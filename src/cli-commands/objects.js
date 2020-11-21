@@ -9,7 +9,7 @@ export default async function objects(graphArg) {
   const graph = await loadGraphFromArgument(graphArg);
   for await (const key of graph) {
     const obj = await graph.get(key);
-    if (!(obj instanceof Graph)) {
+    if (!obj[Graph.isGraph]) {
       console.log(obj);
     }
   }

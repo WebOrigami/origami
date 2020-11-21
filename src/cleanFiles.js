@@ -8,7 +8,7 @@ export default async function cleanFiles(options) {
   for await (const key of source) {
     const obj = await source.get(key);
     const targetPath = path.join(target, key);
-    if (obj instanceof Graph) {
+    if (obj[Graph.isGraph]) {
       // Recurse
       await cleanFiles({
         source: obj,

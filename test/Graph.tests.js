@@ -4,6 +4,12 @@ import ObjectGraph from "../src/ObjectGraph.js";
 const { assert } = chai;
 
 describe("Graph", () => {
+  it("returns a truthy value for the [Graph.isGraph] symbol", () => {
+    const graph = new Graph();
+    assert(typeof Graph.isGraph === "symbol");
+    assert(graph[Graph.isGraph]);
+  });
+
   it("can return the keys for a graph", async () => {
     const graph = new ObjectGraph({
       a: "a",

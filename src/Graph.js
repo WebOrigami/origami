@@ -1,4 +1,11 @@
+const isGraphSymbol = Symbol("Graph.isGraph");
+
 export default class Graph {
+  // Default implementation returns an empty array.
+  [Symbol.iterator]() {
+    return [];
+  }
+
   /**
    * Return the graph as a flat object, with all promises resolved.
    * TODO: This method should probably be called resolve(), and the existing
@@ -8,29 +15,54 @@ export default class Graph {
     return await this.reduce(async (obj) => await obj);
   }
 
+  // Default implementation returns undefined.
+  async get(key) {
+    return undefined;
+  }
+
+  // Static getter used by Graph itself and other classes to define the class
+  // instance method.
+  static get isGraph() {
+    return isGraphSymbol;
+  }
+
+  // Returns true, indicating the object is a graph.
+  // Note that we can't use Graph.isGraph to define Graph's own instance getter,
+  // since the class isn't defined at this point.
+  get [isGraphSymbol]() {
+    return true;
+  }
+
   /**
-   * Returns the keys for this graph node.
+   * Returns the keys a graph.
    */
-  async keys() {
+  static async keys(graph) {
     const result = [];
-    for await (const key of this) {
+    for await (const key of graph) {
       result.push(key);
+    }
+    return result;
+  }
+
+  async keys() {
+    return await Graph.keys(this);
+  }
+
+  static async reduce(graph, callback) {
+    const result = {};
+    for await (const key of graph) {
+      const obj = await graph.get(key);
+      result[key] = obj[Graph.isGraph]
+        ? // Recurse
+          await obj.reduce(callback)
+        : await callback(obj);
     }
     return result;
   }
 
   // TODO: Use a visitor pattern to avoid loops.
   async reduce(callback) {
-    const result = {};
-    for await (const key of this) {
-      const obj = await this.get(key);
-      result[key] =
-        obj instanceof Graph
-          ? // Recurse
-            await obj.reduce(callback)
-          : await callback(obj);
-    }
-    return result;
+    return await Graph.reduce(this, callback);
   }
 
   /**
@@ -50,7 +82,7 @@ export default class Graph {
   }
 
   static from(obj) {
-    return obj instanceof Graph ? obj : new ObjectGraph(obj);
+    return obj[Graph.isGraph] ? obj : new ObjectGraph(obj);
   }
 
   /**
@@ -64,7 +96,7 @@ export default class Graph {
     if (rest.length === 0) {
       // Finished traversing; return the object.
       return obj;
-    } else if (obj instanceof Graph) {
+    } else if (obj[Graph.isGraph]) {
       // Traverse into the graph.
       return await obj.traverse(rest);
     } else {
