@@ -1,0 +1,27 @@
+{
+  "name": "@explorablegraph/graph",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/exports.js",
+  "bin": {
+    "graph": "./src/graph-cli.js"
+  },
+  "dependencies": {
+    "cheerio": "1.0.0-rc.3",
+    "express": "4.17.1",
+    "marked": "1.2.3",
+    "yaml": "2.0.0-1"
+  },
+  "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "8.2.1",
+    "typescript": "4.0.5"
+  },
+  "scripts": {
+    "build": "node demo/src/build.js",
+    "clean": "node demo/src/clean.js",
+    "serve": "node demo/src/serve.js",
+    "test": "mocha --reporter spec",
+    "typecheck": "tsc"
+  }
+}
