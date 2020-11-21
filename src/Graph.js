@@ -15,6 +15,10 @@ export default class Graph {
     return await this.reduce(async (obj) => await obj);
   }
 
+  static from(obj) {
+    return obj[Graph.isGraph] ? obj : new ObjectGraph(obj);
+  }
+
   // Default implementation returns undefined.
   async get(key) {
     return undefined;
@@ -81,10 +85,6 @@ export default class Graph {
     return await this.reduce((obj) => String(obj));
   }
 
-  static from(obj) {
-    return obj[Graph.isGraph] ? obj : new ObjectGraph(obj);
-  }
-
   /**
    * Follow the edges in the graph named by the array of keys.
    *
@@ -106,7 +106,7 @@ export default class Graph {
   }
 }
 
-// We define ObjectGraph here so that Graph.toGraph can reference it
+// We define ObjectGraph here so that Graph.from can reference it
 // without creating a cycle in the JavaScript module dependency graph.
 export class ObjectGraph extends Graph {
   constructor(source) {

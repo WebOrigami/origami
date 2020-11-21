@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "target": "ES2020"
+  },
+  "files": ["src/Explorable.js"]
+  // "include": ["src/**/*.js", "demos/**/*.js", "test/**/*.js"]
+}
