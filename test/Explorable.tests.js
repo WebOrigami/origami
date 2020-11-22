@@ -23,11 +23,11 @@ describe.only("Explorable", () => {
     const plainObject = {};
     assert(!Explorable.isExplorable(plainObject));
 
-    const objectWithIterator = {
+    const objectWithSyncIterator = {
       [call](arg) {},
       [Symbol.iterator]() {},
     };
-    assert(Explorable.isExplorable(objectWithIterator));
+    assert(!Explorable.isExplorable(objectWithSyncIterator));
 
     const objectWithAsyncIterator = {
       [call](arg) {},
@@ -37,19 +37,23 @@ describe.only("Explorable", () => {
 
     function functionWithIterator() {}
     functionWithIterator[Symbol.iterator] = () => {};
-    assert(Explorable.isExplorable(functionWithIterator));
+    assert(!Explorable.isExplorable(functionWithIterator));
 
     function functionWithAsyncIterator() {}
     functionWithAsyncIterator[Symbol.asyncIterator] = () => {};
     assert(Explorable.isExplorable(functionWithAsyncIterator));
   });
 
-  it("can return the keys for a function with an async iterator", async () => {
-    const fixture = (x) => x;
-    fixture[Symbol.asyncIterator] = function* () {
+  it("Explorable.keys returns keys for a function with an async iterator", async () => {
+    function functionWithAsyncIterator() {}
+    functionWithAsyncIterator[Symbol.asyncIterator] = function* () {
       yield* ["a", "b", "c"];
     };
-    assert.deepEqual(await Explorable.keys(fixture), ["a", "b", "c"]);
+    assert.deepEqual(await Explorable.keys(functionWithAsyncIterator), [
+      "a",
+      "b",
+      "c",
+    ]);
   });
 
   it("Explorable.from can crate an explorable plain object", async () => {

@@ -13,7 +13,7 @@ export default class ExplorableObject {
 
     // If the source object provides its own iterator, prefer that.
     if (this.source[Symbol.iterator]) {
-      this[Symbol.iterator] = this.source[Symbol.iterator];
+      this[Symbol.asyncIterator] = this.source[Symbol.iterator];
     }
   }
 
@@ -22,7 +22,7 @@ export default class ExplorableObject {
     return isPlainObject(value) ? new ExplorableObject(value) : value;
   }
 
-  [Symbol.iterator]() {
+  [Symbol.asyncIterator]() {
     return Object.keys(this.source)[Symbol.iterator]();
   }
 }
