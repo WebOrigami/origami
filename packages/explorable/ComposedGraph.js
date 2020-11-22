@@ -1,4 +1,4 @@
-import Graph from "./Graph.js";
+import Graph from "../wip/Graph.js";
 
 export default class ComposedGraph extends Graph {
   constructor(...graphs) {

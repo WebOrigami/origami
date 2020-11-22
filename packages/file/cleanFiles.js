@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import Graph from "./Graph.js";
+import Graph from "../wip/Graph.js";
 
 export default async function cleanFiles(options) {
   const { source, target } = options;

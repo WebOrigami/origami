@@ -3,7 +3,7 @@
 import path from "path";
 import process from "process";
 import { fileURLToPath } from "url";
-import ModuleFiles from "./ModuleFiles.js";
+import ModuleFiles from "../file/ModuleFiles.js";
 
 // Load a graph of our own commands.
 const dirname = path.dirname(fileURLToPath(import.meta.url));

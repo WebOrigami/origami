@@ -1,6 +1,6 @@
 import path from "path";
 import process from "process";
-import Graph from "./Graph.js";
+import Graph from "../wip/Graph.js";
 
 // Returns either the JSON contents from stdin (if arg is "-") or a graph.
 export async function loadGraphFromArgument(arg) {

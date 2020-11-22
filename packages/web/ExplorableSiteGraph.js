@@ -1,4 +1,4 @@
-import { constants, fetch, Graph } from "./exports.js";
+import { constants, fetch, Graph } from "../explorable/exports.js";
 
 let iteratorPromise;
 
