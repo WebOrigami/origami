@@ -31,7 +31,8 @@ export default class Explorable {
    */
   static isExplorable(obj) {
     const isCallable = obj[call] || typeof obj === "function";
-    const hasIterator = !!obj[Symbol.asyncIterator];
+    const hasIterator =
+      Boolean(obj[Symbol.asyncIterator]) || Boolean(obj[Symbol.iterator]);
     return isCallable && hasIterator;
   }
 

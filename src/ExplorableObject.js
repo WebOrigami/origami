@@ -11,9 +11,9 @@ export default class ExplorableObject {
       this[call] = (...args) => this[call](...args);
     }
 
-    // If the source object provides its own asyncIterator, prefer that.
-    if (this.source[Symbol.asyncIterator]) {
-      this[Symbol.asyncIterator] = () => this.source[Symbol.asyncIterator]();
+    // If the source object provides its own iterator, prefer that.
+    if (this.source[Symbol.iterator]) {
+      this[Symbol.iterator] = this.source[Symbol.iterator];
     }
   }
 
@@ -22,7 +22,7 @@ export default class ExplorableObject {
     return isPlainObject(value) ? new ExplorableObject(value) : value;
   }
 
-  [Symbol.asyncIterator]() {
+  [Symbol.iterator]() {
     return Object.keys(this.source)[Symbol.iterator]();
   }
 }

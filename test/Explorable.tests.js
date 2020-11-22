@@ -19,6 +19,31 @@ describe.only("Explorable", () => {
     assert.equal(value, "foobar");
   });
 
+  it("Explorable.isExplorable can determine whether an object is explorable", () => {
+    const plainObject = {};
+    assert(!Explorable.isExplorable(plainObject));
+
+    const objectWithIterator = {
+      [call](arg) {},
+      [Symbol.iterator]() {},
+    };
+    assert(Explorable.isExplorable(objectWithIterator));
+
+    const objectWithAsyncIterator = {
+      [call](arg) {},
+      [Symbol.asyncIterator]() {},
+    };
+    assert(Explorable.isExplorable(objectWithAsyncIterator));
+
+    function functionWithIterator() {}
+    functionWithIterator[Symbol.iterator] = () => {};
+    assert(Explorable.isExplorable(functionWithIterator));
+
+    function functionWithAsyncIterator() {}
+    functionWithAsyncIterator[Symbol.asyncIterator] = () => {};
+    assert(Explorable.isExplorable(functionWithAsyncIterator));
+  });
+
   it("can return the keys for a function with an async iterator", async () => {
     const fixture = (x) => x;
     fixture[Symbol.asyncIterator] = function* () {
