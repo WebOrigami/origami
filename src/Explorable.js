@@ -95,6 +95,26 @@ export default class Explorable {
   }
 
   /**
+   *
+   * @param {any} explorable
+   * @param {function} callback
+   */
+  static async reduce(explorable, callback) {
+    const map = {};
+    for await (const key of explorable) {
+      const obj = await Explorable.call(explorable, key);
+      /** @type {any} */
+      const value = Explorable.isExplorable(obj)
+        ? await this.reduce(obj, callback)
+        : obj;
+      // @ts-ignore
+      map[key] = value;
+    }
+    const result = await callback(map);
+    return result;
+  }
+
+  /**
    * Returns the flat set of values for an explorable.
    *
    * @param {any} explorable
