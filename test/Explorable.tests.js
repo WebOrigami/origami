@@ -66,6 +66,22 @@ describe.only("Explorable", () => {
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
 
+  it("Explorable.values can return the flat list of values", async () => {
+    const fixture = Explorable.from({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const values = await Explorable.values(fixture);
+    assert.deepEqual(values.slice(0, 3), [1, 2, 3]);
+    const nestedValues = await Explorable.values(values[3]);
+    assert.deepEqual(nestedValues, [4, 5]);
+  });
+
   // it("can resolve the objects in a graph", async () => {
   //   const graph = new ObjectGraph({
   //     a: {

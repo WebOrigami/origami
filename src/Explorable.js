@@ -69,4 +69,18 @@ export default class Explorable {
     }
     return result;
   }
+
+  /**
+   * Returns the flat set of values for an explorable.
+   *
+   * @param {any} explorable
+   */
+  static async values(explorable) {
+    const result = [];
+    for await (const key of explorable) {
+      const value = await Explorable.call(explorable, key);
+      result.push(value);
+    }
+    return result;
+  }
 }
