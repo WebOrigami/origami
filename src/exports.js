@@ -2,6 +2,7 @@
 export { default as ArrowDeclaration } from "./ArrowDeclaration.js";
 export { default as ArrowFile } from "./ArrowFile.js";
 export { default as constants } from "./constants.js";
+export { default as Explorable } from "./Explorable.js";
 export { default as ExplorableSiteGraph } from "./ExplorableSiteGraph.js";
 export { default as fetch } from "./fetch.js";
 export { default as Graph } from "./Graph.js";

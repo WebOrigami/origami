@@ -82,6 +82,22 @@ describe.only("Explorable", () => {
     assert.deepEqual(nestedValues, [4, 5]);
   });
 
+  it("Explorable.collapse can collapse a graph using a callback", async () => {
+    const fixture = Explorable.from({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const collapsed = await Explorable.collapse(fixture, (...values) => [
+      ...values,
+    ]);
+    assert.deepEqual(collapsed, [1, 2, 3, [4, 5]]);
+  });
+
   // it("can resolve the objects in a graph", async () => {
   //   const graph = new ObjectGraph({
   //     a: {

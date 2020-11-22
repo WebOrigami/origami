@@ -30,7 +30,7 @@ export default class Explorable {
    * @returns {boolean}
    */
   static isExplorable(obj) {
-    const isCallable = obj[call] || typeof obj === "function";
+    const isCallable = Boolean(obj[call]) || typeof obj === "function";
     const hasIterator = Boolean(obj[Symbol.asyncIterator]);
     return isCallable && hasIterator;
   }
@@ -67,6 +67,30 @@ export default class Explorable {
     for await (const key of explorable) {
       result.push(key);
     }
+    return result;
+  }
+
+  /**
+   * Collapse a graph.
+   *
+   * Working from the leaves toward the root, for each explorable node,
+   * apply the callback to the enumerated values and return the result,
+   * collapsing down to the root.
+   *
+   * @param {any} explorable
+   * @param {function} callback
+   */
+  static async collapse(explorable, callback) {
+    const values = [];
+    for await (const key of explorable) {
+      const obj = await Explorable.call(explorable, key);
+      /** @type {any} */
+      const collapsed = Explorable.isExplorable(obj)
+        ? await this.collapse(obj, callback)
+        : obj;
+      values.push(collapsed);
+    }
+    const result = await callback(...values);
     return result;
   }
 
