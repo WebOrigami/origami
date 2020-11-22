@@ -1,5 +1,6 @@
 Explorable functions could form the organizing information model of a programming language.
-Consider a language with Lisp syntax based on explorable functions.
+
+Consider a language with Lisp syntax based on explorable functions (exfns).
 
 ```lisp
 (exfn a b c)
@@ -16,6 +17,10 @@ These both mean to ask explorable function exfn for the object with key (a b c).
 ```js
 exfn[apply]([a b, c ]);
 ```
+
+The rest of this page considers a hypothetical programming language based on exfns.
+
+_Note: The syntax here is just noodling, and something of a mess. The underlying concept feels extremely sound, however._
 
 ## Declaration
 
@@ -61,14 +66,51 @@ add = {
 
 This defines a graph with no public keys. The `#keys` key returns an exfn `[]` (always returns `undefined`, no public keys itself).
 
-### Lisp
+## Public keys
 
-```lisp
-(define add
-  (lambda
-    (a b) (+ a b)
-  )
-)
+An exfn can explicitly define keys using the `#keys` symbol.
+
+The following function converts letters to uppercase:
+
+```js
+lowerToUpper = (lower) => lower.toUpperCase();
+```
+
+This implicitly has an empty `#keys` exfn. The function can also provide examples of the values it will accept:
+
+```js
+lowerToUpper = {
+  a: "A",
+  b: "B",
+  c: "C"
+} + (lower) => lower.toUpperCase()
+```
+
+This can be useful for math functions too:
+
+```js
+fibo = {
+  #keys: { { 0, 1 }, { 1, 1 } }
+} + (a, b) => // Do the math
+```
+
+This fibonacci function can do the math, as well as provide examples of the tuples it accepts.
+
+## Hidden keys
+
+An exfn can define a hidden key `X` with `[X]`. These will not be included in the exfn's publicly-inspectable `#keys`.
+
+```js
+lowerToUpper = {
+  a: "A",
+  b: "B",
+  c: "C",
+  [secret]: "You have found the secret value!",
+};
+
+lowerToUpper.a; // "A"
+lowerToUpper.#keys; // { a, b, c}
+lowerToUpper.secret; // You have found the secret value
 ```
 
 ## Invocation equals traversal
@@ -102,15 +144,13 @@ String = {
 Given this representation, a variable of type string is an exfn that composes the definitions of `String`.
 
 ```js
-message = Explorable.compose(
+message =
   {
     value: "Hello",
-  },
-  String
-);
+  } + String;
 ```
 
-Here, `compose(a, b)` returns a new graph that composes subgraphs a and b. The resulting exfn will search in graph a for key first, and if not found will look in graph b. The `compose` operation also composes the `#keys` of the subgraphs.
+Here, the `+` operator returns a new graph that composes subgraphs a and b. The resulting exfn will search in graph a for key first, and if not found will look in graph b. The `compose` operation also composes the `#keys` of the subgraphs.
 
 One can then make invocations such as:
 
@@ -125,3 +165,15 @@ message.definition; // Returns message's definitions, including those of String
 The package of Explorable intrinsics in this project are written in JavaScript, but the algorithms behind them are universal and inherently portable to explorable functions implemented in any language. That is, any language built around explorable functions would also pick up a well-defined set of useful operations.
 
 ## Intrinsics
+
+### Lisp
+
+The concept could also be easily represented with a Lisp-like syntax. The `add` example earlier:
+
+```lisp
+(define add
+  (lambda
+    (a b) (+ a b)
+  )
+)
+```
