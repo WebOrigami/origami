@@ -2,9 +2,7 @@
 //   default as ExplorableObject,
 //   isPlainObject,
 // } from "./ExplorableObject.js";
-import { call as callSymbol } from "./symbols.js";
-
-export const call = callSymbol;
+import { asyncCall, asyncGet, call, get } from "./symbols.js";
 
 export default class Explorable {
   /**
@@ -14,14 +12,14 @@ export default class Explorable {
    * @param  {...any} args
    * @returns {any}
    */
-  static call(obj, ...args) {
-    return (
-      // Explorable object or
-      obj[call]?.(...args) ??
-      // Assumed to be a function.
-      obj(...args)
-    );
-  }
+  // static call(obj, ...args) {
+  //   return (
+  //     // Explorable object or
+  //     obj[call]?.(...args) ??
+  //     // Assumed to be a function.
+  //     obj(...args)
+  //   );
+  // }
 
   /**
    * Return true if the given object is explorable.
@@ -128,3 +126,6 @@ export default class Explorable {
   //   return result;
   // }
 }
+
+// Expose the symbols on the Explorable class.
+Object.assign(Explorable, { call, asyncCall, get, asyncGet });

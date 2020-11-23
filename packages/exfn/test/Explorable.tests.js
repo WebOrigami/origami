@@ -1,16 +1,13 @@
 import chai from "chai";
-import { call, default as Explorable } from "../src/Explorable.js";
+import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
 describe.only("Explorable", () => {
-  it("an object can expose the [Explorable.call] symbol to make itself synchrnously invocable", () => {
-    const fixture = {
-      [call](/** @type {any} */ arg) {
-        return `Got ${arg}`;
-      },
-    };
-    const value = Explorable.call(fixture, "foo");
-    assert.equal(value, "Got foo");
+  it("Explorable exports the symbols for recognizing exfns", () => {
+    assert(typeof Explorable.asyncCall === "symbol");
+    assert(typeof Explorable.asyncGet === "symbol");
+    assert(typeof Explorable.call === "symbol");
+    assert(typeof Explorable.get === "symbol");
   });
 
   // it("Explorable.call invokes a function directly", () => {
