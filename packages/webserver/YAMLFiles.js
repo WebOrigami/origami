@@ -1,5 +1,5 @@
-import YAML from "../webserver/node_modules/yaml";
-import FileGraph from "./FileGraph.js.js";
+import YAML from "yaml";
+import FileGraph from "./FileGraph.js.js.js";
 
 // NOTE: Concept only -- not tested
 export default class YAMLFiles extends TransformGraph {
