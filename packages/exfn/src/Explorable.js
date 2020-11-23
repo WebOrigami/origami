@@ -63,19 +63,6 @@ export default class Explorable {
   // }
 
   /**
-   * Returns the keys for an explorable.
-   *
-   * @param {any} explorable
-   */
-  static async keys(explorable) {
-    const result = [];
-    for await (const key of explorable) {
-      result.push(key);
-    }
-    return result;
-  }
-
-  /**
    * Collapse a graph.
    *
    * Working from the leaves toward the root, for each explorable node,

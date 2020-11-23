@@ -2,7 +2,7 @@ import chai from "chai";
 import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
-describe.only("Explorable", () => {
+describe("Explorable", () => {
   it("Explorable exports the symbols for recognizing exfns", () => {
     assert(typeof Explorable.asyncCall === "symbol");
     assert(typeof Explorable.asyncGet === "symbol");
@@ -49,18 +49,6 @@ describe.only("Explorable", () => {
     assert(!Explorable.isSync(asyncExFn));
     assert(Explorable.isAsync(asyncExFn));
   });
-
-  // it("Explorable.keys returns keys for a function with an async iterator", async () => {
-  //   function functionWithAsyncIterator() {}
-  //   functionWithAsyncIterator[Symbol.asyncIterator] = function* () {
-  //     yield* ["a", "b", "c"];
-  //   };
-  //   assert.deepEqual(await Explorable.keys(functionWithAsyncIterator), [
-  //     "a",
-  //     "b",
-  //     "c",
-  //   ]);
-  // });
 
   // it("Explorable.from can crate an explorable plain object", async () => {
   //   const fixture = Explorable.from({

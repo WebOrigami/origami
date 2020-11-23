@@ -66,6 +66,8 @@ for (const key of exfn) {
 }
 ```
 
+**Note:** Given that the APIs for sync and async exfns can have the same general shape and behavior, but async exfns fill a more immediate need for web development, the project is focusing on async exfns first. The API for sync exfns is not yet as complete.
+
 ## Asynchronous explorable functions
 
 The initial intended uses of exfns in JavaScript are file-based tools, web server development, and client-side web page code — all of which generally entail asynchronous behavior.
