@@ -24,10 +24,10 @@ describe("ExplorableFiles", () => {
     });
   });
 
-  it.skip("Can return the contents of files in a folder tree", async () => {
+  it("Can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
-    const plain = await AsyncExplorable.plain(files);
+    const plain = await AsyncExplorable.toStrings(files);
     assert.deepEqual(plain, {
       "a.txt": "The letter A",
       "b.txt": "The letter B",

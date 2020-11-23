@@ -57,6 +57,28 @@ describe("AsyncExplorable", () => {
     assert.deepEqual(plain, original);
   });
 
+  it("toStrings() converts exfn leaf values to strings", async () => {
+    const graph = new AsyncExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const strings = await AsyncExplorable.toStrings(graph);
+    assert.deepEqual(strings, {
+      a: "1",
+      b: "2",
+      c: "3",
+      more: {
+        d: "4",
+        e: "5",
+      },
+    });
+  });
+
   it("structure() produces a plain object version of an exfn that has empty values", async () => {
     const graph = new AsyncExplorableObject({
       a: 1,
