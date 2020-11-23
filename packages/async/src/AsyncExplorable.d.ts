@@ -13,6 +13,6 @@ export default class AsyncExplorable implements Explorable<any, any> {
   static keys(obj: any): any[];
   static plain(exfn: any): any;
   static structure(exfn: any): any;
-  static toStrings(exfn: any): any;
+  static strings(exfn: any): any;
   static traverse(exfn: any, path: any[]): any;
 }

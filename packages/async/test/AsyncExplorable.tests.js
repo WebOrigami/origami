@@ -57,7 +57,7 @@ describe("AsyncExplorable", () => {
     assert.deepEqual(plain, original);
   });
 
-  it("toStrings() converts exfn leaf values to strings", async () => {
+  it("strings() converts exfn leaf values to strings", async () => {
     const graph = new AsyncExplorableObject({
       a: 1,
       b: 2,
@@ -67,7 +67,7 @@ describe("AsyncExplorable", () => {
         e: 5,
       },
     });
-    const strings = await AsyncExplorable.toStrings(graph);
+    const strings = await AsyncExplorable.strings(graph);
     assert.deepEqual(strings, {
       a: "1",
       b: "2",
@@ -99,6 +99,21 @@ describe("AsyncExplorable", () => {
         e: null,
       },
     });
+  });
+
+  // TODO: Move this to sync package
+  it("json() converts graph to strings to JSON", async () => {
+    const graph = new AsyncExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const json = await AsyncExplorable.json();
+    assert.equal(json, `{"a":"1","b":"2","c":"3","more":{"d":"4","e":"5"}}`);
   });
 
   it("traverse() traverses a graph", async () => {

@@ -89,7 +89,7 @@ export default class AsyncExplorable {
    *
    * @param {any} exfn
    */
-  static async toStrings(exfn) {
+  static async strings(exfn) {
     return await this.mapValues(exfn, (obj) => String(obj));
   }
 
