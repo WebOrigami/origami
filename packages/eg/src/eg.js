@@ -3,12 +3,12 @@
 import path from "path";
 import process from "process";
 import { fileURLToPath } from "url";
-import ModuleFiles from "../node/ModuleFiles.js";
+import JavaScriptModuleFiles from "../node/JavaScriptModuleFiles.js";
 
 // Load a graph of our own commands.
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsPath = path.join(dirname, "cli-commands");
-const commandFiles = new ModuleFiles(commandsPath);
+const commandFiles = new JavaScriptModuleFiles(commandsPath);
 
 async function invoke(command, ...args) {
   const commandFilename = `${command}.js`;
