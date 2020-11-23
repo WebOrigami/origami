@@ -21,6 +21,15 @@ export default class Explorable {
   //   );
   // }
 
+  static isSync(obj) {
+    // If obj is async, then we defer to that and say it's not a sync exfn.
+    return !this.isAsync(obj) && !!obj[this.call] && !!obj[Symbol.iterator];
+  }
+
+  static isAsync(obj) {
+    return !!obj[this.asyncCall] && !!obj[Symbol.asyncIterator];
+  }
+
   /**
    * Return true if the given object is explorable.
    *
@@ -28,9 +37,7 @@ export default class Explorable {
    * @returns {boolean}
    */
   static isExplorable(obj) {
-    const isCallable = Boolean(obj[call]) || typeof obj === "function";
-    const hasIterator = Boolean(obj[Symbol.asyncIterator]);
-    return isCallable && hasIterator;
+    return this.isAsync(obj) || this.isSync(obj);
   }
 
   /**
@@ -60,13 +67,13 @@ export default class Explorable {
    *
    * @param {any} explorable
    */
-  // static async keys(explorable) {
-  //   const result = [];
-  //   for await (const key of explorable) {
-  //     result.push(key);
-  //   }
-  //   return result;
-  // }
+  static async keys(explorable) {
+    const result = [];
+    for await (const key of explorable) {
+      result.push(key);
+    }
+    return result;
+  }
 
   /**
    * Collapse a graph.

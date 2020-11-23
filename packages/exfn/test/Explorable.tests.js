@@ -16,30 +16,39 @@ describe.only("Explorable", () => {
   //   assert.equal(value, "foobar");
   // });
 
-  // it("Explorable.isExplorable can determine whether an object is explorable", () => {
-  //   const plainObject = {};
-  //   assert(!Explorable.isExplorable(plainObject));
+  it("Explorable can determine whether an object is sync or async explorable", () => {
+    const plainObject = {};
+    assert(!Explorable.isExplorable(plainObject));
 
-  //   const objectWithSyncIterator = {
-  //     [call](arg) {},
-  //     [Symbol.iterator]() {},
-  //   };
-  //   assert(!Explorable.isExplorable(objectWithSyncIterator));
+    const onlyCallNoIterator = {
+      [Explorable.call]() {},
+    };
+    assert(!Explorable.isExplorable(onlyCallNoIterator));
 
-  //   const objectWithAsyncIterator = {
-  //     [call](arg) {},
-  //     [Symbol.asyncIterator]() {},
-  //   };
-  //   assert(Explorable.isExplorable(objectWithAsyncIterator));
+    const syncExFn = {
+      [Explorable.call]() {},
+      [Symbol.iterator]() {},
+    };
+    assert(Explorable.isExplorable(syncExFn));
+    assert(Explorable.isSync(syncExFn));
+    assert(!Explorable.isAsync(syncExFn));
 
-  //   function functionWithIterator() {}
-  //   functionWithIterator[Symbol.iterator] = () => {};
-  //   assert(!Explorable.isExplorable(functionWithIterator));
+    const syncCallAsyncIterator = {
+      [Explorable.call]() {},
+      [Symbol.asyncIterator]() {},
+    };
+    assert(!Explorable.isExplorable(syncCallAsyncIterator));
+    assert(!Explorable.isSync(syncCallAsyncIterator));
+    assert(!Explorable.isAsync(syncCallAsyncIterator));
 
-  //   function functionWithAsyncIterator() {}
-  //   functionWithAsyncIterator[Symbol.asyncIterator] = () => {};
-  //   assert(Explorable.isExplorable(functionWithAsyncIterator));
-  // });
+    const asyncExFn = {
+      [Explorable.asyncCall]() {},
+      [Symbol.asyncIterator]() {},
+    };
+    assert(Explorable.isExplorable(asyncExFn));
+    assert(!Explorable.isSync(asyncExFn));
+    assert(Explorable.isAsync(asyncExFn));
+  });
 
   // it("Explorable.keys returns keys for a function with an async iterator", async () => {
   //   function functionWithAsyncIterator() {}
