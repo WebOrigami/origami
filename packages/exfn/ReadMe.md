@@ -130,7 +130,7 @@ if value is exfn, traverse it with the remaining path, otherwise return it
 Definition of `Explorable.traverse` is roughly
 
 ```js
-class Explorable {
+class AsyncExplorable {
   static async traverse(exfn, path) {
     const get = exfn[asyncGet] || exfn[get];
     if (get) {
