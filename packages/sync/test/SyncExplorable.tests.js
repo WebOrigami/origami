@@ -4,35 +4,35 @@ const { assert } = chai;
 
 describe("SyncExplorable", () => {
   it("Exports the symbols for recognizing sync exfns", () => {
-    assert(typeof SyncExplorable.call === "symbol");
     assert(typeof SyncExplorable.get === "symbol");
   });
 
   it("Can determine whether an object is a sync exfn", () => {
-    const plainObject = {};
-    assert(!SyncExplorable.isExplorable(plainObject));
+    const neitherCallNorIterator = {};
+    assert(!SyncExplorable.isExplorable(neitherCallNorIterator));
 
-    const onlyCallNoIterator = {
-      [SyncExplorable.call]() {},
+    const getWithoutIterator = {
+      [SyncExplorable.get]() {},
     };
-    assert(!SyncExplorable.isExplorable(onlyCallNoIterator));
+    assert(!SyncExplorable.isExplorable(getWithoutIterator));
 
-    const syncCallAsyncIterator = {
-      [SyncExplorable.call]() {},
+    const getButAsyncIterator = {
+      [SyncExplorable.get]() {},
       [Symbol.asyncIterator]() {},
     };
-    assert(!SyncExplorable.isExplorable(syncCallAsyncIterator));
+    assert(!SyncExplorable.isExplorable(getButAsyncIterator));
 
-    const syncExFn = {
-      [SyncExplorable.call]() {},
+    // Valid sync exfn has both get and sync iterator
+    const getAndSyncIterator = {
+      [SyncExplorable.get]() {},
       [Symbol.iterator]() {},
     };
-    assert(SyncExplorable.isExplorable(syncExFn));
+    assert(SyncExplorable.isExplorable(getAndSyncIterator));
   });
 
   it(".keys() returns keys for a sync exfn", () => {
     const exfn = {
-      [SyncExplorable.call]() {},
+      [SyncExplorable.get]() {},
       [Symbol.iterator]() {
         return ["a", "b", "c"][Symbol.iterator]();
       },

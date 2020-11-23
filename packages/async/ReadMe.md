@@ -104,7 +104,7 @@ e.g., Map
 
 ## Explorable graphs
 
-[Explorable.get] and [Explorable.asyncGet]
+[Explorable.get] and [Explorable.get]
 If an object supports either of those keys, it indicates that it can also be treated with graph semantics
 
 ```js
@@ -122,7 +122,7 @@ value = await exfn[Explorable.asyncCall](path);
 graphs are traversed, get the value with the first key
 
 ```js
-value = await exfn[Explorable.asyncGet](path[0]);
+value = await exfn[Explorable.get](path[0]);
 ```
 
 if value is exfn, traverse it with the remaining path, otherwise return it
@@ -132,7 +132,7 @@ Definition of `Explorable.traverse` is roughly
 ```js
 class AsyncExplorable {
   static async traverse(exfn, path) {
-    const get = exfn[asyncGet] || exfn[get];
+    const get = exfn[get] || exfn[get];
     if (get) {
       // Treat exfn as a graph.
       // Invoke its "get" method with the first element of the path as a key.
@@ -140,7 +140,7 @@ class AsyncExplorable {
       const value = exfn[get](key);
       // *** in condition below, real code must also check type ***
       if (Explorable.isExplorable(value)) {
-        return exfn[asyncGet] ? await Explorable.traverse(value, rest) : value;
+        return exfn[get] ? await Explorable.traverse(value, rest) : value;
       } else {
         return value;
       }

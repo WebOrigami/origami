@@ -1,8 +1,4 @@
-import { asyncCall, asyncGet } from "./symbols.js";
-// import {
-//   default as ExplorableObject,
-//   isPlainObject,
-// } from "./ExplorableObject.js";
+import { get } from "./symbols.js";
 
 export default class AsyncExplorable {
   /**
@@ -12,7 +8,7 @@ export default class AsyncExplorable {
    * @returns {boolean}
    */
   static isExplorable(obj) {
-    return !!obj[asyncCall] && !!obj[Symbol.asyncIterator];
+    return !!obj[get] && !!obj[Symbol.asyncIterator];
   }
 
   /**
@@ -36,24 +32,17 @@ export default class AsyncExplorable {
    * @returns {Promise<any>}
    */
   static async traverse(exfn, path) {
-    if (exfn[asyncGet]) {
-      // Treat exfn as a graph.
-      // Invoke its "get" method with the first element of the path as a key.
-      const [key, ...rest] = path;
-      const value = await exfn[asyncGet](key);
-      // TODO: Check that value is of same constructor before traversing into it.
-      return value && this.isExplorable(value)
-        ? // value is also explorable; traverse into it.
-          await this.traverse(value, rest)
-        : value;
-    } else {
-      // Basic explorable function.
-      // Call it with the path spread into parameters.
-      const value = await exfn[asyncCall](...path);
-      return value;
-    }
+    // Take the first element of the path as the next key.
+    const [key, ...rest] = path;
+    // Get the value with that key.
+    const value = await exfn[get](key);
+    // TODO: Check that value is of same constructor before traversing into it.
+    return value && this.isExplorable(value)
+      ? // value is also explorable; traverse into it.
+        await this.traverse(value, rest)
+      : value;
   }
 }
 
 // Expose the symbols on the AsyncExplorable class.
-Object.assign(AsyncExplorable, { asyncCall, asyncGet });
+Object.assign(AsyncExplorable, { get });

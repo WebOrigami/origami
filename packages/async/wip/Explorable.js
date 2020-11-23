@@ -1,4 +1,4 @@
-import { asyncCall, asyncGet, call, get } from "../src/symbols.js";
+import { asyncCall, call, get } from "../src/symbols.js";
 
 export default class Explorable {
   /**
@@ -80,4 +80,4 @@ export default class Explorable {
 }
 
 // Expose the symbols on the Explorable class.
-Object.assign(Explorable, { call, asyncCall, get, asyncGet });
+Object.assign(Explorable, { call, asyncCall, get, get });

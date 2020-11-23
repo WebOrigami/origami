@@ -16,15 +16,12 @@ export default class AsyncExplorableObject extends AsyncExplorable {
     // this.callPropertyValue = callPropertyDescriptor?.value;
   }
 
-  // TODO: Remove
-  async [AsyncExplorable.asyncCall]() {}
-
   /**
    * Return the value for the corresponding key.
    *
    * @param {any} key
    */
-  async [AsyncExplorable.asyncGet](key) {
+  async [AsyncExplorable.get](key) {
     // Invoke object's own call method.
     // if (typeof this.callPropertyValue === "function") {
     //   // @ts-ignore REVIEW: Next line causes tsc 4.1.2 to crash!

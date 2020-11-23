@@ -1,4 +1,4 @@
-import { asyncCall, call, get } from "../../async/src/symbols.js";
+import { get } from "./symbols.js";
 
 export default class SyncExplorable {
   /**
@@ -8,10 +8,7 @@ export default class SyncExplorable {
    * @returns {boolean}
    */
   static isExplorable(obj) {
-    // If obj is async, then we defer to that and say it's not a sync exfn.
-    const isAsync = !!obj[asyncCall] && !!obj[Symbol.asyncIterator];
-    const isSync = !isAsync && !!obj[call] && !!obj[Symbol.iterator];
-    return isSync;
+    return !!obj[get] && !!obj[Symbol.iterator];
   }
 
   /**
@@ -25,4 +22,4 @@ export default class SyncExplorable {
 }
 
 // Expose the symbols on the SyncExplorable class.
-Object.assign(SyncExplorable, { call, get });
+Object.assign(SyncExplorable, { get });
