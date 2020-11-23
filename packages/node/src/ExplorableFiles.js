@@ -1,10 +1,8 @@
+import { AsyncExplorable } from "@explorablegraph/async";
 import { promises as fs } from "fs";
 import path from "path";
-import Graph from "../async/wip/Graph.js";
 
-export default class FileGraph extends Graph {
-  dirname;
-
+export default class ExplorableFiles extends AsyncExplorable {
   constructor(dirname) {
     super();
     this.dirname = dirname;
@@ -16,11 +14,7 @@ export default class FileGraph extends Graph {
     yield* names;
   }
 
-  get dirname() {
-    return this.dirname;
-  }
-
-  async get(key) {
+  async [AsyncExplorable.get](key) {
     const filePath = path.join(this.dirname, key);
     let stats;
     try {
@@ -31,7 +25,7 @@ export default class FileGraph extends Graph {
       }
     }
     const obj = stats.isDirectory()
-      ? new FileGraph(filePath)
+      ? new ExplorableFiles(filePath)
       : await fs.readFile(filePath);
     return obj;
   }

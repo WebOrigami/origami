@@ -1,3 +1,3 @@
 // Should generate this export file with explorable graphs!
-export { default as Explorable } from "./src/Explorable.js";
+export { default as AsyncExplorable } from "./src/AsyncExplorable.js";
 // etc...

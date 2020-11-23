@@ -1,10 +1,10 @@
 {
-  "name": "@explorablegraph/async",
-  "description": "JavaScript core package for *asynchronous* explorable functions",
+  "name": "@explorablegraph/node",
+  "description": "Explorable functions for objects in the Node.js API",
   "version": "0.0.1",
   "type": "module",
-  "main": "./exports.js",
   "devDependencies": {
+    "@explorablegraph/async": "github:explorablegraph/async",
     "chai": "4.2.0",
     "mocha": "8.2.1",
     "typescript": "4.1.2"
