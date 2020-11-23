@@ -1,4 +1,4 @@
-import { asyncCall, call, get } from "./symbols.js";
+import { asyncCall, call, get } from "../../async/src/symbols.js";
 
 export default class SyncExplorable {
   /**

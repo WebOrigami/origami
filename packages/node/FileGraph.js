@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import Graph from "../exfn/wip/Graph.js";
+import Graph from "../async/wip/Graph.js";
 
 export default class FileGraph extends Graph {
   dirname;

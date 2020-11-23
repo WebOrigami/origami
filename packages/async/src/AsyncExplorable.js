@@ -28,6 +28,13 @@ export default class AsyncExplorable {
     return result;
   }
 
+  /**
+   * Traverse a graph.
+   *
+   * @param {any} exfn
+   * @param {any[]} path
+   * @returns {Promise<any>}
+   */
   static async traverse(exfn, path) {
     if (exfn[asyncGet]) {
       // Treat exfn as a graph.

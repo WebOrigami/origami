@@ -2,7 +2,7 @@ import AsyncExplorable from "./AsyncExplorable.js";
 
 export default class AsyncExplorableObject extends AsyncExplorable {
   /**
-   * @param {object} source
+   * @param {any} source
    */
   constructor(source) {
     super();
