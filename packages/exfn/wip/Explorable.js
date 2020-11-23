@@ -1,45 +1,6 @@
-// import {
-//   default as ExplorableObject,
-//   isPlainObject,
-// } from "./ExplorableObject.js";
-import { asyncCall, asyncGet, call, get } from "./symbols.js";
+import { asyncCall, asyncGet, call, get } from "../src/symbols.js";
 
 export default class Explorable {
-  /**
-   * Invoke an explorable object as a function.
-   *
-   * @param {any} obj
-   * @param  {...any} args
-   * @returns {any}
-   */
-  // static call(obj, ...args) {
-  //   return (
-  //     // Explorable object or
-  //     obj[call]?.(...args) ??
-  //     // Assumed to be a function.
-  //     obj(...args)
-  //   );
-  // }
-
-  static isSync(obj) {
-    // If obj is async, then we defer to that and say it's not a sync exfn.
-    return !this.isAsync(obj) && !!obj[this.call] && !!obj[Symbol.iterator];
-  }
-
-  static isAsync(obj) {
-    return !!obj[this.asyncCall] && !!obj[Symbol.asyncIterator];
-  }
-
-  /**
-   * Return true if the given object is explorable.
-   *
-   * @param {any} obj
-   * @returns {boolean}
-   */
-  static isExplorable(obj) {
-    return this.isAsync(obj) || this.isSync(obj);
-  }
-
   /**
    * Create an explorable reference to the given object.
    *
@@ -61,7 +22,6 @@ export default class Explorable {
   //     "Explorable.from was given an object that cannot be made explorable."
   //   );
   // }
-
   /**
    * Collapse a graph.
    *
@@ -85,7 +45,6 @@ export default class Explorable {
   //   const result = await callback(...values);
   //   return result;
   // }
-
   /**
    *
    * @param {any} explorable
@@ -105,7 +64,6 @@ export default class Explorable {
   //   const result = await callback(map);
   //   return result;
   // }
-
   /**
    * Returns the flat set of values for an explorable.
    *

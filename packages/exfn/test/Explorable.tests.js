@@ -1,55 +1,12 @@
 import chai from "chai";
-import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
 describe("Explorable", () => {
-  it("Explorable exports the symbols for recognizing exfns", () => {
-    assert(typeof Explorable.asyncCall === "symbol");
-    assert(typeof Explorable.asyncGet === "symbol");
-    assert(typeof Explorable.call === "symbol");
-    assert(typeof Explorable.get === "symbol");
-  });
-
   // it("Explorable.call invokes a function directly", () => {
   //   const fixture = (a, b) => a + b;
   //   const value = Explorable.call(fixture, "foo", "bar");
   //   assert.equal(value, "foobar");
   // });
-
-  it("Explorable can determine whether an object is sync or async explorable", () => {
-    const plainObject = {};
-    assert(!Explorable.isExplorable(plainObject));
-
-    const onlyCallNoIterator = {
-      [Explorable.call]() {},
-    };
-    assert(!Explorable.isExplorable(onlyCallNoIterator));
-
-    const syncExFn = {
-      [Explorable.call]() {},
-      [Symbol.iterator]() {},
-    };
-    assert(Explorable.isExplorable(syncExFn));
-    assert(Explorable.isSync(syncExFn));
-    assert(!Explorable.isAsync(syncExFn));
-
-    const syncCallAsyncIterator = {
-      [Explorable.call]() {},
-      [Symbol.asyncIterator]() {},
-    };
-    assert(!Explorable.isExplorable(syncCallAsyncIterator));
-    assert(!Explorable.isSync(syncCallAsyncIterator));
-    assert(!Explorable.isAsync(syncCallAsyncIterator));
-
-    const asyncExFn = {
-      [Explorable.asyncCall]() {},
-      [Symbol.asyncIterator]() {},
-    };
-    assert(Explorable.isExplorable(asyncExFn));
-    assert(!Explorable.isSync(asyncExFn));
-    assert(Explorable.isAsync(asyncExFn));
-  });
-
   // it("Explorable.from can crate an explorable plain object", async () => {
   //   const fixture = Explorable.from({
   //     a: 1,
@@ -59,7 +16,6 @@ describe("Explorable", () => {
   //   const keys = await Explorable.keys(fixture);
   //   assert.deepEqual(keys, ["a", "b", "c"]);
   // });
-
   // it("Explorable.values can return the flat list of values", async () => {
   //   const fixture = Explorable.from({
   //     a: 1,
@@ -75,7 +31,6 @@ describe("Explorable", () => {
   //   const nestedValues = await Explorable.values(values[3]);
   //   assert.deepEqual(nestedValues, [4, 5]);
   // });
-
   // it("Explorable.collapse can collapse a graph using a callback", async () => {
   //   const fixture = Explorable.from({
   //     a: 1,
@@ -91,7 +46,6 @@ describe("Explorable", () => {
   //   ]);
   //   assert.deepEqual(collapsed, [1, 2, 3, [4, 5]]);
   // });
-
   // it("can resolve the objects in a graph", async () => {
   //   const graph = new ObjectGraph({
   //     a: {
@@ -111,7 +65,6 @@ describe("Explorable", () => {
   //     },
   //   });
   // });
-
   // it("can return the text of the resolved objects in a graph", async () => {
   //   const graph = new ObjectGraph({
   //     string: "string",
@@ -127,7 +80,6 @@ describe("Explorable", () => {
   //     boolean: "true",
   //   });
   // });
-
   // it("can traverse a set of keys", async () => {
   //   const graph = new ObjectGraph({
   //     a: {
