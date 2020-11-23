@@ -2,6 +2,15 @@ import { get } from "./symbols.js";
 
 export default class AsyncExplorable {
   /**
+   * Default implementation returns undefined for any key.
+   *
+   * @param {any} key
+   */
+  async [get](key) {
+    return undefined;
+  }
+
+  /**
    * Return true if the given object is explorable.
    *
    * @param {any} obj
@@ -22,6 +31,11 @@ export default class AsyncExplorable {
       result.push(key);
     }
     return result;
+  }
+
+  // Default implementation generates an empty list.
+  async *[Symbol.asyncIterator]() {
+    yield* [];
   }
 
   /**
