@@ -1,7 +1,7 @@
-import {
-  default as ExplorableObject,
-  isPlainObject,
-} from "./ExplorableObject.js";
+// import {
+//   default as ExplorableObject,
+//   isPlainObject,
+// } from "./ExplorableObject.js";
 import { call as callSymbol } from "./symbols.js";
 
 export const call = callSymbol;
@@ -46,29 +46,29 @@ export default class Explorable {
    *
    * @param {any} obj
    */
-  static from(obj) {
-    if (Explorable.isExplorable(obj)) {
-      return obj;
-    } else if (isPlainObject(obj)) {
-      return new ExplorableObject(obj);
-    }
-    throw new TypeError(
-      "Explorable.from was given an object that cannot be made explorable."
-    );
-  }
+  // static from(obj) {
+  //   if (Explorable.isExplorable(obj)) {
+  //     return obj;
+  //   } else if (isPlainObject(obj)) {
+  //     return new ExplorableObject(obj);
+  //   }
+  //   throw new TypeError(
+  //     "Explorable.from was given an object that cannot be made explorable."
+  //   );
+  // }
 
   /**
    * Returns the keys for an explorable.
    *
    * @param {any} explorable
    */
-  static async keys(explorable) {
-    const result = [];
-    for await (const key of explorable) {
-      result.push(key);
-    }
-    return result;
-  }
+  // static async keys(explorable) {
+  //   const result = [];
+  //   for await (const key of explorable) {
+  //     result.push(key);
+  //   }
+  //   return result;
+  // }
 
   /**
    * Collapse a graph.
@@ -80,51 +80,51 @@ export default class Explorable {
    * @param {any} explorable
    * @param {function} callback
    */
-  static async collapse(explorable, callback) {
-    const values = [];
-    for await (const key of explorable) {
-      const obj = await Explorable.call(explorable, key);
-      /** @type {any} */
-      const collapsed = Explorable.isExplorable(obj)
-        ? await this.collapse(obj, callback)
-        : obj;
-      values.push(collapsed);
-    }
-    const result = await callback(...values);
-    return result;
-  }
+  // static async collapse(explorable, callback) {
+  //   const values = [];
+  //   for await (const key of explorable) {
+  //     const obj = await Explorable.call(explorable, key);
+  //     /** @type {any} */
+  //     const collapsed = Explorable.isExplorable(obj)
+  //       ? await this.collapse(obj, callback)
+  //       : obj;
+  //     values.push(collapsed);
+  //   }
+  //   const result = await callback(...values);
+  //   return result;
+  // }
 
   /**
    *
    * @param {any} explorable
    * @param {function} callback
    */
-  static async reduce(explorable, callback) {
-    const map = {};
-    for await (const key of explorable) {
-      const obj = await Explorable.call(explorable, key);
-      /** @type {any} */
-      const value = Explorable.isExplorable(obj)
-        ? await this.reduce(obj, callback)
-        : obj;
-      // @ts-ignore
-      map[key] = value;
-    }
-    const result = await callback(map);
-    return result;
-  }
+  // static async reduce(explorable, callback) {
+  //   const map = {};
+  //   for await (const key of explorable) {
+  //     const obj = await Explorable.call(explorable, key);
+  //     /** @type {any} */
+  //     const value = Explorable.isExplorable(obj)
+  //       ? await this.reduce(obj, callback)
+  //       : obj;
+  //     // @ts-ignore
+  //     map[key] = value;
+  //   }
+  //   const result = await callback(map);
+  //   return result;
+  // }
 
   /**
    * Returns the flat set of values for an explorable.
    *
    * @param {any} explorable
    */
-  static async values(explorable) {
-    const result = [];
-    for await (const key of explorable) {
-      const value = await Explorable.call(explorable, key);
-      result.push(value);
-    }
-    return result;
-  }
+  // static async values(explorable) {
+  //   const result = [];
+  //   for await (const key of explorable) {
+  //     const value = await Explorable.call(explorable, key);
+  //     result.push(value);
+  //   }
+  //   return result;
+  // }
 }
