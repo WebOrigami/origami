@@ -1,6 +1,3 @@
-import chai from "chai";
-const { assert } = chai;
-
 describe("Explorable", () => {
   // it("Explorable.call invokes a function directly", () => {
   //   const fixture = (a, b) => a + b;

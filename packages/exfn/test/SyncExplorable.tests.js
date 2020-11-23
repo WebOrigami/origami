@@ -17,17 +17,17 @@ describe("SyncExplorable", () => {
     };
     assert(!SyncExplorable.isExplorable(onlyCallNoIterator));
 
+    const syncCallAsyncIterator = {
+      [SyncExplorable.call]() {},
+      [Symbol.asyncIterator]() {},
+    };
+    assert(!SyncExplorable.isExplorable(syncCallAsyncIterator));
+
     const syncExFn = {
       [SyncExplorable.call]() {},
       [Symbol.iterator]() {},
     };
     assert(SyncExplorable.isExplorable(syncExFn));
-
-    const asyncExFn = {
-      [SyncExplorable.asyncCall]() {},
-      [Symbol.asyncIterator]() {},
-    };
-    assert(!SyncExplorable.isExplorable(asyncExFn));
   });
 
   it(".keys() returns keys for a sync exfn", () => {

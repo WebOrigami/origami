@@ -17,11 +17,11 @@ describe("AsyncExplorable", () => {
     };
     assert(!AsyncExplorable.isExplorable(onlyCallNoIterator));
 
-    const asyncCallAsyncIterator = {
-      async [AsyncExplorable.call]() {},
-      [Symbol.syncIterator]() {},
+    const asyncCallSyncIterator = {
+      async [AsyncExplorable.asyncCall]() {},
+      [Symbol.iterator]() {},
     };
-    assert(!AsyncExplorable.isExplorable(asyncCallAsyncIterator));
+    assert(!AsyncExplorable.isExplorable(asyncCallSyncIterator));
 
     const asyncExFn = {
       async [AsyncExplorable.asyncCall]() {},
@@ -32,7 +32,7 @@ describe("AsyncExplorable", () => {
 
   it("AsyncExplorable.keys returns keys for an async exfn", async () => {
     const exfn = {
-      [AsyncExplorable.call]() {},
+      async [AsyncExplorable.asyncCall]() {},
       async *[Symbol.asyncIterator]() {
         yield* ["a", "b", "c"];
       },
