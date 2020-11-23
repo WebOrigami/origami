@@ -57,6 +57,28 @@ describe("AsyncExplorable", () => {
     assert.deepEqual(plain, original);
   });
 
+  it("structure() produces a plain object version of an exfn that has empty values", async () => {
+    const graph = new AsyncExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const structure = await AsyncExplorable.structure(graph);
+    assert.deepEqual(structure, {
+      a: null,
+      b: null,
+      c: null,
+      more: {
+        d: null,
+        e: null,
+      },
+    });
+  });
+
   it("traverse() traverses a graph", async () => {
     const graph = new AsyncExplorableObject({
       a: 1,

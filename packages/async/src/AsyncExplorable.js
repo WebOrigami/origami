@@ -38,8 +38,6 @@ export default class AsyncExplorable {
     yield* [];
   }
 
-  static async map(exfn, mapFn) {}
-
   /**
    * Converts an exfn into a plain JavaScript object.
    *
@@ -54,10 +52,33 @@ export default class AsyncExplorable {
       const value = await exfn[get](key);
       // TODO: Check that value is of same constructor before traversing into it.
       result[String(key)] =
-        value && this.isExplorable(value)
+        value !== undefined && this.isExplorable(value)
           ? // value is also explorable; traverse into it.
             await this.plain(value)
           : value;
+    }
+    return result;
+  }
+
+  /**
+   * Converts an exfn into a plain JavaScript object with the same structure
+   * as the original, but with all leaf nodes having a null value.
+   *
+   * The result's keys will be the exfn's keys cast to strings. Any exfn value
+   * that is itself an exfn will be similarly converted to its structure.
+   *
+   * @param {any} exfn
+   */
+  static async structure(exfn) {
+    const result = {};
+    for await (const key of exfn) {
+      const value = await exfn[get](key);
+      // TODO: Check that value is of same constructor before traversing into it.
+      result[String(key)] =
+        value !== undefined && this.isExplorable(value)
+          ? // value is also explorable; traverse into it.
+            await this.structure(value)
+          : null;
     }
     return result;
   }
@@ -75,7 +96,7 @@ export default class AsyncExplorable {
     // Get the value with that key.
     const value = await exfn[get](key);
     // TODO: Check that value is of same constructor before traversing into it.
-    return value && this.isExplorable(value)
+    return value !== undefined && this.isExplorable(value)
       ? // value is also explorable; traverse into it.
         await this.traverse(value, rest)
       : value;
