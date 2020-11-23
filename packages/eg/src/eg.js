@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
+import { JavaScriptModuleFiles } from "@explorablegraph/node";
 import path from "path";
 import process from "process";
 import { fileURLToPath } from "url";
-import JavaScriptModuleFiles from "../node/JavaScriptModuleFiles.js";
 
 // Load a graph of our own commands.
 const dirname = path.dirname(fileURLToPath(import.meta.url));

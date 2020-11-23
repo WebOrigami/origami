@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "type": "module",
   "devDependencies": {
-    "@explorablegraph/async": "github:explorablegraph/async",
     "chai": "4.2.0",
     "mocha": "8.2.1",
     "node-fetch": "2.6.1",

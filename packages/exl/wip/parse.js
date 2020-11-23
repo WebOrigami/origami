@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Explorable } from "@explorablegraph/graph";
+import { Explorable } from "@explorablegraph/explorable";
 
 const foo = (x) => `Foo said, "${x}."`;
 const bar = (x) => `Bar said, "${x}."`;
