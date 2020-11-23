@@ -5,7 +5,7 @@ const { assert } = chai;
 describe.only("Explorable", () => {
   it("an object can expose the [Explorable.call] symbol to make itself invocable", () => {
     const fixture = {
-      [call](arg) {
+      [call](/** @type {any} */ arg) {
         return `Got ${arg}`;
       },
     };
