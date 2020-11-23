@@ -39,6 +39,26 @@ export default class AsyncExplorable {
   }
 
   /**
+   * Create a plain JavaScript object with the exfn's keys cast to strings,
+   * and the given `mapFn` applied to values.
+   *
+   * @param {any} exfn
+   */
+  static async mapValues(exfn, mapFn) {
+    const result = {};
+    for await (const key of exfn) {
+      const value = await exfn[get](key);
+      // TODO: Check that value is of same constructor before traversing into it.
+      result[String(key)] =
+        value !== undefined && this.isExplorable(value)
+          ? // value is also explorable; traverse into it.
+            await this.mapValues(value, mapFn)
+          : await mapFn(value);
+    }
+    return result;
+  }
+
+  /**
    * Converts an exfn into a plain JavaScript object.
    *
    * The result's keys will be the exfn's keys cast to strings. Any exfn value
@@ -47,17 +67,7 @@ export default class AsyncExplorable {
    * @param {any} exfn
    */
   static async plain(exfn) {
-    const result = {};
-    for await (const key of exfn) {
-      const value = await exfn[get](key);
-      // TODO: Check that value is of same constructor before traversing into it.
-      result[String(key)] =
-        value !== undefined && this.isExplorable(value)
-          ? // value is also explorable; traverse into it.
-            await this.plain(value)
-          : value;
-    }
-    return result;
+    return await this.mapValues(exfn, (obj) => obj);
   }
 
   /**
@@ -70,17 +80,7 @@ export default class AsyncExplorable {
    * @param {any} exfn
    */
   static async structure(exfn) {
-    const result = {};
-    for await (const key of exfn) {
-      const value = await exfn[get](key);
-      // TODO: Check that value is of same constructor before traversing into it.
-      result[String(key)] =
-        value !== undefined && this.isExplorable(value)
-          ? // value is also explorable; traverse into it.
-            await this.structure(value)
-          : null;
-    }
-    return result;
+    return await this.mapValues(exfn, () => null);
   }
 
   /**
