@@ -25,7 +25,7 @@ export default class ExplorableFiles extends AsyncExplorable {
       }
     }
     const obj = stats.isDirectory()
-      ? new ExplorableFiles(filePath)
+      ? new this.constructor(filePath)
       : await fs.readFile(filePath);
     return obj;
   }
