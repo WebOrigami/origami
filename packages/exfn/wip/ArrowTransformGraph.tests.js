@@ -1,6 +1,6 @@
 import chai from "chai";
-import ArrowTransformGraph from "../src/ArrowTransformGraph.js";
-import ComposedGraph from "../src/ComposedGraph.js";
+import ArrowTransformGraph from "../src/ArrowTransformGraph.js.js";
+import ComposedGraph from "../src/ComposedGraph.js.js";
 const { assert } = chai;
 
 describe("ArrowTransformGraph", () => {
