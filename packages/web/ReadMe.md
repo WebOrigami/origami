@@ -1,0 +1,1 @@
+This package contains explorable graph tools for both back-end and front-end web development. The modules are generally designed to be used in Node-based local tools, Node-based web servers, and in the browser.

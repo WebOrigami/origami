@@ -102,7 +102,7 @@ describe("AsyncExplorable", () => {
   });
 
   // TODO: Move this to sync package
-  it("json() converts graph to strings to JSON", async () => {
+  it.skip("json() converts graph to strings to JSON", async () => {
     const graph = new AsyncExplorableObject({
       a: 1,
       b: 2,

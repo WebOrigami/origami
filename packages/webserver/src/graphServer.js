@@ -1,4 +1,8 @@
-import { inferMediaType, objectAtPath, textOrObject } from "./graphRouter.js";
+import {
+  inferMediaType,
+  objectAtPath,
+  textOrObject,
+} from "../../express/graphRouter.js";
 
 // Simple server for graph CLI.
 export default function graphServer(graph) {
