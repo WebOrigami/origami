@@ -41,6 +41,22 @@ describe("AsyncExplorable", () => {
     assert.deepEqual(await AsyncExplorable.keys(exfn), ["a", "b", "c"]);
   });
 
+  it("plain() produces a plain object version of an exfn", async () => {
+    const original = {
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    };
+    const graph = new AsyncExplorableObject(original);
+    assert.notDeepEqual(graph, original);
+    const plain = await AsyncExplorable.plain(graph);
+    assert.deepEqual(plain, original);
+  });
+
   it("traverse() traverses a graph", async () => {
     const graph = new AsyncExplorableObject({
       a: 1,
