@@ -1,3 +1,0 @@
-// Should generate this export file with explorable graphs!
-export { default as Explorable } from "./Explorable.js";
-// etc...
