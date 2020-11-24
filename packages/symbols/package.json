@@ -1,0 +1,7 @@
+{
+  "name": "@explorablegraph/symbols",
+  "description": "Well-known Symbol objects for the explorable graph ecosystem",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./exports.js"
+}
