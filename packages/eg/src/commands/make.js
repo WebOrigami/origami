@@ -1,7 +1,7 @@
+import { writeFiles } from "@explorablegraph/node";
 import path from "path";
 import process from "process";
-import { loadGraphFromArgument } from "../cliShared.js";
-import makeFiles from "../makeFiles.js";
+import { loadGraphFromArgument } from "../shared.js";
 
 export default async function make(graphArg, target) {
   if (!graphArg || !target) {
@@ -9,10 +9,8 @@ export default async function make(graphArg, target) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  makeFiles({
-    source: graph,
-    target: path.resolve(process.cwd(), target),
-  });
+  const dirname = path.resolve(process.cwd(), target);
+  await writeFiles(dirname, graph);
 }
 
 make.usage = `eg make <graph> <directory>   Copy the graph to files in the given directory`;

@@ -1,5 +1,5 @@
 import { AsyncExplorable } from "@explorablegraph/async";
-import YAML from "yaml";
+// import YAML from "yaml";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function yaml(graphArg) {
