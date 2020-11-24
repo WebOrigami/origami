@@ -10,4 +10,4 @@ export default async function get(graphArg, key) {
   console.log(String(obj));
 }
 
-get.usage = `graph get <graph> <key>          Print the graph object with the given key`;
+get.usage = `eg get <graph> <key>          Print the graph object with the given key`;

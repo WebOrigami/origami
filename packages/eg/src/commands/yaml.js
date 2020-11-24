@@ -1,5 +1,6 @@
+import { AsyncExplorable } from "@explorablegraph/async";
 import YAML from "yaml";
-import { loadGraphFromArgument } from "../cliShared.js";
+import { loadGraphFromArgument } from "../shared.js";
 
 export default async function yaml(graphArg) {
   if (!graphArg) {
@@ -7,9 +8,9 @@ export default async function yaml(graphArg) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const obj = await graph.resolveText();
+  const obj = await AsyncExplorable.strings(graph);
   const text = YAML.stringify(obj, null, 2);
   console.log(text);
 }
 
-yaml.usage = `graph yaml <graph>               Print the graph in YAML format`;
+yaml.usage = `eg yaml <graph>               Print the graph in YAML format`;

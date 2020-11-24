@@ -1,4 +1,4 @@
-import { loadGraphFromArgument } from "../cliShared.js";
+import { loadGraphFromArgument } from "../shared.js";
 
 export default async function keys(graphArg) {
   if (!graphArg) {
@@ -11,4 +11,4 @@ export default async function keys(graphArg) {
   }
 }
 
-keys.usage = `graph keys <graph>               List the top-level keys in the graph`;
+keys.usage = `eg keys <graph>               List the top-level keys in the graph`;

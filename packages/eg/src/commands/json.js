@@ -1,4 +1,5 @@
-import { loadGraphFromArgument } from "../cliShared.js";
+import { AsyncExplorable } from "@explorablegraph/async";
+import { loadGraphFromArgument } from "../shared.js";
 
 export default async function json(graphArg) {
   if (!graphArg) {
@@ -6,9 +7,9 @@ export default async function json(graphArg) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const obj = await graph.resolveText();
+  const obj = await AsyncExplorable.strings(graph);
   const text = JSON.stringify(obj, null, 2);
   console.log(text);
 }
 
-json.usage = `graph json <graph>               Print the graph in JSON format`;
+json.usage = `eg json <graph>               Print the graph in JSON format`;

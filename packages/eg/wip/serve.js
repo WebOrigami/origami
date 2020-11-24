@@ -15,4 +15,4 @@ export default async function serve(graphArg, port = defaultPort) {
   console.log(`Server running at http://localhost:${port}`);
 }
 
-serve.usage = `graph serve <graph> [port]       Start a local web server for the graph`;
+serve.usage = `eg serve <graph> [port]       Start a local web server for the graph`;

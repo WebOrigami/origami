@@ -1,31 +1,25 @@
 #!/usr/bin/env node
 
-import { JavaScriptModuleFiles } from "@explorablegraph/node";
-import path from "path";
 import process from "process";
-import { fileURLToPath } from "url";
-
-// Load a graph of our own commands.
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const commandsPath = path.join(dirname, "cli-commands");
-const commandFiles = new JavaScriptModuleFiles(commandsPath);
+import commands from "./commands.js";
 
 async function invoke(command, ...args) {
   const commandFilename = `${command}.js`;
-  const commandFn = command
-    ? await commandFiles.get(commandFilename)
+  const exports = command
+    ? await commands[commands.constructor.get](commandFilename)
     : undefined;
-  if (!commandFn) {
+  const fn = exports?.default;
+  if (!fn) {
     await showUsage();
     return;
   }
-  await commandFn(...args);
+  await fn(...args);
 }
 
 async function showUsage() {
-  for await (const commandFilename of commandFiles) {
-    const commandFn = await commandFiles.get(commandFilename);
-    console.log(commandFn.usage);
+  for await (const name of commands) {
+    const exports = await commands[commands.constructor.get](name);
+    console.log(exports.default.usage);
   }
 }
 

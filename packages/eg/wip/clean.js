@@ -13,4 +13,4 @@ export default async function clean(graph, target) {
   });
 }
 
-clean.usage = `graph clean <graph> <directory>  Clean the files in the given directory`;
+clean.usage = `eg clean <graph> <directory>  Clean the files in the given directory`;

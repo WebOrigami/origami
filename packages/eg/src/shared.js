@@ -1,12 +1,14 @@
+import { AsyncExplorableObject } from "@explorablegraph/async";
 import path from "path";
 import process from "process";
-import Graph from "../exfn/wip/Graph.js";
 
 // Returns either the JSON contents from stdin (if arg is "-") or a graph.
 export async function loadGraphFromArgument(arg) {
   const loaded = await loadTextOrGraphFromArgument(arg);
   const result =
-    typeof loaded === "string" ? Graph.from(JSON.parse(loaded)) : loaded;
+    typeof loaded === "string"
+      ? new AsyncExplorableObject(JSON.parse(loaded))
+      : loaded;
   return result;
 }
 
@@ -47,12 +49,6 @@ export async function loadGraphFromModule(modulePath) {
   }
   const value = typeof fn === "function" ? fn() : fn;
   return value;
-}
-
-async function loadGraphFromStdin() {
-  const text = await textFromReadable(process.stdin);
-  const obj = JSON.parse(text);
-  return obj;
 }
 
 function textFromReadable(readable) {

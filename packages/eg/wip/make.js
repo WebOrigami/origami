@@ -15,4 +15,4 @@ export default async function make(graphArg, target) {
   });
 }
 
-make.usage = `graph make <graph> <directory>   Copy the graph to files in the given directory`;
+make.usage = `eg make <graph> <directory>   Copy the graph to files in the given directory`;
