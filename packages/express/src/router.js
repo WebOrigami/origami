@@ -1,8 +1,14 @@
+import {
+  getResourceAtPath,
+  inferMediaType,
+  textOrObject,
+} from "@explorablegraph/webserver";
+
 // Explorable graph router as Express middleware.
 export default function router(exfn) {
   // Return a router for the graph source.
   return async function (request, response, next) {
-    const obj = await objectAtPath(exfn, request.path);
+    const obj = await getResourceAtPath(exfn, request.path);
     if (obj) {
       // Respond with content.
       const content = textOrObject(obj);

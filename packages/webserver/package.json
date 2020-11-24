@@ -3,7 +3,7 @@
   "description": "Web server for explorable graphs",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/exports.js",
+  "main": "./src/webserver.js",
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "8.2.1",
