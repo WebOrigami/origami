@@ -1,6 +1,7 @@
+import { requestListener } from "@explorablegraph/webserver";
 import http from "http";
-import { loadGraphFromArgument } from "../cliShared.js";
-import graphServer from "../graphServer.js";
+import process from "process";
+import { loadGraphFromArgument } from "../shared.js";
 
 const defaultPort = process.env.PORT || 5000;
 
@@ -10,8 +11,7 @@ export default async function serve(graphArg, port = defaultPort) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const server = graphServer(graph);
-  http.createServer(server).listen(port);
+  http.createServer(requestListener(graph)).listen(port);
   console.log(`Server running at http://localhost:${port}`);
 }
 
