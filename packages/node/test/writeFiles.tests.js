@@ -22,9 +22,9 @@ describe("writeFiles", () => {
   it("creates files from a graph", async () => {
     // Create a tiny set of "files".
     const obj = {
-      file1: "This is the first file",
+      file1: "This is the first file.",
       subfolder: {
-        file2: "This is the second file",
+        file2: "This is the second file.",
       },
     };
     const files = new AsyncExplorableObject(obj);
