@@ -7,17 +7,6 @@ function Foo(obj) {
   }
 }
 
-// class Foo {
-//   constructor(obj) {
-//     const name = obj?.name ?? "world";
-//     if (!(this instanceof Foo)) {
-//       return new Foo({ name });
-//     } else {
-//       this.name = name;
-//     }
-//   }
-// }
-
 const constructed1 = Foo();
 const constructed2 = Foo({ name: "Alice" });
 console.log(constructed1, constructed2);
