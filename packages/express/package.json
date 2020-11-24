@@ -1,9 +1,9 @@
 {
-  "name": "@explorablegraph/webserver",
-  "description": "Web server for explorable graphs",
+  "name": "@explorablegraph/express",
+  "description": "Express middleware for explorable graphs",
   "version": "0.0.1",
   "type": "module",
-  "main": "./src/exports.js",
+  "main": "./src/router.js",
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "8.2.1",
