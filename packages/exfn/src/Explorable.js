@@ -17,6 +17,10 @@ export default function Explorable(obj) {
   }
 }
 
+//
+// Instance methods
+//
+
 // Default `get` implementation returns undefined for any key.
 Explorable.prototype[get] = function (key) {
   return undefined;
@@ -24,3 +28,26 @@ Explorable.prototype[get] = function (key) {
 
 // Default iterator implementation generates an empty list.
 Explorable.prototype[keys] = Array.prototype[Symbol.iterator];
+
+//
+// Static methods
+//
+
+/**
+ * Return true if the given object is explorable.
+ *
+ * @param {any} obj
+ * @returns {boolean}
+ */
+Explorable.isExplorable = function (obj) {
+  return !!obj[get] && !!obj[keys];
+};
+
+/**
+ * Returns the keys for a sync explorable.
+ *
+ * @param {any} exfn
+ */
+Explorable.keys = function (exfn) {
+  return [...exfn];
+};
