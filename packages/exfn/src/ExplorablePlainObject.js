@@ -1,4 +1,4 @@
-import { get } from "@explorablegraph/symbols";
+import { get, keys } from "@explorablegraph/symbols";
 import Explorable from "./Explorable.js";
 
 export default class ExplorablePlainObject extends Explorable {
@@ -22,13 +22,13 @@ export default class ExplorablePlainObject extends Explorable {
     return isPlainObject(value) ? new ExplorablePlain(value) : value;
   }
 
-  [Symbol.iterator]() {
+  [keys]() {
     // If the source object provides its own iterator, prefer that.
     const obj = this.obj;
     // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
-    return obj[Symbol.iterator]
+    return obj[keys]
       ? // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
-        obj[Symbol.iterator]()
+        obj[keys]()
       : Object.keys(obj)[Symbol.iterator]();
   }
 }

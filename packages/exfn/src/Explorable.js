@@ -1,4 +1,4 @@
-import { get } from "@explorablegraph/symbols";
+import { get, keys } from "@explorablegraph/symbols";
 import {
   default as ExplorablePlainObject,
   isPlainObject,
@@ -23,4 +23,4 @@ Explorable.prototype[get] = function (key) {
 };
 
 // Default iterator implementation generates an empty list.
-Explorable.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+Explorable.prototype[keys] = Array.prototype[Symbol.iterator];
