@@ -19,9 +19,10 @@ export default class ExplorablePlainObject extends Explorable {
     // If source object provides its own get method, prefer that to our default.
     const obj = this.obj;
     const value = obj[get] ? obj[get](key) : obj[key];
-    return isPlainObject(value) ? new ExplorablePlain(value) : value;
+    return isPlainObject(value) ? new ExplorablePlainObject(value) : value;
   }
 
+  // @ts-ignore
   [keys]() {
     // If the source object provides its own iterator, prefer that.
     const obj = this.obj;

@@ -6,11 +6,15 @@ import {
 
 // Use function syntax to define constructor so that we can support calling the
 // constructor directly without `new` as a means of implicit conversion of
-// objects to exfns.
+// objects to exfns. The TypeScript handling here needs tightening.
+
+// @ts-ignore
 export default function Explorable(obj) {
   if (isPlainObject(obj)) {
     return new ExplorablePlainObject(obj);
+    // @ts-ignore
   } else if (this instanceof Explorable) {
+    // @ts-ignore
     return this;
   } else {
     return new Explorable();

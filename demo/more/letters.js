@@ -1,6 +1,6 @@
-import Graph from "../../src/graph.js";
+import Explorable from "../../src/Explorable.js";
 
-export default Graph.from({
+export default Explorable({
   a: "Hello, a.",
   b: "Hello, b.",
   c: "Hello, c.",
