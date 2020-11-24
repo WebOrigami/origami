@@ -43,6 +43,7 @@ export default class AsyncExplorable {
    * and the given `mapFn` applied to values.
    *
    * @param {any} exfn
+   * @param {any} mapFn
    */
   static async mapValues(exfn, mapFn) {
     const result = {};
@@ -67,7 +68,7 @@ export default class AsyncExplorable {
    * @param {any} exfn
    */
   static async plain(exfn) {
-    return await this.mapValues(exfn, (obj) => obj);
+    return await this.mapValues(exfn, (/** @type {any} */ obj) => obj);
   }
 
   /**

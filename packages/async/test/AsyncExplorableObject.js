@@ -28,6 +28,7 @@ describe("AsyncExplorableObject", () => {
         if (key === "a") {
           return "B";
         }
+        return undefined;
       },
     });
     assert.equal(await fixture[AsyncExplorableObject.get]("a"), "B");

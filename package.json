@@ -12,6 +12,6 @@
     "./packages/*"
   ],
   "scripts": {
-    "typecheck": "tsc"
+    "typecheck": "node node_modules/typescript/bin/tsc"
   }
 }

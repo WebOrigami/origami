@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
     "noEmit": true,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "moduleResolution": "Node",
