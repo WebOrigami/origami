@@ -1,4 +1,4 @@
-import { get } from "./symbols.js";
+import { get } from "@explorablegraph/symbols";
 
 interface Explorable<Key, Value> {
   [get](key: Key): Value;

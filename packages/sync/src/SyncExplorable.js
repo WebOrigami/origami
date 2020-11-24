@@ -1,4 +1,4 @@
-import { get } from "./symbols.js";
+import { get } from "@explorablegraph/symbols";
 
 export default class SyncExplorable {
   /**
