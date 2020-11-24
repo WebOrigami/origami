@@ -1,4 +1,4 @@
-import { loadGraphFromArgument } from "../cliShared.js";
+import { loadGraphFromArgument } from "../shared.js";
 
 export default async function get(graphArg, key) {
   if (!graphArg || !key) {
@@ -6,7 +6,7 @@ export default async function get(graphArg, key) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const obj = await graph.get(key);
+  const obj = await graph[graph.constructor.get](key);
   console.log(String(obj));
 }
 
