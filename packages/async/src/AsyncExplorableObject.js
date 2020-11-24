@@ -7,13 +7,6 @@ export default class AsyncExplorableObject extends AsyncExplorable {
   constructor(source) {
     super();
     this.source = source;
-
-    // If the source object provides its own call method, prefer that.
-    // const callPropertyDescriptor = Object.getOwnPropertyDescriptor(
-    //   source,
-    //   call
-    // );
-    // this.callPropertyValue = callPropertyDescriptor?.value;
   }
 
   /**
@@ -22,23 +15,22 @@ export default class AsyncExplorableObject extends AsyncExplorable {
    * @param {any} key
    */
   async [AsyncExplorable.get](key) {
-    // Invoke object's own call method.
-    // if (typeof this.callPropertyValue === "function") {
-    //   // @ts-ignore REVIEW: Next line causes tsc 4.1.2 to crash!
-    //   return this.callPropertyValue(key);
-    // }
-    const value = this.source[key];
+    // If source provides its own get method, prefer that to our default.
+    const source = this.source;
+    const value = source[AsyncExplorable.get]
+      ? await source[AsyncExplorable.get](key)
+      : source[key];
     return isPlainObject(value) ? new AsyncExplorableObject(value) : value;
   }
 
   async *[Symbol.asyncIterator]() {
-    // // If the source object provides its own asyncIterator, prefer that.
+    // If the source object provides its own asyncIterator, prefer that.
+    const source = this.source;
     // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
-    // if (this.source[Symbol.asyncIterator]) {
-    //   // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
-    //   return this.source[Symbol.asyncIterator]();
-    // }
-    yield* Object.keys(this.source)[Symbol.iterator]();
+    yield* source[Symbol.asyncIterator]
+      ? // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
+        source[Symbol.asyncIterator]()
+      : Object.keys(source)[Symbol.iterator]();
   }
 }
 
