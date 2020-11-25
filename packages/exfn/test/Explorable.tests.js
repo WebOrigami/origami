@@ -1,5 +1,6 @@
-import { get, keys } from "@explorablegraph/symbols";
+import { asyncGet, get, keys } from "@explorablegraph/symbols";
 import chai from "chai";
+import AsyncExplorable from "../src/AsyncExplorable.js";
 import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
@@ -68,7 +69,25 @@ describe("Explorable", () => {
     assert(Explorable.isExplorable(getAndSyncIterator));
   });
 
-  it(".keys() returns keys for a sync exfn", () => {
+  it("Passes the test for an async explorable as well", async () => {
+    const fixture = new Explorable({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    assert(AsyncExplorable.isExplorable(fixture));
+
+    assert.equal(await fixture[asyncGet]("a"), 1);
+    assert.equal(await fixture[asyncGet]("x"), undefined);
+
+    const keys = [];
+    for await (const key of fixture) {
+      keys.push(key);
+    }
+    assert.deepEqual(keys, ["a", "b", "c"]);
+  });
+
+  it("keys() returns keys for a sync exfn", () => {
     const exfn = {
       [get]() {},
       [keys]() {

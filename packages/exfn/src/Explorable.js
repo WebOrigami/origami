@@ -1,4 +1,4 @@
-import { get, keys } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import {
   default as ExplorablePlainObject,
   isPlainObject,
@@ -25,13 +25,25 @@ export default function Explorable(obj) {
 // Instance methods
 //
 
-// Default `get` implementation returns undefined for any key.
+// Default `[asyncGet]` just invokes `[get]`.
+Explorable.prototype[asyncGet] = async function (key) {
+  return this[get](key);
+};
+
+// Default `[asyncKeys]` just invokes `[keys]`.
+Explorable.prototype[asyncKeys] = async function* () {
+  yield* this[keys]();
+};
+
+// Default `[get]` implementation returns undefined for any key.
 Explorable.prototype[get] = function (key) {
   return undefined;
 };
 
-// Default iterator implementation generates an empty list.
-Explorable.prototype[keys] = Array.prototype[Symbol.iterator];
+// Default `[keys]` implementation returns an iterator for an empty list.
+Explorable.prototype[keys] = function () {
+  return [][Symbol.iterator]();
+};
 
 //
 // Static methods

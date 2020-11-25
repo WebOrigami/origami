@@ -30,7 +30,7 @@ export default class ExplorablePlainObject extends Explorable {
     return obj[keys]
       ? // @ts-ignore Remove ignore when TypeScript supports symbol indexers.
         obj[keys]()
-      : Object.keys(obj)[Symbol.iterator]();
+      : [...Object.keys(obj)][Symbol.iterator]();
   }
 }
 
