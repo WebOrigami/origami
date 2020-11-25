@@ -2,6 +2,36 @@ import { get } from "@explorablegraph/symbols";
 import Explorable from "./Explorable.js";
 
 /**
+ * Returns the keys for an exfn.
+ *
+ * @param {any} exfn
+ */
+export function keys(exfn) {
+  return [...exfn];
+}
+
+/**
+ * Create a ExplorableMap with the exfn's keys cast to strings, and the given
+ * `mapFn` applied to keys.
+ *
+ * @param {any} exfn
+ * @param {any} mapFn
+ */
+// export function mapKeys(exfn, mapFn) {
+//   const result = {};
+//   for (const key of exfn) {
+//     const value = exfn[get](key);
+//     // TODO: Check that value is of same constructor before traversing into it.
+//     result[String(key)] =
+//       value !== undefined && Explorable.isExplorable(value)
+//         ? // value is also explorable; traverse into it.
+//           mapKeys(value, mapFn)
+//         : mapFn(value);
+//   }
+//   return result;
+// }
+
+/**
  * Create a plain JavaScript object with the exfn's keys cast to strings,
  * and the given `mapFn` applied to values.
  *
@@ -32,4 +62,46 @@ export function mapValues(exfn, mapFn) {
  */
 export function plain(exfn) {
   return mapValues(exfn, (/** @type {any} */ value) => value);
+}
+
+/**
+ * Converts an exfn into a plain JavaScript object with the same structure
+ * as the original, but with all leaf values cast to strings.
+ *
+ * @param {any} exfn
+ */
+export function strings(exfn) {
+  return mapValues(exfn, (obj) => String(obj));
+}
+
+/**
+ * Converts an exfn into a plain JavaScript object with the same structure
+ * as the original, but with all leaf values being `null`.
+ *
+ * The result's keys will be the exfn's keys cast to strings. Any exfn value
+ * that is itself an exfn will be similarly converted to its structure.
+ *
+ * @param {any} exfn
+ */
+export function structure(exfn) {
+  return mapValues(exfn, () => null);
+}
+
+/**
+ * Traverse a graph.
+ *
+ * @param {any} exfn
+ * @param {any[]} path
+ * @returns {Promise<any>}
+ */
+export function traverse(exfn, path) {
+  // Take the first element of the path as the next key.
+  const [key, ...rest] = path;
+  // Get the value with that key.
+  const value = exfn[get](key);
+  // TODO: Check that value is of same constructor before traversing into it.
+  return value !== undefined && Explorable.isExplorable(value)
+    ? // value is also explorable; traverse into it.
+      traverse(value, rest)
+    : value;
 }

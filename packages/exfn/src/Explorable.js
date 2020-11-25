@@ -47,8 +47,8 @@ Explorable.prototype[get] = function (key) {
 };
 
 // Default `[keys]` implementation returns an iterator for an empty list.
-Explorable.prototype[keys] = function () {
-  return [][Symbol.iterator]();
+Explorable.prototype[keys] = function* () {
+  yield* [];
 };
 
 // Default `toString` implementation returns pretty-printed JSON.

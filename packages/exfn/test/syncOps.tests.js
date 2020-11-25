@@ -1,21 +1,20 @@
-import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import { Explorable, syncOps } from "@explorablegraph/exfn";
+import { get, keys } from "@explorablegraph/symbols";
 import chai from "chai";
-// import * as syncOps from "../src/syncOps.js";
-import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
-describe("asyncOps", () => {
-  it("keys returns keys for an async exfn", async () => {
+describe("syncOps", () => {
+  it("keys returns keys for an exfn", () => {
     const exfn = {
-      async [asyncGet]() {},
-      async *[asyncKeys]() {
+      [get]() {},
+      *[keys]() {
         yield* ["a", "b", "c"];
       },
     };
-    assert.deepEqual(await asyncOps.keys(exfn), ["a", "b", "c"]);
+    assert.deepEqual(syncOps.keys(exfn), ["a", "b", "c"]);
   });
 
-  it("plain() produces a plain object version of an exfn", async () => {
+  it("plain() produces a plain object version of an exfn", () => {
     const original = {
       a: 1,
       b: 2,
@@ -26,12 +25,12 @@ describe("asyncOps", () => {
       },
     };
     const graph = new Explorable(original);
-    const plain = await asyncOps.plain(graph);
+    const plain = syncOps.plain(graph);
     assert.deepEqual(plain, original);
   });
 
-  it("strings() converts exfn leaf values to strings", async () => {
-    const graph = new Explorable({
+  it("strings() converts exfn leaf values to strings", () => {
+    const exfn = new Explorable({
       a: 1,
       b: 2,
       c: 3,
@@ -40,7 +39,7 @@ describe("asyncOps", () => {
         e: 5,
       },
     });
-    const strings = await asyncOps.strings(graph);
+    const strings = syncOps.strings(exfn);
     assert.deepEqual(strings, {
       a: "1",
       b: "2",
@@ -52,7 +51,7 @@ describe("asyncOps", () => {
     });
   });
 
-  it("structure() produces a plain object version of an exfn that has empty values", async () => {
+  it("structure() produces a plain object version of an exfn that has empty values", () => {
     const graph = new Explorable({
       a: 1,
       b: 2,
@@ -62,7 +61,7 @@ describe("asyncOps", () => {
         e: 5,
       },
     });
-    const structure = await asyncOps.structure(graph);
+    const structure = syncOps.structure(graph);
     assert.deepEqual(structure, {
       a: null,
       b: null,
@@ -74,22 +73,7 @@ describe("asyncOps", () => {
     });
   });
 
-  // TODO: Move this to sync package
-  // it.skip("json() converts graph to strings to JSON", async () => {
-  //   const graph = new Explorable({
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //     more: {
-  //       d: 4,
-  //       e: 5,
-  //     },
-  //   });
-  //   const json = await asyncOps.json();
-  //   assert.equal(json, `{"a":"1","b":"2","c":"3","more":{"d":"4","e":"5"}}`);
-  // });
-
-  it("traverse() traverses a graph", async () => {
+  it("traverse() traverses a graph", () => {
     const graph = new Explorable({
       a: 1,
       b: 2,
@@ -99,8 +83,8 @@ describe("asyncOps", () => {
         e: 5,
       },
     });
-    assert.equal(await asyncOps.traverse(graph, ["a"]), 1);
-    assert.equal(await asyncOps.traverse(graph, ["more", "e"]), 5);
-    assert.isUndefined(await asyncOps.traverse(graph, ["x"]));
+    assert.equal(syncOps.traverse(graph, ["a"]), 1);
+    assert.equal(syncOps.traverse(graph, ["more", "e"]), 5);
+    assert.isUndefined(syncOps.traverse(graph, ["x"]));
   });
 });

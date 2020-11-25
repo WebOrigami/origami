@@ -1,7 +1,7 @@
 import chai from "chai";
 const { assert } = chai;
 
-describe.only("link", () => {
+describe("link", () => {
   it("runs", () => {
     assert(true);
   });

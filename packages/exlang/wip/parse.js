@@ -77,8 +77,8 @@ async function parse(text, functions) {
 // Return an explorable constant: no keys, always returns obj.
 function constant(obj) {
   return {
-    [Symbol.asyncIterator]() {
-      return [][Symbol.iterator]();
+    *[Symbol.asyncIterator]() {
+      yield* [];
     },
 
     [Explorable.call](key) {

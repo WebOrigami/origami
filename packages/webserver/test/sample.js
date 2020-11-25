@@ -8,8 +8,8 @@ const routes = ["index.html", ...letters];
 // TODO: When async ops can do implict conversion, this can just be a plain
 // JavaScript object.
 export default new Explorable({
-  [keys]() {
-    return routes[Symbol.iterator]();
+  *[keys]() {
+    yield* routes;
   },
 
   "index.html": letters

@@ -3,7 +3,7 @@ import chai from "chai";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.deepEqual(syncOps.plain(parsed), {

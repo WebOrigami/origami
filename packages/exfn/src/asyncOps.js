@@ -49,6 +49,16 @@ export async function plain(exfn) {
 
 /**
  * Converts an exfn into a plain JavaScript object with the same structure
+ * as the original, but with all leaf values cast to strings.
+ *
+ * @param {any} exfn
+ */
+export async function strings(exfn) {
+  return await mapValues(exfn, async (obj) => String(await obj));
+}
+
+/**
+ * Converts an exfn into a plain JavaScript object with the same structure
  * as the original, but with all leaf values being `null`.
  *
  * The result's keys will be the exfn's keys cast to strings. Any exfn value
@@ -58,16 +68,6 @@ export async function plain(exfn) {
  */
 export async function structure(exfn) {
   return await mapValues(exfn, () => null);
-}
-
-/**
- * Converts an exfn into a plain JavaScript object with the same structure
- * as the original, but with all leaf values cast to strings.
- *
- * @param {any} exfn
- */
-export async function strings(exfn) {
-  return await mapValues(exfn, async (obj) => String(await obj));
 }
 
 /**
