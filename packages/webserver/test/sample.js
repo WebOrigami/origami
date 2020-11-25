@@ -1,11 +1,11 @@
 // Simple graph of web pages used by the server in test.js.
 
-import { AsyncExplorableObject } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/async";
 
 const letters = ["a", "b", "c", "d", "e", "f", "g", "i", "j"];
 const routes = ["index.html", ...letters];
 
-export default new AsyncExplorableObject({
+export default new Explorable({
   *[Symbol.asyncIterator]() {
     yield* routes;
   },
@@ -16,7 +16,7 @@ export default new AsyncExplorableObject({
 
   secret: "You have found the secret page!",
 
-  async [AsyncExplorableObject.get](key) {
+  async [Explorable.get](key) {
     return this[key] || `Hello, ${key}.`;
   },
 

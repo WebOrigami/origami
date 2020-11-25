@@ -1,4 +1,4 @@
-import { AsyncExplorableObject } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/async";
 import path from "path";
 import process from "process";
 
@@ -6,9 +6,7 @@ import process from "process";
 export async function loadGraphFromArgument(arg) {
   const loaded = await loadTextOrGraphFromArgument(arg);
   const result =
-    typeof loaded === "string"
-      ? new AsyncExplorableObject(JSON.parse(loaded))
-      : loaded;
+    typeof loaded === "string" ? new Explorable(JSON.parse(loaded)) : loaded;
   return result;
 }
 

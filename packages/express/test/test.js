@@ -1,4 +1,4 @@
-import { AsyncExplorableObject } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/async";
 import express from "express";
 import router from "../src/router.js";
 
@@ -8,7 +8,7 @@ const app = express();
 // Can define whatever express routes you want here, as in any express app.
 
 // Create a little explorable graph.
-const pages = new AsyncExplorableObject({
+const pages = new Explorable({
   a: "Hello, a.",
   b: "Hello, b.",
   c: "Hello, c.",

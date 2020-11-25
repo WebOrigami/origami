@@ -1,6 +1,6 @@
 import chai from "chai";
 import AsyncExplorable from "../src/AsyncExplorable.js";
-import AsyncExplorableObject from "../src/AsyncExplorableObject.js";
+import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
 describe("AsyncExplorable", () => {
@@ -51,13 +51,13 @@ describe("AsyncExplorable", () => {
         e: 5,
       },
     };
-    const graph = new AsyncExplorableObject(original);
+    const graph = new Explorable(original);
     const plain = await AsyncExplorable.plain(graph);
     assert.deepEqual(plain, original);
   });
 
   it("strings() converts exfn leaf values to strings", async () => {
-    const graph = new AsyncExplorableObject({
+    const graph = new Explorable({
       a: 1,
       b: 2,
       c: 3,
@@ -79,7 +79,7 @@ describe("AsyncExplorable", () => {
   });
 
   it("structure() produces a plain object version of an exfn that has empty values", async () => {
-    const graph = new AsyncExplorableObject({
+    const graph = new Explorable({
       a: 1,
       b: 2,
       c: 3,
@@ -102,7 +102,7 @@ describe("AsyncExplorable", () => {
 
   // TODO: Move this to sync package
   // it.skip("json() converts graph to strings to JSON", async () => {
-  //   const graph = new AsyncExplorableObject({
+  //   const graph = new Explorable({
   //     a: 1,
   //     b: 2,
   //     c: 3,
@@ -116,7 +116,7 @@ describe("AsyncExplorable", () => {
   // });
 
   it("traverse() traverses a graph", async () => {
-    const graph = new AsyncExplorableObject({
+    const graph = new Explorable({
       a: 1,
       b: 2,
       c: 3,
