@@ -27,7 +27,7 @@ export async function mapValues(exfn, mapFn) {
     const value = await exfn[asyncGet](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
-      value !== undefined && AsyncExplorable.isExplorable(value)
+      value !== undefined && value instanceof AsyncExplorable
         ? // value is also explorable; traverse into it.
           await mapValues(value, mapFn)
         : await mapFn(value);
@@ -83,7 +83,7 @@ export async function traverse(exfn, path) {
   // Get the value with that key.
   const value = await exfn[asyncGet](key);
   // TODO: Check that value is of same constructor before traversing into it.
-  return value !== undefined && AsyncExplorable.isExplorable(value)
+  return value !== undefined && value instanceof AsyncExplorable
     ? // value is also explorable; traverse into it.
       await traverse(value, rest)
     : value;

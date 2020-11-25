@@ -25,7 +25,7 @@ export function mapKeys(exfn, mapFn) {
     const mappedKey = mapFn(key);
     // TODO: Check that value is of same constructor before traversing into it.
     const mappedValues =
-      value !== undefined && Explorable.isExplorable(value)
+      value !== undefined && value instanceof Explorable
         ? // value is also explorable; traverse into it.
           mapKeys(value, mapFn)
         : value;
@@ -47,7 +47,7 @@ export function mapValues(exfn, mapFn) {
     const value = exfn[get](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
-      value !== undefined && Explorable.isExplorable(value)
+      value !== undefined && value instanceof Explorable
         ? // value is also explorable; traverse into it.
           mapValues(value, mapFn)
         : mapFn(value);
@@ -103,7 +103,7 @@ export function traverse(exfn, path) {
   // Get the value with that key.
   const value = exfn[get](key);
   // TODO: Check that value is of same constructor before traversing into it.
-  return value !== undefined && Explorable.isExplorable(value)
+  return value !== undefined && value instanceof Explorable
     ? // value is also explorable; traverse into it.
       traverse(value, rest)
     : value;

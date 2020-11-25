@@ -1,4 +1,4 @@
-import { asyncGet } from "@explorablegraph/exfn";
+import { AsyncExplorable, asyncGet } from "@explorablegraph/exfn";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -6,7 +6,7 @@ export default async function unlinkFiles(dirname, exfn) {
   for await (const key of exfn) {
     const obj = await exfn[asyncGet](key);
     const objPath = path.join(dirname, key);
-    if (exfn.constructor.isExplorable(obj)) {
+    if (obj instanceof AsyncExplorable) {
       // Recurse
       await unlinkFiles(objPath, obj);
     } else {

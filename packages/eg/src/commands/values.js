@@ -1,4 +1,4 @@
-import { asyncGet } from "@explorablegraph/exfn";
+import { AsyncExplorable, asyncGet } from "@explorablegraph/exfn";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function values(graphArg) {
@@ -9,7 +9,7 @@ export default async function values(graphArg) {
   const graph = await loadGraphFromArgument(graphArg);
   for await (const key of graph) {
     const obj = await graph[asyncGet](key);
-    if (!graph.constructor.isExplorable(obj)) {
+    if (!(obj instanceof AsyncExplorable)) {
       console.log(obj);
     }
   }

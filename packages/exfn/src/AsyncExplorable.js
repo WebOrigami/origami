@@ -15,7 +15,7 @@ export default function AsyncExplorable(obj) {
     // Constructor called as function without `new`.
     const constructor = this || AsyncExplorable;
     return new constructor(obj);
-  } else if (obj && AsyncExplorable.isExplorable(obj)) {
+  } else if (obj instanceof AsyncExplorable) {
     // Object is already explorable; return as is.
     return obj;
   } else if (isPlainObject(obj)) {
@@ -23,24 +23,23 @@ export default function AsyncExplorable(obj) {
   }
 }
 
-// Defining a class as a function in the way above runs into issues when
-// defining subclasses of subclasses -- they will fail to pass an `instanceof`
-// test. We define [Symbol.hasInstance] so that we'll be asked whether an
-// object is an AsyncExplorable.
+// We define `obj instanceof ArrayExplorable` for any object that has the async
+// exfn symbols.
 //
-// For now, we return true if the object passes the async exfn test. However,
-// that may lead to confusion where someone creates their own exfn using symbols
-// and not the AsyncExplorable constructor, but is surprised to see that their
-// exfn returns true for `instanceof AsyncExplorable`.
+// This can lead to cases where someone creates their own exfn using symbols and
+// not the AsyncExplorable constructor, but is surprised to see that their exfn
+// returns true for `instanceof AsyncExplorable`. However, since AsyncExplorable
+// defines no statis or instance members other than the symbols and this
+// `instanceof` check, such a check is effectively always true by definition.
+// There is no ArrayExplorable.foo member such that an object would pass the
+// `instanceof` test but not have access to the foo method.
 //
-// Another solution would be to walk up the prototype chain to see if it
-// includes AsyncExplorable. That's presumably what the native `instanceof`
-// implementation does -- but the native implementation is probably heavily
-// optimized.
+// Relatedly, defining a class as a function in the way above runs into issues
+// when defining subclasses of subclasses -- they will fail to pass an
+// `instanceof` test. By defining `hasInstance` here, we can also handle that
+// edge case.
 Object.defineProperty(AsyncExplorable, Symbol.hasInstance, {
-  value: (obj) => {
-    return AsyncExplorable.isExplorable(obj);
-  },
+  value: (obj) => obj && obj[asyncGet] && obj[asyncKeys],
 });
 
 //
@@ -63,13 +62,3 @@ AsyncExplorable.prototype[asyncGet] = async function (key) {
 
 // Expose all async ops on `asyncOps` property.
 AsyncExplorable.asyncOps = asyncOps;
-
-/**
- * Return true if the given object is async explorable.
- *
- * @param {any} obj
- * @returns {boolean}
- */
-AsyncExplorable.isExplorable = function (obj) {
-  return !!obj[asyncGet] && !!obj[asyncKeys];
-};

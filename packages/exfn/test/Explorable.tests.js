@@ -41,24 +41,24 @@ describe("Explorable", () => {
 
   it("Can determine whether an object is a sync exfn", () => {
     const neitherCallNorIterator = {};
-    assert(!Explorable.isExplorable(neitherCallNorIterator));
+    assert(!(neitherCallNorIterator instanceof Explorable));
 
     const getWithoutKeys = {
       [get]() {},
     };
-    assert(!Explorable.isExplorable(getWithoutKeys));
+    assert(!(getWithoutKeys instanceof Explorable));
 
     const keysWithoutGet = {
       [keys]() {},
     };
-    assert(!Explorable.isExplorable(keysWithoutGet));
+    assert(!(keysWithoutGet instanceof Explorable));
 
     // Valid sync exfn has both get and keys
     const getAndSyncIterator = {
       [get]() {},
       [keys]() {},
     };
-    assert(Explorable.isExplorable(getAndSyncIterator));
+    assert(getAndSyncIterator instanceof Explorable);
   });
 
   it("Passes the test for an async explorable as well", async () => {
@@ -67,7 +67,7 @@ describe("Explorable", () => {
       b: 2,
       c: 3,
     });
-    assert(AsyncExplorable.isExplorable(fixture));
+    assert(fixture instanceof AsyncExplorable);
 
     assert.equal(await fixture[asyncGet]("a"), 1);
     assert.equal(await fixture[asyncGet]("x"), undefined);

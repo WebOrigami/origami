@@ -16,7 +16,7 @@ export default function Explorable(obj) {
     // Constructor called as function without `new`.
     const constructor = this || Explorable;
     return new constructor(obj);
-  } else if (obj && Explorable.isExplorable(obj)) {
+  } else if (obj instanceof Explorable) {
     // Object is already explorable; return as is.
     return obj;
   } else if (isPlainObject(obj)) {
@@ -34,9 +34,8 @@ Object.defineProperty(Explorable.prototype, "constructor", {
 
 // See AsyncExplorable regarding hasInstance
 Object.defineProperty(Explorable, Symbol.hasInstance, {
-  value: (obj) => {
-    return Explorable.isExplorable(obj);
-  },
+  value: (obj) =>
+    obj && ((obj[get] && obj[keys]) || obj instanceof AsyncExplorable),
 });
 
 //
@@ -64,7 +63,12 @@ Explorable.prototype[keys] = function* () {
   yield* [];
 };
 
-// Default `toString` implementation returns pretty-printed JSON.
+// Default `toString` implementation returns pretty-printed JSON. Note: this
+// pretty `toString` representation will *not* be available to exfns that define
+// the sync exfn symbols but do not inherit from Explorable. Such exfns will
+// still have `toString` defined for them (defined by the Object base class),
+// but the string representation will be something else (usually "[object
+// Object]").
 Explorable.prototype.toString = function () {
   const plain = syncOps.plain(this);
   return JSON.stringify(plain, null, 2);
@@ -73,16 +77,6 @@ Explorable.prototype.toString = function () {
 //
 // Static methods
 //
-
-/**
- * Return true if the given object is explorable.
- *
- * @param {any} obj
- * @returns {boolean}
- */
-Explorable.isExplorable = function (obj) {
-  return (!!obj[get] && !!obj[keys]) || AsyncExplorable.isExplorable(obj);
-};
 
 /**
  * Returns the keys for a sync explorable.
