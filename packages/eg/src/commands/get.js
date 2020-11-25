@@ -1,3 +1,4 @@
+import { asyncGet } from "@explorablegraph/exfn";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function get(graphArg, key) {
@@ -6,7 +7,7 @@ export default async function get(graphArg, key) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const obj = await graph[graph.constructor.get](key);
+  const obj = await graph[asyncGet](key);
   console.log(String(obj));
 }
 

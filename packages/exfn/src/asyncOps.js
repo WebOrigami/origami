@@ -67,7 +67,7 @@ export async function structure(exfn) {
  * @param {any} exfn
  */
 export async function strings(exfn) {
-  return await mapValues(exfn, (obj) => String(obj));
+  return await mapValues(exfn, async (obj) => String(await obj));
 }
 
 /**

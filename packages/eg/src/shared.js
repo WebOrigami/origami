@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/exfn";
 import path from "path";
 import process from "process";
 

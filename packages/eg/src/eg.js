@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
+import { asyncGet } from "@explorablegraph/exfn";
 import process from "process";
 import commands from "./commands.js";
 
 async function invoke(command, ...args) {
   const commandFilename = `${command}.js`;
   const exports = command
-    ? await commands[commands.constructor.get](commandFilename)
+    ? await commands[asyncGet](commandFilename)
     : undefined;
   const fn = exports?.default;
   if (!fn) {
@@ -18,7 +19,7 @@ async function invoke(command, ...args) {
 
 async function showUsage() {
   for await (const name of commands) {
-    const exports = await commands[commands.constructor.get](name);
+    const exports = await commands[asyncGet](name);
     console.log(exports.default.usage);
   }
 }

@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/async";
+import { asyncOps, Explorable } from "@explorablegraph/exfn";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -10,7 +10,7 @@ const { assert } = chai;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe.skip("writeFiles", () => {
+describe("writeFiles", () => {
   beforeEach(async () => {
     await fs.mkdir(tempDirectory, { recursive: true });
   });
@@ -34,7 +34,7 @@ describe.skip("writeFiles", () => {
 
     // Read them back in.
     const tempFiles = new ExplorableFiles(tempDirectory);
-    const actual = await ExplorableFiles.strings(tempFiles);
+    const actual = await asyncOps.strings(tempFiles);
     assert.deepEqual(actual, obj);
   });
 });

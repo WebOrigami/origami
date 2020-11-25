@@ -7,7 +7,7 @@ const { assert } = chai;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
-describe.skip("JavaScriptModuleFiles", () => {
+describe("JavaScriptModuleFiles", () => {
   it("Gets the exports of the file named by the key", async () => {
     const modules = new JavaScriptModuleFiles(fixturesDirectory);
     const result = await modules[JavaScriptModuleFiles.get]("module1.js");

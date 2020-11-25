@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/exfn";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -10,7 +10,7 @@ const { assert } = chai;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe.skip("unlinkFiles", () => {
+describe("unlinkFiles", () => {
   beforeEach(async () => {
     await fs.mkdir(tempDirectory, { recursive: true });
   });

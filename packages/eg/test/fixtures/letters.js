@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/exfn";
 
 export default new Explorable({
   a: "The letter A",

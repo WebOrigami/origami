@@ -10,5 +10,10 @@
     "strict": true,
     "target": "ES2020"
   },
-  "include": ["packages/exfn/src/**/*.js", "packages/exfn/test/**/*.js"]
+  "include": [
+    "packages/exfn/src/**/*.js",
+    "packages/exfn/test/**/*.js"
+    // "packages/node/src/**/*.js",
+    // "packages/node/test/**/*.js"
+  ]
 }

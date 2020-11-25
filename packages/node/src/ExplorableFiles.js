@@ -1,4 +1,4 @@
-import { AsyncExplorable } from "@explorablegraph/async";
+import { AsyncExplorable, asyncGet, asyncKeys } from "@explorablegraph/exfn";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -8,13 +8,13 @@ export default class ExplorableFiles extends AsyncExplorable {
     this.dirname = dirname;
   }
 
-  async *[Symbol.asyncIterator]() {
+  async *[asyncKeys]() {
     const entries = await fs.readdir(this.dirname, { withFileTypes: true });
     const names = entries.map((entry) => entry.name);
     yield* names;
   }
 
-  async [AsyncExplorable.get](key) {
+  async [asyncGet](key) {
     const filePath = path.join(this.dirname, key);
     let stats;
     try {

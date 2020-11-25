@@ -1,4 +1,4 @@
-import { AsyncExplorable } from "@explorablegraph/async";
+import { asyncOps } from "@explorablegraph/exfn";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -8,11 +8,11 @@ const { assert } = chai;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
-describe.skip("ExplorableFiles", () => {
+describe("ExplorableFiles", () => {
   it("Can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
-    const structure = await AsyncExplorable.structure(files);
+    const structure = await asyncOps.structure(files);
     assert.deepEqual(structure, {
       "a.txt": null,
       "b.txt": null,
@@ -27,7 +27,7 @@ describe.skip("ExplorableFiles", () => {
   it("Can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
-    const plain = await AsyncExplorable.strings(files);
+    const plain = await asyncOps.strings(files);
     assert.deepEqual(plain, {
       "a.txt": "The letter A",
       "b.txt": "The letter B",

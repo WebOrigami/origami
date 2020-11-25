@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/async";
+import { Explorable } from "@explorablegraph/exfn";
 import express from "express";
 import router from "../src/router.js";
 
