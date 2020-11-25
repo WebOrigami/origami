@@ -6,21 +6,13 @@ const { assert } = chai;
 
 describe("Explorable", () => {
   it("can instantiate with either class function call or new operator", () => {
-    const constructNoArg = Explorable();
-    assert.equal(constructNoArg[get]("hello"), undefined);
-    assert.deepEqual([...constructNoArg], []);
+    const constructFixture = Explorable();
+    assert.equal(constructFixture[get]("hello"), undefined);
+    assert.deepEqual([...constructFixture], []);
 
-    const constructArg = Explorable();
-    assert.equal(constructArg[get]("hello"), undefined);
-    assert.deepEqual([...constructArg], []);
-
-    const newNoArg = new Explorable();
-    assert.equal(newNoArg[get]("hello"), undefined);
-    assert.deepEqual([...newNoArg], []);
-
-    const newArg = new Explorable();
-    assert.equal(newArg[get]("hello"), undefined);
-    assert.deepEqual([...newArg], []);
+    const newFixture = new Explorable();
+    assert.equal(newFixture[get]("hello"), undefined);
+    assert.deepEqual([...newFixture], []);
   });
 
   it("constructor implicitly converts a plain object argument to an ExplorablePlainObject", () => {

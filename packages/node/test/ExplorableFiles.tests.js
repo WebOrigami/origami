@@ -8,7 +8,7 @@ const { assert } = chai;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
-describe("ExplorableFiles", () => {
+describe.skip("ExplorableFiles", () => {
   it("Can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
