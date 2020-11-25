@@ -1,17 +1,12 @@
 import { get, keys } from "@explorablegraph/symbols";
 import Explorable from "./Explorable.js";
 
-class A extends Explorable {}
-class B extends A {}
-
-// export default class ExplorableMap extends Explorable {
-export default class ExplorableMap extends B {
+export default class ExplorableMap extends Explorable {
   /**
    * @param {Map} map
    */
   constructor(map) {
     super();
-    const isExplorable = this instanceof Explorable;
     this.map = map;
   }
 

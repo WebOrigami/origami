@@ -7,8 +7,7 @@ export default function parseExpression(text) {
   if (open === -1 || close === -1 || close !== trimmed.length - 1) {
     // Return the whole text as an argument to the String constructor.
     return Explorable({
-      key: "String",
-      value: trimmed,
+      String: trimmed,
     });
   }
 
@@ -18,8 +17,7 @@ export default function parseExpression(text) {
   const arg = parseExpression(argText);
 
   return Explorable({
-    key: fnName,
-    value: arg,
+    [fnName]: arg,
   });
 }
 
