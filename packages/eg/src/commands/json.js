@@ -1,4 +1,4 @@
-import { AsyncExplorable } from "@explorablegraph/exfn";
+import { asyncOps } from "@explorablegraph/exfn";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function json(graphArg) {
@@ -7,7 +7,7 @@ export default async function json(graphArg) {
     return;
   }
   const graph = await loadGraphFromArgument(graphArg);
-  const obj = await AsyncExplorable.strings(graph);
+  const obj = await asyncOps.strings(graph);
   const text = JSON.stringify(obj, null, 2);
   console.log(text);
 }

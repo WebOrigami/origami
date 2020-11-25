@@ -1,3 +1,4 @@
+import { asyncOps } from "@explorablegraph/exfn";
 import path from "path";
 
 /**
@@ -46,7 +47,7 @@ export async function getResourceAtPath(exfn, webPath) {
     keys.pop();
     keys.push("index.html");
   }
-  return await exfn.constructor.traverse(exfn, keys);
+  return await asyncOps.traverse(exfn, keys);
 }
 
 /**

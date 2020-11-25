@@ -1,3 +1,4 @@
+import { asyncGet } from "@explorablegraph/exfn";
 import { promises as fs } from "fs";
 import path from "path";
 import ExplorableFiles from "./ExplorableFiles.js";
@@ -6,7 +7,7 @@ export default class JavaScriptModuleFiles extends ExplorableFiles {
   // We'd love to be able to defer to the superclass to return the file data
   // to use an import that. Sadly, the `import()` statement can only
   //
-  async [ExplorableFiles.get](key) {
+  async [asyncGet](key) {
     const filePath = path.join(this.dirname, key);
     let stats;
     try {
