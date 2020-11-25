@@ -4,7 +4,7 @@ import Explorable from "../src/Explorable.js";
 import FirstMatch from "../src/FirstMatch.js";
 const { assert } = chai;
 
-describe.only("FirstMatch", () => {
+describe("FirstMatch", () => {
   it("returns the first defined value from an ordered list of exfns", async () => {
     const fixture = new FirstMatch([
       new Explorable({
