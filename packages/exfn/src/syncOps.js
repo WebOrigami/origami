@@ -24,12 +24,12 @@ export function mapKeys(exfn, mapFn) {
     const value = exfn[get](key);
     const mappedKey = mapFn(key);
     // TODO: Check that value is of same constructor before traversing into it.
-    const mappedValues =
+    const mappedValue =
       value !== undefined && value instanceof Explorable
         ? // value is also explorable; traverse into it.
           mapKeys(value, mapFn)
         : value;
-    map.add(mappedKey, mappedValue);
+    map.set(mappedKey, mappedValue);
   }
   return new ExplorableMap(map);
 }
