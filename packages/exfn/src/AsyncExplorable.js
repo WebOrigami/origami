@@ -1,5 +1,4 @@
 import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
-import * as asyncOps from "./asyncOps.js";
 import {
   default as ExplorablePlainObject,
   isPlainObject,
@@ -46,19 +45,14 @@ Object.defineProperty(AsyncExplorable, Symbol.hasInstance, {
 // Instance methods
 //
 
-// Default `[asyncKeys]` implementation returns an iterator for an empty list.
-AsyncExplorable.prototype[asyncKeys] = async function* () {
-  yield* [];
-};
+Object.assign(AsyncExplorable.prototype, {
+  // Default `[asyncKeys]` implementation returns an iterator for an empty list.
+  async *[asyncKeys]() {
+    yield* [];
+  },
 
-// Default `[asyncGet]` implementation returns undefined for any key.
-AsyncExplorable.prototype[asyncGet] = async function (key) {
-  return undefined;
-};
-
-//
-// Static methods
-//
-
-// Expose all async ops on `asyncOps` property.
-AsyncExplorable.asyncOps = asyncOps;
+  // Default `[asyncGet]` implementation returns undefined for any key.
+  async [asyncGet](key) {
+    return undefined;
+  },
+});

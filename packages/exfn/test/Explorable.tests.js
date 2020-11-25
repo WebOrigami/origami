@@ -78,14 +78,4 @@ describe("Explorable", () => {
     }
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
-
-  it("keys() returns keys for a sync exfn", () => {
-    const exfn = {
-      [get]() {},
-      *[keys]() {
-        yield* ["a", "b", "c"];
-      },
-    };
-    assert.deepEqual(Explorable.keys(exfn), ["a", "b", "c"]);
-  });
 });
