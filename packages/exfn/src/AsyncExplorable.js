@@ -11,16 +11,37 @@ import {
 
 // @ts-ignore
 export default function AsyncExplorable(obj) {
-  if (isPlainObject(obj)) {
+  if (!new.target) {
+    // Constructor called as function without `new`.
+    const constructor = this || AsyncExplorable;
+    return new constructor(obj);
+  } else if (obj && AsyncExplorable.isExplorable(obj)) {
+    // Object is already explorable; return as is.
+    return obj;
+  } else if (isPlainObject(obj)) {
     return new ExplorablePlainObject(obj);
-    // @ts-ignore
-  } else if (this instanceof AsyncExplorable) {
-    // @ts-ignore
-    return this;
-  } else {
-    return new AsyncExplorable();
   }
 }
+
+// Defining a class as a function in the way above runs into issues when
+// defining subclasses of subclasses -- they will fail to pass an `instanceof`
+// test. We define [Symbol.hasInstance] so that we'll be asked whether an
+// object is an AsyncExplorable.
+//
+// For now, we return true if the object passes the async exfn test. However,
+// that may lead to confusion where someone creates their own exfn using symbols
+// and not the AsyncExplorable constructor, but is surprised to see that their
+// exfn returns true for `instanceof AsyncExplorable`.
+//
+// Another solution would be to walk up the prototype chain to see if it
+// includes AsyncExplorable. That's presumably what the native `instanceof`
+// implementation does -- but the native implementation is probably heavily
+// optimized.
+Object.defineProperty(AsyncExplorable, Symbol.hasInstance, {
+  value: (obj) => {
+    return AsyncExplorable.isExplorable(obj);
+  },
+});
 
 //
 // Instance methods

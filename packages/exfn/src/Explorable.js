@@ -14,8 +14,9 @@ import * as syncOps from "./syncOps.js";
 export default function Explorable(obj) {
   if (!new.target) {
     // Constructor called as function without `new`.
-    return new this(obj);
-  } else if (obj && isExplorable(obj)) {
+    const constructor = this || Explorable;
+    return new constructor(obj);
+  } else if (obj && Explorable.isExplorable(obj)) {
     // Object is already explorable; return as is.
     return obj;
   } else if (isPlainObject(obj)) {
@@ -24,7 +25,19 @@ export default function Explorable(obj) {
 }
 
 // Inherit from AsyncExplorable
-// Explorable.prototype = new AsyncExplorable();
+Explorable.prototype = Object.create(AsyncExplorable.prototype);
+Object.defineProperty(Explorable.prototype, "constructor", {
+  value: Explorable,
+  enumerable: false,
+  writable: true,
+});
+
+// See AsyncExplorable regarding hasInstance
+Object.defineProperty(Explorable, Symbol.hasInstance, {
+  value: (obj) => {
+    return Explorable.isExplorable(obj);
+  },
+});
 
 //
 // Instance methods

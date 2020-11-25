@@ -4,8 +4,8 @@ import Explorable from "../src/Explorable.js";
 import ExplorableMap from "../src/ExplorableMap.js";
 const { assert } = chai;
 
-describe.only("ExplorableMap", () => {
-  it.only("can explore a standard JavaScript Map", () => {
+describe("ExplorableMap", () => {
+  it("can explore a standard JavaScript Map", () => {
     const map = new Map([
       ["a", 1],
       ["b", 2],
