@@ -1,6 +1,6 @@
-import Graph from "../../src/graph.js";
+import { Explorable } from "@explorablegraph/exfn";
 
-export default Graph.from({
+const graph = Explorable({
   a: "The letter A",
   b: "The letter B",
   c: "The letter C",
