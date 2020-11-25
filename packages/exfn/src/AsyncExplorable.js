@@ -1,4 +1,5 @@
 import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import * as asyncOps from "./asyncOps.js";
 import {
   default as ExplorablePlainObject,
   isPlainObject,
@@ -38,6 +39,9 @@ AsyncExplorable.prototype[asyncGet] = async function (key) {
 //
 // Static methods
 //
+
+// Expose all async ops on `asyncOps` property.
+AsyncExplorable.asyncOps = asyncOps;
 
 /**
  * Return true if the given object is async explorable.
