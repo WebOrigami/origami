@@ -1,4 +1,5 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
+import AsyncExplorable from "./AsyncExplorable.js";
 import {
   default as ExplorablePlainObject,
   isPlainObject,
@@ -21,17 +22,21 @@ export default function Explorable(obj) {
   }
 }
 
+// Inherit from AsyncExplorable
+Explorable.prototype = new AsyncExplorable();
+
 //
 // Instance methods
 //
 
-// Default `[asyncGet]` just invokes `[get]`.
+// Default `[asyncGet]` invokes `[get]`.
 Explorable.prototype[asyncGet] = async function (key) {
   return this[get](key);
 };
 
-// Default `[asyncKeys]` just invokes `[keys]`.
-Explorable.prototype[asyncKeys] = async function* () {
+// Default `[asyncKeys]` invokes `[keys]`.
+// @ts-ignore
+Explorable.prototype[asyncKeys] = function* () {
   yield* this[keys]();
 };
 
@@ -56,7 +61,7 @@ Explorable.prototype[keys] = function () {
  * @returns {boolean}
  */
 Explorable.isExplorable = function (obj) {
-  return !!obj[get] && !!obj[keys];
+  return (!!obj[get] && !!obj[keys]) || AsyncExplorable.isExplorable(obj);
 };
 
 /**

@@ -2,28 +2,24 @@
 // https://github.com/microsoft/TypeScript/blob/master/lib/lib.es5.d.ts
 
 import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import * as asyncOps from "./asyncOps.js";
 
 interface AsyncExplorable {
-  // We define [Symbol.iterator] so TypeScript knows it's there, even though
-  // it's the same as the [keys].
+  // We define [Symbol.asyncIterator] so TypeScript knows it's there, even
+  // though it's the same as the [asyncKeys].
   [asyncGet](key: any): Promise<any>;
   [asyncKeys]: AsyncIterableIterator<any>;
-  [Symbol.iterator](): Iterator<any>;
+  [Symbol.asyncIterator](): Iterator<any>;
 }
 
 interface AsyncExplorableConstructor {
   new(obj?: any): AsyncExplorable;
   (obj?: any): AsyncExplorable;
-  isExplorable(obj: any): Boolean;
+  asyncOps: typeof asyncOps;
+  isExplorable(obj: any): boolean;
   // keys(obj: any): Array<any>;
 }
 
 declare const AsyncExplorable: AsyncExplorableConstructor;
 
 export default AsyncExplorable;
-
-// static keys(obj: any): any[];
-// static plain(exfn: any): any;
-// static structure(exfn: any): any;
-// static strings(exfn: any): any;
-// static traverse(exfn: any, path: any[]): any;
