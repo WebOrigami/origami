@@ -44,7 +44,7 @@ export async function mapValues(exfn, mapFn) {
  * @param {any} exfn
  */
 export async function plain(exfn) {
-  return await mapValues(exfn, (/** @type {any} */ obj) => obj);
+  return await mapValues(exfn, (/** @type {any} */ value) => value);
 }
 
 /**

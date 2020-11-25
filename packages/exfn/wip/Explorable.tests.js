@@ -1,18 +1,4 @@
 describe("Explorable", () => {
-  // it("Explorable.call invokes a function directly", () => {
-  //   const fixture = (a, b) => a + b;
-  //   const value = Explorable.call(fixture, "foo", "bar");
-  //   assert.equal(value, "foobar");
-  // });
-  // it("Explorable.from can crate an explorable plain object", async () => {
-  //   const fixture = Explorable.from({
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //   });
-  //   const keys = await Explorable.keys(fixture);
-  //   assert.deepEqual(keys, ["a", "b", "c"]);
-  // });
   // it("Explorable.values can return the flat list of values", async () => {
   //   const fixture = Explorable.from({
   //     a: 1,

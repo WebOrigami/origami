@@ -4,6 +4,7 @@ import {
   default as ExplorablePlainObject,
   isPlainObject,
 } from "./ExplorablePlainObject.js";
+import * as syncOps from "./syncOps.js";
 
 // Use function syntax to define constructor so that we can support calling the
 // constructor directly without `new` as a means of implicit conversion of
@@ -48,6 +49,12 @@ Explorable.prototype[get] = function (key) {
 // Default `[keys]` implementation returns an iterator for an empty list.
 Explorable.prototype[keys] = function () {
   return [][Symbol.iterator]();
+};
+
+// Default `toString` implementation returns pretty-printed JSON.
+Explorable.prototype.toString = function () {
+  const plain = syncOps.plain(this);
+  return JSON.stringify(plain, null, 2);
 };
 
 //

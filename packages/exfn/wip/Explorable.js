@@ -1,5 +1,3 @@
-import { asyncCall, call, get } from "../src/symbols.js";
-
 export default class Explorable {
   /**
    * Create an explorable reference to the given object.
@@ -78,6 +76,3 @@ export default class Explorable {
   //   return result;
   // }
 }
-
-// Expose the symbols on the Explorable class.
-Object.assign(Explorable, { call, asyncCall, get, get });
