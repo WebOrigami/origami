@@ -1,5 +1,6 @@
 import { get } from "@explorablegraph/symbols";
 import Explorable from "./Explorable.js";
+import ExplorableMap from "./ExplorableMap.js";
 
 /**
  * Returns the keys for an exfn.
@@ -11,25 +12,27 @@ export function keys(exfn) {
 }
 
 /**
- * Create a ExplorableMap with the exfn's keys cast to strings, and the given
- * `mapFn` applied to keys.
+ * Create a ExplorableMap with the exfn's keys cast to mapped using the given
+ * mapFn.
  *
  * @param {any} exfn
  * @param {any} mapFn
  */
-// export function mapKeys(exfn, mapFn) {
-//   const result = {};
-//   for (const key of exfn) {
-//     const value = exfn[get](key);
-//     // TODO: Check that value is of same constructor before traversing into it.
-//     result[String(key)] =
-//       value !== undefined && Explorable.isExplorable(value)
-//         ? // value is also explorable; traverse into it.
-//           mapKeys(value, mapFn)
-//         : mapFn(value);
-//   }
-//   return result;
-// }
+export function mapKeys(exfn, mapFn) {
+  const map = new Map();
+  for (const key of exfn) {
+    const value = exfn[get](key);
+    const mappedKey = mapFn(key);
+    // TODO: Check that value is of same constructor before traversing into it.
+    const mappedValues =
+      value !== undefined && Explorable.isExplorable(value)
+        ? // value is also explorable; traverse into it.
+          mapKeys(value, mapFn)
+        : value;
+    map.add(mappedKey, mappedValue);
+  }
+  return new ExplorableMap(map);
+}
 
 /**
  * Create a plain JavaScript object with the exfn's keys cast to strings,

@@ -12,19 +12,19 @@ import * as syncOps from "./syncOps.js";
 
 // @ts-ignore
 export default function Explorable(obj) {
-  if (isPlainObject(obj)) {
+  if (!new.target) {
+    // Constructor called as function without `new`.
+    return new this(obj);
+  } else if (obj && isExplorable(obj)) {
+    // Object is already explorable; return as is.
+    return obj;
+  } else if (isPlainObject(obj)) {
     return new ExplorablePlainObject(obj);
-    // @ts-ignore
-  } else if (this instanceof Explorable) {
-    // @ts-ignore
-    return this;
-  } else {
-    return new Explorable();
   }
 }
 
 // Inherit from AsyncExplorable
-Explorable.prototype = new AsyncExplorable();
+// Explorable.prototype = new AsyncExplorable();
 
 //
 // Instance methods

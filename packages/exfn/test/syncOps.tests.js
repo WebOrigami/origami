@@ -14,6 +14,17 @@ describe("syncOps", () => {
     assert.deepEqual(syncOps.keys(exfn), ["a", "b", "c"]);
   });
 
+  // it("mapKeys() maps an exfns keys using a mapping function", () => {
+  //   const original = Explorable({
+  //     a: 1,
+  //     b: 2,
+  //     c: 3,
+  //   });
+  //   const mapped = syncOps.mapKeys(original, (key) => key.toUpperCase());
+  //   const plain = syncOps.plain(mapped);
+  //   assert.deepEqual(plain, original);
+  // });
+
   it("plain() produces a plain object version of an exfn", () => {
     const original = {
       a: 1,
