@@ -1,11 +1,17 @@
 import chai from "chai";
+import { argumentMarker } from "../src/execute.js";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
 describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
-    assert.deepEqual(parsed, "hello");
+    assert.equal(parsed, "hello");
+  });
+
+  it("recognizes a solitary asterisk an argument marker", () => {
+    const parsed = parse("*");
+    assert.equal(parsed, argumentMarker);
   });
 
   it("recognizes a function call", () => {

@@ -1,8 +1,10 @@
-// import { get, syncOps } from "@explorablegraph/exfn";
+import execute from "../src/execute.js";
+import link from "../src/link.js";
+import parse from "../src/parse.js";
 
-// // Given an exfn of parsed { key, value } nodes, return the equivalent tree as
-// // ExplorableMap in which each key has been replaced with its value in the scope
-// // exfn.
-// export default function execute(linked) {
-//   return syncOps.mapKeys(parsed, (key) => scope[get](key));
-// }
+export default function evaluate(source, scope, argument) {
+  const parsed = parse(source);
+  const linked = link(parsed, scope);
+  const result = execute(linked, argument);
+  return result;
+}

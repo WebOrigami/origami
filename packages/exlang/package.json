@@ -5,6 +5,7 @@
   "type": "module",
   "main": "./exports.js",
   "bin": {
+    "evaluate-cli": "src/evaluate-cli.js",
     "parse-cli": "src/parse-cli.js"
   },
   "devDependencies": {
