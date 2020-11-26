@@ -19,7 +19,7 @@ export default class ExplorableMap extends Explorable {
     return this.map.get(key);
   }
 
-  *[keys]() {
-    yield* this.map.keys();
+  [keys]() {
+    return this.map.keys()[Symbol.iterator]();
   }
 }

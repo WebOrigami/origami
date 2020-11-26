@@ -1,14 +1,10 @@
-import { Explorable } from "@explorablegraph/exfn";
-
 // Given a string and a graph of functions, return a parsed tree.
 export default function parseExpression(text) {
   const trimmed = text.trim();
   const { open, close } = getOutermostParenthesis(trimmed);
   if (open === -1 || close === -1 || close !== trimmed.length - 1) {
     // Return the whole text as an argument to the String constructor.
-    return Explorable({
-      String: trimmed,
-    });
+    return [trimmed];
   }
 
   const fnName = trimmed.slice(0, open).trim();
@@ -16,9 +12,12 @@ export default function parseExpression(text) {
   const argText = trimmed.substring(open + 1, close).trim();
   const arg = parseExpression(argText);
 
-  return Explorable({
-    [fnName]: arg,
-  });
+  return [
+    {
+      key: fnName,
+      value: arg,
+    },
+  ];
 }
 
 function getOutermostParenthesis(text) {
