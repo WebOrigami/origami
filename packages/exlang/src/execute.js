@@ -1,21 +1,24 @@
 import { Explorable, get } from "@explorablegraph/exfn";
 
-export default function execute(exfn, argument) {
-  let result;
-  // The fn will be the function we want to execute.
-  for (const fn of exfn) {
-    const subtree = exfn[get](fn);
-    const arg =
-      subtree === argumentMarker
-        ? argument
-        : subtree instanceof Explorable
-        ? subtree[get](argument)
-        : subtree;
-    // REVIEW: Support regular functions directly like this, or require an
-    // exfn?
-    result = fn instanceof Explorable ? fn[get](arg) : fn(arg);
+export default function execute(linked, argument) {
+  if (linked instanceof Array) {
+    // Function
+    const [fn, ...args] = linked;
+
+    // Recursively evaluate args.
+    const evaluated = args.map((arg) => execute(arg, argument));
+
+    // Now apply function to the evaluated args.
+    const result =
+      fn instanceof Explorable ? fn[get](evaluated[0]) : fn(...evaluated);
+    return result;
+  } else if (linked === argumentMarker) {
+    // Argument placeholder
+    return argument;
+  } else {
+    // Other terminal
+    return linked;
   }
-  return result;
 }
 
 export const argumentMarker = Symbol("argumentMarker");
