@@ -1,3 +1,4 @@
+import { syncOps } from "@explorablegraph/exfn";
 import chai from "chai";
 import parse from "../src/parse.js";
 const { assert } = chai;
@@ -5,34 +6,38 @@ const { assert } = chai;
 describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
-    // assert.deepEqual(syncOps.plain(parsed), ["hello"]);
-    assert.deepEqual(parsed, ["hello"]);
+    assert.deepEqual(syncOps.plain(parsed), {
+      0: "hello",
+    });
   });
 
   it("recognizes a function call", () => {
     const parsed = parse(" fn ( arg ) ");
-    // assert.deepEqual(syncOps.plain(parsed), [
-    assert.deepEqual(parsed, [
-      {
+    assert.deepEqual(syncOps.plain(parsed), {
+      0: {
         key: "fn",
-        value: ["arg"],
+        value: {
+          0: "arg",
+        },
       },
-    ]);
+    });
   });
 
   it("recognizes a nested function call", () => {
     const parsed = parse("a(b(c))");
-    // assert.deepEqual(syncOps.plain(parsed), [
-    assert.deepEqual(parsed, [
-      {
+    const plain = syncOps.plain(parsed);
+    assert.deepEqual(plain, {
+      0: {
         key: "a",
-        value: [
-          {
+        value: {
+          0: {
             key: "b",
-            value: ["c"],
+            value: {
+              0: "c",
+            },
           },
-        ],
+        },
       },
-    ]);
+    });
   });
 });

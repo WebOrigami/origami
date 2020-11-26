@@ -1,6 +1,7 @@
 import { get } from "@explorablegraph/symbols";
 import Explorable from "./Explorable.js";
 import ExplorableMap from "./ExplorableMap.js";
+import { isPlainObject } from "./ExplorablePlainObject.js";
 
 /**
  * Returns the keys for an exfn.
@@ -41,13 +42,15 @@ export function mapKeys(exfn, mapFn) {
  * @param {any} exfn
  * @param {any} mapFn
  */
+// TODO: Use ExplorableMap, don't cast keys
 export function mapValues(exfn, mapFn) {
   const result = {};
   for (const key of exfn) {
     const value = exfn[get](key);
-    // TODO: Check that value is of same constructor before traversing into it.
+    // TODO: Check that value is of assignable constructor before traversing
+    // into it.
     result[String(key)] =
-      value !== undefined && value instanceof Explorable
+      value instanceof Explorable
         ? // value is also explorable; traverse into it.
           mapValues(value, mapFn)
         : mapFn(value);
@@ -64,7 +67,13 @@ export function mapValues(exfn, mapFn) {
  * @param {any} exfn
  */
 export function plain(exfn) {
-  return mapValues(exfn, (/** @type {any} */ value) => value);
+  return mapValues(exfn, (/** @type {any} */ value) =>
+    value instanceof Explorable
+      ? plain(value)
+      : isPlainObject(value)
+      ? plain(Explorable(value))
+      : value
+  );
 }
 
 /**
