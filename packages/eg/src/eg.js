@@ -1,26 +1,54 @@
 #!/usr/bin/env node
 
-import { asyncGet } from "@explorablegraph/exfn";
+import { asyncOps, Explorable } from "@explorablegraph/exfn";
+import { evaluate } from "@explorablegraph/exlang";
+// import { asyncGet } from "@explorablegraph/exfn";
 import process from "process";
-import commands from "./commands.js";
+import YAML from "yaml";
+import { loadGraphFromArgument } from "./shared.js";
+// import commands from "./commands.js";
 
-async function invoke(command, ...args) {
-  const commandFilename = `${command}.js`;
-  const exports = command
-    ? await commands[asyncGet](commandFilename)
-    : undefined;
-  const fn = exports?.default;
-  if (!fn) {
-    await showUsage();
+// async function invoke(command, ...args) {
+//   const commandFilename = `${command}.js`;
+//   const exports = command
+//     ? await commands[asyncGet](commandFilename)
+//     : undefined;
+//   const fn = exports?.default;
+//   if (!fn) {
+//     await showUsage();
+//     return;
+//   }
+//   await fn(...args);
+// }
+
+// async function showUsage() {
+//   for await (const name of commands) {
+//     const exports = await commands[asyncGet](name);
+//     console.log(exports.default.usage);
+//   }
+// }
+
+export default async function yaml(graphArg) {
+  if (!graphArg) {
+    console.error(`usage:\n${yaml.usage}`);
     return;
   }
-  await fn(...args);
+  const graph = await loadGraphFromArgument(graphArg);
+  const obj = await asyncOps.strings(graph);
+  const text = YAML.stringify(obj, null, 2);
+  return text;
 }
 
-async function showUsage() {
-  for await (const name of commands) {
-    const exports = await commands[asyncGet](name);
-    console.log(exports.default.usage);
+async function main(...args) {
+  const source = args.join(" ");
+  const scope = Explorable({
+    yaml,
+    toUpperCase: (text) => text.toUpperCase(),
+    testfile: () => `/Users/jan/source/ExplorableGraph/hello/src/graphs/1.js`,
+  });
+  const result = await evaluate(source, scope, "**input**");
+  if (result !== undefined) {
+    console.log(result);
   }
 }
 
@@ -32,4 +60,4 @@ args.shift(); // name of this script file
 while (args[0] === "") {
   args.shift();
 }
-await invoke(...args);
+await main(...args);

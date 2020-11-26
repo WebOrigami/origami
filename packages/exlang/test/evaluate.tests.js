@@ -4,14 +4,14 @@ import evaluate from "../src/evaluate.js";
 const { assert } = chai;
 
 describe("evaluate", () => {
-  it("can parse, link, and execute", () => {
+  it("can parse, link, and execute", async () => {
     const source = "greet(world)";
     const scope = Explorable({
-      greet(name) {
+      async greet(name) {
         return `Hello ${name}`;
       },
     });
-    const result = evaluate(source, scope, "world");
+    const result = await evaluate(source, scope, "world");
     assert.equal(result, "Hello world");
   });
 });
