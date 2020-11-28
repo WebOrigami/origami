@@ -4,7 +4,7 @@ export { default as AsyncExplorable } from "./src/AsyncExplorable.js";
 export { default as Explorable } from "./src/Explorable.js";
 export { default as ExplorableArray } from "./src/ExplorableArray.js";
 export { default as ExplorableMap } from "./src/ExplorableMap.js";
-export { default as ExplorablePlainObject } from "./src/ExplorablePlainObject.js";
+export { default as explorablePlainObject } from "./src/explorablePlainObject.js";
 export { default as FirstMatch } from "./src/FirstMatch.js";
 
 import * as asyncOpsImport from "./src/asyncOps.js";

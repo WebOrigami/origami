@@ -4,7 +4,7 @@ export default class Explorable {
    *
    * If the object is already explorable, this returns the object itself.
    * If the object is a plain JavaScript object, this returns a new instance
-   * of ExplorableObject backed by the object.
+   * of explorablePlainObject backed by the object.
    *
    * Otherwise this throws a TypeError.
    *
@@ -14,7 +14,7 @@ export default class Explorable {
   //   if (Explorable.isExplorable(obj)) {
   //     return obj;
   //   } else if (isPlainObject(obj)) {
-  //     return new ExplorableObject(obj);
+  //     return new explorablePlainObject(obj);
   //   }
   //   throw new TypeError(
   //     "Explorable.from was given an object that cannot be made explorable."

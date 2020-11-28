@@ -1,7 +1,7 @@
 import { get } from "@explorablegraph/symbols";
+import { isPlainObject } from "./builtIns.js";
 import Explorable from "./Explorable.js";
 import ExplorableMap from "./ExplorableMap.js";
-import { isPlainObject } from "./ExplorablePlainObject.js";
 
 /**
  * Returns the keys for an exfn.

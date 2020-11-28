@@ -1,4 +1,4 @@
-import explorableObject from "./explorableObject.js";
+import explorablePlainObject from "./explorablePlainObject.js";
 
 /**
  * Create an explorable version of the given built-in JavaScript object.
@@ -8,7 +8,7 @@ import explorableObject from "./explorableObject.js";
  */
 export function explorable(obj) {
   if (isPlainObject(obj)) {
-    return explorableObject(obj);
+    return explorablePlainObject(obj);
   } else {
     return null;
   }

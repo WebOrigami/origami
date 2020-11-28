@@ -1,7 +1,7 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import { isPlainObject } from "./builtIns.js";
 
-export default function explorableObject(obj) {
+export default function explorablePlainObject(obj) {
   const explorable = {
     // Default `[asyncGet]` invokes `[get]`.
     async [asyncGet](key) {
@@ -20,12 +20,12 @@ export default function explorableObject(obj) {
      * @param {any} key
      */
     [get](key) {
-      // If source object provides its own get method, prefer that to our default.
       const obj = Object.getPrototypeOf(this);
-      // The value might be on this object -- an extension of obj -- or on
-      // the original obj.
+      // If source object provides its own get method, prefer that to our
+      // default. Also note that the value might be on this object -- an
+      // extension of obj -- or on the original obj.
       const value = obj[get] ? obj[get](key) : this[key] || obj[key];
-      return isPlainObject(value) ? explorableObject(value) : value;
+      return isPlainObject(value) ? explorablePlainObject(value) : value;
     },
 
     // @ts-ignore
