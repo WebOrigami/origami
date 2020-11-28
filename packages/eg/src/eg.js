@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { asyncOps, Explorable } from "@explorablegraph/exfn";
+import { asyncOps, Explorable } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
-// import { asyncGet } from "@explorablegraph/exfn";
+// import { asyncGet } from "@explorablegraph/core";
 import process from "process";
 import YAML from "yaml";
 import { loadGraphFromArgument } from "./shared.js";

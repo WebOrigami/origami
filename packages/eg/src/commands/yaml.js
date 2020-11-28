@@ -1,4 +1,4 @@
-import { asyncOps } from "@explorablegraph/exfn";
+import { asyncOps } from "@explorablegraph/core";
 import YAML from "yaml";
 import { loadGraphFromArgument } from "../shared.js";
 

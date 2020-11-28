@@ -1,4 +1,4 @@
-import { asyncOps } from "@explorablegraph/exfn";
+import { asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";

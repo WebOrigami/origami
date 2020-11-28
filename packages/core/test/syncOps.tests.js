@@ -1,4 +1,4 @@
-import { Explorable, syncOps } from "@explorablegraph/exfn";
+import { Explorable, syncOps } from "@explorablegraph/core";
 import { get, keys } from "@explorablegraph/symbols";
 import chai from "chai";
 const { assert } = chai;

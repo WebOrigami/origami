@@ -1,4 +1,4 @@
-import { asyncGet } from "@explorablegraph/exfn";
+import { asyncGet } from "@explorablegraph/core";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function get(graphArg, key) {

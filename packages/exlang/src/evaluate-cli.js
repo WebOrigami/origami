@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Explorable } from "@explorablegraph/exfn";
+import { Explorable } from "@explorablegraph/core";
 import process from "process";
 import evaluate from "./evaluate.js";
 

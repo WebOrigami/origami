@@ -11,8 +11,8 @@
     "target": "ES2020"
   },
   "include": [
-    "packages/exfn/src/**/*.js",
-    "packages/exfn/test/**/*.js"
+    "packages/core/src/**/*.js",
+    "packages/core/test/**/*.js"
     // "packages/node/src/**/*.js",
     // "packages/node/test/**/*.js"
   ]

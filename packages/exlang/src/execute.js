@@ -1,4 +1,4 @@
-import { Explorable, get } from "@explorablegraph/exfn";
+import { Explorable, get } from "@explorablegraph/core";
 
 export default async function execute(linked, argument) {
   if (linked instanceof Array) {

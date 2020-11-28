@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/exfn";
+import { Explorable } from "@explorablegraph/core";
 import path from "path";
 import process from "process";
 

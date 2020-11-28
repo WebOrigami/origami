@@ -1,4 +1,4 @@
-import { asyncOps, Explorable } from "@explorablegraph/exfn";
+import { asyncOps, Explorable } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";

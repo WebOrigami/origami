@@ -1,5 +1,5 @@
 {
-  "name": "@explorablegraph/exfn",
+  "name": "@explorablegraph/core",
   "description": "JavaScript core package for *asynchronous* explorable functions",
   "version": "0.0.1",
   "type": "module",

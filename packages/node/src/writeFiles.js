@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncGet } from "@explorablegraph/exfn";
+import { AsyncExplorable, asyncGet } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 

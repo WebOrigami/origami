@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/exfn";
+import { Explorable } from "@explorablegraph/core";
 import chai from "chai";
 import link from "../src/link.js";
 const { assert } = chai;
