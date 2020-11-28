@@ -5,7 +5,7 @@ import Explorable from "../src/Explorable.js";
 import ExplorablePlainObject from "../src/ExplorablePlainObject.js";
 const { assert } = chai;
 
-describe("ExplorablePlainObject", () => {
+describe.skip("ExplorablePlainObject", () => {
   it("can explore a plain JavaScript object", () => {
     const obj = new ExplorablePlainObject({
       a: 1,

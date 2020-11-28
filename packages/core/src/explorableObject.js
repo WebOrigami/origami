@@ -25,7 +25,7 @@ export default function explorableObject(obj) {
       // The value might be on this object -- an extension of obj -- or on
       // the original obj.
       const value = obj[get] ? obj[get](key) : this[key] || obj[key];
-      return isPlainObject(value) ? explorableBuiltIn(value) : value;
+      return isPlainObject(value) ? explorableObject(value) : value;
     },
 
     // @ts-ignore

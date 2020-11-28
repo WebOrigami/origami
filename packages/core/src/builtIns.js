@@ -2,14 +2,15 @@ import explorableObject from "./explorableObject.js";
 
 /**
  * Create an explorable version of the given built-in JavaScript object.
+ * If the object is not one that can be made explorable, this returns null.
  *
  * @param {any} obj
  */
-export function explore(obj) {
+export function explorable(obj) {
   if (isPlainObject(obj)) {
     return explorableObject(obj);
   } else {
-    throw `builtIns.explore: object is not an explorable built-in JavaScript object: ${obj}`;
+    return null;
   }
 }
 

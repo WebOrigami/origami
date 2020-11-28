@@ -1,8 +1,5 @@
 import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
-import {
-  default as ExplorablePlainObject,
-  isPlainObject,
-} from "./ExplorablePlainObject.js";
+import * as builtIns from "./builtIns.js";
 
 // Use function syntax to define constructor so that we can support calling the
 // constructor directly without `new` as a means of implicit conversion of
@@ -17,8 +14,8 @@ export default function AsyncExplorable(obj) {
   } else if (obj instanceof AsyncExplorable) {
     // Object is already explorable; return as is.
     return obj;
-  } else if (isPlainObject(obj)) {
-    return new ExplorablePlainObject(obj);
+  } else {
+    return builtIns.explorable(obj);
   }
 }
 

@@ -1,9 +1,6 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
-import {
-  default as ExplorablePlainObject,
-  isPlainObject,
-} from "./ExplorablePlainObject.js";
+import * as builtIns from "./builtIns.js";
 import * as syncOps from "./syncOps.js";
 
 // Use function syntax to define constructor so that we can support calling the
@@ -19,8 +16,8 @@ export default function Explorable(obj) {
   } else if (obj instanceof Explorable) {
     // Object is already explorable; return as is.
     return obj;
-  } else if (isPlainObject(obj)) {
-    return new ExplorablePlainObject(obj);
+  } else {
+    return builtIns.explorable(obj);
   }
 }
 

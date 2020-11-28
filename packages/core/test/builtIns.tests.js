@@ -4,7 +4,7 @@ const { assert } = chai;
 
 describe("builtIns", () => {
   it("can make a JavaScript built-in object explorable", () => {
-    const fixture = builtIns.explore({
+    const fixture = builtIns.explorable({
       a: 1,
       b: 2,
       c: 3,
