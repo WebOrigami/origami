@@ -1,4 +1,4 @@
-import { asyncOps } from "@explorablegraph/core";
+import { asyncGet, asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -37,5 +37,19 @@ describe("ExplorableFiles", () => {
         "e.txt": "The letter E",
       },
     });
+  });
+
+  it("Can retrieve a file", async () => {
+    const directory = path.join(fixturesDirectory, "folder1");
+    const files = new ExplorableFiles(directory);
+    const file = await files[asyncGet]("a.txt");
+    assert.equal(String(file), "The letter A");
+  });
+
+  it("Can traverse a path of keys in a folder tree", async () => {
+    const directory = path.join(fixturesDirectory, "folder1");
+    const files = new ExplorableFiles(directory);
+    const file = await files[asyncGet]("more", "e.txt");
+    assert.equal(String(file), "The letter E");
   });
 });

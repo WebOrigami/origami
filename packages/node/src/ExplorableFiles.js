@@ -14,19 +14,20 @@ export default class ExplorableFiles extends AsyncExplorable {
     yield* names;
   }
 
-  async [asyncGet](key) {
-    const filePath = path.join(this.dirname, key);
+  async [asyncGet](...keys) {
+    // We can traverse the keys by joining them into a path.
+    const objPath = path.join(this.dirname, ...keys);
     let stats;
     try {
-      stats = await fs.stat(filePath);
+      stats = await fs.stat(objPath);
     } catch (error) {
       if (error.code === "ENOENT" /* File not found */) {
         return undefined;
       }
     }
-    const obj = stats.isDirectory()
-      ? new this.constructor(filePath)
-      : await fs.readFile(filePath);
-    return obj;
+    const value = stats.isDirectory()
+      ? new this.constructor(objPath)
+      : await fs.readFile(objPath);
+    return value;
   }
 }
