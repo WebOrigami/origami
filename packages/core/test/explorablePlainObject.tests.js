@@ -56,6 +56,20 @@ describe("explorablePlainObject", () => {
     assert.equal(obj[get]("a2", "doesntexist", "c2"), undefined);
   });
 
+  it("can traverse from one explorable into another", () => {
+    const objB = new explorablePlainObject({
+      b1: {
+        b2: 1,
+      },
+    });
+    const objA = new explorablePlainObject({
+      a1: {
+        a2: objB,
+      },
+    });
+    assert.equal(objA[get]("a1", "a2", "b1", "b2"), 1);
+  });
+
   it("can async explore a plain JavaScript object", async () => {
     const obj = new explorablePlainObject({
       a: 1,

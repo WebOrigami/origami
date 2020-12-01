@@ -1,5 +1,6 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import { isPlainObject } from "./builtIns.js";
+import Explorable from "./Explorable.js";
 
 export default function explorablePlainObject(obj) {
   const explorable = {
@@ -15,7 +16,7 @@ export default function explorablePlainObject(obj) {
     },
 
     /**
-     * Return the value for the corresponding path of keys.
+     * Return the value at the corresponding path of keys.
      *
      * @param {any[]} keys
      */
@@ -34,9 +35,17 @@ export default function explorablePlainObject(obj) {
         // The key might be on this object -- an extension of obj -- or on the
         // original obj.
         value = value[key];
+
+        if (value instanceof Explorable && keys.length > 0) {
+          return value[get](...keys);
+        }
       }
 
-      return isPlainObject(value) ? explorablePlainObject(value) : value;
+      return keys.length > 0
+        ? undefined
+        : isPlainObject(value)
+        ? explorablePlainObject(value)
+        : value;
     },
 
     // @ts-ignore

@@ -11,12 +11,17 @@ export default class ExplorableMap extends Explorable {
   }
 
   /**
-   * Return the value for the corresponding key.
+   * Return the value at the corresponding path of keys.
    *
-   * @param {any} key
+   * @param {any[]} keys
    */
-  [get](key) {
-    return this.map.get(key);
+  [get](...keys) {
+    if (keys.length === 0) {
+      return this;
+    }
+    const [key, ...rest] = keys;
+    const value = this.map.get(key);
+    return value instanceof Explorable ? value[get](...rest) : value;
   }
 
   [keys]() {
