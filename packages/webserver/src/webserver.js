@@ -1,4 +1,5 @@
-import { asyncOps } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
+import { asyncGet } from "@explorablegraph/symbols";
 import path from "path";
 
 /**
@@ -47,7 +48,7 @@ export async function getResourceAtPath(exfn, webPath) {
     keys.pop();
     keys.push("index.html");
   }
-  return await asyncOps.traverse(exfn, keys);
+  return await exfn[asyncGet](...keys);
 }
 
 /**
@@ -55,9 +56,10 @@ export async function getResourceAtPath(exfn, webPath) {
  * https.createServer calls, letting you serve an explorable function as a set
  * of pages.
  *
- * @param {any} exfn
+ * @param {any} obj
  */
-export function requestListener(exfn) {
+export function requestListener(obj) {
+  const exfn = AsyncExplorable(obj);
   return async function (request, response) {
     console.log(request.url);
     const obj = await getResourceAtPath(exfn, request.url);

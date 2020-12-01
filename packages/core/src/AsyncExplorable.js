@@ -15,7 +15,7 @@ export default function AsyncExplorable(obj) {
     // Object is already explorable; return as is.
     return obj;
   } else {
-    return builtIns.explorable(obj);
+    return builtIns.asyncExplorable(obj);
   }
 }
 

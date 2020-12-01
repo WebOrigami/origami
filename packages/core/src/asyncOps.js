@@ -70,21 +70,21 @@ export async function structure(exfn) {
   return await mapValues(exfn, () => null);
 }
 
-/**
- * Traverse a graph.
- *
- * @param {any} exfn
- * @param {any[]} path
- * @returns {Promise<any>}
- */
-export async function traverse(exfn, path) {
-  // Take the first element of the path as the next key.
-  const [key, ...rest] = path;
-  // Get the value with that key.
-  const value = await exfn[asyncGet](key);
-  // TODO: Check that value is of same constructor before traversing into it.
-  return value !== undefined && value instanceof AsyncExplorable
-    ? // value is also explorable; traverse into it.
-      await traverse(value, rest)
-    : value;
-}
+// /**
+//  * Traverse a graph.
+//  *
+//  * @param {any} exfn
+//  * @param {any[]} path
+//  * @returns {Promise<any>}
+//  */
+// export async function traverse(exfn, path) {
+//   // Take the first element of the path as the next key.
+//   const [key, ...rest] = path;
+//   // Get the value with that key.
+//   const value = await exfn[asyncGet](key);
+//   // TODO: Check that value is of same constructor before traversing into it.
+//   return value !== undefined && value instanceof AsyncExplorable
+//     ? // value is also explorable; traverse into it.
+//       await traverse(value, rest)
+//     : value;
+// }

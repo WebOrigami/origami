@@ -5,8 +5,8 @@ import Explorable from "./Explorable.js";
 export default function explorablePlainObject(obj) {
   const explorable = {
     // Default `[asyncGet]` invokes `[get]`.
-    async [asyncGet](key) {
-      return this[get](key);
+    async [asyncGet](...keys) {
+      return this[get](...keys);
     },
 
     // Default `[asyncKeys]` invokes `[keys]`.
