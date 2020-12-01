@@ -86,19 +86,4 @@ describe("syncOps", () => {
       },
     });
   });
-
-  it("traverse() traverses a graph", () => {
-    const graph = new Explorable({
-      a: 1,
-      b: 2,
-      c: 3,
-      more: {
-        d: 4,
-        e: 5,
-      },
-    });
-    assert.equal(syncOps.traverse(graph, ["a"]), 1);
-    assert.equal(syncOps.traverse(graph, ["more", "e"]), 5);
-    assert.isUndefined(syncOps.traverse(graph, ["x"]));
-  });
 });

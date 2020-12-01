@@ -88,19 +88,4 @@ describe("asyncOps", () => {
   //   const json = await asyncOps.json();
   //   assert.equal(json, `{"a":"1","b":"2","c":"3","more":{"d":"4","e":"5"}}`);
   // });
-
-  it("traverse() traverses a graph", async () => {
-    const graph = new Explorable({
-      a: 1,
-      b: 2,
-      c: 3,
-      more: {
-        d: 4,
-        e: 5,
-      },
-    });
-    assert.equal(await asyncOps.traverse(graph, ["a"]), 1);
-    assert.equal(await asyncOps.traverse(graph, ["more", "e"]), 5);
-    assert.isUndefined(await asyncOps.traverse(graph, ["x"]));
-  });
 });
