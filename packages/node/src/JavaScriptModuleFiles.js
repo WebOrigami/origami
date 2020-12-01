@@ -1,9 +1,9 @@
 import { asyncGet } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
-import ExplorableFiles from "./ExplorableFiles.js";
+import Files from "./Files.js";
 
-export default class JavaScriptModuleFiles extends ExplorableFiles {
+export default class JavaScriptModuleFiles extends Files {
   // We'd love to be able to defer to the superclass to return the file data
   // to use an import that. Sadly, the `import()` statement can only
   //

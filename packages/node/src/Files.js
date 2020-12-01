@@ -2,7 +2,7 @@ import { AsyncExplorable, asyncGet, asyncKeys } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
-export default class ExplorableFiles extends AsyncExplorable {
+export default class Files extends AsyncExplorable {
   constructor(dirname) {
     super();
     this.dirname = dirname;

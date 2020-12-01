@@ -3,7 +3,7 @@ import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import ExplorableFiles from "../src/ExplorableFiles.js";
+import Files from "../src/Files.js";
 import writeFiles from "../src/writeFiles.js";
 const { assert } = chai;
 
@@ -33,7 +33,7 @@ describe("writeFiles", () => {
     await writeFiles(tempDirectory, files);
 
     // Read them back in.
-    const tempFiles = new ExplorableFiles(tempDirectory);
+    const tempFiles = new Files(tempDirectory);
     const actual = await asyncOps.strings(tempFiles);
     assert.deepEqual(actual, obj);
   });
