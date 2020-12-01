@@ -107,13 +107,14 @@ export function structure(exfn) {
  * @returns {Promise<any>}
  */
 export function traverse(exfn, path) {
-  // Take the first element of the path as the next key.
-  const [key, ...rest] = path;
-  // Get the value with that key.
-  const value = exfn[get](key);
-  // TODO: Check that value is of same constructor before traversing into it.
-  return value !== undefined && value instanceof Explorable
-    ? // value is also explorable; traverse into it.
-      traverse(value, rest)
-    : value;
+  return exfn[get](...path);
+  // // Take the first element of the path as the next key.
+  // const [key, ...rest] = path;
+  // // Get the value with that key.
+  // const value = exfn[get](key);
+  // // TODO: Check that value is of same constructor before traversing into it.
+  // return value !== undefined && value instanceof Explorable
+  //   ? // value is also explorable; traverse into it.
+  //     traverse(value, rest)
+  //   : value;
 }

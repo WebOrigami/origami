@@ -40,6 +40,22 @@ describe("explorablePlainObject", () => {
     assert.deepEqual([...obj], ["a", "b", "c", "more", "f", "g"]);
   });
 
+  it("can traverse a path of keys", () => {
+    const obj = new explorablePlainObject({
+      a1: 1,
+      a2: {
+        b1: 2,
+        b2: {
+          c1: 3,
+          c2: 4,
+        },
+      },
+    });
+    assert.equal(obj[get]("a1"), 1);
+    assert.equal(obj[get]("a2", "b2", "c2"), 4);
+    assert.equal(obj[get]("a2", "doesntexist", "c2"), undefined);
+  });
+
   it("can async explore a plain JavaScript object", async () => {
     const obj = new explorablePlainObject({
       a: 1,

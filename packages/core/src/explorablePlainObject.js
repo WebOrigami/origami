@@ -15,16 +15,27 @@ export default function explorablePlainObject(obj) {
     },
 
     /**
-     * Return the value for the corresponding key.
+     * Return the value for the corresponding path of keys.
      *
-     * @param {any} key
+     * @param {any[]} keys
      */
-    [get](key) {
+    [get](...keys) {
       const obj = Object.getPrototypeOf(this);
-      // If source object provides its own get method, prefer that to our
-      // default. Also note that the value might be on this object -- an
-      // extension of obj -- or on the original obj.
-      const value = obj[get] ? obj[get](key) : this[key] || obj[key];
+
+      // If source object provides its own get method, use that.
+      if (obj[get]) {
+        return obj[get](...keys);
+      }
+
+      // Traverse the keys.
+      let value = this;
+      while (value !== undefined && keys.length > 0) {
+        const key = keys.shift();
+        // The key might be on this object -- an extension of obj -- or on the
+        // original obj.
+        value = value[key];
+      }
+
       return isPlainObject(value) ? explorablePlainObject(value) : value;
     },
 
