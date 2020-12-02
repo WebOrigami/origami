@@ -5,6 +5,7 @@ import { evaluate } from "@explorablegraph/exlang";
 // import { asyncGet } from "@explorablegraph/core";
 import process from "process";
 import YAML from "yaml";
+import serve from "./commands/serve.js";
 import { loadGraphFromArgument, textFromReadable } from "./shared.js";
 
 // import commands from "./commands.js";
@@ -48,6 +49,7 @@ async function main(...args) {
       const obj = JSON.parse(text);
       return Explorable(obj);
     },
+    serve,
     stdin: async () => {
       return await textFromReadable(process.stdin);
     },
