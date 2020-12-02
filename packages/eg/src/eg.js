@@ -5,7 +5,8 @@ import { evaluate } from "@explorablegraph/exlang";
 // import { asyncGet } from "@explorablegraph/core";
 import process from "process";
 import YAML from "yaml";
-import { loadGraphFromArgument } from "./shared.js";
+import { loadGraphFromArgument, textFromReadable } from "./shared.js";
+
 // import commands from "./commands.js";
 
 // async function invoke(command, ...args) {
@@ -28,12 +29,7 @@ import { loadGraphFromArgument } from "./shared.js";
 //   }
 // }
 
-export default async function yaml(graphArg) {
-  if (!graphArg) {
-    console.error(`usage:\n${yaml.usage}`);
-    return;
-  }
-  const graph = await loadGraphFromArgument(graphArg);
+export default async function yaml(graph) {
   const obj = await asyncOps.strings(graph);
   const text = YAML.stringify(obj, null, 2);
   return text;
@@ -42,14 +38,28 @@ export default async function yaml(graphArg) {
 async function main(...args) {
   const source = args.join(" ");
   const scope = Explorable({
-    yaml,
-    toUpperCase: (text) => text.toUpperCase(),
     file1: () =>
       "/Users/jan/Source/ExplorableGraph/explorable/packages/eg/test/fixtures/letters.js",
     file2: () => "/Users/jan/Source/ExplorableGraph/hello/src/graphs/2.js",
+    import: async (file) => {
+      return await loadGraphFromArgument(file);
+    },
+    parse: (text) => {
+      const obj = JSON.parse(text);
+      return Explorable(obj);
+    },
+    stdin: async () => {
+      return await textFromReadable(process.stdin);
+    },
+    toUpperCase: (text) => text.toUpperCase(),
+    yaml,
   });
   const result = await evaluate(source, scope, "**input**");
-  if (result !== undefined) {
+  if (result instanceof Explorable) {
+    const obj = await asyncOps.strings(result);
+    const text = JSON.stringify(obj, null, 2);
+    console.log(text);
+  } else if (result !== undefined) {
     console.log(result);
   }
 }

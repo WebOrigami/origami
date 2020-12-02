@@ -49,7 +49,7 @@ export async function loadGraphFromModule(modulePath) {
   return value;
 }
 
-function textFromReadable(readable) {
+export function textFromReadable(readable) {
   return new Promise((resolve) => {
     const chunks = [];
 
