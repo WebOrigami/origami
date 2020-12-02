@@ -44,7 +44,9 @@ async function main(...args) {
   const scope = Explorable({
     yaml,
     toUpperCase: (text) => text.toUpperCase(),
-    testfile: () => `/Users/jan/source/ExplorableGraph/hello/src/graphs/1.js`,
+    file1: () =>
+      "/Users/jan/Source/ExplorableGraph/explorable/packages/eg/test/fixtures/letters.js",
+    file2: () => "/Users/jan/Source/ExplorableGraph/hello/src/graphs/2.js",
   });
   const result = await evaluate(source, scope, "**input**");
   if (result !== undefined) {
