@@ -1,4 +1,4 @@
-import { asyncGet } from "@explorablegraph/symbols";
+import { asyncGet, get } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
 
 /**
@@ -24,7 +24,8 @@ export async function keys(exfn) {
 export async function mapValues(exfn, mapFn) {
   const result = {};
   for await (const key of exfn) {
-    const value = await exfn[asyncGet](key);
+    const getFn = exfn[get] ? get : asyncGet;
+    const value = await exfn[getFn](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
       value !== undefined && value instanceof AsyncExplorable
