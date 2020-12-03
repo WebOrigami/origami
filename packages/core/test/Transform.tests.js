@@ -1,29 +1,35 @@
+import { asyncGet } from "@explorablegraph/symbols";
 import chai from "chai";
-import TransformGraph from "../src/TransformGraph.js";
+import * as asyncOps from "../src/asyncOps.js";
+import Transform from "../src/Transform.js";
 const { assert } = chai;
 
 // Sample class-based transform capitalizes keys and objects from a source
 // graph.
-class CapitalizeGraph extends TransformGraph {
-  sourceKeyForVirtualKey(key) {
-    return key >= "A" && key <= "Z" ? key.toLowerCase() : null;
+class Capitalize extends Transform {
+  innerKeyForOuterKey(outerKey) {
+    return outerKey >= "A" && outerKey <= "Z"
+      ? outerKey.toLowerCase()
+      : undefined;
   }
-  virtualKeyForSourceKey(key) {
-    return key >= "a" && key <= "z" ? key.toUpperCase() : null;
+  outerKeyForInnerKey(innerKey) {
+    return innerKey >= "a" && innerKey <= "z"
+      ? innerKey.toUpperCase()
+      : undefined;
   }
   async transform(obj) {
     return obj.toUpperCase();
   }
 }
 
-describe("TransformGraph", () => {
+describe.only("Transform", () => {
   it("does nothing by default", async () => {
-    const graph = new TransformGraph({
+    const transform = new Transform({
       a: "The letter a",
       b: "The letter b",
       c: "The letter c",
     });
-    assert.deepEqual(await graph.resolve(), {
+    assert.deepEqual(await asyncOps.plain(transform), {
       a: "The letter a",
       b: "The letter b",
       c: "The letter c",
@@ -32,34 +38,34 @@ describe("TransformGraph", () => {
 
   it("can transform keys", async () => {
     // Transform capitalizes the source keys: A <- a.
-    const graph = new TransformGraph(
+    const transform = new Transform(
       {
         a: "The letter a",
         b: "The letter b",
         c: "The letter c",
       },
       {
-        sourceKeyForVirtualKey(key) {
-          return key >= "A" && key <= "Z" ? key.toLowerCase() : null;
+        innerKeyForOuterKey(key) {
+          return key >= "A" && key <= "Z" ? key.toLowerCase() : undefined;
         },
-        virtualKeyForSourceKey(key) {
-          return key >= "a" && key <= "z" ? key.toUpperCase() : null;
+        outerKeyForInnerKey(key) {
+          return key >= "a" && key <= "z" ? key.toUpperCase() : undefined;
         },
       }
     );
     // The source keys aren't directly available.
-    assert.equal(await graph.get("a"), undefined);
+    assert.equal(await transform[asyncGet]("a"), undefined);
     // The transformed keys are available.
-    assert.deepEqual(await graph.resolve(), {
+    assert.deepEqual(await asyncOps.plain(transform), {
       A: "The letter a",
       B: "The letter b",
       C: "The letter c",
     });
   });
 
-  it("can transform objects", async () => {
-    // Transform capitalizes the source keys: A <- a.
-    const graph = new TransformGraph(
+  it("can transform values", async () => {
+    // Transform capitalizes the inner keys: A <- a.
+    const transform = new Transform(
       {
         a: "The letter a",
         b: "The letter b",
@@ -72,22 +78,22 @@ describe("TransformGraph", () => {
       }
     );
     // The transformed keys are available.
-    assert.deepEqual(await graph.resolve(), {
+    assert.deepEqual(await asyncOps.plain(transform), {
       a: "THE LETTER A",
       b: "THE LETTER B",
       c: "THE LETTER C",
     });
   });
 
-  it("supports transform subclasses", async () => {
+  it("supports transforms as subclasses", async () => {
     // Transform capitalizes the source keys: A <- a.
-    const graph = new CapitalizeGraph({
+    const capitalize = new Capitalize({
       a: "The letter a",
       b: "The letter b",
       c: "The letter c",
     });
     // The transformed keys are available.
-    assert.deepEqual(await graph.resolve(), {
+    assert.deepEqual(await asyncOps.plain(capitalize), {
       A: "THE LETTER A",
       B: "THE LETTER B",
       C: "THE LETTER C",
