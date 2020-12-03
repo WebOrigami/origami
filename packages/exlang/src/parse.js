@@ -5,7 +5,11 @@ export default function parseExpression(text) {
   const trimmed = text.trim();
   const { open, close } = getOutermostParenthesis(trimmed);
   let result;
-  if (open >= 0 || close > 0 || close === trimmed.length - 1) {
+  if (trimmed.startsWith(":") && trimmed.endsWith(".js")) {
+    // Recognized a module import.
+    const moduleName = trimmed.substring(1);
+    result = ["defaultModuleExport", moduleName];
+  } else if (open >= 0 || close > 0 || close === trimmed.length - 1) {
     // Recognized a function call.
     const fnName = trimmed.slice(0, open).trim();
     const argText = trimmed.substring(open + 1, close).trim();

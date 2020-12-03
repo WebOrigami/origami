@@ -3,7 +3,7 @@ import { argumentMarker } from "../src/execute.js";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
@@ -22,5 +22,10 @@ describe("parse", () => {
   it("recognizes a nested function call", () => {
     const parsed = parse("a(b(c))");
     assert.deepEqual(parsed, ["a", ["b", "c"]]);
+  });
+
+  it("recognizes a module import", () => {
+    const parsed = parse(":foo.js");
+    assert.deepEqual(parsed, ["defaultModuleExport", "foo.js"]);
   });
 });

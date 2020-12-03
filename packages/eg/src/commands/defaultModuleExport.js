@@ -1,7 +1,7 @@
 import path from "path";
 import process from "process";
 
-export default async function defaultExport(relativePath) {
+export default async function defaultModuleExport(relativePath) {
   const resolvedPath = path.resolve(process.cwd(), relativePath);
   let module;
   try {
