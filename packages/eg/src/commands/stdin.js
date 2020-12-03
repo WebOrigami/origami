@@ -21,3 +21,5 @@ function textFromReadable(readable) {
     });
   });
 }
+
+stdin.usage = `stdin()                                Returns the standard input stream as text`;

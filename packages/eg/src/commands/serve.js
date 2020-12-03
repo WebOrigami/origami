@@ -9,4 +9,4 @@ export default async function serve(graph, port = defaultPort) {
   console.log(`Server running at http://localhost:${port}`);
 }
 
-serve.usage = `eg serve <graph> [port]       Start a local web server for the graph`;
+serve.usage = `serve(graph)                           Start a local web server for the graph`;
