@@ -1,4 +1,4 @@
-import { get as asyncGet } from "@explorablegraph/core";
+import { asyncGet } from "@explorablegraph/core";
 
 // Link an array of parsed nodes, which are either <terminal> or [fn, args].
 // Return the equivalent array in which each key has been replaced with its value in

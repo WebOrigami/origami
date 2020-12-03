@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { asyncGet } from "@explorablegraph/core";
+import { asyncGet, asyncOps, Explorable } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import process from "process";
-import commands from "./commands.js";
+import commands from "./builtins.js";
 
 async function main(...args) {
   const source = args.join(" ").trim();
@@ -11,8 +11,8 @@ async function main(...args) {
     await showUsage(commands);
   }
   const result = await evaluate(source, commands, "**input**");
-  if (result && commands.stdout) {
-    await commands.stdout(result);
+  if (result) {
+    await stdout(result);
   }
 }
 
@@ -24,6 +24,19 @@ async function showUsage(commands) {
       console.log(command.usage);
     }
   }
+}
+
+export default async function stdout(obj) {
+  let output;
+  if (obj === undefined) {
+    return;
+  } else if (obj instanceof Explorable) {
+    const strings = await asyncOps.strings(obj);
+    output = JSON.stringify(strings, null, 2);
+  } else {
+    output = obj;
+  }
+  console.log(output);
 }
 
 // Process command line arguments
