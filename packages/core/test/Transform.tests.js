@@ -22,7 +22,7 @@ class Capitalize extends Transform {
   }
 }
 
-describe.only("Transform", () => {
+describe("Transform", () => {
   it("does nothing by default", async () => {
     const transform = new Transform({
       a: "The letter a",
