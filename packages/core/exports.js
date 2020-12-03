@@ -6,6 +6,7 @@ export { default as ExplorableArray } from "./src/ExplorableArray.js";
 export { default as ExplorableMap } from "./src/ExplorableMap.js";
 export { default as explorablePlainObject } from "./src/explorablePlainObject.js";
 export { default as FirstMatch } from "./src/FirstMatch.js";
+export { default as Transform } from "./src/Transform.js";
 
 import * as asyncOpsImport from "./src/asyncOps.js";
 import * as syncOpsImport from "./src/syncOps.js";

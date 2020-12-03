@@ -4,9 +4,10 @@ import path from "path";
 import Files from "./Files.js";
 
 export default class JavaScriptModuleFiles extends Files {
-  // We'd love to be able to defer to the superclass to return the file data
-  // to use an import that. Sadly, the `import()` statement can only
-  //
+  // We'd love to be able to defer to the superclass to return the file data and
+  // then do a dynamic import from its data. Sadly, the `import()` statement can
+  // only work with file paths, not data or streams. So we override asyncGet to
+  // do an import instead of a readFile.
   async [asyncGet](key) {
     const filePath = path.join(this.dirname, key);
     let stats;
