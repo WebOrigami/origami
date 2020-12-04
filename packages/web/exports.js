@@ -1,1 +1,1 @@
-export { default as indexPages } from "./src/indexPages.js";
+export { default as IndexPages } from "./src/IndexPages.js";

@@ -1,5 +1,7 @@
 import { IndexPages } from "@explorablegraph/web";
 
-IndexPages.usage = `IndexPages()                           Creates default index.html pages for node's keys`;
+export default function createIndexPage(graph) {
+  return new IndexPages(graph);
+}
 
-export default IndexPages;
+createIndexPage.usage = `IndexPages()                           Creates default index.html pages for node's keys`;

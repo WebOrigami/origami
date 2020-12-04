@@ -17,6 +17,7 @@ export default class Files extends AsyncExplorable {
   async [asyncGet](...keys) {
     // We can traverse the keys by joining them into a path.
     const objPath = path.join(this.dirname, ...keys);
+
     let stats;
     try {
       stats = await fs.stat(objPath);
