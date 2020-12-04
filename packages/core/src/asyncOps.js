@@ -70,3 +70,24 @@ export async function strings(exfn) {
 export async function structure(exfn) {
   return await mapValues(exfn, () => null);
 }
+
+/**
+ * Performs a depth-first traversal of the explorable.
+ *
+ * Note: This does not check for or prevent cycles.
+ *
+ * @param {*} exfn
+ * @param {function} callback
+ * @param {[any[]]} route
+ */
+export async function traversal(exfn, callback, route = []) {
+  for await (const key of exfn) {
+    const extendedRoute = [...route, key];
+    const value = await exfn[get](key);
+    const interior = value instanceof AsyncExplorable;
+    callback(extendedRoute, interior, value);
+    if (interior) {
+      await traversal(value, callback, extendedRoute);
+    }
+  }
+}

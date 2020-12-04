@@ -90,7 +90,7 @@ describe.only("explorablePlainObject", () => {
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
 
-  it.only("can set a value", () => {
+  it("can set a value", () => {
     const obj = new explorablePlainObject({
       a: 1,
       b: 2,
@@ -123,7 +123,7 @@ describe.only("explorablePlainObject", () => {
     });
   });
 
-  it.only("set can delete a key if the value is explicitly undefined", () => {
+  it("set can delete a key if the value is explicitly undefined", () => {
     const obj = new explorablePlainObject({
       a: 1,
       b: 2,
