@@ -26,12 +26,13 @@ export default class IndexPages extends AsyncExplorable {
 
   async [asyncGet](...keys) {
     const value = await this.inner[asyncGet](...keys);
+    const lastKey = keys[keys.length - 1];
 
     let indexParent;
     if (value instanceof AsyncExplorable) {
       // Value is explorable, implicitly return an index for it.
       indexParent = value;
-    } else if (keys[keys.length - 1] === "index.html" && value === undefined) {
+    } else if (lastKey === "index.html" && value === undefined) {
       // Last key was explicitly "index.html", and the inner graph doesn't have a value
       // for it, return an index for the parent.
       const route = keys.slice(0, keys.length - 1);
@@ -44,9 +45,22 @@ export default class IndexPages extends AsyncExplorable {
       return await defaultIndexPage(indexParent);
     }
 
+    if (lastKey === ".keys.json" && value === undefined) {
+      // Return default .keys.json page.
+      const route = keys.slice(0, keys.length - 1);
+      const parent =
+        route.length === 0 ? this.inner : await this.inner[asyncGet](...route);
+      return await defaultKeysJson(parent);
+    }
+
     // No work for us to do.
     return value;
   }
+}
+
+async function defaultKeysJson(graph) {
+  const keys = await asyncOps.keys(graph);
+  return JSON.stringify(keys, null, 2);
 }
 
 async function defaultIndexPage(graph) {

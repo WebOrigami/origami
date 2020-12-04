@@ -3,7 +3,7 @@ import chai from "chai";
 import IndexPages from "../src/IndexPages.js";
 const { assert } = chai;
 
-describe.only("IndexPages", () => {
+describe("IndexPages", () => {
   it("adds index.html to keys for a graph that doesn't have one", async () => {
     const fixture = new IndexPages({
       a: 1,
@@ -39,7 +39,7 @@ describe.only("IndexPages", () => {
     // Request top index
     const index1 = await fixture[asyncGet]("index.html");
     assert(index1.includes(`<a href="a">a</a>`));
-    assert(index1.includes(`<a href="more/">more</a>`));
+    assert(index1.includes(`<a href="more/">more/</a>`));
 
     // Request sub index
     const index2 = await fixture[asyncGet]("more", "index.html");
