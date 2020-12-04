@@ -3,7 +3,7 @@ import { argumentMarker } from "../src/execute.js";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");

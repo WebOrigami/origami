@@ -1,8 +1,9 @@
 {
   "name": "@explorablegraph/web",
-  "description": "Explorable functions for general web development",
+  "description": "Explorable functions for web features (both server-side and client-side)",
   "version": "0.0.1",
   "type": "module",
+  "main": "./exports.js",
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "8.2.1",
