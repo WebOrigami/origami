@@ -1,4 +1,4 @@
-import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys, get, keys, set } from "@explorablegraph/symbols";
 import { isPlainObject } from "./builtIns.js";
 import Explorable from "./Explorable.js";
 
@@ -18,7 +18,7 @@ export default function explorablePlainObject(obj) {
     /**
      * Return the value at the corresponding path of keys.
      *
-     * @param {any[]} keys
+     * @param {...any} keys
      */
     [get](...keys) {
       const obj = Object.getPrototypeOf(this);
@@ -46,6 +46,46 @@ export default function explorablePlainObject(obj) {
         : isPlainObject(value)
         ? explorablePlainObject(value)
         : value;
+    },
+
+    /**
+     * Add or overwrite the value at a given location in the graph. Given a set
+     * of arguments, take the last argument as a value, and the ones before it
+     * as a path. If only one argument is supplied, use that as a key, and take
+     * the value as undefined.
+     *
+     * @param  {...any} args
+     */
+    [set](...args) {
+      if (args.length === 0) {
+        // No-op
+        return;
+      }
+      const value = args.length === 1 ? undefined : args.pop();
+      const keys = args;
+
+      // Traverse the keys
+      let current = obj;
+      while (keys.length > 1) {
+        const key = keys.shift();
+        const next = current[key];
+        if (isPlainObject(next)) {
+          // The next node is a subobject; traverse into it.
+          current = next;
+        } else {
+          // Overwrite path
+          next = {};
+          current[key] = next;
+        }
+        current = next;
+      }
+
+      const key = keys.shift();
+      if (value === undefined) {
+        delete current[key];
+      } else {
+        current[key] = value;
+      }
     },
 
     // @ts-ignore

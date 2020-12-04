@@ -1,11 +1,12 @@
-import { asyncGet, get } from "@explorablegraph/symbols";
+import { asyncGet, get, set } from "@explorablegraph/symbols";
 import chai from "chai";
 import AsyncExplorable from "../src/AsyncExplorable.js";
 import Explorable from "../src/Explorable.js";
 import explorablePlainObject from "../src/explorablePlainObject.js";
+import * as syncOps from "../src/syncOps.js";
 const { assert } = chai;
 
-describe("explorablePlainObject", () => {
+describe.only("explorablePlainObject", () => {
   it("can explore a plain JavaScript object", () => {
     const original = {
       a: 1,
@@ -87,5 +88,66 @@ describe("explorablePlainObject", () => {
       keys.push(key);
     }
     assert.deepEqual(keys, ["a", "b", "c"]);
+  });
+
+  it.only("can set a value", () => {
+    const obj = new explorablePlainObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+
+    // Set key, value.
+    obj[set]("a", 5);
+
+    // New key.
+    obj[set]("f", 7);
+
+    // Set deep key, value.
+    obj[set]("more", "g", 8);
+
+    assert.deepEqual(syncOps.plain(obj), {
+      a: 5,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+        g: 8,
+      },
+      f: 7,
+    });
+  });
+
+  it.only("set can delete a key if the value is explicitly undefined", () => {
+    const obj = new explorablePlainObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+
+    // One arg deletes key.
+    obj[set]("a");
+
+    // Explicit undefined value deletes key.
+    obj[set]("b", undefined);
+
+    // Deep deletion
+    obj[set]("more", "d", undefined);
+
+    assert.deepEqual(syncOps.plain(obj), {
+      c: 3,
+      more: {
+        e: 5,
+      },
+    });
   });
 });
