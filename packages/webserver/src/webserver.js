@@ -56,13 +56,26 @@ export async function getResourceAtPath(exfn, webPath) {
  * https.createServer calls, letting you serve an explorable function as a set
  * of pages.
  *
- * @param {any} obj
+ * @param {any} arg
  */
-export function requestListener(obj) {
-  const exfn = AsyncExplorable(obj);
+export function requestListener(arg) {
+  // Cast string/JSON arguments to objects.
+  let obj;
+  if (typeof arg === "string" && arg.startsWith("{")) {
+    // Interpret as JSON
+    obj = JSON.parse(arg);
+  } else if (typeof arg === "string") {
+    // Serve single string
+    obj = { "index.html": arg };
+  } else {
+    obj = arg;
+  }
+
+  const resources = AsyncExplorable(obj);
+
   return async function (request, response) {
     console.log(request.url);
-    const obj = await getResourceAtPath(exfn, request.url);
+    const obj = await getResourceAtPath(resources, request.url);
     if (obj) {
       const content = textOrObject(obj);
       const mediaType = inferMediaType(request.url, content);
