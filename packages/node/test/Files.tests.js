@@ -78,7 +78,7 @@ describe("Files", () => {
     await removeTempDirectory();
   });
 
-  it("can write out multiple files via asyncOps.update", async () => {
+  it.skip("can write out multiple files via asyncOps.update", async () => {
     await createTempDirectory();
 
     // Create a tiny set of "files".

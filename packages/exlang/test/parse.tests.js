@@ -3,7 +3,7 @@ import { argumentMarker } from "../src/execute.js";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
@@ -33,4 +33,19 @@ describe.only("parse", () => {
     const parsed = parse(":foo.js");
     assert.deepEqual(parsed, ["defaultModuleExport", "foo.js"]);
   });
+
+  it("recognizes a quoted string", () => {
+    const parsed = parse(`"Hello, world."`);
+    assert.deepEqual(parsed, "Hello, world.");
+  });
+
+  it("recognizes a quoted string argument", () => {
+    const parsed = parse(`foo("Hello, world.")`);
+    assert.deepEqual(parsed, ["foo", "Hello, world."]);
+  });
+
+  // it.skip("recognizes a JSON literal", () => {
+  //   const parsed = parse(`{ "foo": "bar" }`);
+  //   assert.deepEqual(parsed, { foo: "bar " });
+  // });
 });

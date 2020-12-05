@@ -1,6 +1,11 @@
 import { argumentMarker } from "./execute.js";
 
-const recognizers = [recognizeModuleImport, recognizeFunction, recognizeMarker];
+const recognizers = [
+  recognizeModuleImport,
+  recognizeFunction,
+  recognizeQuotedString,
+  recognizeMarker,
+];
 
 // Given a string and a graph of functions, return a parsed tree.
 export default function parseExpression(text) {
@@ -49,6 +54,13 @@ function recognizeModuleImport(text) {
   }
 }
 
+function recognizeQuotedString(text) {
+  if (text.startsWith('"') && text.endsWith('"')) {
+    const string = text.substring(1, text.length - 1);
+    return string;
+  }
+}
+
 // Given text that might be a function call, look for the outermost open and
 // close parenthesis. If found, return `open` and `close` indices giving the
 // location of those parenthesis. Also look for commas separating arguments;
@@ -59,28 +71,37 @@ function findArguments(text) {
   const commas = [];
   let openParenIndex;
   let closeParenIndex;
+  let inQuotedString = false;
   let depth = 0;
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     switch (c) {
       case "(":
-        depth++;
-        if (openParenIndex === undefined) {
-          openParenIndex = i;
+        if (!inQuotedString) {
+          depth++;
+          if (openParenIndex === undefined) {
+            openParenIndex = i;
+          }
         }
         break;
 
       case ")":
-        if (depth === 0) {
-          // Hit a close parenthesis before an open parenthesis.
-          return noMatch;
+        if (!inQuotedString) {
+          if (depth === 0) {
+            // Hit a close parenthesis before an open parenthesis.
+            return noMatch;
+          }
+          depth--;
+          closeParenIndex = i;
         }
-        depth--;
-        closeParenIndex = i;
+        break;
+
+      case '"':
+        inQuotedString = !inQuotedString;
         break;
 
       case ",":
-        if (openParenIndex >= 0 && depth === 1) {
+        if (!inQuotedString && openParenIndex >= 0 && depth === 1) {
           // Hit a comma in the argument list.
           // Record its position relative to the opening parenthesis.
           commas.push(i - openParenIndex);
