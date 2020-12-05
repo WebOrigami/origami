@@ -47,4 +47,8 @@ args.shift(); // name of this script file
 while (args[0] === "") {
   args.shift();
 }
-await main(...args);
+try {
+  await main(...args);
+} catch (error) {
+  console.error(error);
+}

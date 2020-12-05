@@ -69,11 +69,9 @@ export default class Files extends AsyncExplorable {
       // to the containing folder with this explorable Files tree.
       const filename = args.pop();
 
+      // Ensure the containing folder exists.
       const folder = path.join(this.dirname, ...args);
-      if (args.length > 0) {
-        // Ensure the containing folder exists.
-        await fs.mkdir(folder, { recursive: true });
-      }
+      await fs.mkdir(folder, { recursive: true });
 
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);
