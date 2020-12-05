@@ -3,7 +3,7 @@ import { argumentMarker } from "../src/execute.js";
 import parse from "../src/parse.js";
 const { assert } = chai;
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
@@ -17,6 +17,11 @@ describe("parse", () => {
   it("recognizes a function call", () => {
     const parsed = parse(" fn ( arg ) ");
     assert.deepEqual(parsed, ["fn", "arg"]);
+  });
+
+  it.skip("can parse a function call with multiple arguments", () => {
+    const parsed = parse("fn(a, b(c), d)");
+    assert.deepEqual(parsed, ["fn", "a", ["b", "c"], "d"]);
   });
 
   it("recognizes a nested function call", () => {
