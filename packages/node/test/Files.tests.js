@@ -1,4 +1,9 @@
-import { asyncGet, asyncOps, asyncSet } from "@explorablegraph/core";
+import {
+  asyncGet,
+  asyncOps,
+  asyncSet,
+  explorablePlainObject,
+} from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -55,7 +60,7 @@ describe.only("Files", () => {
     assert.equal(String(file), "The letter E");
   });
 
-  it.only("can write out a file via [asyncSet]", async () => {
+  it("can write out a file via [asyncSet]", async () => {
     await createTempDirectory();
 
     // Write out a file.
@@ -73,7 +78,7 @@ describe.only("Files", () => {
     await removeTempDirectory();
   });
 
-  it("can write out multiple files via asyncOps.update", async () => {
+  it.only("can write out multiple files via asyncOps.update", async () => {
     await createTempDirectory();
 
     // Create a tiny set of "files".
@@ -83,7 +88,7 @@ describe.only("Files", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new Explorable(obj);
+    const files = new explorablePlainObject(obj);
 
     // Write out files.
     const tempFiles = new Files(tempDirectory);

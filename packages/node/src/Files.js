@@ -22,8 +22,8 @@ export default class Files extends AsyncExplorable {
   async [asyncGet](...keys) {
     // We can traverse the keys by joining them into a path.
     const objPath = path.join(this.dirname, ...keys);
-    const objStat = stat(objPath);
-    const value = objStat.isDirectory()
+    const stats = await stat(objPath);
+    const value = stats.isDirectory()
       ? new this.constructor(objPath)
       : await fs.readFile(objPath);
     return value;
@@ -59,9 +59,11 @@ export default class Files extends AsyncExplorable {
       // to the containing folder with this explorable Files tree.
       const filename = args.pop();
 
-      // Ensure the containing folder exists.
       const folder = path.join(this.dirname, ...args);
-      await fs.mkdir(folder, { recursive: true });
+      if (args.length > 0) {
+        // Ensure the containing folder exists.
+        await fs.mkdir(folder, { recursive: true });
+      }
 
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);
@@ -74,7 +76,7 @@ export default class Files extends AsyncExplorable {
 // If it does not exist, return undefined.
 async function stat(filePath) {
   try {
-    return await fs.stat(objPath);
+    return await fs.stat(filePath);
   } catch (error) {
     if (error.code === "ENOENT" /* File not found */) {
       return undefined;
