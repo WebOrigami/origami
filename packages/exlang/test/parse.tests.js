@@ -19,7 +19,7 @@ describe.only("parse", () => {
     assert.deepEqual(parsed, ["fn", "arg"]);
   });
 
-  it.skip("can parse a function call with multiple arguments", () => {
+  it("can parse a function call with multiple arguments", () => {
     const parsed = parse("fn(a, b(c), d)");
     assert.deepEqual(parsed, ["fn", "a", ["b", "c"], "d"]);
   });

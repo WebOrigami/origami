@@ -17,13 +17,21 @@ export default function parseExpression(text) {
 }
 
 function recognizeFunction(text) {
-  const { open, close } = getOutermostParenthesis(text);
+  const { open, close, commas } = findArguments(text);
   if (open >= 0 || close > 0 || close === text.length - 1) {
     // Recognized a function call.
     const fnName = text.slice(0, open).trim();
     const argText = text.substring(open + 1, close).trim();
-    const parsedArgs = parseExpression(argText);
-    return [fnName, parsedArgs];
+    const argStarts = [-1, ...commas];
+    const args = argStarts.map((argStart, index) =>
+      index === argStarts.length - 1
+        ? // Remainder of argument text
+          argText.substring(argStart + 1)
+        : // Argument text goes to start of next argument
+          argText.substring(argStart + 1, argStarts[index + 1] - 1)
+    );
+    const parsedArgs = args.map((arg) => parseExpression(arg));
+    return [fnName, ...parsedArgs];
   }
 }
 
@@ -41,8 +49,14 @@ function recognizeModuleImport(text) {
   }
 }
 
-function getOutermostParenthesis(text) {
+// Given text that might be a function call, look for the outermost open and
+// close parenthesis. If found, return `open` and `close` indices giving the
+// location of those parenthesis. Also look for commas separating arguments;
+// return a `commas` array indicating the location of those commas relative to
+// the open parenthesis.
+function findArguments(text) {
   const noMatch = { open: -1, close: -1 };
+  const commas = [];
   let openParenIndex;
   let closeParenIndex;
   let depth = 0;
@@ -64,6 +78,14 @@ function getOutermostParenthesis(text) {
         depth--;
         closeParenIndex = i;
         break;
+
+      case ",":
+        if (openParenIndex >= 0 && depth === 1) {
+          // Hit a comma in the argument list.
+          // Record its position relative to the opening parenthesis.
+          commas.push(i - openParenIndex);
+        }
+        break;
     }
   }
 
@@ -72,5 +94,5 @@ function getOutermostParenthesis(text) {
     return noMatch;
   }
 
-  return { open: openParenIndex, close: closeParenIndex };
+  return { open: openParenIndex, close: closeParenIndex, commas };
 }
