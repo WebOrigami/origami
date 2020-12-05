@@ -49,9 +49,19 @@ export default class Files extends AsyncExplorable {
 
     if (value === undefined) {
       // Delete file or directory.
-      // const objPath = path.join(this.dirname, ...args);
+      const objPath = path.join(this.dirname, ...args);
+      const stats = await stat(objPath);
+      if (stats?.isDirectory()) {
+        // Delete directory.
+        await fs.rmdir(objPath, { recursive: true });
+      } else if (stats) {
+        // Delete file.
+        await fs.unlink(objPath);
+      }
     } else if (value === null) {
       // Create directory.
+      const folder = path.join(this.dirname, ...args);
+      await fs.mkdir(folder, { recursive: true });
     } else {
       // Write out value as the contents of a file. The file name is the last
       // arg in the current set (we've already removed the value from the end of
