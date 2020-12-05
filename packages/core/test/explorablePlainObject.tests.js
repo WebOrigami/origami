@@ -6,7 +6,7 @@ import explorablePlainObject from "../src/explorablePlainObject.js";
 import * as syncOps from "../src/syncOps.js";
 const { assert } = chai;
 
-describe.only("explorablePlainObject", () => {
+describe("explorablePlainObject", () => {
   it("can explore a plain JavaScript object", () => {
     const original = {
       a: 1,

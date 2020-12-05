@@ -6,41 +6,6 @@ import explorablePlainObject from "../src/explorablePlainObject.js";
 const { assert } = chai;
 
 describe("asyncOps", () => {
-  // it.only("update(target, source) copies source graph into corresponding target graph", async () => {
-  //   const target = explorablePlainObject({
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //     more: {
-  //       d: 4,
-  //       e: 5,
-  //     },
-  //   });
-  //   const source = explorablePlainObject({
-  //     a: 6,
-  //     b: undefined,
-  //     f: 7,
-  //     more: {
-  //       d: 8,
-  //       e: {
-  //         g: 9,
-  //       },
-  //     },
-  //   });
-  //   await asyncOps.update(target, source);
-  //   assert.deepEqual(asyncOps.plain(target), {
-  //     a: 6,
-  //     c: 3,
-  //     more: {
-  //       d: 8,
-  //       e: {
-  //         g: 9,
-  //       },
-  //     },
-  //     f: 7,
-  //   });
-  // });
-
   it("keys returns keys for an async exfn", async () => {
     const exfn = {
       async [asyncGet]() {},
@@ -110,7 +75,7 @@ describe("asyncOps", () => {
     });
   });
 
-  it.only("traversal() invokes a callback with each node in depth-first order", async () => {
+  it("traversal() invokes a callback with each node in depth-first order", async () => {
     const graph = new explorablePlainObject({
       a: 1,
       b: 2,
@@ -144,5 +109,45 @@ describe("asyncOps", () => {
       { keys: ["more", "d"], interior: false, value: 4 },
       { keys: ["more", "e"], interior: false, value: 5 },
     ]);
+  });
+
+  it("update(target, source) copies source graph into corresponding target graph", async () => {
+    const target = explorablePlainObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const source = explorablePlainObject({
+      a: 6,
+      b: undefined,
+      f: 7,
+      more: {
+        d: 8,
+        e: {
+          g: 9,
+        },
+      },
+    });
+    const result = await asyncOps.update(target, source);
+
+    // update should return target
+    assert.equal(result, target);
+
+    // Confirm target has been updated
+    assert.deepEqual(await asyncOps.plain(target), {
+      a: 6,
+      c: 3,
+      more: {
+        d: 8,
+        e: {
+          g: 9,
+        },
+      },
+      f: 7,
+    });
   });
 });

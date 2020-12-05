@@ -1,4 +1,4 @@
-import { asyncGet, get } from "@explorablegraph/symbols";
+import { asyncGet, asyncSet, get, set } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
 
 /**
@@ -81,13 +81,24 @@ export async function structure(exfn) {
  * @param {[any[]]} route
  */
 export async function traversal(exfn, callback, route = []) {
+  const getFn = exfn[get] ? get : asyncGet;
   for await (const key of exfn) {
     const extendedRoute = [...route, key];
-    const value = await exfn[get](key);
+    const value = await exfn[getFn](key);
     const interior = value instanceof AsyncExplorable;
     callback(extendedRoute, interior, value);
     if (interior) {
       await traversal(value, callback, extendedRoute);
     }
   }
+}
+
+export async function update(target, source) {
+  const setFn = target[set] ? set : asyncSet;
+  await traversal(source, async (route, interior, value) => {
+    if (!interior) {
+      await target[setFn](...route, value);
+    }
+  });
+  return target;
 }

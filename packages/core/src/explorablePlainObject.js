@@ -1,10 +1,18 @@
-import { asyncGet, asyncKeys, get, keys, set } from "@explorablegraph/symbols";
+import {
+  asyncGet,
+  asyncKeys,
+  asyncSet,
+  get,
+  keys,
+  set,
+} from "@explorablegraph/symbols";
 import { isPlainObject } from "./builtIns.js";
 import Explorable from "./Explorable.js";
 
 export default function explorablePlainObject(obj) {
   const explorable = {
     // Default `[asyncGet]` invokes `[get]`.
+    // @ts-ignore
     async [asyncGet](...keys) {
       return this[get](...keys);
     },
@@ -13,6 +21,12 @@ export default function explorablePlainObject(obj) {
     // @ts-ignore
     async *[asyncKeys]() {
       yield* this[keys]();
+    },
+
+    // Default `[asyncSet]` invokes `[set]`.
+    // @ts-ignore
+    async [asyncSet](...args) {
+      return this[set](...args);
     },
 
     /**
@@ -68,11 +82,8 @@ export default function explorablePlainObject(obj) {
       let current = obj;
       while (keys.length > 1) {
         const key = keys.shift();
-        const next = current[key];
-        if (isPlainObject(next)) {
-          // The next node is a subobject; traverse into it.
-          current = next;
-        } else {
+        let next = current[key];
+        if (!isPlainObject(next)) {
           // Overwrite path
           next = {};
           current[key] = next;
