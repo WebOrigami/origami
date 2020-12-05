@@ -1,5 +1,12 @@
 // Should generate this export file with explorable graphs!
-export { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
+export {
+  asyncGet,
+  asyncKeys,
+  asyncSet,
+  get,
+  keys,
+  set,
+} from "@explorablegraph/symbols";
 export { default as AsyncExplorable } from "./src/AsyncExplorable.js";
 export { default as Explorable } from "./src/Explorable.js";
 export { default as ExplorableArray } from "./src/ExplorableArray.js";
