@@ -2,15 +2,26 @@
 
 import { asyncGet, asyncOps, Explorable } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
+import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
-import commands from "./builtins.js";
+import builtins from "./builtins.js";
+import defaultModuleExport from "./commands/defaultModuleExport.js";
+
+// Load config file.
+const configFileName = "eg.config.js";
+const parentFiles = new ParentFiles(process.cwd());
+const configPath = await parentFiles[asyncGet](configFileName);
+const config = configPath ? await defaultModuleExport(configPath) : null;
+
+// Prefer user's config if one was found, otherwise use builtins.
+const scope = config || builtins;
 
 async function main(...args) {
   const source = args.join(" ").trim();
   if (!source) {
-    await showUsage(commands);
+    await showUsage(scope);
   }
-  const result = await evaluate(source, commands, "**input**");
+  const result = await evaluate(source, scope, "**input**");
   if (result) {
     await stdout(result);
   }

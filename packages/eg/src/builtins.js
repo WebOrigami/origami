@@ -8,7 +8,7 @@ const modulesFolder = path.resolve(dirname, "commands");
 const modules = new JavaScriptModuleFiles(modulesFolder);
 
 // Commands are modules, where the `foo.js` module becomes the `foo` command.
-const commands = new Transform(modules, {
+const builtins = new Transform(modules, {
   innerKeyForOuterKey(outerKey) {
     return `${outerKey}.js`;
   },
@@ -20,4 +20,4 @@ const commands = new Transform(modules, {
   },
 });
 
-export default commands;
+export default builtins;
