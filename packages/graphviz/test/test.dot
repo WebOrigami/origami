@@ -1,6 +1,6 @@
 digraph g {
   rankdir=LR;
-  root [shape=doublecircle, label="/"];
+  root [shape=doublecircle, label=""];
   root -> "Hello, world." [label="index.html"];
   root -> "Hello, a." [label="a"];
   root -> "Hello, b." [label="b"];
