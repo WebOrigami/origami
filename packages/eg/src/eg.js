@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
-import { asyncGet, asyncOps, Explorable } from "@explorablegraph/core";
+import {
+  AsyncExplorable,
+  asyncGet,
+  asyncOps,
+  Explorable,
+} from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
@@ -11,7 +16,8 @@ import defaultModuleExport from "./commands/defaultModuleExport.js";
 const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
 const configPath = await parentFiles[asyncGet](configFileName);
-const config = configPath ? await defaultModuleExport(configPath) : null;
+const fn = configPath ? await defaultModuleExport(configPath) : null;
+const config = AsyncExplorable(fn);
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
@@ -31,9 +37,11 @@ async function showUsage(commands) {
   console.log("Usage: eg <expression>, with available functions:");
   for await (const key of commands) {
     const command = await commands[asyncGet](key);
-    if (command.usage) {
-      console.log(command.usage);
+    let usage = command.usage;
+    if (!usage) {
+      usage = typeof command === "function" ? `${key}()` : key;
     }
+    console.log(usage);
   }
 }
 
