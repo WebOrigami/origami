@@ -3,8 +3,9 @@
   "description": "Command line tool for working with explorable graphs",
   "version": "0.0.1",
   "type": "module",
+  "main": "./exports.js",
   "bin": {
-    "eg": "src/eg.js"
+    "eg": "./src/eg.js"
   },
   "devDependencies": {
     "chai": "4.2.0",

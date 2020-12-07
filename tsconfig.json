@@ -12,7 +12,8 @@
   },
   "include": [
     "packages/core/src/**/*.js",
-    "packages/core/test/**/*.js"
+    "packages/core/test/**/*.js",
+    "packages/core/wip/FirstMatch.tests.js"
     // "packages/node/src/**/*.js",
     // "packages/node/test/**/*.js"
   ]
