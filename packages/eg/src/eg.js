@@ -35,14 +35,17 @@ async function main(...args) {
 
 async function showUsage(commands) {
   console.log("Usage: eg <expression>, with available functions:");
+  const usages = [];
   for await (const key of commands) {
     const command = await commands[asyncGet](key);
     let usage = command.usage;
     if (!usage) {
       usage = typeof command === "function" ? `${key}()` : key;
     }
-    console.log(usage);
+    usages.push(usage);
   }
+  usages.sort();
+  console.log(usages.join("\n"));
 }
 
 export default async function stdout(obj) {
