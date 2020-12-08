@@ -38,7 +38,7 @@ async function showUsage(commands) {
   const usages = [];
   for await (const key of commands) {
     const command = await commands[asyncGet](key);
-    let usage = command.usage;
+    let usage = command?.usage;
     if (!usage) {
       usage = typeof command === "function" ? `${key}()` : key;
     }
