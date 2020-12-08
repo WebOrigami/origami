@@ -1,0 +1,24 @@
+digraph g {
+  rankdir=LR;
+  "" [label="/"];
+  "" -> "/index.html";
+  "/index.html" [label="index.html"];
+  "" -> "/a";
+  "/a" [label="a"];
+  "" -> "/b";
+  "/b" [label="b"];
+  "" -> "/c";
+  "/c" [label="c"];
+  "" -> "/d";
+  "/d" [label="d"];
+  "" -> "/e";
+  "/e" [label="e"];
+  "" -> "/f";
+  "/f" [label="f"];
+  "" -> "/g";
+  "/g" [label="g"];
+  "" -> "/i";
+  "/i" [label="i"];
+  "" -> "/j";
+  "/j" [label="j"];
+}

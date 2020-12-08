@@ -19,7 +19,4 @@ export default {
   [get](key) {
     return this[key] || `Hello, ${key}.`;
   },
-
-  // TODO: Get this key from web package.
-  "__keys__.json": JSON.stringify(routes, null, 2),
 };

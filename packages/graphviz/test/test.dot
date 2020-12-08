@@ -1,8 +1,6 @@
 digraph g {
   rankdir=LR;
   "" [label="/"];
-  "" -> "/index.html";
-  "/index.html" [label="index.html"];
   "" -> "/english";
   "/english" [label="english"];
   "/english" -> "/english/a";
