@@ -1,20 +1,33 @@
-import { asyncGet } from "@explorablegraph/symbols";
+import { AsyncExplorable } from "@explorablegraph/core";
+import { asyncGet, get } from "@explorablegraph/symbols";
 
 export default async function dot(graph, rootLabel = "") {
-  const rootNode = `  root [shape=doublecircle, label="${rootLabel}"];`;
-
-  const arcs = [];
-  for (const key in graph) {
-    const value = await graph[asyncGet](key);
-    const arc = `  root -> "${value}" [label="${key}"];`;
-    arcs.push(arc);
-  }
-
+  const graphArcs = await statements(graph, "", "/");
   return `digraph g {
   rankdir=LR;
-${rootNode}
-${arcs.join("\n")}
+${graphArcs.join("\n")}
 }`;
+}
+
+async function statements(node, nodePath, nodeLabel) {
+  let result = [];
+
+  result.push(`  "${nodePath}" [label="${nodeLabel}"];`);
+
+  for await (const key of node) {
+    const destPath = `${nodePath}/${key}`;
+    const arc = `  "${nodePath}" -> "${destPath}";`;
+    result.push(arc);
+
+    const value = node[get] ? node[get](key) : await node[asyncGet](key);
+    if (value instanceof AsyncExplorable) {
+      const subStatements = await statements(value, destPath, key);
+      result = result.concat(subStatements);
+    } else {
+      result.push(`  "${destPath}" [label="${key}"];`);
+    }
+  }
+  return result;
 }
 
 dot.usage = `dot(graph) Show the dots`;

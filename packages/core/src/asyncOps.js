@@ -24,8 +24,7 @@ export async function keys(exfn) {
 export async function mapValues(exfn, mapFn) {
   const result = {};
   for await (const key of exfn) {
-    const getFn = exfn[get] ? get : asyncGet;
-    const value = await exfn[getFn](key);
+    const value = exfn[get] ? exfn[get](key) : await exfn[asyncGet](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
       value !== undefined && value instanceof AsyncExplorable

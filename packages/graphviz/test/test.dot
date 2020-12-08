@@ -1,8 +1,30 @@
 digraph g {
   rankdir=LR;
-  root [shape=doublecircle, label=""];
-  root -> "Hello, world." [label="index.html"];
-  root -> "Hello, a." [label="a"];
-  root -> "Hello, b." [label="b"];
-  root -> "Hello, c." [label="c"];
+  "" [label="/"];
+  "" -> "/index.html";
+  "/index.html" [label="index.html"];
+  "" -> "/english";
+  "/english" [label="english"];
+  "/english" -> "/english/a";
+  "/english/a" [label="a"];
+  "/english" -> "/english/b";
+  "/english/b" [label="b"];
+  "/english" -> "/english/c";
+  "/english/c" [label="c"];
+  "" -> "/french";
+  "/french" [label="french"];
+  "/french" -> "/french/a";
+  "/french/a" [label="a"];
+  "/french" -> "/french/b";
+  "/french/b" [label="b"];
+  "/french" -> "/french/c";
+  "/french/c" [label="c"];
+  "" -> "/spanish";
+  "/spanish" [label="spanish"];
+  "/spanish" -> "/spanish/a";
+  "/spanish/a" [label="a"];
+  "/spanish" -> "/spanish/b";
+  "/spanish/b" [label="b"];
+  "/spanish" -> "/spanish/c";
+  "/spanish/c" [label="c"];
 }

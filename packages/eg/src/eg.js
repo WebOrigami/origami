@@ -20,7 +20,8 @@ const fn = configPath ? await defaultModuleExport(configPath) : null;
 const config = AsyncExplorable(fn);
 
 // Prefer user's config if one was found, otherwise use builtins.
-const scope = config || builtins;
+// const scope = config || builtins;
+const scope = builtins;
 
 async function main(...args) {
   const source = args.join(" ").trim();
