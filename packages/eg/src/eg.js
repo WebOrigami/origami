@@ -17,11 +17,10 @@ const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
 const configPath = await parentFiles[asyncGet](configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
-const config = AsyncExplorable(fn);
+const config = fn ? AsyncExplorable(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
-// const scope = config || builtins;
-const scope = builtins;
+const scope = config || builtins;
 
 async function main(...args) {
   const source = args.join(" ").trim();
