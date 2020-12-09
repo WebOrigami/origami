@@ -13,9 +13,9 @@ export default class Compose extends AsyncExplorable {
     this.graphs = graphs.map((graph) => AsyncExplorable(graph));
   }
 
-  async [asyncGet](key) {
+  async [asyncGet](...keys) {
     for (const graph of this.graphs) {
-      const obj = await graph[asyncGet](key);
+      const obj = await graph[asyncGet](...keys);
       if (obj !== undefined) {
         return obj;
       }
