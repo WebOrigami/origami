@@ -1,6 +1,6 @@
 {
   "name": "@explorablegraph/core",
-  "description": "JavaScript core package for *asynchronous* explorable functions",
+  "description": "JavaScript core package for explorable graphs",
   "version": "0.0.1",
   "type": "module",
   "main": "./exports.js",
