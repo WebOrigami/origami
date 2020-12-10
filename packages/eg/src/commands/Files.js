@@ -7,4 +7,4 @@ export default async function Files(relativePath) {
   return new ExplorableFiles(resolvedPath);
 }
 
-Files.usage = `Files(path)                            The explorable files at path`;
+Files.usage = `Files(path)\tThe explorable files at path`;

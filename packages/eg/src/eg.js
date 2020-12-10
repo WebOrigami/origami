@@ -4,6 +4,8 @@ import {
   AsyncExplorable,
   asyncGet,
   asyncOps,
+  asyncSet,
+  Compose,
   Explorable,
 } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
@@ -11,6 +13,7 @@ import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
+import showUsage from "./showUsage.js";
 
 // Load config file.
 const configFileName = "eg.config.js";
@@ -19,8 +22,22 @@ const configPath = await parentFiles[asyncGet](configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
 const config = fn ? AsyncExplorable(fn) : null;
 
+let scope;
+function getScope() {
+  return scope;
+}
+getScope.usage = `scope()\tReturn the active eg scope`;
+const builtinsPlusScope = new Compose({ scope: getScope }, builtins);
+
 // Prefer user's config if one was found, otherwise use builtins.
-const scope = config || builtins;
+scope = config || builtinsPlusScope;
+
+// If `scope` isn't already defined in scope, add it as a function that returns
+// the scope. This lets someone inspect the scope from the command line.
+const scopeRef = await scope[asyncGet]("scope");
+if (!scopeRef) {
+  await scope[asyncSet]("scope", () => scope);
+}
 
 async function main(...args) {
   const source = args.join(" ").trim();
@@ -31,21 +48,6 @@ async function main(...args) {
   if (result) {
     await stdout(result);
   }
-}
-
-async function showUsage(commands) {
-  console.log("Usage: eg <expression>, with available functions:");
-  const usages = [];
-  for await (const key of commands) {
-    const command = await commands[asyncGet](key);
-    let usage = command?.usage;
-    if (!usage) {
-      usage = typeof command === "function" ? `${key}()` : key;
-    }
-    usages.push(usage);
-  }
-  usages.sort();
-  console.log(usages.join("\n"));
 }
 
 export default async function stdout(obj) {

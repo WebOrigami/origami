@@ -7,4 +7,4 @@ export default async function yaml(graph) {
   return text;
 }
 
-yaml.usage = `yaml(graph)                            Print the graph in YAML format`;
+yaml.usage = `yaml(graph)\tPrint the graph in YAML format`;

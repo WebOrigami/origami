@@ -8,4 +8,4 @@ export default async function file(relativePath) {
   return String(data);
 }
 
-file.usage = `file(path)                             The contents of the file with the path`;
+file.usage = `file(path)\tThe contents of the file with the path`;

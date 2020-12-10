@@ -5,4 +5,4 @@ export default async function parse(text) {
   return Explorable(obj);
 }
 
-parse.usage = `parse(text)                            Parse text as JSON`;
+parse.usage = `parse(text)\tParse text as JSON`;

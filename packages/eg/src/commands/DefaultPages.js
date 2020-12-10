@@ -4,4 +4,4 @@ export default function createIndexPage(graph) {
   return new DefaultPages(graph);
 }
 
-createIndexPage.usage = `DefaultPages()                         Creates default index.html pages for node's keys`;
+createIndexPage.usage = `DefaultPages()\tCreates default index.html pages for node's keys`;
