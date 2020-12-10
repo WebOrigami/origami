@@ -14,7 +14,15 @@ export default class Files extends AsyncExplorable {
   }
 
   async *[asyncKeys]() {
-    const entries = await fs.readdir(this.dirname, { withFileTypes: true });
+    let entries;
+    try {
+      entries = await fs.readdir(this.dirname, { withFileTypes: true });
+    } catch (error) {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+      entries = [];
+    }
     const names = entries.map((entry) => entry.name);
     yield* names;
   }
@@ -65,6 +73,12 @@ export default class Files extends AsyncExplorable {
       // Create directory.
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
+    } else if (value instanceof AsyncExplorable) {
+      // Recursively write out the explorable object.
+      for await (const subKey of value) {
+        const subValue = await value[asyncGet](subKey);
+        await this[asyncSet](...args, subKey, subValue);
+      }
     } else {
       // Write out value as the contents of a file. The file name is the last
       // arg in the current set (we've already removed the value from the end of
