@@ -37,8 +37,13 @@ export function inferMediaType(url, content) {
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
 // the graph.
-export async function getResourceAtPath(exfn, webPath) {
-  const keys = webPath.split("/");
+export async function getResourceAtPath(exfn, href) {
+  const keys = keysFromHref(href);
+  return await exfn[asyncGet](...keys);
+}
+
+export function keysFromHref(href) {
+  const keys = href.split("/");
   if (keys[0] === "") {
     // The path begins with a slash; drop that part.
     keys.shift();
@@ -48,7 +53,7 @@ export async function getResourceAtPath(exfn, webPath) {
     keys.pop();
     keys.push("index.html");
   }
-  return await exfn[asyncGet](...keys);
+  return keys;
 }
 
 /**
@@ -75,11 +80,14 @@ export function requestListener(arg) {
 
   return async function (request, response) {
     console.log(request.url);
-    const obj = await getResourceAtPath(resources, request.url);
+    const keys = keysFromHref(request.url);
+    const obj = await resources[asyncGet](...keys);
     if (obj) {
       const content = textOrObject(obj);
       const mediaType = inferMediaType(request.url, content);
-      response.writeHead(200, { "Content-Type": mediaType });
+      response.writeHead(200, {
+        "Content-Type": mediaType,
+      });
       response.end(content, "utf-8");
     } else {
       response.writeHead(404, { "Content-Type": "text/html" });
