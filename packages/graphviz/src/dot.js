@@ -1,5 +1,5 @@
-import { AsyncExplorable } from "@explorablegraph/core";
-import { asyncGet, get } from "@explorablegraph/symbols";
+import { AsyncExplorable, Explorable } from "@explorablegraph/core";
+import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 
 export default async function dot(graph, rootLabel = "") {
   const graphArcs = await statements(graph, "", "/");
@@ -9,18 +9,19 @@ ${graphArcs.join("\n")}
 }`;
 }
 
-async function statements(node, nodePath, nodeLabel) {
+async function statements(graph, nodePath, nodeLabel) {
   let result = [];
 
   result.push(`  "${nodePath}" [label="${nodeLabel}"];`);
 
-  for await (const key of node) {
+  const graphKeys = graph[keys] ? graph[keys]() : graph[asyncKeys]();
+  for await (const key of graphKeys) {
     const destPath = `${nodePath}/${key}`;
     const arc = `  "${nodePath}" -> "${destPath}";`;
     result.push(arc);
 
-    const value = node[get] ? node[get](key) : await node[asyncGet](key);
-    if (value instanceof AsyncExplorable) {
+    const value = graph[get] ? graph[get](key) : await graph[asyncGet](key);
+    if (value instanceof AsyncExplorable || value instanceof Explorable) {
       const subStatements = await statements(value, destPath, key);
       result = result.concat(subStatements);
     } else {

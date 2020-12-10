@@ -81,8 +81,10 @@ export function requestListener(arg) {
   return async function (request, response) {
     console.log(request.url);
     const keys = keysFromHref(request.url);
-    const obj = await resources[asyncGet](...keys);
-    if (obj) {
+    const resource = await resources[asyncGet](...keys);
+    if (resource) {
+      // If resource is a function, invoke to get the object we want to return.
+      const obj = typeof resource === "function" ? resource() : resource;
       const content = textOrObject(obj);
       const mediaType = inferMediaType(request.url, content);
       response.writeHead(200, {

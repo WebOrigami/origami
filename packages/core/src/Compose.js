@@ -1,4 +1,4 @@
-import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
 
 /**
@@ -15,7 +15,9 @@ export default class Compose extends AsyncExplorable {
 
   async [asyncGet](...keys) {
     for (const graph of this.graphs) {
-      const obj = await graph[asyncGet](...keys);
+      const obj = graph[get]
+        ? graph[get](...keys)
+        : await graph[asyncGet](...keys);
       if (obj !== undefined) {
         return obj;
       }
@@ -27,7 +29,8 @@ export default class Compose extends AsyncExplorable {
     // Use a Set to de-duplicate the keys from the graphs.
     const set = new Set();
     for (const graph of this.graphs) {
-      for await (const key of graph) {
+      const graphKeys = graph[keys] ? graph[keys]() : graph[asyncKeys]();
+      for await (const key of graphKeys) {
         set.add(key);
       }
     }
