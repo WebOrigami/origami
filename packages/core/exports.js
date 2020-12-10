@@ -8,6 +8,7 @@ export {
   set,
 } from "@explorablegraph/symbols";
 export { default as AsyncExplorable } from "./src/AsyncExplorable.js";
+export { default as Cache } from "./src/Cache.js";
 export { default as Compose } from "./src/Compose.js";
 export { default as Explorable } from "./src/Explorable.js";
 export { default as ExplorableArray } from "./src/ExplorableArray.js";
