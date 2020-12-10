@@ -80,7 +80,8 @@ export function requestListener(arg) {
 
   return async function (request, response) {
     console.log(request.url);
-    const keys = keysFromHref(request.url);
+    const unescaped = unescape(request.url);
+    const keys = keysFromHref(unescaped);
     const resource = await resources[asyncGet](...keys);
     if (resource) {
       // If resource is a function, invoke to get the object we want to return.
