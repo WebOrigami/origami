@@ -1,11 +1,11 @@
 import { asyncGet, asyncOps } from "@explorablegraph/core";
 import chai from "chai";
-import IndexPages from "../src/IndexPages.js";
+import DefaultPages from "../src/DefaultPages.js";
 const { assert } = chai;
 
-describe("IndexPages", () => {
+describe("DefaultPages", () => {
   it("adds index.html to keys for a graph that doesn't have one", async () => {
-    const fixture = new IndexPages({
+    const fixture = new DefaultPages({
       a: 1,
       b: 2,
       c: 3,
@@ -15,7 +15,7 @@ describe("IndexPages", () => {
   });
 
   it("defers to index.html if the inner graph defines one", async () => {
-    const fixture = new IndexPages({
+    const fixture = new DefaultPages({
       "index.html": "Index page goes here",
       a: 1,
       b: 2,
@@ -26,7 +26,7 @@ describe("IndexPages", () => {
   });
 
   it("generates index.html for a graph that doesn't have one", async () => {
-    const fixture = new IndexPages({
+    const fixture = new DefaultPages({
       a: 1,
       b: 2,
       c: 3,

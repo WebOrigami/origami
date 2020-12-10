@@ -53,12 +53,6 @@ export default function explorablePlainObject(obj) {
         if (value instanceof Explorable && keys.length > 0) {
           return value[get](...keys);
         }
-
-        // HACK: Move this to another class
-        if (value instanceof Function) {
-          // Invoke function
-          return value(...keys);
-        }
       }
 
       return keys.length > 0
