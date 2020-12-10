@@ -4,8 +4,6 @@ import {
   AsyncExplorable,
   asyncGet,
   asyncOps,
-  asyncSet,
-  Compose,
   Explorable,
 } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
@@ -22,21 +20,14 @@ const configPath = await parentFiles[asyncGet](configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
 const config = fn ? AsyncExplorable(fn) : null;
 
-let scope;
-function getScope() {
-  return scope;
-}
-getScope.usage = `scope()\tReturn the active eg scope`;
-const builtinsPlusScope = new Compose({ scope: getScope }, builtins);
-
 // Prefer user's config if one was found, otherwise use builtins.
-scope = config || builtinsPlusScope;
+const scope = config || builtins;
 
-// If `scope` isn't already defined in scope, add it as a function that returns
-// the scope. This lets someone inspect the scope from the command line.
-const scopeRef = await scope[asyncGet]("scope");
-if (!scopeRef) {
-  await scope[asyncSet]("scope", () => scope);
+// Give the `config()` builtin a reference to the current scope. This lets
+// someone inspect the scope from the command line.
+const configBuiltin = await scope[asyncGet]("config");
+if (configBuiltin) {
+  configBuiltin.setScope(scope);
 }
 
 async function main(...args) {
