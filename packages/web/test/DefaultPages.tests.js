@@ -44,9 +44,5 @@ describe("DefaultPages", () => {
     // Request sub index
     const index2 = await fixture[asyncGet]("more", "index.html");
     assert(index2.includes(`<a href="d">d</a>`));
-
-    // Request subgraph, implies index
-    const index3 = await fixture[asyncGet]("more");
-    assert(index3.includes(`<a href="d">d</a>`));
   });
 });

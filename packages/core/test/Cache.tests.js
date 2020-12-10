@@ -5,7 +5,7 @@ import Cache from "../src/Cache.js";
 import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
-describe.only("Cache", () => {
+describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
     const cache = new Explorable({});
     const fixture = new Cache(cache, {
