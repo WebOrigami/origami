@@ -65,8 +65,19 @@ export default class DefaultPages extends AsyncExplorable {
   }
 }
 
+// TODO: This and default index.html both need to get each key, which is too
+// inefficient for real use.
 async function defaultKeysJson(graph) {
-  const keys = await asyncOps.keys(graph);
+  const keys = [];
+  for await (const key of graph) {
+    const value = await graph[asyncGet](key);
+    const text = value instanceof AsyncExplorable ? `${key}/` : key;
+    keys.push(text);
+  }
+  if (!keys.includes(INDEX_HTML)) {
+    // Since we're going to define it, we include index.html in the keys.
+    keys.unshift(INDEX_HTML);
+  }
   return JSON.stringify(keys, null, 2);
 }
 

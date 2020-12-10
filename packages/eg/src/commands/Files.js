@@ -1,10 +1,10 @@
-import { Files as ExplorableFiles } from "@explorablegraph/node";
+import { Files } from "@explorablegraph/node";
 import path from "path";
 import process from "process";
 
-export default async function Files(relativePath) {
+export default async function files(relativePath) {
   const resolvedPath = path.resolve(process.cwd(), relativePath);
-  return new ExplorableFiles(resolvedPath);
+  return new Files(resolvedPath);
 }
 
-Files.usage = `Files(path)\tThe explorable files at path`;
+files.usage = `Files(path)\tThe explorable files at path`;
