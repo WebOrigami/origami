@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/express",
   "description": "Express middleware for explorable graphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./src/router.js",
   "devDependencies": {

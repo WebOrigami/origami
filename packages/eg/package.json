@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/eg",
   "description": "Command line tool for working with explorable graphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./exports.js",
   "bin": {

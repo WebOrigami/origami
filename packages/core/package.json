@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/core",
   "description": "JavaScript core package for explorable graphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./exports.js",
   "devDependencies": {

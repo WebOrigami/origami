@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/integrations",
   "description": "Sample explorable integrations",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./exports.js",
   "devDependencies": {

@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/exlang",
   "description": "Expression evaluation built with explorable graphs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./exports.js",
   "bin": {
