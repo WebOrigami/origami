@@ -1,7 +1,7 @@
 import { asyncGet } from "@explorablegraph/core";
 
 export default async function showUsage(commands) {
-  console.log("Usage: eg <expression>, with available functions:");
+  console.log("Usage: eg <expression>, with available functions:\n");
 
   // Gather usages.
   const usages = [];
@@ -14,7 +14,10 @@ export default async function showUsage(commands) {
     usages.push(usage);
   }
 
-  usages.sort();
+  // Case-insensitive sort
+  usages.sort(function (a, b) {
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+  });
 
   // Split into signatures and descriptions.
   const signatures = [];

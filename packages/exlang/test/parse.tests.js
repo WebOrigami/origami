@@ -34,6 +34,11 @@ describe("parse", () => {
     assert.deepEqual(parsed, ["defaultModuleExport", "foo.js"]);
   });
 
+  it("recognizes a JSON file import", () => {
+    const parsed = parse(":foo.json");
+    assert.deepEqual(parsed, ["parse", ["file", "foo.json"]]);
+  });
+
   it("recognizes a quoted string", () => {
     const parsed = parse(`"Hello, world."`);
     assert.deepEqual(parsed, "Hello, world.");

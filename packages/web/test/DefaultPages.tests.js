@@ -45,4 +45,26 @@ describe("DefaultPages", () => {
     const index2 = await fixture[asyncGet]("more", "index.html");
     assert(index2.includes(`<a href="d">d</a>`));
   });
+
+  it("generates .keys.json for a graph that doesn't have one", async () => {
+    const fixture = new DefaultPages({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+
+    // Request top keys
+    const keysJson1 = await fixture[asyncGet](".keys.json");
+    const keys1 = JSON.parse(keysJson1);
+    assert.deepEqual(keys1, ["index.html", "a", "b", "c", "more/"]);
+
+    // Request sub keys
+    const keysJson2 = await fixture[asyncGet]("more", ".keys.json");
+    const keys2 = JSON.parse(keysJson2);
+    assert.deepEqual(keys2, ["index.html", "d", "e"]);
+  });
 });

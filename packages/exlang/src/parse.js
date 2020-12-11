@@ -2,6 +2,7 @@ import { argumentMarker } from "./execute.js";
 
 const recognizers = [
   recognizeModuleImport,
+  recognizeJsonImport,
   recognizeFunction,
   recognizeQuotedString,
   recognizeMarker,
@@ -37,6 +38,14 @@ function recognizeFunction(text) {
     );
     const parsedArgs = args.map((arg) => parseExpression(arg));
     return [fnName, ...parsedArgs];
+  }
+}
+
+function recognizeJsonImport(text) {
+  if (text.startsWith(":") && text.endsWith(".json")) {
+    // Recognized a module import.
+    const fileName = text.substring(1);
+    return ["parse", ["file", fileName]];
   }
 }
 
