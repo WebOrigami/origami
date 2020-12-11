@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/web",
   "description": "Explorable functions for web features (both server-side and client-side)",
-  "version": "0.0.2b",
+  "version": "0.0.2-c",
   "type": "module",
   "main": "./exports.js",
   "dependencies": {

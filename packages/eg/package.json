@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./exports.js",
   "bin": {
-    "eg": "./src/eg.js"
+    "eg": "src/eg.js"
   },
   "devDependencies": {
     "chai": "4.2.0",
@@ -13,6 +13,8 @@
     "typescript": "4.1.2"
   },
   "dependencies": {
+    "@explorablegraph/graphviz": "0.0.2",
+    "@explorablegraph/integrations": "0.0.2",
     "yaml": "1.10.0"
   },
   "scripts": {
