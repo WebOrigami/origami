@@ -34,7 +34,7 @@ export default class DefaultPages extends AsyncExplorable {
     const lastKey = keys[keys.length - 1];
 
     let indexParent;
-    if (value instanceof AsyncExplorable) {
+    if (value instanceof AsyncExplorable || value instanceof Explorable) {
       // Value is explorable; return an DefaultPages wrapper around it.
       return new this.constructor(value);
     } else if (lastKey === INDEX_HTML && value === undefined) {
