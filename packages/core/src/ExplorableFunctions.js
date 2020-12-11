@@ -1,4 +1,5 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
+import ExplorableFunction from "./ExplorableFunction.js";
 
 export default class ExplorableFunctions {
   constructor(functions, keys = []) {
@@ -8,6 +9,10 @@ export default class ExplorableFunctions {
 
   async [asyncGet](...args) {
     return this[get](...args);
+  }
+
+  async *[asyncKeys]() {
+    yield* this[keys]();
   }
 
   [get](fnName, ...args) {
@@ -22,28 +27,7 @@ export default class ExplorableFunctions {
     }
   }
 
-  async *[asyncKeys]() {
-    yield* this[keys]();
-  }
-
   [keys]() {
     return Object.keys(this.functions)[Symbol.iterator]();
-  }
-}
-
-// TODO: Expose as separate class.
-class ExplorableFunction {
-  constructor(fn, keys) {
-    this.fn = fn;
-    this.keys = keys;
-  }
-
-  [get](...args) {
-    const result = this.fn(...args);
-    return result;
-  }
-
-  [keys]() {
-    return this.keys[Symbol.iterator]();
   }
 }
