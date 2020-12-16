@@ -1,12 +1,11 @@
 {
   "name": "@explorablegraph/exlang",
   "description": "Expression evaluation built with explorable graphs",
-  "version": "0.0.2",
+  "version": "0.0.2-d",
   "type": "module",
   "main": "./exports.js",
-  "bin": {
-    "evaluate-cli": "src/evaluate-cli.js",
-    "parse-cli": "src/parse-cli.js"
+  "dependencies": {
+    "@explorablegraph/core": "0.0.2-d"
   },
   "devDependencies": {
     "chai": "4.2.0",

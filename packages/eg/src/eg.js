@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  AsyncExplorable,
-  asyncGet,
-  asyncOps,
-  Explorable,
-} from "@explorablegraph/core";
+import { asyncGet, asyncOps, Explorable } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
@@ -22,6 +17,8 @@ const config = fn ? AsyncExplorable(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
+
+console.log(fn);
 
 // Give the `config()` builtin a reference to the current scope. This lets
 // someone inspect the scope from the command line.

@@ -1,9 +1,13 @@
 {
   "name": "@explorablegraph/webserver",
   "description": "Web server for explorable graphs",
-  "version": "0.0.2",
+  "version": "0.0.2-d",
   "type": "module",
   "main": "./src/webserver.js",
+  "dependencies": {
+    "@explorablegraph/core": "0.0.2-d",
+    "@explorablegraph/symbols": "0.0.2-d"
+  },
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "8.2.1",

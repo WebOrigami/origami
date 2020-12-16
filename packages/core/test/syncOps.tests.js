@@ -1,6 +1,7 @@
-import { Explorable, syncOps } from "@explorablegraph/core";
 import { get, keys } from "@explorablegraph/symbols";
 import chai from "chai";
+import Explorable from "../src/Explorable.js";
+import * as syncOps from "../src/syncOps.js";
 const { assert } = chai;
 
 describe("syncOps", () => {

@@ -1,9 +1,13 @@
 {
   "name": "@explorablegraph/node",
   "description": "Explorable functions for objects in the Node.js API",
-  "version": "0.0.2",
+  "version": "0.0.2-d",
   "type": "module",
   "main": "./exports.js",
+  "dependencies": {
+    "@explorablegraph/core": "0.0.2-d",
+    "@explorablegraph/symbols": "0.0.2-d"
+  },
   "devDependencies": {
     "@types/node": "14.14.9",
     "chai": "4.2.0",

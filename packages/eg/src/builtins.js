@@ -21,3 +21,5 @@ const builtins = new Transform(modules, {
 });
 
 export default builtins;
+
+// console.log(builtins);

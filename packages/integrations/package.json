@@ -1,10 +1,11 @@
 {
   "name": "@explorablegraph/integrations",
   "description": "Sample explorable integrations",
-  "version": "0.0.2",
+  "version": "0.0.2-d",
   "type": "module",
   "main": "./exports.js",
   "dependencies": {
+    "@explorablegraph/core": "0.0.2-d",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {

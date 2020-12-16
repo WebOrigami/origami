@@ -1,10 +1,12 @@
 {
   "name": "@explorablegraph/web",
   "description": "Explorable functions for web features (both server-side and client-side)",
-  "version": "0.0.2-c",
+  "version": "0.0.2-d",
   "type": "module",
   "main": "./exports.js",
   "dependencies": {
+    "@explorablegraph/core": "0.0.2-d",
+    "@explorablegraph/symbols": "0.0.2-d",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
