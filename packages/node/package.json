@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/node",
   "description": "Explorable functions for objects in the Node.js API",
-  "version": "0.0.2-d",
+  "version": "0.0.2-e",
   "type": "module",
   "main": "./exports.js",
   "dependencies": {
