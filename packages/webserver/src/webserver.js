@@ -15,21 +15,22 @@ export function inferMediaType(url, content) {
     typeof content === "string" ? "text/html" : "application/octet-stream";
   const extname = path.extname(url).toLowerCase();
   const mediaTypes = {
-    ".html": "text/html",
-    ".js": "text/javascript",
     ".css": "text/css",
-    ".json": "application/json",
-    ".png": "image/png",
-    ".jpg": "image/jpg",
-    ".gif": "image/gif",
-    ".svg": "image/svg+xml",
-    ".wav": "audio/wav",
-    ".mp4": "video/mp4",
-    ".woff": "application/font-woff",
-    ".ttf": "application/font-ttf",
     ".eot": "application/vnd.ms-fontobject",
+    ".gif": "image/gif",
+    ".html": "text/html",
+    ".jpeg": "image/jpg",
+    ".jpg": "image/jpg",
+    ".js": "text/javascript",
+    ".json": "application/json",
+    ".mp4": "video/mp4",
     ".otf": "application/font-otf",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
+    ".ttf": "application/font-ttf",
     ".wasm": "application/wasm",
+    ".wav": "audio/wav",
+    ".woff": "application/font-woff",
   };
   const mediaType = mediaTypes[extname] || defaultMediaType;
   return mediaType;
