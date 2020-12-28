@@ -1,6 +1,7 @@
 import { AsyncExplorable } from "@explorablegraph/core";
 import { asyncGet } from "@explorablegraph/symbols";
 import path from "path";
+import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 /**
  * Given an object's path and the object itself, infer an appropriate media
@@ -14,25 +15,7 @@ export function inferMediaType(url, content) {
   const defaultMediaType =
     typeof content === "string" ? "text/html" : "application/octet-stream";
   const extname = path.extname(url).toLowerCase();
-  const mediaTypes = {
-    ".css": "text/css",
-    ".eot": "application/vnd.ms-fontobject",
-    ".gif": "image/gif",
-    ".html": "text/html",
-    ".jpeg": "image/jpg",
-    ".jpg": "image/jpg",
-    ".js": "text/javascript",
-    ".json": "application/json",
-    ".mp4": "video/mp4",
-    ".otf": "application/font-otf",
-    ".png": "image/png",
-    ".svg": "image/svg+xml",
-    ".ttf": "application/font-ttf",
-    ".wasm": "application/wasm",
-    ".wav": "audio/wav",
-    ".woff": "application/font-woff",
-  };
-  const mediaType = mediaTypes[extname] || defaultMediaType;
+  const mediaType = mediaTypeForExtension[extname] || defaultMediaType;
   return mediaType;
 }
 
@@ -87,12 +70,22 @@ export function requestListener(arg) {
     if (resource) {
       // If resource is a function, invoke to get the object we want to return.
       const obj = typeof resource === "function" ? resource() : resource;
-      const content = textOrObject(obj);
-      const mediaType = inferMediaType(request.url, content);
+
+      // Determine media type, what data we'll send, and encoding.
+      const extname = path.extname(request.url).toLowerCase();
+      let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
+      const data = mediaType ? obj : textOrObject(obj);
+      if (!mediaType) {
+        // Can't identify media type; infer default type.
+        mediaType =
+          typeof data === "string" ? "text/html" : "application/octet-stream";
+      }
+      const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
+
       response.writeHead(200, {
         "Content-Type": mediaType,
       });
-      response.end(content, "utf-8");
+      response.end(data, encoding);
     } else {
       response.writeHead(404, { "Content-Type": "text/html" });
       response.end(`Not found`, "utf-8");
@@ -108,7 +101,7 @@ export function requestListener(arg) {
  */
 export function textOrObject(obj) {
   if (typeof obj === "string") {
-    // Return string object as is.
+    // Return string as is.
     return obj;
   }
 
