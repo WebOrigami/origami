@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/webserver",
   "description": "Web server for explorable graphs",
-  "version": "0.0.2-e",
+  "version": "0.0.2-f",
   "type": "module",
   "main": "./src/webserver.js",
   "dependencies": {

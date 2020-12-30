@@ -1,7 +1,7 @@
 {
   "name": "@explorablegraph/eg",
   "description": "Command line tool for working with explorable graphs",
-  "version": "0.0.2-g",
+  "version": "0.0.2-h",
   "type": "module",
   "main": "./exports.js",
   "bin": {
@@ -19,7 +19,7 @@
     "@explorablegraph/integrations": "0.0.2-d",
     "@explorablegraph/node": "0.0.2-e",
     "@explorablegraph/web": "0.0.2-c",
-    "@explorablegraph/webserver": "0.0.2-e",
+    "@explorablegraph/webserver": "0.0.2-f",
     "yaml": "1.10.0"
   },
   "scripts": {
