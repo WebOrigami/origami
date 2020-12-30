@@ -60,7 +60,7 @@ export function requestListener(arg) {
     obj = arg;
   }
 
-  const resources = AsyncExplorable(obj);
+  const resources = new AsyncExplorable(obj);
 
   return async function (request, response) {
     console.log(request.url);
@@ -69,7 +69,7 @@ export function requestListener(arg) {
     const resource = await resources[asyncGet](...keys);
     if (resource) {
       // If resource is a function, invoke to get the object we want to return.
-      const obj = typeof resource === "function" ? resource() : resource;
+      const obj = typeof resource === "function" ? await resource() : resource;
 
       // Determine media type, what data we'll send, and encoding.
       const extname = path.extname(request.url).toLowerCase();
