@@ -3,27 +3,48 @@ import { asyncGet } from "@explorablegraph/symbols";
 import path from "path";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
-/**
- * Given an object's path and the object itself, infer an appropriate media
- * (MIME) type.
- *
- * @param {string} url
- * @param {any} content
- * @returns {string}
- */
-export function inferMediaType(url, content) {
-  const defaultMediaType =
-    typeof content === "string" ? "text/html" : "application/octet-stream";
-  const extname = path.extname(url).toLowerCase();
-  const mediaType = mediaTypeForExtension[extname] || defaultMediaType;
-  return mediaType;
-}
-
 // Given a relative web path like "/foo/bar", return the corresponding object in
 // the graph.
 export async function getResourceAtPath(exfn, href) {
   const keys = keysFromHref(href);
   return await exfn[asyncGet](...keys);
+}
+
+// Explorable graph router as Express middleware.
+export function graphRouter(graph) {
+  // Return a router for the graph source.
+  return async function (request, response, next) {
+    if (!handleRequest(request, response, graph)) {
+      // Module not found, let next middleware function try.
+      next();
+    }
+  };
+}
+
+export async function handleRequest(request, response, graph) {
+  const unescaped = unescape(request.url);
+  const keys = keysFromHref(unescaped);
+  const resource = await graph[asyncGet](...keys);
+  if (resource) {
+    // If resource is a function, invoke to get the object we want to return.
+    const obj = typeof resource === "function" ? await resource() : resource;
+
+    // Determine media type, what data we'll send, and encoding.
+    const extname = path.extname(request.url).toLowerCase();
+    let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
+    const data = mediaType ? obj : textOrObject(obj);
+    if (!mediaType) {
+      // Can't identify media type; infer default type.
+      mediaType =
+        typeof data === "string" ? "text/html" : "application/octet-stream";
+    }
+    const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
+
+    response.writeHead(200, {
+      "Content-Type": mediaType,
+    });
+    response.end(data, encoding);
+  }
 }
 
 export function keysFromHref(href) {
@@ -60,33 +81,11 @@ export function requestListener(arg) {
     obj = arg;
   }
 
-  const resources = new AsyncExplorable(obj);
+  const graph = new AsyncExplorable(obj);
 
   return async function (request, response) {
     console.log(request.url);
-    const unescaped = unescape(request.url);
-    const keys = keysFromHref(unescaped);
-    const resource = await resources[asyncGet](...keys);
-    if (resource) {
-      // If resource is a function, invoke to get the object we want to return.
-      const obj = typeof resource === "function" ? await resource() : resource;
-
-      // Determine media type, what data we'll send, and encoding.
-      const extname = path.extname(request.url).toLowerCase();
-      let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
-      const data = mediaType ? obj : textOrObject(obj);
-      if (!mediaType) {
-        // Can't identify media type; infer default type.
-        mediaType =
-          typeof data === "string" ? "text/html" : "application/octet-stream";
-      }
-      const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
-
-      response.writeHead(200, {
-        "Content-Type": mediaType,
-      });
-      response.end(data, encoding);
-    } else {
+    if (!handleRequest(request, response, graph)) {
       response.writeHead(404, { "Content-Type": "text/html" });
       response.end(`Not found`, "utf-8");
     }
