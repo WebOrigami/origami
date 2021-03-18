@@ -1,5 +1,5 @@
 import http from "http";
-import { requestListener } from "../src/webserver.js";
+import { requestListener } from "../src/server.js";
 import sample from "./sample.js";
 
 const port = 5000;

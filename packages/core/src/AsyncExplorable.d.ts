@@ -6,8 +6,8 @@ import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
 interface AsyncExplorableInterface {
   // We define [Symbol.asyncIterator] so TypeScript knows it's there, even
   // though it's the same as the [asyncKeys].
-  [asyncGet](key: any): Promise<any>;
-  [asyncKeys]: AsyncIterableIterator<any>;
+  [asyncGet](...key: any[]): Promise<any>;
+  [asyncKeys](): AsyncIterableIterator<any>;
   [Symbol.asyncIterator](): Iterator<any>;
 }
  
@@ -24,7 +24,8 @@ interface AsyncExplorableInterface {
 // export default AsyncExplorable;
 
 export default class AsyncExplorable implements AsyncExplorableInterface {
-  [asyncGet](key: any): Promise<any>;
-  [asyncKeys]: AsyncIterableIterator<any>;
+  constructor(obj?: object);
+  [asyncGet](...key: any[]): Promise<any>;
+  [asyncKeys](): AsyncIterableIterator<any>;
   [Symbol.asyncIterator](): Iterator<any>;
 }

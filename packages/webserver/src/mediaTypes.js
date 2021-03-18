@@ -88,8 +88,6 @@ export const mediaTypeIsText = {
   "text/css": true,
   "text/csv": true,
   "text/html": true,
-  "text/html": true,
-  "text/javascript": true,
   "text/javascript": true,
   "text/plain": true,
 };

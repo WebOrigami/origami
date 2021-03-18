@@ -39,6 +39,7 @@ function recognizeFunction(text) {
     const parsedArgs = args.map((arg) => parseExpression(arg));
     return [fnName, ...parsedArgs];
   }
+  return undefined;
 }
 
 function recognizeJsonImport(text) {
@@ -47,12 +48,14 @@ function recognizeJsonImport(text) {
     const fileName = text.substring(1);
     return ["parse", ["file", fileName]];
   }
+  return undefined;
 }
 
 function recognizeMarker(text) {
   if (text === "*") {
     return argumentMarker;
   }
+  return undefined;
 }
 
 function recognizeModuleImport(text) {
@@ -61,6 +64,7 @@ function recognizeModuleImport(text) {
     const moduleName = text.substring(1);
     return ["defaultModuleExport", moduleName];
   }
+  return undefined;
 }
 
 function recognizeQuotedString(text) {
@@ -68,6 +72,7 @@ function recognizeQuotedString(text) {
     const string = text.substring(1, text.length - 1);
     return string;
   }
+  return undefined;
 }
 
 // Given text that might be a function call, look for the outermost open and
@@ -76,10 +81,10 @@ function recognizeQuotedString(text) {
 // return a `commas` array indicating the location of those commas relative to
 // the open parenthesis.
 function findArguments(text) {
-  const noMatch = { open: -1, close: -1 };
+  const noMatch = { open: -1, close: -1, commas: [] };
   const commas = [];
-  let openParenIndex;
-  let closeParenIndex;
+  let openParenIndex = -1;
+  let closeParenIndex = -1;
   let inQuotedString = false;
   let depth = 0;
   for (let i = 0; i < text.length; i++) {
@@ -88,7 +93,7 @@ function findArguments(text) {
       case "(":
         if (!inQuotedString) {
           depth++;
-          if (openParenIndex === undefined) {
+          if (openParenIndex === -1) {
             openParenIndex = i;
           }
         }

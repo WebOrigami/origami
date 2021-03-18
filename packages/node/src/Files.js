@@ -35,7 +35,7 @@ export default class Files extends AsyncExplorable {
       return undefined;
     }
     const value = stats.isDirectory()
-      ? new this.constructor(objPath)
+      ? Reflect.construct(this.constructor, [objPath])
       : await fs.readFile(objPath);
     return value;
   }
@@ -75,8 +75,7 @@ export default class Files extends AsyncExplorable {
       await fs.mkdir(folder, { recursive: true });
     } else if (value instanceof AsyncExplorable) {
       // Recursively write out the explorable object.
-      const valueKeys = value[keys] ? value[keys]() : value[asyncKeys];
-      for await (const subKey of valueKeys) {
+      for await (const subKey of value) {
         const subValue = await value[asyncGet](subKey);
         await this[asyncSet](...args, subKey, subValue);
       }
@@ -107,5 +106,6 @@ async function stat(filePath) {
     if (error.code === "ENOENT" /* File not found */) {
       return undefined;
     }
+    throw error;
   }
 }

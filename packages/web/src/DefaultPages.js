@@ -34,7 +34,7 @@ export default class DefaultPages extends AsyncExplorable {
     let indexParent;
     if (value instanceof AsyncExplorable) {
       // Value is explorable; return an DefaultPages wrapper around it.
-      return new this.constructor(value);
+      return Reflect.construct(this.constructor, [value]);
     } else if (lastKey === INDEX_HTML && value === undefined) {
       // Last key was explicitly "index.html", and the inner graph doesn't have a value
       // for it, return an index for the parent.

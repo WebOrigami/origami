@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  AsyncExplorable,
-  asyncGet,
-  asyncOps,
-  Explorable,
-} from "@explorablegraph/core";
+import { AsyncExplorable, asyncGet, asyncOps } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
@@ -45,7 +40,7 @@ export default async function stdout(obj) {
   let output;
   if (obj === undefined) {
     return;
-  } else if (obj instanceof Explorable) {
+  } else if (obj instanceof AsyncExplorable) {
     const strings = await asyncOps.strings(obj);
     output = JSON.stringify(strings, null, 2);
   } else {

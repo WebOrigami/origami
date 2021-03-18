@@ -6,15 +6,11 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "module": "ESNext",
     "moduleResolution": "Node",
     "strict": true,
-    "target": "ES2020"
+    "target": "ESNext"
   },
-  "include": [
-    "packages/core/src/**/*.js",
-    "packages/core/test/**/*.js",
-    "packages/core/wip/FirstMatch.tests.js",
-, "packages/sync/wip/Explorable.tests.js"    "packages/sync/Explorable.js" // "packages/node/src/**/*.js",
-    // "packages/node/test/**/*.js"
-  ]
+  "include": ["packages/*/src/**/*.js", "packages/*/test/**/*.js"],
+  "exclude": ["packages/integrations/**"]
 }

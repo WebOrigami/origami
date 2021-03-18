@@ -17,9 +17,10 @@ export default class JavaScriptModuleFiles extends Files {
       if (error.code === "ENOENT" /* File not found */) {
         return undefined;
       }
+      throw error;
     }
     const obj = stats.isDirectory()
-      ? new this.constructor(filePath)
+      ? Reflect.construct(this.constructor, [filePath])
       : await import(filePath);
     return obj;
   }

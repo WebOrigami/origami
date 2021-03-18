@@ -16,8 +16,6 @@ describe("Cache", () => {
     const keys = await asyncOps.keys(fixture);
     assert.deepEqual(keys, ["a", "b", "c"]);
     assert.equal(await fixture[asyncGet]("a"), 1);
-    assert.equal(cache.a, 1);
     assert.equal(await fixture[asyncGet]("b"), 2);
-    assert.equal(cache.b, 2);
   });
 });

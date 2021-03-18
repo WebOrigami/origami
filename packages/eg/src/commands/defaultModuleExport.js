@@ -13,9 +13,3 @@ export default async function defaultModuleExport(relativePath) {
 }
 
 defaultModuleExport.usage = `defaultModuleExport(path)\tThe default export of the module at path`;
-
-export async function loadGraphFromModule(modulePath) {
-  let fn = null;
-  const value = typeof fn === "function" ? fn() : fn;
-  return value;
-}

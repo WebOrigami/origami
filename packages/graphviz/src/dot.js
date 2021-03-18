@@ -1,4 +1,4 @@
-import { AsyncExplorable, Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 
 export default async function dot(graph, rootLabel = "") {
@@ -21,7 +21,7 @@ async function statements(graph, nodePath, nodeLabel) {
     result.push(arc);
 
     const value = graph[get] ? graph[get](key) : await graph[asyncGet](key);
-    if (value instanceof AsyncExplorable || value instanceof Explorable) {
+    if (value instanceof AsyncExplorable) {
       const subStatements = await statements(value, destPath, key);
       result = result.concat(subStatements);
     } else {

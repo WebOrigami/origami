@@ -8,6 +8,11 @@ import AsyncExplorable from "./AsyncExplorable.js";
  * being returned.
  */
 export default class Cache extends AsyncExplorable {
+  /**
+   *
+   * @param {AsyncExplorable} cache
+   * @param  {...any} graphs
+   */
   constructor(cache, ...graphs) {
     super();
     this.cache = cache;

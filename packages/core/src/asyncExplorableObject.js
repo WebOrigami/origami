@@ -4,6 +4,10 @@ import { isPlainObject } from "./builtIns.js";
 
 export default function asyncExplorableObject(obj) {
   const asyncExplorable = {
+    // We define [Symbol.asyncIterator] so TypeScript knows it's there, even
+    // though it's the same as the [asyncKeys].
+    async *[Symbol.asyncIterator]() {},
+
     /**
      * Return the value at the corresponding path of keys.
      *

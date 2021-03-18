@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import process from "process";
 import evaluate from "./evaluate.js";
 
@@ -14,10 +14,10 @@ while (args[0] === "") {
 }
 
 const source = args.join(" ");
-const scope = Explorable({
+const scope = AsyncExplorable({
   hello(name) {
     return `Hello ${name}`;
   },
 });
-const result = evaluate(source, scope, "**input**");
+const result = await evaluate(source, scope, "**input**");
 console.log(result);
