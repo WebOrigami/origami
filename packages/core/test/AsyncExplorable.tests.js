@@ -4,10 +4,7 @@ import AsyncExplorable from "../src/AsyncExplorable.js";
 const { assert } = chai;
 
 describe("AsyncExplorable", () => {
-  it("can instantiate with either class function call or new operator", async () => {
-    const constructFixture = AsyncExplorable();
-    assert.equal(await constructFixture[asyncGet]("hello"), undefined);
-
+  it("can instantiate", async () => {
     const newFixture = new AsyncExplorable();
     assert.equal(await newFixture[asyncGet]("hello"), undefined);
   });

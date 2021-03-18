@@ -2,7 +2,6 @@ import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
 import chai from "chai";
 import AsyncExplorable from "../src/AsyncExplorable.js";
 import * as asyncOps from "../src/asyncOps.js";
-import explorablePlainObject from "../src/explorablePlainObject.js";
 const { assert } = chai;
 
 describe("asyncOps", () => {
@@ -26,13 +25,13 @@ describe("asyncOps", () => {
         e: 5,
       },
     };
-    const graph = new explorablePlainObject(original);
+    const graph = new AsyncExplorable(original);
     const plain = await asyncOps.plain(graph);
     assert.deepEqual(plain, original);
   });
 
   it("strings() converts exfn leaf values to strings", async () => {
-    const graph = new explorablePlainObject({
+    const graph = new AsyncExplorable({
       a: 1,
       b: 2,
       c: 3,
@@ -54,7 +53,7 @@ describe("asyncOps", () => {
   });
 
   it("structure() produces a plain object version of an exfn that has empty values", async () => {
-    const graph = new explorablePlainObject({
+    const graph = new AsyncExplorable({
       a: 1,
       b: 2,
       c: 3,
@@ -76,7 +75,7 @@ describe("asyncOps", () => {
   });
 
   it("traverse() invokes a callback with each node in depth-first order", async () => {
-    const graph = new explorablePlainObject({
+    const graph = new AsyncExplorable({
       a: 1,
       b: 2,
       c: 3,
@@ -112,7 +111,7 @@ describe("asyncOps", () => {
   });
 
   it("update(target, source) copies source graph into corresponding target graph", async () => {
-    const target = explorablePlainObject({
+    const target = new AsyncExplorable({
       a: 1,
       b: 2,
       c: 3,
@@ -121,7 +120,7 @@ describe("asyncOps", () => {
         e: 5,
       },
     });
-    const source = explorablePlainObject({
+    const source = new AsyncExplorable({
       a: 6,
       b: undefined,
       f: 7,

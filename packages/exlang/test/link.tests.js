@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import chai from "chai";
 import link from "../src/link.js";
 const { assert } = chai;
@@ -10,7 +10,7 @@ describe("link", () => {
     const parsed = ["fn", ["fn", "a", "b"]];
 
     function fn() {}
-    const scope = Explorable({
+    const scope = new AsyncExplorable({
       fn: fn, // Maps string key "fn" to `fn` function defined above.
     });
     const linked = await link(parsed, scope);

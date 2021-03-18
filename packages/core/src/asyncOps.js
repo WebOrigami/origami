@@ -1,13 +1,5 @@
-import {
-  asyncGet,
-  asyncKeys,
-  asyncSet,
-  get,
-  keys as keysSymbol,
-  set,
-} from "@explorablegraph/symbols";
+import { asyncGet, asyncSet } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
-import Explorable from "./Explorable.js";
 
 /**
  * Returns the keys for an async graph.
@@ -31,15 +23,11 @@ export async function keys(graph) {
  */
 export async function mapValues(graph, mapFn) {
   const result = {};
-  const graphKeys = graph[keysSymbol]
-    ? graph[keysSymbol]()
-    : graph[asyncKeys]();
-  for await (const key of graphKeys) {
-    const value = graph[get] ? graph[get](key) : await graph[asyncGet](key);
+  for await (const key of graph) {
+    const value = await graph[asyncGet](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
-      value !== undefined &&
-      (value instanceof AsyncExplorable || value instanceof Explorable)
+      value instanceof AsyncExplorable
         ? // value is also explorable; traverse into it.
           await mapValues(value, mapFn)
         : await mapFn(value);
@@ -89,18 +77,13 @@ export async function structure(graph) {
  *
  * @param {*} graph
  * @param {function} callback
- * @param {[any[]]} route
+ * @param {any[]} [route]
  */
 export async function traverse(graph, callback, route = []) {
-  const getFn = graph[get] ? get : asyncGet;
-  const graphKeys = graph[keysSymbol]
-    ? graph[keysSymbol]()
-    : graph[asyncKeys]();
-  for await (const key of graphKeys) {
+  for await (const key of graph) {
     const extendedRoute = [...route, key];
-    const value = await graph[getFn](key);
-    const interior =
-      value instanceof AsyncExplorable || value instanceof Explorable;
+    const value = await graph[asyncGet](key);
+    const interior = value instanceof AsyncExplorable;
     callback(extendedRoute, interior, value);
     if (interior) {
       await traverse(value, callback, extendedRoute);
@@ -109,10 +92,9 @@ export async function traverse(graph, callback, route = []) {
 }
 
 export async function update(target, source) {
-  const setFn = target[set] ? set : asyncSet;
   await traverse(source, async (route, interior, value) => {
     if (!interior) {
-      await target[setFn](...route, value);
+      await target[asyncSet](...route, value);
     }
   });
   return target;

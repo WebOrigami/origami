@@ -1,6 +1,6 @@
 import { asyncGet, get, keys } from "@explorablegraph/symbols";
 import chai from "chai";
-import AsyncExplorable from "../src/AsyncExplorable.js";
+import AsyncExplorable from "../../core/src/AsyncExplorable.js";
 import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 

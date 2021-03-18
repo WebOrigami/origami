@@ -1,4 +1,5 @@
 import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import asyncExplorableObject from "./asyncExplorableObject.js";
 import * as builtIns from "./builtIns.js";
 
 // Use function syntax to define constructor so that we can support calling the
@@ -6,17 +7,27 @@ import * as builtIns from "./builtIns.js";
 // objects to exfns. The TypeScript handling here needs tightening.
 
 // @ts-ignore
-export default function AsyncExplorable(obj) {
-  if (!new.target) {
-    // Constructor called as function without `new`.
-    const constructor = this || AsyncExplorable;
-    return new constructor(obj);
-  } else if (obj instanceof AsyncExplorable) {
-    // Object is already explorable; return as is.
-    return obj;
-  } else {
-    return builtIns.asyncExplorable(obj);
+export default class AsyncExplorable {
+  constructor(obj) {
+    if (obj instanceof AsyncExplorable) {
+      // Object is already explorable; return as is.
+      return obj;
+    } else if (builtIns.isPlainObject(obj)) {
+      return asyncExplorableObject(obj);
+    }
   }
+
+  /**
+   * Default `[asyncKeys]` implementation returns an iterator for an empty list.
+   *
+   * @returns {AsyncGenerator<any, any, any>}
+   */
+  async *[asyncKeys]() {
+    yield* [];
+  }
+
+  // Default `[asyncGet]` implementation returns undefined for any key.
+  async [asyncGet](key) {}
 }
 
 // We define `obj instanceof ArrayExplorable` for any object that has the async
@@ -36,20 +47,4 @@ export default function AsyncExplorable(obj) {
 // edge case.
 Object.defineProperty(AsyncExplorable, Symbol.hasInstance, {
   value: (obj) => obj && obj[asyncGet] && obj[asyncKeys],
-});
-
-//
-// Instance methods
-//
-
-Object.assign(AsyncExplorable.prototype, {
-  // Default `[asyncKeys]` implementation returns an iterator for an empty list.
-  async *[asyncKeys]() {
-    yield* [];
-  },
-
-  // Default `[asyncGet]` implementation returns undefined for any key.
-  async [asyncGet](key) {
-    return undefined;
-  },
 });

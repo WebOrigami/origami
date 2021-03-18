@@ -1,6 +1,6 @@
 import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
-import AsyncExplorable from "./AsyncExplorable.js";
-import * as builtIns from "./builtIns.js";
+import AsyncExplorable from "../core/src/AsyncExplorable.js";
+import * as builtIns from "../core/src/builtIns.js";
 import * as syncOps from "./syncOps.js";
 
 // Use function syntax to define constructor so that we can support calling the

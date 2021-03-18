@@ -1,4 +1,4 @@
-import { Explorable, get } from "@explorablegraph/core";
+import { AsyncExplorable, asyncGet } from "@explorablegraph/core";
 
 export default async function execute(linked, argument) {
   if (linked instanceof Array) {
@@ -12,8 +12,8 @@ export default async function execute(linked, argument) {
 
     // Now apply function to the evaluated args.
     const result =
-      fn instanceof Explorable
-        ? await fn[get](evaluated[0])
+      fn instanceof AsyncExplorable
+        ? await fn[asyncGet](evaluated[0])
         : await fn(...evaluated);
     return result;
   } else if (linked === argumentMarker) {

@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -21,7 +21,7 @@ describe("unlinkFiles", () => {
 
   it("removes the files defines by a graph", async () => {
     // Create a file in a subfolder.
-    const files = new Explorable({
+    const files = new AsyncExplorable({
       subfolder: {
         file: "This is a file in the graph.",
       },

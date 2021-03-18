@@ -1,4 +1,4 @@
-import { Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import chai from "chai";
 import evaluate from "../src/evaluate.js";
 const { assert } = chai;
@@ -6,7 +6,7 @@ const { assert } = chai;
 describe("evaluate", () => {
   it("can parse, link, and execute", async () => {
     const source = "greet(world)";
-    const scope = Explorable({
+    const scope = new AsyncExplorable({
       async greet(name) {
         return `Hello ${name}`;
       },

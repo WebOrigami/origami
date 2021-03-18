@@ -11,7 +11,7 @@ export default class Cache extends AsyncExplorable {
   constructor(cache, ...graphs) {
     super();
     this.cache = cache;
-    this.graphs = graphs.map((graph) => AsyncExplorable(graph));
+    this.graphs = graphs.map((graph) => new AsyncExplorable(graph));
   }
 
   async [asyncGet](...keys) {

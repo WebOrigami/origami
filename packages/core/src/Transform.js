@@ -4,7 +4,7 @@ import AsyncExplorable from "./AsyncExplorable.js";
 export default class Transform extends AsyncExplorable {
   constructor(inner, options = {}) {
     super();
-    this.inner = AsyncExplorable(inner);
+    this.inner = new AsyncExplorable(inner);
     if (options.outerKeyForInnerKey) {
       this.outerKeyForInnerKey = options.outerKeyForInnerKey;
     }

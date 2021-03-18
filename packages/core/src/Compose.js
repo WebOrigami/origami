@@ -10,7 +10,7 @@ import AsyncExplorable from "./AsyncExplorable.js";
 export default class Compose extends AsyncExplorable {
   constructor(...graphs) {
     super();
-    this.graphs = graphs.map((graph) => AsyncExplorable(graph));
+    this.graphs = graphs.map((graph) => new AsyncExplorable(graph));
   }
 
   async [asyncGet](...keys) {

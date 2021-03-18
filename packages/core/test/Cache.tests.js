@@ -1,13 +1,13 @@
 import { asyncGet } from "@explorablegraph/symbols";
 import chai from "chai";
+import AsyncExplorable from "../src/AsyncExplorable.js";
 import * as asyncOps from "../src/asyncOps.js";
 import Cache from "../src/Cache.js";
-import Explorable from "../src/Explorable.js";
 const { assert } = chai;
 
 describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const cache = new Explorable({});
+    const cache = new AsyncExplorable({});
     const fixture = new Cache(cache, {
       a: 1,
       b: 2,

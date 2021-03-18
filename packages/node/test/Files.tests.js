@@ -1,8 +1,8 @@
 import {
+  AsyncExplorable,
   asyncGet,
   asyncOps,
   asyncSet,
-  explorablePlainObject,
 } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
@@ -88,7 +88,7 @@ describe("Files", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new explorablePlainObject(obj);
+    const files = new AsyncExplorable(obj);
 
     // Write out files.
     const tempFiles = new Files(tempDirectory);
