@@ -17,7 +17,7 @@ describe("explorablePlainObject", () => {
         e: 5,
       },
     };
-    const obj = new explorablePlainObject(original);
+    const obj = explorablePlainObject(original);
     assert(obj instanceof Explorable);
     assert.equal(obj[get]("a"), 1);
     assert.equal(obj[get]("b"), 2);
@@ -42,7 +42,7 @@ describe("explorablePlainObject", () => {
   });
 
   it("can traverse a path of keys", () => {
-    const obj = new explorablePlainObject({
+    const obj = explorablePlainObject({
       a1: 1,
       a2: {
         b1: 2,
@@ -58,12 +58,12 @@ describe("explorablePlainObject", () => {
   });
 
   it("can traverse from one explorable into another", () => {
-    const objB = new explorablePlainObject({
+    const objB = explorablePlainObject({
       b1: {
         b2: 1,
       },
     });
-    const objA = new explorablePlainObject({
+    const objA = explorablePlainObject({
       a1: {
         a2: objB,
       },
@@ -72,7 +72,7 @@ describe("explorablePlainObject", () => {
   });
 
   it("can async explore a plain JavaScript object", async () => {
-    const obj = new explorablePlainObject({
+    const obj = explorablePlainObject({
       a: 1,
       b: 2,
       c: 3,
@@ -91,7 +91,7 @@ describe("explorablePlainObject", () => {
   });
 
   it("can set a value", () => {
-    const obj = new explorablePlainObject({
+    const obj = explorablePlainObject({
       a: 1,
       b: 2,
       c: 3,
@@ -124,7 +124,7 @@ describe("explorablePlainObject", () => {
   });
 
   it("set can delete a key if the value is explicitly undefined", () => {
-    const obj = new explorablePlainObject({
+    const obj = explorablePlainObject({
       a: 1,
       b: 2,
       c: 3,

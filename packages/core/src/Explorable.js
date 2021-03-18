@@ -31,8 +31,7 @@ Object.defineProperty(Explorable.prototype, "constructor", {
 
 // See AsyncExplorable regarding hasInstance
 Object.defineProperty(Explorable, Symbol.hasInstance, {
-  value: (obj) =>
-    obj && ((obj[get] && obj[keys]) || obj instanceof AsyncExplorable),
+  value: (obj) => obj && obj[get] && obj[keys],
 });
 
 //

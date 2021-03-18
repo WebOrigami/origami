@@ -1,5 +1,5 @@
-import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
+import asyncExplorableObject from "./asyncExplorableObject.js";
 import Explorable from "./Explorable.js";
 import explorablePlainObject from "./explorablePlainObject.js";
 
@@ -13,23 +13,10 @@ export function asyncExplorable(obj) {
   if (obj instanceof AsyncExplorable) {
     // Already async explorable
     return obj;
+  } else if (isPlainObject(obj)) {
+    return asyncExplorableObject(obj);
   } else {
-    // Create sync explorable version.
-    const exfn = explorable(obj);
-    if (exfn) {
-      Object.assign(exfn, {
-        // Default `[asyncGet]` invokes `[get]`.
-        async [asyncGet](...keys) {
-          return this[get](...keys);
-        },
-
-        // Default `[asyncKeys]` invokes `[keys]`.
-        async *[asyncKeys]() {
-          yield* this[keys]();
-        },
-      });
-    }
-    return exfn;
+    return null;
   }
 }
 
