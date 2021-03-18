@@ -91,7 +91,7 @@ export async function structure(graph) {
  * @param {function} callback
  * @param {[any[]]} route
  */
-export async function traversal(graph, callback, route = []) {
+export async function traverse(graph, callback, route = []) {
   const getFn = graph[get] ? get : asyncGet;
   const graphKeys = graph[keysSymbol]
     ? graph[keysSymbol]()
@@ -103,14 +103,14 @@ export async function traversal(graph, callback, route = []) {
       value instanceof AsyncExplorable || value instanceof Explorable;
     callback(extendedRoute, interior, value);
     if (interior) {
-      await traversal(value, callback, extendedRoute);
+      await traverse(value, callback, extendedRoute);
     }
   }
 }
 
 export async function update(target, source) {
   const setFn = target[set] ? set : asyncSet;
-  await traversal(source, async (route, interior, value) => {
+  await traverse(source, async (route, interior, value) => {
     if (!interior) {
       await target[setFn](...route, value);
     }

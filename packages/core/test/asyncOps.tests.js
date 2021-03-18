@@ -75,7 +75,7 @@ describe("asyncOps", () => {
     });
   });
 
-  it("traversal() invokes a callback with each node in depth-first order", async () => {
+  it("traverse() invokes a callback with each node in depth-first order", async () => {
     const graph = new explorablePlainObject({
       a: 1,
       b: 2,
@@ -86,7 +86,7 @@ describe("asyncOps", () => {
       },
     });
     const results = [];
-    await asyncOps.traversal(graph, (keys, interior, value) => {
+    await asyncOps.traverse(graph, (keys, interior, value) => {
       results.push({ keys, interior, value });
     });
     const plain = await Promise.all(
