@@ -69,7 +69,7 @@ export default class DefaultPages extends AsyncExplorable {
 // inefficient for real use.
 async function defaultKeysJson(graph) {
   const keys = [];
-  for await (const key of graph) {
+  for await (const key of graph[asyncKeys]()) {
     const value = await graph[asyncGet](key);
     const text = value instanceof AsyncExplorable ? `${key}/` : key;
     keys.push(text);
@@ -83,7 +83,7 @@ async function defaultKeysJson(graph) {
 
 async function defaultIndexHtml(graph) {
   const links = [];
-  for await (const key of graph) {
+  for await (const key of graph[asyncKeys]()) {
     const value = await graph[asyncGet](key);
     const href = value instanceof AsyncExplorable ? `${key}/` : key;
     const link = `<li><a href="${href}">${href}</a></li>`;

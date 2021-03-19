@@ -1,11 +1,11 @@
-import { asyncGet } from "@explorablegraph/core";
+import { asyncGet, asyncKeys } from "@explorablegraph/core";
 
 export default async function showUsage(commands) {
   console.log("Usage: eg <expression>, with available functions:\n");
 
   // Gather usages.
   const usages = [];
-  for await (const key of commands) {
+  for await (const key of commands[asyncKeys]()) {
     const command = await commands[asyncGet](key);
     let usage = command?.usage;
     if (!usage) {

@@ -1,14 +1,18 @@
-import { asyncGet, asyncSet } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys, asyncSet } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
+
+/**
+ * @typedef {import('@explorablegraph/symbols').IAsyncExplorable} IAsyncExplorable
+ */
 
 /**
  * Returns the keys for an async graph.
  *
- * @param {any} graph
+ * @param {IAsyncExplorable} graph
  */
 export async function keys(graph) {
   const result = [];
-  for await (const key of graph) {
+  for await (const key of graph[asyncKeys]()) {
     result.push(key);
   }
   return result;
@@ -18,12 +22,12 @@ export async function keys(graph) {
  * Create a plain JavaScript object with the graph's keys cast to strings,
  * and the given `mapFn` applied to values.
  *
- * @param {any} graph
+ * @param {IAsyncExplorable} graph
  * @param {any} mapFn
  */
 export async function mapValues(graph, mapFn) {
   const result = {};
-  for await (const key of graph) {
+  for await (const key of graph[asyncKeys]()) {
     const value = await graph[asyncGet](key);
     // TODO: Check that value is of same constructor before traversing into it.
     result[String(key)] =
@@ -41,17 +45,17 @@ export async function mapValues(graph, mapFn) {
  * The result's keys will be the graph's keys cast to strings. Any graph value
  * that is itself a graph will be similarly converted to a plain object.
  *
- * @param {any} graph
+ * @param {IAsyncExplorable} graph
  */
 export async function plain(graph) {
-  return await mapValues(graph, (/** @type {any} */ value) => value);
+  return await mapValues(graph, (value) => value);
 }
 
 /**
  * Converts a graph into a plain JavaScript object with the same structure
  * as the original, but with all leaf values cast to strings.
  *
- * @param {any} graph
+ * @param {IAsyncExplorable} graph
  */
 export async function strings(graph) {
   return await mapValues(graph, async (obj) => String(await obj));
@@ -64,7 +68,7 @@ export async function strings(graph) {
  * The result's keys will be the graph's keys cast to strings. Any graph value
  * that is itself a graph will be similarly converted to its structure.
  *
- * @param {any} graph
+ * @param {IAsyncExplorable} graph
  */
 export async function structure(graph) {
   return await mapValues(graph, () => null);
@@ -75,12 +79,12 @@ export async function structure(graph) {
  *
  * Note: This does not check for or prevent cycles.
  *
- * @param {*} graph
+ * @param {IAsyncExplorable} graph
  * @param {function} callback
  * @param {any[]} [route]
  */
 export async function traverse(graph, callback, route = []) {
-  for await (const key of graph) {
+  for await (const key of graph[asyncKeys]()) {
     const extendedRoute = [...route, key];
     const value = await graph[asyncGet](key);
     const interior = value instanceof AsyncExplorable;
@@ -91,6 +95,14 @@ export async function traverse(graph, callback, route = []) {
   }
 }
 
+/**
+ * Get the values from the source and set them on the target.
+ * Returns the target.
+ *
+ * @param {IAsyncExplorable} target
+ * @param {IAsyncExplorable} source
+ * @returns IAsyncExplorable
+ */
 export async function update(target, source) {
   await traverse(source, async (route, interior, value) => {
     if (!interior) {

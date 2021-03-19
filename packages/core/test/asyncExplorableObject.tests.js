@@ -1,4 +1,4 @@
-import { asyncGet, asyncSet } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys, asyncSet } from "@explorablegraph/symbols";
 import chai from "chai";
 import AsyncExplorable from "../src/AsyncExplorable.js";
 import asyncExplorableObject from "../src/asyncExplorableObject.js";
@@ -19,7 +19,7 @@ describe("asyncExplorableObject", () => {
     assert.equal(await obj[asyncGet]("x"), undefined);
 
     const keys = [];
-    for await (const key of obj) {
+    for await (const key of obj[asyncKeys]()) {
       keys.push(key);
     }
     assert.deepEqual(keys, ["a", "b", "c"]);

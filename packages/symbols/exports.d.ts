@@ -6,3 +6,9 @@ export const asyncSet = "_asyncSet";
 export const get = "_get";
 export const keys = "_keys";
 export const set = "_set";
+
+export interface IAsyncExplorable {
+  [asyncGet](...key: any[]): Promise<any>;
+  [asyncKeys](): AsyncIterableIterator<any>;
+}
+ 

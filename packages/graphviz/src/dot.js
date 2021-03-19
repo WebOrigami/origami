@@ -1,5 +1,5 @@
 import { AsyncExplorable } from "@explorablegraph/core";
-import { asyncGet, asyncKeys, get, keys } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
 
 export default async function dot(graph, rootLabel = "") {
   const graphArcs = await statements(graph, "", "/");
@@ -14,13 +14,12 @@ async function statements(graph, nodePath, nodeLabel) {
 
   result.push(`  "${nodePath}" [label="${nodeLabel}"];`);
 
-  const graphKeys = graph[keys] ? graph[keys]() : graph[asyncKeys]();
-  for await (const key of graphKeys) {
+  for await (const key of graph[asyncKeys]()) {
     const destPath = `${nodePath}/${key}`;
     const arc = `  "${nodePath}" -> "${destPath}";`;
     result.push(arc);
 
-    const value = graph[get] ? graph[get](key) : await graph[asyncGet](key);
+    const value = await graph[asyncGet](key);
     if (value instanceof AsyncExplorable) {
       const subStatements = await statements(value, destPath, key);
       result = result.concat(subStatements);

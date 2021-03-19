@@ -17,7 +17,7 @@ export default class Transform extends AsyncExplorable {
   }
 
   async *[asyncKeys]() {
-    for await (const innerKey of this.inner) {
+    for await (const innerKey of this.inner[asyncKeys]()) {
       const outerKey = this.outerKeyForInnerKey(innerKey);
       if (outerKey !== undefined) {
         yield outerKey;

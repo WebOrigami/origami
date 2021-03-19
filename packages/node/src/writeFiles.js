@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncGet } from "@explorablegraph/core";
+import { AsyncExplorable, asyncGet, asyncKeys } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -7,7 +7,7 @@ export default async function writeFiles(dirname, exfn) {
   await fs.mkdir(dirname, { recursive: true });
 
   // Write out files.
-  for await (const key of exfn) {
+  for await (const key of exfn[asyncKeys]()) {
     const obj = await exfn[asyncGet](key);
     const objPath = path.join(dirname, key);
     if (obj instanceof AsyncExplorable) {

@@ -27,8 +27,7 @@ export default class Compose extends AsyncExplorable {
     // Use a Set to de-duplicate the keys from the graphs.
     const set = new Set();
     for (const graph of this.graphs) {
-      const graphKeys = graph[asyncKeys]();
-      for await (const key of graphKeys) {
+      for await (const key of graph[asyncKeys]()) {
         set.add(key);
       }
     }

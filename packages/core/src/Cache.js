@@ -44,7 +44,7 @@ export default class Cache extends AsyncExplorable {
     // We also check the cache in case the set of keys provided by the other
     // graphs have changed since the cache was updated.
     for (const graph of [this.cache, ...this.graphs]) {
-      for await (const key of graph) {
+      for await (const key of graph[asyncKeys]()) {
         set.add(key);
       }
     }
