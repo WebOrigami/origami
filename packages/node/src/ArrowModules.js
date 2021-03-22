@@ -14,7 +14,10 @@ export default class ArrowModules extends Transform {
   }
 
   async transform(obj, outerKey, innerKey) {
-    const result = innerKey.endsWith("←.js") ? await obj.default(this) : obj;
-    return result;
+    if (innerKey.endsWith("←.js")) {
+      const fn = obj.default;
+      return typeof fn === "function" ? fn(this) : fn;
+    }
+    return obj;
   }
 }
