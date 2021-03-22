@@ -1,9 +1,9 @@
 import { Transform } from "@explorablegraph/core";
 import path from "path";
 
-// CommandsModules wraps a graph like JavaScriptModuleFiles.
+// CommandModules wraps a graph like JavaScriptModuleFiles.
 // The `foo.js` module becomes the `foo` command.
-export default class CommandsModules extends Transform {
+export default class CommandModules extends Transform {
   innerKeyForOuterKey(outerKey) {
     return `${outerKey}.js`;
   }
