@@ -9,6 +9,11 @@ export default class JavaScriptModuleFiles extends Files {
   // only work with file paths, not data or streams. So we override asyncGet to
   // do an import instead of a readFile.
   async [asyncGet](key) {
+    if (!key.endsWith(".js") && !key.endsWith(".mjs")) {
+      // Not a module; return as is.
+      return await super[asyncGet](key);
+    }
+
     const filePath = path.join(this.dirname, key);
     let stats;
     try {

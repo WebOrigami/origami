@@ -1,4 +1,4 @@
-import { asyncGet, asyncKeys, get } from "@explorablegraph/symbols";
+import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
 import AsyncExplorable from "./AsyncExplorable.js";
 
 export default class Transform extends AsyncExplorable {
@@ -18,7 +18,7 @@ export default class Transform extends AsyncExplorable {
 
   async *[asyncKeys]() {
     for await (const innerKey of this.inner[asyncKeys]()) {
-      const outerKey = this.outerKeyForInnerKey(innerKey);
+      const outerKey = await this.outerKeyForInnerKey(innerKey);
       if (outerKey !== undefined) {
         yield outerKey;
       }
@@ -27,20 +27,19 @@ export default class Transform extends AsyncExplorable {
 
   // TODO: [...keys]
   async [asyncGet](outerKey) {
-    const innerKey = this.innerKeyForOuterKey(outerKey);
+    const innerKey = await this.innerKeyForOuterKey(outerKey);
     const inner = this.inner;
-    const getFn = inner[get] ? get : asyncGet;
-    const value = innerKey ? await inner[getFn](innerKey) : undefined;
+    const value = innerKey ? await inner[asyncGet](innerKey) : undefined;
     return value ? await this.transform(value, outerKey, innerKey) : undefined;
   }
 
   // The default implementation returns the key unmodified.
-  innerKeyForOuterKey(key) {
+  async innerKeyForOuterKey(key) {
     return key;
   }
 
   // The default implementation returns the key unmodified.
-  outerKeyForInnerKey(key) {
+  async outerKeyForInnerKey(key) {
     return key;
   }
 
