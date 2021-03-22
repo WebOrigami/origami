@@ -24,7 +24,7 @@ export default function parseExpression(text) {
 
 function recognizeFunction(text) {
   const { open, close, commas } = findArguments(text);
-  if (open >= 0 || close > 0 || close === text.length - 1) {
+  if (open >= 0 && (close > 0 || close === text.length - 1)) {
     // Recognized a function call.
     const fnName = text.slice(0, open).trim();
     const argText = text.substring(open + 1, close).trim();

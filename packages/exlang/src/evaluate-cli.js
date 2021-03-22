@@ -14,7 +14,7 @@ while (args[0] === "") {
 }
 
 const source = args.join(" ");
-const scope = AsyncExplorable({
+const scope = new AsyncExplorable({
   hello(name) {
     return `Hello ${name}`;
   },

@@ -4,7 +4,6 @@ import {
   asyncKeys,
   asyncOps,
   asyncSet,
-  explorablePlainObject,
 } from "@explorablegraph/core";
 import https from "https";
 // import http from "http";
@@ -45,7 +44,7 @@ export default class JsonStorage extends AsyncExplorable {
         const response = await fetch(this.url);
         const text = await response.text();
         const obj = JSON.parse(text);
-        const explorable = new explorablePlainObject(obj);
+        const explorable = new AsyncExplorable(obj);
         resolve(explorable);
       });
     }

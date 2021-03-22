@@ -1,8 +1,8 @@
-import { Explorable } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 
 export default async function parse(text) {
   const obj = JSON.parse(text);
-  return Explorable(obj);
+  return new AsyncExplorable(obj);
 }
 
 parse.usage = `parse(text)\tParse text as JSON`;
