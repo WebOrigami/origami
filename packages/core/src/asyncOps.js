@@ -58,7 +58,11 @@ export async function plain(graph) {
  * @param {IAsyncExplorable} graph
  */
 export async function strings(graph) {
-  return await mapValues(graph, async (obj) => String(await obj));
+  return await mapValues(graph, async (value) => {
+    const obj = await value;
+    // If obj is a primitive type, we won't be able to call toString
+    return obj.toString ? obj.toString() : "";
+  });
 }
 
 /**
