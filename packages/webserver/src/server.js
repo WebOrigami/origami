@@ -44,7 +44,10 @@ export async function handleRequest(request, response, graph) {
       "Content-Type": mediaType,
     });
     response.end(data, encoding);
+
+    return true;
   }
+  return false;
 }
 
 export function keysFromHref(href) {
@@ -85,7 +88,8 @@ export function requestListener(arg) {
 
   return async function (request, response) {
     console.log(request.url);
-    if (!handleRequest(request, response, graph)) {
+    const handled = await handleRequest(request, response, graph);
+    if (!handled) {
       response.writeHead(404, { "Content-Type": "text/html" });
       response.end(`Not found`, "utf-8");
     }
