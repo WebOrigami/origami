@@ -1,5 +1,4 @@
 import { asyncGet } from "@explorablegraph/core";
-import { promises as fs } from "fs";
 import path from "path";
 import Files from "./Files.js";
 
@@ -13,20 +12,8 @@ export default class JavaScriptModuleFiles extends Files {
       // Not a module; return as is.
       return await super[asyncGet](key);
     }
-
     const filePath = path.join(this.dirname, key);
-    let stats;
-    try {
-      stats = await fs.stat(filePath);
-    } catch (error) {
-      if (error.code === "ENOENT" /* File not found */) {
-        return undefined;
-      }
-      throw error;
-    }
-    const obj = stats.isDirectory()
-      ? Reflect.construct(this.constructor, [filePath])
-      : await import(filePath);
+    const obj = await import(filePath);
     return obj;
   }
 }

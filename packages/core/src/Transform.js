@@ -25,11 +25,12 @@ export default class Transform extends AsyncExplorable {
     }
   }
 
-  // TODO: [...keys]
-  async [asyncGet](outerKey) {
+  async [asyncGet](outerKey, ...rest) {
     const innerKey = await this.innerKeyForOuterKey(outerKey);
     const inner = this.inner;
-    const value = innerKey ? await inner[asyncGet](innerKey) : undefined;
+    const value = innerKey
+      ? await inner[asyncGet](innerKey, ...rest)
+      : undefined;
     return value ? await this.transform(value, outerKey, innerKey) : undefined;
   }
 
