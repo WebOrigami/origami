@@ -27,17 +27,18 @@ export default class Files extends AsyncExplorable {
     yield* names;
   }
 
-  async [asyncGet](...keys) {
-    // We can traverse the keys by joining them into a path.
-    const objPath = path.join(this.dirname, ...keys);
+  async [asyncGet](key, ...rest) {
+    const objPath = path.join(this.dirname, key);
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
     }
-    const value = stats.isDirectory()
-      ? Reflect.construct(this.constructor, [objPath])
-      : await fs.readFile(objPath);
-    return value;
+    if (stats.isDirectory()) {
+      const directory = Reflect.construct(this.constructor, [objPath]);
+      return rest.length > 0 ? await directory[asyncGet](...rest) : directory;
+    } else {
+      return fs.readFile(objPath);
+    }
   }
 
   /**
