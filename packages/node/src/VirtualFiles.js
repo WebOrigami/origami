@@ -10,7 +10,10 @@ export default class VirtualFiles extends Transform {
 
   async innerKeyForOuterKey(outerKey) {
     const keys = await asyncOps.keys(this.inner);
-    return keys.includes(outerKey) ? outerKey : `${outerKey}←.js`;
+    const virtualKey = `${outerKey}←.js`;
+    // Prefer outer key if found in inner graph, otherwise use virtual key if it
+    // exists.
+    return keys.includes(outerKey) ? outerKey : keys.includes(virtualKey) ? virtualKey : undefined;
   }
 
   async outerKeyForInnerKey(innerKey) {
