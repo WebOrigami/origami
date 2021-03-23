@@ -4,13 +4,19 @@ import Files from "./Files.js";
 
 export default class VirtualFiles extends TransformMixin(Files) {
   async innerKeyForOuterKey(outerKey) {
+    if (outerKey === "." || outerKey === "..") {
+      // Return special cases as is.
+      return outerKey;
+    }
+
+    // See if the outer key is found in the inner graph.
     const keys = [];
     for await (const key of this.innerKeys()) {
       keys.push(key);
     }
     const virtualKey = `${outerKey}←.js`;
-    // Prefer outer key if found in inner graph, otherwise use virtual key if it
-    // exists.
+
+    // Prefer outer key if found, otherwise use virtual key if it exists.
     return keys.includes(outerKey)
       ? outerKey
       : keys.includes(virtualKey)
