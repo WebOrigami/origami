@@ -34,7 +34,7 @@ export default class Files extends AsyncExplorable {
       return undefined;
     }
     if (stats.isDirectory()) {
-      const directory = Reflect.construct(this.constructor, [objPath]);
+      const directory = await this.subgraph(key);
       return rest.length > 0 ? await directory[asyncGet](...rest) : directory;
     } else {
       return fs.readFile(objPath);
@@ -95,6 +95,12 @@ export default class Files extends AsyncExplorable {
       const filePath = path.join(folder, filename);
       await fs.writeFile(filePath, value);
     }
+  }
+
+  async subgraph(key, ...args) {
+    const dirname = path.join(this.dirname, key);
+    const graph = Reflect.construct(this.constructor, [dirname, ...args]);
+    return graph;
   }
 }
 
