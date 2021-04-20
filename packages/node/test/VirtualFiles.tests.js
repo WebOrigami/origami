@@ -11,7 +11,7 @@ const directory = path.join(fixturesDirectory, "virtual");
 // @ts-ignore Until we can declare mixins.
 const virtualFiles = new VirtualFiles(directory);
 
-describe.only("VirtualFiles", () => {
+describe("VirtualFiles", () => {
   it("Can generate a file from an arrow module", async () => {
     const keys = await asyncOps.keys(virtualFiles);
     assert.deepEqual(keys, [
