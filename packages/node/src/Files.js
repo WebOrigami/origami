@@ -3,17 +3,18 @@ import {
   asyncGet,
   asyncKeys,
   asyncSet,
+  ExplorableGraph,
 } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
-export default class Files extends AsyncExplorable {
+export default class Files extends ExplorableGraph {
   constructor(dirname) {
     super();
     this.dirname = dirname;
   }
 
-  async *[asyncKeys]() {
+  async *[Symbol.asyncIterator]() {
     let entries;
     try {
       entries = await fs.readdir(this.dirname, { withFileTypes: true });
@@ -27,7 +28,7 @@ export default class Files extends AsyncExplorable {
     yield* names;
   }
 
-  async [asyncGet](key, ...rest) {
+  async get(key, ...rest) {
     const objPath = path.join(this.dirname, key);
     const stats = await stat(objPath);
     if (!stats) {
@@ -35,7 +36,7 @@ export default class Files extends AsyncExplorable {
     }
     if (stats.isDirectory()) {
       const directory = await this.subgraph(key);
-      return rest.length > 0 ? await directory[asyncGet](...rest) : directory;
+      return rest.length > 0 ? await directory.get(...rest) : directory;
     } else {
       return fs.readFile(objPath);
     }
