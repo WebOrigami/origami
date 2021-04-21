@@ -1,5 +1,6 @@
-import { asyncGet, asyncKeys, asyncSet } from "@explorablegraph/symbols";
-import AsyncExplorable from "./AsyncExplorable.js";
+import { asyncKeys } from "@explorablegraph/symbols";
+import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableObject from "./ExplorableObject.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If
@@ -7,20 +8,37 @@ import AsyncExplorable from "./AsyncExplorable.js";
  * that key. If a value is found, the value is written into the cache before
  * being returned.
  */
-export default class Cache extends AsyncExplorable {
+export default class Cache extends ExplorableGraph {
   /**
    *
-   * @param {AsyncExplorable} cache
+   * @param {ExplorableGraph} cache
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {
     super();
     this.cache = cache;
-    this.graphs = graphs.map((graph) => new AsyncExplorable(graph));
+    this.graphs = graphs.map((graph) =>
+      graph instanceof ExplorableGraph ? graph : new ExplorableObject(graph)
+    );
   }
 
-  async [asyncGet](...keys) {
-    const cachedValue = await this.cache[asyncGet](...keys);
+  async *[Symbol.asyncIterator]() {
+    // Use a Set to de-duplicate the keys from the graphs.
+    const set = new Set();
+    // We also check the cache in case the set of keys provided by the other
+    // graphs have changed since the cache was updated.
+    for (const graph of [this.cache, ...this.graphs]) {
+      for await (const key of graph[asyncKeys]()) {
+        if (!set.has(key)) {
+          set.add(key);
+          yield key;
+        }
+      }
+    }
+  }
+
+  async get(...keys) {
+    const cachedValue = await this.cache.get(...keys);
     if (cachedValue) {
       // Cache hit
       return cachedValue;
@@ -28,26 +46,13 @@ export default class Cache extends AsyncExplorable {
 
     // Cache miss
     for (const graph of this.graphs) {
-      const value = await graph[asyncGet](...keys);
+      const value = await graph.get(...keys);
       if (value !== undefined) {
         // Save in cache before returning.
-        await this.cache[asyncSet](...keys, value);
+        await this.cache.set(...keys, value);
         return value;
       }
     }
     return undefined;
-  }
-
-  async *[asyncKeys]() {
-    // Use a Set to de-duplicate the keys from the graphs.
-    const set = new Set();
-    // We also check the cache in case the set of keys provided by the other
-    // graphs have changed since the cache was updated.
-    for (const graph of [this.cache, ...this.graphs]) {
-      for await (const key of graph[asyncKeys]()) {
-        set.add(key);
-      }
-    }
-    yield* set;
   }
 }

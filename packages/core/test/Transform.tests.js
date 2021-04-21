@@ -1,6 +1,4 @@
-import { asyncGet } from "@explorablegraph/symbols";
 import chai from "chai";
-import * as asyncOps from "../src/asyncOps.js";
 import Transform from "../src/Transform.js";
 const { assert } = chai;
 
@@ -29,7 +27,7 @@ describe("Transform", () => {
       b: "The letter b",
       c: "The letter c",
     });
-    assert.deepEqual(await asyncOps.plain(transform), {
+    assert.deepEqual(await transform.plain(), {
       a: "The letter a",
       b: "The letter b",
       c: "The letter c",
@@ -54,9 +52,9 @@ describe("Transform", () => {
       }
     );
     // The source keys aren't directly available.
-    assert.equal(await transform[asyncGet]("a"), undefined);
+    assert.equal(await transform.get("a"), undefined);
     // The transformed keys are available.
-    assert.deepEqual(await asyncOps.plain(transform), {
+    assert.deepEqual(await transform.plain(), {
       A: "The letter a",
       B: "The letter b",
       C: "The letter c",
@@ -78,7 +76,7 @@ describe("Transform", () => {
       }
     );
     // The transformed keys are available.
-    assert.deepEqual(await asyncOps.plain(transform), {
+    assert.deepEqual(await transform.plain(), {
       a: "THE LETTER A",
       b: "THE LETTER B",
       c: "THE LETTER C",
@@ -93,7 +91,7 @@ describe("Transform", () => {
       c: "The letter c",
     });
     // The transformed keys are available.
-    assert.deepEqual(await asyncOps.plain(capitalize), {
+    assert.deepEqual(await capitalize.plain(), {
       A: "THE LETTER A",
       B: "THE LETTER B",
       C: "THE LETTER C",

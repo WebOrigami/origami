@@ -1,6 +1,4 @@
-import { asyncGet } from "@explorablegraph/symbols";
 import chai from "chai";
-import * as asyncOps from "../src/asyncOps.js";
 import Compose from "../src/Compose.js";
 const { assert } = chai;
 
@@ -17,12 +15,12 @@ describe("Compose", () => {
         d: 4,
       }
     );
-    const keys = await asyncOps.keys(fixture);
+    const keys = await fixture.keys();
     assert.deepEqual(keys, ["a", "c", "b", "d"]);
-    assert.equal(await fixture[asyncGet]("a"), 1);
-    assert.equal(await fixture[asyncGet]("b"), 2);
-    assert.equal(await fixture[asyncGet]("c"), 3);
-    assert.equal(await fixture[asyncGet]("d"), 4);
-    assert.equal(await fixture[asyncGet]("x"), undefined);
+    assert.equal(await fixture.get("a"), 1);
+    assert.equal(await fixture.get("b"), 2);
+    assert.equal(await fixture.get("c"), 3);
+    assert.equal(await fixture.get("d"), 4);
+    assert.equal(await fixture.get("x"), undefined);
   });
 });

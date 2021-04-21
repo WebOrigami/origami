@@ -40,6 +40,21 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  it("plain() produces a plain object version of a graph", async () => {
+    const original = {
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    };
+    const graph = new ExplorableObject(original);
+    const plain = await graph.plain();
+    assert.deepEqual(plain, original);
+  });
+
   it("strings() converts graph values to strings", async () => {
     const graph = new ExplorableObject({
       a: 1,

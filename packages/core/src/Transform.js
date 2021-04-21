@@ -1,10 +1,11 @@
-import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
-import AsyncExplorable from "./AsyncExplorable.js";
+import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableObject from "./ExplorableObject.js";
 
-export default class Transform extends AsyncExplorable {
+export default class Transform extends ExplorableGraph {
   constructor(inner, options = {}) {
     super();
-    this.inner = new AsyncExplorable(inner);
+    this.inner =
+      inner instanceof ExplorableGraph ? inner : new ExplorableObject(inner);
     if (options.outerKeyForInnerKey) {
       this.outerKeyForInnerKey = options.outerKeyForInnerKey;
     }
@@ -16,8 +17,8 @@ export default class Transform extends AsyncExplorable {
     }
   }
 
-  async *[asyncKeys]() {
-    for await (const innerKey of this.inner[asyncKeys]()) {
+  async *[Symbol.asyncIterator]() {
+    for await (const innerKey of this.inner) {
       const outerKey = await this.outerKeyForInnerKey(innerKey);
       if (outerKey !== undefined) {
         yield outerKey;
@@ -25,12 +26,10 @@ export default class Transform extends AsyncExplorable {
     }
   }
 
-  async [asyncGet](outerKey, ...rest) {
+  async get(outerKey, ...rest) {
     const innerKey = await this.innerKeyForOuterKey(outerKey);
     const inner = this.inner;
-    const value = innerKey
-      ? await inner[asyncGet](innerKey, ...rest)
-      : undefined;
+    const value = innerKey ? await inner.get(innerKey, ...rest) : undefined;
     return value ? await this.transform(value, outerKey, innerKey) : undefined;
   }
 

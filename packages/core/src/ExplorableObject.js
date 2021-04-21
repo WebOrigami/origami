@@ -33,4 +33,41 @@ export default class ExplorableObject extends ExplorableGraph {
       ? new ExplorableObject(value)
       : value;
   }
+
+  /**
+   * Add or overwrite the value at a given location in the graph. Given a set
+   * of arguments, take the last argument as a value, and the ones before it
+   * as a path. If only one argument is supplied, use that as a key, and take
+   * the value as undefined.
+   *
+   * @param  {...any} args
+   */
+  async set(...args) {
+    if (args.length === 0) {
+      // No-op
+      return;
+    }
+    const value = args.length === 1 ? undefined : args.pop();
+    const keys = args;
+
+    // Traverse the keys
+    let current = this.obj;
+    while (keys.length > 1) {
+      const key = keys.shift();
+      let next = current[key];
+      if (!isPlainObject(next)) {
+        // Overwrite path
+        next = {};
+        current[key] = next;
+      }
+      current = next;
+    }
+
+    const key = keys.shift();
+    if (value === undefined) {
+      delete current[key];
+    } else {
+      current[key] = value;
+    }
+  }
 }
