@@ -55,7 +55,7 @@ describe("Files", () => {
     assert.equal(String(file), "The letter E");
   });
 
-  it("can write out a file via .set", async () => {
+  it("can write out a file via set()", async () => {
     await createTempDirectory();
 
     // Write out a file.
