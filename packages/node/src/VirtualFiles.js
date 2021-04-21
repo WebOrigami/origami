@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncGet, asyncKeys } from "@explorablegraph/core";
+import { AsyncExplorable } from "@explorablegraph/core";
 import path from "path";
 import Files from "./Files.js";
 
@@ -14,43 +14,9 @@ export default class VirtualFiles extends TransformMixin(Files) {
     this.#bindings = bindings || {};
   }
 
-  async [asyncGet](key, ...rest) {
-    const result = await super[asyncGet](key, ...rest);
-    if (result) {
-      // Prefer base result.
-      return result;
-    }
-
-    // Try looking in fallback folders.
-    for (const folder of this.#fallbackFolders) {
-      const result = await folder[asyncGet](...rest);
-      if (result) {
-        return result;
-      }
-    }
-
-    // If we have a wildcard folder, look in there.
-    if (rest.length > 0) {
-      const wildcardFolder = await this.wildcardFolder();
-      if (wildcardFolder) {
-        // Construct a bound folder.
-        const basename = path.basename(wildcardFolder.dirname);
-        const name = basename.slice(1);
-        const bindings = Object.assign({}, this.#bindings, {
-          [name]: key,
-        });
-        const bound = await this.subgraph(basename, undefined, bindings);
-        const result = await bound[asyncGet](...rest);
-        return result;
-      }
-    }
-
-    return undefined;
-  }
-
-  async *[asyncKeys]() {
+  async *[Symbol.asyncIterator]() {
     // Yield our keys first.
-    yield* super[asyncKeys]();
+    yield* super[Symbol.asyncIterator]();
 
     // Yield fallback keys.
     // For wildcard folders, we only yield keys for arrow modules to avoid having,
@@ -67,15 +33,49 @@ export default class VirtualFiles extends TransformMixin(Files) {
         for await (const key of folder.innerKeys()) {
           innerKeys.push(key);
         }
-        for await (const key of folder[asyncKeys]()) {
+        for await (const key of folder) {
           if (!innerKeys.includes(key)) {
             yield key;
           }
         }
       } else {
-        yield* folder[asyncKeys]();
+        yield* folder[Symbol.asyncIterator]();
       }
     }
+  }
+
+  async get(key, ...rest) {
+    const result = await super.get(key, ...rest);
+    if (result) {
+      // Prefer base result.
+      return result;
+    }
+
+    // Try looking in fallback folders.
+    for (const folder of this.#fallbackFolders) {
+      const result = await folder.get(...rest);
+      if (result) {
+        return result;
+      }
+    }
+
+    // If we have a wildcard folder, look in there.
+    if (rest.length > 0) {
+      const wildcardFolder = await this.wildcardFolder();
+      if (wildcardFolder) {
+        // Construct a bound folder.
+        const basename = path.basename(wildcardFolder.dirname);
+        const name = basename.slice(1);
+        const bindings = Object.assign({}, this.#bindings, {
+          [name]: key,
+        });
+        const bound = await this.subgraph(basename, undefined, bindings);
+        const result = await bound.get(...rest);
+        return result;
+      }
+    }
+
+    return undefined;
   }
 
   get bindings() {
@@ -131,7 +131,7 @@ export default class VirtualFiles extends TransformMixin(Files) {
     // key. If any matches are found, they'll become fallback folders for the
     // subfolder we're constructing.
     for (const fallbackFolder of fallbackFolders) {
-      const subfolder = await fallbackFolder[asyncGet](key);
+      const subfolder = await fallbackFolder.get(key);
       if (subfolder instanceof AsyncExplorable) {
         fallbacks.push(subfolder);
       }
@@ -168,7 +168,7 @@ export default class VirtualFiles extends TransformMixin(Files) {
       return this.#wildcardFolder;
     }
     this.#wildcardFolder = null;
-    for await (const key of this[asyncKeys]()) {
+    for await (const key of this) {
       if (key.startsWith(":")) {
         this.#wildcardFolder = this.subgraph(key);
         break;
@@ -180,23 +180,21 @@ export default class VirtualFiles extends TransformMixin(Files) {
 
 function TransformMixin(Base) {
   return class Transform extends Base {
-    async [asyncGet](outerKey, ...rest) {
-      const innerKey = await this.innerKeyForOuterKey(outerKey);
-      const value = innerKey
-        ? await super[asyncGet](innerKey, ...rest)
-        : undefined;
-      return value
-        ? await this.transform(value, outerKey, innerKey)
-        : undefined;
-    }
-
-    async *[asyncKeys]() {
-      for await (const innerKey of super[asyncKeys]()) {
+    async *[Symbol.asyncIterator]() {
+      for await (const innerKey of this.innerKeys()) {
         const outerKey = await this.outerKeyForInnerKey(innerKey);
         if (outerKey !== undefined) {
           yield outerKey;
         }
       }
+    }
+
+    async get(outerKey, ...rest) {
+      const innerKey = await this.innerKeyForOuterKey(outerKey);
+      const value = innerKey ? await super.get(innerKey, ...rest) : undefined;
+      return value
+        ? await this.transform(value, outerKey, innerKey)
+        : undefined;
     }
 
     // The default implementation returns the key unmodified.
@@ -205,7 +203,7 @@ function TransformMixin(Base) {
     }
 
     async *innerKeys() {
-      yield* super[asyncKeys]();
+      yield* super[Symbol.asyncIterator]();
     }
 
     // The default implementation returns the key unmodified.

@@ -1,4 +1,3 @@
-import { asyncGet } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -11,7 +10,7 @@ const fixturesDirectory = path.join(dirname, "fixtures");
 describe("JavaScriptModuleFiles", () => {
   it("Gets the exports of the file named by the key", async () => {
     const modules = new JavaScriptModuleFiles(fixturesDirectory);
-    const result = await modules[asyncGet]("module1.js");
+    const result = await modules.get("module1.js");
     assert.equal(result.default, "This is the default export.");
   });
 });

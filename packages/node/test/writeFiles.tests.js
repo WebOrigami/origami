@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncOps } from "@explorablegraph/core";
+import { ExplorableObject } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -27,14 +27,14 @@ describe("writeFiles", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new AsyncExplorable(obj);
+    const files = new ExplorableObject(obj);
 
     // Write out files.
     await writeFiles(tempDirectory, files);
 
     // Read them back in.
     const tempFiles = new Files(tempDirectory);
-    const actual = await asyncOps.strings(tempFiles);
+    const actual = await tempFiles.strings();
     assert.deepEqual(actual, obj);
   });
 });

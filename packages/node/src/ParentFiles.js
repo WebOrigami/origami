@@ -1,14 +1,14 @@
-import { AsyncExplorable, asyncGet } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
-export default class ParentFiles extends AsyncExplorable {
+export default class ParentFiles extends ExplorableGraph {
   constructor(dirname) {
     super();
     this.dirname = dirname;
   }
 
-  async [asyncGet](key) {
+  async get(key) {
     return await searchUp(this.dirname, key);
   }
 }

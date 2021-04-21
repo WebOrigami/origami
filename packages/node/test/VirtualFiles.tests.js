@@ -1,4 +1,4 @@
-import { asyncGet, asyncOps } from "@explorablegraph/core";
+import { asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -23,17 +23,17 @@ describe("VirtualFiles", () => {
       "sample.txt",
       "subfolder",
     ]);
-    const result = await virtualFiles[asyncGet]("sample.txt");
+    const result = await virtualFiles.get("sample.txt");
     assert.equal(result, "Hello, world.");
   });
 
   it("Can export a scalar value", async () => {
-    const result = await virtualFiles[asyncGet]("math");
+    const result = await virtualFiles.get("math");
     assert.equal(result, 4);
   });
 
   it("Passes a local graph to the arrow module's default function", async () => {
-    const result = await virtualFiles[asyncGet]("index.html");
+    const result = await virtualFiles.get("index.html");
     assert.equal(result, "<p>Hello, world.</p>");
   });
 
@@ -47,13 +47,13 @@ describe("VirtualFiles", () => {
   });
 
   it("Includes wildcard folder contents in keys", async () => {
-    const subfolder = await virtualFiles[asyncGet]("subfolder");
+    const subfolder = await virtualFiles.get("subfolder");
     const keys = await asyncOps.keys(subfolder);
     assert.deepEqual(keys, ["bar.txt", "foo.txt"]);
   });
 
   it("Can return a result from a folder with a wildcard name", async () => {
-    const result = await virtualFiles[asyncGet]("doesntexist", "foo.txt");
+    const result = await virtualFiles.get("doesntexist", "foo.txt");
     assert.equal(result, "doesntexist");
   });
 });

@@ -1,12 +1,12 @@
-import { AsyncExplorable, asyncGet, asyncKeys } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
-export default async function unlinkFiles(dirname, exfn) {
-  for await (const key of exfn[asyncKeys]()) {
-    const obj = await exfn[asyncGet](key);
+export default async function unlinkFiles(dirname, graph) {
+  for await (const key of graph) {
+    const obj = await graph.get(key);
     const objPath = path.join(dirname, key);
-    if (obj instanceof AsyncExplorable) {
+    if (obj instanceof ExplorableGraph) {
       // Recurse
       await unlinkFiles(objPath, obj);
     } else {
