@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncOps } from "@explorablegraph/core";
+import { ExplorableObject } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -73,7 +73,7 @@ describe("Files", () => {
     await removeTempDirectory();
   });
 
-  it.skip("can write out multiple files via asyncOps.update", async () => {
+  it("can write out multiple files via set()", async () => {
     await createTempDirectory();
 
     // Create a tiny set of "files".
@@ -83,15 +83,15 @@ describe("Files", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new AsyncExplorable(obj);
+    const files = new ExplorableObject(obj);
 
     // Write out files.
     const tempFiles = new Files(tempDirectory);
-    await asyncOps.update(tempFiles, files);
+    await tempFiles.set(files);
 
     // Read them back in.
     const actualFiles = new Files(tempDirectory);
-    const actualStrings = await asyncOps.strings(actualFiles);
+    const actualStrings = await actualFiles.strings();
     assert.deepEqual(actualStrings, obj);
 
     await removeTempDirectory();

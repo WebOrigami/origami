@@ -52,7 +52,10 @@ export default class Files extends ExplorableGraph {
       // No-op
       return;
     }
-    const value = args.length === 1 ? undefined : args.pop();
+    const value =
+      args.length === 1 && !(args[0] instanceof ExplorableGraph)
+        ? undefined
+        : args.pop();
 
     if (value === undefined) {
       // Delete file or directory.
