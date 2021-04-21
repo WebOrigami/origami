@@ -1,10 +1,4 @@
-import {
-  AsyncExplorable,
-  asyncGet,
-  asyncKeys,
-  asyncSet,
-  ExplorableGraph,
-} from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -53,7 +47,7 @@ export default class Files extends ExplorableGraph {
    *
    * @param  {...any} args
    */
-  async [asyncSet](...args) {
+  async set(...args) {
     if (args.length === 0) {
       // No-op
       return;
@@ -75,11 +69,11 @@ export default class Files extends ExplorableGraph {
       // Create directory.
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
-    } else if (value instanceof AsyncExplorable) {
-      // Recursively write out the explorable object.
-      for await (const subKey of value[asyncKeys]()) {
-        const subValue = await value[asyncGet](subKey);
-        await this[asyncSet](...args, subKey, subValue);
+    } else if (value instanceof ExplorableGraph) {
+      // Recursively write out the explorable graph.
+      for await (const subKey of value) {
+        const subValue = await value.get(subKey);
+        await this.set(...args, subKey, subValue);
       }
     } else {
       // Write out value as the contents of a file. The file name is the last

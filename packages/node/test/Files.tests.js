@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncOps, asyncSet } from "@explorablegraph/core";
+import { AsyncExplorable, asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import { promises as fs } from "fs";
 import path from "path";
@@ -55,14 +55,14 @@ describe("Files", () => {
     assert.equal(String(file), "The letter E");
   });
 
-  it.skip("can write out a file via [asyncSet]", async () => {
+  it("can write out a file via .set", async () => {
     await createTempDirectory();
 
     // Write out a file.
     const fileName = "file1";
     const fileText = "This is the first file.";
     const tempFiles = new Files(tempDirectory);
-    await tempFiles[asyncSet](fileName, fileText);
+    await tempFiles.set(fileName, fileText);
 
     // Read it back in.
     const filePath = path.join(tempDirectory, fileName);
@@ -97,22 +97,22 @@ describe("Files", () => {
     await removeTempDirectory();
   });
 
-  it.skip("can create an empty directory via [asyncSet]", async () => {
+  it("can create an empty directory via set()", async () => {
     await createTempDirectory();
     const tempFiles = new Files(tempDirectory);
-    await tempFiles[asyncSet]("folder", null);
+    await tempFiles.set("folder", null);
     const tempFolder = path.join(tempDirectory, "folder");
     const stats = await fs.stat(tempFolder);
     assert(stats.isDirectory());
     await removeTempDirectory();
   });
 
-  it.skip("can delete a file via [asyncSet]", async () => {
+  it("can delete a file via set()", async () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");
     await fs.writeFile(tempFile, "");
     const tempFiles = new Files(tempDirectory);
-    await tempFiles[asyncSet]("file", undefined);
+    await tempFiles.set("file", undefined);
     let stats;
     try {
       stats = await fs.stat(tempFile);
@@ -125,12 +125,12 @@ describe("Files", () => {
     await removeTempDirectory();
   });
 
-  it.skip("can delete a folder via [asyncSet]", async () => {
+  it("can delete a folder via set()", async () => {
     await createTempDirectory();
     const folder = path.join(tempDirectory, "folder");
     await fs.mkdir(folder);
     const tempFiles = new Files(tempDirectory);
-    await tempFiles[asyncSet]("folder", undefined);
+    await tempFiles.set("folder", undefined);
     let stats;
     try {
       stats = await fs.stat(folder);
