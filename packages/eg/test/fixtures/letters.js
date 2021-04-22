@@ -1,6 +1,6 @@
-import { AsyncExplorable } from "@explorablegraph/core";
+import { ExplorableObject } from "@explorablegraph/core";
 
-export default new AsyncExplorable({
+export default new ExplorableObject({
   a: "The letter A",
   b: "The letter B",
   c: "The letter C",

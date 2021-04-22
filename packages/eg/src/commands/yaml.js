@@ -1,8 +1,7 @@
-import { asyncOps } from "@explorablegraph/core";
 import YAML from "yaml";
 
 export default async function yaml(graph) {
-  const obj = await asyncOps.strings(graph);
+  const obj = await graph.strings();
   const text = YAML.stringify(obj);
   return text;
 }

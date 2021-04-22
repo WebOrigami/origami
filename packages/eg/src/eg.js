@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
-import { AsyncExplorable, asyncGet, asyncOps } from "@explorablegraph/core";
+import {
+  asyncGet,
+  asyncOps,
+  ExplorableGraph,
+  ExplorableObject,
+} from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
@@ -13,7 +18,7 @@ const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
 const configPath = await parentFiles[asyncGet](configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
-const config = fn ? new AsyncExplorable(fn) : null;
+const config = fn ? new ExplorableObject(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
@@ -40,7 +45,7 @@ export default async function stdout(obj) {
   let output;
   if (obj === undefined) {
     return;
-  } else if (obj instanceof AsyncExplorable) {
+  } else if (obj instanceof ExplorableGraph) {
     const strings = await asyncOps.strings(obj);
     output = JSON.stringify(strings, null, 2);
   } else {
