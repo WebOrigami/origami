@@ -28,8 +28,14 @@ export default class ExplorableSite extends ExplorableGraph {
     } else {
       // Return the page contents.
       const response = await fetch(href);
-      const text = await response.text();
-      return text;
+      // TODO: More robust file extension handling
+      const isText = href.endsWith(".html");
+      if (isText) {
+        return await response.text();
+      } else {
+        const arrayBuffer = await response.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+      }
     }
   }
 }
