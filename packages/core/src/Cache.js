@@ -1,4 +1,3 @@
-import { asyncKeys } from "@explorablegraph/symbols";
 import ExplorableGraph from "./ExplorableGraph.js";
 import ExplorableObject from "./ExplorableObject.js";
 
@@ -28,7 +27,7 @@ export default class Cache extends ExplorableGraph {
     // We also check the cache in case the set of keys provided by the other
     // graphs have changed since the cache was updated.
     for (const graph of [this.cache, ...this.graphs]) {
-      for await (const key of graph[asyncKeys]()) {
+      for await (const key of graph) {
         if (!set.has(key)) {
           set.add(key);
           yield key;
