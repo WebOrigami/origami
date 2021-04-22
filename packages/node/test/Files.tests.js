@@ -149,5 +149,5 @@ async function createTempDirectory() {
 }
 
 async function removeTempDirectory() {
-  await fs.rmdir(tempDirectory, { recursive: true });
+  await fs.rm(tempDirectory, { recursive: true });
 }

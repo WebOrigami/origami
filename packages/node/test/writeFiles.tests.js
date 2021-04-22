@@ -16,7 +16,7 @@ describe("writeFiles", () => {
   });
 
   afterEach(async () => {
-    await fs.rmdir(tempDirectory, { recursive: true });
+    await fs.rm(tempDirectory, { recursive: true });
   });
 
   it("creates files from a graph", async () => {

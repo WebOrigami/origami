@@ -16,7 +16,7 @@ describe("unlinkFiles", () => {
   });
 
   afterEach(async () => {
-    await fs.rmdir(tempDirectory, { recursive: true });
+    await fs.rm(tempDirectory, { recursive: true });
   });
 
   it("removes the files defines by a graph", async () => {

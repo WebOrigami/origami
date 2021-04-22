@@ -1,4 +1,4 @@
-import { AsyncExplorable } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import path from "path";
 import Files from "./Files.js";
 
@@ -132,7 +132,7 @@ export default class VirtualFiles extends TransformMixin(Files) {
     // subfolder we're constructing.
     for (const fallbackFolder of fallbackFolders) {
       const subfolder = await fallbackFolder.get(key);
-      if (subfolder instanceof AsyncExplorable) {
+      if (subfolder instanceof ExplorableGraph) {
         fallbacks.push(subfolder);
       }
     }

@@ -1,16 +1,6 @@
-import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
-
 export default class ExplorableGraph {
-  async [asyncGet](...keys) {
-    return this.get(...keys);
-  }
-
   async *[Symbol.asyncIterator]() {
     yield* [];
-  }
-
-  async *[asyncKeys]() {
-    yield* this[Symbol.asyncIterator]();
   }
 
   /**

@@ -63,7 +63,7 @@ export default class Files extends ExplorableGraph {
       const stats = await stat(objPath);
       if (stats?.isDirectory()) {
         // Delete directory.
-        await fs.rmdir(objPath, { recursive: true });
+        await fs.rm(objPath, { recursive: true });
       } else if (stats) {
         // Delete file.
         await fs.unlink(objPath);

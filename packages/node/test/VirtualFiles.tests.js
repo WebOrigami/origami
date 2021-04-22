@@ -1,4 +1,3 @@
-import { asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,7 +12,7 @@ const virtualFiles = new VirtualFiles(directory);
 
 describe("VirtualFiles", () => {
   it("Can generate a file from an arrow module", async () => {
-    const keys = await asyncOps.keys(virtualFiles);
+    const keys = await virtualFiles.keys();
     assert.deepEqual(keys, [
       ":wildcard",
       "graph.js",
@@ -42,13 +41,13 @@ describe("VirtualFiles", () => {
     assert(wildcardFolder);
     const basename = path.basename(wildcardFolder.dirname);
     assert.equal(basename, ":wildcard");
-    const keys = await asyncOps.keys(wildcardFolder);
+    const keys = await wildcardFolder.keys();
     assert.deepEqual(keys, ["foo.txt"]);
   });
 
   it("Includes wildcard folder contents in keys", async () => {
     const subfolder = await virtualFiles.get("subfolder");
-    const keys = await asyncOps.keys(subfolder);
+    const keys = await subfolder.keys();
     assert.deepEqual(keys, ["bar.txt", "foo.txt"]);
   });
 
