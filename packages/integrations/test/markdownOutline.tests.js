@@ -1,5 +1,5 @@
 import chai from "chai";
-import { promises as fs } from "fs";
+import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import markdownOutline from "../src/markdownOutline.js";

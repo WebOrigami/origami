@@ -1,5 +1,5 @@
 import { ExplorableGraph } from "@explorablegraph/core";
-import { promises as fs } from "fs";
+import * as fs from "fs/promises";
 import path from "path";
 
 export default async function writeFiles(dirname, graph) {

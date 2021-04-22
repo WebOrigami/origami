@@ -1,4 +1,4 @@
-import { promises as fs } from "fs";
+import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
 
