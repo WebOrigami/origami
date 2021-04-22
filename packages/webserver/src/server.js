@@ -1,13 +1,12 @@
 import { AsyncExplorable } from "@explorablegraph/core";
-import { asyncGet } from "@explorablegraph/symbols";
 import path from "path";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
 // the graph.
-export async function getResourceAtPath(exfn, href) {
+export async function getResourceAtPath(graph, href) {
   const keys = keysFromHref(href);
-  return await exfn[asyncGet](...keys);
+  return await graph.get(...keys);
 }
 
 // Explorable graph router as Express middleware.
@@ -24,7 +23,7 @@ export function graphRouter(graph) {
 export async function handleRequest(request, response, graph) {
   const unescaped = unescape(request.url);
   const keys = keysFromHref(unescaped);
-  const resource = await graph[asyncGet](...keys);
+  const resource = await graph.get(...keys);
   if (resource) {
     // If resource is a function, invoke to get the object we want to return.
     const obj = typeof resource === "function" ? await resource() : resource;
