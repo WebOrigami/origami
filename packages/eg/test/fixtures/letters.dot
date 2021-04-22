@@ -1,0 +1,10 @@
+digraph g {
+  rankdir=LR;
+  "" [label="/"];
+  "" -> "/a";
+  "/a" [label="a"];
+  "" -> "/b";
+  "/b" [label="b"];
+  "" -> "/c";
+  "/c" [label="c"];
+}

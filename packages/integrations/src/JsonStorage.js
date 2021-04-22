@@ -1,10 +1,4 @@
-import {
-  AsyncExplorable,
-  asyncGet,
-  asyncKeys,
-  asyncOps,
-  asyncSet,
-} from "@explorablegraph/core";
+import { ExplorableGraph, ExplorableObject } from "@explorablegraph/core";
 import https from "https";
 // import http from "http";
 import fetch from "node-fetch";
@@ -12,29 +6,26 @@ import fetch from "node-fetch";
 const sampleId = "8277d653-77cc-49be-bdec-f433a4e17ac9";
 let fetchPromise;
 
-export default class JsonStorage extends AsyncExplorable {
+export default class JsonStorage extends ExplorableGraph {
   constructor(id) {
     super();
     this.id = id || sampleId;
     this.url = `https://jsonstorage.net/api/items/${this.id}`;
   }
 
-  async [asyncGet](...keys) {
+  async *[Symbol.asyncIterator]() {
     const obj = await this.fetch(this.url);
-    return await obj[asyncGet](...keys);
+    yield* obj[Symbol.asyncIterator]();
   }
 
-  async *[asyncKeys]() {
+  async get(...keys) {
     const obj = await this.fetch(this.url);
-    yield* obj[asyncKeys]();
+    return await obj.get(...keys);
   }
 
-  // REVIEW: This currently doesn't match the [set] pattern.
-  // What's the best way to update a storage object like this?
-  async [asyncSet](arg) {
-    // const obj = await this.fetch(this.url);
-    // await asyncOps.update(obj, arg);
-    const strings = await asyncOps.strings(arg);
+  // TODO: Add routing via ...keys to match general set pattern.
+  async set(arg) {
+    const strings = await arg.strings();
     await this.put(strings);
   }
 
@@ -44,7 +35,7 @@ export default class JsonStorage extends AsyncExplorable {
         const response = await fetch(this.url);
         const text = await response.text();
         const obj = JSON.parse(text);
-        const explorable = new AsyncExplorable(obj);
+        const explorable = new ExplorableObject(obj);
         resolve(explorable);
       });
     }
