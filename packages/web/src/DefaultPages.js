@@ -1,22 +1,18 @@
-import {
-  AsyncExplorable,
-  asyncGet,
-  asyncKeys,
-  asyncOps,
-} from "@explorablegraph/core";
+import { ExplorableGraph, ExplorableObject } from "@explorablegraph/core";
 
 const INDEX_HTML = "index.html";
 const KEYS_JSON = ".keys.json";
 
-export default class DefaultPages extends AsyncExplorable {
+export default class DefaultPages extends ExplorableGraph {
   constructor(inner) {
     super();
-    this.inner = new AsyncExplorable(inner);
+    this.inner =
+      inner instanceof ExplorableGraph ? inner : new ExplorableObject(inner);
   }
 
-  async *[asyncKeys]() {
+  async *[Symbol.asyncIterator]() {
     // Add "index.html" to the inner's keys if not already there.
-    const base = await asyncOps.keys(this.inner);
+    const base = await this.inner.keys();
     const keys = [...base];
 
     if (!keys.includes(INDEX_HTML)) {
@@ -27,12 +23,12 @@ export default class DefaultPages extends AsyncExplorable {
     yield* keys;
   }
 
-  async [asyncGet](...keys) {
-    const value = await this.inner[asyncGet](...keys);
+  async get(...keys) {
+    const value = await this.inner.get(...keys);
     const lastKey = keys[keys.length - 1];
 
     let indexParent;
-    if (value instanceof AsyncExplorable) {
+    if (value instanceof ExplorableGraph) {
       // Value is explorable; return an DefaultPages wrapper around it.
       return Reflect.construct(this.constructor, [value]);
     } else if (lastKey === INDEX_HTML && value === undefined) {
@@ -40,7 +36,7 @@ export default class DefaultPages extends AsyncExplorable {
       // for it, return an index for the parent.
       const route = keys.slice(0, keys.length - 1);
       indexParent =
-        route.length === 0 ? this.inner : await this.inner[asyncGet](...route);
+        route.length === 0 ? this.inner : await this.inner.get(...route);
     }
 
     // In either of the above cases, return an index.
@@ -52,7 +48,7 @@ export default class DefaultPages extends AsyncExplorable {
       // Return default .keys.json page.
       const route = keys.slice(0, keys.length - 1);
       const parent =
-        route.length === 0 ? this.inner : await this.inner[asyncGet](...route);
+        route.length === 0 ? this.inner : await this.inner.get(...route);
       return await defaultKeysJson(parent);
     }
 
@@ -69,9 +65,9 @@ export default class DefaultPages extends AsyncExplorable {
 // inefficient for real use.
 async function defaultKeysJson(graph) {
   const keys = [];
-  for await (const key of graph[asyncKeys]()) {
-    const value = await graph[asyncGet](key);
-    const text = value instanceof AsyncExplorable ? `${key}/` : key;
+  for await (const key of graph) {
+    const value = await graph.get(key);
+    const text = value instanceof ExplorableGraph ? `${key}/` : key;
     keys.push(text);
   }
   if (!keys.includes(INDEX_HTML)) {
@@ -83,9 +79,9 @@ async function defaultKeysJson(graph) {
 
 async function defaultIndexHtml(graph) {
   const links = [];
-  for await (const key of graph[asyncKeys]()) {
-    const value = await graph[asyncGet](key);
-    const href = value instanceof AsyncExplorable ? `${key}/` : key;
+  for await (const key of graph) {
+    const value = await graph.get(key);
+    const href = value instanceof ExplorableGraph ? `${key}/` : key;
     const link = `<li><a href="${href}">${href}</a></li>`;
     links.push(link);
   }

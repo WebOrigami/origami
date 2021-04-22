@@ -1,4 +1,3 @@
-import { asyncGet, asyncOps } from "@explorablegraph/core";
 import chai from "chai";
 import DefaultPages from "../src/DefaultPages.js";
 const { assert } = chai;
@@ -10,7 +9,7 @@ describe("DefaultPages", () => {
       b: 2,
       c: 3,
     });
-    const keys = await asyncOps.keys(fixture);
+    const keys = await fixture.keys();
     assert(keys.includes("index.html"));
   });
 
@@ -21,7 +20,7 @@ describe("DefaultPages", () => {
       b: 2,
       c: 3,
     });
-    const index = await fixture[asyncGet]("index.html");
+    const index = await fixture.get("index.html");
     assert.equal(index, "Index page goes here");
   });
 
@@ -37,12 +36,12 @@ describe("DefaultPages", () => {
     });
 
     // Request top index
-    const index1 = await fixture[asyncGet]("index.html");
+    const index1 = await fixture.get("index.html");
     assert(index1.includes(`<a href="a">a</a>`));
     assert(index1.includes(`<a href="more/">more/</a>`));
 
     // Request sub index
-    const index2 = await fixture[asyncGet]("more", "index.html");
+    const index2 = await fixture.get("more", "index.html");
     assert(index2.includes(`<a href="d">d</a>`));
   });
 
@@ -58,12 +57,12 @@ describe("DefaultPages", () => {
     });
 
     // Request top keys
-    const keysJson1 = await fixture[asyncGet](".keys.json");
+    const keysJson1 = await fixture.get(".keys.json");
     const keys1 = JSON.parse(keysJson1);
     assert.deepEqual(keys1, ["index.html", "a", "b", "c", "more/"]);
 
     // Request sub keys
-    const keysJson2 = await fixture[asyncGet]("more", ".keys.json");
+    const keysJson2 = await fixture.get("more", ".keys.json");
     const keys2 = JSON.parse(keysJson2);
     assert.deepEqual(keys2, ["index.html", "d", "e"]);
   });

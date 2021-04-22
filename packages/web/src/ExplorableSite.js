@@ -1,13 +1,14 @@
-import { asyncGet, asyncKeys } from "@explorablegraph/symbols";
+import { ExplorableGraph } from "@explorablegraph/core";
 import fetch from "node-fetch";
 
-export default class ExplorableSite {
+export default class ExplorableSite extends ExplorableGraph {
   constructor(url) {
+    super();
     this.url = url;
     this.keysPromise = null;
   }
 
-  async *[asyncKeys]() {
+  async *[Symbol.asyncIterator]() {
     if (!this.keysPromise) {
       const href = new URL(".keys.json", this.url).href;
       this.keysPromise = fetch(href);
@@ -18,7 +19,7 @@ export default class ExplorableSite {
     yield* keys;
   }
 
-  async [asyncGet](...keys) {
+  async get(...keys) {
     const route = keys.join("/");
     const href = new URL(route, this.url).href;
     if (href.endsWith("/")) {
