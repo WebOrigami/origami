@@ -1,4 +1,4 @@
-import { ExplorableGraph, ExplorableObject } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 
 const INDEX_HTML = "index.html";
 const KEYS_JSON = ".keys.json";
@@ -6,8 +6,7 @@ const KEYS_JSON = ".keys.json";
 export default class DefaultPages extends ExplorableGraph {
   constructor(inner) {
     super();
-    this.inner =
-      inner instanceof ExplorableGraph ? inner : new ExplorableObject(inner);
+    this.inner = new ExplorableGraph(inner);
   }
 
   async *[Symbol.asyncIterator]() {

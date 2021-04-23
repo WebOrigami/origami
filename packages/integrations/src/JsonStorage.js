@@ -1,4 +1,4 @@
-import { ExplorableGraph, ExplorableObject } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import https from "https";
 // import http from "http";
 import fetch from "node-fetch";
@@ -35,7 +35,7 @@ export default class JsonStorage extends ExplorableGraph {
         const response = await fetch(this.url);
         const text = await response.text();
         const obj = JSON.parse(text);
-        const explorable = new ExplorableObject(obj);
+        const explorable = new ExplorableGraph(obj);
         resolve(explorable);
       });
     }

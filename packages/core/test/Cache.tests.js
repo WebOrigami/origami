@@ -1,11 +1,11 @@
 import chai from "chai";
 import Cache from "../src/Cache.js";
-import ExplorableObject from "../src/ExplorableObject.js";
+import ExplorableGraph from "../src/ExplorableGraph.js";
 const { assert } = chai;
 
 describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const cache = new ExplorableObject({});
+    const cache = new ExplorableGraph({});
     const fixture = new Cache(cache, {
       a: 1,
       b: 2,

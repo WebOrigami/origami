@@ -1,4 +1,4 @@
-import { ExplorableObject } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
@@ -21,7 +21,7 @@ describe("unlinkFiles", () => {
 
   it("removes the files defines by a graph", async () => {
     // Create a file in a subfolder.
-    const files = new ExplorableObject({
+    const files = new ExplorableGraph({
       subfolder: {
         file: "This is a file in the graph.",
       },

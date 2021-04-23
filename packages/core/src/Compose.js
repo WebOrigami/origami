@@ -1,18 +1,15 @@
 import ExplorableGraph from "./ExplorableGraph.js";
-import ExplorableObject from "./ExplorableObject.js";
 
 /**
- * Given a set of explorable functions, the [asyncGet] method will look at each
- * exfn in turn. The first exfn is asked for object with the key. If an exfn
- * returns a defined value (i.e., not undefined), that value is returned. If the
- * first exfn returns undefined, the second exfn will be asked, and so on.
+ * Given a set of explorable graphs, the get method will look at each graph in
+ * turn. The first graph is asked for object with the key. If an graph returns a
+ * defined value (i.e., not undefined), that value is returned. If the first
+ * graph returns undefined, the second graph will be asked, and so on.
  */
 export default class Compose extends ExplorableGraph {
   constructor(...graphs) {
     super();
-    this.graphs = graphs.map((graph) =>
-      graph instanceof ExplorableGraph ? graph : new ExplorableObject(graph)
-    );
+    this.graphs = graphs.map((graph) => new ExplorableGraph(graph));
   }
 
   async *[Symbol.asyncIterator]() {

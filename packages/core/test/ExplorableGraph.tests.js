@@ -1,6 +1,5 @@
 import chai from "chai";
 import ExplorableGraph from "../src/ExplorableGraph.js";
-import ExplorableObject from "../src/ExplorableObject.js";
 const { assert } = chai;
 
 describe("ExplorableGraph", () => {
@@ -9,17 +8,26 @@ describe("ExplorableGraph", () => {
     assert.equal(await graph.get("hello"), undefined);
   });
 
-  it("keys returns an array of the graph's keys", async () => {
-    const fixture = new ExplorableObject({
+  it("constructor takes an optional plain argument, returns an explorable object", async () => {
+    const graph = new ExplorableGraph({
       a: 1,
       b: 2,
       c: 3,
     });
-    assert.deepEqual(await fixture.keys(), ["a", "b", "c"]);
+    assert.equal(await graph.get("a"), 1);
+  });
+
+  it("keys returns an array of the graph's keys", async () => {
+    const graph = new ExplorableGraph({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
   });
 
   it("mapValues() applies a mapping function to values", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ExplorableGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -50,13 +58,13 @@ describe("ExplorableGraph", () => {
         e: 5,
       },
     };
-    const graph = new ExplorableObject(original);
+    const graph = new ExplorableGraph(original);
     const plain = await graph.plain();
     assert.deepEqual(plain, original);
   });
 
   it("strings() converts graph values to strings", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ExplorableGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -78,7 +86,7 @@ describe("ExplorableGraph", () => {
   });
 
   it("structure() produces a plain object version of an graph that has null values", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ExplorableGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -100,7 +108,7 @@ describe("ExplorableGraph", () => {
   });
 
   it("traverse() invokes a callback with each node in depth-first order", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ExplorableGraph({
       a: 1,
       b: 2,
       c: 3,

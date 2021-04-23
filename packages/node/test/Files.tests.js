@@ -1,4 +1,4 @@
-import { ExplorableObject } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
@@ -83,7 +83,7 @@ describe("Files", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new ExplorableObject(obj);
+    const files = new ExplorableGraph(obj);
 
     // Write out files.
     const tempFiles = new Files(tempDirectory);

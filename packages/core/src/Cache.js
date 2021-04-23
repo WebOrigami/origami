@@ -1,5 +1,4 @@
 import ExplorableGraph from "./ExplorableGraph.js";
-import ExplorableObject from "./ExplorableObject.js";
 import IStorableGraph from "./IStorableGraph.js";
 
 /**
@@ -16,9 +15,7 @@ export default class Cache extends ExplorableGraph {
   constructor(cache, ...graphs) {
     super();
     this.cache = cache;
-    this.graphs = graphs.map((graph) =>
-      graph instanceof ExplorableGraph ? graph : new ExplorableObject(graph)
-    );
+    this.graphs = graphs.map((graph) => new ExplorableGraph(graph));
   }
 
   async *[Symbol.asyncIterator]() {

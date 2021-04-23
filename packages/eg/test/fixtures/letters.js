@@ -1,6 +1,6 @@
-import { ExplorableObject } from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 
-export default new ExplorableObject({
+export default new ExplorableGraph({
   a: "The letter A",
   b: "The letter B",
   c: "The letter C",

@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  asyncGet,
-  asyncOps,
-  ExplorableGraph,
-  ExplorableObject,
-} from "@explorablegraph/core";
+import { ExplorableGraph } from "@explorablegraph/core";
 import { evaluate } from "@explorablegraph/exlang";
 import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
@@ -16,16 +11,16 @@ import showUsage from "./showUsage.js";
 // Load config file.
 const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
-const configPath = await parentFiles[asyncGet](configFileName);
+const configPath = await parentFiles.get(configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
-const config = fn ? new ExplorableObject(fn) : null;
+const config = fn ? new ExplorableGraph(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
 
 // Give the `config()` builtin a reference to the current scope. This lets
 // someone inspect the scope from the command line.
-const configBuiltin = await scope[asyncGet]("config");
+const configBuiltin = await scope.get("config");
 if (configBuiltin) {
   configBuiltin.setScope(scope);
 }
@@ -46,7 +41,7 @@ export default async function stdout(obj) {
   if (obj === undefined) {
     return;
   } else if (obj instanceof ExplorableGraph) {
-    const strings = await asyncOps.strings(obj);
+    const strings = await obj.strings();
     output = JSON.stringify(strings, null, 2);
   } else {
     output = obj;
