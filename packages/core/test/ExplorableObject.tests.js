@@ -50,64 +50,64 @@ describe("ExplorableObject", () => {
     assert.equal(await obj.get("a1", "a2", "b1", "b2"), 1);
   });
 
-  // it.skip("can set a value", async () => {
-  //   const obj = new ExplorableObject({
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //     more: {
-  //       d: 4,
-  //       e: 5,
-  //     },
-  //   });
+  it("can set a value", async () => {
+    const obj = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
 
-  //   // Set key, value.
-  //   await obj[asyncSet]("a", 5);
+    // Set key, value.
+    await obj.set("a", 5);
 
-  //   // New key.
-  //   await obj[asyncSet]("f", 7);
+    // New key.
+    await obj.set("f", 7);
 
-  //   // Set deep key, value.
-  //   await obj[asyncSet]("more", "g", 8);
+    // Set deep key, value.
+    await obj.set("more", "g", 8);
 
-  //   assert.deepEqual(await asyncOps.plain(obj), {
-  //     a: 5,
-  //     b: 2,
-  //     c: 3,
-  //     more: {
-  //       d: 4,
-  //       e: 5,
-  //       g: 8,
-  //     },
-  //     f: 7,
-  //   });
-  // });
+    assert.deepEqual(await obj.plain(), {
+      a: 5,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+        g: 8,
+      },
+      f: 7,
+    });
+  });
 
-  // it.skip("set can delete a key if the value is explicitly undefined", async () => {
-  //   const obj = new ExplorableObject({
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //     more: {
-  //       d: 4,
-  //       e: 5,
-  //     },
-  //   });
+  it("set can delete a key if the value is explicitly undefined", async () => {
+    const obj = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
 
-  //   // One arg deletes key.
-  //   await obj[asyncSet]("a");
+    // One arg deletes key.
+    await obj.set("a");
 
-  //   // Explicit undefined value deletes key.
-  //   await obj[asyncSet]("b", undefined);
+    // Explicit undefined value deletes key.
+    await obj.set("b", undefined);
 
-  //   // Deep deletion
-  //   await obj[asyncSet]("more", "d", undefined);
+    // Deep deletion
+    await obj.set("more", "d", undefined);
 
-  //   assert.deepEqual(await asyncOps.plain(obj), {
-  //     c: 3,
-  //     more: {
-  //       e: 5,
-  //     },
-  //   });
-  // });
+    assert.deepEqual(await obj.plain(), {
+      c: 3,
+      more: {
+        e: 5,
+      },
+    });
+  });
 });

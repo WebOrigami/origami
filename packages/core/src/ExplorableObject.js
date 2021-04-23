@@ -7,6 +7,12 @@ export default class ExplorableObject extends ExplorableGraph {
   }
 
   async *[Symbol.asyncIterator]() {
+    // If the object defines an iterator, defer to that.
+    if (this.obj[Symbol.asyncIterator]) {
+      yield* this.obj[Symbol.asyncIterator]();
+    }
+
+    // Iterate over the object's keys.
     yield* Object.keys(this.obj);
   }
 
@@ -16,6 +22,11 @@ export default class ExplorableObject extends ExplorableGraph {
    * @param {...any} keys
    */
   async get(...keys) {
+    // If the object defines its own `get` method, defer to that.
+    if (typeof this.obj.get === "function") {
+      return this.obj.get(...keys);
+    }
+
     // Traverse the keys.
     let value = this.obj;
     while (value !== undefined && keys.length > 0) {
