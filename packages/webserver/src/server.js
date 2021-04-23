@@ -1,4 +1,4 @@
-import { AsyncExplorable } from "@explorablegraph/core";
+import { ExplorableGraph, ExplorableObject } from "@explorablegraph/core";
 import path from "path";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -83,7 +83,8 @@ export function requestListener(arg) {
     obj = arg;
   }
 
-  const graph = new AsyncExplorable(obj);
+  const graph =
+    obj instanceof ExplorableGraph ? obj : new ExplorableObject(obj);
 
   return async function (request, response) {
     console.log(request.url);

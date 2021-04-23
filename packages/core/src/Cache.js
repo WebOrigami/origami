@@ -1,5 +1,6 @@
 import ExplorableGraph from "./ExplorableGraph.js";
 import ExplorableObject from "./ExplorableObject.js";
+import IStorableGraph from "./IStorableGraph.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If
@@ -9,8 +10,7 @@ import ExplorableObject from "./ExplorableObject.js";
  */
 export default class Cache extends ExplorableGraph {
   /**
-   *
-   * @param {ExplorableGraph} cache
+   * @param {IStorableGraph} cache
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {
@@ -52,6 +52,7 @@ export default class Cache extends ExplorableGraph {
         return value;
       }
     }
+
     return undefined;
   }
 }
