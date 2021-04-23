@@ -10,10 +10,10 @@ export default class ExplorableObject extends ExplorableGraph {
     // If the object defines an iterator, defer to that.
     if (this.obj[Symbol.asyncIterator]) {
       yield* this.obj[Symbol.asyncIterator]();
+    } else {
+      // Iterate over the object's keys.
+      yield* Object.keys(this.obj);
     }
-
-    // Iterate over the object's keys.
-    yield* Object.keys(this.obj);
   }
 
   /**
