@@ -5,8 +5,7 @@
   "type": "module",
   "main": "./src/server.js",
   "dependencies": {
-    "@explorablegraph/core": "0.0.2-d",
-    "@explorablegraph/symbols": "0.0.2-d"
+    "@explorablegraph/core": "0.0.2-d"
   },
   "devDependencies": {
     "chai": "4.2.0",

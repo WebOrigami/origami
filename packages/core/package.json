@@ -4,9 +4,6 @@
   "version": "0.0.2-d",
   "type": "module",
   "main": "./exports.js",
-  "dependencies": {
-    "@explorablegraph/symbols": "0.0.2-d"
-  },
   "devDependencies": {
     "chai": "4.2.0",
     "mocha": "8.2.1",
