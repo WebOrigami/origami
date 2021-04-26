@@ -1,4 +1,4 @@
 export default function (graph) {
   const boundKey = graph.bindings.wildcard;
-  return boundKey;
+  return `This file was returned for ${boundKey}`;
 }

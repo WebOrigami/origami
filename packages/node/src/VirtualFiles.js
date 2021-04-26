@@ -46,6 +46,7 @@ export default class VirtualFiles extends TransformMixin(Files) {
 
   async get(key, ...rest) {
     const result = await super.get(key, ...rest);
+
     if (result) {
       // Prefer base result.
       return result;

@@ -48,11 +48,42 @@ describe("VirtualFiles", () => {
   it("Includes wildcard folder contents in keys", async () => {
     const subfolder = await virtualFiles.get("subfolder");
     const keys = await subfolder.keys();
-    assert.deepEqual(keys, ["bar.txt", "foo.txt"]);
+    assert.deepEqual(keys, ["bar.txt", "foo.txt", "virtual.txt"]);
   });
 
   it("Can return a result from a folder with a wildcard name", async () => {
-    const result = await virtualFiles.get("doesntexist", "foo.txt");
-    assert.equal(result, "doesntexist");
+    const result1 = await virtualFiles.get("subfolder", "virtual.txt");
+    assert.equal(result1, "This file was returned for subfolder");
+
+    const result2 = await virtualFiles.get("doesntexist", "virtual.txt");
+    assert.equal(result2, "This file was returned for doesntexist");
+  });
+
+  it("Unbound wildcard folder returns files as is", async () => {
+    const wildcardFolder = await virtualFiles.get(":wildcard");
+    assert.deepEqual(await wildcardFolder.keys(), [
+      "bar.txt",
+      "virtual.txt←.js",
+    ]);
+  });
+
+  it("can inspect the structure of a tree with virtual files", async () => {
+    const structure = await virtualFiles.structure();
+    assert.deepEqual(structure, {
+      ":wildcard": {
+        "bar.txt": null,
+        "virtual.txt←.js": null,
+      },
+      "graph.js": null,
+      "index.html": null,
+      "index.txt": null,
+      math: null,
+      "sample.txt": null,
+      subfolder: {
+        "bar.txt": null,
+        "foo.txt": null,
+        "virtual.txt": null,
+      },
+    });
   });
 });
