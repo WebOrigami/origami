@@ -2,7 +2,7 @@ import chai from "chai";
 import WildcardGraph from "../src/WildcardGraph.js";
 const { assert } = chai;
 
-describe.only("WildcardGraph", () => {
+describe("WildcardGraph", () => {
   it("Hides wildcards from keys", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
