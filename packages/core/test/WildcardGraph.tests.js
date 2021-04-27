@@ -33,34 +33,36 @@ describe.only("WildcardGraph", () => {
     assert.equal(await graph.get("d"), 0);
   });
 
-  it("Composes explorable values with explorable wildcard values", async () => {});
-
   it("Handles explorable wildcard values", async () => {
     const graph = new WildcardGraph({
-      sub: {
+      subgraph: {
         a: 1,
         b: 2,
         c: 3,
       },
-      ":fallback": {
+      ":fallback1": {
         d: 4,
+      },
+      ":fallback2": {
+        e: 5,
       },
     });
 
-    const sub = await graph.get("sub");
-    assert.deepEqual(await sub.keys(), ["a", "b", "c", "d"]);
+    const subgraph = await graph.get("subgraph");
+    assert.deepEqual(await subgraph.keys(), ["a", "b", "c", "d", "e"]);
 
     // Real keys work.
-    assert.equal(await graph.get("sub", "a"), 1);
+    assert.equal(await graph.get("subgraph", "a"), 1);
 
     // Wildcard keys work.
-    assert.equal(await graph.get("sub", "d"), 4);
+    assert.equal(await graph.get("subgraph", "d"), 4);
+    assert.equal(await graph.get("subgraph", "e"), 5);
   });
 
   it("Handles nested wildcards", async () => {
     const graph = new WildcardGraph({
-      sub: {
-        subsub: {
+      subgraph: {
+        subsubgraph: {
           a: 1,
         },
       },
@@ -71,9 +73,7 @@ describe.only("WildcardGraph", () => {
       },
     });
 
-    const subsub = await graph.get("sub", "subsub");
-    assert.deepEqual(await subsub.keys(), ["a", "b"]);
+    const subsubgraph = await graph.get("subgraph", "subsubgraph");
+    assert.deepEqual(await subsubgraph.keys(), ["a", "b"]);
   });
-
-  // handle multiple wildcards
 });
