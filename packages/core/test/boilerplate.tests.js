@@ -2,7 +2,7 @@
 // const { assert } = chai;
 
 // describe("Fixture name goes here", () => {
-//   it("runs", () => {
+//   it("runs", async () => {
 //     assert(false);
 //   });
 // });

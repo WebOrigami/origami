@@ -12,7 +12,7 @@ const directory = path.join(fixturesDirectory, "virtual");
 const files = new Files(directory);
 const virtualFiles = new VirtualFiles(files);
 
-describe.only("VirtualFiles", () => {
+describe("VirtualFiles", () => {
   it("returns virtual names for virtual files", async () => {
     const keys = await virtualFiles.keys();
     assert.deepEqual(keys, [
