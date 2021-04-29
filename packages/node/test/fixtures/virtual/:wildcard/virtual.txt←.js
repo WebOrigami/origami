@@ -1,9 +1,8 @@
 // import path from "path";
 // import { fileURLToPath } from "url";
 
-export default function () {
-  const params = this.params;
-  return `This text was returned for ${params?.wildcard}`;
+export default function (graph) {
+  return `This text was returned for ${graph.params?.wildcard}`;
 }
 
 // function getParams(graph) {

@@ -2,7 +2,7 @@ import chai from "chai";
 import FunctionGraph from "../src/FunctionGraph.js";
 const { assert } = chai;
 
-describe.only("FunctionGraph", () => {
+describe("FunctionGraph", () => {
   it("invokes values which are functions, returns result", async () => {
     const graph = new FunctionGraph({
       a: 1,
