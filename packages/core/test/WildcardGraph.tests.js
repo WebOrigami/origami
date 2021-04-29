@@ -3,7 +3,7 @@ import WildcardGraph from "../src/WildcardGraph.js";
 const { assert } = chai;
 
 describe("WildcardGraph", () => {
-  it("Hides wildcards from keys", async () => {
+  it("hides wildcards from keys", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
       a: 1,
@@ -18,7 +18,7 @@ describe("WildcardGraph", () => {
     assert.equal(await graph.get(":default"), 0);
   });
 
-  it("Returns wildcard values if requested key is missing", async () => {
+  it("returns wildcard values if requested key is missing", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
       a: 1,
@@ -33,7 +33,18 @@ describe("WildcardGraph", () => {
     assert.equal(await graph.get("d"), 0);
   });
 
-  it("Handles explorable wildcard values", async () => {
+  it("can return parameters used to obtain a value", async () => {
+    const graph = new WildcardGraph({
+      ":wildcard": function (graph, params) {
+        return params.wildcard;
+      },
+    });
+    const fn = await graph.get("foo");
+    const result = fn();
+    assert.equal(result, "foo");
+  });
+
+  it("handles explorable wildcard values", async () => {
     const graph = new WildcardGraph({
       subgraph: {
         a: 1,
@@ -59,7 +70,7 @@ describe("WildcardGraph", () => {
     assert.equal(await graph.get("subgraph", "e"), 5);
   });
 
-  it("Handles nested wildcards", async () => {
+  it("handles nested wildcards", async () => {
     const graph = new WildcardGraph({
       subgraph: {
         subsubgraph: {

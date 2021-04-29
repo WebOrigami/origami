@@ -1,10 +1,10 @@
 import { ExplorableGraph } from "@explorablegraph/core";
 import path from "path";
-// import Files from "./Files.js";
 
 const virtualFileExtension = "←.js";
 
 export default class VirtualFiles extends ExplorableGraph {
+  // TODO: type-check that inner has path property
   constructor(inner) {
     super();
     this.inner = new ExplorableGraph(inner);
@@ -22,28 +22,31 @@ export default class VirtualFiles extends ExplorableGraph {
   async get(key, ...rest) {
     let value = await this.inner.get(key);
 
-    if (value === undefined) {
-      // Didn't find key; look for virtual key.
-      // Exception: don't look if key is a special key of "." or "..".
-      if (key !== "." && key !== "..") {
-        const virtualKey = `${key}${virtualFileExtension}`;
+    if (value instanceof ExplorableGraph) {
+      value = Reflect.construct(this.constructor, [value]);
+    }
 
-        // Sadly, we can't import an arrow module via the graph, as the
-        // JavaScript module syntax only works directly with file or web paths.
-        const dirname = this.inner.dirname;
-        const modulePath = path.join(dirname, virtualKey);
-        const obj = await importModule(modulePath);
-        if (obj) {
-          // Successfully imported module; invoke its default export.
-          const fn = obj.default;
-          value = typeof fn === "function" ? await fn(this) : fn;
-        }
+    // If we didn't find the value; try a virtual key.
+    // Exception: don't look if key is a special key of "." or "..".
+    if (value === undefined && key !== "." && key !== "..") {
+      const virtualKey = `${key}${virtualFileExtension}`;
+      // We can't obtain the module via `get`, as the JavaScript module syntax
+      // only works directly with file or web paths.
+      const modulePath = path.join(this.path, virtualKey);
+      const obj = await importModule(modulePath);
+      if (obj) {
+        // Successfully imported module; return its default export.
+        value = obj.default;
       }
     }
 
-    return value === undefined || rest.length === 0
-      ? value
-      : await value.get(...rest);
+    return rest.length > 0 && value instanceof ExplorableGraph
+      ? await value.get(...rest)
+      : value;
+  }
+
+  get path() {
+    return this.inner.path;
   }
 }
 

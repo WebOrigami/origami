@@ -1,3 +1,4 @@
+import { WildcardGraph } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -12,7 +13,7 @@ const files = new Files(directory);
 const virtualFiles = new VirtualFiles(files);
 
 describe.only("VirtualFiles", () => {
-  it("Returns virtual names for virtual files", async () => {
+  it("returns virtual names for virtual files", async () => {
     const keys = await virtualFiles.keys();
     assert.deepEqual(keys, [
       ":wildcard",
@@ -25,32 +26,39 @@ describe.only("VirtualFiles", () => {
     ]);
   });
 
-  it("Can virtual file contents", async () => {
-    const result = await virtualFiles.get("sample.txt");
-    assert.equal(result, "Hello, world.");
-  });
-
-  it("Copes with a request to get a key that doesn't exist even virtually", async () => {
-    const result = await virtualFiles.get("doesn't exist");
-    assert.isUndefined(result);
-  });
-
-  it("Can export a scalar value", async () => {
+  it("can export a scalar value", async () => {
     const result = await virtualFiles.get("math");
     assert.equal(result, 4);
   });
 
-  it("Passes a local graph to the arrow module's default function", async () => {
+  it("can export a function", async () => {
+    const fn = await virtualFiles.get("sample.txt");
+    const result = fn();
+    assert.equal(result, "Hello, world.");
+  });
+
+  it("copes with a request to get a key that doesn't exist even virtually", async () => {
+    const result = await virtualFiles.get("doesn't exist");
+    assert.isUndefined(result);
+  });
+
+  it.skip("passes a local graph to the arrow module's default function", async () => {
     const result = await virtualFiles.get("index.html");
     assert.equal(result, "<p>Hello, world.</p>");
   });
 
-  it.skip("Can return a result from a folder with a wildcard name", async () => {
-    const result1 = await virtualFiles.get("subfolder", "virtual.txt");
-    assert.equal(result1, "This file was returned for subfolder");
+  it.skip("can return a result from a folder with a wildcard name", async () => {
+    const graph = new WildcardGraph(virtualFiles);
 
-    const result2 = await virtualFiles.get("doesntexist", "virtual.txt");
-    assert.equal(result2, "This file was returned for doesntexist");
+    const result1 = await graph.get("subfolder", "virtual.txt");
+    assert.equal(result1, "This text was returned for subfolder");
+
+    const result2 = await graph.get("doesntexist", "virtual.txt");
+    assert.equal(result2, "This text was returned for doesntexist");
+
+    // const result3 = await graph.get(":wildcard", "virtual.txt");
+    // assert.equal(result3, "This text was returned for undefined");
+    // assert.equal(result3, "This text was returned for :wildcard");
   });
 
   // it("can inspect the structure of a tree with virtual files", async () => {

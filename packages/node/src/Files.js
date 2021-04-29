@@ -23,7 +23,7 @@ export default class Files extends ExplorableGraph {
   }
 
   async get(key, ...rest) {
-    const objPath = path.join(this.dirname, key);
+    const objPath = this.pathForKeys(key);
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
@@ -34,6 +34,14 @@ export default class Files extends ExplorableGraph {
     } else {
       return fs.readFile(objPath);
     }
+  }
+
+  get path() {
+    return this.dirname;
+  }
+
+  pathForKeys(...keys) {
+    return path.join(this.dirname, ...keys);
   }
 
   /**

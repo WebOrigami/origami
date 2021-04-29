@@ -1,45 +1,53 @@
-import Compose from "./Compose.js";
 import ExplorableGraph from "./ExplorableGraph.js";
 
 const wildcardPrefix = ":";
 
+export const params = Symbol("params");
+
 export default class WildcardGraph extends ExplorableGraph {
-  constructor(inner) {
+  constructor(...graphs) {
     super();
-    this.inner = new ExplorableGraph(inner);
+    this.graphs = graphs.map((graph) => new ExplorableGraph(graph));
   }
 
   async *[Symbol.asyncIterator]() {
     // Yield keys that aren't wildcard keys.
-    for await (const key of this.inner) {
-      if (!this.isWildcardKey(key)) {
-        yield key;
+    for (const graph of this.graphs) {
+      for await (const key of graph) {
+        if (!this.isWildcardKey(key)) {
+          yield key;
+        }
       }
     }
   }
 
   async get(key, ...rest) {
-    // First see if inner graph has an existing value with those keys.
-    const existingValue = await this.inner.get(key);
-    if (
-      existingValue !== undefined &&
-      !(existingValue instanceof ExplorableGraph)
-    ) {
+    // First see if any graph has an existing value with those keys.
+    let existingValue;
+    for (const graph of this.graphs) {
+      existingValue = await graph.get(key);
+      if (existingValue !== undefined) {
+        break;
+      }
+    }
+
+    const subgraphs = [];
+    if (existingValue instanceof ExplorableGraph) {
+      subgraphs.push(existingValue);
+    } else if (existingValue !== undefined) {
       return existingValue;
     }
 
     // If we have wildcards, try them.
-    const subgraphs = [];
-    if (existingValue instanceof ExplorableGraph) {
-      subgraphs.push(existingValue);
-    }
     let allSubgraphsExplorable = true;
-    for await (const key of this.inner) {
-      if (this.isWildcardKey(key)) {
-        const value = await this.inner.get(key);
-        subgraphs.push(value);
-        if (!(value instanceof ExplorableGraph)) {
-          allSubgraphsExplorable = false;
+    for (const graph of this.graphs) {
+      for await (const key of graph) {
+        if (this.isWildcardKey(key)) {
+          const value = await graph.get(key);
+          subgraphs.push(value);
+          if (!(value instanceof ExplorableGraph)) {
+            allSubgraphsExplorable = false;
+          }
         }
       }
     }
@@ -52,7 +60,15 @@ export default class WildcardGraph extends ExplorableGraph {
     const composed =
       subgraphs.length === 1 || !allSubgraphsExplorable
         ? subgraphs[0] // No need to compose or can't compose; use as is.
-        : Reflect.construct(this.constructor, [new Compose(...subgraphs)]);
+        : Reflect.construct(this.constructor, subgraphs);
+
+    if (value instanceof Function) {
+      const fn = value;
+      const value = () => {
+        return fn(this, params);
+      };
+    }
+
     return rest.length === 0 ? composed : await composed.get(...rest);
   }
 
