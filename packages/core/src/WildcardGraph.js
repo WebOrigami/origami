@@ -2,12 +2,22 @@ import ExplorableGraph from "./ExplorableGraph.js";
 
 const wildcardPrefix = ":";
 
-export const params = Symbol("params");
+export const paramsKey = Symbol("params");
 
 export default class WildcardGraph extends ExplorableGraph {
   constructor(...graphs) {
     super();
     this.graphs = graphs.map((graph) => new ExplorableGraph(graph));
+  }
+
+  addParams(graph, paramsToAdd) {
+    const params = Object.assign({}, this[paramsKey], paramsToAdd);
+    const result = Object.create(graph, {
+      [paramsKey]: {
+        value: params,
+      },
+    });
+    return result;
   }
 
   async *[Symbol.asyncIterator]() {
@@ -22,57 +32,97 @@ export default class WildcardGraph extends ExplorableGraph {
   }
 
   async get(key, ...rest) {
-    // First see if any graph has an existing value with those keys.
-    let existingValue;
+    // First see if any graph has an existing value with the desired key.
+    let value;
     for (const graph of this.graphs) {
-      existingValue = await graph.get(key);
-      if (existingValue !== undefined) {
+      value = await graph.get(key);
+      if (value !== undefined) {
         break;
       }
     }
 
-    const subgraphs = [];
-    if (existingValue instanceof ExplorableGraph) {
-      subgraphs.push(existingValue);
-    } else if (existingValue !== undefined) {
-      return existingValue;
-    }
+    const params = Object.assign({}, this.params);
 
-    // If we have wildcards, try them.
-    let allSubgraphsExplorable = true;
-    for (const graph of this.graphs) {
-      for await (const key of graph) {
-        if (this.isWildcardKey(key)) {
-          const value = await graph.get(key);
-          subgraphs.push(value);
-          if (!(value instanceof ExplorableGraph)) {
-            allSubgraphsExplorable = false;
+    const isRealExplorableValue =
+      !this.isWildcardKey(key) && value instanceof ExplorableGraph;
+
+    if (value === undefined || isRealExplorableValue) {
+      // Didn't find value in our graphs; try wildcards.
+      // Alternatively, if we have an explorable real value and all the wildcard
+      // values are exploralble, we'll want to compose them.
+      const wildcards = await this.wildcards(key);
+      const wildcardKeys = Object.keys(wildcards);
+
+      // real value not explorable => use it
+      // real value explorable, no wildcards => ditto
+      // real value explorable, not all wildcards explorable => ditto
+      // real value explorable, all (>0) wildcards explorable => compose
+      // no real value, only one wildcard => use first one, parameterize
+      // no real value, all (>0) wildcards explorable => compose
+      // no real value, no wildcards => undefined
+
+      if (wildcardKeys.length > 0) {
+        // We have at least one wildcard value.
+        const wildcardValues = Object.values(wildcards);
+        const allWildcardsExplorable = wildcardKeys.every(
+          (wildcardKey) => wildcards[wildcardKey] instanceof ExplorableGraph
+        );
+        if (value === undefined) {
+          if (wildcardKeys.length === 1 || !allWildcardsExplorable) {
+            // Use first wildcard. Add it to the params.
+            const wildcardKey = wildcardKeys[0];
+            const wildcardParam = wildcardKey.slice(1);
+            params[wildcardParam] = key;
+            value = wildcardValues[0];
+          } else {
+            // Compose explorable wildcard values.
+            value = Reflect.construct(this.constructor, wildcardValues);
           }
+        } else if (isRealExplorableValue && allWildcardsExplorable) {
+          // Compose explorable real value and explorable wildcard values.
+          value = Reflect.construct(this.constructor, [
+            value,
+            ...wildcardValues,
+          ]);
         }
       }
     }
 
-    if (subgraphs.length === 0) {
-      // No existing value, no wildcards.
-      return undefined;
+    if (rest.length > 0) {
+      value = await value.get(...rest);
     }
-
-    const composed =
-      subgraphs.length === 1 || !allSubgraphsExplorable
-        ? subgraphs[0] // No need to compose or can't compose; use as is.
-        : Reflect.construct(this.constructor, subgraphs);
 
     if (value instanceof Function) {
-      const fn = value;
-      const value = () => {
-        return fn(this, params);
-      };
+      value = await value.bind(this)(params);
     }
 
-    return rest.length === 0 ? composed : await composed.get(...rest);
+    return value;
   }
 
   isWildcardKey(key) {
     return key.startsWith(wildcardPrefix);
+  }
+
+  get params() {
+    return this[paramsKey] || {};
+  }
+
+  async wildcards(matchKey) {
+    const result = {};
+    for (const graph of this.graphs) {
+      for await (const key of graph) {
+        if (this.isWildcardKey(key) && key !== matchKey) {
+          let value = await graph.get(key);
+          if (value instanceof ExplorableGraph) {
+            const wildcardName = key.slice(1);
+            value = this.addParams(value, {
+              [wildcardName]: key,
+            });
+          }
+          result[key] = value;
+        }
+      }
+    }
+    return result;
   }
 }

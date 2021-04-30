@@ -1,8 +1,8 @@
 import chai from "chai";
-import WildcardGraph from "../src/WildcardGraph.js";
+import { default as WildcardGraph } from "../src/WildcardGraph.js";
 const { assert } = chai;
 
-describe("WildcardGraph", () => {
+describe.only("WildcardGraph", () => {
   it("hides wildcards from keys", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
@@ -33,18 +33,40 @@ describe("WildcardGraph", () => {
     assert.equal(await graph.get("d"), 0);
   });
 
-  it("can return parameters used to obtain a value", async () => {
+  it("adds wildcard matches as params to explorable result", async () => {
     const graph = new WildcardGraph({
-      ":wildcard": function (graph, params) {
-        return params.wildcard;
+      ":wildcard": function (params) {
+        assert.equal(this, graph);
+        assert.equal(params.wildcard, "doesntexist");
+        return "result";
       },
     });
-    const fn = await graph.get("foo");
-    const result = fn();
-    assert.equal(result, "foo");
+    const value = await graph.get("doesntexist");
+    assert.equal(value, "result");
   });
 
-  it("handles explorable wildcard values", async () => {
+  it("composes explorable wildcard values", async () => {
+    const graph = new WildcardGraph({
+      ":fallback1": {
+        a: 1,
+      },
+      ":fallback2": {
+        b: 2,
+      },
+    });
+
+    const subgraph = await graph.get("subgraph");
+    assert.deepEqual(await subgraph.keys(), ["a", "b"]);
+
+    // Real keys work.
+    assert.equal(await graph.get(":fallback1", "a"), 1);
+
+    // Wildcard keys work.
+    assert.equal(await graph.get("subgraph", "a"), 1);
+    assert.equal(await graph.get("subgraph", "b"), 2);
+  });
+
+  it("composes explorable real value and explorable wildcard values", async () => {
     const graph = new WildcardGraph({
       subgraph: {
         a: 1,
@@ -70,21 +92,43 @@ describe("WildcardGraph", () => {
     assert.equal(await graph.get("subgraph", "e"), 5);
   });
 
+  it("if all wildcard values aren't composable, returns first wildcard", async () => {
+    const graph = new WildcardGraph({
+      ":fallback1": 1,
+      ":fallback2": {
+        a: 2,
+      },
+    });
+    assert.equal(await graph.get("doesntexist"), 1);
+  });
+
   it("handles nested wildcards", async () => {
     const graph = new WildcardGraph({
-      subgraph: {
-        subsubgraph: {
+      real: {
+        subreal: {
           a: 1,
         },
       },
       ":fallback": {
-        ":fallbacksub": {
+        ":subfallback": {
           b: 2,
         },
       },
     });
 
-    const subsubgraph = await graph.get("subgraph", "subsubgraph");
+    const subsubgraph = await graph.get("real", "subreal");
     assert.deepEqual(await subsubgraph.keys(), ["a", "b"]);
+  });
+
+  it("parameters are passed down to subgraphs", async () => {
+    const graph = new WildcardGraph({
+      ":wildcard": {
+        foo: function (params) {
+          return params.wildcard;
+        },
+      },
+    });
+    const result = await graph.get("doesntexist", "foo");
+    assert.equal(result, "doesntexist");
   });
 });

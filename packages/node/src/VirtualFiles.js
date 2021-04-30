@@ -42,7 +42,7 @@ export default class VirtualFiles extends ExplorableGraph {
         // this graph as a parameter.
         value =
           moduleDefault instanceof Function
-            ? () => moduleDefault(this)
+            ? (...args) => moduleDefault(this, ...args)
             : moduleDefault;
       }
     }
