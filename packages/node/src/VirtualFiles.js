@@ -38,11 +38,10 @@ export default class VirtualFiles extends ExplorableGraph {
         // Successfully imported module; return its default export.
         const moduleDefault = obj.default;
 
-        // If result is a function, wrap it with a function that will pass in
-        // this graph as a parameter.
+        // If result is a function, bind it to this graph.
         value =
           moduleDefault instanceof Function
-            ? (...args) => moduleDefault(this, ...args)
+            ? moduleDefault.bind(this)
             : moduleDefault;
       }
     }

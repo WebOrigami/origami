@@ -36,13 +36,15 @@ describe("WildcardGraph", () => {
   it("adds wildcard matches as params to invocable functions", async () => {
     const graph = new WildcardGraph({
       ":name": function (params) {
+        // `this` will be a parameterized graph with the above graph
+        // as its prototype.
         assert.equal(this, graph);
         assert.equal(params.name, "Jane");
         return "result";
       },
     });
-    const value = await graph.get("Jane");
-    assert.equal(value, "result");
+    const fn = await graph.get("Jane");
+    assert.equal(fn(), "result");
   });
 
   it("composes explorable wildcard values", async () => {
@@ -128,7 +130,7 @@ describe("WildcardGraph", () => {
         },
       },
     });
-    const result = await graph.get("doesntexist", "foo");
-    assert.equal(result, "doesntexist");
+    const fn = await graph.get("doesntexist", "foo");
+    assert.equal(fn(), "doesntexist");
   });
 });

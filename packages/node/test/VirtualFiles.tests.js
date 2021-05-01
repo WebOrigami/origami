@@ -1,3 +1,4 @@
+import { WildcardGraph } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -47,19 +48,18 @@ describe("VirtualFiles", () => {
     assert.equal(result, "<p>Hello, world.</p>");
   });
 
-  // it("can return a result from a folder with a wildcard name", async () => {
-  //   const graph = new WildcardGraph(virtualFiles);
+  it.skip("can return a result from a folder with a wildcard name", async () => {
+    const graph = new WildcardGraph(virtualFiles);
 
-  //   const result1 = await graph.get("subfolder", "virtual.txt");
-  //   assert.equal(result1, "This text was returned for subfolder");
+    const result1 = await graph.get("subfolder", "virtual.txt");
+    assert.equal(result1, "This text was returned for subfolder");
 
-  //   const result2 = await graph.get("doesntexist", "virtual.txt");
-  //   assert.equal(result2, "This text was returned for doesntexist");
+    const result2 = await graph.get("doesntexist", "virtual.txt");
+    assert.equal(result2, "This text was returned for doesntexist");
 
-  //   // const result3 = await graph.get(":wildcard", "virtual.txt");
-  //   // assert.equal(result3, "This text was returned for undefined");
-  //   // assert.equal(result3, "This text was returned for :wildcard");
-  // });
+    const result3 = await graph.get(":wildcard", "virtual.txt");
+    assert.equal(result3, "This text was returned for undefined");
+  });
 
   // it("can inspect the structure of a tree with virtual files", async () => {
   //   const structure = await virtualFiles.structure();

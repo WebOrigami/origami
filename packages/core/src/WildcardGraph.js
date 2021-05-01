@@ -37,11 +37,14 @@ export default class WildcardGraph extends ExplorableGraph {
     for (const graph of this.graphs) {
       value = await graph.get(key);
       if (value !== undefined) {
+        if (value instanceof Function) {
+          // Bind the function to the graph that had the key, and give it the
+          // graph's params.
+          value = value.bind(graph, graph[paramsKey]);
+        }
         break;
       }
     }
-
-    const params = Object.assign({}, this.params);
 
     const isRealExplorableValue =
       !this.isWildcardKey(key) && value instanceof ExplorableGraph;
@@ -68,12 +71,18 @@ export default class WildcardGraph extends ExplorableGraph {
           (wildcardKey) => wildcards[wildcardKey] instanceof ExplorableGraph
         );
         if (value === undefined) {
-          if (wildcardKeys.length === 1 || !allWildcardsExplorable) {
-            // Use first wildcard. Add it to the params.
-            const wildcardKey = wildcardKeys[0];
-            const wildcardParam = wildcardKey.slice(1);
-            params[wildcardParam] = key;
+          if (!allWildcardsExplorable) {
             value = wildcardValues[0];
+            // Use first wildcard.
+            if (value instanceof Function) {
+              // Add the matching wildcard to the params.
+              const wildcardKey = wildcardKeys[0];
+              const wildcardName = wildcardKey.slice(1);
+              const wildcardParams = Object.assign({}, this.params, {
+                [wildcardName]: key,
+              });
+              value = value.bind(this, wildcardParams);
+            }
           } else {
             // Compose explorable wildcard values.
             value = Reflect.construct(this.constructor, wildcardValues);
@@ -93,7 +102,7 @@ export default class WildcardGraph extends ExplorableGraph {
     }
 
     if (value instanceof Function) {
-      value = await value.call(this, params);
+      value = await value.bind(this);
     }
 
     return value;
@@ -116,7 +125,7 @@ export default class WildcardGraph extends ExplorableGraph {
           if (value instanceof ExplorableGraph) {
             const wildcardName = key.slice(1);
             value = this.addParams(value, {
-              [wildcardName]: key,
+              [wildcardName]: matchKey,
             });
           }
           result[key] = value;
