@@ -23,19 +23,4 @@ describe("Compose", () => {
     assert.equal(await fixture.get("d"), 4);
     assert.equal(await fixture.get("x"), undefined);
   });
-
-  it("can return the path to a desired key", async () => {
-    const fixture = new Compose(
-      {
-        a: 1,
-        c: 3,
-      },
-      {
-        b: 2,
-        c: 0, // Will be obscured by `c` above
-        d: 4,
-      }
-    );
-    assert.equal(fixture.pathForKeys("a"), "a");
-  });
 });

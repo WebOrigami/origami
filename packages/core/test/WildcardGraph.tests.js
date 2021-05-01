@@ -2,7 +2,7 @@ import chai from "chai";
 import { default as WildcardGraph } from "../src/WildcardGraph.js";
 const { assert } = chai;
 
-describe.only("WildcardGraph", () => {
+describe("WildcardGraph", () => {
   it("hides wildcards from keys", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
@@ -33,15 +33,15 @@ describe.only("WildcardGraph", () => {
     assert.equal(await graph.get("d"), 0);
   });
 
-  it("adds wildcard matches as params to explorable result", async () => {
+  it("adds wildcard matches as params to invocable functions", async () => {
     const graph = new WildcardGraph({
-      ":wildcard": function (params) {
+      ":name": function (params) {
         assert.equal(this, graph);
-        assert.equal(params.wildcard, "doesntexist");
+        assert.equal(params.name, "Jane");
         return "result";
       },
     });
-    const value = await graph.get("doesntexist");
+    const value = await graph.get("Jane");
     assert.equal(value, "result");
   });
 

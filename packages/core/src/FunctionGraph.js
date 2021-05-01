@@ -12,7 +12,7 @@ export default class FunctionGraph extends ExplorableGraph {
 
   async get(...keys) {
     const value = await this.inner.get(...keys);
-    const result = value instanceof Function ? await value() : value;
+    const result = value instanceof Function ? await value.call(this) : value;
     return result;
   }
 }

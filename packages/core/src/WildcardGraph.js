@@ -93,7 +93,7 @@ export default class WildcardGraph extends ExplorableGraph {
     }
 
     if (value instanceof Function) {
-      value = await value.bind(this)(params);
+      value = await value.call(this, params);
     }
 
     return value;
