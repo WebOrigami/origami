@@ -12,15 +12,12 @@ describe("WildcardGraph", () => {
     });
 
     assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
-
-    // Can still get values
-    assert.equal(await graph.get("a"), 1);
-    assert.equal(await graph.get(":default"), 0);
   });
 
   it("returns wildcard values if requested key is missing", async () => {
     const graph = new WildcardGraph({
-      ":default": 0,
+      ":fallback1": "foo",
+      ":fallback2": "bar",
       a: 1,
       b: 2,
       c: 3,
@@ -29,17 +26,18 @@ describe("WildcardGraph", () => {
     // Real key takes priority.
     assert.equal(await graph.get("a"), 1);
 
-    // Missing key results in wildcard value.
-    assert.equal(await graph.get("d"), 0);
+    // Missing key results in first fallback value.
+    assert.equal(await graph.get("d"), "foo");
+
+    // Asking specifically for fallback returns that.
+    assert.equal(await graph.get(":fallback2"), "bar");
   });
 
   it("adds wildcard matches as params to invocable functions", async () => {
     const graph = new WildcardGraph({
-      ":name": function (params) {
-        // `this` will be a parameterized graph with the above graph
-        // as its prototype.
-        assert.equal(this, graph);
-        assert.equal(params.name, "Jane");
+      ":name": function (name) {
+        assert.equal(this, graph.inner);
+        assert.equal(name, "Jane");
         return "result";
       },
     });
@@ -120,13 +118,16 @@ describe("WildcardGraph", () => {
 
     const subsubgraph = await graph.get("real", "subreal");
     assert.deepEqual(await subsubgraph.keys(), ["a", "b"]);
+
+    assert.equal(await graph.get("real", "subreal", "a"), 1);
+    assert.equal(await graph.get("real", "subreal", "b"), 2);
   });
 
   it("parameters are passed down to subgraphs", async () => {
     const graph = new WildcardGraph({
       ":wildcard": {
-        foo: function (params) {
-          return params.wildcard;
+        foo: function (_, wildcard) {
+          return wildcard;
         },
       },
     });

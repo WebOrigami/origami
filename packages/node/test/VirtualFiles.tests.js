@@ -48,17 +48,17 @@ describe("VirtualFiles", () => {
     assert.equal(result, "<p>Hello, world.</p>");
   });
 
-  it.skip("can return a result from a folder with a wildcard name", async () => {
+  it("can return a result from a folder with a wildcard name", async () => {
     const graph = new WildcardGraph(virtualFiles);
 
-    const result1 = await graph.get("subfolder", "virtual.txt");
-    assert.equal(result1, "This text was returned for subfolder");
+    const fn1 = await graph.get("subfolder", "virtual.txt");
+    assert.equal(fn1(), "This text was returned for subfolder");
 
-    const result2 = await graph.get("doesntexist", "virtual.txt");
-    assert.equal(result2, "This text was returned for doesntexist");
+    const fn2 = await graph.get("doesntexist", "virtual.txt");
+    assert.equal(fn2(), "This text was returned for doesntexist");
 
-    const result3 = await graph.get(":wildcard", "virtual.txt");
-    assert.equal(result3, "This text was returned for undefined");
+    const fn3 = await graph.get(":wildcard", "virtual.txt");
+    assert.equal(fn3(), "This text was returned for :wildcard");
   });
 
   // it("can inspect the structure of a tree with virtual files", async () => {

@@ -1,3 +1,3 @@
-export default function (params) {
-  return `This text was returned for ${params?.wildcard}`;
+export default function (_, wildcard) {
+  return `This text was returned for ${wildcard}`;
 }

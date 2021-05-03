@@ -159,17 +159,6 @@ export class ExplorableObject extends ExplorableGraph {
       : value;
   }
 
-  // pathForKeys(...keys) {
-  //   const value =
-  //     typeof this.obj.get === "function" ? this.obj.get(key) : this.obj[key];
-
-  //   return value === undefined ?
-  //     undefined :
-  //     keys.length > 0
-
-  //   return value !== undefined ? key : undefined;
-  // }
-
   /**
    * Add or overwrite the value at a given location in the graph. Given a set
    * of arguments, take the last argument as a value, and the ones before it
