@@ -43,13 +43,13 @@ export default class DefaultPages extends ExplorableGraph {
       return await defaultIndexHtml(indexParent);
     }
 
-    if (lastKey === KEYS_JSON && value === undefined) {
-      // Return default .keys.json page.
-      const route = keys.slice(0, keys.length - 1);
-      const parent =
-        route.length === 0 ? this.inner : await this.inner.get(...route);
-      return await defaultKeysJson(parent);
-    }
+    // if (lastKey === KEYS_JSON && value === undefined) {
+    //   // Return default .keys.json page.
+    //   const route = keys.slice(0, keys.length - 1);
+    //   const parent =
+    //     route.length === 0 ? this.inner : await this.inner.get(...route);
+    //   return await defaultKeysJson(parent);
+    // }
 
     // No work for us to do.
     return value;
@@ -57,6 +57,11 @@ export default class DefaultPages extends ExplorableGraph {
 
   static isDefaultPage(key) {
     return key === INDEX_HTML || key === KEYS_JSON;
+  }
+
+  // Feels hacky
+  get path() {
+    return this.inner.path;
   }
 }
 
