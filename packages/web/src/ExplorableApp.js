@@ -1,5 +1,5 @@
 import { ExplorableGraph, WildcardGraph } from "@explorablegraph/core";
-import { Files, VirtualFiles } from "@explorablegraph/node";
+import { Files, VirtualFiles, VirtualKeys } from "@explorablegraph/node";
 import process from "process";
 import DefaultPages from "./DefaultPages.js";
 
@@ -10,8 +10,13 @@ export default class ExplorableApp extends ExplorableGraph {
       const dirname = process.cwd();
       files = new Files(dirname);
     }
-    this.inner = new Resolver(
-      new WildcardGraph(new DefaultPages(new VirtualFiles(files)))
+    // this.inner = new Resolver(
+    //   new VirtualKeys(
+    //     new WildcardGraph(new DefaultPages(new VirtualFiles(files)))
+    //   )
+    // );
+    this.inner = new DefaultPages(
+      new VirtualKeys(new WildcardGraph(new VirtualFiles(files)))
     );
   }
 

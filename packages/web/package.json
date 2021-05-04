@@ -6,6 +6,7 @@
   "main": "./exports.js",
   "dependencies": {
     "@explorablegraph/core": "0.0.2-d",
+    "@explorablegraph/node": "0.0.2-e",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
