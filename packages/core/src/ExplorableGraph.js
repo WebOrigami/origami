@@ -71,6 +71,19 @@ export default class ExplorableGraph {
     return await this.mapValues((value) => value);
   }
 
+  async resolve(value, path) {
+    let result;
+    if (value instanceof Function) {
+      result = await value(...path);
+    } else if (value instanceof ExplorableGraph) {
+      const graph = Reflect.construct(this.constructor, [value]);
+      result = path.length === 0 ? graph : await graph.get(...path);
+    } else if (path.length === 0) {
+      result = value;
+    }
+    return result;
+  }
+
   /**
    * Converts the graph into a plain JavaScript object with the same structure
    * as the original, but with all leaf values cast to strings.

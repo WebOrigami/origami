@@ -20,35 +20,35 @@ export default class VirtualFiles extends ExplorableGraph {
   }
 
   async get(key, ...rest) {
-    let value = await this.inner.get(key);
+    let value = await this.inner.get(key, ...rest);
 
-    if (value instanceof ExplorableGraph) {
-      value = Reflect.construct(this.constructor, [value]);
+    if (value !== undefined) {
+      return value;
     }
 
-    // If we didn't find the value; try a virtual key.
-    // Exception: don't look if key is a special key of "." or "..".
-    if (value === undefined && key !== "." && key !== "..") {
-      const virtualKey = `${key}${virtualFileExtension}`;
-      // We can't obtain the module via `get`, as the JavaScript module syntax
-      // only works directly with file or web paths.
-      const modulePath = path.join(this.path, virtualKey);
-      const obj = await importModule(modulePath);
-      if (obj) {
-        // Successfully imported module; return its default export.
-        const moduleDefault = obj.default;
-
-        // If result is a function, bind it to this graph.
-        value =
-          moduleDefault instanceof Function
-            ? moduleDefault.bind(this)
-            : moduleDefault;
-      }
+    // Special keys "." and ".." can't be used for virtual files.
+    if (key === "." || key === "..") {
+      return undefined;
     }
 
-    return rest.length > 0 && value instanceof ExplorableGraph
-      ? await value.get(...rest)
-      : value;
+    // Didn't find the expected value; try a virtual key.
+    const virtualKey = `${key}${virtualFileExtension}`;
+    // We can't obtain the module via `get`, as the JavaScript module syntax
+    // only works directly with file or web paths.
+    const modulePath = path.join(this.path, virtualKey);
+    const obj = await importModule(modulePath);
+    if (obj) {
+      // Successfully imported module; return its default export.
+      const moduleDefault = obj.default;
+
+      // If result is a function, bind it to this graph.
+      value =
+        moduleDefault instanceof Function
+          ? moduleDefault.bind(this)
+          : moduleDefault;
+    }
+
+    return this.resolve(value, rest);
   }
 
   get path() {

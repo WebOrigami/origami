@@ -28,4 +28,9 @@ export default class VirtualKeys extends ExplorableGraph {
   async get(...path) {
     return await this.inner.get(...path);
   }
+
+  // Feels hacky
+  get path() {
+    return this.inner.path;
+  }
 }

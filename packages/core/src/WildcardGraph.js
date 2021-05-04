@@ -26,7 +26,6 @@ export default class WildcardGraph extends ExplorableGraph {
 
 async function search(graph, params, key, ...rest) {
   let result;
-  let firstWildcardKey;
   let firstWildcardValue;
   let allWildcardsExplorable = true;
   const explorableValues = [];
@@ -36,11 +35,15 @@ async function search(graph, params, key, ...rest) {
     const wildcardMatch = isWildcardKey(innerKey) && key !== innerKey;
     if (exactMatch || wildcardMatch) {
       // Key matched exactly or matched a wildcard.
-      const innerValue = await graph.get(innerKey);
-      if (innerValue) {
-        if (innerValue instanceof ExplorableGraph) {
+      // If wildcard match, include the key that matched in the args.
+      // const args = wildcardMatch
+      //   ? [innerKey, key, ...rest]
+      //   : [innerKey, ...rest];
+      const value = await graph.get(innerKey, ...rest);
+      if (value) {
+        if (value instanceof ExplorableGraph) {
           // Add to explorable matches.
-          explorableValues.push(innerValue);
+          explorableValues.push(value);
         } else {
           if (wildcardMatch) {
             allWildcardsExplorable = false;
@@ -48,13 +51,12 @@ async function search(graph, params, key, ...rest) {
           if (rest.length === 0) {
             if (exactMatch) {
               // Found
-              result = innerValue;
+              result = value;
               break;
             } else if (wildcardMatch && firstWildcardValue === undefined) {
               // Found first wildcard match, hold on to it in case we don't find an
               // exact match later.
-              firstWildcardKey = key;
-              firstWildcardValue = innerValue;
+              firstWildcardValue = value;
             }
           }
         }
@@ -71,18 +73,14 @@ async function search(graph, params, key, ...rest) {
           ? new Compose(...explorableValues)
           : explorableValues[0];
       result = new WildcardGraph(compose, extendedParams);
-      if (rest.length > 0) {
-        // Search deeper
-        result = await search(result, params, ...rest);
-      }
     } else if (rest.length === 0) {
       result = firstWildcardValue;
     }
   }
 
   if (result instanceof Function) {
-    // Bind the result function to the graph and the key that matched.
-    result = result.bind(graph, ...extendedParams);
+    // Bind the result function to the graph.
+    result = result.bind(graph);
   }
 
   return result;

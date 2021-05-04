@@ -45,7 +45,7 @@ describe("DefaultPages", () => {
     assert(index2.includes(`<a href="d">d</a>`));
   });
 
-  it("generates .keys.json for a graph that doesn't have one", async () => {
+  it.skip("generates .keys.json for a graph that doesn't have one", async () => {
     const fixture = new DefaultPages({
       a: 1,
       b: 2,

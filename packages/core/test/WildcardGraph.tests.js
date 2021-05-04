@@ -2,7 +2,7 @@ import chai from "chai";
 import { default as WildcardGraph } from "../src/WildcardGraph.js";
 const { assert } = chai;
 
-describe("WildcardGraph", () => {
+describe.only("WildcardGraph", () => {
   it("hides wildcards from keys", async () => {
     const graph = new WildcardGraph({
       ":default": 0,
@@ -41,8 +41,8 @@ describe("WildcardGraph", () => {
         return "result";
       },
     });
-    const fn = await graph.get("Jane");
-    assert.equal(fn(), "result");
+    const value = await graph.get("Jane");
+    assert.equal(value, "result");
   });
 
   it("composes explorable wildcard values", async () => {
@@ -64,6 +64,9 @@ describe("WildcardGraph", () => {
     // Wildcard keys work.
     assert.equal(await graph.get("subgraph", "a"), 1);
     assert.equal(await graph.get("subgraph", "b"), 2);
+
+    // Asking for an explorable wildcard does *not* compose with other
+    // wildcards.
   });
 
   it("composes explorable real value and explorable wildcard values", async () => {
