@@ -4,3 +4,4 @@ export { default as Files } from "./src/Files.js";
 export { default as JavaScriptModuleFiles } from "./src/JavaScriptModuleFiles.js";
 export { default as ParentFiles } from "./src/ParentFiles.js";
 export { default as VirtualFiles } from "./src/VirtualFiles.js";
+export { default as VirtualKeys } from "./src/VirtualKeys.js";

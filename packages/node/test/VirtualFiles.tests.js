@@ -8,7 +8,7 @@ const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const directory = path.join(fixturesDirectory, "virtual");
+const directory = path.join(fixturesDirectory, "virtualFiles");
 const files = new Files(directory);
 const virtualFiles = new VirtualFiles(files);
 
