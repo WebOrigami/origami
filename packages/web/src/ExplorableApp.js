@@ -1,6 +1,6 @@
-import { ExplorableGraph, WildcardGraph } from "@explorablegraph/core";
-import { Files, VirtualFiles, VirtualKeys } from "@explorablegraph/node";
 import process from "process";
+import { ExplorableGraph, WildcardGraph } from "../../core/exports.js";
+import { Files, VirtualFiles, VirtualKeys } from "../../node/exports.js";
 import DefaultPages from "./DefaultPages.js";
 
 export default class ExplorableApp extends ExplorableGraph {

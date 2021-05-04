@@ -1,8 +1,8 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import { ExplorableGraph } from "../../core/exports.js";
 import unlinkFiles from "../src/unlinkFiles.js";
 import writeFiles from "../src/writeFiles.js";
 const { assert } = chai;

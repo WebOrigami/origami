@@ -1,4 +1,4 @@
-import { ExplorableObject } from "@explorablegraph/core";
+import { ExplorableObject } from "../../core/exports.js";
 
 export default ExplorableObject({
   english: {

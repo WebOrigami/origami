@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import fetch from "node-fetch";
+import { ExplorableGraph } from "../../core/exports.js";
 
 export default class ExplorableSite extends ExplorableGraph {
   constructor(url) {

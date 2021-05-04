@@ -1,7 +1,7 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import https from "https";
 // import http from "http";
 import fetch from "node-fetch";
+import { ExplorableGraph } from "../../core/exports.js";
 
 const sampleId = "8277d653-77cc-49be-bdec-f433a4e17ac9";
 let fetchPromise;

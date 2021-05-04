@@ -1,6 +1,6 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import * as fs from "fs/promises";
 import path from "path";
+import { ExplorableGraph } from "../../core/exports.js";
 
 export default class Files extends ExplorableGraph {
   constructor(dirname) {

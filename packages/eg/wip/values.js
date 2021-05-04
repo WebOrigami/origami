@@ -1,4 +1,4 @@
-import { AsyncExplorable, asyncGet } from "@explorablegraph/core";
+import { AsyncExplorable, asyncGet } from "../../core/exports.js";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function values(graphArg) {

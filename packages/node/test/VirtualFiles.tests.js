@@ -1,7 +1,7 @@
-import { WildcardGraph } from "@explorablegraph/core";
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
+import { WildcardGraph } from "../../core/exports.js";
 import Files from "../src/Files.js";
 import VirtualFiles from "../src/VirtualFiles.js";
 const { assert } = chai;

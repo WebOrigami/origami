@@ -1,5 +1,5 @@
-import { Transform } from "@explorablegraph/core";
 import path from "path";
+import { Transform } from "../../core/exports.js";
 
 // CommandModules wraps a graph like JavaScriptModuleFiles.
 // The `foo.js` module becomes the `foo` command.

@@ -1,4 +1,4 @@
-import { DefaultPages } from "@explorablegraph/web";
+import { DefaultPages } from "../../web/exports.js";
 
 export default function defaultPages(graph) {
   return new DefaultPages(graph);

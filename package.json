@@ -1,17 +1,18 @@
 {
   "name": "@explorablegraph/explorable",
   "version": "0.0.1",
+  "type": "module",
   "devDependencies": {
     "@types/chai": "4.2.14",
     "@types/mocha": "8.0.4",
     "chai": "4.2.0",
     "mocha": "8.2.1",
-    "typescript": "4.2.3",
+    "typescript": "4.2.3"
+  },
+  "dependencies": {
+    "node-fetch": "2.6.1",
     "yaml": "1.10.0"
   },
-  "workspaces": [
-    "./packages/*"
-  ],
   "scripts": {
     "typecheck": "node node_modules/typescript/bin/tsc"
   }

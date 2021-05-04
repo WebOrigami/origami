@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import chai from "chai";
+import { ExplorableGraph } from "../../core/exports.js";
 import link from "../src/link.js";
 const { assert } = chai;
 

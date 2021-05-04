@@ -1,6 +1,6 @@
-import { unlinkFiles } from "@explorablegraph/node";
 import path from "path";
 import process from "process";
+import { unlinkFiles } from "../../node/exports.js";
 import { loadGraphFromArgument } from "../src/shared.js";
 
 export default async function clean(graphArg, target) {

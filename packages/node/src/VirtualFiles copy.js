@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "@explorablegraph/core";
 import path from "path";
+import { ExplorableGraph } from "../../core/exports.js";
 import Files from "./Files.js";
 
 export default class VirtualFiles extends TransformMixin(Files) {

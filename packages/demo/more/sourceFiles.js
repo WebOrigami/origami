@@ -1,7 +1,7 @@
-import { Files } from "@explorablegraph/node";
-import { IndexPages } from "@explorablegraph/web";
 import path from "path";
 import { fileURLToPath } from "url";
+import { Files } from "../../node/exports.js";
+import { IndexPages } from "../../web/exports.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const sourceDirectory = path.join(dirname, ".");

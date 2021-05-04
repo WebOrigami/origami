@@ -1,4 +1,4 @@
-import { ExplorableGraph } from "@explorablegraph/core";
+import { ExplorableGraph } from "../../core/exports.js";
 
 export default async function execute(linked, argument) {
   if (linked instanceof Array) {

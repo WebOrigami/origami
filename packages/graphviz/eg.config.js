@@ -1,5 +1,5 @@
-import { Compose } from "@explorablegraph/core";
-import { builtins } from "@explorablegraph/eg";
+import { Compose } from "../../core/exports.js";
+import { builtins } from "../../eg/exports.js";
 import dot from "./src/dot.js";
 
 export default new Compose(

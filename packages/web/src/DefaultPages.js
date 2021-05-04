@@ -1,4 +1,4 @@
-import { ExplorableGraph } from "@explorablegraph/core";
+import { ExplorableGraph } from "../../core/exports.js";
 
 const INDEX_HTML = "index.html";
 const KEYS_JSON = ".keys.json";

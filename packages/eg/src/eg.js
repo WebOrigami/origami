@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { ExplorableGraph } from "@explorablegraph/core";
-import { evaluate } from "@explorablegraph/exlang";
-import { ParentFiles } from "@explorablegraph/node";
 import process from "process";
+import { ExplorableGraph } from "../../core/exports.js";
+import { evaluate } from "../../exlang/exports.js";
+import { ParentFiles } from "../../node/exports.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";

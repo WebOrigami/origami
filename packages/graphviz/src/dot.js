@@ -1,4 +1,4 @@
-import { ExplorableGraph } from "@explorablegraph/core";
+import { ExplorableGraph } from "../../core/exports.js";
 
 export default async function dot(graph, rootLabel = "") {
   const graphArcs = await statements(graph, "", "/");

@@ -1,6 +1,6 @@
-import { writeFiles } from "@explorablegraph/node";
 import path from "path";
 import process from "process";
+import { writeFiles } from "../../node/exports.js";
 import { loadGraphFromArgument } from "../shared.js";
 
 export default async function make(graphArg, target) {
