@@ -1,10 +1,13 @@
 import chai from "chai";
-import DefaultPages from "../src/DefaultPages.js";
+import { ExplorableObject } from "../../core/exports.js";
+import DefaultPagesMixin from "../src/DefaultPagesMixin.js";
 const { assert } = chai;
 
-describe("DefaultPages", () => {
+class DefaultPagesGraph extends DefaultPagesMixin(ExplorableObject) {}
+
+describe("DefaultPagesMixin", () => {
   it("adds index.html to keys for a graph that doesn't have one", async () => {
-    const fixture = new DefaultPages({
+    const fixture = new DefaultPagesGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -14,7 +17,7 @@ describe("DefaultPages", () => {
   });
 
   it("defers to index.html if the inner graph defines one", async () => {
-    const fixture = new DefaultPages({
+    const fixture = new DefaultPagesGraph({
       "index.html": "Index page goes here",
       a: 1,
       b: 2,
@@ -25,7 +28,7 @@ describe("DefaultPages", () => {
   });
 
   it("generates index.html for a graph that doesn't have one", async () => {
-    const fixture = new DefaultPages({
+    const fixture = new DefaultPagesGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -46,7 +49,7 @@ describe("DefaultPages", () => {
   });
 
   it.skip("generates .keys.json for a graph that doesn't have one", async () => {
-    const fixture = new DefaultPages({
+    const fixture = new DefaultPagesGraph({
       a: 1,
       b: 2,
       c: 3,

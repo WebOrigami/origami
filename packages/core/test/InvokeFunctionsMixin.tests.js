@@ -1,10 +1,12 @@
 import chai from "chai";
-import FunctionGraph from "../src/FunctionGraph.js";
+import { ExplorableObject } from "../exports.js";
+import InvokeFunctionsMixin from "../src/InvokeFunctionsMixin.js";
 const { assert } = chai;
 
-describe("FunctionGraph", () => {
+describe("InvokeFunctionsMixin", () => {
   it("invokes values which are functions, returns result", async () => {
-    const graph = new FunctionGraph({
+    class FunctionsGraph extends InvokeFunctionsMixin(ExplorableObject) {}
+    const graph = new FunctionsGraph({
       a: 1,
       fn: function () {
         assert.equal(this, graph);
