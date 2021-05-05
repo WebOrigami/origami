@@ -9,19 +9,19 @@ export default class VirtualKeys extends ExplorableGraph {
   }
 
   async *[Symbol.asyncIterator]() {
+    // Yield the inner graph's keys.
+    // For virtual files, return virtual name instead of actual name.
+    yield* this.inner[Symbol.asyncIterator]();
+
     // See if we have a .keys.json value.
     const value = await this.inner.get(keysJsonKey);
     if (value) {
-      // Return the keys in the value.
+      // Yield the value (which should be an array) as keys.
       const data =
         value instanceof Buffer || value instanceof String
           ? JSON.parse(String(value))
           : value;
       yield* data;
-    } else {
-      // Use the inner graph's keys.
-      // For virtual files, return virtual name instead of actual name.
-      yield* this.inner[Symbol.asyncIterator]();
     }
   }
 

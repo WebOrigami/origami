@@ -84,10 +84,14 @@ async function defaultKeysJson(graph) {
 async function defaultIndexHtml(graph) {
   const links = [];
   for await (const key of graph) {
-    const value = await graph.get(key);
-    const href = value instanceof ExplorableGraph ? `${key}/` : key;
-    const link = `<li><a href="${href}">${href}</a></li>`;
-    links.push(link);
+    // Skip keys that start with a "." (like .keys.json) or a ":" (wildcard
+    // character).
+    if (!key.startsWith(".") && !key.startsWith(":")) {
+      const value = await graph.get(key);
+      const href = value instanceof ExplorableGraph ? `${key}/` : key;
+      const link = `<li><a href="${href}">${href}</a></li>`;
+      links.push(link);
+    }
   }
   const list = `<ul>\n${links.join("\n")}\n</ul>`;
   return list;

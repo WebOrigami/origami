@@ -14,6 +14,6 @@ describe("VirtualKeys", () => {
   it("can load keys from a .keys.json value", async () => {
     const virtualKeys = new VirtualKeys(files);
     const keys = await virtualKeys.keys();
-    assert.deepEqual(keys, ["a", "b", "c"]);
+    assert.deepEqual(keys, [".keys.json", "a", "b", "c"]);
   });
 });

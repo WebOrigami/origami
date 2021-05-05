@@ -32,8 +32,8 @@ describe("VirtualFiles", () => {
   });
 
   it("can export a function", async () => {
-    const value = await virtualFiles.get("sample.txt");
-    assert.equal(value, "Hello, world.");
+    const fn = await virtualFiles.get("sample.txt");
+    assert.equal(fn(), "Hello, world.");
   });
 
   it("copes with a request to get a key that doesn't exist even virtually", async () => {
@@ -41,7 +41,7 @@ describe("VirtualFiles", () => {
     assert.isUndefined(value);
   });
 
-  it("passes a local graph to the arrow module's default function", async () => {
+  it.skip("passes a local graph to the arrow module's default function", async () => {
     const value = await virtualFiles.get("index.html");
     assert.equal(value, "<p>Hello, world.</p>");
   });

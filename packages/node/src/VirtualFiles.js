@@ -23,11 +23,15 @@ export default class VirtualFiles extends ExplorableGraph {
     let value = await this.inner.get(key, ...rest);
 
     if (value !== undefined) {
+      // Return existing value as is.
       return value;
     }
-
-    // Special keys "." and ".." can't be used for virtual files.
     if (key === "." || key === "..") {
+      // Special keys "." and ".." can't be used for virtual files.
+      return undefined;
+    }
+    if (rest.length > 0) {
+      // Won't be able to fully resolve the rest of the path.
       return undefined;
     }
 
@@ -42,13 +46,15 @@ export default class VirtualFiles extends ExplorableGraph {
       const moduleDefault = obj.default;
 
       // If result is a function, bind it to this graph.
-      value =
-        moduleDefault instanceof Function
-          ? moduleDefault.bind(this)
-          : moduleDefault;
+      // value =
+      //   moduleDefault instanceof Function
+      //     ? moduleDefault.bind(this)
+      //     : moduleDefault;
+      value = moduleDefault;
     }
 
-    return this.resolve(value, rest);
+    // return this.resolve(value, rest);
+    return value;
   }
 
   get path() {
