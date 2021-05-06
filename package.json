@@ -2,6 +2,9 @@
   "name": "@explorablegraph/explorable",
   "version": "0.0.1",
   "type": "module",
+  "bin": {
+    "eg": "packages/eg/src/eg.js"
+  },
   "devDependencies": {
     "@types/chai": "4.2.14",
     "@types/mocha": "8.0.4",

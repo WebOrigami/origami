@@ -1,5 +1,8 @@
 // import { ExplorableGraph, WildcardGraph } from "../../core/exports.js";
-import { Files /*, VirtualFiles, VirtualKeys */ } from "../../node/exports.js";
+import {
+  Files /*, VirtualFiles*/,
+  VirtualKeysMixin,
+} from "../../node/exports.js";
 import DefaultPagesMixin from "./DefaultPagesMixin.js";
 
 // DefaultPagesMixin(Files) so that DefaultPagesMixin can respect real index.html
@@ -14,4 +17,6 @@ import DefaultPagesMixin from "./DefaultPagesMixin.js";
 // WildcardGraph(VirtualFiles(...)) so that VirtualFiles can generate a wildcard function
 // that WildcardGraph can resolve
 
-export default class ExplorableApp extends DefaultPagesMixin(Files) {}
+export default class ExplorableApp extends DefaultPagesMixin(
+  VirtualKeysMixin(Files)
+) {}

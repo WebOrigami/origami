@@ -66,6 +66,8 @@ describe("WildcardGraph", () => {
 
     // Asking for an explorable wildcard does *not* compose with other
     // wildcards.
+
+    // TODO
   });
 
   it("composes explorable real value and explorable wildcard values", async () => {

@@ -1,4 +1,4 @@
-import { ExplorableSite } from "../../web/exports.js";
+import { ExplorableSite } from "../../../web/exports.js";
 
 export default async function explorableSite(url) {
   return new ExplorableSite(url);

@@ -1,6 +1,6 @@
 import path from "path";
 import process from "process";
-import { Files } from "../../node/exports.js";
+import { Files } from "../../../node/exports.js";
 
 export default async function files(relativePath) {
   const resolvedPath = path.resolve(process.cwd(), relativePath);

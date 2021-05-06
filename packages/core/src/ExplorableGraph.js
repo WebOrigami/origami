@@ -27,6 +27,12 @@ export default class ExplorableGraph {
    */
   async get(...keys) {}
 
+  // We define `obj instanceof ExplorableGraph` for any object that has the async
+  // properties we need: Symbol.asyncIterator and a `get` method.
+  static [Symbol.hasInstance](obj) {
+    return obj && obj[Symbol.asyncIterator] && obj.get instanceof Function;
+  }
+
   /**
    * Returns the graph's keys as an array.
    *

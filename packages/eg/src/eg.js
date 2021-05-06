@@ -38,6 +38,12 @@ async function main(...args) {
 
 export default async function stdout(obj) {
   let output;
+
+  // HACK
+  // if (obj[Symbol.asyncIterator] && obj.get instanceof Function) {
+  //   obj = new ExplorableGraph(obj);
+  // }
+
   if (obj === undefined) {
     return;
   } else if (obj instanceof ExplorableGraph) {

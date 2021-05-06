@@ -1,2 +1,2 @@
-import { dot } from "@explorablegraph/graphviz";
+import { dot } from "../../../graphviz/exports.js";
 export default dot;

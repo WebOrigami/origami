@@ -1,4 +1,4 @@
-import { ExplorableApp } from "../../web/exports.js";
+import { ExplorableApp } from "../../../web/exports.js";
 
 export default function app(graph) {
   return new ExplorableApp(graph);
