@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import VirtualFiles from "../../../src/VirtualFiles.js";
+import VirtualFiles from "../../../src/VirtualValuesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 

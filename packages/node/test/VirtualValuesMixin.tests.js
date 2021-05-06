@@ -3,17 +3,18 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { WildcardKeysMixin } from "../../core/exports.js";
 import Files from "../src/Files.js";
-import VirtualFiles from "../src/VirtualFiles.js";
+import VirtualValuesMixin from "../src/VirtualValuesMixin.js";
 const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const directory = path.join(fixturesDirectory, "virtualFiles");
-const files = new Files(directory);
-const virtualFiles = new VirtualFiles(files);
 
-describe("VirtualFiles", () => {
-  it("returns virtual names for virtual files", async () => {
+class VirtualFiles extends VirtualValuesMixin(Files) {}
+const virtualFiles = new VirtualFiles(directory);
+
+describe("VirtualValuesMixin", () => {
+  it("returns virtual names for virtual values", async () => {
     const keys = await virtualFiles.keys();
     assert.deepEqual(keys, [
       ":wildcard",
