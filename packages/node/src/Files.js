@@ -22,15 +22,15 @@ export default class Files extends ExplorableGraph {
     yield* names;
   }
 
-  async get(key, ...rest) {
-    const objPath = this.pathForKeys(key);
+  async get(...keys) {
+    const objPath = path.join(this.dirname, ...keys);
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
     }
     if (stats.isDirectory()) {
-      const directory = await this.subgraph(key);
-      return rest.length > 0 ? await directory.get(...rest) : directory;
+      const directory = Reflect.construct(this.constructor, [objPath]);
+      return directory;
     } else {
       return fs.readFile(objPath);
     }
@@ -38,10 +38,6 @@ export default class Files extends ExplorableGraph {
 
   get path() {
     return this.dirname;
-  }
-
-  pathForKeys(...keys) {
-    return path.join(this.dirname, ...keys);
   }
 
   /**
@@ -101,12 +97,6 @@ export default class Files extends ExplorableGraph {
       const filePath = path.join(folder, filename);
       await fs.writeFile(filePath, value);
     }
-  }
-
-  async subgraph(key, ...args) {
-    const dirname = path.join(this.dirname, key);
-    const graph = Reflect.construct(this.constructor, [dirname, ...args]);
-    return graph;
   }
 }
 
