@@ -1,7 +1,7 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
-import { WildcardGraph } from "../../core/exports.js";
+import { WildcardKeysMixin } from "../../core/exports.js";
 import Files from "../src/Files.js";
 import VirtualFiles from "../src/VirtualFiles.js";
 const { assert } = chai;
@@ -47,7 +47,8 @@ describe("VirtualFiles", () => {
   });
 
   it.skip("can return a result from a folder with a wildcard name", async () => {
-    const graph = new WildcardGraph(virtualFiles);
+    class WildcardGraph extends WildcardKeysMixin(VirtualFiles) {}
+    const graph = new WildcardGraph(files);
 
     const value1 = await graph.get("subfolder", "virtual.txt");
     assert.equal(value1, "This text was returned for subfolder");

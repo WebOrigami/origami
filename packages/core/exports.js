@@ -7,4 +7,4 @@ export {
 export { default as InvokeFunctionsMixin } from "./src/InvokeFunctionsMixin.js";
 export { default as IStorableGraph } from "./src/IStorableGraph.js";
 export { default as Transform } from "./src/Transform.js";
-export { default as WildcardGraph } from "./src/WildcardGraph.js";
+export { default as WildcardKeysMixin } from "./src/WildcardKeysMixin.js";

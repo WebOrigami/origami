@@ -174,7 +174,7 @@ export class ExplorableObject extends ExplorableGraph {
     return keys.length > 0
       ? undefined
       : isPlainObject(value)
-      ? new ExplorableObject(value)
+      ? Reflect.construct(this.constructor, [value])
       : value;
   }
 
