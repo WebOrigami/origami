@@ -24,7 +24,7 @@ export async function handleRequest(request, response, graph) {
   const unescaped = unescape(request.url);
   const keys = keysFromHref(unescaped);
   const resource = await graph.get(...keys);
-  if (resource) {
+  if (resource !== undefined) {
     // If resource is a function, invoke to get the object we want to return.
     const obj = typeof resource === "function" ? await resource() : resource;
 

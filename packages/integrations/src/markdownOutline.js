@@ -39,7 +39,7 @@ export default function markdownOutline(markdown, depth = 2) {
   }
 
   // Any remaining text gets added to the current node.
-  if (text) {
+  if (text !== undefined) {
     current["._content_"] = text;
   }
 

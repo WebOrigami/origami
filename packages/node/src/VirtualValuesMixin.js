@@ -35,7 +35,7 @@ export default function VirtualValuesMixin(Base) {
       // only works directly with file or web paths.
       const modulePath = path.join(this.path, virtualKey);
       const obj = await importModule(modulePath);
-      if (obj) {
+      if (obj !== undefined) {
         // Successfully imported module; return its default export.
         value = obj.default;
       }

@@ -15,7 +15,7 @@ export default function VirtualKeysMixin(Base) {
       // through its keys for a wildcard -- resulting in a loop.
       const value = await super.get(keysJsonKey);
 
-      if (value) {
+      if (value !== undefined) {
         // Yield the value (which should be an array) as keys.
         const data =
           value instanceof Buffer || value instanceof String

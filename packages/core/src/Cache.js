@@ -35,7 +35,7 @@ export default class Cache extends ExplorableGraph {
 
   async get(...keys) {
     const cachedValue = await this.cache.get(...keys);
-    if (cachedValue) {
+    if (cachedValue !== undefined) {
       // Cache hit
       return cachedValue;
     }

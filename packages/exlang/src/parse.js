@@ -13,7 +13,7 @@ export default function parseExpression(text) {
   const trimmed = text.trim();
   for (const recognizer of recognizers) {
     const result = recognizer(trimmed);
-    if (result) {
+    if (result !== undefined) {
       // Recognizer recognized something.
       return result;
     }

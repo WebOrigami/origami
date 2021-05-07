@@ -31,7 +31,7 @@ async function main(...args) {
     await showUsage(scope);
   }
   const result = await evaluate(source, scope, "**input**");
-  if (result) {
+  if (result !== undefined) {
     await stdout(result);
   }
 }
