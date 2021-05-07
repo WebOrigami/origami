@@ -19,5 +19,5 @@ import DefaultPagesMixin from "./DefaultPagesMixin.js";
 // that WildcardGraph can resolve
 
 export default class ExplorableApp extends WildcardKeysMixin(
-  DefaultPagesMixin(VirtualValuesMixin(VirtualKeysMixin(Files)))
+  DefaultPagesMixin(VirtualKeysMixin(VirtualValuesMixin(Files)))
 ) {}

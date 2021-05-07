@@ -23,7 +23,7 @@ export default class Files extends ExplorableGraph {
   }
 
   async get(...keys) {
-    const objPath = path.join(this.dirname, ...keys);
+    const objPath = path.resolve(this.dirname, ...keys);
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;

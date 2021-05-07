@@ -18,9 +18,11 @@ export default function VirtualKeysMixin(Base) {
       if (value !== undefined) {
         // Yield the value (which should be an array) as keys.
         const data =
-          value instanceof Buffer || value instanceof String
-            ? JSON.parse(String(value))
-            : value;
+          value instanceof Function ?
+            await value.call(this) :
+            value instanceof Buffer || value instanceof String
+              ? JSON.parse(String(value))
+              : value;
         yield* data;
       }
     }
