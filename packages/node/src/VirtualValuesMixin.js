@@ -40,7 +40,6 @@ export default function VirtualValuesMixin(Base) {
         value = obj.default;
       }
 
-      // return this.resolve(value, rest);
       return value;
     }
   };

@@ -25,8 +25,7 @@ export default function DefaultPagesMixin(Base) {
       const value = await super.get(...keys);
 
       if (value instanceof ExplorableGraph) {
-        // Value is explorable; return an DefaultPages wrapper around it.
-        return Reflect.construct(this.constructor, [value]);
+        return value;
       }
 
       const lastKey = keys[keys.length - 1];
