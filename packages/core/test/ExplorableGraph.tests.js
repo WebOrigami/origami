@@ -107,6 +107,18 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  // it("subgraph() produces a subgraph for a given key with the same constructor as the graph", async () => {
+  //   class Subclass extends ExplorableGraph {}
+  //   const graph = new Subclass({
+  //     a: {
+  //       b: 1,
+  //     },
+  //   });
+  //   const subgraph = await graph.subgraph("a");
+  //   assert.equal(subgraph.constructor, Subclass);
+  //   assert.deepEqual(await subgraph.keys(), ["b"]);
+  // });
+
   it("traverse() invokes a callback with each node in depth-first order", async () => {
     const graph = new ExplorableGraph({
       a: 1,

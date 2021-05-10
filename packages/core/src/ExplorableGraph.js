@@ -113,6 +113,8 @@ export default class ExplorableGraph {
     return await this.mapValues(() => null);
   }
 
+  async subgraph(key) {}
+
   /**
    * Performs a depth-first traversal of the explorable.
    *

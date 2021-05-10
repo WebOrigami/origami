@@ -5,17 +5,17 @@ const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 
-describe("WildcardGraph", () => {
-  it.skip("hides wildcards from keys", async () => {
-    const graph = new WildcardGraph({
-      ":default": 0,
-      a: 1,
-      b: 2,
-      c: 3,
-    });
+describe.only("WildcardGraph", () => {
+  // it("hides wildcards from keys", async () => {
+  //   const graph = new WildcardGraph({
+  //     ":default": 0,
+  //     a: 1,
+  //     b: 2,
+  //     c: 3,
+  //   });
 
-    assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
-  });
+  //   assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
+  // });
 
   it("returns wildcard values if requested key is missing", async () => {
     const graph = new WildcardGraph({
