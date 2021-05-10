@@ -62,6 +62,9 @@ export default function WildcardKeysMixin(Base) {
   };
 }
 
+// A collection of graphs that support wildcard keys.
+// This is a type of value returned by WildcardKeysMixin (above) if the desired
+// path results in multiple hits: e.g., a real value and some wildcard values.
 class WildcardGraphs extends ExplorableGraph {
   constructor(...graphs) {
     super();
@@ -82,9 +85,12 @@ class WildcardGraphs extends ExplorableGraph {
     }
   }
 
+  // This code is similar to, but slightly different from, the `get` method
+  // defined by WildcardKeysMixin. One challenge with sharing this code with
+  // WildcardKeysMixin is that the latter must invoke the `super` get method,
+  // while WildcardGraphs wants to invoke the normal get method.
   async get(key, ...rest) {
     let value;
-    let bindTarget;
     const explorableValues = [];
 
     // Try key directly.
@@ -97,27 +103,24 @@ class WildcardGraphs extends ExplorableGraph {
 
     if (value === undefined || value instanceof ExplorableGraph) {
       // Consider all wildcards.
-      if (value instanceof ExplorableGraph) {
+      if (value instanceof WildcardGraphs) {
+        explorableValues.push(...value.graphs);
+      } else if (value instanceof ExplorableGraph) {
         explorableValues.push(value);
       }
       outer: for await (const graph of this.graphs) {
-        bindTarget = graph;
         for await (const wildcardKey of wildcards(graph)) {
           if (wildcardKey !== key) {
             // We have a wildcard that matches.
             const wildcardValue = await graph.get(wildcardKey);
             if (wildcardValue !== undefined) {
-              if (wildcardValue instanceof ExplorableGraph) {
-                const parameterized = parameterize(
-                  wildcardValue,
-                  wildcardKey,
-                  key
-                );
-                explorableValues.push(parameterized);
+              if (wildcardValue instanceof WildcardGraphs) {
+                explorableValues.push(...wildcardValue.graphs);
+              } else if (wildcardValue instanceof ExplorableGraph) {
+                explorableValues.push(wildcardValue);
               } else if (explorableValues.length === 0) {
                 // First wildcard found is not explorable; use that value.
                 value = wildcardValue;
-                bindTarget = parameterize(graph, wildcardKey, key);
                 break outer;
               }
             }
@@ -134,8 +137,8 @@ class WildcardGraphs extends ExplorableGraph {
     }
 
     if (value instanceof Function) {
-      // Bind the function to the graph.
-      value = await value.call(bindTarget, ...rest);
+      // Function should already be bound.
+      value = await value.call(null, ...rest);
     } else if (value instanceof ExplorableGraph && rest.length > 0) {
       value = await value.get(...rest);
     }

@@ -29,9 +29,14 @@ export default class ExplorableGraph {
 
   // We define `obj instanceof ExplorableGraph` for any object that has the async
   // properties we need: Symbol.asyncIterator and a `get` method.
-  static [Symbol.hasInstance](obj) {
-    return obj && obj[Symbol.asyncIterator] && obj.get instanceof Function;
-  }
+  // static [Symbol.hasInstance](obj) {
+  //   if (this === ExplorableGraph) {
+  //     return obj && obj[Symbol.asyncIterator] && obj.get instanceof Function;
+  //   } else {
+  //     const superclass = Object.getPrototypeOf(this.prototype).constructor;
+  //     return superclass[Symbol.hasInstance](obj);
+  //   }
+  // }
 
   /**
    * Returns the graph's keys as an array.

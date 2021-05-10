@@ -5,7 +5,7 @@ const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 
-describe.only("WildcardGraph", () => {
+describe("WildcardGraph", () => {
   // it("hides wildcards from keys", async () => {
   //   const graph = new WildcardGraph({
   //     ":default": 0,
