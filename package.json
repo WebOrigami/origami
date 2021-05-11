@@ -5,6 +5,7 @@
   "bin": {
     "eg": "packages/eg/src/eg.js"
   },
+  "main": "./exports.js",
   "devDependencies": {
     "@types/chai": "4.2.14",
     "@types/mocha": "8.0.4",
