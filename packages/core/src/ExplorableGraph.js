@@ -103,7 +103,7 @@ export default class ExplorableGraph {
     return await this.mapValues(async (value) => {
       const obj = await value;
       // If obj is a primitive type, we won't be able to call toString
-      return obj.toString ? obj.toString() : "";
+      return obj?.toString?.();
     });
   }
 
