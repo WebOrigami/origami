@@ -1,5 +1,6 @@
 export { default as Cache } from "./src/Cache.js";
 export { default as Compose } from "./src/Compose.js";
+export { default as DefaultValues } from "./src/DefaultValues.js";
 export {
   default as ExplorableGraph,
   ExplorableObject,
