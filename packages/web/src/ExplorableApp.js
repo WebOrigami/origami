@@ -22,7 +22,7 @@ export default class ExplorableApp extends DefaultValues {
     super(main, defaults);
   }
 }
-6;
+
 async function defaultIndexHtml() {
   const links = [];
   for await (const key of this) {
