@@ -2,10 +2,12 @@ const keysJsonKey = ".keys.json";
 
 export default function VirtualKeysMixin(Base) {
   return class VirtualKeys extends Base {
-    #virtualKeys;
+
+    // TODO: Make private
+    // #virtualKeys;
 
     async *[Symbol.asyncIterator]() {
-      if (this.#virtualKeys === undefined) {
+      if (this.virtualKeys === undefined) {
         // See if we have a .keys.json value.
         // REVIEW: We call super.get instead of this.get here. Otherwise, if we
         // use this mixin with WildcardKeysMixin, we can end up in a loop:
@@ -17,10 +19,10 @@ export default function VirtualKeysMixin(Base) {
 
         if (value === undefined) {
           // No virtual keys
-          this.#virtualKeys = [];
+          this.virtualKeys = [];
         } else {
           // Virtual keys.
-          this.#virtualKeys =
+          this.virtualKeys =
             value instanceof Function
               ? await value.call(this)
               : value instanceof Buffer || value instanceof String
@@ -31,7 +33,7 @@ export default function VirtualKeysMixin(Base) {
 
       // Yield the virtual keys, keeping track of what they are.
       const set = new Set();
-      for (const key of this.#virtualKeys) {
+      for (const key of this.virtualKeys) {
         set.add(key);
         yield key;
       }
