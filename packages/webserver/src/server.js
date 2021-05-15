@@ -31,7 +31,12 @@ export async function handleRequest(request, response, graph) {
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
     let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
-    const data = mediaType ? obj : textOrObject(obj);
+    const data = mediaType === "application/json" && typeof obj !== "string" ?
+      JSON.stringify(obj, null, 2) :
+      mediaType ?
+        obj :
+        textOrObject(obj);
+
     if (!mediaType) {
       // Can't identify media type; infer default type.
       mediaType =

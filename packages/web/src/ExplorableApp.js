@@ -1,13 +1,14 @@
 import { DefaultValues, WildcardKeysMixin } from "../../core/exports.js";
 import {
+  CommonFileTypesMixin,
   Files,
   VirtualKeysMixin,
   VirtualValuesMixin,
 } from "../../node/exports.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 
-class AppGraph extends WildcardKeysMixin(
-  VirtualKeysMixin(VirtualValuesMixin(Files))
+class AppGraph extends CommonFileTypesMixin(
+  WildcardKeysMixin(VirtualKeysMixin(VirtualValuesMixin(Files)))
 ) {}
 
 export default class ExplorableApp extends DefaultValues {
