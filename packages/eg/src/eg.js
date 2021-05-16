@@ -47,8 +47,8 @@ export default async function stdout(obj) {
   if (obj === undefined) {
     return;
   } else if (obj instanceof ExplorableGraph) {
-    const strings = await obj.strings();
-    output = JSON.stringify(strings, null, 2);
+    const plain = await obj.plain();
+    output = JSON.stringify(plain, null, 2);
   } else {
     output = obj;
   }

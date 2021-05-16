@@ -2,6 +2,7 @@ import YAML from "yaml";
 
 export default async function yaml(graph) {
   const obj = await graph.strings();
+  // const obj = await graph.plain();
   const text = YAML.stringify(obj);
   return text;
 }
