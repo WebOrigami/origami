@@ -1,5 +1,5 @@
 import { get } from "@explorablegraph/symbols";
-import { isPlainObject } from "./builtIns.js";
+import { isPlainObject } from "./builtIns.js.js.js";
 import Explorable from "./Explorable.js";
 import ExplorableMap from "./ExplorableMap.js";
 

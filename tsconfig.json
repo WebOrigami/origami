@@ -11,6 +11,5 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["packages/*/src/**/*.js", "packages/*/test/**/*.js"],
-  "exclude": ["packages/integrations/**"]
+  "include": ["packages/*/src/**/*.js", "packages/*/test/**/*.js"]
 }
