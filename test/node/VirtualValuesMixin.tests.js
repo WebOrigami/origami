@@ -1,7 +1,7 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
-import WildcardKeysMixin from "../../src/core/WildcardKeysMixin.js";
+import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
 import Files from "../../src/node/Files.js";
 import VirtualValuesMixin from "../../src/node/VirtualValuesMixin.js";
 const { assert } = chai;

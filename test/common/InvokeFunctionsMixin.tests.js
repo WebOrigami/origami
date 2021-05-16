@@ -1,6 +1,6 @@
 import chai from "chai";
+import InvokeFunctionsMixin from "../../src/common/InvokeFunctionsMixin.js";
 import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
-import InvokeFunctionsMixin from "../../src/core/InvokeFunctionsMixin.js";
 const { assert } = chai;
 
 describe("InvokeFunctionsMixin", () => {

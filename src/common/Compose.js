@@ -1,4 +1,4 @@
-import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Given a set of explorable graphs, the get method will look at each graph in

@@ -15,7 +15,7 @@
     "packages/*/src/**/*.js",
     "packages/*/test/**/*.js",
     "test/core/boilerplate.tests.js",
-    "src/core/Cache.js",
+    "src/common/Cache.js",
     "src/web/mediaTypes.js",
     "src/node/CommandModules.js",
     "src/eg/dot.js",

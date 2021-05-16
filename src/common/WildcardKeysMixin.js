@@ -1,4 +1,4 @@
-import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 const wildcardPrefix = ":";
 

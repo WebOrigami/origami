@@ -1,5 +1,5 @@
 import chai from "chai";
-import DefaultValues from "../../src/core/DefaultValues.js";
+import DefaultValues from "../../src/common/DefaultValues.js";
 const { assert } = chai;
 
 describe("DefaultValues", () => {

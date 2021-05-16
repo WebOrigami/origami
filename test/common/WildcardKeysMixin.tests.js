@@ -1,6 +1,6 @@
 import chai from "chai";
+import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
 import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
-import WildcardKeysMixin from "../../src/core/WildcardKeysMixin.js";
 const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}

@@ -1,5 +1,5 @@
 import chai from "chai";
-import Compose from "../../src/core/Compose.js";
+import Compose from "../../src/common/Compose.js";
 const { assert } = chai;
 
 describe("Compose", () => {

@@ -1,5 +1,5 @@
-import ExplorableGraph from "./ExplorableGraph.js";
-import IStorableGraph from "./IStorableGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import IStorableGraph from "../core/IStorableGraph.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If

@@ -1,5 +1,5 @@
 import chai from "chai";
-import Cache from "../../src/core/Cache.js";
+import Cache from "../../src/common/Cache.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 

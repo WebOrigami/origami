@@ -1,4 +1,4 @@
-import Cache from "../../core/Cache.js";
+import Cache from "../../common/Cache.js";
 
 export default async function cache(...args) {
   return new Cache(...args);

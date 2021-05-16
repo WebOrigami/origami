@@ -1,4 +1,4 @@
-import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of

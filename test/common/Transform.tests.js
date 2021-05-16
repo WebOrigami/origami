@@ -1,5 +1,5 @@
 import chai from "chai";
-import Transform from "../../src/core/Transform.js";
+import Transform from "../../src/common/Transform.js";
 const { assert } = chai;
 
 // Sample class-based transform capitalizes keys and objects from a source

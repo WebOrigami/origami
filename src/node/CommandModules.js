@@ -1,5 +1,5 @@
 import path from "path";
-import Transform from "../../src/core/Transform.js";
+import Transform from "../../src/common/Transform.js";
 
 // CommandModules wraps a graph like JavaScriptModuleFiles.
 // The `foo.js` module becomes the `foo` command.

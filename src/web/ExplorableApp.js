@@ -1,5 +1,5 @@
-import DefaultValues from "../../src/core/DefaultValues.js";
-import WildcardKeysMixin from "../../src/core/WildcardKeysMixin.js";
+import DefaultValues from "../../src/common/DefaultValues.js";
+import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
 import CommonFileTypesMixin from "../../src/node/CommonFileTypesMixin.js";
 import Files from "../../src/node/Files.js";
 import VirtualKeysMixin from "../../src/node/VirtualKeysMixin.js";
