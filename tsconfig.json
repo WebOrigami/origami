@@ -11,5 +11,15 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["packages/*/src/**/*.js", "packages/*/test/**/*.js"]
+  "include": [
+    "packages/*/src/**/*.js",
+    "packages/*/test/**/*.js",
+    "test/core/boilerplate.tests.js",
+    "src/core/Cache.js",
+    "src/web/mediaTypes.js",
+    "src/node/CommandModules.js",
+    "src/eg/dot.js",
+    "test/eg/evaluate.tests.js",
+    "src/eg/evaluate.js"
+  ]
 }
