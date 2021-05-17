@@ -1,5 +1,12 @@
 import path from "path";
 
+const textFileExtensions = {
+  ".htm": true,
+  ".html": true,
+  ".txt": true,
+  ".xhtml": true,
+};
+
 export default function CommonFileTypesMixin(Base) {
   return class CommonFileTypes extends Base {
     async get(...keys) {
@@ -13,6 +20,8 @@ export default function CommonFileTypesMixin(Base) {
         const extname = path.extname(lastKey).toLowerCase();
         if (extname === ".json") {
           value = JSON.parse(String(value));
+        } else if (textFileExtensions[extname]) {
+          value = String(value);
         }
       }
 
