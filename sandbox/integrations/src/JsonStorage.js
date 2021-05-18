@@ -35,7 +35,7 @@ export default class JsonStorage extends ExplorableGraph {
         const response = await fetch(this.url);
         const text = await response.text();
         const obj = JSON.parse(text);
-        const explorable = new ExplorableGraph(obj);
+        const explorable = new ExplorableObject(obj);
         resolve(explorable);
       });
     }

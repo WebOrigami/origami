@@ -1,5 +1,5 @@
 import chai from "chai";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import link from "../../src/eg/link.js";
 const { assert } = chai;
 
@@ -10,7 +10,7 @@ describe("link", () => {
     const parsed = ["fn", ["fn", "a", "b"]];
 
     function fn() {}
-    const scope = new ExplorableGraph({
+    const scope = new ExplorableObject({
       fn: fn, // Maps string key "fn" to `fn` function defined above.
     });
     const linked = await link(parsed, scope);

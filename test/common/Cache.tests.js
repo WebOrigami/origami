@@ -1,16 +1,18 @@
 import chai from "chai";
 import Cache from "../../src/common/Cache.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
 describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const cache = new ExplorableGraph({});
-    const fixture = new Cache(cache, {
-      a: 1,
-      b: 2,
-      c: 3,
-    });
+    const fixture = new Cache(
+      {},
+      {
+        a: 1,
+        b: 2,
+        c: 3,
+      }
+    );
+    const cache = fixture.cache;
 
     const keys = await fixture.keys();
     assert.deepEqual(keys, ["a", "b", "c"]);

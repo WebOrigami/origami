@@ -2,7 +2,6 @@ import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { ExplorableGraph } from "../../core/exports.js";
 import Files from "../src/Files.js";
 import writeFiles from "../src/writeFiles.js";
 const { assert } = chai;
@@ -27,7 +26,7 @@ describe("writeFiles", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new ExplorableGraph(obj);
+    const files = new ExplorableObject(obj);
 
     // Write out files.
     await writeFiles(tempDirectory, files);

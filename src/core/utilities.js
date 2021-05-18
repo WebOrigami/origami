@@ -1,3 +1,12 @@
+import ExplorableGraph from "./ExplorableGraph.js";
+import ExplorableObject from "./ExplorableObject.js";
+
+export function explore(obj) {
+  return obj instanceof ExplorableGraph
+    ? obj // Return object as is.
+    : new ExplorableObject(obj);
+}
+
 /**
  * Return true if the object is a plain JavaScript object.
  *

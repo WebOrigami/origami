@@ -1,5 +1,5 @@
 import path from "path";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -89,7 +89,7 @@ export function requestListener(arg) {
     obj = arg;
   }
 
-  const graph = new ExplorableGraph(obj);
+  const graph = new ExplorableObject(obj);
 
   return async function (request, response) {
     console.log(request.url);

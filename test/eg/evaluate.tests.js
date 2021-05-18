@@ -1,12 +1,12 @@
 import chai from "chai";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import evaluate from "../../src/eg/evaluate.js";
 const { assert } = chai;
 
 describe("evaluate", () => {
   it("can parse, link, and execute", async () => {
     const source = "greet(world)";
-    const scope = new ExplorableGraph({
+    const scope = new ExplorableObject({
       async greet(name) {
         return `Hello ${name}`;
       },

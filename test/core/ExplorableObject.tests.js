@@ -1,5 +1,5 @@
 import chai from "chai";
-import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
 
 describe("ExplorableObject", () => {

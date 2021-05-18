@@ -1,5 +1,5 @@
 import chai from "chai";
-import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import CommonFileTypesMixin from "../../src/node/CommonFileTypesMixin.js";
 const { assert } = chai;
 

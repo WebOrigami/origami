@@ -1,7 +1,7 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
-import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import Files from "../../src/node/Files.js";
 import VirtualKeysMixin from "../../src/node/VirtualKeysMixin.js";
 const { assert } = chai;

@@ -1,11 +1,11 @@
 import chai from "chai";
 import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
-import { ExplorableObject } from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 
-describe("WildcardGraph", () => {
+describe.skip("WildcardKeysMixin", () => {
   // it("hides wildcards from keys", async () => {
   //   const graph = new WildcardGraph({
   //     ":default": 0,

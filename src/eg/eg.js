@@ -4,6 +4,7 @@ import process from "process";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import evaluate from "../../src/eg/evaluate.js";
 import ParentFiles from "../../src/node/ParentFiles.js";
+import { explore } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";
@@ -13,7 +14,7 @@ const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
 const configPath = await parentFiles.get(configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
-const config = fn ? new ExplorableGraph(fn) : null;
+const config = fn ? explore(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
@@ -38,12 +39,6 @@ async function main(...args) {
 
 export default async function stdout(obj) {
   let output;
-
-  // HACK
-  // if (obj[Symbol.asyncIterator] && obj.get instanceof Function) {
-  //   obj = new ExplorableGraph(obj);
-  // }
-
   if (obj === undefined) {
     return;
   } else if (obj instanceof ExplorableGraph) {

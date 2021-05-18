@@ -2,7 +2,6 @@ import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import { ExplorableGraph } from "../../core/exports.js";
 import unlinkFiles from "../src/unlinkFiles.js";
 import writeFiles from "../src/writeFiles.js";
 const { assert } = chai;
@@ -21,7 +20,7 @@ describe("unlinkFiles", () => {
 
   it("removes the files defines by a graph", async () => {
     // Create a file in a subfolder.
-    const files = new ExplorableGraph({
+    const files = new ExplorableObject({
       subfolder: {
         file: "This is a file in the graph.",
       },

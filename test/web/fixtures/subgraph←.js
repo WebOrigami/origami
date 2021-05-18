@@ -1,6 +1,6 @@
-import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../../src/core/ExplorableObject.js";
 
-export default new ExplorableGraph({
+export default new ExplorableObject({
   a: "Hello, a.",
   b: "Hello, b.",
 });

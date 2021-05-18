@@ -2,7 +2,7 @@ import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import Files from "../../src/node/Files.js";
 const { assert } = chai;
 
@@ -83,7 +83,7 @@ describe("Files", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new ExplorableGraph(obj);
+    const files = new ExplorableObject(obj);
 
     // Write out files.
     const tempFiles = new Files(tempDirectory);
