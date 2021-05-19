@@ -4,6 +4,8 @@ const wildcardPrefix = ":";
 
 export default function WildcardKeysMixin(Base) {
   return class WildcardKeys extends Base {
+    #params = {};
+
     async get(key, ...rest) {
       let bindTarget = this;
       const explorableValues = [];
@@ -31,6 +33,7 @@ export default function WildcardKeysMixin(Base) {
               } else if (explorableValues.length === 0) {
                 // First wildcard found is not explorable; use that value.
                 value = wildcardValue;
+                // See concerns in comments for parameterize().
                 bindTarget = parameterize(this, wildcardKey, key);
                 break;
               }
@@ -57,7 +60,10 @@ export default function WildcardKeysMixin(Base) {
     }
 
     get params() {
-      return {};
+      return this.#params;
+    }
+    set params(params) {
+      this.#params = params;
     }
   };
 }
@@ -151,18 +157,14 @@ function isWildcardKey(key) {
   return key.startsWith(wildcardPrefix);
 }
 
+// TODO: Revisit this parameterization method, which is too desctructive and
+// likely to lead to weird bugs.
 function parameterize(obj, wildcard, match) {
   const wildcardName = wildcard.slice(1);
-  const params = Object.assign({}, obj.params, {
+  obj.params = Object.assign({}, obj.params, {
     [wildcardName]: match,
   });
-  return Object.create(obj, {
-    params: {
-      config: true,
-      enumerable: false,
-      value: params,
-    },
-  });
+  return obj;
 }
 
 async function* wildcards(graph) {

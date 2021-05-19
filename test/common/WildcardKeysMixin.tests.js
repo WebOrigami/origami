@@ -5,7 +5,7 @@ const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 
-describe.skip("WildcardKeysMixin", () => {
+describe("WildcardKeysMixin", () => {
   // it("hides wildcards from keys", async () => {
   //   const graph = new WildcardGraph({
   //     ":default": 0,
@@ -13,7 +13,6 @@ describe.skip("WildcardKeysMixin", () => {
   //     b: 2,
   //     c: 3,
   //   });
-
   //   assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
   // });
 
