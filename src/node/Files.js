@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import path from "path";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import { isPlainObject } from "../../src/core/utilities.js";
 
 export default class Files extends ExplorableGraph {
   constructor(dirname) {
@@ -93,9 +94,17 @@ export default class Files extends ExplorableGraph {
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
 
+      // If the value is a plain JS object or array, write it out as JSON, which
+      // seems like a more useful default than "[object Object]" or the array
+      // contents.
+      const data =
+        isPlainObject(value) || value instanceof Array
+          ? JSON.stringify(value, null, 2)
+          : value;
+
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);
-      await fs.writeFile(filePath, value);
+      await fs.writeFile(filePath, data);
     }
   }
 }

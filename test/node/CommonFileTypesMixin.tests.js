@@ -14,7 +14,7 @@ describe("CommonFileTypesMixin", () => {
     assert.equal(await graph.get("bar.txt"), "1");
   });
 
-  it("returns the contents of .json keys/files as parsed JSON objects", async () => {
+  it("returns the contents of .json key/file as parsed JSON objects", async () => {
     const graph = new (CommonFileTypesMixin(ExplorableObject))({
       foo: `{ "message": "foo" }`, // should be left alone
       "bar.json": `{ "message": "bar" }`, // should be parsed
