@@ -42,7 +42,10 @@ export default async function stdout(obj) {
   if (obj === undefined) {
     return;
   } else if (obj instanceof ExplorableGraph) {
-    const plain = await obj.plain();
+    // Convert to strings to resolve promises, etc.
+    const plain = await obj.strings();
+    // Render to JSON, which will also render any JavaScript objects that were
+    // values in the graph.
     output = JSON.stringify(plain, null, 2);
   } else {
     output = obj;
