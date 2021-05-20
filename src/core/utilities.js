@@ -7,6 +7,10 @@ export function explore(obj) {
     : new ExplorableObject(obj);
 }
 
+export function isExplorable(obj) {
+  return obj?.[Symbol.asyncIterator] !== undefined && obj?.get !== undefined;
+}
+
 /**
  * Return true if the object is a plain JavaScript object.
  *

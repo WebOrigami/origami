@@ -1,4 +1,4 @@
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import { isExplorable } from "../core/utilities.js";
 
 export default async function defaultIndexHtml() {
   const links = [];
@@ -7,7 +7,7 @@ export default async function defaultIndexHtml() {
     // character). Also skip adding a link to the index.html page itself.
     if (!key.startsWith(".") && !key.startsWith(":") && key !== "index.html") {
       const value = await this.get(key);
-      const href = value instanceof ExplorableGraph ? `${key}/` : key;
+      const href = isExplorable(value) ? `${key}/` : key;
       const link = `<li><a href="${href}">${href}</a></li>`;
       links.push(link);
     }
