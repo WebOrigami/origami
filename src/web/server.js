@@ -1,5 +1,5 @@
 import path from "path";
-import { explore } from "../../src/core/utilities.js";
+import { explore, isExplorable } from "../../src/core/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -13,7 +13,8 @@ export async function getResourceAtPath(graph, href) {
 export function graphRouter(graph) {
   // Return a router for the graph source.
   return async function (request, response, next) {
-    if (!handleRequest(request, response, graph)) {
+    const handled = await handleRequest(request, response, graph);
+    if (!handled) {
       // Module not found, let next middleware function try.
       next();
     }
@@ -27,6 +28,13 @@ export async function handleRequest(request, response, graph) {
   if (resource !== undefined) {
     // If resource is a function, invoke to get the object we want to return.
     const obj = typeof resource === "function" ? await resource() : resource;
+
+    // The result should be something concrete like a string or Buffer that we
+    // can send to the client. If we ended up with a subgraph as a result,
+    // that's effectively the same as not finding a result.
+    if (isExplorable(obj)) {
+      return false;
+    }
 
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
