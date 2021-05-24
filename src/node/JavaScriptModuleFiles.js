@@ -1,7 +1,7 @@
 import path from "path";
-import Files from "./Files.js";
+import ExplorableFiles from "./ExplorableFiles.js";
 
-export default class JavaScriptModuleFiles extends Files {
+export default class JavaScriptModuleFiles extends ExplorableFiles {
   // We'd love to be able to defer to the superclass to return the file data and
   // then do a dynamic import from its data. Sadly, the `import()` statement can
   // only work with file paths, not data or streams. So we override asyncGet to

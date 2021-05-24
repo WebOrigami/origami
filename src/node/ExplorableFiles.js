@@ -1,9 +1,9 @@
 import * as fs from "fs/promises";
 import path from "path";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import { isPlainObject } from "../../src/core/utilities.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import { isPlainObject } from "../core/utilities.js";
 
-export default class Files {
+export default class ExplorableFiles {
   constructor(dirname) {
     this.dirname = dirname;
   }
@@ -86,7 +86,7 @@ export default class Files {
       // Write out value as the contents of a file. The file name is the last
       // arg in the current set (we've already removed the value from the end of
       // the args). Args before the file name (if there are any) are the path
-      // to the containing folder with this explorable Files tree.
+      // to the containing folder with this explorable ExplorableFiles tree.
       const filename = args.pop();
 
       // Ensure the containing folder exists.

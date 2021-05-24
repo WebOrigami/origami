@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import Files from "../../src/node/Files.js";
+import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import VirtualKeysMixin from "../../src/node/VirtualKeysMixin.js";
 const { assert } = chai;
 
@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const virtualKeysFolder = path.join(fixturesDirectory, "virtualKeys");
 
-class VirtualKeysFiles extends VirtualKeysMixin(Files) {}
+class VirtualKeysFiles extends VirtualKeysMixin(ExplorableFiles) {}
 
 describe("VirtualKeysMixin", () => {
   it("yields keys from .keys.json before other keys", async () => {

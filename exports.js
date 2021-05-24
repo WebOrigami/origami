@@ -14,7 +14,7 @@ export { default as dot } from "./src/eg/commands/dot.js";
 export { default as evaluate } from "./src/eg/evaluate.js";
 export { default as CommandModules } from "./src/node/CommandModules.js";
 export { default as CommonFileTypesMixin } from "./src/node/CommonFileTypesMixin.js";
-export { default as Files } from "./src/node/Files.js";
+export { default as ExplorableFiles } from "./src/node/ExplorableFiles.js";
 export { default as JavaScriptModuleFiles } from "./src/node/JavaScriptModuleFiles.js";
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
 export { default as VirtualKeysMixin } from "./src/node/VirtualKeysMixin.js";

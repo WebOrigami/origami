@@ -4,17 +4,17 @@ import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import Files from "../../src/node/Files.js";
+import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("Files", () => {
+describe("ExplorableFiles", () => {
   it("Can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new Files(directory);
+    const files = new ExplorableFiles(directory);
     assert.deepEqual(await ExplorableGraph.keys(files), [
       "a.txt",
       "b.txt",
@@ -27,7 +27,7 @@ describe("Files", () => {
 
   it("Can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new Files(directory);
+    const files = new ExplorableFiles(directory);
     const plain = await ExplorableGraph.strings(files);
     assert.deepEqual(plain, {
       "a.txt": "The letter A",
@@ -42,14 +42,14 @@ describe("Files", () => {
 
   it("Can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new Files(directory);
+    const files = new ExplorableFiles(directory);
     const file = await files.get("a.txt");
     assert.equal(String(file), "The letter A");
   });
 
   it("Can traverse a path of keys in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new Files(directory);
+    const files = new ExplorableFiles(directory);
     const file = await files.get("more", "e.txt");
     assert.equal(String(file), "The letter E");
   });
@@ -60,7 +60,7 @@ describe("Files", () => {
     // Write out a file.
     const fileName = "file1";
     const fileText = "This is the first file.";
-    const tempFiles = new Files(tempDirectory);
+    const tempFiles = new ExplorableFiles(tempDirectory);
     await tempFiles.set(fileName, fileText);
 
     // Read it back in.
@@ -85,11 +85,11 @@ describe("Files", () => {
     const files = new ExplorableObject(obj);
 
     // Write out files.
-    const tempFiles = new Files(tempDirectory);
+    const tempFiles = new ExplorableFiles(tempDirectory);
     await tempFiles.set(files);
 
     // Read them back in.
-    const actualFiles = new Files(tempDirectory);
+    const actualFiles = new ExplorableFiles(tempDirectory);
     const actualStrings = await ExplorableGraph.strings(actualFiles);
     assert.deepEqual(actualStrings, obj);
 
@@ -98,7 +98,7 @@ describe("Files", () => {
 
   it("can create an empty directory via set()", async () => {
     await createTempDirectory();
-    const tempFiles = new Files(tempDirectory);
+    const tempFiles = new ExplorableFiles(tempDirectory);
     await tempFiles.set("folder", null);
     const tempFolder = path.join(tempDirectory, "folder");
     const stats = await fs.stat(tempFolder);
@@ -110,7 +110,7 @@ describe("Files", () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");
     await fs.writeFile(tempFile, "");
-    const tempFiles = new Files(tempDirectory);
+    const tempFiles = new ExplorableFiles(tempDirectory);
     await tempFiles.set("file", undefined);
     let stats;
     try {
@@ -128,7 +128,7 @@ describe("Files", () => {
     await createTempDirectory();
     const folder = path.join(tempDirectory, "folder");
     await fs.mkdir(folder);
-    const tempFiles = new Files(tempDirectory);
+    const tempFiles = new ExplorableFiles(tempDirectory);
     await tempFiles.set("folder", undefined);
     let stats;
     try {

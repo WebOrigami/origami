@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import Files from "../../src/node/Files.js";
+import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import VirtualValuesMixin from "../../src/node/VirtualValuesMixin.js";
 const { assert } = chai;
 
@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const directory = path.join(fixturesDirectory, "virtualFiles");
 
-class VirtualFiles extends VirtualValuesMixin(Files) {}
+class VirtualFiles extends VirtualValuesMixin(ExplorableFiles) {}
 const virtualFiles = new VirtualFiles(directory);
 
 describe("VirtualValuesMixin", () => {
