@@ -7,7 +7,6 @@ export { default as Transform } from "./src/common/Transform.js";
 export { default as WildcardKeysMixin } from "./src/common/WildcardKeysMixin.js";
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
-export { default as IStorableGraph } from "./src/core/IStorableGraph.js";
 export * as utilities from "./src/core/utilities.js";
 export { default as builtins } from "./src/eg/builtins.js";
 export { default as defaultModuleExport } from "./src/eg/commands/defaultModuleExport.js";

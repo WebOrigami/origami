@@ -4,4 +4,4 @@ export default async function cacheCommand(cache, ...graphs) {
   return new Cache(cache, ...graphs);
 }
 
-cache.usage = `Cache(cache, ...graphs)\tCaches graph values in a storable cache`;
+cacheCommand.usage = `Cache(cache, ...graphs)\tCaches graph values in a storable cache`;
