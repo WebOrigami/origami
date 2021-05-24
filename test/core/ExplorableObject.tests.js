@@ -1,4 +1,5 @@
 import chai from "chai";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
 
@@ -70,7 +71,7 @@ describe("ExplorableObject", () => {
     // Set deep key, value.
     await obj.set("more", "g", 8);
 
-    assert.deepEqual(await obj.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(obj), {
       a: 5,
       b: 2,
       c: 3,
@@ -103,7 +104,7 @@ describe("ExplorableObject", () => {
     // Deep deletion
     await obj.set("more", "d", undefined);
 
-    assert.deepEqual(await obj.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(obj), {
       c: 3,
       more: {
         e: 5,
@@ -122,7 +123,7 @@ describe("ExplorableObject", () => {
       },
     });
 
-    assert.deepEqual(await obj.keys(), ["a", "b", "c"]);
+    assert.deepEqual(await ExplorableGraph.keys(obj), ["a", "b", "c"]);
     assert.equal(await obj.get("a"), "A");
     assert.equal(await obj.get("foo"), "FOO");
   });

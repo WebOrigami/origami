@@ -12,14 +12,16 @@
     "target": "ESNext"
   },
   "include": [
-    "packages/*/src/**/*.js",
-    "packages/*/test/**/*.js",
-    "test/core/boilerplate.tests.js",
-    "src/common/Cache.js",
-    "src/web/mediaTypes.js",
-    "src/node/CommandModules.js",
-    "src/eg/dot.js",
-    "test/eg/evaluate.tests.js",
-    "src/eg/evaluate.js"
+    // "packages/*/src/**/*.js",
+    // "packages/*/test/**/*.js",
+    // "test/core/boilerplate.tests.js",
+    // "src/common/Cache.js",
+    // "src/web/mediaTypes.js",
+    // "src/node/CommandModules.js",
+    // "src/eg/dot.js",
+    // "test/eg/evaluate.tests.js",
+    // "src/eg/evaluate.js"
+    "src/core/*.js",
+    "test/core/*.js"
   ]
 }

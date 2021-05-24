@@ -24,6 +24,12 @@ export default class ExplorableObject extends ExplorableGraph {
     }
   }
 
+  static explore(obj) {
+    return obj instanceof ExplorableGraph
+      ? obj // Return object as is.
+      : new ExplorableObject(obj);
+  }
+
   /**
    * Return the value at the corresponding path of keys.
    *

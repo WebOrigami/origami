@@ -16,14 +16,20 @@ export default class ExplorableGraph {
    */
   async get(...keys) {}
 
+  static [Symbol.hasInstance](instance) {
+    return this === ExplorableGraph
+      ? instance !== undefined &&
+          typeof instance[Symbol.asyncIterator] === "function" &&
+          typeof instance.get === "function"
+      : this.prototype.isPrototypeOf(instance);
+  }
+
   /**
    * Returns the graph's keys as an array.
-   *
-   * @returns {Promise<any[]>}
    */
-  async keys() {
+  static async keys(graph) {
     const result = [];
-    for await (const key of this) {
+    for await (const key of graph) {
       result.push(key);
     }
     return result;
@@ -33,17 +39,18 @@ export default class ExplorableGraph {
    * Create a plain JavaScript object with the graph's keys cast to strings,
    * and the given `mapFn` applied to values.
    *
+   * @param {ExplorableGraph} graph
    * @param {function} mapFn
    */
-  async mapValues(mapFn) {
+  static async mapValues(graph, mapFn) {
     const result = {};
-    for await (const key of this) {
-      const value = await this.get(key);
+    for await (const key of graph) {
+      const value = await graph.get(key);
       // TODO: Check that value is of same constructor before traversing into it?
       result[String(key)] =
         value instanceof ExplorableGraph
           ? // value is also explorable; traverse into it.
-            await value.mapValues(mapFn)
+            await this.mapValues(value, mapFn)
           : await mapFn(value);
     }
     return result;
@@ -55,64 +62,23 @@ export default class ExplorableGraph {
    * The result's keys will be the graph's keys cast to strings. Any graph value
    * that is itself a graph will be similarly converted to a plain object.
    *
+   * @param {ExplorableGraph} graph
    */
-  async plain() {
-    return await this.mapValues((value) => value);
-  }
-
-  async resolve(value, path) {
-    let result;
-    if (value instanceof Function) {
-      result = await value(...path);
-    } else if (value instanceof ExplorableGraph) {
-      const graph = Reflect.construct(this.constructor, [value]);
-      result = path.length === 0 ? graph : await graph.get(...path);
-    } else if (path.length === 0) {
-      result = value;
-    }
-    return result;
+  static async plain(graph) {
+    return await this.mapValues(graph, (value) => value);
   }
 
   /**
    * Converts the graph into a plain JavaScript object with the same structure
    * as the original, but with all leaf values cast to strings.
+   *
+   * @param {ExplorableGraph} graph
    */
-  async strings() {
-    return await this.mapValues(async (value) => {
+  static async strings(graph) {
+    return await this.mapValues(graph, async (value) => {
       const obj = await value;
       // If obj is a primitive type, we won't be able to call toString
       return obj?.toString?.();
     });
-  }
-
-  /**
-   * Converts a graph into a plain JavaScript object with the same structure
-   * as the original, but with all leaf values being `null`.
-   *
-   * The result's keys will be the graph's keys cast to strings. Any graph value
-   * that is itself a graph will be similarly converted to its structure.
-   */
-  async structure() {
-    return await this.mapValues(() => null);
-  }
-
-  /**
-   * Performs a depth-first traversal of the explorable.
-   *
-   * Note: This does not check for or prevent cycles.
-   *
-   * @param {function} callback
-   * @param {any[]} [route]
-   */
-  async traverse(callback, route = []) {
-    for await (const key of this) {
-      const extendedRoute = [...route, key];
-      const value = await this.get(key);
-      const interior = value instanceof ExplorableGraph;
-      await callback(extendedRoute, interior, value);
-      if (interior) {
-        await value.traverse(callback, extendedRoute);
-      }
-    }
   }
 }
