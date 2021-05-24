@@ -1,9 +1,7 @@
 import fetch from "node-fetch";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
-export default class ExplorableSite extends ExplorableGraph {
+export default class ExplorableSite {
   constructor(url) {
-    super();
     this.url = url;
     this.keysPromise = null;
   }

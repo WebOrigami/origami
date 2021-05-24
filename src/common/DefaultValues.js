@@ -1,4 +1,3 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 
 /**
@@ -7,9 +6,8 @@ import ExplorableObject from "../core/ExplorableObject.js";
  * requested key is missing from the main graph, but exists in the default
  * values graph, the value will be returned from that graph.
  */
-export default class DefaultValues extends ExplorableGraph {
+export default class DefaultValues {
   constructor(graph, defaults) {
-    super();
     this.graph = ExplorableObject.explore(graph);
     this.defaults = ExplorableObject.explore(defaults);
   }

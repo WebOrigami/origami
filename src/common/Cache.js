@@ -1,4 +1,3 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 
 /**
@@ -7,13 +6,12 @@ import ExplorableObject from "../core/ExplorableObject.js";
  * that key. If a value is found, the value is written into the cache before
  * being returned.
  */
-export default class Cache extends ExplorableGraph {
+export default class Cache {
   /**
    * @param {Explorable|object} cache
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {
-    super();
     /** @type {any} */ this.cache = ExplorableObject.explore(cache);
     if (typeof this.cache.set !== "function") {
       throw new TypeError(

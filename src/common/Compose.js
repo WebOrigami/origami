@@ -1,4 +1,3 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 
 /**
@@ -7,9 +6,8 @@ import ExplorableObject from "../core/ExplorableObject.js";
  * defined value (i.e., not undefined), that value is returned. If the first
  * graph returns undefined, the second graph will be asked, and so on.
  */
-export default class Compose extends ExplorableGraph {
+export default class Compose {
   constructor(...graphs) {
-    super();
     this.graphs = graphs.map((graph) => ExplorableObject.explore(graph));
   }
 

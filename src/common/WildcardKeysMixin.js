@@ -71,9 +71,8 @@ export default function WildcardKeysMixin(Base) {
 // A collection of graphs that support wildcard keys.
 // This is a type of value returned by WildcardKeysMixin (above) if the desired
 // path results in multiple hits: e.g., a real value and some wildcard values.
-class WildcardGraphs extends ExplorableGraph {
+class WildcardGraphs {
   constructor(...graphs) {
-    super();
     this.graphs = graphs;
   }
 
