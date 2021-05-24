@@ -4,7 +4,8 @@ import process from "process";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import evaluate from "../../src/eg/evaluate.js";
 import ParentFiles from "../../src/node/ParentFiles.js";
-import { explore, isPlainObject } from "../core/utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
+import { isPlainObject } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";
@@ -14,7 +15,7 @@ const configFileName = "eg.config.js";
 const parentFiles = new ParentFiles(process.cwd());
 const configPath = await parentFiles.get(configFileName);
 const fn = configPath ? await defaultModuleExport(configPath) : null;
-const config = fn ? explore(fn) : null;
+const config = fn ? ExplorableObject.explore(fn) : null;
 
 // Prefer user's config if one was found, otherwise use builtins.
 const scope = config || builtins;
@@ -43,7 +44,7 @@ export default async function stdout(obj) {
     return;
   } else if (obj instanceof ExplorableGraph) {
     // Leave objects/arrays as is, but stringify other types.
-    const plain = await obj.mapValues((value) =>
+    const plain = await ExplorableGraph.mapValues(obj, (value) =>
       isPlainObject(value) || value instanceof Array
         ? value
         : value?.toString?.()

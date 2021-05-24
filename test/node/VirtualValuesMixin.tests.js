@@ -2,6 +2,7 @@ import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
 import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import Files from "../../src/node/Files.js";
 import VirtualValuesMixin from "../../src/node/VirtualValuesMixin.js";
 const { assert } = chai;
@@ -15,7 +16,7 @@ const virtualFiles = new VirtualFiles(directory);
 
 describe("VirtualValuesMixin", () => {
   it("returns virtual names for virtual values", async () => {
-    const keys = await virtualFiles.keys();
+    const keys = await ExplorableGraph.keys(virtualFiles);
     assert.deepEqual(keys, [
       ":wildcard",
       "graph.js",
@@ -49,7 +50,7 @@ describe("VirtualValuesMixin", () => {
 
   it.skip("can return a result from a folder with a wildcard name", async () => {
     class WildcardGraph extends WildcardKeysMixin(VirtualFiles) {}
-    const graph = new WildcardGraph(files);
+    const graph = new WildcardGraph(directory);
 
     const value1 = await graph.get("subfolder", "virtual.txt");
     assert.equal(value1, "This text was returned for subfolder");
@@ -60,24 +61,4 @@ describe("VirtualValuesMixin", () => {
     const value3 = await graph.get(":wildcard", "virtual.txt");
     assert.equal(value3, "This text was returned for :wildcard");
   });
-
-  // it("can inspect the structure of a tree with virtual files", async () => {
-  //   const structure = await virtualFiles.structure();
-  //   assert.deepEqual(structure, {
-  //     ":wildcard": {
-  //       "bar.txt": null,
-  //       "virtual.txt←.js": null,
-  //     },
-  //     "graph.js": null,
-  //     "index.html": null,
-  //     "index.txt": null,
-  //     math: null,
-  //     "sample.txt": null,
-  //     subfolder: {
-  //       "bar.txt": null,
-  //       "foo.txt": null,
-  //       "virtual.txt": null,
-  //     },
-  //   });
-  // });
 });

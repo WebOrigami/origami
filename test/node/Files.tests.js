@@ -2,6 +2,7 @@ import chai from "chai";
 import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import Files from "../../src/node/Files.js";
 const { assert } = chai;
@@ -14,22 +15,20 @@ describe("Files", () => {
   it("Can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new Files(directory);
-    const structure = await files.structure();
-    assert.deepEqual(structure, {
-      "a.txt": null,
-      "b.txt": null,
-      "c.txt": null,
-      more: {
-        "d.txt": null,
-        "e.txt": null,
-      },
-    });
+    assert.deepEqual(await ExplorableGraph.keys(files), [
+      "a.txt",
+      "b.txt",
+      "c.txt",
+      "more",
+    ]);
+    const more = await files.get("more");
+    assert.deepEqual(await ExplorableGraph.keys(more), ["d.txt", "e.txt"]);
   });
 
   it("Can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new Files(directory);
-    const plain = await files.strings();
+    const plain = await ExplorableGraph.strings(files);
     assert.deepEqual(plain, {
       "a.txt": "The letter A",
       "b.txt": "The letter B",
@@ -91,7 +90,7 @@ describe("Files", () => {
 
     // Read them back in.
     const actualFiles = new Files(tempDirectory);
-    const actualStrings = await actualFiles.strings();
+    const actualStrings = await ExplorableGraph.strings(actualFiles);
     assert.deepEqual(actualStrings, obj);
 
     await removeTempDirectory();

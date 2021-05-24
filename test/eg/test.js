@@ -1,5 +1,6 @@
-import ExplorableObject from "../../core/src/ExplorableObject.js";
-export default ExplorableObject({
+import ExplorableObject from "../../src/core/ExplorableObject.js";
+
+export default new ExplorableObject({
   english: {
     a: "Hello, a.",
     b: "Hello, b.",

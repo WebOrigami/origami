@@ -1,6 +1,7 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import Files from "../../src/node/Files.js";
 import VirtualKeysMixin from "../../src/node/VirtualKeysMixin.js";
@@ -21,7 +22,7 @@ describe("VirtualKeysMixin", () => {
       e: 5,
       ".keys.json": ["d", "c", "b", "a"],
     });
-    assert.deepEqual(await graph.keys(), [
+    assert.deepEqual(await ExplorableGraph.keys(graph), [
       "d",
       "c",
       "b",
@@ -33,7 +34,7 @@ describe("VirtualKeysMixin", () => {
 
   it("can load keys from a .keys.json value", async () => {
     const virtualKeys = new VirtualKeysFiles(virtualKeysFolder);
-    const keys = await virtualKeys.keys();
+    const keys = await ExplorableGraph.keys(virtualKeys);
     assert.deepEqual(keys, ["a", "b", "c", ".keys.json"]);
   });
 });

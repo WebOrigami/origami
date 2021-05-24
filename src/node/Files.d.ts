@@ -1,5 +1,4 @@
-// import { ExplorableGraph } from "../../core/exports.js";
-import ExplorableGraph from "../../core/exports.js/src/ExplorableGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class Files extends ExplorableGraph {
   constructor(dirname: string);

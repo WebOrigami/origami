@@ -1,5 +1,6 @@
 import path from "path";
-import { explore, isExplorable } from "../../src/core/utilities.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import ExplorableObject from "../core/ExplorableObject.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -32,7 +33,7 @@ export async function handleRequest(request, response, graph) {
     // The result should be something concrete like a string or Buffer that we
     // can send to the client. If we ended up with a subgraph as a result,
     // that's effectively the same as not finding a result.
-    if (isExplorable(obj)) {
+    if (obj instanceof ExplorableGraph) {
       return false;
     }
 
@@ -97,7 +98,7 @@ export function requestListener(arg) {
     obj = arg;
   }
 
-  const graph = explore(obj);
+  const graph = ExplorableObject.explore(obj);
 
   return async function (request, response) {
     console.log(request.url);
