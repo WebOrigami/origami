@@ -11,10 +11,9 @@ export default async function execute(linked, argument) {
     );
 
     // Now apply function to the evaluated args.
-    const result =
-      fn instanceof ExplorableGraph
-        ? await fn.get(...evaluated)
-        : await fn(...evaluated);
+    const result = ExplorableGraph.isExplorable(fn)
+      ? await fn.get(...evaluated)
+      : await fn(...evaluated);
     return result;
   } else if (linked === argumentMarker) {
     // Argument placeholder

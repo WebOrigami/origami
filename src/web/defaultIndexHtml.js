@@ -9,7 +9,7 @@ export default async function defaultIndexHtml() {
     // character). Also skip adding a link to the index.html page itself.
     if (!key.startsWith(".") && !key.startsWith(":") && key !== "index.html") {
       const value = await graph.get(key);
-      const href = value instanceof ExplorableGraph ? `${key}/` : key;
+      const href = ExplorableGraph.isExplorable(value) ? `${key}/` : key;
       const link = `<li><a href="${href}">${href}</a></li>`;
       links.push(link);
     }

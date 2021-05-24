@@ -33,7 +33,7 @@ export async function handleRequest(request, response, graph) {
     // The result should be something concrete like a string or Buffer that we
     // can send to the client. If we ended up with a subgraph as a result,
     // that's effectively the same as not finding a result.
-    if (obj instanceof ExplorableGraph) {
+    if (ExplorableGraph.isExplorable(obj)) {
       return false;
     }
 

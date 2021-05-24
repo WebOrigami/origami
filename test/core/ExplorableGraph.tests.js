@@ -9,31 +9,31 @@ describe("ExplorableGraph", () => {
     assert.equal(await graph.get("hello"), undefined);
   });
 
-  it("instanceof tests for explorable graph interface support", async () => {
-    assert(!({} instanceof ExplorableGraph));
+  it("isExplorable tests for explorable graph interface", async () => {
+    assert(!ExplorableGraph.isExplorable({}));
 
     const missingIterator = {
       async get() {},
     };
-    assert(!(missingIterator instanceof ExplorableGraph));
+    assert(!ExplorableGraph.isExplorable(missingIterator));
 
     const missingGet = {
       async *[Symbol.asyncIterator]() {},
     };
-    assert(!(missingGet instanceof ExplorableGraph));
+    assert(!ExplorableGraph.isExplorable(missingGet));
 
     const graph = {
       async *[Symbol.asyncIterator]() {},
       async get() {},
     };
-    assert(graph instanceof ExplorableGraph);
+    assert(ExplorableGraph.isExplorable(graph));
 
     const classInstance = new ExplorableGraph();
-    assert(classInstance instanceof ExplorableGraph);
+    assert(ExplorableGraph.isExplorable(classInstance));
 
     class Subclass extends ExplorableGraph {}
     const subclassInstance = new Subclass();
-    assert(subclassInstance instanceof ExplorableGraph);
+    assert(ExplorableGraph.isExplorable(subclassInstance));
     assert(!(graph instanceof Subclass));
   });
 

@@ -42,7 +42,7 @@ export default async function stdout(obj) {
   let output;
   if (obj === undefined) {
     return;
-  } else if (obj instanceof ExplorableGraph) {
+  } else if (ExplorableGraph.isExplorable(obj)) {
     // Leave objects/arrays as is, but stringify other types.
     const plain = await ExplorableGraph.mapValues(obj, (value) =>
       isPlainObject(value) || value instanceof Array

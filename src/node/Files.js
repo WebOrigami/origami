@@ -58,7 +58,7 @@ export default class Files extends ExplorableGraph {
       return;
     }
     const value =
-      args.length === 1 && !(args[0] instanceof ExplorableGraph)
+      args.length === 1 && !ExplorableGraph.isExplorable(args[0])
         ? undefined
         : args.pop();
 
@@ -77,7 +77,7 @@ export default class Files extends ExplorableGraph {
       // Create directory.
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
-    } else if (value instanceof ExplorableGraph) {
+    } else if (ExplorableGraph.isExplorable(value)) {
       // Recursively write out the explorable graph.
       for await (const subKey of value) {
         const subValue = await value.get(subKey);

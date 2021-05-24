@@ -25,7 +25,7 @@ export default class ExplorableObject extends ExplorableGraph {
   }
 
   static explore(obj) {
-    return obj instanceof ExplorableGraph
+    return ExplorableGraph.isExplorable(obj)
       ? obj // Return object as is.
       : new ExplorableObject(obj);
   }
@@ -46,7 +46,7 @@ export default class ExplorableObject extends ExplorableGraph {
     while (value !== undefined && keys.length > 0) {
       const key = keys.shift();
       value = value[key];
-      if (value instanceof ExplorableGraph && keys.length > 0) {
+      if (ExplorableGraph.isExplorable(value) && keys.length > 0) {
         return value.get(...keys);
       }
     }

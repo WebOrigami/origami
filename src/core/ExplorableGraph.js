@@ -16,12 +16,18 @@ export default class ExplorableGraph {
    */
   async get(...keys) {}
 
-  static [Symbol.hasInstance](instance) {
-    return this === ExplorableGraph
-      ? instance !== undefined &&
-          typeof instance[Symbol.asyncIterator] === "function" &&
-          typeof instance.get === "function"
-      : this.prototype.isPrototypeOf(instance);
+  /**
+   * Return true if the given object implements the necessary explorable graph
+   * members: a function identified with `Symbol.asyncIterator`, and a function
+   * named `get`.
+   *
+   * @param {any} obj
+   */
+  static isExplorable(obj) {
+    return (
+      typeof obj?.[Symbol.asyncIterator] === "function" &&
+      typeof obj?.get === "function"
+    );
   }
 
   /**
@@ -47,11 +53,9 @@ export default class ExplorableGraph {
     for await (const key of graph) {
       const value = await graph.get(key);
       // TODO: Check that value is of same constructor before traversing into it?
-      result[String(key)] =
-        value instanceof ExplorableGraph
-          ? // value is also explorable; traverse into it.
-            await this.mapValues(value, mapFn)
-          : await mapFn(value);
+      result[String(key)] = ExplorableGraph.isExplorable(value)
+        ? await this.mapValues(value, mapFn) // Traverse into explorable value.
+        : await mapFn(value);
     }
     return result;
   }

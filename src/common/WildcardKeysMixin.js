@@ -13,9 +13,9 @@ export default function WildcardKeysMixin(Base) {
       // Try key directly.
       let value = await super.get(key);
 
-      if (value === undefined || value instanceof ExplorableGraph) {
+      if (value === undefined || ExplorableGraph.isExplorable(value)) {
         // Consider all wildcards.
-        if (value instanceof ExplorableGraph) {
+        if (ExplorableGraph.isExplorable(value)) {
           explorableValues.push(value);
         }
         for await (const wildcardKey of wildcards(this)) {
@@ -23,7 +23,7 @@ export default function WildcardKeysMixin(Base) {
             // We have a wildcard that matches.
             const wildcardValue = await super.get(wildcardKey);
             if (wildcardValue !== undefined) {
-              if (wildcardValue instanceof ExplorableGraph) {
+              if (ExplorableGraph.isExplorable(wildcardValue)) {
                 const parameterized = parameterize(
                   wildcardValue,
                   wildcardKey,
@@ -52,7 +52,7 @@ export default function WildcardKeysMixin(Base) {
       if (value instanceof Function) {
         // Bind the function to the graph.
         value = await value.call(bindTarget, ...rest);
-      } else if (value instanceof ExplorableGraph && rest.length > 0) {
+      } else if (ExplorableGraph.isExplorable(value) && rest.length > 0) {
         value = await value.get(...rest);
       }
 
@@ -107,11 +107,11 @@ class WildcardGraphs extends ExplorableGraph {
       }
     }
 
-    if (value === undefined || value instanceof ExplorableGraph) {
+    if (value === undefined || ExplorableGraph.isExplorable(value)) {
       // Consider all wildcards.
       if (value instanceof WildcardGraphs) {
         explorableValues.push(...value.graphs);
-      } else if (value instanceof ExplorableGraph) {
+      } else if (ExplorableGraph.isExplorable(value)) {
         explorableValues.push(value);
       }
       outer: for await (const graph of this.graphs) {
@@ -122,7 +122,7 @@ class WildcardGraphs extends ExplorableGraph {
             if (wildcardValue !== undefined) {
               if (wildcardValue instanceof WildcardGraphs) {
                 explorableValues.push(...wildcardValue.graphs);
-              } else if (wildcardValue instanceof ExplorableGraph) {
+              } else if (ExplorableGraph.isExplorable(wildcardValue)) {
                 explorableValues.push(wildcardValue);
               } else if (explorableValues.length === 0) {
                 // First wildcard found is not explorable; use that value.
@@ -145,7 +145,7 @@ class WildcardGraphs extends ExplorableGraph {
     if (value instanceof Function) {
       // Function should already be bound.
       value = await value.call(null, ...rest);
-    } else if (value instanceof ExplorableGraph && rest.length > 0) {
+    } else if (ExplorableGraph.isExplorable(value) && rest.length > 0) {
       value = await value.get(...rest);
     }
 

@@ -19,7 +19,7 @@ async function statements(graph, nodePath, nodeLabel) {
     result.push(arc);
 
     const value = await graph.get(key);
-    if (value instanceof ExplorableGraph) {
+    if (ExplorableGraph.isExplorable(value)) {
       const subStatements = await statements(value, destPath, key);
       result = result.concat(subStatements);
     } else {
