@@ -1,6 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import IStorableGraph from "../core/IStorableGraph.js";
-import { explore } from "../core/utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If
@@ -10,20 +9,25 @@ import { explore } from "../core/utilities.js";
  */
 export default class Cache extends ExplorableGraph {
   /**
-   * @param {IStorableGraph} cache
+   * @param {ExplorableGraph} cache
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {
     super();
-    this.cache = explore(cache);
-    this.graphs = graphs.map((graph) => explore(graph));
+    /** @type {any} */ this.cache = ExplorableObject.explore(cache);
+    if (typeof this.cache.set !== "function") {
+      throw new TypeError(
+        `The first parameter to the Cache constructor must be a graph with a "set" method.`
+      );
+    }
+    this.graphs = graphs.map((graph) => ExplorableObject.explore(graph));
   }
 
   async *[Symbol.asyncIterator]() {
     // Use a Set to de-duplicate the keys from the graphs.
     const set = new Set();
-    // We also check the cache in case the set of keys provided by the other
-    // graphs have changed since the cache was updated.
+    // We also check the cache in case the keys provided by the other graphs
+    // have changed since the cache was updated.
     for (const graph of [this.cache, ...this.graphs]) {
       for await (const key of graph) {
         if (!set.has(key)) {

@@ -1,5 +1,6 @@
 import chai from "chai";
 import DefaultValues from "../../src/common/DefaultValues.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
 describe("DefaultValues", () => {
@@ -19,7 +20,7 @@ describe("DefaultValues", () => {
     );
 
     // Default values don't show up in keys
-    assert.deepEqual(await graph.keys(), ["a", "b", "more"]);
+    assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "more"]);
 
     assert.equal(await graph.get("a"), 1);
     assert.equal(await graph.get("b"), 2); // Respects main graph

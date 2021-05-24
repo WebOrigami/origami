@@ -1,10 +1,10 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { explore } from "../core/utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
 
 export default class Transform extends ExplorableGraph {
   constructor(inner, options = {}) {
     super();
-    this.inner = explore(inner);
+    this.inner = ExplorableObject.explore(inner);
     if (options.outerKeyForInnerKey) {
       this.outerKeyForInnerKey = options.outerKeyForInnerKey;
     }

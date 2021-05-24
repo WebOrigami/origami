@@ -38,7 +38,7 @@ export default class ExplorableObject extends ExplorableGraph {
   async get(...keys) {
     // If the object defines its own `get` method, defer to that.
     if (typeof this.#obj.get === "function") {
-      return this.#obj.get(...keys);
+      return await this.#obj.get(...keys);
     }
 
     // Traverse the keys.
@@ -67,6 +67,11 @@ export default class ExplorableObject extends ExplorableGraph {
    * @param  {...any} args
    */
   async set(...args) {
+    // If the object defines its own `set` method, defer to that.
+    if (typeof this.#obj.set === "function") {
+      return await this.#obj.set(...args);
+    }
+
     if (args.length === 0) {
       // No-op
       return;

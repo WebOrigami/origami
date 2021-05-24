@@ -1,5 +1,6 @@
 import chai from "chai";
 import Cache from "../../src/common/Cache.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
 describe("Cache", () => {
@@ -14,7 +15,7 @@ describe("Cache", () => {
     );
     const cache = fixture.cache;
 
-    const keys = await fixture.keys();
+    const keys = await ExplorableGraph.keys(fixture);
     assert.deepEqual(keys, ["a", "b", "c"]);
 
     assert.isUndefined(await cache.get("a"));

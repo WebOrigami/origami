@@ -1,5 +1,6 @@
 import chai from "chai";
 import Compose from "../../src/common/Compose.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
 describe("Compose", () => {
@@ -15,7 +16,7 @@ describe("Compose", () => {
         d: 4,
       }
     );
-    const keys = await fixture.keys();
+    const keys = await ExplorableGraph.keys(fixture);
     assert.deepEqual(keys, ["a", "c", "b", "d"]);
     assert.equal(await fixture.get("a"), 1);
     assert.equal(await fixture.get("b"), 2);

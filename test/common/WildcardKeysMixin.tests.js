@@ -1,21 +1,12 @@
 import chai from "chai";
 import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
 
 class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 
 describe("WildcardKeysMixin", () => {
-  // it("hides wildcards from keys", async () => {
-  //   const graph = new WildcardGraph({
-  //     ":default": 0,
-  //     a: 1,
-  //     b: 2,
-  //     c: 3,
-  //   });
-  //   assert.deepEqual(await graph.keys(), ["a", "b", "c"]);
-  // });
-
   it("returns wildcard values if requested key is missing", async () => {
     const graph = new WildcardGraph({
       ":fallback1": "foo",
@@ -57,7 +48,7 @@ describe("WildcardKeysMixin", () => {
     });
 
     const subgraph = await graph.get("subgraph");
-    assert.deepEqual(await subgraph.keys(), ["a", "b"]);
+    assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
 
     // Real keys work.
     assert.equal(await graph.get(":fallback1", "a"), 1);
@@ -88,7 +79,13 @@ describe("WildcardKeysMixin", () => {
     });
 
     const subgraph = await graph.get("subgraph");
-    assert.deepEqual(await subgraph.keys(), ["a", "b", "c", "d", "e"]);
+    assert.deepEqual(await ExplorableGraph.keys(subgraph), [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+    ]);
 
     // Real keys work.
     assert.equal(await graph.get("subgraph", "a"), 1);
@@ -123,7 +120,7 @@ describe("WildcardKeysMixin", () => {
     });
 
     const subsubgraph = await graph.get("real", "subreal");
-    assert.deepEqual(await subsubgraph.keys(), ["a", "b"]);
+    assert.deepEqual(await ExplorableGraph.keys(subsubgraph), ["a", "b"]);
 
     assert.equal(await graph.get("real", "subreal", "a"), 1);
     assert.equal(await graph.get("real", "subreal", "b"), 2);

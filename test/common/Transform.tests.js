@@ -1,5 +1,6 @@
 import chai from "chai";
 import Transform from "../../src/common/Transform.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
 // Sample class-based transform capitalizes keys and objects from a source
@@ -27,7 +28,7 @@ describe("Transform", () => {
       b: "The letter b",
       c: "The letter c",
     });
-    assert.deepEqual(await transform.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(transform), {
       a: "The letter a",
       b: "The letter b",
       c: "The letter c",
@@ -54,7 +55,7 @@ describe("Transform", () => {
     // The source keys aren't directly available.
     assert.equal(await transform.get("a"), undefined);
     // The transformed keys are available.
-    assert.deepEqual(await transform.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(transform), {
       A: "The letter a",
       B: "The letter b",
       C: "The letter c",
@@ -76,7 +77,7 @@ describe("Transform", () => {
       }
     );
     // The transformed keys are available.
-    assert.deepEqual(await transform.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(transform), {
       a: "THE LETTER A",
       b: "THE LETTER B",
       c: "THE LETTER C",
@@ -91,7 +92,7 @@ describe("Transform", () => {
       c: "The letter c",
     });
     // The transformed keys are available.
-    assert.deepEqual(await capitalize.plain(), {
+    assert.deepEqual(await ExplorableGraph.plain(capitalize), {
       A: "THE LETTER A",
       B: "THE LETTER B",
       C: "THE LETTER C",
