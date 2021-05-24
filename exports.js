@@ -2,6 +2,7 @@
 export { default as Cache } from "./src/common/Cache.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
+export { default as ExplorableFunction } from "./src/common/ExplorableFunction.js";
 export { default as InvokeFunctionsMixin } from "./src/common/InvokeFunctionsMixin.js";
 export { default as Transform } from "./src/common/Transform.js";
 export { default as WildcardKeysMixin } from "./src/common/WildcardKeysMixin.js";
