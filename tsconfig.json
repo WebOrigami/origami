@@ -23,6 +23,7 @@
     // "src/eg/evaluate.js"
     "src/core/*.js",
     "src/common/*.js",
-    "test/core/*.js"
+    "test/core/*.js",
+    "test/common/*.js"
   ]
 }
