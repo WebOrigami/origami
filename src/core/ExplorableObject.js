@@ -1,11 +1,10 @@
 import ExplorableGraph from "./ExplorableGraph.js";
 import { isPlainObject } from "./utilities.js";
 
-export default class ExplorableObject extends ExplorableGraph {
+export default class ExplorableObject {
   #obj;
 
   constructor(obj) {
-    super();
     if (!isPlainObject(obj)) {
       throw new TypeError(
         "The argument to the ExplorableObject constructor must be a plain JavaScript object."

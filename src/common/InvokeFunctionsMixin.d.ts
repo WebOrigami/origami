@@ -1,4 +1,4 @@
-/// <reference path="../core/shared.d.ts"/>
+/// <reference path="../core/explorable.ts"/>
 
 declare const InvokeFunctionsMixin: Mixin<{}>;
 

@@ -9,7 +9,7 @@ import ExplorableObject from "../core/ExplorableObject.js";
  */
 export default class Cache extends ExplorableGraph {
   /**
-   * @param {ExplorableGraph|object} cache
+   * @param {Explorable & Storable} cache
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {

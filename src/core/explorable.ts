@@ -20,3 +20,12 @@ type Constructor<T> = new (...args: any[]) => T;
 type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
+
+interface Explorable {
+  [Symbol.asyncIterator](): AsyncIterableIterator<any>;
+  get(...keys: any[]): Promise<any>;
+}
+
+interface Storable {
+  set(...args: any[]): Promise<void>;
+}

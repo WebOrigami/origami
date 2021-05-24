@@ -4,11 +4,6 @@ import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
 
 describe("ExplorableGraph", () => {
-  it("can instantiate", async () => {
-    const graph = new ExplorableGraph();
-    assert.equal(await graph.get("hello"), undefined);
-  });
-
   it("isExplorable tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 
@@ -27,14 +22,6 @@ describe("ExplorableGraph", () => {
       async get() {},
     };
     assert(ExplorableGraph.isExplorable(graph));
-
-    const classInstance = new ExplorableGraph();
-    assert(ExplorableGraph.isExplorable(classInstance));
-
-    class Subclass extends ExplorableGraph {}
-    const subclassInstance = new Subclass();
-    assert(ExplorableGraph.isExplorable(subclassInstance));
-    assert(!(graph instanceof Subclass));
   });
 
   it("keys returns an array of the graph's keys", async () => {

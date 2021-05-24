@@ -3,9 +3,8 @@ import path from "path";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import { isPlainObject } from "../../src/core/utilities.js";
 
-export default class Files extends ExplorableGraph {
+export default class Files {
   constructor(dirname) {
-    super();
     this.dirname = dirname;
   }
 

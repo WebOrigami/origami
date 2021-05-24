@@ -1,22 +1,5 @@
 export default class ExplorableGraph {
   /**
-   * @returns {AsyncIterableIterator<any>}
-   */
-  async *[Symbol.asyncIterator]() {
-    yield* [];
-  }
-
-  /**
-   * Return the value at the corresponding path of keys.
-   *
-   * Default implementation returns undefined for any key.
-   *
-   * @param {...any} keys
-   * @returns {Promise<any>}
-   */
-  async get(...keys) {}
-
-  /**
    * Return true if the given object implements the necessary explorable graph
    * members: a function identified with `Symbol.asyncIterator`, and a function
    * named `get`.
@@ -45,7 +28,7 @@ export default class ExplorableGraph {
    * Create a plain JavaScript object with the graph's keys cast to strings,
    * and the given `mapFn` applied to values.
    *
-   * @param {ExplorableGraph} graph
+   * @param {Explorable} graph
    * @param {function} mapFn
    */
   static async mapValues(graph, mapFn) {
@@ -66,7 +49,7 @@ export default class ExplorableGraph {
    * The result's keys will be the graph's keys cast to strings. Any graph value
    * that is itself a graph will be similarly converted to a plain object.
    *
-   * @param {ExplorableGraph} graph
+   * @param {Explorable} graph
    */
   static async plain(graph) {
     return await this.mapValues(graph, (value) => value);
@@ -76,7 +59,7 @@ export default class ExplorableGraph {
    * Converts the graph into a plain JavaScript object with the same structure
    * as the original, but with all leaf values cast to strings.
    *
-   * @param {ExplorableGraph} graph
+   * @param {Explorable} graph
    */
   static async strings(graph) {
     return await this.mapValues(graph, async (value) => {
