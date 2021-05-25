@@ -30,12 +30,12 @@ describe("parse", () => {
   });
 
   it("recognizes a module import", () => {
-    const parsed = parse("@foo.js");
+    const parsed = parse("foo.js");
     assert.deepEqual(parsed, ["defaultModuleExport", "foo.js"]);
   });
 
   it("recognizes a JSON file import", () => {
-    const parsed = parse("@foo.json");
+    const parsed = parse("foo.json");
     assert.deepEqual(parsed, ["parse", ["file", "foo.json"]]);
   });
 

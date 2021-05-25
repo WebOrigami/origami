@@ -1,10 +1,10 @@
 import { argumentMarker } from "./execute.js";
 
 const recognizers = [
+  recognizeQuotedString,
   recognizeModuleImport,
   recognizeJsonImport,
   recognizeFunction,
-  recognizeQuotedString,
   recognizeMarker,
 ];
 
@@ -43,10 +43,9 @@ function recognizeFunction(text) {
 }
 
 function recognizeJsonImport(text) {
-  if (text.startsWith("@") && text.endsWith(".json")) {
+  if (text.endsWith(".json")) {
     // Recognized a module import.
-    const fileName = text.substring(1);
-    return ["parse", ["file", fileName]];
+    return ["parse", ["file", text]];
   }
   return undefined;
 }
@@ -59,10 +58,9 @@ function recognizeMarker(text) {
 }
 
 function recognizeModuleImport(text) {
-  if (text.startsWith("@") && text.endsWith(".js")) {
+  if (text.endsWith(".js")) {
     // Recognized a module import.
-    const moduleName = text.substring(1);
-    return ["defaultModuleExport", moduleName];
+    return ["defaultModuleExport", text];
   }
   return undefined;
 }
