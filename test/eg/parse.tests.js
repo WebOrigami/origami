@@ -3,7 +3,7 @@ import { argumentMarker } from "../../src/eg/execute.js";
 import parse from "../../src/eg/parse.js";
 const { assert } = chai;
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
