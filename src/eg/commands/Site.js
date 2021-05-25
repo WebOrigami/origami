@@ -1,4 +1,4 @@
-import ExplorableSite from "../../web/ExplorableSite.js";
+import ExplorableSite from "../../core/ExplorableSite.js";
 
 export default async function Site(url) {
   return new ExplorableSite(url);
