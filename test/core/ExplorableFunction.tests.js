@@ -1,5 +1,5 @@
 import chai from "chai";
-import ExplorableFunction from "../../src/common/ExplorableFunction.js";
+import ExplorableFunction from "../../src/core/ExplorableFunction.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 const { assert } = chai;
 
