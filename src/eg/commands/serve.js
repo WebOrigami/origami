@@ -1,6 +1,6 @@
 import http from "http";
 import process from "process";
-import { requestListener } from "../../../src/web/server.js";
+import { requestListener } from "../../server/server.js";
 
 const defaultPort = process.env.PORT || 5000;
 

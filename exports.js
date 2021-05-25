@@ -1,11 +1,13 @@
 // Should generate this export file with explorable graphs!
 export { default as ExplorableApp } from "./src/app/ExplorableApp.js";
+export { default as VirtualKeysMixin } from "./src/app/VirtualKeysMixin.js";
+export { default as VirtualValuesMixin } from "./src/app/VirtualValuesMixin.js";
+export { default as WildcardKeysMixin } from "./src/app/WildcardKeysMixin.js";
 export { default as Cache } from "./src/common/Cache.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
 export { default as InvokeFunctionsMixin } from "./src/common/InvokeFunctionsMixin.js";
 export { default as Transform } from "./src/common/Transform.js";
-export { default as WildcardKeysMixin } from "./src/common/WildcardKeysMixin.js";
 export { default as ExplorableFunction } from "./src/core/ExplorableFunction.js";
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
@@ -20,6 +22,4 @@ export { default as CommonFileTypesMixin } from "./src/node/CommonFileTypesMixin
 export { default as ExplorableFiles } from "./src/node/ExplorableFiles.js";
 export { default as JavaScriptModuleFiles } from "./src/node/JavaScriptModuleFiles.js";
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
-export { default as VirtualKeysMixin } from "./src/node/VirtualKeysMixin.js";
-export { default as VirtualValuesMixin } from "./src/node/VirtualValuesMixin.js";
-export * from "./src/web/server.js";
+export * from "./src/server/server.js";
