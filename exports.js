@@ -1,4 +1,5 @@
 // Should generate this export file with explorable graphs!
+export { default as ExplorableApp } from "./src/app/ExplorableApp.js";
 export { default as Cache } from "./src/common/Cache.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
@@ -9,7 +10,7 @@ export { default as ExplorableFunction } from "./src/core/ExplorableFunction.js"
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
 export { default as ExplorableSite } from "./src/core/ExplorableSite.js";
-export * as utilities from "./src/core/utilities.js";
+export * from "./src/core/utilities.js";
 export { default as builtins } from "./src/eg/builtins.js";
 export { default as defaultModuleExport } from "./src/eg/commands/defaultModuleExport.js";
 export { default as dot } from "./src/eg/commands/dot.js";
@@ -21,5 +22,4 @@ export { default as JavaScriptModuleFiles } from "./src/node/JavaScriptModuleFil
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
 export { default as VirtualKeysMixin } from "./src/node/VirtualKeysMixin.js";
 export { default as VirtualValuesMixin } from "./src/node/VirtualValuesMixin.js";
-export { default as ExplorableApp } from "./src/web/ExplorableApp.js";
 export * from "./src/web/server.js";

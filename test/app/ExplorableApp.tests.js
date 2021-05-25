@@ -1,8 +1,8 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
+import ExplorableApp from "../../src/app/ExplorableApp.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableApp from "../../src/web/ExplorableApp.js";
 const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

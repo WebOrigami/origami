@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import VirtualValuesMixin from "../../../../src/app/VirtualValuesMixin.js";
 import ExplorableFiles from "../../../../src/node/ExplorableFiles.js";
-import VirtualValuesMixin from "../../../../src/node/VirtualValuesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 

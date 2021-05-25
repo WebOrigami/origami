@@ -1,10 +1,10 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
+import VirtualKeysMixin from "../../src/app/VirtualKeysMixin.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
-import VirtualKeysMixin from "../../src/node/VirtualKeysMixin.js";
 const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,6 +1,6 @@
 import path from "path";
 import process from "process";
-import ExplorableApp from "../../web/ExplorableApp.js";
+import ExplorableApp from "../../app/ExplorableApp.js";
 
 export default function app(relativePath) {
   const resolvedPath = path.resolve(process.cwd(), relativePath);

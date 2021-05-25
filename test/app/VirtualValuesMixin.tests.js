@@ -1,10 +1,10 @@
 import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
-import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
+import VirtualValuesMixin from "../../src/app/VirtualValuesMixin.js";
+import WildcardKeysMixin from "../../src/app/WildcardKeysMixin.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
-import VirtualValuesMixin from "../../src/node/VirtualValuesMixin.js";
 const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

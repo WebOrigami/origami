@@ -1,5 +1,5 @@
 import chai from "chai";
-import WildcardKeysMixin from "../../src/common/WildcardKeysMixin.js";
+import WildcardKeysMixin from "../../src/app/WildcardKeysMixin.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 const { assert } = chai;
