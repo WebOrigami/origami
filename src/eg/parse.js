@@ -2,9 +2,9 @@ import { argumentMarker } from "./execute.js";
 
 const recognizers = [
   recognizeQuotedString,
+  recognizeFunction,
   recognizeModuleImport,
   recognizeJsonImport,
-  recognizeFunction,
   recognizeMarker,
 ];
 
@@ -28,14 +28,13 @@ function recognizeFunction(text) {
     // Recognized a function call.
     const fnName = text.slice(0, open).trim();
     const argText = text.substring(open + 1, close).trim();
-    const argStarts = [-1, ...commas];
-    const args = argStarts.map((argStart, index) =>
-      index === argStarts.length - 1
-        ? // Remainder of argument text
-          argText.substring(argStart + 1)
-        : // Argument text goes to start of next argument
-          argText.substring(argStart + 1, argStarts[index + 1] - 1)
-    );
+    const argStarts = [0, ...commas];
+    const args = argStarts.map((argStart, index) => {
+      const argEnd =
+        index === argStarts.length - 1 ? text.length : argStarts[index + 1] - 1;
+      const arg = argText.substring(argStart, argEnd);
+      return arg;
+    });
     const parsedArgs = args.map((arg) => parseExpression(arg));
     return [fnName, ...parsedArgs];
   }
@@ -83,6 +82,7 @@ function findArguments(text) {
   const commas = [];
   let openParenIndex = -1;
   let closeParenIndex = -1;
+  let treatSpaceAsOpenParen = false;
   let inQuotedString = false;
   let depth = 0;
   for (let i = 0; i < text.length; i++) {
@@ -95,6 +95,18 @@ function findArguments(text) {
             openParenIndex = i;
           }
         }
+        treatSpaceAsOpenParen = false;
+        break;
+
+      case " ":
+        // Treat first space after normal characters as an open parenthesis.
+        if (!inQuotedString && treatSpaceAsOpenParen) {
+          depth++;
+          if (openParenIndex === -1) {
+            openParenIndex = i;
+          }
+        }
+        treatSpaceAsOpenParen = false;
         break;
 
       case ")":
@@ -106,10 +118,12 @@ function findArguments(text) {
           depth--;
           closeParenIndex = i;
         }
+        treatSpaceAsOpenParen = false;
         break;
 
       case '"':
         inQuotedString = !inQuotedString;
+        treatSpaceAsOpenParen = false;
         break;
 
       case ",":
@@ -118,13 +132,17 @@ function findArguments(text) {
           // Record its position relative to the opening parenthesis.
           commas.push(i - openParenIndex);
         }
+        treatSpaceAsOpenParen = false;
         break;
+
+      default:
+        treatSpaceAsOpenParen = true;
     }
   }
 
   if (depth !== 0) {
-    // Missing at least one close parenthesis.
-    return noMatch;
+    // Implicitly close any open parentheses.
+    closeParenIndex = text.length;
   }
 
   return { open: openParenIndex, close: closeParenIndex, commas };

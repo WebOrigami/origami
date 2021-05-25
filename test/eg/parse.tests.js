@@ -3,7 +3,7 @@ import { argumentMarker } from "../../src/eg/execute.js";
 import parse from "../../src/eg/parse.js";
 const { assert } = chai;
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
@@ -15,7 +15,7 @@ describe("parse", () => {
   });
 
   it("recognizes a function call", () => {
-    const parsed = parse(" fn ( arg ) ");
+    const parsed = parse(" fn(arg)");
     assert.deepEqual(parsed, ["fn", "arg"]);
   });
 
@@ -26,6 +26,11 @@ describe("parse", () => {
 
   it("recognizes a nested function call", () => {
     const parsed = parse("a(b(c))");
+    assert.deepEqual(parsed, ["a", ["b", "c"]]);
+  });
+
+  it("recognizes function calls without parenthesis", () => {
+    const parsed = parse("a b c");
     assert.deepEqual(parsed, ["a", ["b", "c"]]);
   });
 
