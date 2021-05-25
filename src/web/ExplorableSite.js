@@ -1,18 +1,20 @@
-import fetch from "node-fetch";
+import fetch from "./fetch.js";
 
 export default class ExplorableSite {
+  #keysPromise;
+
   constructor(url) {
     this.url = url;
-    this.keysPromise = null;
+    this.#keysPromise = null;
   }
 
   async *[Symbol.asyncIterator]() {
-    if (!this.keysPromise) {
+    if (!this.#keysPromise) {
       const href = new URL(".keys.json", this.url).href;
-      this.keysPromise = fetch(href);
+      this.#keysPromise = fetch(href);
     }
-    const response = await this.keysPromise;
-    const text = await response.text();
+    const buffer = await this.#keysPromise;
+    const text = String(buffer);
     const keys = text ? JSON.parse(String(text)) : [];
     yield* keys;
   }
@@ -24,16 +26,9 @@ export default class ExplorableSite {
       // Explorable route
       return new ExplorableSite(href);
     } else {
-      // Return the page contents.
-      const response = await fetch(href);
-      // TODO: More robust file extension handling
-      const isText = href.endsWith(".html");
-      if (isText) {
-        return await response.text();
-      } else {
-        const arrayBuffer = await response.arrayBuffer();
-        return Buffer.from(arrayBuffer);
-      }
+      // Fetch the data at the given endpoint.
+      const buffer = await fetch(href);
+      return buffer;
     }
   }
 }
