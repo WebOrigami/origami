@@ -15,7 +15,7 @@ export default class ExplorableSite {
     }
     const buffer = await this.#keysPromise;
     const text = String(buffer);
-    const keys = text ? JSON.parse(String(text)) : [];
+    const keys = text ? JSON.parse(text) : [];
     yield* keys;
   }
 
