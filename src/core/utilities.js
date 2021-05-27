@@ -16,3 +16,17 @@ export function isPlainObject(obj) {
 
   return Object.getPrototypeOf(obj) === proto;
 }
+
+export function stringify(obj) {
+  if (isPlainObject(obj)) {
+    const result = {};
+    for (const key of obj) {
+      result[key] = stringify(obj);
+    }
+    return result;
+  } else if (obj instanceof Array) {
+    return obj.map((value) => stringify(value));
+  } else {
+    return obj?.toString?.();
+  }
+}

@@ -5,6 +5,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import evaluate from "../../src/eg/evaluate.js";
 import ParentFiles from "../../src/node/ParentFiles.js";
 import ExplorableObject from "../core/ExplorableObject.js";
+import { stringify } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";
@@ -47,7 +48,7 @@ export default async function stdout(obj) {
     // Render to JSON.
     output = JSON.stringify(strings, null, 2);
   } else {
-    output = obj;
+    output = stringify(obj);
   }
   console.log(output);
 }

@@ -1,4 +1,4 @@
-import { isPlainObject } from "./utilities.js";
+import { stringify } from "./utilities.js";
 
 export default class ExplorableGraph {
   /**
@@ -59,17 +59,12 @@ export default class ExplorableGraph {
 
   /**
    * Converts the graph into a plain JavaScript object with the same structure
-   * as the original, but with all leaf values cast to strings. Values which are
-   * plain JavaScript objects or arrays will be left as is.
+   * as the original, but with all leaf values cast to strings.
    *
    * @param {Explorable} graph
    */
   static async strings(graph) {
     // Leave plain objects and arrays as is, but stringify other types.
-    return await this.mapValues(graph, (value) =>
-      isPlainObject(value) || value instanceof Array
-        ? value
-        : value?.toString?.()
-    );
+    return await this.mapValues(graph, (value) => stringify(value));
   }
 }
