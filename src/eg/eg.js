@@ -5,7 +5,6 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import evaluate from "../../src/eg/evaluate.js";
 import ParentFiles from "../../src/node/ParentFiles.js";
 import ExplorableObject from "../core/ExplorableObject.js";
-import { isPlainObject } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";
@@ -43,15 +42,10 @@ export default async function stdout(obj) {
   if (obj === undefined) {
     return;
   } else if (ExplorableGraph.isExplorable(obj)) {
-    // Leave objects/arrays as is, but stringify other types.
-    const plain = await ExplorableGraph.mapValues(obj, (value) =>
-      isPlainObject(value) || value instanceof Array
-        ? value
-        : value?.toString?.()
-    );
-    // Render to JSON, which will also render any JavaScript objects that were
-    // values in the graph.
-    output = JSON.stringify(plain, null, 2);
+    // Stringify graph values.
+    const strings = await ExplorableGraph.strings(obj);
+    // Render to JSON.
+    output = JSON.stringify(strings, null, 2);
   } else {
     output = obj;
   }

@@ -1,13 +1,9 @@
 import YAML from "yaml";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { isPlainObject } from "../../core/utilities.js";
 
 export default async function yaml(graph) {
-  // Leave objects/arrays as is, but stringify other types.
-  const plain = await ExplorableGraph.mapValues(graph, (value) =>
-    isPlainObject(value) || value instanceof Array ? value : value?.toString?.()
-  );
-  const text = YAML.stringify(plain);
+  const strings = await ExplorableGraph.strings(graph);
+  const text = YAML.stringify(strings);
   return text;
 }
 
