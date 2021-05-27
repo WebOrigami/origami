@@ -11,5 +11,5 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["src/**/*.js", "test/**/*.js"]
+  "include": ["exports.js", "src/**/*.js", "test/**/*.js"]
 }
