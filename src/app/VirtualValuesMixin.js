@@ -1,6 +1,6 @@
 import path from "path";
 
-const virtualFileExtension = "←.js";
+const virtualFileExtension = "=.js";
 
 export default function VirtualValuesMixin(Base) {
   return class VirtualValues extends Base {

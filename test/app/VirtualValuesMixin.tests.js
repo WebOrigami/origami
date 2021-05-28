@@ -9,7 +9,7 @@ const { assert } = chai;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const directory = path.join(fixturesDirectory, "virtualFiles");
+const directory = path.join(fixturesDirectory, "virtualValues");
 
 class VirtualFiles extends VirtualValuesMixin(ExplorableFiles) {}
 const virtualFiles = new VirtualFiles(directory);

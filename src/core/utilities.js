@@ -20,8 +20,8 @@ export function isPlainObject(obj) {
 export function stringify(obj) {
   if (isPlainObject(obj)) {
     const result = {};
-    for (const key of obj) {
-      result[key] = stringify(obj);
+    for (const key in obj) {
+      result[key] = stringify(obj[key]);
     }
     return result;
   } else if (obj instanceof Array) {
