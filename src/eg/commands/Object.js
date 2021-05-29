@@ -4,4 +4,4 @@ export default async function object(obj) {
   return new ExplorableObject(obj);
 }
 
-object.usage = `Object(obj)\tMake a plain JavaScript object explorable`;
+object.usage = `object(obj)\tMake a plain JavaScript object explorable`;

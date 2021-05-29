@@ -2,9 +2,9 @@ import path from "path";
 import process from "process";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
 
-export default async function Files(relativePath) {
+export default async function files(relativePath) {
   const resolvedPath = path.resolve(process.cwd(), relativePath);
   return new ExplorableFiles(resolvedPath);
 }
 
-Files.usage = `Files(path)\tThe explorable files at path`;
+files.usage = `files(path)\tThe explorable files at path`;

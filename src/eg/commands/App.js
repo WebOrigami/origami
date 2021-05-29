@@ -7,4 +7,4 @@ export default function app(relativePath) {
   return new ExplorableApp(resolvedPath);
 }
 
-app.usage = `App([files])\tCreates a basic server app for the given set of files`;
+app.usage = `app(path)\tCreates a basic server app for the files at path`;

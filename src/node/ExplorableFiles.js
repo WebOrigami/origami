@@ -1,11 +1,12 @@
 import * as fs from "fs/promises";
 import path from "path";
+import process from "process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { isPlainObject } from "../core/utilities.js";
 
 export default class ExplorableFiles {
   constructor(dirname) {
-    this.dirname = dirname;
+    this.dirname = path.resolve(process.cwd(), dirname);
   }
 
   async *[Symbol.asyncIterator]() {
