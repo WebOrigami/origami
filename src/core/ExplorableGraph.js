@@ -1,5 +1,8 @@
 import { stringify } from "./utilities.js";
 
+/**
+ * A collection of operations that can be performed on explorable graphs.
+ */
 export default class ExplorableGraph {
   /**
    * Return true if the given object implements the necessary explorable graph
