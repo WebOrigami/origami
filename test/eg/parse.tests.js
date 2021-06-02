@@ -9,29 +9,32 @@ describe("parse", () => {
     assert.equal(parsed, "hello");
   });
 
-  it("recognizes a solitary asterisk an argument marker", () => {
+  it.skip("recognizes a solitary asterisk an argument marker", () => {
     const parsed = parse("*");
     assert.equal(parsed, argumentMarker);
   });
 
   it("recognizes a function call", () => {
-    const parsed = parse(" fn(arg)");
+    const parsed = parse(` fn("arg")`);
     assert.deepEqual(parsed, ["fn", "arg"]);
   });
 
   it("can parse a function call with multiple arguments", () => {
-    const parsed = parse("fn(a, b(c), d)");
-    assert.deepEqual(parsed, ["fn", "a", ["b", "c"], "d"]);
+    const parsed = parse(`fn("a", "b", "c")`);
+    assert.deepEqual(parsed, ["fn", "a", "b", "c"]);
   });
 
-  it("recognizes a nested function call", () => {
-    const parsed = parse("a(b(c))");
-    assert.deepEqual(parsed, ["a", ["b", "c"]]);
+  it("recognizes nested function calls", () => {
+    const parsed = parse("a(b(c()))");
+    assert.deepEqual(parsed, ["a", ["b", ["c"]]]);
   });
 
   it("recognizes function calls without parenthesis", () => {
-    const parsed = parse("a b c");
-    assert.deepEqual(parsed, ["a", ["b", "c"]]);
+    const parsed1 = parse("fn");
+    assert.deepEqual(parsed1, ["fn"]);
+
+    const parsed2 = parse("a b c");
+    assert.deepEqual(parsed2, ["a", ["b", ["c"]]]);
   });
 
   it("recognizes a module import", () => {

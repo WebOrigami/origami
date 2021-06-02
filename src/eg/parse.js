@@ -2,9 +2,9 @@ import { argumentMarker } from "./execute.js";
 
 const recognizers = [
   recognizeQuotedString,
-  recognizeFunction,
   recognizeModuleImport,
   recognizeJsonImport,
+  recognizeFunction,
   recognizeMarker,
 ];
 
@@ -28,7 +28,7 @@ function recognizeFunction(text) {
     // Recognized a function call.
     const fnName = text.slice(0, open).trim();
     const argText = text.substring(open + 1, close).trim();
-    const argStarts = [0, ...commas];
+    const argStarts = open + 1 < close ? [0, ...commas] : [];
     const args = argStarts.map((argStart, index) => {
       const argEnd =
         index === argStarts.length - 1 ? text.length : argStarts[index + 1] - 1;
@@ -140,7 +140,12 @@ function findArguments(text) {
     }
   }
 
-  if (depth !== 0) {
+  if (treatSpaceAsOpenParen || depth !== 0) {
+    if (depth === 0) {
+      // Treat entire text as a function call with no arguments.
+      openParenIndex = text.length;
+    }
+
     // Implicitly close any open parentheses.
     closeParenIndex = text.length;
   }

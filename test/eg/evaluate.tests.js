@@ -5,7 +5,7 @@ const { assert } = chai;
 
 describe("evaluate", () => {
   it("can parse, link, and execute", async () => {
-    const source = "greet(world)";
+    const source = `greet("world")`;
     const scope = new ExplorableObject({
       async greet(name) {
         return `Hello ${name}`;
