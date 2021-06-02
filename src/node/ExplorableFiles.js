@@ -2,7 +2,7 @@ import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject } from "../core/utilities.js";
+import { isPlainObject, stringify } from "../core/utilities.js";
 
 export default class ExplorableFiles {
   constructor(dirname) {
@@ -98,9 +98,13 @@ export default class ExplorableFiles {
       // seems like a more useful default than "[object Object]" or the array
       // contents.
       const data =
-        isPlainObject(value) || value instanceof Array
+        value instanceof Buffer ||
+        value instanceof Uint8Array ||
+        value instanceof DataView
+          ? value
+          : isPlainObject(value) || value instanceof Array
           ? JSON.stringify(value, null, 2)
-          : value;
+          : stringify(value);
 
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);
