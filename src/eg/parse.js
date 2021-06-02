@@ -4,73 +4,10 @@ const recognizers = [
   recognizeQuotedString,
   recognizeModuleImport,
   recognizeJsonImport,
+  recognizePath,
   recognizeFunction,
   recognizeMarker,
 ];
-
-// Given a string and a graph of functions, return a parsed tree.
-export default function parseExpression(text) {
-  const trimmed = text.trim();
-  for (const recognizer of recognizers) {
-    const result = recognizer(trimmed);
-    if (result !== undefined) {
-      // Recognizer recognized something.
-      return result;
-    }
-  }
-  // Return the text as is.
-  return trimmed;
-}
-
-function recognizeFunction(text) {
-  const { open, close, commas } = findArguments(text);
-  if (open >= 0 && (close > 0 || close === text.length - 1)) {
-    // Recognized a function call.
-    const fnName = text.slice(0, open).trim();
-    const argText = text.substring(open + 1, close).trim();
-    const argStarts = open + 1 < close ? [0, ...commas] : [];
-    const args = argStarts.map((argStart, index) => {
-      const argEnd =
-        index === argStarts.length - 1 ? text.length : argStarts[index + 1] - 1;
-      const arg = argText.substring(argStart, argEnd);
-      return arg;
-    });
-    const parsedArgs = args.map((arg) => parseExpression(arg));
-    return [fnName, ...parsedArgs];
-  }
-  return undefined;
-}
-
-function recognizeJsonImport(text) {
-  if (text.endsWith(".json")) {
-    // Recognized a module import.
-    return ["parse", ["file", text]];
-  }
-  return undefined;
-}
-
-function recognizeMarker(text) {
-  if (text === "*") {
-    return argumentMarker;
-  }
-  return undefined;
-}
-
-function recognizeModuleImport(text) {
-  if (text.endsWith(".js")) {
-    // Recognized a module import.
-    return ["defaultModuleExport", text];
-  }
-  return undefined;
-}
-
-function recognizeQuotedString(text) {
-  if (text.startsWith('"') && text.endsWith('"')) {
-    const string = text.substring(1, text.length - 1);
-    return string;
-  }
-  return undefined;
-}
 
 // Given text that might be a function call, look for the outermost open and
 // close parenthesis. If found, return `open` and `close` indices giving the
@@ -151,4 +88,75 @@ function findArguments(text) {
   }
 
   return { open: openParenIndex, close: closeParenIndex, commas };
+}
+
+// Given a string and a graph of functions, return a parsed tree.
+export default function parseExpression(text) {
+  const trimmed = text.trim();
+  for (const recognizer of recognizers) {
+    const result = recognizer(trimmed);
+    if (result !== undefined) {
+      // Recognizer recognized something.
+      return result;
+    }
+  }
+  // Return the text as is.
+  return trimmed;
+}
+
+function recognizeFunction(text) {
+  const { open, close, commas } = findArguments(text);
+  if (open >= 0 && (close > 0 || close === text.length - 1)) {
+    // Recognized a function call.
+    const fnName = text.slice(0, open).trim();
+    const argText = text.substring(open + 1, close).trim();
+    const argStarts = open + 1 < close ? [0, ...commas] : [];
+    const args = argStarts.map((argStart, index) => {
+      const argEnd =
+        index === argStarts.length - 1 ? text.length : argStarts[index + 1] - 1;
+      const arg = argText.substring(argStart, argEnd);
+      return arg;
+    });
+    const parsedArgs = args.map((arg) => parseExpression(arg));
+    return [fnName, ...parsedArgs];
+  }
+  return undefined;
+}
+
+function recognizeJsonImport(text) {
+  if (text.endsWith(".json")) {
+    // Recognized a module import.
+    return ["parse", ["file", text]];
+  }
+  return undefined;
+}
+
+function recognizeMarker(text) {
+  if (text === "*") {
+    return argumentMarker;
+  }
+  return undefined;
+}
+
+function recognizeModuleImport(text) {
+  if (text.endsWith(".js")) {
+    // Recognized a module import.
+    return ["defaultModuleExport", text];
+  }
+  return undefined;
+}
+
+function recognizePath(text) {
+  // Match anything that contains a slash or a dot, and also contains no
+  // whitespace or parentheses.
+  const pathRegex = /^[^\(\)\s]*[\.\/][^\(\)\s]*$/;
+  return pathRegex.test(text) ? text : undefined;
+}
+
+function recognizeQuotedString(text) {
+  if (text.startsWith('"') && text.endsWith('"')) {
+    const string = text.substring(1, text.length - 1);
+    return string;
+  }
+  return undefined;
 }

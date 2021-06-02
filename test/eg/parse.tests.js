@@ -57,6 +57,15 @@ describe("parse", () => {
     assert.deepEqual(parsed, ["foo", "Hello, world."]);
   });
 
+  it("recognizes a path", () => {
+    assert.deepEqual(parse("file.txt"), "file.txt");
+    assert.deepEqual(parse("foo bar.txt"), ["foo", "bar.txt"]); // contains whitespace
+    assert.deepEqual(parse("./file.txt"), "./file.txt");
+    assert.deepEqual(parse("//foo/bar"), "//foo/bar");
+    assert.deepEqual(parse("fn(foo)"), ["fn", ["foo"]]);
+    assert.deepEqual(parse("fn(./foo)"), ["fn", "./foo"]);
+  });
+
   // it.skip("recognizes a JSON literal", () => {
   //   const parsed = parse(`{ "foo": "bar" }`);
   //   assert.deepEqual(parsed, { foo: "bar " });
