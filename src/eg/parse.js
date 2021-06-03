@@ -124,8 +124,10 @@ function recognizeFunction(text) {
 }
 
 function recognizeJsonImport(text) {
-  if (text.endsWith(".json")) {
-    // Recognized a module import.
+  // Match anything that ends in .json and has no whitespace.
+  const jsonRegex = /^\S+.json$/;
+  if (jsonRegex.test(text)) {
+    // Recognized a JSON import.
     return ["parse", ["file", text]];
   }
   return undefined;
@@ -139,7 +141,9 @@ function recognizeMarker(text) {
 }
 
 function recognizeModuleImport(text) {
-  if (text.endsWith(".js")) {
+  // Match anything that ends in .js and has no whitespace.
+  const moduleRegex = /^\S+.js$/;
+  if (moduleRegex.test(text)) {
     // Recognized a module import.
     return ["defaultModuleExport", text];
   }
