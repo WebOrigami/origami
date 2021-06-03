@@ -25,7 +25,7 @@ export default async function table(graph) {
 async function fullTable(graph, model) {
   // Construct the header.
   const modelKeys = await ExplorableGraph.keys(model);
-  const header = "\t" + modelKeys.join("\t");
+  const header = " \t" + modelKeys.join("\t");
   const rows = [header];
 
   // Add a row for each top-level object.
