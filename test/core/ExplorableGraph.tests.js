@@ -71,26 +71,4 @@ describe("ExplorableGraph", () => {
     const plain = await ExplorableGraph.plain(graph);
     assert.deepEqual(plain, original);
   });
-
-  it("strings() converts graph values to strings", async () => {
-    const graph = new ExplorableObject({
-      a: 1,
-      b: 2,
-      c: 3,
-      more: {
-        d: 4,
-        e: 5,
-      },
-    });
-    const strings = await ExplorableGraph.strings(graph);
-    assert.deepEqual(strings, {
-      a: "1",
-      b: "2",
-      c: "3",
-      more: {
-        d: "4",
-        e: "5",
-      },
-    });
-  });
 });
