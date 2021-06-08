@@ -4,6 +4,7 @@ const recognizers = [
   recognizeQuotedString,
   recognizeModuleImport,
   recognizeJsonImport,
+  recognizeYamlImport,
   recognizePath,
   recognizeFunction,
   recognizeMarker,
@@ -129,6 +130,16 @@ function recognizeJsonImport(text) {
   if (jsonRegex.test(text)) {
     // Recognized a JSON import.
     return ["parseJson", ["file", text]];
+  }
+  return undefined;
+}
+
+function recognizeYamlImport(text) {
+  // Match anything that ends in .yaml and has no whitespace.
+  const yamlRegex = /^\S+.yaml$/;
+  if (yamlRegex.test(text)) {
+    // Recognized a YAML import.
+    return ["parseYaml", ["file", text]];
   }
   return undefined;
 }
