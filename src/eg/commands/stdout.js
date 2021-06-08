@@ -1,7 +1,7 @@
-import json from "./json.js";
+import yaml from "./yaml.js";
 
 export default async function stdout(obj) {
-  const output = await json(obj);
+  const output = await yaml(obj);
   console.log(output);
 }
 
