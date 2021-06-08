@@ -44,7 +44,7 @@ describe("parse", () => {
 
   it("recognizes a JSON file import", () => {
     const parsed = parse("foo.json");
-    assert.deepEqual(parsed, ["parse", ["file", "foo.json"]]);
+    assert.deepEqual(parsed, ["parseJson", ["file", "foo.json"]]);
   });
 
   it("recognizes a quoted string", () => {

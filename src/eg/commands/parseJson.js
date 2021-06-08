@@ -1,8 +1,8 @@
 import ExplorableObject from "../../core/ExplorableObject.js";
 
-export default async function parse(text) {
+export default async function parseJson(text) {
   const obj = JSON.parse(text);
   return new ExplorableObject(obj);
 }
 
-parse.usage = `parse(text)\tParse text as JSON`;
+parseJson.usage = `parseJson(text)\tParse text as JSON`;

@@ -128,7 +128,7 @@ function recognizeJsonImport(text) {
   const jsonRegex = /^\S+.json$/;
   if (jsonRegex.test(text)) {
     // Recognized a JSON import.
-    return ["parse", ["file", text]];
+    return ["parseJson", ["file", text]];
   }
   return undefined;
 }
