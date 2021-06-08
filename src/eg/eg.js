@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
 import process from "process";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import evaluate from "../../src/eg/evaluate.js";
 import ParentFiles from "../../src/node/ParentFiles.js";
 import ExplorableObject from "../core/ExplorableObject.js";
-import { stringify } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import defaultModuleExport from "./commands/defaultModuleExport.js";
 import showUsage from "./showUsage.js";
@@ -34,23 +32,11 @@ async function main(...args) {
   }
   const result = await evaluate(source, scope, "**input**");
   if (result !== undefined) {
-    await stdout(result);
+    const stdout = await scope.get("stdout");
+    if (stdout) {
+      await stdout(result);
+    }
   }
-}
-
-export default async function stdout(obj) {
-  let output;
-  if (obj === undefined) {
-    return;
-  } else if (ExplorableGraph.isExplorable(obj)) {
-    // Stringify graph values.
-    const strings = await ExplorableGraph.strings(obj);
-    // Render to JSON.
-    output = JSON.stringify(strings, null, 2);
-  } else {
-    output = stringify(obj);
-  }
-  console.log(output);
 }
 
 // Process command line arguments
