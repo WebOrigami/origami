@@ -1,18 +1,7 @@
-import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { stringify } from "../../core/utilities.js";
+import json from "./json.js";
 
 export default async function stdout(obj) {
-  let output;
-  if (obj === undefined) {
-    return;
-  } else if (ExplorableGraph.isExplorable(obj)) {
-    // Stringify graph values.
-    const strings = await ExplorableGraph.strings(obj);
-    // Render to JSON.
-    output = JSON.stringify(strings, null, 2);
-  } else {
-    output = stringify(obj);
-  }
+  const output = await json(obj);
   console.log(output);
 }
 
