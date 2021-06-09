@@ -20,6 +20,8 @@ export default class ExplorableFiles {
       entries = [];
     }
     const names = entries.map((entry) => entry.name);
+    // Use JavaScript sort order instead of OS sort order.
+    names.sort();
     yield* names;
   }
 

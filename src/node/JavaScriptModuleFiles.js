@@ -1,4 +1,5 @@
 import path from "path";
+import { pathToFileURL } from "url";
 import ExplorableFiles from "./ExplorableFiles.js";
 
 export default class JavaScriptModuleFiles extends ExplorableFiles {
@@ -12,7 +13,9 @@ export default class JavaScriptModuleFiles extends ExplorableFiles {
       return await super.get(key);
     }
     const filePath = path.join(this.dirname, key);
-    const obj = await import(filePath);
+    // On Windows, absolute paths must be valid file:// URLs.
+    const fileUrl = pathToFileURL(filePath);
+    const obj = await import(fileUrl.href);
     return obj;
   }
 }

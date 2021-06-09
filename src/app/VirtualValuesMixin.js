@@ -1,4 +1,5 @@
 import path from "path";
+import { pathToFileURL } from "url";
 
 const virtualFileExtension = "=.js";
 
@@ -34,7 +35,9 @@ export default function VirtualValuesMixin(Base) {
       // We can't obtain the module via `get`, as the JavaScript module syntax
       // only works directly with file or web paths.
       const modulePath = path.join(this.path, virtualKey);
-      const obj = await importModule(modulePath);
+      // On Windows, absolute paths must be valid file:// URLs.
+      const moduleUrl = pathToFileURL(modulePath);
+      const obj = await importModule(moduleUrl.href);
       if (obj !== undefined) {
         // Successfully imported module; return its default export.
         value = obj.default;
