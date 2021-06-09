@@ -9,8 +9,8 @@ class WildcardGraph extends WildcardKeysMixin(ExplorableObject) {}
 describe("WildcardKeysMixin", () => {
   it("returns wildcard values if requested key is missing", async () => {
     const graph = new WildcardGraph({
-      ":fallback1": "foo",
-      ":fallback2": "bar",
+      "[fallback1]": "foo",
+      "[fallback2]": "bar",
       a: 1,
       b: 2,
       c: 3,
@@ -23,12 +23,12 @@ describe("WildcardKeysMixin", () => {
     assert.equal(await graph.get("d"), "foo");
 
     // Asking specifically for fallback returns that.
-    assert.equal(await graph.get(":fallback2"), "bar");
+    assert.equal(await graph.get("[fallback2]"), "bar");
   });
 
   it("adds wildcard matches as params to invocable functions", async () => {
     const graph = new WildcardGraph({
-      ":name": function () {
+      "[name]": function () {
         assert.equal(this.params.name, "Jane");
         return "result";
       },
@@ -39,10 +39,10 @@ describe("WildcardKeysMixin", () => {
 
   it("composes explorable wildcard values", async () => {
     const graph = new WildcardGraph({
-      ":fallback1": {
+      "[fallback1]": {
         a: 1,
       },
-      ":fallback2": {
+      "[fallback2]": {
         b: 2,
       },
     });
@@ -70,10 +70,10 @@ describe("WildcardKeysMixin", () => {
         b: 2,
         c: 3,
       },
-      ":fallback1": {
+      "[fallback1]": {
         d: 4,
       },
-      ":fallback2": {
+      "[fallback2]": {
         e: 5,
       },
     });
@@ -97,8 +97,8 @@ describe("WildcardKeysMixin", () => {
 
   it("if all wildcard values aren't composable, returns first wildcard", async () => {
     const graph = new WildcardGraph({
-      ":fallback1": 1,
-      ":fallback2": {
+      "[fallback1]": 1,
+      "[fallback2]": {
         a: 2,
       },
     });
@@ -112,8 +112,8 @@ describe("WildcardKeysMixin", () => {
           a: 1,
         },
       },
-      ":fallback": {
-        ":subfallback": {
+      "[fallback]": {
+        "[subfallback]": {
           b: 2,
         },
       },
@@ -128,7 +128,7 @@ describe("WildcardKeysMixin", () => {
 
   it("parameters are passed down to subgraphs", async () => {
     const graph = new WildcardGraph({
-      ":wildcard": {
+      "[wildcard]": {
         foo: function () {
           return this.params.wildcard;
         },

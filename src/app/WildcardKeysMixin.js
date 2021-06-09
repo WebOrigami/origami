@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-const wildcardPrefix = ":";
+const wildcardPrefix = "[";
+const wildcardSuffix = "]";
 
 export default function WildcardKeysMixin(Base) {
   return class WildcardKeys extends Base {
@@ -153,13 +154,13 @@ class WildcardGraphs {
 }
 
 function isWildcardKey(key) {
-  return key.startsWith(wildcardPrefix);
+  return key.startsWith(wildcardPrefix) && key.endsWith(wildcardSuffix);
 }
 
 // TODO: Revisit this parameterization method, which is too desctructive and
 // likely to lead to weird bugs.
 function parameterize(obj, wildcard, match) {
-  const wildcardName = wildcard.slice(1);
+  const wildcardName = wildcard.slice(1, -1);
   obj.params = Object.assign({}, obj.params, {
     [wildcardName]: match,
   });

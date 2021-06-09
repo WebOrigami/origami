@@ -18,7 +18,7 @@ describe("VirtualValuesMixin", () => {
   it("returns virtual names for virtual values", async () => {
     const keys = await ExplorableGraph.keys(virtualFiles);
     assert.deepEqual(keys, [
-      ":wildcard",
+      "[wildcard]",
       "graph.js",
       "index.html",
       "index.txt",
