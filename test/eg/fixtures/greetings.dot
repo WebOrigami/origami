@@ -1,0 +1,31 @@
+digraph g {
+  rankdir=LR;
+  node [shape=none];
+  edge [arrowhead=vee; arrowsize=0.75];
+
+  "" [label=""; shape=circle; width=0.10];
+  "" -> "/english" [label="english"];
+  "/english" [label=""; shape=circle; width=0.10];
+  "/english" -> "/english/a" [label="a"];
+  "/english/a" [label="Hello, a."; shape=box];
+  "/english" -> "/english/b" [label="b"];
+  "/english/b" [label="Hello, b."; shape=box];
+  "/english" -> "/english/c" [label="c"];
+  "/english/c" [label="Hello, c."; shape=box];
+  "" -> "/french" [label="french"];
+  "/french" [label=""; shape=circle; width=0.10];
+  "/french" -> "/french/a" [label="a"];
+  "/french/a" [label="Bonjour, a."; shape=box];
+  "/french" -> "/french/b" [label="b"];
+  "/french/b" [label="Bonjour, b."; shape=box];
+  "/french" -> "/french/c" [label="c"];
+  "/french/c" [label="Bonjour, c."; shape=box];
+  "" -> "/spanish" [label="spanish"];
+  "/spanish" [label=""; shape=circle; width=0.10];
+  "/spanish" -> "/spanish/a" [label="a"];
+  "/spanish/a" [label="Hola, a."; shape=box];
+  "/spanish" -> "/spanish/b" [label="b"];
+  "/spanish/b" [label="Hola, b."; shape=box];
+  "/spanish" -> "/spanish/c" [label="c"];
+  "/spanish/c" [label="Hola, c."; shape=box];
+}

@@ -1,10 +1,13 @@
 digraph g {
   rankdir=LR;
-  "" [label="/"];
-  "" -> "/a";
-  "/a" [label="a"];
-  "" -> "/b";
-  "/b" [label="b"];
-  "" -> "/c";
-  "/c" [label="c"];
+  node [shape=none];
+  edge [arrowhead=vee];
+
+  "" [label=""; shape=point];
+  "" -> "/a" [label="a"];
+  "/a" [label="The letter A"];
+  "" -> "/b" [label="b"];
+  "/b" [label="The letter B"];
+  "" -> "/c" [label="c"];
+  "/c" [label="The letter C"];
 }
