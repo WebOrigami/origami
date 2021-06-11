@@ -5,8 +5,8 @@ export default async function dot(graph) {
   //   node [label=""; shape=circle; width=0.25];
   return `digraph g {
   rankdir=LR;
-  node [shape=none];
-  edge [arrowhead=vee; arrowsize=0.75];
+  node [shape=box; color=gray70];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60];
 
 ${graphArcs.join("\n")}
 }`;
@@ -16,7 +16,9 @@ async function statements(graph, nodePath, nodeLabel) {
   let result = [];
 
   // result.push(`  "${nodePath}" [label="${nodeLabel}"];`);
-  result.push(`  "${nodePath}" [label=""; shape=circle; width=0.10];`);
+  result.push(
+    `  "${nodePath}" [label=""; shape=circle; width=0.10; color=gray40];`
+  );
 
   for await (const key of graph) {
     const destPath = `${nodePath}/${key}`;
@@ -33,7 +35,7 @@ async function statements(graph, nodePath, nodeLabel) {
         if (label.length > 20) {
           label = label.slice(0, 20) + "…";
         }
-        result.push(`  "${destPath}" [label="${label}"; shape=box];`);
+        result.push(`  "${destPath}" [label="${label}"];`);
       }
     }
   }
