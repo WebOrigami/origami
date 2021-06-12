@@ -1,7 +1,6 @@
-import chai from "chai";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("Compose", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {

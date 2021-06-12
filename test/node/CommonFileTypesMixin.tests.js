@@ -1,7 +1,6 @@
-import chai from "chai";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import CommonFileTypesMixin from "../../src/node/CommonFileTypesMixin.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("CommonFileTypesMixin", () => {
   it("returns the contents of .txt keys/files as text", async () => {

@@ -1,7 +1,6 @@
-import chai from "chai";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import evaluate from "../../src/eg/evaluate.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("evaluate", () => {
   it("can parse, link, and execute", async () => {

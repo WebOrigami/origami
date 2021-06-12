@@ -1,7 +1,6 @@
-import chai from "chai";
 import DefaultValues from "../../src/common/DefaultValues.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("DefaultValues", () => {
   it("provides default values for missing keys at any point in graph", async () => {

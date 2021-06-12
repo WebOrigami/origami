@@ -1,7 +1,6 @@
-import chai from "chai";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("ExplorableGraph", () => {
   it("isExplorable tests for explorable graph interface", async () => {

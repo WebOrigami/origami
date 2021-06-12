@@ -1,7 +1,6 @@
-import chai from "chai";
 import Cache from "../../src/common/Cache.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {

@@ -1,8 +1,7 @@
-import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
 import JavaScriptModuleFiles from "../../src/node/JavaScriptModuleFiles.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");

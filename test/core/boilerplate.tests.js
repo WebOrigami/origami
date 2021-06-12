@@ -1,5 +1,4 @@
-// import chai from "chai";
-// const { assert } = chai;
+// import assert from "../assert.js";
 
 // describe("Fixture name goes here", () => {
 //   it("runs", async () => {

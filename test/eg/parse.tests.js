@@ -1,7 +1,6 @@
-import chai from "chai";
 import { argumentMarker } from "../../src/eg/execute.js";
 import parse from "../../src/eg/parse.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("parse", () => {
   it("recognizes text as text", () => {

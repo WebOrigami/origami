@@ -1,7 +1,6 @@
-import chai from "chai";
 import ExplorableFunction from "../../src/core/ExplorableFunction.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("ExplorableFunction", () => {
   it("constructs an explorable function", async () => {

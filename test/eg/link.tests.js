@@ -1,7 +1,6 @@
-import chai from "chai";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import link from "../../src/eg/link.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("link", () => {
   it("can replace keys in a parsed tree with the functions to apply", async () => {

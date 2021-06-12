@@ -1,11 +1,10 @@
-import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
 import VirtualValuesMixin from "../../src/app/VirtualValuesMixin.js";
 import WildcardKeysMixin from "../../src/app/WildcardKeysMixin.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");

@@ -1,8 +1,7 @@
-import chai from "chai";
 import strings from "../../src/common/strings.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("strings transform", () => {
   it("transforms graph values to strings", async () => {

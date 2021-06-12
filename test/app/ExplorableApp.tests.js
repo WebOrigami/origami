@@ -1,9 +1,8 @@
-import chai from "chai";
 import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableApp from "../../src/app/ExplorableApp.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");

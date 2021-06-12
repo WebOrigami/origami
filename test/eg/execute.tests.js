@@ -1,6 +1,5 @@
-import chai from "chai";
 import { argumentMarker, default as execute } from "../../src/eg/execute.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("execute", () => {
   it("can execute, passing an argument all the way down to an inner function", async () => {

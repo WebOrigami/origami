@@ -1,7 +1,6 @@
-import chai from "chai";
 import InvokeFunctionsMixin from "../../src/common/InvokeFunctionsMixin.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 describe("InvokeFunctionsMixin", () => {
   it("invokes values which are functions, returns result", async () => {

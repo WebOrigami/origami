@@ -1,7 +1,6 @@
-import chai from "chai";
 import Transform from "../../src/common/Transform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-const { assert } = chai;
+import assert from "../assert.js";
 
 // Sample class-based transform capitalizes keys and objects from a source
 // graph.
