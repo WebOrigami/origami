@@ -1,9 +1,9 @@
 digraph g {
   rankdir=LR;
-  node [shape=none];
-  edge [arrowhead=vee];
+  node [shape=box; color=gray70];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60];
 
-  "" [label=""; shape=point];
+  "" [label=""; shape=circle; width=0.10; color=gray40];
   "" -> "/a" [label="a"];
   "/a" [label="The letter A"];
   "" -> "/b" [label="b"];

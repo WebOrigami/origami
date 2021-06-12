@@ -1,31 +1,31 @@
 digraph g {
   rankdir=LR;
-  node [shape=none];
-  edge [arrowhead=vee; arrowsize=0.75];
+  node [shape=box; color=gray70];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60];
 
-  "" [label=""; shape=circle; width=0.10];
+  "" [label=""; shape=circle; width=0.10; color=gray40];
   "" -> "/english" [label="english"];
-  "/english" [label=""; shape=circle; width=0.10];
+  "/english" [label=""; shape=circle; width=0.10; color=gray40];
   "/english" -> "/english/a" [label="a"];
-  "/english/a" [label="Hello, a."; shape=box];
+  "/english/a" [label="Hello, a."];
   "/english" -> "/english/b" [label="b"];
-  "/english/b" [label="Hello, b."; shape=box];
+  "/english/b" [label="Hello, b."];
   "/english" -> "/english/c" [label="c"];
-  "/english/c" [label="Hello, c."; shape=box];
+  "/english/c" [label="Hello, c."];
   "" -> "/french" [label="french"];
-  "/french" [label=""; shape=circle; width=0.10];
+  "/french" [label=""; shape=circle; width=0.10; color=gray40];
   "/french" -> "/french/a" [label="a"];
-  "/french/a" [label="Bonjour, a."; shape=box];
+  "/french/a" [label="Bonjour, a."];
   "/french" -> "/french/b" [label="b"];
-  "/french/b" [label="Bonjour, b."; shape=box];
+  "/french/b" [label="Bonjour, b."];
   "/french" -> "/french/c" [label="c"];
-  "/french/c" [label="Bonjour, c."; shape=box];
+  "/french/c" [label="Bonjour, c."];
   "" -> "/spanish" [label="spanish"];
-  "/spanish" [label=""; shape=circle; width=0.10];
+  "/spanish" [label=""; shape=circle; width=0.10; color=gray40];
   "/spanish" -> "/spanish/a" [label="a"];
-  "/spanish/a" [label="Hola, a."; shape=box];
+  "/spanish/a" [label="Hola, a."];
   "/spanish" -> "/spanish/b" [label="b"];
-  "/spanish/b" [label="Hola, b."; shape=box];
+  "/spanish/b" [label="Hola, b."];
   "/spanish" -> "/spanish/c" [label="c"];
-  "/spanish/c" [label="Hola, c."; shape=box];
+  "/spanish/c" [label="Hola, c."];
 }
