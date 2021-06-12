@@ -13,8 +13,8 @@ export default class ExplorableSite {
       const href = new URL(".keys.json", this.url).href;
       this.#keysPromise = fetch(href);
     }
-    const buffer = await this.#keysPromise;
-    const text = String(buffer);
+    const response = await this.#keysPromise;
+    const text = await response.text();
     const keys = text ? JSON.parse(text) : [];
     yield* keys;
   }
@@ -27,7 +27,15 @@ export default class ExplorableSite {
       return new ExplorableSite(href);
     } else {
       // Fetch the data at the given endpoint.
-      const buffer = await fetch(href);
+      const response = await fetch(href);
+      const buffer = await response.arrayBuffer();
+      if (buffer instanceof ArrayBuffer) {
+        // Patch the ArrayBuffer to give it more useful toString that decodes
+        // the buffer as UTF-8, like Node's Buffer class does.
+        buffer.toString = function () {
+          return new TextDecoder().decode(this);
+        };
+      }
       return buffer;
     }
   }
