@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { stringify } from "../core/utilities.js";
 
 // export function StringsMixin(Base) {
 //   return class Strings extends Base {
@@ -19,7 +20,7 @@ export default function strings(graph) {
       const value = await graph.get(...keys);
       return ExplorableGraph.isExplorable(value)
         ? strings(value)
-        : value?.toString?.();
+        : stringify(value);
     },
   };
 }
