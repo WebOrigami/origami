@@ -3,7 +3,7 @@ import fetch from "./fetch.js";
 export default class ExplorableSite {
   #keysPromise;
 
-  constructor(url) {
+  constructor(url = window?.location.href) {
     this.url = url;
     this.#keysPromise = null;
   }
