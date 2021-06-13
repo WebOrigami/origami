@@ -5,8 +5,8 @@ export default async function dot(graph) {
   //   node [label=""; shape=circle; width=0.25];
   return `digraph g {
   rankdir=LR;
-  node [shape=box; color=gray70];
-  edge [arrowhead=vee; arrowsize=0.75; color=gray60];
+  node [shape=box; color=gray70; fontname="Helvetica"];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"];
 
 ${graphArcs.join("\n")}
 }`;
