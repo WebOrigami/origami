@@ -4,7 +4,12 @@ export default class ExplorableSite {
   #keysPromise;
 
   constructor(url = window?.location.href) {
-    this.url = url;
+    if (url?.startsWith(".") && window?.location !== undefined) {
+      // URL represents a relative path; concatenate with current location.
+      this.url = new URL(url, window.location.href).href;
+    } else {
+      this.url = url;
+    }
     this.#keysPromise = null;
   }
 
@@ -14,9 +19,13 @@ export default class ExplorableSite {
       this.#keysPromise = fetch(href);
     }
     const response = await this.#keysPromise;
-    const text = await response.text();
-    const keys = text ? JSON.parse(text) : [];
-    yield* keys;
+    if (response.ok) {
+      const text = await response.text();
+      const keys = text ? JSON.parse(text) : [];
+      yield* keys;
+    } else {
+      yield* [];
+    }
   }
 
   async get(...keys) {
