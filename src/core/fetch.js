@@ -14,7 +14,8 @@ async function simpleFetch(href) {
         !(statusCode >= 200 && statusCode < 300)
       ) {
         // Not Found or some other unexpected response.
-        resolve(undefined);
+        const response = new SimpleResponse(undefined, statusCode);
+        resolve(response);
         return;
       }
 
@@ -25,7 +26,7 @@ async function simpleFetch(href) {
       });
       response.on("end", () => {
         const buffer = Buffer.concat([...chunks]);
-        const response = new SimpleResponse(buffer);
+        const response = new SimpleResponse(buffer, statusCode);
         resolve(response);
       });
     });
@@ -41,13 +42,23 @@ async function simpleFetch(href) {
 // Roughly approximates a browser's fetch Response
 class SimpleResponse {
   #buffer;
+  #status;
 
-  constructor(buffer) {
+  constructor(buffer, status) {
     this.#buffer = buffer;
+    this.#status = status;
   }
 
   async arrayBuffer() {
     return this.#buffer;
+  }
+
+  get ok() {
+    return this.#status >= 200 && this.#status < 300;
+  }
+
+  get status() {
+    return this.#status;
   }
 
   async text() {
