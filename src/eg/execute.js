@@ -1,13 +1,13 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
-export default async function execute(linked, argument) {
+export default async function execute(linked) {
   if (linked instanceof Array) {
     // Function
     const [fn, ...args] = linked;
 
     // Recursively evaluate args.
     const evaluated = await Promise.all(
-      args.map(async (arg) => await execute(arg, argument))
+      args.map(async (arg) => await execute(arg))
     );
 
     // Now apply function to the evaluated args.
@@ -15,13 +15,8 @@ export default async function execute(linked, argument) {
       ? await fn.get(...evaluated)
       : await fn(...evaluated);
     return result;
-  } else if (linked === argumentMarker) {
-    // Argument placeholder
-    return argument;
   } else {
     // Other terminal
     return linked;
   }
 }
-
-export const argumentMarker = Symbol("argumentMarker");

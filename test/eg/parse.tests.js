@@ -1,4 +1,3 @@
-import { argumentMarker } from "../../src/eg/execute.js";
 import parse from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
@@ -6,11 +5,6 @@ describe("parse", () => {
   it("recognizes text as text", () => {
     const parsed = parse("hello");
     assert.equal(parsed, "hello");
-  });
-
-  it.skip("recognizes a solitary asterisk an argument marker", () => {
-    const parsed = parse("*");
-    assert.equal(parsed, argumentMarker);
   });
 
   it("recognizes a function call", () => {
@@ -70,8 +64,7 @@ describe("parse", () => {
     assert.deepEqual(parse("fn(./foo)"), ["fn", "./foo"]);
   });
 
-  // it.skip("recognizes a JSON literal", () => {
-  //   const parsed = parse(`{ "foo": "bar" }`);
-  //   assert.deepEqual(parsed, { foo: "bar " });
+  // it("recognizes an assignment", () => {
+  //   assert.deepEqual(parse("a = b"), ["assign", "a", "b"]);
   // });
 });

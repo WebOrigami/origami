@@ -1,5 +1,3 @@
-import { argumentMarker } from "./execute.js";
-
 const recognizers = [
   recognizeQuotedString,
   recognizeModuleImport,
@@ -7,7 +5,6 @@ const recognizers = [
   recognizeYamlImport,
   recognizePath,
   recognizeFunction,
-  recognizeMarker,
 ];
 
 // Given text that might be a function call, look for the outermost open and
@@ -140,13 +137,6 @@ function recognizeYamlImport(text) {
   if (yamlRegex.test(text)) {
     // Recognized a YAML import.
     return ["parseYaml", ["file", text]];
-  }
-  return undefined;
-}
-
-function recognizeMarker(text) {
-  if (text === "*") {
-    return argumentMarker;
   }
   return undefined;
 }
