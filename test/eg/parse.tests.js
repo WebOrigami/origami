@@ -65,11 +65,15 @@ describe("parse", () => {
   });
 
   it("recognizes an assignment", () => {
-    assert.deepEqual(parse("a = b"), ["assign", "a", ["b"]]);
-    assert.deepEqual(parse("foo = fn bar.txt"), ["assign", "foo", ["fn", "bar.txt"]]);
+    assert.deepEqual(parse("a = b"), ["=", "a", ["b"]]);
+    assert.deepEqual(parse("a="), ["=", "a"]); // Unbound assignment
+    assert.deepEqual(parse("foo = fn bar.txt"), ["=", "foo", ["fn", "bar.txt"]]);
   });
 
-  // it("recognizes an assignment with a file extension", () => {
-  //   assert.deepEqual(parse("a=.js"), ["assign", "a", ["defaultModuleExport", "a=.js"]]);
-  // });
+  it("recognizes an assignment with a file extension", () => {
+    assert.deepEqual(parse("a=.js"), ["=", "a", ["defaultModuleExport", "a=.js"]]);
+    assert.deepEqual(parse("foo =.js"), ["=", "foo", ["defaultModuleExport", "foo =.js"]]);
+    assert.deepEqual(parse("foo =.json"), ["=", "foo", ["parseJson", ["file", "foo =.json"]]]);
+    assert.deepEqual(parse("foo = .yaml"), ["=", "foo", ["parseYaml", ["file", "foo = .yaml"]]]);
+  });
 });

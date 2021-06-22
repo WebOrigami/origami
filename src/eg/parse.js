@@ -91,6 +91,28 @@ function findArguments(text) {
   return { open: openParenIndex, close: closeParenIndex, commas };
 }
 
+// If the given text represents an import of the file type indicated by the
+// extension, then create an import representation that can be invoked to import
+// that file.
+function handleImportWithExtension(text, extension, createImport) {
+  if (!text.endsWith(extension)) {
+    // Didn't find extension.
+    return undefined;
+  }
+  const fileName = text.slice(0, -extension.length).trim();
+  if (fileName === "") {
+    // No file name.
+    return undefined;
+  }
+  const importResult = createImport(text);
+  const assignment = recognizeAssignment(fileName);
+  return assignment?.length === 2
+    ? // Assignment from import
+      [...assignment, importResult]
+    : // Normal import
+      importResult;
+}
+
 // Given a string and a graph of functions, return a parsed tree.
 export default function parseExpression(text) {
   const trimmed = text.trim();
@@ -106,7 +128,7 @@ export default function parseExpression(text) {
 }
 
 function recognizeAssignment(text) {
-  const assignmentRegex = /^(?<left>[^=\s]+)[ \t]*=[ \t]*(?<right>.+)$/;
+  const assignmentRegex = /^(?<left>[^=\s]+)[ \t]*=[ \t]*(?<right>.+)?$/;
   const match = assignmentRegex.exec(text);
   if (match) {
     const left = match.groups?.left;
@@ -117,8 +139,12 @@ function recognizeAssignment(text) {
       return undefined;
     }
 
-    const parsedRight = parseExpression(right);
-    return ["assign", left, parsedRight];
+    const parsedRight = right ? parseExpression(right) : undefined;
+    const result = ["=", left];
+    if (parsedRight) {
+      result.push(parsedRight);
+    }
+    return result;
   }
   return undefined;
 }
@@ -150,33 +176,17 @@ function recognizeFunction(text) {
 }
 
 function recognizeJsonImport(text) {
-  // Match anything that ends in .json and has no whitespace.
-  const jsonRegex = /^\S+.json$/;
-  if (jsonRegex.test(text)) {
-    // Recognized a JSON import.
-    return ["parseJson", ["file", text]];
-  }
-  return undefined;
-}
-
-function recognizeYamlImport(text) {
-  // Match anything that ends in .yaml and has no whitespace.
-  const yamlRegex = /^\S+.yaml$/;
-  if (yamlRegex.test(text)) {
-    // Recognized a YAML import.
-    return ["parseYaml", ["file", text]];
-  }
-  return undefined;
+  return handleImportWithExtension(text, ".json", (fileName) => [
+    "parseJson",
+    ["file", fileName],
+  ]);
 }
 
 function recognizeModuleImport(text) {
-  // Match anything that ends in .js and has no whitespace.
-  const moduleRegex = /^\S+.js$/;
-  if (moduleRegex.test(text)) {
-    // Recognized a module import.
-    return ["defaultModuleExport", text];
-  }
-  return undefined;
+  return handleImportWithExtension(text, ".js", (fileName) => [
+    "defaultModuleExport",
+    fileName,
+  ]);
 }
 
 function recognizePath(text) {
@@ -192,4 +202,11 @@ function recognizeQuotedString(text) {
     return string;
   }
   return undefined;
+}
+
+function recognizeYamlImport(text) {
+  return handleImportWithExtension(text, ".yaml", (fileName) => [
+    "parseYaml",
+    ["file", fileName],
+  ]);
 }
