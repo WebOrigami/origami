@@ -4,8 +4,11 @@ const recognizers = [
   recognizeJsonImport,
   recognizeYamlImport,
   recognizePath,
+  recognizeAssignment,
   recognizeFunction,
 ];
+
+const javascriptIdentifierRegex = /^[a-zA-Z_$][a-zA-Z\d_$]*$/;
 
 // Given text that might be a function call, look for the outermost open and
 // close parenthesis. If found, return `open` and `close` indices giving the
@@ -102,11 +105,36 @@ export default function parseExpression(text) {
   return trimmed;
 }
 
+function recognizeAssignment(text) {
+  const assignmentRegex = /^(?<left>[^=\s]+)[ \t]*=[ \t]*(?<right>.+)$/;
+  const match = assignmentRegex.exec(text);
+  if (match) {
+    const left = match.groups?.left;
+    const right = match.groups?.right;
+
+    // Left-hand side must be a valid JavaScript identifier.
+    if (left !== undefined && !javascriptIdentifierRegex.test(left)) {
+      return undefined;
+    }
+
+    const parsedRight = parseExpression(right);
+    return ["assign", left, parsedRight];
+  }
+  return undefined;
+}
+
 function recognizeFunction(text) {
   const { open, close, commas } = findArguments(text);
   if (open >= 0 && (close > 0 || close === text.length - 1)) {
-    // Recognized a function call.
     const fnName = text.slice(0, open).trim();
+
+    // Function name must be a valid JavaScript identifier.
+    if (!javascriptIdentifierRegex.test(fnName)) {
+      // Invalid function name.
+      return undefined;
+    }
+
+    // Recognized a function call.
     const argText = text.substring(open + 1, close).trim();
     const argStarts = open + 1 < close ? [0, ...commas] : [];
     const args = argStarts.map((argStart, index) => {

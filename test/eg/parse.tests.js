@@ -64,7 +64,12 @@ describe("parse", () => {
     assert.deepEqual(parse("fn(./foo)"), ["fn", "./foo"]);
   });
 
-  // it("recognizes an assignment", () => {
-  //   assert.deepEqual(parse("a = b"), ["assign", "a", "b"]);
+  it("recognizes an assignment", () => {
+    assert.deepEqual(parse("a = b"), ["assign", "a", ["b"]]);
+    assert.deepEqual(parse("foo = fn bar.txt"), ["assign", "foo", ["fn", "bar.txt"]]);
+  });
+
+  // it("recognizes an assignment with a file extension", () => {
+  //   assert.deepEqual(parse("a=.js"), ["assign", "a", ["defaultModuleExport", "a=.js"]]);
   // });
 });

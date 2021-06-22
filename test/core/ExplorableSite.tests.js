@@ -13,7 +13,7 @@ const localSiteUrl = pathToFileURL(siteDirectory);
 
 describe.skip("ExplorableSite", () => {
   it("can get keys at a given route", async () => {
-    const graph = new ExplorableSite(localSiteUrl);
+    const graph = new ExplorableSite(localSiteUrl.href);
     const keys = await ExplorableGraph.keys(graph);
     assert.deepEqual(keys, ["hello.txt"]);
   });

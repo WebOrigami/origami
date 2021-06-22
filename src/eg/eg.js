@@ -30,7 +30,7 @@ async function main(...args) {
   if (!source) {
     await showUsage(scope);
   }
-  const result = await evaluate(source, scope, "**input**");
+  const result = await evaluate(source, scope);
   if (result !== undefined) {
     const stdout = await scope.get("stdout");
     if (stdout) {

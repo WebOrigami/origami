@@ -10,7 +10,7 @@ describe("evaluate", () => {
         return `Hello ${name}`;
       },
     });
-    const result = await evaluate(source, scope, "world");
+    const result = await evaluate(source, scope);
     assert.equal(result, "Hello world");
   });
 });
