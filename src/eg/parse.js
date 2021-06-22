@@ -1,8 +1,12 @@
-const recognizers = [
-  recognizeQuotedString,
+const importRecognizers = [
   recognizeModuleImport,
   recognizeJsonImport,
   recognizeYamlImport,
+];
+
+const recognizers = [
+  recognizeQuotedString,
+  ...importRecognizers,
   recognizePath,
   recognizeAssignment,
   recognizeFunction,
@@ -154,8 +158,15 @@ function recognizeFunction(text) {
   if (open >= 0 && (close > 0 || close === text.length - 1)) {
     const fnName = text.slice(0, open).trim();
 
-    // Function name must be a valid JavaScript identifier.
-    if (!javascriptIdentifierRegex.test(fnName)) {
+    // Function must be a valid JavaScript identifier or a path that imports a
+    // graph.
+    const fn = javascriptIdentifierRegex.test(fnName)
+      ? // Name is the name of a function
+        fnName
+      : // Name is a path to a graph
+        recognizeImport(fnName);
+
+    if (!fn) {
       // Invalid function name.
       return undefined;
     }
@@ -170,7 +181,18 @@ function recognizeFunction(text) {
       return arg;
     });
     const parsedArgs = args.map((arg) => parseExpression(arg));
-    return [fnName, ...parsedArgs];
+    return [fn, ...parsedArgs];
+  }
+  return undefined;
+}
+
+function recognizeImport(text) {
+  for (const recognizer of importRecognizers) {
+    const result = recognizer(text);
+    if (result !== undefined) {
+      // Recognizer recognized something.
+      return result;
+    }
   }
   return undefined;
 }

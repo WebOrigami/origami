@@ -3,7 +3,12 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 export default async function execute(linked) {
   if (linked instanceof Array) {
     // Function
-    const [fn, ...args] = linked;
+    const [fnExpression, ...args] = linked;
+
+    const fn =
+      fnExpression instanceof Array
+        ? await execute(fnExpression)
+        : fnExpression;
 
     // Recursively evaluate args.
     const evaluated = await Promise.all(

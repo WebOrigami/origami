@@ -5,8 +5,11 @@ export default async function link(parsed, scope) {
   if (parsed instanceof Array) {
     // Function
     // Map the name to the actual function.
-    const [fnName, ...args] = parsed;
-    const fn = await scope.get(fnName);
+    const [fnExpression, ...args] = parsed;
+    const fn =
+      fnExpression instanceof Array
+        ? await link(fnExpression, scope)
+        : await scope.get(fnExpression);
 
     // Recursively link the args.
     const linkedArgs = await Promise.all(args.map((arg) => link(arg, scope)));
