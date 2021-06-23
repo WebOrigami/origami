@@ -1,4 +1,4 @@
-import path from "path/posix";
+import path from "path";
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import builtins from "../eg/builtins.js";

@@ -54,7 +54,12 @@ describe("parse", () => {
     ]);
   });
 
-  it("recognizes a quoted string", () => {
+  it("recognizes a single-quoted string", () => {
+    const parsed = parse(`'Hello, world.'`);
+    assert.deepEqual(parsed, "Hello, world.");
+  });
+
+  it("recognizes a double-quoted string", () => {
     const parsed = parse(`"Hello, world."`);
     assert.deepEqual(parsed, "Hello, world.");
   });

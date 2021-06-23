@@ -5,7 +5,8 @@ const importRecognizers = [
 ];
 
 const recognizers = [
-  recognizeQuotedString,
+  recognizeDoubleQuotedString,
+  recognizeSingleQuotedString,
   ...importRecognizers,
   recognizePath,
   recognizeAssignment,
@@ -153,6 +154,14 @@ function recognizeAssignment(text) {
   return undefined;
 }
 
+function recognizeDoubleQuotedString(text) {
+  if (text.startsWith('"') && text.endsWith('"')) {
+    const string = text.substring(1, text.length - 1);
+    return string;
+  }
+  return undefined;
+}
+
 function recognizeFunction(text) {
   const { open, close, commas } = findArguments(text);
   if (open >= 0 && (close > 0 || close === text.length - 1)) {
@@ -218,8 +227,8 @@ function recognizePath(text) {
   return pathRegex.test(text) ? text : undefined;
 }
 
-function recognizeQuotedString(text) {
-  if (text.startsWith('"') && text.endsWith('"')) {
+function recognizeSingleQuotedString(text) {
+  if (text.startsWith(`'`) && text.endsWith(`'`)) {
     const string = text.substring(1, text.length - 1);
     return string;
   }
