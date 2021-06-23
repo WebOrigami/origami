@@ -69,11 +69,18 @@ describe("parse", () => {
     assert.deepEqual(parsed, ["foo", "Hello, world."]);
   });
 
+  it("recognizes a URL", () => {
+    assert.deepEqual(parse("//foo/bar"), ["site", "//foo/bar"]);
+    assert.deepEqual(parse("https://example.com"), [
+      "site",
+      "https://example.com",
+    ]);
+  });
+
   it("recognizes a path", () => {
     assert.deepEqual(parse("file.txt"), "file.txt");
     assert.deepEqual(parse("foo bar.txt"), ["foo", "bar.txt"]); // contains whitespace
     assert.deepEqual(parse("./file.txt"), "./file.txt");
-    assert.deepEqual(parse("//foo/bar"), "//foo/bar");
     assert.deepEqual(parse("fn(foo)"), ["fn", ["foo"]]);
     assert.deepEqual(parse("fn(./foo)"), ["fn", "./foo"]);
   });

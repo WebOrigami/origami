@@ -8,6 +8,7 @@ const recognizers = [
   recognizeDoubleQuotedString,
   recognizeSingleQuotedString,
   ...importRecognizers,
+  recognizeUrl,
   recognizePath,
   recognizeAssignment,
   recognizeFunction,
@@ -218,6 +219,13 @@ function recognizeModuleImport(text) {
     "defaultModuleExport",
     ["resolvePath", fileName],
   ]);
+}
+
+function recognizeUrl(text) {
+  // Anything that starts with an optional protocol (like https:) and // counts
+  // as a URL.
+  const urlRegex = /^(?:[a-z]+:)?\/\/.+/;
+  return urlRegex.test(text) ? ["site", text] : undefined;
 }
 
 function recognizePath(text) {
