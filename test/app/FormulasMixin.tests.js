@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import FormulasMixin from "../../src/app/FormulasMixin.js";
+import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
@@ -10,24 +11,38 @@ const fixturesDirectory = path.join(dirname, "fixtures");
 const directory = path.join(fixturesDirectory, "formulas");
 
 class VirtualFiles extends FormulasMixin(ExplorableFiles) {}
-const virtualFiles = new VirtualFiles(directory);
+const graph = new VirtualFiles(directory);
+graph.scope = new Compose(
+  {
+    fn() {
+      return "Hello, world.";
+    },
+  },
+  graph.scope
+);
 
 describe("FormulasMixin", () => {
   it("keys include both real and virtual keys", async () => {
-    assert.deepEqual(await ExplorableGraph.keys(virtualFiles), [
+    assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",
       "sampleJson",
+      "value",
     ]);
   });
 
   it("can get the value of a virtual key", async () => {
-    const value = await virtualFiles.get("sampleJson");
+    const value = await graph.get("sampleJson");
     assert(ExplorableGraph.isExplorable(value));
     assert.deepEqual(await ExplorableGraph.plain(value), {
       a: "Hello, a.",
       b: "Hello, b.",
       c: "Hello, c.",
     });
-    assert.equal(await virtualFiles.get("sampleJson", "a"), "Hello, a.");
+    assert.equal(await graph.get("sampleJson", "a"), "Hello, a.");
+  });
+
+  it("can produce a value using a function", async () => {
+    const value = await graph.get("value");
+    assert.equal(value, "Hello, world.");
   });
 });

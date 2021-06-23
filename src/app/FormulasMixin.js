@@ -10,6 +10,19 @@ export default function FormulasMixin(Base) {
   return class Formulas extends Base {
     #keys;
     #formulas;
+    #scope;
+
+    constructor(dirname) {
+      super(dirname);
+      this.scope = new Compose(
+        {
+          resolvePath(relativePath) {
+            return path.resolve(dirname, relativePath);
+          },
+        },
+        builtins
+      );
+    }
 
     async *[Symbol.asyncIterator]() {
       if (!this.#keys) {
@@ -42,7 +55,7 @@ export default function FormulasMixin(Base) {
     async refresh() {
       this.#keys = [];
       this.#formulas = {};
-      const scope = createScope(this.dirname);
+      const scope = this.scope;
       for await (const baseKey of super[Symbol.asyncIterator]()) {
         // Try to parse the base key as an expression.
         const parsed = parse(baseKey);
@@ -61,17 +74,12 @@ export default function FormulasMixin(Base) {
       // Store keys in JavaScript sort order.
       this.#keys.sort();
     }
-  };
-}
 
-function createScope(dirname) {
-  const scope = new Compose(
-    {
-      resolvePath(relativePath) {
-        return path.resolve(dirname, relativePath);
-      },
-    },
-    builtins
-  );
-  return scope;
+    get scope() {
+      return this.#scope;
+    }
+    set scope(scope) {
+      this.#scope = scope;
+    }
+  };
 }
