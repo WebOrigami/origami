@@ -32,17 +32,26 @@ describe("parse", () => {
 
   it("recognizes a module import", () => {
     const parsed = parse("foo.js");
-    assert.deepEqual(parsed, ["defaultModuleExport", "foo.js"]);
+    assert.deepEqual(parsed, [
+      "defaultModuleExport",
+      ["resolvePath", "foo.js"],
+    ]);
   });
 
   it("recognizes a JSON file import", () => {
     const parsed = parse("foo.json");
-    assert.deepEqual(parsed, ["parseJson", ["file", "foo.json"]]);
+    assert.deepEqual(parsed, [
+      "parseJson",
+      ["file", ["resolvePath", "foo.json"]],
+    ]);
   });
 
   it("recognizes a YAML file import", () => {
     const parsed = parse("foo.yaml");
-    assert.deepEqual(parsed, ["parseYaml", ["file", "foo.yaml"]]);
+    assert.deepEqual(parsed, [
+      "parseYaml",
+      ["file", ["resolvePath", "foo.yaml"]],
+    ]);
   });
 
   it("recognizes a quoted string", () => {
@@ -78,22 +87,22 @@ describe("parse", () => {
     assert.deepEqual(parse("a=.js"), [
       "=",
       "a",
-      ["defaultModuleExport", "a=.js"],
+      ["defaultModuleExport", ["resolvePath", "a=.js"]],
     ]);
     assert.deepEqual(parse("foo =.js"), [
       "=",
       "foo",
-      ["defaultModuleExport", "foo =.js"],
+      ["defaultModuleExport", ["resolvePath", "foo =.js"]],
     ]);
     assert.deepEqual(parse("foo =.json"), [
       "=",
       "foo",
-      ["parseJson", ["file", "foo =.json"]],
+      ["parseJson", ["file", ["resolvePath", "foo =.json"]]],
     ]);
     assert.deepEqual(parse("foo = .yaml"), [
       "=",
       "foo",
-      ["parseYaml", ["file", "foo = .yaml"]],
+      ["parseYaml", ["file", ["resolvePath", "foo = .yaml"]]],
     ]);
   });
 });

@@ -1,10 +1,7 @@
 import * as fs from "fs/promises";
-import path from "path";
-import process from "process";
 
-export default async function file(relativePath) {
-  const resolvedPath = path.resolve(process.cwd(), relativePath);
-  const data = await fs.readFile(resolvedPath);
+export default async function file(filePath) {
+  const data = await fs.readFile(filePath);
   return String(data);
 }
 

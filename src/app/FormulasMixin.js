@@ -1,3 +1,9 @@
+import path from "path/posix";
+import Compose from "../common/Compose.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import builtins from "../eg/builtins.js";
+import execute from "../eg/execute.js";
+import link from "../eg/link.js";
 import parse from "../eg/parse.js";
 
 export default function FormulasMixin(Base) {
@@ -19,18 +25,34 @@ export default function FormulasMixin(Base) {
       return this.#formulas;
     }
 
+    async get(...keys) {
+      const [key, ...rest] = keys;
+      const formulas = await this.formulas();
+      const formula = formulas[key];
+      if (formula) {
+        const value = await execute(formula);
+        return ExplorableGraph.isExplorable(value) && rest.length > 0
+          ? await value.get(...rest)
+          : value;
+      } else {
+        return await super.get(...keys);
+      }
+    }
+
     async refresh() {
       this.#keys = [];
       this.#formulas = {};
+      const scope = createScope(this.dirname);
       for await (const baseKey of super[Symbol.asyncIterator]()) {
         // Try to parse the base key as an expression.
         const parsed = parse(baseKey);
         const isFormula = parsed instanceof Array && parsed[0] === "=";
         if (isFormula) {
-          const key = parsed[1];
-          const value = parsed[2];
-          this.#formulas[key] = value;
-          this.#keys.push(key);
+          const left = parsed[1];
+          const right = parsed[2];
+          const linked = await link(right, scope);
+          this.#formulas[left] = linked;
+          this.#keys.push(left);
         } else {
           this.#keys.push(baseKey);
         }
@@ -40,4 +62,16 @@ export default function FormulasMixin(Base) {
       this.#keys.sort();
     }
   };
+}
+
+function createScope(dirname) {
+  const scope = new Compose(
+    {
+      resolvePath(relativePath) {
+        return path.resolve(dirname, relativePath);
+      },
+    },
+    builtins
+  );
+  return scope;
 }

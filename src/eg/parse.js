@@ -200,14 +200,14 @@ function recognizeImport(text) {
 function recognizeJsonImport(text) {
   return handleImportWithExtension(text, ".json", (fileName) => [
     "parseJson",
-    ["file", fileName],
+    ["file", ["resolvePath", fileName]],
   ]);
 }
 
 function recognizeModuleImport(text) {
   return handleImportWithExtension(text, ".js", (fileName) => [
     "defaultModuleExport",
-    fileName,
+    ["resolvePath", fileName],
   ]);
 }
 
@@ -229,6 +229,6 @@ function recognizeQuotedString(text) {
 function recognizeYamlImport(text) {
   return handleImportWithExtension(text, ".yaml", (fileName) => [
     "parseYaml",
-    ["file", fileName],
+    ["file", ["resolvePath", fileName]],
   ]);
 }

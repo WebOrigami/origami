@@ -12,17 +12,22 @@ const directory = path.join(fixturesDirectory, "formulas");
 class VirtualFiles extends FormulasMixin(ExplorableFiles) {}
 const virtualFiles = new VirtualFiles(directory);
 
-describe.only("FormulasMixin", () => {
-  it("yields virtual keys", async () => {
+describe("FormulasMixin", () => {
+  it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(virtualFiles), [
       "foo.txt",
       "sampleJson",
     ]);
   });
 
-  // it("can load keys from a .keys.json value", async () => {
-  //   const virtualKeys = new VirtualKeysFiles(virtualKeysFolder);
-  //   const keys = await ExplorableGraph.keys(virtualKeys);
-  //   assert.deepEqual(keys, ["a", "b", "c", ".keys.json"]);
-  // });
+  it("can get the value of a virtual key", async () => {
+    const value = await virtualFiles.get("sampleJson");
+    assert(ExplorableGraph.isExplorable(value));
+    assert.deepEqual(await ExplorableGraph.plain(value), {
+      a: "Hello, a.",
+      b: "Hello, b.",
+      c: "Hello, c.",
+    });
+    assert.equal(await virtualFiles.get("sampleJson", "a"), "Hello, a.");
+  });
 });
