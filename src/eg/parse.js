@@ -139,12 +139,6 @@ function recognizeAssignment(text) {
   if (match) {
     const left = match.groups?.left;
     const right = match.groups?.right;
-
-    // Left-hand side must be a valid JavaScript identifier.
-    if (left !== undefined && !javascriptIdentifierRegex.test(left)) {
-      return undefined;
-    }
-
     const parsedRight = right ? parseExpression(right) : undefined;
     const result = ["=", left];
     if (parsedRight) {

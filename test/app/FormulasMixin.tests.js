@@ -22,9 +22,10 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
-  it("keys include both real and virtual keys", async () => {
+  it.only("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",
+      "sample.txt",
       "sampleJson",
       "value",
     ]);
@@ -40,6 +41,11 @@ describe("FormulasMixin", () => {
     });
     assert.equal(await graph.get("sampleJson", "a"), "Hello, a.");
   });
+
+  // it("can export a function", async () => {
+  //   const fn = await graph.get("sample.txt");
+  //   assert.equal(fn(), "Hello, world.");
+  // });
 
   it("can produce a value using a function", async () => {
     const value = await graph.get("value");
