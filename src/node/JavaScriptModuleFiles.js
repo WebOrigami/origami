@@ -15,7 +15,19 @@ export default class JavaScriptModuleFiles extends ExplorableFiles {
     const filePath = path.join(this.dirname, key);
     // On Windows, absolute paths must be valid file:// URLs.
     const fileUrl = pathToFileURL(filePath);
-    const obj = await import(fileUrl.href);
+    const obj = await importModule(fileUrl.href);
     return obj;
   }
+}
+
+async function importModule(modulePath) {
+  let obj;
+  try {
+    obj = await import(modulePath);
+  } catch (error) {
+    if (error.code !== "ERR_MODULE_NOT_FOUND") {
+      throw error;
+    }
+  }
+  return obj;
 }
