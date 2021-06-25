@@ -43,7 +43,7 @@ export default function FormulasMixin(Base) {
       const formulas = await this.formulas();
       const formula = formulas[key];
       if (formula) {
-        const value = await execute(formula);
+        const value = await execute(formula, this);
         return ExplorableGraph.isExplorable(value) && rest.length > 0
           ? await value.get(...rest)
           : value;

@@ -7,7 +7,9 @@ export default async function link(parsed, scope) {
     // Map the name to the actual function.
     const [fnExpression, ...args] = parsed;
     const fn =
-      fnExpression instanceof Array
+      fnExpression === "this"
+        ? "this" // Don't link reference to context graph
+        : fnExpression instanceof Array
         ? await link(fnExpression, scope)
         : await scope.get(fnExpression);
 

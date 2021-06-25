@@ -15,4 +15,10 @@ describe("link", () => {
     const linked = await link(parsed, scope);
     assert.deepEqual(linked, [fn, [fn, "a", "b"]]);
   });
+
+  it("leaves the special `this` reference alone", async () => {
+    const parsed = ["this", "foo"];
+    const linked = await link(parsed, null);
+    assert.deepEqual(linked, ["this", "foo"]);
+  });
 });

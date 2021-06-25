@@ -29,6 +29,9 @@ export default class ExplorableSite {
   }
 
   async get(...keys) {
+    if (keys.length === 0) {
+      return this;
+    }
     const route = keys.join("/");
     const href = new URL(route, this.url).href;
     if (href.endsWith("/")) {

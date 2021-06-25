@@ -1,3 +1,4 @@
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import execute from "../../src/eg/execute.js";
 import assert from "../assert.js";
 
@@ -10,5 +11,12 @@ describe("execute", () => {
     const linked = [greet, "world"];
     const result = await execute(linked);
     assert.equal(result, "Hello world");
+  });
+
+  it("can use `this` to reference the current graph", async () => {
+    const linked = ["this"];
+    const graph = new ExplorableObject({});
+    const result = await execute(linked, graph);
+    assert.equal(result, graph);
   });
 });

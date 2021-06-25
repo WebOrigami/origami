@@ -26,6 +26,9 @@ export default class ExplorableFiles {
   }
 
   async get(...keys) {
+    if (keys.length === 0) {
+      return this;
+    }
     const objPath = path.resolve(this.dirname, ...keys);
     const stats = await stat(objPath);
     if (!stats) {

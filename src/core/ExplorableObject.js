@@ -40,6 +40,11 @@ export default class ExplorableObject {
       return await this.#obj.get(...keys);
     }
 
+    // No keys: return this graph as is.
+    if (keys.length === 0) {
+      return this;
+    }
+
     // Traverse the keys.
     let value = this.#obj;
     while (value !== undefined && keys.length > 0) {

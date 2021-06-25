@@ -3,6 +3,7 @@
 import process from "process";
 import evaluate from "../../src/eg/evaluate.js";
 import config from "./commands/config.js";
+import files from "./commands/files.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -11,7 +12,8 @@ async function main(...args) {
   if (!source) {
     await showUsage(scope);
   }
-  const result = await evaluate(source, scope);
+  const context = await files();
+  const result = await evaluate(source, scope, context);
   if (result !== undefined) {
     const stdout = await scope.get("stdout");
     if (stdout) {
