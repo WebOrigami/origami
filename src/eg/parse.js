@@ -1,17 +1,14 @@
-const importRecognizers = [
-  recognizeModuleImport,
-  recognizeJsonImport,
-  recognizeYamlImport,
-];
+const importParsers = [parseModuleImport, parseJsonImport, parseYamlImport];
 
-const recognizers = [
-  recognizeDoubleQuotedString,
-  recognizeSingleQuotedString,
-  ...importRecognizers,
-  recognizeUrl,
-  recognizePath,
-  recognizeAssignment,
-  recognizeFunction,
+const expressionParsers = [
+  parseDoubleQuotedString,
+  parseSingleQuotedString,
+  ...importParsers,
+  parseUrl,
+  parsePath,
+  parseAssignment,
+  parseFunction,
+  parseParentheticalGroup,
 ];
 
 const javascriptIdentifierRegex = /^[a-zA-Z_$][a-zA-Z\d_$]*$/;
@@ -111,7 +108,7 @@ function handleImportWithExtension(text, extension, createImport) {
     return undefined;
   }
   const importResult = createImport(text);
-  const assignment = recognizeAssignment(fileName);
+  const assignment = parseAssignment(fileName);
   return assignment?.length === 2
     ? // Assignment from import
       [...assignment, importResult]
@@ -119,21 +116,7 @@ function handleImportWithExtension(text, extension, createImport) {
       importResult;
 }
 
-// Given a string and a graph of functions, return a parsed tree.
-export default function parseExpression(text) {
-  const trimmed = text.trim();
-  for (const recognizer of recognizers) {
-    const result = recognizer(trimmed);
-    if (result !== undefined) {
-      // Recognizer recognized something.
-      return result;
-    }
-  }
-  // Return the text as is.
-  return trimmed;
-}
-
-function recognizeAssignment(text) {
+function parseAssignment(text) {
   const assignmentRegex = /^(?<left>[^=\s]+)[ \t]*=[ \t]*(?<right>.+)?$/;
   const match = assignmentRegex.exec(text);
   if (match) {
@@ -149,7 +132,7 @@ function recognizeAssignment(text) {
   return undefined;
 }
 
-function recognizeDoubleQuotedString(text) {
+function parseDoubleQuotedString(text) {
   if (text.startsWith('"') && text.endsWith('"')) {
     const string = text.substring(1, text.length - 1);
     return string;
@@ -157,7 +140,21 @@ function recognizeDoubleQuotedString(text) {
   return undefined;
 }
 
-function recognizeFunction(text) {
+// Parse the given text as an eg expression.
+export default function parseExpression(text) {
+  const trimmed = text.trim();
+  for (const parser of expressionParsers) {
+    const result = parser(trimmed);
+    if (result !== undefined) {
+      // Parser parsed something.
+      return result;
+    }
+  }
+  // Return the text as is.
+  return trimmed;
+}
+
+function parseFunction(text) {
   const { open, close, commas } = findArguments(text);
   if (open >= 0 && (close > 0 || close === text.length - 1)) {
     const fnName = text.slice(0, open).trim();
@@ -168,7 +165,7 @@ function recognizeFunction(text) {
       ? // Name is the name of a function
         fnName
       : // Name is a path to a graph
-        recognizeImport(fnName);
+        parseImport(fnName);
 
     if (!fn) {
       // Invalid function name.
@@ -190,9 +187,9 @@ function recognizeFunction(text) {
   return undefined;
 }
 
-function recognizeImport(text) {
-  for (const recognizer of importRecognizers) {
-    const result = recognizer(text);
+function parseImport(text) {
+  for (const parser of importParsers) {
+    const result = parser(text);
     if (result !== undefined) {
       // Recognizer recognized something.
       return result;
@@ -201,35 +198,53 @@ function recognizeImport(text) {
   return undefined;
 }
 
-function recognizeJsonImport(text) {
+function parseJsonImport(text) {
   return handleImportWithExtension(text, ".json", (fileName) => [
     "parseJson",
     ["file", ["resolvePath", fileName]],
   ]);
 }
 
-function recognizeModuleImport(text) {
+function parseModuleImport(text) {
   return handleImportWithExtension(text, ".js", (fileName) => [
     "defaultModuleExport",
     ["resolvePath", fileName],
   ]);
 }
 
-function recognizeUrl(text) {
+function parseParentheticalGroup(text) {
+  const groupRegex = /^\(\s*(?<inner>.+\s*)\)(?:\s*(?<after>.+)\s*)?$/;
+  const match = groupRegex.exec(text);
+  if (match?.groups) {
+    const { inner, after } = match.groups;
+    const parseInner = parseExpression(inner);
+    if (parseInner) {
+      const parseAfter = after ? parseExpression(after) : undefined;
+      return parseAfter
+        ? // Parentheses returns a function to invoke on what comes after.
+          [parseInner, parseAfter]
+        : // Parentheses is just grouping some terms.
+          parseInner;
+    }
+  }
+  return undefined;
+}
+
+function parseUrl(text) {
   // Anything that starts with an optional protocol (like https:) and // counts
   // as a URL.
   const urlRegex = /^(?:[a-z]+:)?\/\/.+/;
   return urlRegex.test(text) ? ["site", text] : undefined;
 }
 
-function recognizePath(text) {
+function parsePath(text) {
   // Match anything that contains a slash or a dot, and also contains no
   // whitespace or parentheses.
   const pathRegex = /^[^\(\)\s]*[\.\/][^\(\)\s]*$/;
   return pathRegex.test(text) ? text : undefined;
 }
 
-function recognizeSingleQuotedString(text) {
+function parseSingleQuotedString(text) {
   if (text.startsWith(`'`) && text.endsWith(`'`)) {
     const string = text.substring(1, text.length - 1);
     return string;
@@ -237,7 +252,7 @@ function recognizeSingleQuotedString(text) {
   return undefined;
 }
 
-function recognizeYamlImport(text) {
+function parseYamlImport(text) {
   return handleImportWithExtension(text, ".yaml", (fileName) => [
     "parseYaml",
     ["file", ["resolvePath", fileName]],
