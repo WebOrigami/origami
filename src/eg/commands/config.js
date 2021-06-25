@@ -6,8 +6,8 @@ import defaultModuleExport from "./defaultModuleExport.js";
 const configFileName = "eg.config.js";
 
 // Load config file.
-export default async function config() {
-  const parentFiles = new ParentFiles(process.cwd());
+export default async function config(dirname = process.cwd()) {
+  const parentFiles = new ParentFiles(dirname);
   const configPath = await parentFiles.get(configFileName);
   const fn = configPath ? await defaultModuleExport(configPath) : null;
   const graph = fn ? ExplorableObject.explore(fn) : null;
