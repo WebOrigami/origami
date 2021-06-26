@@ -3,6 +3,8 @@ import {
   doubleQuoteString,
   expression,
   functionCall,
+  group,
+  indirection,
   list,
   reference,
   singleQuoteString,
@@ -29,10 +31,7 @@ describe.only("parse2", () => {
   });
 
   it("list", () => {
-    assert.deepEqual(list(""), {
-      value: [],
-      rest: "",
-    });
+    assert.equal(list("").value, undefined);
     assert.deepEqual(list(" a"), {
       value: [["a"]],
       rest: "",
@@ -56,6 +55,8 @@ describe.only("parse2", () => {
       value: [["a"], ["b"], ["c"]],
       rest: "",
     });
+    assert.deepEqual(args("()").value, []);
+    assert.deepEqual(args("").value, undefined);
   });
 
   it("double-quote string", () => {
@@ -83,6 +84,18 @@ describe.only("parse2", () => {
       value: ["fn", ["a"], ["b"]],
       rest: "",
     });
+  });
+
+  it("group", () => {
+    assert.deepEqual(group(" ( hello )").value, ["hello"]);
+    assert.deepEqual(group("(((nested)))").value, ["nested"]);
+    assert.equal(group("(").value, undefined);
+  });
+
+  it("indirect function call", () => {
+    assert.deepEqual(indirection("(fn) 'a'").value, [["fn"], "a"]);
+    assert.deepEqual(indirection("(fn) ('a', 'b')").value, [["fn"], "a", "b"]);
+    assert.deepEqual(indirection("(fn)").value, undefined);
   });
 
   it("expression", () => {

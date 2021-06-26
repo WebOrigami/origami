@@ -6,15 +6,13 @@ export function args(text) {
     const result2 = whitespace(listResult.rest);
     const rparenResult = rparen(result2.rest);
     if (rparenResult.value) {
+      const value = listResult.value ?? [];
       return {
-        value: listResult.value,
+        value,
         rest: rparenResult.rest,
       };
     } else {
-      return {
-        value: undefined,
-        rest: rparenResult.rest,
-      };
+      return rparenResult;
     }
   }
   return list(text);
@@ -33,22 +31,6 @@ export function doubleQuoteString(text) {
 
 export function expression(text) {
   const result1 = whitespace(text);
-  const lparenResult = lparen(result1.rest);
-  if (lparenResult.value) {
-    const expressionResult = expression(lparenResult.rest);
-    const rparenResult = rparen(expressionResult.rest);
-    if (rparenResult.value) {
-      return {
-        value: expressionResult.value,
-        rest: rparenResult.rest,
-      };
-    } else {
-      return {
-        value: undefined,
-        rest: rparenResult.reset,
-      };
-    }
-  }
   const doubleQuoteResult = doubleQuoteString(result1.rest);
   if (doubleQuoteResult.value) {
     return doubleQuoteResult;
@@ -56,6 +38,10 @@ export function expression(text) {
   const singleQuoteResult = singleQuoteString(result1.rest);
   if (singleQuoteResult.value) {
     return singleQuoteResult;
+  }
+  const groupResult = group(result1.rest);
+  if (groupResult.value) {
+    return groupResult;
   }
   return functionCall(result1.rest);
 }
@@ -68,32 +54,75 @@ export function functionCall(text) {
     const argsResult = args(referenceResult.rest);
     if (argsResult.value) {
       value.push(...argsResult.value);
-      return {
-        value,
-        rest: argsResult.rest,
-      };
     }
+    return {
+      value,
+      rest: argsResult.rest,
+    };
   }
   return referenceResult;
 }
 
+export function group(text) {
+  const result1 = whitespace(text);
+  const lparenResult = lparen(result1.rest);
+  if (lparenResult.value) {
+    const result2 = whitespace(lparenResult.rest);
+    const expressionResult = expression(result2.rest);
+    const result3 = whitespace(expressionResult.rest);
+    const rparenResult = rparen(result3.rest);
+    if (rparenResult.value) {
+      return {
+        value: expressionResult.value,
+        rest: rparenResult.rest,
+      };
+    } else {
+      return rparenResult;
+    }
+  }
+  return lparenResult;
+}
+
+export function indirection(text) {
+  const result1 = whitespace(text);
+  const groupResult = group(result1.rest);
+  if (!groupResult.value) {
+    return groupResult.value;
+  }
+  const result2 = whitespace(groupResult.rest);
+  const argsResult = args(result2.rest);
+  if (!argsResult.value) {
+    return argsResult;
+  }
+  const value = [groupResult.value, ...argsResult.value];
+  return {
+    value,
+    rest: argsResult.rest,
+  };
+}
+
 export function list(text) {
-  const args = [];
   const result1 = whitespace(text);
   let expressionResult = expression(result1.rest);
+  if (!expressionResult.value) {
+    return expressionResult;
+  }
+  const value = [expressionResult.value];
   while (expressionResult.value) {
-    args.push(expressionResult.value);
     const result3 = whitespace(expressionResult.rest);
     const result4 = match(result3.rest, /,/);
     if (result4.value) {
       const result5 = whitespace(result4.rest);
       expressionResult = expression(result5.rest);
+      if (expressionResult.value) {
+        value.push(expressionResult.value);
+      }
     } else {
       expressionResult = { value: undefined, rest: result4.rest };
     }
   }
   return {
-    value: args,
+    value,
     rest: expressionResult.rest,
   };
 }
