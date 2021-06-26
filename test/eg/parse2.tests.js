@@ -4,19 +4,19 @@ import {
   expression,
   functionCall,
   group,
-  indirection,
+  indirectCall,
   list,
+  optionalWhitespace,
   reference,
   singleQuoteString,
   statement,
-  whitespace,
 } from "../../src/eg/parse2.js";
 import assert from "../assert.js";
 
 describe.only("parse2", () => {
   it("whitespace", () => {
-    assert.deepEqual(whitespace("   hello"), {
-      value: "   ",
+    assert.deepEqual(optionalWhitespace("   hello"), {
+      value: null,
       rest: "hello",
     });
   });
@@ -93,9 +93,9 @@ describe.only("parse2", () => {
   });
 
   it("indirect function call", () => {
-    assert.deepEqual(indirection("(fn) 'a'").value, [["fn"], "a"]);
-    assert.deepEqual(indirection("(fn) ('a', 'b')").value, [["fn"], "a", "b"]);
-    assert.deepEqual(indirection("(fn)").value, undefined);
+    assert.deepEqual(indirectCall("(fn) 'a'").value, [["fn"], "a"]);
+    assert.deepEqual(indirectCall("(fn) ('a', 'b')").value, [["fn"], "a", "b"]);
+    assert.deepEqual(indirectCall("(fn)").value, undefined);
   });
 
   it("expression", () => {
@@ -110,7 +110,16 @@ describe.only("parse2", () => {
       "hello",
       "world",
     ]);
+    assert.deepEqual(expression("(fn)('a')").value, [["fn"], "a"]);
     assert.equal(expression("(foo").value, undefined);
+  });
+
+  it("assignment", () => {
+    assert.deepEqual(statement("foo = fn 'bar'").value, [
+      "=",
+      "foo",
+      ["fn", "bar"],
+    ]);
   });
 
   it("statement", () => {

@@ -1,186 +1,183 @@
+/**
+ * Parse statements in the eg language.
+ *
+ * See ReadMe.md for a high-level descripton of the grammar.
+ *
+ * This is a basic parser combinator-based parser: each term in the grammar is
+ * handled by a function that can recognize that type of term at the start of a
+ * text string.
+ *
+ * The result of a parser function is a `{ value, rest }` tuple, in which
+ * `value` is the result of the parse operation. `value` will be `undefined` if
+ * the parser could not recognize the text. The `rest` value is the remaining
+ * text after the parse operation.
+ *
+ * Higher-order combinators handle things like sequences of terms or choices
+ * between possible terms.
+ */
+
+import {
+  any,
+  optional,
+  regex,
+  separatedList,
+  sequence,
+  terminal,
+} from "./combinators.js";
+
+// Parse arguments to a function.
 export function args(text) {
-  const result1 = whitespace(text);
-  const lparenResult = lparen(result1.rest);
-  if (lparenResult.value) {
-    const listResult = list(lparenResult.rest);
-    const result2 = whitespace(listResult.rest);
-    const rparenResult = rparen(result2.rest);
-    if (rparenResult.value) {
-      const value = listResult.value ?? [];
-      return {
-        value,
-        rest: rparenResult.rest,
-      };
-    } else {
-      return rparenResult;
-    }
-  }
-  return list(text);
+  return any(parentheticalArgs, list)(text);
 }
 
+// Parse an assignment statment.
+export function assignment(text) {
+  const result = sequence(
+    optionalWhitespace,
+    reference,
+    optionalWhitespace,
+    terminal(/=/),
+    optionalWhitespace,
+    expression
+  )(text);
+  const value =
+    result.value === undefined
+      ? undefined
+      : ["=", result.value[1], result.value[5]];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a double-quoted string.
 export function doubleQuoteString(text) {
-  const doubleQuoteMatch = match(text, /^"[^\"]*"/);
-  if (doubleQuoteMatch.value) {
-    return {
-      value: doubleQuoteMatch.value.slice(1, -1),
-      rest: doubleQuoteMatch.rest,
-    };
-  }
-  return doubleQuoteMatch;
+  const result = sequence(optionalWhitespace, regex(/^"[^\"]*"/))(text);
+  const value = result.value?.[1].slice(1, -1);
+  return {
+    value,
+    rest: result.rest,
+  };
 }
 
+// Parse an eg expression.
 export function expression(text) {
-  const result1 = whitespace(text);
-  const doubleQuoteResult = doubleQuoteString(result1.rest);
-  if (doubleQuoteResult.value) {
-    return doubleQuoteResult;
-  }
-  const singleQuoteResult = singleQuoteString(result1.rest);
-  if (singleQuoteResult.value) {
-    return singleQuoteResult;
-  }
-  const groupResult = group(result1.rest);
-  if (groupResult.value) {
-    return groupResult;
-  }
-  return functionCall(result1.rest);
+  return any(
+    doubleQuoteString,
+    singleQuoteString,
+    indirectCall,
+    group,
+    functionCall
+  )(text);
 }
 
+// Parse a function call.
 export function functionCall(text) {
-  const result1 = whitespace(text);
-  const referenceResult = reference(result1.rest);
-  if (referenceResult.value) {
-    const value = [referenceResult.value];
-    const argsResult = args(referenceResult.rest);
-    if (argsResult.value) {
-      value.push(...argsResult.value);
-    }
-    return {
-      value,
-      rest: argsResult.rest,
-    };
+  const result = sequence(optionalWhitespace, reference, optional(args))(text);
+  if (result.value === undefined) {
+    return result;
   }
-  return referenceResult;
+  const { 1: fnName, 2: fnArgs } = result.value;
+  let value = [fnName];
+  if (fnArgs) {
+    value.push(...fnArgs);
+  }
+  return {
+    value,
+    rest: result.rest,
+  };
 }
 
+// Parse a parenthetical group.
 export function group(text) {
-  const result1 = whitespace(text);
-  const lparenResult = lparen(result1.rest);
-  if (lparenResult.value) {
-    const result2 = whitespace(lparenResult.rest);
-    const expressionResult = expression(result2.rest);
-    const result3 = whitespace(expressionResult.rest);
-    const rparenResult = rparen(result3.rest);
-    if (rparenResult.value) {
-      return {
-        value: expressionResult.value,
-        rest: rparenResult.rest,
-      };
-    } else {
-      return rparenResult;
-    }
-  }
-  return lparenResult;
-}
-
-export function indirection(text) {
-  const result1 = whitespace(text);
-  const groupResult = group(result1.rest);
-  if (!groupResult.value) {
-    return groupResult.value;
-  }
-  const result2 = whitespace(groupResult.rest);
-  const argsResult = args(result2.rest);
-  if (!argsResult.value) {
-    return argsResult;
-  }
-  const value = [groupResult.value, ...argsResult.value];
+  const result = sequence(
+    optionalWhitespace,
+    lparen,
+    optionalWhitespace,
+    expression,
+    optionalWhitespace,
+    rparen
+  )(text);
+  const value = result.value?.[3]; // the expression
   return {
     value,
-    rest: argsResult.rest,
+    rest: result.rest,
   };
 }
 
+// Parse an indirect function call like `(fn)(arg1, arg2)`.
+export function indirectCall(text) {
+  const result = sequence(
+    optionalWhitespace,
+    group,
+    optionalWhitespace,
+    args
+  )(text);
+  const value = result.value
+    ? [result.value[1], ...result.value[3]] // function and args
+    : undefined;
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a comma-separated list with at least one term.
 export function list(text) {
-  const result1 = whitespace(text);
-  let expressionResult = expression(result1.rest);
-  if (!expressionResult.value) {
-    return expressionResult;
-  }
-  const value = [expressionResult.value];
-  while (expressionResult.value) {
-    const result3 = whitespace(expressionResult.rest);
-    const result4 = match(result3.rest, /,/);
-    if (result4.value) {
-      const result5 = whitespace(result4.rest);
-      expressionResult = expression(result5.rest);
-      if (expressionResult.value) {
-        value.push(expressionResult.value);
-      }
-    } else {
-      expressionResult = { value: undefined, rest: result4.rest };
-    }
-  }
-  return {
-    value,
-    rest: expressionResult.rest,
-  };
+  return separatedList(expression, regex(/,/), optionalWhitespace)(text);
 }
 
+// Parse a left parenthesis.
 function lparen(text) {
-  return match(text, /^\(/);
+  return terminal(/^\(/)(text);
 }
 
-function match(text, regex) {
-  const match = regex.exec(text);
-  const value = match ? match[0] : undefined;
-  const rest = match ? text.slice(value.length) : text;
+// Parse function arguments enclosed in parentheses.
+function parentheticalArgs(text) {
+  const result = sequence(
+    optionalWhitespace,
+    lparen,
+    optionalWhitespace,
+    optional(list),
+    optionalWhitespace,
+    rparen
+  )(text);
+  const listValue = result.value?.[3];
+  const value =
+    listValue === undefined ? undefined : listValue === null ? [] : listValue;
   return {
     value,
-    rest,
+    rest: result.rest,
   };
 }
 
+// Parse a reference to a function, graph, etc.
 export function reference(text) {
   // References are sequences of everything but terminal characters.
-  return match(text, /^[^=\(\)"',\s]+/);
+  return regex(/^[^=\(\)"',\s]+/)(text);
 }
 
+// Parse a right parenthesis.
 function rparen(text) {
-  return match(text, /^\)/);
+  return terminal(/^\)/)(text);
 }
 
+// Parse a single-quoted string.
 export function singleQuoteString(text) {
-  const singleQuoteMatch = match(text, /^'[^\']*'/);
-  if (singleQuoteMatch.value) {
-    return {
-      value: singleQuoteMatch.value.slice(1, -1),
-      rest: singleQuoteMatch.rest,
-    };
-  }
-  return singleQuoteMatch;
+  const result = sequence(optionalWhitespace, regex(/^'[^\']*'/))(text);
+  const value = result.value?.[1].slice(1, -1);
+  return {
+    value,
+    rest: result.rest,
+  };
 }
 
+// Parse an eg statement.
 export function statement(text) {
-  const result1 = whitespace(text);
-  const referenceResult = reference(result1.rest);
-  if (referenceResult.value) {
-    const result2 = whitespace(referenceResult.rest);
-    const equalsResult = match(result2.rest, /=/);
-    if (equalsResult.value) {
-      const expressionResult = expression(equalsResult.rest);
-      if (expressionResult) {
-        const value = ["=", referenceResult.value, expressionResult.value];
-        return {
-          value,
-          rest: expressionResult.rest,
-        };
-      }
-    }
-  }
-  return expression(text);
+  return any(assignment, expression)(text);
 }
 
-export function whitespace(text) {
-  return match(text, /^\s+/);
+// Parse an optional whitespace sequence.
+export function optionalWhitespace(text) {
+  return terminal(/^\s*/)(text);
 }
