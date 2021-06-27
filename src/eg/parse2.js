@@ -52,7 +52,11 @@ export function assignment(text) {
 
 // Parse a double-quoted string.
 export function doubleQuoteString(text) {
-  const result = sequence(optionalWhitespace, regex(/^"[^\"]*"/))(text);
+  const result = sequence(
+    optionalWhitespace,
+    regex(/^"[^\"]*"/),
+    optionalWhitespace
+  )(text);
   const value = result.value?.[1].slice(1, -1);
   return {
     value,
@@ -73,7 +77,12 @@ export function expression(text) {
 
 // Parse a function call.
 export function functionCall(text) {
-  const result = sequence(optionalWhitespace, reference, optional(args))(text);
+  const result = sequence(
+    optionalWhitespace,
+    reference,
+    optional(args),
+    optionalWhitespace
+  )(text);
   if (result.value === undefined) {
     return result;
   }
@@ -96,7 +105,8 @@ export function group(text) {
     optionalWhitespace,
     expression,
     optionalWhitespace,
-    rparen
+    rparen,
+    optionalWhitespace
   )(text);
   const value = result.value?.[3]; // the expression
   return {
@@ -111,7 +121,8 @@ export function indirectCall(text) {
     optionalWhitespace,
     group,
     optionalWhitespace,
-    args
+    args,
+    optionalWhitespace
   )(text);
   const value = result.value
     ? [result.value[1], ...result.value[3]] // function and args
@@ -140,7 +151,8 @@ function parentheticalArgs(text) {
     optionalWhitespace,
     optional(list),
     optionalWhitespace,
-    rparen
+    rparen,
+    optionalWhitespace
   )(text);
   const listValue = result.value?.[3];
   const value =
@@ -164,7 +176,11 @@ function rparen(text) {
 
 // Parse a single-quoted string.
 export function singleQuoteString(text) {
-  const result = sequence(optionalWhitespace, regex(/^'[^\']*'/))(text);
+  const result = sequence(
+    optionalWhitespace,
+    regex(/^'[^\']*'/),
+    optionalWhitespace
+  )(text);
   const value = result.value?.[1].slice(1, -1);
   return {
     value,
