@@ -21,7 +21,7 @@ graph.scope = new Compose(
   graph.scope
 );
 
-describe("FormulasMixin", () => {
+describe.skip("FormulasMixin", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",

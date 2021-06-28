@@ -1,29 +1,31 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
-export default async function execute(linked, graph) {
-  if (linked instanceof Array) {
+export default async function execute(parsed, scope, graph) {
+  if (parsed instanceof Array) {
     // Function
-    const [fnExpression, ...args] = linked;
+    const [fn, ...args] = parsed;
 
-    const fn =
-      fnExpression === "this"
-        ? graph
-        : fnExpression instanceof Array
-        ? await execute(fnExpression)
-        : fnExpression;
+    // Evaluate the function expression
+    const evaluatedFn = await execute(fn, scope, graph);
 
     // Recursively evaluate args.
-    const evaluated = await Promise.all(
-      args.map(async (arg) => await execute(arg, graph))
+    const evalutedArgs = await Promise.all(
+      args.map(async (arg) => await execute(arg, scope, graph))
     );
 
     // Now apply function to the evaluated args.
-    const result = ExplorableGraph.isExplorable(fn)
-      ? await fn.get(...evaluated)
-      : await fn(...evaluated);
+    const result = ExplorableGraph.isExplorable(evaluatedFn)
+      ? await evaluatedFn.get(...evalutedArgs)
+      : typeof evaluatedFn === "function"
+      ? await evaluatedFn(...evalutedArgs)
+      : evalutedArgs.length === 0
+      ? evaluatedFn
+      : undefined;
     return result;
   } else {
-    // Other terminal
-    return linked;
+    // Terminal
+    return parsed === "this"
+      ? graph
+      : (await scope.get(parsed)) ?? (await graph.get(parsed));
   }
 }

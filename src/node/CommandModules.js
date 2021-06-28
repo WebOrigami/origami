@@ -11,8 +11,4 @@ export default class CommandModules extends Transform {
   async outerKeyForInnerKey(innerKey) {
     return path.basename(innerKey, ".js");
   }
-
-  async transform(module) {
-    return module.default;
-  }
 }

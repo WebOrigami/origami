@@ -13,7 +13,7 @@ import {
 } from "../../src/eg/parse2.js";
 import assert from "../assert.js";
 
-describe.only("parse2", () => {
+describe("parse2", () => {
   it("whitespace", () => {
     assert.deepEqual(optionalWhitespace("   hello"), {
       value: null,

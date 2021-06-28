@@ -21,6 +21,6 @@ export { default as evaluate } from "./src/eg/evaluate.js";
 export { default as CommandModules } from "./src/node/CommandModules.js";
 export { default as CommonFileTypesMixin } from "./src/node/CommonFileTypesMixin.js";
 export { default as ExplorableFiles } from "./src/node/ExplorableFiles.js";
-export { default as JavaScriptModuleFiles } from "./src/node/JavaScriptModuleFiles.js";
+export { default as JavaScriptModuleFiles } from "./src/node/ModulesDefaultExportMixin.js";
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
 export * from "./src/server/server.js";

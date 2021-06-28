@@ -1,4 +1,5 @@
 import path from "path";
+import YAML from "yaml";
 
 const textFileExtensions = {
   ".htm": true,
@@ -20,6 +21,8 @@ export default function CommonFileTypesMixin(Base) {
         const extname = path.extname(lastKey).toLowerCase();
         if (extname === ".json") {
           value = JSON.parse(String(value));
+        } else if (extname === ".yaml") {
+          value = YAML.parse(String(value));
         } else if (textFileExtensions[extname]) {
           value = String(value);
         }

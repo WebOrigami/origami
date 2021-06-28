@@ -3,7 +3,6 @@
 import process from "process";
 import evaluate from "../../src/eg/evaluate.js";
 import config from "./commands/config.js";
-import files from "./commands/files.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -11,8 +10,10 @@ async function main(...args) {
   const source = args.join(" ").trim();
   if (!source) {
     await showUsage(scope);
+    return;
   }
-  const context = await files();
+  const defaultGraph = await scope.get("defaultGraph");
+  const context = await defaultGraph();
   const result = await evaluate(source, scope, context);
   if (result !== undefined) {
     const stdout = await scope.get("stdout");
