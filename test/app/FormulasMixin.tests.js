@@ -21,30 +21,21 @@ graph.scope = new Compose(
   graph.scope
 );
 
-describe.skip("FormulasMixin", () => {
+describe("FormulasMixin", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",
+      "obj",
       "sample.txt",
-      "sampleJson",
+      "string",
       "value",
     ]);
   });
 
   it("can get the value of a virtual key", async () => {
-    const value = await graph.get("sampleJson");
-    assert(ExplorableGraph.isExplorable(value));
-    assert.deepEqual(await ExplorableGraph.plain(value), {
-      a: "Hello, a.",
-      b: "Hello, b.",
-      c: "Hello, c.",
-    });
-    assert.equal(await graph.get("sampleJson", "a"), "Hello, a.");
-  });
-
-  it("can generate a value by calling a function exported by a module", async () => {
-    const fn = await graph.get("sample.txt");
-    assert.equal(fn(), "Hello, world.");
+    const buffer = await graph.get("string");
+    const json = JSON.parse(String(buffer));
+    assert.equal(json, "Hello, world.");
   });
 
   it("can produce a value using a function", async () => {

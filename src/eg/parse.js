@@ -40,10 +40,20 @@ export function assignment(text) {
     optionalWhitespace,
     expression
   )(text);
-  const value =
-    result.value === undefined
-      ? undefined
-      : ["=", result.value[1], result.value[5]];
+  if (!result.value) {
+    return result;
+  }
+  let { 1: left, 5: right } = result.value;
+  // Handle special case where right side is just a file extension.
+  const isExtension =
+    right.length === 1 &&
+    typeof right[0] === "string" &&
+    /^\.\S+$/.test(right[0]);
+  if (isExtension) {
+    // Use entire text as a file name.
+    right = text;
+  }
+  const value = ["=", left, right];
   return {
     value,
     rest: result.rest,

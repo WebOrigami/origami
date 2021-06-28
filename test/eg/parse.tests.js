@@ -125,6 +125,14 @@ describe("parse", () => {
     ]);
   });
 
+  it("assignment with file extension as right-hand side", () => {
+    assert.deepEqual(statement("foo = .json").value, [
+      "=",
+      "foo",
+      "foo = .json",
+    ]);
+  });
+
   it("statement", () => {
     assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
     assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);
