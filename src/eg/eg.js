@@ -3,7 +3,7 @@
 import process from "process";
 import execute from "../../src/eg/execute.js";
 import config from "./commands/config.js";
-import { parse } from "./parse2.js";
+import { parse } from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {

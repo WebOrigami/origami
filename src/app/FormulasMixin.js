@@ -3,7 +3,6 @@ import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import builtins from "../eg/builtins.js";
 import execute from "../eg/execute.js";
-import link from "../eg/link.js";
 import parse from "../eg/parse.js";
 
 export default function FormulasMixin(Base) {
@@ -42,8 +41,9 @@ export default function FormulasMixin(Base) {
       const [key, ...rest] = keys;
       const formulas = await this.formulas();
       const formula = formulas[key];
+      const scope = this.scope;
       if (formula) {
-        const value = await execute(formula, this);
+        const value = await execute(formula, scope, this);
         return ExplorableGraph.isExplorable(value) && rest.length > 0
           ? await value.get(...rest)
           : value;
@@ -55,7 +55,6 @@ export default function FormulasMixin(Base) {
     async refresh() {
       this.#keys = [];
       this.#formulas = {};
-      const scope = this.scope;
       for await (const baseKey of super[Symbol.asyncIterator]()) {
         // Try to parse the base key as an expression.
         const parsed = parse(baseKey);
@@ -63,8 +62,7 @@ export default function FormulasMixin(Base) {
         if (isFormula) {
           const left = parsed[1];
           const right = parsed[2];
-          const linked = await link(right, scope);
-          this.#formulas[left] = linked;
+          this.#formulas[left] = right;
           this.#keys.push(left);
         } else {
           this.#keys.push(baseKey);

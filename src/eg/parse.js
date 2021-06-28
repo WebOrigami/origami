@@ -168,7 +168,7 @@ function parentheticalArgs(text) {
 }
 
 // Top-level parse function parses a statement and returns just the value.
-export function parse(text) {
+export default function parse(text) {
   const result = statement(text);
   return result.value;
 }

@@ -1,128 +1,132 @@
-import parse from "../../src/eg/parse.js";
+import {
+  args,
+  doubleQuoteString,
+  expression,
+  functionCall,
+  group,
+  indirectCall,
+  list,
+  optionalWhitespace,
+  reference,
+  singleQuoteString,
+  statement,
+} from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
 describe("parse", () => {
-  it("parses text as text", () => {
-    const parsed = parse("hello");
-    assert.equal(parsed, "hello");
+  it("whitespace", () => {
+    assert.deepEqual(optionalWhitespace("   hello"), {
+      value: null,
+      rest: "hello",
+    });
   });
 
-  it("parses a function call", () => {
-    const parsed = parse(` fn("arg")`);
-    assert.deepEqual(parsed, ["fn", "arg"]);
+  it("reference", () => {
+    assert.deepEqual(reference("hello"), {
+      value: "hello",
+      rest: "",
+    });
+    assert.equal(reference("").value, undefined);
+    assert.equal(reference("()").value, undefined);
   });
 
-  it("can parse a function call with multiple arguments", () => {
-    const parsed = parse(`fn("a", "b", "c")`);
-    assert.deepEqual(parsed, ["fn", "a", "b", "c"]);
-  });
-
-  it("parses nested function calls", () => {
-    const parsed = parse("a(b(c()))");
-    assert.deepEqual(parsed, ["a", ["b", ["c"]]]);
-  });
-
-  it("parses function calls without parenthesis", () => {
-    assert.deepEqual(parse("fn"), ["fn"]);
-    assert.deepEqual(parse("fn 'arg'"), ["fn", "arg"]);
-    assert.deepEqual(parse("fn 'arg1', 'arg2'"), ["fn", "arg1", "arg2"]);
-    assert.deepEqual(parse("fn1 fn2 fn3"), ["fn1", ["fn2", ["fn3"]]]);
-  });
-
-  it.skip("parses a function with an initial parenthesis group", () => {
-    assert.deepEqual(parse("(fn) 'a', 'b'"), [["fn"], "a", "b"]);
-  });
-
-  it("parses a module import", () => {
-    const parsed = parse("foo.js");
-    assert.deepEqual(parsed, [
-      "defaultModuleExport",
-      ["resolvePath", "foo.js"],
+  it("list", () => {
+    assert.equal(list("").value, undefined);
+    assert.deepEqual(list(" a"), {
+      value: [["a"]],
+      rest: "",
+    });
+    assert.deepEqual(list(" a , b,c, d , e").value, [
+      ["a"],
+      ["b"],
+      ["c"],
+      ["d"],
+      ["e"],
+    ]);
+    assert.deepEqual(list(`"foo", "bar"`).value, [
+      ["quote", "foo"],
+      ["quote", "bar"],
     ]);
   });
 
-  it("parses a JSON file import", () => {
-    const parsed = parse("foo.json");
-    assert.deepEqual(parsed, [
-      "parseJson",
-      ["file", ["resolvePath", "foo.json"]],
+  it("args", () => {
+    assert.deepEqual(args("a, b, c"), {
+      value: [["a"], ["b"], ["c"]],
+      rest: "",
+    });
+    assert.deepEqual(args("(a, b, c)"), {
+      value: [["a"], ["b"], ["c"]],
+      rest: "",
+    });
+    assert.deepEqual(args("()").value, []);
+    assert.deepEqual(args("").value, undefined);
+  });
+
+  it("double-quote string", () => {
+    assert.deepEqual(doubleQuoteString(`"hello"`).value, ["quote", "hello"]);
+  });
+
+  it("single-quote string", () => {
+    assert.deepEqual(singleQuoteString(`'hello'`).value, ["quote", "hello"]);
+  });
+
+  it("function call", () => {
+    assert.deepEqual(functionCall("fn"), {
+      value: ["fn"],
+      rest: "",
+    });
+    assert.deepEqual(functionCall("fn('a', 'b')"), {
+      value: ["fn", ["quote", "a"], ["quote", "b"]],
+      rest: "",
+    });
+    assert.deepEqual(functionCall("fn 'a', 'b'"), {
+      value: ["fn", ["quote", "a"], ["quote", "b"]],
+      rest: "",
+    });
+    assert.deepEqual(functionCall("fn a, b"), {
+      value: ["fn", ["a"], ["b"]],
+      rest: "",
+    });
+  });
+
+  it("group", () => {
+    assert.deepEqual(group(" ( hello )").value, ["hello"]);
+    assert.deepEqual(group("(((nested)))").value, ["nested"]);
+    assert.equal(group("(").value, undefined);
+  });
+
+  it("indirect function call", () => {
+    assert.deepEqual(indirectCall("(fn) 'a'").value, [["fn"], ["quote", "a"]]);
+    assert.deepEqual(indirectCall("(fn) (a, b)").value, [["fn"], ["a"], ["b"]]);
+    assert.deepEqual(indirectCall("(fn)").value, undefined);
+  });
+
+  it("expression", () => {
+    assert.deepEqual(expression("(fn a, b, c)").value, [
+      "fn",
+      ["a"],
+      ["b"],
+      ["c"],
     ]);
-  });
-
-  it("parses a YAML file import", () => {
-    const parsed = parse("foo.yaml");
-    assert.deepEqual(parsed, [
-      "parseYaml",
-      ["file", ["resolvePath", "foo.yaml"]],
+    assert.deepEqual(expression("foo.bar( 'hello' , 'world' )").value, [
+      "foo.bar",
+      ["quote", "hello"],
+      ["quote", "world"],
     ]);
+    assert.deepEqual(expression("(fn)('a')").value, [["fn"], ["quote", "a"]]);
+    assert.equal(expression("(foo").value, undefined);
   });
 
-  it("parses a single-quoted string", () => {
-    const parsed = parse(`'Hello, world.'`);
-    assert.deepEqual(parsed, "Hello, world.");
-  });
-
-  it("parses a double-quoted string", () => {
-    const parsed = parse(`"Hello, world."`);
-    assert.deepEqual(parsed, "Hello, world.");
-  });
-
-  it("parses a quoted string argument", () => {
-    const parsed = parse(`foo("Hello, world.")`);
-    assert.deepEqual(parsed, ["foo", "Hello, world."]);
-  });
-
-  it("parses a URL", () => {
-    assert.deepEqual(parse("//foo/bar"), ["site", "//foo/bar"]);
-    assert.deepEqual(parse("https://example.com"), [
-      "site",
-      "https://example.com",
-    ]);
-  });
-
-  it("parses a path", () => {
-    assert.deepEqual(parse("file.txt"), "file.txt");
-    assert.deepEqual(parse("foo bar.txt"), ["foo", "bar.txt"]); // contains whitespace
-    assert.deepEqual(parse("./file.txt"), "./file.txt");
-    assert.deepEqual(parse("fn(foo)"), ["fn", ["foo"]]);
-    assert.deepEqual(parse("fn(./foo)"), ["fn", "./foo"]);
-  });
-
-  it("parses an assignment", () => {
-    assert.deepEqual(parse("a = b"), ["=", "a", ["b"]]);
-    assert.deepEqual(parse("a="), ["=", "a"]); // Unbound assignment
-    assert.deepEqual(parse("foo = fn bar.txt"), [
+  it("assignment", () => {
+    assert.deepEqual(statement("foo = fn 'bar'").value, [
       "=",
       "foo",
-      ["fn", "bar.txt"],
+      ["fn", ["quote", "bar"]],
     ]);
   });
 
-  it("parses an assignment with a file extension", () => {
-    assert.deepEqual(parse("a=.js"), [
-      "=",
-      "a",
-      ["defaultModuleExport", ["resolvePath", "a=.js"]],
-    ]);
-    assert.deepEqual(parse("foo =.js"), [
-      "=",
-      "foo",
-      ["defaultModuleExport", ["resolvePath", "foo =.js"]],
-    ]);
-    assert.deepEqual(parse("foo =.json"), [
-      "=",
-      "foo",
-      ["parseJson", ["file", ["resolvePath", "foo =.json"]]],
-    ]);
-    assert.deepEqual(parse("foo = .yaml"), [
-      "=",
-      "foo",
-      ["parseYaml", ["file", ["resolvePath", "foo = .yaml"]]],
-    ]);
-  });
-
-  it("parses a parentheical group", () => {
-    assert.deepEqual(parse("(fn)"), ["fn"]);
-    assert.deepEqual(parse("fn (('text'))"), ["fn", "text"]);
+  it("statement", () => {
+    assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
+    assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);
   });
 });

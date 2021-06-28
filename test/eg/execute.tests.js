@@ -18,10 +18,11 @@ describe("execute", () => {
     assert.equal(result, "Hello world");
   });
 
-  it.skip("can use `this` to reference the current graph", async () => {
-    const linked = ["this"];
+  it("can use `this` to reference the current graph", async () => {
+    const parsed = ["this"];
+    const scope = new ExplorableObject({});
     const graph = new ExplorableObject({});
-    const result = await execute(linked, graph);
+    const result = await execute(parsed, scope, graph);
     assert.equal(result, graph);
   });
 });
