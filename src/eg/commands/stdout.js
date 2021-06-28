@@ -1,7 +1,12 @@
 import yaml from "./yaml.js";
 
 export default async function stdout(obj) {
-  const output = typeof obj === "string" ? obj : await yaml(obj);
+  const output =
+    obj === undefined
+      ? "undefined"
+      : typeof obj === "string"
+      ? obj
+      : await yaml(obj);
   console.log(output);
 }
 

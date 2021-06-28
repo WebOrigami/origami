@@ -1,5 +1,3 @@
-import path from "path";
-import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import builtins from "../eg/builtins.js";
 import execute from "../eg/execute.js";
@@ -9,19 +7,7 @@ export default function FormulasMixin(Base) {
   return class Formulas extends Base {
     #keys;
     #formulas;
-    #scope;
-
-    constructor(dirname) {
-      super(dirname);
-      this.scope = new Compose(
-        {
-          resolvePath(relativePath) {
-            return path.resolve(dirname, relativePath);
-          },
-        },
-        builtins
-      );
-    }
+    #scope = builtins;
 
     async *[Symbol.asyncIterator]() {
       if (!this.#keys) {

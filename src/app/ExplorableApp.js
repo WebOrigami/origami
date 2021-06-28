@@ -9,13 +9,17 @@ import FormulasMixin from "./FormulasMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 import WildcardKeysMixin from "./WildcardKeysMixin.js";
 
-class AppGraph extends CommonFileTypesMixin(
-  ModulesDefaultExportMixin(
-    WildcardKeysMixin(VirtualKeysMixin(FormulasMixin(ExplorableFiles)))
+class AppGraph extends WildcardKeysMixin(
+  VirtualKeysMixin(
+    FormulasMixin(
+      CommonFileTypesMixin(ModulesDefaultExportMixin(ExplorableFiles))
+    )
   )
 ) {}
 
 export default class ExplorableApp extends DefaultValues {
+  #main;
+
   constructor(dirname) {
     const main = new AppGraph(dirname);
     const defaults = {
@@ -23,5 +27,13 @@ export default class ExplorableApp extends DefaultValues {
       "index.html": defaultIndexHtml,
     };
     super(main, defaults);
+    this.#main = main;
+  }
+
+  get scope() {
+    return this.#main.scope;
+  }
+  set scope(scope) {
+    this.#main.scope = scope;
   }
 }
