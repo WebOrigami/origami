@@ -167,6 +167,12 @@ function parentheticalArgs(text) {
   };
 }
 
+// Top-level parse function parses a statement and returns just the value.
+export function parse(text) {
+  const result = statement(text);
+  return result.value;
+}
+
 // Parse a reference to a function, graph, etc.
 export function reference(text) {
   // References are sequences of everything but terminal characters.

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import process from "process";
-import evaluate from "../../src/eg/evaluate.js";
+import execute from "../../src/eg/execute.js";
 import config from "./commands/config.js";
+import { parse } from "./parse2.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -14,7 +15,13 @@ async function main(...args) {
   }
   const defaultGraph = await scope.get("defaultGraph");
   const context = await defaultGraph();
-  const result = await evaluate(source, scope, context);
+  const parsed = parse(source);
+  console.log(JSON.stringify(parsed));
+  if (!parsed) {
+    console.error(`Could not recognize command: ${source}`);
+    return;
+  }
+  const result = await execute(parsed, scope, context);
   const stdout = await scope.get("stdout");
   await stdout(result);
 }
