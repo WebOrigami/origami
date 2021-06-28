@@ -15,12 +15,8 @@ async function main(...args) {
   const defaultGraph = await scope.get("defaultGraph");
   const context = await defaultGraph();
   const result = await evaluate(source, scope, context);
-  if (result !== undefined) {
-    const stdout = await scope.get("stdout");
-    if (stdout) {
-      await stdout(result);
-    }
-  }
+  const stdout = await scope.get("stdout");
+  await stdout(result);
 }
 
 // Process command line arguments

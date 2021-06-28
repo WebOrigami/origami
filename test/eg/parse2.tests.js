@@ -43,7 +43,10 @@ describe("parse2", () => {
       ["d"],
       ["e"],
     ]);
-    assert.deepEqual(list(`"foo", "bar"`).value, ["foo", "bar"]);
+    assert.deepEqual(list(`"foo", "bar"`).value, [
+      ["quote", "foo"],
+      ["quote", "bar"],
+    ]);
   });
 
   it("args", () => {
@@ -60,11 +63,11 @@ describe("parse2", () => {
   });
 
   it("double-quote string", () => {
-    assert.deepEqual(doubleQuoteString(`"hello"`).value, "hello");
+    assert.deepEqual(doubleQuoteString(`"hello"`).value, ["quote", "hello"]);
   });
 
   it("single-quote string", () => {
-    assert.deepEqual(singleQuoteString(`'hello'`).value, "hello");
+    assert.deepEqual(singleQuoteString(`'hello'`).value, ["quote", "hello"]);
   });
 
   it("function call", () => {
@@ -73,11 +76,11 @@ describe("parse2", () => {
       rest: "",
     });
     assert.deepEqual(functionCall("fn('a', 'b')"), {
-      value: ["fn", "a", "b"],
+      value: ["fn", ["quote", "a"], ["quote", "b"]],
       rest: "",
     });
     assert.deepEqual(functionCall("fn 'a', 'b'"), {
-      value: ["fn", "a", "b"],
+      value: ["fn", ["quote", "a"], ["quote", "b"]],
       rest: "",
     });
     assert.deepEqual(functionCall("fn a, b"), {
@@ -93,8 +96,8 @@ describe("parse2", () => {
   });
 
   it("indirect function call", () => {
-    assert.deepEqual(indirectCall("(fn) 'a'").value, [["fn"], "a"]);
-    assert.deepEqual(indirectCall("(fn) ('a', 'b')").value, [["fn"], "a", "b"]);
+    assert.deepEqual(indirectCall("(fn) 'a'").value, [["fn"], ["quote", "a"]]);
+    assert.deepEqual(indirectCall("(fn) (a, b)").value, [["fn"], ["a"], ["b"]]);
     assert.deepEqual(indirectCall("(fn)").value, undefined);
   });
 
@@ -107,10 +110,10 @@ describe("parse2", () => {
     ]);
     assert.deepEqual(expression("foo.bar( 'hello' , 'world' )").value, [
       "foo.bar",
-      "hello",
-      "world",
+      ["quote", "hello"],
+      ["quote", "world"],
     ]);
-    assert.deepEqual(expression("(fn)('a')").value, [["fn"], "a"]);
+    assert.deepEqual(expression("(fn)('a')").value, [["fn"], ["quote", "a"]]);
     assert.equal(expression("(foo").value, undefined);
   });
 
@@ -118,12 +121,12 @@ describe("parse2", () => {
     assert.deepEqual(statement("foo = fn 'bar'").value, [
       "=",
       "foo",
-      ["fn", "bar"],
+      ["fn", ["quote", "bar"]],
     ]);
   });
 
   it("statement", () => {
-    assert.deepEqual(statement("fn('foo')").value, ["fn", "foo"]);
+    assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
     assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);
   });
 });

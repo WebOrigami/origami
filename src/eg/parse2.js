@@ -57,7 +57,11 @@ export function doubleQuoteString(text) {
     regex(/^"[^\"]*"/),
     optionalWhitespace
   )(text);
-  const value = result.value?.[1].slice(1, -1);
+  if (!result.value) {
+    return result;
+  }
+  const quotedText = result.value[1].slice(1, -1);
+  const value = ["quote", quotedText];
   return {
     value,
     rest: result.rest,
@@ -181,7 +185,11 @@ export function singleQuoteString(text) {
     regex(/^'[^\']*'/),
     optionalWhitespace
   )(text);
-  const value = result.value?.[1].slice(1, -1);
+  if (!result.value) {
+    return result;
+  }
+  const quotedText = result.value[1].slice(1, -1);
+  const value = ["quote", quotedText];
   return {
     value,
     rest: result.rest,

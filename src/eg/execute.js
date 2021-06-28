@@ -8,6 +8,11 @@ export default async function execute(parsed, scope, graph) {
     // Evaluate the function expression
     const evaluatedFn = await execute(fn, scope, graph);
 
+    if (fn === "quote") {
+      // Don't evaluate quoted arg.
+      return args[0];
+    }
+
     // Recursively evaluate args.
     const evalutedArgs = await Promise.all(
       args.map(async (arg) => await execute(arg, scope, graph))

@@ -5,6 +5,8 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 export default async function yaml(obj) {
   const plain = ExplorableGraph.isExplorable(obj)
     ? await ExplorableGraph.plain(strings(obj))
+    : obj instanceof Buffer
+    ? String(obj)
     : obj;
   const text = YAML.stringify(plain);
   return text;
