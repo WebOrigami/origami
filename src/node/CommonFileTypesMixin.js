@@ -1,6 +1,5 @@
 import path from "path";
 import YAML from "yaml";
-import ExplorableObject from "../core/ExplorableObject.js";
 
 const textFileExtensions = {
   ".htm": true,
@@ -22,10 +21,8 @@ export default function CommonFileTypesMixin(Base) {
         const extname = path.extname(lastKey).toLowerCase();
         if (extname === ".json") {
           value = JSON.parse(String(value));
-          value = new ExplorableObject(value);
         } else if (extname === ".yaml") {
           value = YAML.parse(String(value));
-          value = new ExplorableObject(value);
         } else if (textFileExtensions[extname]) {
           value = String(value);
         }

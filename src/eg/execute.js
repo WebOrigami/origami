@@ -1,16 +1,22 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../core/ExplorableObject.js";
+import { isPlainObject } from "../core/utilities.js";
 
 export default async function execute(parsed, scope, graph) {
   if (parsed instanceof Array) {
     // Function
     const [fn, ...args] = parsed;
 
-    // Evaluate the function expression
-    const evaluatedFn = await execute(fn, scope, graph);
-
     if (fn === "quote") {
-      // Don't evaluate quoted arg.
+      // Don't evaluate, return argument as is.
       return args[0];
+    }
+
+    // Evaluate the function expression
+    let evaluatedFn = await execute(fn, scope, graph);
+    if (isPlainObject(evaluatedFn)) {
+      // Got an object, cast to a graph.
+      evaluatedFn = new ExplorableObject(evaluatedFn);
     }
 
     // Recursively evaluate args.
