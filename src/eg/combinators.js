@@ -69,7 +69,7 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
     while (termResult.value) {
       const whitespace2 = whitespaceParser(termResult.rest);
       const separatorResult = separatorParser(whitespace2.rest);
-      if (separatorResult.value) {
+      if (separatorResult.value !== undefined) {
         const whitespace3 = whitespaceParser(separatorResult.rest);
         termResult = termParser(whitespace3.rest);
         if (termResult.value) {

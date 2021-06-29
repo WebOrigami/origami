@@ -36,7 +36,7 @@ export function assignment(text) {
     optionalWhitespace,
     reference,
     optionalWhitespace,
-    terminal(/=/),
+    terminal(/^=/),
     optionalWhitespace,
     expression
   )(text);
@@ -149,7 +149,7 @@ export function indirectCall(text) {
 
 // Parse a comma-separated list with at least one term.
 export function list(text) {
-  return separatedList(expression, regex(/,/), optionalWhitespace)(text);
+  return separatedList(expression, terminal(/^,/), optionalWhitespace)(text);
 }
 
 // Parse a left parenthesis.

@@ -47,6 +47,7 @@ describe("parse", () => {
       ["quote", "foo"],
       ["quote", "bar"],
     ]);
+    assert.deepEqual(list("a(b), c").value, [["a", ["b"]], ["c"]]);
   });
 
   it("args", () => {
@@ -85,6 +86,10 @@ describe("parse", () => {
     });
     assert.deepEqual(functionCall("fn a, b"), {
       value: ["fn", ["a"], ["b"]],
+      rest: "",
+    });
+    assert.deepEqual(functionCall("fn a(b), c"), {
+      value: ["fn", ["a", ["b"]], ["c"]],
       rest: "",
     });
   });
