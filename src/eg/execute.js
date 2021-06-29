@@ -14,8 +14,9 @@ export default async function execute(parsed, scope, graph) {
 
     // Evaluate the function expression
     let evaluatedFn = await execute(fn, scope, graph);
-    if (isPlainObject(evaluatedFn)) {
-      // Got an object, cast to a graph.
+    if (isPlainObject(evaluatedFn) && args.length > 0) {
+      // Code wants to apply a graph-castable object as a function, so cast it
+      // to a graph.
       evaluatedFn = new ExplorableObject(evaluatedFn);
     }
 
