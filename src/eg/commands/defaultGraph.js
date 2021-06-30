@@ -1,9 +1,9 @@
 import path from "path";
-import CommonFileTypesMixin from "../../node/CommonFileTypesMixin.js";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
+import FileLoadersMixin from "../../node/FileLoadersMixin.js";
 import JavaScriptModuleFiles from "../../node/ModulesDefaultExportMixin.js";
 
-class DefaultGraph extends CommonFileTypesMixin(
+class DefaultGraph extends FileLoadersMixin(
   JavaScriptModuleFiles(ExplorableFiles)
 ) {}
 

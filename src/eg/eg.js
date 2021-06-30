@@ -18,7 +18,7 @@ async function main(...args) {
   const parsed = parse(source);
   console.log(JSON.stringify(parsed));
   if (!parsed) {
-    console.error(`Could not recognize command: ${source}`);
+    console.error(`eg: could not recognize command: ${source}`);
     return;
   }
   const result = await execute(parsed, scope, context);
