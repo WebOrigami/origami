@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
-import { ExplorableSite } from "../../exports.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableSite from "../../src/core/ExplorableSite.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

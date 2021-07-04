@@ -8,7 +8,6 @@ export { default as Cache } from "./src/common/Cache.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
 export { default as InvokeFunctionsMixin } from "./src/common/InvokeFunctionsMixin.js";
-export { default as Transform } from "./src/common/Transform.js";
 export { default as ExplorableFunction } from "./src/core/ExplorableFunction.js";
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
