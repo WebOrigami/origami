@@ -7,7 +7,7 @@ export default async function showUsage(commands) {
     const command = await commands.get(key);
     let usage = command?.usage;
     if (!usage) {
-      usage = typeof command === "function" ? `${key}()` : key;
+      usage = typeof command === "function" ? defaultUsage(key, command) : key;
     }
     usages.push(usage);
   }
@@ -38,4 +38,13 @@ export default async function showUsage(commands) {
   );
 
   console.log(formatted.join("\n"));
+}
+
+function defaultUsage(name, fn) {
+  const arity = fn.length;
+  let args = [];
+  for (let i = 0; i < arity; i++) {
+    args.push(`arg${i + 1}`);
+  }
+  return `${name}(${args.join(", ")})`;
 }
