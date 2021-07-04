@@ -20,6 +20,6 @@ export { default as dot } from "./src/eg/commands/dot.js";
 export { default as CommandModules } from "./src/node/CommandModules.js";
 export { default as ExplorableFiles } from "./src/node/ExplorableFiles.js";
 export { default as FileLoadersMixin } from "./src/node/FileLoadersMixin.js";
-export { default as JavaScriptModuleFiles } from "./src/node/ModulesDefaultExportMixin.js";
+export { default as ModulesDefaultExportMixin } from "./src/node/ModulesDefaultExportMixin.js";
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
 export * from "./src/server/server.js";
