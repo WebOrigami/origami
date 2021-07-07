@@ -42,9 +42,15 @@ export default async function showUsage(commands) {
 
 function defaultUsage(name, fn) {
   const arity = fn.length;
-  let args = [];
-  for (let i = 0; i < arity; i++) {
-    args.push(`arg${i + 1}`);
+  if (arity === 0) {
+    return `${name}()`;
+  } else if (arity === 1) {
+    return `${name}(arg)`;
+  } else {
+    let args = [];
+    for (let i = 0; i < arity; i++) {
+      args.push(`arg${i + 1}`);
+    }
+    return `${name}(${args.join(", ")})`;
   }
-  return `${name}(${args.join(", ")})`;
 }
