@@ -11,14 +11,14 @@ export default function FormulasMixin(Base) {
 
     async *[Symbol.asyncIterator]() {
       if (!this.#keys) {
-        await this.refresh();
+        await this.#refresh();
       }
       yield* this.#keys;
     }
 
     async formulas() {
       if (!this.#formulas) {
-        await this.refresh();
+        await this.#refresh();
       }
       return this.#formulas;
     }
@@ -38,7 +38,7 @@ export default function FormulasMixin(Base) {
       }
     }
 
-    async refresh() {
+    async #refresh() {
       this.#keys = [];
       this.#formulas = {};
       for await (const baseKey of super[Symbol.asyncIterator]()) {

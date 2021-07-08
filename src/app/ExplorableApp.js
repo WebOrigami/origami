@@ -6,12 +6,17 @@ import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 // import VirtualValuesMixin from "./VirtualValuesMixin.js";
 import FormulasMixin from "./FormulasMixin.js";
+import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 import WildcardKeysMixin from "./WildcardKeysMixin.js";
 
 class AppGraph extends WildcardKeysMixin(
-  VirtualKeysMixin(
-    FormulasMixin(FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles)))
+  SplatKeysMixin(
+    VirtualKeysMixin(
+      FormulasMixin(
+        FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
+      )
+    )
   )
 ) {}
 
