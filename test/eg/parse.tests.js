@@ -138,6 +138,14 @@ describe("parse", () => {
     ]);
   });
 
+  it("assignment to splat on left with file extension on right", () => {
+    assert.deepEqual(statement("...graph = .js").value, [
+      "=",
+      "...graph",
+      "...graph = .js",
+    ]);
+  });
+
   it("statement", () => {
     assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
     assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);

@@ -13,15 +13,11 @@ export default function SplatKeysMixin(Base) {
       for await (const key of super[Symbol.asyncIterator]()) {
         const isSplatKey = key.startsWith(splatKeyPrefix);
         if (isSplatKey) {
-          let innerGraph;
-          if (updateSplatGraphs) {
-            innerGraph = await super.get(key);
-            this.#splatGraphs[key] = innerGraph;
-          } else {
-            innerGraph = this.#splatGraphs[key];
+          if (this.#splatGraphs[key] === undefined) {
+            this.#splatGraphs[key] = await super.get(key);
           }
           // Return keys of splat graph in place of splat key.
-          for await (const innerKey of innerGraph) {
+          for await (const innerKey of this.#splatGraphs[key]) {
             results.push(innerKey);
           }
         } else {
@@ -32,10 +28,6 @@ export default function SplatKeysMixin(Base) {
     }
 
     async get(...keys) {
-      if (keys?.[0].startsWith(splatKeyPrefix)) {
-        return undefined;
-      }
-
       const value = await super.get(...keys);
       if (value !== undefined) {
         return value;

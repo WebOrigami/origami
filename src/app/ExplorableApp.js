@@ -1,6 +1,8 @@
 import DefaultValues from "../../src/common/DefaultValues.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import FileLoadersMixin from "../../src/node/FileLoadersMixin.js";
+// import WildcardKeysMixin from "./WildcardKeysMixin.js";
+import InvokeFunctionsMixin from "../common/InvokeFunctionsMixin.js";
 import ModulesDefaultExportMixin from "../node/ModulesDefaultExportMixin.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
@@ -8,9 +10,8 @@ import defaultKeysJson from "./defaultKeysJson.js";
 import FormulasMixin from "./FormulasMixin.js";
 import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
-import WildcardKeysMixin from "./WildcardKeysMixin.js";
 
-class AppGraph extends WildcardKeysMixin(
+class AppGraph extends InvokeFunctionsMixin /* WildcardKeysMixin */(
   SplatKeysMixin(
     VirtualKeysMixin(
       FormulasMixin(

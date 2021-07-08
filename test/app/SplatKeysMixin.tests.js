@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe.only("SplatKeysMixin", () => {
+describe("SplatKeysMixin", () => {
   it("treats values inside subgraphs marked by `...` splat keys as if part of main graph", async () => {
     const graph = new (SplatKeysMixin(ExplorableObject))({
       a: 1,
