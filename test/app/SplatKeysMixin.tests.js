@@ -7,7 +7,7 @@ describe("SplatKeysMixin", () => {
   it("treats values inside subgraphs marked by `...` splat keys as if part of main graph", async () => {
     const graph = new (SplatKeysMixin(ExplorableObject))({
       a: 1,
-      "...": new ExplorableObject({
+      "test...": new ExplorableObject({
         b: 2,
         c: 3,
       }),

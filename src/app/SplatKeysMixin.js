@@ -1,4 +1,4 @@
-const splatKeyPrefix = "...";
+const splatKeySuffix = "...";
 
 export default function SplatKeysMixin(Base) {
   return class SplatKeys extends Base {
@@ -11,7 +11,7 @@ export default function SplatKeysMixin(Base) {
       }
       const results = [];
       for await (const key of super[Symbol.asyncIterator]()) {
-        const isSplatKey = key.startsWith(splatKeyPrefix);
+        const isSplatKey = key.endsWith(splatKeySuffix);
         if (isSplatKey) {
           if (this.#splatGraphs[key] === undefined) {
             this.#splatGraphs[key] = await super.get(key);
