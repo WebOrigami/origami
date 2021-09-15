@@ -8,7 +8,7 @@ export default class ExplorableFunction {
     yield* this.keys;
   }
 
-  async get(...args) {
-    return await this.fn(...args);
+  async get(...keys) {
+    return keys.length === 0 ? this : await this.fn(...keys);
   }
 }
