@@ -56,6 +56,29 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  it("map returns a new explorable applying a mapping function", async () => {
+    const graph = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+    const doubled = ExplorableGraph.map(graph, (value) => 2 * value);
+    const plain = await ExplorableGraph.plain(doubled);
+    assert.deepEqual(plain, {
+      a: 2,
+      b: 4,
+      c: 6,
+      more: {
+        d: 8,
+        e: 10,
+      },
+    });
+  });
+
   it("plain() produces a plain object version of a graph", async () => {
     const original = {
       a: 1,

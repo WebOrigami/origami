@@ -30,6 +30,32 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Given a graph and a function, return a new explorable graph that applies
+   * the function to the original graph's values.
+   *
+   * @param {Explorable} graph
+   * @param {function} mapFn
+   */
+  static map(graph, mapFn) {
+    return {
+      // Return same keys as original graph.
+      async *[Symbol.asyncIterator]() {
+        yield* graph;
+      },
+
+      // Apply the mapping function to the original graph's values.
+      async get(...keys) {
+        const value = await graph.get(...keys);
+        return ExplorableGraph.isExplorable(value)
+          ? ExplorableGraph.map(value, mapFn) // Return mapped subgraph
+          : value !== undefined
+          ? mapFn(value) // Return mapped value
+          : undefined;
+      },
+    };
+  }
+
+  /**
    * Create a plain JavaScript object with the graph's keys cast to strings,
    * and the given `mapFn` applied to values.
    *
