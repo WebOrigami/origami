@@ -157,7 +157,7 @@ function isWildcardKey(key) {
   return key.startsWith(wildcardPrefix) && key.endsWith(wildcardSuffix);
 }
 
-// TODO: Revisit this parameterization method, which is too desctructive and
+// TODO: Revisit this parameterization method, which is too destructive and
 // likely to lead to weird bugs.
 function parameterize(obj, wildcard, match) {
   const wildcardName = wildcard.slice(1, -1);
