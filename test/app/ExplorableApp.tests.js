@@ -14,11 +14,13 @@ const formulasGraph = new ExplorableApp(
 // Given the nature of ExplorableApp, these are integration tests.
 
 describe("ExplorableApp", () => {
-  it.skip("Can navigate into a dynamic graph", async () => {
-    const graph = new ExplorableApp(fixturesDirectory);
-    const subgraph = await graph.get("subgraph");
-    assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
-    assert.equal(await subgraph.get("a"), "Hello, a.");
+  it("can return an object", async () => {
+    const value = await formulasGraph.get("obj");
+    assert.deepEqual(value, {
+      a: "Hello, a.",
+      b: "Hello, b.",
+      c: "Hello, c.",
+    });
   });
 
   it("can generate a value by calling a function exported by a module", async () => {
@@ -26,15 +28,10 @@ describe("ExplorableApp", () => {
     assert.equal(value, "Hello, world.");
   });
 
-  it.skip("can return an explorable object", async () => {
-    const value = await formulasGraph.get("obj");
-    // TODO: This fails because the obj is a plain object, not explorable.
-    assert(ExplorableGraph.isExplorable(value));
-    assert.deepEqual(await ExplorableGraph.plain(value), {
-      a: "Hello, a.",
-      b: "Hello, b.",
-      c: "Hello, c.",
-    });
-    assert.equal(await formulasGraph.get("sampleJson", "a"), "Hello, a.");
+  it("Can navigate into a dynamic graph", async () => {
+    const graph = new ExplorableApp(fixturesDirectory);
+    const subgraph = await graph.get("subgraph");
+    assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
+    assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 });

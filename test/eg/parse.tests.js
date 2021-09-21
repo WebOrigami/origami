@@ -130,19 +130,24 @@ describe("parse", () => {
     ]);
   });
 
-  it("assignment with file extension as right-hand side", () => {
-    assert.deepEqual(statement("foo = .json").value, [
+  it("assignment with ƒ on right-hand side", () => {
+    assert.deepEqual(statement("foo = ƒ().js").value, [
       "=",
       "foo",
-      "foo = .json",
+      "foo = ƒ().js",
+    ]);
+    assert.deepEqual(statement("foo = ƒ.json").value, [
+      "=",
+      "foo",
+      "foo = ƒ.json",
     ]);
   });
 
-  it("assignment to splat on left with file extension on right", () => {
-    assert.deepEqual(statement("...graph = .js").value, [
+  it("assignment to splat on left with ƒ on right", () => {
+    assert.deepEqual(statement("...graph = ƒ().js").value, [
       "=",
       "...graph",
-      "...graph = .js",
+      "...graph = ƒ().js",
     ]);
   });
 

@@ -38,21 +38,15 @@ export function assignment(text) {
     optionalWhitespace,
     terminal(/^=/),
     optionalWhitespace,
-    expression
+    expression,
+    optionalWhitespace,
+    optional(extension)
   )(text);
   if (!result.value) {
     return result;
   }
   let { 1: left, 5: right } = result.value;
-  // Handle special case where right side is just a file extension.
-  const isExtension =
-    right.length === 1 &&
-    typeof right[0] === "string" &&
-    /^\.\S+$/.test(right[0]);
-  if (isExtension) {
-    // Use entire text as a file name.
-    right = text;
-  }
+  right = substituteSelfReferences(right, text);
   const value = ["=", left, right];
   return {
     value,
@@ -87,6 +81,11 @@ export function expression(text) {
     group,
     functionCall
   )(text);
+}
+
+// Parse a file extension
+export function extension(text) {
+  return sequence(terminal(/^./), reference);
 }
 
 // Parse a function call.
@@ -157,6 +156,11 @@ function lparen(text) {
   return terminal(/^\(/)(text);
 }
 
+// Parse an optional whitespace sequence.
+export function optionalWhitespace(text) {
+  return terminal(/^\s*/)(text);
+}
+
 // Parse function arguments enclosed in parentheses.
 function parentheticalArgs(text) {
   const result = sequence(
@@ -217,7 +221,20 @@ export function statement(text) {
   return any(assignment, expression)(text);
 }
 
-// Parse an optional whitespace sequence.
-export function optionalWhitespace(text) {
-  return terminal(/^\s*/)(text);
+// Look for occurences of ["ƒ"] in the parsed tree, which represent a call to
+// the value of the key defining the assignment. Replace those with the
+// indicated text, which will be the entire key.
+function substituteSelfReferences(parsed, text) {
+  if (!(parsed instanceof Array)) {
+    // Return scalar values as is.
+    return parsed;
+  } else if (
+    parsed.length === 1 &&
+    (parsed[0] === "ƒ" || parsed[0].startsWith("ƒ."))
+  ) {
+    // Perform substitution.
+    return text;
+  } else {
+    return parsed.map((item) => substituteSelfReferences(item, text));
+  }
 }
