@@ -131,15 +131,20 @@ describe("parse", () => {
   });
 
   it("assignment with ƒ on right-hand side", () => {
+    assert.deepEqual(statement("foo = ƒ.json").value, [
+      "=",
+      "foo",
+      "foo = ƒ.json",
+    ]);
     assert.deepEqual(statement("foo = ƒ().js").value, [
       "=",
       "foo",
       "foo = ƒ().js",
     ]);
-    assert.deepEqual(statement("foo = ƒ.json").value, [
+    assert.deepEqual(statement("foo = ƒ('bar').js").value, [
       "=",
       "foo",
-      "foo = ƒ.json",
+      ["foo = ƒ('bar').js", ["quote", "bar"]],
     ]);
   });
 

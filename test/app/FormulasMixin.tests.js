@@ -25,6 +25,7 @@ describe("FormulasMixin", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",
+      "greeting",
       "obj",
       "sample.txt",
       "string",

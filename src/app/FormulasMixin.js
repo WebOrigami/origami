@@ -32,6 +32,8 @@ export default function FormulasMixin(Base) {
         const value = await execute(formula, scope, this);
         return ExplorableGraph.isExplorable(value) && rest.length > 0
           ? await value.get(...rest)
+          : typeof value === "function"
+          ? value()
           : value;
       } else {
         return await super.get(...keys);

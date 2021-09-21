@@ -28,6 +28,11 @@ describe("ExplorableApp", () => {
     assert.equal(value, "Hello, world.");
   });
 
+  it("can pass an argument to a function", async () => {
+    const greeting = await formulasGraph.get("greeting");
+    assert.equal(greeting, "Hello, world.");
+  });
+
   it("Can navigate into a dynamic graph", async () => {
     const graph = new ExplorableApp(fixturesDirectory);
     const subgraph = await graph.get("subgraph");

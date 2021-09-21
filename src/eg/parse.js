@@ -228,13 +228,16 @@ function substituteSelfReferences(parsed, text) {
   if (!(parsed instanceof Array)) {
     // Return scalar values as is.
     return parsed;
-  } else if (
-    parsed.length === 1 &&
-    (parsed[0] === "ƒ" || parsed[0].startsWith("ƒ."))
-  ) {
-    // Perform substitution.
-    return text;
-  } else {
-    return parsed.map((item) => substituteSelfReferences(item, text));
   }
+  const substituted = parsed.map((item) =>
+    substituteSelfReferences(item, text)
+  );
+  if (substituted[0] === "ƒ" || substituted[0].startsWith("ƒ.")) {
+    // Perform substitution.
+    if (substituted.length === 1) {
+      return text;
+    }
+    substituted[0] = text;
+  }
+  return substituted;
 }
