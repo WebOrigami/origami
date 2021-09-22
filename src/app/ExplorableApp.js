@@ -8,14 +8,17 @@ import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 // import VirtualValuesMixin from "./VirtualValuesMixin.js";
 import FormulasMixin from "./FormulasMixin.js";
+import PlusKeysMixin from "./PlusKeysMixin.js";
 import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 
 class AppGraph
-  /* InvokeFunctionsMixin */ /* WildcardKeysMixin */ extends SplatKeysMixin(
-    VirtualKeysMixin(
-      FormulasMixin(
-        FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
+  /* InvokeFunctionsMixin */ /* WildcardKeysMixin */ extends PlusKeysMixin(
+    SplatKeysMixin(
+      VirtualKeysMixin(
+        FormulasMixin(
+          FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
+        )
       )
     )
   ) {}
