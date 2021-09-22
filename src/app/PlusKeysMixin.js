@@ -24,7 +24,9 @@ export default function PlusKeysMixin(Base) {
         this.#plusValues.length > 0
       ) {
         // Value is explorable; compose it with the plus values.
-        result = new Compose(result, ...this.#plusValues);
+        // The result should itself support plus keys to handle nesting.
+        // @ts-ignore
+        result = new (PlusKeysMixin(Compose))(result, ...this.#plusValues);
       }
 
       result =
