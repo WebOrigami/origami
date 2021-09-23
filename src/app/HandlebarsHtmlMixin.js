@@ -1,5 +1,6 @@
 import Handlebars from "handlebars";
 import path from "path";
+import YAML from "yaml";
 
 export default function HandlebarsHtmlMixin(Base) {
   return class HandlebarsHtml extends Base {
@@ -7,6 +8,7 @@ export default function HandlebarsHtmlMixin(Base) {
       const htmlKeys = new Set();
       const handlebarsKeys = new Set();
       const jsonKeys = new Set();
+      const yamlKeys = new Set();
       for await (const key of super[Symbol.asyncIterator]()) {
         yield key;
         if (key.endsWith(".html")) {
@@ -18,13 +20,16 @@ export default function HandlebarsHtmlMixin(Base) {
         } else if (key.endsWith(".json")) {
           const jsonBase = path.basename(key, ".json");
           jsonKeys.add(jsonBase);
+        } else if (key.endsWith(".yaml")) {
+          const yamlBase = path.basename(key, ".yaml");
+          yamlKeys.add(yamlBase);
         }
       }
 
-      // Yield HTML keys if we have both .handlebars and .json keys but *not* a
-      // corresponding HTML key.
+      // Yield HTML keys if we have both .handlebars and .json/.yaml keys but
+      // *not* a corresponding HTML key.
       for (const key of handlebarsKeys) {
-        if (jsonKeys.has(key) && !htmlKeys.has(key)) {
+        if ((jsonKeys.has(key) || yamlKeys.has(key)) && !htmlKeys.has(key)) {
           yield `${key}.html`;
         }
       }
@@ -40,15 +45,30 @@ export default function HandlebarsHtmlMixin(Base) {
         const base = path.basename(lastKey, ".html");
         const handlebarsKey = `${base}.handlebars`;
         const handlebarsValue = await super.get(handlebarsKey);
+        if (handlebarsValue === undefined) {
+          return undefined;
+        }
+        let data;
         const jsonKey = `${base}.json`;
         const jsonValue = await super.get(jsonKey);
-        if (handlebarsValue !== undefined && jsonValue !== undefined) {
-          // Have both a .handlebars and a .json value; combine to create HTML.
-          const compiled = Handlebars.compile(String(handlebarsValue));
-          const data =
+        if (jsonValue !== undefined) {
+          data =
             typeof jsonValue === "string" || jsonValue instanceof Buffer
               ? JSON.parse(String(jsonValue))
               : jsonValue;
+        } else {
+          const yamlKey = `${base}.yaml`;
+          const yamlValue = await super.get(yamlKey);
+          if (yamlValue !== undefined) {
+            data =
+              typeof yamlValue === "string" || yamlValue instanceof Buffer
+                ? YAML.parse(String(yamlValue))
+                : yamlValue;
+          }
+        }
+        if (data !== undefined) {
+          // Have both a .handlebars and a .json value; combine to create HTML.
+          const compiled = Handlebars.compile(String(handlebarsValue));
           const result = compiled(data);
           return result;
         }

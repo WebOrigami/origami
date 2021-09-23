@@ -13,4 +13,13 @@ describe("HandlebarsHtmlMixin", () => {
     const html = await fixture.get("foo.html");
     assert.equal(html, "Hello, world.");
   });
+
+  it("generates a .html file from a .handlebars and .yaml file", async () => {
+    const fixture = new ObjectWithHandlebars({
+      "foo.handlebars": `Hello, {{name}}.`,
+      "foo.yaml": `{ "name": "world" }`,
+    });
+    const html = await fixture.get("foo.html");
+    assert.equal(html, "Hello, world.");
+  });
 });
