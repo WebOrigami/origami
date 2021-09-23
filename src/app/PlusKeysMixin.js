@@ -42,14 +42,3 @@ export default function PlusKeysMixin(Base) {
 function isPlusKey(key) {
   return key.startsWith("+");
 }
-
-async function plusValues(graph) {
-  const result = [];
-  for await (const key of graph) {
-    if (isPlusKey(key)) {
-      const value = await graph.get(key);
-      result.push(value);
-    }
-  }
-  return result;
-}
