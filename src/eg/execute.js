@@ -29,7 +29,7 @@ export default async function execute(parsed, scope, graph) {
     const result = ExplorableGraph.isExplorable(evaluatedFn)
       ? await evaluatedFn.get(...evalutedArgs)
       : typeof evaluatedFn === "function"
-      ? await evaluatedFn(...evalutedArgs)
+      ? await evaluatedFn.call(graph, ...evalutedArgs)
       : evalutedArgs.length === 0
       ? evaluatedFn
       : undefined;
