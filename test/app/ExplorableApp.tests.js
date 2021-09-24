@@ -44,25 +44,25 @@ describe("ExplorableApp", () => {
     const graph = new ExplorableApp(path.join(fixturesDirectory, "plusKeys"));
     const strings = await ExplorableGraph.strings(graph);
     assert.deepEqual(strings, {
-      "+more": {
-        "+moreSub": {
-          moreSub1: "sub one",
+      "+a": {
+        "+sub": {
+          plusSub1: "sub one",
         },
-        more1: "one",
-        more2: "two",
+        plus1: "one",
+        plus2: "two",
       },
       a: {
-        aSub: {
+        sub: {
           aSub1: "sub 1",
-          moreSub1: "sub one",
+          plusSub1: "sub one",
         },
         a1: "1",
         a2: "2",
-        "+moreSub": {
-          moreSub1: "sub one",
+        "+sub": {
+          plusSub1: "sub one",
         },
-        more1: "one",
-        more2: "two",
+        plus1: "one",
+        plus2: "two",
       },
       b: "not explorable",
     });

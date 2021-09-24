@@ -6,15 +6,15 @@ import assert from "../assert.js";
 describe("PlusKeysMixin", () => {
   it("composes explorable values with + values", async () => {
     const graph = new (PlusKeysMixin(ExplorableObject))({
-      "+more": {
-        "+moreSub": {
-          moreSub1: "sub one",
+      "+a": {
+        "+sub": {
+          plusSub1: "sub one",
         },
-        more1: "one",
-        more2: "two",
+        plus1: "one",
+        plus2: "two",
       },
       a: {
-        aSub: {
+        sub: {
           aSub1: "sub 1",
         },
         a1: 1,
@@ -24,25 +24,25 @@ describe("PlusKeysMixin", () => {
     });
     const plain = await ExplorableGraph.plain(graph);
     assert.deepEqual(plain, {
-      "+more": {
-        more1: "one",
-        more2: "two",
-        "+moreSub": {
-          moreSub1: "sub one",
+      "+a": {
+        plus1: "one",
+        plus2: "two",
+        "+sub": {
+          plusSub1: "sub one",
         },
       },
       a: {
-        aSub: {
+        sub: {
           aSub1: "sub 1",
-          moreSub1: "sub one",
+          plusSub1: "sub one",
         },
         a1: 1,
         a2: 2,
-        "+moreSub": {
-          moreSub1: "sub one",
+        "+sub": {
+          plusSub1: "sub one",
         },
-        more1: "one",
-        more2: "two",
+        plus1: "one",
+        plus2: "two",
       },
       b: "not explorable",
     });
