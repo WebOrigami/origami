@@ -5,6 +5,11 @@ const plusPrefix = "+";
 
 export default function PlusKeysMixin(Base) {
   return class PlusKeys extends Base {
+    // Define constructor so TypeScript knows constructor can accept arguments.
+    constructor(...args) {
+      super(...args);
+    }
+
     async get(key, ...rest) {
       let result = await super.get(key);
 
@@ -15,7 +20,6 @@ export default function PlusKeysMixin(Base) {
         if (plusValue !== undefined) {
           // Found plus value; compose this with actual value.
           // The result should itself support plus keys to handle nesting.
-          // @ts-ignore
           result = new (PlusKeysMixin(Compose))(result, plusValue);
         }
       }
