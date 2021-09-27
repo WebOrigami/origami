@@ -3,12 +3,15 @@ import { fileURLToPath } from "url";
 import FormulasMixin from "../../src/app/FormulasMixin.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const directory = path.join(fixturesDirectory, "formulas");
+
+class FormulasObject extends FormulasMixin(ExplorableObject) {}
 
 class VirtualFiles extends FormulasMixin(ExplorableFiles) {}
 const graph = new VirtualFiles(directory);
@@ -22,6 +25,17 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
+  it("graph includes both real and virtual values", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      b: "Hello",
+    });
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      a: "Hello",
+      b: "Hello",
+    });
+  });
+
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",

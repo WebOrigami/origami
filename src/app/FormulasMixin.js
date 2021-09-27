@@ -1,7 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import builtins from "../eg/builtins.js";
 import execute from "../eg/execute.js";
-import parse from "../eg/parse.js";
+import * as parse from "../eg/parse.js";
 
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
@@ -44,10 +44,9 @@ export default function FormulasMixin(Base) {
       this.#keys = [];
       this.#formulas = {};
       for await (const baseKey of super[Symbol.asyncIterator]()) {
-        // Try to parse the base key as an expression.
-        const parsed = parse(baseKey);
-        const isFormula = parsed instanceof Array && parsed[0] === "=";
-        if (isFormula) {
+        // Try to parse the base key as an assignment.
+        const { value: parsed, rest } = parse.assignment(baseKey);
+        if (parsed !== undefined && rest.length === 0) {
           const left = parsed[1];
           const right = parsed[2];
           this.#formulas[left] = right;
