@@ -4,7 +4,7 @@ The eg grammar is as follows:
 statement: assignment
            expr
 
-assignment: reference = expr
+assignment: reference = expr [extension]
 
 expr: doubleQuotedString
       singleQuotedString
@@ -31,5 +31,12 @@ parentheticalArgs: ( [list] )
 list: expr , list
       expr
 
-reference: everything but =()"', and whitespace
+reference: literal
+           pattern
+
+pattern: literal{literal}literal
+
+extension: .literal
+
+literal: everything but =()"', and whitespace
 ```

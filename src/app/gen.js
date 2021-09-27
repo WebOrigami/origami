@@ -12,12 +12,12 @@
  */
 export default function impliedKeys(formulas, definedKeys) {
   const implications = new Set(definedKeys);
-  // We make repeated passes over the array of formulas. If a pass produces new
-  // implications, we make another pass. When there are no new implications, the
-  // set of implications has settled and we can exit.
+  // We make repeated passes over the set of implications. If a pass produces
+  // new implications, we make another pass. When there are no new implications,
+  // the set of implications has settled and we can exit.
   let settled = false;
   while (!settled) {
-    settled = true; // Assume we won't find new implications.
+    settled = true; // Assume this pass won't produce new implications.
     // For all keys we currently have, both defined and implied...
     for (const key of implications) {
       // See if the key matches a formula's first antecedent.
@@ -25,20 +25,27 @@ export default function impliedKeys(formulas, definedKeys) {
         const variable = match(antecedents[0], key);
         if (variable) {
           // First antecedent matched; do the rest match?
-          // TODO
-
-          // Determine the consequent of this formula.
-          const implication = consequent.prefix + variable + consequent.suffix;
-          if (!implications.has(implication)) {
-            // We found a new implication.
-            implications.add(implication);
-            settled = false; // Will need to make at least one more pass.
+          const restMatched = antecedents
+            .slice(1)
+            .every((pattern) => implications.has(format(pattern, variable)));
+          if (restMatched) {
+            // Determine the consequent of this formula.
+            const implication = format(consequent, variable);
+            if (!implications.has(implication)) {
+              // We found a new implication.
+              implications.add(implication);
+              settled = false; // Will need to make at least one more pass.
+            }
           }
         }
       }
     }
   }
   return [...implications];
+}
+
+function format(pattern, variable) {
+  return pattern.prefix + variable + pattern.suffix;
 }
 
 function match(pattern, text) {
