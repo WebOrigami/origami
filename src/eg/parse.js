@@ -187,10 +187,47 @@ export default function parse(text) {
   return result.value;
 }
 
+// A pattern containing a variable like `{foo}.json`
+export function pattern(text) {
+  const result = sequence(
+    optional(reference),
+    terminal(/^\{/),
+    reference,
+    terminal(/^\}/),
+    optional(reference)
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const { 0: prefix, 2: variable, 4: suffix } = result.value;
+
+  const variableReference = ["variable", variable];
+  /** @type {any[]} */ let value;
+  if (prefix || suffix) {
+    // Concatenate the variable reference with a prefix and/or suffix.
+    value = ["concat"];
+    if (prefix) {
+      value.push(prefix);
+    }
+    value.push(variableReference);
+    if (suffix) {
+      value.push(suffix);
+    }
+  } else {
+    // Variable reference with no prefix or suffix
+    value = variableReference;
+  }
+
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
 // Parse a reference to a function, graph, etc.
 export function reference(text) {
   // References are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)"',\s]+/)(text);
+  return regex(/^[^=\(\)\{\}"',\s]+/)(text);
 }
 
 // Parse a right parenthesis.

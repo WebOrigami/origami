@@ -7,6 +7,7 @@ import {
   indirectCall,
   list,
   optionalWhitespace,
+  pattern,
   reference,
   singleQuoteString,
   statement,
@@ -106,6 +107,15 @@ describe("parse", () => {
     assert.deepEqual(indirectCall("(fn)").value, undefined);
   });
 
+  it.only("variable pattern", () => {
+    assert.deepEqual(pattern("{name}").value, ["variable", "name"]);
+    assert.deepEqual(pattern("{name}.json").value, [
+      "concat",
+      ["variable", "name"],
+      ".json",
+    ]);
+  });
+
   it("expression", () => {
     assert.deepEqual(expression("(fn a, b, c)").value, [
       "fn",
@@ -155,6 +165,14 @@ describe("parse", () => {
       "...graph = ƒ().js",
     ]);
   });
+
+  // it("assignment with variable pattern", () => {
+  //   assert.deepEqual(statement("{name}.html = foo({name}.json)"), [
+  //     "=",
+  //     { prefix: "", suffix: ".html" },
+  //     ["foo", ["concat", ["variable", "name"], ".json"]],
+  //   ]);
+  // });
 
   it("statement", () => {
     assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);

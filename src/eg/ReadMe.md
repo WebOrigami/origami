@@ -34,9 +34,9 @@ list: expr , list
 reference: literal
            pattern
 
-pattern: literal{literal}literal
+pattern: [literal]{literal}[literal]
 
 extension: .literal
 
-literal: everything but =()"', and whitespace
+literal: everything but =(){}"', and whitespace
 ```
