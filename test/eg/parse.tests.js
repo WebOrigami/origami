@@ -1,16 +1,18 @@
 import {
   args,
+  assignment,
   doubleQuoteString,
   expression,
   functionCall,
   group,
+  identifier,
   indirectCall,
   list,
   optionalWhitespace,
   pattern,
-  reference,
   singleQuoteString,
   statement,
+  variableMarker,
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
@@ -22,13 +24,13 @@ describe("parse", () => {
     });
   });
 
-  it("reference", () => {
-    assert.deepEqual(reference("hello"), {
+  it("identifier", () => {
+    assert.deepEqual(identifier("hello"), {
       value: "hello",
       rest: "",
     });
-    assert.equal(reference("").value, undefined);
-    assert.equal(reference("()").value, undefined);
+    assert.equal(identifier("").value, undefined);
+    assert.equal(identifier("()").value, undefined);
   });
 
   it("list", () => {
@@ -107,12 +109,25 @@ describe("parse", () => {
     assert.deepEqual(indirectCall("(fn)").value, undefined);
   });
 
-  it.only("variable pattern", () => {
-    assert.deepEqual(pattern("{name}").value, ["variable", "name"]);
+  it("variable pattern", () => {
+    assert.deepEqual(pattern("{name}").value, [
+      variableMarker,
+      "name",
+      null,
+      null,
+    ]);
     assert.deepEqual(pattern("{name}.json").value, [
-      "concat",
-      ["variable", "name"],
+      variableMarker,
+      "name",
+      null,
       ".json",
+    ]);
+  });
+
+  it("function call with variable pattern", () => {
+    assert.deepEqual(functionCall("fn({name}.json)").value, [
+      "fn",
+      [[variableMarker, "name", null, ".json"]],
     ]);
   });
 
@@ -133,7 +148,7 @@ describe("parse", () => {
   });
 
   it("assignment", () => {
-    assert.deepEqual(statement("foo = fn 'bar'").value, [
+    assert.deepEqual(assignment("foo = fn 'bar'").value, [
       "=",
       "foo",
       ["fn", ["quote", "bar"]],
@@ -141,17 +156,17 @@ describe("parse", () => {
   });
 
   it("assignment with ƒ on right-hand side", () => {
-    assert.deepEqual(statement("foo = ƒ.json").value, [
+    assert.deepEqual(assignment("foo = ƒ.json").value, [
       "=",
       "foo",
       "foo = ƒ.json",
     ]);
-    assert.deepEqual(statement("foo = ƒ().js").value, [
+    assert.deepEqual(assignment("foo = ƒ().js").value, [
       "=",
       "foo",
       "foo = ƒ().js",
     ]);
-    assert.deepEqual(statement("foo = ƒ('bar').js").value, [
+    assert.deepEqual(assignment("foo = ƒ('bar').js").value, [
       "=",
       "foo",
       ["foo = ƒ('bar').js", ["quote", "bar"]],
@@ -159,20 +174,20 @@ describe("parse", () => {
   });
 
   it("assignment to splat on left with ƒ on right", () => {
-    assert.deepEqual(statement("...graph = ƒ().js").value, [
+    assert.deepEqual(assignment("...graph = ƒ().js").value, [
       "=",
       "...graph",
       "...graph = ƒ().js",
     ]);
   });
 
-  // it("assignment with variable pattern", () => {
-  //   assert.deepEqual(statement("{name}.html = foo({name}.json)"), [
-  //     "=",
-  //     { prefix: "", suffix: ".html" },
-  //     ["foo", ["concat", ["variable", "name"], ".json"]],
-  //   ]);
-  // });
+  it("assignment with variable pattern", () => {
+    assert.deepEqual(assignment("{name}.html = foo({name}.json)").value, [
+      "=",
+      [variableMarker, "name", null, ".html"],
+      ["foo", [[variableMarker, "name", null, ".json"]]],
+    ]);
+  });
 
   it("statement", () => {
     assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);

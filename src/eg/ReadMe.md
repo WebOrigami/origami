@@ -20,8 +20,7 @@ indirectCall: group args
 
 group: ( expr )
 
-call: reference args
-      reference
+call: reference [args]
 
 args: parentheticalArgs
       list
@@ -31,12 +30,12 @@ parentheticalArgs: ( [list] )
 list: expr , list
       expr
 
-reference: literal
-           pattern
+reference: pattern
+           identifier
 
-pattern: [literal]{literal}[literal]
+pattern: [identifier]{identifier}[identifier]
 
-extension: .literal
+extension: .identifier
 
-literal: everything but =(){}"', and whitespace
+identifier: everything but =(){}"', and whitespace
 ```

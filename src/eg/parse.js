@@ -85,7 +85,7 @@ export function expression(text) {
 
 // Parse a file extension
 export function extension(text) {
-  return sequence(terminal(/^./), reference);
+  return sequence(terminal(/^./), identifier);
 }
 
 // Parse a function call.
@@ -126,6 +126,12 @@ export function group(text) {
     value,
     rest: result.rest,
   };
+}
+
+// Parse an identifier for a function, graph, etc.
+export function identifier(text) {
+  // Identifiers are sequences of everything but terminal characters.
+  return regex(/^[^=\(\)\{\}"',\s]+/)(text);
 }
 
 // Parse an indirect function call like `(fn)(arg1, arg2)`.
@@ -190,44 +196,26 @@ export default function parse(text) {
 // A pattern containing a variable like `{foo}.json`
 export function pattern(text) {
   const result = sequence(
-    optional(reference),
+    optional(identifier),
     terminal(/^\{/),
-    reference,
+    identifier,
     terminal(/^\}/),
-    optional(reference)
+    optional(identifier)
   )(text);
   if (result.value === undefined) {
     return result;
   }
   const { 0: prefix, 2: variable, 4: suffix } = result.value;
-
-  const variableReference = ["variable", variable];
-  /** @type {any[]} */ let value;
-  if (prefix || suffix) {
-    // Concatenate the variable reference with a prefix and/or suffix.
-    value = ["concat"];
-    if (prefix) {
-      value.push(prefix);
-    }
-    value.push(variableReference);
-    if (suffix) {
-      value.push(suffix);
-    }
-  } else {
-    // Variable reference with no prefix or suffix
-    value = variableReference;
-  }
-
+  const value = [variableMarker, variable, prefix, suffix];
   return {
     value,
     rest: result.rest,
   };
 }
 
-// Parse a reference to a function, graph, etc.
+// Parse a reference.
 export function reference(text) {
-  // References are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}"',\s]+/)(text);
+  return any(pattern, identifier)(text);
 }
 
 // Parse a right parenthesis.
@@ -269,7 +257,10 @@ function substituteSelfReferences(parsed, text) {
   const substituted = parsed.map((item) =>
     substituteSelfReferences(item, text)
   );
-  if (substituted[0] === "ƒ" || substituted[0].startsWith("ƒ.")) {
+  if (
+    typeof substituted[0] === "string" &&
+    (substituted[0] === "ƒ" || substituted[0].startsWith("ƒ."))
+  ) {
     // Perform substitution.
     if (substituted.length === 1) {
       return text;
@@ -278,3 +269,6 @@ function substituteSelfReferences(parsed, text) {
   }
   return substituted;
 }
+
+// Marker for a variable
+export const variableMarker = Symbol("variable");
