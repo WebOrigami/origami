@@ -85,7 +85,7 @@ export function expression(text) {
 
 // Parse a file extension
 export function extension(text) {
-  return sequence(terminal(/^./), identifier);
+  return sequence(terminal(/^./), identifier)(text);
 }
 
 // Parse a function call.
