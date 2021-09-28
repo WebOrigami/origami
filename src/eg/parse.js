@@ -187,9 +187,9 @@ function parentheticalArgs(text) {
   };
 }
 
-// Top-level parse function parses a statement and returns just the value.
+// Top-level parse function parses a expression and returns just the value.
 export default function parse(text) {
-  const result = statement(text);
+  const result = expression(text);
   return result.value;
 }
 

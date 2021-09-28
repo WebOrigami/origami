@@ -3,7 +3,7 @@
 import process from "process";
 import execute from "../../src/eg/execute.js";
 import config from "./commands/config.js";
-import parse from "./parse.js";
+import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -15,7 +15,8 @@ async function main(...args) {
   }
   const defaultGraph = await scope.get("defaultGraph");
   const context = await defaultGraph();
-  const parsed = parse(source);
+  const { value, rest } = parse.expression(source);
+  const parsed = rest.length === 0 ? value : undefined;
   console.log(JSON.stringify(parsed));
   if (!parsed) {
     console.error(`eg: could not recognize command: ${source}`);

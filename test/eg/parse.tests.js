@@ -11,7 +11,6 @@ import {
   optionalWhitespace,
   pattern,
   singleQuoteString,
-  statement,
   variableMarker,
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
@@ -189,8 +188,8 @@ describe("parse", () => {
     ]);
   });
 
-  it("statement", () => {
-    assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
-    assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);
-  });
+  // it("statement", () => {
+  //   assert.deepEqual(statement("fn('foo')").value, ["fn", ["quote", "foo"]]);
+  //   assert.deepEqual(statement("foo = bar").value, ["=", "foo", ["bar"]]);
+  // });
 });

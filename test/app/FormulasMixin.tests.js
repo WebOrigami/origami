@@ -52,18 +52,28 @@ describe("FormulasMixin", () => {
 
   it("can define assignments to variables", async () => {
     const fixture = new FormulasObject({
-      "{name} = 'NAME'": "",
+      "{name} = 'FOO'": "",
     });
-    assert.equal(await fixture.get("alice"), "NAME");
-    assert.equal(await fixture.get("bob"), "NAME");
+    assert.equal(await fixture.get("alice"), "FOO");
+    assert.equal(await fixture.get("bob"), "FOO");
   });
 
-  it.only("can pass variable to right-hand side", async () => {
+  it.skip("matches suffixes/extensions", async () => {
     const fixture = new FormulasObject({
-      "{name} = ƒ(quote {name})": (name) => name[0].toUpperCase(),
+      "{x}.html": "html",
+      "{y}": "no extension",
     });
-    assert.equal(await fixture.get("alice"), "ALICE");
-    assert.equal(await fixture.get("bob"), "BOB");
+    assert.equal(await fixture.get("foo.html", "html"));
+    // assert.equal(await fixture.get("bar.baz.html", "html"));
+    // assert.equal(await fixture.get("foo.json", undefined));
+  });
+
+  it("can pass variable to right-hand side", async () => {
+    const fixture = new FormulasObject({
+      "{name} = quote {name}": "",
+    });
+    assert.deepEqual(await fixture.get("alice"), ["alice"]);
+    assert.deepEqual(await fixture.get("bob"), ["bob"]);
   });
 
   it("keys include both real and virtual keys", async () => {

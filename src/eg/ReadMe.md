@@ -2,11 +2,11 @@ The eg grammar is as follows:
 
 ```
 statement: assignment
-           expr
+           expression
 
-assignment: reference = expr [extension]
+assignment: reference = expression [extension]
 
-expr: doubleQuotedString
+expression: doubleQuotedString
       singleQuotedString
       indirectCall
       group
@@ -18,7 +18,7 @@ singleQuotedString: '[text]'
 
 indirectCall: group args
 
-group: ( expr )
+group: ( expression )
 
 call: reference [args]
 
@@ -27,8 +27,8 @@ args: parentheticalArgs
 
 parentheticalArgs: ( [list] )
 
-list: expr , list
-      expr
+list: expression , list
+      expression
 
 reference: pattern
            identifier
