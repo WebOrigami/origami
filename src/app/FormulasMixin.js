@@ -24,33 +24,44 @@ export default function FormulasMixin(Base) {
     }
 
     async get(...keys) {
+      const value = await super.get(...keys);
+      if (value !== undefined) {
+        return value;
+      }
+
       const [key, ...rest] = keys;
       const formulas = await this.formulas();
-      const formula = formulas[key];
-      if (formula) {
-        const scope = this.scope;
-        const value = await execute(formula, scope, this);
-        return ExplorableGraph.isExplorable(value) && rest.length > 0
-          ? await value.get(...rest)
-          : typeof value === "function"
-          ? value()
-          : value;
-      } else {
-        return await super.get(...keys);
+      for (const formula of formulas) {
+        const bindings = unify(formula.left, key);
+        if (bindings) {
+          const scope = this.scope;
+          const bound = bind(formula.right, bindings);
+          const value = await execute(bound, scope, this);
+          if (value !== undefined) {
+            return ExplorableGraph.isExplorable(value) && rest.length > 0
+              ? await value.get(...rest)
+              : typeof value === "function"
+              ? value()
+              : value;
+          }
+        }
       }
     }
 
     async #refresh() {
       this.#keys = [];
-      this.#formulas = {};
+      this.#formulas = [];
       for await (const baseKey of super[Symbol.asyncIterator]()) {
         // Try to parse the base key as an assignment.
         const { value: parsed, rest } = parse.assignment(baseKey);
         if (parsed !== undefined && rest.length === 0) {
           const left = parsed[1];
           const right = parsed[2];
-          this.#formulas[left] = right;
-          this.#keys.push(left);
+          const formula = { left, right };
+          this.#formulas.push(formula);
+          if (isConstantFormula(formula)) {
+            this.#keys.push(left);
+          }
         } else {
           this.#keys.push(baseKey);
         }
@@ -67,4 +78,46 @@ export default function FormulasMixin(Base) {
       this.#scope = scope;
     }
   };
+}
+
+function bind(expression, bindings) {
+  if (!(expression instanceof Array)) {
+    return expression;
+  }
+  if (expression[0] === parse.variableMarker) {
+    const [_, name, prefix, suffix] = expression;
+    const bound = (prefix ?? "") + bindings[name] + (suffix ?? "");
+    return bound;
+  }
+  const mapped = expression.map((item) => bind(item, bindings));
+  return mapped;
+}
+
+function isConstantFormula(formula) {
+  return typeof formula.left === "string";
+}
+
+function unify(definition, key) {
+  if (typeof definition === "string") {
+    // Constant formula; simple case
+    return definition === key ? {} : undefined;
+  }
+  const [marker, variable, prefix, suffix] = definition;
+  if (marker !== parse.variableMarker) {
+    return undefined;
+  }
+  // TODO: Rationalize with gen()
+  const prefixLength = prefix?.length ?? 0;
+  const suffixLength = suffix?.length ?? 0;
+  const patternLength = prefixLength + suffixLength;
+  if (
+    patternLength < key.length &&
+    (prefix === null || key.startsWith(prefix)) &&
+    (suffix === null || key.endsWith(suffix))
+  ) {
+    // Matched
+    const value = key.substring(prefixLength, key.length - patternLength);
+    return { [variable]: value };
+  }
+  return undefined;
 }

@@ -25,7 +25,7 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
-  it("graph includes both real and virtual values", async () => {
+  it("can define assignments to constants", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
       b: "Hello",
@@ -34,6 +34,36 @@ describe("FormulasMixin", () => {
       a: "Hello",
       b: "Hello",
     });
+  });
+
+  it("first formula that returns a defined value is used", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      "a = c": "",
+      b: undefined,
+      c: "Hello",
+    });
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      a: "Hello",
+      b: undefined,
+      c: "Hello",
+    });
+  });
+
+  it("can define assignments to variables", async () => {
+    const fixture = new FormulasObject({
+      "{name} = 'NAME'": "",
+    });
+    assert.equal(await fixture.get("alice"), "NAME");
+    assert.equal(await fixture.get("bob"), "NAME");
+  });
+
+  it.only("can pass variable to right-hand side", async () => {
+    const fixture = new FormulasObject({
+      "{name} = ƒ(quote {name})": (name) => name[0].toUpperCase(),
+    });
+    assert.equal(await fixture.get("alice"), "ALICE");
+    assert.equal(await fixture.get("bob"), "BOB");
   });
 
   it("keys include both real and virtual keys", async () => {
