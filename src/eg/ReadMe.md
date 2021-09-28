@@ -1,16 +1,16 @@
 The eg grammar is as follows:
 
 ```
-statement: assignment
-           expression
+key: assignment [extension]
+     reference
 
-assignment: reference = expression [extension]
+assignment: reference = expression
 
 expression: doubleQuotedString
-      singleQuotedString
-      indirectCall
-      group
-      call
+            singleQuotedString
+            indirectCall
+            group
+            call
 
 doubleQuotedString: "[text]"
 
@@ -33,7 +33,7 @@ list: expression , list
 reference: pattern
            identifier
 
-pattern: [identifier]{identifier}[identifier]
+pattern: {identifier}[identifier]
 
 extension: .identifier
 

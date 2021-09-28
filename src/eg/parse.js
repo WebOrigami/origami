@@ -196,7 +196,6 @@ export default function parse(text) {
 // A pattern containing a variable like `{foo}.json`
 export function pattern(text) {
   const result = sequence(
-    optional(identifier),
     terminal(/^\{/),
     identifier,
     terminal(/^\}/),
@@ -205,8 +204,8 @@ export function pattern(text) {
   if (result.value === undefined) {
     return result;
   }
-  const { 0: prefix, 2: variable, 4: suffix } = result.value;
-  const value = [variableMarker, variable, prefix, suffix];
+  const { 1: variable, 3: suffix } = result.value;
+  const value = [variableMarker, variable, suffix];
   return {
     value,
     rest: result.rest,
@@ -242,9 +241,9 @@ export function singleQuoteString(text) {
 }
 
 // Parse an eg statement.
-export function statement(text) {
-  return any(assignment, expression)(text);
-}
+// export function statement(text) {
+//   return any(assignment, expression)(text);
+// }
 
 // Look for occurences of ["ƒ"] in the parsed tree, which represent a call to
 // the value of the key defining the assignment. Replace those with the

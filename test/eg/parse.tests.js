@@ -109,16 +109,10 @@ describe("parse", () => {
   });
 
   it("variable pattern", () => {
-    assert.deepEqual(pattern("{name}").value, [
-      variableMarker,
-      "name",
-      null,
-      null,
-    ]);
+    assert.deepEqual(pattern("{name}").value, [variableMarker, "name", null]);
     assert.deepEqual(pattern("{name}.json").value, [
       variableMarker,
       "name",
-      null,
       ".json",
     ]);
   });
@@ -126,7 +120,7 @@ describe("parse", () => {
   it("function call with variable pattern", () => {
     assert.deepEqual(functionCall("fn({name}.json)").value, [
       "fn",
-      [[variableMarker, "name", null, ".json"]],
+      [[variableMarker, "name", ".json"]],
     ]);
   });
 
@@ -183,8 +177,8 @@ describe("parse", () => {
   it("assignment with variable pattern", () => {
     assert.deepEqual(assignment("{name}.html = foo({name}.json)").value, [
       "=",
-      [variableMarker, "name", null, ".html"],
-      ["foo", [[variableMarker, "name", null, ".json"]]],
+      [variableMarker, "name", ".html"],
+      ["foo", [[variableMarker, "name", ".json"]]],
     ]);
   });
 

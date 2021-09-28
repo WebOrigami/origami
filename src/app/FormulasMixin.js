@@ -85,8 +85,8 @@ function bind(expression, bindings) {
     return expression;
   }
   if (expression[0] === parse.variableMarker) {
-    const [_, name, prefix, suffix] = expression;
-    const bound = (prefix ?? "") + bindings[name] + (suffix ?? "");
+    const [_, name, suffix] = expression;
+    const bound = bindings[name] + (suffix ?? "");
     return bound;
   }
   const mapped = expression.map((item) => bind(item, bindings));
@@ -102,21 +102,15 @@ function unify(definition, key) {
     // Constant formula; simple case
     return definition === key ? {} : undefined;
   }
-  const [marker, variable, prefix, suffix] = definition;
+  const [marker, variable, suffix] = definition;
   if (marker !== parse.variableMarker) {
     return undefined;
   }
   // TODO: Rationalize with gen()
-  const prefixLength = prefix?.length ?? 0;
   const suffixLength = suffix?.length ?? 0;
-  const patternLength = prefixLength + suffixLength;
-  if (
-    patternLength < key.length &&
-    (prefix === null || key.startsWith(prefix)) &&
-    (suffix === null || key.endsWith(suffix))
-  ) {
+  if (suffixLength < key.length && (suffix === null || key.endsWith(suffix))) {
     // Matched
-    const value = key.substring(prefixLength, key.length - patternLength);
+    const value = key.substring(0, key.length - suffixLength);
     return { [variable]: value };
   }
   return undefined;
