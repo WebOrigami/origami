@@ -7,6 +7,7 @@ import {
   group,
   identifier,
   indirectCall,
+  key,
   list,
   optionalWhitespace,
   pattern,
@@ -179,6 +180,20 @@ describe("parse", () => {
       "=",
       [variableMarker, "name", ".html"],
       ["foo", [[variableMarker, "name", ".json"]]],
+    ]);
+  });
+
+  it("key", () => {
+    assert.deepEqual(key("foo").value, "foo");
+    assert.deepEqual(key("{name}.yaml").value, [
+      variableMarker,
+      "name",
+      ".yaml",
+    ]);
+    assert.deepEqual(key("{x}.html = marked {x}.md").value, [
+      "=",
+      [variableMarker, "x", ".html"],
+      ["marked", [[variableMarker, "x", ".md"]]],
     ]);
   });
 

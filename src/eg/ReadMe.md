@@ -1,10 +1,10 @@
 The eg grammar is as follows:
 
 ```
-key: assignment [extension]
+key: assignment
      reference
 
-assignment: reference = expression
+assignment: reference = expression [extension]
 
 expression: doubleQuotedString
             singleQuotedString

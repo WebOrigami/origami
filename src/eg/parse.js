@@ -152,6 +152,11 @@ export function indirectCall(text) {
   };
 }
 
+// A key in an Explorable App
+export function key(text) {
+  return any(assignment, reference)(text);
+}
+
 // Parse a comma-separated list with at least one term.
 export function list(text) {
   return separatedList(expression, terminal(/^,/), optionalWhitespace)(text);
