@@ -38,8 +38,11 @@ export default function FormulasMixin(Base) {
           if (formula.right === null) {
             // Variable pattern
             const [_, variable, suffix] = formula.left;
-            const key = variable + suffix;
-            value = await this.get(key);
+
+            // TODO: Save pattern so we don't have to reconstruct it
+
+            const pattern = `{${variable}}${suffix ?? ""}`;
+            value = await this.get(pattern);
           } else {
             // Assignment
             const scope = this.scope;
@@ -50,7 +53,7 @@ export default function FormulasMixin(Base) {
             return ExplorableGraph.isExplorable(value) && rest.length > 0
               ? await value.get(...rest)
               : typeof value === "function"
-              ? value()
+              ? value(...rest)
               : value;
           }
         }
