@@ -7,16 +7,16 @@
   },
   "main": "./exports.js",
   "devDependencies": {
-    "@types/chai": "4.2.14",
-    "@types/mocha": "8.0.4",
-    "@types/node": "15.6.0",
-    "chai": "4.2.0",
+    "@types/chai": "4.2.22",
+    "@types/mocha": "9.0.0",
+    "@types/node": "16.10.1",
+    "chai": "4.3.4",
     "handlebars": "4.7.7",
-    "mocha": "8.2.1",
-    "typescript": "4.2.3"
+    "mocha": "9.1.2",
+    "typescript": "4.4.3"
   },
   "dependencies": {
-    "yaml": "1.10.0"
+    "yaml": "1.10.2"
   },
   "scripts": {
     "typecheck": "node node_modules/typescript/bin/tsc"
