@@ -45,6 +45,21 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("foo"), "no extension");
   });
 
+  it("can compute keys for variable patterns", async () => {
+    const fixture = new FormulasObject({
+      "{x}.json": "html",
+      a: "",
+      b: "",
+    });
+    assert.deepEqual(await ExplorableGraph.keys(fixture), [
+      "a",
+      "a.json",
+      "b",
+      "b.json",
+      "{x}.json",
+    ]);
+  });
+
   it("can compute keys for assignments", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
@@ -61,17 +76,18 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("a"), "Hello");
   });
 
-  it.skip("can compute keys for variable patterns", async () => {
+  it("can compute keys for variable patterns", async () => {
     const fixture = new FormulasObject({
-      "{x}.txt ⇐ {x}": "Default text",
       a: "",
       b: "",
+      "{x}.txt": "Default text",
     });
-    assert.equal(await ExplorableGraph.keys(fixture), [
+    assert.deepEqual(await ExplorableGraph.keys(fixture), [
       "a",
-      "b",
       "a.txt",
+      "b",
       "b.txt",
+      "{x}.txt",
     ]);
   });
 

@@ -47,7 +47,9 @@ export default function FormulasMixin(Base) {
     }
 
     async #refresh() {
-      this.#keys = [];
+      const keys = new Set();
+
+      // Find all formulas in this graph.
       this.#formulas = [];
       for await (const key of super[Symbol.asyncIterator]()) {
         // Try to parse the key as a formula.
@@ -55,12 +57,24 @@ export default function FormulasMixin(Base) {
         if (formula) {
           // Successfully parsed key as a formula.
           this.#formulas.push(formula);
-          this.#keys.push(formula.key);
+          keys.add(formula.key);
         } else {
-          this.#keys.push(key);
+          keys.add(key);
         }
       }
+
+      // Generate the set of implied keys in multiple passes until a pass
+      // produces no new implied keys.
+      for (let size = 0; size !== keys.size; ) {
+        size = keys.size;
+        // Ask each formula to add any implied keys.
+        for (const formula of this.#formulas) {
+          formula.addImpliedKeys(keys);
+        }
+      }
+
       // Store keys in JavaScript sort order.
+      this.#keys = [...keys];
       this.#keys.sort();
     }
 
