@@ -65,7 +65,7 @@ describe("FormulasMixin", () => {
       "a = b": "",
       b: "Hello",
     });
-    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
+    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "a = b", "b"]);
   });
 
   it("can get a value defined by an assignment", async () => {
@@ -93,16 +93,13 @@ describe("FormulasMixin", () => {
 
   it("first formula that returns a defined value is used", async () => {
     const fixture = new FormulasObject({
+      a: undefined,
       "a = b": "",
       "a = c": "",
       b: undefined,
       c: "Hello",
     });
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
-      a: "Hello",
-      b: undefined,
-      c: "Hello",
-    });
+    assert.equal(await fixture.get("a"), "Hello");
   });
 
   it("can define assignments to variables", async () => {
@@ -125,10 +122,15 @@ describe("FormulasMixin", () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
       "foo.txt",
       "greeting",
+      "greeting = ƒ('world').js",
       "obj",
+      "obj = ƒ.json",
       "sample.txt",
+      "sample.txt = ƒ().js",
       "string",
+      "string = ƒ.json",
       "value",
+      "value = fn()",
     ]);
   });
 

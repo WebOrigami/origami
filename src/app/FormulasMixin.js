@@ -10,14 +10,41 @@ export default function FormulasMixin(Base) {
 
     async *[Symbol.asyncIterator]() {
       if (!this.#keys) {
-        await this.#refresh();
+        const keys = new Set();
+        for await (const key of super[Symbol.asyncIterator]()) {
+          keys.add(key);
+        }
+
+        // Generate the set of implied keys in multiple passes until a pass
+        // produces no new implied keys.
+        for (let size = 0; size !== keys.size; ) {
+          size = keys.size;
+          // Ask each formula to add any implied keys.
+          const formulas = await this.formulas();
+          for await (const formula of formulas) {
+            formula.addImpliedKeys(keys);
+          }
+        }
+
+        // Store keys in JavaScript sort order.
+        this.#keys = [...keys];
+        this.#keys.sort();
       }
       yield* this.#keys;
     }
 
     async formulas() {
       if (!this.#formulas) {
-        await this.#refresh();
+        // Find all formulas in this graph.
+        this.#formulas = [];
+        for await (const key of super[Symbol.asyncIterator]()) {
+          // Try to parse the key as a formula.
+          const formula = Formula.parse(key);
+          if (formula) {
+            // Successfully parsed key as a formula.
+            this.#formulas.push(formula);
+          }
+        }
       }
       return this.#formulas;
     }
@@ -44,38 +71,6 @@ export default function FormulasMixin(Base) {
           }
         }
       }
-    }
-
-    async #refresh() {
-      const keys = new Set();
-
-      // Find all formulas in this graph.
-      this.#formulas = [];
-      for await (const key of super[Symbol.asyncIterator]()) {
-        // Try to parse the key as a formula.
-        const formula = Formula.parse(key);
-        if (formula) {
-          // Successfully parsed key as a formula.
-          this.#formulas.push(formula);
-          keys.add(formula.key);
-        } else {
-          keys.add(key);
-        }
-      }
-
-      // Generate the set of implied keys in multiple passes until a pass
-      // produces no new implied keys.
-      for (let size = 0; size !== keys.size; ) {
-        size = keys.size;
-        // Ask each formula to add any implied keys.
-        for (const formula of this.#formulas) {
-          formula.addImpliedKeys(keys);
-        }
-      }
-
-      // Store keys in JavaScript sort order.
-      this.#keys = [...keys];
-      this.#keys.sort();
     }
 
     get scope() {

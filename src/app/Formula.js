@@ -70,7 +70,8 @@ function bind(expression, bindings) {
 
 class ConstantFormula extends Formula {
   addImpliedKeys(keys) {
-    // Constant formulas don't imply any new keys.
+    // Constant formulas add the name of the constant they define.
+    keys.add(this.key);
   }
 
   unify(key) {
