@@ -38,7 +38,7 @@ export default function FormulasMixin(Base) {
           if (formula.right === null) {
             // Variable pattern
             const [_, variable, suffix] = formula.left;
-            const key = `{${variable}}${suffix}`;
+            const key = variable + suffix;
             value = await this.get(key);
           } else {
             // Assignment

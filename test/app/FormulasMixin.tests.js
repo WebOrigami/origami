@@ -25,13 +25,24 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
-  it("can get a value defined by a variable pattern", async () => {
+  it.skip("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "{x}.txt": "Default text",
       "a.txt": "Specific text",
     });
     assert.equal(await fixture.get("a.txt"), "Specific text");
     assert.equal(await fixture.get("b.txt"), "Default text");
+  });
+
+  it.only("matches suffixes/extensions", async () => {
+    const fixture = new FormulasObject({
+      "{x}.html": "html",
+      "{y}": "no extension",
+    });
+    assert.equal(await fixture.get("foo.html"), "html");
+    // assert.equal(await fixture.get("bar.baz.html"), "html");
+    // assert.equal(await fixture.get("foo.json"), undefined);
+    // assert.equal(await fixture.get("foo"), "no extension");
   });
 
   it.skip("can compute keys for variable patterns", async () => {
@@ -85,17 +96,6 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("alice"), "FOO");
     assert.equal(await fixture.get("bob"), "FOO");
   });
-
-  // it("matches suffixes/extensions", async () => {
-  //   // const fixture = new FormulasObject({
-  //   //   "{x}.html": "html",
-  //   //   "{y}": "no extension",
-  //   // });
-  //   // assert.equal(await fixture.get("foo.html"), "html");
-  //   // assert.equal(await fixture.get("bar.baz.html"), "html");
-  //   // assert.equal(await fixture.get("foo.json"), undefined);
-  //   // assert.equal(await fixture.get("foo"), "no extension");
-  // });
 
   it("can pass variable to right-hand side", async () => {
     const fixture = new FormulasObject({
