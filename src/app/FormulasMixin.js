@@ -34,9 +34,18 @@ export default function FormulasMixin(Base) {
       for (const formula of formulas) {
         const bindings = unify(formula.left, key);
         if (bindings) {
-          const scope = this.scope;
-          const bound = bind(formula.right, bindings);
-          const value = await execute(bound, scope, this);
+          let value;
+          if (formula.right === null) {
+            // Variable pattern
+            const [_, variable, suffix] = formula.left;
+            const key = `{${variable}}${suffix}`;
+            value = await this.get(key);
+          } else {
+            // Assignment
+            const scope = this.scope;
+            const bound = bind(formula.right, bindings);
+            value = await execute(bound, scope, this);
+          }
           if (value !== undefined) {
             return ExplorableGraph.isExplorable(value) && rest.length > 0
               ? await value.get(...rest)
@@ -52,14 +61,24 @@ export default function FormulasMixin(Base) {
       this.#keys = [];
       this.#formulas = [];
       for await (const baseKey of super[Symbol.asyncIterator]()) {
-        // Try to parse the base key as an assignment.
-        const { value: parsed, rest } = parse.assignment(baseKey);
-        if (parsed !== undefined && rest.length === 0) {
-          const left = parsed[1];
-          const right = parsed[2];
+        // Try to parse the base key as a key.
+        const { value: parsed, rest } = parse.key(baseKey);
+        // Add the key to our list of formulas only if it's complex:
+        // a variable pattern or a formula.
+        if (parsed instanceof Array && rest.length === 0) {
+          let left, right;
+          if (parsed[0] === parse.variableMarker) {
+            // Variable pattern
+            left = parsed;
+            right = null;
+          } else if (parsed[0] === "=") {
+            // Assignment
+            left = parsed[1];
+            right = parsed[2];
+          }
           const formula = { left, right };
           this.#formulas.push(formula);
-          if (isConstantFormula(formula)) {
+          if (typeof left === "string") {
             this.#keys.push(left);
           }
         } else {

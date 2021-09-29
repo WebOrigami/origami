@@ -25,15 +25,31 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
-  it("can define assignments to constants", async () => {
+  it("can compute keys for assignments", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
       b: "Hello",
     });
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
-      a: "Hello",
+    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
+  });
+
+  // it("can compute keys for variable patterns")
+
+  it("can get a value defined by an assignment", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
       b: "Hello",
     });
+    assert.equal(await fixture.get("a"), "Hello");
+  });
+
+  it("can get a value defined by a variable pattern", async () => {
+    const fixture = new FormulasObject({
+      "{x}.txt": "Default text",
+      "a.txt": "Specific text",
+    });
+    assert.equal(await fixture.get("a.txt"), "Specific text");
+    assert.equal(await fixture.get("b.txt"), "Default text");
   });
 
   it("first formula that returns a defined value is used", async () => {
