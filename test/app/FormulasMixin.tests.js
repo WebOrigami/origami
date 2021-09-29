@@ -116,6 +116,8 @@ describe("FormulasMixin", () => {
     ]);
   });
 
+  // TODO: Move files graph tests to ExplorableApp
+
   it("can get the value of a virtual key", async () => {
     const buffer = await graph.get("string");
     const json = JSON.parse(String(buffer));
