@@ -34,7 +34,7 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("b.txt"), "Default text");
   });
 
-  it("matches suffixes/extensions", async () => {
+  it("matches extensions", async () => {
     const fixture = new FormulasObject({
       "{x}.html": "html",
       "{y}": "no extension",

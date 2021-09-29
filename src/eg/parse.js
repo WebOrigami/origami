@@ -209,8 +209,8 @@ export function pattern(text) {
   if (result.value === undefined) {
     return result;
   }
-  const { 1: variable, 3: suffix } = result.value;
-  const value = [variableMarker, variable, suffix];
+  const { 1: variable, 3: extension } = result.value;
+  const value = [variableMarker, variable, extension];
   return {
     value,
     rest: result.rest,
