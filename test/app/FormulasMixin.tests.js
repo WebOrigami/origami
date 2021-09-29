@@ -25,6 +25,29 @@ graph.scope = new Compose(
 );
 
 describe("FormulasMixin", () => {
+  it("can get a value defined by a variable pattern", async () => {
+    const fixture = new FormulasObject({
+      "{x}.txt": "Default text",
+      "a.txt": "Specific text",
+    });
+    assert.equal(await fixture.get("a.txt"), "Specific text");
+    assert.equal(await fixture.get("b.txt"), "Default text");
+  });
+
+  it.skip("can compute keys for variable patterns", async () => {
+    const fixture = new FormulasObject({
+      "{x}.txt ⇐ {x}": "Default text",
+      a: "",
+      b: "",
+    });
+    assert.equal(await ExplorableGraph.keys(fixture), [
+      "a",
+      "b",
+      "a.txt",
+      "b.txt",
+    ]);
+  });
+
   it("can compute keys for assignments", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
@@ -33,23 +56,12 @@ describe("FormulasMixin", () => {
     assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
   });
 
-  // it("can compute keys for variable patterns")
-
   it("can get a value defined by an assignment", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
       b: "Hello",
     });
     assert.equal(await fixture.get("a"), "Hello");
-  });
-
-  it("can get a value defined by a variable pattern", async () => {
-    const fixture = new FormulasObject({
-      "{x}.txt": "Default text",
-      "a.txt": "Specific text",
-    });
-    assert.equal(await fixture.get("a.txt"), "Specific text");
-    assert.equal(await fixture.get("b.txt"), "Default text");
   });
 
   it("first formula that returns a defined value is used", async () => {
@@ -74,15 +86,16 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("bob"), "FOO");
   });
 
-  it.skip("matches suffixes/extensions", async () => {
-    const fixture = new FormulasObject({
-      "{x}.html": "html",
-      "{y}": "no extension",
-    });
-    assert.equal(await fixture.get("foo.html", "html"));
-    // assert.equal(await fixture.get("bar.baz.html", "html"));
-    // assert.equal(await fixture.get("foo.json", undefined));
-  });
+  // it("matches suffixes/extensions", async () => {
+  //   // const fixture = new FormulasObject({
+  //   //   "{x}.html": "html",
+  //   //   "{y}": "no extension",
+  //   // });
+  //   // assert.equal(await fixture.get("foo.html"), "html");
+  //   // assert.equal(await fixture.get("bar.baz.html"), "html");
+  //   // assert.equal(await fixture.get("foo.json"), undefined);
+  //   // assert.equal(await fixture.get("foo"), "no extension");
+  // });
 
   it("can pass variable to right-hand side", async () => {
     const fixture = new FormulasObject({

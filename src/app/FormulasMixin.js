@@ -125,6 +125,10 @@ function unify(definition, key) {
   if (marker !== parse.variableMarker) {
     return undefined;
   }
+  if (!suffix) {
+    // Key must itself not contain an extension
+    return !key.includes(".") ? { [variable]: key } : undefined;
+  }
   // TODO: Rationalize with gen()
   const suffixLength = suffix?.length ?? 0;
   if (suffixLength < key.length && (suffix === null || key.endsWith(suffix))) {

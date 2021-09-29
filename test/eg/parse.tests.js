@@ -70,6 +70,17 @@ describe("parse", () => {
     assert.deepEqual(doubleQuoteString(`"hello"`).value, ["quote", "hello"]);
   });
 
+  it.skip("double-quoted string with variables", () => {
+    assert.deepEqual(doubleQuoteString(`"This is {foo} and {bar}.`).value, [
+      "quote",
+      "This is ",
+      [variableMarker, "foo", null],
+      " and ",
+      [variableMarker, "bar", null],
+      ".",
+    ]);
+  });
+
   it("single-quote string", () => {
     assert.deepEqual(singleQuoteString(`'hello'`).value, ["quote", "hello"]);
   });
