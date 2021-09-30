@@ -48,7 +48,7 @@ reference: variableReference
 
 variableReference: $variableName[extension]
 
-variableName: everything in literal, but not a period
+variableName: for now, JavaScript identifiers with ASCII letters
 
 extension: .literal
 

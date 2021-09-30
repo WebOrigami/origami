@@ -317,7 +317,7 @@ function substituteSelfReferences(parsed, text) {
 // Parse a variable name
 export function variableName(text) {
   // Like a literal, but periods are not allowed.
-  return regex(/^[^=\(\)\{\}\$"'`,\s.]+/)(text);
+  return regex(/^[$A-Za-z_][A-Za-z9-9_$]*/)(text);
 }
 
 // Parse a variable declaration like ${x}.json
