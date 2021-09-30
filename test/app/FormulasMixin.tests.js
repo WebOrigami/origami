@@ -97,10 +97,10 @@ describe("FormulasMixin", () => {
 
   it("can pass variable name to right-hand side", async () => {
     const fixture = new FormulasObject({
-      "{name} = `$name`": "",
+      "{name} = `Hello, $name.`": "",
     });
-    assert.deepEqual(await fixture.get("alice"), "alice");
-    assert.deepEqual(await fixture.get("bob"), "bob");
+    assert.deepEqual(await fixture.get("Alice"), "Hello, Alice.");
+    assert.deepEqual(await fixture.get("Bob"), "Hello, Bob.");
   });
 
   it("keys include both real and virtual keys", async () => {

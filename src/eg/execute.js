@@ -9,8 +9,8 @@ export default async function execute(parsed, scope, graph) {
     const [fn, ...args] = parsed;
 
     if (fn === opcodes.quote) {
-      // Don't evaluate, return argument as is.
-      return args[0];
+      // Don't evaluate, concatenate the arguments as is.
+      return String.prototype.concat(...args);
     }
 
     // Evaluate the function expression
