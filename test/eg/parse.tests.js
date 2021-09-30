@@ -2,6 +2,7 @@ import * as opcodes from "../../src/eg/opcodes.js";
 import {
   args,
   assignment,
+  backtickQuoteString,
   doubleQuoteString,
   expression,
   functionCall,
@@ -128,34 +129,41 @@ describe("parse", () => {
 
   it("variable reference", () => {
     assert.deepEqual(variableReference("$name").value, [
-      opcodes.variableValue,
+      opcodes.variable,
       "name",
       null,
     ]);
     assert.deepEqual(variableReference("$name.json").value, [
-      opcodes.variableValue,
+      opcodes.variable,
       "name",
       ".json",
     ]);
   });
 
-  // it("backtick quoted string", () => {
-  //   assert.deepEqual(
-  //     backtickQuoteString("`Hello, world.`").value,
-  //     [opcodes.quote, "Hello, world."]
-  //   );
-  //   // assert.deepEqual(backtickQuotedString("`foo $x.json bar`").value, [
-  //   //   opcodes.concat,
-  //   //   "foo ",
-  //   //   [opcodes.variableName, "x", ".json"],
-  //   //   " bar",
-  //   // ]);
-  // });
+  it("backtick quoted string", () => {
+    assert.deepEqual(backtickQuoteString("`Hello, world.`").value, [
+      opcodes.quote,
+      "Hello, world.",
+    ]);
+  });
+
+  it("backtick quoted string with variable pattern", () => {
+    assert.deepEqual(backtickQuoteString("`$x.json`").value, [
+      opcodes.quote,
+      [opcodes.variable, "x", ".json"],
+    ]);
+    assert.deepEqual(backtickQuoteString("`foo $x.json bar`").value, [
+      opcodes.quote,
+      "foo ",
+      [opcodes.variable, "x", ".json"],
+      " bar",
+    ]);
+  });
 
   it("function call with variable pattern", () => {
     assert.deepEqual(functionCall("fn($name.json)").value, [
       "fn",
-      [[opcodes.variableValue, "name", ".json"]],
+      [[opcodes.variable, "name", ".json"]],
     ]);
   });
 
@@ -215,22 +223,22 @@ describe("parse", () => {
   it("assignment with variable pattern", () => {
     assert.deepEqual(assignment("{name}.html = foo($name.json)").value, [
       "=",
-      [opcodes.variableValue, "name", ".html"],
-      ["foo", [[opcodes.variableValue, "name", ".json"]]],
+      [opcodes.variable, "name", ".html"],
+      ["foo", [[opcodes.variable, "name", ".json"]]],
     ]);
   });
 
   it("key", () => {
     assert.deepEqual(key("foo").value, "foo");
     assert.deepEqual(key("{name}.yaml").value, [
-      opcodes.variableValue,
+      opcodes.variable,
       "name",
       ".yaml",
     ]);
     assert.deepEqual(key("{x}.html = marked $x.md").value, [
       "=",
-      [opcodes.variableValue, "x", ".html"],
-      ["marked", [[opcodes.variableValue, "x", ".md"]]],
+      [opcodes.variable, "x", ".html"],
+      ["marked", [[opcodes.variable, "x", ".md"]]],
     ]);
   });
 });

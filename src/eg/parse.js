@@ -59,18 +59,40 @@ export function assignment(text) {
 export function backtickQuoteString(text) {
   const result = sequence(
     optionalWhitespace,
-    regex(/^`[^\`]*`/),
+    terminal(/^`/),
+    backtickContents,
+    terminal(/^`/),
     optionalWhitespace
   )(text);
   if (!result.value) {
     return result;
   }
-  const quotedText = result.value[1].slice(1, -1);
-  const value = [opcodes.quote, quotedText];
+  const { 2: contents } = result.value;
+  // Drop empty strings.
+  const filtered = contents.filter((item) => item !== "");
+  const value = [opcodes.quote, ...filtered];
   return {
     value,
     rest: result.rest,
   };
+}
+
+// Parse the text and variable references in a backtick-quoted string
+export function backtickContents(text) {
+  // It's a bit of a stretch to use the separated list parser for this, but it
+  // works. We treat the plain text as the list items, and the variable
+  // references as the separators.
+  return separatedList(
+    optional(backtickText),
+    variableReference,
+    regex(/^/)
+  )(text);
+}
+
+// Parse the text in a backtick-quoted string
+export function backtickText(text) {
+  // Everything but ` and $
+  return regex(/^[^\`\$]*/)(text);
 }
 
 // Parse a declaration.
@@ -101,6 +123,7 @@ export function expression(text) {
   return any(
     doubleQuoteString,
     singleQuoteString,
+    backtickQuoteString,
     indirectCall,
     group,
     functionCall
@@ -177,13 +200,30 @@ export function key(text) {
 
 // Parse a comma-separated list with at least one term.
 export function list(text) {
-  return separatedList(expression, terminal(/^,/), optionalWhitespace)(text);
+  const result = separatedList(
+    expression,
+    terminal(/^,/),
+    optionalWhitespace
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  // Remove the separators from the result.
+  const values = [];
+  while (result.value.length > 0) {
+    values.push(result.value.shift()); // Keep value
+    result.value.shift(); // Drop separator
+  }
+  return {
+    value: values,
+    rest: result.rest,
+  };
 }
 
 // Parse a literal
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\$"',\s]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"'`,\s]+/)(text);
 }
 
 // Parse a left parenthesis.
@@ -277,7 +317,7 @@ function substituteSelfReferences(parsed, text) {
 // Parse a variable name
 export function variableName(text) {
   // Like a literal, but periods are not allowed.
-  return regex(/^[^=\(\)\{\}\$"',\s.]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"'`,\s.]+/)(text);
 }
 
 // Parse a variable declaration like ${x}.json
@@ -292,7 +332,7 @@ export function variableDeclaration(text) {
     return result;
   }
   const { 1: variable, 3: extension } = result.value;
-  const value = [opcodes.variableValue, variable, extension];
+  const value = [opcodes.variable, variable, extension];
   return {
     value,
     rest: result.rest,
@@ -310,7 +350,7 @@ export function variableReference(text) {
     return result;
   }
   const { 1: variable, 2: extension } = result.value;
-  const value = [opcodes.variableValue, variable, extension];
+  const value = [opcodes.variable, variable, extension];
   return {
     value,
     rest: result.rest,

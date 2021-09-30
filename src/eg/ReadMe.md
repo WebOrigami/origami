@@ -22,11 +22,12 @@ doubleQuoteString: "[text]"
 
 singleQuoteString: '[text]'
 
-backtickQuoteString: `backtickList`
+backtickQuoteString: `backtickContents`
 
-backtickList: backtickText variableReference backtickText
+backtickContents: backtickText variableReference backtickContents
+                  backtickText
 
-backtickText: everything but $
+backtickText: everything but ` and $
 
 indirectCall: group args
 

@@ -31,14 +31,14 @@ export default class Formula {
       // Unsuccessful parse
       return null;
     }
-    if (parsed[0] === opcodes.variableValue) {
+    if (parsed[0] === opcodes.variable) {
       // Variable pattern
       const [_, variable, extension] = parsed;
       return new VariableFormula(variable, extension, null);
     } else if (parsed[0] === "=") {
       // Assignment
       const [_, left, expression] = parsed;
-      if (left[0] === opcodes.variableValue) {
+      if (left[0] === opcodes.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
         return new VariableFormula(variable, extension, expression);
@@ -58,7 +58,7 @@ function bind(expression, bindings) {
   } else if (!(expression instanceof Array)) {
     // Scalar values don't need binding.
     return expression;
-  } else if (expression[0] === opcodes.variableValue) {
+  } else if (expression[0] === opcodes.variable) {
     // Found a reference to a variable, return the bound value instead.
     const [_, name, extension] = expression;
     const bound = bindings[name] + (extension ?? "");
@@ -128,7 +128,7 @@ class VariableFormula extends Formula {
     // Scalar values (or no expression) have no antecedents.
     if (!(expression instanceof Array)) {
       return [];
-    } else if (expression[0] === opcodes.variableValue) {
+    } else if (expression[0] === opcodes.variable) {
       // A variable reference means we have an antecedent.
       const [_marker, _variable, extension] = expression;
       return [extension];

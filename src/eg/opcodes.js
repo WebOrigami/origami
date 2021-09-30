@@ -1,3 +1,2 @@
-export const variableValue = Symbol("variableValue");
-export const variableName = Symbol("variableName");
+export const variable = Symbol("variable");
 export const quote = Symbol("quote");

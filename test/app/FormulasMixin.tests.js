@@ -95,13 +95,13 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("bob"), "FOO");
   });
 
-  // it("can pass variable to right-hand side", async () => {
-  //   const fixture = new FormulasObject({
-  //     "{name} = quote $name": "",
-  //   });
-  //   assert.deepEqual(await fixture.get("alice"), ["alice"]);
-  //   assert.deepEqual(await fixture.get("bob"), ["bob"]);
-  // });
+  it("can pass variable name to right-hand side", async () => {
+    const fixture = new FormulasObject({
+      "{name} = `$name`": "",
+    });
+    assert.deepEqual(await fixture.get("alice"), "alice");
+    assert.deepEqual(await fixture.get("bob"), "bob");
+  });
 
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(graph), [
