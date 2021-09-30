@@ -24,6 +24,7 @@ import {
   sequence,
   terminal,
 } from "./combinators.js";
+import * as opcodes from "./opcodes.js";
 
 // Parse arguments to a function.
 export function args(text) {
@@ -273,7 +274,7 @@ export function variableDeclaration(text) {
     return result;
   }
   const { 1: variable, 3: extension } = result.value;
-  const value = [variableMarker, variable, extension];
+  const value = [opcodes.variableValue, variable, extension];
   return {
     value,
     rest: result.rest,
@@ -291,12 +292,9 @@ export function variableReference(text) {
     return result;
   }
   const { 1: variable, 2: extension } = result.value;
-  const value = [variableMarker, variable, extension];
+  const value = [opcodes.variableValue, variable, extension];
   return {
     value,
     rest: result.rest,
   };
 }
-
-// Marker for a variable
-export const variableMarker = Symbol("variable");

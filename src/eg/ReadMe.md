@@ -13,6 +13,7 @@ assignment: declaration = expression [extension]
 
 expression: doubleQuotedString
             singleQuotedString
+            backtickQuotedString
             indirectCall
             group
             call
@@ -20,6 +21,12 @@ expression: doubleQuotedString
 doubleQuotedString: "[text]"
 
 singleQuotedString: '[text]'
+
+backtickQuotedString: `backtickList`
+
+backtickList: backtickText variableReference backtickText
+
+backtickText: everything but $
 
 indirectCall: group args
 
@@ -36,12 +43,9 @@ list: expression , list
       expression
 
 reference: variableReference
-           variableNameReference
            literal
 
 variableReference: $variableName[extension]
-
-variableNameReference: &variableName[extension]
 
 variableName: everything in literal, but not a period
 

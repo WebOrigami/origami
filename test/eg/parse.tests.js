@@ -1,3 +1,4 @@
+import * as opcodes from "../../src/eg/opcodes.js";
 import {
   args,
   assignment,
@@ -11,7 +12,6 @@ import {
   literal,
   optionalWhitespace,
   singleQuoteString,
-  variableMarker,
   variableName,
   variableReference,
 } from "../../src/eg/parse.js";
@@ -119,21 +119,30 @@ describe("parse", () => {
 
   it("variable reference", () => {
     assert.deepEqual(variableReference("$name").value, [
-      variableMarker,
+      opcodes.variableValue,
       "name",
       null,
     ]);
     assert.deepEqual(variableReference("$name.json").value, [
-      variableMarker,
+      opcodes.variableValue,
       "name",
       ".json",
     ]);
   });
 
+  // it("backtick quoted string", () => {
+  //   assert.deepEqual(backtickQuotedString("`foo $x.json bar`").value, [
+  //     opcodes.concat,
+  //     "foo ",
+  //     [opcodes.variableName, "x", ".json"],
+  //     " bar",
+  //   ]);
+  // });
+
   it("function call with variable pattern", () => {
     assert.deepEqual(functionCall("fn($name.json)").value, [
       "fn",
-      [[variableMarker, "name", ".json"]],
+      [[opcodes.variableValue, "name", ".json"]],
     ]);
   });
 
@@ -190,22 +199,22 @@ describe("parse", () => {
   it("assignment with variable pattern", () => {
     assert.deepEqual(assignment("{name}.html = foo($name.json)").value, [
       "=",
-      [variableMarker, "name", ".html"],
-      ["foo", [[variableMarker, "name", ".json"]]],
+      [opcodes.variableValue, "name", ".html"],
+      ["foo", [[opcodes.variableValue, "name", ".json"]]],
     ]);
   });
 
   it("key", () => {
     assert.deepEqual(key("foo").value, "foo");
     assert.deepEqual(key("{name}.yaml").value, [
-      variableMarker,
+      opcodes.variableValue,
       "name",
       ".yaml",
     ]);
     assert.deepEqual(key("{x}.html = marked $x.md").value, [
       "=",
-      [variableMarker, "x", ".html"],
-      ["marked", [[variableMarker, "x", ".md"]]],
+      [opcodes.variableValue, "x", ".html"],
+      ["marked", [[opcodes.variableValue, "x", ".md"]]],
     ]);
   });
 });
