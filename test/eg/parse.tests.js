@@ -188,7 +188,7 @@ describe("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assert.deepEqual(assignment("$name.html = foo($name.json)").value, [
+    assert.deepEqual(assignment("{name}.html = foo($name.json)").value, [
       "=",
       [variableMarker, "name", ".html"],
       ["foo", [[variableMarker, "name", ".json"]]],
@@ -197,12 +197,12 @@ describe("parse", () => {
 
   it("key", () => {
     assert.deepEqual(key("foo").value, "foo");
-    assert.deepEqual(key("$name.yaml").value, [
+    assert.deepEqual(key("{name}.yaml").value, [
       variableMarker,
       "name",
       ".yaml",
     ]);
-    assert.deepEqual(key("$x.html = marked $x.md").value, [
+    assert.deepEqual(key("{x}.html = marked $x.md").value, [
       "=",
       [variableMarker, "x", ".html"],
       ["marked", [[variableMarker, "x", ".md"]]],

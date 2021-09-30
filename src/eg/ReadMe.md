@@ -2,13 +2,17 @@ The eg grammar is as follows:
 
 ```
 key: assignment
-     reference
+     declaration
 
-assignment: reference = expression [extension]
+declaration: variableDeclaration
+             literal
+
+variableDeclaration: {variableName}[extension]
+
+assignment: declaration = expression [extension]
 
 expression: doubleQuotedString
             singleQuotedString
-            variableNameReference
             indirectCall
             group
             call
@@ -32,15 +36,16 @@ list: expression , list
       expression
 
 reference: variableReference
+           variableNameReference
            literal
 
 variableReference: $variableName[extension]
 
 variableNameReference: &variableName[extension]
 
+variableName: everything in literal, but not a period
+
 extension: .literal
 
-literal: everything but =(){}"', and whitespace
-
-variableName: everything in literal, but not a period
+literal: everything but =(){}$&"', and whitespace
 ```

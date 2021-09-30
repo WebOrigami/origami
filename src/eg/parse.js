@@ -34,7 +34,7 @@ export function args(text) {
 export function assignment(text) {
   const result = sequence(
     optionalWhitespace,
-    reference,
+    declaration,
     optionalWhitespace,
     terminal(/^=/),
     optionalWhitespace,
@@ -52,6 +52,11 @@ export function assignment(text) {
     value,
     rest: result.rest,
   };
+}
+
+// Parse a declaration.
+export function declaration(text) {
+  return any(variableDeclaration, literal)(text);
 }
 
 // Parse a double-quoted string.
@@ -148,7 +153,7 @@ export function indirectCall(text) {
 
 // A key in an Explorable App
 export function key(text) {
-  return any(assignment, reference)(text);
+  return any(assignment, declaration)(text);
 }
 
 // Parse a comma-separated list with at least one term.
@@ -159,7 +164,7 @@ export function list(text) {
 // Parse a literal
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)$"',\s]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"',\s]+/)(text);
 }
 
 // Parse a left parenthesis.
@@ -253,10 +258,29 @@ function substituteSelfReferences(parsed, text) {
 // Parse a variable name
 export function variableName(text) {
   // Like a literal, but periods are not allowed.
-  return regex(/^[^=\(\)$"',\s.]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"',\s.]+/)(text);
 }
 
-// A pattern containing a variable like `{foo}.json`
+// Parse a variable declaration like ${x}.json
+export function variableDeclaration(text) {
+  const result = sequence(
+    terminal(/^\{/),
+    variableName,
+    terminal(/^\}/),
+    optional(literal)
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const { 1: variable, 3: extension } = result.value;
+  const value = [variableMarker, variable, extension];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a variable reference like $foo.html
 export function variableReference(text) {
   const result = sequence(
     terminal(/^\$/),
