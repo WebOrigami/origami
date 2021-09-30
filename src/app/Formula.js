@@ -85,7 +85,7 @@ class VariableFormula extends Formula {
   antecedents;
 
   constructor(variable, extension, expression) {
-    const key = `{${variable}}${extension ?? ""}`;
+    const key = `\$${variable}${extension ?? ""}`;
     super(key, expression);
     this.variable = variable;
     this.extension = extension;

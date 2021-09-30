@@ -27,7 +27,7 @@ graph.scope = new Compose(
 describe("FormulasMixin", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
-      "{x}.txt": "Default text",
+      "$x.txt": "Default text",
       "a.txt": "Specific text",
     });
     assert.equal(await fixture.get("a.txt"), "Specific text");
@@ -36,8 +36,8 @@ describe("FormulasMixin", () => {
 
   it("matches extensions", async () => {
     const fixture = new FormulasObject({
-      "{x}.html": "html",
-      "{y}": "no extension",
+      "$x.html": "html",
+      $y: "no extension",
     });
     assert.equal(await fixture.get("foo.html"), "html");
     assert.equal(await fixture.get("bar.baz.html"), "html");
@@ -47,16 +47,16 @@ describe("FormulasMixin", () => {
 
   it("can compute keys for variable patterns", async () => {
     const fixture = new FormulasObject({
-      "{x}.json": "html",
+      "$x.json": "html",
       a: "",
       b: "",
     });
     assert.deepEqual(await ExplorableGraph.keys(fixture), [
+      "$x.json",
       "a",
       "a.json",
       "b",
       "b.json",
-      "{x}.json",
     ]);
   });
 
@@ -76,21 +76,6 @@ describe("FormulasMixin", () => {
     assert.equal(await fixture.get("a"), "Hello");
   });
 
-  it("can compute keys for variable patterns", async () => {
-    const fixture = new FormulasObject({
-      a: "",
-      b: "",
-      "{x}.txt": "Default text",
-    });
-    assert.deepEqual(await ExplorableGraph.keys(fixture), [
-      "a",
-      "a.txt",
-      "b",
-      "b.txt",
-      "{x}.txt",
-    ]);
-  });
-
   it("first formula that returns a defined value is used", async () => {
     const fixture = new FormulasObject({
       a: undefined,
@@ -104,7 +89,7 @@ describe("FormulasMixin", () => {
 
   it("can define assignments to variables", async () => {
     const fixture = new FormulasObject({
-      "{name} = 'FOO'": "",
+      "$name = 'FOO'": "",
     });
     assert.equal(await fixture.get("alice"), "FOO");
     assert.equal(await fixture.get("bob"), "FOO");
@@ -112,7 +97,7 @@ describe("FormulasMixin", () => {
 
   it("can pass variable to right-hand side", async () => {
     const fixture = new FormulasObject({
-      "{name} = quote {name}": "",
+      "$name = quote $name": "",
     });
     assert.deepEqual(await fixture.get("alice"), ["alice"]);
     assert.deepEqual(await fixture.get("bob"), ["bob"]);

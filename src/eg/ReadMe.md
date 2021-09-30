@@ -8,6 +8,7 @@ assignment: reference = expression [extension]
 
 expression: doubleQuotedString
             singleQuotedString
+            variableNameReference
             indirectCall
             group
             call
@@ -30,12 +31,16 @@ parentheticalArgs: ( [list] )
 list: expression , list
       expression
 
-reference: pattern
-           identifier
+reference: variableReference
+           literal
 
-pattern: {identifier}[identifier]
+variableReference: $variableName[extension]
 
-extension: .identifier
+variableNameReference: &variableName[extension]
 
-identifier: everything but =(){}"', and whitespace
+extension: .literal
+
+literal: everything but =(){}"', and whitespace
+
+variableName: everything in literal, but not a period
 ```

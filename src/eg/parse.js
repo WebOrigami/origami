@@ -85,7 +85,7 @@ export function expression(text) {
 
 // Parse a file extension
 export function extension(text) {
-  return sequence(terminal(/^./), identifier)(text);
+  return sequence(terminal(/^./), literal)(text);
 }
 
 // Parse a function call.
@@ -128,12 +128,6 @@ export function group(text) {
   };
 }
 
-// Parse an identifier for a function, graph, etc.
-export function identifier(text) {
-  // Identifiers are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}"',\s]+/)(text);
-}
-
 // Parse an indirect function call like `(fn)(arg1, arg2)`.
 export function indirectCall(text) {
   const result = sequence(
@@ -160,6 +154,12 @@ export function key(text) {
 // Parse a comma-separated list with at least one term.
 export function list(text) {
   return separatedList(expression, terminal(/^,/), optionalWhitespace)(text);
+}
+
+// Parse a literal
+export function literal(text) {
+  // Identifiers are sequences of everything but terminal characters.
+  return regex(/^[^=\(\)$"',\s]+/)(text);
 }
 
 // Parse a left parenthesis.
@@ -198,28 +198,9 @@ export default function parse(text) {
   return result.value;
 }
 
-// A pattern containing a variable like `{foo}.json`
-export function pattern(text) {
-  const result = sequence(
-    terminal(/^\{/),
-    identifier,
-    terminal(/^\}/),
-    optional(identifier)
-  )(text);
-  if (result.value === undefined) {
-    return result;
-  }
-  const { 1: variable, 3: extension } = result.value;
-  const value = [variableMarker, variable, extension];
-  return {
-    value,
-    rest: result.rest,
-  };
-}
-
 // Parse a reference.
 export function reference(text) {
-  return any(pattern, identifier)(text);
+  return any(variableReference, literal)(text);
 }
 
 // Parse a right parenthesis.
@@ -245,11 +226,6 @@ export function singleQuoteString(text) {
   };
 }
 
-// Parse an eg statement.
-// export function statement(text) {
-//   return any(assignment, expression)(text);
-// }
-
 // Look for occurences of ["ƒ"] in the parsed tree, which represent a call to
 // the value of the key defining the assignment. Replace those with the
 // indicated text, which will be the entire key.
@@ -272,6 +248,30 @@ function substituteSelfReferences(parsed, text) {
     substituted[0] = text;
   }
   return substituted;
+}
+
+// Parse a variable name
+export function variableName(text) {
+  // Like a literal, but periods are not allowed.
+  return regex(/^[^=\(\)$"',\s.]+/)(text);
+}
+
+// A pattern containing a variable like `{foo}.json`
+export function variableReference(text) {
+  const result = sequence(
+    terminal(/^\$/),
+    variableName,
+    optional(literal)
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const { 1: variable, 2: extension } = result.value;
+  const value = [variableMarker, variable, extension];
+  return {
+    value,
+    rest: result.rest,
+  };
 }
 
 // Marker for a variable
