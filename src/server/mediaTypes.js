@@ -75,6 +75,7 @@ export const mediaTypeForExtension = {
   ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ".xml": "application/xml",
   ".xul": "application/vnd.mozilla.xul+xml",
+  ".yaml": "text/yaml", // Not official
   ".zip": "application/zip",
 };
 
