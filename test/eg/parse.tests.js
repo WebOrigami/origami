@@ -48,8 +48,8 @@ describe("parse", () => {
       ["e"],
     ]);
     assert.deepEqual(list(`"foo", "bar"`).value, [
-      ["quote", "foo"],
-      ["quote", "bar"],
+      [opcodes.quote, "foo"],
+      [opcodes.quote, "bar"],
     ]);
     assert.deepEqual(list("a(b), c").value, [["a", ["b"]], ["c"]]);
   });
@@ -68,11 +68,17 @@ describe("parse", () => {
   });
 
   it("double-quote string", () => {
-    assert.deepEqual(doubleQuoteString(`"hello"`).value, ["quote", "hello"]);
+    assert.deepEqual(doubleQuoteString(`"hello"`).value, [
+      opcodes.quote,
+      "hello",
+    ]);
   });
 
   it("single-quote string", () => {
-    assert.deepEqual(singleQuoteString(`'hello'`).value, ["quote", "hello"]);
+    assert.deepEqual(singleQuoteString(`'hello'`).value, [
+      opcodes.quote,
+      "hello",
+    ]);
   });
 
   it("function call", () => {
@@ -81,11 +87,11 @@ describe("parse", () => {
       rest: "",
     });
     assert.deepEqual(functionCall("fn('a', 'b')"), {
-      value: ["fn", ["quote", "a"], ["quote", "b"]],
+      value: ["fn", [opcodes.quote, "a"], [opcodes.quote, "b"]],
       rest: "",
     });
     assert.deepEqual(functionCall("fn 'a', 'b'"), {
-      value: ["fn", ["quote", "a"], ["quote", "b"]],
+      value: ["fn", [opcodes.quote, "a"], [opcodes.quote, "b"]],
       rest: "",
     });
     assert.deepEqual(functionCall("fn a, b"), {
@@ -105,7 +111,10 @@ describe("parse", () => {
   });
 
   it("indirect function call", () => {
-    assert.deepEqual(indirectCall("(fn) 'a'").value, [["fn"], ["quote", "a"]]);
+    assert.deepEqual(indirectCall("(fn) 'a'").value, [
+      ["fn"],
+      [opcodes.quote, "a"],
+    ]);
     assert.deepEqual(indirectCall("(fn) (a, b)").value, [["fn"], ["a"], ["b"]]);
     assert.deepEqual(indirectCall("(fn)").value, undefined);
   });
@@ -131,12 +140,16 @@ describe("parse", () => {
   });
 
   // it("backtick quoted string", () => {
-  //   assert.deepEqual(backtickQuotedString("`foo $x.json bar`").value, [
-  //     opcodes.concat,
-  //     "foo ",
-  //     [opcodes.variableName, "x", ".json"],
-  //     " bar",
-  //   ]);
+  //   assert.deepEqual(
+  //     backtickQuoteString("`Hello, world.`").value,
+  //     [opcodes.quote, "Hello, world."]
+  //   );
+  //   // assert.deepEqual(backtickQuotedString("`foo $x.json bar`").value, [
+  //   //   opcodes.concat,
+  //   //   "foo ",
+  //   //   [opcodes.variableName, "x", ".json"],
+  //   //   " bar",
+  //   // ]);
   // });
 
   it("function call with variable pattern", () => {
@@ -155,10 +168,13 @@ describe("parse", () => {
     ]);
     assert.deepEqual(expression("foo.bar( 'hello' , 'world' )").value, [
       "foo.bar",
-      ["quote", "hello"],
-      ["quote", "world"],
+      [opcodes.quote, "hello"],
+      [opcodes.quote, "world"],
     ]);
-    assert.deepEqual(expression("(fn)('a')").value, [["fn"], ["quote", "a"]]);
+    assert.deepEqual(expression("(fn)('a')").value, [
+      ["fn"],
+      [opcodes.quote, "a"],
+    ]);
     assert.equal(expression("(foo").value, undefined);
   });
 
@@ -166,7 +182,7 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = fn 'bar'").value, [
       "=",
       "foo",
-      ["fn", ["quote", "bar"]],
+      ["fn", [opcodes.quote, "bar"]],
     ]);
   });
 
@@ -184,7 +200,7 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = ƒ('bar').js").value, [
       "=",
       "foo",
-      ["foo = ƒ('bar').js", ["quote", "bar"]],
+      ["foo = ƒ('bar').js", [opcodes.quote, "bar"]],
     ]);
   });
 

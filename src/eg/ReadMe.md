@@ -11,18 +11,18 @@ variableDeclaration: {variableName}[extension]
 
 assignment: declaration = expression [extension]
 
-expression: doubleQuotedString
-            singleQuotedString
-            backtickQuotedString
+expression: doubleQuoteString
+            singleQuoteString
+            backtickQuoteString
             indirectCall
             group
             call
 
-doubleQuotedString: "[text]"
+doubleQuoteString: "[text]"
 
-singleQuotedString: '[text]'
+singleQuoteString: '[text]'
 
-backtickQuotedString: `backtickList`
+backtickQuoteString: `backtickList`
 
 backtickList: backtickText variableReference backtickText
 

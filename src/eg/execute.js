@@ -1,13 +1,14 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { isPlainObject } from "../core/utilities.js";
+import * as opcodes from "./opcodes.js";
 
 export default async function execute(parsed, scope, graph) {
   if (parsed instanceof Array) {
     // Function
     const [fn, ...args] = parsed;
 
-    if (fn === "quote") {
+    if (fn === opcodes.quote) {
       // Don't evaluate, return argument as is.
       return args[0];
     }

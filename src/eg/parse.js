@@ -55,6 +55,24 @@ export function assignment(text) {
   };
 }
 
+// Parse a backtick-quoted string.
+export function backtickQuoteString(text) {
+  const result = sequence(
+    optionalWhitespace,
+    regex(/^`[^\`]*`/),
+    optionalWhitespace
+  )(text);
+  if (!result.value) {
+    return result;
+  }
+  const quotedText = result.value[1].slice(1, -1);
+  const value = [opcodes.quote, quotedText];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -71,7 +89,7 @@ export function doubleQuoteString(text) {
     return result;
   }
   const quotedText = result.value[1].slice(1, -1);
-  const value = ["quote", quotedText];
+  const value = [opcodes.quote, quotedText];
   return {
     value,
     rest: result.rest,
@@ -225,7 +243,7 @@ export function singleQuoteString(text) {
     return result;
   }
   const quotedText = result.value[1].slice(1, -1);
-  const value = ["quote", quotedText];
+  const value = [opcodes.quote, quotedText];
   return {
     value,
     rest: result.rest,
