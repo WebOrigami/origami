@@ -10,20 +10,20 @@ import defaultKeysJson from "./defaultKeysJson.js";
 import FormulasMixin from "./FormulasMixin.js";
 import HandlebarsHtmlMixin from "./HandlebarsHtmlMixin.js";
 import ImplicitExportsMixin from "./ImplicitExportsMixin.js";
-import PlusKeysMixin from "./PlusKeysMixin.js";
-import SplatKeysMixin from "./SplatKeysMixin.js";
+// import PlusKeysMixin from "./PlusKeysMixin.js";
+// import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 
 class AppGraph
-  /* InvokeFunctionsMixin */ /* WildcardKeysMixin */ extends ImplicitExportsMixin(
+  // InvokeFunctionsMixin
+  // WildcardKeysMixin
+  extends ImplicitExportsMixin(
     HandlebarsHtmlMixin(
-      PlusKeysMixin(
-        SplatKeysMixin(
-          VirtualKeysMixin(
-            FormulasMixin(
-              FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
-            )
-          )
+      // PlusKeysMixin(
+      // SplatKeysMixin(
+      VirtualKeysMixin(
+        FormulasMixin(
+          FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
         )
       )
     )

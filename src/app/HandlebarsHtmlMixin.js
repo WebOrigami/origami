@@ -1,6 +1,7 @@
 import Handlebars from "handlebars";
 import path from "path";
 import YAML from "yaml";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default function HandlebarsHtmlMixin(Base) {
   return class HandlebarsHtml extends Base {
@@ -55,6 +56,8 @@ export default function HandlebarsHtmlMixin(Base) {
           data =
             typeof jsonValue === "string" || jsonValue instanceof Buffer
               ? JSON.parse(String(jsonValue))
+              : ExplorableGraph.isExplorable(jsonValue)
+              ? await ExplorableGraph.plain(jsonValue)
               : jsonValue;
         } else {
           const yamlKey = `${base}.yaml`;
@@ -63,6 +66,8 @@ export default function HandlebarsHtmlMixin(Base) {
             data =
               typeof yamlValue === "string" || yamlValue instanceof Buffer
                 ? YAML.parse(String(yamlValue))
+                : ExplorableGraph.isExplorable(yamlValue)
+                ? await ExplorableGraph.plain(yamlValue)
                 : yamlValue;
           }
         }
