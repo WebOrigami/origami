@@ -4,10 +4,10 @@ import YAML from "yaml";
 const defaultLoaders = {
   ".htm": String,
   ".html": String,
-  ".json": (data) => JSON.parse(String(data)),
+  ".json": loadJson,
   ".txt": String,
   ".xhtml": String,
-  ".yaml": (data) => YAML.parse(String(data)),
+  ".yaml": loadYaml,
 };
 
 export default function FileLoadersMixin(Base) {
@@ -37,4 +37,16 @@ export default function FileLoadersMixin(Base) {
       this.#loaders = loaders;
     }
   };
+}
+
+function loadJson(data) {
+  return typeof data === "string" || data instanceof Buffer
+    ? JSON.parse(String(data))
+    : data; // Data may already be parsed
+}
+
+function loadYaml(data) {
+  return typeof data === "string" || data instanceof Buffer
+    ? YAML.parse(String(data))
+    : data; // Data may already be parsed
 }
