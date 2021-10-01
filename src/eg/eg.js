@@ -17,7 +17,7 @@ async function main(...args) {
   const context = await defaultGraph();
   const { value, rest } = parse.expression(source);
   const parsed = rest.length === 0 ? value : undefined;
-  console.log(JSON.stringify(parsed));
+  // console.log(JSON.stringify(parsed));
   if (!parsed) {
     console.error(`eg: could not recognize command: ${source}`);
     return;
