@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableApp from "../../src/app/ExplorableApp.js";
+import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
@@ -10,10 +11,36 @@ const fixturesDirectory = path.join(dirname, "fixtures");
 const formulasGraph = new ExplorableApp(
   path.join(fixturesDirectory, "formulas")
 );
+formulasGraph.scope = new Compose(
+  {
+    fn() {
+      return "Hello, world.";
+    },
+  },
+  formulasGraph.scope
+);
 
 // Given the nature of ExplorableApp, these are integration tests.
 
 describe("ExplorableApp", () => {
+  it("keys include both real and virtual keys", async () => {
+    assert.deepEqual(await ExplorableGraph.keys(formulasGraph), [
+      "foo.txt",
+      "greeting",
+      "greeting = ƒ('world').js",
+      "greeting = ƒ('world')",
+      "obj",
+      "obj = ƒ.json",
+      "sample.txt",
+      "sample.txt = ƒ().js",
+      "sample.txt = ƒ()",
+      "string",
+      "string = ƒ.json",
+      "value",
+      "value = fn()",
+    ]);
+  });
+
   it("can return an object", async () => {
     const value = await formulasGraph.get("obj");
     assert.deepEqual(value, {
@@ -21,6 +48,16 @@ describe("ExplorableApp", () => {
       b: "Hello, b.",
       c: "Hello, c.",
     });
+  });
+
+  it("can get the value of a virtual key", async () => {
+    const s = await formulasGraph.get("string");
+    assert.equal(s, "Hello, world.");
+  });
+
+  it("can produce a value using a function", async () => {
+    const value = await formulasGraph.get("value");
+    assert.equal(value, "Hello, world.");
   });
 
   it("can generate a value by calling a function exported by a module", async () => {

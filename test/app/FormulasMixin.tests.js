@@ -1,28 +1,9 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import FormulasMixin from "../../src/app/FormulasMixin.js";
-import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const fixturesDirectory = path.join(dirname, "fixtures");
-const directory = path.join(fixturesDirectory, "formulas");
-
 class FormulasObject extends FormulasMixin(ExplorableObject) {}
-
-class VirtualFiles extends FormulasMixin(ExplorableFiles) {}
-const graph = new VirtualFiles(directory);
-graph.scope = new Compose(
-  {
-    fn() {
-      return "Hello, world.";
-    },
-  },
-  graph.scope
-);
 
 describe("FormulasMixin", () => {
   it("can get a value defined by a variable pattern", async () => {
@@ -101,34 +82,5 @@ describe("FormulasMixin", () => {
     });
     assert.deepEqual(await fixture.get("Alice"), "Hello, Alice.");
     assert.deepEqual(await fixture.get("Bob"), "Hello, Bob.");
-  });
-
-  it("keys include both real and virtual keys", async () => {
-    assert.deepEqual(await ExplorableGraph.keys(graph), [
-      "foo.txt",
-      "greeting",
-      "greeting = ƒ('world').js",
-      "obj",
-      "obj = ƒ.json",
-      "sample.txt",
-      "sample.txt = ƒ().js",
-      "string",
-      "string = ƒ.json",
-      "value",
-      "value = fn()",
-    ]);
-  });
-
-  // TODO: Move files graph tests to ExplorableApp
-
-  it("can get the value of a virtual key", async () => {
-    const buffer = await graph.get("string");
-    const json = JSON.parse(String(buffer));
-    assert.equal(json, "Hello, world.");
-  });
-
-  it("can produce a value using a function", async () => {
-    const value = await graph.get("value");
-    assert.equal(value, "Hello, world.");
   });
 });
