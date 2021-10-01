@@ -16,6 +16,7 @@ expression: doubleQuoteString
             backtickQuoteString
             indirectCall
             group
+            url
             call
 
 doubleQuoteString: "[text]"
@@ -32,6 +33,17 @@ backtickText: everything but ` and $
 indirectCall: group args
 
 group: ( expression )
+
+url: protocol urlPath
+
+protocol: "http"
+          "https"
+
+urlPath: urlKey urlPath
+         urlKey
+
+urlKey: variableReference
+        literal
 
 call: reference [args]
 

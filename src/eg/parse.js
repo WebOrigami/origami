@@ -126,6 +126,7 @@ export function expression(text) {
     backtickQuoteString,
     indirectCall,
     group,
+    url,
     functionCall
   )(text);
 }
@@ -355,4 +356,69 @@ export function variableReference(text) {
     value,
     rest: result.rest,
   };
+}
+
+// Parse a space-delimeted URL
+export function url(text) {
+  const result = sequence(
+    optionalWhitespace,
+    urlProtocol,
+    whitespace,
+    urlPath,
+    optionalWhitespace
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const { 1: protocol, 3: path } = result.value;
+  const value = [protocol, ...path];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a URL protocol
+export function urlProtocol(text) {
+  return regex(/^https?/)(text);
+}
+
+// Parse a space-delimeted URL path
+export function urlPath(text) {
+  const result = separatedList(urlKey, whitespace, regex(/^/))(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  // Remove the separators from the result.
+  const values = [];
+  while (result.value.length > 0) {
+    values.push(result.value.shift()); // Keep value
+    result.value.shift(); // Drop separator
+  }
+  return {
+    value: values,
+    rest: result.rest,
+  };
+}
+
+// Parse a key in a URL path
+export function urlKey(text) {
+  const result = any(variableReference, literal)(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  // Quote if it's a literal.
+  const value =
+    typeof result.value === "string"
+      ? [opcodes.quote, result.value]
+      : result.value;
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a whitespace sequence.
+export function whitespace(text) {
+  return terminal(/^\s+/)(text);
 }
