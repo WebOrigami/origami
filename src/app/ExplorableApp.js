@@ -13,7 +13,6 @@ import ImplicitExportsMixin from "./ImplicitExportsMixin.js";
 // import PlusKeysMixin from "./PlusKeysMixin.js";
 // import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
-import WatchFilesMixin from "./WatchFilesMixin.js";
 
 class AppGraph
   // InvokeFunctionsMixin
@@ -24,9 +23,7 @@ class AppGraph
       // SplatKeysMixin(
       VirtualKeysMixin(
         FormulasMixin(
-          FileLoadersMixin(
-            ModulesDefaultExportMixin(WatchFilesMixin(ExplorableFiles))
-          )
+          FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
         )
       )
     )
