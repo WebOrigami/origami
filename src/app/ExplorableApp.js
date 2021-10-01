@@ -17,13 +17,13 @@ import VirtualKeysMixin from "./VirtualKeysMixin.js";
 class AppGraph
   // InvokeFunctionsMixin
   // WildcardKeysMixin
-  extends ImplicitExportsMixin(
-    HandlebarsHtmlMixin(
-      // PlusKeysMixin(
-      // SplatKeysMixin(
-      VirtualKeysMixin(
-        FormulasMixin(
-          FileLoadersMixin(ModulesDefaultExportMixin(ExplorableFiles))
+  extends FileLoadersMixin(
+    ImplicitExportsMixin(
+      HandlebarsHtmlMixin(
+        // PlusKeysMixin(
+        // SplatKeysMixin(
+        VirtualKeysMixin(
+          FormulasMixin(ModulesDefaultExportMixin(ExplorableFiles))
         )
       )
     )
