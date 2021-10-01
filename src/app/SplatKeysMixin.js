@@ -42,6 +42,7 @@ export default function SplatKeysMixin(Base) {
       // Try looking in splat graphs.
       if (this.#splatGraphs === undefined) {
         // Force refresh
+        // @ts-ignore
         for await (const key of this) {
         }
       }

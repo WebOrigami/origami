@@ -29,7 +29,7 @@ async function importModule(modulePath) {
   let obj;
   try {
     obj = await import(modulePath);
-  } catch (error) {
+  } catch (/** @type {any} */ error) {
     if (error.code !== "ERR_MODULE_NOT_FOUND") {
       throw error;
     }

@@ -13,7 +13,7 @@ export default class ExplorableFiles {
     let entries;
     try {
       entries = await fs.readdir(this.dirname, { withFileTypes: true });
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       if (error.code !== "ENOENT") {
         throw error;
       }
@@ -123,7 +123,7 @@ export default class ExplorableFiles {
 async function stat(filePath) {
   try {
     return await fs.stat(filePath);
-  } catch (error) {
+  } catch (/** @type {any} */ error) {
     if (error.code === "ENOENT" /* File not found */) {
       return undefined;
     }

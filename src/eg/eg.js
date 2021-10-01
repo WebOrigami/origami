@@ -37,6 +37,6 @@ while (args[0] === "") {
 }
 try {
   await main(...args);
-} catch (error) {
+} catch (/** @type {any} */ error) {
   console.error(error);
 }

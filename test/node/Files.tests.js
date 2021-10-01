@@ -115,7 +115,7 @@ describe("ExplorableFiles", () => {
     let stats;
     try {
       stats = await fs.stat(tempFile);
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       if (error.code !== "ENOENT") {
         throw error;
       }
@@ -133,7 +133,7 @@ describe("ExplorableFiles", () => {
     let stats;
     try {
       stats = await fs.stat(folder);
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       if (error.code !== "ENOENT") {
         throw error;
       }

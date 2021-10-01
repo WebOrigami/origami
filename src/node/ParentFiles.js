@@ -18,7 +18,7 @@ export default class ParentFiles {
       try {
         await fs.stat(filePath);
         return filePath; // Found
-      } catch (error) {
+      } catch (/** @type {any} */ error) {
         if (error.code !== "ENOENT") {
           throw error;
         }
