@@ -73,6 +73,15 @@ export default function FormulasMixin(Base) {
       }
     }
 
+    // Reset memoized values when the underlying graph changes.
+    onChange(eventType, filename) {
+      if (super.onChange) {
+        super.onChange(eventType, filename);
+      }
+      this.#formulas = null;
+      this.#keys = null;
+    }
+
     get scope() {
       return this.#scope;
     }
