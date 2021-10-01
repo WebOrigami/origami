@@ -3,6 +3,7 @@ import process from "process";
 import { requestListener } from "../../server/server.js";
 
 const defaultPort = process.env.PORT || 5000;
+console.log(`process.env.PORT = ${process.env.PORT}`);
 
 export default async function serve(graph, port = defaultPort) {
   http.createServer(requestListener(graph)).listen(port);
