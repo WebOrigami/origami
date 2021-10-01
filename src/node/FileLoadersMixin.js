@@ -40,13 +40,17 @@ export default function FileLoadersMixin(Base) {
 }
 
 function loadJson(data) {
-  return typeof data === "string" || data instanceof Buffer
+  return data.length === 0
+    ? {} // Empty string; treat as empty object
+    : typeof data === "string" || data instanceof Buffer
     ? JSON.parse(String(data))
     : data; // Data may already be parsed
 }
 
 function loadYaml(data) {
-  return typeof data === "string" || data instanceof Buffer
+  return data.length === 0
+    ? {} // Empty string; treat as empty object
+    : typeof data === "string" || data instanceof Buffer
     ? YAML.parse(String(data))
     : data; // Data may already be parsed
 }
