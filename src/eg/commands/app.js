@@ -3,7 +3,7 @@ import process from "process";
 import ExplorableApp from "../../app/ExplorableApp.js";
 import config from "./config.js";
 
-// Start an ExplorableApp with file watching
+// Start an ExplorableApp
 export default async function app(relativePath = "") {
   const resolvedPath = path.resolve(process.cwd(), relativePath);
   // const app = new (WatchFilesMixin(ExplorableApp))(resolvedPath);
