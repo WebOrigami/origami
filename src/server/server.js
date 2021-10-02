@@ -28,18 +28,24 @@ export async function handleRequest(request, response, graph) {
   const resource = await graph.get(...keys);
   if (resource !== undefined) {
     // If resource is a function, invoke to get the object we want to return.
-    const obj = typeof resource === "function" ? await resource() : resource;
-
-    // The result should be something concrete like a string or Buffer that we
-    // can send to the client. If we ended up with a subgraph as a result,
-    // that's effectively the same as not finding a result.
-    if (ExplorableGraph.isExplorable(obj)) {
-      return false;
-    }
+    let obj = typeof resource === "function" ? await resource() : resource;
 
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
     let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
+
+    if (ExplorableGraph.isExplorable(obj)) {
+      // The result should be something concrete like a string or Buffer that we
+      // can send to the client. If we ended up with a subgraph as a result,
+      // that's effectively the same as not finding a result. Exception:
+      // if this graph is for a JSON request, cast the graph to JSON.
+      if (mediaType === "application/json") {
+        obj = await ExplorableGraph.plain(obj);
+      } else {
+        return false;
+      }
+    }
+
     const data =
       mediaType === "application/json" && typeof obj !== "string"
         ? JSON.stringify(obj, null, 2)
