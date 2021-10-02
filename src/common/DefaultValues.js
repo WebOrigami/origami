@@ -46,4 +46,8 @@ export default class DefaultValues {
 
     return value;
   }
+
+  get path() {
+    return /** @type {any} */ (this.graph).path;
+  }
 }
