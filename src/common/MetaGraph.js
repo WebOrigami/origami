@@ -16,7 +16,7 @@ export default class MetaGraph {
     if (isLink) {
       // Remove `$graph/` and get path parts.
       const path = value.slice(7).split("/");
-      const targetValue = await this.target.get(path);
+      const targetValue = await this.target.get(...path);
       return targetValue;
     } else {
       return value;
