@@ -107,7 +107,7 @@ export function requestListener(arg) {
   const graph = ExplorableObject.explore(obj);
 
   return async function (request, response) {
-    console.log(request.url);
+    console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);
     if (!handled) {
       response.writeHead(404, { "Content-Type": "text/html" });
