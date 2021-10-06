@@ -23,8 +23,8 @@ export function graphRouter(graph) {
 }
 
 export async function handleRequest(request, response, graph) {
-  const unescaped = unescape(request.url);
-  const keys = keysFromHref(unescaped);
+  const decodedUrl = decodeURI(request.url);
+  const keys = keysFromHref(decodedUrl);
   const resource = await graph.get(...keys);
   if (resource !== undefined) {
     // If resource is a function, invoke to get the object we want to return.
