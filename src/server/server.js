@@ -25,33 +25,42 @@ export function graphRouter(graph) {
 export async function handleRequest(request, response, graph) {
   const decodedUrl = decodeURI(request.url);
   const keys = keysFromHref(decodedUrl);
-  const resource = await graph.get(...keys);
-  if (resource !== undefined) {
-    // If resource is a function, invoke to get the object we want to return.
-    let obj = typeof resource === "function" ? await resource() : resource;
 
+  // Ask the graph for the resource with those keys.
+  let resource;
+  try {
+    resource = await graph.get(...keys);
+    // If resource is a function, invoke to get the object we want to return.
+    if (typeof resource === "function") {
+      resource = await resource();
+    }
+  } catch (/** @type {any} */ error) {
+    console.log(error.message);
+    resource = undefined;
+  }
+
+  if (resource !== undefined) {
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
     let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
-
-    if (ExplorableGraph.isExplorable(obj)) {
+    if (ExplorableGraph.isExplorable(resource)) {
       // The result should be something concrete like a string or Buffer that we
       // can send to the client. If we ended up with a subgraph as a result,
       // that's effectively the same as not finding a result. Exception:
       // if this graph is for a JSON request, cast the graph to JSON.
       if (mediaType === "application/json") {
-        obj = await ExplorableGraph.plain(obj);
+        resource = await ExplorableGraph.plain(resource);
       } else {
         return false;
       }
     }
 
     const data =
-      mediaType === "application/json" && typeof obj !== "string"
-        ? JSON.stringify(obj, null, 2)
+      mediaType === "application/json" && typeof resource !== "string"
+        ? JSON.stringify(resource, null, 2)
         : mediaType
-        ? obj
-        : textOrObject(obj);
+        ? resource
+        : textOrObject(resource);
 
     if (!mediaType) {
       // Can't identify media type; infer default type.
