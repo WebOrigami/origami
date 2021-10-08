@@ -1,14 +1,16 @@
-import path from "path";
 import process from "process";
 import ExplorableApp from "../../app/ExplorableApp.js";
 import config from "./config.js";
 
 // Start an ExplorableApp
-export default async function app(relativePath = "") {
-  const resolvedPath = path.resolve(process.cwd(), relativePath);
-  const app = new ExplorableApp(resolvedPath);
-  app.scope = await config(resolvedPath);
-  return app;
+export default async function app(...keys) {
+  const appPath = process.cwd();
+  let result = new ExplorableApp(appPath);
+  result.scope = await config(appPath);
+  if (keys.length > 0) {
+    result = await result.get(...keys);
+  }
+  return result;
 }
 
-app.usage = `app(path)\tCreates a basic server app for the files at path`;
+app.usage = `app()\tAn explorable application graph for the current directory`;
