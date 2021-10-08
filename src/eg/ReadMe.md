@@ -46,9 +46,9 @@ urlPath: urlKey / urlPath
 urlKey: variableReference
         literal
 
-spaceUrl: spaceProtocol whitespace spaceUrlPath
+spaceUrl: spaceUrlProtocol whitespace spaceUrlPath
 
-spaceProtocol: https
+spaceUrlProtocol: https
                http
 
 spaceUrlPath: literal whitespace spaceUrlPath

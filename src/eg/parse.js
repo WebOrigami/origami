@@ -126,7 +126,7 @@ export function expression(text) {
     backtickQuoteString,
     indirectCall,
     group,
-    url,
+    spaceUrl,
     functionCall
   )(text);
 }
@@ -291,6 +291,49 @@ export function singleQuoteString(text) {
   };
 }
 
+// Parse a space-delimeted URL
+export function spaceUrl(text) {
+  const result = sequence(
+    optionalWhitespace,
+    spaceUrlProtocol,
+    whitespace,
+    spaceUrlPath,
+    optionalWhitespace
+  )(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const { 1: protocol, 3: path } = result.value;
+  const value = [protocol, ...path];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a URL protocol
+export function spaceUrlProtocol(text) {
+  return regex(/^https?/)(text);
+}
+
+// Parse a space-delimeted URL path
+export function spaceUrlPath(text) {
+  const result = separatedList(urlKey, whitespace, regex(/^/))(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  // Remove the separators from the result.
+  const values = [];
+  while (result.value.length > 0) {
+    values.push(result.value.shift()); // Keep value
+    result.value.shift(); // Drop separator
+  }
+  return {
+    value: values,
+    rest: result.rest,
+  };
+}
+
 // Look for occurences of ["ƒ"] in the parsed tree, which represent a call to
 // the value of the key defining the assignment. Replace those with the
 // indicated text, which will be the entire key.
@@ -354,49 +397,6 @@ export function variableReference(text) {
   const value = [opcodes.variable, variable, extension];
   return {
     value,
-    rest: result.rest,
-  };
-}
-
-// Parse a space-delimeted URL
-export function url(text) {
-  const result = sequence(
-    optionalWhitespace,
-    urlProtocol,
-    whitespace,
-    urlPath,
-    optionalWhitespace
-  )(text);
-  if (result.value === undefined) {
-    return result;
-  }
-  const { 1: protocol, 3: path } = result.value;
-  const value = [protocol, ...path];
-  return {
-    value,
-    rest: result.rest,
-  };
-}
-
-// Parse a URL protocol
-export function urlProtocol(text) {
-  return regex(/^https?/)(text);
-}
-
-// Parse a space-delimeted URL path
-export function urlPath(text) {
-  const result = separatedList(urlKey, whitespace, regex(/^/))(text);
-  if (result.value === undefined) {
-    return result;
-  }
-  // Remove the separators from the result.
-  const values = [];
-  while (result.value.length > 0) {
-    values.push(result.value.shift()); // Keep value
-    result.value.shift(); // Drop separator
-  }
-  return {
-    value: values,
     rest: result.rest,
   };
 }

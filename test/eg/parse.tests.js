@@ -13,7 +13,7 @@ import {
   literal,
   optionalWhitespace,
   singleQuoteString,
-  url,
+  spaceUrl,
   variableName,
   variableReference,
 } from "../../src/eg/parse.js";
@@ -187,14 +187,14 @@ describe("parse", () => {
     assert.equal(expression("(foo").value, undefined);
   });
 
-  it("url", () => {
-    assert.deepEqual(url("https example.com foo bar.json").value, [
+  it("space-delimited url", () => {
+    assert.deepEqual(spaceUrl("https example.com foo bar.json").value, [
       "https",
       [opcodes.quote, "example.com"],
       [opcodes.quote, "foo"],
       [opcodes.quote, "bar.json"],
     ]);
-    assert.deepEqual(url("http example.org $x data.json").value, [
+    assert.deepEqual(spaceUrl("http example.org $x data.json").value, [
       "http",
       [opcodes.quote, "example.org"],
       [opcodes.variable, "x", null],
