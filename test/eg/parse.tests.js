@@ -13,6 +13,8 @@ import {
   literal,
   optionalWhitespace,
   singleQuoteString,
+  slashCall,
+  slashPath,
   spaceUrl,
   variableName,
   variableReference,
@@ -185,6 +187,33 @@ describe("parse", () => {
       [opcodes.quote, "a"],
     ]);
     assert.equal(expression("(foo").value, undefined);
+  });
+
+  it("slash-delimited path", () => {
+    assert.deepEqual(slashPath("foo/bar/baz").value, [
+      [opcodes.quote, "foo"],
+      [opcodes.quote, "bar"],
+      [opcodes.quote, "baz"],
+    ]);
+  });
+
+  it("function call with path syntax", () => {
+    assert.deepEqual(slashCall("fn/a/b/c").value, [
+      "fn",
+      [opcodes.quote, "a"],
+      [opcodes.quote, "b"],
+      [opcodes.quote, "c"],
+    ]);
+    assert.deepEqual(slashCall("about:blank").value, [
+      "about",
+      [opcodes.quote, "blank"],
+    ]);
+    assert.deepEqual(slashCall("https://example.com/foo/bar.json").value, [
+      "https",
+      [opcodes.quote, "example.com"],
+      [opcodes.quote, "foo"],
+      [opcodes.quote, "bar.json"],
+    ]);
   });
 
   it("space-delimited url", () => {

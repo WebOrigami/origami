@@ -16,9 +16,9 @@ expression: doubleQuoteString
             backtickQuoteString
             indirectCall
             group
-            url
             spaceUrl
-            call
+            pathCall
+            functionCall
 
 doubleQuoteString: "[text]"
 
@@ -35,26 +35,24 @@ indirectCall: group args
 
 group: ( expression )
 
-url: urlProtocol urlPath
-     urlPath
+pathCall: literal ":"|"://"|"/" slashPath
 
-urlProtocol: literal :
+slashPath: pathKey / slashPath
+           pathKey
 
-urlPath: urlKey / urlPath
-         urlKey
+pathKey: reference
 
-urlKey: variableReference
-        literal
+slashCall: literal / slashPath
 
 spaceUrl: spaceUrlProtocol whitespace spaceUrlPath
 
 spaceUrlProtocol: https
-               http
+                  http
 
-spaceUrlPath: literal whitespace spaceUrlPath
-              literal
+spaceUrlPath: pathKey whitespace spaceUrlPath
+              pathKey
 
-call: reference [args]
+functionCall: reference [args]
 
 args: parentheticalArgs
       list
