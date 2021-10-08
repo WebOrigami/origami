@@ -17,6 +17,7 @@ expression: doubleQuoteString
             indirectCall
             group
             url
+            spaceUrl
             call
 
 doubleQuoteString: "[text]"
@@ -34,16 +35,24 @@ indirectCall: group args
 
 group: ( expression )
 
-url: protocol urlPath
+url: urlProtocol urlPath
+     urlPath
 
-protocol: "http"
-          "https"
+urlProtocol: literal :
 
-urlPath: urlKey urlPath
+urlPath: urlKey / urlPath
          urlKey
 
 urlKey: variableReference
         literal
+
+spaceUrl: spaceProtocol whitespace spaceUrlPath
+
+spaceProtocol: https
+               http
+
+spaceUrlPath: literal whitespace spaceUrlPath
+              literal
 
 call: reference [args]
 
@@ -64,5 +73,5 @@ variableName: for now, JavaScript identifiers with ASCII letters
 
 extension: .literal
 
-literal: everything but =(){}$&"', and whitespace
+literal: everything but =(){}$&"'/, and whitespace
 ```

@@ -224,7 +224,7 @@ export function list(text) {
 // Parse a literal
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\$"'`,\s]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"'/`,\s]+/)(text);
 }
 
 // Parse a left parenthesis.

@@ -2,7 +2,7 @@ import MetaGraph from "../../src/common/MetaGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
-describe.only("MetaGraph", () => {
+describe("MetaGraph", () => {
   it("runs", async () => {
     const map = {
       title: "Home page",
