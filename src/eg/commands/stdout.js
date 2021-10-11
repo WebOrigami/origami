@@ -1,8 +1,12 @@
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import yaml from "./yaml.js";
 
 export default async function stdout(obj) {
   const output =
-    obj !== undefined ? await ExplorableGraph.toYaml(obj) : undefined;
+    typeof obj === "string"
+      ? obj
+      : obj !== undefined
+      ? await yaml(obj)
+      : undefined;
   if (output !== undefined) {
     console.log(output);
   }

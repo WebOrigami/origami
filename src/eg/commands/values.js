@@ -1,7 +1,7 @@
-import ExplorableObject from "../../core/ExplorableObject.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default async function values(arg) {
-  const graph = ExplorableObject.explore(arg);
+export default async function values(variant) {
+  const graph = ExplorableGraph.from(variant);
   const results = [];
   for await (const key of graph) {
     results.push(await graph.get(key));

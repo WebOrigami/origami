@@ -1,8 +1,7 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import ExplorableObject from "../../core/ExplorableObject.js";
 
-export default async function keys(arg) {
-  const graph = ExplorableObject.explore(arg);
+export default async function keys(variant) {
+  const graph = ExplorableGraph.from(variant);
   return await ExplorableGraph.keys(graph);
 }
 
