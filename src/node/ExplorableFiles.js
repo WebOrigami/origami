@@ -2,7 +2,7 @@ import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject, stringify } from "../core/utilities.js";
+import { isPlainObject, toSerializable } from "../core/utilities.js";
 
 export default class ExplorableFiles {
   constructor(dirname) {
@@ -109,7 +109,7 @@ export default class ExplorableFiles {
           ? value
           : isPlainObject(value) || value instanceof Array
           ? JSON.stringify(value, null, 2)
-          : stringify(value);
+          : toSerializable(value);
 
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);

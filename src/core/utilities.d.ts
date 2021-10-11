@@ -1,2 +1,2 @@
 export function isPlainObject(obj: any): boolean;
-export function stringify(obj: any): any;
+export function toSerializable(obj: any): any;

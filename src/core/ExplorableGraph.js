@@ -1,12 +1,21 @@
 import YAML from "yaml";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
-import { isPlainObject, stringify } from "./utilities.js";
+import { isPlainObject, toSerializable } from "./utilities.js";
 
 /**
  * A collection of operations that can be performed on explorable graphs.
  */
 export default class ExplorableGraph {
+  static canCastToExplorable(obj) {
+    return (
+      this.isExplorable(obj) ||
+      typeof obj === "string" ||
+      typeof obj === "function" ||
+      isPlainObject(obj)
+    );
+  }
+
   static from(variant) {
     if (this.isExplorable(variant)) {
       // Already explorable
@@ -19,7 +28,7 @@ export default class ExplorableGraph {
     } else if (isPlainObject(variant)) {
       return new ExplorableObject(variant);
     } else {
-      throw new TypeError("Could convert object to an explorable graph");
+      throw new TypeError("Couldn't convert object to an explorable graph");
     }
   }
 
@@ -53,10 +62,11 @@ export default class ExplorableGraph {
    * Given a graph and a function, return a new explorable graph that applies
    * the function to the original graph's values.
    *
-   * @param {Explorable} graph
+   * @param {GraphVariant} variant
    * @param {function} mapFn
    */
-  static map(graph, mapFn) {
+  static map(variant, mapFn) {
+    const graph = ExplorableGraph.from(variant);
     return {
       // Return same keys as original graph.
       async *[Symbol.asyncIterator]() {
@@ -97,36 +107,25 @@ export default class ExplorableGraph {
 
   /**
    * Converts the graph into a plain JavaScript object with the same structure
-   * as the graph, but with all keys and leaf values cast to strings.
+   * as the graph, but which can be serialized to text. All keys will be cast to
+   * strings, and all values reduced to native JavaScript types as best as
+   * possible.
    *
-   * @param {Explorable} graph
+   * @param {GraphVariant} variant
    */
-  static async strings(graph) {
-    // Leave plain objects and arrays as is, but stringify other types.
-    const stringified = this.map(graph, stringify);
-    return this.plain(stringified);
+  static async toSerializable(variant) {
+    const serializable = this.map(variant, toSerializable);
+    return this.plain(serializable);
   }
 
-  static async toJson(graph) {
-    if (typeof graph === "string") {
-      return graph;
-    }
-    // TODO: plain should get access to graph.obj, can return that immediately
-    // for ExplorableObject
-    const obj = isPlainObject(graph)
-      ? graph
-      : await ExplorableGraph.plain(graph);
-    return JSON.stringify(obj, null, 2);
+  static async toJson(variant) {
+    const serializable = await this.toSerializable(variant);
+    return JSON.stringify(serializable, null, 2);
   }
 
-  static async toYaml(graph) {
-    if (typeof graph === "string") {
-      return graph;
-    }
-    const obj = isPlainObject(graph)
-      ? graph
-      : await ExplorableGraph.plain(graph);
-    return YAML.stringify(obj);
+  static async toYaml(variant) {
+    const serializable = await this.toSerializable(variant);
+    return YAML.stringify(serializable);
   }
 
   /**

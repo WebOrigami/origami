@@ -17,16 +17,29 @@ export function isPlainObject(obj) {
   return Object.getPrototypeOf(obj) === proto;
 }
 
-export function stringify(obj) {
+export function toSerializable(obj) {
   if (isPlainObject(obj)) {
     const result = {};
     for (const key in obj) {
-      result[key] = stringify(obj[key]);
+      result[key] = toSerializable(obj[key]);
     }
     return result;
   } else if (obj instanceof Array) {
-    return obj.map((value) => stringify(value));
+    return obj.map((value) => toSerializable(value));
   } else {
-    return obj?.toString?.();
+    // Leave primitive and built-in types alone
+    const t = typeof obj;
+    if (
+      t === "boolean" ||
+      t === "number" ||
+      t === "bigint" ||
+      t === "string" ||
+      obj instanceof Date
+    ) {
+      return obj;
+    } else {
+      // Unknown type; try to cast to string.
+      return obj?.toString?.();
+    }
   }
 }

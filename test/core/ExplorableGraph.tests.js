@@ -96,43 +96,11 @@ c: Hello, c.`;
     });
   });
 
-  it("strings() returns a graph with keys and values cast to strings", async () => {
-    const graph = new ExplorableObject({
-      a: 1,
-      b: 2,
-      c: 3,
-      more: {
-        d: 4,
-        e: 5,
-      },
-    });
-    const strings = await ExplorableGraph.strings(graph);
-    assert.deepEqual(strings, {
-      a: "1",
-      b: "2",
-      c: "3",
-      more: {
-        d: "4",
-        e: "5",
-      },
-    });
-  });
-
   it("toJson() renders a graph as JSON", async () => {
     const graph = new ExplorableObject({ a: "Hello, a." });
     const json = await ExplorableGraph.toJson(graph);
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
-
-  // it("toTextForExtension() renders a graph as JSON or YAML", async () => {
-  //   const graph = new ExplorableObject({ a: "Hello, a." });
-  //   const yaml = await ExplorableGraph.toTextForExtension(graph, "foo.yaml");
-  //   assert.equal(yaml, `a: Hello, a.\n`);
-  //   const json = await ExplorableGraph.toTextForExtension(graph, "foo.json");
-  //   assert.equal(json, `{\n  "a": "Hello, a."\n}`);
-  //   const text = await ExplorableGraph.toTextForExtension(graph, "foo.bar");
-  //   assert.equal(text, `a: Hello, a.\n`); // YAML
-  // });
 
   it("toYaml() renders a graph as YAML", async () => {
     const graph = new ExplorableObject({ a: "Hello, a." });

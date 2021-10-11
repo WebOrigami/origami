@@ -56,7 +56,7 @@ export default function HandlebarsHtmlMixin(Base) {
           data =
             typeof jsonValue === "string" || jsonValue instanceof Buffer
               ? JSON.parse(String(jsonValue))
-              : ExplorableGraph.isExplorable(jsonValue)
+              : ExplorableGraph.canCastToExplorable(jsonValue)
               ? await ExplorableGraph.plain(jsonValue)
               : jsonValue;
         } else {
@@ -66,7 +66,7 @@ export default function HandlebarsHtmlMixin(Base) {
             data =
               typeof yamlValue === "string" || yamlValue instanceof Buffer
                 ? YAML.parse(String(yamlValue))
-                : ExplorableGraph.isExplorable(yamlValue)
+                : ExplorableGraph.canCastToExplorable(yamlValue)
                 ? await ExplorableGraph.plain(yamlValue)
                 : yamlValue;
           }

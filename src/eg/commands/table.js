@@ -1,5 +1,5 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { stringify } from "../../core/utilities.js";
+import { toSerializable } from "../../core/utilities.js";
 
 export default async function table(variant) {
   const graph = ExplorableGraph.from(variant);
@@ -46,7 +46,7 @@ async function simpleTable(graph) {
   const rows = [header];
   for await (const key of graph) {
     const value = await graph.get(key);
-    const valueText = stringify(value);
+    const valueText = toSerializable(value);
     rows.push(`${key}\t${valueText}`);
   }
   const text = rows.join("\n");
