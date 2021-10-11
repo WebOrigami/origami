@@ -3,6 +3,21 @@ import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 describe.only("ExplorableGraph", () => {
+  it("from() converts input to an explorable graph", async () => {
+    const graph1 = ExplorableGraph.from(`a: Hello, a.`);
+    assert(await ExplorableGraph.plain(graph1), {
+      a: "Hello, a.",
+    });
+    const graph2 = ExplorableGraph.from(graph1); // Already explorable
+    assert.equal(graph2, graph1);
+    const graph3 = ExplorableGraph.from({
+      b: "Hello, b.",
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph3), {
+      b: "Hello, b.",
+    });
+  });
+
   it("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 

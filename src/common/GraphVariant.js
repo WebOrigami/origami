@@ -1,3 +1,0 @@
-class ExplorableGraphPlus {
-  static from() {}
-}

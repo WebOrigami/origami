@@ -1,4 +1,5 @@
 import YAML from "yaml";
+import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
 import { isPlainObject, stringify } from "./utilities.js";
 
@@ -6,6 +7,21 @@ import { isPlainObject, stringify } from "./utilities.js";
  * A collection of operations that can be performed on explorable graphs.
  */
 export default class ExplorableGraph {
+  static from(variant) {
+    if (this.isExplorable(variant)) {
+      // Already explorable
+      return variant;
+    } else if (typeof variant === "string") {
+      return this.parse(variant);
+    } else if (typeof variant === "function") {
+      return new ExplorableFunction(variant);
+    } else if (isPlainObject(variant)) {
+      return new ExplorableObject(variant);
+    } else {
+      throw new TypeError("Could convert object to an explorable graph");
+    }
+  }
+
   /**
    * Return true if the given object implements the necessary explorable graph
    * members: a function identified with `Symbol.asyncIterator`, and a function
