@@ -70,18 +70,6 @@ describe("ExplorableGraph", () => {
     });
   });
 
-  it("parse() parses YAML (and so also JSON)", async () => {
-    const text = `a: Hello, a.
-b: Hello, b.
-c: Hello, c.`;
-    const graph = ExplorableGraph.parse(text);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: "Hello, a.",
-      b: "Hello, b.",
-      c: "Hello, c.",
-    });
-  });
-
   it("plain() produces a plain object version of a graph", async () => {
     const original = {
       a: 1,
@@ -95,6 +83,17 @@ c: Hello, c.`;
     const graph = new ExplorableObject(original);
     const plain = await ExplorableGraph.plain(graph);
     assert.deepEqual(plain, original);
+  });
+
+  it("plain() can parse YAML (and so also JSON)", async () => {
+    const yaml = `a: Hello, a.
+b: Hello, b.
+c: Hello, c.`;
+    assert.deepEqual(await ExplorableGraph.plain(yaml), {
+      a: "Hello, a.",
+      b: "Hello, b.",
+      c: "Hello, c.",
+    });
   });
 
   it("strings() returns a graph with keys and values cast to strings", async () => {

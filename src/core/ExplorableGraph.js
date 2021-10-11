@@ -12,7 +12,8 @@ export default class ExplorableGraph {
       // Already explorable
       return variant;
     } else if (typeof variant === "string") {
-      return this.parse(variant);
+      const obj = YAML.parse(variant);
+      return new ExplorableObject(obj);
     } else if (typeof variant === "function") {
       return new ExplorableFunction(variant);
     } else if (isPlainObject(variant)) {
@@ -39,7 +40,8 @@ export default class ExplorableGraph {
   /**
    * Returns the graph's keys as an array.
    */
-  static async keys(graph) {
+  static async keys(variant) {
+    const graph = this.from(variant);
     const result = [];
     for await (const key of graph) {
       result.push(key);
@@ -73,20 +75,16 @@ export default class ExplorableGraph {
     };
   }
 
-  static parse(text) {
-    const obj = YAML.parse(text);
-    return new ExplorableObject(obj);
-  }
-
   /**
    * Converts a graph into a plain JavaScript object.
    *
    * The result's keys will be the graph's keys cast to strings. Any graph value
    * that is itself a graph will be similarly converted to a plain object.
    *
-   * @param {Explorable} graph
+   * @param {GraphVariant} variant
    */
-  static async plain(graph) {
+  static async plain(variant) {
+    const graph = this.from(variant);
     const result = {};
     for await (const key of graph) {
       const value = await graph.get(key);
@@ -129,5 +127,17 @@ export default class ExplorableGraph {
       ? graph
       : await ExplorableGraph.plain(graph);
     return YAML.stringify(obj);
+  }
+
+  /**
+   * Returns the graph's values as an array.
+   */
+  static async values(variant) {
+    const graph = this.from(variant);
+    const result = [];
+    for await (const key of graph) {
+      result.push(await graph.get(key));
+    }
+    return result;
   }
 }
