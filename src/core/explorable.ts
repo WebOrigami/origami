@@ -29,3 +29,9 @@ interface Explorable {
 interface Storable {
   set(...args: any[]): Promise<void>;
 }
+
+type PlainObject = {
+  [key: string]: any;
+};
+
+type GraphVariant = Explorable | PlainObject | string | Function;

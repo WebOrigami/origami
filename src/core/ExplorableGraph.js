@@ -1,4 +1,6 @@
-import { stringify } from "./utilities.js";
+import YAML from "yaml";
+import ExplorableObject from "./ExplorableObject.js";
+import { isPlainObject, stringify } from "./utilities.js";
 
 /**
  * A collection of operations that can be performed on explorable graphs.
@@ -55,6 +57,11 @@ export default class ExplorableGraph {
     };
   }
 
+  static parse(text) {
+    const obj = YAML.parse(text);
+    return new ExplorableObject(obj);
+  }
+
   /**
    * Converts a graph into a plain JavaScript object.
    *
@@ -84,5 +91,27 @@ export default class ExplorableGraph {
     // Leave plain objects and arrays as is, but stringify other types.
     const stringified = this.map(graph, stringify);
     return this.plain(stringified);
+  }
+
+  static async toJson(graph) {
+    if (typeof graph === "string") {
+      return graph;
+    }
+    // TODO: plain should get access to graph.obj, can return that immediately
+    // for ExplorableObject
+    const obj = isPlainObject(graph)
+      ? graph
+      : await ExplorableGraph.plain(graph);
+    return JSON.stringify(obj, null, 2);
+  }
+
+  static async toYaml(graph) {
+    if (typeof graph === "string") {
+      return graph;
+    }
+    const obj = isPlainObject(graph)
+      ? graph
+      : await ExplorableGraph.plain(graph);
+    return YAML.stringify(obj);
   }
 }

@@ -2,7 +2,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("ExplorableGraph", () => {
+describe.only("ExplorableGraph", () => {
   it("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 
@@ -55,6 +55,18 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  it("parse() parses YAML (and so also JSON)", async () => {
+    const text = `a: Hello, a.
+b: Hello, b.
+c: Hello, c.`;
+    const graph = ExplorableGraph.parse(text);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: "Hello, a.",
+      b: "Hello, b.",
+      c: "Hello, c.",
+    });
+  });
+
   it("plain() produces a plain object version of a graph", async () => {
     const original = {
       a: 1,
@@ -90,5 +102,27 @@ describe("ExplorableGraph", () => {
         e: "5",
       },
     });
+  });
+
+  it("toJson() renders a graph as JSON", async () => {
+    const graph = new ExplorableObject({ a: "Hello, a." });
+    const json = await ExplorableGraph.toJson(graph);
+    assert.equal(json, `{\n  "a": "Hello, a."\n}`);
+  });
+
+  // it("toTextForExtension() renders a graph as JSON or YAML", async () => {
+  //   const graph = new ExplorableObject({ a: "Hello, a." });
+  //   const yaml = await ExplorableGraph.toTextForExtension(graph, "foo.yaml");
+  //   assert.equal(yaml, `a: Hello, a.\n`);
+  //   const json = await ExplorableGraph.toTextForExtension(graph, "foo.json");
+  //   assert.equal(json, `{\n  "a": "Hello, a."\n}`);
+  //   const text = await ExplorableGraph.toTextForExtension(graph, "foo.bar");
+  //   assert.equal(text, `a: Hello, a.\n`); // YAML
+  // });
+
+  it("toYaml() renders a graph as YAML", async () => {
+    const graph = new ExplorableObject({ a: "Hello, a." });
+    const yaml = await ExplorableGraph.toYaml(graph);
+    assert.equal(yaml, `a: Hello, a.\n`);
   });
 });
