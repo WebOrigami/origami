@@ -30,7 +30,7 @@ describe("ExplorableApp", () => {
       "greeting = ƒ('world').js",
       "greeting = ƒ('world')",
       "obj",
-      "obj = ƒ.json",
+      "obj = parse ƒ.json",
       "sample.txt",
       "sample.txt = ƒ().js",
       "sample.txt = ƒ()",
@@ -52,7 +52,7 @@ describe("ExplorableApp", () => {
 
   it("can get the value of a virtual key", async () => {
     const s = await formulasGraph.get("string");
-    assert.equal(s, "Hello, world.");
+    assert.equal(s.trim(), `"Hello, world."`);
   });
 
   it("can produce a value using a function", async () => {

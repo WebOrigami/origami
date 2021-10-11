@@ -1,13 +1,12 @@
 import path from "path";
-import YAML from "yaml";
 
 const defaultLoaders = {
   ".htm": String,
   ".html": String,
-  ".json": loadJson,
+  ".json": String,
   ".txt": String,
   ".xhtml": String,
-  ".yaml": loadYaml,
+  ".yaml": String,
 };
 
 export default function FileLoadersMixin(Base) {
@@ -37,20 +36,4 @@ export default function FileLoadersMixin(Base) {
       this.#loaders = loaders;
     }
   };
-}
-
-function loadJson(data) {
-  return data.length === 0
-    ? {} // Empty string; treat as empty object
-    : typeof data === "string" || data instanceof Buffer
-    ? JSON.parse(String(data))
-    : data; // Data may already be parsed
-}
-
-function loadYaml(data) {
-  return data.length === 0
-    ? {} // Empty string; treat as empty object
-    : typeof data === "string" || data instanceof Buffer
-    ? YAML.parse(String(data))
-    : data; // Data may already be parsed
 }
