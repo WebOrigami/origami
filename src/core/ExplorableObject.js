@@ -23,12 +23,6 @@ export default class ExplorableObject {
     }
   }
 
-  static explore(obj) {
-    return ExplorableGraph.isExplorable(obj)
-      ? obj // Return object as is.
-      : new ExplorableObject(obj);
-  }
-
   /**
    * Return the value at the corresponding path of keys.
    *

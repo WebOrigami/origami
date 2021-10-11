@@ -1,4 +1,4 @@
-import ExplorableObject from "../core/ExplorableObject.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
@@ -8,8 +8,8 @@ import ExplorableObject from "../core/ExplorableObject.js";
  */
 export default class DefaultValues {
   constructor(graph, defaults) {
-    this.graph = ExplorableObject.explore(graph);
-    this.defaults = ExplorableObject.explore(defaults);
+    this.graph = ExplorableGraph.from(graph);
+    this.defaults = ExplorableGraph.from(defaults);
   }
 
   async *[Symbol.asyncIterator]() {

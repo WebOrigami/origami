@@ -1,4 +1,4 @@
-import ExplorableObject from "../core/ExplorableObject.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If
@@ -12,13 +12,13 @@ export default class Cache {
    * @param  {...any} graphs
    */
   constructor(cache, ...graphs) {
-    /** @type {any} */ this.cache = ExplorableObject.explore(cache);
+    /** @type {any} */ this.cache = ExplorableGraph.from(cache);
     if (typeof this.cache.set !== "function") {
       throw new TypeError(
         `The first parameter to the Cache constructor must be a graph with a "set" method.`
       );
     }
-    this.graphs = graphs.map((graph) => ExplorableObject.explore(graph));
+    this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
   }
 
   async *[Symbol.asyncIterator]() {

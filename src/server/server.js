@@ -1,6 +1,5 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ExplorableObject from "../core/ExplorableObject.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -98,23 +97,10 @@ export function keysFromHref(href) {
  * https.createServer calls, letting you serve an explorable function as a set
  * of pages.
  *
- * @param {any} arg
+ * @param {GraphVariant} variant
  */
-export function requestListener(arg) {
-  // Cast string/JSON arguments to objects.
-  let obj;
-  if (typeof arg === "string" && arg.startsWith("{")) {
-    // Interpret as JSON
-    obj = JSON.parse(arg);
-  } else if (typeof arg === "string") {
-    // Serve single string
-    obj = { "index.html": arg };
-  } else {
-    obj = arg;
-  }
-
-  const graph = ExplorableObject.explore(obj);
-
+export function requestListener(variant) {
+  const graph = ExplorableGraph.from(variant);
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);

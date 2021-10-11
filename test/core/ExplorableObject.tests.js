@@ -126,20 +126,4 @@ describe("ExplorableObject", () => {
     assert.equal(await obj.get("a"), "A");
     assert.equal(await obj.get("foo"), "FOO");
   });
-
-  it("explore wraps an object", async () => {
-    const graph = ExplorableObject.explore({
-      a: 1,
-    });
-    assert.equal(await graph.get("a"), 1);
-  });
-
-  it("explore returns an already explorable object as is", async () => {
-    const graph = {
-      async *[Symbol.asyncIterator]() {},
-      async get() {},
-    };
-    const result = ExplorableObject.explore(graph);
-    assert.equal(result, graph);
-  });
 });

@@ -1,4 +1,4 @@
-import ExplorableObject from "../core/ExplorableObject.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Given a set of explorable graphs, the get method will look at each graph in
@@ -8,7 +8,7 @@ import ExplorableObject from "../core/ExplorableObject.js";
  */
 export default class Compose {
   constructor(...graphs) {
-    this.graphs = graphs.map((graph) => ExplorableObject.explore(graph));
+    this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
   }
 
   async *[Symbol.asyncIterator]() {

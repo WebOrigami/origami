@@ -2,7 +2,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe.only("ExplorableGraph", () => {
+describe("ExplorableGraph", () => {
   it("from() converts input to an explorable graph", async () => {
     const graph1 = ExplorableGraph.from(`a: Hello, a.`);
     assert(await ExplorableGraph.plain(graph1), {

@@ -1,9 +1,9 @@
-import ExplorableObject from "../core/ExplorableObject.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class MetaGraph {
   constructor(meta, target) {
-    this.meta = ExplorableObject.explore(meta);
-    this.target = ExplorableObject.explore(target);
+    this.meta = ExplorableGraph.from(meta);
+    this.target = ExplorableGraph.from(target);
   }
 
   async *[Symbol.asyncIterator]() {
