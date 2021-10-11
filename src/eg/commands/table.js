@@ -1,11 +1,8 @@
-// import ExplorableGraph from "../../core/ExplorableGraph.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { stringify } from "../../core/utilities.js";
 
-export default async function table(graph) {
-  // const keys = await ExplorableGraph.keys(graph);
-  // const header = keys.join("\t");
-  // const text = header + "\n";
+export default async function table(variant) {
+  const graph = ExplorableGraph.from(variant);
   const firstValue = await valueForFirstKey(graph);
   if (ExplorableGraph.isExplorable(firstValue)) {
     return await fullTable(graph, firstValue);

@@ -1,6 +1,7 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default async function dot(graph) {
+export default async function dot(variant) {
+  const graph = ExplorableGraph.from(variant);
   const graphArcs = await statements(graph, "", "/");
   //   node [label=""; shape=circle; width=0.25];
   return `digraph g {
