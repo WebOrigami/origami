@@ -15,6 +15,12 @@ export default async function execute(parsed, scope, graph) {
 
     // Evaluate the function expression
     let evaluatedFn = await execute(fn, scope, graph);
+
+    if (evaluatedFn === undefined) {
+      // TODO: Look for best exception to throw
+      throw `Couldn't find function or graph member called: ${fn}`;
+    }
+
     if (isPlainObject(evaluatedFn) && args.length > 0) {
       // Code wants to apply a graph-castable object as a function, so cast it
       // to a graph.
