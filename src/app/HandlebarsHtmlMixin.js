@@ -57,10 +57,8 @@ export default function HandlebarsHtmlMixin(Base) {
         handlebarsTemplate = data.content;
       } else {
         // No front matter; look for separate .json or .yaml file.
-        const extension = path.extname(lastKey);
-        const base = path.basename(lastKey, extension);
-        const jsonKey = `${base}.json`;
-        const yamlKey = `${base}.yaml`;
+        const jsonKey = `${lastKey}.json`;
+        const yamlKey = `${lastKey}.yaml`;
         const dataValue =
           (await super.get(jsonKey)) ?? (await super.get(yamlKey));
         if (dataValue) {
