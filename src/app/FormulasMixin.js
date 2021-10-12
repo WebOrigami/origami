@@ -62,7 +62,7 @@ export default function FormulasMixin(Base) {
         if (bindings) {
           // Formula applies to this key.
           let value = await formula.evaluate(this.scope, this, bindings);
-          if (value !== null && value !== undefined) {
+          if (value !== undefined) {
             return ExplorableGraph.isExplorable(value) && rest.length > 0
               ? await value.get(...rest)
               : typeof value === "function"

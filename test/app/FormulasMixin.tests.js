@@ -62,7 +62,7 @@ describe("FormulasMixin", () => {
       a: undefined,
       "a = b": "",
       "a = c": "",
-      b: null,
+      b: () => undefined,
       c: "Hello",
     });
     assert.equal(await fixture.get("a"), "Hello");
