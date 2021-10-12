@@ -1,3 +1,27 @@
+import YAML from "yaml";
+
+/**
+ * Extract front matter from the given text. The first line of the text must be
+ * "---", followed by a block of JSON or YAML, followed by another line of
+ * "---". Any lines following will be returned added to the data under a
+ * `content` key.
+ *
+ * If the text does not contain front matter, this returns null.
+ *
+ * @param {string} text
+ */
+export function extractFrontMatter(text) {
+  const regex = /^---\n(?<front>[\s\S]*)\n---\n(?<content>[\s\S]*$)/;
+  const match = regex.exec(text);
+  if (match) {
+    const { front, content } = /** @type {any} */ (match).groups;
+    const data = YAML.parse(front);
+    data.content = content;
+    return data;
+  }
+  return null;
+}
+
 /**
  * Return true if the object is a plain JavaScript object.
  *
