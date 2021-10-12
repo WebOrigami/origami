@@ -51,25 +51,16 @@ export default function HandlebarsHtmlMixin(Base) {
         }
         let data;
         const jsonKey = `${base}.json`;
-        const jsonValue = await super.get(jsonKey);
-        if (jsonValue !== undefined) {
+        const yamlKey = `${base}.yaml`;
+        const dataValue =
+          (await super.get(jsonKey)) ?? (await super.get(yamlKey));
+        if (dataValue !== undefined) {
           data =
-            typeof jsonValue === "string" || jsonValue instanceof Buffer
-              ? JSON.parse(String(jsonValue))
-              : ExplorableGraph.canCastToExplorable(jsonValue)
-              ? await ExplorableGraph.plain(jsonValue)
-              : jsonValue;
-        } else {
-          const yamlKey = `${base}.yaml`;
-          const yamlValue = await super.get(yamlKey);
-          if (yamlValue !== undefined) {
-            data =
-              typeof yamlValue === "string" || yamlValue instanceof Buffer
-                ? YAML.parse(String(yamlValue))
-                : ExplorableGraph.canCastToExplorable(yamlValue)
-                ? await ExplorableGraph.plain(yamlValue)
-                : yamlValue;
-          }
+            typeof dataValue === "string" || dataValue instanceof Buffer
+              ? YAML.parse(String(dataValue))
+              : ExplorableGraph.canCastToExplorable(dataValue)
+              ? await ExplorableGraph.plain(dataValue)
+              : dataValue;
         }
         if (data !== undefined) {
           // Have both a .handlebars and a .json value; combine to create HTML.
