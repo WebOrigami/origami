@@ -11,7 +11,7 @@ import YAML from "yaml";
  * @param {string} text
  */
 export function extractFrontMatter(text) {
-  const regex = /^---\n(?<front>[\s\S]*)\n---\n(?<content>[\s\S]*$)/;
+  const regex = /^---\r?\n(?<front>[\s\S]*)\r?\n---\r?\n(?<content>[\s\S]*$)/;
   const match = regex.exec(text);
   if (match) {
     const { front, content } = /** @type {any} */ (match).groups;

@@ -7,34 +7,35 @@ import * as utilities from "../core/utilities.js";
 export default function HandlebarsHtmlMixin(Base) {
   return class HandlebarsHtml extends Base {
     async *[Symbol.asyncIterator]() {
-      const htmlKeys = new Set();
-      const handlebarsKeys = new Set();
-      const jsonKeys = new Set();
-      const yamlKeys = new Set();
+      // const keys = new Set();
+      // const handlebarsKeys = new Set();
+      // const jsonKeys = new Set();
+      // const yamlKeys = new Set();
       for await (const key of super[Symbol.asyncIterator]()) {
         yield key;
-        if (key.endsWith(".html")) {
-          const htmlBase = path.basename(key, ".handlebars");
-          htmlKeys.add(htmlBase);
-        } else if (key.endsWith(".handlebars")) {
-          const handlebarsBase = path.basename(key, ".handlebars");
-          handlebarsKeys.add(handlebarsBase);
-        } else if (key.endsWith(".json")) {
-          const jsonBase = path.basename(key, ".json");
-          jsonKeys.add(jsonBase);
-        } else if (key.endsWith(".yaml")) {
-          const yamlBase = path.basename(key, ".yaml");
-          yamlKeys.add(yamlBase);
+        // keys.add(key);
+        if (key.endsWith(".hbs")) {
+          const generatedKey = path.basename(key, ".hbs");
+          // handlebarsKeys.add(handlebarsBase);
+          // keys.add(generatedKey);
+          yield generatedKey;
         }
+        // else if (key.endsWith(".json")) {
+        //   const jsonBase = path.basename(key, ".json");
+        //   jsonKeys.add(jsonBase);
+        // } else if (key.endsWith(".yaml")) {
+        //   const yamlBase = path.basename(key, ".yaml");
+        //   yamlKeys.add(yamlBase);
+        // }
       }
 
       // Yield HTML keys if we have both .handlebars and .json/.yaml keys but
       // *not* a corresponding HTML key.
-      for (const key of handlebarsKeys) {
-        if ((jsonKeys.has(key) || yamlKeys.has(key)) && !htmlKeys.has(key)) {
-          yield `${key}.html`;
-        }
-      }
+      // for (const key of handlebarsKeys) {
+      //   if ((jsonKeys.has(key) || yamlKeys.has(key)) && !htmlKeys.has(key)) {
+      //     yield `${key}.html`;
+      //   }
+      // }
     }
 
     async get(...keys) {
@@ -43,41 +44,41 @@ export default function HandlebarsHtmlMixin(Base) {
         return value;
       }
       const lastKey = keys[keys.length - 1];
-      if (path.extname(lastKey) === ".html") {
-        const base = path.basename(lastKey, ".html");
-        const handlebarsKey = `${base}.handlebars`;
-        const handlebarsValue = await super.get(handlebarsKey);
-        if (handlebarsValue === undefined) {
-          return undefined;
-        }
-        let handlebarsTemplate = String(handlebarsValue);
+      const handlebarsKey = `${lastKey}.hbs`;
+      const handlebarsValue = await super.get(handlebarsKey);
+      if (handlebarsValue === undefined) {
+        return undefined;
+      }
+      let handlebarsTemplate = String(handlebarsValue);
 
-        // See if the template contains front matter we can use as data.
-        let data = utilities.extractFrontMatter(handlebarsTemplate);
-        if (data) {
-          handlebarsTemplate = data.content;
-        } else {
-          // No front matter; look for separate .json or .yaml file.
-          const jsonKey = `${base}.json`;
-          const yamlKey = `${base}.yaml`;
-          const dataValue =
-            (await super.get(jsonKey)) ?? (await super.get(yamlKey));
-          if (dataValue) {
-            data =
-              typeof dataValue === "string" || dataValue instanceof Buffer
-                ? YAML.parse(String(dataValue))
-                : ExplorableGraph.canCastToExplorable(dataValue)
-                ? await ExplorableGraph.plain(dataValue)
-                : dataValue;
-          }
-        }
-        if (data !== undefined) {
-          // Have both a .handlebars and a .json value; combine to create HTML.
-          const compiled = Handlebars.compile(handlebarsTemplate);
-          const result = compiled(data);
-          return result;
+      // See if the template contains front matter we can use as data.
+      let data = utilities.extractFrontMatter(handlebarsTemplate);
+      if (data) {
+        handlebarsTemplate = data.content;
+      } else {
+        // No front matter; look for separate .json or .yaml file.
+        const extension = path.extname(lastKey);
+        const base = path.basename(lastKey, extension);
+        const jsonKey = `${base}.json`;
+        const yamlKey = `${base}.yaml`;
+        const dataValue =
+          (await super.get(jsonKey)) ?? (await super.get(yamlKey));
+        if (dataValue) {
+          data =
+            typeof dataValue === "string" || dataValue instanceof Buffer
+              ? YAML.parse(String(dataValue))
+              : ExplorableGraph.canCastToExplorable(dataValue)
+              ? await ExplorableGraph.plain(dataValue)
+              : dataValue;
         }
       }
+      if (data !== undefined) {
+        // Have both a .handlebars and a .json value; combine to create HTML.
+        const compiled = Handlebars.compile(handlebarsTemplate);
+        const result = compiled(data);
+        return result;
+      }
+
       return undefined;
     }
   };
