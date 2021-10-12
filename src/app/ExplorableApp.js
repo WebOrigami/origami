@@ -8,7 +8,7 @@ import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 // import VirtualValuesMixin from "./VirtualValuesMixin.js";
 import FormulasMixin from "./FormulasMixin.js";
-import HandlebarsHtmlMixin from "./HandlebarsHtmlMixin.js";
+// import HandlebarsHtmlMixin from "./HandlebarsHtmlMixin.js";
 import ImplicitExportsMixin from "./ImplicitExportsMixin.js";
 // import PlusKeysMixin from "./PlusKeysMixin.js";
 // import SplatKeysMixin from "./SplatKeysMixin.js";
@@ -19,12 +19,11 @@ class AppGraph
   // WildcardKeysMixin
   extends FileLoadersMixin(
     ImplicitExportsMixin(
-      HandlebarsHtmlMixin(
-        // PlusKeysMixin(
-        // SplatKeysMixin(
-        VirtualKeysMixin(
-          FormulasMixin(ModulesDefaultExportMixin(ExplorableFiles))
-        )
+      // HandlebarsHtmlMixin(
+      // PlusKeysMixin(
+      // SplatKeysMixin(
+      VirtualKeysMixin(
+        FormulasMixin(ModulesDefaultExportMixin(ExplorableFiles))
       )
     )
   ) {}
@@ -35,6 +34,7 @@ export default class ExplorableApp extends DefaultValues {
   constructor(dirname) {
     const main = new AppGraph(dirname);
     const defaults = {
+      ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
       "index.html": defaultIndexHtml,
     };

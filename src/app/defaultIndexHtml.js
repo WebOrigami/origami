@@ -5,9 +5,8 @@ export default async function defaultIndexHtml() {
   const graph = this;
   const links = [];
   for await (const key of graph) {
-    // Skip keys that start with a "." (like .keys.json). Also skip adding a
-    // link to the index.html page itself.
-    if (!key.startsWith(".") && key !== "index.html") {
+    // Skip keys that start with a "." (like .keys.json).
+    if (!key.startsWith(".")) {
       const value = await graph.get(key);
       const href = ExplorableGraph.isExplorable(value) ? `${key}/` : key;
       const link = `<li><a href="${href}">${href}</a></li>`;
