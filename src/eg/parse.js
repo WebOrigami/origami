@@ -48,6 +48,8 @@ export function assignment(text) {
   }
   let { 1: left, 5: right } = result.value;
   right = substituteSelfReferences(right, text);
+  // TODO: Clean up
+  left = left[0] === opcodes.get ? left[1] : left;
   const value = ["=", left, right];
   return {
     value,
@@ -211,13 +213,13 @@ export function list(text) {
     return result;
   }
   // Remove the separators from the result.
-  const values = [];
+  const value = [];
   while (result.value.length > 0) {
-    values.push(result.value.shift()); // Keep value
+    value.push(result.value.shift()); // Keep value
     result.value.shift(); // Drop separator
   }
   return {
-    value: values,
+    value: value,
     rest: result.rest,
   };
 }
@@ -225,7 +227,15 @@ export function list(text) {
 // Parse a literal
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+  const result = regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const value = [opcodes.get, result.value];
+  return {
+    value,
+    rest: result.rest,
+  };
 }
 
 // Parse a left parenthesis.
@@ -274,6 +284,9 @@ export function pathKey(text) {
   const value =
     typeof result.value === "string"
       ? [opcodes.quote, result.value]
+      : // TODO: Clean up
+      result.value instanceof Array && result.value[0] === opcodes.get
+      ? [opcodes.quote, result.value[1]]
       : result.value;
   return {
     value,
@@ -363,7 +376,7 @@ export function spaceUrl(text) {
     return result;
   }
   const { 1: protocol, 3: path } = result.value;
-  const value = [protocol, ...path];
+  const value = [[opcodes.get, protocol], ...path];
   return {
     value,
     rest: result.rest,
@@ -404,13 +417,15 @@ function substituteSelfReferences(parsed, text) {
   const substituted = parsed.map((item) =>
     substituteSelfReferences(item, text)
   );
+  // TODO: Clean up
   if (
-    typeof substituted[0] === "string" &&
-    (substituted[0] === "ƒ" || substituted[0].startsWith("ƒ."))
+    substituted instanceof Array &&
+    substituted[0] === opcodes.get &&
+    (substituted[1] === "ƒ" || substituted[1].startsWith("ƒ."))
   ) {
     // Perform substitution.
-    if (substituted.length === 1) {
-      return text;
+    if (substituted.length === 2) {
+      return [opcodes.get, text];
     }
     substituted[0] = text;
   }
@@ -435,7 +450,8 @@ export function variableDeclaration(text) {
     return result;
   }
   const { 1: variable, 3: extension } = result.value;
-  const value = [opcodes.variable, variable, extension];
+  // TODO: Clean up
+  const value = [opcodes.variable, variable, extension?.[1] ?? null];
   return {
     value,
     rest: result.rest,
@@ -453,7 +469,8 @@ export function variableReference(text) {
     return result;
   }
   const { 1: variable, 2: extension } = result.value;
-  const value = [opcodes.variable, variable, extension];
+  // TODO: Clean up
+  const value = [opcodes.variable, variable, extension?.[1] ?? null];
   return {
     value,
     rest: result.rest,

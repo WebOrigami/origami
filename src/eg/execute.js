@@ -3,21 +3,22 @@ import * as opcodes from "./opcodes.js";
 
 export default async function execute(parsed, scope, graph) {
   if (parsed instanceof Array) {
+    // Executable code
     const [fn, ...args] = parsed;
 
-    // Function
-    if (fn === opcodes.quote) {
-      // Don't evaluate, concatenate the arguments as is.
-      return String.prototype.concat(...args);
-    }
+    const context = { scope, graph };
 
-    // Recursively evaluate the function and its args.
-    const evaluated = await Promise.all(
-      parsed.map(async (arg) => await execute(arg, scope, graph))
+    let evaluatedFn =
+      typeof fn === "symbol" // opcode?
+        ? opcodes.ops[fn]
+        : await execute(fn, scope, graph);
+
+    // Recursively evaluate the args.
+    const evaluatedArgs = await Promise.all(
+      args.map(async (arg) => await execute(arg, scope, graph))
     );
-    let [evaluatedFn, ...evaluatedArgs] = evaluated;
 
-    if (args.length > 0) {
+    if (evaluatedArgs.length > 0) {
       if (
         typeof evaluatedFn !== "function" &&
         ExplorableGraph.canCastToExplorable(evaluatedFn)
@@ -35,15 +36,13 @@ export default async function execute(parsed, scope, graph) {
     const result = ExplorableGraph.isExplorable(evaluatedFn)
       ? await evaluatedFn.get(...evaluatedArgs)
       : typeof evaluatedFn === "function"
-      ? await evaluatedFn.call(graph, ...evaluatedArgs)
+      ? await evaluatedFn.call(context, ...evaluatedArgs)
       : evaluatedArgs.length === 0
       ? evaluatedFn
       : undefined;
     return result;
   } else {
-    // Terminal
-    return parsed === "this"
-      ? graph
-      : (await scope.get(parsed)) ?? (await graph.get(parsed));
+    // Not executable; return as is.
+    return parsed;
   }
 }

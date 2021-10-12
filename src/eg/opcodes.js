@@ -1,18 +1,18 @@
-/**
- * We define a class to represent our opcodes so that we can customize their
- * JSON string representation, which can be helpful when debugging.
- */
-class OpCode {
-  #name;
+// Opcodes
+export const variable = Symbol("variable");
+export const quote = Symbol("quote");
+export const get = Symbol("get");
 
-  constructor(name) {
-    this.#name = name;
-  }
+export const ops = {
+  async [get](key) {
+    return (await this.scope.get(key)) ?? (await this.graph.get(key));
+  },
 
-  toJSON() {
-    return `«${this.#name}»`;
-  }
-}
+  async [quote](...args) {
+    return String.prototype.concat(...args);
+  },
 
-export const variable = new OpCode("variable");
-export const quote = new OpCode("quote");
+  async [variable](name) {
+    return this.bindings[name];
+  },
+};
