@@ -2,6 +2,7 @@ import Handlebars from "handlebars";
 import path from "path";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import * as utilities from "../core/utilities.js";
 
 export default function HandlebarsHtmlMixin(Base) {
   return class HandlebarsHtml extends Base {
@@ -49,22 +50,30 @@ export default function HandlebarsHtmlMixin(Base) {
         if (handlebarsValue === undefined) {
           return undefined;
         }
-        let data;
-        const jsonKey = `${base}.json`;
-        const yamlKey = `${base}.yaml`;
-        const dataValue =
-          (await super.get(jsonKey)) ?? (await super.get(yamlKey));
-        if (dataValue !== undefined) {
-          data =
-            typeof dataValue === "string" || dataValue instanceof Buffer
-              ? YAML.parse(String(dataValue))
-              : ExplorableGraph.canCastToExplorable(dataValue)
-              ? await ExplorableGraph.plain(dataValue)
-              : dataValue;
+        let handlebarsTemplate = String(handlebarsValue);
+
+        // See if the template contains front matter we can use as data.
+        let data = utilities.extractFrontMatter(handlebarsTemplate);
+        if (data) {
+          handlebarsTemplate = data.content;
+        } else {
+          // No front matter; look for separate .json or .yaml file.
+          const jsonKey = `${base}.json`;
+          const yamlKey = `${base}.yaml`;
+          const dataValue =
+            (await super.get(jsonKey)) ?? (await super.get(yamlKey));
+          if (dataValue) {
+            data =
+              typeof dataValue === "string" || dataValue instanceof Buffer
+                ? YAML.parse(String(dataValue))
+                : ExplorableGraph.canCastToExplorable(dataValue)
+                ? await ExplorableGraph.plain(dataValue)
+                : dataValue;
+          }
         }
         if (data !== undefined) {
           // Have both a .handlebars and a .json value; combine to create HTML.
-          const compiled = Handlebars.compile(String(handlebarsValue));
+          const compiled = Handlebars.compile(handlebarsTemplate);
           const result = compiled(data);
           return result;
         }

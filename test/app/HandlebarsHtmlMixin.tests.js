@@ -22,4 +22,15 @@ describe("HandlebarsHtmlMixin", () => {
     const html = await fixture.get("foo.html");
     assert.equal(html, "Hello, world.");
   });
+
+  it("generates a .html file from a .handlebars file with front matter", async () => {
+    const fixture = new ObjectWithHandlebars({
+      "foo.handlebars": `---
+name: world
+---
+Hello, {{name}}.`,
+    });
+    const html = await fixture.get("foo.html");
+    assert.equal(html, "Hello, world.");
+  });
 });
