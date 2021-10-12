@@ -72,7 +72,7 @@ export default function HandlebarsHtmlMixin(Base) {
               : dataValue;
         }
       }
-      if (data !== undefined) {
+      if (data) {
         // Have both a .handlebars and a .json value; combine to create HTML.
         const compiled = Handlebars.compile(handlebarsTemplate);
         const result = compiled(data);
