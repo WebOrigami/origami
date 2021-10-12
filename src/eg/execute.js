@@ -1,6 +1,4 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../core/ExplorableObject.js";
-import { isPlainObject } from "../core/utilities.js";
 import * as opcodes from "./opcodes.js";
 
 export default async function execute(parsed, scope, graph) {
@@ -16,15 +14,18 @@ export default async function execute(parsed, scope, graph) {
     // Evaluate the function expression
     let evaluatedFn = await execute(fn, scope, graph);
 
+    if (
+      args.length > 0 &&
+      typeof evaluatedFn !== "function" &&
+      ExplorableGraph.canCastToExplorable(evaluatedFn)
+    ) {
+      // Use the graph-castable object as a function.
+      evaluatedFn = ExplorableGraph.from(evaluatedFn);
+    }
+
     if (evaluatedFn === undefined) {
       // TODO: Look for best exception to throw
       throw `Couldn't find function or graph member called: ${fn}`;
-    }
-
-    if (isPlainObject(evaluatedFn) && args.length > 0) {
-      // Code wants to apply a graph-castable object as a function, so cast it
-      // to a graph.
-      evaluatedFn = new ExplorableObject(evaluatedFn);
     }
 
     // Recursively evaluate args.

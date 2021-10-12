@@ -22,14 +22,15 @@ export default class ExplorableGraph {
       return variant;
     } else if (typeof variant === "string") {
       const obj = YAML.parse(variant);
-      return new ExplorableObject(obj);
+      if (isPlainObject(obj)) {
+        return new ExplorableObject(obj);
+      }
     } else if (typeof variant === "function") {
       return new ExplorableFunction(variant);
     } else if (isPlainObject(variant)) {
       return new ExplorableObject(variant);
-    } else {
-      throw new TypeError("Couldn't convert object to an explorable graph");
     }
+    throw new TypeError("Couldn't convert object to an explorable graph");
   }
 
   /**
