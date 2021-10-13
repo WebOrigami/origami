@@ -1,6 +1,6 @@
 // Any combinator: return result of whichever parser matches first.
 export function any(...parsers) {
-  return function (text) {
+  return function parseAny(text) {
     for (const parser of parsers) {
       const result = parser(text);
       if (result.value !== undefined) {
@@ -17,7 +17,7 @@ export function any(...parsers) {
 // Optional combinator: if the given parser succeeded, return its result,
 // otherwise return a null value.
 export function optional(parser) {
-  return function (text) {
+  return function parseOptional(text) {
     const result = parser(text);
     const value = result.value ?? null;
     return {
@@ -29,7 +29,7 @@ export function optional(parser) {
 
 // Parse using the given regular expression.
 export function regex(regex) {
-  return function (text) {
+  return function parseRegex(text) {
     const match = regex.exec(text);
     const value = match ? match[0] : undefined;
     const rest = match ? text.slice(value.length) : text;
@@ -43,7 +43,7 @@ export function regex(regex) {
 // Sequence combinator: succeeds if all the parsers succeed in turn.
 // Returns an array with the results of the individual parsers.
 export function sequence(...parsers) {
-  return function (text) {
+  return function parseSequence(text) {
     let rest = text;
     const value = [];
     for (const parser of parsers) {
@@ -59,7 +59,7 @@ export function sequence(...parsers) {
 }
 
 export function separatedList(termParser, separatorParser, whitespaceParser) {
-  return function (text) {
+  return function parseSeparatedList(text) {
     const whitespace1 = whitespaceParser(text);
     let termResult = termParser(whitespace1.rest);
     if (termResult.value === undefined) {
@@ -91,7 +91,7 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
 // If successful, returns a null value to indicate we can throw away the value;
 // we already know what it is.
 export function terminal(terminalRegex) {
-  return function (text) {
+  return function parseTerminal(text) {
     const result = regex(terminalRegex)(text);
     if (result.value === undefined) {
       return result;

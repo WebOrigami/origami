@@ -1,5 +1,5 @@
 import execute from "../eg/execute.js";
-import * as opcodes from "../eg/opcodes.js";
+import * as ops from "../eg/ops.js";
 import * as parse from "../eg/parse.js";
 
 export default class Formula {
@@ -14,8 +14,8 @@ export default class Formula {
   async evaluate(scope, graph, bindings) {
     if (this.expression) {
       // Constant or variable assignment
-      const bound = bind(this.expression, bindings);
-      const value = await execute(bound, scope, graph);
+      const code = bind(this.expression, bindings);
+      const value = await execute(code, scope, graph);
       return value;
     } else {
       // Variable pattern
@@ -31,14 +31,14 @@ export default class Formula {
       // Unsuccessful parse
       return null;
     }
-    if (parsed[0] === opcodes.variable) {
+    if (parsed[0] === ops.variable) {
       // Variable pattern
       const [_, variable, extension] = parsed;
       return new VariableFormula(variable, extension, null);
     } else if (parsed[0] === "=") {
       // Assignment
       const [_, left, expression] = parsed;
-      if (left[0] === opcodes.variable) {
+      if (left[0] === ops.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
         return new VariableFormula(variable, extension, expression);
@@ -58,7 +58,7 @@ function bind(expression, bindings) {
   } else if (!(expression instanceof Array)) {
     // Scalar values don't need binding.
     return expression;
-  } else if (expression[0] === opcodes.variable) {
+  } else if (expression[0] === ops.variable) {
     // Found a reference to a variable, return the bound value instead.
     const [_, name, extension] = expression;
     const bound = bindings[name] + (extension ?? "");
@@ -128,7 +128,7 @@ class VariableFormula extends Formula {
     // Scalar values (or no expression) have no antecedents.
     if (!(expression instanceof Array)) {
       return [];
-    } else if (expression[0] === opcodes.variable) {
+    } else if (expression[0] === ops.variable) {
       // A variable reference means we have an antecedent.
       const [_marker, _variable, extension] = expression;
       return [extension];

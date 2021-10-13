@@ -14,15 +14,15 @@ async function main(...args) {
     return;
   }
   const defaultGraph = await scope.get("defaultGraph");
-  const context = await defaultGraph();
+  const graph = await defaultGraph();
   const { value, rest } = parse.expression(source);
-  const parsed = rest.length === 0 ? value : undefined;
-  // console.log(JSON.stringify(parsed));
-  if (!parsed) {
+  const code = rest.length === 0 ? value : undefined;
+  // console.log(JSON.stringify(code));
+  if (!code) {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }
-  const result = await execute(parsed, scope, context);
+  const result = await execute(code, scope, graph);
   const stdout = await scope.get("stdout");
   await stdout(result);
 }

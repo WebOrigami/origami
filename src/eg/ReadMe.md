@@ -17,8 +17,10 @@ expression: doubleQuoteString
             indirectCall
             group
             spaceUrl
-            pathCall
+            slashCall
             functionCall
+            variableValue
+            literal
 
 doubleQuoteString: "[text]"
 
@@ -35,7 +37,7 @@ indirectCall: group args
 
 group: ( expression )
 
-pathCall: literal ":"|"://"|"/" slashPath
+slashCall: literal ":"|"://"|"/" slashPath
 
 slashPath: pathKey / slashPath
            pathKey
@@ -61,6 +63,8 @@ parentheticalArgs: ( [list] )
 
 list: expression , list
       expression
+
+variableValue: variableReference
 
 reference: variableReference
            literal

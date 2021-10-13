@@ -30,7 +30,7 @@ describe("ExplorableApp", () => {
       "greeting = ƒ('world').js",
       "greeting = ƒ('world')",
       "obj",
-      "obj = parse ƒ.json",
+      "obj = ƒ.json",
       "sample.txt",
       "sample.txt = ƒ().js",
       "sample.txt = ƒ()",
@@ -43,7 +43,7 @@ describe("ExplorableApp", () => {
 
   it("can return an object", async () => {
     const value = await formulasGraph.get("obj");
-    assert.deepEqual(value, {
+    assert.deepEqual(await ExplorableGraph.plain(value), {
       a: "Hello, a.",
       b: "Hello, b.",
       c: "Hello, c.",

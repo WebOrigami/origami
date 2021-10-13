@@ -24,7 +24,7 @@ import {
   sequence,
   terminal,
 } from "./combinators.js";
-import * as opcodes from "./opcodes.js";
+import * as ops from "./ops.js";
 
 // Parse arguments to a function.
 export function args(text) {
@@ -49,7 +49,7 @@ export function assignment(text) {
   let { 1: left, 5: right } = result.value;
   right = substituteSelfReferences(right, text);
   // TODO: Clean up
-  left = left[0] === opcodes.get ? left[1] : left;
+  left = left[0] === ops.get ? left[1] : left;
   const value = ["=", left, right];
   return {
     value,
@@ -72,7 +72,7 @@ export function backtickQuoteString(text) {
   const { 2: contents } = result.value;
   // Drop empty strings.
   const filtered = contents.filter((item) => item !== "");
-  const value = [opcodes.quote, ...filtered];
+  const value = [ops.quote, ...filtered];
   return {
     value,
     rest: result.rest,
@@ -113,7 +113,7 @@ export function doubleQuoteString(text) {
     return result;
   }
   const quotedText = result.value[1].slice(1, -1);
-  const value = [opcodes.quote, quotedText];
+  const value = [ops.quote, quotedText];
   return {
     value,
     rest: result.rest,
@@ -130,7 +130,9 @@ export function expression(text) {
     group,
     spaceUrl,
     slashCall,
-    functionCall
+    functionCall,
+    variableValue,
+    literal
   )(text);
 }
 
@@ -144,7 +146,7 @@ export function functionCall(text) {
   const result = sequence(
     optionalWhitespace,
     reference,
-    optional(args),
+    args,
     optionalWhitespace
   )(text);
   if (result.value === undefined) {
@@ -231,7 +233,7 @@ export function literal(text) {
   if (result.value === undefined) {
     return result;
   }
-  const value = [opcodes.get, result.value];
+  const value = [ops.get, result.value];
   return {
     value,
     rest: result.rest,
@@ -283,10 +285,10 @@ export function pathKey(text) {
   // Quote if it's a literal.
   const value =
     typeof result.value === "string"
-      ? [opcodes.quote, result.value]
+      ? [ops.quote, result.value]
       : // TODO: Clean up
-      result.value instanceof Array && result.value[0] === opcodes.get
-      ? [opcodes.quote, result.value[1]]
+      result.value instanceof Array && result.value[0] === ops.get
+      ? [ops.quote, result.value[1]]
       : result.value;
   return {
     value,
@@ -315,7 +317,7 @@ export function singleQuoteString(text) {
     return result;
   }
   const quotedText = result.value[1].slice(1, -1);
-  const value = [opcodes.quote, quotedText];
+  const value = [ops.quote, quotedText];
   return {
     value,
     rest: result.rest,
@@ -376,7 +378,7 @@ export function spaceUrl(text) {
     return result;
   }
   const { 1: protocol, 3: path } = result.value;
-  const value = [[opcodes.get, protocol], ...path];
+  const value = [[ops.get, protocol], ...path];
   return {
     value,
     rest: result.rest,
@@ -420,12 +422,13 @@ function substituteSelfReferences(parsed, text) {
   // TODO: Clean up
   if (
     substituted instanceof Array &&
-    substituted[0] === opcodes.get &&
+    substituted[0] === ops.get &&
+    typeof substituted[1] === "string" &&
     (substituted[1] === "ƒ" || substituted[1].startsWith("ƒ."))
   ) {
     // Perform substitution.
     if (substituted.length === 2) {
-      return [opcodes.get, text];
+      return [ops.get, text];
     }
     substituted[0] = text;
   }
@@ -451,7 +454,7 @@ export function variableDeclaration(text) {
   }
   const { 1: variable, 3: extension } = result.value;
   // TODO: Clean up
-  const value = [opcodes.variable, variable, extension?.[1] ?? null];
+  const value = [ops.variable, variable, extension?.[1] ?? null];
   return {
     value,
     rest: result.rest,
@@ -470,7 +473,20 @@ export function variableReference(text) {
   }
   const { 1: variable, 2: extension } = result.value;
   // TODO: Clean up
-  const value = [opcodes.variable, variable, extension?.[1] ?? null];
+  const value = [ops.variable, variable, extension?.[1] ?? null];
+  return {
+    value,
+    rest: result.rest,
+  };
+}
+
+// Parse a request to get the value of a variable.
+export function variableValue(text) {
+  const result = variableReference(text);
+  if (result.value === undefined) {
+    return result;
+  }
+  const value = [ops.get, result.value];
   return {
     value,
     rest: result.rest,

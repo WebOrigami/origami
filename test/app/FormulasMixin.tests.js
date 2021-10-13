@@ -60,7 +60,7 @@ describe("FormulasMixin", () => {
   it("first formula that returns a defined value is used", async () => {
     const fixture = new FormulasObject({
       a: undefined,
-      "a = b": "",
+      "a = b()": "",
       "a = c": "",
       b: () => undefined,
       c: "Hello",
