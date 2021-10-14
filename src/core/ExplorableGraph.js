@@ -107,6 +107,16 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Returns the graph in function form.
+   *
+   * @param {GraphVariant} variant
+   */
+  static toFunction(variant) {
+    const graph = this.from(variant);
+    return graph.get.bind(graph);
+  }
+
+  /**
    * Converts the graph into a plain JavaScript object with the same structure
    * as the graph, but which can be serialized to text. All keys will be cast to
    * strings, and all values reduced to native JavaScript types as best as

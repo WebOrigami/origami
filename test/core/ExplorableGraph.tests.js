@@ -96,6 +96,16 @@ c: Hello, c.`;
     });
   });
 
+  it("toFunction() returns the graph in function form", async () => {
+    const graph = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    const fn = ExplorableGraph.toFunction(graph);
+    assert.equal(await fn("a"), 1);
+  });
+
   it("toJson() renders a graph as JSON", async () => {
     const graph = new ExplorableObject({ a: "Hello, a." });
     const json = await ExplorableGraph.toJson(graph);

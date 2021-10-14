@@ -9,7 +9,8 @@ export default async function defaultIndexHtml() {
       links.push(link);
     }
   }
-  const heading = graph.path ? `${graph.path}` : `Index`;
+  const parts = graph.path?.split("/");
+  const heading = parts?.[parts.length - 1] ?? "Index";
   const list = `
     <h1>${heading.trim()}</h1>
     <ul>\n${links.join("\n").trim()}\n</ul>

@@ -22,8 +22,7 @@ async function invoke(code) {
   let [fn, ...args] = evaluated;
   if (typeof fn !== "function" && ExplorableGraph.canCastToExplorable(fn)) {
     // Use the graph-castable object as a function.
-    const graph = ExplorableGraph.from(fn);
-    fn = graph.get.bind(graph);
+    fn = ExplorableGraph.toFunction(fn);
   }
   if (fn === undefined) {
     // TODO: Look for best exception to throw
