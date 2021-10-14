@@ -2,11 +2,13 @@
 
 import process from "process";
 import execute from "../../src/eg/execute.js";
+import * as ops from "../../src/eg/ops.js";
 import config from "./commands/config.js";
 import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
+  // Set up
   const scope = await config();
   const source = args.join(" ").trim();
   if (!source) {
@@ -15,14 +17,26 @@ async function main(...args) {
   }
   const defaultGraph = await scope.get("defaultGraph");
   const graph = await defaultGraph();
-  const { value, rest } = parse.expression(source);
-  const code = rest.length === 0 ? value : undefined;
-  // console.log(JSON.stringify(code));
+
+  // Parse
+  const parsed = parse.expression(source);
+  const code = parsed?.value;
   if (!code) {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }
+
+  // Execute
   const result = await execute(code, scope, graph);
+
+  // We don't generally complain if the result is undefined; the user may be
+  // invoking a function that does work but doesn't return a result. However, if
+  // the request was only a `get` for something that doesn't exist, say so.
+  if (result === undefined && code[0] === ops.get) {
+    console.error(`eg: could not find ${code[1]}`);
+  }
+
+  // Display the result.
   const stdout = await scope.get("stdout");
   await stdout(result);
 }

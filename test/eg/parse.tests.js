@@ -3,7 +3,6 @@ import {
   args,
   assignment,
   backtickQuoteString,
-  doubleQuoteString,
   expression,
   functionCall,
   group,
@@ -48,7 +47,7 @@ describe("parse", () => {
       [ops.get, "d"],
       [ops.get, "e"],
     ]);
-    assert.deepEqual(list(`"foo", "bar"`)?.value, ["foo", "bar"]);
+    assert.deepEqual(list(`'foo', 'bar'`)?.value, ["foo", "bar"]);
     assert.deepEqual(list("a(b), c")?.value, [
       [
         [ops.get, "a"],
@@ -77,10 +76,6 @@ describe("parse", () => {
     });
     assert.deepEqual(args("()")?.value, []);
     assert.deepEqual(args(""), null);
-  });
-
-  it("double-quote string", () => {
-    assert.deepEqual(doubleQuoteString(`"hello"`)?.value, "hello");
   });
 
   it("single-quote string", () => {

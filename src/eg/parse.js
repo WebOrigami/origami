@@ -102,28 +102,9 @@ export function declaration(text) {
   return any(variableDeclaration, literal)(text);
 }
 
-// Parse a double-quoted string.
-export function doubleQuoteString(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    regex(/^"[^\"]*"/),
-    optionalWhitespace
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  // Remove quotes
-  const value = parsed.value[1].slice(1, -1);
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse an eg expression.
 export function expression(text) {
   return any(
-    doubleQuoteString,
     singleQuoteString,
     backtickQuoteString,
     indirectCall,
@@ -279,7 +260,7 @@ function parentheticalArgs(text) {
 // Top-level parse function parses a expression and returns just the value.
 export default function parse(text) {
   const parsed = expression(text);
-  return parsed.value;
+  return parsed?.rest !== "" ? parsed.value : null;
 }
 
 // Parse a key in a URL path
@@ -443,7 +424,7 @@ function substituteSelfReferences(parsed, text) {
 
 // Parse a variable name
 export function variableName(text) {
-  // Like a literal, but periods are not allowed.
+  // For now, use JavaScript identifier rules.
   return regex(/^[$A-Za-z_][A-Za-z0-9_$]*/)(text);
 }
 

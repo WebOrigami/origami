@@ -11,8 +11,7 @@ variableDeclaration: {variableName}[extension]
 
 assignment: declaration = expression [extension]
 
-expression: doubleQuoteString
-            singleQuoteString
+expression: singleQuoteString
             backtickQuoteString
             indirectCall
             group
@@ -21,8 +20,6 @@ expression: doubleQuoteString
             functionCall
             variableValue
             literal
-
-doubleQuoteString: "[text]"
 
 singleQuoteString: '[text]'
 
