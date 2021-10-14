@@ -48,10 +48,7 @@ describe("parse", () => {
       [ops.get, "d"],
       [ops.get, "e"],
     ]);
-    assert.deepEqual(list(`"foo", "bar"`)?.value, [
-      [ops.quote, "foo"],
-      [ops.quote, "bar"],
-    ]);
+    assert.deepEqual(list(`"foo", "bar"`)?.value, ["foo", "bar"]);
     assert.deepEqual(list("a(b), c")?.value, [
       [
         [ops.get, "a"],
@@ -83,24 +80,24 @@ describe("parse", () => {
   });
 
   it("double-quote string", () => {
-    assert.deepEqual(doubleQuoteString(`"hello"`)?.value, [ops.quote, "hello"]);
+    assert.deepEqual(doubleQuoteString(`"hello"`)?.value, "hello");
   });
 
   it("single-quote string", () => {
-    assert.deepEqual(singleQuoteString(`'hello'`)?.value, [ops.quote, "hello"]);
+    assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
   });
 
   it("function call", () => {
     assert.equal(functionCall("fn"), null); // didn't have parentheses
     assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
       [ops.get, "fn"],
-      [ops.quote, "a"],
-      [ops.quote, "b"],
+      "a",
+      "b",
     ]);
     assert.deepEqual(functionCall("fn 'a', 'b'")?.value, [
       [ops.get, "fn"],
-      [ops.quote, "a"],
-      [ops.quote, "b"],
+      "a",
+      "b",
     ]);
     assert.deepEqual(functionCall("fn a, b")?.value, [
       [ops.get, "fn"],
@@ -126,7 +123,7 @@ describe("parse", () => {
   it("indirect function call", () => {
     assert.deepEqual(indirectCall("(fn()) 'a'")?.value, [
       [[ops.get, "fn"]],
-      [ops.quote, "a"],
+      "a",
     ]);
     assert.deepEqual(indirectCall("(fn()) (a, b)")?.value, [
       [[ops.get, "fn"]],
@@ -193,13 +190,10 @@ describe("parse", () => {
     ]);
     assert.deepEqual(expression("foo.bar( 'hello' , 'world' )")?.value, [
       [ops.get, "foo.bar"],
-      [ops.quote, "hello"],
-      [ops.quote, "world"],
+      "hello",
+      "world",
     ]);
-    assert.deepEqual(expression("(fn)('a')")?.value, [
-      [ops.get, "fn"],
-      [ops.quote, "a"],
-    ]);
+    assert.deepEqual(expression("(fn)('a')")?.value, [[ops.get, "fn"], "a"]);
     assert.equal(expression("(foo"), null);
   });
 
@@ -249,10 +243,7 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = fn 'bar'")?.value, [
       "=",
       "foo",
-      [
-        [ops.get, "fn"],
-        [ops.quote, "bar"],
-      ],
+      [[ops.get, "fn"], "bar"],
     ]);
     assert.deepEqual(assignment("data = obj.json")?.value, [
       "=",
@@ -275,10 +266,7 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = ƒ('bar').js")?.value, [
       "=",
       "foo",
-      [
-        [ops.get, "foo = ƒ('bar').js"],
-        [ops.quote, "bar"],
-      ],
+      [[ops.get, "foo = ƒ('bar').js"], "bar"],
     ]);
   });
 

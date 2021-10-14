@@ -33,7 +33,7 @@ export function args(text) {
 
 // Parse an assignment statment.
 export function assignment(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     declaration,
     optionalWhitespace,
@@ -43,39 +43,39 @@ export function assignment(text) {
     optionalWhitespace,
     optional(extension)
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  let { 1: left, 5: right } = result.value;
+  let { 1: left, 5: right } = parsed.value;
   right = substituteSelfReferences(right, text);
   // TODO: Clean up
   left = left[0] === ops.get ? left[1] : left;
   const value = ["=", left, right];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a backtick-quoted string.
 export function backtickQuoteString(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     terminal(/^`/),
     backtickContents,
     terminal(/^`/),
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 2: contents } = result.value;
+  const { 2: contents } = parsed.value;
   // Drop empty strings.
   const filtered = contents.filter((item) => item !== "");
   const value = [ops.quote, ...filtered];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -104,19 +104,19 @@ export function declaration(text) {
 
 // Parse a double-quoted string.
 export function doubleQuoteString(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     regex(/^"[^\"]*"/),
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const quotedText = result.value[1].slice(1, -1);
-  const value = [ops.quote, quotedText];
+  // Remove quotes
+  const value = parsed.value[1].slice(1, -1);
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -143,29 +143,29 @@ export function extension(text) {
 
 // Parse a function call.
 export function functionCall(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     reference,
     args,
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 1: fnName, 2: fnArgs } = result.value;
+  const { 1: fnName, 2: fnArgs } = parsed.value;
   let value = [fnName];
   if (fnArgs) {
     value.push(...fnArgs);
   }
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a parenthetical group.
 export function group(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     lparen,
     optionalWhitespace,
@@ -174,34 +174,34 @@ export function group(text) {
     rparen,
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const value = result.value[3]; // the expression
+  const value = parsed.value[3]; // the expression
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse an indirect function call like `(fn)(arg1, arg2)`.
 export function indirectCall(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     group,
     optionalWhitespace,
     args,
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const value = result.value
-    ? [result.value[1], ...result.value[3]] // function and args
+  const value = parsed.value
+    ? [parsed.value[1], ...parsed.value[3]] // function and args
     : undefined;
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -212,37 +212,37 @@ export function key(text) {
 
 // Parse a comma-separated list with at least one term.
 export function list(text) {
-  const result = separatedList(
+  const parsed = separatedList(
     expression,
     terminal(/^,/),
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
   // Remove the separators from the result.
   const value = [];
-  while (result.value.length > 0) {
-    value.push(result.value.shift()); // Keep value
-    result.value.shift(); // Drop separator
+  while (parsed.value.length > 0) {
+    value.push(parsed.value.shift()); // Keep value
+    parsed.value.shift(); // Drop separator
   }
   return {
     value: value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a literal
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
-  const result = regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
-  if (!result) {
-    return result;
+  const parsed = regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+  if (!parsed) {
+    return parsed;
   }
-  const value = [ops.get, result.value];
+  const value = [ops.get, parsed.value];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -258,47 +258,47 @@ export function optionalWhitespace(text) {
 
 // Parse function arguments enclosed in parentheses.
 function parentheticalArgs(text) {
-  const result = sequence(
+  const parsed = sequence(
     lparen,
     optional(list),
     optionalWhitespace,
     rparen
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const listValue = result.value[1];
+  const listValue = parsed.value[1];
   const value =
     listValue === undefined ? undefined : listValue === null ? [] : listValue;
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Top-level parse function parses a expression and returns just the value.
 export default function parse(text) {
-  const result = expression(text);
-  return result.value;
+  const parsed = expression(text);
+  return parsed.value;
 }
 
 // Parse a key in a URL path
 export function pathKey(text) {
-  const result = any(variableReference, literal)(text);
-  if (!result) {
+  const parsed = any(variableReference, literal)(text);
+  if (!parsed) {
     return null;
   }
   // Quote if it's a literal.
   const value =
-    typeof result.value === "string"
-      ? [ops.quote, result.value]
+    typeof parsed.value === "string"
+      ? [ops.quote, parsed.value]
       : // TODO: Clean up
-      result.value instanceof Array && result.value[0] === ops.get
-      ? [ops.quote, result.value[1]]
-      : result.value;
+      parsed.value instanceof Array && parsed.value[0] === ops.get
+      ? [ops.quote, parsed.value[1]]
+      : parsed.value;
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -314,80 +314,80 @@ function rparen(text) {
 
 // Parse a single-quoted string.
 export function singleQuoteString(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     regex(/^'[^\']*'/),
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const quotedText = result.value[1].slice(1, -1);
-  const value = [ops.quote, quotedText];
+  // Remove quotes.
+  const value = parsed.value[1].slice(1, -1);
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a function call with slash syntax.
 export function slashCall(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     reference,
     terminal(/^\/|:\/\/|:/),
     slashPath,
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 1: fnName, 3: fnArgs } = result.value;
+  const { 1: fnName, 3: fnArgs } = parsed.value;
   let value = [fnName];
   if (fnArgs) {
     value.push(...fnArgs);
   }
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a slash-delimeted path
 export function slashPath(text) {
-  const result = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
-  if (!result) {
+  const parsed = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
+  if (!parsed) {
     return null;
   }
   // Remove the separators from the result.
   const values = [];
-  while (result.value.length > 0) {
-    values.push(result.value.shift()); // Keep value
-    result.value.shift(); // Drop separator
+  while (parsed.value.length > 0) {
+    values.push(parsed.value.shift()); // Keep value
+    parsed.value.shift(); // Drop separator
   }
   return {
     value: values,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a space-delimeted URL
 export function spaceUrl(text) {
-  const result = sequence(
+  const parsed = sequence(
     optionalWhitespace,
     spaceUrlProtocol,
     whitespace,
     spaceUrlPath,
     optionalWhitespace
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 1: protocol, 3: path } = result.value;
+  const { 1: protocol, 3: path } = parsed.value;
   const value = [[ops.get, protocol], ...path];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -398,19 +398,19 @@ export function spaceUrlProtocol(text) {
 
 // Parse a space-delimeted URL path
 export function spaceUrlPath(text) {
-  const result = separatedList(pathKey, whitespace, regex(/^/))(text);
-  if (!result) {
+  const parsed = separatedList(pathKey, whitespace, regex(/^/))(text);
+  if (!parsed) {
     return null;
   }
   // Remove the separators from the result.
   const values = [];
-  while (result.value.length > 0) {
-    values.push(result.value.shift()); // Keep value
-    result.value.shift(); // Drop separator
+  while (parsed.value.length > 0) {
+    values.push(parsed.value.shift()); // Keep value
+    parsed.value.shift(); // Drop separator
   }
   return {
     value: values,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
@@ -449,53 +449,53 @@ export function variableName(text) {
 
 // Parse a variable declaration like ${x}.json
 export function variableDeclaration(text) {
-  const result = sequence(
+  const parsed = sequence(
     terminal(/^\{/),
     variableName,
     terminal(/^\}/),
     optional(literal)
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 1: variable, 3: extension } = result.value;
+  const { 1: variable, 3: extension } = parsed.value;
   // TODO: Clean up
   const value = [ops.variable, variable, extension?.[1] ?? null];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a variable reference like $foo.html
 export function variableReference(text) {
-  const result = sequence(
+  const parsed = sequence(
     terminal(/^\$/),
     variableName,
     optional(literal)
   )(text);
-  if (!result) {
+  if (!parsed) {
     return null;
   }
-  const { 1: variable, 2: extension } = result.value;
+  const { 1: variable, 2: extension } = parsed.value;
   // TODO: Clean up
   const value = [ops.variable, variable, extension?.[1] ?? null];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 
 // Parse a request to get the value of a variable.
 export function variableValue(text) {
-  const result = variableReference(text);
-  if (!result) {
+  const parsed = variableReference(text);
+  if (!parsed) {
     return null;
   }
-  const value = [ops.get, result.value];
+  const value = [ops.get, parsed.value];
   return {
     value,
-    rest: result.rest,
+    rest: parsed.rest,
   };
 }
 

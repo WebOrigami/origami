@@ -2,9 +2,9 @@
 export function any(...parsers) {
   return function parseAny(text) {
     for (const parser of parsers) {
-      const result = parser(text);
-      if (result) {
-        return result;
+      const parsed = parser(text);
+      if (parsed) {
+        return parsed;
       }
     }
     return null;
@@ -15,9 +15,9 @@ export function any(...parsers) {
 // otherwise return a null value.
 export function optional(parser) {
   return function parseOptional(text) {
-    const result = parser(text);
-    const value = result?.value ?? null;
-    const rest = result?.rest ?? text;
+    const parsed = parser(text);
+    const value = parsed?.value ?? null;
+    const rest = parsed?.rest ?? text;
     return {
       value,
       rest,
@@ -48,12 +48,12 @@ export function sequence(...parsers) {
     let rest = text;
     const value = [];
     for (const parser of parsers) {
-      const result = parser(rest);
-      if (!result) {
+      const parsed = parser(rest);
+      if (!parsed) {
         return null;
       }
-      value.push(result.value);
-      rest = result.rest;
+      value.push(parsed.value);
+      rest = parsed.rest;
     }
     return { value, rest };
   };
@@ -62,25 +62,25 @@ export function sequence(...parsers) {
 export function separatedList(termParser, separatorParser, whitespaceParser) {
   return function parseSeparatedList(text) {
     const whitespace1 = whitespaceParser(text);
-    let termResult = termParser(whitespace1.rest);
-    if (!termResult) {
+    let parsedTerm = termParser(whitespace1.rest);
+    if (!parsedTerm) {
       return null;
     }
-    const value = [termResult.value];
+    const value = [parsedTerm.value];
     let rest;
-    while (termResult) {
-      rest = termResult.rest;
-      const whitespace2 = whitespaceParser(termResult.rest);
-      const separatorResult = separatorParser(whitespace2.rest);
-      if (separatorResult) {
-        value.push(separatorResult.value);
-        const whitespace3 = whitespaceParser(separatorResult.rest);
-        termResult = termParser(whitespace3.rest);
-        if (termResult) {
-          value.push(termResult.value);
+    while (parsedTerm) {
+      rest = parsedTerm.rest;
+      const whitespace2 = whitespaceParser(parsedTerm.rest);
+      const parsedSeparator = separatorParser(whitespace2.rest);
+      if (parsedSeparator) {
+        value.push(parsedSeparator.value);
+        const whitespace3 = whitespaceParser(parsedSeparator.rest);
+        parsedTerm = termParser(whitespace3.rest);
+        if (parsedTerm) {
+          value.push(parsedTerm.value);
         }
       } else {
-        termResult = null;
+        parsedTerm = null;
       }
     }
     return {
@@ -95,13 +95,13 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
 // we already know what it is.
 export function terminal(terminalRegex) {
   return function parseTerminal(text) {
-    const result = regex(terminalRegex)(text);
-    if (!result) {
+    const parsed = regex(terminalRegex)(text);
+    if (!parsed) {
       return null;
     }
     return {
       value: null,
-      rest: result.rest,
+      rest: parsed.rest,
     };
   };
 }

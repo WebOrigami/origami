@@ -1,6 +1,11 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export async function invoke(code) {
+  if (!(code instanceof Array)) {
+    // Simple scalar; return as is.
+    return code;
+  }
+
   const evaluated = await Promise.all(
     code.map((instruction) =>
       instruction instanceof Array
