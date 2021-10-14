@@ -299,7 +299,7 @@ export function slashCall(text) {
     optionalWhitespace,
     getCall,
     terminal(/^\/|:\/\/|:/),
-    slashPath,
+    optional(slashPath),
     optionalWhitespace
   )(text);
   if (!parsed) {

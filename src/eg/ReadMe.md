@@ -50,7 +50,7 @@ reference: variableReference
 
 singleQuoteString: '[text]'
 
-slashCall: getCall ":"|"://"|"/" slashPath
+slashCall: getCall ":"|"://"|"/" [slashPath]
 
 slashPath: reference / slashPath
            reference

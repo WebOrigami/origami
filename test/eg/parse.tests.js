@@ -258,6 +258,15 @@ describe("parse", () => {
     assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
   });
 
+  it.only("slashCall", () => {
+    assert.deepEqual(slashCall("graph/")?.value, [[ops.get, "graph"]]);
+    assert.deepEqual(slashCall("graph/foo/bar")?.value, [
+      [ops.get, "graph"],
+      "foo",
+      "bar",
+    ]);
+  });
+
   it("slashPath", () => {
     assert.deepEqual(slashPath("foo/bar/baz")?.value, ["foo", "bar", "baz"]);
   });
