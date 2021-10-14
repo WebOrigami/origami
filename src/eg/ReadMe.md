@@ -19,7 +19,7 @@ expression: singleQuoteString
             slashCall
             functionCall
             variableValue
-            literal
+            literalValue
 
 singleQuoteString: '[text]'
 
@@ -39,7 +39,8 @@ slashCall: literal ":"|"://"|"/" slashPath
 slashPath: pathKey / slashPath
            pathKey
 
-pathKey: reference
+pathKey: variableReference
+         literal
 
 slashCall: literal / slashPath
 
@@ -61,16 +62,18 @@ parentheticalArgs: ( [list] )
 list: expression , list
       expression
 
-variableValue: variableReference
-
 reference: variableReference
-           literal
+           literalValue
+
+variableValue: variableReference
 
 variableReference: $variableName[extension]
 
 variableName: for now, JavaScript identifiers with ASCII letters
 
 extension: .literal
+
+literalValue: literal
 
 literal: everything but =(){}$&"'/, and whitespace
 ```

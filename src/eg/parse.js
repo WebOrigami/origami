@@ -48,8 +48,6 @@ export function assignment(text) {
   }
   let { 1: left, 5: right } = parsed.value;
   right = substituteSelfReferences(right, text);
-  // TODO: Clean up
-  left = left[0] === ops.get ? left[1] : left;
   const value = ["=", left, right];
   return {
     value,
@@ -113,7 +111,7 @@ export function expression(text) {
     slashCall,
     functionCall,
     variableValue,
-    literal
+    literalValue
   )(text);
 }
 
@@ -215,10 +213,15 @@ export function list(text) {
 
 // Parse a literal
 export function literal(text) {
-  // Identifiers are sequences of everything but terminal characters.
-  const parsed = regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+  // Literals are sequences of everything but terminal characters.
+  return regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+}
+
+// Parse a request to get the value of a literal
+export function literalValue(text) {
+  const parsed = literal(text);
   if (!parsed) {
-    return parsed;
+    return null;
   }
   const value = [ops.get, parsed.value];
   return {
@@ -265,27 +268,12 @@ export default function parse(text) {
 
 // Parse a key in a URL path
 export function pathKey(text) {
-  const parsed = any(variableReference, literal)(text);
-  if (!parsed) {
-    return null;
-  }
-  // Quote if it's a literal.
-  const value =
-    typeof parsed.value === "string"
-      ? [ops.quote, parsed.value]
-      : // TODO: Clean up
-      parsed.value instanceof Array && parsed.value[0] === ops.get
-      ? [ops.quote, parsed.value[1]]
-      : parsed.value;
-  return {
-    value,
-    rest: parsed.rest,
-  };
+  return any(variableReference, literal)(text);
 }
 
 // Parse a reference.
 export function reference(text) {
-  return any(variableReference, literal)(text);
+  return any(variableReference, literalValue)(text);
 }
 
 // Parse a right parenthesis.
@@ -406,7 +394,6 @@ function substituteSelfReferences(parsed, text) {
   const substituted = parsed.map((item) =>
     substituteSelfReferences(item, text)
   );
-  // TODO: Clean up
   if (
     substituted instanceof Array &&
     substituted[0] === ops.get &&
@@ -440,8 +427,7 @@ export function variableDeclaration(text) {
     return null;
   }
   const { 1: variable, 3: extension } = parsed.value;
-  // TODO: Clean up
-  const value = [ops.variable, variable, extension?.[1] ?? null];
+  const value = [ops.variable, variable, extension];
   return {
     value,
     rest: parsed.rest,
@@ -459,8 +445,7 @@ export function variableReference(text) {
     return null;
   }
   const { 1: variable, 2: extension } = parsed.value;
-  // TODO: Clean up
-  const value = [ops.variable, variable, extension?.[1] ?? null];
+  const value = [ops.variable, variable, extension];
   return {
     value,
     rest: parsed.rest,
