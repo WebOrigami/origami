@@ -27,7 +27,12 @@ async function main(...args) {
   }
 
   // Execute
-  const result = await execute(code, scope, graph);
+  let result = await execute(code, scope, graph);
+
+  // If result was a function, execute it.
+  if (typeof result === "function") {
+    result = await result();
+  }
 
   // We don't generally complain if the result is undefined; the user may be
   // invoking a function that does work but doesn't return a result. However, if

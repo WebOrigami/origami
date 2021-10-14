@@ -3,6 +3,9 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { toSerializable } from "../../core/utilities.js";
 
 export default async function yaml(obj) {
+  if (obj instanceof Buffer) {
+    obj = String(obj);
+  }
   if (ExplorableGraph.canCastToExplorable(obj)) {
     return await ExplorableGraph.toYaml(obj);
   } else {

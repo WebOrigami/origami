@@ -1,11 +1,8 @@
 import path from "path";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
 import FileLoadersMixin from "../../node/FileLoadersMixin.js";
-import ModulesDefaultExportMixin from "../../node/ModulesDefaultExportMixin.js";
 
-class DefaultGraph extends FileLoadersMixin(
-  ModulesDefaultExportMixin(ExplorableFiles)
-) {}
+class DefaultGraph extends FileLoadersMixin(ExplorableFiles) {}
 
 export default async function defaultGraph(relativePath = "") {
   const resolvedPath = path.resolve(process.cwd(), relativePath);

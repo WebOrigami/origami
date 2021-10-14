@@ -1,30 +1,19 @@
-import DefaultValues from "../../src/common/DefaultValues.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
-import FileLoadersMixin from "../../src/node/FileLoadersMixin.js";
-// import WildcardKeysMixin from "./WildcardKeysMixin.js";
-import ModulesDefaultExportMixin from "../node/ModulesDefaultExportMixin.js";
+import DefaultValues from "../common/DefaultValues.js";
+import ExplorableFiles from "../node/ExplorableFiles.js";
+import FileLoadersMixin from "../node/FileLoadersMixin.js";
+// import HandlebarsHtmlMixin from "./HandlebarsHtmlMixin.js";
+import ImplicitModulesMixin from "../node/ImplicitModulesMixin.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 // import VirtualValuesMixin from "./VirtualValuesMixin.js";
 import FormulasMixin from "./FormulasMixin.js";
-// import HandlebarsHtmlMixin from "./HandlebarsHtmlMixin.js";
-import ImplicitExportsMixin from "./ImplicitExportsMixin.js";
 // import PlusKeysMixin from "./PlusKeysMixin.js";
 // import SplatKeysMixin from "./SplatKeysMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 
-class AppGraph
-  // WildcardKeysMixin
-  extends FileLoadersMixin(
-    ImplicitExportsMixin(
-      // HandlebarsHtmlMixin(
-      // PlusKeysMixin(
-      // SplatKeysMixin(
-      VirtualKeysMixin(
-        FormulasMixin(ModulesDefaultExportMixin(ExplorableFiles))
-      )
-    )
-  ) {}
+class AppGraph extends FileLoadersMixin(
+  VirtualKeysMixin(FormulasMixin(ImplicitModulesMixin(ExplorableFiles)))
+) {}
 
 export default class ExplorableApp extends DefaultValues {
   #main;

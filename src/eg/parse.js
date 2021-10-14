@@ -395,10 +395,18 @@ function substituteSelfReferences(parsed, text) {
     (substituted[1] === "ƒ" || substituted[1].startsWith("ƒ."))
   ) {
     // Perform substitution.
+
+    // Special case: if the original text ends in `.js`, we omit that from the
+    // substituted text. We'll rely on code elsewhere to map an attempt to get
+    // `foo = ƒ()` to loading the module `foo = ƒ().js`.
+    const substitutedText = text.endsWith(".js")
+      ? text.substr(0, text.length - 3)
+      : text;
+
     if (substituted.length === 2) {
-      return [ops.get, text];
+      return [ops.get, substitutedText];
     }
-    substituted[0] = text;
+    substituted[0] = substitutedText;
   }
   return substituted;
 }

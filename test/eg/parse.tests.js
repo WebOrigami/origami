@@ -65,12 +65,12 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = ƒ().js")?.value, [
       "=",
       "foo",
-      [[ops.get, "foo = ƒ().js"]],
+      [[ops.get, "foo = ƒ()"]],
     ]);
     assert.deepEqual(assignment("foo = ƒ('bar').js")?.value, [
       "=",
       "foo",
-      [[ops.get, "foo = ƒ('bar').js"], "bar"],
+      [[ops.get, "foo = ƒ('bar')"], "bar"],
     ]);
   });
 
@@ -78,7 +78,7 @@ describe("parse", () => {
     assert.deepEqual(assignment("...graph = ƒ().js")?.value, [
       "=",
       "...graph",
-      [[ops.get, "...graph = ƒ().js"]],
+      [[ops.get, "...graph = ƒ()"]],
     ]);
   });
 
@@ -258,7 +258,7 @@ describe("parse", () => {
     assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
   });
 
-  it.only("slashCall", () => {
+  it("slashCall", () => {
     assert.deepEqual(slashCall("graph/")?.value, [[ops.get, "graph"]]);
     assert.deepEqual(slashCall("graph/foo/bar")?.value, [
       [ops.get, "graph"],

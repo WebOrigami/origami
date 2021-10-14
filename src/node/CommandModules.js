@@ -1,7 +1,7 @@
 import CommandModulesMixin from "./CommandModulesMixin.js";
 import ExplorableFiles from "./ExplorableFiles.js";
-import ModulesDefaultExportMixin from "./ModulesDefaultExportMixin.js";
+import ImplicitModulesMixin from "./ImplicitModulesMixin.js";
 
 export default class CommandModules extends CommandModulesMixin(
-  ModulesDefaultExportMixin(ExplorableFiles)
+  ImplicitModulesMixin(ExplorableFiles)
 ) {}
