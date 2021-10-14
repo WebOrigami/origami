@@ -49,6 +49,12 @@ export async function handleRequest(request, response, graph) {
       // if this graph is for a JSON request, cast the graph to JSON.
       if (mediaType === "application/json") {
         resource = await ExplorableGraph.plain(resource);
+      } else if (!request.url.endsWith("/")) {
+        // Redirect to the root of the explorable graph.
+        const Location = `${request.url}/`;
+        response.writeHead(307, { Location });
+        response.end("ok");
+        return true;
       } else {
         return false;
       }

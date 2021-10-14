@@ -1,5 +1,3 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
-
 export default async function defaultIndexHtml() {
   // @ts-ignore
   const graph = this;
@@ -7,9 +5,7 @@ export default async function defaultIndexHtml() {
   for await (const key of graph) {
     // Skip keys that start with a "." (like .keys.json).
     if (!key.startsWith(".")) {
-      const value = await graph.get(key);
-      const href = ExplorableGraph.isExplorable(value) ? `${key}/` : key;
-      const link = `<li><a href="${href}">${href}</a></li>`;
+      const link = `<li><a href="${key}">${key}</a></li>`;
       links.push(link);
     }
   }
