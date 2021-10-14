@@ -110,8 +110,7 @@ export function expression(text) {
     spaceUrl,
     slashCall,
     functionCall,
-    variableValue,
-    literalValue
+    getCall
   )(text);
 }
 
@@ -124,7 +123,7 @@ export function extension(text) {
 export function functionCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    reference,
+    getCall,
     args,
     optionalWhitespace
   )(text);
@@ -136,6 +135,19 @@ export function functionCall(text) {
   if (fnArgs) {
     value.push(...fnArgs);
   }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a call to get a value.
+export function getCall(text) {
+  const parsed = reference(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.get, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -211,23 +223,10 @@ export function list(text) {
   };
 }
 
-// Parse a literal
+// Parse a reference to a literal
 export function literal(text) {
   // Literals are sequences of everything but terminal characters.
   return regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
-}
-
-// Parse a request to get the value of a literal
-export function literalValue(text) {
-  const parsed = literal(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.get, parsed.value];
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 // Parse a left parenthesis.
@@ -266,14 +265,9 @@ export default function parse(text) {
   return parsed?.rest !== "" ? parsed.value : null;
 }
 
-// Parse a key in a URL path
-export function pathKey(text) {
-  return any(variableReference, literal)(text);
-}
-
-// Parse a reference.
+// Parse a reference to a variable or literal.
 export function reference(text) {
-  return any(variableReference, literalValue)(text);
+  return any(variableReference, literal)(text);
 }
 
 // Parse a right parenthesis.
@@ -303,7 +297,7 @@ export function singleQuoteString(text) {
 export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    reference,
+    getCall,
     terminal(/^\/|:\/\/|:/),
     slashPath,
     optionalWhitespace
@@ -324,7 +318,7 @@ export function slashCall(text) {
 
 // Parse a slash-delimeted path
 export function slashPath(text) {
-  const parsed = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
+  const parsed = separatedList(reference, terminal(/^\//), regex(/^/))(text);
   if (!parsed) {
     return null;
   }
@@ -367,7 +361,7 @@ export function spaceUrlProtocol(text) {
 
 // Parse a space-delimeted URL path
 export function spaceUrlPath(text) {
-  const parsed = separatedList(pathKey, whitespace, regex(/^/))(text);
+  const parsed = separatedList(reference, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
@@ -446,19 +440,6 @@ export function variableReference(text) {
   }
   const { 1: variable, 2: extension } = parsed.value;
   const value = [ops.variable, variable, extension];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a request to get the value of a variable.
-export function variableValue(text) {
-  const parsed = variableReference(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.get, parsed.value];
   return {
     value,
     rest: parsed.rest,

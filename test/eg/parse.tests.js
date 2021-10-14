@@ -5,12 +5,12 @@ import {
   backtickQuoteString,
   expression,
   functionCall,
+  getCall,
   group,
   indirectCall,
   key,
   list,
   literal,
-  literalValue,
   optionalWhitespace,
   singleQuoteString,
   slashCall,
@@ -201,6 +201,13 @@ describe("parse", () => {
     assert.deepEqual(indirectCall("(fn())"), null);
   });
 
+  it("getCall", () => {
+    assert.deepEqual(getCall("hello"), {
+      value: [ops.get, "hello"],
+      rest: "",
+    });
+  });
+
   it("key", () => {
     assert.deepEqual(key("foo")?.value, "foo");
     assert.deepEqual(key("{name}.yaml")?.value, [
@@ -238,20 +245,13 @@ describe("parse", () => {
     ]);
   });
 
-  it("literal", () => {
+  it("literalReference", () => {
     assert.deepEqual(literal("hello"), {
       value: "hello",
       rest: "",
     });
     assert.equal(literal(""), null);
     assert.equal(literal("()"), null);
-  });
-
-  it("literalValue", () => {
-    assert.deepEqual(literalValue("hello"), {
-      value: [ops.get, "hello"],
-      rest: "",
-    });
   });
 
   it("singleQuoteString", () => {

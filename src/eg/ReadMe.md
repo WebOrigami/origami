@@ -1,15 +1,20 @@
 The eg grammar is as follows:
 
 ```
-key: assignment
-     declaration
+args: parentheticalArgs
+      list
+
+assignment: declaration = expression [extension]
+
+backtickContents: backtickText variableReference backtickContents
+                  backtickText
+
+backtickQuoteString: `backtickContents`
+
+backtickText: everything but ` and $
 
 declaration: variableDeclaration
              literal
-
-variableDeclaration: {variableName}[extension]
-
-assignment: declaration = expression [extension]
 
 expression: singleQuoteString
             backtickQuoteString
@@ -18,82 +23,51 @@ expression: singleQuoteString
             spaceUrl
             slashCall
             functionCall
-            variableValue
-            literalValue
+            getCall
 
-singleQuoteString: '[text]'
+extension: .literal
 
-backtickQuoteString: `backtickContents`
+functionCall: getCall [args]
 
-backtickContents: backtickText variableReference backtickContents
-                  backtickText
-
-backtickText: everything but ` and $
-
-indirectCall: group args
+getCall: reference
 
 group: ( expression )
 
-slashCall: literal ":"|"://"|"/" slashPath
+key: assignment
+     declaration
 
-slashPath: pathKey / slashPath
-           pathKey
+indirectCall: group args
 
-pathKey: variableReference
-         literal
+list: expression , list
+      expression
 
-slashCall: literal / slashPath
+literal: everything but =(){}$&"'/, and whitespace
+
+parentheticalArgs: ( [list] )
+
+reference: variableReference
+           literal
+
+singleQuoteString: '[text]'
+
+slashCall: getCall ":"|"://"|"/" slashPath
+
+slashPath: reference / slashPath
+           reference
 
 spaceUrl: spaceUrlProtocol whitespace spaceUrlPath
 
 spaceUrlProtocol: https
                   http
 
-spaceUrlPath: pathKey whitespace spaceUrlPath
-              pathKey
+spaceUrlPath: reference whitespace spaceUrlPath
+              reference
 
-functionCall: reference [args]
-
-args: parentheticalArgs
-      list
-
-parentheticalArgs: ( [list] )
-
-list: expression , list
-      expression
-
-reference: variableReference
-           literalValue
-
-variableValue: variableReference
-
-variableReference: $variableName[extension]
+variableDeclaration: {variableName}[extension]
 
 variableName: for now, JavaScript identifiers with ASCII letters
 
-extension: .literal
-
-literalValue: literal
-
-literal: everything but =(){}$&"'/, and whitespace
-
-
-functionCall: value [args]
-
-key: assignment
-     reference
-
-declaration → drop
-
-slashPath: reference / slashPath
-spaceUrlPath: reference whitespace spaceUrlPath
-
-pathKey → drop
-
-reference: variableReference
-           literalReference
-
-value: variableValue
-       literalValue
-
+variableReference: $variableName[extension]
 ```
+
+The `eg` shell command parses an expression by starting with `expression`. The `Formula` class used by `ExplorableApp` parses a key which may be a formula by starting with `key`.
