@@ -3,14 +3,11 @@ export function any(...parsers) {
   return function parseAny(text) {
     for (const parser of parsers) {
       const result = parser(text);
-      if (result.value !== undefined) {
+      if (result) {
         return result;
       }
     }
-    return {
-      value: undefined,
-      rest: text,
-    };
+    return null;
   };
 }
 
@@ -19,10 +16,11 @@ export function any(...parsers) {
 export function optional(parser) {
   return function parseOptional(text) {
     const result = parser(text);
-    const value = result.value ?? null;
+    const value = result?.value ?? null;
+    const rest = result?.rest ?? text;
     return {
       value,
-      rest: result.rest,
+      rest,
     };
   };
 }
@@ -31,8 +29,11 @@ export function optional(parser) {
 export function regex(regex) {
   return function parseRegex(text) {
     const match = regex.exec(text);
-    const value = match ? match[0] : undefined;
-    const rest = match ? text.slice(value.length) : text;
+    if (!match) {
+      return null;
+    }
+    const value = match[0];
+    const rest = text.slice(value.length);
     return {
       value,
       rest,
@@ -48,8 +49,8 @@ export function sequence(...parsers) {
     const value = [];
     for (const parser of parsers) {
       const result = parser(rest);
-      if (result.value === undefined) {
-        return result;
+      if (!result) {
+        return null;
       }
       value.push(result.value);
       rest = result.rest;
@@ -62,27 +63,29 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
   return function parseSeparatedList(text) {
     const whitespace1 = whitespaceParser(text);
     let termResult = termParser(whitespace1.rest);
-    if (termResult.value === undefined) {
-      return termResult;
+    if (!termResult) {
+      return null;
     }
     const value = [termResult.value];
-    while (termResult.value !== undefined) {
+    let rest;
+    while (termResult) {
+      rest = termResult.rest;
       const whitespace2 = whitespaceParser(termResult.rest);
       const separatorResult = separatorParser(whitespace2.rest);
-      if (separatorResult.value !== undefined) {
+      if (separatorResult) {
         value.push(separatorResult.value);
         const whitespace3 = whitespaceParser(separatorResult.rest);
         termResult = termParser(whitespace3.rest);
-        if (termResult.value !== undefined) {
+        if (termResult) {
           value.push(termResult.value);
         }
       } else {
-        termResult = { value: undefined, rest: separatorResult.rest };
+        termResult = null;
       }
     }
     return {
       value,
-      rest: termResult.rest,
+      rest,
     };
   };
 }
@@ -93,8 +96,8 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
 export function terminal(terminalRegex) {
   return function parseTerminal(text) {
     const result = regex(terminalRegex)(text);
-    if (result.value === undefined) {
-      return result;
+    if (!result) {
+      return null;
     }
     return {
       value: null,

@@ -43,8 +43,8 @@ export function assignment(text) {
     optionalWhitespace,
     optional(extension)
   )(text);
-  if (!result.value) {
-    return result;
+  if (!result) {
+    return null;
   }
   let { 1: left, 5: right } = result.value;
   right = substituteSelfReferences(right, text);
@@ -66,8 +66,8 @@ export function backtickQuoteString(text) {
     terminal(/^`/),
     optionalWhitespace
   )(text);
-  if (!result.value) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 2: contents } = result.value;
   // Drop empty strings.
@@ -109,8 +109,8 @@ export function doubleQuoteString(text) {
     regex(/^"[^\"]*"/),
     optionalWhitespace
   )(text);
-  if (!result.value) {
-    return result;
+  if (!result) {
+    return null;
   }
   const quotedText = result.value[1].slice(1, -1);
   const value = [ops.quote, quotedText];
@@ -149,8 +149,8 @@ export function functionCall(text) {
     args,
     optionalWhitespace
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 1: fnName, 2: fnArgs } = result.value;
   let value = [fnName];
@@ -174,7 +174,10 @@ export function group(text) {
     rparen,
     optionalWhitespace
   )(text);
-  const value = result.value?.[3]; // the expression
+  if (!result) {
+    return null;
+  }
+  const value = result.value[3]; // the expression
   return {
     value,
     rest: result.rest,
@@ -190,6 +193,9 @@ export function indirectCall(text) {
     args,
     optionalWhitespace
   )(text);
+  if (!result) {
+    return null;
+  }
   const value = result.value
     ? [result.value[1], ...result.value[3]] // function and args
     : undefined;
@@ -211,8 +217,8 @@ export function list(text) {
     terminal(/^,/),
     optionalWhitespace
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   // Remove the separators from the result.
   const value = [];
@@ -230,7 +236,7 @@ export function list(text) {
 export function literal(text) {
   // Identifiers are sequences of everything but terminal characters.
   const result = regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
-  if (result.value === undefined) {
+  if (!result) {
     return result;
   }
   const value = [ops.get, result.value];
@@ -253,15 +259,15 @@ export function optionalWhitespace(text) {
 // Parse function arguments enclosed in parentheses.
 function parentheticalArgs(text) {
   const result = sequence(
-    optionalWhitespace,
     lparen,
-    optionalWhitespace,
     optional(list),
     optionalWhitespace,
-    rparen,
-    optionalWhitespace
+    rparen
   )(text);
-  const listValue = result.value?.[3];
+  if (!result) {
+    return null;
+  }
+  const listValue = result.value[1];
   const value =
     listValue === undefined ? undefined : listValue === null ? [] : listValue;
   return {
@@ -279,8 +285,8 @@ export default function parse(text) {
 // Parse a key in a URL path
 export function pathKey(text) {
   const result = any(variableReference, literal)(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   // Quote if it's a literal.
   const value =
@@ -313,8 +319,8 @@ export function singleQuoteString(text) {
     regex(/^'[^\']*'/),
     optionalWhitespace
   )(text);
-  if (!result.value) {
-    return result;
+  if (!result) {
+    return null;
   }
   const quotedText = result.value[1].slice(1, -1);
   const value = [ops.quote, quotedText];
@@ -333,8 +339,8 @@ export function slashCall(text) {
     slashPath,
     optionalWhitespace
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 1: fnName, 3: fnArgs } = result.value;
   let value = [fnName];
@@ -350,8 +356,8 @@ export function slashCall(text) {
 // Parse a slash-delimeted path
 export function slashPath(text) {
   const result = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   // Remove the separators from the result.
   const values = [];
@@ -374,8 +380,8 @@ export function spaceUrl(text) {
     spaceUrlPath,
     optionalWhitespace
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 1: protocol, 3: path } = result.value;
   const value = [[ops.get, protocol], ...path];
@@ -393,8 +399,8 @@ export function spaceUrlProtocol(text) {
 // Parse a space-delimeted URL path
 export function spaceUrlPath(text) {
   const result = separatedList(pathKey, whitespace, regex(/^/))(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   // Remove the separators from the result.
   const values = [];
@@ -449,8 +455,8 @@ export function variableDeclaration(text) {
     terminal(/^\}/),
     optional(literal)
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 1: variable, 3: extension } = result.value;
   // TODO: Clean up
@@ -468,8 +474,8 @@ export function variableReference(text) {
     variableName,
     optional(literal)
   )(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const { 1: variable, 2: extension } = result.value;
   // TODO: Clean up
@@ -483,8 +489,8 @@ export function variableReference(text) {
 // Parse a request to get the value of a variable.
 export function variableValue(text) {
   const result = variableReference(text);
-  if (result.value === undefined) {
-    return result;
+  if (!result) {
+    return null;
   }
   const value = [ops.get, result.value];
   return {

@@ -34,25 +34,25 @@ describe("parse", () => {
       value: [ops.get, "hello"],
       rest: "",
     });
-    assert.equal(literal("").value, undefined);
-    assert.equal(literal("()").value, undefined);
+    assert.equal(literal(""), null);
+    assert.equal(literal("()"), null);
   });
 
   it("list", () => {
-    assert.equal(list("").value, undefined);
-    assert.deepEqual(list(" a").value, [[ops.get, "a"]]);
-    assert.deepEqual(list(" a , b,c, d , e").value, [
+    assert.equal(list(""), null);
+    assert.deepEqual(list(" a")?.value, [[ops.get, "a"]]);
+    assert.deepEqual(list(" a , b,c, d , e")?.value, [
       [ops.get, "a"],
       [ops.get, "b"],
       [ops.get, "c"],
       [ops.get, "d"],
       [ops.get, "e"],
     ]);
-    assert.deepEqual(list(`"foo", "bar"`).value, [
+    assert.deepEqual(list(`"foo", "bar"`)?.value, [
       [ops.quote, "foo"],
       [ops.quote, "bar"],
     ]);
-    assert.deepEqual(list("a(b), c").value, [
+    assert.deepEqual(list("a(b), c")?.value, [
       [
         [ops.get, "a"],
         [ops.get, "b"],
@@ -78,36 +78,36 @@ describe("parse", () => {
       ],
       rest: "",
     });
-    assert.deepEqual(args("()").value, []);
-    assert.deepEqual(args("").value, undefined);
+    assert.deepEqual(args("()")?.value, []);
+    assert.deepEqual(args(""), null);
   });
 
   it("double-quote string", () => {
-    assert.deepEqual(doubleQuoteString(`"hello"`).value, [ops.quote, "hello"]);
+    assert.deepEqual(doubleQuoteString(`"hello"`)?.value, [ops.quote, "hello"]);
   });
 
   it("single-quote string", () => {
-    assert.deepEqual(singleQuoteString(`'hello'`).value, [ops.quote, "hello"]);
+    assert.deepEqual(singleQuoteString(`'hello'`)?.value, [ops.quote, "hello"]);
   });
 
   it("function call", () => {
-    assert.equal(functionCall("fn").value, undefined); // didn't have parentheses
-    assert.deepEqual(functionCall("fn('a', 'b')").value, [
+    assert.equal(functionCall("fn"), null); // didn't have parentheses
+    assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
       [ops.get, "fn"],
       [ops.quote, "a"],
       [ops.quote, "b"],
     ]);
-    assert.deepEqual(functionCall("fn 'a', 'b'").value, [
+    assert.deepEqual(functionCall("fn 'a', 'b'")?.value, [
       [ops.get, "fn"],
       [ops.quote, "a"],
       [ops.quote, "b"],
     ]);
-    assert.deepEqual(functionCall("fn a, b").value, [
+    assert.deepEqual(functionCall("fn a, b")?.value, [
       [ops.get, "fn"],
       [ops.get, "a"],
       [ops.get, "b"],
     ]);
-    assert.deepEqual(functionCall("fn a(b), c").value, [
+    assert.deepEqual(functionCall("fn a(b), c")?.value, [
       [ops.get, "fn"],
       [
         [ops.get, "a"],
@@ -118,22 +118,22 @@ describe("parse", () => {
   });
 
   it("group", () => {
-    assert.deepEqual(group(" ( hello )").value, [ops.get, "hello"]);
-    assert.deepEqual(group("(((nested)))").value, [ops.get, "nested"]);
-    assert.equal(group("(").value, undefined);
+    assert.deepEqual(group(" ( hello )")?.value, [ops.get, "hello"]);
+    assert.deepEqual(group("(((nested)))")?.value, [ops.get, "nested"]);
+    assert.equal(group("("), null);
   });
 
   it("indirect function call", () => {
-    assert.deepEqual(indirectCall("(fn()) 'a'").value, [
+    assert.deepEqual(indirectCall("(fn()) 'a'")?.value, [
       [[ops.get, "fn"]],
       [ops.quote, "a"],
     ]);
-    assert.deepEqual(indirectCall("(fn()) (a, b)").value, [
+    assert.deepEqual(indirectCall("(fn()) (a, b)")?.value, [
       [[ops.get, "fn"]],
       [ops.get, "a"],
       [ops.get, "b"],
     ]);
-    assert.deepEqual(indirectCall("(fn())").value, undefined);
+    assert.deepEqual(indirectCall("(fn())"), null);
   });
 
   it("variable name", () => {
@@ -144,12 +144,12 @@ describe("parse", () => {
   });
 
   it("variable reference", () => {
-    assert.deepEqual(variableReference("$name").value, [
+    assert.deepEqual(variableReference("$name")?.value, [
       ops.variable,
       "name",
       null,
     ]);
-    assert.deepEqual(variableReference("$name.json").value, [
+    assert.deepEqual(variableReference("$name.json")?.value, [
       ops.variable,
       "name",
       ".json",
@@ -157,18 +157,18 @@ describe("parse", () => {
   });
 
   it("backtick quoted string", () => {
-    assert.deepEqual(backtickQuoteString("`Hello, world.`").value, [
+    assert.deepEqual(backtickQuoteString("`Hello, world.`")?.value, [
       ops.quote,
       "Hello, world.",
     ]);
   });
 
   it("backtick quoted string with variable pattern", () => {
-    assert.deepEqual(backtickQuoteString("`$x.json`").value, [
+    assert.deepEqual(backtickQuoteString("`$x.json`")?.value, [
       ops.quote,
       [ops.variable, "x", ".json"],
     ]);
-    assert.deepEqual(backtickQuoteString("`foo $x.json bar`").value, [
+    assert.deepEqual(backtickQuoteString("`foo $x.json bar`")?.value, [
       ops.quote,
       "foo ",
       [ops.variable, "x", ".json"],
@@ -177,34 +177,34 @@ describe("parse", () => {
   });
 
   it("function call with variable reference", () => {
-    assert.deepEqual(functionCall("fn($name.json)").value, [
+    assert.deepEqual(functionCall("fn($name.json)")?.value, [
       [ops.get, "fn"],
       [ops.get, [ops.variable, "name", ".json"]],
     ]);
   });
 
   it("expression", () => {
-    assert.deepEqual(expression("obj.json").value, [ops.get, "obj.json"]);
-    assert.deepEqual(expression("(fn a, b, c)").value, [
+    assert.deepEqual(expression("obj.json")?.value, [ops.get, "obj.json"]);
+    assert.deepEqual(expression("(fn a, b, c)")?.value, [
       [ops.get, "fn"],
       [ops.get, "a"],
       [ops.get, "b"],
       [ops.get, "c"],
     ]);
-    assert.deepEqual(expression("foo.bar( 'hello' , 'world' )").value, [
+    assert.deepEqual(expression("foo.bar( 'hello' , 'world' )")?.value, [
       [ops.get, "foo.bar"],
       [ops.quote, "hello"],
       [ops.quote, "world"],
     ]);
-    assert.deepEqual(expression("(fn)('a')").value, [
+    assert.deepEqual(expression("(fn)('a')")?.value, [
       [ops.get, "fn"],
       [ops.quote, "a"],
     ]);
-    assert.equal(expression("(foo").value, undefined);
+    assert.equal(expression("(foo"), null);
   });
 
   it("slash-delimited path", () => {
-    assert.deepEqual(slashPath("foo/bar/baz").value, [
+    assert.deepEqual(slashPath("foo/bar/baz")?.value, [
       [ops.quote, "foo"],
       [ops.quote, "bar"],
       [ops.quote, "baz"],
@@ -212,17 +212,17 @@ describe("parse", () => {
   });
 
   it("function call with path syntax", () => {
-    assert.deepEqual(slashCall("fn/a/b/c").value, [
+    assert.deepEqual(slashCall("fn/a/b/c")?.value, [
       [ops.get, "fn"],
       [ops.quote, "a"],
       [ops.quote, "b"],
       [ops.quote, "c"],
     ]);
-    assert.deepEqual(slashCall("about:blank").value, [
+    assert.deepEqual(slashCall("about:blank")?.value, [
       [ops.get, "about"],
       [ops.quote, "blank"],
     ]);
-    assert.deepEqual(slashCall("https://example.com/foo/bar.json").value, [
+    assert.deepEqual(slashCall("https://example.com/foo/bar.json")?.value, [
       [ops.get, "https"],
       [ops.quote, "example.com"],
       [ops.quote, "foo"],
@@ -231,13 +231,13 @@ describe("parse", () => {
   });
 
   it("space-delimited url", () => {
-    assert.deepEqual(spaceUrl("https example.com foo bar.json").value, [
+    assert.deepEqual(spaceUrl("https example.com foo bar.json")?.value, [
       [ops.get, "https"],
       [ops.quote, "example.com"],
       [ops.quote, "foo"],
       [ops.quote, "bar.json"],
     ]);
-    assert.deepEqual(spaceUrl("http example.org $x data.json").value, [
+    assert.deepEqual(spaceUrl("http example.org $x data.json")?.value, [
       [ops.get, "http"],
       [ops.quote, "example.org"],
       [ops.variable, "x", null],
@@ -246,7 +246,7 @@ describe("parse", () => {
   });
 
   it("assignment", () => {
-    assert.deepEqual(assignment("foo = fn 'bar'").value, [
+    assert.deepEqual(assignment("foo = fn 'bar'")?.value, [
       "=",
       "foo",
       [
@@ -254,7 +254,7 @@ describe("parse", () => {
         [ops.quote, "bar"],
       ],
     ]);
-    assert.deepEqual(assignment("data = obj.json").value, [
+    assert.deepEqual(assignment("data = obj.json")?.value, [
       "=",
       "data",
       [ops.get, "obj.json"],
@@ -262,17 +262,17 @@ describe("parse", () => {
   });
 
   it("assignment with ƒ on right-hand side", () => {
-    assert.deepEqual(assignment("foo = ƒ.json").value, [
+    assert.deepEqual(assignment("foo = ƒ.json")?.value, [
       "=",
       "foo",
       [ops.get, "foo = ƒ.json"],
     ]);
-    assert.deepEqual(assignment("foo = ƒ().js").value, [
+    assert.deepEqual(assignment("foo = ƒ().js")?.value, [
       "=",
       "foo",
       [[ops.get, "foo = ƒ().js"]],
     ]);
-    assert.deepEqual(assignment("foo = ƒ('bar').js").value, [
+    assert.deepEqual(assignment("foo = ƒ('bar').js")?.value, [
       "=",
       "foo",
       [
@@ -283,7 +283,7 @@ describe("parse", () => {
   });
 
   it("assignment to splat on left with ƒ on right", () => {
-    assert.deepEqual(assignment("...graph = ƒ().js").value, [
+    assert.deepEqual(assignment("...graph = ƒ().js")?.value, [
       "=",
       "...graph",
       [[ops.get, "...graph = ƒ().js"]],
@@ -291,7 +291,7 @@ describe("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assert.deepEqual(assignment("{name}.html = foo($name.json)").value, [
+    assert.deepEqual(assignment("{name}.html = foo($name.json)")?.value, [
       "=",
       [ops.variable, "name", ".html"],
       [
@@ -302,9 +302,13 @@ describe("parse", () => {
   });
 
   it("key", () => {
-    assert.deepEqual(key("foo").value, [ops.get, "foo"]);
-    assert.deepEqual(key("{name}.yaml").value, [ops.variable, "name", ".yaml"]);
-    assert.deepEqual(key("{x}.html = marked $x.md").value, [
+    assert.deepEqual(key("foo")?.value, [ops.get, "foo"]);
+    assert.deepEqual(key("{name}.yaml")?.value, [
+      ops.variable,
+      "name",
+      ".yaml",
+    ]);
+    assert.deepEqual(key("{x}.html = marked $x.md")?.value, [
       "=",
       [ops.variable, "x", ".html"],
       [
