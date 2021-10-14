@@ -76,4 +76,24 @@ extension: .literal
 literalValue: literal
 
 literal: everything but =(){}$&"'/, and whitespace
+
+
+functionCall: value [args]
+
+key: assignment
+     reference
+
+declaration → drop
+
+slashPath: reference / slashPath
+spaceUrlPath: reference whitespace spaceUrlPath
+
+pathKey → drop
+
+reference: variableReference
+           literalReference
+
+value: variableValue
+       literalValue
+
 ```
