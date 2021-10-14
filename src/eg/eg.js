@@ -25,19 +25,21 @@ async function main(...args) {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }
+  let errorIfResultUndefined = code[0] === ops.get;
 
   // Execute
   let result = await execute(code, scope, graph);
 
   // If result was a function, execute it.
   if (typeof result === "function") {
+    errorIfResultUndefined = false;
     result = await result();
   }
 
   // We don't generally complain if the result is undefined; the user may be
   // invoking a function that does work but doesn't return a result. However, if
   // the request was only a `get` for something that doesn't exist, say so.
-  if (result === undefined && code[0] === ops.get) {
+  if (result === undefined && errorIfResultUndefined) {
     console.error(`eg: could not find ${code[1]}`);
   }
 
