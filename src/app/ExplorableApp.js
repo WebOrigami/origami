@@ -2,7 +2,6 @@ import DefaultValues from "../../src/common/DefaultValues.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import FileLoadersMixin from "../../src/node/FileLoadersMixin.js";
 // import WildcardKeysMixin from "./WildcardKeysMixin.js";
-// import InvokeFunctionsMixin from "../common/InvokeFunctionsMixin.js";
 import ModulesDefaultExportMixin from "../node/ModulesDefaultExportMixin.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
@@ -15,7 +14,6 @@ import ImplicitExportsMixin from "./ImplicitExportsMixin.js";
 import VirtualKeysMixin from "./VirtualKeysMixin.js";
 
 class AppGraph
-  // InvokeFunctionsMixin
   // WildcardKeysMixin
   extends FileLoadersMixin(
     ImplicitExportsMixin(
