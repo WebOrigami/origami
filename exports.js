@@ -2,8 +2,6 @@
 export { default as ExplorableApp } from "./src/app/ExplorableApp.js";
 export { default as FormulasMixin } from "./src/app/FormulasMixin.js";
 export { default as VirtualKeysMixin } from "./src/app/VirtualKeysMixin.js";
-export { default as VirtualValuesMixin } from "./src/app/VirtualValuesMixin.js";
-export { default as WildcardKeysMixin } from "./src/app/WildcardKeysMixin.js";
 export { default as Cache } from "./src/common/Cache.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
