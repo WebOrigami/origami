@@ -78,6 +78,8 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
         parsedTerm = termParser(whitespace3.rest);
         if (parsedTerm) {
           value.push(parsedTerm.value);
+        } else {
+          value.push(""); // trailing separator
         }
       } else {
         parsedTerm = null;

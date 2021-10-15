@@ -13,6 +13,7 @@ import {
   list,
   literal,
   optionalWhitespace,
+  protocolIndirectCall,
   singleQuoteString,
   slashCall,
   slashPath,
@@ -263,6 +264,14 @@ describe("parse", () => {
     assert.equal(literal("()"), null);
   });
 
+  it("protocolIndirectCall", () => {
+    assert.deepEqual(protocolIndirectCall("fn:a/b")?.value, [
+      [[ops.get, "fn"]],
+      "a",
+      "b",
+    ]);
+  });
+
   it("singleQuoteString", () => {
     assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
   });
@@ -282,6 +291,12 @@ describe("parse", () => {
 
   it("slashPath", () => {
     assert.deepEqual(slashPath("foo/bar/baz")?.value, ["foo", "bar", "baz"]);
+    assert.deepEqual(slashPath("foo/bar/baz/")?.value, [
+      "foo",
+      "bar",
+      "baz",
+      "",
+    ]);
   });
 
   it("spaceUrl", () => {

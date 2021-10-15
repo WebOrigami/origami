@@ -120,6 +120,7 @@ export function expression(text) {
     indirectCall,
     group,
     spaceUrl,
+    protocolIndirectCall,
     slashCall,
     functionCall,
     // contextCall,
@@ -204,9 +205,7 @@ export function indirectCall(text) {
   if (!parsed) {
     return null;
   }
-  const value = parsed.value
-    ? [parsed.value[1], ...parsed.value[3]] // function and args
-    : undefined;
+  const value = [parsed.value[1], ...parsed.value[3]]; // function and args
   return {
     value,
     rest: parsed.rest,
@@ -280,6 +279,24 @@ function parentheticalArgs(text) {
 export default function parse(text) {
   const parsed = expression(text);
   return parsed?.rest !== "" ? parsed.value : null;
+}
+
+// Parse an indirect protocol call like `fn:foo/bar`.
+export function protocolIndirectCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    reference,
+    terminal(/^:\/\/|:/),
+    slashPath
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [[[ops.get, parsed.value[1]]], ...parsed.value[3]]; // function and args
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a reference to a variable or literal.

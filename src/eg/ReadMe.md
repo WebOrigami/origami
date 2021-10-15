@@ -21,6 +21,7 @@ expression: singleQuoteString
             indirectCall
             group
             spaceUrl
+            protocolIndirectCall
             slashCall
             functionCall
             getCall
@@ -50,7 +51,9 @@ reference: variableReference
 
 singleQuoteString: '[text]'
 
-slashCall: getCall ":"|"://"|"/" [slashPath]
+protocolIndirectCall: getCall ":"|"://" slashPath
+
+slashCall: getCall "//"|"/" [slashPath]
 
 slashPath: reference / slashPath
            reference
