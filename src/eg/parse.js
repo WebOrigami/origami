@@ -381,7 +381,7 @@ export function spaceUrl(text) {
     return null;
   }
   const { 1: protocol, 3: path } = parsed.value;
-  const value = [[ops.get, protocol], ...path];
+  const value = [[[ops.get, protocol]], ...path];
   return {
     value,
     rest: parsed.rest,

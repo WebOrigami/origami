@@ -298,13 +298,13 @@ describe("parse", () => {
 
   it("spaceUrl", () => {
     assert.deepEqual(spaceUrl("https example.com foo bar.json")?.value, [
-      [ops.get, "https"],
+      [[ops.get, "https"]],
       "example.com",
       "foo",
       "bar.json",
     ]);
     assert.deepEqual(spaceUrl("http example.org $x data.json")?.value, [
-      [ops.get, "http"],
+      [[ops.get, "http"]],
       "example.org",
       [ops.variable, "x", null],
       "data.json",
