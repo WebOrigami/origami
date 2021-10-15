@@ -1,8 +1,10 @@
 import path from "path";
 
 const defaultLoaders = {
+  ".css": String,
   ".htm": String,
   ".html": String,
+  ".js": String,
   ".json": String,
   ".txt": String,
   ".xhtml": String,

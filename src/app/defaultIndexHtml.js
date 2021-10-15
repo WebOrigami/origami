@@ -5,7 +5,9 @@ export default async function defaultIndexHtml() {
   for await (const key of graph) {
     // Skip keys that start with a "." (like .keys.json).
     if (!key.startsWith(".")) {
-      const link = `<li><a href="${key}">${key}</a></li>`;
+      const isFormula = key.toString().includes("=");
+      const linkClass = isFormula ? `class="formula"` : "";
+      const link = `<li ${linkClass}><a href="${key}">${key}</a></li>`;
       links.push(link);
     }
   }
@@ -21,6 +23,21 @@ export default async function defaultIndexHtml() {
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <style>
+          li {
+            margin-bottom: 0.20em;
+          }
+
+          .formula {
+            color: #666;
+            list-style: none;
+          }
+
+          .formula a {
+            color: inherit;
+            text-decoration: none;
+          }
+        </style>
       </head>
       <body>
         ${list.trim()}
