@@ -11,11 +11,11 @@ export default class Formula {
     this.expression = expression;
   }
 
-  async evaluate(scope, graph, bindings) {
+  async evaluate(scope, graph, context, bindings) {
     if (this.expression) {
       // Constant or variable assignment
       const code = bind(this.expression, bindings);
-      const value = await execute(code, scope, graph);
+      const value = await execute(code, scope, graph, context);
       return value;
     } else {
       // Variable pattern

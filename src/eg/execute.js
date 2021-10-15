@@ -1,7 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-export default async function execute(code, scope, graph) {
-  const context = { graph, scope };
+export default async function execute(code, scope, graph, ctx = graph) {
+  const context = { graph, scope, context: ctx };
   return await invoke.call(context, code);
 }
 

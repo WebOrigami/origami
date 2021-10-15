@@ -1,3 +1,8 @@
+export async function context() {
+  return this.context;
+}
+context.toString = () => "«ops.context»";
+
 export async function get(key) {
   return (await this.scope.get(key)) ?? (await this.graph.get(key));
 }

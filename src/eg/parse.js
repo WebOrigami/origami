@@ -95,6 +95,18 @@ export function backtickText(text) {
   return regex(/^[^\`\$]*/)(text);
 }
 
+export function contextReference(text) {
+  const parsed = regex(/^\$context/)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.context];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -110,6 +122,7 @@ export function expression(text) {
     spaceUrl,
     slashCall,
     functionCall,
+    // contextCall,
     getCall
   )(text);
 }
@@ -147,7 +160,11 @@ export function getCall(text) {
   if (!parsed) {
     return null;
   }
-  const value = [ops.get, parsed.value];
+  // HACK
+  const value =
+    parsed.value instanceof Array && parsed.value[0] === ops.context
+      ? parsed.value
+      : [ops.get, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -267,7 +284,7 @@ export default function parse(text) {
 
 // Parse a reference to a variable or literal.
 export function reference(text) {
-  return any(variableReference, literal)(text);
+  return any(contextReference, variableReference, literal)(text);
 }
 
 // Parse a right parenthesis.

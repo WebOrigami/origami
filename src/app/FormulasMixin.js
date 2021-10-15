@@ -4,8 +4,9 @@ import Formula from "./Formula.js";
 
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
-    #keys;
+    #context;
     #formulas;
+    #keys;
     #scope = builtins;
 
     async *[Symbol.asyncIterator]() {
@@ -31,6 +32,13 @@ export default function FormulasMixin(Base) {
         this.#keys.sort();
       }
       yield* this.#keys;
+    }
+
+    get context() {
+      return this.#context || this;
+    }
+    set context(context) {
+      this.#context = context;
     }
 
     async formulas() {
@@ -61,7 +69,12 @@ export default function FormulasMixin(Base) {
         const bindings = formula.unify(key);
         if (bindings) {
           // Formula applies to this key.
-          let value = await formula.evaluate(this.scope, this, bindings);
+          let value = await formula.evaluate(
+            this.scope,
+            this,
+            this.context,
+            bindings
+          );
           if (value !== undefined) {
             return ExplorableGraph.isExplorable(value) && rest.length > 0
               ? await value.get(...rest)

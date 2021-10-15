@@ -3,6 +3,7 @@ import {
   args,
   assignment,
   backtickQuoteString,
+  contextReference,
   expression,
   functionCall,
   getCall,
@@ -113,6 +114,10 @@ describe("parse", () => {
     ]);
   });
 
+  it("contextReference", () => {
+    assert.deepEqual(contextReference("$context")?.value, [ops.context]);
+  });
+
   it("expression", () => {
     assert.deepEqual(expression("obj.json")?.value, [ops.get, "obj.json"]);
     assert.deepEqual(expression("(fn a, b, c)")?.value, [
@@ -182,6 +187,17 @@ describe("parse", () => {
     ]);
   });
 
+  it("getCall", () => {
+    assert.deepEqual(getCall("hello"), {
+      value: [ops.get, "hello"],
+      rest: "",
+    });
+    assert.deepEqual(getCall("$context"), {
+      value: [ops.context],
+      rest: "",
+    });
+  });
+
   it("group", () => {
     assert.deepEqual(group(" ( hello )")?.value, [ops.get, "hello"]);
     assert.deepEqual(group("(((nested)))")?.value, [ops.get, "nested"]);
@@ -199,13 +215,6 @@ describe("parse", () => {
       [ops.get, "b"],
     ]);
     assert.deepEqual(indirectCall("(fn())"), null);
-  });
-
-  it("getCall", () => {
-    assert.deepEqual(getCall("hello"), {
-      value: [ops.get, "hello"],
-      rest: "",
-    });
   });
 
   it("key", () => {
@@ -264,6 +273,10 @@ describe("parse", () => {
       [ops.get, "graph"],
       "foo",
       "bar",
+    ]);
+    assert.deepEqual(slashCall("$context/file")?.value, [
+      [ops.context],
+      "file",
     ]);
   });
 
