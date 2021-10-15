@@ -60,6 +60,12 @@ export default function FormulasMixin(Base) {
     async get(...keys) {
       const value = await super.get(...keys);
       if (value !== undefined) {
+        // If we're returning a subgraph of the same type as us, give it our
+        // scope.
+        if (value instanceof this.constructor) {
+          value.scope = this.scope;
+        }
+
         return value;
       }
 
