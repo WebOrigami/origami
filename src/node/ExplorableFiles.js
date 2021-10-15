@@ -25,21 +25,34 @@ export default class ExplorableFiles {
     yield* names;
   }
 
-  async get(...keys) {
-    if (keys.length === 0) {
+  // We may have been given a path like foo/bar/baz containing multiple keys.
+  // While we could turn that into a filesystem path and get the result in one
+  // step, this would prevent the path from entering dynamic subgraphs created
+  // by mixins/subclasses of this class. So we only process one key at a time;
+  // if we get an explorable result, we have it handle the rest of the path.
+  async get(key, ...rest) {
+    if (key === undefined) {
       return this;
     }
-    const objPath = path.resolve(this.dirname, ...keys);
+    const objPath = path.resolve(this.dirname, key);
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
     }
+
+    let result;
     if (stats.isDirectory()) {
-      const directory = Reflect.construct(this.constructor, [objPath]);
-      return directory;
+      result = Reflect.construct(this.constructor, [objPath]);
     } else {
-      return fs.readFile(objPath);
+      result = fs.readFile(objPath);
     }
+
+    result =
+      rest.length > 0 && ExplorableGraph.isExplorable(result)
+        ? await result.get(...rest)
+        : result;
+
+    return result;
   }
 
   get path() {
