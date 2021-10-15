@@ -21,7 +21,7 @@ async function main(...args) {
   // Parse
   const parsed = parse.expression(source);
   const code = parsed?.value;
-  if (!code) {
+  if (!code || parsed.rest !== "") {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }

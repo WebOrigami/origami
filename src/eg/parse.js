@@ -332,7 +332,7 @@ export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     getCall,
-    terminal(/^\/|:\/\/|:/),
+    terminal(/^\//),
     optional(slashPath),
     optionalWhitespace
   )(text);

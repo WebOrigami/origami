@@ -23,7 +23,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assert.deepEqual(args("a, b, c"), {
       value: [
@@ -162,30 +162,22 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionCall with path syntax", () => {
-    assert.deepEqual(slashCall("fn/a/b/c")?.value, [
-      [ops.get, "fn"],
-      "a",
-      "b",
-      "c",
-    ]);
-    assert.deepEqual(slashCall("about:blank")?.value, [
-      [ops.get, "about"],
-      "blank",
-    ]);
-    assert.deepEqual(slashCall("https://example.com/foo/bar.json")?.value, [
-      [ops.get, "https"],
-      "example.com",
-      "foo",
-      "bar.json",
-    ]);
-  });
-
   it("functionCall with variable reference", () => {
     assert.deepEqual(functionCall("fn($name.json)")?.value, [
       [ops.get, "fn"],
       [ops.get, [ops.variable, "name", ".json"]],
     ]);
+  });
+
+  it("functionCall with mixed argument types", () => {
+    assert.deepEqual(
+      functionCall(`copy app:formulas, files 'snapshot'`)?.value,
+      [
+        [ops.get, "copy"],
+        [[[ops.get, "app"]], "formulas"],
+        [[ops.get, "files"], "snapshot"],
+      ]
+    );
   });
 
   it("getCall", () => {
@@ -270,6 +262,14 @@ describe("parse", () => {
       "a",
       "b",
     ]);
+    assert.deepEqual(protocolIndirectCall("about:blank")?.value, [
+      [[ops.get, "about"]],
+      "blank",
+    ]);
+    assert.deepEqual(
+      protocolIndirectCall("https://example.com/foo/bar.json")?.value,
+      [[[ops.get, "https"]], "example.com", "foo", "bar.json"]
+    );
   });
 
   it("singleQuoteString", () => {
