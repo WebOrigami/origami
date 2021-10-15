@@ -23,7 +23,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("args", () => {
     assert.deepEqual(args("a, b, c"), {
       value: [
@@ -136,6 +136,14 @@ describe.only("parse", () => {
     assert.equal(expression("(foo"), null);
   });
 
+  it("expression with function with space-separated arguments, mixed argument types", () => {
+    assert.deepEqual(expression(`copy app:formulas, files 'snapshot'`)?.value, [
+      [ops.get, "copy"],
+      [[[ops.get, "app"]], "formulas"],
+      [[ops.get, "files"], "snapshot"],
+    ]);
+  });
+
   it("functionCall", () => {
     assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
       [ops.get, "fn"],
@@ -167,17 +175,6 @@ describe.only("parse", () => {
       [ops.get, "fn"],
       [ops.get, [ops.variable, "name", ".json"]],
     ]);
-  });
-
-  it("functionCall with mixed argument types", () => {
-    assert.deepEqual(
-      functionCall(`copy app:formulas, files 'snapshot'`)?.value,
-      [
-        [ops.get, "copy"],
-        [[[ops.get, "app"]], "formulas"],
-        [[ops.get, "files"], "snapshot"],
-      ]
-    );
   });
 
   it("getCall", () => {

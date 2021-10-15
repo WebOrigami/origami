@@ -25,7 +25,6 @@ formulasGraph.scope = new Compose(
 describe("ExplorableApp", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(formulasGraph), [
-      "eg.config.js",
       "foo.txt",
       "greeting",
       "greeting = ƒ('world').js",

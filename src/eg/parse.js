@@ -281,12 +281,12 @@ export default function parse(text) {
   return parsed?.rest !== "" ? parsed.value : null;
 }
 
-// Parse an indirect protocol call like `fn:foo/bar`.
+// Parse an indirect protocol call like `fn:foo/bar` or `fn://foo/bar`.
 export function protocolIndirectCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     reference,
-    terminal(/^:\/\/|:/),
+    terminal(/^:\/\/|^:/),
     slashPath
   )(text);
   if (!parsed) {
