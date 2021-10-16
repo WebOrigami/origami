@@ -25,13 +25,18 @@ export default class DefaultValues {
       return undefined; // Nothing to get.
     }
 
-    const subgraph =
+    let subgraph =
       keys.length === 0 ? this.graph : await this.graph.get(...keys);
     if (subgraph === undefined) {
       return undefined; // Can't find subgraph.
     }
 
-    let value = await subgraph.get(lastKey);
+    // TODO: Rethink where this check for Buffer happens.
+    // if (subgraph instanceof Buffer) {
+    //   subgraph = subgraph.toString();
+    // }
+
+    let value = await ExplorableGraph.from(subgraph).get(lastKey);
     if (value !== undefined) {
       return value; // Found in main graph.
     }
