@@ -4,7 +4,7 @@ import Formula from "./Formula.js";
 
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
-    #context;
+    #context = this;
     #formulas;
     #keys;
     #scope = builtins;
@@ -35,7 +35,7 @@ export default function FormulasMixin(Base) {
     }
 
     get context() {
-      return this.#context || this;
+      return this.#context;
     }
     set context(context) {
       this.#context = context;

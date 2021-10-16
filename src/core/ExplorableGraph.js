@@ -20,8 +20,8 @@ export default class ExplorableGraph {
     if (this.isExplorable(variant)) {
       // Already explorable
       return variant;
-    } else if (typeof variant === "string") {
-      const obj = YAML.parse(variant);
+    } else if (typeof variant === "string" || variant instanceof Buffer) {
+      const obj = YAML.parse(String(variant));
       if (isPlainObject(obj)) {
         return new ExplorableObject(obj);
       }

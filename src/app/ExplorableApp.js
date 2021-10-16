@@ -27,6 +27,13 @@ export default class ExplorableApp extends DefaultValues {
     this.#main = main;
   }
 
+  get context() {
+    return this.#main.context;
+  }
+  set context(context) {
+    this.#main.context = context;
+  }
+
   get scope() {
     return this.#main.scope;
   }

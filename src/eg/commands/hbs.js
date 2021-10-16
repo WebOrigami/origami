@@ -1,19 +1,32 @@
 import Handlebars from "handlebars";
 import YAML from "yaml";
+import FormulasObject from "../../app/FormulasObject.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { isPlainObject } from "../../core/utilities.js";
+import { extractFrontMatter, isPlainObject } from "../../core/utilities.js";
+import config from "./config.js";
 
-export default async function hbs(template, variant) {
+export default async function hbs(template, input) {
+  template = String(template);
+  if (!input) {
+    // See if template defines front matter.
+    const frontMatter = extractFrontMatter(template);
+    if (frontMatter) {
+      input = new FormulasObject(frontMatter);
+      input.scope = await config();
+      input.context = this.graph;
+      template = frontMatter.content;
+    }
+  }
   const data =
-    typeof variant === "string" || variant instanceof Buffer
-      ? YAML.parse(String(variant))
-      : isPlainObject(variant)
-      ? variant
-      : ExplorableGraph.canCastToExplorable(variant)
-      ? await ExplorableGraph.plain(variant)
-      : variant;
+    typeof input === "string" || input instanceof Buffer
+      ? YAML.parse(String(input))
+      : isPlainObject(input)
+      ? input
+      : ExplorableGraph.canCastToExplorable(input)
+      ? await ExplorableGraph.plain(input)
+      : input;
   if (data) {
-    const compiled = Handlebars.compile(String(template));
+    const compiled = Handlebars.compile(template);
     const result = compiled(data);
     return result;
   } else {
