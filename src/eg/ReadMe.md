@@ -70,7 +70,7 @@ variableDeclaration: {variableName}[extension]
 
 variableName: for now, JavaScript identifiers with ASCII letters
 
-variableReference: $variableName[extension]
+variableReference: ${variableName}[extension]
 ```
 
 The `eg` shell command parses an expression by starting with `expression`. The `Formula` class used by `ExplorableApp` parses a key which may be a formula by starting with `key`.

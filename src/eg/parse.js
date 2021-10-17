@@ -473,14 +473,15 @@ export function variableDeclaration(text) {
 // Parse a variable reference like $foo.html
 export function variableReference(text) {
   const parsed = sequence(
-    terminal(/^\$/),
+    terminal(/^\$\{/),
     variableName,
+    terminal(/^\}/),
     optional(literal)
   )(text);
   if (!parsed) {
     return null;
   }
-  const { 1: variable, 2: extension } = parsed.value;
+  const { 1: variable, 3: extension } = parsed.value;
   const value = [ops.variable, variable, extension];
   return {
     value,

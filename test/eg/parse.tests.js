@@ -85,7 +85,7 @@ describe("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assert.deepEqual(assignment("{name}.html = foo($name.json)")?.value, [
+    assert.deepEqual(assignment("{name}.html = foo(${name}.json)")?.value, [
       "=",
       [ops.variable, "name", ".html"],
       [
@@ -103,11 +103,11 @@ describe("parse", () => {
   });
 
   it("backtickQuotedString with variable pattern", () => {
-    assert.deepEqual(backtickQuoteString("`$x.json`")?.value, [
+    assert.deepEqual(backtickQuoteString("`${x}.json`")?.value, [
       ops.quote,
       [ops.variable, "x", ".json"],
     ]);
-    assert.deepEqual(backtickQuoteString("`foo $x.json bar`")?.value, [
+    assert.deepEqual(backtickQuoteString("`foo ${x}.json bar`")?.value, [
       ops.quote,
       "foo ",
       [ops.variable, "x", ".json"],
@@ -171,7 +171,7 @@ describe("parse", () => {
   });
 
   it("functionCall with variable reference", () => {
-    assert.deepEqual(functionCall("fn($name.json)")?.value, [
+    assert.deepEqual(functionCall("fn(${name}.json)")?.value, [
       [ops.get, "fn"],
       [ops.get, [ops.variable, "name", ".json"]],
     ]);
@@ -214,7 +214,7 @@ describe("parse", () => {
       "name",
       ".yaml",
     ]);
-    assert.deepEqual(key("{x}.html = marked $x.md")?.value, [
+    assert.deepEqual(key("{x}.html = marked ${x}.md")?.value, [
       "=",
       [ops.variable, "x", ".html"],
       [
@@ -303,7 +303,7 @@ describe("parse", () => {
       "foo",
       "bar.json",
     ]);
-    assert.deepEqual(spaceUrl("http example.org $x data.json")?.value, [
+    assert.deepEqual(spaceUrl("http example.org ${x} data.json")?.value, [
       [[ops.get, "http"]],
       "example.org",
       [ops.variable, "x", null],
@@ -319,12 +319,12 @@ describe("parse", () => {
   });
 
   it("variableReference", () => {
-    assert.deepEqual(variableReference("$name")?.value, [
+    assert.deepEqual(variableReference("${name}")?.value, [
       ops.variable,
       "name",
       null,
     ]);
-    assert.deepEqual(variableReference("$name.json")?.value, [
+    assert.deepEqual(variableReference("${name}.json")?.value, [
       ops.variable,
       "name",
       ".json",
