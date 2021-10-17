@@ -62,6 +62,8 @@ export default function FormulasMixin(Base) {
       if (value !== undefined) {
         // If we're returning a subgraph of the same type as us, give it our
         // scope.
+        // TODO: Maybe do duck typing and do this for any subgraph that defines
+        // a scope property?
         if (value instanceof this.constructor) {
           value.scope = this.scope;
         }
@@ -81,12 +83,17 @@ export default function FormulasMixin(Base) {
             this.context,
             bindings
           );
-          if (value !== undefined) {
-            return ExplorableGraph.isExplorable(value) && rest.length > 0
+
+          if (value !== undefined && rest.length > 0) {
+            // If there are more keys to get, do that.
+            value = ExplorableGraph.isExplorable(value)
               ? await value.get(...rest)
               : typeof value === "function"
               ? value(...rest)
-              : value;
+              : undefined;
+          }
+          if (value !== undefined) {
+            return value;
           }
         }
       }
