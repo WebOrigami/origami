@@ -4,7 +4,10 @@ export async function context() {
 context.toString = () => "«ops.context»";
 
 export async function get(key) {
-  return (await this.scope.get(key)) ?? (await this.graph.get(key));
+  // We handle "." as a special case that prefers the graph over the scope.
+  return key === "."
+    ? this.graph
+    : (await this.scope.get(key)) ?? (await this.graph.get(key));
 }
 get.toString = () => "«ops.get»";
 
