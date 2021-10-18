@@ -1,2 +1,2 @@
 title: Files demonstration
-files = keys files/:
+files = keys context():

@@ -1,7 +1,7 @@
-export async function context() {
-  return this.context;
-}
-context.toString = () => "«ops.context»";
+// export async function context() {
+//   return this.context;
+// }
+// context.toString = () => "«ops.context»";
 
 export async function get(key) {
   // We handle "." as a special case that prefers the graph over the scope.

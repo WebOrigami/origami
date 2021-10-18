@@ -2,7 +2,7 @@ The eg grammar is as follows:
 
 ```
 args: parentheticalArgs
-      list
+      omittedParensArgs
 
 assignment: declaration = expression [extension]
 
@@ -43,6 +43,8 @@ list: expression , list
       expression
 
 literal: everything but =(){}$&"'/, and whitespace
+
+omittedParensArgs: whitespace list
 
 parentheticalArgs: ( [list] )
 

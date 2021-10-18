@@ -28,7 +28,7 @@ import * as ops from "./ops.js";
 
 // Parse arguments to a function.
 export function args(text) {
-  return any(parentheticalArgs, list)(text);
+  return any(parentheticalArgs, omittedParensArgs)(text);
 }
 
 // Parse an assignment statment.
@@ -61,8 +61,7 @@ export function backtickQuoteString(text) {
     optionalWhitespace,
     terminal(/^`/),
     backtickContents,
-    terminal(/^`/),
-    optionalWhitespace
+    terminal(/^`/)
   )(text);
   if (!parsed) {
     return null;
@@ -95,18 +94,6 @@ export function backtickText(text) {
   return regex(/^[^\`\$]*/)(text);
 }
 
-export function contextReference(text) {
-  const parsed = regex(/^context/)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.context];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -123,7 +110,6 @@ export function expression(text) {
     protocolIndirectCall,
     slashCall,
     functionCall,
-    // contextCall,
     getCall
   )(text);
 }
@@ -135,12 +121,7 @@ export function extension(text) {
 
 // Parse a function call.
 export function functionCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    getCall,
-    args,
-    optionalWhitespace
-  )(text);
+  const parsed = sequence(optionalWhitespace, getCall, args)(text);
   if (!parsed) {
     return null;
   }
@@ -161,11 +142,7 @@ export function getCall(text) {
   if (!parsed) {
     return null;
   }
-  // HACK
-  const value =
-    parsed.value instanceof Array && parsed.value[0] === ops.context
-      ? parsed.value
-      : [ops.get, parsed.value];
+  const value = [ops.get, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -180,8 +157,7 @@ export function group(text) {
     optionalWhitespace,
     expression,
     optionalWhitespace,
-    rparen,
-    optionalWhitespace
+    rparen
   )(text);
   if (!parsed) {
     return null;
@@ -195,17 +171,11 @@ export function group(text) {
 
 // Parse an indirect function call like `(fn)(arg1, arg2)`.
 export function indirectCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    group,
-    optionalWhitespace,
-    args,
-    optionalWhitespace
-  )(text);
+  const parsed = sequence(optionalWhitespace, group, args)(text);
   if (!parsed) {
     return null;
   }
-  const value = [parsed.value[1], ...parsed.value[3]]; // function and args
+  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
   return {
     value,
     rest: parsed.rest,
@@ -250,6 +220,19 @@ function lparen(text) {
   return terminal(/^\(/)(text);
 }
 
+// Parse the arguments to a function where the parentheses have been omitted.
+export function omittedParensArgs(text) {
+  const parsed = sequence(whitespace, list)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse an optional whitespace sequence.
 export function optionalWhitespace(text) {
   return terminal(/^\s*/)(text);
@@ -258,6 +241,7 @@ export function optionalWhitespace(text) {
 // Parse function arguments enclosed in parentheses.
 function parentheticalArgs(text) {
   const parsed = sequence(
+    optionalWhitespace,
     lparen,
     optional(list),
     optionalWhitespace,
@@ -266,7 +250,7 @@ function parentheticalArgs(text) {
   if (!parsed) {
     return null;
   }
-  const listValue = parsed.value[1];
+  const listValue = parsed.value[2];
   const value =
     listValue === undefined ? undefined : listValue === null ? [] : listValue;
   return {
@@ -301,7 +285,7 @@ export function protocolIndirectCall(text) {
 
 // Parse a reference to a variable or literal.
 export function reference(text) {
-  return any(contextReference, variableReference, literal)(text);
+  return any(variableReference, literal)(text);
 }
 
 // Parse a right parenthesis.
@@ -311,11 +295,7 @@ function rparen(text) {
 
 // Parse a single-quoted string.
 export function singleQuoteString(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    regex(/^'[^\']*'/),
-    optionalWhitespace
-  )(text);
+  const parsed = sequence(optionalWhitespace, regex(/^'[^\']*'/))(text);
   if (!parsed) {
     return null;
   }
@@ -333,8 +313,7 @@ export function slashCall(text) {
     optionalWhitespace,
     getCall,
     terminal(/^\//),
-    optional(slashPath),
-    optionalWhitespace
+    optional(slashPath)
   )(text);
   if (!parsed) {
     return null;
@@ -374,8 +353,7 @@ export function spaceUrl(text) {
     optionalWhitespace,
     spaceUrlProtocol,
     whitespace,
-    spaceUrlPath,
-    optionalWhitespace
+    spaceUrlPath
   )(text);
   if (!parsed) {
     return null;

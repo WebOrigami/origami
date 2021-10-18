@@ -3,7 +3,6 @@ import {
   args,
   assignment,
   backtickQuoteString,
-  contextReference,
   expression,
   functionCall,
   getCall,
@@ -25,7 +24,7 @@ import assert from "../assert.js";
 
 describe("parse", () => {
   it("args", () => {
-    assert.deepEqual(args("a, b, c"), {
+    assert.deepEqual(args(" a, b, c"), {
       value: [
         [ops.get, "a"],
         [ops.get, "b"],
@@ -115,10 +114,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("contextReference", () => {
-    assert.deepEqual(contextReference("context")?.value, [ops.context]);
-  });
-
   it("expression", () => {
     assert.deepEqual(expression("obj.json")?.value, [ops.get, "obj.json"]);
     assert.deepEqual(expression("(fn a, b, c)")?.value, [
@@ -180,10 +175,6 @@ describe("parse", () => {
   it("getCall", () => {
     assert.deepEqual(getCall("hello"), {
       value: [ops.get, "hello"],
-      rest: "",
-    });
-    assert.deepEqual(getCall("context"), {
-      value: [ops.context],
       rest: "",
     });
   });
@@ -280,7 +271,6 @@ describe("parse", () => {
       "foo",
       "bar",
     ]);
-    assert.deepEqual(slashCall("context/file")?.value, [[ops.context], "file"]);
   });
 
   it("slashPath", () => {
