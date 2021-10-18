@@ -116,7 +116,7 @@ describe("parse", () => {
   });
 
   it("contextReference", () => {
-    assert.deepEqual(contextReference("$context")?.value, [ops.context]);
+    assert.deepEqual(contextReference("context")?.value, [ops.context]);
   });
 
   it("expression", () => {
@@ -182,7 +182,7 @@ describe("parse", () => {
       value: [ops.get, "hello"],
       rest: "",
     });
-    assert.deepEqual(getCall("$context"), {
+    assert.deepEqual(getCall("context"), {
       value: [ops.context],
       rest: "",
     });
@@ -280,10 +280,7 @@ describe("parse", () => {
       "foo",
       "bar",
     ]);
-    assert.deepEqual(slashCall("$context/file")?.value, [
-      [ops.context],
-      "file",
-    ]);
+    assert.deepEqual(slashCall("context/file")?.value, [[ops.context], "file"]);
   });
 
   it("slashPath", () => {

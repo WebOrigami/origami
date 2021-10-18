@@ -96,7 +96,7 @@ export function backtickText(text) {
 }
 
 export function contextReference(text) {
-  const parsed = regex(/^\$context/)(text);
+  const parsed = regex(/^context/)(text);
   if (!parsed) {
     return null;
   }
