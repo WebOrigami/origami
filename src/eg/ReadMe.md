@@ -48,6 +48,9 @@ omittedParensArgs: whitespace list
 
 parentheticalArgs: ( [list] )
 
+pathKey: group
+         reference
+
 reference: variableReference
            literal
 
@@ -57,16 +60,16 @@ protocolIndirectCall: getCall ":"|"://" slashPath
 
 slashCall: getCall "/" [slashPath]
 
-slashPath: reference / slashPath
-           reference
+slashPath: pathKey / slashPath
+           pathKey
 
 spaceUrl: spaceUrlProtocol whitespace spaceUrlPath
 
 spaceUrlProtocol: https
                   http
 
-spaceUrlPath: reference whitespace spaceUrlPath
-              reference
+spaceUrlPath: pathKey whitespace spaceUrlPath
+              pathKey
 
 variableDeclaration: {variableName}[extension]
 

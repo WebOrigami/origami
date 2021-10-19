@@ -281,6 +281,10 @@ describe("parse", () => {
       "baz",
       "",
     ]);
+    assert.deepEqual(slashPath("(fn())/foo")?.value, [
+      [[ops.get, "fn"]],
+      "foo",
+    ]);
   });
 
   it("spaceUrl", () => {

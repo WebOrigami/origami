@@ -265,6 +265,11 @@ export default function parse(text) {
   return parsed?.rest !== "" ? parsed.value : null;
 }
 
+// Parse a key in a path.
+export function pathKey(text) {
+  return any(group, reference)(text);
+}
+
 // Parse an indirect protocol call like `fn:foo/bar` or `fn://foo/bar`.
 export function protocolIndirectCall(text) {
   const parsed = sequence(
@@ -331,7 +336,7 @@ export function slashCall(text) {
 
 // Parse a slash-delimeted path
 export function slashPath(text) {
-  const parsed = separatedList(reference, terminal(/^\//), regex(/^/))(text);
+  const parsed = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
   if (!parsed) {
     return null;
   }
