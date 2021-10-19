@@ -58,7 +58,8 @@ export function toSerializable(obj) {
       t === "number" ||
       t === "bigint" ||
       t === "string" ||
-      obj instanceof Date
+      obj instanceof Date ||
+      obj === null
     ) {
       return obj;
     } else {
