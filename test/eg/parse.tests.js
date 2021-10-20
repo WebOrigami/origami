@@ -254,6 +254,12 @@ describe("parse", () => {
       [[ops.get, "about"]],
       "blank",
     ]);
+    assert.deepEqual(protocolIndirectCall("https://example.com/foo/")?.value, [
+      [[ops.get, "https"]],
+      "example.com",
+      "foo",
+      "",
+    ]);
     assert.deepEqual(
       protocolIndirectCall("https://example.com/foo/bar.json")?.value,
       [[[ops.get, "https"]], "example.com", "foo", "bar.json"]

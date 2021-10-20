@@ -79,7 +79,9 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
         if (parsedTerm) {
           value.push(parsedTerm.value);
         } else {
-          value.push(""); // trailing separator
+          // Trailing separator
+          value.push("");
+          rest = parsedSeparator.rest;
         }
       } else {
         parsedTerm = null;
