@@ -1,4 +1,5 @@
-import fetch from "./fetch.js";
+// import fetch from "./fetch.js";
+import fetch from "node-fetch";
 
 export default class ExplorableSite {
   #keysPromise;
@@ -40,6 +41,15 @@ export default class ExplorableSite {
     } else {
       // Fetch the data at the given endpoint.
       const response = await fetch(href);
+      if (!response.ok) {
+        return undefined;
+      }
+
+      if (response.redirected && response.url.endsWith("/")) {
+        // Redirected to another explorable location.
+        return new ExplorableSite(response.url);
+      }
+
       const buffer = await response.arrayBuffer();
       if (buffer instanceof ArrayBuffer) {
         // Patch the ArrayBuffer to give it more useful toString that decodes
