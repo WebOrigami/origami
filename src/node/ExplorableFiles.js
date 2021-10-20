@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
+import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { isPlainObject, toSerializable } from "../core/utilities.js";
 
@@ -79,6 +80,7 @@ export default class ExplorableFiles {
       args.length === 1 && !ExplorableGraph.isExplorable(args[0])
         ? undefined
         : args.pop();
+    const lastKey = args[args.length - 1];
 
     if (value === undefined) {
       // Delete file or directory.
@@ -95,8 +97,14 @@ export default class ExplorableFiles {
       // Create directory.
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
-    } else if (ExplorableGraph.isExplorable(value)) {
-      // Recursively write out the explorable graph.
+    } else if (
+      ExplorableGraph.isExplorable(value) &&
+      !(lastKey?.endsWith(".json") || lastKey?.endsWith(".yaml"))
+    ) {
+      // Write out an explorable graph as a directory, and recusively write out
+      // the graph into that directory. Don't do that if the filename ends in
+      // .json or .yaml; in that case, let the next condition write out the
+      // graph as a JSON or YAML file.
       for await (const subKey of value) {
         const subValue = await value.get(subKey);
         await this.set(...args, subKey, subValue);
@@ -112,23 +120,49 @@ export default class ExplorableFiles {
       const folder = path.join(this.dirname, ...args);
       await fs.mkdir(folder, { recursive: true });
 
-      // If the value is a plain JS object or array, write it out as JSON, which
-      // seems like a more useful default than "[object Object]" or the array
-      // contents.
-      const data =
-        value instanceof Buffer ||
-        value instanceof Uint8Array ||
-        value instanceof DataView
-          ? value
-          : isPlainObject(value) || value instanceof Array
-          ? JSON.stringify(value, null, 2)
-          : toSerializable(value);
+      // Convert the data to a form we can write to disk.
+      const data = await prepareData(filename, value);
 
       // Write out the value as the file's contents.
       const filePath = path.join(folder, filename);
       await fs.writeFile(filePath, data);
     }
   }
+}
+
+// Determine the form in which we want to write the data to disk under the given
+// key.
+async function prepareData(key, value) {
+  // If the value is already serializable, return it as is.
+  if (
+    value instanceof Buffer ||
+    value instanceof Uint8Array ||
+    value instanceof DataView ||
+    typeof value === "string"
+  ) {
+    return value;
+  }
+
+  // If the value is a plain JS object or array, write it out as JSON or YAML (depending on the key), which
+  // seems like a more useful default than "[object Object]" or the array
+  // contents.
+  if (isPlainObject(value) || value instanceof Array) {
+    return key.endsWith(".yaml")
+      ? YAML.stringify(value)
+      : JSON.stringify(value, null, 2);
+  }
+
+  // Explorable values are written out as JSON or, if the key ends in ".yaml",
+  // as YAML.
+  if (ExplorableGraph.canCastToExplorable(value)) {
+    const graph = ExplorableGraph.from(value);
+    return key.endsWith(".yaml")
+      ? await ExplorableGraph.toYaml(graph)
+      : await ExplorableGraph.toJson(graph);
+  }
+
+  // Otherwise, do our best to convert known types to a string.
+  return toSerializable(value);
 }
 
 // Return the file information for the file/folder at the given path.
