@@ -50,14 +50,20 @@ export default class ExplorableSite {
         return new ExplorableSite(response.url);
       }
 
-      const buffer = await response.arrayBuffer();
+      let buffer = await response.arrayBuffer();
+      // if (buffer instanceof ArrayBuffer) {
+      //   // Patch the ArrayBuffer to give it more useful toString that decodes
+      //   // the buffer as UTF-8, like Node's Buffer class does.
+      //   buffer.toString = function () {
+      //     return new TextDecoder().decode(this);
+      //   };
+      // }
+
+      // HACK: Use Node Buffer everywhere for now.
       if (buffer instanceof ArrayBuffer) {
-        // Patch the ArrayBuffer to give it more useful toString that decodes
-        // the buffer as UTF-8, like Node's Buffer class does.
-        buffer.toString = function () {
-          return new TextDecoder().decode(this);
-        };
+        buffer = Buffer.from(buffer);
       }
+
       return buffer;
     }
   }

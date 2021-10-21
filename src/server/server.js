@@ -60,8 +60,14 @@ export async function handleRequest(request, response, graph) {
       }
     }
 
+    if (resource instanceof ArrayBuffer) {
+      // Convert JavaScrip ArrayBuffer to Node Buffer.
+      resource = Buffer.from(resource);
+    }
+
     const data =
-      mediaType === "application/json" && typeof resource !== "string"
+      mediaType === "application/json" &&
+      !(typeof resource === "string" || resource instanceof Buffer)
         ? JSON.stringify(resource, null, 2)
         : mediaType
         ? resource

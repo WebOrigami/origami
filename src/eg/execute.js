@@ -21,9 +21,15 @@ async function invoke(code) {
     )
   );
   let [fn, ...args] = evaluated;
-  if (typeof fn !== "function" && ExplorableGraph.canCastToExplorable(fn)) {
-    // Use the graph-castable object as a function.
-    fn = ExplorableGraph.toFunction(fn);
+  if (typeof fn !== "function") {
+    if (fn instanceof Buffer || fn instanceof ArrayBuffer) {
+      // Presume the buffer contains text that represents a graph.
+      fn = fn.toString();
+    }
+    if (ExplorableGraph.canCastToExplorable(fn)) {
+      // Use the graph-castable object as a function.
+      fn = ExplorableGraph.toFunction(fn);
+    }
   }
   if (fn === undefined) {
     // The most common cause of an undefined function at this point is that the
