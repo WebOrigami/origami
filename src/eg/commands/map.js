@@ -1,9 +1,9 @@
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import MapGraph from "../../core/MapGraph.js";
 
 export default async function map(graph, ...maps) {
   let result = graph;
   for (const map of maps) {
-    result = ExplorableGraph.map(result, map);
+    result = new MapGraph(result, map);
   }
   return result;
 }

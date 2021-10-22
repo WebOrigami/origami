@@ -1,6 +1,7 @@
 import YAML from "yaml";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
+import MapGraph from "./MapGraph.js";
 import { isPlainObject, toSerializable } from "./utilities.js";
 
 /**
@@ -60,33 +61,6 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Given a graph and a function, return a new explorable graph that applies
-   * the function to the original graph's values.
-   *
-   * @param {GraphVariant} variant
-   * @param {function} mapFn
-   */
-  static map(variant, mapFn) {
-    const graph = ExplorableGraph.from(variant);
-    return {
-      // Return same keys as original graph.
-      async *[Symbol.asyncIterator]() {
-        yield* graph;
-      },
-
-      // Apply the mapping function to the original graph's values.
-      async get(...keys) {
-        const value = await graph.get(...keys);
-        return ExplorableGraph.isExplorable(value)
-          ? ExplorableGraph.map(value, mapFn) // Return mapped subgraph
-          : value !== undefined
-          ? mapFn(value) // Return mapped value
-          : undefined;
-      },
-    };
-  }
-
-  /**
    * Converts a graph into a plain JavaScript object.
    *
    * The result's keys will be the graph's keys cast to strings. Any graph value
@@ -125,7 +99,7 @@ export default class ExplorableGraph {
    * @param {GraphVariant} variant
    */
   static async toSerializable(variant) {
-    const serializable = this.map(variant, toSerializable);
+    const serializable = new MapGraph(variant, toSerializable);
     return this.plain(serializable);
   }
 
