@@ -57,10 +57,11 @@ export default class ExplorableObject {
   }
 
   /**
-   * Add or overwrite the value at a given location in the graph. Given a set
-   * of arguments, take the last argument as a value, and the ones before it
-   * as a path. If only one argument is supplied, use that as a key, and take
-   * the value as undefined.
+   * Add or overwrite the value at a given location in the graph. Given a set of
+   * arguments, take the last argument as a value, and the ones before it as a
+   * path. If only one explorable argument is supplied, apply its values over
+   * the current graph. If only one non-explorable argument is supplied, use
+   * that as a key, and take the value as undefined.
    *
    * @param  {...any} args
    */
@@ -74,7 +75,10 @@ export default class ExplorableObject {
       // No-op
       return;
     }
-    const value = args.length === 1 ? undefined : args.pop();
+    const value =
+      args.length === 1 && !ExplorableGraph.isExplorable(args[0])
+        ? undefined
+        : args.pop();
     const keys = args;
 
     // Traverse the keys
@@ -91,7 +95,24 @@ export default class ExplorableObject {
     }
 
     const key = keys.shift();
-    if (value === undefined) {
+    if (ExplorableGraph.isExplorable(value)) {
+      let subobject;
+      if (key === undefined) {
+        subobject = current;
+      } else if (current[key] !== undefined) {
+        subobject = current[key];
+      } else {
+        subobject = {};
+        current[key] = subobject;
+      }
+      // Recursively write out the values in the graph.
+      const subgraph =
+        subobject === this.#obj ? this : new ExplorableObject(subobject);
+      for await (const subkey of value) {
+        const subvalue = await value.get(subkey);
+        await subgraph.set(subkey, subvalue);
+      }
+    } else if (value === undefined) {
       delete current[key];
     } else {
       current[key] = value;

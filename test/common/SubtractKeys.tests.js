@@ -3,7 +3,7 @@ import SubtractKeys from "../../src/common/SubtractKeys.js";
 import assert from "../assert.js";
 
 describe("SubtracKeys", () => {
-  it.only("can remove keys from a graph", async () => {
+  it("can remove keys from a graph", async () => {
     const original = {
       a: 1,
       b: 2,

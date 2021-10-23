@@ -83,6 +83,33 @@ describe("ExplorableObject", () => {
     });
   });
 
+  it("can set an explorable value", async () => {
+    const obj = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    const more = new ExplorableObject({
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+
+    // Set key, value.
+    await obj.set(more);
+
+    assert.deepEqual(await ExplorableGraph.plain(obj), {
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
+      },
+    });
+  });
+
   it("set can delete a key if the value is explicitly undefined", async () => {
     const obj = new ExplorableObject({
       a: 1,
