@@ -22,14 +22,16 @@ export default class SubtractKeys {
   }
 
   async get(...keys) {
-    let result = await this.#original.get(...keys);
-    if (ExplorableGraph.isExplorable(result)) {
-      const removeResult = await this.#remove.get(...keys);
-      if (ExplorableGraph.isExplorable(removeResult)) {
-        result = new SubtractKeys(result, removeResult);
+    let originalValue = await this.#original.get(...keys);
+    const removeValue = await this.#remove.get(...keys);
+    if (ExplorableGraph.isExplorable(originalValue)) {
+      if (ExplorableGraph.isExplorable(removeValue)) {
+        originalValue = new SubtractKeys(originalValue, removeValue);
       }
+    } else if (removeValue !== undefined) {
+      originalValue = undefined;
     }
 
-    return result;
+    return originalValue;
   }
 }
