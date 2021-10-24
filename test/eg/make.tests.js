@@ -27,7 +27,7 @@ describe("make", () => {
     });
   });
 
-  it.only("Considers contents of .eg.clean.yaml to determine which values are real", async () => {
+  it("Considers contents of .eg.clean.yaml to determine which values are real", async () => {
     const graph = {
       ".eg.clean.yaml": `a: ""\n`,
       "a = 'Hello'": "",
