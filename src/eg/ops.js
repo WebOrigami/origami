@@ -1,8 +1,3 @@
-// export async function context() {
-//   return this.context;
-// }
-// context.toString = () => "«ops.context»";
-
 export async function get(key) {
   // We handle "." as a special case that prefers the graph over the scope.
   return key === "."
@@ -16,7 +11,15 @@ export async function quote(...args) {
 }
 quote.toString = () => "«ops.quote»";
 
-export async function variable() {
-  throw "Error: tried to execute a variable that was never bound.";
+export async function variable(name, extension) {
+  if (this.bindings) {
+    let result = this.bindings[name];
+    if (extension) {
+      result += extension;
+    }
+    return result;
+  } else {
+    return undefined;
+  }
 }
 variable.toString = () => "«ops.variable»";

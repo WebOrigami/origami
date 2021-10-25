@@ -14,15 +14,11 @@ export default class Formula {
   async evaluate(environment) {
     if (this.expression) {
       // Constant or variable assignment
-      const { bindings } = environment;
-      const code = bind(this.expression, bindings);
-      const value = await execute(code, environment);
-      return value;
+      return await execute(this.expression, environment);
     } else {
       // Variable pattern
       const { graph } = environment;
-      const value = await graph.get(this.key);
-      return value;
+      return await graph.get(this.key);
     }
   }
 
@@ -50,24 +46,6 @@ export default class Formula {
       }
     }
     return undefined;
-  }
-}
-
-function bind(expression, bindings) {
-  if (Object.keys(bindings).length === 0) {
-    // Nothing to bind
-    return expression;
-  } else if (!(expression instanceof Array)) {
-    // Scalar values don't need binding.
-    return expression;
-  } else if (expression[0] === ops.variable) {
-    // Found a reference to a variable, return the bound value instead.
-    const [_, name, extension] = expression;
-    const bound = bindings[name] + (extension ?? "");
-    return bound;
-  } else {
-    // Regular array; bind each of its elements.
-    return expression.map((item) => bind(item, bindings));
   }
 }
 
