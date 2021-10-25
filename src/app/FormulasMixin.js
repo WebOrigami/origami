@@ -4,6 +4,7 @@ import Formula from "./Formula.js";
 
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
+    #bindings;
     #context = this;
     #formulas;
     #keys;
@@ -32,6 +33,13 @@ export default function FormulasMixin(Base) {
         this.#keys.sort();
       }
       yield* this.#keys;
+    }
+
+    get bindings() {
+      return this.#bindings;
+    }
+    set bindings(bindings) {
+      this.#bindings = bindings;
     }
 
     get context() {
@@ -66,9 +74,13 @@ export default function FormulasMixin(Base) {
         const [key, ...rest] = keys;
         const formulas = await this.formulas();
         for (const formula of formulas) {
-          const bindings = formula.unify(key);
-          if (bindings) {
+          const keyBinding = formula.unify(key);
+          if (keyBinding) {
             // Formula applies to this key.
+
+            // Add our formula's key binding to the graph's bindings.
+            const bindings = Object.assign({}, this.bindings, keyBinding);
+
             value = await formula.evaluate({
               scope: this.scope,
               graph: this,
@@ -76,15 +88,22 @@ export default function FormulasMixin(Base) {
               bindings,
             });
 
+            if (value instanceof this.constructor) {
+              // Give the subgraph our complete bindings.
+              value.bindings = bindings;
+            }
+
+            if (rest.length > 0) {
+              // If there are more keys to get, do that.
+              value = ExplorableGraph.isExplorable(value)
+                ? await value.get(...rest)
+                : typeof value === "function"
+                ? value(...rest)
+                : undefined;
+            }
+
             if (value !== undefined) {
-              if (rest.length > 0) {
-                // If there are more keys to get, do that.
-                value = ExplorableGraph.isExplorable(value)
-                  ? await value.get(...rest)
-                  : typeof value === "function"
-                  ? value(...rest)
-                  : undefined;
-              }
+              // Found a formula that returned a defined value; return it.
               break;
             }
           }
