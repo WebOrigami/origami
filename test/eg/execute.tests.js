@@ -18,7 +18,7 @@ describe("execute", () => {
     const graph = new ExplorableObject({
       name: "world",
     });
-    const result = await execute(parsed, scope, graph);
+    const result = await execute(parsed, { scope, graph });
     assert.equal(result, "Hello world");
   });
 
@@ -26,7 +26,7 @@ describe("execute", () => {
     const parsed = ["this"];
     const scope = new ExplorableObject({});
     const graph = new ExplorableObject({});
-    const result = await execute(parsed, scope, graph);
+    const result = await execute(parsed, { scope, graph });
     assert.equal(result, graph);
   });
 });

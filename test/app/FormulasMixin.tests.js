@@ -83,4 +83,13 @@ describe("FormulasMixin", () => {
     assert.deepEqual(await fixture.get("Alice"), "Hello, Alice.");
     assert.deepEqual(await fixture.get("Bob"), "Hello, Bob.");
   });
+
+  // it("can pass bindings to subgraphs", async () => {
+  //   const fixture = new FormulasObject({
+  //     "{x}": {
+  //       "result = ${x}": "",
+  //     },
+  //   });
+  //   assert.equal(await fixture.get("foo", "result"), "foo");
+  // });
 });

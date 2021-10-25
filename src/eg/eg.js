@@ -28,7 +28,7 @@ async function main(...args) {
   let errorIfResultUndefined = code[0] === ops.get;
 
   // Execute
-  let result = await execute(code, scope, graph);
+  let result = await execute(code, { scope, graph });
 
   // If result was a function, execute it.
   if (typeof result === "function") {

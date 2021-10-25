@@ -1,9 +1,11 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as ops from "./ops.js";
 
-export default async function execute(code, scope, graph, ctx = graph) {
-  const context = { graph, scope, context: ctx };
-  return await invoke.call(context, code);
+export default async function execute(code, environment) {
+  if (!environment.context) {
+    environment.context = environment.graph;
+  }
+  return await invoke.call(environment, code);
 }
 
 // `this` will be the context for invoking the code.

@@ -11,14 +11,16 @@ export default class Formula {
     this.expression = expression;
   }
 
-  async evaluate(scope, graph, context, bindings) {
+  async evaluate(environment) {
     if (this.expression) {
       // Constant or variable assignment
+      const { bindings } = environment;
       const code = bind(this.expression, bindings);
-      const value = await execute(code, scope, graph, context);
+      const value = await execute(code, environment);
       return value;
     } else {
       // Variable pattern
+      const { graph } = environment;
       const value = await graph.get(this.key);
       return value;
     }

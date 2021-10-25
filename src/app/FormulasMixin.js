@@ -58,45 +58,48 @@ export default function FormulasMixin(Base) {
     }
 
     async get(...keys) {
-      const value = await super.get(...keys);
-      if (value !== undefined) {
-        // If we're returning a subgraph of the same type as us, give it our
-        // scope.
-        // TODO: Maybe do duck typing and do this for any subgraph that defines
-        // a scope property?
-        if (value instanceof this.constructor) {
-          value.scope = this.scope;
-        }
+      // See if real value exists.
+      let value = await super.get(...keys);
 
-        return value;
-      }
+      if (value === undefined) {
+        // No real value defined; try our formulas.
+        const [key, ...rest] = keys;
+        const formulas = await this.formulas();
+        for (const formula of formulas) {
+          const bindings = formula.unify(key);
+          if (bindings) {
+            // Formula applies to this key.
+            value = await formula.evaluate({
+              scope: this.scope,
+              graph: this,
+              context: this.context,
+              bindings,
+            });
 
-      const [key, ...rest] = keys;
-      const formulas = await this.formulas();
-      for (const formula of formulas) {
-        const bindings = formula.unify(key);
-        if (bindings) {
-          // Formula applies to this key.
-          let value = await formula.evaluate(
-            this.scope,
-            this,
-            this.context,
-            bindings
-          );
-
-          if (value !== undefined && rest.length > 0) {
-            // If there are more keys to get, do that.
-            value = ExplorableGraph.isExplorable(value)
-              ? await value.get(...rest)
-              : typeof value === "function"
-              ? value(...rest)
-              : undefined;
-          }
-          if (value !== undefined) {
-            return value;
+            if (value !== undefined) {
+              if (rest.length > 0) {
+                // If there are more keys to get, do that.
+                value = ExplorableGraph.isExplorable(value)
+                  ? await value.get(...rest)
+                  : typeof value === "function"
+                  ? value(...rest)
+                  : undefined;
+              }
+              break;
+            }
           }
         }
       }
+
+      // If we're returning a subgraph of the same type as us, give it our
+      // scope.
+      // TODO: Maybe do duck typing and do this for any subgraph that defines
+      // a scope property?
+      if (value instanceof this.constructor) {
+        value.scope = this.scope;
+      }
+
+      return value;
     }
 
     // Reset memoized values when the underlying graph changes.
