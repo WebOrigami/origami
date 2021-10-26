@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
+import { pathToFileURL } from "url";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { isPlainObject, toSerializable } from "../core/utilities.js";
@@ -54,6 +55,28 @@ export default class ExplorableFiles {
         : result;
 
     return result;
+  }
+
+  async import(...keys) {
+    const filePath = path.join(this.dirname, ...keys);
+    // On Windows, absolute paths must be valid file:// URLs.
+    const fileUrl = pathToFileURL(filePath);
+    const modulePath = fileUrl.href;
+
+    // Try to load the module.
+    let obj;
+    try {
+      obj = await import(modulePath);
+    } catch (/** @type {any} */ error) {
+      if (error.code === "ERR_MODULE_NOT_FOUND") {
+        return undefined;
+      }
+      throw error;
+    }
+
+    // If the module loaded and defines a default export, return that, otherwise
+    // return the overall module.
+    return obj?.default ?? obj;
   }
 
   get path() {
