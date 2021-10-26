@@ -102,4 +102,12 @@ describe("ExplorableApp", () => {
       b: "not explorable",
     });
   });
+
+  it.skip("can handle nested wildcard folders", async () => {
+    const graph = new ExplorableApp(
+      path.join(fixturesDirectory, "wildcardFolders")
+    );
+    const indexHtml = await graph.get("2000", "01", "index.html");
+    assert.equal(indexHtml, "Hello, world.\n");
+  });
 });

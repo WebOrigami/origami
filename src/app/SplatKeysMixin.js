@@ -18,6 +18,7 @@ export default function SplatKeysMixin(Base) {
         if (isSplatKey) {
           if (this.#splatGraphs[key] === undefined) {
             const splatValue = await super.get(key);
+            // TODO: Use ExplorableGraph.from()
             this.#splatGraphs[key] = ExplorableGraph.isExplorable(splatValue)
               ? splatValue
               : new ExplorableObject(splatValue);
