@@ -5,10 +5,16 @@ import * as parse from "../eg/parse.js";
 export default class Formula {
   key;
   expression;
+  source;
 
-  constructor(key, expression) {
+  constructor(key, expression, source) {
     this.key = key;
     this.expression = expression;
+
+    // Special case: if the source ends in `.js`, we omit that from the stored
+    // source. We'll rely on code elsewhere to map an attempt to get `foo =
+    // this()` to loading the module `foo = this().js`.
+    this.source = source.endsWith(".js") ? source.slice(0, -3) : source;
   }
 
   async evaluate(environment) {
@@ -22,9 +28,9 @@ export default class Formula {
     }
   }
 
-  static parse(text) {
+  static parse(source) {
     // Try to parse the base key as a key.
-    const { value: parsed, rest } = parse.key(text);
+    const { value: parsed, rest } = parse.key(source);
     if (!parsed || rest.length > 0) {
       // Unsuccessful parse
       return null;
@@ -32,17 +38,17 @@ export default class Formula {
     if (parsed[0] === ops.variable) {
       // Variable pattern
       const [_, variable, extension] = parsed;
-      return new VariableFormula(variable, extension, null);
+      return new VariableFormula(variable, extension, null, source);
     } else if (parsed[0] === "=") {
       // Assignment
       const [_, left, expression] = parsed;
       if (left[0] === ops.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
-        return new VariableFormula(variable, extension, expression);
+        return new VariableFormula(variable, extension, expression, source);
       } else {
         // Constant assignment
-        return new ConstantFormula(left, expression);
+        return new ConstantFormula(left, expression, source);
       }
     }
     return undefined;
@@ -65,9 +71,9 @@ class VariableFormula extends Formula {
   extension;
   antecedents;
 
-  constructor(variable, extension, expression) {
+  constructor(variable, extension, expression, source) {
     const key = `{${variable}}${extension ?? ""}`;
-    super(key, expression);
+    super(key, expression, source);
     this.variable = variable;
     this.extension = extension;
     if (expression) {

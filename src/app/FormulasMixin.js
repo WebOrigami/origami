@@ -82,10 +82,11 @@ export default function FormulasMixin(Base) {
             const bindings = Object.assign({}, this.bindings, keyBinding);
 
             value = await formula.evaluate({
-              scope: this.scope,
-              graph: this,
-              context: this.context,
               bindings,
+              context: this.context,
+              graph: this,
+              scope: this.scope,
+              thisKey: formula.source,
             });
 
             if (value instanceof this.constructor) {

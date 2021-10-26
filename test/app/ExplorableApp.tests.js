@@ -27,13 +27,13 @@ describe("ExplorableApp", () => {
     assert.deepEqual(await ExplorableGraph.keys(formulasGraph), [
       "foo.txt",
       "greeting",
-      "greeting = ƒ('world').js",
+      "greeting = this('world').js",
       "obj",
-      "obj = ƒ.json",
+      "obj = this.json",
       "sample.txt",
-      "sample.txt = ƒ().js",
+      "sample.txt = this().js",
       "string",
-      "string = ƒ.json",
+      "string = this.json",
       "value",
       "value = fn()",
     ]);

@@ -46,8 +46,7 @@ export function assignment(text) {
   if (!parsed) {
     return null;
   }
-  let { 1: left, 5: right } = parsed.value;
-  right = substituteSelfReferences(right, text);
+  const { 1: left, 5: right } = parsed.value;
   const value = ["=", left, right];
   return {
     value,
@@ -290,7 +289,7 @@ export function protocolIndirectCall(text) {
 
 // Parse a reference to a variable or literal.
 export function reference(text) {
-  return any(variableReference, literal)(text);
+  return any(thisReference, variableReference, literal)(text);
 }
 
 // Parse a right parenthesis.
@@ -394,38 +393,17 @@ export function spaceUrlPath(text) {
   };
 }
 
-// Look for occurences of ["ƒ"] in the parsed tree, which represent a call to
-// the value of the key defining the assignment. Replace those with the
-// indicated text, which will be the entire key.
-function substituteSelfReferences(parsed, text) {
-  if (!(parsed instanceof Array)) {
-    // Return scalar values as is.
-    return parsed;
+// Parse a reference to "this".
+function thisReference(text) {
+  const parsed = terminal(/^this/)(text);
+  if (!parsed) {
+    return null;
   }
-  const substituted = parsed.map((item) =>
-    substituteSelfReferences(item, text)
-  );
-  if (
-    substituted instanceof Array &&
-    substituted[0] === ops.get &&
-    typeof substituted[1] === "string" &&
-    (substituted[1] === "ƒ" || substituted[1].startsWith("ƒ."))
-  ) {
-    // Perform substitution.
-
-    // Special case: if the original text ends in `.js`, we omit that from the
-    // substituted text. We'll rely on code elsewhere to map an attempt to get
-    // `foo = ƒ()` to loading the module `foo = ƒ().js`.
-    const substitutedText = text.endsWith(".js")
-      ? text.substr(0, text.length - 3)
-      : text;
-
-    if (substituted.length === 2) {
-      return [ops.get, substitutedText];
-    }
-    substituted[0] = substitutedText;
-  }
-  return substituted;
+  const value = [ops.thisKey];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a variable name

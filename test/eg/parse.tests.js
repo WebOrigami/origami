@@ -57,29 +57,29 @@ describe("parse", () => {
     ]);
   });
 
-  it("assignment with ƒ on right-hand side", () => {
-    assert.deepEqual(assignment("foo = ƒ.json")?.value, [
+  it("assignment with `this` on right-hand side", () => {
+    assert.deepEqual(assignment("foo = this.json")?.value, [
       "=",
       "foo",
-      [ops.get, "foo = ƒ.json"],
+      [ops.get, [ops.thisKey]],
     ]);
-    assert.deepEqual(assignment("foo = ƒ().js")?.value, [
+    assert.deepEqual(assignment("foo = this().js")?.value, [
       "=",
       "foo",
-      [[ops.get, "foo = ƒ()"]],
+      [[ops.get, [ops.thisKey]]],
     ]);
-    assert.deepEqual(assignment("foo = ƒ('bar').js")?.value, [
+    assert.deepEqual(assignment("foo = this('bar').js")?.value, [
       "=",
       "foo",
-      [[ops.get, "foo = ƒ('bar')"], "bar"],
+      [[ops.get, [ops.thisKey]], "bar"],
     ]);
   });
 
-  it("assignment to splat on left with ƒ on right", () => {
-    assert.deepEqual(assignment("...graph = ƒ().js")?.value, [
+  it("assignment to splat on left with `this` on right", () => {
+    assert.deepEqual(assignment("...graph = this().js")?.value, [
       "=",
       "...graph",
-      [[ops.get, "...graph = ƒ()"]],
+      [[ops.get, [ops.thisKey]]],
     ]);
   });
 

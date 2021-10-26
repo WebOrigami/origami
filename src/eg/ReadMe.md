@@ -51,7 +51,8 @@ parentheticalArgs: ( [list] )
 pathKey: group
          reference
 
-reference: variableReference
+reference: thisReference
+           variableReference
            literal
 
 singleQuoteString: '[text]'
@@ -70,6 +71,8 @@ spaceUrlProtocol: https
 
 spaceUrlPath: pathKey whitespace spaceUrlPath
               pathKey
+
+thisReference: "this"
 
 variableDeclaration: {variableName}[extension]
 

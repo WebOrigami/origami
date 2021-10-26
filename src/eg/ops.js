@@ -6,6 +6,11 @@ export async function get(key) {
 }
 get.toString = () => "«ops.get»";
 
+export async function thisKey() {
+  return this.thisKey;
+}
+thisKey.toString = () => "«ops.thisKey»";
+
 export async function quote(...args) {
   return String.prototype.concat(...args);
 }
