@@ -1,17 +1,10 @@
 import DefaultValues from "../common/DefaultValues.js";
 import ExplorableFiles from "../node/ExplorableFiles.js";
-import FileLoadersMixin from "../node/FileLoadersMixin.js";
-import ImplicitModulesMixin from "../node/ImplicitModulesMixin.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
-import FormulasMixin from "./FormulasMixin.js";
-// import PlusKeysMixin from "./PlusKeysMixin.js";
-// import SplatKeysMixin from "./SplatKeysMixin.js";
-import VirtualKeysMixin from "./VirtualKeysMixin.js";
+import MetaMixin from "./MetaMixin.js";
 
-class AppGraph extends FileLoadersMixin(
-  VirtualKeysMixin(FormulasMixin(ImplicitModulesMixin(ExplorableFiles)))
-) {}
+class AppGraph extends MetaMixin(ExplorableFiles) {}
 
 export default class ExplorableApp extends DefaultValues {
   #main;
