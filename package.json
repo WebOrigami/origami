@@ -16,6 +16,7 @@
     "typescript": "4.4.3"
   },
   "dependencies": {
+    "marked": "3.0.8",
     "node-fetch": "2.6.5",
     "node-graphviz": "^0.1.0",
     "yaml": "1.10.2"
