@@ -36,7 +36,7 @@ export default class ExplorableFiles {
     if (key === undefined) {
       return this;
     }
-    const objPath = path.resolve(this.dirname, key);
+    const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
