@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-const splatKeySuffix = "...";
+const splatKeySuffix1 = "...";
+const splatKeySuffix2 = "…";
 
 export default function SplatKeysMixin(Base) {
   return class SplatKeys extends Base {
@@ -11,8 +12,7 @@ export default function SplatKeysMixin(Base) {
         this.#splatGraphs = {};
       }
       for await (const key of super[Symbol.asyncIterator]()) {
-        const isSplatKey = key.endsWith(splatKeySuffix);
-        if (isSplatKey) {
+        if (isSplatKey(key)) {
           if (this.#splatGraphs[key] === undefined) {
             const splatValue = await super.get(key);
             this.#splatGraphs[key] = ExplorableGraph.isExplorable(splatValue)
@@ -50,4 +50,8 @@ export default function SplatKeysMixin(Base) {
       return undefined;
     }
   };
+}
+
+function isSplatKey(key) {
+  return key.endsWith(splatKeySuffix1) || key.endsWith(splatKeySuffix2);
 }
