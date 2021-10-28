@@ -28,14 +28,11 @@ export default async function defaultIndexHtml() {
             margin-bottom: 0.20em;
           }
 
-          .formula {
-            color: #666;
-            list-style: none;
-          }
-
-          .formula a {
-            color: inherit;
+          a {
             text-decoration: none;
+          }
+          a:hover {
+            text-decoration: revert;
           }
         </style>
       </head>
