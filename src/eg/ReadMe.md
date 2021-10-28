@@ -21,6 +21,7 @@ expression: singleQuoteString
             indirectCall
             group
             spaceUrl
+            spacePathCall
             protocolIndirectCall
             slashCall
             functionCall
@@ -71,6 +72,8 @@ spaceUrlProtocol: https
 
 spaceUrlPath: pathKey whitespace spaceUrlPath
               pathKey
+
+spacePathCall: "."|".." [spaceUrlPath]
 
 thisReference: "this"
 

@@ -106,6 +106,7 @@ export function expression(text) {
     indirectCall,
     group,
     spaceUrl,
+    spacePathCall,
     protocolIndirectCall,
     slashCall,
     functionCall,
@@ -347,6 +348,28 @@ export function slashPath(text) {
   }
   return {
     value: values,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a space-delimited path function call that starts with "." or ".."
+export function spacePathCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    regex(/^\.\.|\./),
+    whitespace,
+    spaceUrlPath
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: fnName, 3: fnArgs } = parsed.value;
+  let value = [[ops.get, fnName]];
+  if (fnArgs) {
+    value.push(...fnArgs);
+  }
+  return {
+    value,
     rest: parsed.rest,
   };
 }

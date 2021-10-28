@@ -16,6 +16,7 @@ import {
   singleQuoteString,
   slashCall,
   slashPath,
+  spacePathCall,
   spaceUrl,
   variableName,
   variableReference,
@@ -54,6 +55,11 @@ describe("parse", () => {
       "=",
       "data",
       [ops.get, "obj.json"],
+    ]);
+    assert.deepEqual(assignment("match = .. .. .. foo bar")?.value, [
+      "=",
+      "match",
+      [[ops.get, ".."], "..", "..", "foo", "bar"],
     ]);
   });
 
@@ -290,6 +296,16 @@ describe("parse", () => {
     assert.deepEqual(slashPath("(fn())/foo")?.value, [
       [[ops.get, "fn"]],
       "foo",
+    ]);
+  });
+
+  it("spacePathCall", () => {
+    assert.deepEqual(spacePathCall(".. .. .. foo bar")?.value, [
+      [ops.get, ".."],
+      "..",
+      "..",
+      "foo",
+      "bar",
     ]);
   });
 
