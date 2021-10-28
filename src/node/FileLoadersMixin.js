@@ -6,6 +6,7 @@ const defaultLoaders = {
   ".html": String,
   ".js": String,
   ".json": String,
+  ".md": String,
   ".txt": String,
   ".xhtml": String,
   ".yaml": String,
