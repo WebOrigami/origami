@@ -53,7 +53,8 @@ async function invoke(code) {
   try {
     result = await fn.call(this, ...args);
   } catch (/** @type {any} */ error) {
-    console.error(`An eg expression triggered an exception: ${error.message}`);
+    console.error(`An eg expression triggered an exception:`);
+    console.error(error.stack);
   }
 
   return result;

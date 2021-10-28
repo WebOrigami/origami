@@ -33,6 +33,9 @@ export default class Formula {
     const { value: parsed, rest } = parse.key(source);
     if (!parsed || rest.length > 0) {
       // Unsuccessful parse
+      if (source.includes("=")) {
+        console.warn(`Formula: couldn't parse formula: ${source}`);
+      }
       return null;
     }
     if (parsed[0] === ops.variable) {
