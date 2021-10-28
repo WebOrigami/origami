@@ -1,5 +1,4 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ExplorableObject from "../core/ExplorableObject.js";
 
 const splatKeySuffix = "...";
 
@@ -8,30 +7,24 @@ export default function SplatKeysMixin(Base) {
     #splatGraphs;
 
     async *[Symbol.asyncIterator]() {
-      let updateSplatGraphs = this.#splatGraphs === undefined;
-      if (updateSplatGraphs) {
+      if (this.#splatGraphs === undefined) {
         this.#splatGraphs = {};
       }
-      const results = [];
       for await (const key of super[Symbol.asyncIterator]()) {
         const isSplatKey = key.endsWith(splatKeySuffix);
         if (isSplatKey) {
           if (this.#splatGraphs[key] === undefined) {
             const splatValue = await super.get(key);
-            // TODO: Use ExplorableGraph.from()
             this.#splatGraphs[key] = ExplorableGraph.isExplorable(splatValue)
               ? splatValue
-              : new ExplorableObject(splatValue);
+              : ExplorableGraph.from(splatValue);
           }
           // Return keys of splat graph in place of splat key.
-          for await (const innerKey of this.#splatGraphs[key]) {
-            results.push(innerKey);
-          }
+          yield* this.#splatGraphs[key];
         } else {
-          results.push(key);
+          yield key;
         }
       }
-      yield* results;
     }
 
     async get(...keys) {
