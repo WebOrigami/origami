@@ -19,12 +19,26 @@ export default class DefaultValues {
 
   async get(...keys) {
     // Try main graph first.
+    let value = await this.graph.get(...keys);
+    if (value !== undefined) {
+      return value;
+    }
+
     // Find route to subgraph that would hold the last key.
     const lastKey = keys.pop();
     if (lastKey === undefined) {
       return undefined; // Nothing to get.
     }
 
+    // See if we have a default value for this last key.
+    const defaultValue = await this.defaults.get(lastKey);
+    if (!(defaultValue instanceof Function)) {
+      // Either we have a fixed default value, or we don't have a default. In
+      // either case, return that.
+      return defaultValue;
+    }
+
+    // We have a default value function; give it the subgraph to work on.
     let subgraph =
       keys.length === 0 ? this.graph : await this.graph.get(...keys);
     if (subgraph === undefined) {
@@ -36,18 +50,8 @@ export default class DefaultValues {
     //   subgraph = subgraph.toString();
     // }
 
-    let value = await ExplorableGraph.from(subgraph).get(lastKey);
-    if (value !== undefined) {
-      return value; // Found in main graph.
-    }
-
-    // Try default values graph next.
-    value = await this.defaults.get(lastKey);
-
-    if (value instanceof Function) {
-      // Bind to subgraph and invoke.
-      value = value.call(subgraph);
-    }
+    // Bind to subgraph and invoke.
+    value = defaultValue.call(subgraph);
 
     return value;
   }
