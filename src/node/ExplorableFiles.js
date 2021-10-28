@@ -68,10 +68,19 @@ export default class ExplorableFiles {
     try {
       obj = await import(modulePath);
     } catch (/** @type {any} */ error) {
-      if (error.code === "ERR_MODULE_NOT_FOUND") {
-        return undefined;
+      if (error.code !== "ERR_MODULE_NOT_FOUND") {
+        throw error;
       }
-      throw error;
+
+      // Does the module exist as a file?
+      const stats = await stat(filePath);
+      if (stats) {
+        // Module exists, but we can't load it, probably due to a syntax error.
+        throw new SyntaxError(`Syntax error in ${filePath}`);
+      }
+
+      // Module doesn't exist.
+      return undefined;
     }
 
     // If the module loaded and defines a default export, return that, otherwise

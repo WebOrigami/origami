@@ -48,5 +48,13 @@ async function invoke(code) {
       `Couldn't find function or graph member called: ${name}`
     );
   }
-  return await fn.call(this, ...args);
+
+  let result;
+  try {
+    result = await fn.call(this, ...args);
+  } catch (/** @type {any} */ error) {
+    console.error(`An eg expression triggered an exception: ${error.message}`);
+  }
+
+  return result;
 }
