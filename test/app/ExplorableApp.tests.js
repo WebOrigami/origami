@@ -75,34 +75,6 @@ describe("ExplorableApp", () => {
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
-  it.skip("composes explorable values with + values", async () => {
-    const graph = new ExplorableApp(path.join(fixturesDirectory, "plusKeys"));
-    const strings = await ExplorableGraph.strings(graph);
-    assert.deepEqual(strings, {
-      "+a": {
-        "+sub": {
-          plusSub1: "sub one",
-        },
-        plus1: "one",
-        plus2: "two",
-      },
-      a: {
-        sub: {
-          aSub1: "sub 1",
-          plusSub1: "sub one",
-        },
-        a1: "1",
-        a2: "2",
-        "+sub": {
-          plusSub1: "sub one",
-        },
-        plus1: "one",
-        plus2: "two",
-      },
-      b: "not explorable",
-    });
-  });
-
   it.skip("can handle nested wildcard folders", async () => {
     const graph = new ExplorableApp(
       path.join(fixturesDirectory, "wildcardFolders")
