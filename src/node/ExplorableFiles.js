@@ -76,7 +76,7 @@ export default class ExplorableFiles {
       const stats = await stat(filePath);
       if (stats) {
         // Module exists, but we can't load it, probably due to a syntax error.
-        throw new SyntaxError(`Syntax error in ${filePath}`);
+        throw new SyntaxError(`Error loading ${filePath}`);
       }
 
       // Module doesn't exist.
