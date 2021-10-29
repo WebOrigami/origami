@@ -9,6 +9,7 @@ const defaultLoaders = {
   ".md": String,
   ".txt": String,
   ".xhtml": String,
+  ".yml": String,
   ".yaml": String,
 };
 

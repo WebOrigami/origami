@@ -10,6 +10,7 @@ export { default as ExplorableFunction } from "./src/core/ExplorableFunction.js"
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
 export { default as ExplorableSite } from "./src/core/ExplorableSite.js";
+export { default as MapGraph } from "./src/core/MapGraph.js";
 export * from "./src/core/utilities.js";
 export { default as builtins } from "./src/eg/builtins.js";
 export { default as defaultModuleExport } from "./src/eg/commands/defaultModuleExport.js";
