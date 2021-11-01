@@ -49,11 +49,14 @@ export default class ExplorableObject {
       }
     }
 
-    return keys.length > 0
-      ? undefined
-      : isPlainObject(value)
-      ? Reflect.construct(this.constructor, [value])
-      : value;
+    if (keys.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
+      value = await ExplorableGraph.from(value).get(...keys);
+    }
+    if (isPlainObject(value) && !(value instanceof this.constructor)) {
+      value = Reflect.construct(this.constructor, [value]);
+    }
+
+    return value;
   }
 
   /**

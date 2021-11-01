@@ -9,6 +9,16 @@ export default class ExplorableFunction {
   }
 
   async get(...keys) {
-    return keys.length === 0 ? this : await this.fn(...keys);
+    if (keys.length === 0) {
+      return this;
+    }
+
+    let value = await this.fn(...keys);
+
+    if (value instanceof Function && !(value instanceof this.constructor)) {
+      value = Reflect.construct(this.constructor, [value]);
+    }
+
+    return value;
   }
 }
