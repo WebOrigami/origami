@@ -1,3 +1,5 @@
+// TODO: Because this relies on FormulasObject, it should probably go in /src/app
+import FormulasObject from "../app/FormulasObject.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
@@ -9,16 +11,25 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 export default class Cache {
   /**
    * @param {Explorable|object} cache
-   * @param  {...any} graphs
+   * @param  {Explorable|object} graph
+   * @param {Explorable|object} [filter]
    */
-  constructor(cache, ...graphs) {
+  constructor(cache, graph, filter) {
     /** @type {any} */ this.cache = ExplorableGraph.from(cache);
     if (typeof this.cache.set !== "function") {
       throw new TypeError(
         `The first parameter to the Cache constructor must be a graph with a "set" method.`
       );
     }
-    this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
+    this.graph = ExplorableGraph.from(graph);
+
+    if (filter) {
+      this.filter = ExplorableGraph.isExplorable(filter)
+        ? filter
+        : new FormulasObject(filter);
+    } else {
+      this.filter = undefined;
+    }
   }
 
   async *[Symbol.asyncIterator]() {
@@ -26,7 +37,7 @@ export default class Cache {
     const set = new Set();
     // We also check the cache in case the keys provided by the other graphs
     // have changed since the cache was updated.
-    for (const graph of [this.cache, ...this.graphs]) {
+    for (const graph of [this.cache, this.graph]) {
       for await (const key of graph) {
         if (!set.has(key)) {
           set.add(key);
@@ -44,13 +55,17 @@ export default class Cache {
     }
 
     // Cache miss
-    for (const graph of this.graphs) {
-      const value = await graph.get(...keys);
-      if (value !== undefined) {
+    const value = await this.graph.get(...keys);
+    if (value !== undefined) {
+      // Does this key match the filter?
+      const matches =
+        this.filter === undefined || (await this.filter.get(...keys));
+      if (matches) {
         // Save in cache before returning.
         await this.cache.set(...keys, value);
-        return value;
       }
+      
+      return value;
     }
 
     return undefined;
