@@ -2,6 +2,7 @@ import path from "path";
 
 const defaultLoaders = {
   ".css": String,
+  ".hbs": String,
   ".htm": String,
   ".html": String,
   ".js": String,
