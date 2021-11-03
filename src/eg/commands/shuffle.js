@@ -1,6 +1,7 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
+import defaultGraph from "./defaultGraph.js";
 
-export default function shuffle(variant) {
+export default function shuffle(variant = defaultGraph()) {
   const graph = ExplorableGraph.from(variant);
   return {
     async *[Symbol.asyncIterator]() {

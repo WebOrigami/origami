@@ -7,7 +7,7 @@ class DefaultGraph extends ImplicitModulesMixin(
   FileLoadersMixin(ExplorableFiles)
 ) {}
 
-export default async function defaultGraph(relativePath = "") {
+export default function defaultGraph(relativePath = "") {
   const resolvedPath = path.resolve(process.cwd(), relativePath);
   return new DefaultGraph(resolvedPath);
 }
