@@ -26,7 +26,7 @@ describe("Cache", () => {
     assert.equal(await cache.get("b"), 2);
   });
 
-  it.only("if a cache filter is supplied, it only caches files that match the filter", async () => {
+  it("if a cache filter is supplied, it only caches files that match the filter", async () => {
     const fixture = new Cache(
       {},
       {
