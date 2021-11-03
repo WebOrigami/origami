@@ -5,6 +5,6 @@ import SplatKeysMixin from "./SplatKeysMixin.js";
 
 export default function MetaMixin(Base) {
   return class Meta extends FileLoadersMixin(
-    SplatKeysMixin(FormulasMixin(ImplicitModulesMixin(Base)))
+    FormulasMixin(SplatKeysMixin(ImplicitModulesMixin(Base)))
   ) {};
 }
