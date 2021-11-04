@@ -13,6 +13,7 @@ export { default as ExplorableSite } from "./src/core/ExplorableSite.js";
 export { default as MapGraph } from "./src/core/MapGraph.js";
 export * from "./src/core/utilities.js";
 export { default as builtins } from "./src/eg/builtins.js";
+export { default as defaultGraph } from "./src/eg/commands/defaultGraph.js";
 export { default as defaultModuleExport } from "./src/eg/commands/defaultModuleExport.js";
 export { default as dot } from "./src/eg/commands/dot.js";
 export { default as hbs } from "./src/eg/commands/hbs.js";
