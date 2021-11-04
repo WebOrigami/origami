@@ -1,4 +1,5 @@
 import YAML from "yaml";
+import ExplorableArray from "./ExplorableArray.js";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
 import MapGraph from "./MapGraph.js";
@@ -8,6 +9,7 @@ import { isPlainObject, toSerializable } from "./utilities.js";
  * A collection of operations that can be performed on explorable graphs.
  */
 export default class ExplorableGraph {
+  // TODO: Report true for Buffer? Array?
   static canCastToExplorable(obj) {
     return (
       this.isExplorable(obj) ||
@@ -21,16 +23,23 @@ export default class ExplorableGraph {
     if (this.isExplorable(variant)) {
       // Already explorable
       return variant;
-    } else if (typeof variant === "string" || variant instanceof Buffer) {
-      const obj = YAML.parse(String(variant));
-      if (isPlainObject(obj)) {
-        return new ExplorableObject(obj);
-      }
-    } else if (typeof variant === "function") {
-      return new ExplorableFunction(variant);
-    } else if (isPlainObject(variant)) {
-      return new ExplorableObject(variant);
     }
+
+    // Parse a string/buffer as YAML (which covers JSON too).
+    const obj =
+      typeof variant === "string" || variant instanceof Buffer
+        ? YAML.parse(String(variant))
+        : variant;
+
+    // Handle known types.
+    if (obj instanceof Function) {
+      return new ExplorableFunction(obj);
+    } else if (obj instanceof Array) {
+      return new ExplorableArray(obj);
+    } else if (isPlainObject(obj)) {
+      return new ExplorableObject(obj);
+    }
+
     throw new TypeError("Couldn't convert object to an explorable graph");
   }
 
