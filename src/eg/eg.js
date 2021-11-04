@@ -25,13 +25,13 @@ async function main(...args) {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }
-  let errorIfResultUndefined = code[0] === ops.get;
 
   if (!source.endsWith(")")) {
     // The source ends without an explicit parenthesis. If the rightmost call in
     // the code tree is a function, we'll want to invoke it.
     code = patchDanglingFunction(code);
   }
+  let errorIfResultUndefined = code[0] === ops.get;
 
   // Execute
   let result = await execute(code, { scope, graph });
