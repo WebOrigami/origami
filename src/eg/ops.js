@@ -7,6 +7,14 @@ export async function get(key) {
 }
 get.toString = () => "«ops.get»";
 
+export async function implicitCall(key) {
+  let value = await get.call(this, key);
+  if (typeof value === "function") {
+    value = await value.call(this);
+  }
+  return value;
+}
+
 export async function thisKey() {
   return this.thisKey;
 }

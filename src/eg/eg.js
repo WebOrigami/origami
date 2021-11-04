@@ -20,12 +20,18 @@ async function main(...args) {
 
   // Parse
   const parsed = parse.expression(source);
-  const code = parsed?.value;
+  let code = parsed?.value;
   if (!code || parsed.rest !== "") {
     console.error(`eg: could not recognize command: ${source}`);
     return;
   }
   let errorIfResultUndefined = code[0] === ops.get;
+
+  if (!source.endsWith(")")) {
+    // The source ends without an explicit parenthesis. If the rightmost call in
+    // the code tree is a function, we'll want to invoke it.
+    code = patchDanglingFunction(code);
+  }
 
   // Execute
   let result = await execute(code, { scope, graph });
@@ -46,6 +52,31 @@ async function main(...args) {
   // Display the result.
   const stdout = await scope.get("stdout");
   await stdout(result);
+}
+
+// If the user didn't explicitly specify end the source with a parenthesis, but
+// the rightmost derivation of the code is a function, we'll want to implicitly
+// invoke it. We can't tell at this time whether the code is a function or not,
+// so we'll change the ops from `ops.get` to `ops.implicitCall` to check for a
+// function at runtime and -- if it's a function -- invoke it.
+function patchDanglingFunction(code) {
+  if (code instanceof Array) {
+    const isGet =
+      code.length === 2 && code[0] === ops.get && typeof code[1] === "string";
+    if (isGet) {
+      // Change ops.get to ops.implicitCall
+      return [ops.implicitCall, code[1]];
+    } else {
+      // Recurse
+      const last = code[code.length - 1];
+      const patched = patchDanglingFunction(last);
+      const newCode = code.slice();
+      newCode[code.length - 1] = patched;
+      return newCode;
+    }
+  }
+  // Return the code as is.
+  return code;
 }
 
 // Process command line arguments
