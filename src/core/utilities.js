@@ -1,4 +1,5 @@
 import YAML from "yaml";
+import GraphDelegate from "./GraphDelegate.js";
 
 /**
  * Extract front matter from the given text. The first line of the text must be
@@ -39,6 +40,10 @@ export function isPlainObject(obj) {
   }
 
   return Object.getPrototypeOf(obj) === proto;
+}
+
+export function applyMixinToObject(Mixin, obj) {
+  return new (Mixin(GraphDelegate))(obj);
 }
 
 export function toSerializable(obj) {
