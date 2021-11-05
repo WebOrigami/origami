@@ -89,7 +89,7 @@ export default function FormulasMixin(Base) {
               thisKey: formula.source,
             });
 
-            if (value instanceof this.constructor) {
+            if (value instanceof Object && "bindings" in value) {
               // Give the subgraph our complete bindings.
               value.bindings = bindings;
             }
@@ -115,7 +115,7 @@ export default function FormulasMixin(Base) {
       // scope.
       // TODO: Maybe do duck typing and do this for any subgraph that defines
       // a scope property?
-      if (value instanceof this.constructor) {
+      if (value instanceof Object && "scope" in value) {
         value.scope = this.scope;
       }
 
