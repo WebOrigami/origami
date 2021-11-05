@@ -1,6 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default async function plain(variant) {
+export default async function plain(variant = this.graph) {
   return await ExplorableGraph.plain(variant);
 }
 

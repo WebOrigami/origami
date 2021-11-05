@@ -1,7 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import defaultGraph from "./defaultGraph.js";
 
-export default async function structure(variant = defaultGraph()) {
+export default async function structure(variant = this.graph) {
   const graph = ExplorableGraph.from(variant);
   const interior = {
     async *[Symbol.asyncIterator]() {

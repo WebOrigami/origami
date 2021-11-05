@@ -1,9 +1,8 @@
 import ShuffleMixin from "../../common/ShuffleMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { applyMixinToObject } from "../../core/utilities.js";
-import defaultGraph from "./defaultGraph.js";
 
-export default function shuffle(variant = defaultGraph()) {
+export default function shuffle(variant = this.graph) {
   const graph = ExplorableGraph.from(variant);
   return applyMixinToObject(ShuffleMixin, graph);
 }
