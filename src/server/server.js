@@ -45,10 +45,14 @@ export async function handleRequest(request, response, graph) {
     if (ExplorableGraph.isExplorable(resource)) {
       // The result should be something concrete like a string or Buffer that we
       // can send to the client. If we ended up with a subgraph as a result,
-      // that's effectively the same as not finding a result. Exception:
-      // if this graph is for a JSON request, cast the graph to JSON.
-      if (mediaType === "application/json") {
-        resource = await ExplorableGraph.plain(resource);
+      // that's effectively the same as not finding a result. Exception: if this
+      // graph is for a JSON or YAML request, cast the graph to JSON or YAML.
+      if (mediaType === "application/json" || mediaType === "text/yaml") {
+        const graph = ExplorableGraph.from(resource);
+        resource =
+          mediaType === "text/yaml"
+            ? await ExplorableGraph.toYaml(graph)
+            : await ExplorableGraph.toJson(graph);
       } else if (!request.url.endsWith("/")) {
         // Redirect to the root of the explorable graph.
         const Location = `${request.url}/`;
@@ -61,17 +65,11 @@ export async function handleRequest(request, response, graph) {
     }
 
     if (resource instanceof ArrayBuffer) {
-      // Convert JavaScrip ArrayBuffer to Node Buffer.
+      // Convert JavaScript ArrayBuffer to Node Buffer.
       resource = Buffer.from(resource);
     }
 
-    const data =
-      mediaType === "application/json" &&
-      !(typeof resource === "string" || resource instanceof Buffer)
-        ? JSON.stringify(resource, null, 2)
-        : mediaType
-        ? resource
-        : textOrObject(resource);
+    const data = mediaType ? resource : textOrObject(resource);
 
     if (!mediaType) {
       // Can't identify media type; infer default type.
