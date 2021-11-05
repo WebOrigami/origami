@@ -11,8 +11,8 @@ export default class GraphDelegate {
 
   async get(...keys) {
     const value = await this.graph.get(...keys);
-    if (ExplorableGraph.isExplorable(value)) {
-      return Reflect.construct(this.constructor, [value]);
-    }
+    return ExplorableGraph.isExplorable(value)
+      ? Reflect.construct(this.constructor, [value])
+      : value;
   }
 }
