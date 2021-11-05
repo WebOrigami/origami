@@ -15,4 +15,8 @@ export default class GraphDelegate {
       ? Reflect.construct(this.constructor, [value])
       : value;
   }
+
+  async set(...args) {
+    return this.graph.set(...args);
+  }
 }
