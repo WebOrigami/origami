@@ -14,7 +14,8 @@ export default class ExplorableGraph {
     return (
       this.isExplorable(obj) ||
       typeof obj === "string" ||
-      typeof obj === "function" ||
+      obj instanceof Function ||
+      obj instanceof Array ||
       isPlainObject(obj)
     );
   }
