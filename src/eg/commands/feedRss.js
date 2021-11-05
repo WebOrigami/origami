@@ -2,22 +2,22 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 export default async function feedRss(jsonFeedGraph) {
   const jsonFeed = await ExplorableGraph.plain(jsonFeedGraph);
-  const { title, description, items, feed_url } = jsonFeed;
+  const { description, home_page_url, items, feed_url, title } = jsonFeed;
 
   // Presume that the RSS feed lives in same location as feed_url.
   const parts = feed_url.split("/");
   parts.pop();
   parts.push("rss.xml");
-  const link = parts.join("/");
+  const rssUrl = parts.join("/");
 
   const itemsRss = items?.map((story) => itemRss(story)).join("\n") ?? [];
 
   return `<?xml version="1.0" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <atom:link href="${feed_url}" rel="self" type="application/rss+xml"/>
+    <atom:link href="${rssUrl}" rel="self" type="application/rss+xml"/>
     <title>${title}</title>
-    <link>${link}</link>
+    <link>${home_page_url}</link>
     <description>${description}</description>
   ${itemsRss}</channel>
 </rss>`;
