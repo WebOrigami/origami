@@ -12,6 +12,8 @@ import {
   list,
   literal,
   optionalWhitespace,
+  percentCall,
+  percentPath,
   protocolIndirectCall,
   singleQuoteString,
   slashCall,
@@ -248,6 +250,25 @@ describe("parse", () => {
     });
     assert.equal(literal(""), null);
     assert.equal(literal("()"), null);
+  });
+
+  it("percentCall", () => {
+    assert.deepEqual(percentCall("graph%")?.value, [[ops.get, "graph"]]);
+    assert.deepEqual(percentCall("graph%foo%bar")?.value, [
+      [ops.get, "graph"],
+      "foo",
+      "bar",
+    ]);
+  });
+
+  it("percentPath", () => {
+    assert.deepEqual(percentPath("foo%bar%baz")?.value, ["foo", "bar", "baz"]);
+    assert.deepEqual(percentPath("foo%bar%baz%")?.value, [
+      "foo",
+      "bar",
+      "baz",
+      "",
+    ]);
   });
 
   it("protocolIndirectCall", () => {

@@ -194,7 +194,7 @@ async function prepareData(key, value) {
   }
 
   // Otherwise, do our best to convert known types to a string.
-  return toSerializable(value);
+  return String(toSerializable(value));
 }
 
 // Return the file information for the file/folder at the given path.

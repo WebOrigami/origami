@@ -24,6 +24,7 @@ expression: singleQuoteString
             spacePathCall
             protocolIndirectCall
             slashCall
+            percentCall
             functionCall
             getCall
 
@@ -43,7 +44,7 @@ indirectCall: group args
 list: expression , list
       expression
 
-literal: everything but =(){}$&"'/, and whitespace
+literal: everything but =(){}$&"'/`%, and whitespace
 
 omittedParensArgs: whitespace list
 

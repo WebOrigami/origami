@@ -109,6 +109,7 @@ export function expression(text) {
     spacePathCall,
     protocolIndirectCall,
     slashCall,
+    percentCall,
     functionCall,
     getCall
   )(text);
@@ -212,7 +213,7 @@ export function list(text) {
 // Parse a reference to a literal
 export function literal(text) {
   // Literals are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\$"'/:`,\s]+/)(text);
+  return regex(/^[^=\(\)\{\}\$"'/:`%,\s]+/)(text);
 }
 
 // Parse a left parenthesis.
@@ -268,6 +269,46 @@ export default function parse(text) {
 // Parse a key in a path.
 export function pathKey(text) {
   return any(group, reference)(text);
+}
+
+// Parse a function call with percent syntax.
+export function percentCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    getCall,
+    terminal(/^%/),
+    optional(percentPath)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: fnName, 3: fnArgs } = parsed.value;
+  let value = [fnName];
+  if (fnArgs) {
+    value.push(...fnArgs);
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a percent-delimeted path
+export function percentPath(text) {
+  const parsed = separatedList(pathKey, terminal(/^%/), regex(/^/))(text);
+  if (!parsed) {
+    return null;
+  }
+  // Remove the separators from the result.
+  const values = [];
+  while (parsed.value.length > 0) {
+    values.push(parsed.value.shift()); // Keep value
+    parsed.value.shift(); // Drop separator
+  }
+  return {
+    value: values,
+    rest: parsed.rest,
+  };
 }
 
 // Parse an indirect protocol call like `fn:foo/bar` or `fn://foo/bar`.
