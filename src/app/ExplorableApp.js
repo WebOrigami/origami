@@ -1,36 +1,36 @@
-import DefaultValues from "../common/DefaultValues.js";
-import ExplorableFiles from "../node/ExplorableFiles.js";
+import DefaultValuesMixin from "../common/DefaultValuesMixin.js";
+import GraphDelegate from "../core/GraphDelegate.js";
+import { applyMixinToGraph } from "../core/utilities.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 import MetaMixin from "./MetaMixin.js";
 
-class AppGraph extends MetaMixin(ExplorableFiles) {}
+// Apply meta in app() command
+// class AppGraph extends MetaMixin(ExplorableFiles) {}
 
-export default class ExplorableApp extends DefaultValues {
-  #main;
-
-  constructor(dirname) {
-    const main = new AppGraph(dirname);
-    const defaults = {
+export default class ExplorableApp extends GraphDelegate {
+  constructor(graph) {
+    const meta = applyMixinToGraph(MetaMixin, graph);
+    const defaults = applyMixinToGraph(DefaultValuesMixin, meta);
+    super(defaults);
+    this.defaults = {
       ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
       "index.html": defaultIndexHtml,
     };
-    super(main, defaults);
-    this.#main = main;
   }
 
   get context() {
-    return this.#main.context;
+    return this.graph.context;
   }
   set context(context) {
-    this.#main.context = context;
+    this.graph.context = context;
   }
 
   get scope() {
-    return this.#main.scope;
+    return this.graph.scope;
   }
   set scope(scope) {
-    this.#main.scope = scope;
+    this.graph.scope = scope;
   }
 }
