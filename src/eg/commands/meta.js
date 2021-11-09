@@ -1,13 +1,13 @@
 import MetaMixin from "../../app/MetaMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { applyMixinToGraph } from "../../core/utilities.js";
+import { applyMixinToObject } from "../../core/utilities.js";
 
 export default async function meta(variant = this.graph, ...path) {
   const graph = ExplorableGraph.from(variant);
 
-  const meta = applyMixinToGraph(MetaMixin, graph);
+  const meta = applyMixinToObject(MetaMixin, graph);
   meta.context = this.graph;
-  meta.scope = this.graph.scope;
+  meta.scope = this.scope;
 
   const result = path.length > 0 ? await meta.get(...path) : meta;
   return result;
