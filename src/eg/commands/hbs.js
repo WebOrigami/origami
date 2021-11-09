@@ -17,6 +17,9 @@ export default async function hbs(template, input) {
       template = frontMatter.content;
     }
   }
+
+  const partials = await getPartials(this.graph, template);
+
   const data =
     typeof input === "string" || input instanceof Buffer
       ? YAML.parse(String(input))
@@ -25,13 +28,40 @@ export default async function hbs(template, input) {
       : ExplorableGraph.canCastToExplorable(input)
       ? await ExplorableGraph.plain(input)
       : input;
+
   if (data) {
+    const options = { partials };
     const compiled = Handlebars.compile(template);
-    const result = compiled(data);
+    const result = compiled(data, options);
     return result;
   } else {
     return undefined;
   }
+}
+
+function findPartialReferences(template) {
+  // Partials:
+  // start with "{{>" or "{{#>"
+  // then have optional whitespace
+  // then start with a character that's not a "@" (like the special @partial-block)
+  // then continue with any number of characters that aren't whitespace or a "}"
+  const regex = /{{#?>\s*(?<name>[^@][^\s}]+)/g;
+  const matches = [...template.matchAll(regex)];
+  const names = matches.map((match) => match.groups.name);
+  const unique = [...new Set(names)];
+  return unique;
+}
+
+async function getPartials(graph, template) {
+  const partialNames = findPartialReferences(template);
+  const partialKeys = partialNames.map((name) => `${name}.hbs`);
+  const partialPromises = partialKeys.map(async (name) => graph.get(name));
+  const partialValues = await Promise.all(partialPromises);
+  const partials = {};
+  partialValues.forEach((value, index) => {
+    partials[partialNames[index]] = value;
+  });
+  return partials;
 }
 
 hbs.usage = `hbs(template, data)\tGenerate content from a Handlebars template and data`;
