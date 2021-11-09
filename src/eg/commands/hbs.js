@@ -13,12 +13,12 @@ export default async function hbs(template, input) {
     if (frontMatter) {
       input = new FormulasObject(frontMatter);
       input.scope = await config();
-      input.context = this.graph;
+      input.context = this?.graph;
       template = frontMatter.content;
     }
   }
 
-  const partials = await getPartials(this.graph, template);
+  const partials = await getPartials(this?.graph, template);
 
   const data =
     typeof input === "string" || input instanceof Buffer
@@ -55,12 +55,17 @@ function findPartialReferences(template) {
 async function getPartials(graph, template) {
   const partialNames = findPartialReferences(template);
   const partialKeys = partialNames.map((name) => `${name}.hbs`);
-  const partialPromises = partialKeys.map(async (name) => graph.get(name));
-  const partialValues = await Promise.all(partialPromises);
-  const partials = {};
-  partialValues.forEach((value, index) => {
-    partials[partialNames[index]] = value;
-  });
+  let partials = {};
+  if (partialKeys.length > 0) {
+    if (!graph) {
+      throw `A Handlebars template references partials (${partialKeys}), but no graph was provided in which to search for them.`;
+    }
+    const partialPromises = partialKeys.map(async (name) => graph.get(name));
+    const partialValues = await Promise.all(partialPromises);
+    partialValues.forEach((value, index) => {
+      partials[partialNames[index]] = value;
+    });
+  }
   return partials;
 }
 

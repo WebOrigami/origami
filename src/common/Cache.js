@@ -1,5 +1,4 @@
 // TODO: Because this relies on FormulasObject, it should probably go in /src/app
-import FormulasObject from "../app/FormulasObject.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
@@ -22,14 +21,7 @@ export default class Cache {
       );
     }
     this.graph = ExplorableGraph.from(graph);
-
-    if (filter) {
-      this.filter = ExplorableGraph.isExplorable(filter)
-        ? filter
-        : new FormulasObject(filter);
-    } else {
-      this.filter = undefined;
-    }
+    this.filter = filter ? ExplorableGraph.from(filter) : undefined;
   }
 
   async *[Symbol.asyncIterator]() {
@@ -64,7 +56,7 @@ export default class Cache {
         // Save in cache before returning.
         await this.cache.set(...keys, value);
       }
-      
+
       return value;
     }
 

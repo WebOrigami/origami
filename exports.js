@@ -1,5 +1,4 @@
 // Should generate this export file with explorable graphs!
-export { default as ExplorableApp } from "./src/app/ExplorableApp.js";
 export { default as FormulasMixin } from "./src/app/FormulasMixin.js";
 export { default as MetaMixin } from "./src/app/MetaMixin.js";
 export { default as Cache } from "./src/common/Cache.js";
@@ -13,6 +12,7 @@ export { default as ExplorableSite } from "./src/core/ExplorableSite.js";
 export { default as MapGraph } from "./src/core/MapGraph.js";
 export * from "./src/core/utilities.js";
 export { default as builtins } from "./src/eg/builtins.js";
+export { default as app } from "./src/eg/commands/app.js";
 export { default as defaultGraph } from "./src/eg/commands/defaultGraph.js";
 export { default as defaultModuleExport } from "./src/eg/commands/defaultModuleExport.js";
 export { default as dot } from "./src/eg/commands/dot.js";

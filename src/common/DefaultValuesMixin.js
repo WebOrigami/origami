@@ -1,3 +1,5 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
  * default values, this returns values as usual from the main graph. If a
@@ -12,7 +14,7 @@ export default function DefaultValuesMixin(Base) {
       return this.#defaults;
     }
     set defaults(defaults) {
-      this.#defaults = defaults;
+      this.#defaults = ExplorableGraph.from(defaults);
     }
 
     async get(...keys) {
@@ -37,8 +39,7 @@ export default function DefaultValuesMixin(Base) {
       }
 
       // We have a default value function; give it the subgraph to work on.
-      let subgraph =
-        keys.length === 0 ? this.graph : await this.graph.get(...keys);
+      let subgraph = keys.length === 0 ? this : await this.get(...keys);
       if (subgraph === undefined) {
         return undefined; // Can't find subgraph.
       }

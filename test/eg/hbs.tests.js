@@ -10,7 +10,7 @@ describe("hbs (Handlebars) command", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  it.only("applies partials found in the local graph", async () => {
+  it("applies partials found in the local graph", async () => {
     const template = `Hello, {{#>bold}}{{name}}{{/bold}}.`;
     const data = { name: "world" };
     const graph = new ExplorableObject({

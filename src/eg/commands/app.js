@@ -1,14 +1,19 @@
 import path from "path";
 import process from "process";
-import ExplorableApp from "../../app/ExplorableApp.js";
+import DefaultPagesMixin from "../../app/DefaultPagesMixin.js";
+import MetaMixin from "../../app/MetaMixin.js";
+import { applyMixinToObject } from "../../core/utilities.js";
+import ExplorableFiles from "../../node/ExplorableFiles.js";
 import config from "./config.js";
 
 // Start an ExplorableApp
 export default async function app(...keys) {
   const appPath = path.resolve(process.cwd(), ...keys);
-  let graph = new ExplorableApp(appPath);
-  graph.scope = await config(appPath);
-  return graph;
+  let graph = new ExplorableFiles(appPath);
+  const meta = applyMixinToObject(MetaMixin, graph);
+  const result = applyMixinToObject(DefaultPagesMixin, meta);
+  result.scope = await config(appPath);
+  return result;
 }
 
 app.usage = `app()\tAn explorable application graph for the current directory`;
