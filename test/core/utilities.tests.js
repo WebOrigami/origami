@@ -1,3 +1,5 @@
+import { ExplorableGraph } from "../../exports.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import * as utilities from "../../src/core/utilities.js";
 import assert from "../assert.js";
 
@@ -18,7 +20,7 @@ describe("utilities", () => {
     const fixture = utilities.applyMixinToObject(FixtureMixin, person);
 
     // Can get properties of the base object.
-    assert.equal(person.age, 30);
+    assert.equal(fixture.age, 30);
 
     // Can get a property that entails the mixin calling `super`.
     assert.equal(fixture.name, "*Alice*");
@@ -35,6 +37,29 @@ describe("utilities", () => {
     // considering the base object.
     assert("age" in fixture);
     assert("extra" in fixture);
+  });
+
+  it("applyMixinToObject applies the same mixin to explorable results", async () => {
+    function UppercaseMixin(Base) {
+      return class Uppercase extends Base {
+        async get(...keys) {
+          const value = await super.get(...keys);
+          return ExplorableGraph.isExplorable(value)
+            ? Reflect.construct(this.constructor, [value])
+            : value.toUpperCase();
+        }
+      };
+    }
+    const graph = new ExplorableObject({
+      a: "a",
+      more: {
+        b: "b",
+      },
+    });
+    const mixed = utilities.applyMixinToObject(UppercaseMixin, graph);
+    assert.equal(await mixed.get("a"), "A");
+    const mixedMore = await mixed.get("more");
+    assert.equal(await mixedMore.get("b"), "B");
   });
 
   it("extractFrontMatter() returns front matter if found", () => {
