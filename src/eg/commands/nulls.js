@@ -1,6 +1,6 @@
 import MapGraph from "../../core/MapGraph.js";
 
-export default async function nulls(graph = this.graph) {
+export default function nulls(graph = this.graph) {
   return new MapGraph(graph, () => null);
 }
 
