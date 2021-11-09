@@ -1,8 +1,72 @@
 import YAML from "yaml";
-import GraphDelegate from "./GraphDelegate.js";
 
-export function applyMixinToGraph(Mixin, graph) {
-  return new (Mixin(GraphDelegate))(graph);
+/**
+ * Apply a functional class mixin to an individual object instance.
+ *
+ * Graph transformations can be defined with mixins that extend a graph base
+ * class. Sometimes it's useful to apply such a mixin to an individual object
+ * instance. That is what this function does.
+ *
+ * This works by creating an intermediate class whose prototype is a Proxy to
+ * the base object. That Proxy will take care of forwarding any property or
+ * methods that are not defined in the mixin to the base object.
+ *
+ * @param {Function} Mixin
+ * @param {any} base
+ */
+export function applyMixinToObject(Mixin, base) {
+  // We need to define an intermediate Base class that will proxy property and
+  // method requests to the base object. This class's prototype will be a Proxy
+  // that will handle the property/method forwarding. This shenanigna requires
+  // that we define the class using function/prototype syntax instead of class
+  // syntax.
+  function Base() {}
+  Base.prototype = new Proxy(
+    {
+      base,
+    },
+    {
+      // If the mixin doesn't define a property/method, this `get` method will
+      // be invoked. We forward the request to the base object.
+      get(target, prop) {
+        const value = target.base[prop];
+
+        // If the property value is a function defined by the base object, we
+        // need to bind the function to the base object. This ensures that the
+        // function will be able to access private members of the base object.
+        return value instanceof Function ? value.bind(target.base) : value;
+      },
+
+      // Similarly, forward requests that want to know if this object has a
+      // particular property to the base object.
+      has(target, prop) {
+        return Reflect.has(target.base, prop);
+      },
+
+      // If someone tries to set a property that's not defined by the mixin, and
+      // the base object has that property, forward the set request.
+      set(target, prop, value, receiver) {
+        // Special case: setting the constructor (below) should set the
+        // constructor on the extended (mixed) object, not the base object.
+        if (prop !== "constructor" && prop in target.base) {
+          target.base[prop] = value;
+        } else {
+          Reflect.set(target, prop, value, receiver);
+        }
+        return true;
+      },
+    }
+  );
+  Base.prototype.constructor = Base;
+
+  // Now that we've defined the intermediate Base class, apply the mixin to it
+  // to produce a new, mixed class.
+  class Mixed extends Mixin(Base) {}
+
+  // Instantiate the mixed class and return that instance. It will include all
+  // the properties and methods of both the mixin and the base object.
+  const mixed = new Mixed();
+  return mixed;
 }
 
 /**

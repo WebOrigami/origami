@@ -15,6 +15,7 @@ export default function ShuffleMixin(Base) {
         const key = keys[index];
         // Remove the key from the hat.
         keys.splice(index, 1);
+        // Yield the key we picked.
         yield key;
       }
     }
