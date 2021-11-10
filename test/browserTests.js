@@ -3,7 +3,6 @@ import "./app/WildcardKeysMixin.tests.js";
 import "./common/Cache.tests.js";
 import "./common/Compose.tests.js";
 import "./common/DefaultValues.tests.js";
-import "./common/InvokeFunctionsMixin.tests.js";
 import "./common/strings.tests.js";
 import "./common/Transform.tests.js";
 import "./core/ExplorableFunction.tests.js";
