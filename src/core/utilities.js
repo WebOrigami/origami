@@ -1,5 +1,31 @@
 import YAML from "yaml";
 import ExplorableGraph from "./ExplorableGraph.js";
+import makeProxyClass from "./makeProxyClass.js";
+
+export function applyMixinToGraph(Mixin, graph) {
+  // Create a class that proxies properties/methods to the object.
+  const Base = makeProxyClass(graph);
+
+  // Apply the mixin, and add some handling for the graph's `get` method.
+  class Mixed extends Mixin(Base) {
+    async get(...keys) {
+      let value = await super.get(...keys);
+      if (
+        ExplorableGraph.isExplorable(value) &&
+        !(value instanceof this.constructor)
+      ) {
+        // Wrap subgraphs in a new instance of the mixed class.
+        value = Reflect.construct(this.constructor, [value]);
+      }
+      return value;
+    }
+  }
+
+  // Instantiate the mixed class and return a new instance.
+  // @ts-ignore
+  const mixed = new Mixed(graph);
+  return mixed;
+}
 
 /**
  * Apply a functional class mixin to an individual object instance.
@@ -16,88 +42,14 @@ import ExplorableGraph from "./ExplorableGraph.js";
  * @param {any} obj
  */
 export function applyMixinToObject(Mixin, obj) {
-  // We define an intermediate Base class that will proxy property and
-  // method requests to the base object. This class will take a single argument:
-  // whereas the Mixin takes a class argument, the intermediate class will
-  // take an object argument -- the object to extend.
-  //
-  // This intermediate class' prototype is a Proxy that will handle the
-  // property/method forwarding. This shenanigna requires that we define the
-  // class using function/prototype syntax instead of class syntax.
-  function Base(base) {
-    this.base = base;
-  }
-  Base.prototype = new Proxy(
-    // Proxy target: tracks the base object the Base class instance extends.
-    {
-      obj,
-    },
-    // Proxy handler: handles property/method forwarding.
-    {
-      // If the mixin doesn't define a property/method, this `get` method will
-      // be invoked.
-      get(target, prop, receiver) {
-        if (prop === "base") {
-          return receiver.base;
-        }
+  // Create a class that proxies properties/methods to the object.
+  const Base = makeProxyClass(obj);
 
-        // Forward other property requests to the base object.
-        const value = receiver.base?.[prop];
+  // Apply the mixin to that class.
+  class Mixed extends Mixin(Base) {}
 
-        // If the property value is a function defined by the base object, we
-        // need to bind the function to the base object. This ensures that the
-        // function will be able to access private members of the base object.
-        return value instanceof Function ? value.bind(receiver.base) : value;
-      },
-
-      // Similarly, forward requests that want to know if this object has a
-      // particular property to the *original* object.
-      has(target, prop) {
-        return prop === "base" ? true : Reflect.has(obj, prop);
-      },
-
-      // If someone tries to set a property that's not defined by the mixin, and
-      // the base object has that property, forward the set request.
-      set(target, prop, value, receiver) {
-        if (
-          prop === "base" ||
-          prop === "constructor" ||
-          !(prop in receiver.base)
-        ) {
-          Reflect.set(target, prop, value, receiver);
-        } else {
-          // Set the property on the base object.
-          receiver.base[prop] = value;
-        }
-        return true;
-      },
-    }
-  );
-  Base.prototype.constructor = Base;
-
-  // Now that we've defined the intermediate Base class, apply the mixin to it
-  // to produce a new, mixed class.
-  class Mixed extends Mixin(Base) {
-    // Define this so TypeScript knows the constructor expects an argument.
-    constructor(base) {
-      super(base);
-    }
-
-    // HACK — this is specific to graphs.
-    async get(...keys) {
-      let value = await super.get(...keys);
-      if (
-        ExplorableGraph.isExplorable(value) &&
-        !(value instanceof this.constructor)
-      ) {
-        value = Reflect.construct(this.constructor, [value]);
-      }
-      return value;
-    }
-  }
-
-  // Instantiate the mixed class and return that instance. It will include all
-  // the properties and methods of both the mixin and the base object.
+  // Instantiate the mixed class and return a new instance.
+  // @ts-ignore
   const mixed = new Mixed(obj);
   return mixed;
 }

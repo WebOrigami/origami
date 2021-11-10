@@ -2,7 +2,7 @@ import path from "path";
 import process from "process";
 import DefaultPagesMixin from "../../app/DefaultPagesMixin.js";
 import MetaMixin from "../../app/MetaMixin.js";
-import { applyMixinToObject } from "../../core/utilities.js";
+import { applyMixinToGraph } from "../../core/utilities.js";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
 import config from "./config.js";
 
@@ -10,8 +10,8 @@ import config from "./config.js";
 export default async function app(...keys) {
   const appPath = path.resolve(process.cwd(), ...keys);
   let graph = new ExplorableFiles(appPath);
-  const meta = applyMixinToObject(MetaMixin, graph);
-  const result = applyMixinToObject(DefaultPagesMixin, meta);
+  const meta = applyMixinToGraph(MetaMixin, graph);
+  const result = applyMixinToGraph(DefaultPagesMixin, meta);
   result.scope = await config(appPath);
   return result;
 }

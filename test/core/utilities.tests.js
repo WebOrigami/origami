@@ -39,7 +39,7 @@ describe("utilities", () => {
     assert("extra" in fixture);
   });
 
-  it("applyMixinToObject applies the same mixin to explorable results", async () => {
+  it("applyMixinToGraph applies the same mixin to explorable results", async () => {
     function UppercaseMixin(Base) {
       return class Uppercase extends Base {
         async get(...keys) {
@@ -56,7 +56,7 @@ describe("utilities", () => {
         b: "b",
       },
     });
-    const mixed = utilities.applyMixinToObject(UppercaseMixin, graph);
+    const mixed = utilities.applyMixinToGraph(UppercaseMixin, graph);
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");
     assert.equal(await mixedMore.get("b"), "B");
