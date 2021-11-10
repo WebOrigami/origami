@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { MetaMixin } from "../../exports.js";
+import MetaMixin from "../../src/app/MetaMixin.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";

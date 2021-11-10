@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "../../exports.js";
 import SubtractKeys from "../../src/common/SubtractKeys.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("SubtracKeys", () => {
