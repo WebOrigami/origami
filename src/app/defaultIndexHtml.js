@@ -1,10 +1,12 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
 export default async function defaultIndexHtml() {
   // @ts-ignore
-  const graph = this;
+  const graph = ExplorableGraph.from(this);
   const links = [];
   for await (const key of graph) {
     // Skip keys that start with a "." (like .keys.json).
-    if (!key.startsWith(".")) {
+    if (!String(key).startsWith(".")) {
       const isFormula = key.toString().includes("=");
       const linkClass = isFormula ? `class="formula"` : "";
       const link = `<li ${linkClass}><a href="${key}">${key}</a></li>`;
