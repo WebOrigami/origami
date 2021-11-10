@@ -1,5 +1,3 @@
-import path from "path";
-
 export default function ImplicitModulesMixin(Base) {
   return class ImplicitModules extends Base {
     async get(...keys) {
@@ -10,7 +8,7 @@ export default function ImplicitModulesMixin(Base) {
 
       // See if we have a JS module for the requested key.
       const lastKey = keys.pop();
-      if (!path || lastKey.endsWith(".js")) {
+      if (lastKey.endsWith(".js")) {
         return undefined;
       }
 
