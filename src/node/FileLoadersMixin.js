@@ -21,10 +21,7 @@ export default function FileLoadersMixin(Base) {
     async get(...keys) {
       let value = await super.get(...keys);
       const lastKey = keys[keys.length - 1];
-      if (
-        lastKey !== undefined &&
-        (typeof value === "string" || value instanceof Buffer)
-      ) {
+      if (lastKey !== undefined && value instanceof Buffer) {
         const extname = path.extname(lastKey).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
