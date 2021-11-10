@@ -1,9 +1,9 @@
 // import fetch from "./fetch.js";
 import fetch from "node-fetch";
 
-export default class ExplorableSite {
-  #keysPromise;
+const keysPromise = Symbol("keysPromise");
 
+export default class ExplorableSite {
   constructor(url = window?.location.href) {
     if (url?.startsWith(".") && window?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.
@@ -11,15 +11,15 @@ export default class ExplorableSite {
     } else {
       this.url = url;
     }
-    this.#keysPromise = null;
+    this[keysPromise] = null;
   }
 
   async *[Symbol.asyncIterator]() {
-    if (!this.#keysPromise) {
+    if (!this[keysPromise]) {
       const href = new URL(".keys.json", this.url).href;
-      this.#keysPromise = fetch(href);
+      this[keysPromise] = fetch(href);
     }
-    const response = await this.#keysPromise;
+    const response = await this[keysPromise];
     if (response.ok) {
       const text = await response.text();
       const keys = text ? JSON.parse(text) : [];
