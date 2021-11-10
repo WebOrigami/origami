@@ -137,20 +137,4 @@ describe("ExplorableObject", () => {
       },
     });
   });
-
-  it("uses iterator and get method on object if defined", async () => {
-    const obj = new ExplorableObject({
-      async *[Symbol.asyncIterator]() {
-        yield* ["a", "b", "c"];
-      },
-
-      async get(key) {
-        return key.toUpperCase();
-      },
-    });
-
-    assert.deepEqual(await ExplorableGraph.keys(obj), ["a", "b", "c"]);
-    assert.equal(await obj.get("a"), "A");
-    assert.equal(await obj.get("foo"), "FOO");
-  });
 });

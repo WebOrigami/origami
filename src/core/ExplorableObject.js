@@ -2,24 +2,22 @@ import ExplorableGraph from "./ExplorableGraph.js";
 import { isPlainObject } from "./utilities.js";
 
 export default class ExplorableObject {
-  #obj;
-
-  constructor(obj) {
-    if (!isPlainObject(obj)) {
+  constructor(object) {
+    if (!isPlainObject(object)) {
       throw new TypeError(
         "The argument to the ExplorableObject constructor must be a plain JavaScript object."
       );
     }
-    this.#obj = obj;
+    this.object = object;
   }
 
   async *[Symbol.asyncIterator]() {
     // If the object defines an iterator, defer to that.
-    if (this.#obj[Symbol.asyncIterator]) {
-      yield* this.#obj[Symbol.asyncIterator]();
+    if (this.object[Symbol.asyncIterator]) {
+      yield* this.object[Symbol.asyncIterator]();
     } else {
       // Iterate over the object's keys.
-      yield* Object.keys(this.#obj);
+      yield* Object.keys(this.object);
     }
   }
 
@@ -29,18 +27,13 @@ export default class ExplorableObject {
    * @param {...any} keys
    */
   async get(...keys) {
-    // If the object defines its own `get` method, defer to that.
-    if (typeof this.#obj.get === "function") {
-      return await this.#obj.get(...keys);
-    }
-
     // No keys: return this graph as is.
     if (keys.length === 0) {
       return this;
     }
 
     // Traverse the keys.
-    let value = this.#obj;
+    let value = this.object;
     while (value !== undefined && keys.length > 0) {
       const key = keys.shift();
       value = value[key];
@@ -69,11 +62,6 @@ export default class ExplorableObject {
    * @param  {...any} args
    */
   async set(...args) {
-    // If the object defines its own `set` method, defer to that.
-    if (typeof this.#obj.set === "function") {
-      return await this.#obj.set(...args);
-    }
-
     if (args.length === 0) {
       // No-op
       return;
@@ -85,7 +73,7 @@ export default class ExplorableObject {
     const keys = args;
 
     // Traverse the keys
-    let current = this.#obj;
+    let current = this.object;
     while (keys.length > 1) {
       const key = keys.shift();
       let next = current[key];
@@ -110,7 +98,7 @@ export default class ExplorableObject {
       }
       // Recursively write out the values in the graph.
       const subgraph =
-        subobject === this.#obj ? this : new ExplorableObject(subobject);
+        subobject === this.object ? this : new ExplorableObject(subobject);
       for await (const subkey of value) {
         const subvalue = await value.get(subkey);
         await subgraph.set(subkey, subvalue);
