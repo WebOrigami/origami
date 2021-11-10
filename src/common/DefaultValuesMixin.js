@@ -52,8 +52,6 @@ export default function DefaultValuesMixin(Base) {
       // Bind to subgraph and invoke.
       value = defaultValue.call(subgraph);
 
-      // TODO: Use Reflect.construct
-
       return value;
     }
   };
