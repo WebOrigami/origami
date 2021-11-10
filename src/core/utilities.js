@@ -1,4 +1,5 @@
 import YAML from "yaml";
+import ExplorableGraph from "./ExplorableGraph.js";
 
 /**
  * Apply a functional class mixin to an individual object instance.
@@ -89,6 +90,15 @@ export function applyMixinToObject(Mixin, obj) {
     // Define this so TypeScript knows the constructor expects an argument.
     constructor(base) {
       super(base);
+    }
+
+    // HACK
+    async get(...keys) {
+      let value = await super.get(...keys);
+      if (ExplorableGraph.isExplorable(value)) {
+        value = applyMixinToObject(Mixin, value);
+      }
+      return value;
     }
   }
 
