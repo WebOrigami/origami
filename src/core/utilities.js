@@ -30,55 +30,46 @@ export function applyMixinToObject(Mixin, obj) {
   Base.prototype = new Proxy(
     // Proxy target: tracks the base object the Base class instance extends.
     {
-      base: null,
+      obj,
     },
     // Proxy handler: handles property/method forwarding.
     {
       // If the mixin doesn't define a property/method, this `get` method will
       // be invoked.
-      get(target, prop) {
+      get(target, prop, receiver) {
         if (prop === "base") {
-          // The `base` property is defined on our proxy target.
-          return target.base;
+          return receiver.base;
         }
 
         // Forward other property requests to the base object.
-        const value = target.base?.[prop];
+        const value = receiver.base?.[prop];
 
         // If the property value is a function defined by the base object, we
         // need to bind the function to the base object. This ensures that the
         // function will be able to access private members of the base object.
-        return value instanceof Function ? value.bind(target.base) : value;
+        return value instanceof Function ? value.bind(receiver.base) : value;
       },
 
       // Similarly, forward requests that want to know if this object has a
-      // particular property to the base object.
+      // particular property to the *original* object.
       has(target, prop) {
-        return prop === "base"
-          ? true
-          : target.base
-          ? Reflect.has(target.base, prop)
-          : false;
+        return prop === "base" ? true : Reflect.has(obj, prop);
       },
 
       // If someone tries to set a property that's not defined by the mixin, and
       // the base object has that property, forward the set request.
       set(target, prop, value, receiver) {
-        if (prop === "base") {
-          // Record the new base object on the proxy target.
-          target.base = value;
-          return true;
-        } else if (prop === "constructor" || !(prop in target.base)) {
-          // Special case: setting the constructor sets the constructor on the
-          // extended (mixed) object, not the base object.
+        if (
+          prop === "base" ||
+          prop === "constructor" ||
+          !(prop in receiver.base)
+        ) {
           Reflect.set(target, prop, value, receiver);
-          return true;
-        } else if (target.base) {
+        } else {
           // Set the property on the base object.
-          target.base[prop] = value;
-          return true;
+          receiver.base[prop] = value;
         }
-        return false;
+        return true;
       },
     }
   );
@@ -92,11 +83,14 @@ export function applyMixinToObject(Mixin, obj) {
       super(base);
     }
 
-    // HACK
+    // HACK — this is specific to graphs.
     async get(...keys) {
       let value = await super.get(...keys);
-      if (ExplorableGraph.isExplorable(value)) {
-        value = applyMixinToObject(Mixin, value);
+      if (
+        ExplorableGraph.isExplorable(value) &&
+        !(value instanceof this.constructor)
+      ) {
+        value = Reflect.construct(this.constructor, [value]);
       }
       return value;
     }
