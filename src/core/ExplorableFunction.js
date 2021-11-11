@@ -1,3 +1,5 @@
+import { constructSubgraph } from "./utilities.js";
+
 export default class ExplorableFunction {
   constructor(fn, keys = []) {
     this.fn = fn;
@@ -16,7 +18,7 @@ export default class ExplorableFunction {
     let value = await this.fn(...keys);
 
     if (value instanceof Function && !(value instanceof this.constructor)) {
-      value = Reflect.construct(this.constructor, [value]);
+      value = constructSubgraph(this.constructor, { fn: value, keys: [] });
     }
 
     return value;

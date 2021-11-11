@@ -1,5 +1,5 @@
 import ExplorableGraph from "./ExplorableGraph.js";
-import { isPlainObject } from "./utilities.js";
+import { constructSubgraph, isPlainObject } from "./utilities.js";
 
 export default class ExplorableObject {
   constructor(object) {
@@ -46,7 +46,7 @@ export default class ExplorableObject {
       value = await ExplorableGraph.from(value).get(...keys);
     }
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
-      value = Reflect.construct(this.constructor, [value]);
+      value = constructSubgraph(this.constructor, { object: value });
     }
 
     return value;

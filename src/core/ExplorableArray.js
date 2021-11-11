@@ -1,4 +1,5 @@
 import ExplorableGraph from "./ExplorableGraph.js";
+import { constructSubgraph } from "./utilities.js";
 
 export default class ExplorableArray {
   /**
@@ -24,7 +25,7 @@ export default class ExplorableArray {
       value = await ExplorableGraph.from(value).get(...rest);
     }
     if (value instanceof Array && !(value instanceof this.constructor)) {
-      value = Reflect.construct(this.constructor, [value]);
+      value = constructSubgraph(this.constructor, { array: value });
     }
 
     return value;

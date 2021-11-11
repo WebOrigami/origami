@@ -45,7 +45,7 @@ describe("utilities", () => {
         async get(...keys) {
           const value = await super.get(...keys);
           return ExplorableGraph.isExplorable(value)
-            ? Reflect.construct(this.constructor, [value])
+            ? value
             : value.toUpperCase();
         }
       };

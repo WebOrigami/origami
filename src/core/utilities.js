@@ -1,57 +1,58 @@
 import YAML from "yaml";
-import ExplorableGraph from "./ExplorableGraph.js";
-import makeProxyClass from "./makeProxyClass.js";
 
 export function applyMixinToGraph(Mixin, graph) {
-  // Create a class that proxies properties/methods to the object.
-  const Base = makeProxyClass(graph);
-
-  // Apply the mixin, and add some handling for the graph's `get` method.
-  class Mixed extends Mixin(Base) {
-    async get(...keys) {
-      let value = await super.get(...keys);
-      if (
-        ExplorableGraph.isExplorable(value) &&
-        !(value instanceof this.constructor)
-      ) {
-        // Wrap subgraphs in a new instance of the mixed class.
-        value = Reflect.construct(this.constructor, [value]);
-      }
-      return value;
-    }
-  }
-
-  // Instantiate the mixed class and return a new instance.
-  // @ts-ignore
-  const mixed = new Mixed(graph);
-  return mixed;
+  //   // Create a class that proxies properties/methods to the object.
+  //   const Base = makeProxyClass(graph);
+  //   // Apply the mixin, and add some handling for the graph's `get` method.
+  //   class Mixed extends Mixin(Base) {
+  //     async get(...keys) {
+  //       let value = await super.get(...keys);
+  //       if (
+  //         ExplorableGraph.isExplorable(value) &&
+  //         !(value instanceof this.constructor)
+  //       ) {
+  //         // Wrap subgraphs in a new instance of the mixed class.
+  //         value = Reflect.construct(this.constructor, [value]);
+  //       }
+  //       return value;
+  //     }
+  //   }
+  //   // Instantiate the mixed class and return a new instance.
+  //   // @ts-ignore
+  //   const mixed = new Mixed(graph);
+  //   return mixed;
+  return applyMixinToObject(Mixin, graph);
 }
 
 /**
  * Apply a functional class mixin to an individual object instance.
  *
- * Graph transformations can be defined with mixins that extend a graph base
- * class. Sometimes it's useful to apply such a mixin to an individual object
- * instance. That is what this function does.
  *
- * This works by creating an intermediate class whose prototype is a Proxy to
- * the base object. That Proxy will take care of forwarding any property or
- * methods that are not defined in the mixin to the base object.
  *
  * @param {Function} Mixin
  * @param {any} obj
  */
 export function applyMixinToObject(Mixin, obj) {
-  // Create a class that proxies properties/methods to the object.
-  const Base = makeProxyClass(obj);
-
-  // Apply the mixin to that class.
-  class Mixed extends Mixin(Base) {}
-
-  // Instantiate the mixed class and return a new instance.
-  // @ts-ignore
-  const mixed = new Mixed(obj);
+  const mixed = new (Mixin(Object))();
+  // The mixin may have added multiple prototypes to the chain.
+  // Walk up the prototype chain until we hit Object.
+  let proto = mixed.__proto__;
+  while (proto.__proto__ !== Object.prototype) {
+    proto = proto.__proto__;
+  }
+  Object.setPrototypeOf(proto, obj);
   return mixed;
+}
+
+export function constructSubgraph(constructor, dictionary) {
+  const args = Object.values(dictionary);
+  const result = Reflect.construct(constructor, args);
+  for (const [key, value] of Object.entries(dictionary)) {
+    if (result[key] !== value) {
+      result[key] = value;
+    }
+  }
+  return result;
 }
 
 /**
