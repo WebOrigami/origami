@@ -3,24 +3,26 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 const splatKeySuffix1 = "...";
 const splatKeySuffix2 = "…";
 
+const splatGraphsKey = Symbol("splatGraphs");
+
 export default function SplatKeysMixin(Base) {
   return class SplatKeys extends Base {
-    #splatGraphs;
+    constructor(...args) {
+      super(...args);
+      this[splatGraphsKey] = {};
+    }
 
     async *[Symbol.asyncIterator]() {
-      if (this.#splatGraphs === undefined) {
-        this.#splatGraphs = {};
-      }
       for await (const key of super[Symbol.asyncIterator]()) {
         if (isSplatKey(key)) {
-          if (this.#splatGraphs[key] === undefined) {
+          if (this[splatGraphsKey][key] === undefined) {
             const splatValue = await super.get(key);
-            this.#splatGraphs[key] = ExplorableGraph.isExplorable(splatValue)
+            this[splatGraphsKey][key] = ExplorableGraph.isExplorable(splatValue)
               ? splatValue
               : ExplorableGraph.from(splatValue);
           }
           // Return keys of splat graph in place of splat key.
-          yield* this.#splatGraphs[key];
+          yield* this[splatGraphsKey][key];
         } else {
           yield key;
         }
@@ -34,14 +36,14 @@ export default function SplatKeysMixin(Base) {
       }
 
       // Try looking in splat graphs.
-      if (this.#splatGraphs === undefined) {
+      if (this[splatGraphsKey] === undefined) {
         // Force refresh
         // @ts-ignore
         for await (const key of this) {
         }
       }
-      for (const splatGraphKeys in this.#splatGraphs) {
-        const splatGraph = this.#splatGraphs[splatGraphKeys];
+      for (const splatGraphKeys in this[splatGraphsKey]) {
+        const splatGraph = this[splatGraphsKey][splatGraphKeys];
         const innerValue = await splatGraph.get(...keys);
         if (innerValue !== undefined) {
           return innerValue;

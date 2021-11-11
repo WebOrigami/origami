@@ -2,16 +2,25 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import builtins from "../eg/builtins.js";
 import Formula from "./Formula.js";
 
+const bindingsKey = Symbol("bindings");
+const contextKey = Symbol("context");
+const formulasKey = Symbol("formulas");
+const keysKey = Symbol("keys");
+const scopeKey = Symbol("scope");
+
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
-    #bindings;
-    #context = this;
-    #formulas;
-    #keys;
-    #scope = builtins;
+    constructor(...args) {
+      super(...args);
+      this[bindingsKey] = null;
+      this[contextKey] = this;
+      this[formulasKey] = null;
+      this[keysKey] = null;
+      this[scopeKey] = builtins;
+    }
 
     async *[Symbol.asyncIterator]() {
-      if (!this.#keys) {
+      if (!this[keysKey]) {
         const keys = new Set();
         for await (const key of super[Symbol.asyncIterator]()) {
           keys.add(key);
@@ -29,40 +38,40 @@ export default function FormulasMixin(Base) {
         }
 
         // Store keys in JavaScript sort order.
-        this.#keys = [...keys];
-        this.#keys.sort();
+        this[keysKey] = [...keys];
+        this[keysKey].sort();
       }
-      yield* this.#keys;
+      yield* this[keysKey];
     }
 
     get bindings() {
-      return this.#bindings;
+      return this[bindingsKey];
     }
     set bindings(bindings) {
-      this.#bindings = bindings;
+      this[bindingsKey] = bindings;
     }
 
     get context() {
-      return this.#context;
+      return this[contextKey];
     }
     set context(context) {
-      this.#context = context;
+      this[contextKey] = context;
     }
 
     async formulas() {
-      if (!this.#formulas) {
+      if (!this[formulasKey]) {
         // Find all formulas in this graph.
-        this.#formulas = [];
+        this[formulasKey] = [];
         for await (const key of super[Symbol.asyncIterator]()) {
           // Try to parse the key as a formula.
           const formula = Formula.parse(key);
           if (formula) {
             // Successfully parsed key as a formula.
-            this.#formulas.push(formula);
+            this[formulasKey].push(formula);
           }
         }
       }
-      return this.#formulas;
+      return this[formulasKey];
     }
 
     async get(...keys) {
@@ -127,15 +136,15 @@ export default function FormulasMixin(Base) {
       if (super.onChange) {
         super.onChange(eventType, filename);
       }
-      this.#formulas = null;
-      this.#keys = null;
+      this[formulasKey] = null;
+      this[keysKey] = null;
     }
 
     get scope() {
-      return this.#scope;
+      return this[scopeKey];
     }
     set scope(scope) {
-      this.#scope = scope;
+      this[scopeKey] = scope;
     }
   };
 }

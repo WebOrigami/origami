@@ -16,7 +16,10 @@ const defaultLoaders = {
 
 export default function FileLoadersMixin(Base) {
   return class FileLoaders extends Base {
-    #loaders = defaultLoaders;
+    constructor(...args) {
+      super(...args);
+      this.loaders = defaultLoaders;
+    }
 
     async get(...keys) {
       let value = await super.get(...keys);
@@ -29,13 +32,6 @@ export default function FileLoadersMixin(Base) {
         }
       }
       return value;
-    }
-
-    get loaders() {
-      return this.#loaders;
-    }
-    set loaders(loaders) {
-      this.#loaders = loaders;
     }
   };
 }

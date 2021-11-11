@@ -1,34 +1,34 @@
 import ExplorableGraph from "./ExplorableGraph.js";
 
+const graphKey = Symbol("graph");
+const mapFnKey = Symbol("mapFn");
+
 /**
  * Given a graph and a function, return a new explorable graph that applies
  * the function to the original graph's values.
  */
 export default class MapGraph {
-  #graph;
-  #mapFn;
-
   /**
    * @param {GraphVariant} variant
    * @param {function} mapFn
    */
   constructor(variant, mapFn) {
-    this.#graph = ExplorableGraph.from(variant);
-    this.#mapFn = mapFn;
+    this[graphKey] = ExplorableGraph.from(variant);
+    this[mapFnKey] = mapFn;
   }
 
   // Return same keys as original graph.
   async *[Symbol.asyncIterator]() {
-    yield* this.#graph;
+    yield* this[graphKey];
   }
 
   // Apply the mapping function to the original graph's values.
   async get(...keys) {
-    const value = await this.#graph.get(...keys);
+    const value = await this[graphKey].get(...keys);
     return ExplorableGraph.isExplorable(value)
-      ? new MapGraph(value, this.#mapFn) // Return mapped subgraph
+      ? new MapGraph(value, this[mapFnKey]) // Return mapped subgraph
       : value !== undefined
-      ? this.#mapFn(value) // Return mapped value
+      ? this[mapFnKey](value) // Return mapped value
       : undefined;
   }
 }

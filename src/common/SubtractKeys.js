@@ -1,17 +1,17 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-export default class SubtractKeys {
-  #original;
-  #remove;
+const originalKey = Symbol("originalKey");
+const removeKey = Symbol("removeKey");
 
+export default class SubtractKeys {
   constructor(original, remove) {
-    this.#original = ExplorableGraph.from(original);
-    this.#remove = ExplorableGraph.from(remove);
+    this[originalKey] = ExplorableGraph.from(original);
+    this[removeKey] = ExplorableGraph.from(remove);
   }
 
   async *[Symbol.asyncIterator]() {
-    for await (const key of this.#original) {
-      const removeResult = await this.#remove.get(key);
+    for await (const key of this[originalKey]) {
+      const removeResult = await this[removeKey].get(key);
       if (
         removeResult === undefined ||
         ExplorableGraph.isExplorable(removeResult)
@@ -22,8 +22,8 @@ export default class SubtractKeys {
   }
 
   async get(...keys) {
-    let originalValue = await this.#original.get(...keys);
-    const removeValue = await this.#remove.get(...keys);
+    let originalValue = await this[originalKey].get(...keys);
+    const removeValue = await this[removeKey].get(...keys);
     if (ExplorableGraph.isExplorable(originalValue)) {
       if (ExplorableGraph.isExplorable(removeValue)) {
         originalValue = new SubtractKeys(originalValue, removeValue);

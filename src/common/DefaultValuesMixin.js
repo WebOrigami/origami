@@ -1,5 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
+const defaultsKey = Symbol("defaults");
+
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
  * default values, this returns values as usual from the main graph. If a
@@ -8,19 +10,22 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default function DefaultValuesMixin(Base) {
   return class DefaultValues extends Base {
-    #defaults;
+    constructor(...args) {
+      super(...args);
+      this[defaultsKey] = null;
+    }
 
     get defaults() {
-      return this.#defaults;
+      return this[defaultsKey];
     }
     set defaults(defaults) {
-      this.#defaults = ExplorableGraph.from(defaults);
+      this[defaultsKey] = ExplorableGraph.from(defaults);
     }
 
     async get(...keys) {
       // Try main graph first.
       let value = await super.get(...keys);
-      if (value !== undefined) {
+      if (value !== undefined || this.defaults === null) {
         return value;
       }
 
