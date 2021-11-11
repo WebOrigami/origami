@@ -1,49 +1,57 @@
 import YAML from "yaml";
 
-export function applyMixinToGraph(Mixin, graph) {
-  //   // Create a class that proxies properties/methods to the object.
-  //   const Base = makeProxyClass(graph);
-  //   // Apply the mixin, and add some handling for the graph's `get` method.
-  //   class Mixed extends Mixin(Base) {
-  //     async get(...keys) {
-  //       let value = await super.get(...keys);
-  //       if (
-  //         ExplorableGraph.isExplorable(value) &&
-  //         !(value instanceof this.constructor)
-  //       ) {
-  //         // Wrap subgraphs in a new instance of the mixed class.
-  //         value = Reflect.construct(this.constructor, [value]);
-  //       }
-  //       return value;
-  //     }
-  //   }
-  //   // Instantiate the mixed class and return a new instance.
-  //   // @ts-ignore
-  //   const mixed = new Mixed(graph);
-  //   return mixed;
-  return applyMixinToObject(Mixin, graph);
-}
-
 /**
  * Apply a functional class mixin to an individual object instance.
  *
+ * This works by create an intermediate class, creating an instance of that, and
+ * then setting the intermedia class's prototype to the given individual object.
+ * The resulting, extended object is then returned.
  *
+ * This manipulation of the prototype chain is generally sound in JavaScript,
+ * with some caveats. First, the original object class cannot make direct use of
+ * private members; JavaScript will generally complain if the extended object
+ * does anything that requires access to those private members.
  *
  * @param {Function} Mixin
  * @param {any} obj
  */
 export function applyMixinToObject(Mixin, obj) {
+  // Create an intermediate class that applies the mixin to Object, then
+  // instantiate that.
   const mixed = new (Mixin(Object))();
-  // The mixin may have added multiple prototypes to the chain.
-  // Walk up the prototype chain until we hit Object.
-  let proto = mixed.__proto__;
-  while (proto.__proto__ !== Object.prototype) {
-    proto = proto.__proto__;
+
+  // Find the highest prototype in the chain that was added by the Mixin. The
+  // mixin may have added multiple prototypes to the chain. Walk up the
+  // prototype chain until we hit Object.
+  let mixinProto = mixed.__proto__;
+  while (mixinProto.__proto__ !== Object.prototype) {
+    mixinProto = mixinProto.__proto__;
   }
-  Object.setPrototypeOf(proto, obj);
+
+  // Redirect the prototype chain above the mixin to point to the original
+  // object.
+  Object.setPrototypeOf(mixinProto, obj);
+
+  // Return the extended object.
   return mixed;
 }
 
+/**
+ * ExplorableGraph substrates like ExplorableObject and ExplorableFiles
+ * need to be able to return instances of those classes for explorable
+ * subgraphs.
+ *
+ * Because those substrate classes are often extended by mixins, they
+ * cannot simply call `new ExplorableObject`; the actual constructor
+ * may have been extended.
+ *
+ * Moreover, they need to account for the possibility that the graph instance
+ * that is returning the subgraph is the result of applying a class mixin to an
+ * individual object instance using applyMixinToObject. Because of how that
+ * routine works, the arguments passed to the constructor may not get applied.
+ * This function therefore checks to see whether the constructor arguments were
+ * applied and, if not, applies them.
+ */
 export function constructSubgraph(constructor, dictionary) {
   const args = Object.values(dictionary);
   const result = Reflect.construct(constructor, args);
