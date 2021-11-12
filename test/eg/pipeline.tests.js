@@ -5,7 +5,7 @@ import { applyMixinToObject } from "../../src/core/utilities.js";
 import pipeline from "../../src/eg/commands/pipeline.js";
 import assert from "../assert.js";
 
-describe.only("pipeline", () => {
+describe("pipeline", () => {
   it("converts an array-like object to a series of named steps", async () => {
     const fixture = pipeline(["'Hello'", "foo(it)", "bar(it)"]);
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
