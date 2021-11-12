@@ -1,36 +1,46 @@
 import path from "path";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default function mapTypes(graph, sourceExtname, destinationExtName, fn) {
+export default function mapTypes(
+  variant,
+  sourceExtension,
+  destinationExtension,
+  fn
+) {
+  const graph = ExplorableGraph.from(variant);
+  const sourceExtensionLower = sourceExtension.toLowerCase();
+  const destinationExtensionLower = destinationExtension.toLowerCase();
   const environment = this;
   return {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph) {
-        yield path.extname(key) === sourceExtname
-          ? `${path.basename(key, sourceExtname)}${destinationExtName}`
+        const extension = path.extname(key).toLowerCase();
+        yield extension === sourceExtensionLower
+          ? `${path.basename(key, extension)}${destinationExtension}`
           : key;
       }
     },
 
     async get(...keys) {
-      let transform = false;
-      const lastKeyIndex = keys.length - 1;
-      let lastKey = keys[lastKeyIndex];
-      if (lastKey && path.extname(lastKey) === destinationExtName) {
-        keys[lastKeyIndex] = `${path.basename(
-          lastKey,
-          destinationExtName
-        )}${sourceExtname}`;
-        transform = true;
+      let lastKey = keys.pop();
+      if (
+        lastKey &&
+        path.extname(lastKey).toLowerCase() === destinationExtensionLower
+      ) {
+        // Asking for an extension that we map to.
+        // Try all the source extensions.
+        const basename = path.basename(lastKey, destinationExtension);
+        const key = `${basename}${sourceExtension}`;
+        const value = await graph.get(...keys, key);
+        return value !== undefined
+          ? await fn.call(environment, value /* keys */)
+          : ExplorableGraph.isExplorable(value)
+          ? mapTypes(value, sourceExtension, destinationExtension, fn)
+          : value;
+      } else {
+        // Not an extension we handle.
+        return await graph.get(...keys, lastKey);
       }
-
-      const value = await graph.get(...keys);
-
-      return transform && value !== undefined
-        ? await fn.call(environment, value, keys)
-        : ExplorableGraph.isExplorable(value)
-        ? mapTypes(value, sourceExtname, destinationExtName, fn)
-        : value;
     },
   };
 }
