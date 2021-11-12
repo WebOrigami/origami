@@ -55,5 +55,6 @@ export default function SplatKeysMixin(Base) {
 }
 
 function isSplatKey(key) {
-  return key.endsWith(splatKeySuffix1) || key.endsWith(splatKeySuffix2);
+  const text = String(key);
+  return text.endsWith(splatKeySuffix1) || text.endsWith(splatKeySuffix2);
 }
