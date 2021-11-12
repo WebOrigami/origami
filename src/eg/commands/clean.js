@@ -3,7 +3,9 @@ import MapGraph from "../../core/MapGraph.js";
 import files from "./files.js";
 
 export default async function clean(variant) {
-  const graph = variant ? ExplorableGraph.from(variant) : await files();
+  const graph = variant
+    ? ExplorableGraph.from(variant)
+    : await files.call(this);
   const cleanGraph = await graph.get(".eg.clean.yaml");
   if (!cleanGraph) {
     // Nothing to clean

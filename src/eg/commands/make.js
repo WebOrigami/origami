@@ -9,9 +9,11 @@ import files from "./files.js";
 import yaml from "./yaml.js";
 
 export default async function make(virtual, destination) {
-  virtual = virtual ? ExplorableGraph.from(virtual) : await app();
+  virtual = virtual ? ExplorableGraph.from(virtual) : await app.call(this);
   const virtualPlain = await ExplorableGraph.plain(virtual);
-  destination = destination ? ExplorableGraph.from(destination) : await files();
+  destination = destination
+    ? ExplorableGraph.from(destination)
+    : await files.call(this);
   // const cleanGraph = await destination.get(".eg.clean.yaml");
   // const built = cleanGraph ? ExplorableGraph.from(cleanGraph) : null;
   // const real = built ? new SubtractKeys(destination, built) : destination;
