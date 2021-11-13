@@ -19,7 +19,7 @@ export default class ExplorableArray {
     }
 
     const [key, ...rest] = keys;
-    let value = this.array[key];
+    let value = this.array[Number(key)];
 
     if (rest.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
       value = await ExplorableGraph.from(value).get(...rest);

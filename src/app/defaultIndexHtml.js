@@ -8,20 +8,21 @@ export default async function defaultIndexHtml() {
   const links = [];
   for (const key of filtered) {
     let link;
-    const isFormula = key.toString().includes("=");
-    const isWildcard = key.startsWith("{");
+    const keyText = String(key);
+    const isFormula = keyText.includes("=");
+    const isWildcard = keyText.startsWith("{");
     if (isFormula) {
       if (isWildcard) {
-        link = `<li class="formula wildcard"><a href="${key}">${key}</a></li>`;
+        link = `<li class="formula wildcard"><a href="${keyText}">${keyText}</a></li>`;
       } else {
-        const parts = key.split("=");
+        const parts = keyText.split("=");
         const lhs = parts[0].trim();
         const rhs = parts[1].trim();
-        link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${key}">= ${rhs}</a></span></li>`;
+        link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${keyText}">= ${rhs}</a></span></li>`;
       }
     } else {
       // Simple key.
-      link = `<li><a href="${key}">${key}</a></li>`;
+      link = `<li><a href="${keyText}">${keyText}</a></li>`;
     }
     links.push(link);
   }
@@ -74,11 +75,12 @@ function filterKeys(keys) {
   const filtered = [];
   let previous = null;
   for (const key of keys) {
-    if (key.startsWith(".")) {
+    const keyText = key.toString();
+    if (keyText.startsWith(".")) {
       // Skip "private" files.
       continue;
     }
-    if (previous && key.includes("=")) {
+    if (previous && keyText.includes("=")) {
       const [lhs, rhs] = previous.split("=");
       if (lhs.trim() === previous) {
         // Formula for the previous key replaces it.
@@ -86,7 +88,7 @@ function filterKeys(keys) {
       }
     }
     filtered.push(key);
-    previous = key;
+    previous = keyText;
   }
   return filtered;
 }

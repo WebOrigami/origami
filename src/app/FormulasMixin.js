@@ -105,8 +105,8 @@ export default function FormulasMixin(Base) {
 
             if (rest.length > 0) {
               // If there are more keys to get, do that.
-              value = ExplorableGraph.isExplorable(value)
-                ? await value.get(...rest)
+              value = ExplorableGraph.canCastToExplorable(value)
+                ? await ExplorableGraph.from(value).get(...rest)
                 : typeof value === "function"
                 ? value(...rest)
                 : undefined;
