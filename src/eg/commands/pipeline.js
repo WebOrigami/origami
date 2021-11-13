@@ -9,7 +9,7 @@ export default function pipeline(variant) {
       const values = await ExplorableGraph.values(graph);
       let previous = "";
       const stepNames = keys.map((key, index) => {
-        const lhs = index < keys.length - 1 ? `_step${index + 1}` : "result";
+        const lhs = `Step${index + 1}`;
         const itRegex = /(^|\W)(it)(\W|$)/g;
         const value = values[index];
         const rhs = value.replaceAll(itRegex, `$1${previous}$3`);

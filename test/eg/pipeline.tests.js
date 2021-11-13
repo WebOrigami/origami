@@ -9,9 +9,9 @@ describe("pipeline", () => {
   it("converts an array-like object to a series of named steps", async () => {
     const fixture = pipeline(["'Hello'", "foo(it)", "bar(it)"]);
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
-      "_step1 = 'Hello'": "",
-      "_step2 = foo(_step1)": "",
-      "result = bar(_step2)": "",
+      "Step1 = 'Hello'": "",
+      "Step2 = foo(Step1)": "",
+      "Step3 = bar(Step2)": "",
     });
   });
 
@@ -22,6 +22,6 @@ describe("pipeline", () => {
       greet: (x) => `Hello, ${x}.`,
       uppercase: (x) => x.toUpperCase(),
     });
-    assert.equal(await meta.get("result"), "Hello, WORLD.");
+    assert.equal(await meta.get("Step3"), "Hello, WORLD.");
   });
 });
