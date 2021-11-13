@@ -44,21 +44,20 @@ export async function handleRequest(request, response, graph) {
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
     mediaType = extname ? mediaTypeForExtension[extname] : undefined;
-    if (ExplorableGraph.isExplorable(resource)) {
-      // If we got an explorable graph, redirect to its index page. Exception:
-      // if this graph is for a JSON or YAML request, we'll cast the graph to
-      // JSON or YAML below.
-      if (mediaType === "application/json" || mediaType === "text/yaml") {
-        // Do processing below
-      } else if (!request.url.endsWith("/")) {
-        // Redirect to the root of the explorable graph.
-        const Location = `${request.url}/`;
-        response.writeHead(307, { Location });
-        response.end("ok");
-        return true;
-      } else {
-        return false;
-      }
+
+    if (
+      mediaType === undefined &&
+      !request.url.endsWith("/") &&
+      (ExplorableGraph.isExplorable(resource) ||
+        isPlainObject(resource) ||
+        resource instanceof Array)
+    ) {
+      // Redirect to an index page for the result.
+      // Redirect to the root of the explorable graph.
+      const Location = `${request.url}/`;
+      response.writeHead(307, { Location });
+      response.end("ok");
+      return true;
     }
 
     if (resource instanceof ArrayBuffer) {
