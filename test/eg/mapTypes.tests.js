@@ -18,4 +18,21 @@ describe("mapTypes", () => {
       "file3.foo": "won't be mapped",
     });
   });
+
+  it("applies a mapping function to convert file extensions in the middle of a path", async () => {
+    const fixture = {
+      "file1.txt": "Hello, a.",
+      file2: "won't be mapped",
+    };
+    const mapped = mapTypes(fixture, ".txt", ".json", (value) => ({
+      data: value,
+    }));
+    assert.deepEqual(await ExplorableGraph.plain(mapped), {
+      "file1.json": {
+        data: "Hello, a.",
+      },
+      file2: "won't be mapped",
+    });
+    assert.equal(await mapped.get("file1.json", "data"), "Hello, a.");
+  });
 });
