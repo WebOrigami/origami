@@ -14,8 +14,8 @@ export default function mapTypes(
   return {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph) {
-        const extension = path.extname(key).toLowerCase();
-        yield extension === sourceExtensionLower
+        const extension = path.extname(key);
+        yield extension.toLowerCase() === sourceExtensionLower
           ? `${path.basename(key, extension)}${destinationExtension}`
           : key;
       }
