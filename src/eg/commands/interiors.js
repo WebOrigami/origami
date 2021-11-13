@@ -1,6 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default async function structure(variant = this.graph) {
+export default async function interiors(variant = this.graph) {
   const graph = ExplorableGraph.from(variant);
   const interior = {
     async *[Symbol.asyncIterator]() {
@@ -14,10 +14,10 @@ export default async function structure(variant = this.graph) {
 
     async get(...keys) {
       const value = await graph.get(...keys);
-      return ExplorableGraph.isExplorable(value) ? structure(value) : undefined;
+      return ExplorableGraph.isExplorable(value) ? interiors(value) : undefined;
     },
   };
   return interior;
 }
 
-structure.usage = `structure([graph])\tReturn the interior nodes of the graph`;
+interiors.usage = `interiors([graph])\tReturn the interior nodes of the graph`;
