@@ -28,3 +28,5 @@ export default function pipeline(variant) {
 
   return result;
 }
+
+pipeline.usage = `pipeline(array)\tTransform an array-like object to a series of labeled steps`;
