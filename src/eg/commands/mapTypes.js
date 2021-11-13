@@ -25,35 +25,34 @@ export default function mapTypes(
       const mapKeyIndex = keys.findIndex(
         (key) => path.extname(key).toLowerCase() === destinationExtensionLower
       );
+      let value;
       if (mapKeyIndex >= 0) {
         // Asking for an extension that we map to.
-
         // Use regular get to get the value to map.
-        const valuePath = keys.slice(0, mapKeyIndex - 2);
+        const valuePath = mapKeyIndex > 0 ? keys.slice(0, mapKeyIndex) : [];
         const basename = path.basename(keys[mapKeyIndex], destinationExtension);
         const key = `${basename}${sourceExtension}`;
         valuePath.push(key);
-        let value = await graph.get(...valuePath);
-        if (value === undefined) {
-          return undefined;
-        } else if (ExplorableGraph.isExplorable(value)) {
-          value = mapTypes(value, sourceExtension, destinationExtension, fn);
-        } else {
-          value = await fn.call(environment, value);
-        }
         const rest = keys.slice(mapKeyIndex + 1);
-        if (rest.length === 0) {
-          return value;
-        } else if (ExplorableGraph.canCastToExplorable(value)) {
-          value = ExplorableGraph.from(value);
-          return await value.get(...rest);
-        } else {
-          return undefined;
+        value = await graph.get(...valuePath);
+        value = value ? await fn.call(environment, value) : undefined;
+        if (value !== undefined && rest.length > 0) {
+          if (ExplorableGraph.canCastToExplorable(value)) {
+            value = ExplorableGraph.from(value);
+            value = await value.get(...rest);
+          } else {
+            value = undefined;
+          }
         }
       } else {
         // Not an extension we handle.
-        return await graph.get(...keys);
+        value = await graph.get(...keys);
+        if (ExplorableGraph.isExplorable(value)) {
+          value = mapTypes(value, sourceExtension, destinationExtension, fn);
+        }
       }
+
+      return value;
     },
   };
 }
