@@ -1,6 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-export default function pipeline(variant) {
+export default function steps(variant) {
   const graph = ExplorableGraph.from(variant);
 
   const result = {
@@ -29,4 +29,4 @@ export default function pipeline(variant) {
   return result;
 }
 
-pipeline.usage = `pipeline(array)\tTransform an array-like object to a series of labeled steps`;
+steps.usage = `steps(array)\tTransform an array-like object to a series of labeled steps`;
