@@ -1,5 +1,6 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { isPlainObject } from "../core/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -38,15 +39,15 @@ export async function handleRequest(request, response, graph) {
     resource = undefined;
   }
 
+  let mediaType;
   if (resource !== undefined) {
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
-    let mediaType = extname ? mediaTypeForExtension[extname] : undefined;
+    mediaType = extname ? mediaTypeForExtension[extname] : undefined;
     if (ExplorableGraph.isExplorable(resource)) {
-      // The result should be something concrete like a string or Buffer that we
-      // can send to the client. If we ended up with a subgraph as a result,
-      // that's effectively the same as not finding a result. Exception: if this
-      // graph is for a JSON or YAML request, we'll cast the graph to JSON or YAML below.
+      // If we got an explorable graph, redirect to its index page. Exception:
+      // if this graph is for a JSON or YAML request, we'll cast the graph to
+      // JSON or YAML below.
       if (mediaType === "application/json" || mediaType === "text/yaml") {
         // Do processing below
       } else if (!request.url.endsWith("/")) {
@@ -65,7 +66,7 @@ export async function handleRequest(request, response, graph) {
       resource = Buffer.from(resource);
     }
 
-    // If the reequest is for a JSON or YAML result, and the resource we got
+    // If the request is for a JSON or YAML result, and the resource we got
     // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
     if (
       (mediaType === "application/json" || mediaType === "text/yaml") &&
@@ -76,6 +77,14 @@ export async function handleRequest(request, response, graph) {
         mediaType === "text/yaml"
           ? await ExplorableGraph.toYaml(graph)
           : await ExplorableGraph.toJson(graph);
+    } else if (
+      mediaType === undefined &&
+      (isPlainObject(resource) || resource instanceof Array)
+    ) {
+      // The resource is data, try showing it as YAML.
+      const graph = ExplorableGraph.from(resource);
+      resource = await ExplorableGraph.toYaml(graph);
+      mediaType = "text/yaml";
     }
 
     const data = mediaType ? resource : textOrObject(resource);
