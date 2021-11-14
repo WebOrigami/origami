@@ -29,13 +29,16 @@ export default function mapTypes(
       if (mapKeyIndex >= 0) {
         // Asking for an extension that we map to.
         // Use regular get to get the value to map.
-        const valuePath = mapKeyIndex > 0 ? keys.slice(0, mapKeyIndex) : [];
-        const basename = path.basename(keys[mapKeyIndex], destinationExtension);
-        const key = `${basename}${sourceExtension}`;
-        valuePath.push(key);
+        const sourcePath = mapKeyIndex > 0 ? keys.slice(0, mapKeyIndex) : [];
+        const destinationKey = keys[mapKeyIndex];
+        const basename = path.basename(destinationKey, destinationExtension);
+        const sourceKey = `${basename}${sourceExtension}`;
+        sourcePath.push(sourceKey);
         const rest = keys.slice(mapKeyIndex + 1);
-        value = await graph.get(...valuePath);
-        value = value ? await fn.call(environment, value) : undefined;
+        value = await graph.get(...sourcePath);
+        value = value
+          ? await fn.call(environment, value, sourceKey, destinationKey)
+          : undefined;
         if (value !== undefined && rest.length > 0) {
           if (ExplorableGraph.canCastToExplorable(value)) {
             value = ExplorableGraph.from(value);
