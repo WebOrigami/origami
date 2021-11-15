@@ -1,4 +1,7 @@
-import YAML from "yaml";
+import * as YAMLModule from "yaml";
+
+// See notes at ExplorableGraph.js
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * Apply a functional class mixin to an individual object instance.

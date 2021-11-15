@@ -1,4 +1,3 @@
-// import fetch from "./fetch.js";
 import fetch from "node-fetch";
 
 const keysPromise = Symbol("keysPromise");

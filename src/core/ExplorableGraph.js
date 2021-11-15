@@ -1,9 +1,13 @@
-import YAML from "yaml";
+import * as YAMLModule from "yaml";
 import ExplorableArray from "./ExplorableArray.js";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
 import MapGraph from "./MapGraph.js";
 import { isPlainObject, toSerializable } from "./utilities.js";
+
+// The "yaml" package doesn't seem to provide a default export that the browser can
+// recognize, so we have to handle two ways to accommodate Node and the browser.
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * A collection of operations that can be performed on explorable graphs.
@@ -28,7 +32,8 @@ export default class ExplorableGraph {
 
     // Parse a string/buffer as YAML (which covers JSON too).
     const obj =
-      typeof variant === "string" || variant instanceof Buffer
+      typeof variant === "string" ||
+      (globalThis.Buffer && variant instanceof Buffer)
         ? YAML.parse(String(variant))
         : variant;
 

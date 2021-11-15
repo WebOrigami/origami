@@ -9,6 +9,15 @@
     <title>ExplorableGraph browser tests</title>
 
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "yaml": "../node_modules/yaml/browser/dist/index.js"
+        }
+      }
+    </script>
+
     <script
       src="../node_modules/mocha/mocha.js"
       type="text/javascript"
@@ -17,7 +26,9 @@
     <script type="module">
       mocha.setup("bdd");
     </script>
+
     <script type="module" src="./browserTests.js"></script>
+
     <script type="module">
       mocha.run();
     </script>
