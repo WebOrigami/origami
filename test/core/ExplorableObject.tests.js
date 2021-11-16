@@ -151,7 +151,7 @@ describe("ExplorableObject", () => {
     });
     const keys = await ExplorableGraph.keys(graph);
     const valuesExplorable = await Promise.all(
-      keys.map(async (key) => await graph.isKeyValueExplorable(key))
+      keys.map(async (key) => await graph.isKeyExplorable(key))
     );
     assert.deepEqual(valuesExplorable, [false, true, false, true]);
   });

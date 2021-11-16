@@ -140,6 +140,15 @@ describe("ExplorableFiles", () => {
     assert.isUndefined(stats);
     await removeTempDirectory();
   });
+
+  it("can indicate which values are explorable", async () => {
+    const graph = new ExplorableFiles(fixturesDirectory);
+    const keys = await ExplorableGraph.keys(graph);
+    const valuesExplorable = await Promise.all(
+      keys.map(async (key) => await graph.isKeyExplorable(key))
+    );
+    assert.deepEqual(valuesExplorable, [true, false, false]);
+  });
 });
 
 async function createTempDirectory() {

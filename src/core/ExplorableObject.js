@@ -52,7 +52,7 @@ export default class ExplorableObject {
     return value;
   }
 
-  async isKeyValueExplorable(key) {
+  async isKeyExplorable(key) {
     const value = this.object[key];
     // This definition is different than ExplorableGraph.canCastToExplorable
     // because it excludes strings. String values can be explorable if they're

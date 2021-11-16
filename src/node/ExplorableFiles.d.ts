@@ -5,5 +5,6 @@ export default class ExplorableFiles implements Explorable, Storable {
   [Symbol.asyncIterator](): AsyncIterableIterator<any>;
   dirname: string;
   get(...keys: any[]): Promise<any>;
+  isKeyExplorable(key: any): Promise<boolean>;
   set(...args: any[]): Promise<void>;
 }

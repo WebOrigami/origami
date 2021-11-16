@@ -92,6 +92,12 @@ export default class ExplorableFiles {
     return obj?.default ?? obj;
   }
 
+  async isKeyExplorable(key) {
+    const filePath = path.join(this.dirname, key);
+    const stats = await stat(filePath);
+    return stats ? stats.isDirectory() : false;
+  }
+
   get path() {
     return this.dirname;
   }
