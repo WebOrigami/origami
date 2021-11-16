@@ -120,10 +120,7 @@ export default function FormulasMixin(Base) {
         }
       }
 
-      // If we're returning a subgraph of the same type as us, give it our
-      // scope.
-      // TODO: Maybe do duck typing and do this for any subgraph that defines
-      // a scope property?
+      // If the result has a scope, set it to our scope.
       if (value instanceof Object && "scope" in value) {
         value.scope = this.scope;
       }
