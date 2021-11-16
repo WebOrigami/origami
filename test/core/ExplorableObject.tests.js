@@ -137,4 +137,20 @@ describe("ExplorableObject", () => {
       },
     });
   });
+
+  it("can indicate which values are explorable", async () => {
+    const obj = new ExplorableObject({
+      a1: 1,
+      a2: {
+        b1: 2,
+      },
+      a3: 3,
+      a4: {
+        b2: 4,
+      },
+    });
+    const keys = await ExplorableGraph.keys(obj);
+    const valuesExplorable = keys.map((key) => key.isValueExplorable);
+    assert.deepEqual(valuesExplorable, [undefined, true, undefined, true]);
+  });
 });

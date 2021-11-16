@@ -17,7 +17,22 @@ export default class ExplorableObject {
       yield* this.object[Symbol.asyncIterator]();
     } else {
       // Iterate over the object's keys.
-      yield* Object.keys(this.object);
+      for (const objectKey of Object.keys(this.object)) {
+        const value = this.object[objectKey];
+        const isValueExplorable =
+          ExplorableGraph.isExplorable(value) ||
+          value instanceof Function ||
+          value instanceof Array ||
+          isPlainObject(value);
+        let key;
+        if (isValueExplorable) {
+          key = new String(objectKey);
+          key.isValueExplorable = true;
+        } else {
+          key = objectKey;
+        }
+        yield key;
+      }
     }
   }
 
