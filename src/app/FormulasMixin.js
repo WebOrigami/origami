@@ -1,12 +1,10 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import builtins from "../eg/builtins.js";
 import Formula from "./Formula.js";
 
 const bindingsKey = Symbol("bindings");
 const contextKey = Symbol("context");
 const formulasKey = Symbol("formulas");
 const keysKey = Symbol("keys");
-const scopeKey = Symbol("scope");
 
 export default function FormulasMixin(Base) {
   return class Formulas extends Base {
@@ -16,7 +14,6 @@ export default function FormulasMixin(Base) {
       this[contextKey] = this;
       this[formulasKey] = null;
       this[keysKey] = null;
-      this[scopeKey] = builtins;
     }
 
     async *[Symbol.asyncIterator]() {
@@ -94,7 +91,7 @@ export default function FormulasMixin(Base) {
               bindings,
               context: this.context,
               graph: this,
-              scope: this.scope,
+              scope: this.scope ?? this,
               thisKey: formula.source,
             });
 
@@ -120,11 +117,6 @@ export default function FormulasMixin(Base) {
         }
       }
 
-      // If the result has a scope, set it to our scope.
-      if (value instanceof Object && "scope" in value) {
-        value.scope = this.scope;
-      }
-
       return value;
     }
 
@@ -135,13 +127,6 @@ export default function FormulasMixin(Base) {
       }
       this[formulasKey] = null;
       this[keysKey] = null;
-    }
-
-    get scope() {
-      return this[scopeKey];
-    }
-    set scope(scope) {
-      this[scopeKey] = scope;
     }
   };
 }

@@ -11,18 +11,28 @@ export default function InheritScopeMixin(Base) {
       this.scope = this;
     }
 
-    async get(...keys) {
-      const value = await super.get(...keys);
+    constructSubgraph(dictionary) {
+      const subgraph = super.constructSubgraph(dictionary);
 
-      // Does the result accept a scope?
-      if (value instanceof Object && "scope" in value) {
-        // Compose the current graph onto the scope and set it
-        // as the scope for the result.
-        value.scope = new Compose(value, this.scope);
-      }
+      // Compose the current graph onto the scope and set it as the scope for
+      // the subgraph.
+      subgraph.scope = new Compose(subgraph, this.scope);
 
-      return value;
+      return subgraph;
     }
+
+    // async get(...keys) {
+    //   const value = await super.get(...keys);
+
+    //   // Does the result accept a scope?
+    //   if (value instanceof Object && "scope" in value) {
+    //     // Compose the current graph onto the scope and set it
+    //     // as the scope for the result.
+    //     value.scope = new Compose(value, this.scope);
+    //   }
+
+    //   return value;
+    // }
 
     get scope() {
       return this[scopeKey];

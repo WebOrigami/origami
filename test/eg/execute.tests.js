@@ -10,15 +10,14 @@ describe("execute", () => {
       [ops.get, "greet"],
       [ops.get, "name"],
     ];
-    const scope = new ExplorableObject({
+
+    const graph = new ExplorableObject({
       async greet(name) {
         return `Hello ${name}`;
       },
-    });
-    const graph = new ExplorableObject({
       name: "world",
     });
-    const result = await execute(parsed, { scope, graph });
+    const result = await execute(parsed, { graph });
     assert.equal(result, "Hello world");
   });
 

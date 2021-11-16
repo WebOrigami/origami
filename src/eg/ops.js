@@ -3,7 +3,7 @@ export async function get(key) {
   // scope.
   return key === "." || key === ".."
     ? await this.graph.get(key)
-    : (await this.scope.get(key)) ?? (await this.graph.get(key));
+    : await this.scope.get(key);
 }
 get.toString = () => "«ops.get»";
 

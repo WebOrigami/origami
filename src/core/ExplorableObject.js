@@ -21,6 +21,10 @@ export default class ExplorableObject {
     }
   }
 
+  constructSubgraph(dictionary) {
+    return constructSubgraph(this.constructor, dictionary);
+  }
+
   /**
    * Return the value at the corresponding path of keys.
    *
@@ -46,7 +50,7 @@ export default class ExplorableObject {
       value = await ExplorableGraph.from(value).get(...keys);
     }
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
-      value = constructSubgraph(this.constructor, { object: value });
+      value = this.constructSubgraph({ object: value });
     }
 
     return value;
