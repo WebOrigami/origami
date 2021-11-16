@@ -3,6 +3,7 @@
 export default class ExplorableGraph {
   static canCastToExplorable(obj: any): boolean;
   static from(graph: GraphVariant): Explorable;
+  static get(graph: GraphVariant, ...keys: any[]): Promise<any>;
   static isExplorable(obj: any): boolean;
   static isKeyExplorable(graph: Explorable, obj: any): Promise<boolean>;
   static keys(graph: GraphVariant): Promise<any[]>;

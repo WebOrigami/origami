@@ -25,35 +25,44 @@ export default class ExplorableObject {
     return constructSubgraph(this.constructor, dictionary);
   }
 
+  async get2(key) {
+    let value = this.object[key];
+    if (isPlainObject(value) && !(value instanceof this.constructor)) {
+      value = this.constructSubgraph({ object: value });
+    }
+    return value;
+  }
+
   /**
    * Return the value at the corresponding path of keys.
    *
    * @param {...any} keys
    */
   async get(...keys) {
-    // No keys: return this graph as is.
-    if (keys.length === 0) {
-      return this;
-    }
+    return await ExplorableGraph.get(this, ...keys);
+    // // No keys: return this graph as is.
+    // if (keys.length === 0) {
+    //   return this;
+    // }
 
-    // Traverse the keys.
-    let value = this.object;
-    while (value !== undefined && keys.length > 0) {
-      const key = keys.shift();
-      value = value[key];
-      if (ExplorableGraph.isExplorable(value) && keys.length > 0) {
-        return value.get(...keys);
-      }
-    }
+    // // Traverse the keys.
+    // let value = this.object;
+    // while (value !== undefined && keys.length > 0) {
+    //   const key = keys.shift();
+    //   value = value[key];
+    //   if (ExplorableGraph.isExplorable(value) && keys.length > 0) {
+    //     return value.get(...keys);
+    //   }
+    // }
 
-    if (keys.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
-      value = await ExplorableGraph.from(value).get(...keys);
-    }
-    if (isPlainObject(value) && !(value instanceof this.constructor)) {
-      value = this.constructSubgraph({ object: value });
-    }
+    // if (keys.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
+    //   value = await ExplorableGraph.from(value).get(...keys);
+    // }
+    // if (isPlainObject(value) && !(value instanceof this.constructor)) {
+    //   value = this.constructSubgraph({ object: value });
+    // }
 
-    return value;
+    // return value;
   }
 
   async isKeyExplorable(key) {

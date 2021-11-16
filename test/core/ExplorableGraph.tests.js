@@ -18,6 +18,22 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  it("get() can traverse a set of keys", async () => {
+    const graph = ExplorableGraph.from({
+      a: 1,
+      sub: {
+        b: 2,
+        more: {
+          c: 3,
+        },
+      },
+    });
+    assert.equal(await ExplorableGraph.get(graph), graph);
+    assert.equal(await ExplorableGraph.get(graph, "a"), 1);
+    assert.equal(await ExplorableGraph.get(graph, "sub", "b"), 2);
+    assert.equal(await ExplorableGraph.get(graph, "sub", "more", "c"), 3);
+  });
+
   it("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 

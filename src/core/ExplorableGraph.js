@@ -50,6 +50,32 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Return the value at the corresponding path of keys.
+   *
+   * @param {Explorable} graph
+   * @param {...any} keys
+   */
+  static async get(graph, ...keys) {
+    // Start our traversal at the root of the graph.
+    let value = graph;
+    for (const key of keys) {
+      // If the value isn't already explorable, cast it to an explorable graph.
+      // The implication is that, if someone is trying to call `get` on this
+      // thing, they mean to treat it as an explorable graph.
+      const subgraph = ExplorableGraph.from(value);
+
+      // Ask the graph to get the value of the key.
+      value = await subgraph.get2(key);
+
+      // If the value is undefined, we short-circuit the traversal.
+      if (value === undefined) {
+        return undefined;
+      }
+    }
+    return value;
+  }
+
+  /**
    * Return true if the given object implements the necessary explorable graph
    * members: a function identified with `Symbol.asyncIterator`, and a function
    * named `get`.
