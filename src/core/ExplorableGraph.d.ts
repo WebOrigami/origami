@@ -4,6 +4,7 @@ export default class ExplorableGraph {
   static canCastToExplorable(obj: any): boolean;
   static from(graph: GraphVariant): Explorable;
   static isExplorable(obj: any): boolean;
+  static isKeyExplorable(graph: Explorable, obj: any): Promise<boolean>;
   static keys(graph: GraphVariant): Promise<any[]>;
   static map(graph: Explorable, mapFn: (any) => any): Explorable;
   static parse(text: string): Explorable;

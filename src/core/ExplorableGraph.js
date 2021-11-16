@@ -64,6 +64,27 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Return true if the indicated key produces or is expected to produce an
+   * explorable value.
+   *
+   * This defers to the graph's own isKeyExplorable method. If not found, this
+   * gets the value of that key and returns true if the value is in fact
+   * explorable.
+   *
+   * REVIEW: The name of this suggested that it examines whether the key itself
+   * is explorable, but really it's the value that matters. Calling this
+   * `isValueExplorable`, on the other hand, makes it sound like it takes a
+   * value argument instead of a key. `isKeyValueExplorable` is long.
+   */
+  static async isKeyExplorable(graph, key) {
+    if (graph.isKeyExplorable) {
+      return await graph.isKeyExplorable(key);
+    }
+    const value = graph.get(key);
+    return this.isExplorable(value);
+  }
+
+  /**
    * Returns the graph's keys as an array.
    */
   static async keys(variant) {

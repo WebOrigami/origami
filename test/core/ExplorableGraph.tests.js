@@ -38,6 +38,17 @@ describe("ExplorableGraph", () => {
     assert(ExplorableGraph.isExplorable(graph));
   });
 
+  it("isKeyExplorable() indicates whether a key is expected to produce an explorable value", async () => {
+    const graph = new ExplorableObject({
+      a: 1,
+      b: {
+        c: 2,
+      },
+    });
+    assert(!(await ExplorableGraph.isKeyExplorable(graph, "a")));
+    assert(await ExplorableGraph.isKeyExplorable(graph, "b"));
+  });
+
   it("keys() returns an array of the graph's keys", async () => {
     const graph = new ExplorableObject({
       a: 1,
