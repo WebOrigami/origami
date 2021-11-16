@@ -56,6 +56,11 @@ export default class ExplorableGraph {
    * @param {...any} keys
    */
   static async get(graph, ...keys) {
+    // If the graph's get method accepts multiple keys, pass them all at once.
+    if (graph.get2?.length > 1) {
+      return await graph.get2(...keys);
+    }
+
     // Start our traversal at the root of the graph.
     let value = graph;
     for (const key of keys) {

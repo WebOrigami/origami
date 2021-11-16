@@ -28,7 +28,7 @@ export default class ExplorableSite {
     }
   }
 
-  async get(...keys) {
+  async get2(...keys) {
     if (keys.length === 0) {
       return this;
     }
@@ -65,5 +65,8 @@ export default class ExplorableSite {
 
       return buffer;
     }
+  }
+  async get(...keys) {
+    return await this.get2(...keys);
   }
 }

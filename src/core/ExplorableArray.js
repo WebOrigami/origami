@@ -13,21 +13,14 @@ export default class ExplorableArray {
     yield* this.array.keys();
   }
 
-  async get(...keys) {
-    if (keys.length === 0) {
-      return this;
-    }
-
-    const [key, ...rest] = keys;
+  async get2(key) {
     let value = this.array[Number(key)];
-
-    if (rest.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
-      value = await ExplorableGraph.from(value).get(...rest);
-    }
     if (value instanceof Array && !(value instanceof this.constructor)) {
       value = constructSubgraph(this.constructor, { array: value });
     }
-
     return value;
+  }
+  async get(...keys) {
+    return await ExplorableGraph.get(this, ...keys);
   }
 }

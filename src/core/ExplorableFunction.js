@@ -1,3 +1,4 @@
+import ExplorableGraph from "./ExplorableGraph.js";
 import { constructSubgraph } from "./utilities.js";
 
 export default class ExplorableFunction {
@@ -10,17 +11,14 @@ export default class ExplorableFunction {
     yield* this.keys;
   }
 
-  async get(...keys) {
-    if (keys.length === 0) {
-      return this;
-    }
-
-    let value = await this.fn(...keys);
-
+  async get2(key) {
+    let value = this.fn.length === 1 ? this.fn(key) : this.fn.bind(this, key);
     if (value instanceof Function && !(value instanceof this.constructor)) {
       value = constructSubgraph(this.constructor, { fn: value, keys: [] });
     }
-
     return value;
+  }
+  async get(...keys) {
+    return await ExplorableGraph.get(this, ...keys);
   }
 }
