@@ -139,7 +139,7 @@ describe("ExplorableObject", () => {
   });
 
   it("can indicate which values are explorable", async () => {
-    const obj = new ExplorableObject({
+    const graph = new ExplorableObject({
       a1: 1,
       a2: {
         b1: 2,
@@ -149,8 +149,10 @@ describe("ExplorableObject", () => {
         b2: 4,
       },
     });
-    const keys = await ExplorableGraph.keys(obj);
-    const valuesExplorable = keys.map((key) => key.isValueExplorable);
-    assert.deepEqual(valuesExplorable, [undefined, true, undefined, true]);
+    const keys = await ExplorableGraph.keys(graph);
+    const valuesExplorable = await Promise.all(
+      keys.map(async (key) => await graph.isKeyValueExplorable(key))
+    );
+    assert.deepEqual(valuesExplorable, [false, true, false, true]);
   });
 });
