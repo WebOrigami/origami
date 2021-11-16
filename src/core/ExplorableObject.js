@@ -39,30 +39,7 @@ export default class ExplorableObject {
    * @param {...any} keys
    */
   async get(...keys) {
-    return await ExplorableGraph.get(this, ...keys);
-    // // No keys: return this graph as is.
-    // if (keys.length === 0) {
-    //   return this;
-    // }
-
-    // // Traverse the keys.
-    // let value = this.object;
-    // while (value !== undefined && keys.length > 0) {
-    //   const key = keys.shift();
-    //   value = value[key];
-    //   if (ExplorableGraph.isExplorable(value) && keys.length > 0) {
-    //     return value.get(...keys);
-    //   }
-    // }
-
-    // if (keys.length > 0 && ExplorableGraph.canCastToExplorable(value)) {
-    //   value = await ExplorableGraph.from(value).get(...keys);
-    // }
-    // if (isPlainObject(value) && !(value instanceof this.constructor)) {
-    //   value = this.constructSubgraph({ object: value });
-    // }
-
-    // return value;
+    return await ExplorableGraph.traverse(this, ...keys);
   }
 
   async isKeyExplorable(key) {

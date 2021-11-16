@@ -21,6 +21,6 @@ export default class ExplorableArray {
     return value;
   }
   async get(...keys) {
-    return await ExplorableGraph.get(this, ...keys);
+    return await ExplorableGraph.traverse(this, ...keys);
   }
 }

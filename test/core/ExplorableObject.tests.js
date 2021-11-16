@@ -21,35 +21,6 @@ describe("ExplorableObject", () => {
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
 
-  it("can traverse a path of keys", async () => {
-    const obj = new ExplorableObject({
-      a1: 1,
-      a2: {
-        b1: 2,
-        b2: {
-          c1: 3,
-          c2: 4,
-        },
-      },
-    });
-    assert.equal(await obj.get("a1"), 1);
-    assert.equal(await obj.get("a2", "b2", "c2"), 4);
-    assert.equal(await obj.get("a2", "doesntexist", "c2"), undefined);
-  });
-
-  it("can traverse from one explorable into another", async () => {
-    const obj = new ExplorableObject({
-      a1: {
-        a2: new ExplorableObject({
-          b1: {
-            b2: 1,
-          },
-        }),
-      },
-    });
-    assert.equal(await obj.get("a1", "a2", "b1", "b2"), 1);
-  });
-
   it("can set a value", async () => {
     const obj = new ExplorableObject({
       a: 1,

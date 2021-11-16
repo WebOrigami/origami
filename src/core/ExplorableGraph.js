@@ -50,37 +50,6 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Return the value at the corresponding path of keys.
-   *
-   * @param {Explorable} graph
-   * @param {...any} keys
-   */
-  static async get(graph, ...keys) {
-    // If the graph's get method accepts multiple keys, pass them all at once.
-    if (graph.get2?.length > 1) {
-      return await graph.get2(...keys);
-    }
-
-    // Start our traversal at the root of the graph.
-    let value = graph;
-    for (const key of keys) {
-      // If the value isn't already explorable, cast it to an explorable graph.
-      // The implication is that, if someone is trying to call `get` on this
-      // thing, they mean to treat it as an explorable graph.
-      const subgraph = ExplorableGraph.from(value);
-
-      // Ask the graph to get the value of the key.
-      value = await subgraph.get2(key);
-
-      // If the value is undefined, we short-circuit the traversal.
-      if (value === undefined) {
-        return undefined;
-      }
-    }
-    return value;
-  }
-
-  /**
    * Return true if the given object implements the necessary explorable graph
    * members: a function identified with `Symbol.asyncIterator`, and a function
    * named `get`.
@@ -178,6 +147,37 @@ export default class ExplorableGraph {
   static async toYaml(variant) {
     const serializable = await this.toSerializable(variant);
     return YAML.stringify(serializable);
+  }
+
+  /**
+   * Return the value at the corresponding path of keys.
+   *
+   * @param {Explorable} graph
+   * @param {...any} keys
+   */
+  static async traverse(graph, ...keys) {
+    // If the graph's get method accepts multiple keys, pass them all at once.
+    if (graph.get2?.length > 1) {
+      return await graph.get2(...keys);
+    }
+
+    // Start our traversal at the root of the graph.
+    let value = graph;
+    for (const key of keys) {
+      // If the value isn't already explorable, cast it to an explorable graph.
+      // The implication is that, if someone is trying to call `get` on this
+      // thing, they mean to treat it as an explorable graph.
+      const subgraph = ExplorableGraph.from(value);
+
+      // Ask the graph to get the value of the key.
+      value = await subgraph.get2(key);
+
+      // If the value is undefined, we short-circuit the traversal.
+      if (value === undefined) {
+        return undefined;
+      }
+    }
+    return value;
   }
 
   /**
