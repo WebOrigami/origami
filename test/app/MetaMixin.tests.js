@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import MetaMixin from "../../src/app/MetaMixin.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
@@ -87,5 +88,30 @@ describe("MetaMixin", () => {
       "index.html"
     );
     assert.equal(indexHtml, "Hello, world.\n");
+  });
+
+  it("Can inherit formulas via fallbacks", async () => {
+    const graph = new (MetaMixin(ExplorableObject))({
+      "+": {
+        "greeting = message": "",
+      },
+      message: "Hello",
+      spanish: {
+        message: "Hola",
+      },
+      unknown: {},
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      "+": {
+        "greeting = message": "",
+      },
+      message: "Hello",
+      greeting: "Hello",
+      spanish: {
+        message: "Hola",
+        greeting: "Hola",
+      },
+      unknown: {},
+    });
   });
 });

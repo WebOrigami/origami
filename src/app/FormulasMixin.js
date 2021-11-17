@@ -66,6 +66,15 @@ export default function FormulasMixin(Base) {
             this[formulasKey].push(formula);
           }
         }
+
+        // Add fallback formulas.
+        const fallbacks = await this.fallbacks?.();
+        if (fallbacks) {
+          const fallbackFormulas = await fallbacks.formulas?.();
+          if (fallbackFormulas) {
+            this[formulasKey].push(...fallbackFormulas);
+          }
+        }
       }
       return this[formulasKey];
     }
