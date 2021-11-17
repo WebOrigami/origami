@@ -27,16 +27,12 @@ export default async function hbs(template, input) {
       ? input
       : ExplorableGraph.canCastToExplorable(input)
       ? await ExplorableGraph.plain(input)
-      : input;
+      : input ?? {};
 
-  if (data) {
-    const options = { partials };
-    const compiled = Handlebars.compile(template);
-    const result = compiled(data, options);
-    return result;
-  } else {
-    return undefined;
-  }
+  const options = { partials };
+  const compiled = Handlebars.compile(template);
+  const result = compiled(data, options);
+  return result;
 }
 
 function findPartialReferences(template) {
