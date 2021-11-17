@@ -12,15 +12,15 @@ export default function FallbackMixin(Base) {
       this[inheritedFallbacksGraph] = undefined;
     }
 
-    async *[Symbol.asyncIterator]() {
-      yield* super[Symbol.asyncIterator]();
-      const fallbacks = await this.getFallbacks();
-      if (fallbacks) {
-        yield* fallbacks;
-      }
-    }
+    // async *[Symbol.asyncIterator]() {
+    //   yield* super[Symbol.asyncIterator]();
+    //   const fallbacks = await this.getFallbacks();
+    //   if (fallbacks) {
+    //     yield* fallbacks;
+    //   }
+    // }
 
-    async getFallbacks() {
+    async fallbacks() {
       if (this[fallbacksGraph] === undefined) {
         const inherited = this.inheritedFallbacks;
         const local = await this.get(fallbackKey);
@@ -50,7 +50,7 @@ export default function FallbackMixin(Base) {
       let result = await super.get(key);
       if (result !== undefined) {
         if (key !== fallbackKey && result instanceof this.constructor) {
-          result.inheritedFallbacks = await this.getFallbacks();
+          result.inheritedFallbacks = await this.fallbacks();
         }
         return result;
       }
@@ -61,13 +61,22 @@ export default function FallbackMixin(Base) {
       }
 
       // Not found locally, check local and inherited fallbacks.
-      const fallbacks = await this.getFallbacks();
+      const fallbacks = await this.fallbacks();
       result = await fallbacks?.get(key);
       if (result !== undefined) {
         return result;
       }
 
       return undefined;
+    }
+
+    // Reset memoized values when the underlying graph changes.
+    onChange(eventType, filename) {
+      if (super.onChange) {
+        super.onChange(eventType, filename);
+      }
+      this[fallbacksGraph] = undefined;
+      this[inheritedFallbacksGraph] = undefined;
     }
   };
 }
