@@ -24,13 +24,16 @@ export default class Compose {
     }
   }
 
-  async get(...keys) {
+  async get2(...keys) {
     for (const graph of this.graphs) {
-      const obj = await graph.get(...keys);
+      const obj = await ExplorableGraph.traverse(graph, ...keys);
       if (obj !== undefined) {
         return obj;
       }
     }
     return undefined;
+  }
+  async get(...keys) {
+    return await ExplorableGraph.traverse(this, ...keys);
   }
 }
