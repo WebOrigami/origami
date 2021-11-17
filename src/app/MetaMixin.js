@@ -7,6 +7,6 @@ import InheritScopeMixin from "./InheritScopeMixin.js";
 
 export default function MetaMixin(Base) {
   return class Meta extends FileLoadersMixin(
-    InheritScopeMixin(FormulasMixin(FallbackMixin(ImplicitModulesMixin(Base))))
+    InheritScopeMixin(FallbackMixin(FormulasMixin(ImplicitModulesMixin(Base))))
   ) {};
 }
