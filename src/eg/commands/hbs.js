@@ -31,8 +31,18 @@ export default async function hbs(template, input) {
 
   const options = { partials };
   const compiled = Handlebars.compile(template);
-  const result = compiled(data, options);
-  return result;
+  try {
+    const result = compiled(data, options);
+    return result;
+  } catch (error) {
+    // If we're asked to directly render a template that includes a
+    // @partial-block (i.e., without invoking that as a partial in some other
+    // template), then just return undefined rather than throwing an error.
+    if (error.message === "The partial @partial-block could not be found") {
+      return undefined;
+    }
+    throw error;
+  }
 }
 
 function findPartialReferences(template) {
@@ -41,7 +51,8 @@ function findPartialReferences(template) {
   // then have optional whitespace
   // then start with a character that's not a "@" (like the special @partial-block)
   // then continue with any number of characters that aren't whitespace or a "}"
-  const regex = /{{#?>\s*(?<name>[^@][^\s}]+)/g;
+  // and aren't a reference to `partial-block`
+  const regex = /{{#?>\s*(?<name>[^@\s][^\s}]+)/g;
   const matches = [...template.matchAll(regex)];
   const names = matches.map((match) => match.groups.name);
   const unique = [...new Set(names)];
