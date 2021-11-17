@@ -1,4 +1,5 @@
 import Compose from "../common/Compose.js";
+import builtins from "../eg/builtins.js";
 
 const scopeKey = Symbol("scope");
 
@@ -7,8 +8,8 @@ export default function InheritScopeMixin(Base) {
     constructor(...args) {
       super(...args);
 
-      // Default scope is just the graph itself.
-      this.scope = this;
+      // Default scope is builtins and the graph itself.
+      this.scope = new Compose(this, builtins);
     }
 
     constructSubgraph(dictionary) {
