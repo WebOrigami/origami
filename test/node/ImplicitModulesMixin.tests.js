@@ -10,7 +10,7 @@ const modules = new (ImplicitModulesMixin(ExplorableFiles))(fixturesDirectory);
 
 describe("ImplicitModulesMixin", () => {
   it("Gets the exports of the .js file named by the key", async () => {
-    const result = await modules.get2("module1");
+    const result = await modules.get("module1");
     assert.equal(result, "This is the default export.");
   });
 });

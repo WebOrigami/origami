@@ -7,6 +7,6 @@ describe("FormulasObject", () => {
       "a = b": null,
       b: "Hello, world.",
     });
-    assert.equal(await graph.get2("a"), "Hello, world.");
+    assert.equal(await graph.get("a"), "Hello, world.");
   });
 });

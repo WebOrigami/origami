@@ -59,7 +59,7 @@ export default class ExplorableGraph {
   static isExplorable(obj) {
     return (
       typeof obj?.[Symbol.asyncIterator] === "function" &&
-      typeof obj?.get2 === "function"
+      typeof obj?.get === "function"
     );
   }
 
@@ -80,7 +80,7 @@ export default class ExplorableGraph {
     if (graph.isKeyExplorable) {
       return await graph.isKeyExplorable(key);
     }
-    const value = graph.get2(key);
+    const value = graph.get(key);
     return this.isExplorable(value);
   }
 
@@ -108,7 +108,7 @@ export default class ExplorableGraph {
     const graph = this.from(variant);
     const result = {};
     for await (const key of graph) {
-      const value = await graph.get2(key);
+      const value = await graph.get(key);
       result[String(key)] = ExplorableGraph.isExplorable(value)
         ? await this.plain(value) // Traverse into explorable value.
         : value;
@@ -123,7 +123,7 @@ export default class ExplorableGraph {
    */
   static toFunction(variant) {
     const graph = this.from(variant);
-    return graph.get2.bind(graph);
+    return graph.get.bind(graph);
   }
 
   static async toJson(variant) {
@@ -157,8 +157,8 @@ export default class ExplorableGraph {
    */
   static async traverse(graph, ...keys) {
     // If the graph's get method accepts multiple keys, pass them all at once.
-    if (graph.get2?.length > 1) {
-      return await graph.get2(...keys);
+    if (graph.get?.length !== 1) {
+      return await graph.get(...keys);
     }
 
     // Start our traversal at the root of the graph.
@@ -170,7 +170,7 @@ export default class ExplorableGraph {
       const subgraph = ExplorableGraph.from(value);
 
       // Ask the graph to get the value of the key.
-      value = await subgraph.get2(key);
+      value = await subgraph.get(key);
 
       // If the value is undefined, we short-circuit the traversal.
       if (value === undefined) {
@@ -187,7 +187,7 @@ export default class ExplorableGraph {
     const graph = this.from(variant);
     const result = [];
     for await (const key of graph) {
-      result.push(await graph.get2(key));
+      result.push(await graph.get(key));
     }
     return result;
   }

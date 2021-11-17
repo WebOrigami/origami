@@ -8,7 +8,7 @@ const configFileName = "eg.config.js";
 // Load config file.
 export default async function config(dirname = process.cwd()) {
   const parentFiles = new ParentFiles(dirname);
-  const configPath = await parentFiles.get2(configFileName);
+  const configPath = await parentFiles.get(configFileName);
   const fn = configPath ? await defaultModuleExport(configPath) : null;
   const graph = fn ? ExplorableGraph.from(fn) : null;
 

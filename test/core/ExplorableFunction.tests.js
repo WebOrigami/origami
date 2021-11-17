@@ -18,7 +18,7 @@ describe("ExplorableFunction", () => {
     });
 
     // Can also get values for other keys.
-    assert.equal(await graph.get2("d"), "Hello, d.");
+    assert.equal(await graph.get("d"), "Hello, d.");
   });
 
   it("get returns 'this' if no keys are provided", async () => {
@@ -26,7 +26,7 @@ describe("ExplorableFunction", () => {
       (key) => `Hello, ${key}.`,
       ["a", "b", "c"]
     );
-    const result = await graph.get2();
+    const result = await graph.get();
     assert.equal(result, graph);
   });
 });

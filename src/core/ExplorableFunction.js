@@ -10,7 +10,7 @@ export default class ExplorableFunction {
     yield* this.keys;
   }
 
-  async get2(key) {
+  async get(key) {
     let value =
       key === undefined
         ? this

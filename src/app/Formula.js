@@ -24,7 +24,7 @@ export default class Formula {
     } else {
       // Variable pattern
       const { graph } = environment;
-      return await graph.get2(this.key);
+      return await graph.get(this.key);
     }
   }
 

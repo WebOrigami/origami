@@ -22,7 +22,7 @@ describe("ExplorableGraph", () => {
     assert(!ExplorableGraph.isExplorable({}));
 
     const missingIterator = {
-      async get2() {},
+      async get() {},
     };
     assert(!ExplorableGraph.isExplorable(missingIterator));
 
@@ -33,7 +33,7 @@ describe("ExplorableGraph", () => {
 
     const graph = {
       async *[Symbol.asyncIterator]() {},
-      async get2() {},
+      async get() {},
     };
     assert(ExplorableGraph.isExplorable(graph));
   });

@@ -24,7 +24,7 @@ export default class Compose {
     }
   }
 
-  async get2(...keys) {
+  async get(...keys) {
     for (const graph of this.graphs) {
       const obj = await ExplorableGraph.traverse(graph, ...keys);
       if (obj !== undefined) {

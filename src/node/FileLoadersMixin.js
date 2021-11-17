@@ -21,8 +21,8 @@ export default function FileLoadersMixin(Base) {
       this.loaders = defaultLoaders;
     }
 
-    async get2(key) {
-      let value = await super.get2(key);
+    async get(key) {
+      let value = await super.get(key);
       if (value instanceof Buffer) {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];

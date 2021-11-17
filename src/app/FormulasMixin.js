@@ -70,9 +70,9 @@ export default function FormulasMixin(Base) {
       return this[formulasKey];
     }
 
-    async get2(key) {
+    async get(key) {
       // See if real value exists.
-      let value = await super.get2(key);
+      let value = await super.get(key);
 
       if (value === undefined) {
         // No real value defined; try our formulas.

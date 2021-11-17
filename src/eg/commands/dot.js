@@ -26,7 +26,7 @@ async function statements(graph, nodePath, nodeLabel) {
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
     result.push(arc);
 
-    const value = await graph.get2(key);
+    const value = await graph.get(key);
     if (ExplorableGraph.isExplorable(value)) {
       const subStatements = await statements(value, destPath, key);
       result = result.concat(subStatements);

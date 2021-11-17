@@ -41,7 +41,7 @@ describe("MetaMixin", () => {
   });
 
   it("can return an object", async () => {
-    const value = await metaGraph.get2("obj");
+    const value = await metaGraph.get("obj");
     assert.deepEqual(await ExplorableGraph.plain(value), {
       a: "Hello, a.",
       b: "Hello, b.",
@@ -50,30 +50,30 @@ describe("MetaMixin", () => {
   });
 
   it("can get the value of a virtual key", async () => {
-    const s = await metaGraph.get2("string");
+    const s = await metaGraph.get("string");
     assert.equal(s.trim(), `"Hello, world."`);
   });
 
   it("can produce a value using a function", async () => {
-    const value = await metaGraph.get2("value");
+    const value = await metaGraph.get("value");
     assert.equal(value, "Hello, world.");
   });
 
   it("can generate a value by calling a function exported by a module", async () => {
-    const value = await metaGraph.get2("sample.txt");
+    const value = await metaGraph.get("sample.txt");
     assert.equal(value, "Hello, world.");
   });
 
   it("can pass an argument to a function", async () => {
-    const greeting = await metaGraph.get2("greeting");
+    const greeting = await metaGraph.get("greeting");
     assert.equal(greeting, "Hello, world.");
   });
 
   it("Can navigate into a dynamic graph", async () => {
     const graph = new (MetaMixin(ExplorableFiles))(fixturesDirectory);
-    const subgraph = await graph.get2("subgraph");
+    const subgraph = await graph.get("subgraph");
     assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
-    assert.equal(await subgraph.get2("a"), "Hello, a.");
+    assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
   it.skip("can handle nested wildcard folders", async () => {

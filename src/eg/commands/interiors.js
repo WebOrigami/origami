@@ -5,15 +5,15 @@ export default async function interiors(variant = this.graph) {
   const interior = {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph) {
-        const value = await graph.get2(key);
+        const value = await graph.get(key);
         if (ExplorableGraph.isExplorable(value)) {
           yield key;
         }
       }
     },
 
-    async get2(key) {
-      const value = await graph.get2(key);
+    async get(key) {
+      const value = await graph.get(key);
       return ExplorableGraph.isExplorable(value) ? interiors(value) : undefined;
     },
   };

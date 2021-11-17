@@ -1,7 +1,7 @@
 export default function ImplicitModulesMixin(Base) {
   return class ImplicitModules extends Base {
-    async get2(key) {
-      const value = await super.get2(key);
+    async get(key) {
+      const value = await super.get(key);
       if (value !== undefined) {
         return value;
       }

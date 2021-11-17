@@ -9,10 +9,10 @@ describe("ExplorableObject", () => {
       b: 2,
       c: 3,
     });
-    assert.equal(await obj.get2("a"), 1);
-    assert.equal(await obj.get2("b"), 2);
-    assert.equal(await obj.get2("c"), 3);
-    assert.equal(await obj.get2("x"), undefined);
+    assert.equal(await obj.get("a"), 1);
+    assert.equal(await obj.get("b"), 2);
+    assert.equal(await obj.get("c"), 3);
+    assert.equal(await obj.get("x"), undefined);
 
     const keys = [];
     for await (const key of obj) {

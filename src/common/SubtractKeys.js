@@ -31,7 +31,7 @@ export default class SubtractKeys {
     }
   }
 
-  async get2(...keys) {
+  async get(...keys) {
     let originalValue = await ExplorableGraph.traverse(
       this[originalGraph],
       ...keys

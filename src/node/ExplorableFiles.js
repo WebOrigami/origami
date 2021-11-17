@@ -40,14 +40,12 @@ export default class ExplorableFiles {
   // step, this would prevent the path from entering dynamic subgraphs created
   // by mixins/subclasses of this class. So we only process one key at a time;
   // if we get an explorable result, we have it handle the rest of the path.
-  async get2(key) {
+  async get(key) {
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
-    if (!stats) {
-      return undefined;
-    }
-
-    return stats.isDirectory()
+    return !stats
+      ? undefined
+      : stats.isDirectory()
       ? this.constructSubgraph({ dirname: objPath })
       : await fs.readFile(objPath);
   }
@@ -139,7 +137,7 @@ export default class ExplorableFiles {
       // .json or .yaml; in that case, let the next condition write out the
       // graph as a JSON or YAML file.
       for await (const subKey of value) {
-        const subValue = await value.get2(subKey);
+        const subValue = await value.get(subKey);
         await this.set(...args, subKey, subValue);
       }
     } else {

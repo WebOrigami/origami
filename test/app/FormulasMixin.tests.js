@@ -11,8 +11,8 @@ describe("FormulasMixin", () => {
       "{x}.txt": "Default text",
       "a.txt": "Specific text",
     });
-    assert.equal(await fixture.get2("a.txt"), "Specific text");
-    assert.equal(await fixture.get2("b.txt"), "Default text");
+    assert.equal(await fixture.get("a.txt"), "Specific text");
+    assert.equal(await fixture.get("b.txt"), "Default text");
   });
 
   it("matches extensions", async () => {
@@ -20,10 +20,10 @@ describe("FormulasMixin", () => {
       "{x}.html": "html",
       "{y}": "no extension",
     });
-    assert.equal(await fixture.get2("foo.html"), "html");
-    assert.equal(await fixture.get2("bar.baz.html"), "html");
-    assert.equal(await fixture.get2("foo.json"), undefined); // Has extension
-    assert.equal(await fixture.get2("foo"), "no extension");
+    assert.equal(await fixture.get("foo.html"), "html");
+    assert.equal(await fixture.get("bar.baz.html"), "html");
+    assert.equal(await fixture.get("foo.json"), undefined); // Has extension
+    assert.equal(await fixture.get("foo"), "no extension");
   });
 
   it("can compute keys for variable patterns", async () => {
@@ -54,7 +54,7 @@ describe("FormulasMixin", () => {
       "a = b": "",
       b: "Hello",
     });
-    assert.equal(await fixture.get2("a"), "Hello");
+    assert.equal(await fixture.get("a"), "Hello");
   });
 
   it("first formula that returns a defined value is used", async () => {
@@ -65,23 +65,23 @@ describe("FormulasMixin", () => {
       b: () => undefined,
       c: "Hello",
     });
-    assert.equal(await fixture.get2("a"), "Hello");
+    assert.equal(await fixture.get("a"), "Hello");
   });
 
   it("can define assignments to variables", async () => {
     const fixture = new FormulasObject({
       "{name} = 'FOO'": "",
     });
-    assert.equal(await fixture.get2("alice"), "FOO");
-    assert.equal(await fixture.get2("bob"), "FOO");
+    assert.equal(await fixture.get("alice"), "FOO");
+    assert.equal(await fixture.get("bob"), "FOO");
   });
 
   it("can pass variable name to right-hand side", async () => {
     const fixture = new FormulasObject({
       "{name} = `Hello, ${name}.`": "",
     });
-    assert.deepEqual(await fixture.get2("Alice"), "Hello, Alice.");
-    assert.deepEqual(await fixture.get2("Bob"), "Hello, Bob.");
+    assert.deepEqual(await fixture.get("Alice"), "Hello, Alice.");
+    assert.deepEqual(await fixture.get("Bob"), "Hello, Bob.");
   });
 
   it("can pass bindings to subgraphs", async () => {

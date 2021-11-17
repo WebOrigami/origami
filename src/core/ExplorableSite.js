@@ -28,7 +28,7 @@ export default class ExplorableSite {
     }
   }
 
-  async get2(...keys) {
+  async get(...keys) {
     if (keys.length === 0) {
       return this;
     }

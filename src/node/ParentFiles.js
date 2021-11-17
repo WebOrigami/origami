@@ -11,7 +11,7 @@ export default class ParentFiles {
 
   // Walk up the folder hiearchy, returning the path for the closest file with
   // the given name.
-  async get2(key) {
+  async get(key) {
     let current = this.dirname;
     while (true) {
       const filePath = path.join(current, key);

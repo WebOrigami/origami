@@ -10,7 +10,7 @@ describe("ParentFiles", () => {
   it("looks up for a file that exists", async () => {
     const folder = path.join(fixturesDirectory, "folder1");
     const parentFiles = new ParentFiles(folder);
-    const configPath = await parentFiles.get2("test.config");
+    const configPath = await parentFiles.get("test.config");
     const expectedPath = path.join(fixturesDirectory, "test.config");
     assert(configPath, expectedPath);
   });
@@ -18,7 +18,7 @@ describe("ParentFiles", () => {
   it("returns undefined for a file that doesn't exist", async () => {
     const folder = path.join(fixturesDirectory, "folder1");
     const parentFiles = new ParentFiles(folder);
-    const configPath = await parentFiles.get2("doesnotexist");
+    const configPath = await parentFiles.get("doesnotexist");
     assert.isUndefined(configPath);
   });
 });

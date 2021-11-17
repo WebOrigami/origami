@@ -39,7 +39,7 @@ export default class Cache {
     }
   }
 
-  async get2(...keys) {
+  async get(...keys) {
     const cachedValue = await ExplorableGraph.traverse(this.cache, ...keys);
     if (cachedValue !== undefined) {
       // Cache hit

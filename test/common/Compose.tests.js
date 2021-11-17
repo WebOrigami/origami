@@ -17,10 +17,10 @@ describe("Compose", () => {
     );
     const keys = await ExplorableGraph.keys(fixture);
     assert.deepEqual(keys, ["a", "c", "b", "d"]);
-    assert.equal(await fixture.get2("a"), 1);
-    assert.equal(await fixture.get2("b"), 2);
-    assert.equal(await fixture.get2("c"), 3);
-    assert.equal(await fixture.get2("d"), 4);
-    assert.equal(await fixture.get2("x"), undefined);
+    assert.equal(await fixture.get("a"), 1);
+    assert.equal(await fixture.get("b"), 2);
+    assert.equal(await fixture.get("c"), 3);
+    assert.equal(await fixture.get("d"), 4);
+    assert.equal(await fixture.get("x"), undefined);
   });
 });

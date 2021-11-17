@@ -21,7 +21,7 @@ export default function mapTypes(
       }
     },
 
-    async get2(key) {
+    async get(key) {
       const applyMap =
         path.extname(key).toLowerCase() === destinationExtensionLower;
       let value;
@@ -30,13 +30,13 @@ export default function mapTypes(
         // Use regular get to get the value to map.
         const basename = path.basename(key, destinationExtension);
         const sourceKey = `${basename}${sourceExtension}`;
-        value = await graph.get2(sourceKey);
+        value = await graph.get(sourceKey);
         value = value
           ? await fn.call(environment, value, sourceKey, key)
           : undefined;
       } else {
         // Not an extension we handle.
-        value = await graph.get2(key);
+        value = await graph.get(key);
       }
 
       if (value !== undefined && ExplorableGraph.isExplorable(value)) {

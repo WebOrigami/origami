@@ -15,7 +15,7 @@ async function main(...args) {
     await showUsage(scope);
     return;
   }
-  const defaultGraph = await scope.get2("defaultGraph");
+  const defaultGraph = await scope.get("defaultGraph");
   const graph = await defaultGraph();
 
   // Parse
@@ -50,7 +50,7 @@ async function main(...args) {
   }
 
   // Display the result.
-  const stdout = await scope.get2("stdout");
+  const stdout = await scope.get("stdout");
   await stdout(result);
 }
 

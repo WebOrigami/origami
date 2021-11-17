@@ -23,7 +23,7 @@ type Mixin<MixinMembers> = <T>(
 
 interface Explorable {
   [Symbol.asyncIterator](): AsyncIterableIterator<any>;
-  get2(...keys: any[]): Promise<any>;
+  get(...keys: any[]): Promise<any>;
 }
 
 interface Storable {

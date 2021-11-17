@@ -30,7 +30,7 @@ export default class ExplorableObject {
    *
    * @param {any} key
    */
-  async get2(key) {
+  async get(key) {
     let value = this.object[key];
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
       value = this.constructSubgraph({ object: value });
@@ -99,7 +99,7 @@ export default class ExplorableObject {
       const subgraph =
         subobject === this.object ? this : new ExplorableObject(subobject);
       for await (const subkey of value) {
-        const subvalue = await value.get2(subkey);
+        const subvalue = await value.get(subkey);
         await subgraph.set(subkey, subvalue);
       }
     } else if (value === undefined) {

@@ -1,5 +1,4 @@
 import DefaultPages from "../../app/DefaultPages.js";
-// import DefaultPagesMixin from "../../app/DefaultPagesMixin.js";
 import MetaMixin from "../../app/MetaMixin.js";
 import Compose from "../../common/Compose.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";

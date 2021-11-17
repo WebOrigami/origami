@@ -19,7 +19,7 @@ export default function steps(variant) {
       yield* stepNames;
     },
 
-    async get2(key) {
+    async get(key) {
       // TODO: Parse the key for real.
       const isFormula = key.includes("=");
       return isFormula ? "" : undefined;
