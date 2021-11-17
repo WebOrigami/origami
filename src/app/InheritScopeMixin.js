@@ -1,5 +1,6 @@
 import Compose from "../common/Compose.js";
 import builtins from "../eg/builtins.js";
+import { fallbackKey } from "./FallbackMixin.js";
 
 const scopeKey = Symbol("scope");
 
@@ -12,12 +13,15 @@ export default function InheritScopeMixin(Base) {
       this.scope = new Compose(this, builtins);
     }
 
-    constructSubgraph(dictionary) {
-      const subgraph = super.constructSubgraph(dictionary);
+    constructSubgraph(key, dictionary) {
+      const subgraph = super.constructSubgraph(key, dictionary);
 
-      // Compose the current graph onto the scope and set it as the scope for
-      // the subgraph.
-      subgraph.scope = new Compose(subgraph, this.scope);
+      // Fallback folders don't inherit scope.
+      if (key !== fallbackKey) {
+        // Compose the current graph onto the scope and set it as the scope for
+        // the subgraph.
+        subgraph.scope = new Compose(subgraph, this.scope);
+      }
 
       return subgraph;
     }

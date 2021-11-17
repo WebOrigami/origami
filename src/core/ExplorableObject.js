@@ -21,7 +21,7 @@ export default class ExplorableObject {
     }
   }
 
-  constructSubgraph(dictionary) {
+  constructSubgraph(key, dictionary) {
     return constructSubgraph(this.constructor, dictionary);
   }
 
@@ -33,7 +33,7 @@ export default class ExplorableObject {
   async get(key) {
     let value = this.object[key];
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
-      value = this.constructSubgraph({ object: value });
+      value = this.constructSubgraph(key, { object: value });
     }
     return value;
   }

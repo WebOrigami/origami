@@ -104,6 +104,7 @@ describe("MetaMixin", () => {
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       "+": {
         "greeting = message": "",
+        greeting: undefined,
       },
       message: "Hello",
       greeting: "Hello",

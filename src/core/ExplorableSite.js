@@ -29,7 +29,7 @@ export default class ExplorableSite {
     }
   }
 
-  constructSubgraph(dictionary) {
+  constructSubgraph(key, dictionary) {
     return constructSubgraph(this.constructor, dictionary);
   }
 
@@ -51,7 +51,7 @@ export default class ExplorableSite {
 
       if (response.redirected && response.url.endsWith("/")) {
         // Redirected to another explorable location.
-        return this.constructSubgraph({ url: response.url });
+        return this.constructSubgraph(key, { url: response.url });
       }
 
       let buffer = await response.arrayBuffer();

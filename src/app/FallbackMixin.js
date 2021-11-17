@@ -1,6 +1,6 @@
 import Compose from "../common/Compose.js";
 
-const fallbackKey = "+";
+export const fallbackKey = "+";
 const fallbacksGraph = Symbol("fallbacksGraph");
 const inheritedFallbacksGraph = Symbol("inheritedFallbacksGraph");
 

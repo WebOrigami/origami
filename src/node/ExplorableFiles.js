@@ -31,7 +31,7 @@ export default class ExplorableFiles {
     yield* names;
   }
 
-  constructSubgraph(dictionary) {
+  constructSubgraph(key, dictionary) {
     return constructSubgraph(this.constructor, dictionary);
   }
 
@@ -46,7 +46,7 @@ export default class ExplorableFiles {
     return !stats
       ? undefined
       : stats.isDirectory()
-      ? this.constructSubgraph({ dirname: objPath })
+      ? this.constructSubgraph(key, { dirname: objPath })
       : await fs.readFile(objPath);
   }
 
