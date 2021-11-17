@@ -10,6 +10,10 @@ export default class ExplorableFunction {
     yield* this.keys;
   }
 
+  constructSubgraph(dictionary) {
+    return constructSubgraph(this.constructor, dictionary);
+  }
+
   async get(key) {
     let value =
       key === undefined
@@ -18,7 +22,7 @@ export default class ExplorableFunction {
         ? this.fn(key)
         : this.fn.bind(this, key);
     if (value instanceof Function && !(value instanceof this.constructor)) {
-      value = constructSubgraph(this.constructor, { fn: value, keys: [] });
+      value = this.constructSubgraph({ fn: value, keys: [] });
     }
     return value;
   }
