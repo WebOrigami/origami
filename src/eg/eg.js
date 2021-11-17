@@ -3,20 +3,22 @@
 import process from "process";
 import execute from "../../src/eg/execute.js";
 import * as ops from "../../src/eg/ops.js";
+import Compose from "../common/Compose.js";
 import config from "./commands/config.js";
 import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
   // Set up
-  const scope = await config();
+  const baseScope = await config();
   const source = args.join(" ").trim();
   if (!source) {
-    await showUsage(scope);
+    await showUsage(baseScope);
     return;
   }
-  const defaultGraph = await scope.get("defaultGraph");
+  const defaultGraph = await baseScope.get("defaultGraph");
   const graph = await defaultGraph();
+  const scope = new Compose(graph, baseScope);
 
   // Parse
   const parsed = parse.expression(source);
@@ -50,7 +52,7 @@ async function main(...args) {
   }
 
   // Display the result.
-  const stdout = await scope.get("stdout");
+  const stdout = await baseScope.get("stdout");
   await stdout(result);
 }
 
