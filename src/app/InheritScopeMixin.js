@@ -21,19 +21,6 @@ export default function InheritScopeMixin(Base) {
       return subgraph;
     }
 
-    // async get(...keys) {
-    //   const value = await super.get(...keys);
-
-    //   // Does the result accept a scope?
-    //   if (value instanceof Object && "scope" in value) {
-    //     // Compose the current graph onto the scope and set it
-    //     // as the scope for the result.
-    //     value.scope = new Compose(value, this.scope);
-    //   }
-
-    //   return value;
-    // }
-
     get scope() {
       return this[scopeKey];
     }

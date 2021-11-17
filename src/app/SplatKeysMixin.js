@@ -16,7 +16,7 @@ export default function SplatKeysMixin(Base) {
       for await (const key of super[Symbol.asyncIterator]()) {
         if (isSplatKey(key)) {
           if (this[splatGraphsKey][key] === undefined) {
-            const splatValue = await super.get(key);
+            const splatValue = await super.get2(key);
             this[splatGraphsKey][key] = ExplorableGraph.isExplorable(splatValue)
               ? splatValue
               : ExplorableGraph.from(splatValue);
@@ -29,8 +29,8 @@ export default function SplatKeysMixin(Base) {
       }
     }
 
-    async get(...keys) {
-      const value = await super.get(...keys);
+    async get2(key) {
+      const value = await super.get2(key);
       if (value !== undefined) {
         return value;
       }
@@ -44,7 +44,7 @@ export default function SplatKeysMixin(Base) {
       }
       for (const splatGraphKeys in this[splatGraphsKey]) {
         const splatGraph = this[splatGraphsKey][splatGraphKeys];
-        const innerValue = await splatGraph.get(...keys);
+        const innerValue = await splatGraph.get2(key);
         if (innerValue !== undefined) {
           return innerValue;
         }

@@ -23,8 +23,8 @@ export default class MapGraph {
   }
 
   // Apply the mapping function to the original graph's values.
-  async get(...keys) {
-    const value = await this[graphKey].get(...keys);
+  async get2(key) {
+    const value = await this[graphKey].get2(key);
     return ExplorableGraph.isExplorable(value)
       ? new MapGraph(value, this[mapFnKey]) // Return mapped subgraph
       : value !== undefined

@@ -66,7 +66,4 @@ export default class ExplorableSite {
       return buffer;
     }
   }
-  async get(...keys) {
-    return await this.get2(...keys);
-  }
 }

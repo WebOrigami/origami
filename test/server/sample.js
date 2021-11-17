@@ -8,7 +8,7 @@ export default {
     yield* routes;
   },
 
-  async get(key) {
+  async get2(key) {
     switch (key) {
       case "index.html":
         return letters

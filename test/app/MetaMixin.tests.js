@@ -41,7 +41,7 @@ describe("MetaMixin", () => {
   });
 
   it("can return an object", async () => {
-    const value = await metaGraph.get("obj");
+    const value = await metaGraph.get2("obj");
     assert.deepEqual(await ExplorableGraph.plain(value), {
       a: "Hello, a.",
       b: "Hello, b.",
@@ -50,37 +50,42 @@ describe("MetaMixin", () => {
   });
 
   it("can get the value of a virtual key", async () => {
-    const s = await metaGraph.get("string");
+    const s = await metaGraph.get2("string");
     assert.equal(s.trim(), `"Hello, world."`);
   });
 
   it("can produce a value using a function", async () => {
-    const value = await metaGraph.get("value");
+    const value = await metaGraph.get2("value");
     assert.equal(value, "Hello, world.");
   });
 
   it("can generate a value by calling a function exported by a module", async () => {
-    const value = await metaGraph.get("sample.txt");
+    const value = await metaGraph.get2("sample.txt");
     assert.equal(value, "Hello, world.");
   });
 
   it("can pass an argument to a function", async () => {
-    const greeting = await metaGraph.get("greeting");
+    const greeting = await metaGraph.get2("greeting");
     assert.equal(greeting, "Hello, world.");
   });
 
   it("Can navigate into a dynamic graph", async () => {
     const graph = new (MetaMixin(ExplorableFiles))(fixturesDirectory);
-    const subgraph = await graph.get("subgraph");
+    const subgraph = await graph.get2("subgraph");
     assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
-    assert.equal(await subgraph.get("a"), "Hello, a.");
+    assert.equal(await subgraph.get2("a"), "Hello, a.");
   });
 
   it.skip("can handle nested wildcard folders", async () => {
     const graph = new (MetaMixin(ExplorableFiles))(
       path.join(fixturesDirectory, "wildcardFolders")
     );
-    const indexHtml = await graph.get("2000", "01", "index.html");
+    const indexHtml = await ExplorableGraph.traverse(
+      graph,
+      "2000",
+      "01",
+      "index.html"
+    );
     assert.equal(indexHtml, "Hello, world.\n");
   });
 });

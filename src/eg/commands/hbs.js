@@ -60,7 +60,7 @@ async function getPartials(graph, template) {
     if (!graph) {
       throw `A Handlebars template references partials (${partialKeys}), but no graph was provided in which to search for them.`;
     }
-    const partialPromises = partialKeys.map(async (name) => graph.get(name));
+    const partialPromises = partialKeys.map(async (name) => graph.get2(name));
     const partialValues = await Promise.all(partialPromises);
     partialValues.forEach((value, index) => {
       partials[partialNames[index]] = value;

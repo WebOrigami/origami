@@ -33,7 +33,4 @@ export default class Compose {
     }
     return undefined;
   }
-  async get(...keys) {
-    return await ExplorableGraph.traverse(this, ...keys);
-  }
 }

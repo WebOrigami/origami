@@ -4,7 +4,7 @@ export default async function showUsage(commands) {
   // Gather usages.
   const usages = [];
   for await (const key of commands) {
-    const command = await commands.get(key);
+    const command = await commands.get2(key);
     let usage = command?.usage;
     if (!usage) {
       usage = typeof command === "function" ? defaultUsage(key, command) : key;

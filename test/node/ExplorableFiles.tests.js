@@ -20,7 +20,7 @@ describe("ExplorableFiles", () => {
       "c.txt",
       "more",
     ]);
-    const more = await files.get("more");
+    const more = await files.get2("more");
     assert.deepEqual(await ExplorableGraph.keys(more), ["d.txt", "e.txt"]);
   });
 
@@ -42,14 +42,14 @@ describe("ExplorableFiles", () => {
   it("Can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
-    const file = await files.get("a.txt");
+    const file = await files.get2("a.txt");
     assert.equal(String(file), "The letter A");
   });
 
   it("Can traverse a path of keys in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new ExplorableFiles(directory);
-    const file = await files.get("more", "e.txt");
+    const file = await ExplorableGraph.traverse(files, "more", "e.txt");
     assert.equal(String(file), "The letter E");
   });
 

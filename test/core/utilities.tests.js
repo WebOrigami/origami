@@ -42,8 +42,8 @@ describe("utilities", () => {
   it("applyMixinToObject applies the same mixin to explorable results", async () => {
     function UppercaseMixin(Base) {
       return class Uppercase extends Base {
-        async get(...keys) {
-          const value = await super.get(...keys);
+        async get2(key) {
+          const value = await super.get2(key);
           return ExplorableGraph.isExplorable(value)
             ? value
             : value.toUpperCase();
@@ -57,9 +57,9 @@ describe("utilities", () => {
       },
     });
     const mixed = utilities.applyMixinToObject(UppercaseMixin, graph);
-    assert.equal(await mixed.get("a"), "A");
-    const mixedMore = await mixed.get("more");
-    assert.equal(await mixedMore.get("b"), "B");
+    assert.equal(await mixed.get2("a"), "A");
+    const mixedMore = await mixed.get2("more");
+    assert.equal(await mixedMore.get2("b"), "B");
   });
 
   it("extractFrontMatter() returns front matter if found", () => {

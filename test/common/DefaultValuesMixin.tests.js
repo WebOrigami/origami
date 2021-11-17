@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("DefaultValuesMixin", () => {
+describe.skip("DefaultValuesMixin", () => {
   it("provides default values for missing keys at any point in graph", async () => {
     const graph = new (DefaultValuesMixin(ExplorableObject))({
       a: 1,
@@ -20,11 +20,11 @@ describe("DefaultValuesMixin", () => {
     // Default values don't show up in keys
     assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "more"]);
 
-    assert.equal(await graph.get("a"), 1);
-    assert.equal(await graph.get("b"), 2); // Respects main graph
-    assert.equal(await graph.get("d"), 5); // Default
-    assert.equal(await graph.get("more", "b"), 4); // Default
-    assert.equal(await graph.get("more", "c"), 3);
-    assert.equal(await graph.get("more", "d"), 5); // Default
+    assert.equal(await graph.get2("a"), 1);
+    assert.equal(await graph.get2("b"), 2); // Respects main graph
+    assert.equal(await graph.get2("d"), 5); // Default
+    assert.equal(await ExplorableGraph.traverse(graph, "more", "b"), 4); // Default
+    assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
+    assert.equal(await ExplorableGraph.traverse(graph, "more", "d"), 5); // Default
   });
 });

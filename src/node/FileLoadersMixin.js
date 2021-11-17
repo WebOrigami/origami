@@ -21,11 +21,10 @@ export default function FileLoadersMixin(Base) {
       this.loaders = defaultLoaders;
     }
 
-    async get(...keys) {
-      let value = await super.get(...keys);
-      const lastKey = keys[keys.length - 1];
-      if (lastKey !== undefined && value instanceof Buffer) {
-        const extname = path.extname(lastKey).toLowerCase();
+    async get2(key) {
+      let value = await super.get2(key);
+      if (value instanceof Buffer) {
+        const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
           return loader(value);

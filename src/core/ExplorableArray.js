@@ -1,4 +1,3 @@
-import ExplorableGraph from "./ExplorableGraph.js";
 import { constructSubgraph } from "./utilities.js";
 
 export default class ExplorableArray {
@@ -19,8 +18,5 @@ export default class ExplorableArray {
       value = constructSubgraph(this.constructor, { array: value });
     }
     return value;
-  }
-  async get(...keys) {
-    return await ExplorableGraph.traverse(this, ...keys);
   }
 }

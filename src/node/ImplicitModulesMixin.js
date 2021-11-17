@@ -1,21 +1,18 @@
 export default function ImplicitModulesMixin(Base) {
   return class ImplicitModules extends Base {
-    async get(...keys) {
-      const value = await super.get(...keys);
+    async get2(key) {
+      const value = await super.get2(key);
       if (value !== undefined) {
         return value;
       }
 
       // See if we have a JS module for the requested key.
-      const lastKey = keys.pop();
-      if (lastKey.endsWith(".js")) {
+      if (key.endsWith(".js")) {
         return undefined;
       }
 
-      const moduleKey = `${lastKey}.js`;
-      keys.push(moduleKey);
-
-      return this.import?.(...keys);
+      const moduleKey = `${key}.js`;
+      return this.import?.(moduleKey);
     }
   };
 }

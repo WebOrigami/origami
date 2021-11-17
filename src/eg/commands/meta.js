@@ -4,7 +4,7 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { applyMixinToObject } from "../../core/utilities.js";
 import config from "./config.js";
 
-export default async function meta(variant = this.graph, ...path) {
+export default async function meta(variant = this.graph, ...keys) {
   const graph = ExplorableGraph.from(variant);
 
   const meta = applyMixinToObject(MetaMixin, graph);
@@ -12,7 +12,8 @@ export default async function meta(variant = this.graph, ...path) {
   const baseScope = this?.scope ?? (await config());
   meta.scope = new Compose(meta, baseScope);
 
-  const result = path.length > 0 ? await meta.get(...path) : meta;
+  const result =
+    keys.length > 0 ? await ExplorableGraph.traverse(meta, ...keys) : meta;
   return result;
 }
 

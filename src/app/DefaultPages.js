@@ -26,9 +26,9 @@ export default class DefaultPages {
     yield* this.graph[Symbol.asyncIterator]();
   }
 
-  async get(...keys) {
+  async get2(...keys) {
     // Try main graph first.
-    let value = await this.graph.get(...keys);
+    let value = await this.graph.get2(...keys);
     if (value !== undefined) {
       return value;
     }
@@ -40,7 +40,7 @@ export default class DefaultPages {
     }
 
     // See if we have a default value for this last key.
-    const defaultValue = await this.defaults.get(lastKey);
+    const defaultValue = await this.defaults.get2(lastKey);
     if (!(defaultValue instanceof Function)) {
       // Either we have a fixed default value, or we don't have a default. In
       // either case, return that.
@@ -49,7 +49,7 @@ export default class DefaultPages {
 
     // We have a default value function; give it the subgraph to work on.
     let subgraph =
-      keys.length === 0 ? this.graph : await this.graph.get(...keys);
+      keys.length === 0 ? this.graph : await this.graph.get2(...keys);
     if (subgraph === undefined) {
       return undefined; // Can't find subgraph.
     }

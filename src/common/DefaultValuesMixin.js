@@ -22,9 +22,9 @@ export default function DefaultValuesMixin(Base) {
       this[defaultsKey] = ExplorableGraph.from(defaults);
     }
 
-    async get(...keys) {
+    async get2(...keys) {
       // Try main graph first.
-      let value = await super.get(...keys);
+      let value = await super.get2(...keys);
       if (value !== undefined || this.defaults === null) {
         return value;
       }
@@ -36,7 +36,7 @@ export default function DefaultValuesMixin(Base) {
       }
 
       // See if we have a default value for this last key.
-      const defaultValue = await this.defaults.get(lastKey);
+      const defaultValue = await this.defaults.get2(lastKey);
       if (!(defaultValue instanceof Function)) {
         // Either we have a fixed default value, or we don't have a default. In
         // either case, return that.
@@ -44,7 +44,7 @@ export default function DefaultValuesMixin(Base) {
       }
 
       // We have a default value function; give it the subgraph to work on.
-      let subgraph = keys.length === 0 ? this : await this.get(...keys);
+      let subgraph = keys.length === 0 ? this : await this.get2(...keys);
       if (subgraph === undefined) {
         return undefined; // Can't find subgraph.
       }

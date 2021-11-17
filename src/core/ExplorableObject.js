@@ -25,21 +25,17 @@ export default class ExplorableObject {
     return constructSubgraph(this.constructor, dictionary);
   }
 
+  /**
+   * Return the value for the given key.
+   *
+   * @param {any} key
+   */
   async get2(key) {
     let value = this.object[key];
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
       value = this.constructSubgraph({ object: value });
     }
     return value;
-  }
-
-  /**
-   * Return the value at the corresponding path of keys.
-   *
-   * @param {...any} keys
-   */
-  async get(...keys) {
-    return await ExplorableGraph.traverse(this, ...keys);
   }
 
   async isKeyExplorable(key) {
@@ -103,7 +99,7 @@ export default class ExplorableObject {
       const subgraph =
         subobject === this.object ? this : new ExplorableObject(subobject);
       for await (const subkey of value) {
-        const subvalue = await value.get(subkey);
+        const subvalue = await value.get2(subkey);
         await subgraph.set(subkey, subvalue);
       }
     } else if (value === undefined) {

@@ -9,7 +9,7 @@ describe("FileLoadersMixin", () => {
       "bar.txt": 1, // should be cast to a string
     });
 
-    assert.equal(await graph.get("foo"), 1);
-    assert.equal(await graph.get("bar.txt"), "1");
+    assert.equal(await graph.get2("foo"), 1);
+    assert.equal(await graph.get2("bar.txt"), "1");
   });
 });

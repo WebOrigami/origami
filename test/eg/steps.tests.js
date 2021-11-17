@@ -22,6 +22,6 @@ describe("steps", () => {
       greet: (x) => `Hello, ${x}.`,
       uppercase: (x) => x.toUpperCase(),
     });
-    assert.equal(await meta.get("Step3"), "Hello, WORLD.");
+    assert.equal(await meta.get2("Step3"), "Hello, WORLD.");
   });
 });

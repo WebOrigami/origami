@@ -2,8 +2,8 @@ export async function get(key) {
   // We handle "." and ".." as a special cases that prefer the graph over the
   // scope.
   return key === "." || key === ".."
-    ? await this.graph.get(key)
-    : await this.scope.get(key);
+    ? await this.graph.get2(key)
+    : await this.scope.get2(key);
 }
 get.toString = () => "«ops.get»";
 

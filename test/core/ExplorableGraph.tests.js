@@ -18,47 +18,11 @@ describe("ExplorableGraph", () => {
     });
   });
 
-  it("traverse() a path of keys", async () => {
-    const obj = new ExplorableObject({
-      a1: 1,
-      a2: {
-        b1: 2,
-        b2: {
-          c1: 3,
-          c2: 4,
-        },
-      },
-    });
-    assert.equal(await ExplorableGraph.traverse(obj), obj);
-    assert.equal(await ExplorableGraph.traverse(obj, "a1"), 1);
-    assert.equal(await ExplorableGraph.traverse(obj, "a2", "b2", "c2"), 4);
-    assert.equal(
-      await ExplorableGraph.traverse(obj, "a2", "doesntexist", "c2"),
-      undefined
-    );
-  });
-
-  it("traverse() from one explorable into another", async () => {
-    const obj = new ExplorableObject({
-      a1: {
-        a2: new ExplorableObject({
-          b1: {
-            b2: 1,
-          },
-        }),
-      },
-    });
-    assert.equal(
-      await ExplorableGraph.traverse(obj, "a1", "a2", "b1", "b2"),
-      1
-    );
-  });
-
   it("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 
     const missingIterator = {
-      async get() {},
+      async get2() {},
     };
     assert(!ExplorableGraph.isExplorable(missingIterator));
 
@@ -69,7 +33,7 @@ describe("ExplorableGraph", () => {
 
     const graph = {
       async *[Symbol.asyncIterator]() {},
-      async get() {},
+      async get2() {},
     };
     assert(ExplorableGraph.isExplorable(graph));
   });
@@ -140,5 +104,41 @@ c: Hello, c.`;
     const graph = new ExplorableObject({ a: "Hello, a." });
     const yaml = await ExplorableGraph.toYaml(graph);
     assert.equal(yaml, `a: Hello, a.\n`);
+  });
+
+  it("traverse() a path of keys", async () => {
+    const obj = new ExplorableObject({
+      a1: 1,
+      a2: {
+        b1: 2,
+        b2: {
+          c1: 3,
+          c2: 4,
+        },
+      },
+    });
+    assert.equal(await ExplorableGraph.traverse(obj), obj);
+    assert.equal(await ExplorableGraph.traverse(obj, "a1"), 1);
+    assert.equal(await ExplorableGraph.traverse(obj, "a2", "b2", "c2"), 4);
+    assert.equal(
+      await ExplorableGraph.traverse(obj, "a2", "doesntexist", "c2"),
+      undefined
+    );
+  });
+
+  it("traverse() from one explorable into another", async () => {
+    const obj = new ExplorableObject({
+      a1: {
+        a2: new ExplorableObject({
+          b1: {
+            b2: 1,
+          },
+        }),
+      },
+    });
+    assert.equal(
+      await ExplorableGraph.traverse(obj, "a1", "a2", "b1", "b2"),
+      1
+    );
   });
 });

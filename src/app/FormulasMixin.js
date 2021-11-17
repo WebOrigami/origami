@@ -1,4 +1,3 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import Formula from "./Formula.js";
 
 const bindingsKey = Symbol("bindings");
@@ -71,13 +70,12 @@ export default function FormulasMixin(Base) {
       return this[formulasKey];
     }
 
-    async get(...keys) {
+    async get2(key) {
       // See if real value exists.
-      let value = await super.get(...keys);
+      let value = await super.get2(key);
 
       if (value === undefined) {
         // No real value defined; try our formulas.
-        const [key, ...rest] = keys;
         const formulas = await this.formulas();
         for (const formula of formulas) {
           const keyBinding = formula.unify(key);
@@ -98,15 +96,6 @@ export default function FormulasMixin(Base) {
             if (value instanceof Object && "bindings" in value) {
               // Give the subgraph our complete bindings.
               value.bindings = bindings;
-            }
-
-            if (rest.length > 0) {
-              // If there are more keys to get, do that.
-              value = ExplorableGraph.canCastToExplorable(value)
-                ? await ExplorableGraph.from(value).get(...rest)
-                : typeof value === "function"
-                ? value(...rest)
-                : undefined;
             }
 
             if (value !== undefined) {

@@ -39,19 +39,20 @@ export default class Cache {
     }
   }
 
-  async get(...keys) {
-    const cachedValue = await this.cache.get(...keys);
+  async get2(...keys) {
+    const cachedValue = await ExplorableGraph.traverse(this.cache, ...keys);
     if (cachedValue !== undefined) {
       // Cache hit
       return cachedValue;
     }
 
     // Cache miss
-    const value = await this.graph.get(...keys);
+    const value = await ExplorableGraph.traverse(this.graph, ...keys);
     if (value !== undefined) {
       // Does this key match the filter?
       const matches =
-        this.filter === undefined || (await this.filter.get(...keys));
+        this.filter === undefined ||
+        (await ExplorableGraph.traverse(this.filter, ...keys));
       if (matches) {
         // Save in cache before returning.
         await this.cache.set(...keys, value);

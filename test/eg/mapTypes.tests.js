@@ -33,6 +33,9 @@ describe("mapTypes", () => {
       },
       file2: "won't be mapped",
     });
-    assert.equal(await mapped.get("file1.json", "data"), "Hello, a.");
+    assert.equal(
+      await ExplorableGraph.traverse(mapped, "file1.json", "data"),
+      "Hello, a."
+    );
   });
 });

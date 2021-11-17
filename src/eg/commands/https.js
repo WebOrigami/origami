@@ -1,9 +1,10 @@
+import ExplorableGraph from "../../core/ExplorableGraph.js";
 import ExplorableSite from "../../core/ExplorableSite.js";
 
 export default async function https() {
   return async function (domain, ...keys) {
     const site = new ExplorableSite(`https://${domain}`);
-    return await site.get(...keys);
+    return await ExplorableGraph.traverse(site, ...keys);
   };
 }
 

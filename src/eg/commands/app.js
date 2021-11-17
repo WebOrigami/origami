@@ -13,7 +13,9 @@ export default async function app(variant = this.graph, ...keys) {
   const baseScope = this?.scope ?? (await config());
   meta.scope = new Compose(meta, baseScope);
   const result = new DefaultPages(meta);
-  return keys.length > 0 ? await result.get(...keys) : result;
+  return keys.length > 0
+    ? await ExplorableGraph.traverse(result, ...keys)
+    : result;
 }
 
 app.usage = `app()\tAn explorable application graph for the current directory`;

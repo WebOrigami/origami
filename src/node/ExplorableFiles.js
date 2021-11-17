@@ -51,9 +51,6 @@ export default class ExplorableFiles {
       ? this.constructSubgraph({ dirname: objPath })
       : await fs.readFile(objPath);
   }
-  async get(...keys) {
-    return await ExplorableGraph.traverse(this, ...keys);
-  }
 
   async import(...keys) {
     const filePath = path.join(this.dirname, ...keys);
@@ -142,7 +139,7 @@ export default class ExplorableFiles {
       // .json or .yaml; in that case, let the next condition write out the
       // graph as a JSON or YAML file.
       for await (const subKey of value) {
-        const subValue = await value.get(subKey);
+        const subValue = await value.get2(subKey);
         await this.set(...args, subKey, subValue);
       }
     } else {

@@ -14,7 +14,7 @@ export default async function make(virtual, destination) {
   destination = destination
     ? ExplorableGraph.from(destination)
     : await files.call(this);
-  // const cleanGraph = await destination.get(".eg.clean.yaml");
+  // const cleanGraph = await destination.get2(".eg.clean.yaml");
   // const built = cleanGraph ? ExplorableGraph.from(cleanGraph) : null;
   // const real = built ? new SubtractKeys(destination, built) : destination;
   const real = destination;

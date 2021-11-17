@@ -59,7 +59,7 @@ export default class ExplorableGraph {
   static isExplorable(obj) {
     return (
       typeof obj?.[Symbol.asyncIterator] === "function" &&
-      typeof obj?.get === "function"
+      typeof obj?.get2 === "function"
     );
   }
 
@@ -80,7 +80,7 @@ export default class ExplorableGraph {
     if (graph.isKeyExplorable) {
       return await graph.isKeyExplorable(key);
     }
-    const value = graph.get(key);
+    const value = graph.get2(key);
     return this.isExplorable(value);
   }
 
@@ -108,7 +108,7 @@ export default class ExplorableGraph {
     const graph = this.from(variant);
     const result = {};
     for await (const key of graph) {
-      const value = await graph.get(key);
+      const value = await graph.get2(key);
       result[String(key)] = ExplorableGraph.isExplorable(value)
         ? await this.plain(value) // Traverse into explorable value.
         : value;
@@ -123,7 +123,12 @@ export default class ExplorableGraph {
    */
   static toFunction(variant) {
     const graph = this.from(variant);
-    return graph.get.bind(graph);
+    return graph.get2.bind(graph);
+  }
+
+  static async toJson(variant) {
+    const serializable = await this.toSerializable(variant);
+    return JSON.stringify(serializable, null, 2);
   }
 
   /**
@@ -137,11 +142,6 @@ export default class ExplorableGraph {
   static async toSerializable(variant) {
     const serializable = new MapGraph(variant, toSerializable);
     return this.plain(serializable);
-  }
-
-  static async toJson(variant) {
-    const serializable = await this.toSerializable(variant);
-    return JSON.stringify(serializable, null, 2);
   }
 
   static async toYaml(variant) {
@@ -187,7 +187,7 @@ export default class ExplorableGraph {
     const graph = this.from(variant);
     const result = [];
     for await (const key of graph) {
-      result.push(await graph.get(key));
+      result.push(await graph.get2(key));
     }
     return result;
   }

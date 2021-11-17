@@ -31,9 +31,15 @@ export default class SubtractKeys {
     }
   }
 
-  async get(...keys) {
-    let originalValue = await this[originalGraph].get(...keys);
-    const removeValue = await this[removeGraph].get(...keys);
+  async get2(...keys) {
+    let originalValue = await ExplorableGraph.traverse(
+      this[originalGraph],
+      ...keys
+    );
+    const removeValue = await ExplorableGraph.traverse(
+      this[removeGraph],
+      ...keys
+    );
     if (ExplorableGraph.isExplorable(originalValue)) {
       if (ExplorableGraph.isExplorable(removeValue)) {
         originalValue = new SubtractKeys(originalValue, removeValue);
