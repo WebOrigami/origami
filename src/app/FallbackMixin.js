@@ -1,6 +1,8 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { applyMixinToObject } from "../core/utilities.js";
 import ComposeFallbacks from "./ComposeFallbacks.js";
+import FormulasMixin from "./FormulasMixin.js";
 
 export const fallbackKey = "+";
 const fallbacksGraph = Symbol("fallbacksGraph");
@@ -59,11 +61,12 @@ export default function FallbackMixin(Base) {
     async get(key) {
       let result = await super.get(key);
       if (result !== undefined) {
-        if (
-          key !== fallbackKey &&
-          result instanceof Object &&
-          "inheritedFallbacks" in result
-        ) {
+        if (key !== fallbackKey && ExplorableGraph.isExplorable(result)) {
+          if (!("inheritedFallbacks" in result)) {
+            // Wrap result with FormulaMixin/FallbackMixin so we can give it fallbacks.
+            const Mixin = (Base) => FormulasMixin(FallbackMixin(Base));
+            result = applyMixinToObject(Mixin, result);
+          }
           result.inheritedFallbacks = await this.fallbacks();
         }
         return result;
