@@ -81,11 +81,14 @@ export function extractFrontMatter(text) {
   const match = regex.exec(text);
   if (match) {
     const { front, content } = /** @type {any} */ (match).groups;
-    const data = YAML.parse(front);
-    data.content = content;
-    return data;
+    const frontMatter = YAML.parse(front);
+    return { frontMatter, content };
+  } else {
+    return {
+      frontMatter: null,
+      content: text,
+    };
   }
-  return null;
 }
 
 /**

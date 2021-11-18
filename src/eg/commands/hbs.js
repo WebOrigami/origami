@@ -1,20 +1,25 @@
 import Handlebars from "handlebars";
 import YAML from "yaml";
-import FormulasObject from "../../app/FormulasObject.js";
+import FormulasMixin from "../../app/FormulasMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { extractFrontMatter, isPlainObject } from "../../core/utilities.js";
+import {
+  applyMixinToObject,
+  extractFrontMatter,
+  isPlainObject,
+} from "../../core/utilities.js";
 import config from "./config.js";
 
 export default async function hbs(template, input) {
   template = String(template);
   if (!input) {
     // See if template defines front matter.
-    const frontMatter = extractFrontMatter(template);
-    if (frontMatter) {
-      input = new FormulasObject(frontMatter);
+    const { frontMatter, content } = extractFrontMatter(template);
+    if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
+      const frontGraph = ExplorableGraph.from(frontMatter);
+      input = applyMixinToObject(FormulasMixin, frontGraph);
       input.scope = await config();
       input.context = this?.graph;
-      template = frontMatter.content;
+      template = content;
     } else if (arguments.length === 2) {
       // Caller explicitly passed in `undefined` as the input argument,
       // and there's no frontmatter. Most likely the input parameter is
