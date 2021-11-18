@@ -13,11 +13,17 @@ export default function mapTypes(
   const environment = this;
   return {
     async *[Symbol.asyncIterator]() {
+      const keys = new Set();
       for await (const key of graph) {
         const extension = path.extname(key);
-        yield extension.toLowerCase() === sourceExtensionLower
-          ? `${path.basename(key, extension)}${destinationExtension}`
-          : key;
+        const mappedKey =
+          extension.toLowerCase() === sourceExtensionLower
+            ? `${path.basename(key, extension)}${destinationExtension}`
+            : key;
+        if (!keys.has(mappedKey)) {
+          keys.add(mappedKey);
+          yield mappedKey;
+        }
       }
     },
 
