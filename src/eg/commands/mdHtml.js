@@ -10,7 +10,7 @@ marked.setOptions({
 });
 
 export default async function mdHtml(markdown) {
-  return marked(String(markdown));
+  return markdown ? marked(String(markdown)) : undefined;
 }
 
 mdHtml.usage = `mdHtml(markdown)\tRender the markdown text as HTML`;
