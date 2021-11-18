@@ -64,7 +64,7 @@ export default function FormulasMixin(Base) {
         this[formulasKey] = [];
         for await (const key of super[Symbol.asyncIterator]()) {
           // Try to parse the key as a formula.
-          const formula = Formula.parse(key);
+          const formula = Formula.parse(String(key));
           if (formula) {
             // Successfully parsed key as a formula.
             this[formulasKey].push(formula);
