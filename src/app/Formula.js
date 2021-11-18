@@ -58,7 +58,7 @@ export default class Formula {
   }
 }
 
-class ConstantFormula extends Formula {
+export class ConstantFormula extends Formula {
   addImpliedKeys(keys) {
     // Constant formulas add the name of the constant they define.
     keys.add(this.key);
@@ -69,7 +69,7 @@ class ConstantFormula extends Formula {
   }
 }
 
-class VariableFormula extends Formula {
+export class VariableFormula extends Formula {
   variable;
   extension;
   antecedents;

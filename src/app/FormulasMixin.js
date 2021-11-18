@@ -1,4 +1,8 @@
-import Formula from "./Formula.js";
+import {
+  ConstantFormula,
+  default as Formula,
+  VariableFormula,
+} from "./Formula.js";
 
 const bindingsKey = Symbol("bindings");
 const contextKey = Symbol("context");
@@ -75,7 +79,22 @@ export default function FormulasMixin(Base) {
             this[formulasKey].push(...fallbackFormulas);
           }
         }
+
+        // Sort constant formulas before variable formulas.
+        this[formulasKey].sort((a, b) => {
+          if (a instanceof ConstantFormula && b instanceof VariableFormula) {
+            return -1;
+          } else if (
+            b instanceof ConstantFormula &&
+            a instanceof VariableFormula
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
       }
+
       return this[formulasKey];
     }
 
