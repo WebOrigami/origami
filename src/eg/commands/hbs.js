@@ -60,18 +60,32 @@ function findPartialReferences(template) {
 }
 
 async function getPartials(scope, template) {
+  // Find the names of the partials used in the template.
   const partialNames = findPartialReferences(template);
+
+  // Map those to corresponding .hbs filenames.
   const partialKeys = partialNames.map((name) => `${name}.hbs`);
   let partials = {};
+
   if (partialKeys.length > 0) {
     if (!scope) {
       throw `A Handlebars template references partials (${partialKeys}), but no scope graph was provided in which to search for them.`;
     }
+
+    // Get the partials from the scope graph.
     const partialPromises = partialKeys.map(async (name) => scope.get(name));
     const partialValues = await Promise.all(partialPromises);
     partialValues.forEach((value, index) => {
       partials[partialNames[index]] = value;
     });
+
+    // The partials may themselves reference other partials; collect those too.
+    await Promise.all(
+      partialValues.map(async (value) => {
+        const nestedPartials = await getPartials(scope, value);
+        Object.assign(partials, nestedPartials);
+      })
+    );
   }
   return partials;
 }
