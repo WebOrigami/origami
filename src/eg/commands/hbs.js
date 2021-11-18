@@ -15,6 +15,12 @@ export default async function hbs(template, input) {
       input.scope = await config();
       input.context = this?.graph;
       template = frontMatter.content;
+    } else if (arguments.length === 2) {
+      // Caller explicitly passed in `undefined` as the input argument,
+      // and there's no frontmatter. Most likely the input parameter is
+      // a variable pattern that didn't match, in which case we define
+      // the template result as undefined.
+      return undefined;
     }
   }
 
