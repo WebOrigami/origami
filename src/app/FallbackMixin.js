@@ -13,14 +13,6 @@ export default function FallbackMixin(Base) {
       this[inheritedFallbacksGraph] = undefined;
     }
 
-    // async *[Symbol.asyncIterator]() {
-    //   yield* super[Symbol.asyncIterator]();
-    //   const fallbacks = await this.getFallbacks();
-    //   if (fallbacks) {
-    //     yield* fallbacks;
-    //   }
-    // }
-
     async fallbacks() {
       if (this[fallbacksGraph] === undefined) {
         const inherited = this.inheritedFallbacks;
