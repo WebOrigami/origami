@@ -59,7 +59,11 @@ export default function FallbackMixin(Base) {
     async get(key) {
       let result = await super.get(key);
       if (result !== undefined) {
-        if (key !== fallbackKey && result instanceof this.constructor) {
+        if (
+          key !== fallbackKey &&
+          result instanceof Object &&
+          "inheritedFallbacks" in result
+        ) {
           result.inheritedFallbacks = await this.fallbacks();
         }
         return result;

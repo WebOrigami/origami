@@ -100,10 +100,8 @@ export default function FormulasMixin(Base) {
         // come from fallbacks.
         const fallbacks = await this.fallbacks?.();
         if (fallbacks) {
-          const fallbackFormulas = await fallbacks.formulas?.();
-          if (fallbackFormulas) {
-            this[formulasKey].push(...fallbackFormulas);
-          }
+          const fallbackFormulas = (await fallbacks.formulas?.()) ?? [];
+          this[formulasKey].push(...fallbackFormulas);
         }
       }
 
