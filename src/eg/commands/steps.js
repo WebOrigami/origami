@@ -21,8 +21,9 @@ export default function steps(variant) {
 
     async get(key) {
       // TODO: Parse the key for real.
-      const isFormula = key.includes("=");
-      return isFormula ? "" : undefined;
+      const stepRegex = /^Step(\d+) =/;
+      const isStepKey = stepRegex.test(key);
+      return isStepKey ? "" : undefined;
     },
   };
 
