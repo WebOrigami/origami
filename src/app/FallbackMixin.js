@@ -15,11 +15,23 @@ export default function FallbackMixin(Base) {
 
     async fallbacks() {
       if (this[fallbacksGraph] === undefined) {
+        // Get inherited fallbacks.
         const inherited = this.inheritedFallbacks;
+
+        // Get local fallbacks.
+        let local;
         const fallbackVariant = await this.get(fallbackKey);
-        const local = fallbackVariant
-          ? ExplorableGraph.from(fallbackVariant)
-          : null;
+        if (fallbackVariant) {
+          local = ExplorableGraph.from(fallbackVariant);
+
+          // Add this folder to the local fallback's scope so that it can
+          // reference values inside this folder.
+          local.scope = local.scope
+            ? new Compose(this.scope, local.scope)
+            : this.scope;
+        }
+
+        // Merge as appropriate.
         let fallbacks;
         if (local && inherited) {
           fallbacks = new Compose(local, inherited);
@@ -30,6 +42,7 @@ export default function FallbackMixin(Base) {
         } else {
           fallbacks = null;
         }
+
         this[fallbacksGraph] = fallbacks;
       }
       return this[fallbacksGraph];
