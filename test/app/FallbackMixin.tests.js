@@ -21,26 +21,6 @@ describe("FallbackMixin", () => {
         },
       },
     });
-    // const plain = await ExplorableGraph.plain(graph);
-    // assert.deepEqual(plain, {
-    //   "+": {
-    //     b: "+b",
-    //   },
-    //   a: {
-    //     "+": {
-    //       c: "+c",
-    //     },
-    //     a1: "a1",
-    //     subgraph: {
-    //       a2: "a2",
-    //       b: "+b",
-    //       c: "+c",
-    //     },
-    //     b: "+b",
-    //     c: "+c",
-    //   },
-    //   b: "+b",
-    // });
 
     // Fallback keys are not included.
     assert.deepEqual(await ExplorableGraph.keys(graph), ["+", "a"]);

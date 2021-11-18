@@ -1,4 +1,3 @@
-// TODO: Because this relies on FormulasObject, it should probably go in /src/app
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**

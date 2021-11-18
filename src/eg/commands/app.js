@@ -1,4 +1,4 @@
-import DefaultPages from "../../app/DefaultPages.js";
+import defaultPages from "../../app/defaultPages.js";
 import MetaMixin from "../../app/MetaMixin.js";
 import Compose from "../../common/Compose.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
@@ -11,10 +11,8 @@ export default async function app(variant = this.graph, ...keys) {
   const meta = applyMixinToObject(MetaMixin, graph);
   const baseScope = this?.scope ?? (await config());
   meta.scope = new Compose(meta, baseScope);
-  const result = new DefaultPages(meta);
-  return keys.length > 0
-    ? await ExplorableGraph.traverse(result, ...keys)
-    : result;
+  meta.inheritedFallbacks = defaultPages;
+  return keys.length > 0 ? await ExplorableGraph.traverse(meta, ...keys) : meta;
 }
 
 app.usage = `app()\tAn explorable application graph for the current directory`;

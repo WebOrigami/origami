@@ -71,15 +71,6 @@ export default function FormulasMixin(Base) {
           }
         }
 
-        // Add fallback formulas.
-        const fallbacks = await this.fallbacks?.();
-        if (fallbacks) {
-          const fallbackFormulas = await fallbacks.formulas?.();
-          if (fallbackFormulas) {
-            this[formulasKey].push(...fallbackFormulas);
-          }
-        }
-
         // Sort constant formulas before variable formulas.
         this[formulasKey].sort((a, b) => {
           if (a instanceof ConstantFormula && b instanceof VariableFormula) {
@@ -93,6 +84,27 @@ export default function FormulasMixin(Base) {
             return 0;
           }
         });
+
+        // Add fallback formulas.
+        //
+        // NOTE: The call to get fallbacks will cause FallbackMixin to get the
+        // fallback key (`+`), which will cause FormulasMixin's `get` to ask for
+        // formulas, creating the potential for a recursive loop. However, when
+        // that inner `get` call asks for formulas, the `if` condition at the
+        // top of this present formulas() method will see that this[formulasKey]
+        // has already been set and return it immediately.
+        //
+        // This feels shaky, but does have the correct behavior. In particular,
+        // the fallback key `+` can be defined with a formula -- but the
+        // formulas that define it have to come from the local graph; they can't
+        // come from fallbacks.
+        const fallbacks = await this.fallbacks?.();
+        if (fallbacks) {
+          const fallbackFormulas = await fallbacks.formulas?.();
+          if (fallbackFormulas) {
+            this[formulasKey].push(...fallbackFormulas);
+          }
+        }
       }
 
       return this[formulasKey];

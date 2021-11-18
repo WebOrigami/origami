@@ -1,5 +1,6 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ComposeFallbacks from "./ComposeFallbacks.js";
 
 export const fallbackKey = "+";
 const fallbacksGraph = Symbol("fallbacksGraph");
@@ -20,7 +21,7 @@ export default function FallbackMixin(Base) {
 
         // Get local fallbacks.
         let local;
-        const fallbackVariant = await this.get(fallbackKey);
+        const fallbackVariant = await super.get(fallbackKey);
         if (fallbackVariant) {
           local = ExplorableGraph.from(fallbackVariant);
 
@@ -34,7 +35,7 @@ export default function FallbackMixin(Base) {
         // Merge as appropriate.
         let fallbacks;
         if (local && inherited) {
-          fallbacks = new Compose(local, inherited);
+          fallbacks = new ComposeFallbacks(local, inherited);
         } else if (local) {
           fallbacks = local;
         } else if (inherited) {
