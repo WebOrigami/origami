@@ -79,9 +79,11 @@ describe("FormulasMixin", () => {
   it("can pass variable name to right-hand side", async () => {
     const fixture = new FormulasObject({
       "{name} = `Hello, ${name}.`": "",
+      Carol: "Hey, Carol.", // Explicit values preferred over patterns.
     });
     assert.deepEqual(await fixture.get("Alice"), "Hello, Alice.");
     assert.deepEqual(await fixture.get("Bob"), "Hello, Bob.");
+    assert.deepEqual(await fixture.get("Carol"), "Hey, Carol.");
   });
 
   it("can pass bindings to subgraphs", async () => {
