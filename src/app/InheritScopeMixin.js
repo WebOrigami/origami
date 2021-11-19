@@ -17,8 +17,7 @@ export default function InheritScopeMixin(Base) {
       if (value === undefined) {
         // Wasn't found in local graph, try inherited scope.
         value = await this.scope?.get(key);
-      }
-      if (ExplorableGraph.isExplorable(value) && value.inheritsScope) {
+      } else if (ExplorableGraph.isExplorable(value) && value.inheritsScope) {
         // This graph becomes the scope for the subgraph.
         value.scope = this;
       }
