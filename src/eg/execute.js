@@ -2,12 +2,6 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as ops from "./ops.js";
 
 export default async function execute(code, environment) {
-  if (!environment.context) {
-    environment.context = environment.graph;
-  }
-  // if (!environment.scope) {
-  //   environment.scope = environment.graph;
-  // }
   return await invoke.call(environment, code);
 }
 

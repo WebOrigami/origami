@@ -1,13 +1,12 @@
 import Handlebars from "handlebars";
 import YAML from "yaml";
-import FormulasMixin from "../../app/FormulasMixin.js";
+import MetaMixin from "../../app/MetaMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import {
   applyMixinToObject,
   extractFrontMatter,
   isPlainObject,
 } from "../../core/utilities.js";
-import config from "./config.js";
 
 export default async function hbs(template, input) {
   template = String(template);
@@ -16,9 +15,8 @@ export default async function hbs(template, input) {
     const { frontMatter, content } = extractFrontMatter(template);
     if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
       const frontGraph = ExplorableGraph.from(frontMatter);
-      input = applyMixinToObject(FormulasMixin, frontGraph);
-      input.scope = await config();
-      input.context = this?.graph;
+      input = applyMixinToObject(MetaMixin, frontGraph);
+      input.scope = this?.graph;
       template = content;
     } else if (arguments.length === 2) {
       // Caller explicitly passed in `undefined` as the input argument,

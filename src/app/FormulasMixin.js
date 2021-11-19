@@ -112,9 +112,7 @@ export default function FormulasMixin(Base) {
 
             value = await formula.evaluate({
               bindings,
-              context: this.context,
               graph: this,
-              // scope: this.scope ?? this,
               thisKey: formula.source,
             });
 
