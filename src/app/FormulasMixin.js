@@ -7,6 +7,7 @@ import {
 const bindingsKey = Symbol("bindings");
 const contextKey = Symbol("context");
 const formulasKey = Symbol("formulas");
+const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasMixin(Base) {
@@ -17,6 +18,7 @@ export default function FormulasMixin(Base) {
       this[contextKey] = this;
       this[formulasKey] = null;
       this[keysKey] = null;
+      this[localFormulasKey] = null;
     }
 
     async *[Symbol.asyncIterator]() {
@@ -30,8 +32,8 @@ export default function FormulasMixin(Base) {
         // produces no new implied keys.
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
-          // Ask each formula to add any implied keys.
-          const formulas = await this.formulas();
+          // Ask each *local* formula to add any implied keys.
+          const formulas = await this.localFormulas();
           for await (const formula of formulas) {
             formula.addImpliedKeys(keys);
           }
@@ -60,30 +62,7 @@ export default function FormulasMixin(Base) {
 
     async formulas() {
       if (!this[formulasKey]) {
-        // Find all formulas in this graph.
-        this[formulasKey] = [];
-        for await (const key of super[Symbol.asyncIterator]()) {
-          // Try to parse the key as a formula.
-          const formula = Formula.parse(String(key));
-          if (formula) {
-            // Successfully parsed key as a formula.
-            this[formulasKey].push(formula);
-          }
-        }
-
-        // Sort constant formulas before variable formulas.
-        this[formulasKey].sort((a, b) => {
-          if (a instanceof ConstantFormula && b instanceof VariableFormula) {
-            return -1;
-          } else if (
-            b instanceof ConstantFormula &&
-            a instanceof VariableFormula
-          ) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
+        this[formulasKey] = await this.localFormulas();
 
         // Add inherited formulas.
         const inherited = await this.scope?.formulas?.();
@@ -130,6 +109,39 @@ export default function FormulasMixin(Base) {
       }
 
       return value;
+    }
+
+    async localFormulas() {
+      if (!this[localFormulasKey]) {
+        // Find all formulas in this graph.
+        const formulas = [];
+
+        for await (const key of super[Symbol.asyncIterator]()) {
+          // Try to parse the key as a formula.
+          const formula = Formula.parse(String(key));
+          if (formula) {
+            // Successfully parsed key as a formula.
+            formulas.push(formula);
+          }
+        }
+
+        // Sort constant formulas before variable formulas.
+        formulas.sort((a, b) => {
+          if (a instanceof ConstantFormula && b instanceof VariableFormula) {
+            return -1;
+          } else if (
+            b instanceof ConstantFormula &&
+            a instanceof VariableFormula
+          ) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+        this[localFormulasKey] = formulas;
+      }
+      return this[localFormulasKey];
     }
 
     // Reset memoized values when the underlying graph changes.
