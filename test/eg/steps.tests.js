@@ -1,5 +1,5 @@
+import { ExplorableObject } from "../../exports.js";
 import MetaMixin from "../../src/app/MetaMixin.js";
-import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import { applyMixinToObject } from "../../src/core/utilities.js";
 import steps from "../../src/eg/commands/steps.js";
@@ -18,7 +18,7 @@ describe("steps", () => {
   it("a steps can be interpreted as a metagraph", async () => {
     const fixture = steps(["'world'", "uppercase(it)", "greet(it)"]);
     const meta = applyMixinToObject(MetaMixin, fixture);
-    meta.scope = new Compose(meta.scope, {
+    meta.scope = new ExplorableObject({
       greet: (x) => `Hello, ${x}.`,
       uppercase: (x) => x.toUpperCase(),
     });

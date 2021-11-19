@@ -1,29 +1,35 @@
-import Compose from "../common/Compose.js";
-import builtins from "../eg/builtins.js";
-import { fallbackKey } from "./FallbackMixin.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 const scopeKey = Symbol("scope");
+const inheritsScopeKey = Symbol("inheritsScope");
 
 export default function InheritScopeMixin(Base) {
   return class InheritScope extends Base {
     constructor(...args) {
       super(...args);
-
-      // Default scope is builtins and the graph itself.
-      this.scope = new Compose(this, builtins);
+      this.scope = null;
+      this.inheritsScope = true;
     }
 
-    constructSubgraph(key, dictionary) {
-      const subgraph = super.constructSubgraph(key, dictionary);
-
-      // Fallback folders don't inherit scope.
-      if (key !== fallbackKey) {
-        // Compose the current graph onto the scope and set it as the scope for
-        // the subgraph.
-        subgraph.scope = new Compose(subgraph, this.scope);
+    async get(key) {
+      // Try local graph first.
+      let value = await super.get(key);
+      if (value === undefined) {
+        // Wasn't found in local graph, try inherited scope.
+        value = await this.scope?.get(key);
       }
+      if (ExplorableGraph.isExplorable(value) && value.inheritsScope) {
+        // This graph becomes the scope for the subgraph.
+        value.scope = this;
+      }
+      return value;
+    }
 
-      return subgraph;
+    get inheritsScope() {
+      return this[inheritsScopeKey];
+    }
+    set inheritsScope(inheritsScope) {
+      this[inheritsScopeKey] = inheritsScope;
     }
 
     get scope() {

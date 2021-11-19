@@ -29,7 +29,7 @@ export default async function hbs(template, input) {
     }
   }
 
-  const partials = await getPartials(this?.scope, template);
+  const partials = await getPartials(this?.graph, template);
 
   const data =
     typeof input === "string" || input instanceof Buffer
@@ -70,7 +70,7 @@ function findPartialReferences(template) {
   return unique;
 }
 
-async function getPartials(scope, template) {
+async function getPartials(graph, template) {
   // Find the names of the partials used in the template.
   const partialNames = findPartialReferences(template);
 
@@ -79,12 +79,12 @@ async function getPartials(scope, template) {
   let partials = {};
 
   if (partialKeys.length > 0) {
-    if (!scope) {
+    if (!graph) {
       throw `A Handlebars template references partials (${partialKeys}), but no scope graph was provided in which to search for them.`;
     }
 
-    // Get the partials from the scope graph.
-    const partialPromises = partialKeys.map(async (name) => scope.get(name));
+    // Get the partials from the graph.
+    const partialPromises = partialKeys.map(async (name) => graph.get(name));
     const partialValues = await Promise.all(partialPromises);
     partialValues.forEach((value, index) => {
       partials[partialNames[index]] = value;
@@ -93,7 +93,7 @@ async function getPartials(scope, template) {
     // The partials may themselves reference other partials; collect those too.
     await Promise.all(
       partialValues.map(async (value) => {
-        const nestedPartials = await getPartials(scope, value);
+        const nestedPartials = await getPartials(graph, value);
         Object.assign(partials, nestedPartials);
       })
     );

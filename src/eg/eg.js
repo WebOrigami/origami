@@ -3,22 +3,21 @@
 import process from "process";
 import execute from "../../src/eg/execute.js";
 import * as ops from "../../src/eg/ops.js";
-import Compose from "../common/Compose.js";
 import config from "./commands/config.js";
 import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
   // Set up
-  const baseScope = await config();
+  const scope = await config();
   const source = args.join(" ").trim();
   if (!source) {
-    await showUsage(baseScope);
+    await showUsage(scope);
     return;
   }
-  const defaultGraph = await baseScope.get("defaultGraph");
+  const defaultGraph = await scope.get("defaultGraph");
   const graph = await defaultGraph();
-  const scope = new Compose(graph, baseScope);
+  graph.scope = scope;
 
   // Parse
   const parsed = parse.expression(source);
@@ -36,7 +35,7 @@ async function main(...args) {
   let errorIfResultUndefined = code[0] === ops.get;
 
   // Execute
-  let result = await execute(code, { scope, graph });
+  let result = await execute(code, { graph });
 
   // If result was a function, execute it.
   if (typeof result === "function") {
@@ -52,7 +51,7 @@ async function main(...args) {
   }
 
   // Display the result.
-  const stdout = await baseScope.get("stdout");
+  const stdout = await scope.get("stdout");
   await stdout(result);
 }
 

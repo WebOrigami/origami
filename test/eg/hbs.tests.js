@@ -13,10 +13,10 @@ describe("hbs (Handlebars) command", () => {
   it("applies partials found in scope", async () => {
     const template = `Hello, {{#>bold}}{{name}}{{/bold}}.`;
     const data = { name: "world" };
-    const scope = new ExplorableObject({
+    const graph = new ExplorableObject({
       "bold.hbs": `<b>{{> @partial-block }}</b>`,
     });
-    const environment = { scope };
+    const environment = { graph };
     const result = await hbs.call(environment, template, data);
     assert.equal(result, "Hello, <b>world</b>.");
   });

@@ -4,6 +4,7 @@ import MetaMixin from "../../src/app/MetaMixin.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import builtins from "../../src/eg/builtins.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
@@ -19,7 +20,7 @@ metaGraph.scope = new Compose(
       return "Hello, world.";
     },
   },
-  metaGraph.scope
+  builtins
 );
 
 // Given the nature of MetaMixin, these are integration tests.
@@ -90,29 +91,30 @@ describe("MetaMixin", () => {
     assert.equal(indexHtml, "Hello, world.\n");
   });
 
-  it("Can inherit formulas via fallbacks", async () => {
+  it("Can inherit formulas", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
-      "+": {
-        "greeting = message": "",
-      },
+      "greeting = message": "",
       message: "Hello",
       spanish: {
         message: "Hola",
       },
-      unknown: {},
     });
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      "+": {
-        "greeting = message": "",
-        greeting: undefined,
+    assert.equal(await graph.get("greeting"), "Hello");
+    const spanish = await graph.get("spanish");
+    assert.equal(await spanish.get("greeting"), "Hola");
+  });
+
+  it("Can inherit functions", async () => {
+    const graph = new (MetaMixin(ExplorableObject))({
+      "index.txt": "Home",
+      textToHtml: (text) => `<body>${text}</body>`,
+      "{x}.html = textToHtml(${x}.txt)": "",
+      about: {
+        "index.txt": "About",
       },
-      message: "Hello",
-      greeting: "Hello",
-      spanish: {
-        message: "Hola",
-        greeting: "Hola",
-      },
-      unknown: {},
     });
+    assert.equal(await graph.get("index.html"), "<body>Home</body>");
+    const about = await graph.get("about");
+    assert.equal(await about.get("index.html"), "<body>About</body>");
   });
 });

@@ -5,9 +5,9 @@ export default async function execute(code, environment) {
   if (!environment.context) {
     environment.context = environment.graph;
   }
-  if (!environment.scope) {
-    environment.scope = environment.graph;
-  }
+  // if (!environment.scope) {
+  //   environment.scope = environment.graph;
+  // }
   return await invoke.call(environment, code);
 }
 
@@ -32,8 +32,9 @@ async function invoke(code) {
       fn = fn.toString();
     }
     if (ExplorableGraph.canCastToExplorable(fn)) {
-      // Use the graph-castable object as a function.
-      fn = ExplorableGraph.toFunction(fn);
+      // The function is a graph. We can traverse it.
+      const graph = ExplorableGraph.from(fn);
+      fn = ExplorableGraph.traverse.bind(null, graph);
     }
   }
   if (fn === undefined) {

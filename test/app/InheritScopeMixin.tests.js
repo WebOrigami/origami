@@ -18,21 +18,21 @@ describe("InheritScopeMixin", () => {
       },
     });
 
-    // Graph starts out with itself as the scope.
-    assert.equal(await graph.scope.get("a"), 1);
-    assert.equal(await graph.scope.get("b"), 2);
+    // Root graph can get only local values.
+    assert.equal(await graph.get("a"), 1);
+    assert.equal(await graph.get("b"), 2);
 
-    // Subgraph inherits that scope.
+    // Subgraph can get its own values, plus inherited values.
     const subgraph = await graph.get("subgraph");
-    assert.equal(await subgraph.scope.get("a"), 1);
-    assert.equal(await subgraph.scope.get("b"), 3);
-    assert.equal(await subgraph.scope.get("c"), 4);
+    assert.equal(await subgraph.get("a"), 1);
+    assert.equal(await subgraph.get("b"), 3);
+    assert.equal(await subgraph.get("c"), 4);
 
     // Sub-subgraph inherits everything.
     const more = await subgraph.get("more");
-    assert.equal(await more.scope.get("a"), 1);
-    assert.equal(await more.scope.get("b"), 3);
-    assert.equal(await more.scope.get("c"), 4);
-    assert.equal(await more.scope.get("d"), 5);
+    assert.equal(await more.get("a"), 1);
+    assert.equal(await more.get("b"), 3);
+    assert.equal(await more.get("c"), 4);
+    assert.equal(await more.get("d"), 5);
   });
 });

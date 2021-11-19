@@ -20,12 +20,4 @@ describe("execute", () => {
     const result = await execute(parsed, { graph });
     assert.equal(result, "Hello world");
   });
-
-  it.skip("can use `this` to reference the current graph", async () => {
-    const parsed = ["this"];
-    const scope = new ExplorableObject({});
-    const graph = new ExplorableObject({});
-    const result = await execute(parsed, { scope, graph });
-    assert.equal(result, graph);
-  });
 });
