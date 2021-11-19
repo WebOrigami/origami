@@ -26,6 +26,7 @@ describe("InheritScopeMixin", () => {
     const subgraph = await graph.get("subgraph");
     assert.equal(await subgraph.scope.get("a"), 1);
     assert.equal(await subgraph.scope.get("b"), 3);
+    assert.equal(await subgraph.scope.get("c"), 4);
 
     // Sub-subgraph inherits everything.
     const more = await subgraph.get("more");
