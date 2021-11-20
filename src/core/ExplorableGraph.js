@@ -128,7 +128,8 @@ export default class ExplorableGraph {
 
   static async toJson(variant) {
     const serializable = await this.toSerializable(variant);
-    return JSON.stringify(serializable, null, 2);
+    const cast = castArrayLike(serializable);
+    return JSON.stringify(cast, null, 2);
   }
 
   /**
@@ -146,7 +147,8 @@ export default class ExplorableGraph {
 
   static async toYaml(variant) {
     const serializable = await this.toSerializable(variant);
-    return YAML.stringify(serializable);
+    const cast = castArrayLike(serializable);
+    return YAML.stringify(cast);
   }
 
   /**
@@ -191,4 +193,19 @@ export default class ExplorableGraph {
     }
     return result;
   }
+}
+
+// If the given plain object has only integer keys, return it as an array.
+// Otherwise return it as is.
+function castArrayLike(obj) {
+  const array = [];
+  for (const key of Object.keys(obj)) {
+    const index = Number(key);
+    if (isNaN(index)) {
+      // Not an array-like object.
+      return obj;
+    }
+    array[index] = obj[key];
+  }
+  return array;
 }
