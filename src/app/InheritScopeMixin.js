@@ -1,8 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-const scopeKey = Symbol("scope");
-const inheritsScopeKey = Symbol("inheritsScope");
-
 export default function InheritScopeMixin(Base) {
   return class InheritScope extends Base {
     constructor(...args) {
@@ -22,20 +19,6 @@ export default function InheritScopeMixin(Base) {
         value.scope = this;
       }
       return value;
-    }
-
-    get inheritsScope() {
-      return this[inheritsScopeKey];
-    }
-    set inheritsScope(inheritsScope) {
-      this[inheritsScopeKey] = inheritsScope;
-    }
-
-    get scope() {
-      return this[scopeKey];
-    }
-    set scope(scope) {
-      this[scopeKey] = scope;
     }
   };
 }

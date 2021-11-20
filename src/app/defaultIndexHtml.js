@@ -2,7 +2,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default async function defaultIndexHtml() {
   // @ts-ignore
-  const graph = this.graph;
+  const graph = this;
   const keys = await ExplorableGraph.keys(graph);
   const filtered = filterKeys(keys);
   const links = [];

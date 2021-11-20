@@ -1,5 +1,5 @@
-// import defaultPages from "../../app/defaultPages.js";
 import path from "path";
+import DefaultPages from "../../app/DefaultPages.js";
 import MetaMixin from "../../app/MetaMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { applyMixinToObject } from "../../core/utilities.js";
@@ -17,8 +17,8 @@ export default async function app(variant) {
     meta = new (MetaMixin(ExplorableFiles))(dirname);
     meta.scope = await config(dirname);
   }
-  // meta.inheritedFallbacks = defaultPages;
-  return meta;
+  const result = new DefaultPages(meta);
+  return result;
 }
 
 app.usage = `app()\tAn explorable application graph for the current directory`;

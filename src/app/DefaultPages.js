@@ -1,7 +1,6 @@
-import ExplorableObject from "../core/ExplorableObject.js";
+import DefaultValues from "../common/DefaultValues.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
-import FormulasMixin from "./FormulasMixin.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
@@ -9,8 +8,22 @@ import FormulasMixin from "./FormulasMixin.js";
  * requested key is missing from the main graph, but exists in the default
  * values graph, the value will be returned from that graph.
  */
-export default new (FormulasMixin(ExplorableObject))({
-  ".index = this()": defaultIndexHtml,
-  ".keys.json = this()": defaultKeysJson,
-  "index.html = this()": defaultIndexHtml,
-});
+export default class DefaultPages extends DefaultValues {
+  constructor(graph) {
+    super(graph, {
+      ".index": defaultIndexHtml,
+      ".keys.json": defaultKeysJson,
+      "index.html": defaultIndexHtml,
+    });
+  }
+
+  onChange(eventType, filename) {
+    if (graph.onChange) {
+      graph.onChange(eventType, filename);
+    }
+  }
+
+  get path() {
+    return this.graph.path;
+  }
+}
