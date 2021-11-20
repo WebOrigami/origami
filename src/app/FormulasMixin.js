@@ -25,6 +25,19 @@ export default function FormulasMixin(Base) {
           keys.add(key);
         }
 
+        // Cooperate with AdditionsMixin: if the graph has addition, add the
+        // addition's keys to the graph's keys. We wouldn't normally pick those
+        // up, because MetaMixin applies AdditionsMixin after FormulasMixin. (If
+        // someone applies the mixins in the opposite, the addition's keys will
+        // already have been picked up by the iterator above, but it won't hurt
+        // anything to add them to the set again.)
+        const additions = await this.additions?.();
+        if (additions) {
+          for await (const key of additions) {
+            keys.add(key);
+          }
+        }
+
         // Generate the set of implied keys in multiple passes until a pass
         // produces no new implied keys.
         for (let size = 0; size !== keys.size; ) {

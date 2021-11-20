@@ -1,6 +1,7 @@
 import execute from "../eg/execute.js";
 import * as ops from "../eg/ops.js";
 import * as parse from "../eg/parse.js";
+import { additionsKey } from "./AdditionsMixin.js";
 
 export default class Formula {
   key;
@@ -145,7 +146,10 @@ export class VariableFormula extends Formula {
    * @param {string} extension
    */
   #matchExtension(key, extension) {
-    if (extension) {
+    if (key.includes("=") || key === additionsKey) {
+      // Formulas and the additions key don't match extensions.
+      return null;
+    } else if (extension) {
       // Key matches if it ends with the same extension
       if (key.length > extension.length && key.endsWith(extension)) {
         return key.substring(0, key.length - extension.length);

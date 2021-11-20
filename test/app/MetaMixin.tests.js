@@ -117,4 +117,21 @@ describe("MetaMixin", () => {
     const about = await graph.get("about");
     assert.equal(await about.get("index.html"), "<body>About</body>");
   });
+
+  it("Formulas can imply keys based on additions", async () => {
+    const graph = new (MetaMixin(ExplorableObject))({
+      "+": {
+        "a.json": "Hello, a.",
+      },
+      "{x}.txt = ${x}.json": "",
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      "+": {
+        "a.json": "Hello, a.",
+      },
+      "{x}.txt = ${x}.json": "",
+      "a.json": "Hello, a.",
+      "a.txt": "Hello, a.",
+    });
+  });
 });
