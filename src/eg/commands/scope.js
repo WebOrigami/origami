@@ -1,5 +1,7 @@
-export default async function scope() {
-  return this.graph.scope;
+import ExplorableGraph from "../../core/ExplorableGraph.js";
+
+export default async function scope(...keys) {
+  return ExplorableGraph.traverse(this.graph.scope, ...keys);
 }
 
-scope.usage = `scope()\tReturns the current scope`;
+scope.usage = `scope([...keys])\tReturns the current scope`;
