@@ -207,5 +207,5 @@ function castArrayLike(obj) {
     }
     array[index] = obj[key];
   }
-  return array;
+  return array.length > 0 ? array : obj;
 }
