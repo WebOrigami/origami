@@ -4,8 +4,6 @@ import {
   VariableFormula,
 } from "./Formula.js";
 
-const bindingsKey = Symbol("bindings");
-const contextKey = Symbol("context");
 const formulasKey = Symbol("formulas");
 const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
@@ -14,8 +12,7 @@ export default function FormulasMixin(Base) {
   return class Formulas extends Base {
     constructor(...args) {
       super(...args);
-      this[bindingsKey] = null;
-      this[contextKey] = this;
+      this.bindings = null;
       this[formulasKey] = null;
       this[keysKey] = null;
       this[localFormulasKey] = null;
@@ -46,31 +43,14 @@ export default function FormulasMixin(Base) {
       yield* this[keysKey];
     }
 
-    get bindings() {
-      return this[bindingsKey];
-    }
-    set bindings(bindings) {
-      this[bindingsKey] = bindings;
-    }
-
-    get context() {
-      return this[contextKey];
-    }
-    set context(context) {
-      this[contextKey] = context;
-    }
-
     async formulas() {
       if (!this[formulasKey]) {
-        this[formulasKey] = await this.localFormulas();
-
+        // Start with local formulas.
+        const localFormulas = await this.localFormulas();
         // Add inherited formulas.
-        const inherited = await this.scope?.formulas?.();
-        if (inherited) {
-          this[formulasKey].push(...inherited);
-        }
+        const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
+        this[formulasKey] = [...localFormulas, ...inheritedFormulas];
       }
-
       return this[formulasKey];
     }
 
@@ -146,10 +126,9 @@ export default function FormulasMixin(Base) {
 
     // Reset memoized values when the underlying graph changes.
     onChange(eventType, filename) {
-      if (super.onChange) {
-        super.onChange(eventType, filename);
-      }
+      super.onChange?.(eventType, filename);
       this[formulasKey] = null;
+      this[localFormulasKey] = null;
       this[keysKey] = null;
     }
   };
