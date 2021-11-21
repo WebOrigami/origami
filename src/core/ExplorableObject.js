@@ -21,10 +21,6 @@ export default class ExplorableObject {
     }
   }
 
-  constructSubgraph(key, dictionary) {
-    return constructSubgraph(this.constructor, dictionary);
-  }
-
   /**
    * Return the value for the given key.
    *
@@ -33,7 +29,7 @@ export default class ExplorableObject {
   async get(key) {
     let value = this.object[key];
     if (isPlainObject(value) && !(value instanceof this.constructor)) {
-      value = this.constructSubgraph(key, { object: value });
+      value = constructSubgraph(this.constructor, { object: value });
     }
     return value;
   }

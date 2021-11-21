@@ -12,14 +12,10 @@ export default class ExplorableArray {
     yield* this.array.keys();
   }
 
-  constructSubgraph(key, dictionary) {
-    return constructSubgraph(this.constructor, dictionary);
-  }
-
   async get(key) {
     let value = this.array[Number(key)];
     if (value instanceof Array && !(value instanceof this.constructor)) {
-      value = this.constructSubgraph(key, { array: value });
+      value = constructSubgraph(this.constructor, { array: value });
     }
     return value;
   }

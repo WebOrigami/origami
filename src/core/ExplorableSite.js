@@ -29,10 +29,6 @@ export default class ExplorableSite {
     }
   }
 
-  constructSubgraph(key, dictionary) {
-    return constructSubgraph(this.constructor, dictionary);
-  }
-
   async get(...keys) {
     if (keys.length === 0) {
       return this;
@@ -51,8 +47,7 @@ export default class ExplorableSite {
 
       if (response.redirected && response.url.endsWith("/")) {
         // Redirected to another explorable location.
-        const key = keys[keys.length - 1];
-        return this.constructSubgraph(key, { url: response.url });
+        return constructSubgraph(this.constructor, { url: response.url });
       }
 
       let buffer = await response.arrayBuffer();

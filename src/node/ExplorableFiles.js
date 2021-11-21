@@ -31,10 +31,6 @@ export default class ExplorableFiles {
     yield* names;
   }
 
-  constructSubgraph(key, dictionary) {
-    return constructSubgraph(this.constructor, dictionary);
-  }
-
   // We may have been given a path like foo/bar/baz containing multiple keys.
   // While we could turn that into a filesystem path and get the result in one
   // step, this would prevent the path from entering dynamic subgraphs created
@@ -46,7 +42,7 @@ export default class ExplorableFiles {
     return !stats
       ? undefined
       : stats.isDirectory()
-      ? this.constructSubgraph(key, { dirname: objPath })
+      ? constructSubgraph(this.constructor, { dirname: objPath })
       : await fs.readFile(objPath);
   }
 
