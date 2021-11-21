@@ -18,12 +18,12 @@ export default class DefaultPages extends DefaultValues {
   }
 
   onChange(eventType, filename) {
-    if (graph.onChange) {
-      graph.onChange(eventType, filename);
-    }
+    // @ts-ignore
+    this.graph.onChange?.(eventType, filename);
   }
 
   get path() {
+    // @ts-ignore
     return this.graph.path;
   }
 }

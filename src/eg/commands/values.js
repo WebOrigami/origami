@@ -1,5 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
+// @ts-ignore
 export default async function values(variant = this.graph) {
   return ExplorableGraph.values(variant);
 }

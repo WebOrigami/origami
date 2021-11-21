@@ -10,6 +10,7 @@ export default function mapTypes(
   const graph = ExplorableGraph.from(variant);
   const sourceExtensionLower = sourceExtension.toLowerCase();
   const destinationExtensionLower = destinationExtension.toLowerCase();
+  // @ts-ignore
   const environment = this;
   return {
     async *[Symbol.asyncIterator]() {

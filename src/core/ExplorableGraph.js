@@ -7,6 +7,7 @@ import { isPlainObject, toSerializable } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
+// @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**

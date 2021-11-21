@@ -1,4 +1,5 @@
 export default function bind(fn, ...args) {
+  // @ts-ignore
   return fn.bind(this, ...args);
 }
 

@@ -51,6 +51,7 @@ export default class ExplorableSite {
 
       if (response.redirected && response.url.endsWith("/")) {
         // Redirected to another explorable location.
+        const key = keys[keys.length - 1];
         return this.constructSubgraph(key, { url: response.url });
       }
 

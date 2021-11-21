@@ -1,5 +1,6 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
+// @ts-ignore
 export default async function paths(variant = this.graph, prefix = "") {
   const graph = ExplorableGraph.from(variant);
   const result = [];

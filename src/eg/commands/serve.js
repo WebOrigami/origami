@@ -10,7 +10,8 @@ const defaultPort = process.env.PORT || 5000;
 export default async function serve(variant, port = defaultPort) {
   const graph = variant
     ? ExplorableGraph.from(variant)
-    : await watch.call(this, await app.call(this));
+    : // @ts-ignore
+      await watch.call(this, await app.call(this));
   http.createServer(requestListener(graph)).listen(port);
   console.log(`Server running at http://localhost:${port}`);
 }

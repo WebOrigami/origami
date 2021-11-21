@@ -15,7 +15,8 @@ async function invoke(code) {
   const evaluated = await Promise.all(
     code.map((instruction) =>
       instruction instanceof Array
-        ? invoke.call(this, instruction)
+        ? // @ts-ignore
+          invoke.call(this, instruction)
         : instruction
     )
   );
@@ -49,6 +50,7 @@ async function invoke(code) {
 
   let result;
   try {
+    // @ts-ignore
     result = await fn.call(this, ...args);
   } catch (/** @type {any} */ error) {
     console.error(`An eg expression triggered an exception:`);

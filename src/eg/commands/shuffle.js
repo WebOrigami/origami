@@ -2,6 +2,7 @@ import ShuffleMixin from "../../common/ShuffleMixin.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { applyMixinToObject } from "../../core/utilities.js";
 
+// @ts-ignore
 export default function shuffle(variant = this.graph) {
   const graph = ExplorableGraph.from(variant);
   const shuffled = applyMixinToObject(ShuffleMixin, graph);

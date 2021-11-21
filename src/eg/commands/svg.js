@@ -2,6 +2,7 @@ import { graphviz } from "node-graphviz";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import dot from "./dot.js";
 
+// @ts-ignore
 export default async function svg(variant = this.graph) {
   const graph = ExplorableGraph.from(variant);
   const dotText = await dot(graph);

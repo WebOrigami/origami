@@ -1,5 +1,6 @@
 import * as fs from "fs"; // NOT the promises version used elsewhere
 
+// @ts-ignore
 export default async function watch(graph = this.graph) {
   const graphPath = graph.path;
   console.log(`Watching ${graphPath}`);

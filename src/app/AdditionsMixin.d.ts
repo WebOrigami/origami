@@ -2,4 +2,6 @@
 
 declare const AdditionsMixin: Mixin<{}>;
 
+export const additionsKey: string;
+
 export default AdditionsMixin;

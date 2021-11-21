@@ -9,24 +9,22 @@ import files from "./files.js";
 import yaml from "./yaml.js";
 
 export default async function make(virtual, destination) {
+  // @ts-ignore
   virtual = virtual ? ExplorableGraph.from(virtual) : await app.call(this);
-  const virtualPlain = await ExplorableGraph.plain(virtual);
   destination = destination
     ? ExplorableGraph.from(destination)
-    : await files.call(this);
+    : // @ts-ignore
+      await files.call(this);
   // const cleanGraph = await destination.get(".eg.clean.yaml");
   // const built = cleanGraph ? ExplorableGraph.from(cleanGraph) : null;
   // const real = built ? new SubtractKeys(destination, built) : destination;
   const real = destination;
   await clean(real);
-  const realPlain = await ExplorableGraph.plain(real);
   const build = new SubtractKeys(virtual, real);
-  const buildPlain = await ExplorableGraph.plain(build);
   const empties = new MapGraph(build, (value) => "");
   const cleanYaml = await yaml(empties);
   destination.set(".eg.clean.yaml", cleanYaml);
   const undefineds = new MapGraph(build, (value) => undefined);
-  const undefinedsPlain = await ExplorableGraph.plain(undefineds);
   await copy(undefineds, destination);
   await copy(build, destination);
 }

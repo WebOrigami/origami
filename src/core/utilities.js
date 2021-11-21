@@ -1,6 +1,7 @@
 import * as YAMLModule from "yaml";
 
 // See notes at ExplorableGraph.js
+// @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**

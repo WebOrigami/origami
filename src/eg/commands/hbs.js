@@ -16,6 +16,7 @@ export default async function hbs(template, input) {
     if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
       const frontGraph = ExplorableGraph.from(frontMatter);
       input = applyMixinToObject(MetaMixin, frontGraph);
+      // @ts-ignore
       input.scope = this?.graph;
       template = content;
     } else if (arguments.length === 2) {
@@ -27,6 +28,7 @@ export default async function hbs(template, input) {
     }
   }
 
+  // @ts-ignore
   const partials = await getPartials(this?.graph, template);
 
   const data =
@@ -38,12 +40,12 @@ export default async function hbs(template, input) {
       ? await ExplorableGraph.plain(input)
       : input ?? {};
 
-  const options = { partials };
+  /** @type {any} */ const options = { partials };
   const compiled = Handlebars.compile(template);
   try {
     const result = compiled(data, options);
     return result;
-  } catch (error) {
+  } catch (/** @type {any} */ error) {
     // If we're asked to directly render a template that includes a
     // @partial-block (i.e., without invoking that as a partial in some other
     // template), then just return undefined rather than throwing an error.
