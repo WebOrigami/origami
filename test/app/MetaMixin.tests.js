@@ -91,7 +91,7 @@ describe("MetaMixin", () => {
     assert.equal(indexHtml, "Hello, world.\n");
   });
 
-  it("Can inherit formulas", async () => {
+  it("can inherit formulas", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "greeting = message": "",
       message: "Hello",
@@ -104,7 +104,7 @@ describe("MetaMixin", () => {
     assert.equal(await spanish.get("greeting"), "Hola");
   });
 
-  it("Can inherit functions", async () => {
+  it("can inherit functions", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
@@ -118,7 +118,7 @@ describe("MetaMixin", () => {
     assert.equal(await about.get("index.html"), "<body>About</body>");
   });
 
-  it("Formulas can imply keys based on additions", async () => {
+  it("can imply keys based on additions", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "+": {
         "a.json": "Hello, a.",
@@ -133,5 +133,25 @@ describe("MetaMixin", () => {
       "a.json": "Hello, a.",
       "a.txt": "Hello, a.",
     });
+  });
+
+  it.only("doesn't inherit wildcard folders", async () => {
+    const graph = new (MetaMixin(ExplorableObject))({
+      "{test}": {
+        b: 2,
+      },
+      a: 1,
+      subgraph: {},
+    });
+    // Wildcard folder matches direct request.
+    const foo = await graph.get("foo");
+    assert.deepEqual(await ExplorableGraph.plain(foo), { b: 2 });
+    // Regular values are inherited.
+    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "a"), 1);
+    // Wildcard values are not inherited.
+    // assert.equal(
+    //   await ExplorableGraph.traverse(graph, "subgraph", "b"),
+    //   undefined
+    // );
   });
 });

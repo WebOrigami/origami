@@ -146,8 +146,8 @@ export class VariableFormula extends Formula {
    * @param {string} extension
    */
   #matchExtension(key, extension) {
-    if (key.includes("=") || key === additionsKey) {
-      // Formulas and the additions key don't match extensions.
+    if (key.includes("=") || key.startsWith("{") || key === additionsKey) {
+      // Formulas and the additions key don't match patterns.
       return null;
     } else if (extension) {
       // Key matches if it ends with the same extension
