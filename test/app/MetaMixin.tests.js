@@ -135,7 +135,7 @@ describe("MetaMixin", () => {
     });
   });
 
-  it.skip("doesn't inherit wildcard folders", async () => {
+  it("doesn't inherit wildcard folders", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "{test}": {
         b: 2,
@@ -149,9 +149,9 @@ describe("MetaMixin", () => {
     // Regular values are inherited.
     assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "a"), 1);
     // Wildcard values are not inherited.
-    // assert.equal(
-    //   await ExplorableGraph.traverse(graph, "subgraph", "b"),
-    //   undefined
-    // );
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraph", "b"),
+      undefined
+    );
   });
 });

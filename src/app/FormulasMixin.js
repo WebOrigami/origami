@@ -62,7 +62,11 @@ export default function FormulasMixin(Base) {
         const localFormulas = await this.localFormulas();
         // Add inherited formulas.
         const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
-        this[formulasKey] = [...localFormulas, ...inheritedFormulas];
+        // Filter out inherited wildcards.
+        const filtered = inheritedFormulas.filter(
+          (formula) => !formula.isWildcard
+        );
+        this[formulasKey] = [...localFormulas, ...filtered];
       }
       return this[formulasKey];
     }
@@ -71,7 +75,11 @@ export default function FormulasMixin(Base) {
       // See if real value exists.
       let value = await super.get(key);
 
-      if (value === undefined) {
+      // See if we have a formula that can produce the desired key. Skip this if
+      // this call is happening because a subgraph is looking up its scope for
+      // inherited values -- the subgraph's FormulasMixin will have already
+      // considered all inherited formulas already.
+      if (value === undefined && !this.isInScope) {
         // No real value defined; try our formulas.
         const formulas = await this.formulas();
         for (const formula of formulas) {

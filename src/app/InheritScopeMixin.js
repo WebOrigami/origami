@@ -6,6 +6,7 @@ export default function InheritScopeMixin(Base) {
       super(...args);
       this.scope = null;
       this.inheritsScope = true;
+      this.isInScope = false;
     }
 
     async get(key) {
@@ -16,7 +17,16 @@ export default function InheritScopeMixin(Base) {
         value = await this.scope?.get(key);
       } else if (ExplorableGraph.isExplorable(value) && value.inheritsScope) {
         // This graph becomes the scope for the subgraph.
-        value.scope = this;
+
+        // Add an indicator that, from the perspective of the subgraph, this
+        // graph is in scope. We use a prototype extension to do this, because
+        // we don't want to directly modifiy this graph.
+        const scopeWrapper = {
+          isInScope: true,
+        };
+        Object.setPrototypeOf(scopeWrapper, this);
+
+        value.scope = scopeWrapper;
       }
       return value;
     }

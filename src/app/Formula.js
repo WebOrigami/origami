@@ -65,6 +65,10 @@ export class ConstantFormula extends Formula {
     keys.add(this.key);
   }
 
+  get isWildcard() {
+    return false;
+  }
+
   unify(key) {
     return this.key === key ? {} : null;
   }
@@ -132,6 +136,10 @@ export class VariableFormula extends Formula {
       const unique = [...set];
       return unique;
     }
+  }
+
+  get isWildcard() {
+    return this.extension === null;
   }
 
   /**

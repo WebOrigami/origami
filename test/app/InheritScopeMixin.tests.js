@@ -35,4 +35,16 @@ describe("InheritScopeMixin", () => {
     assert.equal(await more.get("c"), 4);
     assert.equal(await more.get("d"), 5);
   });
+
+  it("sets isInScope on a graph when it's in the scope of another graph", async () => {
+    const graph = new (InheritScopeMixin(ExplorableObject))({
+      a: 1,
+      subgraph: {
+        b: 2,
+      },
+    });
+    assert(!graph.isInScope);
+    const subgraph = await graph.get("subgraph");
+    assert(subgraph.scope.isInScope);
+  });
 });
