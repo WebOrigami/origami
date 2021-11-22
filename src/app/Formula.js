@@ -2,6 +2,7 @@ import execute from "../eg/execute.js";
 import * as ops from "../eg/ops.js";
 import * as parse from "../eg/parse.js";
 import { additionsKey } from "./AdditionsMixin.js";
+import { ghostGraphExtension } from "./GhostValuesMixin.js";
 
 export default class Formula {
   key;
@@ -27,6 +28,10 @@ export default class Formula {
       const { graph } = environment;
       return await graph.get(this.key);
     }
+  }
+
+  get inheritable() {
+    return true;
   }
 
   static parse(source) {
@@ -65,10 +70,6 @@ export class ConstantFormula extends Formula {
     keys.add(this.key);
   }
 
-  get isWildcard() {
-    return false;
-  }
-
   unify(key) {
     return this.key === key ? {} : null;
   }
@@ -96,8 +97,12 @@ export class VariableFormula extends Formula {
 
   addImpliedKeys(keys) {
     // Formulas with no antecedents don't imply any new keys, nor do formulas
-    // without an extension.
-    if (!this.antecedents || this.extension === null) {
+    // without an extension, nor do ghost keys.
+    if (
+      !this.antecedents ||
+      this.extension === null ||
+      this.extension === ghostGraphExtension
+    ) {
       return;
     }
 
@@ -138,8 +143,12 @@ export class VariableFormula extends Formula {
     }
   }
 
-  get isWildcard() {
-    return this.extension === null;
+  get inheritable() {
+    return (
+      this.extension !== null &&
+      this.extension !== ghostGraphExtension &&
+      super.inheritable
+    );
   }
 
   /**

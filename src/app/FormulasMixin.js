@@ -62,13 +62,44 @@ export default function FormulasMixin(Base) {
         const localFormulas = await this.localFormulas();
         // Add inherited formulas.
         const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
-        // Filter out inherited wildcards.
+        // Only inherit formulas that are inheritable.
         const filtered = inheritedFormulas.filter(
-          (formula) => !formula.isWildcard
+          (formula) => formula.inheritable
         );
         this[formulasKey] = [...localFormulas, ...filtered];
       }
       return this[formulasKey];
+    }
+
+    async localFormulaMatches(key) {
+      // See if we have a formula that can produce the desired key.
+      const formulas = await this.localFormulas();
+      const matches = [];
+      for (const formula of formulas) {
+        const keyBinding = formula.unify(key);
+        if (keyBinding) {
+          // Formula applies to this key.
+
+          // Add our formula's key binding to the graph's bindings.
+          const bindings = Object.assign({}, this.bindings, keyBinding);
+
+          const value = await formula.evaluate({
+            bindings,
+            graph: this,
+            thisKey: formula.source,
+          });
+
+          if (value instanceof Object && "bindings" in value) {
+            // Give the subgraph our complete bindings.
+            value.bindings = bindings;
+          }
+
+          if (value !== undefined) {
+            matches.push(value);
+          }
+        }
+      }
+      return matches;
     }
 
     async get(key) {

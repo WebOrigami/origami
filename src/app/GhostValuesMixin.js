@@ -1,3 +1,7 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
+export const ghostGraphExtension = "+";
+
 export default function GhostValuesMixin(Base) {
   return class GhostValues extends Base {
     constructor(...args) {
@@ -23,8 +27,16 @@ export default function GhostValuesMixin(Base) {
             break;
           }
         }
+      } else if (ExplorableGraph.isExplorable(value) && !isGhostKey(key)) {
+        // Add ghost graphs from local formulas.
+        const ghostKey = `${key}${ghostGraphExtension}`;
+        value.ghostGraphs = await this.localFormulaMatches(ghostKey);
       }
       return value;
     }
   };
+}
+
+function isGhostKey(key) {
+  return key.endsWith(ghostGraphExtension);
 }

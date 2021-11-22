@@ -143,11 +143,14 @@ describe("MetaMixin", () => {
       a: 1,
       subgraph: {},
     });
+
     // Wildcard folder matches direct request.
     const foo = await graph.get("foo");
     assert.deepEqual(await ExplorableGraph.plain(foo), { b: 2 });
+
     // Regular values are inherited.
     assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "a"), 1);
+
     // Wildcard values are not inherited.
     assert.equal(
       await ExplorableGraph.traverse(graph, "subgraph", "b"),
