@@ -135,7 +135,7 @@ describe("MetaMixin", () => {
     });
   });
 
-  it.only("doesn't inherit wildcard folders", async () => {
+  it.skip("doesn't inherit wildcard folders", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "{test}": {
         b: 2,
