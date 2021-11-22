@@ -98,22 +98,46 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Converts a graph into a plain JavaScript object.
+   * Converts an asynchronous explorable graph into a synchronous plain
+   * JavaScript object.
    *
    * The result's keys will be the graph's keys cast to strings. Any graph value
    * that is itself a graph will be similarly converted to a plain object.
+   *
+   * This is done in as parallel fashion as possible. For each graph key, we
+   * fire off all the get requests for those values as once, then add them to
+   * the resulting object as the values come in.
    *
    * @param {GraphVariant} variant
    */
   static async plain(variant) {
     const graph = this.from(variant);
     const result = {};
+
+    // We're going to fire off all the get requests in parallel, as quickly as
+    // the keys come in.
+    let promises = [];
     for await (const key of graph) {
-      const value = await graph.get(key);
-      result[String(key)] = ExplorableGraph.isExplorable(value)
-        ? await this.plain(value) // Traverse into explorable value.
-        : value;
+      // Create a key in the result object at this point as a placeholder so
+      // that, even if this value takes a long time to resolve, the key will
+      // still appear at the proper place in the result.
+      result[key] = undefined;
+
+      // Call the graph's `get` method, but *don't* wait for it yet.
+      const valuePromise = graph.get(key).then(async (value) => {
+        // If the value is itself a graph, recurse.
+        // Once we have a final value, add it to the result.
+        // The value will appear in the place reserved for it earlier.
+        result[key] = this.isExplorable(value)
+          ? await this.plain(value)
+          : value;
+      });
+      promises.push(valuePromise);
     }
+
+    // Wait for all the promises to resolve.
+    await Promise.all(promises);
+
     return result;
   }
 
