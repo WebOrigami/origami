@@ -60,6 +60,7 @@ export default function FormulasMixin(Base) {
       if (!this[formulasKey]) {
         // Start with local formulas.
         const localFormulas = await this.localFormulas();
+
         // Add inherited formulas.
         const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
         // Only inherit formulas that are inheritable.
@@ -81,7 +82,7 @@ export default function FormulasMixin(Base) {
           // Formula applies to this key.
 
           // Add our formula's key binding to the graph's bindings.
-          const bindings = Object.assign({}, this.bindings, keyBinding);
+          const bindings = Object.assign({}, formula.closure, keyBinding);
 
           const value = await formula.evaluate({
             bindings,
@@ -119,7 +120,11 @@ export default function FormulasMixin(Base) {
             // Formula applies to this key.
 
             // Add our formula's key binding to the graph's bindings.
-            const bindings = Object.assign({}, this.bindings, keyBinding);
+            const bindings = Object.assign(
+              formula.closure,
+              this.bindings,
+              keyBinding
+            );
 
             value = await formula.evaluate({
               bindings,
@@ -153,8 +158,16 @@ export default function FormulasMixin(Base) {
           const formula = Formula.parse(String(key));
           if (formula) {
             // Successfully parsed key as a formula.
+            formula.closure = this.bindings ?? {};
             formulas.push(formula);
           }
+        }
+
+        // Add formulas from ghost graphs, if present.
+        const ghostGraphs = this.ghostGraphs ?? [];
+        for (const ghostGraph of ghostGraphs) {
+          const ghostFormulas = (await ghostGraph.localFormulas()) ?? [];
+          formulas.push(...ghostFormulas);
         }
 
         // Sort constant formulas before variable formulas.

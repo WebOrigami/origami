@@ -70,7 +70,6 @@ describe("GhostValuesMixin", () => {
       "a",
       "c",
       "subsubgraph",
-      "{y}+",
     ]);
     const subsubgraph = await subgraph.get("subsubgraph");
     assert.deepEqual(await ExplorableGraph.plain(subsubgraph), {
@@ -82,11 +81,15 @@ describe("GhostValuesMixin", () => {
   it("parameters are passed down to ghost graphs", async () => {
     const graph = new GhostFormulasObject({
       "{x}+": {
-        "value = `${x}`": "",
+        "{y}+": {
+          "value = `${x}-${y}`": "",
+        },
       },
-      subgraph: {},
+      foo: {
+        bar: {},
+      },
     });
-    const value = await ExplorableGraph.traverse(graph, "subgraph", "value");
-    assert.equal(value, "subgraph");
+    const value = await ExplorableGraph.traverse(graph, "foo", "bar", "value");
+    assert.equal(value, "foo-bar");
   });
 });

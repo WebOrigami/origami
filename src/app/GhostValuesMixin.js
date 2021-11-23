@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import Formula from "./Formula.js";
 
 export const ghostGraphExtension = "+";
 
@@ -12,7 +13,11 @@ export default function GhostValuesMixin(Base) {
     async *[Symbol.asyncIterator]() {
       yield* super[Symbol.asyncIterator]();
       for (const graph of this.ghostGraphs) {
-        yield* graph;
+        for await (const key of graph) {
+          if (!Formula.isFormula(key)) {
+            yield key;
+          }
+        }
       }
     }
 

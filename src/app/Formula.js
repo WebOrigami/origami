@@ -5,6 +5,7 @@ import { additionsKey } from "./AdditionsMixin.js";
 import { ghostGraphExtension } from "./GhostValuesMixin.js";
 
 export default class Formula {
+  closure = {};
   key;
   expression;
   source;
@@ -12,6 +13,7 @@ export default class Formula {
   constructor(key, expression, source) {
     this.key = key;
     this.expression = expression;
+    this.closure;
 
     // Special case: if the source ends in `.js`, we omit that from the stored
     // source. We'll rely on code elsewhere to map an attempt to get `foo =
@@ -32,6 +34,10 @@ export default class Formula {
 
   get inheritable() {
     return true;
+  }
+
+  static isFormula(key) {
+    return key.includes("=") || key.startsWith("{") || key === additionsKey;
   }
 
   static parse(source) {
@@ -163,8 +169,8 @@ export class VariableFormula extends Formula {
    * @param {string} extension
    */
   #matchExtension(key, extension) {
-    if (key.includes("=") || key.startsWith("{") || key === additionsKey) {
-      // Formulas and the additions key don't match patterns.
+    if (Formula.isFormula(key)) {
+      // Formulas don't match patterns.
       return null;
     } else if (extension) {
       // Key matches if it ends with the same extension
