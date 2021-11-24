@@ -1,6 +1,7 @@
 import DefaultValues from "../common/DefaultValues.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
+import defaultYamlHtml from "./defaultYamlHtml.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
@@ -13,6 +14,7 @@ export default class DefaultPages extends DefaultValues {
     super(graph, {
       ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
+      ".yaml": defaultYamlHtml,
       "index.html": defaultIndexHtml,
     });
   }
