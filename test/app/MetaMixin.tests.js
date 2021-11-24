@@ -135,26 +135,30 @@ describe("MetaMixin", () => {
     });
   });
 
-  it("doesn't inherit wildcard folders", async () => {
+  it("real values take precedence over wildcards", async () => {
     const graph = new (MetaMixin(ExplorableObject))({
       "{test}": {
         b: 2,
       },
       a: 1,
-      subgraph: {},
+      subgraph: {
+        subsubgraph: {},
+      },
     });
 
     // Wildcard folder matches direct request.
     const foo = await graph.get("foo");
     assert.deepEqual(await ExplorableGraph.plain(foo), { b: 2 });
 
-    // Regular values are inherited.
+    // Real values are inherited.
     assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "a"), 1);
 
-    // Wildcard values are not inherited.
+    // Wildcard values are inherited.
+    // REVIEW: Do we want this to work?
+    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "b"), 2);
     assert.equal(
-      await ExplorableGraph.traverse(graph, "subgraph", "b"),
-      undefined
+      await ExplorableGraph.traverse(graph, "subgraph", "subsubgraph", "b"),
+      2
     );
   });
 });
