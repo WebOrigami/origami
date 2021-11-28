@@ -179,30 +179,32 @@ export default class ExplorableGraph {
   /**
    * Return the value at the corresponding path of keys.
    *
-   * @param {Explorable} graph
+   * @param {Explorable} variant
    * @param {...any} keys
    */
-  static async traverse(graph, ...keys) {
-    // If the graph's get method accepts multiple keys, pass them all at once.
-    if (graph.get?.length !== 1) {
-      return await graph.get(...keys);
-    }
-
+  static async traverse(variant, ...keys) {
     // Start our traversal at the root of the graph.
-    let value = graph;
-    for (const key of keys) {
+    let value = variant;
+
+    // Process each key in turn.
+    // If the value is ever undefined, short-circuit the traversal.
+    const remainingKeys = keys.slice();
+    while (remainingKeys.length > 0 && value !== undefined) {
       // If the value isn't already explorable, cast it to an explorable graph.
-      // The implication is that, if someone is trying to call `get` on this
-      // thing, they mean to treat it as an explorable graph.
-      const subgraph = ExplorableGraph.from(value);
+      // If someone is trying to call `get` on this thing, they mean to treat it
+      // as an explorable graph.
+      const graph = ExplorableGraph.from(value);
 
-      // Ask the graph to get the value of the key.
-      value = await subgraph.get(key);
-
-      // If the value is undefined, we short-circuit the traversal.
-      if (value === undefined) {
-        return undefined;
+      // If the graph's get method accepts multiple keys, pass the remaining
+      // keys all at once.
+      if (graph.get.length !== 1) {
+        value = await graph.get(...remainingKeys);
+        break;
       }
+
+      // Otherwise, process the next key.
+      const key = remainingKeys.shift();
+      value = await graph.get(key);
     }
     return value;
   }
