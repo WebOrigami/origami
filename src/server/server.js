@@ -86,7 +86,12 @@ export async function handleRequest(request, response, graph) {
       mediaType = "text/yaml";
     }
 
-    const data = mediaType ? resource : textOrObject(resource);
+    let data;
+    if (mediaType) {
+      data = mediaTypeIsText[mediaType] ? String(resource) : resource;
+    } else {
+      data = textOrObject(resource);
+    }
 
     if (!mediaType) {
       // Can't identify media type; infer default type.
