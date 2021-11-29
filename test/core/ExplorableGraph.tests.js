@@ -18,6 +18,20 @@ describe("ExplorableGraph", () => {
     });
   });
 
+  it("from() uses an object's toGraph() method if defined", async () => {
+    const obj = {
+      toGraph() {
+        return {
+          a: "Hello, a.",
+        };
+      },
+    };
+    const graph = ExplorableGraph.from(obj);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: "Hello, a.",
+    });
+  });
+
   it("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 

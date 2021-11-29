@@ -1,6 +1,8 @@
 import Handlebars from "handlebars";
 import YAML from "yaml";
+import DefaultPages from "../../app/DefaultPages.js";
 import MetaMixin from "../../app/MetaMixin.js";
+import StringWithGraph from "../../app/StringWithGraph.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import {
   applyMixinToObject,
@@ -43,7 +45,9 @@ export default async function hbs(template, input) {
   /** @type {any} */ const options = { partials };
   const compiled = Handlebars.compile(template);
   try {
-    const result = compiled(data, options);
+    const text = compiled(data, options);
+    const dataGraph = new DefaultPages(data);
+    const result = new StringWithGraph(text, dataGraph);
     return result;
   } catch (/** @type {any} */ error) {
     // If we're asked to directly render a template that includes a

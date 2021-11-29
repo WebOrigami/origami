@@ -26,17 +26,24 @@ export default class ExplorableGraph {
   }
 
   static from(variant) {
-    if (this.isExplorable(variant)) {
-      // Already explorable
-      return variant;
+    // Use the object's toGraph() method if defined.
+    let obj = variant;
+    while (typeof obj.toGraph === "function") {
+      obj = obj.toGraph();
+    }
+
+    if (this.isExplorable(obj)) {
+      // Object itself supports the ExplorableGraph interface.
+      return obj;
     }
 
     // Parse a string/buffer as YAML (which covers JSON too).
-    const obj =
+    if (
       typeof variant === "string" ||
       (globalThis.Buffer && variant instanceof Buffer)
-        ? YAML.parse(String(variant))
-        : variant;
+    ) {
+      obj = YAML.parse(String(obj));
+    }
 
     // Handle known types.
     if (obj instanceof Function) {

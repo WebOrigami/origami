@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import Formula from "./Formula.js";
+import StringWithGraph from "./StringWithGraph.js";
 
 export default async function defaultIndexHtml() {
   // @ts-ignore
@@ -68,7 +69,7 @@ export default async function defaultIndexHtml() {
         ${list.trim()}
       </body>
     </html>`;
-  return html.trim();
+  return new StringWithGraph(html.trim(), graph);
 }
 
 function filterKeys(keys) {
