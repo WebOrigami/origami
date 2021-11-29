@@ -1,5 +1,3 @@
-import { constructSubgraph } from "./utilities.js";
-
 export default class ExplorableFunction {
   constructor(fn, keys = []) {
     this.fn = fn;
@@ -18,7 +16,10 @@ export default class ExplorableFunction {
         ? this.fn(key)
         : this.fn.bind(this, key);
     if (value instanceof Function && !(value instanceof this.constructor)) {
-      value = constructSubgraph(this.constructor, { fn: value, keys: [] });
+      // We don't know the domain of the explorable function we're returning, so
+      // use the empty array.
+      const keys = [];
+      value = Reflect.construct(this.constructor, [value, keys]);
     }
     return value;
   }

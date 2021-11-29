@@ -1,5 +1,3 @@
-import { constructSubgraph } from "./utilities.js";
-
 export default class ExplorableArray {
   /**
    * @param {Array} array
@@ -15,7 +13,7 @@ export default class ExplorableArray {
   async get(key) {
     let value = this.array[Number(key)];
     if (value instanceof Array && !(value instanceof this.constructor)) {
-      value = constructSubgraph(this.constructor, { array: value });
+      value = Reflect.construct(this.constructor, [value]);
     }
     return value;
   }

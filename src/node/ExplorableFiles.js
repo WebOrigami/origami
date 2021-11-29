@@ -4,11 +4,7 @@ import process from "process";
 import { pathToFileURL } from "url";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import {
-  constructSubgraph,
-  isPlainObject,
-  toSerializable,
-} from "../core/utilities.js";
+import { isPlainObject, toSerializable } from "../core/utilities.js";
 
 export default class ExplorableFiles {
   constructor(dirname) {
@@ -42,7 +38,7 @@ export default class ExplorableFiles {
     return !stats
       ? undefined
       : stats.isDirectory()
-      ? constructSubgraph(this.constructor, { dirname: objPath })
+      ? Reflect.construct(this.constructor, [objPath])
       : await fs.readFile(objPath);
   }
 

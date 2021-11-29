@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import { constructSubgraph } from "./utilities.js";
 
 const keysPromise = Symbol("keysPromise");
 
@@ -47,7 +46,7 @@ export default class ExplorableSite {
 
       if (response.redirected && response.url.endsWith("/")) {
         // Redirected to another explorable location.
-        return constructSubgraph(this.constructor, { url: response.url });
+        return Reflect.construct(this.constructor, [response.url]);
       }
 
       let buffer = await response.arrayBuffer();
