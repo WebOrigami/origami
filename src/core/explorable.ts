@@ -34,4 +34,10 @@ type PlainObject = {
   [key: string]: any;
 };
 
-type GraphVariant = Explorable | PlainObject | string | Function;
+interface HasFunction {
+  toFunction(): Function;
+}
+
+type Invocable = Explorable | Function | HasFunction;
+
+type GraphVariant = Explorable | PlainObject | string | Function | any[];
