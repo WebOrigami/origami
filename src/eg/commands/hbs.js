@@ -10,6 +10,14 @@ import {
   isPlainObject,
 } from "../../core/utilities.js";
 
+/**
+ * Apply the indicated Handlebars template to the given data and return the
+ * result.
+ *
+ * @this {ProgramContext}
+ * @param {string} template
+ * @param {Explorable|PlainObject} input
+ */
 export default async function hbs(template, input) {
   template = String(template);
   if (!input) {
@@ -18,7 +26,6 @@ export default async function hbs(template, input) {
     if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
       const frontGraph = ExplorableGraph.from(frontMatter);
       input = applyMixinToObject(MetaMixin, frontGraph);
-      // @ts-ignore
       input.scope = this?.graph;
       template = content;
     } else if (arguments.length === 2) {
@@ -30,7 +37,6 @@ export default async function hbs(template, input) {
     }
   }
 
-  // @ts-ignore
   const partials = await getPartials(this?.graph, template);
 
   const data =

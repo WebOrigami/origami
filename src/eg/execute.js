@@ -1,11 +1,25 @@
+/// <reference path="./egcode.d.ts" />
+
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as ops from "./ops.js";
 
-export default async function execute(code, environment) {
-  return await invoke.call(environment, code);
+/**
+ * Evaluate the given code in the given context and return the result.
+ *
+ * @param {Code} code
+ * @param {ProgramContext} context
+ */
+export default async function execute(code, context) {
+  return await invoke.call(context, code);
 }
 
-// `this` will be the context for invoking the code.
+/**
+ * Evaluate the given code and return the result.
+ * `this` will be the context in which the code will be evaluated.
+ *
+ * @this {ProgramContext}
+ * @param {Code} code
+ */
 async function invoke(code) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.

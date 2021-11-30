@@ -2,8 +2,12 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import Formula from "./Formula.js";
 import StringWithGraph from "./StringWithGraph.js";
 
+/**
+ * Return a default index.html page for the current graph.
+ *
+ * @this {Explorable}
+ */
 export default async function defaultIndexHtml() {
-  // @ts-ignore
   const graph = this;
   const keys = await ExplorableGraph.keys(graph);
   const filtered = filterKeys(keys);
@@ -28,7 +32,7 @@ export default async function defaultIndexHtml() {
     links.push(link);
   }
 
-  const parts = graph.path?.split("/");
+  const parts = /** @type {any} */ (graph).path?.split("/");
   const heading = parts?.[parts.length - 1] ?? "Index";
   const list = `
     <h1>${heading.trim()}</h1>
