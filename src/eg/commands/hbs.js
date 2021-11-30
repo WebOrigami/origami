@@ -91,7 +91,7 @@ async function getPartials(graph, template) {
     const partialPromises = partialKeys.map(async (name) => graph.get(name));
     const partialValues = await Promise.all(partialPromises);
     partialValues.forEach((value, index) => {
-      partials[partialNames[index]] = value;
+      partials[partialNames[index]] = String(value);
     });
 
     // The partials may themselves reference other partials; collect those too.

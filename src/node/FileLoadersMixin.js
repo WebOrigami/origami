@@ -1,17 +1,18 @@
 import path from "path";
+import HandlebarsTemplate from "../app/HandlebarsTemplate.js";
 
 const defaultLoaders = {
-  ".css": String,
-  ".hbs": String,
-  ".htm": String,
-  ".html": String,
-  ".js": String,
-  ".json": String,
-  ".md": String,
-  ".txt": String,
-  ".xhtml": String,
-  ".yml": String,
-  ".yaml": String,
+  ".css": bufferToString,
+  ".hbs": (obj) => new HandlebarsTemplate(bufferToString(obj)),
+  ".htm": bufferToString,
+  ".html": bufferToString,
+  ".js": bufferToString,
+  ".json": bufferToString,
+  ".md": bufferToString,
+  ".txt": bufferToString,
+  ".xhtml": bufferToString,
+  ".yml": bufferToString,
+  ".yaml": bufferToString,
 };
 
 export default function FileLoadersMixin(Base) {
@@ -23,14 +24,21 @@ export default function FileLoadersMixin(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (value instanceof Buffer) {
+      if (value) {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
-          return loader(value);
+          value = loader(value);
         }
       }
       return value;
     }
   };
+}
+
+function bufferToString(value) {
+  // return typeof value === "string" || value instanceof String
+  //   ? value
+  //   : String(value);
+  return value instanceof Buffer ? String(value) : value;
 }

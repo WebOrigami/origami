@@ -21,15 +21,19 @@ async function invoke(code) {
     )
   );
   let [fn, ...args] = evaluated;
-  if (typeof fn !== "function") {
-    if (fn instanceof Buffer || fn instanceof ArrayBuffer) {
-      // Presume the buffer contains text that represents a graph.
-      fn = fn.toString();
-    }
-    if (ExplorableGraph.canCastToExplorable(fn)) {
-      // The function is a graph. We can traverse it.
-      const graph = ExplorableGraph.from(fn);
-      fn = ExplorableGraph.traverse.bind(null, graph);
+  if (fn !== undefined && typeof fn !== "function") {
+    if (typeof fn.toFunction === "function") {
+      fn = fn.toFunction();
+    } else {
+      if (fn instanceof Buffer || fn instanceof ArrayBuffer) {
+        // Presume the buffer contains text that represents a graph.
+        fn = fn.toString();
+      }
+      if (ExplorableGraph.canCastToExplorable(fn)) {
+        // The function is a graph. We can traverse it.
+        const graph = ExplorableGraph.from(fn);
+        fn = ExplorableGraph.traverse.bind(null, graph);
+      }
     }
   }
   if (fn === undefined) {
