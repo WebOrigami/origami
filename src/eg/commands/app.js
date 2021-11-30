@@ -8,13 +8,15 @@ import config from "./config.js";
 
 // Start an ExplorableApp
 export default async function app(variant) {
+  const dirname = path.resolve(process.cwd());
   let meta;
   if (variant) {
     const graph = ExplorableGraph.from(variant);
     meta = applyMixinToObject(MetaMixin, graph);
   } else {
-    const dirname = path.resolve(process.cwd());
     meta = new (MetaMixin(ExplorableFiles))(dirname);
+  }
+  if (!meta.scope) {
     meta.scope = await config(dirname);
   }
   const result = new DefaultPages(meta);
