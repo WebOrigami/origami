@@ -37,8 +37,5 @@ export default function FileLoadersMixin(Base) {
 }
 
 function bufferToString(value) {
-  // return typeof value === "string" || value instanceof String
-  //   ? value
-  //   : String(value);
   return value instanceof Buffer ? String(value) : value;
 }
