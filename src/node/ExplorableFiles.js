@@ -166,9 +166,9 @@ async function prepareData(key, value) {
     return value;
   }
 
-  // If the value is a plain JS object or array, write it out as JSON or YAML (depending on the key), which
-  // seems like a more useful default than "[object Object]" or the array
-  // contents.
+  // If the value is a plain JS object or array, write it out as JSON or YAML
+  // (depending on the key), which seems like a more useful default than
+  // "[object Object]" or the array contents.
   if (isPlainObject(value) || value instanceof Array) {
     return key.endsWith(".yaml")
       ? YAML.stringify(value)

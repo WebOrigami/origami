@@ -3,6 +3,15 @@
  * tool to confirm our code is type safe.
  */
 
+/**
+ * Core ExplorableGraph interface
+ */
+interface Explorable {
+  [Symbol.asyncIterator](): AsyncIterableIterator<any>;
+  get(...keys: any[]): Promise<any>;
+  set?(...args: any[]): Promise<void>;
+}
+
 /*
  * A class constructor is an object with a `new` method that returns an
  * instance of the indicated type.
@@ -20,15 +29,6 @@ type Constructor<T> = new (...args: any[]) => T;
 type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
-
-interface Explorable {
-  [Symbol.asyncIterator](): AsyncIterableIterator<any>;
-  get(...keys: any[]): Promise<any>;
-}
-
-interface Storable {
-  set(...args: any[]): Promise<void>;
-}
 
 type PlainObject = {
   [key: string]: any;

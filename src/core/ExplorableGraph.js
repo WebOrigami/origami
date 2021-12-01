@@ -14,7 +14,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  * A collection of operations that can be performed on explorable graphs.
  */
 export default class ExplorableGraph {
-  // TODO: Report true for Buffer? Array?
+  // TODO: Report true for Buffer?
   static canCastToExplorable(obj) {
     return (
       this.isExplorable(obj) ||
