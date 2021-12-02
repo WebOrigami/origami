@@ -37,6 +37,20 @@ async function invoke(code) {
   // The head of the array is a graph or function, the rest are args or keys.
   let [fn, ...args] = evaluated;
 
+  if (fn === undefined) {
+    // The most common cause of an undefined function at this point is that the
+    // code tried to get a member that doesn't exist in the local graph. To
+    // give a better error message for that common case, we inspect the code to
+    // see if it was a get.
+    const name =
+      code instanceof Array &&
+      code[0] instanceof Array &&
+      code[0][0] === ops.graph
+        ? code[0][1]
+        : "(unknown)";
+    throw ReferenceError(`Couldn't find function or graph key: ${name}`);
+  }
+
   try {
     const result =
       fn instanceof Function
