@@ -7,7 +7,7 @@ export default function ImplicitModulesMixin(Base) {
       }
 
       // See if we have a JS module for the requested key.
-      if (key.endsWith(".js")) {
+      if (key.endsWith?.(".js")) {
         return undefined;
       }
 

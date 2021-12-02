@@ -1,15 +1,7 @@
 /// <reference path="./egcode.d.ts" />
 
-/**
- * Get the key from the current graph.
- *
- * @this {ProgramContext}
- * @param {any} key
- */
-export async function get(key) {
-  return await this.graph.get(key);
-}
-get.toString = () => "«ops.get»";
+// The graph "op" is a placeholder that represents the current graph.
+export const graph = Symbol("«ops.graph»");
 
 /**
  * Get the key from the current graph and, if it's a function, invoke it.
@@ -18,7 +10,7 @@ get.toString = () => "«ops.get»";
  * @param {any} key
  */
 export async function implicitCall(key) {
-  let value = await get.call(this, key);
+  let value = await this.graph.get(key);
   if (typeof value === "function") {
     value = await value.call(this);
   }

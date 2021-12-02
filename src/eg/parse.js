@@ -111,7 +111,7 @@ export function expression(text) {
     slashCall,
     percentCall,
     functionCall,
-    getCall
+    getReference
   )(text);
 }
 
@@ -122,13 +122,13 @@ export function extension(text) {
 
 // Parse a function call.
 export function functionCall(text) {
-  const parsed = sequence(optionalWhitespace, getCall, args)(text);
+  const parsed = sequence(optionalWhitespace, reference, args)(text);
   if (!parsed) {
     return null;
   }
   const { 1: fnName, 2: fnArgs } = parsed.value;
-  let value = [fnName];
-  if (fnArgs) {
+  let value = [[ops.graph, fnName]];
+  if (fnArgs.length > 0) {
     value.push(...fnArgs);
   }
   return {
@@ -138,12 +138,12 @@ export function functionCall(text) {
 }
 
 // Parse a call to get a value.
-export function getCall(text) {
+export function getReference(text) {
   const parsed = reference(text);
   if (!parsed) {
     return null;
   }
-  const value = [ops.get, parsed.value];
+  const value = [ops.graph, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -275,17 +275,19 @@ export function pathKey(text) {
 export function percentCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    getCall,
+    getReference,
     terminal(/^%/),
     optional(percentPath)
   )(text);
   if (!parsed) {
     return null;
   }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
-  let value = [fnName];
-  if (fnArgs) {
-    value.push(...fnArgs);
+  const { 1: value, 3: path } = parsed.value;
+  if (path) {
+    value.push(...path);
+  } else {
+    // Trailing separator
+    value.push(undefined);
   }
   return {
     value,
@@ -322,7 +324,8 @@ export function protocolIndirectCall(text) {
   if (!parsed) {
     return null;
   }
-  const value = [[[ops.get, parsed.value[1]]], ...parsed.value[3]]; // function and args
+  const { 1: fnName, 3: fnArgs } = parsed.value;
+  const value = [[ops.graph, fnName], ...fnArgs]; // function and args
   return {
     value,
     rest: parsed.rest,
@@ -357,17 +360,19 @@ export function singleQuoteString(text) {
 export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    getCall,
+    getReference,
     terminal(/^\//),
     optional(slashPath)
   )(text);
   if (!parsed) {
     return null;
   }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
-  let value = [fnName];
-  if (fnArgs) {
-    value.push(...fnArgs);
+  const { 1: value, 3: path } = parsed.value;
+  if (path) {
+    value.push(...path);
+  } else {
+    // Trailing separator
+    value.push(undefined);
   }
   return {
     value,
@@ -405,7 +410,7 @@ export function spacePathCall(text) {
     return null;
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
-  let value = [[ops.get, fnName]];
+  let value = [ops.graph, fnName];
   if (fnArgs) {
     value.push(...fnArgs);
   }
@@ -427,7 +432,7 @@ export function spaceUrl(text) {
     return null;
   }
   const { 1: protocol, 3: path } = parsed.value;
-  const value = [[[ops.get, protocol]], ...path];
+  const value = [[ops.graph, protocol], ...path];
   return {
     value,
     rest: parsed.rest,

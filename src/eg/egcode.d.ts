@@ -6,4 +6,4 @@ type ProgramContext = {
   thisKey?: string;
 };
 
-type Code = any[];
+type Code = [GraphVariant, ...any[]] | any;

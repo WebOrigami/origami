@@ -190,13 +190,39 @@ export default class ExplorableGraph {
    * @param {...any} keys
    */
   static async traverse(variant, ...keys) {
+    try {
+      return await this.traverseOrThrow(variant, ...keys);
+    } catch (/** @type {any} */ error) {
+      if (error instanceof ReferenceError) {
+        return undefined;
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Return the value at the corresponding path of keys. Throw if any interior
+   * step of the path doesn't lead to a result.
+   *
+   * @param {Explorable} variant
+   * @param  {...any} keys
+   * @returns
+   */
+  static async traverseOrThrow(variant, ...keys) {
     // Start our traversal at the root of the graph.
     let value = variant;
 
     // Process each key in turn.
     // If the value is ever undefined, short-circuit the traversal.
     const remainingKeys = keys.slice();
-    while (remainingKeys.length > 0 && value !== undefined) {
+    while (remainingKeys.length > 0) {
+      if (value === undefined) {
+        throw new ReferenceError(
+          `Couldn't traverse the path: ${keys.join("/")}`
+        );
+      }
+
       // If the value isn't already explorable, cast it to an explorable graph.
       // If someone is trying to call `get` on this thing, they mean to treat it
       // as an explorable graph.

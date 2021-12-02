@@ -26,13 +26,11 @@ expression: singleQuoteString
             slashCall
             percentCall
             functionCall
-            getCall
+            reference
 
 extension: .literal
 
-functionCall: getCall [args]
-
-getCall: reference
+functionCall: reference [args]
 
 group: ( expression )
 
@@ -59,9 +57,9 @@ reference: thisReference
 
 singleQuoteString: '[text]'
 
-protocolIndirectCall: getCall ":"|"://" slashPath
+protocolIndirectCall: reference ":"|"://" slashPath
 
-slashCall: getCall "/" [slashPath]
+slashCall: reference "/" [slashPath]
 
 slashPath: pathKey / slashPath
            pathKey

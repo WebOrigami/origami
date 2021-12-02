@@ -10,9 +10,7 @@ export default class ExplorableFunction {
 
   async get(key) {
     let value =
-      key === undefined
-        ? this
-        : this.fn.length === 1
+      key === undefined || this.fn.length === 1
         ? this.fn(key)
         : this.fn.bind(this, key);
     if (value instanceof Function && !(value instanceof this.constructor)) {

@@ -80,7 +80,7 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
           value.push(parsedTerm.value);
         } else {
           // Trailing separator
-          value.push("");
+          value.push(undefined);
           rest = parsedSeparator.rest;
         }
       } else {
