@@ -1,4 +1,5 @@
 import * as YAMLModule from "yaml";
+import ExplorableGraph from "./ExplorableGraph.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -89,6 +90,21 @@ export function isPlainObject(obj) {
   }
 
   return Object.getPrototypeOf(obj) === proto;
+}
+
+/**
+ * Convert the given object to a function.
+ *
+ * @param {Invocable} obj
+ */
+export function toFunction(obj) {
+  const fn =
+    typeof obj === "function"
+      ? obj
+      : typeof (/** @type {any} */ (obj).toFunction) === "function"
+      ? /** @type {any} */ (obj).toFunction()
+      : ExplorableGraph.toFunction(obj);
+  return fn;
 }
 
 export function toSerializable(obj) {

@@ -1,7 +1,15 @@
 import * as fs from "fs"; // NOT the promises version used elsewhere
+import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-// @ts-ignore
-export default async function watch(graph = this.graph) {
+/**
+ * Let a graph of files respond to changes.
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} [variant]
+ */
+export default async function watch(variant) {
+  variant = variant ?? this;
+  const graph = /** @type {any} */ (ExplorableGraph.from(variant));
   const graphPath = graph.path;
   console.log(`Watching ${graphPath}`);
   fs.watch(graphPath, (eventType, filename) => {
@@ -13,4 +21,4 @@ export default async function watch(graph = this.graph) {
   return graph;
 }
 
-watch.usage = `watch(files)\tLets a graph of files respond to changes`;
+watch.usage = `watch(files)\tLet a graph of files respond to changes`;

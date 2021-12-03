@@ -4,26 +4,16 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as ops from "./ops.js";
 
 /**
- * Evaluate the given code in the given context and return the result.
- *
- * @param {Code} code
- * @param {ProgramContext} context
- */
-export default async function execute(code, context) {
-  return await invoke.call(context, code);
-}
-
-/**
  * Evaluate the given code and return the result.
- * `this` will be the context in which the code will be evaluated.
+ * `this` should be the graph in which the code will be evaluated.
  *
- * @this {ProgramContext}
+ * @this {Explorable}
  * @param {Code} code
  */
-async function invoke(code) {
+export default async function execute(code) {
   if (code === ops.graph) {
     // ops.graph is a placeholder for the current graph.
-    return this.graph;
+    return this;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -31,7 +21,7 @@ async function invoke(code) {
 
   // Evaluate each instruction in the code.
   const evaluated = await Promise.all(
-    code.map((instruction) => invoke.call(this, instruction))
+    code.map((instruction) => execute.call(this, instruction))
   );
 
   // The head of the array is a graph or function, the rest are args or keys.
@@ -49,6 +39,12 @@ async function invoke(code) {
         ? code[0][1]
         : "(unknown)";
     throw ReferenceError(`Couldn't find function or graph key: ${name}`);
+  }
+
+  // If the "function" is currently an object with a .toFunction() method, get
+  // the real function from that.
+  if (typeof fn !== "function" && fn.toFunction) {
+    fn = fn.toFunction();
   }
 
   try {

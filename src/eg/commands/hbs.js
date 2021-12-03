@@ -14,7 +14,7 @@ import {
  * Apply the indicated Handlebars template to the given data and return the
  * result.
  *
- * @this {ProgramContext}
+ * @this {Explorable}
  * @param {string} template
  * @param {Explorable|PlainObject} input
  */
@@ -26,7 +26,7 @@ export default async function hbs(template, input) {
     if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
       const frontGraph = ExplorableGraph.from(frontMatter);
       input = applyMixinToObject(MetaMixin, frontGraph);
-      input.scope = this?.graph;
+      /** @type {any} */ (input).scope = this;
       template = content;
     } else if (arguments.length === 2) {
       // Caller explicitly passed in `undefined` as the input argument,
@@ -37,7 +37,7 @@ export default async function hbs(template, input) {
     }
   }
 
-  const partials = await getPartials(this?.graph, template);
+  const partials = await getPartials(this, template);
 
   const data =
     typeof input === "string" || input instanceof Buffer

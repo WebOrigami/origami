@@ -34,7 +34,7 @@ async function main(...args) {
   }
 
   // Execute
-  let result = await execute(code, { graph });
+  let result = await execute.call(graph, code);
 
   // If result was a function, execute it.
   if (typeof result === "function") {

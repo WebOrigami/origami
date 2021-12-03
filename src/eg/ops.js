@@ -13,11 +13,11 @@ export const variable = Symbol("«ops.variable»");
 /**
  * Get the key from the current graph and, if it's a function, invoke it.
  *
- * @this {ProgramContext}
+ * @this {Explorable}
  * @param {any} key
  */
 export async function implicitCall(key) {
-  let value = await this.graph.get(key);
+  let value = await this.get(key);
   if (typeof value === "function") {
     value = await value.call(this);
   }

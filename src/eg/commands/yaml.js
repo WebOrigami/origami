@@ -2,8 +2,14 @@ import YAML from "yaml";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { toSerializable } from "../../core/utilities.js";
 
-// @ts-ignore
-export default async function yaml(obj = this.graph) {
+/**
+ * Render the object as text in YAML format.
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} [obj]
+ */
+export default async function yaml(obj) {
+  obj = obj ?? this;
   if (obj instanceof Buffer) {
     obj = String(obj);
   }

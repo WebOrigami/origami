@@ -21,11 +21,10 @@ export default class DefaultPages extends DefaultValues {
 
   onChange(eventType, filename) {
     // @ts-ignore
-    this.graph.onChange?.(eventType, filename);
+    this.onChange?.(eventType, filename);
   }
 
   get path() {
-    // @ts-ignore
-    return this.graph.path;
+    return /** @type {any} */ (this.graph).path;
   }
 }

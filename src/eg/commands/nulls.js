@@ -1,8 +1,14 @@
 import MapGraph from "../../core/MapGraph.js";
 
-// @ts-ignore
-export default function nulls(graph = this.graph) {
-  return new MapGraph(graph, () => null);
+/**
+ * Return a new graph with all values equal to null.
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} [variant]
+ */
+export default function nulls(variant) {
+  variant = variant ?? this;
+  return new MapGraph(variant, () => null);
 }
 
 nulls.usage = `nulls(graph)\tReturn a new graph with all values equal to null`;

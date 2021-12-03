@@ -115,7 +115,7 @@ export default class ExplorableGraph {
    * fire off all the get requests for those values as once, then add them to
    * the resulting object as the values come in.
    *
-   * @param {GraphVariant} variant
+   * @param {GraphVariant} [variant]
    */
   static async plain(variant) {
     const graph = this.from(variant);
@@ -151,7 +151,7 @@ export default class ExplorableGraph {
   /**
    * Returns the graph in function form.
    *
-   * @param {GraphVariant} variant
+   * @param {GraphVariant} [variant]
    */
   static toFunction(variant) {
     const graph = this.from(variant);

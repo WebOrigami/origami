@@ -1,8 +1,14 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { toSerializable } from "../../core/utilities.js";
 
-// @ts-ignore
-export default async function json(obj = this.graph) {
+/**
+ * Render the given object in JSON format.
+ *
+ * @this {Explorable}
+ * @param {any} obj
+ */
+export default async function json(obj) {
+  obj = obj ?? this;
   if (ExplorableGraph.canCastToExplorable(obj)) {
     return await ExplorableGraph.toJson(obj);
   } else {

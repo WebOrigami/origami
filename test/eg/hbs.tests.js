@@ -16,8 +16,7 @@ describe("hbs (Handlebars) command", () => {
     const graph = new ExplorableObject({
       "bold.hbs": `<b>{{> @partial-block }}</b>`,
     });
-    const environment = { graph };
-    const result = await hbs.call(environment, template, data);
+    const result = await hbs.call(graph, template, data);
     assert.equal(result, "Hello, <b>world</b>.");
   });
 });

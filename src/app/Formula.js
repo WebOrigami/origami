@@ -38,16 +38,21 @@ export default class Formula {
     }
   }
 
-  async evaluate(environment) {
+  /**
+   * Evaluate the formula in the context of the given graph.
+   *
+   * @param {Explorable} graph
+   */
+  async evaluate(graph) {
     if (this.expression) {
       // Constant or variable assignment
-      const code = environment.graph.bindings
-        ? this.bindCode(this.expression, environment.graph.bindings)
+      const bindings = /** @type {any} */ (graph).bindings;
+      const code = bindings
+        ? this.bindCode(this.expression, bindings)
         : this.expression;
-      return await execute(code, environment);
+      return await execute.call(graph, code);
     } else {
       // Variable pattern
-      const { graph } = environment;
       return await graph.get(this.key);
     }
   }

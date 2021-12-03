@@ -1,4 +1,5 @@
 import ExplorableGraph from "./ExplorableGraph.js";
+import * as utilities from "./utilities.js";
 
 const graphKey = Symbol("graph");
 const mapFnKey = Symbol("mapFn");
@@ -14,7 +15,7 @@ export default class MapGraph {
    */
   constructor(variant, mapFn) {
     this[graphKey] = ExplorableGraph.from(variant);
-    this[mapFnKey] = mapFn;
+    this[mapFnKey] = utilities.toFunction(mapFn);
   }
 
   // Return same keys as original graph.

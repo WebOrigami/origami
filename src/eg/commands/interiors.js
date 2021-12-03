@@ -1,7 +1,13 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
-// @ts-ignore
-export default async function interiors(variant = this.graph) {
+/**
+ * Return the interior nodes of the graph.
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} [variant]
+ */
+export default async function interiors(variant) {
+  variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
   const interior = {
     async *[Symbol.asyncIterator]() {
