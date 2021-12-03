@@ -3,6 +3,10 @@
 // The graph op is a placeholder that represents the current graph.
 export const graph = Symbol("«ops.graph»");
 
+// The `thisKey` op is a placeholder that represents the key of the object that
+// resulted in the current code.
+export const thisKey = Symbol("«ops.thisKey»");
+
 // The variable op is a placeholder that represents a variable.
 export const variable = Symbol("«ops.variable»");
 
@@ -19,16 +23,6 @@ export async function implicitCall(key) {
   }
   return value;
 }
-
-/**
- * Return the string key for the formula that created this code.
- *
- * @this {ProgramContext}
- */
-export async function thisKey() {
-  return this.thisKey;
-}
-thisKey.toString = () => "«ops.thisKey»";
 
 export async function concat(...args) {
   return String.prototype.concat(...args);

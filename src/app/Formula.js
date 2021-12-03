@@ -21,6 +21,23 @@ export default class Formula {
     this.source = source.endsWith(".js") ? source.slice(0, -3) : source;
   }
 
+  // Find unbound variables in the code and replace them with the given
+  // bindings. Likewise, find ops.thisKey referernces in the code and replace
+  // them with this formula's `source`.
+  bindCode(code, bindings) {
+    if (!(code instanceof Array)) {
+      return code;
+    } else if (code[0] === ops.variable) {
+      // Variable assignment; apply binding.
+      const [_, variable, extension] = code;
+      return bindings[variable] + (extension ?? "");
+    } else if (code[0] === ops.thisKey) {
+      return this.source;
+    } else {
+      return code.map((c) => this.bindCode(c, bindings));
+    }
+  }
+
   async evaluate(environment) {
     if (this.expression) {
       // Constant or variable assignment
@@ -70,18 +87,6 @@ export default class Formula {
       }
     }
     return undefined;
-  }
-
-  bindCode(code, bindings) {
-    if (!(code instanceof Array)) {
-      return code;
-    } else if (code[0] === ops.variable) {
-      // Variable assignment; apply binding.
-      const [_, variable, extension] = code;
-      return bindings[variable] + (extension ?? "");
-    } else {
-      return code.map((c) => this.bindCode(c, bindings));
-    }
   }
 }
 
