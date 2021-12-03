@@ -68,7 +68,7 @@ export function backtickQuoteString(text) {
   const { 2: contents } = parsed.value;
   // Drop empty strings.
   const filtered = contents.filter((item) => item !== "");
-  const value = [ops.quote, ...filtered];
+  const value = [ops.concat, ...filtered];
   return {
     value,
     rest: parsed.rest,

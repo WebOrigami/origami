@@ -121,14 +121,18 @@ export default function FormulasMixin(Base) {
 
             // Add our formula's key binding to the graph's bindings.
             const bindings = Object.assign(
+              {},
               formula.closure,
               this.bindings,
               keyBinding
             );
 
+            // Extend the graph with the full bindings.
+            const graph = Object.create(this);
+            graph.bindings = bindings;
+
             value = await formula.evaluate({
-              bindings,
-              graph: this,
+              graph,
               thisKey: formula.source,
             });
 

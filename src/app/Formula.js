@@ -24,7 +24,10 @@ export default class Formula {
   async evaluate(environment) {
     if (this.expression) {
       // Constant or variable assignment
-      return await execute(this.expression, environment);
+      const code = environment.graph.bindings
+        ? this.bindCode(this.expression, environment.graph.bindings)
+        : this.expression;
+      return await execute(code, environment);
     } else {
       // Variable pattern
       const { graph } = environment;
@@ -67,6 +70,18 @@ export default class Formula {
       }
     }
     return undefined;
+  }
+
+  bindCode(code, bindings) {
+    if (!(code instanceof Array)) {
+      return code;
+    } else if (code[0] === ops.variable) {
+      // Variable assignment; apply binding.
+      const [_, variable, extension] = code;
+      return bindings[variable] + (extension ?? "");
+    } else {
+      return code.map((c) => this.bindCode(c, bindings));
+    }
   }
 }
 

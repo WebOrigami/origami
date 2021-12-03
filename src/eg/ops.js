@@ -1,7 +1,10 @@
 /// <reference path="./egcode.d.ts" />
 
-// The graph "op" is a placeholder that represents the current graph.
+// The graph op is a placeholder that represents the current graph.
 export const graph = Symbol("«ops.graph»");
+
+// The variable op is a placeholder that represents a variable.
+export const variable = Symbol("«ops.variable»");
 
 /**
  * Get the key from the current graph and, if it's a function, invoke it.
@@ -27,27 +30,7 @@ export async function thisKey() {
 }
 thisKey.toString = () => "«ops.thisKey»";
 
-export async function quote(...args) {
+export async function concat(...args) {
   return String.prototype.concat(...args);
 }
-quote.toString = () => "«ops.quote»";
-
-/**
- * Return the current value of the indicated variable (+ extension).
- *
- * @this {ProgramContext}
- * @param {string} name
- * @param {string} extension
- */
-export async function variable(name, extension) {
-  if (this.bindings) {
-    let result = this.bindings[name];
-    if (extension) {
-      result += extension;
-    }
-    return result;
-  } else {
-    return undefined;
-  }
-}
-variable.toString = () => "«ops.variable»";
+concat.toString = () => "«ops.concat";

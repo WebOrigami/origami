@@ -104,18 +104,18 @@ describe("parse", () => {
 
   it("backtickQuoteString", () => {
     assert.deepEqual(backtickQuoteString("`Hello, world.`")?.value, [
-      ops.quote,
+      ops.concat,
       "Hello, world.",
     ]);
   });
 
   it("backtickQuotedString with variable pattern", () => {
     assert.deepEqual(backtickQuoteString("`${x}.json`")?.value, [
-      ops.quote,
+      ops.concat,
       [ops.variable, "x", ".json"],
     ]);
     assert.deepEqual(backtickQuoteString("`foo ${x}.json bar`")?.value, [
-      ops.quote,
+      ops.concat,
       "foo ",
       [ops.variable, "x", ".json"],
       " bar",
