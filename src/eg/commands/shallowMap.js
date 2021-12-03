@@ -20,7 +20,7 @@ export default async function shallowMap(variant, mapFn) {
     async get(key) {
       let value = await graph.get(key);
       return value !== undefined
-        ? fn.call(this, value, key) // Return mapped value
+        ? await fn.call(this, value, key) // Return mapped value
         : undefined;
     },
   };

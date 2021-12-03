@@ -29,7 +29,7 @@ export default class MapGraph {
     return ExplorableGraph.isExplorable(value)
       ? new MapGraph(value, this[mapFnKey]) // Return mapped subgraph
       : value !== undefined
-      ? this[mapFnKey](value, key) // Return mapped value
+      ? await this[mapFnKey](value, key) // Return mapped value
       : undefined;
   }
 }
