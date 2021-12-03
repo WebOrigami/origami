@@ -2,8 +2,9 @@ import path from "path";
 import process from "process";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
 
-export default async function files(...keys) {
-  const dirname = path.resolve(process.cwd(), ...keys);
+// TODO: Reconsider whether we can support a ...keys spread parameter.
+export default async function files(key) {
+  const dirname = path.resolve(process.cwd(), key);
   return new ExplorableFiles(dirname);
 }
 

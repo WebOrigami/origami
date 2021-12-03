@@ -11,8 +11,12 @@ export default class ExplorableFunction {
   async get(key) {
     let value =
       key === undefined || this.fn.length === 1
-        ? this.fn(key)
-        : this.fn.bind(this, key);
+        ? // No key was provided, or function takes only one argument: invoke
+          this.fn(key)
+        : // Bind the key to the first parameter. Subsequent get calls will
+          // eventually bind all parameters until only one remains. At that point,
+          // the above condition will apply and the function will be invoked.
+          this.fn.bind(this, key);
     if (value instanceof Function && !(value instanceof this.constructor)) {
       // We don't know the domain of the explorable function we're returning, so
       // use the empty array.
