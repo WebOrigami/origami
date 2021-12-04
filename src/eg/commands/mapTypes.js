@@ -1,17 +1,20 @@
 import path from "path";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
+import * as utilities from "../../core/utilities.js";
 
+/**
+ * @this {Explorable}
+ */
 export default function mapTypes(
   variant,
   sourceExtension,
   destinationExtension,
-  fn
+  mapFn
 ) {
   const graph = ExplorableGraph.from(variant);
   const sourceExtensionLower = sourceExtension.toLowerCase();
   const destinationExtensionLower = destinationExtension.toLowerCase();
-  // @ts-ignore
-  const environment = this;
+  const fn = utilities.toFunction(mapFn);
   return {
     async *[Symbol.asyncIterator]() {
       const keys = new Set();
@@ -38,9 +41,7 @@ export default function mapTypes(
         const basename = path.basename(key, destinationExtension);
         const sourceKey = `${basename}${sourceExtension}`;
         value = await graph.get(sourceKey);
-        value = value
-          ? await fn.call(environment, value, sourceKey, key)
-          : undefined;
+        value = value ? await fn.call(this, value, sourceKey, key) : undefined;
       } else {
         // Not an extension we handle.
         value = await graph.get(key);
