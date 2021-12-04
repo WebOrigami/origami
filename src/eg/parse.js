@@ -266,6 +266,21 @@ export default function parse(text) {
   return parsed?.rest !== "" ? parsed.value : null;
 }
 
+export function pathHead(text) {
+  const parsed = any(indirectCall, group, functionCall, getReference)(text);
+  if (!parsed) {
+    return null;
+  }
+  let value = parsed.value;
+  if (value[0] !== ops.graph) {
+    value = [value];
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse a key in a path.
 export function pathKey(text) {
   return any(group, reference)(text);
@@ -275,7 +290,7 @@ export function pathKey(text) {
 export function percentCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    getReference,
+    pathHead,
     terminal(/^%/),
     optional(percentPath)
   )(text);
@@ -360,14 +375,14 @@ export function singleQuoteString(text) {
 export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    getReference,
+    pathHead,
     terminal(/^\//),
     optional(slashPath)
   )(text);
   if (!parsed) {
     return null;
   }
-  const { 1: value, 3: path } = parsed.value;
+  let { 1: value, 3: path } = parsed.value;
   if (path) {
     value.push(...path);
   } else {

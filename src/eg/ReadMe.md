@@ -48,6 +48,11 @@ omittedParensArgs: whitespace list
 
 parentheticalArgs: ( [list] )
 
+pathHead: indirectCall
+          group
+          functionCall
+          getReference
+
 pathKey: group
          reference
 
@@ -57,9 +62,14 @@ reference: thisReference
 
 singleQuoteString: '[text]'
 
+percentCall: pathHead "/" [percentPath]
+
+percentPath: pathKey / percentPath
+           pathKey
+
 protocolIndirectCall: reference ":"|"://" slashPath
 
-slashCall: reference "/" [slashPath]
+slashCall: pathHead "/" [slashPath]
 
 slashPath: pathKey / slashPath
            pathKey

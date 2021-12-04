@@ -316,6 +316,11 @@ describe("parse", () => {
       "foo",
       "bar",
     ]);
+    assert.deepEqual(slashCall("fn('a', 'b')/c/d")?.value, [
+      [[ops.graph, "fn"], "a", "b"],
+      "c",
+      "d",
+    ]);
   });
 
   it("slashPath", () => {
