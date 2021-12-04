@@ -96,15 +96,27 @@ async function getPartials(graph, template) {
     // Get the partials from the graph.
     const partialPromises = partialKeys.map(async (name) => graph.get(name));
     const partialValues = await Promise.all(partialPromises);
+
+    // Check to see whether any partials are missing.
+    partialValues
+      .filter((value) => value === undefined)
+      .forEach((value, index) => {
+        console.warn(`Partial ${partialKeys[index]} not found in graph.`);
+      });
+
     partialValues.forEach((value, index) => {
-      partials[partialNames[index]] = String(value);
+      if (value) {
+        partials[partialNames[index]] = String(value);
+      }
     });
 
     // The partials may themselves reference other partials; collect those too.
     await Promise.all(
       partialValues.map(async (value) => {
-        const nestedPartials = await getPartials(graph, value);
-        Object.assign(partials, nestedPartials);
+        if (value) {
+          const nestedPartials = await getPartials(graph, value);
+          Object.assign(partials, nestedPartials);
+        }
       })
     );
   }
