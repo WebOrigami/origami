@@ -52,8 +52,8 @@ export default async function hbs(template, input) {
   const compiled = Handlebars.compile(template);
   try {
     const text = compiled(data, options);
-    const dataGraph = new DefaultPages(data);
-    const result = new StringWithGraph(text, dataGraph);
+    const dataGraph = isPlainObject(data) ? new DefaultPages(data) : null;
+    const result = dataGraph ? new StringWithGraph(text, dataGraph) : text;
     return result;
   } catch (/** @type {any} */ error) {
     // If we're asked to directly render a template that includes a

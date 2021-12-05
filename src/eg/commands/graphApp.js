@@ -10,7 +10,7 @@ import config from "./config.js";
  *
  * @param {Explorable} variant
  */
-export default async function appOf(variant) {
+export default async function graphApp(variant) {
   const graph = ExplorableGraph.from(variant);
   const meta = applyMixinToObject(MetaMixin, graph);
   if (!meta.scope) {
@@ -22,4 +22,4 @@ export default async function appOf(variant) {
   return result;
 }
 
-appOf.usage = `appOf(graph)\tCreate an app by wrapping a graph`;
+graphApp.usage = `graphApp(graph)\tCreate an app by wrapping a graph`;

@@ -52,6 +52,9 @@ export default class ExplorableGraph {
       return new ExplorableArray(obj);
     } else if (isPlainObject(obj)) {
       return new ExplorableObject(obj);
+    } else if (typeof obj.toFunction === "function") {
+      const fn = obj.toFunction();
+      return new ExplorableFunction(fn);
     }
 
     throw new TypeError("Couldn't convert object to an explorable graph");

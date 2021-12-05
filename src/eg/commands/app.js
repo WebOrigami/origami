@@ -1,6 +1,6 @@
 import path from "path";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
-import appOf from "./appOf.js";
+import graphApp from "./graphApp.js";
 
 /**
  * Wrap the graph for the current directory with an app.
@@ -8,7 +8,7 @@ import appOf from "./appOf.js";
 export default async function app(key) {
   const dirname = path.resolve(process.cwd());
   const files = new ExplorableFiles(dirname);
-  const graph = await appOf(files);
+  const graph = await graphApp(files);
   return key === undefined ? graph : await graph.get(key);
 }
 
