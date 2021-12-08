@@ -91,6 +91,17 @@ export function isPlainObject(obj) {
   return Object.getPrototypeOf(obj) === proto;
 }
 
+export function parse(text) {
+  const frontMatter = extractFrontMatter(text);
+  if (frontMatter) {
+    const { frontData, bodyText } = frontMatter;
+    const data = Object.assign(frontData, { bodyText });
+    return data;
+  } else {
+    return YAML.parse(text);
+  }
+}
+
 /**
  * Convert the given object to a function.
  *

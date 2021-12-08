@@ -81,4 +81,16 @@ This is the content.
     const text = "a: Hello, a.";
     assert.equal(utilities.extractFrontMatter(text), null);
   });
+
+  it("parse can combine front matter and body text", () => {
+    const parsed = utilities.parse(`---
+a: Hello, a.
+---
+This is the content.
+`);
+    assert.deepEqual(parsed, {
+      a: "Hello, a.",
+      bodyText: "This is the content.\n",
+    });
+  });
 });

@@ -1,9 +1,9 @@
 import Handlebars from "handlebars";
-import YAML from "yaml";
 import DefaultPages from "../../app/DefaultPages.js";
 import MetaMixin from "../../app/MetaMixin.js";
 import StringWithGraph from "../../app/StringWithGraph.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
+import * as utilities from "../../core/utilities.js";
 import {
   applyMixinToObject,
   extractFrontMatter,
@@ -64,15 +64,7 @@ export default async function hbs(template, input) {
 // Extract the data from the given input.
 async function dataFromInput(input) {
   if (typeof input === "string" || input instanceof Buffer) {
-    const text = String(input);
-    const frontMatter = extractFrontMatter(text);
-    if (frontMatter) {
-      const { frontData, bodyText } = frontMatter;
-      const data = Object.assign(frontData, { bodyText });
-      return data;
-    } else {
-      return YAML.parse(text);
-    }
+    return utilities.parse(String(input));
   } else if (isPlainObject(input)) {
     return input;
   } else if (ExplorableGraph.canCastToExplorable(input)) {
