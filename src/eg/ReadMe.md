@@ -69,6 +69,8 @@ percentPath: pathKey / percentPath
 
 protocolIndirectCall: reference ":"|"://" slashPath
 
+protocolCall: pathHead ":"|"://" expression
+
 slashCall: pathHead "/" [slashPath]
 
 slashPath: pathKey / slashPath

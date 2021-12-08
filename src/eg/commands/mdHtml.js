@@ -1,5 +1,6 @@
 import highlight from "highlight.js";
 import marked from "marked";
+import { extractFrontMatter } from "../../core/utilities.js";
 
 marked.setOptions({
   gfm: true, // Use GitHub-flavored markdown.
@@ -10,7 +11,16 @@ marked.setOptions({
 });
 
 export default async function mdHtml(markdown) {
-  return markdown ? marked(String(markdown)) : undefined;
+  if (!markdown) {
+    return undefined;
+  }
+  // Preserve any front matter.
+  const frontMatter = extractFrontMatter(markdown);
+  const bodyText = frontMatter?.bodyText ?? markdown;
+  const frontBlock = frontMatter?.frontBlock ?? "";
+  const html = marked(String(bodyText));
+  const output = `${frontBlock}${html}`;
+  return output;
 }
 
 mdHtml.usage = `mdHtml(markdown)\tRender the markdown text as HTML`;

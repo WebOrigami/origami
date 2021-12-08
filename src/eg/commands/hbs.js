@@ -22,12 +22,13 @@ export default async function hbs(template, input) {
   template = String(template);
   if (!input) {
     // See if template defines front matter.
-    const { frontMatter, content } = extractFrontMatter(template);
-    if (frontMatter && ExplorableGraph.canCastToExplorable(frontMatter)) {
-      const frontGraph = ExplorableGraph.from(frontMatter);
+    const frontMatter = extractFrontMatter(template);
+    if (frontMatter) {
+      const { frontData, bodyText } = frontMatter;
+      const frontGraph = ExplorableGraph.from(frontData);
       input = applyMixinToObject(MetaMixin, frontGraph);
       /** @type {any} */ (input).scope = this;
-      template = content;
+      template = bodyText;
     } else if (arguments.length === 2) {
       // Caller explicitly passed in `undefined` as the input argument,
       // and there's no frontmatter. Most likely the input parameter is

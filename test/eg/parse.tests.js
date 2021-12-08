@@ -291,6 +291,10 @@ describe("parse", () => {
       protocolIndirectCall("https://example.com/foo/bar.json")?.value,
       [[ops.graph, "https"], "example.com", "foo", "bar.json"]
     );
+    // assert.deepEqual(protocolIndirectCall("foo:bar:baz")?.value, [
+    //   [ops.graph, "foo"],
+    //   [[ops.graph, "bar"], "baz"],
+    // ]);
   });
 
   it("getReference", () => {

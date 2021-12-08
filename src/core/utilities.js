@@ -59,17 +59,16 @@ export function applyMixinToObject(Mixin, obj) {
  * @param {string} text
  */
 export function extractFrontMatter(text) {
-  const regex = /^---\r?\n(?<front>[\s\S]*)\r?\n---\r?\n(?<content>[\s\S]*$)/;
+  const regex =
+    /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
   const match = regex.exec(text);
   if (match) {
-    const { front, content } = /** @type {any} */ (match).groups;
-    const frontMatter = YAML.parse(front);
-    return { frontMatter, content };
+    const { frontBlock, frontText, bodyText } = /** @type {any} */ (match)
+      .groups;
+    const frontData = YAML.parse(frontText);
+    return { frontBlock, bodyText, frontData };
   } else {
-    return {
-      frontMatter: null,
-      content: text,
-    };
+    return null;
   }
 }
 
