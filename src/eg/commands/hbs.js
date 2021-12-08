@@ -16,38 +16,32 @@ import {
  *
  * @this {Explorable}
  * @param {string} template
- * @param {Explorable|PlainObject} input
+ * @param {Explorable|PlainObject|string} [input]
  */
 export default async function hbs(template, input) {
   template = String(template);
-  if (!input) {
-    // See if template defines front matter.
-    const frontMatter = extractFrontMatter(template);
-    if (frontMatter) {
-      const { frontData, bodyText } = frontMatter;
-      const frontGraph = ExplorableGraph.from(frontData);
-      input = applyMixinToObject(MetaMixin, frontGraph);
-      /** @type {any} */ (input).scope = this;
-      template = bodyText;
-    } else if (arguments.length === 2) {
-      // Caller explicitly passed in `undefined` as the input argument,
-      // and there's no frontmatter. Most likely the input parameter is
-      // a variable pattern that didn't match, in which case we define
-      // the template result as undefined.
-      return undefined;
-    }
+
+  let data;
+  if (input) {
+    data = await dataFromInput(input);
+  } else {
+    let { data: templateData, template: templateText } = await dataFromTemplate(
+      template,
+      this
+    );
+    data = templateData;
+    template = templateText;
+  }
+
+  if (!data && arguments.length === 2) {
+    // Caller explicitly passed in `undefined` as the input argument, and
+    // there's no frontmatter. Most likely the input parameter is a variable
+    // pattern that didn't match, in which case we define the template result as
+    // undefined.
+    return undefined;
   }
 
   const partials = await getPartials(this, template);
-
-  const data =
-    typeof input === "string" || input instanceof Buffer
-      ? YAML.parse(String(input))
-      : isPlainObject(input)
-      ? input
-      : ExplorableGraph.canCastToExplorable(input)
-      ? await ExplorableGraph.plain(input)
-      : input ?? {};
 
   /** @type {any} */ const options = { partials };
   const compiled = Handlebars.compile(template);
@@ -65,6 +59,51 @@ export default async function hbs(template, input) {
     }
     throw error;
   }
+}
+
+// Extract the data from the given input.
+async function dataFromInput(input) {
+  if (typeof input === "string" || input instanceof Buffer) {
+    const text = String(input);
+    const frontMatter = extractFrontMatter(text);
+    if (frontMatter) {
+      const { frontData, bodyText } = frontMatter;
+      const data = Object.assign(frontData, { bodyText });
+      return data;
+    } else {
+      return YAML.parse(text);
+    }
+  } else if (isPlainObject(input)) {
+    return input;
+  } else if (ExplorableGraph.canCastToExplorable(input)) {
+    return await ExplorableGraph.plain(input);
+  } else if (input) {
+    return input;
+  } else {
+    return {};
+  }
+}
+
+// If the template contains front matter, process the front matter data as a
+// metagraph and return the plain result of that graph as the data; the body
+// text of the template is returned as the template. If no front matter is
+// found, return `null` for the data and the original template as the template.
+async function dataFromTemplate(template, context) {
+  // See if template defines front matter.
+  const frontMatter = extractFrontMatter(template);
+  let data;
+  if (frontMatter) {
+    const { frontData, bodyText } = frontMatter;
+    const frontGraph = ExplorableGraph.from(frontData);
+    const graph = applyMixinToObject(MetaMixin, frontGraph);
+    /** @type {any} */ (graph).scope = context;
+    data = await ExplorableGraph.plain(graph);
+    template = bodyText;
+  } else {
+    // No front matter.
+    data = null;
+  }
+  return { data, template };
 }
 
 function findPartialReferences(template) {
