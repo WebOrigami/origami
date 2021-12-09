@@ -3,7 +3,7 @@ import ExplorableArray from "./ExplorableArray.js";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
 import MapGraph from "./MapGraph.js";
-import { isPlainObject, toSerializable } from "./utilities.js";
+import * as utilities from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
@@ -21,7 +21,7 @@ export default class ExplorableGraph {
       typeof obj === "string" ||
       obj instanceof Function ||
       obj instanceof Array ||
-      isPlainObject(obj)
+      utilities.isPlainObject(obj)
     );
   }
 
@@ -42,7 +42,7 @@ export default class ExplorableGraph {
       typeof variant === "string" ||
       (globalThis.Buffer && variant instanceof Buffer)
     ) {
-      obj = YAML.parse(String(obj));
+      obj = utilities.parse(String(obj));
     }
 
     // Handle known types.
@@ -50,7 +50,7 @@ export default class ExplorableGraph {
       return new ExplorableFunction(obj);
     } else if (obj instanceof Array) {
       return new ExplorableArray(obj);
-    } else if (isPlainObject(obj)) {
+    } else if (utilities.isPlainObject(obj)) {
       return new ExplorableObject(obj);
     } else if (typeof obj.toFunction === "function") {
       const fn = obj.toFunction();
@@ -176,7 +176,7 @@ export default class ExplorableGraph {
    * @param {GraphVariant} variant
    */
   static async toSerializable(variant) {
-    const serializable = new MapGraph(variant, toSerializable);
+    const serializable = new MapGraph(variant, utilities.toSerializable);
     return this.plain(serializable);
   }
 
