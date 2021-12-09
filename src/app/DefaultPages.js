@@ -19,11 +19,6 @@ export default class DefaultPages extends DefaultValues {
     });
   }
 
-  onChange(eventType, filename) {
-    // @ts-ignore
-    this.onChange?.(eventType, filename);
-  }
-
   get path() {
     return /** @type {any} */ (this.graph).path;
   }

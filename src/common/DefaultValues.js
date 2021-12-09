@@ -40,4 +40,8 @@ export default class DefaultValues {
 
     return value;
   }
+
+  onChange(eventType, fileName) {
+    /** @type {any} */ (this.graph).onChange?.(eventType, fileName);
+  }
 }
