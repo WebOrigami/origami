@@ -14,7 +14,7 @@ import {
   optionalWhitespace,
   percentCall,
   percentPath,
-  protocolIndirectCall,
+  protocolCall,
   singleQuoteString,
   slashCall,
   slashPath,
@@ -271,30 +271,32 @@ describe("parse", () => {
     ]);
   });
 
-  it("protocolIndirectCall", () => {
-    assert.deepEqual(protocolIndirectCall("fn:a/b")?.value, [
+  it("protocolCall", () => {
+    assert.deepEqual(protocolCall("fn:a/b")?.value, [
       [ops.graph, "fn"],
       "a",
       "b",
     ]);
-    assert.deepEqual(protocolIndirectCall("about:blank")?.value, [
+    assert.deepEqual(protocolCall("about:blank")?.value, [
       [ops.graph, "about"],
       "blank",
     ]);
-    assert.deepEqual(protocolIndirectCall("https://example.com/foo/")?.value, [
+    assert.deepEqual(protocolCall("https://example.com/foo/")?.value, [
       [ops.graph, "https"],
       "example.com",
       "foo",
       undefined,
     ]);
-    assert.deepEqual(
-      protocolIndirectCall("https://example.com/foo/bar.json")?.value,
-      [[ops.graph, "https"], "example.com", "foo", "bar.json"]
-    );
-    // assert.deepEqual(protocolIndirectCall("foo:bar:baz")?.value, [
-    //   [ops.graph, "foo"],
-    //   [[ops.graph, "bar"], "baz"],
-    // ]);
+    assert.deepEqual(protocolCall("https://example.com/foo/bar.json")?.value, [
+      [ops.graph, "https"],
+      "example.com",
+      "foo",
+      "bar.json",
+    ]);
+    assert.deepEqual(protocolCall("foo:bar:baz")?.value, [
+      [ops.graph, "foo"],
+      [[ops.graph, "bar"], "baz"],
+    ]);
   });
 
   it("getReference", () => {
@@ -325,6 +327,7 @@ describe("parse", () => {
       "c",
       "d",
     ]);
+    assert.deepEqual(slashCall("//foo/bar")?.value, [ops.graph, "foo", "bar"]);
   });
 
   it("slashPath", () => {

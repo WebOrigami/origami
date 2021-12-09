@@ -22,7 +22,7 @@ expression: singleQuoteString
             group
             spaceUrl
             spacePathCall
-            protocolIndirectCall
+            protocolCall
             slashCall
             percentCall
             functionCall
@@ -67,11 +67,10 @@ percentCall: pathHead "/" [percentPath]
 percentPath: pathKey / percentPath
            pathKey
 
-protocolIndirectCall: reference ":"|"://" slashPath
+protocolCall: pathHead ":"|"://" slashPath
+              pathHead ":"|"://" protocolCall
 
-protocolCall: pathHead ":"|"://" expression
-
-slashCall: pathHead "/" [slashPath]
+slashCall: ["//"] pathHead "/" [slashPath]
 
 slashPath: pathKey / slashPath
            pathKey

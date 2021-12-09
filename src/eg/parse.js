@@ -107,7 +107,7 @@ export function expression(text) {
     group,
     spaceUrl,
     spacePathCall,
-    protocolIndirectCall,
+    protocolCall,
     slashCall,
     percentCall,
     functionCall,
@@ -328,19 +328,25 @@ export function percentPath(text) {
   };
 }
 
-// Parse an indirect protocol call like `fn:foo/bar` or `fn://foo/bar`.
-export function protocolIndirectCall(text) {
+// Parse a right-associative protocol call like `fn:foo/bar` or `fn://foo/bar`.
+export function protocolCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     reference,
     terminal(/^:\/\/|^:/),
-    slashPath
+    any(protocolCall, slashPath)
   )(text);
   if (!parsed) {
     return null;
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
-  const value = [[ops.graph, fnName], ...fnArgs]; // function and args
+  const value = [[ops.graph, fnName]];
+  const argIsNestedCall = fnArgs[0]?.[0] === ops.graph;
+  if (argIsNestedCall) {
+    value.push(fnArgs);
+  } else {
+    value.push(...fnArgs);
+  }
   return {
     value,
     rest: parsed.rest,
@@ -375,6 +381,7 @@ export function singleQuoteString(text) {
 export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
+    optional(terminal(/\/\//)),
     pathHead,
     terminal(/^\//),
     optional(slashPath)
@@ -382,7 +389,7 @@ export function slashCall(text) {
   if (!parsed) {
     return null;
   }
-  let { 1: value, 3: path } = parsed.value;
+  let { 2: value, 4: path } = parsed.value;
   if (path) {
     value.push(...path);
   } else {
