@@ -1,17 +1,16 @@
+import { stdout } from "process";
 import yaml from "./yaml.js";
 
-export default async function stdout(obj) {
+export default async function stdoutCommand(obj) {
   const output =
-    typeof obj === "string"
+    typeof obj === "string" || obj instanceof Buffer
       ? obj
-      : obj instanceof Buffer
-      ? obj.toString()
       : obj !== undefined
       ? await yaml(obj)
       : undefined;
   if (output !== undefined) {
-    console.log(output);
+    stdout.write(output);
   }
 }
 
-stdout.usage = "stdout(obj)\tWrite obj to the standard output stream";
+stdoutCommand.usage = "stdout(obj)\tWrite obj to the standard output stream";
