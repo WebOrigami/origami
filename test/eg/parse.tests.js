@@ -20,6 +20,7 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
+  thisReference,
   variableName,
   variableReference,
 } from "../../src/eg/parse.js";
@@ -328,6 +329,12 @@ describe("parse", () => {
       "d",
     ]);
     assert.deepEqual(slashCall("//foo/bar")?.value, [ops.graph, "foo", "bar"]);
+    assert.deepEqual(slashCall("a/b/c.txt")?.value, [
+      ops.graph,
+      "a",
+      "b",
+      "c.txt",
+    ]);
   });
 
   it("slashPath", () => {
@@ -368,6 +375,12 @@ describe("parse", () => {
       [ops.variable, "x", null],
       "data.json",
     ]);
+  });
+
+  it("thisReference", () => {
+    assert.deepEqual(thisReference("this")?.value, [ops.thisKey]);
+    // If there's an extension after the 'this' keyword, it's a reference.
+    // assert.equal(thisReference("this.foo")?.value, null);
   });
 
   it("variableName", () => {

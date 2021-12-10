@@ -485,7 +485,7 @@ export function spaceUrlPath(text) {
 }
 
 // Parse a reference to "this".
-function thisReference(text) {
+export function thisReference(text) {
   const parsed = terminal(/^this/)(text);
   if (!parsed) {
     return null;
