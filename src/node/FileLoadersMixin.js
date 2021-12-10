@@ -3,7 +3,9 @@ import HandlebarsTemplate from "../app/HandlebarsTemplate.js";
 
 const defaultLoaders = {
   ".css": bufferToString,
-  ".hbs": (obj) => new HandlebarsTemplate(bufferToString(obj)),
+  ".hbs": function (obj) {
+    return new HandlebarsTemplate(bufferToString(obj), this);
+  },
   ".htm": bufferToString,
   ".html": bufferToString,
   ".js": bufferToString,
@@ -28,7 +30,7 @@ export default function FileLoadersMixin(Base) {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
-          value = loader(value);
+          value = loader.call(this, value);
         }
       }
       return value;
