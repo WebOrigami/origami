@@ -2,11 +2,6 @@ import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as utilities from "../core/utilities.js";
 
-const graphKey = Symbol("graph");
-const mapFnKey = Symbol("mapFn");
-const sourceExtensionKey = Symbol("sourceExtension");
-const targetExtensionKey = Symbol("targetExtension");
-
 /**
  * Given a graph and a function, return a new explorable graph that applies the
  * function to the original graph's values. If a source extension is specified,
@@ -22,20 +17,20 @@ export default class MapTypesGraph {
    * @param {string} [targetExtension]
    */
   constructor(variant, mapFn, sourceExtension, targetExtension) {
-    this[graphKey] = ExplorableGraph.from(variant);
-    this[mapFnKey] = utilities.toFunction(mapFn);
-    this[sourceExtensionKey] = sourceExtension.toLowerCase();
-    this[targetExtensionKey] =
-      targetExtension?.toLowerCase() ?? this[sourceExtensionKey];
+    this.graph = ExplorableGraph.from(variant);
+    this.mapFn = utilities.toFunction(mapFn);
+    this.sourceExtension = sourceExtension.toLowerCase();
+    this.targetExtension =
+      targetExtension?.toLowerCase() ?? this.sourceExtension;
   }
 
   async *[Symbol.asyncIterator]() {
     const keys = new Set();
-    for await (const key of this[graphKey]) {
+    for await (const key of this.graph) {
       const extension = path.extname(key).toLowerCase();
       const mappedKey =
-        extension === this[sourceExtensionKey]
-          ? `${path.basename(key, extension)}${this[targetExtensionKey]}`
+        extension === this.sourceExtension
+          ? `${path.basename(key, extension)}${this.targetExtension}`
           : key;
       if (!keys.has(mappedKey)) {
         keys.add(mappedKey);
@@ -46,30 +41,29 @@ export default class MapTypesGraph {
 
   // Apply the map function if the key matches the source extension.
   async get(key) {
-    const applyMap =
-      path.extname(key).toLowerCase() === this[targetExtensionKey];
+    const applyMap = path.extname(key).toLowerCase() === this.targetExtension;
     let value;
     if (applyMap) {
       // Asking for an extension that we map to.
       // Use regular get to get the value to map.
-      const basename = path.basename(key, this[targetExtensionKey]);
-      const sourceKey = `${basename}${this[sourceExtensionKey]}`;
-      value = await this[graphKey].get(sourceKey);
+      const basename = path.basename(key, this.targetExtension);
+      const sourceKey = `${basename}${this.sourceExtension}`;
+      value = await this.graph.get(sourceKey);
       value = value
-        ? await this[mapFnKey].call(this[graphKey], value, sourceKey, key)
+        ? await this.mapFn.call(this.graph, value, sourceKey, key)
         : undefined;
     } else {
       // Not an extension we handle.
-      value = await this[graphKey].get(key);
+      value = await this.graph.get(key);
     }
 
     return ExplorableGraph.isExplorable(value)
       ? // Return mapped subgraph
         new MapTypesGraph(
           value,
-          this[mapFnKey],
-          this[sourceExtensionKey],
-          this[targetExtensionKey]
+          this.mapFn,
+          this.sourceExtension,
+          this.targetExtension
         )
       : value;
   }
