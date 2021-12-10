@@ -1,4 +1,5 @@
 // Should generate this export file with explorable graphs!
+export { default as defaultKeysJson } from "./src/app/defaultKeysJson.js";
 export { default as FormulasMixin } from "./src/app/FormulasMixin.js";
 export { default as MetaMixin } from "./src/app/MetaMixin.js";
 export { default as Cache } from "./src/common/Cache.js";
