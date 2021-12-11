@@ -22,7 +22,7 @@ export default class DefaultValues {
     let value = await this.graph.get(key);
     if (value !== undefined || !this.defaults) {
       if (ExplorableGraph.isExplorable(value)) {
-        value = new DefaultValues(value, this.defaults);
+        value = Reflect.construct(this.constructor, [value, this.defaults]);
       }
       return value;
     }

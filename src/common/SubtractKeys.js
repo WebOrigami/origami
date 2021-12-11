@@ -42,7 +42,10 @@ export default class SubtractKeys {
     );
     if (ExplorableGraph.isExplorable(originalValue)) {
       if (ExplorableGraph.isExplorable(removeValue)) {
-        originalValue = new SubtractKeys(originalValue, removeValue);
+        originalValue = Reflect.construct(this.constructor, [
+          originalValue,
+          removeValue,
+        ]);
       }
     } else if (removeValue !== undefined) {
       originalValue = undefined;
