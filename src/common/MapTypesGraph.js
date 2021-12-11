@@ -59,12 +59,12 @@ export default class MapTypesGraph {
 
     return ExplorableGraph.isExplorable(value)
       ? // Return mapped subgraph
-        new MapTypesGraph(
+        Reflect.construct(this.constructor, [
           value,
           this.mapFn,
           this.sourceExtension,
-          this.targetExtension
-        )
+          this.targetExtension,
+        ])
       : value;
   }
 }

@@ -24,7 +24,7 @@ export default class MapGraph {
   async get(key) {
     const value = await this.graph.get(key);
     return ExplorableGraph.isExplorable(value)
-      ? new MapGraph(value, this.mapFn) // Return mapped subgraph
+      ? Reflect.construct(this.constructor, [value, this.mapFn]) // Return mapped subgraph
       : value !== undefined
       ? await this.mapFn(value, key) // Return mapped value
       : undefined;
