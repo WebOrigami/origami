@@ -10,7 +10,7 @@ import HandlebarsTemplate from "../../app/HandlebarsTemplate.js";
  */
 export default async function hbs(templateText, input) {
   const template = new HandlebarsTemplate(templateText, this);
-  return await template.apply(input);
+  return await template.apply(input, this);
 }
 
 hbs.usage = `hbs(template, data)\tGenerate content from a Handlebars template and data`;

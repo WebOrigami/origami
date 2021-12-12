@@ -15,9 +15,9 @@ import {
  * and a function form that can be invoked to apply the template to data.
  */
 export default class HandlebarsTemplate {
-  constructor(text, graph) {
+  constructor(text, location) {
     this.text = String(text);
-    this.graph = graph;
+    this.location = location;
 
     // Extract the template and possibly front matter from the text.
     const frontMatter = extractFrontMatter(this.text);
@@ -33,15 +33,16 @@ export default class HandlebarsTemplate {
   }
 
   /**
-   * Apply the template to the given input data.
+   * Apply the template to the given input data in the context of a graph.
    *
-   * @param {any} [input]
+   * @param {any} input
+   * @param {Explorable} graph
    */
-  async apply(input) {
+  async apply(input, graph) {
     const data = input
       ? await this.dataFromInput(input)
-      : await this.interpretFrontMatter();
-    if (!data && arguments.length === 2) {
+      : await this.interpretFrontMatter(graph);
+    if (input === undefined && !data) {
       // Caller explicitly passed in `undefined` as the input argument, and
       // there's no frontmatter. Most likely the input parameter is a variable
       // pattern that didn't match, in which case we define the template result as
@@ -49,7 +50,7 @@ export default class HandlebarsTemplate {
       return undefined;
     }
 
-    const partials = await this.getPartials(this.graph, this.template);
+    const partials = await this.getPartials(this.location, this.template);
 
     /** @type {any} */ const options = { partials };
     const compiled = Handlebars.compile(this.template);
@@ -90,19 +91,21 @@ export default class HandlebarsTemplate {
   // text of the template is returned as the template. If no front matter is
   // found, return `null` for the data and the original template as the
   // template.
-  async interpretFrontMatter() {
+  //
+  // The supplied scope is used as the scope for the front matter graph.
+  async interpretFrontMatter(scope) {
     if (this.frontData) {
       const frontGraph = ExplorableGraph.from(this.frontData);
-      const graph = applyMixinToObject(MetaMixin, frontGraph);
-      /** @type {any} */ (graph).scope = this.graph;
-      const data = await ExplorableGraph.plain(graph);
+      const meta = applyMixinToObject(MetaMixin, frontGraph);
+      /** @type {any} */ (meta).scope = scope;
+      const data = await ExplorableGraph.plain(meta);
       return data;
     } else {
       return null;
     }
   }
 
-  async getPartials(graph, template) {
+  async getPartials(location, template) {
     // Find the names of the partials used in the template.
     const partialNames = this.partialReferences(template);
 
@@ -111,12 +114,14 @@ export default class HandlebarsTemplate {
     let partials = {};
 
     if (partialKeys.length > 0) {
-      if (!this.graph) {
+      if (!this.location) {
         throw `A Handlebars template references partials (${partialKeys}), but no scope graph was provided in which to search for them.`;
       }
 
       // Get the partials from the graph.
-      const partialPromises = partialKeys.map(async (name) => graph.get(name));
+      const partialPromises = partialKeys.map(async (name) =>
+        location.get(name)
+      );
       const partialValues = await Promise.all(partialPromises);
 
       // Check to see whether any partials are missing.
@@ -136,7 +141,10 @@ export default class HandlebarsTemplate {
       await Promise.all(
         partialValues.map(async (value) => {
           if (value) {
-            const nestedPartials = await this.getPartials(graph, String(value));
+            const nestedPartials = await this.getPartials(
+              location,
+              String(value)
+            );
             Object.assign(partials, nestedPartials);
           }
         })
@@ -164,8 +172,8 @@ export default class HandlebarsTemplate {
     /** @this {Explorable} */
     return async function (data) {
       return data !== undefined
-        ? await templateFunction(data)
-        : await templateFunction();
+        ? await templateFunction(data, this)
+        : await templateFunction(undefined, this);
     };
   }
 
