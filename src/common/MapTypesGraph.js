@@ -41,19 +41,24 @@ export default class MapTypesGraph {
 
   // Apply the map function if the key matches the source extension.
   async get(key) {
-    const applyMap = path.extname(key).toLowerCase() === this.targetExtension;
     let value;
+    // See if the key matches the source extension.
+    const applyMap = path.extname(key).toLowerCase() === this.targetExtension;
     if (applyMap) {
       // Asking for an extension that we map to.
       // Use regular get to get the value to map.
       const basename = path.basename(key, this.targetExtension);
       const sourceKey = `${basename}${this.sourceExtension}`;
       value = await this.graph.get(sourceKey);
-      value = value
-        ? await this.mapFn.call(this.graph, value, sourceKey, key)
-        : undefined;
-    } else {
-      // Not an extension we handle.
+      if (value) {
+        // Apply map function.
+        value = await this.mapFn.call(this.graph, value, sourceKey, key);
+      }
+    }
+
+    // If the key didn't match, or we couldn't get the source value, see if the
+    // key exists as is.
+    if (value === undefined) {
       value = await this.graph.get(key);
     }
 
