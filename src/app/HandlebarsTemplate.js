@@ -72,16 +72,16 @@ export default class HandlebarsTemplate {
 
   // Extract the data from the given input.
   async dataFromInput(input) {
-    if (typeof input === "string" || input instanceof Buffer) {
-      return utilities.parse(String(input));
-    } else if (isPlainObject(input)) {
+    if (isPlainObject(input) || input instanceof Array) {
       return input;
-    } else if (ExplorableGraph.canCastToExplorable(input)) {
+    } else if (ExplorableGraph.isExplorable(input)) {
       return await ExplorableGraph.plain(input);
-    } else if (input) {
-      return input;
+    } else if (typeof input === "string" || typeof input === "object") {
+      // Cast object to string.
+      const parsed = utilities.parse(String(input));
+      return isPlainObject(parsed) ? parsed : { bodyText: parsed };
     } else {
-      return {};
+      return input;
     }
   }
 
@@ -170,6 +170,6 @@ export default class HandlebarsTemplate {
   }
 
   toString() {
-    return this.template;
+    return this.text;
   }
 }
