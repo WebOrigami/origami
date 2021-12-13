@@ -2,6 +2,7 @@
 export { default as defaultKeysJson } from "./src/app/defaultKeysJson.js";
 export { default as FormulasMixin } from "./src/app/FormulasMixin.js";
 export { default as MetaMixin } from "./src/app/MetaMixin.js";
+export { default as StringWithGraph } from "./src/app/StringWithGraph.js";
 export { default as Cache } from "./src/common/Cache.js";
 export { default as CachedValuesTransform } from "./src/common/CachedValuesTransform.js";
 export { default as Compose } from "./src/common/Compose.js";

@@ -105,13 +105,15 @@ export default class HandlebarsTemplate {
     }
   }
 
-  async getPartials(location, template) {
+  async getPartials(location, template, partials = {}) {
     // Find the names of the partials used in the template.
-    const partialNames = this.partialReferences(template);
+    const partialReferences = this.partialReferences(template);
+
+    // Which partials have we not already collected?
+    const newPartials = partialReferences.filter((name) => !partials[name]);
 
     // Map those to corresponding .hbs filenames.
-    const partialKeys = partialNames.map((name) => `${name}.hbs`);
-    let partials = {};
+    const partialKeys = newPartials.map((name) => `${name}.hbs`);
 
     if (partialKeys.length > 0) {
       if (!this.location) {
@@ -133,7 +135,7 @@ export default class HandlebarsTemplate {
 
       partialValues.forEach((value, index) => {
         if (value) {
-          partials[partialNames[index]] = String(value);
+          partials[newPartials[index]] = String(value);
         }
       });
 
@@ -143,7 +145,8 @@ export default class HandlebarsTemplate {
           if (value) {
             const nestedPartials = await this.getPartials(
               location,
-              String(value)
+              String(value),
+              partials
             );
             Object.assign(partials, nestedPartials);
           }
