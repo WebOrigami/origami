@@ -1,7 +1,7 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 /**
- * tReturn an array of paths to the values in the graph.
+ * Return an array of paths to the values in the graph.
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
