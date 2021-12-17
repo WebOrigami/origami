@@ -6,49 +6,6 @@ import ExplorableGraph from "./ExplorableGraph.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
- * Apply a functional class mixin to an individual object instance.
- *
- * This works by create an intermediate class, creating an instance of that, and
- * then setting the intermediate class's prototype to the given individual
- * object. The resulting, extended object is then returned.
- *
- * This manipulation of the prototype chain is generally sound in JavaScript,
- * with some caveats. In particular, the original object class cannot make
- * direct use of private members; JavaScript will complain if the extended
- * object does anything that requires access to those private members.
- *
- * @param {Function} Transform
- * @param {any} obj
- */
-export function transformObject(Transform, obj) {
-  // Apply the mixin to Object and instantiate that. The Object base class here
-  // is going to be cut out of the prototype chain in a moment; we just use
-  // Object as a convenience because its constructor takes no arguments.
-  const mixed = new (Transform(Object))();
-
-  // Find the highest prototype in the chain that was added by the Transform. The
-  // mixin may have added multiple prototypes to the chain. Walk up the
-  // prototype chain until we hit Object.
-  let mixinProto = Object.getPrototypeOf(mixed);
-  while (Object.getPrototypeOf(mixinProto) !== Object.prototype) {
-    mixinProto = Object.getPrototypeOf(mixinProto);
-  }
-
-  // Redirect the prototype chain above the mixin to point to the original
-  // object. The mixed object now extends the original object with the mixin.
-  Object.setPrototypeOf(mixinProto, obj);
-
-  // Create a new constructor for this mixed object that reflects its prototype
-  // chain. Because we've already got the instance we want, we won't use this
-  // constructor now, but this can be used later to instantiate other objects
-  // that look like the mixed one.
-  mixed.constructor = Transform(obj.constructor);
-
-  // Return the mixed object.
-  return mixed;
-}
-
-/**
  * Extract front matter from the given text. The first line of the text must be
  * "---", followed by a block of JSON or YAML, followed by another line of
  * "---". Any lines following will be returned added to the data under a
@@ -143,4 +100,47 @@ export function toSerializable(obj) {
       return obj?.toString?.();
     }
   }
+}
+
+/**
+ * Apply a functional class mixin to an individual object instance.
+ *
+ * This works by create an intermediate class, creating an instance of that, and
+ * then setting the intermediate class's prototype to the given individual
+ * object. The resulting, extended object is then returned.
+ *
+ * This manipulation of the prototype chain is generally sound in JavaScript,
+ * with some caveats. In particular, the original object class cannot make
+ * direct use of private members; JavaScript will complain if the extended
+ * object does anything that requires access to those private members.
+ *
+ * @param {Function} Transform
+ * @param {any} obj
+ */
+export function transformObject(Transform, obj) {
+  // Apply the mixin to Object and instantiate that. The Object base class here
+  // is going to be cut out of the prototype chain in a moment; we just use
+  // Object as a convenience because its constructor takes no arguments.
+  const mixed = new (Transform(Object))();
+
+  // Find the highest prototype in the chain that was added by the class mixin.
+  // The mixin may have added multiple prototypes to the chain. Walk up the
+  // prototype chain until we hit Object.
+  let mixinProto = Object.getPrototypeOf(mixed);
+  while (Object.getPrototypeOf(mixinProto) !== Object.prototype) {
+    mixinProto = Object.getPrototypeOf(mixinProto);
+  }
+
+  // Redirect the prototype chain above the mixin to point to the original
+  // object. The mixed object now extends the original object with the mixin.
+  Object.setPrototypeOf(mixinProto, obj);
+
+  // Create a new constructor for this mixed object that reflects its prototype
+  // chain. Because we've already got the instance we want, we won't use this
+  // constructor now, but this can be used later to instantiate other objects
+  // that look like the mixed one.
+  mixed.constructor = Transform(obj.constructor);
+
+  // Return the mixed object.
+  return mixed;
 }
