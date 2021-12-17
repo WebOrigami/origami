@@ -42,13 +42,17 @@ export default class MapTypesGraph {
   // Apply the map function if the key matches the source extension.
   async get(key) {
     let value;
-    // See if the key matches the source extension.
-    const applyMap = path.extname(key).toLowerCase() === this.targetExtension;
+    // See if the key matches the source extension. We use a cruder but more
+    // general interpretation of "extension" to mean any suffix, rather than
+    // Node's `path` interpretation in extname. In particular, we want to be
+    // able to match an "extension" like ".foo.bar" that contains more than one
+    // dot.
+    const applyMap = key.toLowerCase().endsWith(this.targetExtension);
     if (applyMap) {
       // Asking for an extension that we map to.
-      // Use regular get to get the value to map.
-      const basename = path.basename(key, this.targetExtension);
+      const basename = key.slice(0, -this.targetExtension.length);
       const sourceKey = `${basename}${this.sourceExtension}`;
+      // Use regular `get` to get the value to map.
       value = await this.graph.get(sourceKey);
       if (value) {
         // Apply map function.
