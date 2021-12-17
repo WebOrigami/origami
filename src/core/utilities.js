@@ -17,16 +17,16 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  * direct use of private members; JavaScript will complain if the extended
  * object does anything that requires access to those private members.
  *
- * @param {Function} Mixin
+ * @param {Function} Transform
  * @param {any} obj
  */
-export function applyMixinToObject(Mixin, obj) {
+export function transformObject(Transform, obj) {
   // Apply the mixin to Object and instantiate that. The Object base class here
   // is going to be cut out of the prototype chain in a moment; we just use
   // Object as a convenience because its constructor takes no arguments.
-  const mixed = new (Mixin(Object))();
+  const mixed = new (Transform(Object))();
 
-  // Find the highest prototype in the chain that was added by the Mixin. The
+  // Find the highest prototype in the chain that was added by the Transform. The
   // mixin may have added multiple prototypes to the chain. Walk up the
   // prototype chain until we hit Object.
   let mixinProto = Object.getPrototypeOf(mixed);
@@ -42,7 +42,7 @@ export function applyMixinToObject(Mixin, obj) {
   // chain. Because we've already got the instance we want, we won't use this
   // constructor now, but this can be used later to instantiate other objects
   // that look like the mixed one.
-  mixed.constructor = Mixin(obj.constructor);
+  mixed.constructor = Transform(obj.constructor);
 
   // Return the mixed object.
   return mixed;

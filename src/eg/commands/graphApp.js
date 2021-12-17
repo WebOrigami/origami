@@ -1,8 +1,8 @@
 import path from "path";
 import DefaultPages from "../../app/DefaultPages.js";
-import MetaMixin from "../../app/MetaMixin.js";
+import MetaTransform from "../../app/MetaTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { applyMixinToObject } from "../../core/utilities.js";
+import { transformObject } from "../../core/utilities.js";
 import config from "./config.js";
 
 /**
@@ -12,7 +12,7 @@ import config from "./config.js";
  */
 export default async function graphApp(variant) {
   const graph = ExplorableGraph.from(variant);
-  const meta = applyMixinToObject(MetaMixin, graph);
+  const meta = transformObject(MetaTransform, graph);
   if (!meta.scope) {
     const scopePath =
       /** @type {any} */ (graph).path ?? path.resolve(process.cwd());

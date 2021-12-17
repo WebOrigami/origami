@@ -1,4 +1,4 @@
-export default function ShuffleMixin(Base) {
+export default function ShuffleTransform(Base) {
   return class Shuffle extends Base {
     async *[Symbol.asyncIterator]() {
       // Get base keys.

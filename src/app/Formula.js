@@ -1,8 +1,8 @@
 import execute from "../eg/execute.js";
 import * as ops from "../eg/ops.js";
 import * as parse from "../eg/parse.js";
-import { additionsKey } from "./AdditionsMixin.js";
-import { ghostGraphExtension } from "./GhostValuesMixin.js";
+import { additionsKey } from "./AdditionsTransform.js";
+import { ghostGraphExtension } from "./GhostValuesTransform.js";
 
 export default class Formula {
   closure = {};

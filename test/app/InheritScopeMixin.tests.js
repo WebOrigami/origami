@@ -1,10 +1,10 @@
-import InheritScopeMixin from "../../src/app/InheritScopeMixin.js";
+import InheritScopeTransform from "../../src/app/InheritScopeTransform.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("InheritScopeMixin", () => {
+describe("InheritScopeTransform", () => {
   it("passes a scope to values that define a scope property", async () => {
-    const graph = new (InheritScopeMixin(ExplorableObject))({
+    const graph = new (InheritScopeTransform(ExplorableObject))({
       a: 1,
       b: 2,
       subgraph: {
@@ -37,7 +37,7 @@ describe("InheritScopeMixin", () => {
   });
 
   it("sets isInScope on a graph when it's in the scope of another graph", async () => {
-    const graph = new (InheritScopeMixin(ExplorableObject))({
+    const graph = new (InheritScopeTransform(ExplorableObject))({
       a: 1,
       subgraph: {
         b: 2,

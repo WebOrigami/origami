@@ -1,6 +1,6 @@
-import MetaMixin from "../../app/MetaMixin.js";
+import MetaTransform from "../../app/MetaTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { applyMixinToObject } from "../../core/utilities.js";
+import { transformObject } from "../../core/utilities.js";
 import config from "./config.js";
 
 /**
@@ -12,7 +12,7 @@ import config from "./config.js";
 export default async function meta(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
-  const meta = applyMixinToObject(MetaMixin, graph);
+  const meta = transformObject(MetaTransform, graph);
   meta.scope = this ?? (await config());
   return meta;
 }

@@ -1,15 +1,15 @@
 import { ExplorableGraph } from "../../exports.js";
-import FormulasMixin from "../../src/app/FormulasMixin.js";
-import GhostValuesMixin from "../../src/app/GhostValuesMixin.js";
+import FormulasTransform from "../../src/app/FormulasTransform.js";
+import GhostValuesTransform from "../../src/app/GhostValuesTransform.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-class GhostValuesObject extends GhostValuesMixin(ExplorableObject) {}
-class GhostFormulasObject extends FormulasMixin(
-  GhostValuesMixin(ExplorableObject)
+class GhostValuesObject extends GhostValuesTransform(ExplorableObject) {}
+class GhostFormulasObject extends FormulasTransform(
+  GhostValuesTransform(ExplorableObject)
 ) {}
 
-describe("GhostValuesMixin", () => {
+describe("GhostValuesTransform", () => {
   it("returns wildcard values if requested key is missing", async () => {
     const graph = new GhostValuesObject({
       a: 1,

@@ -1,7 +1,7 @@
 // Should generate this export file with explorable graphs!
 export { default as defaultKeysJson } from "./src/app/defaultKeysJson.js";
-export { default as FormulasMixin } from "./src/app/FormulasMixin.js";
-export { default as MetaMixin } from "./src/app/MetaMixin.js";
+export { default as FormulasTransform } from "./src/app/FormulasTransform.js";
+export { default as MetaTransform } from "./src/app/MetaTransform.js";
 export { default as StringWithGraph } from "./src/app/StringWithGraph.js";
 export { default as Cache } from "./src/common/Cache.js";
 export { default as CachedValuesTransform } from "./src/common/CachedValuesTransform.js";
@@ -24,8 +24,8 @@ export { default as interiors } from "./src/eg/commands/interiors.js";
 export { default as mdHtml } from "./src/eg/commands/mdHtml.js";
 export { default as values } from "./src/eg/commands/values.js";
 export { default as CommandModules } from "./src/node/CommandModules.js";
-export { default as CommandModulesMixin } from "./src/node/CommandModulesMixin.js";
+export { default as CommandModulesTransform } from "./src/node/CommandModulesTransform.js";
 export { default as ExplorableFiles } from "./src/node/ExplorableFiles.js";
-export { default as FileLoadersMixin } from "./src/node/FileLoadersMixin.js";
+export { default as FileLoadersTransform } from "./src/node/FileLoadersTransform.js";
 export { default as ParentFiles } from "./src/node/ParentFiles.js";
 export * from "./src/server/server.js";

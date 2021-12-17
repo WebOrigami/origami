@@ -3,7 +3,7 @@ import Formula from "./Formula.js";
 
 export const ghostGraphExtension = "+";
 
-export default function GhostValuesMixin(Base) {
+export default function GhostValuesTransform(Base) {
   return class GhostValues extends Base {
     constructor(...args) {
       super(...args);

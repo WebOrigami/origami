@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import MetaMixin from "../../src/app/MetaMixin.js";
+import MetaTransform from "../../src/app/MetaTransform.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
@@ -11,7 +11,7 @@ import assert from "../assert.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
-const metaGraph = new (MetaMixin(ExplorableFiles))(
+const metaGraph = new (MetaTransform(ExplorableFiles))(
   path.join(fixturesDirectory, "meta")
 );
 metaGraph.scope = new Compose(
@@ -23,9 +23,9 @@ metaGraph.scope = new Compose(
   builtins
 );
 
-// Given the nature of MetaMixin, these are integration tests.
+// Given the nature of MetaTransform, these are integration tests.
 
-describe("MetaMixin", () => {
+describe("MetaTransform", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(metaGraph), [
       "foo.txt",
@@ -72,14 +72,14 @@ describe("MetaMixin", () => {
   });
 
   it("Can navigate into a dynamic graph", async () => {
-    const graph = new (MetaMixin(ExplorableFiles))(fixturesDirectory);
+    const graph = new (MetaTransform(ExplorableFiles))(fixturesDirectory);
     const subgraph = await graph.get("subgraph");
     assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
   it.skip("can handle nested wildcard folders", async () => {
-    const graph = new (MetaMixin(ExplorableFiles))(
+    const graph = new (MetaTransform(ExplorableFiles))(
       path.join(fixturesDirectory, "wildcardFolders")
     );
     const indexHtml = await ExplorableGraph.traverse(
@@ -92,7 +92,7 @@ describe("MetaMixin", () => {
   });
 
   it("can inherit formulas", async () => {
-    const graph = new (MetaMixin(ExplorableObject))({
+    const graph = new (MetaTransform(ExplorableObject))({
       "greeting = message": "",
       message: "Hello",
       spanish: {
@@ -105,7 +105,7 @@ describe("MetaMixin", () => {
   });
 
   it("can inherit functions", async () => {
-    const graph = new (MetaMixin(ExplorableObject))({
+    const graph = new (MetaTransform(ExplorableObject))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
       "{x}.html = textToHtml(${x}.txt)": "",
@@ -119,7 +119,7 @@ describe("MetaMixin", () => {
   });
 
   it("can imply keys based on additions", async () => {
-    const graph = new (MetaMixin(ExplorableObject))({
+    const graph = new (MetaTransform(ExplorableObject))({
       "+": {
         "a.json": "Hello, a.",
       },
@@ -136,7 +136,7 @@ describe("MetaMixin", () => {
   });
 
   it("real values take precedence over wildcards", async () => {
-    const graph = new (MetaMixin(ExplorableObject))({
+    const graph = new (MetaTransform(ExplorableObject))({
       "{test}": {
         b: 2,
       },

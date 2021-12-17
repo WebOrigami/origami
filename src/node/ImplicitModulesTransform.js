@@ -1,4 +1,4 @@
-export default function ImplicitModulesMixin(Base) {
+export default function ImplicitModulesTransform(Base) {
   return class ImplicitModules extends Base {
     async get(key) {
       const value = await super.get(key);

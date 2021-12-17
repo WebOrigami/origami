@@ -1,11 +1,11 @@
 import path from "path";
-import InheritScopeMixin from "../../app/InheritScopeMixin.js";
+import InheritScopeTransform from "../../app/InheritScopeTransform.js";
 import ExplorableFiles from "../../node/ExplorableFiles.js";
-import FileLoadersMixin from "../../node/FileLoadersMixin.js";
-import ImplicitModulesMixin from "../../node/ImplicitModulesMixin.js";
+import FileLoadersTransform from "../../node/FileLoadersTransform.js";
+import ImplicitModulesTransform from "../../node/ImplicitModulesTransform.js";
 
-class DefaultGraph extends FileLoadersMixin(
-  InheritScopeMixin(ImplicitModulesMixin(ExplorableFiles))
+class DefaultGraph extends FileLoadersTransform(
+  InheritScopeTransform(ImplicitModulesTransform(ExplorableFiles))
 ) {}
 
 export default function defaultGraph(relativePath = "") {

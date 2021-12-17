@@ -1,4 +1,4 @@
-import FormulasMixin from "../../src/app/FormulasMixin.js";
+import FormulasTransform from "../../src/app/FormulasTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import make from "../../src/eg/commands/make.js";
@@ -13,7 +13,7 @@ describe("make", () => {
         "c = 'Goodbye'": "",
       },
     };
-    const virtual = new (FormulasMixin(ExplorableObject))(graph);
+    const virtual = new (FormulasTransform(ExplorableObject))(graph);
     const real = new ExplorableObject(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {
@@ -35,7 +35,7 @@ describe("make", () => {
       a: "Hi", // make should update this value
       "b = 'Goodbye'": "", // make should create this value
     };
-    const virtual = new (FormulasMixin(ExplorableObject))(graph);
+    const virtual = new (FormulasTransform(ExplorableObject))(graph);
     const real = new ExplorableObject(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {

@@ -1,14 +1,14 @@
 import Handlebars from "handlebars";
 import DefaultPages from "../app/DefaultPages.js";
-import MetaMixin from "../app/MetaMixin.js";
 import StringWithGraph from "../app/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as utilities from "../core/utilities.js";
 import {
-  applyMixinToObject,
   extractFrontMatter,
   isPlainObject,
+  transformObject,
 } from "../core/utilities.js";
+import MetaTransform from "./MetaTransform.js";
 
 /**
  * A representation of a Handlebars template that has both a string form
@@ -35,8 +35,8 @@ export default class HandlebarsTemplate {
   /**
    * Apply the template to the given input data in the context of a graph.
    *
-   * @param {any} input
-   * @param {Explorable} graph
+   * @param {any} [input]
+   * @param {Explorable} [graph]
    */
   async apply(input, graph) {
     const data = input
@@ -96,7 +96,7 @@ export default class HandlebarsTemplate {
   async interpretFrontMatter(scope) {
     if (this.frontData) {
       const frontGraph = ExplorableGraph.from(this.frontData);
-      const meta = applyMixinToObject(MetaMixin, frontGraph);
+      const meta = transformObject(MetaTransform, frontGraph);
       /** @type {any} */ (meta).scope = scope;
       const data = await ExplorableGraph.plain(meta);
       return data;

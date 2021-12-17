@@ -3,7 +3,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 export const additionsKey = "+";
 const additions = Symbol("additions");
 
-export default function AdditionsMixin(Base) {
+export default function AdditionsTransform(Base) {
   return class Additions extends Base {
     constructor(...args) {
       super(...args);
@@ -20,9 +20,9 @@ export default function AdditionsMixin(Base) {
 
     async *[Symbol.asyncIterator]() {
       yield* super[Symbol.asyncIterator]();
-      // If FormulasMixin is applied, it will have already yielded the
+      // If FormulasTransform is applied, it will have already yielded the
       // addition's keys. If the graph has no `formulas` property, we conclude
-      // FormualsMixin has *not* been applied, so yield the keys ourselves.
+      // FormualsTransform has *not* been applied, so yield the keys ourselves.
       if (!this.formulas) {
         const additions = await this.additions();
         if (additions) {

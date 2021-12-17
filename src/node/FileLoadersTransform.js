@@ -17,7 +17,7 @@ const defaultLoaders = {
   ".yaml": bufferToString,
 };
 
-export default function FileLoadersMixin(Base) {
+export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {
     constructor(...args) {
       super(...args);

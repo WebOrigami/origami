@@ -1,11 +1,11 @@
-import FormulasMixin from "../../src/app/FormulasMixin.js";
+import FormulasTransform from "../../src/app/FormulasTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-class FormulasObject extends FormulasMixin(ExplorableObject) {}
+class FormulasObject extends FormulasTransform(ExplorableObject) {}
 
-describe("FormulasMixin", () => {
+describe("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "{x}.txt": "Default text",

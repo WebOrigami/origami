@@ -1,9 +1,9 @@
 import path from "path";
 
 /***
- * This mixin is a companion to ImplicitModulesMixin.
+ * This mixin is a companion to ImplicitModulesTransform.
  *
- * ImplicitModulesMixin takes care of loading "foo.js" if a request to load
+ * ImplicitModulesTransform takes care of loading "foo.js" if a request to load
  * "foo" fails, then returning that module's export as a result. What that mixin
  * doesn't do is expose "foo" as a key, since that might not be desired in cases
  * like a server, which has no need to expose such internal functions on things
@@ -16,7 +16,7 @@ import path from "path";
  * As a side effect, however, this suppresses all other keys. The eg shell scope
  * only wants to consider commands.
  */
-export default function CommandsModulesMixin(Base) {
+export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {
     async *[Symbol.asyncIterator]() {
       for await (const key of super[Symbol.asyncIterator]()) {

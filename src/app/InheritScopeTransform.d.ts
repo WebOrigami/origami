@@ -1,9 +1,9 @@
 /// <reference path="../core/explorable.ts"/>
 
-declare const InheritScopeMixin: Mixin<{
+declare const InheritScopeTransform: Transform<{
   inheritsScope: boolean;
   isInScope: boolean;
   scope: Explorable;
 }>;
 
-export default InheritScopeMixin;
+export default InheritScopeTransform;

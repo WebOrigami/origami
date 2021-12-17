@@ -1,9 +1,9 @@
 // Should build this list of imports with ExplorableGraph
-import "./app/AdditionsMixin.tests.js";
-import "./app/FormulasMixin.tests.js";
-// import "./app/GhostValuesMixin.tests.js";
-import "./app/InheritScopeMixin.tests.js";
-// import "./app/MetaMixin.tests.js";
+import "./app/AdditionsTransform.tests.js";
+import "./app/FormulasTransform.tests.js";
+// import "./app/GhostValuesTransform.tests.js";
+import "./app/InheritScopeTransform.tests.js";
+// import "./app/MetaTransform.tests.js";
 import "./common/Cache.tests.js";
 import "./common/Compose.tests.js";
 import "./common/DefaultValues.tests.js";

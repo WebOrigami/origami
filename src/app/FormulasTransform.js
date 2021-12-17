@@ -8,7 +8,7 @@ const formulasKey = Symbol("formulas");
 const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
 
-export default function FormulasMixin(Base) {
+export default function FormulasTransform(Base) {
   return class Formulas extends Base {
     constructor(...args) {
       super(...args);
@@ -25,9 +25,9 @@ export default function FormulasMixin(Base) {
           keys.add(key);
         }
 
-        // Cooperate with AdditionsMixin: if the graph has addition, add the
+        // Cooperate with AdditionsTransform: if the graph has addition, add the
         // addition's keys to the graph's keys. We wouldn't normally pick those
-        // up, because MetaMixin applies AdditionsMixin after FormulasMixin. (If
+        // up, because MetaTransform applies AdditionsTransform after FormulasTransform. (If
         // someone applies the mixins in the opposite, the addition's keys will
         // already have been picked up by the iterator above, but it won't hurt
         // anything to add them to the set again.)
@@ -114,7 +114,7 @@ export default function FormulasMixin(Base) {
 
       // See if we have a formula that can produce the desired key. Skip this if
       // this call is happening because a subgraph is looking up its scope for
-      // inherited values -- the subgraph's FormulasMixin will have already
+      // inherited values -- the subgraph's FormulasTransform will have already
       // considered all inherited formulas already.
       if (value === undefined && !this.isInScope) {
         // No real value defined; try our formulas.

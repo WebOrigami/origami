@@ -4,8 +4,8 @@ import * as utilities from "../../src/core/utilities.js";
 import assert from "../assert.js";
 
 describe("utilities", () => {
-  it("applyMixinToObject can apply a class mixin to a single object instance", () => {
-    function FixtureMixin(Base) {
+  it("transformObject can apply a class mixin to a single object instance", () => {
+    function FixtureTransform(Base) {
       return class Fixture extends Base {
         get name() {
           return `*${super.name}*`;
@@ -17,7 +17,7 @@ describe("utilities", () => {
       age: 30,
       name: "Alice",
     };
-    const fixture = utilities.applyMixinToObject(FixtureMixin, person);
+    const fixture = utilities.transformObject(FixtureTransform, person);
 
     // Can get properties of the base object.
     assert.equal(fixture.age, 30);
@@ -39,8 +39,8 @@ describe("utilities", () => {
     assert("extra" in fixture);
   });
 
-  it("applyMixinToObject applies the same mixin to explorable results", async () => {
-    function UppercaseMixin(Base) {
+  it("transformObject applies the same mixin to explorable results", async () => {
+    function UppercaseTransform(Base) {
       return class Uppercase extends Base {
         async get(key) {
           const value = await super.get(key);
@@ -56,7 +56,7 @@ describe("utilities", () => {
         b: "b",
       },
     });
-    const mixed = utilities.applyMixinToObject(UppercaseMixin, graph);
+    const mixed = utilities.transformObject(UppercaseTransform, graph);
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");
     assert.equal(await mixedMore.get("b"), "B");

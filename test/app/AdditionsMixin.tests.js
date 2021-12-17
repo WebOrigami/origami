@@ -1,11 +1,11 @@
-import AdditionsMixin from "../../src/app/AdditionsMixin.js";
+import AdditionsTransform from "../../src/app/AdditionsTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("AdditionsMixin", () => {
+describe("AdditionsTransform", () => {
   it("defines additional content with + key", async () => {
-    const graph = new (AdditionsMixin(ExplorableObject))({
+    const graph = new (AdditionsTransform(ExplorableObject))({
       a: 1,
       "+": {
         b: 2,

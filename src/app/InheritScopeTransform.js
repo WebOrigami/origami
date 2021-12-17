@@ -1,6 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-export default function InheritScopeMixin(Base) {
+export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {
     constructor(...args) {
       super(...args);

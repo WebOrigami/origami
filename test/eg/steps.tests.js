@@ -1,7 +1,7 @@
 import { ExplorableObject } from "../../exports.js";
-import MetaMixin from "../../src/app/MetaMixin.js";
+import MetaTransform from "../../src/app/MetaTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import { applyMixinToObject } from "../../src/core/utilities.js";
+import { transformObject } from "../../src/core/utilities.js";
 import steps from "../../src/eg/commands/steps.js";
 import assert from "../assert.js";
 
@@ -17,7 +17,7 @@ describe("steps", () => {
 
   it("a steps can be interpreted as a metagraph", async () => {
     const fixture = steps(["'world'", "uppercase(it)", "greet(it)"]);
-    const meta = applyMixinToObject(MetaMixin, fixture);
+    const meta = transformObject(MetaTransform, fixture);
     meta.scope = new ExplorableObject({
       greet: (x) => `Hello, ${x}.`,
       uppercase: (x) => x.toUpperCase(),

@@ -1,6 +1,6 @@
-import ShuffleMixin from "../../common/ShuffleMixin.js";
+import ShuffleTransform from "../../common/ShuffleTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import { applyMixinToObject } from "../../core/utilities.js";
+import { transformObject } from "../../core/utilities.js";
 
 /**
  * Return a new graph with the original's keys shuffled
@@ -11,7 +11,7 @@ import { applyMixinToObject } from "../../core/utilities.js";
 export default function shuffle(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
-  const shuffled = applyMixinToObject(ShuffleMixin, graph);
+  const shuffled = transformObject(ShuffleTransform, graph);
   return shuffled;
 }
 
