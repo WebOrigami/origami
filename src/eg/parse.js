@@ -95,7 +95,12 @@ export function backtickText(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return any(variableDeclaration, literal)(text);
+  return any(variableDeclaration, literalDeclaration)(text);
+}
+
+// Parse an ellipsis.
+function ellipsis(text) {
+  return terminal(/^…/)(text);
 }
 
 // Parse an eg expression.
@@ -214,6 +219,18 @@ export function list(text) {
 export function literal(text) {
   // Literals are sequences of everything but terminal characters.
   return regex(/^[^=\(\)\{\}\$"'/:`%,\s]+/)(text);
+}
+
+export function literalDeclaration(text) {
+  const parsed = sequence(optional(ellipsis), literal)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a left parenthesis.
@@ -506,6 +523,7 @@ export function variableName(text) {
 // Parse a variable declaration like ${x}.json
 export function variableDeclaration(text) {
   const parsed = sequence(
+    optional(ellipsis),
     terminal(/^\{/),
     variableName,
     terminal(/^\}/),
@@ -514,7 +532,7 @@ export function variableDeclaration(text) {
   if (!parsed) {
     return null;
   }
-  const { 1: variable, 3: extension } = parsed.value;
+  const { 2: variable, 4: extension } = parsed.value;
   const value = [ops.variable, variable, extension];
   return {
     value,

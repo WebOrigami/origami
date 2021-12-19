@@ -27,4 +27,4 @@ export async function implicitCall(key) {
 export async function concat(...args) {
   return String.prototype.concat(...args);
 }
-concat.toString = () => "«ops.concat";
+concat.toString = () => "«ops.concat»";

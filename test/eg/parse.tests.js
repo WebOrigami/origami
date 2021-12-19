@@ -84,10 +84,10 @@ describe("parse", () => {
     ]);
   });
 
-  it("assignment to splat on left with `this` on right", () => {
-    assert.deepEqual(assignment("...graph = this().js")?.value, [
+  it("assignment to inherited key on left", () => {
+    assert.deepEqual(assignment("…index.html = this().js")?.value, [
       "=",
-      "...graph",
+      "index.html",
       [[ops.graph, [ops.thisKey]]],
     ]);
   });
