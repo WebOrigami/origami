@@ -1,6 +1,6 @@
 /// <reference path="../core/explorable.ts"/>
 
-declare const GhostValuesTransform: Transform<{
+declare const GhostValuesTransform: Mixin<{
   ghostGraphs: Explorable[];
 }>;
 

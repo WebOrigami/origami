@@ -26,9 +26,9 @@ type Constructor<T> = new (...args: any[]) => T;
  * ensures the use of the mixin doesn't accidentally hide members of the class
  * passed to the mixin.
  */
-type Transform<TransformMembers> = <T>(
+type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
-) => Constructor<T & TransformMembers>;
+) => Constructor<T & MixinMembers>;
 
 type PlainObject = {
   [key: string]: any;

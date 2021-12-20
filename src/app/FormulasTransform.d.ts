@@ -1,6 +1,6 @@
 /// <reference path="../core/explorable.ts"/>
 
-declare const FormulasTransform: Transform<{
+declare const FormulasTransform: Mixin<{
   scope: Explorable;
 }>;
 

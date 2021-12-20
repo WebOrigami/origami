@@ -1,5 +1,5 @@
 /// <reference path="../core/explorable.ts"/>
 
-declare const CommandModulesTransform: Transform<{}>;
+declare const CommandModulesTransform: Mixin<{}>;
 
 export default CommandModulesTransform;
