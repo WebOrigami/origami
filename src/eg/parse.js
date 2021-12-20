@@ -35,6 +35,7 @@ export function args(text) {
 export function assignment(text) {
   const parsed = sequence(
     optionalWhitespace,
+    optional(ellipsis),
     declaration,
     optionalWhitespace,
     terminal(/^=/),
@@ -46,7 +47,7 @@ export function assignment(text) {
   if (!parsed) {
     return null;
   }
-  const { 1: left, 5: right } = parsed.value;
+  const { 2: left, 6: right } = parsed.value;
   const value = ["=", left, right];
   return {
     value,
@@ -188,20 +189,22 @@ export function indirectCall(text) {
   };
 }
 
-// A key in an Explorable App
-export function key(text) {
-  const parsed = sequence(
-    optional(ellipsis),
-    any(assignment, declaration)
-  )(text);
+// Parse an inheritable constant declaration or variable declaration.
+export function inheritableDeclaration(text) {
+  const parsed = sequence(ellipsis, declaration)(text);
   if (!parsed) {
     return null;
   }
-  let { 1: value } = parsed.value;
+  const value = ["=", parsed.value[1], [ops.graph, [ops.thisKey]]];
   return {
     value,
     rest: parsed.rest,
   };
+}
+
+// A key in an Explorable App
+export function key(text) {
+  return any(assignment, inheritableDeclaration, declaration)(text);
 }
 
 // Parse a comma-separated list with at least one term.

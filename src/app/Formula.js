@@ -46,14 +46,14 @@ export default class Formula {
    */
   async evaluate(graph) {
     if (this.expression) {
-      // Constant or variable assignment
+      // Assignment or inheritable declaration
       const bindings = /** @type {any} */ (graph).bindings;
       const code = bindings
         ? this.bindCode(this.expression, bindings)
         : this.expression;
       return await execute.call(graph, code);
     } else {
-      // Variable declaration or inheritable constant declaration
+      // Local variable declaration
       return await graph.get(this.source);
     }
   }
@@ -104,9 +104,6 @@ export default class Formula {
         // Constant assignment
         return new ConstantFormula(left, expression, source, inheritable);
       }
-    } else if (inheritable) {
-      // Inheritable constant assignment
-      return new ConstantFormula(parsed, null, source, inheritable);
     } else {
       return undefined;
     }

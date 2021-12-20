@@ -217,7 +217,7 @@ describe("parse", () => {
       "index.html",
       [[ops.graph, "foo"]],
     ]);
-    assert.deepEqual(key("…a")?.value, "a");
+    assert.deepEqual(key("…a")?.value, ["=", "a", [ops.graph, [ops.thisKey]]]);
   });
 
   it("list", () => {

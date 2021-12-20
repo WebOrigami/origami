@@ -4,7 +4,7 @@ The eg grammar is as follows:
 args: parentheticalArgs
       omittedParensArgs
 
-assignment: declaration = expression [extension]
+assignment: ["…"]declaration = expression [extension]
 
 backtickContents: backtickText variableReference backtickContents
                   backtickText
@@ -36,8 +36,9 @@ group: ( expression )
 
 indirectCall: group args
 
-key: ["…"]assignment
-     ["…"]declaration
+key: assignment
+     inheritableDeclaration
+     declaration
 
 list: expression , list
       expression
@@ -86,6 +87,8 @@ spaceUrlPath: pathKey whitespace spaceUrlPath
 spacePathCall: "."|".." [spaceUrlPath]
 
 thisReference: "this"
+
+valueDeclaration: ["…"]declaration
 
 variableDeclaration: {variableName}[extension]
 
