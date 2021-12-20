@@ -6,7 +6,7 @@ import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 describe("InheritValuesTransform", () => {
-  it.only("lets subgraphs inherit values", async () => {
+  it("lets subgraphs inherit values", async () => {
     const fixture = new (InheritValuesTransform(
       InheritScopeTransform(FormulasTransform(ExplorableObject))
     ))({

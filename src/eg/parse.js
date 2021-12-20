@@ -197,16 +197,7 @@ export function key(text) {
   if (!parsed) {
     return null;
   }
-  let { 0: inheritable, 1: value } = parsed.value;
-  if (inheritable && value[0]?.[0] !== "=") {
-    // An inheritable constant declaration like `…foo` or a variable declaration
-    // like `…{foo}` -- but not an assignment. Convert to an assignment so that
-    // inheritance can be handled as an inheritable formula. On the RHS, we use
-    // `this` to get the value, which requires an extra graph `get`. This isn't
-    // as performant as we could make it, but at least this is a simple way to
-    // leverage the formula inheritance infrastructure.
-    value = ["=", value, [ops.graph, [ops.thisKey]]];
-  }
+  let { 1: value } = parsed.value;
   return {
     value,
     rest: parsed.rest,

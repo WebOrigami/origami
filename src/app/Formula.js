@@ -53,8 +53,8 @@ export default class Formula {
         : this.expression;
       return await execute.call(graph, code);
     } else {
-      // Variable pattern
-      return await graph.get(this.key);
+      // Variable declaration or inheritable constant declaration
+      return await graph.get(this.source);
     }
   }
 
@@ -104,6 +104,9 @@ export default class Formula {
         // Constant assignment
         return new ConstantFormula(left, expression, source, inheritable);
       }
+    } else if (inheritable) {
+      // Inheritable constant assignment
+      return new ConstantFormula(parsed, null, source, inheritable);
     } else {
       return undefined;
     }
