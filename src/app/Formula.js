@@ -6,14 +6,15 @@ import { ghostGraphExtension } from "./GhostValuesTransform.js";
 
 export default class Formula {
   closure = {};
+  inheritable;
   key;
   expression;
   source;
 
-  constructor(key, expression, source) {
+  constructor(key, expression, source, inheritable) {
     this.key = key;
     this.expression = expression;
-    this.closure;
+    this.inheritable = inheritable;
 
     // Special case: if the source ends in `.js`, we omit that from the stored
     // source. We'll rely on code elsewhere to map an attempt to get `foo =
@@ -57,7 +58,7 @@ export default class Formula {
     }
   }
 
-  get inheritable() {
+  get foundInScope() {
     return true;
   }
 
@@ -75,20 +76,33 @@ export default class Formula {
       }
       return null;
     }
+    const inheritable = source.startsWith("…");
     if (parsed[0] === ops.variable) {
       // Variable pattern
       const [_, variable, extension] = parsed;
-      return new VariableFormula(variable, extension, null, source);
+      return new VariableFormula(
+        variable,
+        extension,
+        null,
+        source,
+        inheritable
+      );
     } else if (parsed[0] === "=") {
       // Assignment
       const [_, left, expression] = parsed;
       if (left[0] === ops.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
-        return new VariableFormula(variable, extension, expression, source);
+        return new VariableFormula(
+          variable,
+          extension,
+          expression,
+          source,
+          inheritable
+        );
       } else {
         // Constant assignment
-        return new ConstantFormula(left, expression, source);
+        return new ConstantFormula(left, expression, source, inheritable);
       }
     } else {
       return undefined;
@@ -112,9 +126,9 @@ export class VariableFormula extends Formula {
   extension;
   antecedents;
 
-  constructor(variable, extension, expression, source) {
+  constructor(variable, extension, expression, source, inheritable) {
     const key = `{${variable}}${extension ?? ""}`;
-    super(key, expression, source);
+    super(key, expression, source, inheritable);
     this.variable = variable;
     this.extension = extension;
     if (expression) {
@@ -175,11 +189,11 @@ export class VariableFormula extends Formula {
     }
   }
 
-  get inheritable() {
+  get foundInScope() {
     return (
       this.extension !== null &&
       this.extension !== ghostGraphExtension &&
-      super.inheritable
+      super.foundInScope
     );
   }
 

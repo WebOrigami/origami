@@ -1,13 +1,14 @@
 import FormulasTransform from "../../src/app/FormulasTransform.js";
-import InheritedValuesTransform from "../../src/app/InheritedValuesTransform.js";
+import InheritScopeTransform from "../../src/app/InheritScopeTransform.js";
+import InheritValuesTransform from "../../src/app/InheritValuesTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("InheritedValuesTransform", () => {
-  it("lets subgraphs inheritable values", async () => {
-    const fixture = new (InheritedValuesTransform(
-      FormulasTransform(ExplorableObject)
+describe("InheritValuesTransform", () => {
+  it.only("lets subgraphs inherit values", async () => {
+    const fixture = new (InheritValuesTransform(
+      InheritScopeTransform(FormulasTransform(ExplorableObject))
     ))({
       "…a": 1,
       "…b": 2,

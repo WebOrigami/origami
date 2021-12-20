@@ -56,18 +56,21 @@ export default function FormulasTransform(Base) {
       yield* this[keysKey];
     }
 
+    // TODO: Reconcile this name with localFormulas,
+    // would be better if other transforms could define `formulas`.
     async formulas() {
       if (!this[formulasKey]) {
         // Start with local formulas.
         const localFormulas = await this.localFormulas();
+        this[formulasKey] = localFormulas;
 
-        // Add inherited formulas.
-        const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
-        // Only inherit formulas that are inheritable.
-        const filtered = inheritedFormulas.filter(
-          (formula) => formula.inheritable
-        );
-        this[formulasKey] = [...localFormulas, ...filtered];
+        // // Add inherited formulas.
+        // const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
+        // // Only inherit formulas that can be found in scope.
+        // const filtered = inheritedFormulas.filter(
+        //   (formula) => formula.foundInScope
+        // );
+        // this[formulasKey] = [...localFormulas, ...filtered];
       }
       return this[formulasKey];
     }
