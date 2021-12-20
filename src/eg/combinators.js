@@ -95,7 +95,7 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
 }
 
 // Parse a terminal value like a parenthesis.
-// If successful, returns a null value to indicate we can throw away the value;
+// If successful, returns a true value to indicate we can throw away the value;
 // we already know what it is.
 export function terminal(terminalRegex) {
   return function parseTerminal(text) {
@@ -104,7 +104,7 @@ export function terminal(terminalRegex) {
       return null;
     }
     return {
-      value: null,
+      value: true,
       rest: parsed.rest,
     };
   };

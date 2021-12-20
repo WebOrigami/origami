@@ -90,8 +90,9 @@ export default class Formula {
         // Constant assignment
         return new ConstantFormula(left, expression, source);
       }
+    } else {
+      return undefined;
     }
-    return undefined;
   }
 }
 

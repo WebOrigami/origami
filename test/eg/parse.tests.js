@@ -84,14 +84,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("assignment to inherited key on left", () => {
-    assert.deepEqual(assignment("…index.html = this().js")?.value, [
-      "=",
-      "index.html",
-      [[ops.graph, [ops.thisKey]]],
-    ]);
-  });
-
   it("assignment with variable pattern", () => {
     assert.deepEqual(assignment("{name}.html = foo(${name}.json)")?.value, [
       "=",
@@ -217,6 +209,15 @@ describe("parse", () => {
         [ops.graph, [ops.variable, "x", ".md"]],
       ],
     ]);
+  });
+
+  it("key marked as inheritable", () => {
+    assert.deepEqual(key("…index.html = foo()")?.value, [
+      "=",
+      "index.html",
+      [[ops.graph, "foo"]],
+    ]);
+    assert.deepEqual(key("…a")?.value, ["=", "a", [ops.graph, [ops.thisKey]]]);
   });
 
   it("list", () => {
@@ -405,7 +406,7 @@ describe("parse", () => {
 
   it("whitespace", () => {
     assert.deepEqual(optionalWhitespace("   hello"), {
-      value: null,
+      value: true,
       rest: "hello",
     });
   });

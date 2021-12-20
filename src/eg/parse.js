@@ -95,7 +95,7 @@ export function backtickText(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return any(variableDeclaration, literalDeclaration)(text);
+  return any(variableDeclaration, literal)(text);
 }
 
 // Parse an ellipsis.
@@ -190,7 +190,27 @@ export function indirectCall(text) {
 
 // A key in an Explorable App
 export function key(text) {
-  return any(assignment, declaration)(text);
+  const parsed = sequence(
+    optional(ellipsis),
+    any(assignment, declaration)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  let { 0: inheritable, 1: value } = parsed.value;
+  if (inheritable && value[0]?.[0] !== "=") {
+    // An inheritable constant declaration like `…foo` or a variable declaration
+    // like `…{foo}` -- but not an assignment. Convert to an assignment so that
+    // inheritance can be handled as an inheritable formula. On the RHS, we use
+    // `this` to get the value, which requires an extra graph `get`. This isn't
+    // as performant as we could make it, but at least this is a simple way to
+    // leverage the formula inheritance infrastructure.
+    value = ["=", value, [ops.graph, [ops.thisKey]]];
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a comma-separated list with at least one term.
@@ -219,18 +239,6 @@ export function list(text) {
 export function literal(text) {
   // Literals are sequences of everything but terminal characters.
   return regex(/^[^=\(\)\{\}\$"'/:`%,\s]+/)(text);
-}
-
-export function literalDeclaration(text) {
-  const parsed = sequence(optional(ellipsis), literal)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = parsed.value[1];
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 // Parse a left parenthesis.
@@ -523,7 +531,6 @@ export function variableName(text) {
 // Parse a variable declaration like ${x}.json
 export function variableDeclaration(text) {
   const parsed = sequence(
-    optional(ellipsis),
     terminal(/^\{/),
     variableName,
     terminal(/^\}/),
@@ -532,7 +539,7 @@ export function variableDeclaration(text) {
   if (!parsed) {
     return null;
   }
-  const { 2: variable, 4: extension } = parsed.value;
+  const { 1: variable, 3: extension } = parsed.value;
   const value = [ops.variable, variable, extension];
   return {
     value,

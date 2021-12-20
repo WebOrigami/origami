@@ -14,7 +14,7 @@ backtickQuoteString: `backtickContents`
 backtickText: everything but ` and $
 
 declaration: variableDeclaration
-             literalDeclaration
+             literal
 
 expression: singleQuoteString
             backtickQuoteString
@@ -34,17 +34,15 @@ functionCall: reference [args]
 
 group: ( expression )
 
-key: assignment
-     declaration
-
 indirectCall: group args
+
+key: ["…"]assignment
+     ["…"]declaration
 
 list: expression , list
       expression
 
 literal: everything but =(){}$&"'/`%, and whitespace
-
-literalDeclaration: ["…"]literal
 
 omittedParensArgs: whitespace list
 
@@ -89,7 +87,7 @@ spacePathCall: "."|".." [spaceUrlPath]
 
 thisReference: "this"
 
-variableDeclaration: ["…"]{variableName}[extension]
+variableDeclaration: {variableName}[extension]
 
 variableName: for now, JavaScript identifiers with ASCII letters
 
