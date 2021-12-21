@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import Formula from "./Formula.js";
+import { sortFormulas } from "./FormulasTransform.js";
 
 export const ghostGraphExtension = "+";
 
@@ -35,9 +36,22 @@ export default function GhostValuesTransform(Base) {
       } else if (ExplorableGraph.isExplorable(value) && !isGhostKey(key)) {
         // Add ghost graphs from local formulas.
         const ghostKey = `${key}${ghostGraphExtension}`;
-        value.ghostGraphs = await this.localFormulaMatches(ghostKey);
+        value.ghostGraphs = await this.formulaMatches(ghostKey);
       }
       return value;
+    }
+
+    async localFormulas() {
+      // Start with super formulas, if any.
+      const formulas = (await super.localFormulas?.()) ?? [];
+      // Add formulas from ghost graphs, if any.
+      const ghostGraphs = this.ghostGraphs ?? [];
+      for (const ghostGraph of ghostGraphs) {
+        const ghostFormulas = (await ghostGraph.localFormulas?.()) ?? [];
+        formulas.push(...ghostFormulas);
+      }
+      sortFormulas(formulas);
+      return formulas;
     }
   };
 }

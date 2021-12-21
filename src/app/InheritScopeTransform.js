@@ -22,8 +22,8 @@ export default function InheritScopeTransform(Base) {
       return value;
     }
 
-    async localFormulas() {
-      const base = (await super.localFormulas?.()) ?? [];
+    async formulas() {
+      const base = (await super.formulas?.()) ?? [];
       if (this.parent) {
         const parentFormulas = (await this.parent.formulas?.()) ?? [];
         const inherited = parentFormulas.filter(
