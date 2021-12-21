@@ -36,7 +36,7 @@ export default function GhostValuesTransform(Base) {
       } else if (ExplorableGraph.isExplorable(value) && !isGhostKey(key)) {
         // Add ghost graphs from local formulas.
         const ghostKey = `${key}${ghostGraphExtension}`;
-        value.ghostGraphs = await this.formulaMatches(ghostKey);
+        value.ghostGraphs = await this.formulaResults(ghostKey);
       }
       return value;
     }

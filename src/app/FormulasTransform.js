@@ -86,17 +86,19 @@ export default function FormulasTransform(Base) {
       return value;
     }
 
-    // Return all matches for the given key.
-    async formulaMatches(key) {
+    // Return all results for the given key.
+    async formulaResults(key) {
       const formulas = await this.formulas();
       const results = await Promise.all(
         formulas.map(async (formula) => this.evaluateFormula(formula, key))
       );
-      const matches = results.filter((result) => result !== undefined);
-      return matches;
+      const definedResults = results.filter((result) => result !== undefined);
+      return definedResults;
     }
 
     async formulas() {
+      // REVIEW: This isn't saving us much, because InheritScopeTransform is
+      // overriding the formulas() method.
       if (!this[formulasKey]) {
         this[formulasKey] = await this.localFormulas();
       }

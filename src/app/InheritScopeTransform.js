@@ -43,13 +43,15 @@ export default function InheritScopeTransform(Base) {
 
       if (parent) {
         // Add parent to this graph's scope.
+        let parentScope = parent.scope ?? parent;
+
         // Add a wrapper to indicate that, from the perspective of the subgraph,
         // the parent is in scope. We use a prototype extension to do this,
         // because we don't want to directly modifiy the parent graph.
         const scopeWrapper = {
           isInScope: true,
         };
-        Object.setPrototypeOf(scopeWrapper, parent);
+        Object.setPrototypeOf(scopeWrapper, parentScope);
 
         this[scopeKey] = new Compose(this, scopeWrapper);
       } else {

@@ -199,4 +199,29 @@ describe("MetaTransform", () => {
     const match = await ExplorableGraph.traverse(graph, "subgraph", "match");
     assert.equal(match, undefined);
   });
+
+  it("lets subgraphs inherit values", async () => {
+    const fixture = new (MetaTransform(ExplorableObject))({
+      "…a": 1,
+      "…b": 2,
+      subgraph: {
+        "…b": 3, // Overrides ancestor value
+        subsubgraph: {},
+      },
+    });
+
+    assert.equal(await fixture.get("a"), 1);
+
+    assert.equal(await ExplorableGraph.traverse(fixture, "subgraph", "a"), 1);
+    assert.equal(await ExplorableGraph.traverse(fixture, "subgraph", "b"), 3);
+
+    assert.equal(
+      await ExplorableGraph.traverse(fixture, "subgraph", "subsubgraph", "a"),
+      1
+    );
+    assert.equal(
+      await ExplorableGraph.traverse(fixture, "subgraph", "subsubgraph", "b"),
+      3
+    );
+  });
 });
