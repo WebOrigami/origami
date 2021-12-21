@@ -121,9 +121,8 @@ export default class HandlebarsTemplate {
       }
 
       // Get the partials from the graph.
-      const partialPromises = partialKeys.map(async (name) =>
-        location.get(name)
-      );
+      const scope = location.scope ?? location;
+      const partialPromises = partialKeys.map(async (name) => scope.get(name));
       const partialValues = await Promise.all(partialPromises);
 
       // Check to see whether any partials are missing.

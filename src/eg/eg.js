@@ -17,7 +17,7 @@ async function main(...args) {
   }
   const defaultGraph = await scope.get("defaultGraph");
   const graph = await defaultGraph();
-  graph.scope = scope;
+  graph.parent = scope;
 
   // Parse
   const parsed = parse.expression(source);

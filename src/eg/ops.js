@@ -17,7 +17,8 @@ export const variable = Symbol("«ops.variable»");
  * @param {any} key
  */
 export async function implicitCall(key) {
-  let value = await this.get(key);
+  const scope = this.scope ?? this;
+  let value = await scope.get(key);
   if (typeof value === "function") {
     value = await value.call(this);
   }
