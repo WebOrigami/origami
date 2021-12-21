@@ -44,7 +44,7 @@ export default function FormulasTransform(Base) {
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
           // Ask each formula to add any implied keys.
-          const formulas = await this.formulas();
+          const formulas = await this.localFormulas();
           for await (const formula of formulas) {
             formula.addImpliedKeys(keys);
           }
