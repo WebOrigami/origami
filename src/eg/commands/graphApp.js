@@ -13,11 +13,9 @@ import config from "./config.js";
 export default async function graphApp(variant) {
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
-  if (!meta.scope) {
-    const scopePath =
-      /** @type {any} */ (graph).path ?? path.resolve(process.cwd());
-    meta.scope = await config(scopePath);
-  }
+  const scopePath =
+    /** @type {any} */ (graph).path ?? path.resolve(process.cwd());
+  meta.parent = await config(scopePath);
   const result = new DefaultPages(meta);
   return result;
 }

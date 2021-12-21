@@ -13,7 +13,7 @@ export default async function meta(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
-  meta.scope = this ?? (await config());
+  meta.parent = this ?? (await config());
   return meta;
 }
 
