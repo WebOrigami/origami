@@ -86,7 +86,8 @@ function filterKeys(keys) {
       continue;
     }
     if (previous && keyText.includes("=")) {
-      const [lhs] = previous.split("=");
+      const sides = key.split("=");
+      const lhs = sides[0].trim();
       if (lhs.trim() === previous) {
         // Formula for the previous key replaces it.
         filtered.pop();
