@@ -10,10 +10,11 @@ class GhostFormulasObject extends FormulasTransform(
 ) {}
 
 describe("GhostValuesTransform", () => {
-  it("returns wildcard values if requested key is missing", async () => {
+  it("treats ghost values as if present in main graph", async () => {
     const graph = new GhostValuesObject({
       a: 1,
     });
+    // This will add 2 sets of ghost values to the above graph.
     graph.ghostGraphs = [
       new ExplorableObject({
         a: 0, // Shouldn't affect anything

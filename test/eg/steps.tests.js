@@ -18,7 +18,7 @@ describe("steps", () => {
   it("a steps can be interpreted as a metagraph", async () => {
     const fixture = steps(["'world'", "uppercase(it)", "greet(it)"]);
     const meta = transformObject(MetaTransform, fixture);
-    meta.scope = new ExplorableObject({
+    meta.parent = new ExplorableObject({
       greet: (x) => `Hello, ${x}.`,
       uppercase: (x) => x.toUpperCase(),
     });

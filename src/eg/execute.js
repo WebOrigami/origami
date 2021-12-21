@@ -11,9 +11,10 @@ import * as ops from "./ops.js";
  * @param {Code} code
  */
 export default async function execute(code) {
-  if (code === ops.graph) {
-    // ops.graph is a placeholder for the current graph.
-    return this;
+  if (code === ops.scope) {
+    // ops.scope is a placeholder for the current graph's scope. If the graph
+    // doesn't define a scope, use the graph itself as the scope.
+    return this.scope ?? this;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -35,7 +36,7 @@ export default async function execute(code) {
     const name =
       code instanceof Array &&
       code[0] instanceof Array &&
-      code[0][0] === ops.graph
+      code[0][0] === ops.scope
         ? code[0][1]
         : "(unknown)";
     throw ReferenceError(`Couldn't find function or graph key: ${name}`);

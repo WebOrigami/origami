@@ -60,17 +60,7 @@ export default function FormulasTransform(Base) {
     // would be better if other transforms could define `formulas`.
     async formulas() {
       if (!this[formulasKey]) {
-        // Start with local formulas.
-        const localFormulas = await this.localFormulas();
-        this[formulasKey] = localFormulas;
-
-        // // Add inherited formulas.
-        // const inheritedFormulas = (await this.scope?.formulas?.()) ?? [];
-        // // Only inherit formulas that can be found in scope.
-        // const filtered = inheritedFormulas.filter(
-        //   (formula) => formula.foundInScope
-        // );
-        // this[formulasKey] = [...localFormulas, ...filtered];
+        this[formulasKey] = await this.localFormulas();
       }
       return this[formulasKey];
     }
@@ -81,9 +71,9 @@ export default function FormulasTransform(Base) {
       const matches = [];
       for (const formula of formulas) {
         const keyBinding = formula.unify(key);
-        if (keyBinding) {
-          // Formula applies to this key.
-
+        const formulaApplies =
+          keyBinding !== null && (!this.isInScope || formula.foundInScope);
+        if (formulaApplies) {
           // Add our formula's key binding to the graph's bindings.
           const bindings = Object.assign(
             {},
@@ -115,18 +105,15 @@ export default function FormulasTransform(Base) {
       // See if real value exists.
       let value = await super.get(key);
 
-      // See if we have a formula that can produce the desired key. Skip this if
-      // this call is happening because a subgraph is looking up its scope for
-      // inherited values -- the subgraph's FormulasTransform will have already
-      // considered all inherited formulas already.
-      if (value === undefined && !this.isInScope) {
+      // See if we have a formula that can produce the desired key.
+      if (value === undefined) {
         // No real value defined; try our formulas.
         const formulas = await this.formulas();
         for (const formula of formulas) {
           const keyBinding = formula.unify(key);
-          if (keyBinding) {
-            // Formula applies to this key.
-
+          const formulaApplies =
+            keyBinding !== null && (!this.isInScope || formula.foundInScope);
+          if (formulaApplies) {
             // Add our formula's key binding to the graph's bindings.
             const bindings = Object.assign(
               {},

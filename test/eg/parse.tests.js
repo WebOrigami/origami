@@ -30,17 +30,17 @@ describe("parse", () => {
   it("args", () => {
     assert.deepEqual(args(" a, b, c"), {
       value: [
-        [ops.graph, "a"],
-        [ops.graph, "b"],
-        [ops.graph, "c"],
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+        [ops.scope, "c"],
       ],
       rest: "",
     });
     assert.deepEqual(args("(a, b, c)"), {
       value: [
-        [ops.graph, "a"],
-        [ops.graph, "b"],
-        [ops.graph, "c"],
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+        [ops.scope, "c"],
       ],
       rest: "",
     });
@@ -52,17 +52,17 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = fn 'bar'")?.value, [
       "=",
       "foo",
-      [[ops.graph, "fn"], "bar"],
+      [[ops.scope, "fn"], "bar"],
     ]);
     assert.deepEqual(assignment("data = obj.json")?.value, [
       "=",
       "data",
-      [ops.graph, "obj.json"],
+      [ops.scope, "obj.json"],
     ]);
     assert.deepEqual(assignment("match = .. .. .. foo bar")?.value, [
       "=",
       "match",
-      [ops.graph, "..", "..", "..", "foo", "bar"],
+      [ops.scope, "..", "..", "..", "foo", "bar"],
     ]);
   });
 
@@ -70,17 +70,17 @@ describe("parse", () => {
     assert.deepEqual(assignment("foo = this.json")?.value, [
       "=",
       "foo",
-      [ops.graph, [ops.thisKey]],
+      [ops.scope, [ops.thisKey]],
     ]);
     assert.deepEqual(assignment("foo = this().js")?.value, [
       "=",
       "foo",
-      [[ops.graph, [ops.thisKey]]],
+      [[ops.scope, [ops.thisKey]]],
     ]);
     assert.deepEqual(assignment("foo = this('bar').js")?.value, [
       "=",
       "foo",
-      [[ops.graph, [ops.thisKey]], "bar"],
+      [[ops.scope, [ops.thisKey]], "bar"],
     ]);
   });
 
@@ -89,8 +89,8 @@ describe("parse", () => {
       "=",
       [ops.variable, "name", ".html"],
       [
-        [ops.graph, "foo"],
-        [ops.graph, [ops.variable, "name", ".json"]],
+        [ops.scope, "foo"],
+        [ops.scope, [ops.variable, "name", ".json"]],
       ],
     ]);
   });
@@ -116,80 +116,80 @@ describe("parse", () => {
   });
 
   it("expression", () => {
-    assert.deepEqual(expression("obj.json")?.value, [ops.graph, "obj.json"]);
+    assert.deepEqual(expression("obj.json")?.value, [ops.scope, "obj.json"]);
     assert.deepEqual(expression("(fn a, b, c)")?.value, [
-      [ops.graph, "fn"],
-      [ops.graph, "a"],
-      [ops.graph, "b"],
-      [ops.graph, "c"],
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
     ]);
     assert.deepEqual(expression("foo.bar( 'hello' , 'world' )")?.value, [
-      [ops.graph, "foo.bar"],
+      [ops.scope, "foo.bar"],
       "hello",
       "world",
     ]);
-    assert.deepEqual(expression("(fn)('a')")?.value, [[ops.graph, "fn"], "a"]);
+    assert.deepEqual(expression("(fn)('a')")?.value, [[ops.scope, "fn"], "a"]);
     assert.equal(expression("(foo"), null);
   });
 
   it("expression with function with space-separated arguments, mixed argument types", () => {
     assert.deepEqual(expression(`copy app:formulas, files 'snapshot'`)?.value, [
-      [ops.graph, "copy"],
-      [[ops.graph, "app"], "formulas"],
-      [[ops.graph, "files"], "snapshot"],
+      [ops.scope, "copy"],
+      [[ops.scope, "app"], "formulas"],
+      [[ops.scope, "files"], "snapshot"],
     ]);
   });
 
   it("functionCall", () => {
-    assert.deepEqual(functionCall("fn()")?.value, [[ops.graph, "fn"]]);
+    assert.deepEqual(functionCall("fn()")?.value, [[ops.scope, "fn"]]);
     assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
-      [ops.graph, "fn"],
+      [ops.scope, "fn"],
       "a",
       "b",
     ]);
     assert.deepEqual(functionCall("fn 'a', 'b'")?.value, [
-      [ops.graph, "fn"],
+      [ops.scope, "fn"],
       "a",
       "b",
     ]);
     assert.deepEqual(functionCall("fn a, b")?.value, [
-      [ops.graph, "fn"],
-      [ops.graph, "a"],
-      [ops.graph, "b"],
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
     ]);
     assert.deepEqual(functionCall("fn a(b), c")?.value, [
-      [ops.graph, "fn"],
+      [ops.scope, "fn"],
       [
-        [ops.graph, "a"],
-        [ops.graph, "b"],
+        [ops.scope, "a"],
+        [ops.scope, "b"],
       ],
-      [ops.graph, "c"],
+      [ops.scope, "c"],
     ]);
   });
 
   it("functionCall with variable reference", () => {
     assert.deepEqual(functionCall("fn(${name}.json)")?.value, [
-      [ops.graph, "fn"],
-      [ops.graph, [ops.variable, "name", ".json"]],
+      [ops.scope, "fn"],
+      [ops.scope, [ops.variable, "name", ".json"]],
     ]);
   });
 
   it("group", () => {
-    assert.deepEqual(group(" ( hello )")?.value, [ops.graph, "hello"]);
-    assert.deepEqual(group("(((nested)))")?.value, [ops.graph, "nested"]);
-    assert.deepEqual(group("(fn())")?.value, [[ops.graph, "fn"]]);
+    assert.deepEqual(group(" ( hello )")?.value, [ops.scope, "hello"]);
+    assert.deepEqual(group("(((nested)))")?.value, [ops.scope, "nested"]);
+    assert.deepEqual(group("(fn())")?.value, [[ops.scope, "fn"]]);
     assert.equal(group("("), null);
   });
 
   it("indirectFunctionCall", () => {
     assert.deepEqual(indirectCall("(fn()) 'a'")?.value, [
-      [[ops.graph, "fn"]],
+      [[ops.scope, "fn"]],
       "a",
     ]);
     assert.deepEqual(indirectCall("(fn()) (a, b)")?.value, [
-      [[ops.graph, "fn"]],
-      [ops.graph, "a"],
-      [ops.graph, "b"],
+      [[ops.scope, "fn"]],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
     ]);
     assert.deepEqual(indirectCall("(fn())"), null);
   });
@@ -205,8 +205,8 @@ describe("parse", () => {
       "=",
       [ops.variable, "x", ".html"],
       [
-        [ops.graph, "marked"],
-        [ops.graph, [ops.variable, "x", ".md"]],
+        [ops.scope, "marked"],
+        [ops.scope, [ops.variable, "x", ".md"]],
       ],
     ]);
   });
@@ -215,28 +215,28 @@ describe("parse", () => {
     assert.deepEqual(key("…index.html = foo()")?.value, [
       "=",
       "index.html",
-      [[ops.graph, "foo"]],
+      [[ops.scope, "foo"]],
     ]);
-    assert.deepEqual(key("…a")?.value, ["=", "a", [ops.graph, [ops.thisKey]]]);
+    assert.deepEqual(key("…a")?.value, ["=", "a", [ops.scope, [ops.thisKey]]]);
   });
 
   it("list", () => {
     assert.equal(list(""), null);
-    assert.deepEqual(list(" a")?.value, [[ops.graph, "a"]]);
+    assert.deepEqual(list(" a")?.value, [[ops.scope, "a"]]);
     assert.deepEqual(list(" a , b,c, d , e")?.value, [
-      [ops.graph, "a"],
-      [ops.graph, "b"],
-      [ops.graph, "c"],
-      [ops.graph, "d"],
-      [ops.graph, "e"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+      [ops.scope, "d"],
+      [ops.scope, "e"],
     ]);
     assert.deepEqual(list(`'foo', 'bar'`)?.value, ["foo", "bar"]);
     assert.deepEqual(list("a(b), c")?.value, [
       [
-        [ops.graph, "a"],
-        [ops.graph, "b"],
+        [ops.scope, "a"],
+        [ops.scope, "b"],
       ],
-      [ops.graph, "c"],
+      [ops.scope, "c"],
     ]);
   });
 
@@ -251,12 +251,12 @@ describe("parse", () => {
 
   it("percentCall", () => {
     assert.deepEqual(percentCall("graph%")?.value, [
-      ops.graph,
+      ops.scope,
       "graph",
       undefined,
     ]);
     assert.deepEqual(percentCall("graph%foo%bar")?.value, [
-      ops.graph,
+      ops.scope,
       "graph",
       "foo",
       "bar",
@@ -275,35 +275,35 @@ describe("parse", () => {
 
   it("protocolCall", () => {
     assert.deepEqual(protocolCall("fn:a/b")?.value, [
-      [ops.graph, "fn"],
+      [ops.scope, "fn"],
       "a",
       "b",
     ]);
     assert.deepEqual(protocolCall("about:blank")?.value, [
-      [ops.graph, "about"],
+      [ops.scope, "about"],
       "blank",
     ]);
     assert.deepEqual(protocolCall("https://example.com/foo/")?.value, [
-      [ops.graph, "https"],
+      [ops.scope, "https"],
       "example.com",
       "foo",
       undefined,
     ]);
     assert.deepEqual(protocolCall("https://example.com/foo/bar.json")?.value, [
-      [ops.graph, "https"],
+      [ops.scope, "https"],
       "example.com",
       "foo",
       "bar.json",
     ]);
     assert.deepEqual(protocolCall("foo:bar:baz")?.value, [
-      [ops.graph, "foo"],
-      [[ops.graph, "bar"], "baz"],
+      [ops.scope, "foo"],
+      [[ops.scope, "bar"], "baz"],
     ]);
   });
 
   it("getReference", () => {
     assert.deepEqual(getReference("hello"), {
-      value: [ops.graph, "hello"],
+      value: [ops.scope, "hello"],
       rest: "",
     });
   });
@@ -314,24 +314,24 @@ describe("parse", () => {
 
   it("slashCall", () => {
     assert.deepEqual(slashCall("graph/")?.value, [
-      ops.graph,
+      ops.scope,
       "graph",
       undefined,
     ]);
     assert.deepEqual(slashCall("graph/foo/bar")?.value, [
-      ops.graph,
+      ops.scope,
       "graph",
       "foo",
       "bar",
     ]);
     assert.deepEqual(slashCall("fn('a', 'b')/c/d")?.value, [
-      [[ops.graph, "fn"], "a", "b"],
+      [[ops.scope, "fn"], "a", "b"],
       "c",
       "d",
     ]);
-    assert.deepEqual(slashCall("//foo/bar")?.value, [ops.graph, "foo", "bar"]);
+    assert.deepEqual(slashCall("//foo/bar")?.value, [ops.scope, "foo", "bar"]);
     assert.deepEqual(slashCall("a/b/c.txt")?.value, [
-      ops.graph,
+      ops.scope,
       "a",
       "b",
       "c.txt",
@@ -347,14 +347,14 @@ describe("parse", () => {
       undefined,
     ]);
     assert.deepEqual(slashPath("(fn())/foo")?.value, [
-      [[ops.graph, "fn"]],
+      [[ops.scope, "fn"]],
       "foo",
     ]);
   });
 
   it("spacePathCall", () => {
     assert.deepEqual(spacePathCall(".. .. .. foo bar")?.value, [
-      ops.graph,
+      ops.scope,
       "..",
       "..",
       "..",
@@ -365,13 +365,13 @@ describe("parse", () => {
 
   it("spaceUrl", () => {
     assert.deepEqual(spaceUrl("https example.com foo bar.json")?.value, [
-      [ops.graph, "https"],
+      [ops.scope, "https"],
       "example.com",
       "foo",
       "bar.json",
     ]);
     assert.deepEqual(spaceUrl("http example.org ${x} data.json")?.value, [
-      [ops.graph, "http"],
+      [ops.scope, "http"],
       "example.org",
       [ops.variable, "x", null],
       "data.json",

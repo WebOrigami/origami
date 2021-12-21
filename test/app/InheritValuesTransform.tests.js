@@ -5,7 +5,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("InheritValuesTransform", () => {
+describe.skip("InheritValuesTransform", () => {
   it("lets subgraphs inherit values", async () => {
     const fixture = new (InheritValuesTransform(
       InheritScopeTransform(FormulasTransform(ExplorableObject))

@@ -49,14 +49,14 @@ async function main(...args) {
 // If the user didn't explicitly specify end the source with a parenthesis, but
 // the rightmost derivation of the code is a function, we'll want to implicitly
 // invoke it. We can't tell at this time whether the code is a function or not,
-// so we'll change the ops from `ops.graph` to `ops.implicitCall` to check for a
+// so we'll change the ops from `ops.scope` to `ops.implicitCall` to check for a
 // function at runtime and -- if it's a function -- invoke it.
 function patchDanglingFunction(code) {
   if (code instanceof Array) {
     const isGet =
-      code.length === 2 && code[0] === ops.graph && typeof code[1] === "string";
+      code.length === 2 && code[0] === ops.scope && typeof code[1] === "string";
     if (isGet) {
-      // Change ops.graph to ops.implicitCall
+      // Change ops.scope to ops.implicitCall
       return [ops.implicitCall, code[1]];
     } else {
       // Recurse

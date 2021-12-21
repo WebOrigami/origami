@@ -1,34 +1,64 @@
+import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+
+const parentKey = Symbol("parent");
+const scopeKey = Symbol("scope");
 
 export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {
     constructor(...args) {
       super(...args);
-      this.scope = null;
-      this.inheritsScope = true;
       this.isInScope = false;
+      this[parentKey] = null;
+      /** @type {any} */ this[scopeKey] = this;
     }
 
     async get(key) {
-      // Try local graph first.
-      let value = await super.get(key);
-      if (value === undefined) {
-        // Wasn't found in local graph, try inherited scope.
-        value = await this.scope?.get(key);
-      } else if (ExplorableGraph.isExplorable(value) && value.inheritsScope) {
-        // This graph becomes the scope for the subgraph.
+      const value = await super.get(key);
+      if (ExplorableGraph.isExplorable(value)) {
+        // This graph becomes the parent for all subgraphs.
+        value.parent = this;
+      }
+      return value;
+    }
 
-        // Add an indicator that, from the perspective of the subgraph, this
-        // graph is in scope. We use a prototype extension to do this, because
-        // we don't want to directly modifiy this graph.
+    async localFormulas() {
+      const base = (await super.localFormulas?.()) ?? [];
+      if (this.parent) {
+        const parentFormulas = (await this.parent.formulas?.()) ?? [];
+        const inherited = parentFormulas.filter(
+          (formula) => formula.inheritable
+        );
+        // Inherited formulas are lower priority, so come last.
+        return [...base, ...inherited];
+      }
+      return base;
+    }
+
+    get parent() {
+      return this[parentKey];
+    }
+    set parent(parent) {
+      this[parentKey] = parent;
+
+      if (parent) {
+        // Add parent to this graph's scope.
+        // Add a wrapper to indicate that, from the perspective of the subgraph,
+        // the parent is in scope. We use a prototype extension to do this,
+        // because we don't want to directly modifiy the parent graph.
         const scopeWrapper = {
           isInScope: true,
         };
-        Object.setPrototypeOf(scopeWrapper, this);
+        Object.setPrototypeOf(scopeWrapper, parent);
 
-        value.scope = scopeWrapper;
+        this[scopeKey] = new Compose(this, scopeWrapper);
+      } else {
+        this[scopeKey] = null;
       }
-      return value;
+    }
+
+    get scope() {
+      return this[scopeKey];
     }
   };
 }

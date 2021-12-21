@@ -133,7 +133,7 @@ export function functionCall(text) {
     return null;
   }
   const { 1: fnName, 2: fnArgs } = parsed.value;
-  let value = [[ops.graph, fnName]];
+  let value = [[ops.scope, fnName]];
   if (fnArgs.length > 0) {
     value.push(...fnArgs);
   }
@@ -149,7 +149,7 @@ export function getReference(text) {
   if (!parsed) {
     return null;
   }
-  const value = [ops.graph, parsed.value];
+  const value = [ops.scope, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -195,7 +195,7 @@ export function inheritableDeclaration(text) {
   if (!parsed) {
     return null;
   }
-  const value = ["=", parsed.value[1], [ops.graph, [ops.thisKey]]];
+  const value = ["=", parsed.value[1], [ops.scope, [ops.thisKey]]];
   return {
     value,
     rest: parsed.rest,
@@ -291,7 +291,7 @@ export function pathHead(text) {
     return null;
   }
   let value = parsed.value;
-  if (value[0] !== ops.graph) {
+  if (value[0] !== ops.scope) {
     value = [value];
   }
   return {
@@ -359,8 +359,8 @@ export function protocolCall(text) {
     return null;
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
-  const value = [[ops.graph, fnName]];
-  const argIsNestedCall = fnArgs[0]?.[0] === ops.graph;
+  const value = [[ops.scope, fnName]];
+  const argIsNestedCall = fnArgs[0]?.[0] === ops.scope;
   if (argIsNestedCall) {
     value.push(fnArgs);
   } else {
@@ -451,7 +451,7 @@ export function spacePathCall(text) {
     return null;
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
-  let value = [ops.graph, fnName];
+  let value = [ops.scope, fnName];
   if (fnArgs) {
     value.push(...fnArgs);
   }
@@ -473,7 +473,7 @@ export function spaceUrl(text) {
     return null;
   }
   const { 1: protocol, 3: path } = parsed.value;
-  const value = [[ops.graph, protocol], ...path];
+  const value = [[ops.scope, protocol], ...path];
   return {
     value,
     rest: parsed.rest,

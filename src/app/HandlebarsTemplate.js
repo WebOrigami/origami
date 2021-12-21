@@ -92,12 +92,12 @@ export default class HandlebarsTemplate {
   // found, return `null` for the data and the original template as the
   // template.
   //
-  // The supplied scope is used as the scope for the front matter graph.
-  async interpretFrontMatter(scope) {
+  // The supplied parent is used as the parent for the front matter graph.
+  async interpretFrontMatter(parent) {
     if (this.frontData) {
       const frontGraph = ExplorableGraph.from(this.frontData);
       const meta = transformObject(MetaTransform, frontGraph);
-      /** @type {any} */ (meta).scope = scope;
+      /** @type {any} */ (meta).parent = parent;
       const data = await ExplorableGraph.plain(meta);
       return data;
     } else {

@@ -1,7 +1,7 @@
 /// <reference path="./egcode.d.ts" />
 
-// The graph op is a placeholder that represents the current graph.
-export const graph = Symbol("«ops.graph»");
+// The scope op is a placeholder for the graph's scope.
+export const scope = Symbol("«ops.scope»");
 
 // The `thisKey` op is a placeholder that represents the key of the object that
 // resulted in the current code.

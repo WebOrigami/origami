@@ -14,7 +14,7 @@ const fixturesDirectory = path.join(dirname, "fixtures");
 const metaGraph = new (MetaTransform(ExplorableFiles))(
   path.join(fixturesDirectory, "meta")
 );
-metaGraph.scope = new Compose(
+metaGraph.parent = new Compose(
   {
     fn() {
       return "Hello, world.";
@@ -91,9 +91,9 @@ describe("MetaTransform", () => {
     assert.equal(indexHtml, "Hello, world.\n");
   });
 
-  it("can inherit formulas", async () => {
+  it("can inherit ellipsis formulas", async () => {
     const graph = new (MetaTransform(ExplorableObject))({
-      "greeting = message": "",
+      "…greeting = message": "",
       message: "Hello",
       spanish: {
         message: "Hola",
@@ -104,11 +104,38 @@ describe("MetaTransform", () => {
     assert.equal(await spanish.get("greeting"), "Hola");
   });
 
+  it("has access to concrete values in scope", async () => {
+    const graph = new (MetaTransform(ExplorableObject))({
+      greeting: "Hello",
+      subgraph: {
+        "message = greeting": "",
+      },
+    });
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraph", "message"),
+      "Hello"
+    );
+  });
+
+  it("has access to virtual values in scope", async () => {
+    const graph = new (MetaTransform(ExplorableObject))({
+      "greeting = `Hello`": "",
+      subgraph: {
+        "message = greeting": "",
+      },
+    });
+    assert.equal(await ExplorableGraph.traverse(graph, "greeting"), "Hello");
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraph", "message"),
+      "Hello"
+    );
+  });
+
   it("can inherit functions", async () => {
     const graph = new (MetaTransform(ExplorableObject))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
-      "{x}.html = textToHtml(${x}.txt)": "",
+      "…{x}.html = textToHtml(${x}.txt)": "",
       about: {
         "index.txt": "About",
       },
@@ -137,28 +164,39 @@ describe("MetaTransform", () => {
 
   it("real values take precedence over wildcards", async () => {
     const graph = new (MetaTransform(ExplorableObject))({
-      "{test}": {
-        b: 2,
+      "…a": 1,
+      subgraphWithA: {
+        a: 2,
       },
-      a: 1,
+      subgraphWithoutA: {},
+    });
+
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraphWithA", "a"),
+      2
+    );
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraphWithoutA", "a"),
+      1
+    );
+  });
+
+  it("wildcard values do not apply in scope", async () => {
+    const graph = new (MetaTransform(ExplorableObject))({
+      "{test}": {
+        a: 1,
+      },
       subgraph: {
-        subsubgraph: {},
+        "match = foo": "",
       },
     });
 
     // Wildcard folder matches direct request.
     const foo = await graph.get("foo");
-    assert.deepEqual(await ExplorableGraph.plain(foo), { b: 2 });
+    assert.deepEqual(await ExplorableGraph.plain(foo), { a: 1 });
 
-    // Real values are inherited.
-    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "a"), 1);
-
-    // Wildcard values are inherited.
-    // REVIEW: Do we want this to work?
-    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "b"), 2);
-    assert.equal(
-      await ExplorableGraph.traverse(graph, "subgraph", "subsubgraph", "b"),
-      2
-    );
+    // Wildcard folder is not found in search of scope.
+    const match = await ExplorableGraph.traverse(graph, "subgraph", "match");
+    assert.equal(match, undefined);
   });
 });
