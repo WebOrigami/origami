@@ -80,7 +80,9 @@ export default class HandlebarsTemplate {
     } else if (typeof input === "string" || typeof input === "object") {
       // Cast object to string.
       const parsed = utilities.parse(String(input));
-      return isPlainObject(parsed) ? parsed : { bodyText: parsed };
+      return isPlainObject(parsed) || parsed instanceof Array
+        ? parsed
+        : { bodyText: parsed };
     } else {
       return input;
     }
