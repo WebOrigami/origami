@@ -166,15 +166,6 @@ async function prepareData(key, value) {
     return value;
   }
 
-  // If the value is a plain JS object or array, write it out as JSON or YAML
-  // (depending on the key), which seems like a more useful default than
-  // "[object Object]" or the array contents.
-  if (isPlainObject(value) || value instanceof Array) {
-    return key.endsWith(".yaml")
-      ? YAML.stringify(value)
-      : JSON.stringify(value, null, 2);
-  }
-
   // Explorable values are written out as JSON or, if the key ends in ".yaml",
   // as YAML.
   if (ExplorableGraph.canCastToExplorable(value)) {
@@ -182,6 +173,15 @@ async function prepareData(key, value) {
     return key.endsWith(".yaml")
       ? await ExplorableGraph.toYaml(graph)
       : await ExplorableGraph.toJson(graph);
+  }
+
+  // If the value is a plain JS object or array, write it out as JSON or YAML
+  // (depending on the key), which seems like a more useful default than
+  // "[object Object]" or the array contents.
+  if (isPlainObject(value) || value instanceof Array) {
+    return key.endsWith(".yaml")
+      ? YAML.stringify(value)
+      : JSON.stringify(value, null, 2);
   }
 
   // Otherwise, do our best to convert known types to a string.
