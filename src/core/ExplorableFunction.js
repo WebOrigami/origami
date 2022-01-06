@@ -17,12 +17,6 @@ export default class ExplorableFunction {
           // eventually bind all parameters until only one remains. At that point,
           // the above condition will apply and the function will be invoked.
           this.fn.bind(this, key);
-    if (value instanceof Function && !(value instanceof this.constructor)) {
-      // We don't know the domain of the explorable function we're returning, so
-      // use the empty array.
-      const keys = [];
-      value = Reflect.construct(this.constructor, [value, keys]);
-    }
     return value;
   }
 }
