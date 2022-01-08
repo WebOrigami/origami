@@ -117,6 +117,7 @@ export function expression(text) {
     slashCall,
     percentCall,
     functionCall,
+    number,
     getReference
   )(text);
 }
@@ -238,6 +239,20 @@ export function literal(text) {
 // Parse a left parenthesis.
 function lparen(text) {
   return terminal(/^\(/)(text);
+}
+
+export function number(text) {
+  // Based on https://stackoverflow.com/a/51733563/76472
+  // but only accepts integers or floats, not exponential notation.
+  const parsed = regex(/^-?\d+(?:\.\d*)?|\.\d+/)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = Number(parsed.value);
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse the arguments to a function where the parentheses have been omitted.

@@ -11,6 +11,7 @@ import {
   key,
   list,
   literal,
+  number,
   optionalWhitespace,
   percentCall,
   percentPath,
@@ -129,6 +130,7 @@ describe("parse", () => {
       "world",
     ]);
     assert.deepEqual(expression("(fn)('a')")?.value, [[ops.scope, "fn"], "a"]);
+    assert.equal(expression("1")?.value, 1);
     assert.equal(expression("(foo"), null);
   });
 
@@ -247,6 +249,12 @@ describe("parse", () => {
     });
     assert.equal(literal(""), null);
     assert.equal(literal("()"), null);
+  });
+
+  it("number", () => {
+    assert.equal(number("1")?.value, 1);
+    assert.equal(number("3.14159")?.value, 3.14159);
+    assert.equal(number("-1")?.value, -1);
   });
 
   it("percentCall", () => {

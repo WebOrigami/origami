@@ -26,6 +26,7 @@ expression: singleQuoteString
             slashCall
             percentCall
             functionCall
+            number
             reference
 
 extension: .literal
@@ -44,6 +45,8 @@ list: expression , list
       expression
 
 literal: everything but =(){}$&"'/`%, and whitespace
+
+number: (valid JavaScript signed/unsigned integer or floating point number)
 
 omittedParensArgs: whitespace list
 
