@@ -12,13 +12,8 @@ export default class ExplorableObject {
   }
 
   async *[Symbol.asyncIterator]() {
-    // If the object defines an iterator, defer to that.
-    if (this.object[Symbol.asyncIterator]) {
-      yield* this.object[Symbol.asyncIterator]();
-    } else {
-      // Iterate over the object's keys.
-      yield* Object.keys(this.object);
-    }
+    // Iterate over the object's keys.
+    yield* Object.keys(this.object);
   }
 
   /**
