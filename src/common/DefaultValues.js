@@ -44,4 +44,8 @@ export default class DefaultValues {
   onChange(eventType, fileName) {
     /** @type {any} */ (this.graph).onChange?.(eventType, fileName);
   }
+
+  get scope() {
+    return this.graph.scope;
+  }
 }

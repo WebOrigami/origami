@@ -76,4 +76,8 @@ export default class MapTypesGraph {
         ])
       : value;
   }
+
+  get scope() {
+    return this.graph.scope;
+  }
 }

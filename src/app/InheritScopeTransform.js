@@ -62,5 +62,8 @@ export default function InheritScopeTransform(Base) {
     get scope() {
       return this[scopeKey];
     }
+    set scope(scope) {
+      this[scopeKey] = scope;
+    }
   };
 }

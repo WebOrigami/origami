@@ -29,4 +29,8 @@ export default class MapGraph {
       ? await this.mapFn(value, key) // Return mapped value
       : undefined;
   }
+
+  get scope() {
+    return this.graph.scope;
+  }
 }
