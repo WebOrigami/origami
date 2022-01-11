@@ -40,7 +40,7 @@ export default class HandlebarsTemplate {
    */
   async apply(input, graph) {
     const data = input
-      ? await this.dataFromInput(input)
+      ? await this.dataFromInput(input, graph)
       : await this.interpretFrontMatter(graph);
     if (input === undefined && !data) {
       // Caller explicitly passed in `undefined` as the input argument, and
@@ -72,20 +72,38 @@ export default class HandlebarsTemplate {
   }
 
   // Extract the data from the given input.
-  async dataFromInput(input) {
+  async dataFromInput(input, graph) {
+    let data;
     if (isPlainObject(input) || input instanceof Array) {
-      return input;
+      data = input;
     } else if (ExplorableGraph.isExplorable(input)) {
-      return await ExplorableGraph.plain(input);
+      data = await ExplorableGraph.plain(input);
     } else if (typeof input === "string" || typeof input === "object") {
       // Cast object to string.
       const parsed = utilities.parse(String(input));
-      return isPlainObject(parsed) || parsed instanceof Array
-        ? parsed
-        : { bodyText: parsed };
+      if (isPlainObject(parsed)) {
+        if (graph) {
+          // Interpret the parsed object as a metagraph.
+          const explorable = ExplorableGraph.from(parsed);
+          const meta = transformObject(MetaTransform, explorable);
+          /** @type {any} */ (meta).parent = graph;
+          const p = await meta.scope.get("parse");
+          data = await ExplorableGraph.plain(meta);
+        } else {
+          // Use parsed object as is.
+          data = parsed;
+        }
+      } else if (parsed instanceof Array) {
+        // Use array as is.
+        data = parsed;
+      } else {
+        // Interpret the parsed string as a `bodyText` field.
+        data = { bodyText: parsed };
+      }
     } else {
-      return input;
+      data = input;
     }
+    return data;
   }
 
   // If the template contains front matter, process the front matter data as a
