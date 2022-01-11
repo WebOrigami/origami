@@ -78,6 +78,6 @@ export default class MapTypesGraph {
   }
 
   get scope() {
-    return this.graph.scope;
+    return /** @type {any} */ (this.graph).scope;
   }
 }

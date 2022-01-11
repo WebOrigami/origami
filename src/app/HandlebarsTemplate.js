@@ -87,7 +87,6 @@ export default class HandlebarsTemplate {
           const explorable = ExplorableGraph.from(parsed);
           const meta = transformObject(MetaTransform, explorable);
           /** @type {any} */ (meta).parent = graph;
-          const p = await meta.scope.get("parse");
           data = await ExplorableGraph.plain(meta);
         } else {
           // Use parsed object as is.

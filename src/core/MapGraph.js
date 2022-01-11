@@ -31,6 +31,6 @@ export default class MapGraph {
   }
 
   get scope() {
-    return this.graph.scope;
+    return /** @type {any} */ (this.graph).scope;
   }
 }

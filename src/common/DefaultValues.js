@@ -46,6 +46,6 @@ export default class DefaultValues {
   }
 
   get scope() {
-    return this.graph.scope;
+    return /** @type {any} */ (this.graph).scope;
   }
 }

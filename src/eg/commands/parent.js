@@ -4,7 +4,7 @@
  * @this {Explorable}
  */
 export default async function parent() {
-  return this.parent;
+  return /** @type {any} */ (this).parent;
 }
 
 parent.usage = `parent()\Returns the parent of the current graph`;

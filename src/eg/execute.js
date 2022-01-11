@@ -14,7 +14,7 @@ export default async function execute(code) {
   if (code === ops.scope) {
     // ops.scope is a placeholder for the current graph's scope. If the graph
     // doesn't define a scope, use the graph itself as the scope.
-    return this.scope ?? this;
+    return /** @type {any} */ (this).scope ?? this;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
