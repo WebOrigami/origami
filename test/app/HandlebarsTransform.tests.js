@@ -46,4 +46,17 @@ Hello, <em>world</em>.`;
   Hello, <em>world</em>.`
     );
   });
+
+  it("layers input data on top of template front matter if present", async () => {
+    const template = new HandlebarsTemplate(`---
+name: world
+message: Hello
+---
+{{message}}, {{name}}.`);
+    const data = {
+      name: "Alice",
+    };
+    const result = await template.apply(data);
+    assert.equal(result, `Hello, Alice.`);
+  });
 });

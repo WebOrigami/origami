@@ -1,6 +1,7 @@
 import Handlebars from "handlebars";
 import DefaultPages from "../app/DefaultPages.js";
 import StringWithGraph from "../app/StringWithGraph.js";
+import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as utilities from "../core/utilities.js";
 import {
@@ -72,36 +73,41 @@ export default class HandlebarsTemplate {
   }
 
   // Extract the data from the given input.
+  // If the template itself has front matter, and the input and front matter can
+  // be composed, do that.
   async dataFromInput(input, graph) {
-    let data;
-    if (isPlainObject(input) || input instanceof Array) {
-      data = input;
-    } else if (ExplorableGraph.isExplorable(input)) {
-      data = await ExplorableGraph.plain(input);
-    } else if (typeof input === "string" || typeof input === "object") {
-      // Cast object to string.
-      const parsed = utilities.parse(String(input));
-      if (isPlainObject(parsed)) {
-        if (graph) {
-          // Interpret the parsed object as a metagraph.
-          const explorable = ExplorableGraph.from(parsed);
-          const meta = transformObject(MetaTransform, explorable);
-          /** @type {any} */ (meta).parent = graph;
-          data = await ExplorableGraph.plain(meta);
-        } else {
-          // Use parsed object as is.
-          data = parsed;
-        }
-      } else if (parsed instanceof Array) {
-        // Use array as is.
-        data = parsed;
-      } else {
+    // Step 1: parse the input if necessary.
+    let parsed = input;
+    if (typeof input === "string" || input instanceof Buffer) {
+      parsed = utilities.parse(String(input));
+      if (typeof parsed === "string") {
         // Interpret the parsed string as a `bodyText` field.
-        data = { bodyText: parsed };
+        parsed = { bodyText: parsed };
       }
-    } else {
-      data = input;
     }
+
+    // Step two: compose if we can and convert to plain object or array.
+    let data = parsed;
+    if (isPlainObject(input)) {
+      if (this.frontData) {
+        // Compose (parsed) input on top of front matter.
+        parsed = Object.assign({}, this.frontData, parsed);
+      }
+      // Interpret the parsed object as a metagraph.
+      const explorable = ExplorableGraph.from(parsed);
+      const meta = transformObject(MetaTransform, explorable);
+      if (graph) {
+        /** @type {any} */ (meta).parent = graph;
+      }
+      data = await ExplorableGraph.plain(meta);
+    } else if (ExplorableGraph.isExplorable(input)) {
+      // If template has front matter, compose input on top of that.
+      const composed = this.frontData
+        ? new Compose(input, this.frontData)
+        : input;
+      data = await ExplorableGraph.plain(composed);
+    }
+
     return data;
   }
 
