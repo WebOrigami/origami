@@ -88,7 +88,7 @@ export default class HandlebarsTemplate {
 
     // Step two: compose if we can and convert to plain object or array.
     let data = parsed;
-    if (isPlainObject(input)) {
+    if (isPlainObject(parsed)) {
       if (this.frontData) {
         // Compose (parsed) input on top of front matter.
         parsed = Object.assign({}, this.frontData, parsed);
@@ -100,11 +100,11 @@ export default class HandlebarsTemplate {
         /** @type {any} */ (meta).parent = graph;
       }
       data = await ExplorableGraph.plain(meta);
-    } else if (ExplorableGraph.isExplorable(input)) {
+    } else if (ExplorableGraph.isExplorable(parsed)) {
       // If template has front matter, compose input on top of that.
       const composed = this.frontData
-        ? new Compose(input, this.frontData)
-        : input;
+        ? new Compose(parsed, this.frontData)
+        : parsed;
       data = await ExplorableGraph.plain(composed);
     }
 
