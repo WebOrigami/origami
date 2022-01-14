@@ -1,10 +1,10 @@
 import process from "process";
 
 export default async function stdin() {
-  return await textFromReadable(process.stdin);
+  return await readAll(process.stdin);
 }
 
-function textFromReadable(readable) {
+function readAll(readable) {
   return new Promise((resolve) => {
     const chunks = [];
 
@@ -16,10 +16,10 @@ function textFromReadable(readable) {
     });
 
     readable.on("end", () => {
-      const content = chunks.join("");
-      resolve(content);
+      const buffer = Buffer.concat(chunks);
+      resolve(buffer);
     });
   });
 }
 
-stdin.usage = `stdin()\tReturns the standard input stream as text`;
+stdin.usage = `stdin()\tReturns the contents of the standard input stream`;
