@@ -11,4 +11,4 @@ export default async function plain(variant) {
   return await ExplorableGraph.plain(variant);
 }
 
-plain.usage = `plain(graph)\tA plain JavaScript object representation of the graph`;
+plain.usage = `plain([graph])\tA plain JavaScript object representation of the graph`;

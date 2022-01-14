@@ -38,6 +38,9 @@ export default async function showUsage(commands) {
   );
 
   console.log(formatted.join("\n"));
+  console.log(
+    `\nGet more details on a command like "serve" with: eg help/serve`
+  );
 }
 
 function defaultUsage(name, fn) {

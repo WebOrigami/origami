@@ -1,7 +1,8 @@
 import child_process from "child_process";
 
 export default function help(name) {
-  const url = `https://explorablegraph.org/eg/commands.html#${name}`;
+  const anchor = name ? `#${name}` : "";
+  const url = `https://explorablegraph.org/eg/commands.html${anchor}`;
   const platform = process.platform;
   const start =
     platform === "darwin"
