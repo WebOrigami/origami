@@ -1,6 +1,6 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import clean from "../../src/eg/commands/clean.js";
+import clean from "../../src/eg/builtins/clean.js";
 import assert from "../assert.js";
 
 describe("clean", () => {

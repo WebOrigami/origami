@@ -3,7 +3,7 @@
 import process from "process";
 import execute from "../../src/eg/execute.js";
 import * as ops from "../../src/eg/ops.js";
-import config from "./commands/config.js";
+import config from "./builtins/config.js";
 import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 

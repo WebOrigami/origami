@@ -2,7 +2,7 @@ import { ExplorableObject } from "../../exports.js";
 import MetaTransform from "../../src/app/MetaTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import { transformObject } from "../../src/core/utilities.js";
-import steps from "../../src/eg/commands/steps.js";
+import steps from "../../src/eg/builtins/steps.js";
 import assert from "../assert.js";
 
 describe("steps", () => {
