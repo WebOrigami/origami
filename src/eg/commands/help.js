@@ -2,7 +2,7 @@ import child_process from "child_process";
 
 export default function help(name) {
   const anchor = name ? `#${name}` : "";
-  const url = `https://explorablegraph.org/eg/commands.html${anchor}`;
+  const url = `https://explorablegraph.org/eg/builtins.html${anchor}`;
   const platform = process.platform;
   const start =
     platform === "darwin"
@@ -14,4 +14,4 @@ export default function help(name) {
   child_process.exec(command);
 }
 
-help.usage = `help(name)\tOpens documentation for the named command`;
+help.usage = `help(name)\tOpens documentation for the named built-in command`;
