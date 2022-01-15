@@ -19,7 +19,7 @@ export { default as defaultGraph } from "./src/eg/builtins/defaultGraph.js";
 export { default as dot } from "./src/eg/builtins/dot.js";
 export { default as graphApp } from "./src/eg/builtins/graphApp.js";
 export { default as hbs } from "./src/eg/builtins/hbs.js";
-export { default as interiors } from "./src/eg/builtins/interiors.js";
+export { default as interiors } from "./src/eg/builtins/inners.js";
 export { default as mdHtml } from "./src/eg/builtins/mdHtml.js";
 export { default as values } from "./src/eg/builtins/values.js";
 export { default as defaultModuleExport } from "./src/eg/defaultModuleExport.js";

@@ -17,4 +17,4 @@ export default async function clean(variant) {
   await graph.set(undefineds);
 }
 
-clean.usage = `clean(graph)\tRemoves files created by the make command`;
+clean.usage = `clean(graph)\tRemoves files created by the make command [experimental]`;

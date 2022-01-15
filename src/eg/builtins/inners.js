@@ -1,15 +1,15 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 /**
- * Return the interior nodes of the graph.
+ * Return the inner nodes of the graph: the nodes with children.
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
  */
-export default async function interiors(variant) {
+export default async function inners(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
-  const interior = {
+  const inner = {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph) {
         const value = await graph.get(key);
@@ -21,10 +21,10 @@ export default async function interiors(variant) {
 
     async get(key) {
       const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value) ? interiors(value) : undefined;
+      return ExplorableGraph.isExplorable(value) ? inners(value) : undefined;
     },
   };
-  return interior;
+  return inner;
 }
 
-interiors.usage = `interiors([graph])\tReturn the interior nodes of the graph`;
+inners.usage = `inners([graph])\tThe inner nodes of the graph`;

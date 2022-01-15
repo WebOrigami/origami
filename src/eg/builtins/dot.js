@@ -3,7 +3,6 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 export default async function dot(variant) {
   const graph = ExplorableGraph.from(variant);
   const graphArcs = await statements(graph, "", "/");
-  //   node [label=""; shape=circle; width=0.25];
   return `digraph g {
   rankdir=LR;
   node [shape=box; color=gray70; fontname="Helvetica"];
@@ -16,7 +15,6 @@ ${graphArcs.join("\n")}
 async function statements(graph, nodePath, nodeLabel) {
   let result = [];
 
-  // result.push(`  "${nodePath}" [label="${nodeLabel}"];`);
   result.push(
     `  "${nodePath}" [label=""; shape=circle; width=0.10; color=gray40];`
   );

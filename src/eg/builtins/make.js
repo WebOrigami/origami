@@ -29,4 +29,4 @@ export default async function make(virtual, destination) {
   await copy(build, destination);
 }
 
-make.usage = `make()\tMake real versions of any virtual files`;
+make.usage = `make()\tMake real versions of any virtual files [experimental]`;

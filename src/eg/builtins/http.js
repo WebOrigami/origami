@@ -6,4 +6,4 @@ export default async function http(domain, ...keys) {
   return await ExplorableGraph.traverse(site, ...keys);
 }
 
-http.usage = `http(domain, ...keys)\tA web resource`;
+http.usage = `http(domain, ...keys)\tA web resource via HTTP`;
