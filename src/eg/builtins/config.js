@@ -18,4 +18,4 @@ export default async function config(relativePath = "") {
   return graph || builtins;
 }
 
-config.usage = `config()\tReturn the graph for the active eg configuration`;
+config.usage = `config\tReturn the graph for the active eg configuration`;

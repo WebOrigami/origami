@@ -41,4 +41,4 @@ async function statements(graph, nodePath, nodeLabel) {
   return result;
 }
 
-dot.usage = `dot(graph)\tRender a graph visually in dot language`;
+dot.usage = `dot <graph>\tRender a graph visually in dot language`;

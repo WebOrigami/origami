@@ -10,4 +10,4 @@ export default async function parent(variant) {
   return /** @type {any} */ (graph).parent;
 }
 
-parent.usage = `parent()\tThe parent of the current graph`;
+parent.usage = `parent\tThe parent of the current graph`;

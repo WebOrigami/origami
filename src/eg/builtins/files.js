@@ -10,4 +10,4 @@ export default async function files(dirname) {
   return new ExplorableFiles(resolved);
 }
 
-files.usage = `files([path])\tThe explorable files at the given path`;
+files.usage = `files [path]\tThe explorable files at the given path`;

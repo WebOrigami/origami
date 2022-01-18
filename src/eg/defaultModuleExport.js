@@ -15,4 +15,4 @@ export default async function defaultModuleExport(...keys) {
   return result;
 }
 
-defaultModuleExport.usage = `defaultModuleExport(path)\tThe default export of the module at path`;
+defaultModuleExport.usage = `defaultModuleExport <path>\tThe default export of the module at path`;

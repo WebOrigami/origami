@@ -11,4 +11,4 @@ export default function nulls(variant) {
   return new MapGraph(variant, () => null);
 }
 
-nulls.usage = `nulls(graph)\tReturn a new graph with all values equal to null`;
+nulls.usage = `nulls <graph>\tReturn a new graph with all values equal to null`;

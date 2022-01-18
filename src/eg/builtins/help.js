@@ -14,4 +14,4 @@ export default function help(name) {
   child_process.exec(command);
 }
 
-help.usage = `help(name)\tOpens documentation for the named built-in command`;
+help.usage = `help <name>\tOpens documentation for the named built-in command`;

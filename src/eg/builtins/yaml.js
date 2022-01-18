@@ -21,4 +21,4 @@ export default async function yaml(obj) {
   }
 }
 
-yaml.usage = `yaml(obj)\tRender the object as text in YAML format`;
+yaml.usage = `yaml <obj>\tRender the object as text in YAML format`;

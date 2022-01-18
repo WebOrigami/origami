@@ -16,4 +16,4 @@ export default async function serve(variant, port = defaultPort) {
   console.log(`Server running at http://localhost:${port}`);
 }
 
-serve.usage = `serve(graph, [port])\tStart a local web server for the graph`;
+serve.usage = `serve <graph>, [port]\tStart a local web server for the graph`;

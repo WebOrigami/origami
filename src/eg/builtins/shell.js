@@ -12,4 +12,4 @@ export default async function shell(command) {
   }
 }
 
-shell.usage = `shell(command)\tExecutes the shell command and returns the output`;
+shell.usage = `shell <command>\tExecutes the shell command and returns the output`;

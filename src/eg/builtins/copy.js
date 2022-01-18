@@ -5,4 +5,4 @@ export default async function copy(source, target) {
   await target.set(sourceGraph);
 }
 
-copy.usage = `copy(source, target)\tCopies the source graph to the target`;
+copy.usage = `copy <source>, <target>\tCopies the source graph to the target`;

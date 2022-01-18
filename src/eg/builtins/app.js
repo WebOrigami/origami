@@ -12,4 +12,4 @@ export default async function app(key) {
   return key === undefined ? graph : await graph.get(key);
 }
 
-app.usage = `app()\tWrap the graph for the current directory with an app`;
+app.usage = `app\tWrap the graph for the current directory with an app`;

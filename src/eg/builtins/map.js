@@ -10,4 +10,4 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
     : new MapTypesGraph(variant, mapFn, sourceExtension, targetExtension);
 }
 
-map.usage = `map(...args)\tMap the values in a graph using a map function.`;
+map.usage = `map <graph>, <mapFn>\tMap the values in a graph using a map function.`;

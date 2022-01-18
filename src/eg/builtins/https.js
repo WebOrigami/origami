@@ -6,4 +6,4 @@ export default async function https(domain, ...keys) {
   return await ExplorableGraph.traverse(site, ...keys);
 }
 
-https.usage = `https(domain, ...keys)\tA web resource via HTTPS`;
+https.usage = `https <domain>, <...keys>\tA web resource via HTTPS`;

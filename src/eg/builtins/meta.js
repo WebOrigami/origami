@@ -17,4 +17,4 @@ export default async function meta(variant) {
   return meta;
 }
 
-meta.usage = `meta(graph)\tEvaluate the formulas in the keys of the graph`;
+meta.usage = `meta <graph>\tEvaluate the formulas in the keys of the graph`;

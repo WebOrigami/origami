@@ -64,4 +64,4 @@ async function valueForFirstKey(graph) {
 }
 
 table.usage =
-  "table(graph)\tFormat the graph's top level as a tab-delimited table";
+  "table <graph>\tFormat the graph's top level as a tab-delimited table";

@@ -20,4 +20,4 @@ export default async function graphApp(variant) {
   return result;
 }
 
-graphApp.usage = `graphApp(graph)\tCreate an app by wrapping a graph`;
+graphApp.usage = `graphApp <graph>\tCreate an app by wrapping a graph`;

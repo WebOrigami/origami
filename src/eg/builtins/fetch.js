@@ -5,4 +5,4 @@ export default async function fetchCommand(url) {
   return response.buffer();
 }
 
-fetchCommand.usage = `fetch(url)\tFetch the resource at the given URL`;
+fetchCommand.usage = `fetch <url>\tFetch the resource at the given URL`;

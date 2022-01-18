@@ -16,4 +16,4 @@ export default async function stdoutCommand(obj) {
   }
 }
 
-stdoutCommand.usage = "stdout(obj)\tWrite obj to the standard output stream";
+stdoutCommand.usage = "stdout <obj>\tWrite obj to the standard output stream";

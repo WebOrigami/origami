@@ -1,5 +1,5 @@
 import highlight from "highlight.js";
-import marked from "marked";
+import { marked } from "marked";
 import { extractFrontMatter } from "../../core/utilities.js";
 
 marked.setOptions({
@@ -23,4 +23,4 @@ export default async function mdHtml(markdown) {
   return output;
 }
 
-mdHtml.usage = `mdHtml(markdown)\tRender the markdown text as HTML`;
+mdHtml.usage = `mdHtml <markdown>\tRender the markdown text as HTML`;

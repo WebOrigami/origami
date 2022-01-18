@@ -11,4 +11,4 @@ export default async function scope(...keys) {
   return ExplorableGraph.traverse(scope, ...keys);
 }
 
-scope.usage = `scope([...keys])\tReturns the current scope`;
+scope.usage = `scope [...keys]\tReturns the current scope`;

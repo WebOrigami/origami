@@ -27,4 +27,4 @@ export default async function inners(variant) {
   return inner;
 }
 
-inners.usage = `inners([graph])\tThe inner nodes of the graph`;
+inners.usage = `inners <graph>\tThe inner nodes of the graph`;

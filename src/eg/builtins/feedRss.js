@@ -37,4 +37,4 @@ function itemRss(jsonFeedItem) {
 `;
 }
 
-feedRss.usage = `feedRss(feed)\tTransforms a JSON Feed object to RSS XML`;
+feedRss.usage = `feedRss <feed>\tTransforms a JSON Feed object to RSS XML`;

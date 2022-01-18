@@ -26,4 +26,4 @@ export default async function shallowMap(variant, mapFn) {
   };
 }
 
-shallowMap.usage = `shallowMap(graph, fn)\tMap the top-level values in a graph`;
+shallowMap.usage = `shallowMap <graph, fn>\tMap the top-level values in a graph`;

@@ -5,4 +5,4 @@ export default async function front(text) {
   return frontMatter?.frontData;
 }
 
-front.usage = `front(text)\tReturn the text's parsed front matter`;
+front.usage = `front <text>\tReturn the text's parsed front matter`;

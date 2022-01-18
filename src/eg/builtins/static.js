@@ -29,4 +29,4 @@ export default async function staticGraph(variant) {
   };
 }
 
-staticGraph.usage = `static(graph)\tAdd keys for generating common static files`;
+staticGraph.usage = `static <graph>\tAdd keys for generating common static files`;

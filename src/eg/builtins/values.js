@@ -11,4 +11,4 @@ export default async function values(variant) {
   return ExplorableGraph.values(variant);
 }
 
-values.usage = `values(graph)\tThe top-level values in the graph`;
+values.usage = `values <graph>\tThe top-level values in the graph`;

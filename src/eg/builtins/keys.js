@@ -11,4 +11,4 @@ export default async function keys(variant) {
   return await ExplorableGraph.keys(graph);
 }
 
-keys.usage = `keys(graph)\tThe top-level keys in the graph`;
+keys.usage = `keys <graph>\tThe top-level keys in the graph`;

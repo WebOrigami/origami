@@ -22,4 +22,4 @@ function readAll(readable) {
   });
 }
 
-stdin.usage = `stdin()\tReturns the contents of the standard input stream`;
+stdin.usage = `stdin\tReturns the contents of the standard input stream`;

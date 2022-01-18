@@ -1,5 +1,11 @@
 export default async function showUsage(commands) {
-  console.log("Usage: eg <expression>, with available functions:\n");
+  console.log(`Usage: eg <expression>, which could be:
+- a string like 'Hello' in single quotes
+- a file or folder name
+- an https: or http: URL
+- a name like "foo" that refers to an object/function exported by a local file foo.js
+- the name of a built-in function below:
+`);
 
   // Gather usages.
   const usages = [];
@@ -39,7 +45,7 @@ export default async function showUsage(commands) {
 
   console.log(formatted.join("\n"));
   console.log(
-    `\nMore details: "eg help"; or get help on a function like serve() with "eg help/serve"`
+    `\nMore details: "eg help"; or get help on a function like serve with "eg help/serve"`
   );
 }
 

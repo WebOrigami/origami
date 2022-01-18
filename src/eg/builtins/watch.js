@@ -21,4 +21,4 @@ export default async function watch(variant) {
   return graph;
 }
 
-watch.usage = `watch(files)\tLet a graph of files respond to changes`;
+watch.usage = `watch <folder>\tLet a folder graph respond to changes`;

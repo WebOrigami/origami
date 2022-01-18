@@ -13,4 +13,4 @@ export default function defaultGraph(relativePath = "") {
   return new DefaultGraph(resolvedPath);
 }
 
-defaultGraph.usage = `defaultGraph()\tThe default graph used by eg`;
+defaultGraph.usage = `defaultGraph\tThe default graph used by eg`;

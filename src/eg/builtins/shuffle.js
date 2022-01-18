@@ -15,4 +15,4 @@ export default function shuffle(variant) {
   return shuffled;
 }
 
-shuffle.usage = `shuffle(graph)\tReturn a new graph with the original's keys shuffled`;
+shuffle.usage = `shuffle <graph>\tReturn a new graph with the original's keys shuffled`;

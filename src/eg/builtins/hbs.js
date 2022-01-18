@@ -13,4 +13,4 @@ export default async function hbs(templateText, input) {
   return await template.apply(input, this);
 }
 
-hbs.usage = `hbs(template, data)\tGenerate content from a Handlebars template and data`;
+hbs.usage = `hbs <template, data>\tGenerate content from a Handlebars template and data`;
