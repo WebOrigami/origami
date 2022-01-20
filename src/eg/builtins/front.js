@@ -6,3 +6,4 @@ export default async function front(text) {
 }
 
 front.usage = `front <text>\tReturn the text's parsed front matter`;
+front.documentation = "https://explorablegraph.org/pika/builtins.html#front";

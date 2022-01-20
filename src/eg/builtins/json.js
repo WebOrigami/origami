@@ -18,3 +18,4 @@ export default async function json(obj) {
 }
 
 json.usage = "json <obj>\tRender the object as text in JSON format";
+json.documentation = "https://explorablegraph.org/pika/builtins.html#json";

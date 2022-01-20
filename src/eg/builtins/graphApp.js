@@ -21,3 +21,5 @@ export default async function graphApp(variant) {
 }
 
 graphApp.usage = `graphApp <graph>\tCreate an app by wrapping a graph`;
+graphApp.documentation =
+  "https://explorablegraph.org/pika/builtins.html#graphApp";

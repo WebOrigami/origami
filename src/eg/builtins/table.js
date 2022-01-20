@@ -65,3 +65,4 @@ async function valueForFirstKey(graph) {
 
 table.usage =
   "table <graph>\tFormat the graph's top level as a tab-delimited table";
+table.documentation = "https://explorablegraph.org/pika/builtins.html#table";

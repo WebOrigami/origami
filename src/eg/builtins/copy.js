@@ -7,3 +7,4 @@ export default async function copy(source, target) {
 }
 
 copy.usage = `copy <source>, <target>\tCopies the source graph to the target`;
+copy.documentation = "https://explorablegraph.org/pika/builtins.html#copy";

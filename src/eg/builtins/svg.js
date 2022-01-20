@@ -15,4 +15,6 @@ export default async function svg(variant) {
   const result = await graphviz.dot(dotText, "svg");
   return result;
 }
+
 svg.usage = `svg <graph>\tRender a graph visually as in SVG format`;
+svg.documentation = "https://explorablegraph.org/pika/builtins.html#svg";

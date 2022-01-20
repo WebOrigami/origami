@@ -42,3 +42,4 @@ async function statements(graph, nodePath, nodeLabel) {
 }
 
 dot.usage = `dot <graph>\tRender a graph visually in dot language`;
+dot.documentation = "https://explorablegraph.org/pika/builtins.html#dot";

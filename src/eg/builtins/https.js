@@ -7,3 +7,4 @@ export default async function https(domain, ...keys) {
 }
 
 https.usage = `https <domain>, <...keys>\tA web resource via HTTPS`;
+https.documentation = "https://explorablegraph.org/pika/builtins.html#https";

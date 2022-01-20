@@ -12,3 +12,4 @@ export default async function scope(...keys) {
 }
 
 scope.usage = `scope [...keys]\tReturns the current scope`;
+scope.documentation = "https://explorablegraph.org/pika/builtins.html#scope";

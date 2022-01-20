@@ -11,3 +11,4 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
 }
 
 map.usage = `map <graph>, <mapFn>\tMap the values in a graph using a map function.`;
+map.documentation = "https://explorablegraph.org/pika/builtins.html#map";

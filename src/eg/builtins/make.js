@@ -30,3 +30,4 @@ export default async function make(virtual, destination) {
 }
 
 make.usage = `make\tMake real versions of any virtual files [experimental]`;
+make.documentation = "https://explorablegraph.org/pika/builtins.html#make";

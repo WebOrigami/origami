@@ -14,3 +14,5 @@ export default function defaultGraph(relativePath = "") {
 }
 
 defaultGraph.usage = `defaultGraph\tThe default graph used by eg`;
+defaultGraph.documentation =
+  "https://explorablegraph.org/pika/builtins.html#defaultGraph";

@@ -12,3 +12,4 @@ export default async function plain(variant) {
 }
 
 plain.usage = `plain <graph>\tA plain JavaScript object representation of the graph`;
+plain.documentation = "https://explorablegraph.org/pika/builtins.html#plain";

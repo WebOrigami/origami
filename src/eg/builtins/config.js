@@ -19,3 +19,4 @@ export default async function config(relativePath = "") {
 }
 
 config.usage = `config\tReturn the graph for the active eg configuration`;
+config.documentation = "https://explorablegraph.org/pika/builtins.html#config";

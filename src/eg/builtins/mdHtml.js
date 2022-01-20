@@ -24,3 +24,4 @@ export default async function mdHtml(markdown) {
 }
 
 mdHtml.usage = `mdHtml <markdown>\tRender the markdown text as HTML`;
+mdHtml.documentation = "https://explorablegraph.org/pika/builtins.html#mdHtml";

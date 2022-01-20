@@ -27,3 +27,5 @@ export default async function shallowMap(variant, mapFn) {
 }
 
 shallowMap.usage = `shallowMap <graph, fn>\tMap the top-level values in a graph`;
+shallowMap.documentation =
+  "https://explorablegraph.org/pika/builtins.html#shallowMap";

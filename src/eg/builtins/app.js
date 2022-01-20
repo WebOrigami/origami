@@ -13,3 +13,4 @@ export default async function app(key) {
 }
 
 app.usage = `app\tWrap the graph for the current directory with an app`;
+app.documentation = "https://explorablegraph.org/pika/builtins.html#app";

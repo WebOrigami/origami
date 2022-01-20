@@ -5,3 +5,5 @@ export default async function compose(...graphs) {
 }
 
 compose.usage = `compose <...graphs>\tCompose the given graphs`;
+compose.documentation =
+  "https://explorablegraph.org/pika/builtins.html#compose";

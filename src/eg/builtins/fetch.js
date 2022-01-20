@@ -6,3 +6,5 @@ export default async function fetchCommand(url) {
 }
 
 fetchCommand.usage = `fetch <url>\tFetch the resource at the given URL`;
+fetchCommand.documentation =
+  "https://explorablegraph.org/pika/builtins.html#fetch";

@@ -30,3 +30,5 @@ export default async function staticGraph(variant) {
 }
 
 staticGraph.usage = `static <graph>\tAdd keys for generating common static files`;
+staticGraph.documentation =
+  "https://explorablegraph.org/pika/builtins.html#static";

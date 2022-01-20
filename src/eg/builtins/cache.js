@@ -5,3 +5,5 @@ export default async function cacheCommand(cache, graph, filter) {
 }
 
 cacheCommand.usage = `cache <cache>, <...graphs>\tCaches graph values in a storable cache`;
+cacheCommand.documentation =
+  "https://explorablegraph.org/pika/builtins.html#cache";

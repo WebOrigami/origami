@@ -13,3 +13,4 @@ export default async function shell(command) {
 }
 
 shell.usage = `shell <command>\tExecutes the shell command and returns the output`;
+shell.documentation = "https://explorablegraph.org/pika/builtins.html#shell";
