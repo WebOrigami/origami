@@ -23,7 +23,7 @@ async function main(...args) {
   const parsed = parse.expression(source);
   let code = parsed?.value;
   if (!code || parsed.rest !== "") {
-    console.error(`xg: could not recognize command: ${source}`);
+    console.error(`pika: could not recognize command: ${source}`);
     return;
   }
 
