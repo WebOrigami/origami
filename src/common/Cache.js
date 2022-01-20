@@ -54,7 +54,18 @@ export default class Cache {
         (await ExplorableGraph.traverse(this.filter, ...keys));
       if (matches) {
         // Save in cache before returning.
-        await this.cache.set(...keys, value);
+
+        // Convert keys and value to an object that can be applied.
+        const updates = {};
+        let current = updates;
+        const lastKey = keys.pop();
+        for (const key of keys) {
+          current[key] = {};
+          current = current[key];
+        }
+        current[lastKey] = value;
+
+        await this.cache.set(updates);
       }
 
       return value;

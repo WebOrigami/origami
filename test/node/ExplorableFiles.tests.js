@@ -95,16 +95,6 @@ describe("ExplorableFiles", () => {
     await removeTempDirectory();
   });
 
-  it("can create an empty directory via set()", async () => {
-    await createTempDirectory();
-    const tempFiles = new ExplorableFiles(tempDirectory);
-    await tempFiles.set("folder", null);
-    const tempFolder = path.join(tempDirectory, "folder");
-    const stats = await fs.stat(tempFolder);
-    assert(stats.isDirectory());
-    await removeTempDirectory();
-  });
-
   it("can delete a file via set()", async () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");

@@ -10,12 +10,15 @@ describe("Cache", () => {
         a: 1,
         b: 2,
         c: 3,
+        more: {
+          d: 4,
+        },
       }
     );
     const cache = fixture.cache;
 
     const keys = await ExplorableGraph.keys(fixture);
-    assert.deepEqual(keys, ["a", "b", "c"]);
+    assert.deepEqual(keys, ["a", "b", "c", "more"]);
 
     assert.isUndefined(await cache.get("a"));
     assert.equal(await fixture.get("a"), 1);
@@ -24,6 +27,12 @@ describe("Cache", () => {
     assert.isUndefined(await cache.get("b"));
     assert.equal(await fixture.get("b"), 2);
     assert.equal(await cache.get("b"), 2);
+
+    assert.isUndefined(
+      await ExplorableGraph.traverse(fixture.cache, "more", "d")
+    );
+    assert.equal(await ExplorableGraph.traverse(fixture, "more", "d"), 4);
+    assert.equal(await ExplorableGraph.traverse(fixture.cache, "more", "d"), 4);
   });
 
   it("if a cache filter is supplied, it only caches files that match the filter", async () => {

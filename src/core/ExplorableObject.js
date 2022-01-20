@@ -44,60 +44,42 @@ export default class ExplorableObject {
   }
 
   /**
-   * Add or overwrite the value at a given location in the graph. Given a set of
-   * arguments, take the last argument as a value, and the ones before it as a
-   * path. If only one explorable argument is supplied, apply its values over
-   * the current graph. If only one non-explorable argument is supplied, use
-   * that as a key, and take the value as undefined.
+   * Add or overwrite the value for the given key. If the value is undefined,
+   * delete the key. If only one argument is passed and it is explorable, apply
+   * the explorable's values as updates to the current graph.
    *
-   * @param  {...any} args
+   * @param {any} key
+   * @param {any} value
    */
-  async set(...args) {
-    if (args.length === 0) {
-      // No-op
-      return;
-    }
-    const value =
-      args.length === 1 && !ExplorableGraph.isExplorable(args[0])
-        ? undefined
-        : args.pop();
-    const keys = args;
-
-    // Traverse the keys
-    let current = this.object;
-    while (keys.length > 1) {
-      const key = keys.shift();
-      let next = current[key];
-      if (!isPlainObject(next)) {
-        // Overwrite path
-        next = {};
-        current[key] = next;
-      }
-      current = next;
-    }
-
-    const key = keys.shift();
-    if (ExplorableGraph.isExplorable(value)) {
-      let subobject;
-      if (key === undefined) {
-        subobject = current;
-      } else if (current[key] !== undefined) {
-        subobject = current[key];
-      } else {
-        subobject = {};
-        current[key] = subobject;
-      }
-      // Recursively write out the values in the graph.
-      const subgraph =
-        subobject === this.object ? this : new ExplorableObject(subobject);
-      for await (const subkey of value) {
-        const subvalue = await value.get(subkey);
-        await subgraph.set(subkey, subvalue);
-      }
+  async set(key, value) {
+    if (arguments.length === 1) {
+      // Recursively write out an explorable argument as updates.
+      const graph = ExplorableGraph.from(key);
+      await applyUpdates(graph, this);
     } else if (value === undefined) {
-      delete current[key];
+      // Delete the key.
+      delete this.object[key];
     } else {
-      current[key] = value;
+      // Set the value for the key.
+      this.object[key] = value;
+    }
+  }
+}
+
+async function applyUpdates(source, target) {
+  for await (const key of source) {
+    const sourceValue = await source.get(key);
+    if (ExplorableGraph.isExplorable(sourceValue)) {
+      const targetValue = await target.get(key);
+      if (ExplorableGraph.isExplorable(targetValue)) {
+        await applyUpdates(sourceValue, targetValue);
+        continue;
+      }
+    }
+    if (sourceValue === undefined) {
+      delete target.object[key];
+    } else {
+      target.object[key] = sourceValue;
     }
   }
 }

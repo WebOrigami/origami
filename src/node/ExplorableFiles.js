@@ -27,11 +27,7 @@ export default class ExplorableFiles {
     yield* names;
   }
 
-  // We may have been given a path like foo/bar/baz containing multiple keys.
-  // While we could turn that into a filesystem path and get the result in one
-  // step, this would prevent the path from entering dynamic subgraphs created
-  // by mixins/subclasses of this class. So we only process one key at a time;
-  // if we get an explorable result, we have it handle the rest of the path.
+  // Get the contents of the file or directory named by the given key.
   async get(key) {
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
@@ -84,30 +80,22 @@ export default class ExplorableFiles {
   }
 
   /**
-   * Write or overwrite the contents of a file at a given location in the graph.
-   * Given a set of arguments, take the last argument as a value, and the ones
-   * before it as a path. If only one argument is supplied, use that as a key,
-   * and take the value as implicitly undefined.
+   * Write the contents for the file named by the given key. If the value is
+   * undefined, delete the file or directory. If only one argument is passed and
+   * it is explorable, apply the explorable's values to the current graph.
    *
-   * If the value is either explicitly or implicitly undefined, delete the file
-   * or directory.
-   *
-   * @param  {...any} args
+   * @param {any} key
+   * @param {any} value
    */
-  async set(...args) {
-    if (args.length === 0) {
-      // No-op
-      return;
-    }
-    const value =
-      args.length === 1 && !ExplorableGraph.isExplorable(args[0])
-        ? undefined
-        : args.pop();
-    const lastKey = args[args.length - 1];
-
-    if (value === undefined) {
+  async set(key, value) {
+    if (arguments.length === 1) {
+      // Take the single argument as a source graph and write its values into
+      // the current graph.
+      const sourceGraph = ExplorableGraph.from(key);
+      await writeFiles(sourceGraph, this);
+    } else if (value === undefined) {
       // Delete file or directory.
-      const objPath = path.join(this.dirname, ...args);
+      const objPath = path.join(this.dirname, key);
       const stats = await stat(objPath);
       if (stats?.isDirectory()) {
         // Delete directory.
@@ -116,38 +104,23 @@ export default class ExplorableFiles {
         // Delete file.
         await fs.unlink(objPath);
       }
-    } else if (value === null) {
-      // Create directory.
-      const folder = path.join(this.dirname, ...args);
-      await fs.mkdir(folder, { recursive: true });
     } else if (
       ExplorableGraph.isExplorable(value) &&
-      !(lastKey?.endsWith(".json") || lastKey?.endsWith(".yaml"))
+      !(key?.endsWith(".json") || key?.endsWith(".yaml"))
     ) {
-      // Write out an explorable graph as a directory, and recusively write out
-      // the graph into that directory. Don't do that if the filename ends in
-      // .json or .yaml; in that case, let the next condition write out the
-      // graph as a JSON or YAML file.
-      for await (const subKey of value) {
-        const subValue = await value.get(subKey);
-        await this.set(...args, subKey, subValue);
-      }
+      // Write the explorable's values into the subfolder named by the key.
+      // However, if the key ends in .json or .yaml, let the next condition
+      // write out the graph as a JSON/YAML file.
+      const subfolder = path.resolve(this.dirname, String(key));
+      const targetGraph = Reflect.construct(this.constructor, [subfolder]);
+      await writeFiles(value, targetGraph);
     } else {
-      // Write out value as the contents of a file. The file name is the last
-      // arg in the current set (we've already removed the value from the end of
-      // the args). Args before the file name (if there are any) are the path
-      // to the containing folder with this explorable ExplorableFiles tree.
-      const filename = args.pop();
+      // Ensure the directory exists.
+      await fs.mkdir(this.dirname, { recursive: true });
 
-      // Ensure the containing folder exists.
-      const folder = path.join(this.dirname, ...args);
-      await fs.mkdir(folder, { recursive: true });
-
-      // Convert the data to a form we can write to disk.
-      const data = await prepareData(filename, value);
-
-      // Write out the value as the file's contents.
-      const filePath = path.join(folder, filename);
+      // Write out the value as the contents of a file.
+      const filePath = path.join(this.dirname, key);
+      const data = await prepareData(key, value);
       await fs.writeFile(filePath, data);
     }
   }
@@ -164,6 +137,11 @@ async function prepareData(key, value) {
     typeof value === "string"
   ) {
     return value;
+  }
+
+  // A null value is written out as an empty string to create an empty file.
+  if (value === null) {
+    return "";
   }
 
   // Explorable values are written out as JSON or, if the key ends in ".yaml",
@@ -198,5 +176,18 @@ async function stat(filePath) {
       return undefined;
     }
     throw error;
+  }
+}
+
+// Write out the indicated graph of source files/subfolders into the indicated
+// target graph.
+async function writeFiles(sourceGraph, targetGraph) {
+  // Ensure the directory exists.
+  await fs.mkdir(targetGraph.dirname, { recursive: true });
+
+  // Recursively write out the graph.
+  for await (const key of sourceGraph) {
+    const value = await sourceGraph.get(key);
+    await targetGraph.set(key, value);
   }
 }

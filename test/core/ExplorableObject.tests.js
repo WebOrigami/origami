@@ -4,107 +4,117 @@ import assert from "../assert.js";
 
 describe("ExplorableObject", () => {
   it("can async explore a plain JavaScript object", async () => {
-    const obj = new ExplorableObject({
+    const graph = new ExplorableObject({
       a: 1,
       b: 2,
       c: 3,
     });
-    assert.equal(await obj.get("a"), 1);
-    assert.equal(await obj.get("b"), 2);
-    assert.equal(await obj.get("c"), 3);
-    assert.equal(await obj.get("x"), undefined);
+    assert.equal(await graph.get("a"), 1);
+    assert.equal(await graph.get("b"), 2);
+    assert.equal(await graph.get("c"), 3);
+    assert.equal(await graph.get("x"), undefined);
 
     const keys = [];
-    for await (const key of obj) {
+    for await (const key of graph) {
       keys.push(key);
     }
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
 
   it("can set a value", async () => {
-    const obj = new ExplorableObject({
+    const graph = new ExplorableObject({
       a: 1,
       b: 2,
       c: 3,
-      more: {
-        d: 4,
-        e: 5,
-      },
     });
 
-    // Set key, value.
-    await obj.set("a", 5);
+    // Update existing key.
+    await graph.set("a", 4);
 
     // New key.
-    await obj.set("f", 7);
+    await graph.set("d", 5);
 
-    // Set deep key, value.
-    await obj.set("more", "g", 8);
+    // Delete key.
+    await graph.set("b", undefined);
 
-    assert.deepEqual(await ExplorableGraph.plain(obj), {
-      a: 5,
-      b: 2,
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 4,
       c: 3,
-      more: {
-        d: 4,
-        e: 5,
-        g: 8,
-      },
-      f: 7,
+      d: 5,
     });
   });
 
-  it("can set an explorable value", async () => {
-    const obj = new ExplorableObject({
+  it("can apply updates with a single argument to set", async () => {
+    const graph = new ExplorableObject({
       a: 1,
       b: 2,
       c: 3,
     });
-    const more = new ExplorableObject({
+
+    // Apply changes.
+    await graph.set({
+      a: 4,
+      b: undefined,
+      d: 5,
       more: {
-        d: 4,
-        e: 5,
+        e: 6,
       },
     });
 
-    // Set key, value.
-    await obj.set(more);
-
-    assert.deepEqual(await ExplorableGraph.plain(obj), {
-      a: 1,
-      b: 2,
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 4,
       c: 3,
+      d: 5,
       more: {
-        d: 4,
-        e: 5,
+        e: 6,
       },
     });
   });
 
-  it("set can delete a key if the value is explicitly undefined", async () => {
-    const obj = new ExplorableObject({
+  it("distinguishes between setting an explorable value and apply updates", async () => {
+    const graph1 = new ExplorableObject({
       a: 1,
-      b: 2,
-      c: 3,
       more: {
-        d: 4,
-        e: 5,
+        b: 2,
       },
     });
 
-    // One arg deletes key.
-    await obj.set("a");
+    // Setting key by name overwrites any existing value.
+    await graph1.set(
+      "more",
+      new ExplorableObject({
+        c: 3,
+      })
+    );
 
-    // Explicit undefined value deletes key.
-    await obj.set("b", undefined);
-
-    // Deep deletion
-    await obj.set("more", "d", undefined);
-
-    assert.deepEqual(await ExplorableGraph.plain(obj), {
-      c: 3,
+    assert.deepEqual(await ExplorableGraph.plain(graph1), {
+      a: 1,
       more: {
-        e: 5,
+        c: 3,
+      },
+    });
+
+    const graph2 = new ExplorableObject({
+      a: 1,
+      more: {
+        b: 2,
+      },
+    });
+
+    // Passing an explorable as the single argument applies it as updates.
+    await graph2.set(
+      new ExplorableObject({
+        more: {
+          c: 3,
+        },
+      })
+    );
+
+    assert.deepEqual(await ExplorableGraph.plain(graph2), {
+      a: 1,
+      more: {
+        b: 2,
+        c: 3,
       },
     });
   });
