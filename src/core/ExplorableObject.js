@@ -23,7 +23,8 @@ export default class ExplorableObject {
    */
   async get(key) {
     let value = this.object[key];
-    if (isPlainObject(value) && !(value instanceof this.constructor)) {
+    if (isPlainObject(value)) {
+      // Wrap a returned plain object as an ExplorableObject.
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;
