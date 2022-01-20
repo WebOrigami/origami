@@ -1,6 +1,6 @@
 {
   "name": "@explorablegraph/explorable",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "bin": {
     "eg": "src/eg/eg.js",
