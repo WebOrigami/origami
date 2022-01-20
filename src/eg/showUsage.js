@@ -1,5 +1,5 @@
 export default async function showUsage(commands) {
-  console.log(`Usage: eg <expression>, which could be:
+  console.log(`Usage: xg <expression>, which could be:
 - a string like 'Hello' in single quotes
 - a file or folder name
 - an https: or http: URL
@@ -45,7 +45,7 @@ export default async function showUsage(commands) {
 
   console.log(formatted.join("\n"));
   console.log(
-    `\nMore details: "eg help"; or get help on a function like serve with "eg help/serve"`
+    `\nMore details: "xg help"; or get help on a function like serve with "xg help/serve"`
   );
 }
 
