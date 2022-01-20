@@ -1,5 +1,6 @@
 // Should generate this export file with explorable graphs!
 export { default as defaultKeysJson } from "./src/app/defaultKeysJson.js";
+export { default as DefaultPages } from "./src/app/DefaultPages.js";
 export { default as FormulasTransform } from "./src/app/FormulasTransform.js";
 export { default as MetaTransform } from "./src/app/MetaTransform.js";
 export { default as StringWithGraph } from "./src/app/StringWithGraph.js";
@@ -17,6 +18,7 @@ export { default as app } from "./src/eg/builtins/app.js";
 export { default as config } from "./src/eg/builtins/config.js";
 export { default as defaultGraph } from "./src/eg/builtins/defaultGraph.js";
 export { default as dot } from "./src/eg/builtins/dot.js";
+export { default as fetch } from "./src/eg/builtins/fetch.js";
 export { default as graphApp } from "./src/eg/builtins/graphApp.js";
 export { default as hbs } from "./src/eg/builtins/hbs.js";
 export { default as interiors } from "./src/eg/builtins/inners.js";
