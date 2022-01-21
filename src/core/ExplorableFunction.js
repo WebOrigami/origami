@@ -1,13 +1,15 @@
 export default class ExplorableFunction {
-  constructor(fn, keys = []) {
+  constructor(fn, domain = []) {
     this.fn = fn;
-    this.keys = keys;
+    this.domain = domain;
   }
 
+  // Yield the function's domain as its keys.
   async *[Symbol.asyncIterator]() {
-    yield* this.keys;
+    yield* this.domain;
   }
 
+  // Return the value for a given key.
   async get(key) {
     let value =
       key === undefined || this.fn.length === 1
