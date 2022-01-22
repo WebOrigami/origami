@@ -241,6 +241,22 @@ function lparen(text) {
   return terminal(/^\(/)(text);
 }
 
+export function newCall(text) {
+  const parsed = sequence(optionalWhitespace, newThing, args)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function newThing(text) {
+  return any(group, slashCall, functionCall)(text);
+}
+
 export function number(text) {
   // Based on https://stackoverflow.com/a/51733563/76472
   // but only accepts integers or floats, not exponential notation.
@@ -416,7 +432,8 @@ export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     optional(terminal(/\/\//)),
-    pathHead,
+    // pathHead,
+    getReference,
     terminal(/^\//),
     optional(slashPath)
   )(text);

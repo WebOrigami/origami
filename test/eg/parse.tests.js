@@ -11,6 +11,7 @@ import {
   key,
   list,
   literal,
+  newCall,
   number,
   optionalWhitespace,
   percentCall,
@@ -357,6 +358,13 @@ describe("parse", () => {
     assert.deepEqual(slashPath("(fn())/foo")?.value, [
       [[ops.scope, "fn"]],
       "foo",
+    ]);
+  });
+
+  it.only("newCall", () => {
+    assert.deepEqual(newCall("functions/fn('arg')")?.value, [
+      [ops.scope, "functions", "fn"],
+      "arg",
     ]);
   });
 
