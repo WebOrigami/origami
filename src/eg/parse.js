@@ -94,6 +94,11 @@ export function backtickText(text) {
   return regex(/^[^\`\$]*/)(text);
 }
 
+// Parse something that results in a function/graph that can be called.
+export function callTarget(text) {
+  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
+}
+
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -114,9 +119,10 @@ export function expression(text) {
     spaceUrl,
     spacePathCall,
     protocolCall,
-    slashCall,
-    percentCall,
-    functionCall,
+    // slashCall,
+    // percentCall,
+    // functionCall,
+    newCall,
     number,
     getReference
   )(text);
@@ -242,7 +248,7 @@ function lparen(text) {
 }
 
 export function newCall(text) {
-  const parsed = sequence(optionalWhitespace, newThing, args)(text);
+  const parsed = sequence(optionalWhitespace, callTarget, args)(text);
   if (!parsed) {
     return null;
   }
@@ -251,10 +257,6 @@ export function newCall(text) {
     value,
     rest: parsed.rest,
   };
-}
-
-export function newThing(text) {
-  return any(group, slashCall, functionCall)(text);
 }
 
 export function number(text) {
@@ -317,7 +319,7 @@ export default function parse(text) {
 }
 
 export function pathHead(text) {
-  const parsed = any(indirectCall, group, functionCall, getReference)(text);
+  const parsed = any(group, newCall, getReference)(text);
   if (!parsed) {
     return null;
   }
@@ -432,9 +434,8 @@ export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     optional(terminal(/\/\//)),
-    // pathHead,
-    getReference,
-    terminal(/^\//),
+    pathHead,
+    // ge  terminew/),
     optional(slashPath)
   )(text);
   if (!parsed) {

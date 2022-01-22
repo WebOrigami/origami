@@ -28,7 +28,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assert.deepEqual(args(" a, b, c"), {
       value: [
@@ -143,7 +143,7 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionCall", () => {
+  it.skip("functionCall", () => {
     assert.deepEqual(functionCall("fn()")?.value, [[ops.scope, "fn"]]);
     assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
       [ops.scope, "fn"],
@@ -170,11 +170,18 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionCall with variable reference", () => {
+  it.skip("functionCall with variable reference", () => {
     assert.deepEqual(functionCall("fn(${name}.json)")?.value, [
       [ops.scope, "fn"],
       [ops.scope, [ops.variable, "name", ".json"]],
     ]);
+  });
+
+  it("getReference", () => {
+    assert.deepEqual(getReference("hello"), {
+      value: [ops.scope, "hello"],
+      rest: "",
+    });
   });
 
   it("group", () => {
@@ -184,7 +191,7 @@ describe("parse", () => {
     assert.equal(group("("), null);
   });
 
-  it("indirectFunctionCall", () => {
+  it.skip("indirectFunctionCall", () => {
     assert.deepEqual(indirectCall("(fn()) 'a'")?.value, [
       [[ops.scope, "fn"]],
       "a",
@@ -252,6 +259,65 @@ describe("parse", () => {
     assert.equal(literal("()"), null);
   });
 
+  it("new function call", () => {
+    assert.deepEqual(newCall("fn()")?.value, [[ops.scope, "fn"]]);
+    assert.deepEqual(newCall("fn('arg')")?.value, [[ops.scope, "fn"], "arg"]);
+    assert.deepEqual(newCall("fn('a', 'b')")?.value, [
+      [ops.scope, "fn"],
+      "a",
+      "b",
+    ]);
+    assert.deepEqual(newCall("fn 'a', 'b'")?.value, [
+      [ops.scope, "fn"],
+      "a",
+      "b",
+    ]);
+    assert.deepEqual(newCall("fn a, b")?.value, [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+  });
+
+  it("new function call with variable reference", () => {
+    assert.deepEqual(newCall("fn(${name}.json)")?.value, [
+      [ops.scope, "fn"],
+      [ops.scope, [ops.variable, "name", ".json"]],
+    ]);
+  });
+
+  it("new indirect function call", () => {
+    assert.deepEqual(newCall("fn a(b), c")?.value, [
+      [ops.scope, "fn"],
+      [
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+      ],
+      [ops.scope, "c"],
+    ]);
+    assert.deepEqual(newCall("(fn()) 'arg'")?.value, [
+      [[ops.scope, "fn"]],
+      "arg",
+    ]);
+    assert.deepEqual(newCall("(fn()) (a, b)")?.value, [
+      [[ops.scope, "fn"]],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assert.deepEqual(newCall("(fn())"), null);
+  });
+
+  it("new path function call", () => {
+    assert.deepEqual(newCall("functions/fn('arg')")?.value, [
+      [ops.scope, "functions", "fn"],
+      "arg",
+    ]);
+    assert.deepEqual(newCall("https://example.com/graph.yaml 'key'")?.value, [
+      [[ops.scope, "https"], "example.com", "graph.yaml"],
+      "key",
+    ]);
+  });
+
   it("number", () => {
     assert.equal(number("1")?.value, 1);
     assert.equal(number("3.14159")?.value, 3.14159);
@@ -310,13 +376,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("getReference", () => {
-    assert.deepEqual(getReference("hello"), {
-      value: [ops.scope, "hello"],
-      rest: "",
-    });
-  });
-
   it("singleQuoteString", () => {
     assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
   });
@@ -358,13 +417,6 @@ describe("parse", () => {
     assert.deepEqual(slashPath("(fn())/foo")?.value, [
       [[ops.scope, "fn"]],
       "foo",
-    ]);
-  });
-
-  it.only("newCall", () => {
-    assert.deepEqual(newCall("functions/fn('arg')")?.value, [
-      [ops.scope, "functions", "fn"],
-      "arg",
     ]);
   });
 
