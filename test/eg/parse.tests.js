@@ -7,11 +7,9 @@ import {
   functionCall,
   getReference,
   group,
-  indirectCall,
   key,
   list,
   literal,
-  newCall,
   number,
   optionalWhitespace,
   percentCall,
@@ -28,40 +26,34 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("args", () => {
-    assert.deepEqual(args(" a, b, c"), {
-      value: [
-        [ops.scope, "a"],
-        [ops.scope, "b"],
-        [ops.scope, "c"],
-      ],
-      rest: "",
-    });
-    assert.deepEqual(args("(a, b, c)"), {
-      value: [
-        [ops.scope, "a"],
-        [ops.scope, "b"],
-        [ops.scope, "c"],
-      ],
-      rest: "",
-    });
-    assert.deepEqual(args("()")?.value, []);
-    assert.deepEqual(args(""), null);
+    assertParse(args(" a, b, c"), [
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+    ]);
+    assertParse(args("(a, b, c)"), [
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+    ]);
+    assertParse(args("()"), []);
+    assert.equal(args(""), null);
   });
 
   it("assignment", () => {
-    assert.deepEqual(assignment("foo = fn 'bar'")?.value, [
+    assertParse(assignment("foo = fn 'bar'"), [
       "=",
       "foo",
       [[ops.scope, "fn"], "bar"],
     ]);
-    assert.deepEqual(assignment("data = obj.json")?.value, [
+    assertParse(assignment("data = obj.json"), [
       "=",
       "data",
       [ops.scope, "obj.json"],
     ]);
-    assert.deepEqual(assignment("match = .. .. .. foo bar")?.value, [
+    assertParse(assignment("match = .. .. .. foo bar"), [
       "=",
       "match",
       [ops.scope, "..", "..", "..", "foo", "bar"],
@@ -69,17 +61,17 @@ describe.only("parse", () => {
   });
 
   it("assignment with `this` on right-hand side", () => {
-    assert.deepEqual(assignment("foo = this.json")?.value, [
+    assertParse(assignment("foo = this.json"), [
       "=",
       "foo",
       [ops.scope, [ops.thisKey]],
     ]);
-    assert.deepEqual(assignment("foo = this().js")?.value, [
+    assertParse(assignment("foo = this().js"), [
       "=",
       "foo",
       [[ops.scope, [ops.thisKey]]],
     ]);
-    assert.deepEqual(assignment("foo = this('bar').js")?.value, [
+    assertParse(assignment("foo = this('bar').js"), [
       "=",
       "foo",
       [[ops.scope, [ops.thisKey]], "bar"],
@@ -87,7 +79,7 @@ describe.only("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assert.deepEqual(assignment("{name}.html = foo(${name}.json)")?.value, [
+    assertParse(assignment("{name}.html = foo(${name}.json)"), [
       "=",
       [ops.variable, "name", ".html"],
       [
@@ -98,18 +90,18 @@ describe.only("parse", () => {
   });
 
   it("backtickQuoteString", () => {
-    assert.deepEqual(backtickQuoteString("`Hello, world.`")?.value, [
+    assertParse(backtickQuoteString("`Hello, world.`"), [
       ops.concat,
       "Hello, world.",
     ]);
   });
 
   it("backtickQuotedString with variable pattern", () => {
-    assert.deepEqual(backtickQuoteString("`${x}.json`")?.value, [
+    assertParse(backtickQuoteString("`${x}.json`"), [
       ops.concat,
       [ops.variable, "x", ".json"],
     ]);
-    assert.deepEqual(backtickQuoteString("`foo ${x}.json bar`")?.value, [
+    assertParse(backtickQuoteString("`foo ${x}.json bar`"), [
       ops.concat,
       "foo ",
       [ops.variable, "x", ".json"],
@@ -118,49 +110,42 @@ describe.only("parse", () => {
   });
 
   it("expression", () => {
-    assert.deepEqual(expression("obj.json")?.value, [ops.scope, "obj.json"]);
-    assert.deepEqual(expression("(fn a, b, c)")?.value, [
+    assertParse(expression("obj.json"), [ops.scope, "obj.json"]);
+    assertParse(expression("(fn a, b, c)"), [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
       [ops.scope, "c"],
     ]);
-    assert.deepEqual(expression("foo.bar( 'hello' , 'world' )")?.value, [
+    assertParse(expression("foo.bar( 'hello' , 'world' )"), [
       [ops.scope, "foo.bar"],
       "hello",
       "world",
     ]);
-    assert.deepEqual(expression("(fn)('a')")?.value, [[ops.scope, "fn"], "a"]);
-    assert.equal(expression("1")?.value, 1);
+    assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
+    assertParse(expression("1"), 1);
     assert.equal(expression("(foo"), null);
   });
 
   it("expression with function with space-separated arguments, mixed argument types", () => {
-    assert.deepEqual(expression(`copy app:formulas, files 'snapshot'`)?.value, [
+    assertParse(expression(`copy app:formulas, files 'snapshot'`), [
       [ops.scope, "copy"],
       [[ops.scope, "app"], "formulas"],
       [[ops.scope, "files"], "snapshot"],
     ]);
   });
 
-  it.skip("functionCall", () => {
-    assert.deepEqual(functionCall("fn()")?.value, [[ops.scope, "fn"]]);
-    assert.deepEqual(functionCall("fn('a', 'b')")?.value, [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assert.deepEqual(functionCall("fn 'a', 'b'")?.value, [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assert.deepEqual(functionCall("fn a, b")?.value, [
+  it("functionCall", () => {
+    assertParse(functionCall("fn()"), [[ops.scope, "fn"]]);
+    assertParse(functionCall("fn('arg')"), [[ops.scope, "fn"], "arg"]);
+    assertParse(functionCall("fn('a', 'b')"), [[ops.scope, "fn"], "a", "b"]);
+    assertParse(functionCall("fn 'a', 'b'"), [[ops.scope, "fn"], "a", "b"]);
+    assertParse(functionCall("fn a, b"), [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assert.deepEqual(functionCall("fn a(b), c")?.value, [
+    assertParse(functionCall("fn a(b), c"), [
       [ops.scope, "fn"],
       [
         [ops.scope, "a"],
@@ -170,48 +155,38 @@ describe.only("parse", () => {
     ]);
   });
 
-  it.skip("functionCall with variable reference", () => {
-    assert.deepEqual(functionCall("fn(${name}.json)")?.value, [
+  it("functionCall with variable reference", () => {
+    assertParse(functionCall("fn(${name}.json)"), [
       [ops.scope, "fn"],
       [ops.scope, [ops.variable, "name", ".json"]],
     ]);
   });
 
-  it("getReference", () => {
-    assert.deepEqual(getReference("hello"), {
-      value: [ops.scope, "hello"],
-      rest: "",
-    });
-  });
-
-  it("group", () => {
-    assert.deepEqual(group(" ( hello )")?.value, [ops.scope, "hello"]);
-    assert.deepEqual(group("(((nested)))")?.value, [ops.scope, "nested"]);
-    assert.deepEqual(group("(fn())")?.value, [[ops.scope, "fn"]]);
-    assert.equal(group("("), null);
-  });
-
-  it.skip("indirectFunctionCall", () => {
-    assert.deepEqual(indirectCall("(fn()) 'a'")?.value, [
-      [[ops.scope, "fn"]],
-      "a",
-    ]);
-    assert.deepEqual(indirectCall("(fn()) (a, b)")?.value, [
+  it("functionCall indirect", () => {
+    assertParse(functionCall("(fn()) 'arg'"), [[[ops.scope, "fn"]], "arg"]);
+    assertParse(functionCall("(fn()) (a, b)"), [
       [[ops.scope, "fn"]],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assert.deepEqual(indirectCall("(fn())"), null);
+    assert.equal(functionCall("(fn())"), null);
+  });
+
+  it("getReference", () => {
+    assertParse(getReference("hello"), [ops.scope, "hello"]);
+  });
+
+  it("group", () => {
+    assertParse(group(" ( hello )"), [ops.scope, "hello"]);
+    assertParse(group("(((nested)))"), [ops.scope, "nested"]);
+    assertParse(group("(fn())"), [[ops.scope, "fn"]]);
+    assert.equal(group("("), null);
   });
 
   it("key", () => {
-    assert.deepEqual(key("foo")?.value, "foo");
-    assert.deepEqual(key("{name}.yaml")?.value, [
-      ops.variable,
-      "name",
-      ".yaml",
-    ]);
-    assert.deepEqual(key("{x}.html = marked ${x}.md")?.value, [
+    assertParse(key("foo"), "foo");
+    assertParse(key("{name}.yaml"), [ops.variable, "name", ".yaml"]);
+    assertParse(key("{x}.html = marked ${x}.md"), [
       "=",
       [ops.variable, "x", ".html"],
       [
@@ -222,26 +197,26 @@ describe.only("parse", () => {
   });
 
   it("key marked as inheritable", () => {
-    assert.deepEqual(key("…index.html = foo()")?.value, [
+    assertParse(key("…index.html = foo()"), [
       "=",
       "index.html",
       [[ops.scope, "foo"]],
     ]);
-    assert.deepEqual(key("…a")?.value, ["=", "a", [ops.scope, [ops.thisKey]]]);
+    assertParse(key("…a"), ["=", "a", [ops.scope, [ops.thisKey]]]);
   });
 
   it("list", () => {
     assert.equal(list(""), null);
-    assert.deepEqual(list(" a")?.value, [[ops.scope, "a"]]);
-    assert.deepEqual(list(" a , b,c, d , e")?.value, [
+    assertParse(list(" a"), [[ops.scope, "a"]]);
+    assertParse(list(" a , b,c, d , e"), [
       [ops.scope, "a"],
       [ops.scope, "b"],
       [ops.scope, "c"],
       [ops.scope, "d"],
       [ops.scope, "e"],
     ]);
-    assert.deepEqual(list(`'foo', 'bar'`)?.value, ["foo", "bar"]);
-    assert.deepEqual(list("a(b), c")?.value, [
+    assertParse(list(`'foo', 'bar'`), ["foo", "bar"]);
+    assertParse(list("a(b), c"), [
       [
         [ops.scope, "a"],
         [ops.scope, "b"],
@@ -259,78 +234,15 @@ describe.only("parse", () => {
     assert.equal(literal("()"), null);
   });
 
-  it("new function call", () => {
-    assert.deepEqual(newCall("fn()")?.value, [[ops.scope, "fn"]]);
-    assert.deepEqual(newCall("fn('arg')")?.value, [[ops.scope, "fn"], "arg"]);
-    assert.deepEqual(newCall("fn('a', 'b')")?.value, [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assert.deepEqual(newCall("fn 'a', 'b'")?.value, [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assert.deepEqual(newCall("fn a, b")?.value, [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-  });
-
-  it("new function call with variable reference", () => {
-    assert.deepEqual(newCall("fn(${name}.json)")?.value, [
-      [ops.scope, "fn"],
-      [ops.scope, [ops.variable, "name", ".json"]],
-    ]);
-  });
-
-  it("new indirect function call", () => {
-    assert.deepEqual(newCall("fn a(b), c")?.value, [
-      [ops.scope, "fn"],
-      [
-        [ops.scope, "a"],
-        [ops.scope, "b"],
-      ],
-      [ops.scope, "c"],
-    ]);
-    assert.deepEqual(newCall("(fn()) 'arg'")?.value, [
-      [[ops.scope, "fn"]],
-      "arg",
-    ]);
-    assert.deepEqual(newCall("(fn()) (a, b)")?.value, [
-      [[ops.scope, "fn"]],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assert.deepEqual(newCall("(fn())"), null);
-  });
-
-  it("new path function call", () => {
-    assert.deepEqual(newCall("functions/fn('arg')")?.value, [
-      [ops.scope, "functions", "fn"],
-      "arg",
-    ]);
-    assert.deepEqual(newCall("https://example.com/graph.yaml 'key'")?.value, [
-      [[ops.scope, "https"], "example.com", "graph.yaml"],
-      "key",
-    ]);
-  });
-
   it("number", () => {
-    assert.equal(number("1")?.value, 1);
-    assert.equal(number("3.14159")?.value, 3.14159);
-    assert.equal(number("-1")?.value, -1);
+    assertParse(number("1"), 1);
+    assertParse(number("3.14159"), 3.14159);
+    assertParse(number("-1"), -1);
   });
 
   it("percentCall", () => {
-    assert.deepEqual(percentCall("graph%")?.value, [
-      ops.scope,
-      "graph",
-      undefined,
-    ]);
-    assert.deepEqual(percentCall("graph%foo%bar")?.value, [
+    assertParse(percentCall("graph%"), [ops.scope, "graph", undefined]);
+    assertParse(percentCall("graph%foo%bar"), [
       ops.scope,
       "graph",
       "foo",
@@ -339,89 +251,67 @@ describe.only("parse", () => {
   });
 
   it("percentPath", () => {
-    assert.deepEqual(percentPath("foo%bar%baz")?.value, ["foo", "bar", "baz"]);
-    assert.deepEqual(percentPath("foo%bar%baz%")?.value, [
-      "foo",
-      "bar",
-      "baz",
-      undefined,
-    ]);
+    assertParse(percentPath("foo%bar%baz"), ["foo", "bar", "baz"]);
+    assertParse(percentPath("foo%bar%baz%"), ["foo", "bar", "baz", undefined]);
   });
 
   it("protocolCall", () => {
-    assert.deepEqual(protocolCall("fn:a/b")?.value, [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assert.deepEqual(protocolCall("about:blank")?.value, [
-      [ops.scope, "about"],
-      "blank",
-    ]);
-    assert.deepEqual(protocolCall("https://example.com/foo/")?.value, [
+    assertParse(protocolCall("fn:a/b"), [[ops.scope, "fn"], "a", "b"]);
+    assertParse(protocolCall("about:blank"), [[ops.scope, "about"], "blank"]);
+    assertParse(protocolCall("https://example.com/foo/"), [
       [ops.scope, "https"],
       "example.com",
       "foo",
       undefined,
     ]);
-    assert.deepEqual(protocolCall("https://example.com/foo/bar.json")?.value, [
+    assertParse(protocolCall("https://example.com/foo/bar.json"), [
       [ops.scope, "https"],
       "example.com",
       "foo",
       "bar.json",
     ]);
-    assert.deepEqual(protocolCall("foo:bar:baz")?.value, [
+    assertParse(protocolCall("foo:bar:baz"), [
       [ops.scope, "foo"],
       [[ops.scope, "bar"], "baz"],
     ]);
   });
 
+  it("protocolCall with functionCall", () => {
+    assertParse(expression("https://example.com/graph.yaml 'key'"), [
+      [[ops.scope, "https"], "example.com", "graph.yaml"],
+      "key",
+    ]);
+  });
+
   it("singleQuoteString", () => {
-    assert.deepEqual(singleQuoteString(`'hello'`)?.value, "hello");
+    assertParse(singleQuoteString(`'hello'`), "hello");
   });
 
   it("slashCall", () => {
-    assert.deepEqual(slashCall("graph/")?.value, [
-      ops.scope,
-      "graph",
-      undefined,
-    ]);
-    assert.deepEqual(slashCall("graph/foo/bar")?.value, [
-      ops.scope,
-      "graph",
-      "foo",
-      "bar",
-    ]);
-    assert.deepEqual(slashCall("fn('a', 'b')/c/d")?.value, [
+    assertParse(slashCall("graph/"), [ops.scope, "graph", undefined]);
+    assertParse(slashCall("graph/foo/bar"), [ops.scope, "graph", "foo", "bar"]);
+    assertParse(slashCall("fn('a', 'b')/c/d"), [
       [[ops.scope, "fn"], "a", "b"],
       "c",
       "d",
     ]);
-    assert.deepEqual(slashCall("//foo/bar")?.value, [ops.scope, "foo", "bar"]);
-    assert.deepEqual(slashCall("a/b/c.txt")?.value, [
-      ops.scope,
-      "a",
-      "b",
-      "c.txt",
-    ]);
+    assertParse(slashCall("//foo/bar"), [ops.scope, "foo", "bar"]);
+    assertParse(slashCall("a/b/c.txt"), [ops.scope, "a", "b", "c.txt"]);
   });
 
   it("slashPath", () => {
-    assert.deepEqual(slashPath("foo/bar/baz")?.value, ["foo", "bar", "baz"]);
-    assert.deepEqual(slashPath("foo/bar/baz/")?.value, [
-      "foo",
-      "bar",
-      "baz",
-      undefined,
-    ]);
-    assert.deepEqual(slashPath("(fn())/foo")?.value, [
-      [[ops.scope, "fn"]],
-      "foo",
-    ]);
+    assertParse(slashPath("foo/bar/baz"), ["foo", "bar", "baz"]);
+    assertParse(slashPath("foo/bar/baz/"), ["foo", "bar", "baz", undefined]);
+  });
+
+  it("slashCalls with functionCalls", () => {
+    assertParse(expression("fn()/key"), [[[ops.scope, "fn"]], "key"]);
+    assertParse(expression("graph/key()"), [[ops.scope, "graph", "key"]]);
+    assertParse(expression("fn1()/fn2()"), [[[[ops.scope, "fn1"]], "fn2"]]);
   });
 
   it("spacePathCall", () => {
-    assert.deepEqual(spacePathCall(".. .. .. foo bar")?.value, [
+    assertParse(spacePathCall(".. .. .. foo bar"), [
       ops.scope,
       "..",
       "..",
@@ -432,13 +322,13 @@ describe.only("parse", () => {
   });
 
   it("spaceUrl", () => {
-    assert.deepEqual(spaceUrl("https example.com foo bar.json")?.value, [
+    assertParse(spaceUrl("https example.com foo bar.json"), [
       [ops.scope, "https"],
       "example.com",
       "foo",
       "bar.json",
     ]);
-    assert.deepEqual(spaceUrl("http example.org ${x} data.json")?.value, [
+    assertParse(spaceUrl("http example.org ${x} data.json"), [
       [ops.scope, "http"],
       "example.org",
       [ops.variable, "x", null],
@@ -447,9 +337,9 @@ describe.only("parse", () => {
   });
 
   it("thisReference", () => {
-    assert.deepEqual(thisReference("this")?.value, [ops.thisKey]);
+    assertParse(thisReference("this"), [ops.thisKey]);
     // If there's an extension after the 'this' keyword, it's a reference.
-    // assert.equal(thisReference("this.foo")?.value, null);
+    // assert.equal(thisReference("this.foo"), null);
   });
 
   it("variableName", () => {
@@ -460,12 +350,8 @@ describe.only("parse", () => {
   });
 
   it("variableReference", () => {
-    assert.deepEqual(variableReference("${name}")?.value, [
-      ops.variable,
-      "name",
-      null,
-    ]);
-    assert.deepEqual(variableReference("${name}.json")?.value, [
+    assertParse(variableReference("${name}"), [ops.variable, "name", null]);
+    assertParse(variableReference("${name}.json"), [
       ops.variable,
       "name",
       ".json",
@@ -479,3 +365,8 @@ describe.only("parse", () => {
     });
   });
 });
+
+function assertParse(parseResult, expected) {
+  assert.equal(parseResult.rest, "");
+  assert.deepEqual(parseResult.value, expected);
+}

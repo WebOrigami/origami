@@ -94,11 +94,6 @@ export function backtickText(text) {
   return regex(/^[^\`\$]*/)(text);
 }
 
-// Parse something that results in a function/graph that can be called.
-export function callTarget(text) {
-  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
-}
-
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -114,15 +109,13 @@ export function expression(text) {
   return any(
     singleQuoteString,
     backtickQuoteString,
-    indirectCall,
-    group,
     spaceUrl,
     spacePathCall,
+    functionCall,
     protocolCall,
-    // slashCall,
-    // percentCall,
-    // functionCall,
-    newCall,
+    group,
+    slashCall,
+    percentCall,
     number,
     getReference
   )(text);
@@ -133,21 +126,21 @@ export function extension(text) {
   return sequence(terminal(/^./), literal)(text);
 }
 
-// Parse a function call.
 export function functionCall(text) {
-  const parsed = sequence(optionalWhitespace, reference, args)(text);
+  const parsed = sequence(optionalWhitespace, functionCallTarget, args)(text);
   if (!parsed) {
     return null;
   }
-  const { 1: fnName, 2: fnArgs } = parsed.value;
-  let value = [[ops.scope, fnName]];
-  if (fnArgs.length > 0) {
-    value.push(...fnArgs);
-  }
+  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
   return {
     value,
     rest: parsed.rest,
   };
+}
+
+// Parse something that results in a function/graph that can be called.
+export function functionCallTarget(text) {
+  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
 }
 
 // Parse a call to get a value.
@@ -177,19 +170,6 @@ export function group(text) {
     return null;
   }
   const value = parsed.value[3]; // the expression
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse an indirect function call like `(fn)(arg1, arg2)`.
-export function indirectCall(text) {
-  const parsed = sequence(optionalWhitespace, group, args)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
   return {
     value,
     rest: parsed.rest,
@@ -245,18 +225,6 @@ export function literal(text) {
 // Parse a left parenthesis.
 function lparen(text) {
   return terminal(/^\(/)(text);
-}
-
-export function newCall(text) {
-  const parsed = sequence(optionalWhitespace, callTarget, args)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 export function number(text) {
@@ -319,7 +287,7 @@ export default function parse(text) {
 }
 
 export function pathHead(text) {
-  const parsed = any(group, newCall, getReference)(text);
+  const parsed = any(group, simpleFunctionCall, getReference)(text);
   if (!parsed) {
     return null;
   }
@@ -415,6 +383,24 @@ function rparen(text) {
   return terminal(/^\)/)(text);
 }
 
+// Parse a function call that's just `<name>([...args])`.
+// This is the only function call form can appear at the head of a path.
+export function simpleFunctionCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    getReference,
+    parentheticalArgs
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse a single-quoted string.
 export function singleQuoteString(text) {
   const parsed = sequence(optionalWhitespace, regex(/^'[^\']*'/))(text);
@@ -435,7 +421,7 @@ export function slashCall(text) {
     optionalWhitespace,
     optional(terminal(/\/\//)),
     pathHead,
-    // ge  terminew/),
+    terminal(/^\//),
     optional(slashPath)
   )(text);
   if (!parsed) {
