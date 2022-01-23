@@ -4,7 +4,7 @@ import {
   assignment,
   backtickQuoteString,
   expression,
-  functionCall,
+  functionComposition,
   getReference,
   group,
   key,
@@ -135,17 +135,25 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionCall", () => {
-    assertParse(functionCall("fn()"), [[ops.scope, "fn"]]);
-    assertParse(functionCall("fn('arg')"), [[ops.scope, "fn"], "arg"]);
-    assertParse(functionCall("fn('a', 'b')"), [[ops.scope, "fn"], "a", "b"]);
-    assertParse(functionCall("fn 'a', 'b'"), [[ops.scope, "fn"], "a", "b"]);
-    assertParse(functionCall("fn a, b"), [
+  it("functionComposition", () => {
+    assertParse(functionComposition("fn()"), [[ops.scope, "fn"]]);
+    assertParse(functionComposition("fn('arg')"), [[ops.scope, "fn"], "arg"]);
+    assertParse(functionComposition("fn('a', 'b')"), [
+      [ops.scope, "fn"],
+      "a",
+      "b",
+    ]);
+    assertParse(functionComposition("fn 'a', 'b'"), [
+      [ops.scope, "fn"],
+      "a",
+      "b",
+    ]);
+    assertParse(functionComposition("fn a, b"), [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assertParse(functionCall("fn a(b), c"), [
+    assertParse(functionComposition("fn a(b), c"), [
       [ops.scope, "fn"],
       [
         [ops.scope, "a"],
@@ -153,23 +161,34 @@ describe("parse", () => {
       ],
       [ops.scope, "c"],
     ]);
+    assertParse(functionComposition("fn1 fn2 'arg'"), [
+      [ops.scope, "fn1"],
+      [[ops.scope, "fn2"], "arg"],
+    ]);
   });
 
-  it("functionCall with variable reference", () => {
-    assertParse(functionCall("fn(${name}.json)"), [
+  it("functionComposition with variable reference", () => {
+    assertParse(functionComposition("fn(${name}.json)"), [
       [ops.scope, "fn"],
       [ops.scope, [ops.variable, "name", ".json"]],
     ]);
   });
 
-  it("functionCall indirect", () => {
-    assertParse(functionCall("(fn()) 'arg'"), [[[ops.scope, "fn"]], "arg"]);
-    assertParse(functionCall("(fn()) (a, b)"), [
+  it("functionComposition indirect", () => {
+    assertParse(functionComposition("(fn()) 'arg'"), [
+      [[ops.scope, "fn"]],
+      "arg",
+    ]);
+    assertParse(functionComposition("(fn()) (a, b)"), [
       [[ops.scope, "fn"]],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assert.equal(functionCall("(fn())"), null);
+    assertParse(functionComposition("fn('a')('b')"), [
+      [[ops.scope, "fn"], "a"],
+      "b",
+    ]);
+    assert.equal(functionComposition("(fn())"), null);
   });
 
   it("getReference", () => {
@@ -276,7 +295,7 @@ describe("parse", () => {
     ]);
   });
 
-  it("protocolCall with functionCall", () => {
+  it("protocolCall with functionComposition", () => {
     assertParse(expression("https://example.com/graph.yaml 'key'"), [
       [[ops.scope, "https"], "example.com", "graph.yaml"],
       "key",
@@ -290,11 +309,6 @@ describe("parse", () => {
   it("slashCall", () => {
     assertParse(slashCall("graph/"), [ops.scope, "graph", undefined]);
     assertParse(slashCall("graph/foo/bar"), [ops.scope, "graph", "foo", "bar"]);
-    assertParse(slashCall("fn('a', 'b')/c/d"), [
-      [[ops.scope, "fn"], "a", "b"],
-      "c",
-      "d",
-    ]);
     assertParse(slashCall("//foo/bar"), [ops.scope, "foo", "bar"]);
     assertParse(slashCall("a/b/c.txt"), [ops.scope, "a", "b", "c.txt"]);
   });
@@ -304,8 +318,14 @@ describe("parse", () => {
     assertParse(slashPath("foo/bar/baz/"), ["foo", "bar", "baz", undefined]);
   });
 
-  it("slashCalls with functionCalls", () => {
+  it("slashCalls with functions", () => {
     assertParse(expression("fn()/key"), [[[ops.scope, "fn"]], "key"]);
+    assertParse(expression("(fn())/key"), [[[ops.scope, "fn"]], "key"]);
+    assertParse(slashCall("fn('a', 'b')/c/d"), [
+      [[ops.scope, "fn"], "a", "b"],
+      "c",
+      "d",
+    ]);
     assertParse(expression("graph/key()"), [[ops.scope, "graph", "key"]]);
     assertParse(expression("fn1()/fn2()"), [[[[ops.scope, "fn1"]], "fn2"]]);
   });

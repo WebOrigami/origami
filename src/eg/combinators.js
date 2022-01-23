@@ -11,6 +11,13 @@ export function any(...parsers) {
   };
 }
 
+export function empty(text) {
+  return {
+    value: null,
+    rest: text,
+  };
+}
+
 // Optional combinator: if the given parser succeeded, return its result,
 // otherwise return a null value.
 export function optional(parser) {
@@ -86,6 +93,27 @@ export function separatedList(termParser, separatorParser, whitespaceParser) {
       } else {
         parsedTerm = null;
       }
+    }
+    return {
+      value,
+      rest,
+    };
+  };
+}
+
+// Parse a consecutive series of at least one instance of the given term.
+export function series(termParser) {
+  return function parseSeries(text) {
+    let parsedTerm = termParser(text);
+    if (!parsedTerm) {
+      return null;
+    }
+    const value = [];
+    let rest;
+    while (parsedTerm) {
+      value.push(parsedTerm.value);
+      rest = parsedTerm.rest;
+      parsedTerm = termParser(rest);
     }
     return {
       value,

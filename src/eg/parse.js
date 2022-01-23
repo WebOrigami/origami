@@ -22,13 +22,19 @@ import {
   regex,
   separatedList,
   sequence,
+  series,
   terminal,
 } from "./combinators.js";
 import * as ops from "./ops.js";
 
-// Parse arguments to a function.
+// Parse arguments to a function, with either explicit or implicit parentheses.
 export function args(text) {
-  return any(parentheticalArgs, omittedParensArgs)(text);
+  return any(parensArgs, implicitParensArgs)(text);
+}
+
+// Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
+export function argsChain(text) {
+  return series(args)(text);
 }
 
 // Parse an assignment statment.
@@ -111,11 +117,11 @@ export function expression(text) {
     backtickQuoteString,
     spaceUrl,
     spacePathCall,
-    functionCall,
+    functionComposition,
     protocolCall,
-    group,
     slashCall,
     percentCall,
+    group,
     number,
     getReference
   )(text);
@@ -126,21 +132,35 @@ export function extension(text) {
   return sequence(terminal(/^./), literal)(text);
 }
 
-export function functionCall(text) {
-  const parsed = sequence(optionalWhitespace, functionCallTarget, args)(text);
+// Parse something that results in a function/graph that can be called.
+export function functionCallTarget(text) {
+  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
+}
+
+// Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
+// of function calls, like `fn(arg1)(arg2)(arg3)`.
+export function functionComposition(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    functionCallTarget,
+    argsChain
+  )(text);
   if (!parsed) {
     return null;
   }
-  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
+  const { 1: target, 2: chain } = parsed.value;
+  // The argsChain is an array of arguments (which are themselves arrays). The
+  // `target` represents the function call target at the head of the chain.
+  // Successively apply the arguments in the chain to build up the function
+  // composition.
+  let value = target;
+  for (const args of chain) {
+    value = [value, ...args];
+  }
   return {
     value,
     rest: parsed.rest,
   };
-}
-
-// Parse something that results in a function/graph that can be called.
-export function functionCallTarget(text) {
-  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
 }
 
 // Parse a call to get a value.
@@ -183,6 +203,19 @@ export function inheritableDeclaration(text) {
     return null;
   }
   const value = ["=", parsed.value[1], [ops.scope, [ops.thisKey]]];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse the arguments to a function where the parentheses have been omitted.
+export function implicitParensArgs(text) {
+  const parsed = sequence(whitespace, list)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
   return {
     value,
     rest: parsed.rest,
@@ -241,26 +274,13 @@ export function number(text) {
   };
 }
 
-// Parse the arguments to a function where the parentheses have been omitted.
-export function omittedParensArgs(text) {
-  const parsed = sequence(whitespace, list)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = parsed.value[1];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse an optional whitespace sequence.
 export function optionalWhitespace(text) {
   return terminal(/^\s*/)(text);
 }
 
 // Parse function arguments enclosed in parentheses.
-function parentheticalArgs(text) {
+function parensArgs(text) {
   const parsed = sequence(
     optionalWhitespace,
     lparen,
@@ -286,6 +306,7 @@ export default function parse(text) {
   return parsed?.rest !== "" ? parsed.value : null;
 }
 
+// Parse the start of a path.
 export function pathHead(text) {
   const parsed = any(group, simpleFunctionCall, getReference)(text);
   if (!parsed) {
@@ -386,11 +407,7 @@ function rparen(text) {
 // Parse a function call that's just `<name>([...args])`.
 // This is the only function call form can appear at the head of a path.
 export function simpleFunctionCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    getReference,
-    parentheticalArgs
-  )(text);
+  const parsed = sequence(optionalWhitespace, getReference, parensArgs)(text);
   if (!parsed) {
     return null;
   }
