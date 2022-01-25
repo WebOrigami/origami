@@ -1,4 +1,3 @@
-import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as utilities from "../core/utilities.js";
 
@@ -27,11 +26,8 @@ export default class MapTypesGraph {
   async *[Symbol.asyncIterator]() {
     const keys = new Set();
     for await (const key of this.graph) {
-      const extension = path.extname(key).toLowerCase();
-      const mappedKey =
-        (extension === this.sourceExtension) !== undefined
-          ? `${path.basename(key, extension)}${this.targetExtension}`
-          : key;
+      const basename = matchExtension(key, this.sourceExtension);
+      const mappedKey = basename ? `${basename}${this.targetExtension}` : key;
       if (!keys.has(mappedKey)) {
         keys.add(mappedKey);
         yield mappedKey;
@@ -42,15 +38,9 @@ export default class MapTypesGraph {
   // Apply the map function if the key matches the source extension.
   async get(key) {
     let value;
-    // See if the key matches the source extension. We use a cruder but more
-    // general interpretation of "extension" to mean any suffix, rather than
-    // Node's `path` interpretation in extname. In particular, we want to be
-    // able to match an "extension" like ".foo.bar" that contains more than one
-    // dot.
-    const applyMap = key.toLowerCase().endsWith(this.targetExtension);
-    if (applyMap) {
+    const basename = matchExtension(key, this.targetExtension);
+    if (basename) {
       // Asking for an extension that we map to.
-      const basename = key.slice(0, -this.targetExtension.length);
       const sourceKey = `${basename}${this.sourceExtension}`;
       // Use regular `get` to get the value to map.
       value = await this.graph.get(sourceKey);
@@ -82,6 +72,15 @@ export default class MapTypesGraph {
   }
 }
 
+// See if the key ends with the given extension. If it does, return the basename
+// without the extension; if it doesn't return null.
+//
+// An empty/null extension means: match any key that does *not* contain a period.
+//
+// We use a cruder but more general interpretation of "extension" to mean any
+// suffix, rather than Node's `path` interpretation in extname. In particular,
+// we want to be able to match an "extension" like ".foo.bar" that contains more
+// than one dot.
 function matchExtension(key, extension) {
   if (extension) {
     // Key matches if it ends with the same extension
@@ -92,4 +91,6 @@ function matchExtension(key, extension) {
     // Key matches if it has no extension
     return key;
   }
+  // Didn't match
+  return null;
 }
