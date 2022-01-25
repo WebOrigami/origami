@@ -19,7 +19,7 @@ export default class MapTypesGraph {
   constructor(variant, mapFn, sourceExtension, targetExtension) {
     this.graph = ExplorableGraph.from(variant);
     this.mapFn = utilities.toFunction(mapFn);
-    this.sourceExtension = sourceExtension.toLowerCase();
+    this.sourceExtension = sourceExtension?.toLowerCase();
     this.targetExtension =
       targetExtension?.toLowerCase() ?? this.sourceExtension;
   }
@@ -29,7 +29,7 @@ export default class MapTypesGraph {
     for await (const key of this.graph) {
       const extension = path.extname(key).toLowerCase();
       const mappedKey =
-        extension === this.sourceExtension
+        (extension === this.sourceExtension) !== undefined
           ? `${path.basename(key, extension)}${this.targetExtension}`
           : key;
       if (!keys.has(mappedKey)) {
@@ -79,5 +79,17 @@ export default class MapTypesGraph {
 
   get scope() {
     return /** @type {any} */ (this.graph).scope;
+  }
+}
+
+function matchExtension(key, extension) {
+  if (extension) {
+    // Key matches if it ends with the same extension
+    if (key.length > extension.length && key.endsWith(extension)) {
+      return key.substring(0, key.length - extension.length);
+    }
+  } else if (!key.includes(".")) {
+    // Key matches if it has no extension
+    return key;
   }
 }

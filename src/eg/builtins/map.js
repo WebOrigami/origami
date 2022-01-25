@@ -5,7 +5,7 @@ import MapGraph from "../../core/MapGraph.js";
  * @this {Explorable}
  */
 export default function map(variant, mapFn, sourceExtension, targetExtension) {
-  return !sourceExtension
+  return sourceExtension === undefined
     ? new MapGraph(variant, mapFn)
     : new MapTypesGraph(variant, mapFn, sourceExtension, targetExtension);
 }
