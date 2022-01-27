@@ -3,7 +3,7 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 import dot from "./dot.js";
 
 /**
- * Render a graph visually as in SVG format.
+ * Render a graph visually in SVG format.
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
