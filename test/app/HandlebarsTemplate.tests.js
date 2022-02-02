@@ -59,4 +59,13 @@ message: Hello
     const result = await template.apply(data);
     assert.equal(result, `Hello, Alice.`);
   });
+
+  it("makes template's own contents available as data", async () => {
+    const template = new HandlebarsTemplate(`---
+foo: bar
+---
+{{{template}}}`);
+    const result = await template.apply();
+    assert.equal(result, `{{{template}}}`);
+  });
 });

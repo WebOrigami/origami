@@ -24,7 +24,9 @@ export default class HandlebarsTemplate {
     const frontMatter = extractFrontMatter(this.text);
     if (frontMatter) {
       const { frontData, bodyText } = frontMatter;
-      this.frontData = frontData;
+      this.frontData = Object.assign(frontData, {
+        template: bodyText,
+      });
       this.template = bodyText;
     } else {
       // No front matter.
