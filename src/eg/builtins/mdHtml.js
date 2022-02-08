@@ -8,6 +8,7 @@ marked.setOptions({
     const language = highlight.getLanguage(lang) ? lang : "plaintext";
     return highlight.highlight(code, { language }).value;
   },
+  smartypants: true,
 });
 
 export default async function mdHtml(markdown) {
