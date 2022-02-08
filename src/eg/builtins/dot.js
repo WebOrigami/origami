@@ -11,19 +11,19 @@ import { toSerializable } from "../../core/utilities.js";
 export default async function dot(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
-  const graphArcs = await statements(graph, "", "/");
+  const graphArcs = await statements(graph, "");
   return `digraph g {
-  nodesep=.75;
+  nodesep=1;
   rankdir=LR;
   ranksep=1.5;
   node [shape=box; color=gray70; fontname="Helvetica"];
-  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; labeldistance=4];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; labeldistance=5];
 
 ${graphArcs.join("\n")}
 }`;
 }
 
-async function statements(graph, nodePath, nodeLabel) {
+async function statements(graph, nodePath) {
   let result = [];
 
   result.push(
@@ -37,7 +37,7 @@ async function statements(graph, nodePath, nodeLabel) {
 
     const value = await graph.get(key);
     if (ExplorableGraph.isExplorable(value)) {
-      const subStatements = await statements(value, destPath, key);
+      const subStatements = await statements(value, destPath);
       result = result.concat(subStatements);
     } else {
       const serializable = value ? toSerializable(value) : undefined;
