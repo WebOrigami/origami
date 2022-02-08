@@ -26,7 +26,7 @@ export default function FileLoadersTransform(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (value) {
+      if (value && typeof key === "string") {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {

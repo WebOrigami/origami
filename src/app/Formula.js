@@ -63,7 +63,10 @@ export default class Formula {
   }
 
   static isFormula(key) {
-    return key.includes("=") || key.startsWith("{") || key === additionsKey;
+    return (
+      typeof key === "string" &&
+      (key.includes("=") || key.startsWith("{") || key === additionsKey)
+    );
   }
 
   static parse(source) {
@@ -217,7 +220,7 @@ export class VariableFormula extends Formula {
       if (key.length > extension.length && key.endsWith(extension)) {
         return key.substring(0, key.length - extension.length);
       }
-    } else if (!key.includes(".")) {
+    } else if (typeof key === "string" && !key.includes(".")) {
       // Key matches if it has no extension
       return key;
     }
