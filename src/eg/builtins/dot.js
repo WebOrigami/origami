@@ -16,7 +16,7 @@ export default async function dot(variant) {
   nodesep=1;
   rankdir=LR;
   ranksep=1.5;
-  node [shape=box; color=gray70; fontname="Helvetica"];
+  node [shape=box; color=gray70; fontname="Helvetica"; fontsize="10"];
   edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; labeldistance=5];
 
 ${graphArcs.join("\n")}
@@ -30,6 +30,8 @@ async function statements(graph, nodePath) {
     `  "${nodePath}" [label=""; shape=circle; width=0.10; color=gray40];`
   );
 
+  // Draw edges and collect labels for the nodes they lead to.
+  let labels = {};
   for await (const key of graph) {
     const destPath = `${nodePath}/${key}`;
     const arc = `  "${nodePath}" -> "${destPath}" [headlabel="${key}"];`;
@@ -37,6 +39,7 @@ async function statements(graph, nodePath) {
 
     const value = await graph.get(key);
     if (ExplorableGraph.isExplorable(value)) {
+      const destPath = `${nodePath}/${key}`;
       const subStatements = await statements(value, destPath);
       result = result.concat(subStatements);
     } else {
@@ -45,20 +48,86 @@ async function statements(graph, nodePath) {
         typeof serializable === "object"
           ? YAML.stringify(serializable)
           : serializable ?? "";
-      if (label) {
-        if (label.length > 20) {
-          // Long text, just use the beginning
-          label = label.slice(0, 20) + "…";
-        }
-        label = label.replace(/\n/g, " "); // Remove newlines
-        label = label.replace(/"/g, '\\"'); // Escape quotes
-        label = label.replace(/\s+/g, " "); // Collapse whitespace
-        label = label.replace(/[\u{0080}-\u{FFFF}]/gu, ""); // Remove non-ASCII characters
-      }
-      result.push(`  "${destPath}" [label="${label}"];`);
+      labels[key] = label;
     }
   }
+
+  // If we have more than one label, we'll focus the labels' differences. We'll
+  // use the first label as a representative baseline for all labels but the
+  // first (which will use the second label as a baseline).
+  const values = Object.values(labels);
+  const showLabelDiffs = values.length > 1;
+  const label1 = showLabelDiffs ? values[0] : undefined;
+  const label2 = showLabelDiffs ? values[1] : undefined;
+
+  // Trim labels.
+  let i = 0;
+  for (const key of Object.keys(labels)) {
+    let label = labels[key];
+    if (label) {
+      let clippedStart = false;
+      let clippedEnd = false;
+
+      if (showLabelDiffs) {
+        const baseline = i === 0 ? label2 : label1;
+        const diff = stringDiff(baseline, label);
+        if (diff !== label) {
+          label = diff;
+          clippedStart = true;
+        }
+      }
+
+      if (label.length > 40) {
+        // Long text, just use the beginning
+        label = label.slice(0, 40);
+        clippedEnd = true;
+      }
+      label = label.replace(/\n/g, " "); // Remove newlines
+      label = label.replace(/"/g, '\\"'); // Escape quotes
+      label = label.replace(/\s+/g, " "); // Collapse whitespace
+      label = label.replace(/[\u{0080}-\u{FFFF}]/gu, ""); // Remove non-ASCII characters
+
+      if (clippedStart) {
+        label = "…" + label;
+      }
+      if (clippedEnd) {
+        label += "…";
+      }
+
+      labels[key] = label;
+    }
+    i++;
+  }
+
+  // Draw labels.
+  for (const key in labels) {
+    const destPath = `${nodePath}/${key}`;
+    const label = labels[key];
+    const fontSize = label.length > 20 ? `; fontsize="10"` : "";
+    result.push(`  "${destPath}" [label="${label}"];`);
+  }
+
   return result;
+}
+
+// Return the second string, removing the initial portion it shares with the
+// first string. The returned string will start with the first non-whitespace
+// character of the first line that differs from the first string.
+function stringDiff(first, second) {
+  let i = 0;
+  // Find point of first difference.
+  while (i < first.length && i < second.length && first[i] === second[i]) {
+    i++;
+  }
+  // Back up to start of that line.
+  while (i > 0 && second[i - 1] !== "\n") {
+    i--;
+  }
+  // Move forward to first non-whitespace character.
+  while (i < second.length && /\s/.test(second[i])) {
+    i++;
+  }
+  return second.slice(i);
 }
 
 dot.usage = `dot <graph>\tRender a graph visually in dot language`;
