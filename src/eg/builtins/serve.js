@@ -12,8 +12,9 @@ export default async function serve(variant, port = defaultPort) {
     ? ExplorableGraph.from(variant)
     : // @ts-ignore
       await watch.call(this, await app.call(this));
-  http.createServer(requestListener(graph)).listen(port);
-  console.log(`Server running at http://localhost:${port}`);
+  http.createServer(requestListener(graph)).listen(port, undefined, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
 }
 
 serve.usage = `serve <graph>, [port]\tStart a local web server for the graph`;
