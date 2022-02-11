@@ -119,7 +119,7 @@ export default class ExplorableFiles {
       await fs.mkdir(this.dirname, { recursive: true });
 
       // Write out the value as the contents of a file.
-      const filePath = path.join(this.dirname, key);
+      const filePath = path.join(this.dirname, key.toString());
       const data = await prepareData(key, value);
       await fs.writeFile(filePath, data);
     }
