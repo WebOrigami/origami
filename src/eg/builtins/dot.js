@@ -34,7 +34,7 @@ async function statements(graph, nodePath) {
   let labels = {};
   for await (const key of graph) {
     const destPath = `${nodePath}/${key}`;
-    const arc = `  "${nodePath}" -> "${destPath}" [headlabel="${key}"];`;
+    const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
     result.push(arc);
 
     const value = await graph.get(key);
@@ -52,9 +52,9 @@ async function statements(graph, nodePath) {
     }
   }
 
-  // If we have more than one label, we'll focus the labels' differences. We'll
-  // use the first label as a representative baseline for all labels but the
-  // first (which will use the second label as a baseline).
+  // If we have more than one label, we'll focus on the labels' differences.
+  // We'll use the first label as a representative baseline for all labels but
+  // the first (which will use the second label as a baseline).
   const values = Object.values(labels);
   const showLabelDiffs = values.length > 1;
   const label1 = showLabelDiffs ? values[0] : undefined;
@@ -103,7 +103,6 @@ async function statements(graph, nodePath) {
   for (const key in labels) {
     const destPath = `${nodePath}/${key}`;
     const label = labels[key];
-    const fontSize = label.length > 20 ? `; fontsize="10"` : "";
     result.push(`  "${destPath}" [label="${label}"];`);
   }
 
