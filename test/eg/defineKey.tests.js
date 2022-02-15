@@ -2,7 +2,7 @@ import { ExplorableGraph } from "../../exports.js";
 import defineKey from "../../src/eg/builtins/defineKey.js";
 import assert from "../assert.js";
 
-describe.only("defineKey", () => {
+describe("defineKey", () => {
   it("by default makes the value itself the key", async () => {
     const graph = await defineKey(["a", "b", "c"]);
     assert(await ExplorableGraph.plain(graph), {
