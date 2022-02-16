@@ -75,7 +75,7 @@ export function backtickQuoteString(text) {
   const { 2: contents } = parsed.value;
   // Drop empty strings.
   const filtered = contents.filter((item) => item !== "");
-  const value = [ops.concat, ...filtered];
+  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
   return {
     value,
     rest: parsed.rest,
@@ -84,14 +84,10 @@ export function backtickQuoteString(text) {
 
 // Parse the text and variable references in a backtick-quoted string
 export function backtickContents(text) {
-  // It's a bit of a stretch to use the separated list parser for this, but it
-  // works. We treat the plain text as the list items, and the variable
-  // references as the separators.
-  return separatedList(
-    optional(backtickText),
-    variableReference,
-    regex(/^/)
-  )(text);
+  // It's a stretch to use the separated list parser for this, but it works. We
+  // treat the plain text as the list items, and the substitutions as
+  // separators.
+  return separatedList(optional(backtickText), substitution, regex(/^/))(text);
 }
 
 // Parse the text in a backtick-quoted string
@@ -324,8 +320,10 @@ export function pathHead(text) {
 
 // Parse a key in a path.
 export function pathKey(text) {
-  return any(group, reference)(text);
+  return any(group, substitution, literal)(text);
 }
+
+// Parse a path key that contains substitutions
 
 // Parse a function call with percent syntax.
 export function percentCall(text) {
@@ -523,7 +521,7 @@ export function spaceUrlProtocol(text) {
 
 // Parse a space-delimeted URL path
 export function spaceUrlPath(text) {
-  const parsed = separatedList(reference, whitespace, regex(/^/))(text);
+  const parsed = separatedList(pathKey, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
@@ -535,6 +533,25 @@ export function spaceUrlPath(text) {
   }
   return {
     value: values,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a substitution like ${foo} found in an backtick template.
+export function substitution(text) {
+  const parsed = sequence(
+    terminal(/^\$\{/),
+    optionalWhitespace,
+    expression,
+    optionalWhitespace,
+    terminal(/^\}/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 2: value } = parsed.value;
+  return {
+    value,
     rest: parsed.rest,
   };
 }

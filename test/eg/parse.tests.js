@@ -26,7 +26,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
@@ -90,21 +90,28 @@ describe("parse", () => {
   });
 
   it("backtickQuoteString", () => {
-    assertParse(backtickQuoteString("`Hello, world.`"), [
-      ops.concat,
-      "Hello, world.",
-    ]);
+    assertParse(backtickQuoteString("`Hello, world.`"), "Hello, world.");
   });
 
-  it("backtickQuotedString with variable pattern", () => {
+  it("backtickQuoteString with substitution", () => {
     assertParse(backtickQuoteString("`${x}.json`"), [
       ops.concat,
-      [ops.variable, "x", ".json"],
+      [ops.scope, "x"],
+      ".json",
     ]);
     assertParse(backtickQuoteString("`foo ${x}.json bar`"), [
       ops.concat,
       "foo ",
-      [ops.variable, "x", ".json"],
+      [ops.scope, "x"],
+      ".json bar",
+    ]);
+    assertParse(backtickQuoteString("`foo ${ fn(a) } bar`"), [
+      ops.concat,
+      "foo ",
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "a"],
+      ],
       " bar",
     ]);
   });
@@ -351,7 +358,7 @@ describe("parse", () => {
     assertParse(spaceUrl("http example.org ${x} data.json"), [
       [ops.scope, "http"],
       "example.org",
-      [ops.variable, "x", null],
+      [ops.scope, "x"],
       "data.json",
     ]);
   });
