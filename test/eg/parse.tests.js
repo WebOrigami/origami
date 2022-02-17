@@ -2,7 +2,6 @@ import * as ops from "../../src/eg/ops.js";
 import {
   args,
   assignment,
-  backtickQuoteString,
   expression,
   functionComposition,
   getReference,
@@ -20,6 +19,7 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
+  templateLiteral,
   thisReference,
   variableName,
   variableReference,
@@ -86,33 +86,6 @@ describe("parse", () => {
         [ops.scope, "foo"],
         [ops.scope, [ops.variable, "name", ".json"]],
       ],
-    ]);
-  });
-
-  it("backtickQuoteString", () => {
-    assertParse(backtickQuoteString("`Hello, world.`"), "Hello, world.");
-  });
-
-  it("backtickQuoteString with substitution", () => {
-    assertParse(backtickQuoteString("`${x}.json`"), [
-      ops.concat,
-      [ops.scope, "x"],
-      ".json",
-    ]);
-    assertParse(backtickQuoteString("`foo ${x}.json bar`"), [
-      ops.concat,
-      "foo ",
-      [ops.scope, "x"],
-      ".json bar",
-    ]);
-    assertParse(backtickQuoteString("`foo ${ fn(a) } bar`"), [
-      ops.concat,
-      "foo ",
-      [
-        [ops.scope, "fn"],
-        [ops.scope, "a"],
-      ],
-      " bar",
     ]);
   });
 
@@ -360,6 +333,33 @@ describe("parse", () => {
       "example.org",
       [ops.scope, "x"],
       "data.json",
+    ]);
+  });
+
+  it("templateLiteral", () => {
+    assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
+  });
+
+  it("templateLiteral with substitution", () => {
+    assertParse(templateLiteral("`${x}.json`"), [
+      ops.concat,
+      [ops.scope, "x"],
+      ".json",
+    ]);
+    assertParse(templateLiteral("`foo ${x}.json bar`"), [
+      ops.concat,
+      "foo ",
+      [ops.scope, "x"],
+      ".json bar",
+    ]);
+    assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
+      ops.concat,
+      "foo ",
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "a"],
+      ],
+      " bar",
     ]);
   });
 

@@ -61,41 +61,6 @@ export function assignment(text) {
   };
 }
 
-// Parse a backtick-quoted string.
-export function backtickQuoteString(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^`/),
-    backtickContents,
-    terminal(/^`/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 2: contents } = parsed.value;
-  // Drop empty strings.
-  const filtered = contents.filter((item) => item !== "");
-  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse the text and variable references in a backtick-quoted string
-export function backtickContents(text) {
-  // It's a stretch to use the separated list parser for this, but it works. We
-  // treat the plain text as the list items, and the substitutions as
-  // separators.
-  return separatedList(optional(backtickText), substitution, regex(/^/))(text);
-}
-
-// Parse the text in a backtick-quoted string
-export function backtickText(text) {
-  // Everything but ` and $
-  return regex(/^[^\`\$]*/)(text);
-}
-
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -110,7 +75,7 @@ function ellipsis(text) {
 export function expression(text) {
   return any(
     singleQuoteString,
-    backtickQuoteString,
+    templateLiteral,
     spaceUrl,
     spacePathCall,
     functionComposition,
@@ -554,6 +519,41 @@ export function substitution(text) {
     value,
     rest: parsed.rest,
   };
+}
+
+// Parse the text and variable references in a template.
+export function template(text) {
+  // It's a stretch to use the separated list parser for this, but it works. We
+  // treat the plain text as the list items, and the substitutions as
+  // separators.
+  return separatedList(optional(templateText), substitution, regex(/^/))(text);
+}
+
+// Parse a backtick-quoted template literal.
+export function templateLiteral(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    terminal(/^`/),
+    template,
+    terminal(/^`/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 2: contents } = parsed.value;
+  // Drop empty strings.
+  const filtered = contents.filter((item) => item !== "");
+  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse the text in a template.
+export function templateText(text) {
+  // Everything but ` and $
+  return regex(/^[^\`\$]*/)(text);
 }
 
 // Parse a reference to "this".
