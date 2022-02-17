@@ -6,7 +6,7 @@ import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(ExplorableObject) {}
 
-describe.only("FormulasTransform", () => {
+describe("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "{x}.txt": "Default text",
@@ -89,7 +89,8 @@ describe.only("FormulasTransform", () => {
     assert.deepEqual(await fixture.get("David"), "Hi, David.");
   });
 
-  it.only("can inherit bound variables", async () => {
+  // More focused version of test also performed in MetaTransform.tests.js.
+  it("can inherit bound variables", async () => {
     const fixture = new (InheritScopeTransform(FormulasObject))({
       "{x}": {
         "{y} = `${x}${y}`": "",

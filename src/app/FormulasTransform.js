@@ -1,10 +1,8 @@
-import ExplorableObject from "../core/ExplorableObject.js";
 import {
   ConstantFormula,
   default as Formula,
   VariableFormula,
 } from "./Formula.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
 
 const formulasKey = Symbol("formulas");
 const localFormulasKey = Symbol("localFormulas");
@@ -65,22 +63,24 @@ export default function FormulasTransform(Base) {
       const formulaApplies =
         keyBinding !== null && (!this.isInScope || formula.foundInScope);
       if (formulaApplies) {
-        let graph;
-        if (Object.keys(keyBinding).length === 0) {
-          // No bindings; use the current graph.
-          graph = this;
-        } else {
-          // Extend the current graph, adding the key binding to its scope.
-          graph = new (InheritScopeTransform(ExplorableObject))(keyBinding);
-          graph.parent = this;
-        }
+        // Add the formula's key binding to the graph's bindings.
+        const bindings = Object.assign(
+          {},
+          formula.closure,
+          this.bindings,
+          keyBinding
+        );
+
+        // Extend the graph with the full bindings.
+        const graph = Object.create(this);
+        graph.bindings = bindings;
 
         // Evaluate the formula.
         value = await formula.evaluate(graph);
 
-        if (value instanceof Object && "parent" in value) {
-          // Include the key bindings in the value's scope.
-          value.parent = graph;
+        if (value instanceof Object && "bindings" in value) {
+          // Give the subgraph the complete bindings.
+          value.bindings = bindings;
         }
       }
       return value;
@@ -106,8 +106,15 @@ export default function FormulasTransform(Base) {
     }
 
     async get(key) {
-      // See if real value exists.
-      let value = await super.get(key);
+      // See if we have a binding for this key.
+      // This is effectively composing the bindings on top of this graph.
+      let value = this.bindings?.[key];
+
+      if (value === undefined) {
+        // See if real value exists.
+        value = await super.get(key);
+      }
+
       if (value === undefined) {
         // No real value defined; try our formulas.
         const formulas = await this.formulas();
@@ -119,6 +126,7 @@ export default function FormulasTransform(Base) {
           }
         }
       }
+
       return value;
     }
 

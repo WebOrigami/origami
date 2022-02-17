@@ -2,7 +2,6 @@ import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 const parentKey = Symbol("parent");
-const scopeKey = Symbol("scope");
 
 export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {
@@ -10,7 +9,6 @@ export default function InheritScopeTransform(Base) {
       super(...args);
       this.isInScope = false;
       this[parentKey] = null;
-      /** @type {any} */ this[scopeKey] = this;
     }
 
     async get(key) {
@@ -18,18 +16,6 @@ export default function InheritScopeTransform(Base) {
       if (ExplorableGraph.isExplorable(value) && !value.parent) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
-
-        if ("scope" in value && this.parent) {
-          // The scope for the value graph will be that graph, composed with the
-          // inherited parent and that parent's scope. Both the latter are marked
-          // as inherited.
-          const thisWrapper = markInScope(this);
-          const parentScopeWrapper = markInScope(
-            this.parent?.scope ?? this.parent
-          );
-          const inheritedScope = new Compose(thisWrapper, parentScopeWrapper);
-          value.scope = new Compose(value, inheritedScope);
-        }
       }
       return value;
     }
@@ -52,27 +38,25 @@ export default function InheritScopeTransform(Base) {
     }
     set parent(parent) {
       this[parentKey] = parent;
-      if (parent) {
-        // Add parent to this graph's scope.
-        const scopeWrapper = markInScope(parent.scope ?? parent);
-        this[scopeKey] = new Compose(this, scopeWrapper);
-      } else {
-        this[scopeKey] = this;
-      }
     }
 
     get scope() {
-      return this[scopeKey];
-    }
-    set scope(scope) {
-      this[scopeKey] = scope;
+      const parent = this.parent;
+      if (parent) {
+        // Add parent to this graph's scope.
+        const parentScopeWrapper = markInScope(parent?.scope ?? parent);
+        return new Compose(this, parentScopeWrapper);
+      } else {
+        // Scope is just the graph itself.
+        return this;
+      }
     }
   };
 }
 
-// Add a wrapper to indicate that, from the perspective of the subgraph,
-// the parent is in scope. We use a prototype extension to do this,
-// because we don't want to directly modifiy the parent graph.
+// Add a wrapper to indicate that, from the perspective of the subgraph, the
+// parent is in scope. We use a prototype extension to do this, because we don't
+// want to directly modifiy the parent graph.
 function markInScope(graph) {
   if (graph.isInScope) {
     return graph;
