@@ -15,7 +15,9 @@ export default function InheritScopeTransform(Base) {
       const value = await super.get(key);
       if (ExplorableGraph.isExplorable(value) && !value.parent) {
         // This graph becomes the parent for all subgraphs.
-        value.parent = this;
+
+        // REVIEW: Confirm this resolves our scoping issue.
+        value.parent = markInScope(this);
       }
       return value;
     }
