@@ -145,6 +145,22 @@ describe("MetaTransform", () => {
     assert.equal(await about.get("index.html"), "<body>About</body>");
   });
 
+  it("can inherit bound variables", async () => {
+    const fixture = new (MetaTransform(ExplorableObject))({
+      "{x}": {
+        "{y} = `${x}${y}`": "",
+      },
+    });
+    assert.equal(
+      await ExplorableGraph.traverse(fixture, "foo", "bar"),
+      "foobar"
+    );
+    assert.equal(
+      await ExplorableGraph.traverse(fixture, "fizz", "buzz"),
+      "fizzbuzz"
+    );
+  });
+
   it("can imply keys based on additions", async () => {
     const graph = new (MetaTransform(ExplorableObject))({
       "+": {

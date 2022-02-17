@@ -15,9 +15,21 @@ export default function InheritScopeTransform(Base) {
 
     async get(key) {
       const value = await super.get(key);
-      if (ExplorableGraph.isExplorable(value)) {
+      if (ExplorableGraph.isExplorable(value) && !value.parent) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
+
+        if ("scope" in value && this.parent) {
+          // The scope for the value graph will be that graph, composed with the
+          // inherited parent and that parent's scope. Both the latter are marked
+          // as inherited.
+          const thisWrapper = markInScope(this);
+          const parentScopeWrapper = markInScope(
+            this.parent?.scope ?? this.parent
+          );
+          const inheritedScope = new Compose(thisWrapper, parentScopeWrapper);
+          value.scope = new Compose(value, inheritedScope);
+        }
       }
       return value;
     }
@@ -40,22 +52,12 @@ export default function InheritScopeTransform(Base) {
     }
     set parent(parent) {
       this[parentKey] = parent;
-
       if (parent) {
         // Add parent to this graph's scope.
-        let parentScope = parent.scope ?? parent;
-
-        // Add a wrapper to indicate that, from the perspective of the subgraph,
-        // the parent is in scope. We use a prototype extension to do this,
-        // because we don't want to directly modifiy the parent graph.
-        const scopeWrapper = {
-          isInScope: true,
-        };
-        Object.setPrototypeOf(scopeWrapper, parentScope);
-
+        const scopeWrapper = markInScope(parent.scope ?? parent);
         this[scopeKey] = new Compose(this, scopeWrapper);
       } else {
-        this[scopeKey] = null;
+        this[scopeKey] = this;
       }
     }
 
@@ -66,4 +68,18 @@ export default function InheritScopeTransform(Base) {
       this[scopeKey] = scope;
     }
   };
+}
+
+// Add a wrapper to indicate that, from the perspective of the subgraph,
+// the parent is in scope. We use a prototype extension to do this,
+// because we don't want to directly modifiy the parent graph.
+function markInScope(graph) {
+  if (graph.isInScope) {
+    return graph;
+  }
+  const scopeWrapper = {
+    isInScope: true,
+  };
+  Object.setPrototypeOf(scopeWrapper, graph);
+  return scopeWrapper;
 }

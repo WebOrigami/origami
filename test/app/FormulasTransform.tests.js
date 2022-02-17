@@ -1,11 +1,12 @@
 import FormulasTransform from "../../src/app/FormulasTransform.js";
+import InheritScopeTransform from "../../src/app/InheritScopeTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(ExplorableObject) {}
 
-describe("FormulasTransform", () => {
+describe.only("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "{x}.txt": "Default text",
@@ -88,8 +89,8 @@ describe("FormulasTransform", () => {
     assert.deepEqual(await fixture.get("David"), "Hi, David.");
   });
 
-  it("can pass bindings to subgraphs", async () => {
-    const fixture = new FormulasObject({
+  it.only("can inherit bound variables", async () => {
+    const fixture = new (InheritScopeTransform(FormulasObject))({
       "{x}": {
         "{y} = `${x}${y}`": "",
       },

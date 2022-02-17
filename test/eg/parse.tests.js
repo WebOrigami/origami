@@ -26,7 +26,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],

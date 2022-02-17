@@ -47,14 +47,15 @@ export default class Formula {
   async evaluate(graph) {
     if (this.expression) {
       // Assignment or inheritable declaration
-      const bindings = /** @type {any} */ (graph).bindings;
-      const code = bindings
-        ? this.bindCode(this.expression, bindings)
-        : this.expression;
-      return await execute.call(graph, code);
+      // const bindings = /** @type {any} */ (graph).bindings;
+      // const code = bindings
+      //   ? this.bindCode(this.expression, bindings)
+      //   : this.expression;
+      return await execute.call(graph, this.expression);
     } else {
       // Local variable declaration
-      return await graph.get(this.source);
+      const scope = graph.scope ?? graph;
+      return await scope.get(this.source);
     }
   }
 

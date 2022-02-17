@@ -1,8 +1,10 @@
+import ExplorableObject from "../core/ExplorableObject.js";
 import {
   ConstantFormula,
   default as Formula,
   VariableFormula,
 } from "./Formula.js";
+import InheritScopeTransform from "./InheritScopeTransform.js";
 
 const formulasKey = Symbol("formulas");
 const localFormulasKey = Symbol("localFormulas");
@@ -63,24 +65,22 @@ export default function FormulasTransform(Base) {
       const formulaApplies =
         keyBinding !== null && (!this.isInScope || formula.foundInScope);
       if (formulaApplies) {
-        // Add the formula's key binding to the graph's bindings.
-        const bindings = Object.assign(
-          {},
-          formula.closure,
-          this.bindings,
-          keyBinding
-        );
-
-        // Extend the graph with the full bindings.
-        const graph = Object.create(this);
-        graph.bindings = bindings;
+        let graph;
+        if (Object.keys(keyBinding).length === 0) {
+          // No bindings; use the current graph.
+          graph = this;
+        } else {
+          // Extend the current graph, adding the key binding to its scope.
+          graph = new (InheritScopeTransform(ExplorableObject))(keyBinding);
+          graph.parent = this;
+        }
 
         // Evaluate the formula.
         value = await formula.evaluate(graph);
 
-        if (value instanceof Object && "bindings" in value) {
-          // Give the subgraph the complete bindings.
-          value.bindings = bindings;
+        if (value instanceof Object && "parent" in value) {
+          // Include the key bindings in the value's scope.
+          value.parent = graph;
         }
       }
       return value;
