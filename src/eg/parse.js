@@ -526,7 +526,21 @@ export function template(text) {
   // It's a stretch to use the separated list parser for this, but it works. We
   // treat the plain text as the list items, and the substitutions as
   // separators.
-  return separatedList(optional(templateText), substitution, regex(/^/))(text);
+  const parsed = separatedList(
+    optional(templateText),
+    substitution,
+    regex(/^/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  // Drop empty strings.
+  const filtered = parsed.value.filter((item) => item !== "");
+  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a backtick-quoted template literal.
@@ -540,10 +554,7 @@ export function templateLiteral(text) {
   if (!parsed) {
     return null;
   }
-  const { 2: contents } = parsed.value;
-  // Drop empty strings.
-  const filtered = contents.filter((item) => item !== "");
-  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
+  const { 2: value } = parsed.value;
   return {
     value,
     rest: parsed.rest,

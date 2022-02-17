@@ -20,4 +20,15 @@ describe("execute", () => {
     const result = await execute.call(graph, code);
     assert.equal(result, "Hello world");
   });
+
+  it("can resolve substitutions in a template literal", async () => {
+    const graph = new ExplorableObject({
+      name: "world",
+    });
+
+    const code = [ops.concat, "Hello, ", [ops.scope, "name"], "."];
+
+    const result = await execute.call(graph, code);
+    assert.equal(result, "Hello, world.");
+  });
 });
