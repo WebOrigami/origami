@@ -11,7 +11,7 @@ const fixturesGraph = new (ImplicitModulesTransform(ExplorableFiles))(
   fixturesDirectory
 );
 
-describe.only("Fixture name goes here", () => {
+describe("Fixture name goes here", () => {
   it("runs", async () => {
     const template = await fixturesGraph.get("template.pkt");
     const result = await pkt.call(fixturesGraph, template);
