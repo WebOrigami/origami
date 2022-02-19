@@ -15,8 +15,9 @@ describe("Fixture name goes here", () => {
   it("runs", async () => {
     const template = await fixturesGraph.get("template.pkt");
     const result = await pkt.call(fixturesGraph, template);
+    const normalized = result.toString().replace(/\r\n/g, "\n");
     assert.equal(
-      result,
+      normalized,
       `This is a template containing substitutions.
 
 Hello, world.
