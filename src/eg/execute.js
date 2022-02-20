@@ -20,10 +20,16 @@ export default async function execute(code) {
     return code;
   }
 
-  // Evaluate each instruction in the code.
-  const evaluated = await Promise.all(
-    code.map((instruction) => execute.call(this, instruction))
-  );
+  let evaluated;
+  if (code[0] === ops.lambda) {
+    // Don't evaluate instructions, use as is.
+    evaluated = code;
+  } else {
+    // Evaluate each instruction in the code.
+    evaluated = await Promise.all(
+      code.map((instruction) => execute.call(this, instruction))
+    );
+  }
 
   // The head of the array is a graph or function, the rest are args or keys.
   let [fn, ...args] = evaluated;

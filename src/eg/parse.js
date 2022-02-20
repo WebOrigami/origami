@@ -75,6 +75,7 @@ function ellipsis(text) {
 export function expression(text) {
   return any(
     singleQuoteString,
+    taggedTemplate,
     templateLiteral,
     spaceUrl,
     spacePathCall,
@@ -515,6 +516,18 @@ export function substitution(text) {
     return null;
   }
   const { 2: value } = parsed.value;
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function taggedTemplate(text) {
+  const parsed = sequence(terminal(/^template/), templateLiteral)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.lambda, parsed.value[1]];
   return {
     value,
     rest: parsed.rest,

@@ -19,6 +19,7 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
+  taggedTemplate,
   templateLiteral,
   thisReference,
   variableName,
@@ -336,31 +337,51 @@ describe("parse", () => {
     ]);
   });
 
+  it("taggedTemplate", () => {
+    assertParse(taggedTemplate("template`Hello, ${name}.`"), [
+      ops.lambda,
+      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
+    ]);
+  });
+
   it("templateLiteral", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
   });
 
-  it("templateLiteral with substitution", () => {
-    assertParse(templateLiteral("`${x}.json`"), [
-      ops.concat,
+  it.only("templateLiteral with substitution", () => {
+    // assertParse(templateLiteral("`${x}.json`"), [
+    //   ops.concat,
+    //   [ops.scope, "x"],
+    //   ".json",
+    // ]);
+    // assertParse(templateLiteral("`foo ${x}.json bar`"), [
+    //   ops.concat,
+    //   "foo ",
+    //   [ops.scope, "x"],
+    //   ".json bar",
+    // ]);
+    // assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
+    //   ops.concat,
+    //   "foo ",
+    //   [
+    //     [ops.scope, "fn"],
+    //     [ops.scope, "a"],
+    //   ],
+    //   " bar",
+    // ]);
+    // assertParse(templateLiteral("`${`nested`}`"), "nested");
+    assertParse(templateLiteral("`${template`${x}`}`"), [
+      ops.lambda,
       [ops.scope, "x"],
-      ".json",
     ]);
-    assertParse(templateLiteral("`foo ${x}.json bar`"), [
-      ops.concat,
-      "foo ",
-      [ops.scope, "x"],
-      ".json bar",
-    ]);
-    assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
-      ops.concat,
-      "foo ",
-      [
-        [ops.scope, "fn"],
-        [ops.scope, "a"],
-      ],
-      " bar",
-    ]);
+    // assertParse(templateLiteral("`${shallowMap(people, template`${name}`}`"), [
+    //   ops.concat,
+    //   [
+    //     [ops.scope, "shallowMap"],
+    //     [ops.scope, "people"],
+    //     [ops.lambda, [ops.scope, "name"]],
+    //   ],
+    // ]);
   });
 
   it("thisReference", () => {
@@ -394,6 +415,7 @@ describe("parse", () => {
 });
 
 function assertParse(parseResult, expected) {
+  assert(parseResult);
   assert.equal(parseResult.rest, "");
   assert.deepEqual(parseResult.value, expected);
 }

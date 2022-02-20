@@ -1,5 +1,16 @@
 /// <reference path="./egcode.d.ts" />
 
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import execute from "./execute.js";
+
+export function lambda(code) {
+  return async function (value, key) {
+    const result = await execute.call(value, code);
+    return result;
+  };
+}
+lambda.toString = () => "«ops.lambda";
+
 // The scope op is a placeholder for the graph's scope.
 export const scope = Symbol("«ops.scope»");
 
@@ -26,6 +37,12 @@ export async function implicitCall(key) {
 }
 
 export async function concat(...args) {
-  return String.prototype.concat(...args);
+  const textPromises = args.map(async (arg) =>
+    ExplorableGraph.isExplorable(arg)
+      ? concat(...(await ExplorableGraph.values(arg)))
+      : arg.toString()
+  );
+  const text = await Promise.all(textPromises);
+  return text.join("");
 }
 concat.toString = () => "«ops.concat»";
