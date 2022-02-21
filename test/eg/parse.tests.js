@@ -27,7 +27,7 @@ import {
 } from "../../src/eg/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
@@ -348,40 +348,40 @@ describe("parse", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
   });
 
-  it.only("templateLiteral with substitution", () => {
-    // assertParse(templateLiteral("`${x}.json`"), [
-    //   ops.concat,
-    //   [ops.scope, "x"],
-    //   ".json",
-    // ]);
-    // assertParse(templateLiteral("`foo ${x}.json bar`"), [
-    //   ops.concat,
-    //   "foo ",
-    //   [ops.scope, "x"],
-    //   ".json bar",
-    // ]);
-    // assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
-    //   ops.concat,
-    //   "foo ",
-    //   [
-    //     [ops.scope, "fn"],
-    //     [ops.scope, "a"],
-    //   ],
-    //   " bar",
-    // ]);
-    // assertParse(templateLiteral("`${`nested`}`"), "nested");
-    assertParse(templateLiteral("`${template`${x}`}`"), [
-      ops.lambda,
+  it("templateLiteral with substitution", () => {
+    assertParse(templateLiteral("`${x}.json`"), [
+      ops.concat,
       [ops.scope, "x"],
+      ".json",
     ]);
-    // assertParse(templateLiteral("`${shallowMap(people, template`${name}`}`"), [
-    //   ops.concat,
-    //   [
-    //     [ops.scope, "shallowMap"],
-    //     [ops.scope, "people"],
-    //     [ops.lambda, [ops.scope, "name"]],
-    //   ],
-    // ]);
+    assertParse(templateLiteral("`foo ${x}.json bar`"), [
+      ops.concat,
+      "foo ",
+      [ops.scope, "x"],
+      ".json bar",
+    ]);
+    assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
+      ops.concat,
+      "foo ",
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "a"],
+      ],
+      " bar",
+    ]);
+    assertParse(templateLiteral("`${`nested`}`"), "nested");
+    assertParse(templateLiteral("`${template`${x}`}`"), [
+      ops.concat,
+      [ops.lambda, [ops.concat, [ops.scope, "x"]]],
+    ]);
+    assertParse(templateLiteral("`${shallowMap(people, template`${name}`)}`"), [
+      ops.concat,
+      [
+        [ops.scope, "shallowMap"],
+        [ops.scope, "people"],
+        [ops.lambda, [ops.concat, [ops.scope, "name"]]],
+      ],
+    ]);
   });
 
   it("thisReference", () => {

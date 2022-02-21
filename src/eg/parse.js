@@ -549,7 +549,12 @@ export function template(text) {
   }
   // Drop empty strings.
   const filtered = parsed.value.filter((item) => item !== "");
-  const value = filtered.length === 1 ? filtered[0] : [ops.concat, ...filtered];
+  // Return a concatenation of the values. If there's just one string,
+  // return that directly.
+  const value =
+    filtered.length === 1 && typeof filtered[0] === "string"
+      ? filtered[0]
+      : [ops.concat, ...filtered];
   return {
     value,
     rest: parsed.rest,
