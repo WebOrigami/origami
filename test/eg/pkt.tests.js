@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import pkt from "../../src/eg/builtins/pkt.js";
+import shallowMap from "../../src/eg/builtins/shallowMap.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import ImplicitModulesTransform from "../../src/node/ImplicitModulesTransform.js";
 import assert from "../assert.js";
@@ -32,6 +33,7 @@ Hello, Alice.
     const template = "People:\n${shallowMap(people, template`${name}\n`)}";
     const graph = ExplorableGraph.from({
       people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
+      shallowMap,
     });
     const result = await pkt.call(graph, template);
     assert.equal(
@@ -39,7 +41,8 @@ Hello, Alice.
       `People:
 Alice
 Bob
-Carol`
+Carol
+`
     );
   });
 });
