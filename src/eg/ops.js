@@ -16,7 +16,21 @@ export function lambda(code) {
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }
-      graph.parent = parent;
+      class Hack {
+        async *[Symbol.asyncIterator]() {}
+
+        async get(k) {
+          switch (k) {
+            case "@key":
+              return key;
+            case "@value":
+              return value;
+          }
+        }
+      }
+      const builtIns = new (InheritScopeTransform(Hack))();
+      builtIns.parent = parent;
+      graph.parent = builtIns;
     }
     const result = await execute.call(graph, code);
     return result;

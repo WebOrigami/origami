@@ -47,4 +47,20 @@ Hello, Carol.
 `
     );
   });
+
+  it.only("template has access to @key and @value", async () => {
+    const template = "${shallowMap(array, template`${@key}: ${@value}\n`)}";
+    const graph = ExplorableGraph.from({
+      array: ["a", "b", "c"],
+      shallowMap,
+    });
+    const result = await pkt.call(graph, template);
+    assert.equal(
+      result,
+      `0: a
+1: b
+2: c
+`
+    );
+  });
 });

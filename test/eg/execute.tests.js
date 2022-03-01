@@ -49,7 +49,7 @@ describe("execute", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  it.only("lambda extends scope of value passed to it", async () => {
+  it("lambda extends scope of value passed to it", async () => {
     const graph = new ExplorableObject({
       a: "Defined by graph",
     });
@@ -65,6 +65,14 @@ describe("execute", () => {
     const fnB = ops.lambda.call(graph, [ops.scope, "b"]);
     const resultB = await fnB(value, key);
     assert.equal(resultB, "Defined by value");
+
+    const fnKey = ops.lambda.call(graph, [ops.scope, "@key"]);
+    const resultKey = await fnKey(value, key);
+    assert.equal(resultKey, "key");
+
+    const fnValue = ops.lambda.call(graph, [ops.scope, "@value"]);
+    const resultValue = await fnValue(value, key);
+    assert.deepEqual(resultValue, value);
   });
 
   it("concat can concatenate graph values", async () => {
