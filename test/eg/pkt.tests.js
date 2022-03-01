@@ -30,18 +30,20 @@ Hello, Alice.
   });
 
   it("can map data to a nested template", async () => {
-    const template = "People:\n${shallowMap(people, template`${name}\n`)}";
+    const template =
+      "Greetings:\n${shallowMap(people, template`${greeting}, ${name}.\n`)}";
     const graph = ExplorableGraph.from({
+      greeting: "Hello",
       people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       shallowMap,
     });
     const result = await pkt.call(graph, template);
     assert.equal(
       result,
-      `People:
-Alice
-Bob
-Carol
+      `Greetings:
+Hello, Alice.
+Hello, Bob.
+Hello, Carol.
 `
     );
   });
