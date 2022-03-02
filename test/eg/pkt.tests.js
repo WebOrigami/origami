@@ -48,7 +48,7 @@ Hello, Carol.
     );
   });
 
-  it.only("template has access to @key and @value", async () => {
+  it("template has access to @key and @value", async () => {
     const template = "${shallowMap(array, template`${@key}: ${@value}\n`)}";
     const graph = ExplorableGraph.from({
       array: ["a", "b", "c"],

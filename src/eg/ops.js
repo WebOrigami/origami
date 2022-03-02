@@ -2,36 +2,46 @@
 
 import InheritScopeTransform from "../app/InheritScopeTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { isPlainObject, transformObject } from "../core/utilities.js";
 import execute from "./execute.js";
 
 export function lambda(code) {
   const parent = this;
   return async function (value, key) {
-    // Make value's parent the graph that invoked the lambda.
-    // REVIEW: Not sure if value scope should be extended here or in
-    // MapGraph/shallowMap
-    let graph = ExplorableGraph.from(value);
-    if (graph.parent === undefined) {
-      if (!("parent" in graph)) {
-        graph = transformObject(InheritScopeTransform, graph);
-      }
-      class Hack {
-        async *[Symbol.asyncIterator]() {}
+    class Hack {
+      async *[Symbol.asyncIterator]() {}
 
-        async get(k) {
-          switch (k) {
-            case "@key":
-              return key;
-            case "@value":
-              return value;
-          }
+      async get(k) {
+        switch (k) {
+          case "@key":
+            return key;
+          case "@value":
+            return value;
         }
       }
-      const builtIns = new (InheritScopeTransform(Hack))();
-      builtIns.parent = parent;
-      graph.parent = builtIns;
     }
+    const builtIns = new (InheritScopeTransform(Hack))();
+    builtIns.parent = parent;
+
+    let graph;
+    // TODO: Share with ExplorableObject isKeyExplorable
+    const isValueExplorable =
+      value instanceof Array ||
+      value instanceof Function ||
+      ExplorableGraph.isExplorable(value) ||
+      isPlainObject(value);
+    if (isValueExplorable) {
+      graph = ExplorableGraph.from(value);
+      if (graph.parent === undefined) {
+        if (!("parent" in graph)) {
+          graph = transformObject(InheritScopeTransform, graph);
+        }
+        graph.parent = builtIns;
+      }
+    } else {
+      graph = builtIns;
+    }
+
     const result = await execute.call(graph, code);
     return result;
   };
@@ -67,7 +77,7 @@ export async function concat(...args) {
   const textPromises = args.map(async (arg) =>
     ExplorableGraph.isExplorable(arg)
       ? concat(...(await ExplorableGraph.values(arg)))
-      : arg
+      : arg !== undefined
       ? arg.toString()
       : "undefined"
   );
