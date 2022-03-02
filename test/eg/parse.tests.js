@@ -329,7 +329,7 @@ describe("parse", () => {
       "foo",
       "bar.json",
     ]);
-    assertParse(spaceUrl("http example.org ${x} data.json"), [
+    assertParse(spaceUrl("http example.org {{x}} data.json"), [
       [ops.scope, "http"],
       "example.org",
       [ops.scope, "x"],
@@ -338,7 +338,7 @@ describe("parse", () => {
   });
 
   it("taggedTemplate", () => {
-    assertParse(taggedTemplate("template`Hello, ${name}.`"), [
+    assertParse(taggedTemplate("template`Hello, {{name}}.`"), [
       ops.lambda,
       [ops.concat, "Hello, ", [ops.scope, "name"], "."],
     ]);
@@ -349,18 +349,18 @@ describe("parse", () => {
   });
 
   it("templateLiteral with substitution", () => {
-    assertParse(templateLiteral("`${x}.json`"), [
+    assertParse(templateLiteral("`{{x}}.json`"), [
       ops.concat,
       [ops.scope, "x"],
       ".json",
     ]);
-    assertParse(templateLiteral("`foo ${x}.json bar`"), [
+    assertParse(templateLiteral("`foo {{x}}.json bar`"), [
       ops.concat,
       "foo ",
       [ops.scope, "x"],
       ".json bar",
     ]);
-    assertParse(templateLiteral("`foo ${ fn(a) } bar`"), [
+    assertParse(templateLiteral("`foo {{ fn(a) }} bar`"), [
       ops.concat,
       "foo ",
       [
@@ -369,19 +369,22 @@ describe("parse", () => {
       ],
       " bar",
     ]);
-    assertParse(templateLiteral("`${`nested`}`"), "nested");
-    assertParse(templateLiteral("`${template`${x}`}`"), [
+    assertParse(templateLiteral("`{{`nested`}}`"), "nested");
+    assertParse(templateLiteral("`{{template`{{x}}`}}`"), [
       ops.concat,
       [ops.lambda, [ops.concat, [ops.scope, "x"]]],
     ]);
-    assertParse(templateLiteral("`${shallowMap(people, template`${name}`)}`"), [
-      ops.concat,
+    assertParse(
+      templateLiteral("`{{shallowMap(people, template`{{name}}`)}}`"),
       [
-        [ops.scope, "shallowMap"],
-        [ops.scope, "people"],
-        [ops.lambda, [ops.concat, [ops.scope, "name"]]],
-      ],
-    ]);
+        ops.concat,
+        [
+          [ops.scope, "shallowMap"],
+          [ops.scope, "people"],
+          [ops.lambda, [ops.concat, [ops.scope, "name"]]],
+        ],
+      ]
+    );
   });
 
   it("thisReference", () => {

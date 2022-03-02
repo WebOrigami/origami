@@ -83,7 +83,7 @@ describe("GhostValuesTransform", () => {
     const graph = new GhostFormulasObject({
       "{x}+": {
         "{y}+": {
-          "value = `${x}-${y}`": "",
+          "value = `{{x}}-{{y}}`": "",
         },
       },
       foo: {

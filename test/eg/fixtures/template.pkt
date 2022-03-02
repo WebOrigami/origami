@@ -1,4 +1,4 @@
 This is a template containing substitutions.
 
-${ plain.txt }
-${ greet('Alice') }
+{{ plain.txt }}
+{{ greet('Alice') }}

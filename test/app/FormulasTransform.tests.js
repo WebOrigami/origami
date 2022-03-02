@@ -79,7 +79,7 @@ describe("FormulasTransform", () => {
 
   it("can pass variable name to right-hand side", async () => {
     const fixture = new FormulasObject({
-      "{name} = `Hello, ${name}.`": "",
+      "{name} = `Hello, {{name}}.`": "",
       Carol: "Hey, Carol.", // Explicit values preferred over formulas.
       "David = 'Hi, David.'": "", // Constant formulas preferred over patterns.
     });
@@ -93,7 +93,7 @@ describe("FormulasTransform", () => {
   it("can inherit bound variables", async () => {
     const fixture = new (InheritScopeTransform(FormulasObject))({
       "{x}": {
-        "{y} = `${x}${y}`": "",
+        "{y} = `{{x}}{{y}}`": "",
       },
     });
     assert.equal(

@@ -31,7 +31,7 @@ Hello, Alice.
 
   it("can map data to a nested template", async () => {
     const template =
-      "Greetings:\n${shallowMap(people, template`${greeting}, ${name}.\n`)}";
+      "Greetings:\n{{shallowMap(people, template`{{greeting}}, {{name}}.\n`)}}";
     const graph = ExplorableGraph.from({
       greeting: "Hello",
       people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
@@ -49,7 +49,8 @@ Hello, Carol.
   });
 
   it("template has access to @key and @value", async () => {
-    const template = "${shallowMap(array, template`${@key}: ${@value}\n`)}";
+    const template =
+      "{{ shallowMap(array, template`{{ @key }}: {{ @value }}\n`) }}";
     const graph = ExplorableGraph.from({
       array: ["a", "b", "c"],
       shallowMap,

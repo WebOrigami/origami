@@ -148,7 +148,7 @@ describe("MetaTransform", () => {
   it("can inherit bound variables", async () => {
     const fixture = new (MetaTransform(ExplorableObject))({
       "{x}": {
-        "{y} = `${x}${y}`": "",
+        "{y} = `{{x}}{{y}}`": "",
       },
     });
     assert.equal(

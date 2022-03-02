@@ -503,14 +503,14 @@ export function spaceUrlPath(text) {
   };
 }
 
-// Parse a substitution like ${foo} found in an backtick template.
+// Parse a substitution like {{foo}} found in an backtick template.
 export function substitution(text) {
   const parsed = sequence(
-    terminal(/^\$\{/),
+    terminal(/^\{\{/),
     optionalWhitespace,
     expression,
     optionalWhitespace,
-    terminal(/^\}/)
+    terminal(/^\}\}/)
   )(text);
   if (!parsed) {
     return null;
@@ -581,8 +581,8 @@ export function templateLiteral(text) {
 
 // Parse the text in a template.
 export function templateText(text) {
-  // Everything but ` and $
-  return regex(/^[^\`\$]*/)(text);
+  // Everything but backtick or left curly brace.
+  return regex(/^[^\`\{]*/)(text);
 }
 
 // Parse a reference to "this".
