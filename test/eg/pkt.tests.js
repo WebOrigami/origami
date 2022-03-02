@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import map from "../../src/eg/builtins/map.js";
 import pkt from "../../src/eg/builtins/pkt.js";
 import shallowMap from "../../src/eg/builtins/shallowMap.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
@@ -31,7 +32,7 @@ Hello, Alice.
 
   it("can map data to a nested template", async () => {
     const template =
-      "Greetings:\n{{shallowMap(people, template`{{greeting}}, {{name}}.\n`)}}";
+      "Greetings:\n{{shallowMap(people, pika`{{greeting}}, {{name}}.\n`)}}";
     const graph = ExplorableGraph.from({
       greeting: "Hello",
       people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
@@ -49,11 +50,10 @@ Hello, Carol.
   });
 
   it("template has access to @key and @value", async () => {
-    const template =
-      "{{ shallowMap(array, template`{{ @key }}: {{ @value }}\n`) }}";
+    const template = "{{ map(array, pika`{{ @key }}: {{ @value }}\n`) }}";
     const graph = ExplorableGraph.from({
       array: ["a", "b", "c"],
-      shallowMap,
+      map,
     });
     const result = await pkt.call(graph, template);
     assert.equal(

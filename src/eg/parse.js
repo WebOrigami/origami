@@ -523,7 +523,7 @@ export function substitution(text) {
 }
 
 export function taggedTemplate(text) {
-  const parsed = sequence(terminal(/^template/), templateLiteral)(text);
+  const parsed = sequence(terminal(/^pika/), templateLiteral)(text);
   if (!parsed) {
     return null;
   }

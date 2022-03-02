@@ -338,7 +338,7 @@ describe("parse", () => {
   });
 
   it("taggedTemplate", () => {
-    assertParse(taggedTemplate("template`Hello, {{name}}.`"), [
+    assertParse(taggedTemplate("pika`Hello, {{name}}.`"), [
       ops.lambda,
       [ops.concat, "Hello, ", [ops.scope, "name"], "."],
     ]);
@@ -370,21 +370,18 @@ describe("parse", () => {
       " bar",
     ]);
     assertParse(templateLiteral("`{{`nested`}}`"), "nested");
-    assertParse(templateLiteral("`{{template`{{x}}`}}`"), [
+    assertParse(templateLiteral("`{{pika`{{x}}`}}`"), [
       ops.concat,
       [ops.lambda, [ops.concat, [ops.scope, "x"]]],
     ]);
-    assertParse(
-      templateLiteral("`{{shallowMap(people, template`{{name}}`)}}`"),
+    assertParse(templateLiteral("`{{shallowMap(people, pika`{{name}}`)}}`"), [
+      ops.concat,
       [
-        ops.concat,
-        [
-          [ops.scope, "shallowMap"],
-          [ops.scope, "people"],
-          [ops.lambda, [ops.concat, [ops.scope, "name"]]],
-        ],
-      ]
-    );
+        [ops.scope, "shallowMap"],
+        [ops.scope, "people"],
+        [ops.lambda, [ops.concat, [ops.scope, "name"]]],
+      ],
+    ]);
   });
 
   it("thisReference", () => {
