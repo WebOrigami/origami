@@ -72,7 +72,8 @@ describe("execute", () => {
 
     const fnValue = ops.lambda.call(graph, [ops.scope, "@value"]);
     const resultValue = await fnValue(value, key);
-    assert.deepEqual(resultValue, value);
+    const resultPlain = await ExplorableGraph.plain(resultValue);
+    assert.deepEqual(resultPlain, value);
   });
 
   it("concat can concatenate graph values", async () => {

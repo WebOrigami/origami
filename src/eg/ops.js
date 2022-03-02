@@ -2,35 +2,37 @@
 
 import InheritScopeTransform from "../app/InheritScopeTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject, transformObject } from "../core/utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
+import { transformObject } from "../core/utilities.js";
 import execute from "./execute.js";
 
+/**
+ * Return a function that will invoke the given code.
+ *
+ * The value passed to the function will have its scope extended to include the
+ * graph defining the lambda. The scope will also include two special built-in
+ * values: `@value` (which returns the value passed to the function) and `@key`
+ * (which returns the optional key passed to the function).
+ *
+ * @this {Explorable}
+ * @param {Code} code
+ */
 export function lambda(code) {
   const parent = this;
   return async function (value, key) {
-    class Hack {
-      async *[Symbol.asyncIterator]() {}
-
-      async get(k) {
-        switch (k) {
-          case "@key":
-            return key;
-          case "@value":
-            return value;
-        }
-      }
-    }
-    const builtIns = new (InheritScopeTransform(Hack))();
+    // Add special built-in values to scope.
+    const builtIns = new (InheritScopeTransform(ExplorableObject))({
+      "@key": key,
+      "@value": value,
+    });
     builtIns.parent = parent;
 
+    // Add the parent graph defining the lambda to the scope.
     let graph;
-    // TODO: Share with ExplorableObject isKeyExplorable
-    const isValueExplorable =
-      value instanceof Array ||
-      value instanceof Function ||
-      ExplorableGraph.isExplorable(value) ||
-      isPlainObject(value);
-    if (isValueExplorable) {
+    if (
+      typeof value !== "string" &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
       graph = ExplorableGraph.from(value);
       if (graph.parent === undefined) {
         if (!("parent" in graph)) {
@@ -75,7 +77,9 @@ export async function implicitCall(key) {
 
 export async function concat(...args) {
   const textPromises = args.map(async (arg) =>
-    ExplorableGraph.isExplorable(arg)
+    typeof arg === "string"
+      ? arg
+      : ExplorableGraph.canCastToExplorable(arg)
       ? concat(...(await ExplorableGraph.values(arg)))
       : arg !== undefined
       ? arg.toString()
