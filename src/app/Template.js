@@ -2,10 +2,10 @@ import DefaultPages from "../app/DefaultPages.js";
 import StringWithGraph from "../app/StringWithGraph.js";
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import * as utilities from "../core/utilities.js";
 import {
   extractFrontMatter,
   isPlainObject,
+  parse,
   transformObject,
 } from "../core/utilities.js";
 import MetaTransform from "./MetaTransform.js";
@@ -86,7 +86,7 @@ export default class Template {
     // Step 1: parse the input if necessary.
     let parsed = input;
     if (typeof input === "string" || input instanceof Buffer) {
-      parsed = utilities.parse(String(input));
+      parsed = parse(String(input));
       if (typeof parsed === "string") {
         // Interpret the parsed string as a `bodyText` field.
         parsed = { bodyText: parsed };

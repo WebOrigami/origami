@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "../../exports.js";
 import CachedValuesTransform from "../../src/common/CachedValuesTransform.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 

@@ -1,10 +1,9 @@
 import path from "path";
-import HandlebarsTemplate from "../app/HandlebarsTemplate.js";
-import PikaTemplate from "../app/PikaTemplate.js";
 
 const defaultLoaders = {
   ".css": bufferToString,
-  ".hbs": function (obj) {
+  ".hbs": async function (obj) {
+    const HandlebarsTemplate = await import("../app/HandlebarsTemplate.js");
     return new HandlebarsTemplate(bufferToString(obj), this);
   },
   ".htm": bufferToString,
@@ -12,7 +11,8 @@ const defaultLoaders = {
   ".js": bufferToString,
   ".json": bufferToString,
   ".md": bufferToString,
-  ".pkt": function (obj) {
+  ".pkt": async function (obj) {
+    const PikaTemplate = await import("../app/PikaTemplate.js");
     return new PikaTemplate(bufferToString(obj), this);
   },
   ".txt": bufferToString,
@@ -34,7 +34,7 @@ export default function FileLoadersTransform(Base) {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
-          value = loader.call(this, value);
+          value = await loader.call(this, value);
         }
       }
       return value;

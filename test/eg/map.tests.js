@@ -1,4 +1,4 @@
-import { ExplorableGraph } from "../../exports.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import map from "../../src/eg/builtins/map.js";
 import assert from "../assert.js";
 

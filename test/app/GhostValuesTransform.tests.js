@@ -1,6 +1,6 @@
-import { ExplorableGraph } from "../../exports.js";
 import FormulasTransform from "../../src/app/FormulasTransform.js";
 import GhostValuesTransform from "../../src/app/GhostValuesTransform.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
