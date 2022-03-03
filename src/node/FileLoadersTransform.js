@@ -3,7 +3,9 @@ import path from "path";
 const defaultLoaders = {
   ".css": bufferToString,
   ".hbs": async function (obj) {
-    const HandlebarsTemplate = await import("../app/HandlebarsTemplate.js");
+    const { default: HandlebarsTemplate } = await import(
+      "../app/HandlebarsTemplate.js"
+    );
     return new HandlebarsTemplate(bufferToString(obj), this);
   },
   ".htm": bufferToString,
@@ -12,7 +14,7 @@ const defaultLoaders = {
   ".json": bufferToString,
   ".md": bufferToString,
   ".pkt": async function (obj) {
-    const PikaTemplate = await import("../app/PikaTemplate.js");
+    const { default: PikaTemplate } = await import("../app/PikaTemplate.js");
     return new PikaTemplate(bufferToString(obj), this);
   },
   ".txt": bufferToString,
