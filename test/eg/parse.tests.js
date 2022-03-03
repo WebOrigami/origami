@@ -346,6 +346,7 @@ describe("parse", () => {
 
   it("templateLiteral", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
+    assertParse(templateLiteral("`foo { bar } baz`"), "foo { bar } baz");
   });
 
   it("templateLiteral with substitution", () => {

@@ -547,8 +547,8 @@ export function template(text) {
   if (!parsed) {
     return null;
   }
-  // Drop empty strings.
-  const filtered = parsed.value.filter((item) => item !== "");
+  // Drop empty/null strings.
+  const filtered = parsed.value.filter((item) => item);
   // Return a concatenation of the values. If there's just one string,
   // return that directly.
   const value =
@@ -581,8 +581,21 @@ export function templateLiteral(text) {
 
 // Parse the text in a template.
 export function templateText(text) {
-  // Everything but backtick or left curly brace.
-  return regex(/^[^\`\{]*/)(text);
+  // Match up to the first backtick or double left curly bracket. This seems
+  // challenging/impossible in JavaScript regular expressions, especially
+  // without support for lookbehind assertions, so we match this by hand.
+  let i;
+  for (i = 0; i < text.length; i++) {
+    if (text[i] === "`" || (text[i] === "{" && text[i + 1] === "{")) {
+      break;
+    }
+  }
+  return i > 0
+    ? {
+        value: text.slice(0, i),
+        rest: text.slice(i),
+      }
+    : null;
 }
 
 // Parse a reference to "this".
