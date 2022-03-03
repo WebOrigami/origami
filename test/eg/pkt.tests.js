@@ -14,7 +14,7 @@ const fixturesGraph = new (ImplicitModulesTransform(ExplorableFiles))(
   fixturesDirectory
 );
 
-describe("pkt (pika template)", () => {
+describe.only("pkt (pika template)", () => {
   it("substitutes values from the supplied graph", async () => {
     const template = await fixturesGraph.get("template.pkt");
     const result = await pkt.call(fixturesGraph, template);

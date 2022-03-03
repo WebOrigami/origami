@@ -1,5 +1,6 @@
 import path from "path";
 import HandlebarsTemplate from "../app/HandlebarsTemplate.js";
+import PikaTemplate from "../app/PikaTemplate.js";
 
 const defaultLoaders = {
   ".css": bufferToString,
@@ -11,6 +12,9 @@ const defaultLoaders = {
   ".js": bufferToString,
   ".json": bufferToString,
   ".md": bufferToString,
+  ".pkt": function (obj) {
+    return new PikaTemplate(bufferToString(obj), this);
+  },
   ".txt": bufferToString,
   ".xhtml": bufferToString,
   ".yml": bufferToString,
