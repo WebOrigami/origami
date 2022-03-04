@@ -21,7 +21,8 @@ export default class PikaTemplate extends Template {
       } else {
         // Extend graph with data (if present).
         extended = ExplorableGraph.from(data);
-        if (extended.parent === undefined) {
+        const parent = /** @type {any} */ (extended).parent;
+        if (parent === undefined) {
           if (!("parent" in extended)) {
             extended = transformObject(InheritScopeTransform, extended);
           }

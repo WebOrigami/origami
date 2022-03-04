@@ -76,7 +76,7 @@ export default class Template {
   }
 
   async compile() {
-    return async (data) => "";
+    return async (data, graph) => "";
   }
 
   // Extract the data from the given input.

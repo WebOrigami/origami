@@ -34,7 +34,8 @@ export function lambda(code) {
       ExplorableGraph.canCastToExplorable(value)
     ) {
       graph = ExplorableGraph.from(value);
-      if (graph.parent === undefined) {
+      const parent = /** @type {any} */ (graph).parent;
+      if (parent === undefined) {
         if (!("parent" in graph)) {
           graph = transformObject(InheritScopeTransform, graph);
         }

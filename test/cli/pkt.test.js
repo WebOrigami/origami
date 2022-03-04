@@ -15,7 +15,7 @@ describe("pkt (pika template)", () => {
   it("substitutes values from the supplied graph", async () => {
     const template = await fixturesGraph.get("inline.pkt");
     const result = await pkt.call(fixturesGraph, template);
-    const normalized = result.toString().replace(/\r\n/g, "\n");
+    const normalized = result?.toString().replace(/\r\n/g, "\n");
     assert.equal(
       normalized,
       `This is a template containing substitutions.

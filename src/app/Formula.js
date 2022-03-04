@@ -53,7 +53,7 @@ export default class Formula {
       return await execute.call(graph, code);
     } else {
       // Local variable declaration
-      const scope = graph.scope ?? graph;
+      const scope = /** @type {any} */ (graph).scope ?? graph;
       return await scope.get(this.source);
     }
   }
