@@ -7,6 +7,7 @@ import {
   getReference,
   group,
   key,
+  lambda,
   list,
   literal,
   number,
@@ -19,7 +20,6 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
-  taggedTemplate,
   templateLiteral,
   thisReference,
   variableName,
@@ -205,6 +205,14 @@ describe("parse", () => {
     assertParse(key("…a"), ["=", "a", [ops.scope, [ops.thisKey]]]);
   });
 
+  it("lambda", () => {
+    assertParse(lambda("=> message"), [ops.lambda, [ops.scope, "message"]]);
+    assertParse(lambda("=>`Hello, {{name}}.`"), [
+      ops.lambda,
+      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
+    ]);
+  });
+
   it("list", () => {
     assert.equal(list(""), null);
     assertParse(list(" a"), [[ops.scope, "a"]]);
@@ -337,13 +345,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("taggedTemplate", () => {
-    assertParse(taggedTemplate("pika`Hello, {{name}}.`"), [
-      ops.lambda,
-      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
-    ]);
-  });
-
   it("templateLiteral", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
     assertParse(templateLiteral("`foo { bar } baz`"), "foo { bar } baz");
@@ -371,11 +372,7 @@ describe("parse", () => {
       " bar",
     ]);
     assertParse(templateLiteral("`{{`nested`}}`"), "nested");
-    assertParse(templateLiteral("`{{pika`{{x}}`}}`"), [
-      ops.concat,
-      [ops.lambda, [ops.concat, [ops.scope, "x"]]],
-    ]);
-    assertParse(templateLiteral("`{{shallowMap(people, pika`{{name}}`)}}`"), [
+    assertParse(templateLiteral("`{{shallowMap(people, =>`{{name}}`)}}`"), [
       ops.concat,
       [
         [ops.scope, "shallowMap"],

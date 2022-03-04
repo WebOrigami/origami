@@ -37,7 +37,7 @@ Hello, world.
 
   it("can map data to a nested template", async () => {
     const template = new PikaTemplate(
-      "Greetings:\n{{shallowMap(people, pika`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{shallowMap(people, =>`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = ExplorableGraph.from({
       greeting: "Hello",
@@ -57,7 +57,7 @@ Hello, Carol.
 
   it("gives template access to @key and @value", async () => {
     const template = new PikaTemplate(
-      "{{ map(array, pika`{{ @key }}: {{ @value }}\n`) }}"
+      "{{ map(array, =>`{{ @key }}: {{ @value }}\n`) }}"
     );
     const graph = ExplorableGraph.from({
       array: ["a", "b", "c"],

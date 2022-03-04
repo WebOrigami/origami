@@ -12,3 +12,6 @@ export default async function pkt(templateText, input) {
   const template = new PikaTemplate(templateText, this);
   return await template.apply(input, this);
 }
+
+pkt.usage = `pkt template, input\tApply a Pika template to input data`;
+pkt.documentation = "https://explorablegraph.org/pika/builtins.html#pkt";

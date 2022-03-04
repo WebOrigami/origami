@@ -75,7 +75,7 @@ function ellipsis(text) {
 export function expression(text) {
   return any(
     singleQuoteString,
-    taggedTemplate,
+    lambda,
     templateLiteral,
     spaceUrl,
     spacePathCall,
@@ -187,6 +187,24 @@ export function implicitParensArgs(text) {
 // A key in an Explorable App
 export function key(text) {
   return any(assignment, inheritableDeclaration, declaration)(text);
+}
+
+// A lambda expression
+export function lambda(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    terminal(/^=>/),
+    optionalWhitespace,
+    expression
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.lambda, parsed.value[3]];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a comma-separated list with at least one term.
@@ -516,18 +534,6 @@ export function substitution(text) {
     return null;
   }
   const { 2: value } = parsed.value;
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-export function taggedTemplate(text) {
-  const parsed = sequence(terminal(/^pika/), templateLiteral)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.lambda, parsed.value[1]];
   return {
     value,
     rest: parsed.rest,
