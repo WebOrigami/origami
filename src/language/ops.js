@@ -1,6 +1,7 @@
 /// <reference path="./egcode.d.ts" />
 
 import InheritScopeTransform from "../app/InheritScopeTransform.js";
+import concatBuiltin from "../cli/builtins/concat.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { transformObject } from "../core/utilities.js";
@@ -77,16 +78,6 @@ export async function implicitCall(key) {
 }
 
 export async function concat(...args) {
-  const textPromises = args.map(async (arg) =>
-    typeof arg === "string"
-      ? arg
-      : ExplorableGraph.canCastToExplorable(arg)
-      ? concat(...(await ExplorableGraph.values(arg)))
-      : arg !== undefined
-      ? arg.toString()
-      : "undefined"
-  );
-  const text = await Promise.all(textPromises);
-  return text.join("");
+  return concatBuiltin(...args);
 }
 concat.toString = () => "«ops.concat»";
