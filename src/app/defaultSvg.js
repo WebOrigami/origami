@@ -1,4 +1,4 @@
-import svg from "../cli/builtins/svg.js";
+import svg from "../builtins/svg.js";
 
 /**
  * Return a default SVG file representing the current graph.
