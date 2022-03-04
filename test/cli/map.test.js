@@ -1,5 +1,5 @@
+import map from "../../src/cli/builtins/map.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import map from "../../src/eg/builtins/map.js";
 import assert from "../assert.js";
 
 describe("map", () => {

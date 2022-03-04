@@ -2,10 +2,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { ExplorableFiles } from "../../exports.js";
 import PikaTemplate from "../../src/app/PikaTemplate.js";
+import map from "../../src/cli/builtins/map.js";
+import shallowMap from "../../src/cli/builtins/shallowMap.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import map from "../../src/eg/builtins/map.js";
-import shallowMap from "../../src/eg/builtins/shallowMap.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

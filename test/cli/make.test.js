@@ -1,7 +1,7 @@
 import FormulasTransform from "../../src/app/FormulasTransform.js";
+import make from "../../src/cli/builtins/make.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import make from "../../src/eg/builtins/make.js";
 import assert from "../assert.js";
 
 describe("make", () => {

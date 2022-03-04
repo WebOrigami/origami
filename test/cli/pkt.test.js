@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import pkt from "../../src/eg/builtins/pkt.js";
+import pkt from "../../src/cli/builtins/pkt.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import ImplicitModulesTransform from "../../src/node/ImplicitModulesTransform.js";
 import assert from "../assert.js";

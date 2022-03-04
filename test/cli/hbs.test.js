@@ -1,4 +1,4 @@
-import hbs from "../../src/eg/builtins/hbs.js";
+import hbs from "../../src/cli/builtins/hbs.js";
 import assert from "../assert.js";
 
 describe("hbs (Handlebars) command", () => {

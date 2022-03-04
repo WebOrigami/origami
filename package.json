@@ -3,8 +3,7 @@
   "version": "0.0.7",
   "type": "module",
   "bin": {
-    "eg": "src/eg/eg.js",
-    "pika": "src/eg/eg.js"
+    "pika": "src/cli/pika.js"
   },
   "main": "./exports.js",
   "devDependencies": {

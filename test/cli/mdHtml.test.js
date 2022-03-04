@@ -1,4 +1,4 @@
-import mdHtml from "../../src/eg/builtins/mdHtml.js";
+import mdHtml from "../../src/cli/builtins/mdHtml.js";
 import assert from "../assert.js";
 
 describe("mdHtml", () => {
