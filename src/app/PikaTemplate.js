@@ -1,7 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
-import execute from "../eg/execute.js";
-import * as parse from "../eg/parse.js";
+import execute from "../language/execute.js";
+import * as parse from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import Template from "./Template.js";
 

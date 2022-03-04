@@ -1,6 +1,6 @@
-import execute from "../eg/execute.js";
-import * as ops from "../eg/ops.js";
-import * as parse from "../eg/parse.js";
+import execute from "../language/execute.js";
+import * as ops from "../language/ops.js";
+import * as parse from "../language/parse.js";
 import { additionsKey } from "./AdditionsTransform.js";
 import { ghostGraphExtension } from "./GhostValuesTransform.js";
 

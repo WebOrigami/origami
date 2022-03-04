@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import process from "process";
-import execute from "../../src/eg/execute.js";
-import * as ops from "../../src/eg/ops.js";
+import execute from "../language/execute.js";
+import * as ops from "../language/ops.js";
+import * as parse from "../language/parse.js";
 import config from "./builtins/config.js";
-import * as parse from "./parse.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {

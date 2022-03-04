@@ -1,4 +1,4 @@
-import * as ops from "../../src/eg/ops.js";
+import * as ops from "../../src/language/ops.js";
 import {
   args,
   assignment,
@@ -24,7 +24,7 @@ import {
   thisReference,
   variableName,
   variableReference,
-} from "../../src/eg/parse.js";
+} from "../../src/language/parse.js";
 import assert from "../assert.js";
 
 describe("parse", () => {

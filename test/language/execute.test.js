@@ -1,7 +1,7 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import execute from "../../src/eg/execute.js";
-import * as ops from "../../src/eg/ops.js";
+import execute from "../../src/language/execute.js";
+import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("execute", () => {

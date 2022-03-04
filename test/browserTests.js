@@ -15,5 +15,5 @@ import "./core/ExplorableObject.test.js";
 import "./core/MapGraph.test.js";
 import "./core/utilities.test.js";
 // import "./core/ExplorableSite.test.js";
-import "./eg/execute.test.js";
-import "./eg/parse.test.js";
+import "./language/execute.test.js";
+import "./language/parse.test.js";
