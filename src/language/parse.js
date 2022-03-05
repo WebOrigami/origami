@@ -23,7 +23,7 @@ import {
   separatedList,
   sequence,
   series,
-  terminal,
+  terminal
 } from "./combinators.js";
 import * as ops from "./ops.js";
 
@@ -418,7 +418,7 @@ export function singleQuoteString(text) {
 export function slashCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    optional(terminal(/\/\//)),
+    optional(terminal(/^\/\//)),
     pathHead,
     terminal(/^\//),
     optional(slashPath)
@@ -541,38 +541,48 @@ export function substitution(text) {
 }
 
 // Parse the text and variable references in a template.
-export function template(text) {
-  // It's a stretch to use the separated list parser for this, but it works. We
-  // treat the plain text as the list items, and the substitutions as
-  // separators.
-  const parsed = separatedList(
-    optional(templateText),
-    substitution,
-    regex(/^/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  // Drop empty/null strings.
-  const filtered = parsed.value.filter((item) => item);
-  // Return a concatenation of the values. If there's just one string,
-  // return that directly.
-  const value =
-    filtered.length === 1 && typeof filtered[0] === "string"
-      ? filtered[0]
-      : [ops.concat, ...filtered];
-  return {
-    value,
-    rest: parsed.rest,
+function templateParser(allowBackticks) {
+  const textParser = templateTextParser(allowBackticks);
+  return function template(text) {
+    // It's a stretch to use the separated list parser for this, but it works. We
+    // treat the plain text as the list items, and the substitutions as
+    // separators.
+    const parsed = separatedList(
+      optional(textParser),
+      substitution,
+      regex(/^/)
+    )(text);
+    if (!parsed) {
+      return null;
+    }
+    // Drop empty/null strings.
+    const filtered = parsed.value.filter((item) => item);
+    // Return a concatenation of the values. If there's just one string,
+    // return that directly.
+    const value =
+      filtered.length === 1 && typeof filtered[0] === "string"
+        ? filtered[0]
+        : [ops.concat, ...filtered];
+    return {
+      value,
+      rest: parsed.rest,
+    };
   };
+}
+
+// Parse a template document.
+export function templateDocument(text) {
+  const allowBackticks = true;
+  return templateParser(allowBackticks)(text);
 }
 
 // Parse a backtick-quoted template literal.
 export function templateLiteral(text) {
+  const allowBackticks = false;
   const parsed = sequence(
     optionalWhitespace,
     terminal(/^`/),
-    template,
+    templateParser(allowBackticks),
     terminal(/^`/)
   )(text);
   if (!parsed) {
@@ -585,23 +595,29 @@ export function templateLiteral(text) {
   };
 }
 
-// Parse the text in a template.
-export function templateText(text) {
-  // Match up to the first backtick or double left curly bracket. This seems
-  // challenging/impossible in JavaScript regular expressions, especially
-  // without support for lookbehind assertions, so we match this by hand.
-  let i;
-  for (i = 0; i < text.length; i++) {
-    if (text[i] === "`" || (text[i] === "{" && text[i + 1] === "{")) {
-      break;
-    }
-  }
-  return i > 0
-    ? {
-        value: text.slice(0, i),
-        rest: text.slice(i),
+// Return a parser for the text of a template.
+function templateTextParser(allowBackticks) {
+  return function templateText(text) {
+    // Match up to the first backtick (if backticks aren't allowed) or double left
+    // curly bracket. This seems challenging/impossible in JavaScript regular
+    // expressions, especially without support for lookbehind assertions, so we
+    // match this by hand.
+    let i;
+    for (i = 0; i < text.length; i++) {
+      if (
+        (text[i] === "`" && !allowBackticks) ||
+        (text[i] === "{" && text[i + 1] === "{")
+      ) {
+        break;
       }
-    : null;
+    }
+    return i > 0
+      ? {
+          value: text.slice(0, i),
+          rest: text.slice(i),
+        }
+      : null;
+  };
 }
 
 // Parse a reference to "this".

@@ -21,7 +21,6 @@ export default async function pkt(
     const frontMatter = extractFrontMatter(templateText);
     if (frontMatter) {
       frontBlock = frontMatter.frontBlock;
-      templateText = frontMatter.bodyText;
     }
   }
   const template = new PikaTemplate(templateText, this);

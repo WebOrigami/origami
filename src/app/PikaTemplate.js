@@ -7,7 +7,7 @@ import Template from "./Template.js";
 
 export default class PikaTemplate extends Template {
   async compile() {
-    const parsed = await parse.template(this.template);
+    const parsed = await parse.templateDocument(this.template);
     if (!parsed || parsed.rest !== "") {
       throw new Error(`Couldn't parse template`);
     }

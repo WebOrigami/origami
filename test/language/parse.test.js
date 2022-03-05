@@ -20,6 +20,7 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
+  templateDocument,
   templateLiteral,
   thisReference,
   variableName,
@@ -343,6 +344,13 @@ describe("parse", () => {
       [ops.scope, "x"],
       "data.json",
     ]);
+  });
+
+  it("templateDocument", () => {
+    assertParse(
+      templateDocument("Documents can contain ` backticks"),
+      "Documents can contain ` backticks"
+    );
   });
 
   it("templateLiteral", () => {
