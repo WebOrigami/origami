@@ -1,16 +1,35 @@
 import PikaTemplate from "../app/PikaTemplate.js";
+import { extractFrontMatter } from "../core/utilities.js";
 
 /**
  * Apply the indicated Pika template to the given data and return the
  * result.
  *
  * @this {Explorable}
- * @param {string} templateText
+ * @param {string} templateContent
  * @param {Explorable|PlainObject|string} [input]
+ * @param {boolean} [preserveFrontMatter]
  */
-export default async function pkt(templateText, input) {
+export default async function pkt(
+  templateContent,
+  input,
+  preserveFrontMatter = false
+) {
+  let templateText = String(templateContent);
+  let frontBlock;
+  if (preserveFrontMatter) {
+    const frontMatter = extractFrontMatter(templateText);
+    if (frontMatter) {
+      frontBlock = frontMatter.frontBlock;
+      templateText = frontMatter.bodyText;
+    }
+  }
   const template = new PikaTemplate(templateText, this);
-  return await template.apply(input, this);
+  let result = await template.apply(input, this);
+  if (frontBlock) {
+    result = frontBlock + result;
+  }
+  return result;
 }
 
 pkt.usage = `pkt template, input\tApply a Pika template to input data`;
