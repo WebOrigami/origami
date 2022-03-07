@@ -88,8 +88,8 @@ export default class Template {
     if (typeof input === "string" || input instanceof Buffer) {
       parsed = parse(String(input));
       if (typeof parsed === "string") {
-        // Interpret the parsed string as a `bodyText` field.
-        parsed = { bodyText: parsed };
+        // Interpret the parsed string as an `@value` field.
+        parsed = { "@value": parsed };
       }
     }
 

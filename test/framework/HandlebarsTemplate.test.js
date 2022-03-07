@@ -2,7 +2,7 @@ import ExplorableObject from "../../src/core/ExplorableObject.js";
 import HandlebarsTemplate from "../../src/framework/HandlebarsTemplate.js";
 import assert from "../assert.js";
 
-describe("HandlebarsTemplate", () => {
+describe.skip("HandlebarsTemplate", () => {
   it("applies a template to data", async () => {
     const template = new HandlebarsTemplate(`Hello, {{name}}.`);
     const data = { name: "world" };
@@ -34,7 +34,7 @@ Hello, {{name}}.`);
 
   it("accommodates front matter in the input object", async () => {
     const template = new HandlebarsTemplate(`<h1>{{title}}</h1>
-  {{{bodyText}}}`);
+  {{{ @value }}}`);
     const data = `---
 title: Test
 ---

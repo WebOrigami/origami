@@ -52,7 +52,9 @@ export function parse(text) {
   const frontMatter = extractFrontMatter(text);
   if (frontMatter) {
     const { frontData, bodyText } = frontMatter;
-    const data = Object.assign(frontData, { bodyText });
+    const data = Object.assign(frontData, {
+      "@value": bodyText,
+    });
     return data;
   } else {
     return YAML.parse(text);

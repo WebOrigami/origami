@@ -90,7 +90,7 @@ This is the content.
 `);
     assert.deepEqual(parsed, {
       a: "Hello, a.",
-      bodyText: "This is the content.\n",
+      "@value": "This is the content.\n",
     });
   });
 });
