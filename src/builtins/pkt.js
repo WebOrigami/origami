@@ -1,5 +1,5 @@
-import PikaTemplate from "../app/PikaTemplate.js";
 import { extractFrontMatter } from "../core/utilities.js";
+import PikaTemplate from "../framework/PikaTemplate.js";
 
 /**
  * Apply the indicated Pika template to the given data and return the

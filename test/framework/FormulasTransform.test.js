@@ -1,7 +1,7 @@
-import FormulasTransform from "../../src/app/FormulasTransform.js";
-import InheritScopeTransform from "../../src/app/InheritScopeTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import FormulasTransform from "../../src/framework/FormulasTransform.js";
+import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(ExplorableObject) {}

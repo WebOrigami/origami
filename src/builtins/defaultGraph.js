@@ -1,5 +1,5 @@
 import path from "path";
-import InheritScopeTransform from "../app/InheritScopeTransform.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import ExplorableFiles from "../node/ExplorableFiles.js";
 import FileLoadersTransform from "../node/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";

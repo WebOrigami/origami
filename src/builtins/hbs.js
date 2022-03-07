@@ -1,4 +1,4 @@
-import HandlebarsTemplate from "../app/HandlebarsTemplate.js";
+import HandlebarsTemplate from "../framework/HandlebarsTemplate.js";
 
 /**
  * Apply the indicated Handlebars template to the given data and return the

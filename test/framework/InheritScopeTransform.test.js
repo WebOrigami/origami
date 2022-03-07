@@ -1,5 +1,5 @@
-import InheritScopeTransform from "../../src/app/InheritScopeTransform.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 
 describe("InheritScopeTransform", () => {

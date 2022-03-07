@@ -1,7 +1,7 @@
-import FormulasTransform from "../../src/app/FormulasTransform.js";
-import GhostValuesTransform from "../../src/app/GhostValuesTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import FormulasTransform from "../../src/framework/FormulasTransform.js";
+import GhostValuesTransform from "../../src/framework/GhostValuesTransform.js";
 import assert from "../assert.js";
 
 class GhostValuesObject extends GhostValuesTransform(ExplorableObject) {}

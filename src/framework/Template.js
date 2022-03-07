@@ -1,5 +1,3 @@
-import DefaultPages from "../app/DefaultPages.js";
-import StringWithGraph from "../app/StringWithGraph.js";
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
@@ -8,7 +6,9 @@ import {
   parse,
   transformObject,
 } from "../core/utilities.js";
+import DefaultPages from "./DefaultPages.js";
 import MetaTransform from "./MetaTransform.js";
+import StringWithGraph from "./StringWithGraph.js";
 
 export default class Template {
   constructor(text, location) {

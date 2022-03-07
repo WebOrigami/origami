@@ -1,6 +1,6 @@
-import AdditionsTransform from "../../src/app/AdditionsTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import AdditionsTransform from "../../src/framework/AdditionsTransform.js";
 import assert from "../assert.js";
 
 describe("AdditionsTransform", () => {

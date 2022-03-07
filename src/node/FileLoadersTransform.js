@@ -4,7 +4,7 @@ const defaultLoaders = {
   ".css": bufferToString,
   ".hbs": async function (obj) {
     const { default: HandlebarsTemplate } = await import(
-      "../app/HandlebarsTemplate.js"
+      "../framework/HandlebarsTemplate.js"
     );
     return new HandlebarsTemplate(bufferToString(obj), this);
   },
@@ -14,7 +14,9 @@ const defaultLoaders = {
   ".json": bufferToString,
   ".md": bufferToString,
   ".pkt": async function (obj) {
-    const { default: PikaTemplate } = await import("../app/PikaTemplate.js");
+    const { default: PikaTemplate } = await import(
+      "../framework/PikaTemplate.js"
+    );
     return new PikaTemplate(bufferToString(obj), this);
   },
   ".txt": bufferToString,

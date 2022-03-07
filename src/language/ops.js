@@ -1,10 +1,10 @@
 /// <reference path="./egcode.d.ts" />
 
-import InheritScopeTransform from "../app/InheritScopeTransform.js";
 import concatBuiltin from "../builtins/concat.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import execute from "./execute.js";
 
 /**

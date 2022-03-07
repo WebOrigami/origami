@@ -1,6 +1,6 @@
-import MetaTransform from "../app/MetaTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
+import MetaTransform from "../framework/MetaTransform.js";
 import config from "./config.js";
 
 /**

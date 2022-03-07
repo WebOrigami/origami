@@ -3,6 +3,7 @@
   "version": "0.0.7",
   "type": "module",
   "bin": {
+    "ori": "src/cli/pika.js",
     "pika": "src/cli/pika.js"
   },
   "main": "./exports.js",

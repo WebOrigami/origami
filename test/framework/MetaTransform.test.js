@@ -1,10 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import MetaTransform from "../../src/app/MetaTransform.js";
 import builtins from "../../src/cli/builtins.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import MetaTransform from "../../src/framework/MetaTransform.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 

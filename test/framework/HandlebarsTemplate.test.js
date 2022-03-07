@@ -1,5 +1,5 @@
-import HandlebarsTemplate from "../../src/app/HandlebarsTemplate.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import HandlebarsTemplate from "../../src/framework/HandlebarsTemplate.js";
 import assert from "../assert.js";
 
 describe("HandlebarsTemplate", () => {
