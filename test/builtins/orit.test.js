@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import pkt from "../../src/builtins/pkt.js";
+import orit from "../../src/builtins/orit.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import ImplicitModulesTransform from "../../src/node/ImplicitModulesTransform.js";
 import assert from "../assert.js";
@@ -11,10 +11,10 @@ const fixturesGraph = new (ImplicitModulesTransform(ExplorableFiles))(
   fixturesDirectory
 );
 
-describe("pkt (pika template)", () => {
+describe("orit (apply Origami template)", () => {
   it("substitutes values from the supplied graph", async () => {
-    const template = await fixturesGraph.get("inline.pkt");
-    const result = await pkt.call(fixturesGraph, template);
+    const template = await fixturesGraph.get("inline.ori");
+    const result = await orit.call(fixturesGraph, template);
     const normalized = result?.toString().replace(/\r\n/g, "\n");
     assert.equal(
       normalized,

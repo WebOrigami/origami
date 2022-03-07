@@ -13,11 +13,11 @@ const defaultLoaders = {
   ".js": bufferToString,
   ".json": bufferToString,
   ".md": bufferToString,
-  ".pkt": async function (obj) {
-    const { default: PikaTemplate } = await import(
-      "../framework/PikaTemplate.js"
+  ".ori": async function (obj) {
+    const { default: OrigamiTemplate } = await import(
+      "../framework/OrigamiTemplate.js"
     );
-    return new PikaTemplate(bufferToString(obj), this);
+    return new OrigamiTemplate(bufferToString(obj), this);
   },
   ".txt": bufferToString,
   ".xhtml": bufferToString,

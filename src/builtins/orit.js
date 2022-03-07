@@ -1,16 +1,15 @@
 import { extractFrontMatter } from "../core/utilities.js";
-import PikaTemplate from "../framework/PikaTemplate.js";
+import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
- * Apply the indicated Pika template to the given data and return the
- * result.
+ * Apply the indicated Origami template to the given data and return the result.
  *
  * @this {Explorable}
  * @param {string} templateContent
  * @param {Explorable|PlainObject|string} [input]
  * @param {boolean} [preserveFrontMatter]
  */
-export default async function pkt(
+export default async function orit(
   templateContent,
   input,
   preserveFrontMatter = false
@@ -23,7 +22,7 @@ export default async function pkt(
       frontBlock = frontMatter.frontBlock;
     }
   }
-  const template = new PikaTemplate(templateText, this);
+  const template = new OrigamiTemplate(templateText, this);
   let result = await template.apply(input, this);
   if (frontBlock) {
     result = frontBlock + result;
@@ -31,5 +30,5 @@ export default async function pkt(
   return result;
 }
 
-pkt.usage = `pkt template, input\tApply a Pika template to input data`;
-pkt.documentation = "https://explorablegraph.org/pika/builtins.html#pkt";
+orit.usage = `orit template, input\tApply an Origami template to input data`;
+orit.documentation = "https://explorablegraph.org/pika/builtins.html#orit";

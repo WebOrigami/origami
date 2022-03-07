@@ -1,4 +1,0 @@
-Greetings:
-
-{{ shallowMap(names.yaml, pika`Hello, {{ @value }}.
-`) }}

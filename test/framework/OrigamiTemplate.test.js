@@ -5,16 +5,16 @@ import map from "../../src/builtins/map.js";
 import shallowMap from "../../src/builtins/shallowMap.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import PikaTemplate from "../../src/framework/PikaTemplate.js";
+import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const templatesDirectory = path.join(dirname, "fixtures/templates");
 const templateFiles = new ExplorableFiles(templatesDirectory);
 
-describe("PikaTemplate", () => {
+describe("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {
-    const template = new PikaTemplate("{{greeting}}, {{name}}.");
+    const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };
     const context = new ExplorableObject({ greeting: "Hello" });
     const result = await template.apply(input, context);
@@ -22,7 +22,7 @@ describe("PikaTemplate", () => {
   });
 
   it("can inline files", async () => {
-    const template = new PikaTemplate(
+    const template = new OrigamiTemplate(
       `This template inlines a file.
 {{ plain.txt }}`
     );
@@ -36,7 +36,7 @@ Hello, world.
   });
 
   it("can map data to a nested template", async () => {
-    const template = new PikaTemplate(
+    const template = new OrigamiTemplate(
       "Greetings:\n{{shallowMap(people, =>`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = ExplorableGraph.from({
@@ -56,7 +56,7 @@ Hello, Carol.
   });
 
   it("gives template access to @key and @value", async () => {
-    const template = new PikaTemplate(
+    const template = new OrigamiTemplate(
       "{{ map(array, =>`{{ @key }}: {{ @value }}\n`) }}"
     );
     const graph = ExplorableGraph.from({

@@ -6,11 +6,11 @@ import MetaTransform from "../framework/MetaTransform.js";
 import config from "./config.js";
 
 /**
- * Wrap a graph in an explorable app.
+ * Wrap the indicated graph as a virtual app.
  *
  * @param {Explorable} variant
  */
-export default async function graphApp(variant) {
+export default async function graphVirtual(variant) {
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
   const scopePath =
@@ -20,6 +20,6 @@ export default async function graphApp(variant) {
   return result;
 }
 
-graphApp.usage = `graphApp <graph>\tCreate an app by wrapping a graph`;
-graphApp.documentation =
-  "https://explorablegraph.org/pika/builtins.html#graphApp";
+graphVirtual.usage = `graphVirtual <graph>\tWrap the indicatedd graph as a virtual app`;
+graphVirtual.documentation =
+  "https://explorablegraph.org/pika/builtins.html#graphVirtual";

@@ -1,0 +1,4 @@
+Greetings:
+
+{{ shallowMap(names.yaml, =>`Hello, {{ @value }}.
+`) }}

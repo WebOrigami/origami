@@ -5,11 +5,11 @@ import * as parse from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import Template from "./Template.js";
 
-export default class PikaTemplate extends Template {
+export default class OrigamiTemplate extends Template {
   async compile() {
     const parsed = await parse.templateDocument(this.template);
     if (!parsed || parsed.rest !== "") {
-      throw new Error(`Couldn't parse template`);
+      throw new Error(`Couldn't parse Origami template`);
     }
     const code = parsed.value;
 
