@@ -1,5 +1,9 @@
 export default function ifCommand(value, trueResult, falseResult) {
-  return value ? trueResult : falseResult;
+  let result = value ? trueResult : falseResult;
+  if (typeof result === "function") {
+    result = result();
+  }
+  return result;
 }
 
 ifCommand.usage = `if <value>, <true> [, <false>]\tReturns the true result if true, the false result otherwise`;
