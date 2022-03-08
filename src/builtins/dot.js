@@ -57,13 +57,13 @@ async function statements(graph, nodePath) {
   // the first (which will use the second label as a baseline).
   const values = Object.values(labels);
   const showLabelDiffs = values.length > 1;
-  const label1 = showLabelDiffs ? values[0] : undefined;
-  const label2 = showLabelDiffs ? values[1] : undefined;
+  const label1 = showLabelDiffs ? String(values[0]) : undefined;
+  const label2 = showLabelDiffs ? String(values[1]) : undefined;
 
   // Trim labels.
   let i = 0;
   for (const key of Object.keys(labels)) {
-    let label = labels[key];
+    let label = String(labels[key]);
     if (label) {
       let clippedStart = false;
       let clippedEnd = false;
