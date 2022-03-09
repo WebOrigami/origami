@@ -360,6 +360,10 @@ describe("parse", () => {
   it("templateLiteral", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
     assertParse(templateLiteral("`foo { bar } baz`"), "foo { bar } baz");
+    assertParse(
+      templateLiteral("`escape characters with \\`backslash\\``"),
+      "escape characters with `backslash`"
+    );
   });
 
   it("templateLiteral with substitution", () => {
