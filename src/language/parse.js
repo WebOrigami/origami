@@ -402,16 +402,41 @@ export function simpleFunctionCall(text) {
 
 // Parse a single-quoted string.
 export function singleQuoteString(text) {
-  const parsed = sequence(optionalWhitespace, regex(/^'[^\']*'/))(text);
+  const parsed = sequence(
+    optionalWhitespace,
+    terminal(/^'/),
+    quotedTextWithEscapes,
+    terminal(/^'/)
+  )(text);
   if (!parsed) {
     return null;
   }
   // Remove quotes.
-  const value = parsed.value[1].slice(1, -1);
+  const { 2: value } = parsed.value;
   return {
     value,
     rest: parsed.rest,
   };
+}
+
+export function quotedTextWithEscapes(text) {
+  let i;
+  let value = "";
+  for (i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === "'") {
+      break;
+    } else if (char === "\\") {
+      i++;
+      if (i < text.length) {
+        value += text[i];
+      }
+    } else {
+      value += char;
+    }
+  }
+  const rest = text.slice(i);
+  return i > 0 ? { value, rest } : null;
 }
 
 // Parse a function call with slash syntax.
@@ -598,10 +623,10 @@ export function templateLiteral(text) {
 // Return a parser for the text of a template.
 function templateTextParser(allowBackticks) {
   return function templateText(text) {
-    // Match up to the first backtick (if backticks aren't allowed) or double left
-    // curly bracket. This seems challenging/impossible in JavaScript regular
-    // expressions, especially without support for lookbehind assertions, so we
-    // match this by hand.
+    // Match up to the first backtick (if backticks aren't allowed) or double
+    // left curly bracket. This seems challenging/impossible in JavaScript
+    // regular expressions, especially without support for lookbehind
+    // assertions, so we match this by hand.
     let i;
     for (i = 0; i < text.length; i++) {
       if (
