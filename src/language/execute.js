@@ -64,6 +64,7 @@ export default async function execute(code) {
     return result;
   } catch (/** @type {any} */ error) {
     console.error(`An Origami expression triggered an exception:`);
+    console.error(JSON.stringify(code));
     console.error(error.stack);
     return undefined;
   }
