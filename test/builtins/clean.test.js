@@ -4,15 +4,15 @@ import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 describe("clean", () => {
-  it("removes files indicated in .eg.clean.yaml", async () => {
+  it("removes files indicated in .ori.clean.yaml", async () => {
     const graph = new ExplorableObject({
-      ".eg.clean.yaml": `a: ""\n`,
+      ".ori.clean.yaml": `a: ""\n`,
       "a = 'Hello'": "",
       a: "Hello",
     });
     await clean(graph);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
-      ".eg.clean.yaml": `a: ""\n`,
+      ".ori.clean.yaml": `a: ""\n`,
       "a = 'Hello'": "",
     });
   });

@@ -7,7 +7,7 @@ export default async function clean(variant) {
     ? ExplorableGraph.from(variant)
     : // @ts-ignore
       await files.call(this);
-  const cleanGraph = await graph.get(".eg.clean.yaml");
+  const cleanGraph = await graph.get(".ori.clean.yaml");
   if (!cleanGraph) {
     // Nothing to clean
     return;
@@ -18,4 +18,4 @@ export default async function clean(variant) {
 }
 
 clean.usage = `clean <graph>\tRemoves files created by the make command [experimental]`;
-clean.documentation = "https://explorablegraph.org/pika/builtins.html#clean";
+clean.documentation = "https://explorablegraph.org/cli/builtins.html#clean";

@@ -14,4 +14,4 @@ export default async function hbs(templateText, input) {
 }
 
 hbs.usage = `hbs <template, data>\tGenerate content from a Handlebars template and data`;
-hbs.documentation = "https://explorablegraph.org/pika/builtins.html#hbs";
+hbs.documentation = "https://explorablegraph.org/cli/builtins.html#hbs";

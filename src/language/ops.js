@@ -78,6 +78,6 @@ export async function implicitCall(key) {
 }
 
 export async function concat(...args) {
-  return concatBuiltin(...args);
+  return concatBuiltin.call(this, ...args);
 }
 concat.toString = () => "«ops.concat»";

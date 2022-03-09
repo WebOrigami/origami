@@ -63,7 +63,7 @@ export default async function execute(code) {
           await ExplorableGraph.traverseOrThrow(fn, ...args);
     return result;
   } catch (/** @type {any} */ error) {
-    console.error(`An eg expression triggered an exception:`);
+    console.error(`An Origami expression triggered an exception:`);
     console.error(error.stack);
     return undefined;
   }

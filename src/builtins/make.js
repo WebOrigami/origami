@@ -14,7 +14,7 @@ export default async function make(virtual, destination) {
     ? ExplorableGraph.from(destination)
     : // @ts-ignore
       await files.call(this);
-  // const cleanGraph = await destination.get(".eg.clean.yaml");
+  // const cleanGraph = await destination.get(".ori.clean.yaml");
   // const built = cleanGraph ? ExplorableGraph.from(cleanGraph) : null;
   // const real = built ? new SubtractKeys(destination, built) : destination;
   const real = destination;
@@ -22,11 +22,11 @@ export default async function make(virtual, destination) {
   const build = new SubtractKeys(virtual, real);
   const empties = new MapGraph(build, (value) => "");
   const cleanYaml = await yaml(empties);
-  destination.set(".eg.clean.yaml", cleanYaml);
+  destination.set(".ori.clean.yaml", cleanYaml);
   const undefineds = new MapGraph(build, (value) => undefined);
   await copy(undefineds, destination);
   await copy(build, destination);
 }
 
 make.usage = `make\tMake real versions of any virtual files [experimental]`;
-make.documentation = "https://explorablegraph.org/pika/builtins.html#make";
+make.documentation = "https://explorablegraph.org/cli/builtins.html#make";

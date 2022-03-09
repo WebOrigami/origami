@@ -18,4 +18,4 @@ export default async function stdoutCommand(obj) {
 
 stdoutCommand.usage = "stdout <obj>\tWrite obj to the standard output stream";
 stdoutCommand.documentation =
-  "https://explorablegraph.org/pika/builtins.html#stdout";
+  "https://explorablegraph.org/cli/builtins.html#stdout";

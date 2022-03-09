@@ -13,6 +13,6 @@ export default function defaultGraph(relativePath = "") {
   return new DefaultGraph(resolvedPath);
 }
 
-defaultGraph.usage = `defaultGraph\tThe default graph used by eg`;
+defaultGraph.usage = `defaultGraph\tThe default graph used by Origami`;
 defaultGraph.documentation =
-  "https://explorablegraph.org/pika/builtins.html#defaultGraph";
+  "https://explorablegraph.org/cli/builtins.html#defaultGraph";

@@ -17,7 +17,7 @@ describe("make", () => {
     const real = new ExplorableObject(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {
-      ".eg.clean.yaml": `b: ""\nmore:\n  c: ""\n`,
+      ".ori.clean.yaml": `b: ""\nmore:\n  c: ""\n`,
       a: "Hello",
       "b = a": "",
       b: "Hello",
@@ -28,9 +28,9 @@ describe("make", () => {
     });
   });
 
-  it("Considers contents of .eg.clean.yaml to determine which values are real", async () => {
+  it("Considers contents of .ori.clean.yaml to determine which values are real", async () => {
     const graph = {
-      ".eg.clean.yaml": `a: ""\n`,
+      ".ori.clean.yaml": `a: ""\n`,
       "a = 'Hello'": "",
       a: "Hi", // make should update this value
       "b = 'Goodbye'": "", // make should create this value
@@ -39,7 +39,7 @@ describe("make", () => {
     const real = new ExplorableObject(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {
-      ".eg.clean.yaml": `a: ""\nb: ""\n`,
+      ".ori.clean.yaml": `a: ""\nb: ""\n`,
       "a = 'Hello'": "",
       a: "Hello",
       "b = 'Goodbye'": "",

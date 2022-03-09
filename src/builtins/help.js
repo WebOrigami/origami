@@ -14,7 +14,7 @@ export default async function help(name) {
       return;
     }
   } else {
-    url = "https://explorablegraph.org/pika";
+    url = "https://explorablegraph.org/cli/";
   }
   const platform = process.platform;
   const start =
@@ -28,4 +28,4 @@ export default async function help(name) {
 }
 
 help.usage = `help/<name>\tOpens documentation for the named built-in command`;
-help.documentation = "https://explorablegraph.org/pika/builtins.html#help";
+help.documentation = "https://explorablegraph.org/cli/builtins.html#help";

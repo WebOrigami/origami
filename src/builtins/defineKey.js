@@ -50,4 +50,4 @@ async function dataFromInput(input) {
 
 defineKey.usage = `defineKey <graph>\tDefine the key used to get nodes from the graph`;
 defineKey.documentation =
-  "https://explorablegraph.org/pika/builtins.html#defineKey";
+  "https://explorablegraph.org/cli/builtins.html#defineKey";

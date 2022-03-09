@@ -18,4 +18,4 @@ export default async function meta(variant) {
 }
 
 meta.usage = `meta <graph>\tEvaluate the formulas in the keys of the graph`;
-meta.documentation = "https://explorablegraph.org/pika/builtins.html#meta";
+meta.documentation = "https://explorablegraph.org/cli/builtins.html#meta";

@@ -13,5 +13,4 @@ export default async function virtual(key) {
 }
 
 virtual.usage = `virtual\tWrap the graph for the current directory with a virtual app`;
-virtual.documentation =
-  "https://explorablegraph.org/pika/builtins.html#virtual";
+virtual.documentation = "https://explorablegraph.org/cli/builtins.html#virtual";

@@ -12,4 +12,4 @@ export default function nulls(variant) {
 }
 
 nulls.usage = `nulls <graph>\tReturn a new graph with all values equal to null`;
-nulls.documentation = "https://explorablegraph.org/pika/builtins.html#nulls";
+nulls.documentation = "https://explorablegraph.org/cli/builtins.html#nulls";

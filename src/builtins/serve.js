@@ -18,4 +18,4 @@ export default async function serve(variant, port = defaultPort) {
 }
 
 serve.usage = `serve <graph>, [port]\tStart a local web server for the graph`;
-serve.documentation = "https://explorablegraph.org/pika/builtins.html#serve";
+serve.documentation = "https://explorablegraph.org/cli/builtins.html#serve";

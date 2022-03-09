@@ -23,4 +23,4 @@ function readAll(readable) {
 }
 
 stdin.usage = `stdin\tReturns the contents of the standard input stream`;
-stdin.documentation = "https://explorablegraph.org/pika/builtins.html#stdin";
+stdin.documentation = "https://explorablegraph.org/cli/builtins.html#stdin";

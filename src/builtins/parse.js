@@ -5,4 +5,4 @@ export default async function parse(text) {
 }
 
 parse.usage = `parse <text>\tParse text as JSON or YAML into an object`;
-parse.documentation = "https://explorablegraph.org/pika/builtins.html#parse";
+parse.documentation = "https://explorablegraph.org/cli/builtins.html#parse";

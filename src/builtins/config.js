@@ -4,7 +4,7 @@ import defaultModuleExport from "../cli/defaultModuleExport.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ParentFiles from "../node/ParentFiles.js";
 
-const configFileName = "eg.config.js";
+const configFileName = "ori.config.js";
 
 // Load config file.
 export default async function config(relativePath = "") {
@@ -18,5 +18,5 @@ export default async function config(relativePath = "") {
   return graph || builtins;
 }
 
-config.usage = `config\tReturn the graph for the active eg configuration`;
-config.documentation = "https://explorablegraph.org/pika/builtins.html#config";
+config.usage = `config\tReturn the graph for the active Origami configuration`;
+config.documentation = "https://explorablegraph.org/cli/builtins.html#config";

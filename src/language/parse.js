@@ -1,7 +1,7 @@
 /**
- * Parse statements in the eg language.
+ * Parse statements in the Origami expression language.
  *
- * See ReadMe.md for a high-level descripton of the grammar.
+ * See https://explorablegraph.org/language/grammar.html for a formal grammar.
  *
  * This is a basic parser combinator-based parser: each term in the grammar is
  * handled by a function that can recognize that type of term at the start of a
@@ -23,7 +23,7 @@ import {
   separatedList,
   sequence,
   series,
-  terminal
+  terminal,
 } from "./combinators.js";
 import * as ops from "./ops.js";
 
@@ -71,7 +71,7 @@ function ellipsis(text) {
   return terminal(/^…/)(text);
 }
 
-// Parse an eg expression.
+// Parse an Origami expression.
 export function expression(text) {
   return any(
     singleQuoteString,

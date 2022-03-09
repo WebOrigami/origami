@@ -12,4 +12,4 @@ export default async function values(variant) {
 }
 
 values.usage = `values <graph>\tThe top-level values in the graph`;
-values.documentation = "https://explorablegraph.org/pika/builtins.html#values";
+values.documentation = "https://explorablegraph.org/cli/builtins.html#values";
