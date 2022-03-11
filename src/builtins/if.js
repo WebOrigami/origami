@@ -1,7 +1,15 @@
-export default function ifCommand(value, trueResult, falseResult) {
-  let result = value ? trueResult : falseResult;
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
+export default async function ifCommand(value, trueResult, falseResult) {
+  let condition = await value;
+  if (ExplorableGraph.isExplorable(condition)) {
+    const keys = await ExplorableGraph.keys(condition);
+    condition = keys.length > 0;
+  }
+
+  let result = condition ? trueResult : falseResult;
   if (typeof result === "function") {
-    result = result();
+    result = await result();
   }
   return result;
 }
