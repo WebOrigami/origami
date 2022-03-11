@@ -25,7 +25,7 @@ export { default as map } from "./src/builtins/map.js";
 export { default as mdHtml } from "./src/builtins/mdHtml.js";
 export { default as meta } from "./src/builtins/meta.js";
 export { default as nulls } from "./src/builtins/nulls.js";
-export { default as pkt } from "./src/builtins/orit.js";
+export { default as orit } from "./src/builtins/orit.js";
 export { default as parent } from "./src/builtins/parent.js";
 export { default as parse } from "./src/builtins/parse.js";
 export { default as plain } from "./src/builtins/plain.js";
