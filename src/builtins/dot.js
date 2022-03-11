@@ -13,10 +13,11 @@ export default async function dot(variant) {
   const graph = ExplorableGraph.from(variant);
   const graphArcs = await statements(graph, "");
   return `digraph g {
+  bgcolor="transparent";
   nodesep=1;
   rankdir=LR;
   ranksep=1.5;
-  node [shape=box; color=gray70; fontname="Helvetica"; fontsize="10"];
+  node [shape=box; color=gray70; fillcolor="white"; fontname="Helvetica"; fontsize="10"; style="filled"];
   edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; labeldistance=5];
 
 ${graphArcs.join("\n")}
@@ -27,7 +28,7 @@ async function statements(graph, nodePath) {
   let result = [];
 
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; width=0.10; color=gray40];`
+    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
