@@ -4,7 +4,7 @@ import { parse } from "../core/utilities.js";
 /**
  * Wrap a graph and redefine the key used to access nodes in it.
  */
-export default async function defineKey(variant, indexKey) {
+export default async function mapKeys(variant, indexKey) {
   const graph = ExplorableGraph.from(variant);
   return {
     async *[Symbol.asyncIterator]() {
@@ -12,8 +12,8 @@ export default async function defineKey(variant, indexKey) {
         const value = await graph.get(key);
         const data = value ? await dataFromInput(value) : undefined;
         if (data !== undefined) {
-          const index = indexKey === undefined ? data : data[indexKey];
-          yield index;
+          const mappedKey = indexKey === undefined ? data : data[indexKey];
+          yield mappedKey;
         }
       }
     },
@@ -48,6 +48,5 @@ async function dataFromInput(input) {
   return data;
 }
 
-defineKey.usage = `defineKey <graph>\tDefine the key used to get nodes from the graph`;
-defineKey.documentation =
-  "https://explorablegraph.org/cli/builtins.html#defineKey";
+mapKeys.usage = `mapKeys <graph>\tDefine the key used to get nodes from the graph`;
+mapKeys.documentation = "https://explorablegraph.org/cli/builtins.html#mapKeys";

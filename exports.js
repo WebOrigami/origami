@@ -22,6 +22,7 @@ export { default as json } from "./src/builtins/json.js";
 export { default as keys } from "./src/builtins/keys.js";
 export { default as make } from "./src/builtins/make.js";
 export { default as map } from "./src/builtins/map.js";
+export { default as mapKeys } from "./src/builtins/mapKeys.js";
 export { default as mdHtml } from "./src/builtins/mdHtml.js";
 export { default as meta } from "./src/builtins/meta.js";
 export { default as nulls } from "./src/builtins/nulls.js";
