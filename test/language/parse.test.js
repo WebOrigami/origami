@@ -367,6 +367,7 @@ describe("parse", () => {
   });
 
   it("templateLiteral with substitution", () => {
+    assertParse(templateLiteral("``"), "");
     assertParse(templateLiteral("`{{x}}.json`"), [
       ops.concat,
       [ops.scope, "x"],

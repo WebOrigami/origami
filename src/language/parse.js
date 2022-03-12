@@ -582,10 +582,12 @@ function templateParser(allowBackticks) {
     }
     // Drop empty/null strings.
     const filtered = parsed.value.filter((item) => item);
-    // Return a concatenation of the values. If there's just one string,
-    // return that directly.
+    // Return a concatenation of the values. If there are no values, return the
+    // empty string. If there's just one string, return that directly.
     const value =
-      filtered.length === 1 && typeof filtered[0] === "string"
+      filtered.length === 0
+        ? ""
+        : filtered.length === 1 && typeof filtered[0] === "string"
         ? filtered[0]
         : [ops.concat, ...filtered];
     return {
