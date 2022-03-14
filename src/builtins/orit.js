@@ -5,8 +5,8 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * Apply the indicated Origami template to the given data and return the result.
  *
  * @this {Explorable}
- * @param {string} templateContent
- * @param {Explorable|PlainObject|string} [input]
+ * @param {Buffer|string} templateContent
+ * @param {Explorable|PlainObject|Buffer|string|null} [input]
  * @param {boolean} [preserveFrontMatter]
  */
 export default async function orit(
