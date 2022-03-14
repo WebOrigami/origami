@@ -18,7 +18,7 @@ export default async function dot(variant) {
   rankdir=LR;
   ranksep=1.5;
   node [shape=box; color=gray70; fillcolor="white"; fontname="Helvetica"; fontsize="10"; style="filled"];
-  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; labeldistance=5];
+  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; fontsize="10"; labeldistance=5];
 
 ${graphArcs.join("\n")}
 }`;
