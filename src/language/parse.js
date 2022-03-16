@@ -393,7 +393,7 @@ export function quotedTextWithEscapes(text) {
     }
   }
   const rest = text.slice(i);
-  return i > 0 ? { value, rest } : null;
+  return { value, rest };
 }
 
 // Parse a reference to a variable or literal.

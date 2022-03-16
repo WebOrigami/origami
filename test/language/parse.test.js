@@ -293,6 +293,7 @@ describe("parse", () => {
   });
 
   it("singleQuoteString", () => {
+    assertParse(singleQuoteString(`''`), "");
     assertParse(singleQuoteString(`'hello'`), "hello");
     assertParse(
       singleQuoteString(String.raw`'escape characters with \'backslash\''`),
