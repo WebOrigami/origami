@@ -44,7 +44,7 @@ export default class MapTypesGraph {
       const sourceKey = `${basename}${this.sourceExtension}`;
       // Use regular `get` to get the value to map.
       value = await this.graph.get(sourceKey);
-      if (value) {
+      if (value !== undefined) {
         // Apply map function.
         value = await this.mapFn.call(this.graph, value, sourceKey, key);
       }
@@ -87,7 +87,7 @@ function matchExtension(key, extension) {
     if (key.length > extension.length && key.endsWith(extension)) {
       return key.substring(0, key.length - extension.length);
     }
-  } else if (!key.includes(".")) {
+  } else if (!key.includes?.(".")) {
     // Key matches if it has no extension
     return key;
   }
