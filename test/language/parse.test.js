@@ -207,8 +207,8 @@ describe("parse", () => {
   });
 
   it("lambda", () => {
-    assertParse(lambda("=> message"), [ops.lambda, [ops.scope, "message"]]);
-    assertParse(lambda("=>`Hello, {{name}}.`"), [
+    assertParse(lambda("= message"), [ops.lambda, [ops.scope, "message"]]);
+    assertParse(lambda("=`Hello, {{name}}.`"), [
       ops.lambda,
       [ops.concat, "Hello, ", [ops.scope, "name"], "."],
     ]);
@@ -390,7 +390,7 @@ describe("parse", () => {
       " bar",
     ]);
     assertParse(templateLiteral("`{{`nested`}}`"), "nested");
-    assertParse(templateLiteral("`{{shallowMap(people, =>`{{name}}`)}}`"), [
+    assertParse(templateLiteral("`{{shallowMap(people, =`{{name}}`)}}`"), [
       ops.concat,
       [
         [ops.scope, "shallowMap"],

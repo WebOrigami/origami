@@ -193,7 +193,7 @@ export function key(text) {
 export function lambda(text) {
   const parsed = sequence(
     optionalWhitespace,
-    terminal(/^=>/),
+    terminal(/^=/),
     optionalWhitespace,
     expression
   )(text);

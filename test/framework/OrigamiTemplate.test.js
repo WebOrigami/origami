@@ -27,8 +27,9 @@ describe("OrigamiTemplate", () => {
 {{ plain.txt }}`
     );
     const result = await template.apply(null, templateFiles);
+    const normalized = result?.toString().replace(/\r\n/g, "\n");
     assert.equal(
-      result,
+      normalized,
       `This template inlines a file.
 Hello, world.
 `
@@ -37,7 +38,7 @@ Hello, world.
 
   it("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
-      "Greetings:\n{{shallowMap(people, =>`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{shallowMap(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = ExplorableGraph.from({
       greeting: "Hello",
@@ -57,7 +58,7 @@ Hello, Carol.
 
   it("gives template access to @key and @value", async () => {
     const template = new OrigamiTemplate(
-      "{{ map(array, =>`{{ @key }}: {{ @value }}\n`) }}"
+      "{{ map(array, =`{{ @key }}: {{ @value }}\n`) }}"
     );
     const graph = ExplorableGraph.from({
       array: ["a", "b", "c"],
