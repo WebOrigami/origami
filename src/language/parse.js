@@ -548,7 +548,7 @@ export function spaceUrlPath(text) {
 
 // Parse a block or inline substitution in a template.
 export function substitution(text) {
-  return any(substitutionBlock, substitutionInline)(text);
+  return any(substitutionInline, substitutionBlock)(text);
 }
 
 // Parse a substitution block.
