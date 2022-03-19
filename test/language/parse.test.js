@@ -20,6 +20,8 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
+  substitutionBlock,
+  substitutionInline,
   templateDocument,
   templateLiteral,
   thisReference,
@@ -349,6 +351,27 @@ describe("parse", () => {
       [ops.scope, "x"],
       "data.json",
     ]);
+  });
+
+  it("substitutionBlock", () => {
+    assertParse(
+      substitutionBlock(`{{#fn}}
+Block contents
+{{/fn}}`),
+      [
+        [ops.scope, "fn"],
+        [ops.lambda, "Block contents\n"],
+      ]
+    );
+    assertParse(substitutionBlock(`{{# fn 'a'}}Block contents{{/end}}`), [
+      [ops.scope, "fn"],
+      "a",
+      [ops.lambda, "Block contents"],
+    ]);
+  });
+
+  it("substitutionInline", () => {
+    assertParse(substitutionInline("{{foo}}"), [ops.scope, "foo"]);
   });
 
   it("templateDocument", () => {

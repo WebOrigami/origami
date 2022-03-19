@@ -546,14 +546,71 @@ export function spaceUrlPath(text) {
   };
 }
 
-// Parse a substitution like {{foo}} found in an backtick template.
+// Parse a block or inline substitution in a template.
 export function substitution(text) {
+  return any(substitutionBlock, substitutionInline)(text);
+}
+
+// Parse a substitution block.
+export function substitutionBlock(text) {
+  const parsed = sequence(
+    terminal(/^\{\{#\s*/),
+    functionCallTarget,
+    optional(implicitParensArgs),
+    terminal(/^\s*\}\}(?:\s*\n)?/),
+    templateDocument,
+    terminal(/^\{\{\/[^\}]*\}\}/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: fn, 2: fnArgs, 4: lastFnArg } = parsed.value;
+  const value = [fn];
+  if (fnArgs) {
+    value.push(...fnArgs);
+  }
+  if (lastFnArg) {
+    value.push([ops.lambda, lastFnArg]);
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse an inline substitution like {{foo}} found in a template.
+export function substitutionInline(text) {
   const parsed = sequence(
     terminal(/^\{\{/),
     optionalWhitespace,
     expression,
     optionalWhitespace,
     terminal(/^\}\}/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 2: value } = parsed.value;
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a template document.
+export function templateDocument(text) {
+  const allowBackticks = true;
+  return templateParser(allowBackticks)(text);
+}
+
+// Parse a backtick-quoted template literal.
+export function templateLiteral(text) {
+  const allowBackticks = false;
+  const parsed = sequence(
+    optionalWhitespace,
+    terminal(/^`/),
+    templateParser(allowBackticks),
+    terminal(/^`/)
   )(text);
   if (!parsed) {
     return null;
@@ -594,31 +651,6 @@ function templateParser(allowBackticks) {
       value,
       rest: parsed.rest,
     };
-  };
-}
-
-// Parse a template document.
-export function templateDocument(text) {
-  const allowBackticks = true;
-  return templateParser(allowBackticks)(text);
-}
-
-// Parse a backtick-quoted template literal.
-export function templateLiteral(text) {
-  const allowBackticks = false;
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^`/),
-    templateParser(allowBackticks),
-    terminal(/^`/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 2: value } = parsed.value;
-  return {
-    value,
-    rest: parsed.rest,
   };
 }
 
