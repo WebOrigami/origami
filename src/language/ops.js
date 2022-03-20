@@ -77,6 +77,12 @@ export async function implicitCall(key) {
   return value;
 }
 
+/**
+ * Concatenate the given arguments.
+ *
+ * @this {Explorable}
+ * @param {any[]} args
+ */
 export async function concat(...args) {
   return concatBuiltin.call(this, ...args);
 }
