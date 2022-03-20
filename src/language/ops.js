@@ -1,4 +1,4 @@
-/// <reference path="./egcode.d.ts" />
+/// <reference path="./code.d.ts" />
 
 import concatBuiltin from "../builtins/concat.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";

@@ -1,4 +1,4 @@
-/// <reference path="./egcode.d.ts" />
+/// <reference path="./code.d.ts" />
 
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as ops from "./ops.js";
