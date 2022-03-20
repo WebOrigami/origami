@@ -50,7 +50,7 @@ export function lambda(code) {
     return result;
   };
 }
-lambda.toString = () => "«ops.lambda";
+lambda.toString = () => "«ops.lambda»";
 
 // The scope op is a placeholder for the graph's scope.
 export const scope = "«ops.scope»";
