@@ -9,7 +9,7 @@ export default function MetaTransform(Base) {
   return class Meta extends FileLoadersTransform(
     InheritScopeTransform(
       AdditionsTransform(
-        FormulasTransform(GhostValuesTransform(ImplicitModulesTransform(Base)))
+        GhostValuesTransform(FormulasTransform(ImplicitModulesTransform(Base)))
       )
     )
   ) {};

@@ -240,4 +240,19 @@ describe("MetaTransform", () => {
       3
     );
   });
+
+  it("ghost folders can define formulas that work on original graph values", async () => {
+    const fixture = new (MetaTransform(ExplorableObject))({
+      "{x}": {
+        "message = `Hello, {{name}}.`": "",
+      },
+      sub: {
+        name: "Alice",
+      },
+    });
+    assert.equal(
+      await ExplorableGraph.traverse(fixture, "sub", "message"),
+      "Hello, Alice."
+    );
+  });
 });
