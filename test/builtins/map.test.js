@@ -36,4 +36,32 @@ describe("map", () => {
       "file3.foo": "won't be mapped",
     });
   });
+
+  it("mapping function context's scope has @key and @value ambient properties", async () => {
+    const results = map(["a", "b", "c"], async function () {
+      const key = await this.scope.get("@key");
+      const value = await this.scope.get("@value");
+      return { key, value };
+    });
+    assert.deepEqual(await ExplorableGraph.plain(results), {
+      0: { key: 0, value: "a" },
+      1: { key: 1, value: "b" },
+      2: { key: 2, value: "c" },
+    });
+  });
+
+  it("mapping function context's scope includes the value's graph", async () => {
+    const results = map(
+      [{ name: "Alice" }, { name: "Bob" }, { name: "Carol " }],
+      async function () {
+        const name = await this.scope.get("name");
+        return name;
+      }
+    );
+    assert.deepEqual(await ExplorableGraph.plain(results), {
+      0: "Alice",
+      1: "Bob",
+      2: "Carol ",
+    });
+  });
 });

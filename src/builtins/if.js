@@ -9,7 +9,7 @@ export default async function ifCommand(value, trueResult, falseResult) {
 
   let result = condition ? trueResult : falseResult;
   if (typeof result === "function") {
-    result = await result();
+    result = await result.call(this);
   }
   return result;
 }

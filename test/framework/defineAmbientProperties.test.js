@@ -1,6 +1,6 @@
 import { ExplorableGraph } from "../../exports.js";
-import defineAmbientProperties from "../../src/core/defineAmbientProperties.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import defineAmbientProperties from "../../src/framework/defineAmbientProperties.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 

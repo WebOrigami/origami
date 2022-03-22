@@ -68,6 +68,7 @@ export { default as defaultKeysJson } from "./src/framework/defaultKeysJson.js";
 export { default as DefaultPages } from "./src/framework/DefaultPages.js";
 export { default as defaultSvg } from "./src/framework/defaultSvg.js";
 export { default as defaultYamlHtml } from "./src/framework/defaultYamlHtml.js";
+export { default as defineAmbientProperties } from "./src/framework/defineAmbientProperties.js";
 export { default as Formula } from "./src/framework/Formula.js";
 export { default as FormulasTransform } from "./src/framework/FormulasTransform.js";
 export { default as GhostValuesTransform } from "./src/framework/GhostValuesTransform.js";

@@ -1,7 +1,7 @@
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import ExplorableObject from "./ExplorableObject.js";
-import IdentityGraph from "./IdentityGraph.js";
-import { transformObject } from "./utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
+import IdentityGraph from "../core/IdentityGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "./InheritScopeTransform.js";
 
 /**
  * Extend the scope of the given graph to include the given ambient properties.

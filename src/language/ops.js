@@ -1,10 +1,6 @@
 /// <reference path="./code.d.ts" />
 
 import concatBuiltin from "../builtins/concat.js";
-import defineAmbientProperties from "../core/defineAmbientProperties.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import execute from "./execute.js";
 
 /**
@@ -19,31 +15,8 @@ import execute from "./execute.js";
  * @param {Code} code
  */
 export function lambda(code) {
-  return async function (value, key) {
-    // Add special built-in values as ambient properties.
-    const withAmbients = defineAmbientProperties(this, {
-      "@key": key,
-      "@value": value,
-    });
-
-    let graph;
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      graph = ExplorableGraph.from(value);
-      const parent = /** @type {any} */ (graph).parent;
-      if (parent === undefined) {
-        if (!("parent" in graph)) {
-          graph = transformObject(InheritScopeTransform, graph);
-        }
-        graph.parent = withAmbients;
-      }
-    } else {
-      graph = withAmbients;
-    }
-
-    const result = await execute.call(graph, code);
+  return async function () {
+    const result = await execute.call(this, code);
     return result;
   };
 }

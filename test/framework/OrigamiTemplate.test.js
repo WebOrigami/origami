@@ -2,7 +2,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { ExplorableFiles } from "../../exports.js";
 import map from "../../src/builtins/map.js";
-import shallowMap from "../../src/builtins/shallowMap.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
@@ -36,14 +35,14 @@ Hello, world.
     );
   });
 
-  it.skip("can map data to a nested template", async () => {
+  it("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
-      "Greetings:\n{{shallowMap(people, =`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = ExplorableGraph.from({
       greeting: "Hello",
+      map,
       people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
-      shallowMap,
     });
     const result = await template.apply(null, graph);
     assert.equal(
