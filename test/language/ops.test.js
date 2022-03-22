@@ -40,20 +40,20 @@ describe("ops", () => {
       b: "Defined by value",
     };
 
-    const fnA = ops.lambda.call(graph, [ops.scope, "a"]);
-    const resultA = await fnA(value, key);
+    const fnA = ops.lambda([ops.scope, "a"]);
+    const resultA = await fnA.call(graph, value, key);
     assert.equal(resultA, "Defined by graph");
 
-    const fnB = ops.lambda.call(graph, [ops.scope, "b"]);
-    const resultB = await fnB(value, key);
+    const fnB = ops.lambda([ops.scope, "b"]);
+    const resultB = await fnB.call(graph, value, key);
     assert.equal(resultB, "Defined by value");
 
-    const fnKey = ops.lambda.call(graph, [ops.scope, "@key"]);
-    const resultKey = await fnKey(value, key);
+    const fnKey = ops.lambda([ops.scope, "@key"]);
+    const resultKey = await fnKey.call(graph, value, key);
     assert.equal(resultKey, "key");
 
-    const fnValue = ops.lambda.call(graph, [ops.scope, "@value"]);
-    const resultValue = await fnValue(value, key);
+    const fnValue = ops.lambda([ops.scope, "@value"]);
+    const resultValue = await fnValue.call(graph, value, key);
     const resultPlain = await ExplorableGraph.plain(resultValue);
     assert.deepEqual(resultPlain, value);
   });

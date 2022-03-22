@@ -19,31 +19,34 @@ import execute from "./execute.js";
  * @param {Code} code
  */
 export function lambda(code) {
-  const parent = this;
   return async function (value, key) {
-    // Add special built-in values to scope.
-    const builtIns = new (InheritScopeTransform(ExplorableObject))({
-      "@key": key,
-      "@value": value,
-    });
-    builtIns.parent = parent;
-
-    // Add the parent graph defining the lambda to the scope.
     let graph;
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      graph = ExplorableGraph.from(value);
-      const parent = /** @type {any} */ (graph).parent;
-      if (parent === undefined) {
-        if (!("parent" in graph)) {
-          graph = transformObject(InheritScopeTransform, graph);
-        }
-        graph.parent = builtIns;
-      }
+    if (value === undefined) {
+      graph = this;
     } else {
-      graph = builtIns;
+      // Add special built-in values to scope.
+      const builtIns = new (InheritScopeTransform(ExplorableObject))({
+        "@key": key,
+        "@value": value,
+      });
+      builtIns.parent = this;
+
+      // Add the parent graph defining the lambda to the scope.
+      if (
+        typeof value !== "string" &&
+        ExplorableGraph.canCastToExplorable(value)
+      ) {
+        graph = ExplorableGraph.from(value);
+        const parent = /** @type {any} */ (graph).parent;
+        if (parent === undefined) {
+          if (!("parent" in graph)) {
+            graph = transformObject(InheritScopeTransform, graph);
+          }
+          graph.parent = builtIns;
+        }
+      } else {
+        graph = builtIns;
+      }
     }
 
     const result = await execute.call(graph, code);
