@@ -27,7 +27,7 @@ describe("ops", () => {
     ];
 
     const fn = await execute.call(graph, code);
-    const result = await fn(graph);
+    const result = await fn.call(graph);
     assert.equal(result, "Hello, world.");
   });
 

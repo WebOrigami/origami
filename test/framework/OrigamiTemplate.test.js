@@ -36,7 +36,7 @@ Hello, world.
     );
   });
 
-  it.only("can map data to a nested template", async () => {
+  it.skip("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
       "Greetings:\n{{shallowMap(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
