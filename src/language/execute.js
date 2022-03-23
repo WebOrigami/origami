@@ -5,16 +5,23 @@ import * as ops from "./ops.js";
 
 /**
  * Evaluate the given code and return the result.
- * `this` should be the graph in which the code will be evaluated.
  *
- * @this {Explorable}
+ * `this` should be the context in which the code will be evaluated, so you will
+ * normally invoke this function as `execute.call(myContext)`. The context can
+ * expose a `scope` property that is a graph that will be searched to look up
+ * the names of things to execute.
+ *
+ * @this {any}
  * @param {Code} code
  */
 export default async function execute(code) {
+  const context = this;
+
   if (code === ops.scope) {
-    // ops.scope is a placeholder for the current graph's scope. If the graph
-    // doesn't define a scope, use the graph itself as the scope.
-    return /** @type {any} */ (this).scope ?? this;
+    // ops.scope is a placeholder for the context's scope. If the context
+    // doesn't define a scope, assume the context is a graph and use the context
+    // itself as the scope.
+    return /** @type {any} */ (context).scope ?? context;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -27,7 +34,7 @@ export default async function execute(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => execute.call(this, instruction))
+      code.map((instruction) => execute.call(context, instruction))
     );
   }
 
@@ -58,7 +65,7 @@ export default async function execute(code) {
     const result =
       fn instanceof Function
         ? // Invoke the function
-          await fn.call(this, ...args)
+          await fn.call(context, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
     return result;

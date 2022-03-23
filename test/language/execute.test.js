@@ -20,4 +20,14 @@ describe("execute", () => {
     const result = await execute.call(graph, code);
     assert.equal(result, "Hello world");
   });
+
+  it("can obtain scope from function context", async () => {
+    const code = [ops.scope, "message"];
+    const context = {};
+    context.scope = {
+      message: "Hello",
+    };
+    const result = await execute.call(context, code);
+    assert.equal(result, "Hello");
+  });
 });
