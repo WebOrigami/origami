@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const templatesDirectory = path.join(dirname, "fixtures/templates");
 const templateFiles = new ExplorableFiles(templatesDirectory);
 
-describe("OrigamiTemplate", () => {
+describe.skip("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {
     const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };

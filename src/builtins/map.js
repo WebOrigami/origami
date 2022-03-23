@@ -2,6 +2,7 @@ import MapTypesGraph from "../common/MapTypesGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import MapGraph from "../core/MapGraph.js";
+import { box } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -22,11 +23,8 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
       ExplorableGraph.canCastToExplorable(value)
     ) {
       context = ExplorableGraph.from(value);
-    }
-    if (typeof value === "string") {
-      context = new String(value);
     } else {
-      context = {};
+      context = box(value);
     }
 
     // Establish the @key and @value ambient properties.

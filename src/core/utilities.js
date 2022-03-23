@@ -6,6 +6,29 @@ import ExplorableGraph from "./ExplorableGraph.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
+ * Return an object representation of the given value. If the value
+ * is already an object, return it as is. If the value is a primitive
+ * type, wrap the value in an appropriate box type, e.g., a string
+ * value will be returned as a String object.
+ *
+ * @param {any} value
+ */
+export function box(value) {
+  const typeToClass = {
+    boolean: Boolean,
+    number: Number,
+    bigInt: BigInt,
+    string: String,
+    symbol: Symbol,
+  };
+  if (typeof value === "object") {
+    return value;
+  }
+  const valueClass = typeToClass[typeof value];
+  return valueClass ? new valueClass(value) : value;
+}
+
+/**
  * Extract front matter from the given text. The first line of the text must be
  * "---", followed by a block of JSON or YAML, followed by another line of
  * "---". Any lines following will be returned added to the data under a
