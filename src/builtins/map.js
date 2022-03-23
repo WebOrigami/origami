@@ -48,7 +48,8 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
       withValue = withAmbients;
     }
 
-    return await mapFn.call(withValue, value, key);
+    const fn = mapFn.toFunction?.() ?? mapFn;
+    return await fn.call(withValue, value, key);
   }
 
   return sourceExtension === undefined
