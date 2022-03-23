@@ -2,8 +2,6 @@ import MapTypesGraph from "../common/MapTypesGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import MapGraph from "../core/MapGraph.js";
-import { transformObject } from "../core/utilities.js";
-import defineAmbientProperties from "../framework/defineAmbientProperties.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -17,39 +15,43 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
   // We extend the mapping function so that the function's `this` context's
   // scope includes additional information.
   async function extendedMapFn(value, key) {
+    // Convert value into an execution context with a scope.
+    let context;
+    if (
+      typeof value !== "string" &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
+      context = ExplorableGraph.from(value);
+    }
+    if (typeof value === "string") {
+      context = new String(value);
+    } else {
+      context = {};
+    }
+
     // Establish the @key and @value ambient properties.
     const ambientProperties = {
       "@key": key,
       "@value": value,
     };
-
-    // If the outer `map` function was invoked in the context of a graph, extend
-    // that graph with the ambient properties. Otherwise, the ambient properties
-    // themselves will be the basis for the graph.
-    const withAmbients = graph
-      ? defineAmbientProperties(graph, ambientProperties)
-      : new (InheritScopeTransform(ExplorableObject))(ambientProperties);
-
-    // If the value is explorable (but not a string), extend the graph with it.
-    let withValue;
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      withValue = ExplorableGraph.from(value);
-      const parent = /** @type {any} */ (withValue).parent;
-      if (parent === undefined) {
-        if (!("parent" in withValue)) {
-          withValue = transformObject(InheritScopeTransform, withValue);
-        }
-        withValue.parent = withAmbients;
-      }
+    let ambients;
+    if (graph) {
+      ambients = new (InheritScopeTransform(ExplorableObject))(
+        ambientProperties
+      );
+      ambients.parent = graph;
     } else {
-      withValue = withAmbients;
+      ambients = new ExplorableObject(ambientProperties);
+    }
+
+    if ("parent" in context) {
+      context.parent = ambients;
+    } else {
+      context.scope = ambients;
     }
 
     const fn = mapFn.toFunction?.() ?? mapFn;
-    return await fn.call(withValue, value, key);
+    return await fn.call(context, value, key);
   }
 
   return sourceExtension === undefined
