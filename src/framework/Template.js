@@ -42,13 +42,6 @@ export default class Template {
     const data = input
       ? await this.dataFromInput(input, graph)
       : await this.interpretFrontMatter(graph);
-    // if (input === undefined && !data) {
-    //   // Caller explicitly passed in `undefined` as the input argument, and
-    //   // there's no frontmatter. Most likely the input parameter is a variable
-    //   // pattern that didn't match, in which case we define the template result as
-    //   // undefined.
-    //   return undefined;
-    // }
 
     if (!this.compiled) {
       const compiled = await this.compile();
@@ -87,10 +80,6 @@ export default class Template {
     let parsed = input;
     if (typeof input === "string" || input instanceof Buffer) {
       parsed = parse(String(input));
-      if (typeof parsed === "string") {
-        // Interpret the parsed string as a `@value` field.
-        parsed = { "@value": parsed };
-      }
     }
 
     // Step two: compose if we can and convert to plain object or array.

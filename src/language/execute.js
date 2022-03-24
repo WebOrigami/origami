@@ -21,7 +21,7 @@ export default async function execute(code) {
     // ops.scope is a placeholder for the context's scope. If the context
     // doesn't define a scope, assume the context is a graph and use the context
     // itself as the scope.
-    return /** @type {any} */ (context).scope ?? context;
+    return /** @type {any} */ (context)?.scope ?? context;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;

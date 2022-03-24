@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const templatesDirectory = path.join(dirname, "fixtures/templates");
 const templateFiles = new ExplorableFiles(templatesDirectory);
 
-describe.skip("OrigamiTemplate", () => {
+describe("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {
     const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };
@@ -53,6 +53,13 @@ Hello, Bob.
 Hello, Carol.
 `
     );
+  });
+
+  it("defines ambient property @input that references input data", async () => {
+    const template = new OrigamiTemplate("Hello, {{ @input }}.");
+    const graph = new ExplorableObject({});
+    const result = await template.apply("world", graph);
+    assert.equal(result, "Hello, world.");
   });
 
   it("gives template access to @key and @value", async () => {

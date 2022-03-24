@@ -1,9 +1,6 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
 import execute from "../language/execute.js";
 import * as parse from "../language/parse.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
-import { defineAmbientProperties } from "./scopeUtilities.js";
+import { defineAmbientProperties, setScope } from "./scopeUtilities.js";
 import Template from "./Template.js";
 
 export default class OrigamiTemplate extends Template {
@@ -15,35 +12,23 @@ export default class OrigamiTemplate extends Template {
     const code = parsed.value;
 
     return async (data, graph) => {
-      let base;
-      if (!data) {
-        // Use graph as is.
-        base = graph;
-      } else if (typeof data === "function") {
-        // Evaluate data function. A common scenario for this would be a
-        // template like foo.ori being called as a block:
-        // {{#foo.ori}}...{{/foo.ori}}. The inner contents of the block will
-        // be a lambda, i.e., a function that we want to invoke.
+      if (typeof data === "function") {
+        // The data is a function that must be evaluated to get the actual data.
+        // A common scenario for this would be a template like foo.ori being
+        // called as a block: {{#foo.ori}}...{{/foo.ori}}. The inner contents of
+        // the block will be a lambda, i.e., a function that we want to invoke.
         data = await data.call(graph);
-        base = graph;
-      } else {
-        // Extend graph with data.
-        base = ExplorableGraph.from(data);
-        const parent = /** @type {any} */ (base).parent;
-        if (parent === undefined) {
-          if (!("parent" in base)) {
-            base = transformObject(InheritScopeTransform, base);
-          }
-          base.parent = graph;
-        }
       }
 
-      // Add the data as a @value ambient.
-      const withAmbients = defineAmbientProperties(base, {
-        "@value": data,
+      // Extend the graph's scope with ambient properties.
+      const baseScope = graph?.scope ?? graph;
+      const scope = defineAmbientProperties(baseScope, {
+        "@input": data,
       });
 
-      const result = await execute.call(withAmbients, code);
+      const context = data ? setScope(data, scope) : scope;
+
+      const result = await execute.call(context, code);
       return result;
     };
   }
