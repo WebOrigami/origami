@@ -16,8 +16,10 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
   // We extend the mapping function so that the function's `this` context's
   // scope includes additional information.
   async function extendedMapFn(value, key) {
-    // Extend the context graph with the @key and @value ambient properties.
-    const extended = defineAmbientProperties(graph, {
+    // Create a scope graph by extending the context graph with the @key and
+    // @value ambient properties.
+    const baseScope = graph?.scope ?? graph;
+    const scope = defineAmbientProperties(baseScope, {
       "@key": key,
       "@value": value,
     });
@@ -38,11 +40,11 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
       context = box(value);
     }
 
-    // Set the context's scope to the graph extended by the ambient properties.
+    // Set the context's scope to the extended scope.
     if ("parent" in context) {
-      context.parent = extended;
+      context.parent = scope;
     } else {
-      context.scope = extended;
+      context.scope = scope;
     }
 
     const fn = mapFn.toFunction?.() ?? mapFn;
