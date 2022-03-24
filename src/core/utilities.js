@@ -6,10 +6,10 @@ import ExplorableGraph from "./ExplorableGraph.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
- * Return an object representation of the given value. If the value
- * is already an object, return it as is. If the value is a primitive
- * type, wrap the value in an appropriate box type, e.g., a string
- * value will be returned as a String object.
+ * Return an object representation of the given value. If the value is already
+ * an object, return it as is. If the value is a primitive type, wrap the value
+ * in an appropriate box type, e.g., a string value will be returned as a String
+ * object. Special case: a null/undefined value is boxed as an empty object.
  *
  * @param {any} value
  */
@@ -21,11 +21,19 @@ export function box(value) {
     string: String,
     symbol: Symbol,
   };
-  if (typeof value === "object") {
+
+  if (value === null || value === undefined) {
+    // Special case
+    return {};
+  } else if (typeof value === "object") {
+    // Already an object
     return value;
+  } else {
+    // If JavaScript provides a corresponding class, use that. This should cover
+    // all remaining cases, but as a fallback we return the empty object.
+    const valueClass = typeToClass[typeof value];
+    return valueClass ? new valueClass(value) : {};
   }
-  const valueClass = typeToClass[typeof value];
-  return valueClass ? new valueClass(value) : value;
 }
 
 /**

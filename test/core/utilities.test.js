@@ -17,6 +17,12 @@ describe("utilities", () => {
     const obj = { name: "value" };
     const boxedObject = utilities.box(obj);
     assert.deepEqual(boxedObject, obj);
+
+    // Null/undefined value boxed as an empty object.
+    const boxedNull = utilities.box(null);
+    assert.deepEqual(boxedNull, {});
+    const boxedUndefined = utilities.box(undefined);
+    assert.deepEqual(boxedUndefined, {});
   });
 
   it("transformObject can apply a class mixin to a single object instance", () => {
