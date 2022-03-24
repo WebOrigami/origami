@@ -1,33 +1,46 @@
-import ExplorableObject from "../core/ExplorableObject.js";
-import IdentityGraph from "../core/IdentityGraph.js";
-import { transformObject } from "../core/utilities.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
+import Compose from "../common/Compose.js";
+import { isPlainObject } from "../core/utilities.js";
 
 /**
- * Extend the scope of the given graph to include the given ambient properties.
+ * Compose the given set of ambient properties on top of the given graph. This
+ * operation is typically performed on a graph that will be used as a scope.
  *
- * @param {Explorable} graph
+ * @param {Explorable|null} graph
  * @param {PlainObject} ambientProperties
  */
 export default function defineAmbientProperties(graph, ambientProperties) {
   // Create a graph of the ambient properties.
-  const ambients = new (InheritScopeTransform(ExplorableObject))(
-    ambientProperties
-  );
+  const ambients = new AmbientPropertyGraph(ambientProperties);
 
-  // If the original graph has a scope, we're going to insert the ambients in
-  // the scope between (a copy of) the original graph and original scope.
-  const scope = /** @type {any} */ (graph).scope;
-  if (scope && scope !== graph) {
-    ambients.parent = scope;
+  // If graph is defined, compose the ambients with it.
+  const extended = graph ? new Compose(ambients, graph) : ambients;
+
+  // Return the extended graph.
+  return extended;
+}
+
+/**
+ * Helper class for defining a graph of ambient properties.
+ *
+ * This is simpler than ExplorableObject: it doesn't expose the object's keys,
+ * just makes object's values available. It also doesn't support `set`, nor does
+ * it wrap returned graphs with its own class.
+ */
+class AmbientPropertyGraph {
+  constructor(object) {
+    if (!isPlainObject(object)) {
+      throw new TypeError(
+        "Ambient properties must be defined as a plain JavaScript object."
+      );
+    }
+    this.object = object;
   }
 
-  // We don't want to destroy the original graph's scope, so we make a copy of
-  // the graph. We then add the ambients (and any original scope) as a parent of
-  // the copy, thereby setting a new scope.
-  const extended = transformObject(InheritScopeTransform, IdentityGraph(graph));
-  extended.parent = ambients;
+  // We define this so that class instances are considered to be explorable, but
+  // we don't yield any keys.
+  async *[Symbol.asyncIterator]() {}
 
-  // Return the extended graph with its new scope.
-  return extended;
+  async get(key) {
+    return this.object[key];
+  }
 }

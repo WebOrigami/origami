@@ -2,7 +2,7 @@ import map from "../../src/builtins/map.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
-describe.skip("map", () => {
+describe("map", () => {
   it("maps all the values in a graph", async () => {
     const fixture = map(
       {

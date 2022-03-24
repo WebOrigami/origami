@@ -1,12 +1,11 @@
 import { ExplorableGraph } from "../../exports.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import defineAmbientProperties from "../../src/framework/defineAmbientProperties.js";
-import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 
 describe("defineAmbientProperties", () => {
-  it("runs", async () => {
-    const graph = new (InheritScopeTransform(ExplorableObject))({
+  it("extends graph with ambient properties", async () => {
+    const graph = new ExplorableObject({
       a: "Defined by graph",
     });
     const extended = defineAmbientProperties(graph, {
@@ -18,8 +17,20 @@ describe("defineAmbientProperties", () => {
       a: "Defined by graph",
     });
 
-    // But scope should now include the ambient properties.
-    assert.equal(await extended.scope.get("a"), "Defined by graph");
-    assert.equal(await extended.scope.get("@b"), "Ambient property");
+    // But extended graph can now get the ambient properties.
+    assert.equal(await extended.get("a"), "Defined by graph");
+    assert.equal(await extended.get("@b"), "Ambient property");
+  });
+
+  it("can 'extend' even if it's not given a graph", async () => {
+    const extended = defineAmbientProperties(null, {
+      "@b": "Ambient property",
+    });
+
+    // Graph should be empty.
+    assert.deepEqual(await ExplorableGraph.plain(extended), {});
+
+    // But extended graph can still provide the ambient properties.
+    assert.equal(await extended.get("@b"), "Ambient property");
   });
 });

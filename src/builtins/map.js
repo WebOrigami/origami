@@ -1,8 +1,8 @@
 import MapTypesGraph from "../common/MapTypesGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ExplorableObject from "../core/ExplorableObject.js";
 import MapGraph from "../core/MapGraph.js";
-import { box } from "../core/utilities.js";
+import { box, transformObject } from "../core/utilities.js";
+import defineAmbientProperties from "../framework/defineAmbientProperties.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -16,36 +16,33 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
   // We extend the mapping function so that the function's `this` context's
   // scope includes additional information.
   async function extendedMapFn(value, key) {
-    // Convert value into an execution context with a scope.
+    // Extend the context graph with the @key and @value ambient properties.
+    const extended = defineAmbientProperties(graph, {
+      "@key": key,
+      "@value": value,
+    });
+
+    // Convert value into a context graph or object that can take a scope.
     let context;
     if (
       typeof value !== "string" &&
       ExplorableGraph.canCastToExplorable(value)
     ) {
+      // Convert the value to a graph.
       context = ExplorableGraph.from(value);
+      // Apply InheritScopeTransform if necessary so graph can take a scope.
+      if (!("parent" in context)) {
+        context = transformObject(InheritScopeTransform, context);
+      }
     } else {
       context = box(value);
     }
 
-    // Establish the @key and @value ambient properties.
-    const ambientProperties = {
-      "@key": key,
-      "@value": value,
-    };
-    let ambients;
-    if (graph) {
-      ambients = new (InheritScopeTransform(ExplorableObject))(
-        ambientProperties
-      );
-      ambients.parent = graph;
-    } else {
-      ambients = new ExplorableObject(ambientProperties);
-    }
-
+    // Set the context's scope to the graph extended by the ambient properties.
     if ("parent" in context) {
-      context.parent = ambients;
+      context.parent = extended;
     } else {
-      context.scope = ambients;
+      context.scope = extended;
     }
 
     const fn = mapFn.toFunction?.() ?? mapFn;
