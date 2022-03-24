@@ -1,10 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { ExplorableFiles } from "../../exports.js";
 import map from "../../src/builtins/map.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
+import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

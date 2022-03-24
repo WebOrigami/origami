@@ -2,8 +2,8 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import execute from "../language/execute.js";
 import * as parse from "../language/parse.js";
-import defineAmbientProperties from "./defineAmbientProperties.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
+import { defineAmbientProperties } from "./scopeUtilities.js";
 import Template from "./Template.js";
 
 export default class OrigamiTemplate extends Template {

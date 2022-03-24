@@ -1,9 +1,9 @@
 import MapTypesGraph from "../common/MapTypesGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapGraph from "../core/MapGraph.js";
-import { box, transformObject } from "../core/utilities.js";
-import defineAmbientProperties from "../framework/defineAmbientProperties.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import {
+  defineAmbientProperties,
+  setScope,
+} from "../framework/scopeUtilities.js";
 
 /**
  * @this {Explorable}
@@ -24,30 +24,13 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
       "@value": value,
     });
 
-    // Convert value into a context graph or object that can take a scope.
-    let context;
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      // Convert the value to a graph.
-      context = ExplorableGraph.from(value);
-      // Apply InheritScopeTransform if necessary so graph can take a scope.
-      if (!("parent" in context)) {
-        context = transformObject(InheritScopeTransform, context);
-      }
-    } else {
-      context = box(value);
-    }
+    // Apply the scope to the value to create a context for the map function.
+    const context = setScope(value, scope);
 
-    // Set the context's scope to the extended scope.
-    if ("parent" in context) {
-      context.parent = scope;
-    } else {
-      context.scope = scope;
-    }
-
+    // If the mapFn is a graph, convert it to a function.
     const fn = mapFn.toFunction?.() ?? mapFn;
+
+    // Invoke the map function with our newly-created context.
     return await fn.call(context, value, key);
   }
 

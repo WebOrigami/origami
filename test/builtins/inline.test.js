@@ -1,5 +1,5 @@
-import { ExplorableObject } from "../../exports.js";
 import inline from "../../src/builtins/inline.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 describe("inline", () => {

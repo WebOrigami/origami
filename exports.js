@@ -68,7 +68,6 @@ export { default as defaultKeysJson } from "./src/framework/defaultKeysJson.js";
 export { default as DefaultPages } from "./src/framework/DefaultPages.js";
 export { default as defaultSvg } from "./src/framework/defaultSvg.js";
 export { default as defaultYamlHtml } from "./src/framework/defaultYamlHtml.js";
-export { default as defineAmbientProperties } from "./src/framework/defineAmbientProperties.js";
 export { default as Formula } from "./src/framework/Formula.js";
 export { default as FormulasTransform } from "./src/framework/FormulasTransform.js";
 export { default as GhostValuesTransform } from "./src/framework/GhostValuesTransform.js";
@@ -76,6 +75,7 @@ export { default as HandlebarsTemplate } from "./src/framework/HandlebarsTemplat
 export { default as InheritScopeTransform } from "./src/framework/InheritScopeTransform.js";
 export { default as InheritValuesTransform } from "./src/framework/InheritValuesTransform.js";
 export { default as MetaTransform } from "./src/framework/MetaTransform.js";
+export * from "./src/framework/scopeUtilities.js";
 export { default as StringWithGraph } from "./src/framework/StringWithGraph.js";
 export * from "./src/language/combinators.js";
 export { default as CommandModules } from "./src/node/CommandModules.js";
