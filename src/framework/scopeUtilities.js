@@ -1,4 +1,3 @@
-import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { box, isPlainObject, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -38,13 +37,20 @@ class AmbientPropertyGraph {
  */
 export function defineAmbientProperties(graph, ambientProperties) {
   // Create a graph of the ambient properties.
-  const ambients = new AmbientPropertyGraph(ambientProperties);
-
-  // If graph is defined, compose the ambients with it.
-  const extended = graph ? new Compose(ambients, graph) : ambients;
+  let ambients;
+  if (graph) {
+    // If graph is defined, make it the parent of the ambient properties graph.
+    ambients = new (InheritScopeTransform(AmbientPropertyGraph))(
+      ambientProperties
+    );
+    ambients.parent = graph;
+  } else {
+    // Just define the ambients as a graph.
+    ambients = new AmbientPropertyGraph(ambientProperties);
+  }
 
   // Return the extended graph.
-  return extended;
+  return ambients;
 }
 
 /**
@@ -54,7 +60,12 @@ export function defineAmbientProperties(graph, ambientProperties) {
  */
 export function setScope(value, scope) {
   let result;
-  if (typeof value !== "string" && ExplorableGraph.canCastToExplorable(value)) {
+  if (ExplorableGraph.isExplorable(value)) {
+    result = value;
+  } else if (
+    typeof value !== "string" &&
+    ExplorableGraph.canCastToExplorable(value)
+  ) {
     // Convert the value to a graph.
     result = ExplorableGraph.from(value);
     // Apply InheritScopeTransform if necessary so graph can take a scope.

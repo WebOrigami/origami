@@ -2,12 +2,6 @@ import path from "path";
 
 const defaultLoaders = {
   ".css": bufferToString,
-  ".hbs": async function (obj) {
-    const { default: HandlebarsTemplate } = await import(
-      "../framework/HandlebarsTemplate.js"
-    );
-    return new HandlebarsTemplate(bufferToString(obj), this);
-  },
   ".htm": bufferToString,
   ".html": bufferToString,
   ".js": bufferToString,
@@ -34,7 +28,10 @@ export default function FileLoadersTransform(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (value && typeof key === "string") {
+      if (
+        (typeof value === "string" || value instanceof Buffer) &&
+        typeof key === "string"
+      ) {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {

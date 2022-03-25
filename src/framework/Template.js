@@ -1,129 +1,114 @@
-import Compose from "../common/Compose.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import {
-  extractFrontMatter,
-  isPlainObject,
-  parse,
-  transformObject,
-} from "../core/utilities.js";
+import ExplorableObject from "../core/ExplorableObject.js";
+import { extractFrontMatter } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
-import MetaTransform from "./MetaTransform.js";
-import StringWithGraph from "./StringWithGraph.js";
+import FormulasTransform from "./FormulasTransform.js";
+import InheritScopeTransform from "./InheritScopeTransform.js";
+import { defineAmbientProperties, setScope } from "./scopeUtilities.js";
 
 export default class Template {
-  constructor(text, location) {
+  constructor(document, container) {
     this.compiled = null;
-    this.location = location;
-    this.text = String(text);
-
-    // Extract the template and possibly front matter from the text.
-    const frontMatter = extractFrontMatter(this.text);
-    if (frontMatter) {
-      const { frontData, bodyText } = frontMatter;
-      this.frontData = Object.assign(frontData, {
-        template: bodyText,
-      });
-      this.template = bodyText;
-    } else {
-      // No front matter.
-      this.frontData = null;
-      this.template = this.text;
-    }
+    this.container = container;
+    const { frontData, frontGraph, text } = parseDocument(String(document));
+    this.frontData = frontData;
+    this.frontGraph = frontGraph;
+    this.text = text;
   }
 
   /**
    * Apply the template to the given input data in the context of a graph.
    *
-   * @param {Explorable} [graph]
    * @param {any} [input]
-   * @param {Explorable} [graph]
+   * @param {Explorable} [container]
    */
-  async apply(input, graph) {
-    const data = input
-      ? await this.dataFromInput(input, graph)
-      : await this.interpretFrontMatter(graph);
-
+  async apply(input, container) {
+    // Compile the template if we haven't already done so.
     if (!this.compiled) {
-      const compiled = await this.compile();
-      if (compiled) {
-        this.compiled = compiled;
-      } else {
-        return undefined;
-      }
+      this.compiled = await this.compile();
     }
 
-    try {
-      const text = await this.compiled(data, graph);
-      const dataGraph = isPlainObject(data) ? new DefaultPages(data) : null;
-      const result = dataGraph ? new StringWithGraph(text, dataGraph) : text;
-      return result;
-    } catch (/** @type {any} */ error) {
-      // If we're asked to directly render a template that includes a
-      // @partial-block (i.e., without invoking that as a partial in some other
-      // template), then just return undefined rather than throwing an error.
-      if (error.message === "The partial @partial-block could not be found") {
-        return undefined;
-      }
-      throw error;
-    }
+    // Create the execution context for the compiled template.
+    const processedInput = await processInput(input, container);
+    const context = await this.createContext(processedInput);
+
+    const text = await this.compiled(context);
+
+    // Attach a lazy graph of the resolved template and input data.
+    const result = new String(text);
+    result.toGraph = () => this.createResultGraph(processedInput, context);
+    return result;
   }
 
   async compile() {
     return async (data, graph) => "";
   }
 
-  // Extract the data from the given input.
-  // If the template itself has front matter, and the input and front matter can
-  // be composed, do that.
-  async dataFromInput(input, graph) {
-    // Step 1: parse the input if necessary.
-    let parsed = input;
-    if (typeof input === "string" || input instanceof Buffer) {
-      parsed = parse(String(input));
+  /**
+   * Scope chain: input or input frontData -> template frontData -> ambients -> container
+   */
+  async createContext(processedInput) {
+    const { container, frontData, frontGraph, input, text } = processedInput;
+
+    // Base scope is the container's scope or the container itself.
+    const baseScope = container?.scope ?? container;
+
+    // Extend that with ambient properties.
+    const withAmbients = defineAmbientProperties(baseScope, {
+      "@container": container,
+      "@frontData": frontData,
+      "@input": input,
+      "@template": {
+        container: this.container,
+        frontData: this.frontData,
+        text: this.text,
+      },
+      "@text": text,
+    });
+
+    // Extend that with any template front data.
+    // TODO: mark scope as isInScope
+    let withTemplateFrontGraph;
+    if (this.frontGraph) {
+      // Avoid directly touching the template's front graph, as it may be reused
+      // in future invocations.
+      withTemplateFrontGraph = Object.create(this.frontGraph);
+      withTemplateFrontGraph.parent = withAmbients;
+    } else {
+      withTemplateFrontGraph = withAmbients;
     }
 
-    // Step two: compose if we can and convert to plain object or array.
-    let data = parsed;
-    if (isPlainObject(parsed)) {
-      if (this.frontData) {
-        // Compose (parsed) input on top of front matter.
-        parsed = Object.assign({}, this.frontData, parsed);
-      }
-      // Interpret the parsed object as a metagraph.
-      const explorable = ExplorableGraph.from(parsed);
-      const meta = transformObject(MetaTransform, explorable);
-      if (graph) {
-        /** @type {any} */ (meta).parent = graph;
-      }
-      data = await ExplorableGraph.plain(meta);
-    } else if (ExplorableGraph.isExplorable(parsed)) {
-      // If template has front matter, compose input on top of that.
-      const composed = this.frontData
-        ? new Compose(parsed, this.frontData)
-        : parsed;
-      data = await ExplorableGraph.plain(composed);
+    // If the input is a document with front matter, the context object will be
+    // the input text, otherwise will be the input itself.
+    let contextObject;
+    let scope;
+    if (frontGraph) {
+      contextObject = text;
+      // Can modify the input's front graph, as it won't be reused.
+      frontGraph.parent = withTemplateFrontGraph;
+      scope = frontGraph.scope;
+    } else {
+      contextObject = input;
+      scope = withTemplateFrontGraph.scope;
     }
 
-    return data;
+    // The context is the context object with the constructed scope.
+    const context = setScope(contextObject, scope);
+
+    return context;
   }
 
-  // If the template contains front matter, process the front matter data as a
-  // metagraph and return the plain result of that graph as the data; the body
-  // text of the template is returned as the template. If no front matter is
-  // found, return `null` for the data and the original template as the
-  // template.
-  //
-  // The supplied parent is used as the parent for the front matter graph.
-  async interpretFrontMatter(parent) {
-    if (this.frontData) {
-      const frontGraph = ExplorableGraph.from(this.frontData);
-      const meta = transformObject(MetaTransform, frontGraph);
-      /** @type {any} */ (meta).parent = parent;
-      const data = await ExplorableGraph.plain(meta);
-      return data;
-    } else {
-      return null;
-    }
+  createResultGraph(processedInput, context) {
+    const data = Object.assign(
+      {},
+      this.frontData,
+      processedInput.frontData ?? processedInput.input
+    );
+    const dataGraph = new (InheritScopeTransform(
+      FormulasTransform(ExplorableObject)
+    ))(data);
+    dataGraph.parent = context;
+    const withPages = new DefaultPages(dataGraph);
+    return withPages;
   }
 
   toFunction() {
@@ -139,4 +124,47 @@ export default class Template {
   toString() {
     return this.text;
   }
+}
+
+// Extract the body text and any front matter from a template document.
+function parseDocument(document) {
+  const frontMatter = extractFrontMatter(document);
+  const frontData = frontMatter?.frontData;
+  const frontGraph = frontData
+    ? new (InheritScopeTransform(FormulasTransform(ExplorableObject)))(
+        frontData
+      )
+    : null;
+  const text = frontMatter?.bodyText ?? document;
+  return { frontData, frontGraph, text };
+}
+
+// If the input is a string, parse it as a document that may have front matter.
+async function processInput(input, container) {
+  let frontData = null;
+  let frontGraph = null;
+  let text = String(input);
+
+  if (typeof input === "function") {
+    // The input is a function that must be evaluated to get the actual input. A
+    // common scenario for this would be an Origami template like foo.ori being
+    // called as a block: {{#foo.ori}}...{{/foo.ori}}. The inner contents of the
+    // block will be a lambda, i.e., a function that we want to invoke.
+    input = await input.call(container);
+  }
+
+  if (typeof input === "string" || input instanceof Buffer) {
+    const parsed = parseDocument(String(input));
+    frontData = parsed.frontData;
+    frontGraph = parsed.frontGraph;
+    text = parsed.text;
+  }
+
+  return {
+    container,
+    input,
+    frontData,
+    frontGraph,
+    text,
+  };
 }

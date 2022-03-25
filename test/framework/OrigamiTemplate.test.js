@@ -54,29 +54,4 @@ Hello, Carol.
 `
     );
   });
-
-  it("defines ambient property @input that references input data", async () => {
-    const template = new OrigamiTemplate("Hello, {{ @input }}.");
-    const graph = new ExplorableObject({});
-    const result = await template.apply("world", graph);
-    assert.equal(result, "Hello, world.");
-  });
-
-  it("gives template access to @key and @value", async () => {
-    const template = new OrigamiTemplate(
-      "{{ map(array, =`{{ @key }}: {{ @value }}\n`) }}"
-    );
-    const graph = ExplorableGraph.from({
-      array: ["a", "b", "c"],
-      map,
-    });
-    const result = await template.apply(null, graph);
-    assert.equal(
-      result,
-      `0: a
-1: b
-2: c
-`
-    );
-  });
 });

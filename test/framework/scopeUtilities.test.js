@@ -6,23 +6,21 @@ import {
 } from "../../src/framework/scopeUtilities.js";
 import assert from "../assert.js";
 
-describe("defineAmbientProperties", () => {
+describe("scopeUtilities", () => {
   it("extends graph with ambient properties", async () => {
     const graph = new ExplorableObject({
       a: "Defined by graph",
     });
-    const extended = defineAmbientProperties(graph, {
+    const ambients = defineAmbientProperties(graph, {
       "@b": "Ambient property",
     });
 
-    // Extended graph should expose the same keys/values as the original.
-    assert.deepEqual(await ExplorableGraph.plain(extended), {
-      a: "Defined by graph",
-    });
+    // Ambients graph doesn't expose any keys.
+    assert.deepEqual(await ExplorableGraph.plain(ambients), {});
 
-    // But extended graph can now get the ambient properties.
-    assert.equal(await extended.get("a"), "Defined by graph");
-    assert.equal(await extended.get("@b"), "Ambient property");
+    // Scope of returned graph includes ambients + original graph values.
+    assert.equal(await ambients.scope.get("a"), "Defined by graph");
+    assert.equal(await ambients.scope.get("@b"), "Ambient property");
   });
 
   it("can define ambient properties even if it's not given a base graph", async () => {
