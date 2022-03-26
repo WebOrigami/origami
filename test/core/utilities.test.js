@@ -111,7 +111,7 @@ This is the content.
 `);
     assert.deepEqual(parsed, {
       a: "Hello, a.",
-      "@value": "This is the content.\n",
+      "@text": "This is the content.\n",
     });
   });
 });

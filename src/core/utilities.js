@@ -84,7 +84,7 @@ export function parse(text) {
   if (frontMatter) {
     const { frontData, bodyText } = frontMatter;
     const data = Object.assign(frontData, {
-      "@value": bodyText,
+      "@text": bodyText,
     });
     return data;
   } else {

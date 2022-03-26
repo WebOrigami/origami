@@ -18,14 +18,14 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
   async function extendedMapFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
     // @value ambient properties.
-    const baseScope = graph?.scope ?? graph;
-    const scope = defineAmbientProperties(baseScope, {
+    const baseScope = /** @type {any} */ (graph)?.scope ?? graph;
+    const ambients = defineAmbientProperties(baseScope, {
       "@key": key,
       "@value": value,
     });
 
     // Apply the scope to the value to create a context for the map function.
-    const context = setScope(value, scope);
+    const context = setScope(value, ambients.scope);
 
     // If the mapFn is a graph, convert it to a function.
     const fn = mapFn.toFunction?.() ?? mapFn;

@@ -1,5 +1,11 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
+/**
+ * @this {Explorable}
+ * @param {any} value
+ * @param {any} trueResult
+ * @param {any} [falseResult]
+ */
 export default async function ifCommand(value, trueResult, falseResult) {
   let condition = await value;
   if (ExplorableGraph.isExplorable(condition)) {

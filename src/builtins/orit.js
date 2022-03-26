@@ -23,6 +23,7 @@ export default async function orit(
     }
   }
   const template = new OrigamiTemplate(templateText, this);
+  /** @type {any} */
   let result = await template.apply(input, this);
   if (frontBlock) {
     result = frontBlock + result;

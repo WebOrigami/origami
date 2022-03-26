@@ -1,9 +1,16 @@
+import * as YAMLModule from "yaml";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
-import { extractFrontMatter } from "../core/utilities.js";
+import { extractFrontMatter, isPlainObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import { defineAmbientProperties, setScope } from "./scopeUtilities.js";
+import StringWithGraph from "./StringWithGraph.js";
+
+// See notes at ExplorableGraph.js
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 export default class Template {
   constructor(document, container) {
@@ -34,25 +41,28 @@ export default class Template {
     const text = await this.compiled(context);
 
     // Attach a lazy graph of the resolved template and input data.
-    const result = new String(text);
+    const result = new StringWithGraph(text, null);
     result.toGraph = () => this.createResultGraph(processedInput, context);
     return result;
   }
 
   async compile() {
-    return async (data, graph) => "";
+    return async (context) => "";
   }
 
   /**
    * Scope chain: input or input frontData -> template frontData -> ambients -> container
    */
   async createContext(processedInput) {
-    const { container, frontData, frontGraph, input, text } = processedInput;
+    const { container, frontData, inputGraph, input, text } = processedInput;
+
+    // By default, the context object will be the input itself.
+    let contextObject = input;
 
     // Base scope is the container's scope or the container itself.
     const baseScope = container?.scope ?? container;
 
-    // Extend that with ambient properties.
+    // Extend the scope with ambient properties.
     const withAmbients = defineAmbientProperties(baseScope, {
       "@container": container,
       "@frontData": frontData,
@@ -65,8 +75,7 @@ export default class Template {
       "@text": text,
     });
 
-    // Extend that with any template front data.
-    // TODO: mark scope as isInScope
+    // Extend the scope with any template front data.
     let withTemplateFrontGraph;
     if (this.frontGraph) {
       // Avoid directly touching the template's front graph, as it may be reused
@@ -77,21 +86,25 @@ export default class Template {
       withTemplateFrontGraph = withAmbients;
     }
 
-    // If the input is a document with front matter, the context object will be
-    // the input text, otherwise will be the input itself.
-    let contextObject;
-    let scope;
-    if (frontGraph) {
-      contextObject = text;
+    // Extend the scope with any explorable input data.
+    let withInputGraph;
+    if (inputGraph) {
+      // We either have front matter, or the input itself is explorable data.
+      if (frontData) {
+        // In the case where we have front matter, the context object is the
+        // input text.
+        contextObject = text;
+      }
       // Can modify the input's front graph, as it won't be reused.
-      frontGraph.parent = withTemplateFrontGraph;
-      scope = frontGraph.scope;
+      inputGraph.parent = withTemplateFrontGraph;
+      withInputGraph = inputGraph;
     } else {
-      contextObject = input;
-      scope = withTemplateFrontGraph.scope;
+      withInputGraph = withTemplateFrontGraph;
     }
+    const scope = withInputGraph.scope;
 
-    // The context is the context object with the constructed scope.
+    // The complete context is the context object with the constructed scope
+    // attached to it.
     const context = setScope(contextObject, scope);
 
     return context;
@@ -142,8 +155,7 @@ function parseDocument(document) {
 // If the input is a string, parse it as a document that may have front matter.
 async function processInput(input, container) {
   let frontData = null;
-  let frontGraph = null;
-  let text = String(input);
+  let inputGraph = null;
 
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
@@ -153,18 +165,42 @@ async function processInput(input, container) {
     input = await input.call(container);
   }
 
+  let text =
+    typeof input === "string" || input instanceof Buffer ? String(input) : null;
+
+  let inputData = input;
   if (typeof input === "string" || input instanceof Buffer) {
-    const parsed = parseDocument(String(input));
-    frontData = parsed.frontData;
-    frontGraph = parsed.frontGraph;
-    text = parsed.text;
+    // Try parsing input as a document with front matter.
+    const inputText = String(input);
+    const parsedDocument = parseDocument(inputText);
+    if (parsedDocument.frontData) {
+      frontData = parsedDocument.frontData;
+      inputGraph = parsedDocument.frontGraph;
+      text = parsedDocument.text;
+    } else {
+      // Input has no front matter, but input itself may be YAML/JSON.
+      try {
+        inputData = YAML.parse(inputText);
+      } catch (e) {
+        // Input is not YAML/JSON.
+      }
+    }
+  }
+
+  if (ExplorableGraph.isExplorable(input)) {
+    inputGraph = input;
+  } else if (isPlainObject(inputData)) {
+    // Construct input graph from the input data.
+    inputGraph = new (InheritScopeTransform(
+      FormulasTransform(ExplorableObject)
+    ))(inputData);
   }
 
   return {
     container,
-    input,
     frontData,
-    frontGraph,
+    input,
+    inputGraph,
     text,
   };
 }

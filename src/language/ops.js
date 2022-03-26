@@ -15,6 +15,7 @@ import execute from "./execute.js";
  * @param {Code} code
  */
 export function lambda(code) {
+  /** @this {any} */
   return async function () {
     const result = await execute.call(this, code);
     return result;

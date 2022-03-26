@@ -43,6 +43,7 @@ template`);
         b: 2,
         c: 3,
       });
+      return "";
     };
     await template.apply(input, graph);
   });
@@ -57,6 +58,7 @@ text`;
     template.compiled = async (context) => {
       assert.equal(String(context), "text");
       assert.equal(await context.scope.get("a"), 1);
+      return "";
     };
     await template.apply(input, graph);
   });
@@ -87,6 +89,7 @@ text`;
       assert.deepEqual(await scope.get("@frontData"), { b: 2 });
       assert.equal(await scope.get("@input"), inputDocument);
       assert.equal(await scope.get("@text"), "text");
+      return "";
     };
     await template.apply(inputDocument, inputContainer);
   });
@@ -104,6 +107,7 @@ text`;
     template.compiled = async (context) => {
       assert.equal(await context.scope.get("a"), 1);
       assert.equal(await context.scope.get("b"), 2);
+      return "";
     };
     await template.apply(input, graph);
   });

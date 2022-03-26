@@ -37,16 +37,12 @@ class AmbientPropertyGraph {
  */
 export function defineAmbientProperties(graph, ambientProperties) {
   // Create a graph of the ambient properties.
-  let ambients;
+  const ambients = new (InheritScopeTransform(AmbientPropertyGraph))(
+    ambientProperties
+  );
   if (graph) {
     // If graph is defined, make it the parent of the ambient properties graph.
-    ambients = new (InheritScopeTransform(AmbientPropertyGraph))(
-      ambientProperties
-    );
     ambients.parent = graph;
-  } else {
-    // Just define the ambients as a graph.
-    ambients = new AmbientPropertyGraph(ambientProperties);
   }
 
   // Return the extended graph.
