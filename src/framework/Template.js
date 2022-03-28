@@ -52,6 +52,8 @@ export default class Template {
 
   /**
    * Scope chain: input or input frontData -> template frontData -> ambients -> container
+   *
+   * TODO: (input or input frontData + template frontData) -> ambients -> container
    */
   async createContext(processedInput) {
     const { container, frontData, inputGraph, input, text } = processedInput;
