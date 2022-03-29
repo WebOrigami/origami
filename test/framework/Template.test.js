@@ -28,16 +28,20 @@ text`,
 
   it("extends container scope with template and input data", async () => {
     const template = new Template(`---
-a: 1
+b: 2
 ---
 template`);
     const graph = new ExplorableObject({
-      b: 2,
+      a: 1,
     });
     const input = { c: 3 };
     template.compiled = async (context) => {
-      // Context itself is the input data
-      assert.deepEqual(await ExplorableGraph.plain(context), input);
+      // Context itself is the combined input + template data
+      assert.deepEqual(await ExplorableGraph.plain(context), {
+        b: 2,
+        c: 3,
+      });
+      // Scope is combined input + template + container
       assert.deepEqual(await ExplorableGraph.plain(context.scope), {
         a: 1,
         b: 2,

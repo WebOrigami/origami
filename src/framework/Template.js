@@ -2,10 +2,9 @@ import * as YAMLModule from "yaml";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
-import { extractFrontMatter, isPlainObject } from "../core/utilities.js";
+import { extractFrontMatter } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
 import { AmbientPropertyGraph, setScope } from "./scopeUtilities.js";
 import StringWithGraph from "./StringWithGraph.js";
 
@@ -17,9 +16,8 @@ export default class Template {
   constructor(document, container) {
     this.compiled = null;
     this.container = container;
-    const { frontData, frontGraph, text } = parseDocument(String(document));
+    const { frontData, text } = parseDocument(String(document));
     this.frontData = frontData;
-    this.frontGraph = frontGraph;
     this.text = text;
   }
 
@@ -37,13 +35,13 @@ export default class Template {
 
     // Create the execution context for the compiled template.
     const processedInput = await processInput(input, container);
-    const context = await this.createContext(processedInput);
+    const { context, dataGraph } = await this.createContext(processedInput);
 
     const text = await this.compiled(context);
 
-    // Attach a lazy graph of the resolved template and input data.
+    // Attach a graph of the resolved template and input data.
     const result = new StringWithGraph(text, null);
-    result.toGraph = () => this.createResultGraph(processedInput, context);
+    result.toGraph = () => this.createResultGraph(dataGraph);
     return result;
   }
 
@@ -58,7 +56,7 @@ export default class Template {
    * container.
    */
   async createContext(processedInput) {
-    const { container, frontData, inputGraph, input, text } = processedInput;
+    const { container, frontData, input, inputData, text } = processedInput;
 
     // Ambient properties let the template reference specific input/template data.
     const ambients = new AmbientPropertyGraph({
@@ -73,13 +71,21 @@ export default class Template {
       "@text": text,
     });
 
-    // Construct new scope chain:
-    // input or input frontData -> template frontData -> ambients -> container
+    // Construct the graph for the data that the template will be applied to.
+    // This graph combines the input data (if present) with the template data
+    // (if present).
+    const data =
+      inputData || this.frontData
+        ? Object.assign({}, this.frontData, inputData)
+        : null;
+    const dataGraph = data
+      ? new (FormulasTransform(ExplorableObject))(data)
+      : null;
 
-    // TODO: (input or input frontData + template frontData) -> ambients -> container
+    // Construct new scope chain:
+    // (input or input frontData + template frontData) -> ambients -> container
     const scope = new Scope(
-      inputGraph,
-      this.frontGraph,
+      dataGraph,
       ambients,
       // Base scope is the container's scope (if defined) or the container itself.
       container?.scope ?? container
@@ -88,25 +94,16 @@ export default class Template {
     // By default, the context object will be the input itself. In the case
     // where we have front matter, the context object is the input text (the
     // input without the front matter).
-    const contextObject = frontData ? text : input;
+    const contextObject = frontData ? text : dataGraph;
 
     // The complete context is the context object with the constructed scope
     // attached to it.
     const context = setScope(contextObject, scope);
 
-    return context;
+    return { context, dataGraph };
   }
 
-  createResultGraph(processedInput, context) {
-    const data = Object.assign(
-      {},
-      this.frontData,
-      processedInput.frontData ?? processedInput.input
-    );
-    const dataGraph = new (InheritScopeTransform(
-      FormulasTransform(ExplorableObject)
-    ))(data);
-    dataGraph.parent = context;
+  createResultGraph(dataGraph) {
     const withPages = new DefaultPages(dataGraph);
     return withPages;
   }
@@ -130,19 +127,13 @@ export default class Template {
 function parseDocument(document) {
   const frontMatter = extractFrontMatter(document);
   const frontData = frontMatter?.frontData;
-  const frontGraph = frontData
-    ? new (InheritScopeTransform(FormulasTransform(ExplorableObject)))(
-        frontData
-      )
-    : null;
   const text = frontMatter?.bodyText ?? document;
-  return { frontData, frontGraph, text };
+  return { frontData, text };
 }
 
 // If the input is a string, parse it as a document that may have front matter.
 async function processInput(input, container) {
-  let frontData = null;
-  let inputGraph = null;
+  let frontData;
 
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
@@ -162,7 +153,7 @@ async function processInput(input, container) {
     const parsedDocument = parseDocument(inputText);
     if (parsedDocument.frontData) {
       frontData = parsedDocument.frontData;
-      inputGraph = parsedDocument.frontGraph;
+      inputData = frontData;
       text = parsedDocument.text;
     } else {
       // Input has no front matter, but input itself may be YAML/JSON.
@@ -172,22 +163,15 @@ async function processInput(input, container) {
         // Input is not YAML/JSON.
       }
     }
-  }
-
-  if (ExplorableGraph.isExplorable(input)) {
-    inputGraph = input;
-  } else if (isPlainObject(inputData)) {
-    // Construct input graph from the input data.
-    inputGraph = new (InheritScopeTransform(
-      FormulasTransform(ExplorableObject)
-    ))(inputData);
+  } else if (ExplorableGraph.isExplorable(input)) {
+    inputData = await ExplorableGraph.plain(input);
   }
 
   return {
     container,
     frontData,
     input,
-    inputGraph,
+    inputData,
     text,
   };
 }
