@@ -9,7 +9,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * just makes object's values available. It also doesn't support `set`, nor does
  * it wrap returned graphs with its own class.
  */
-class AmbientPropertyGraph {
+export class AmbientPropertyGraph {
   constructor(object) {
     if (!isPlainObject(object)) {
       throw new TypeError(

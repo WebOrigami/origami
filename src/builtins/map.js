@@ -1,9 +1,7 @@
 import MapTypesGraph from "../common/MapTypesGraph.js";
+import Scope from "../common/Scope.js";
 import MapGraph from "../core/MapGraph.js";
-import {
-  defineAmbientProperties,
-  setScope,
-} from "../framework/scopeUtilities.js";
+import { AmbientPropertyGraph, setScope } from "../framework/scopeUtilities.js";
 
 /**
  * @this {Explorable}
@@ -18,14 +16,16 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
   async function extendedMapFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
     // @value ambient properties.
-    const baseScope = /** @type {any} */ (graph)?.scope ?? graph;
-    const ambients = defineAmbientProperties(baseScope, {
-      "@key": key,
-      "@value": value,
-    });
+    const scope = new Scope(
+      new AmbientPropertyGraph({
+        "@key": key,
+        "@value": value,
+      }),
+      graph?.scope
+    );
 
     // Apply the scope to the value to create a context for the map function.
-    const context = setScope(value, ambients.scope);
+    const context = setScope(value, scope);
 
     // If the mapFn is a graph, convert it to a function.
     const fn = mapFn.toFunction?.() ?? mapFn;
