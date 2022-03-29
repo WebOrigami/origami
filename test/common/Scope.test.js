@@ -19,4 +19,22 @@ describe("Scope", () => {
     );
     assert.deepEqual(objects, [graphA, graphB, graphC]);
   });
+
+  it("sets isInScope on all graphs in scope but the first", async () => {
+    const graphA = {
+      a: 1,
+    };
+    const graphB = {
+      b: 2,
+    };
+    const graphC = {
+      c: 3,
+    };
+    const scope = new Scope(graphA, graphB, graphC);
+    /** @type {any[]} */
+    const graphs = scope.graphs;
+    assert.equal(!!graphs[0].isInScope, false);
+    assert.equal(graphs[1].isInScope, true);
+    assert.equal(graphs[2].isInScope, true);
+  });
 });

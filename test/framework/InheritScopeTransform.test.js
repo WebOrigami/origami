@@ -25,16 +25,4 @@ describe("InheritScopeTransform", () => {
     assert.deepEqual(await subgraph.scope.get("b"), 2);
     assert.deepEqual(await subgraph.scope.get("a"), 1);
   });
-
-  it.skip("sets isInScope on a graph when it's in the scope of another graph", async () => {
-    const graph = new (InheritScopeTransform(ExplorableObject))({
-      a: 1,
-      subgraph: {
-        b: 2,
-      },
-    });
-    assert(!graph.isInScope);
-    const subgraph = await graph.get("subgraph");
-    assert(subgraph.scope.isInScope);
-  });
 });

@@ -1,11 +1,12 @@
 import * as YAMLModule from "yaml";
+import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { extractFrontMatter, isPlainObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-import { defineAmbientProperties, setScope } from "./scopeUtilities.js";
+import { AmbientPropertyGraph, setScope } from "./scopeUtilities.js";
 import StringWithGraph from "./StringWithGraph.js";
 
 // See notes at ExplorableGraph.js
@@ -51,21 +52,16 @@ export default class Template {
   }
 
   /**
-   * Scope chain: input or input frontData -> template frontData -> ambients -> container
-   *
-   * TODO: (input or input frontData + template frontData) -> ambients -> container
+   * Create an object that will be the context for executing the compiled
+   * template. This will be some form of the input, along with a scope that
+   * includes input data, template data, ambient properties, and the input's
+   * container.
    */
   async createContext(processedInput) {
     const { container, frontData, inputGraph, input, text } = processedInput;
 
-    // By default, the context object will be the input itself.
-    let contextObject = input;
-
-    // Base scope is the container's scope or the container itself.
-    const baseScope = container?.scope ?? container;
-
-    // Extend the scope with ambient properties.
-    const withAmbients = defineAmbientProperties(baseScope, {
+    // Ambient properties let the template reference specific input/template data.
+    const ambients = new AmbientPropertyGraph({
       "@container": container,
       "@frontData": frontData,
       "@input": input,
@@ -77,33 +73,22 @@ export default class Template {
       "@text": text,
     });
 
-    // Extend the scope with any template front data.
-    let withTemplateFrontGraph;
-    if (this.frontGraph) {
-      // Avoid directly touching the template's front graph, as it may be reused
-      // in future invocations.
-      withTemplateFrontGraph = Object.create(this.frontGraph);
-      withTemplateFrontGraph.parent = withAmbients;
-    } else {
-      withTemplateFrontGraph = withAmbients;
-    }
+    // Construct new scope chain:
+    // input or input frontData -> template frontData -> ambients -> container
 
-    // Extend the scope with any explorable input data.
-    let withInputGraph;
-    if (inputGraph) {
-      // We either have front matter, or the input itself is explorable data.
-      if (frontData) {
-        // In the case where we have front matter, the context object is the
-        // input text.
-        contextObject = text;
-      }
-      // Can modify the input's front graph, as it won't be reused.
-      inputGraph.parent = withTemplateFrontGraph;
-      withInputGraph = inputGraph;
-    } else {
-      withInputGraph = withTemplateFrontGraph;
-    }
-    const scope = withInputGraph.scope;
+    // TODO: (input or input frontData + template frontData) -> ambients -> container
+    const scope = new Scope(
+      inputGraph,
+      this.frontGraph,
+      ambients,
+      // Base scope is the container's scope (if defined) or the container itself.
+      container?.scope ?? container
+    );
+
+    // By default, the context object will be the input itself. In the case
+    // where we have front matter, the context object is the input text (the
+    // input without the front matter).
+    const contextObject = frontData ? text : input;
 
     // The complete context is the context object with the constructed scope
     // attached to it.
