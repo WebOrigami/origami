@@ -1,7 +1,15 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { toSerializable } from "../core/utilities.js";
 
+/**
+ * @this {Explorable}
+ * @param {GraphVariant} variant
+ */
 export default async function table(variant) {
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const firstValue = await valueForFirstKey(graph);
   if (ExplorableGraph.isExplorable(firstValue)) {

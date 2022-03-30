@@ -1,12 +1,17 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapGraph from "../core/MapGraph.js";
-import files from "./files.js";
 
+/**
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} [variant]
+ */
 export default async function clean(variant) {
-  const graph = variant
-    ? ExplorableGraph.from(variant)
-    : // @ts-ignore
-      await files.call(this);
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return;
+  }
+  const graph = ExplorableGraph.from(variant);
   const cleanGraph = await graph.get(".ori.clean.yaml");
   if (!cleanGraph) {
     // Nothing to clean

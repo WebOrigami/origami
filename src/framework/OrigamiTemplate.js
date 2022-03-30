@@ -9,8 +9,8 @@ export default class OrigamiTemplate extends Template {
       throw new Error(`Couldn't parse Origami template`);
     }
     const code = parsed.value;
-    return async (context) => {
-      const result = await execute.call(context, code);
+    return async (scope) => {
+      const result = await execute.call(scope, code);
       return result;
     };
   }

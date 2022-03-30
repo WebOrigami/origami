@@ -46,7 +46,7 @@ export default class MapTypesGraph {
       value = await this.graph.get(sourceKey);
       if (value !== undefined) {
         // Apply map function.
-        value = await this.mapFn.call(this.graph, value, sourceKey, key);
+        value = await this.mapFn.call(this, value, sourceKey, key);
       }
     }
 
@@ -65,10 +65,6 @@ export default class MapTypesGraph {
           this.targetExtension,
         ])
       : value;
-  }
-
-  get scope() {
-    return /** @type {any} */ (this.graph).scope;
   }
 }
 

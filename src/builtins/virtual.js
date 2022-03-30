@@ -9,7 +9,11 @@ export default async function virtual(key) {
   const dirname = path.resolve(process.cwd());
   const files = new ExplorableFiles(dirname);
   const graph = await graphVirtual(files);
-  return key === undefined ? graph : await graph.get(key);
+  return graph === undefined
+    ? undefined
+    : key === undefined
+    ? graph
+    : await graph.get(key);
 }
 
 virtual.usage = `virtual\tWrap the graph for the current directory with a virtual app`;

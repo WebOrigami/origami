@@ -8,9 +8,14 @@ import config from "./config.js";
 /**
  * Wrap the indicated graph as a virtual app.
  *
- * @param {Explorable} variant
+ * @this {Explorable}
+ * @param {Explorable} [variant]
  */
 export default async function graphVirtual(variant) {
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
   const scopePath =

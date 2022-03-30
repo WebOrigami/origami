@@ -37,13 +37,13 @@ describe("map", () => {
     });
   });
 
-  it("mapping function context's scope has @key and @value ambient properties", async () => {
+  it("mapping function context has @key and @value ambient properties", async () => {
     const results = map(
       ["a", "b", "c"],
       /** @this {any} */
       async function () {
-        const key = await this.scope.get("@key");
-        const value = await this.scope.get("@value");
+        const key = await this.get("@key");
+        const value = await this.get("@value");
         return { key, value };
       }
     );
@@ -54,12 +54,12 @@ describe("map", () => {
     });
   });
 
-  it("mapping function context's scope includes the value's graph", async () => {
+  it("mapping function context includes the value's graph", async () => {
     const results = map(
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol " }],
       /** @this {any} */
       async function () {
-        const name = await this.scope.get("name");
+        const name = await this.get("name");
         return name;
       }
     );

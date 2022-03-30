@@ -3,10 +3,11 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { extractFrontMatter } from "../core/utilities.js";
+import AmbientPropertiesGraph from "./AmbientPropertiesGraph.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-import { AmbientPropertyGraph, setScope } from "./scopeUtilities.js";
+import { getScope } from "./scopeUtilities.js";
 import StringWithGraph from "./StringWithGraph.js";
 
 // See notes at ExplorableGraph.js
@@ -14,9 +15,9 @@ import StringWithGraph from "./StringWithGraph.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 export default class Template {
-  constructor(document, container) {
+  constructor(document, scope) {
     this.compiled = null;
-    this.container = container;
+    this.scope = scope;
     const { frontData, text } = parseDocument(String(document));
     this.frontData = frontData;
     this.text = text;
@@ -26,19 +27,21 @@ export default class Template {
    * Apply the template to the given input data in the context of a graph.
    *
    * @param {any} [input]
-   * @param {Explorable} [container]
+   * @param {Explorable} [scope]
    */
-  async apply(input, container) {
+  async apply(input, scope) {
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
     }
 
     // Create the execution context for the compiled template.
-    const processedInput = await processInput(input, container);
-    const { context, dataGraph } = await this.createContext(processedInput);
+    const processedInput = await processInput(input, scope);
+    const { dataGraph, scope: extendedScope } = await this.createContext(
+      processedInput
+    );
 
-    const text = await this.compiled(context);
+    const text = await this.compiled(extendedScope);
 
     // Attach a graph of the resolved template and input data.
     const result = new StringWithGraph(text, null);
@@ -47,7 +50,7 @@ export default class Template {
   }
 
   async compile() {
-    return async (context) => "";
+    return async (scope) => "";
   }
 
   /**
@@ -57,16 +60,21 @@ export default class Template {
    * container.
    */
   async createContext(processedInput) {
-    const { container, frontData, input, inputData, text } = processedInput;
+    const {
+      frontData,
+      input,
+      inputData,
+      scope: inputScope,
+      text,
+    } = processedInput;
 
     // Ambient properties let the template reference specific input/template data.
-    const ambients = new AmbientPropertyGraph({
-      "@container": container,
+    const ambients = new AmbientPropertiesGraph({
       "@frontData": frontData,
       "@input": input,
       "@template": {
-        container: this.container,
         frontData: this.frontData,
+        scope: this.scope,
         text: this.text,
       },
       "@text": text,
@@ -75,11 +83,7 @@ export default class Template {
     // Construct new scope chain:
     // (input or input frontData + template frontData) -> ambients -> container
     /** @type {Explorable} */
-    let scope = new Scope(
-      ambients,
-      // Base scope is the container's scope (if defined) or the container itself.
-      container?.scope ?? container
-    );
+    let scope = new Scope(ambients, getScope(inputScope));
 
     // Construct the graph for the data that the template will be applied to.
     // This graph combines the input data (if present) with the template data
@@ -96,20 +100,7 @@ export default class Template {
       scope = dataGraph.scope;
     }
 
-    // The complete context is the context object with the constructed scope
-    // attached to it. By default, the context object will be the input itself.
-    // In the case where we have front matter, the context object is the input
-    // text (the input without the front matter).
-    let context;
-    if (frontData) {
-      context = setScope(text, scope);
-    } else if (dataGraph) {
-      context = dataGraph;
-    } else {
-      context = setScope(input, scope);
-    }
-
-    return { context, dataGraph };
+    return { dataGraph, scope };
   }
 
   createResultGraph(dataGraph) {
@@ -141,7 +132,7 @@ function parseDocument(document) {
 }
 
 // If the input is a string, parse it as a document that may have front matter.
-async function processInput(input, container) {
+async function processInput(input, scope) {
   let frontData;
 
   if (typeof input === "function") {
@@ -149,7 +140,7 @@ async function processInput(input, container) {
     // common scenario for this would be an Origami template like foo.ori being
     // called as a block: {{#foo.ori}}...{{/foo.ori}}. The inner contents of the
     // block will be a lambda, i.e., a function that we want to invoke.
-    input = await input.call(container);
+    input = await input.call(scope);
   }
 
   let text =
@@ -177,10 +168,10 @@ async function processInput(input, container) {
   }
 
   return {
-    container,
     frontData,
     input,
     inputData,
+    scope,
     text,
   };
 }

@@ -9,7 +9,7 @@ describe("Template", () => {
     const template = new Template("text", container);
     assert.equal(template.frontData, null);
     assert.equal(template.text, "text");
-    assert.equal(template.container, container);
+    assert.equal(template.scope, container);
   });
 
   it("parses template with front matter", () => {
@@ -23,7 +23,7 @@ text`,
     );
     assert.deepEqual(template.frontData, { a: 1 });
     assert.equal(template.text, "text");
-    assert.equal(template.container, container);
+    assert.equal(template.scope, container);
   });
 
   it("extends container scope with template and input data", async () => {
@@ -31,25 +31,20 @@ text`,
 b: 2
 ---
 template`);
-    const graph = new ExplorableObject({
+    const scope = new ExplorableObject({
       a: 1,
     });
     const input = { c: 3 };
-    template.compiled = async (context) => {
-      // Context itself is the combined input + template data
-      assert.deepEqual(await ExplorableGraph.plain(context), {
-        b: 2,
-        c: 3,
-      });
+    template.compiled = async (scope) => {
       // Scope is combined input + template + container
-      assert.deepEqual(await ExplorableGraph.plain(context.scope), {
+      assert.deepEqual(await ExplorableGraph.plain(scope), {
         a: 1,
         b: 2,
         c: 3,
       });
       return "";
     };
-    await template.apply(input, graph);
+    await template.apply(input, scope);
   });
 
   it("extends scope with input front matter", async () => {
@@ -59,43 +54,39 @@ template`);
 a: 1
 ---
 text`;
-    template.compiled = async (context) => {
-      assert.equal(String(context), "text");
-      assert.equal(await context.scope.get("a"), 1);
+    template.compiled = async (scope) => {
+      assert.equal(await scope.get("a"), 1);
       return "";
     };
     await template.apply(input, graph);
   });
 
   it("defines ambient properties for input and template data", async () => {
-    const templateContainer = {};
+    const templateScope = {};
     const templateDocument = `---
 a: 1
 ---
 template`;
-    const template = new Template(templateDocument, templateContainer);
-    const inputContainer = new ExplorableObject({});
+    const template = new Template(templateDocument, templateScope);
+    const inputScope = new ExplorableObject({});
     const inputDocument = `---
 b: 2
 ---
 text`;
-    template.compiled = async (context) => {
-      const scope = context.scope;
-
+    template.compiled = async (scope) => {
       const templateInfo = await scope.get("@template");
       assert.deepEqual(templateInfo, {
-        container: templateContainer,
+        scope: templateScope,
         frontData: { a: 1 },
         text: "template",
       });
 
-      assert.equal(await scope.get("@container"), inputContainer);
       assert.deepEqual(await scope.get("@frontData"), { b: 2 });
       assert.equal(await scope.get("@input"), inputDocument);
       assert.equal(await scope.get("@text"), "text");
       return "";
     };
-    await template.apply(inputDocument, inputContainer);
+    await template.apply(inputDocument, inputScope);
   });
 
   it("interprets input and template data as metagraphs", async () => {
@@ -108,9 +99,9 @@ template`);
 b = 2:
 ---
 text`;
-    template.compiled = async (context) => {
-      assert.equal(await context.scope.get("a"), 1);
-      assert.equal(await context.scope.get("b"), 2);
+    template.compiled = async (scope) => {
+      assert.equal(await scope.get("a"), 1);
+      assert.equal(await scope.get("b"), 2);
       return "";
     };
     await template.apply(input, graph);

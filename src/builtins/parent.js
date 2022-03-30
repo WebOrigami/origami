@@ -4,9 +4,14 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * Returns the parent of the current graph.
  *
  * @this {Explorable}
+ * @param {GraphVariant} [variant]
  */
 export default async function parent(variant) {
-  const graph = variant ? ExplorableGraph.from(variant) : this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
+  const graph = ExplorableGraph.from(variant);
   return /** @type {any} */ (graph).parent;
 }
 

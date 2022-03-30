@@ -9,10 +9,14 @@ import dot from "./dot.js";
  * @param {GraphVariant} [variant]
  */
 export default async function svg(variant) {
-  variant = variant ?? this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const dotText = await dot(graph);
-  const result = await graphviz.dot(dotText, "svg");
+  const result =
+    dotText === undefined ? undefined : await graphviz.dot(dotText, "svg");
   return result;
 }
 

@@ -7,7 +7,11 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function keys(variant) {
-  const graph = variant ? ExplorableGraph.from(variant) : this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
+  const graph = ExplorableGraph.from(variant);
   return await ExplorableGraph.keys(graph);
 }
 

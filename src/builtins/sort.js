@@ -9,7 +9,10 @@ import { transformObject } from "../core/utilities.js";
  * @param {GraphVariant} [variant]
  */
 export default async function sort(variant) {
-  variant = variant ?? this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const sort = transformObject(SortTransform, graph);
   return sort;

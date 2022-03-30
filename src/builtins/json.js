@@ -5,10 +5,13 @@ import { toSerializable } from "../core/utilities.js";
  * Render the given object in JSON format.
  *
  * @this {Explorable}
- * @param {any} obj
+ * @param {any} [obj]
  */
 export default async function json(obj) {
-  obj = obj ?? this;
+  obj = obj ?? (await this.get("@defaultGraph"));
+  if (obj === undefined) {
+    return undefined;
+  }
   if (ExplorableGraph.canCastToExplorable(obj)) {
     return await ExplorableGraph.toJson(obj);
   } else {

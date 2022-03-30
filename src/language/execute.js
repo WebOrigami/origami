@@ -6,22 +6,17 @@ import * as ops from "./ops.js";
 /**
  * Evaluate the given code and return the result.
  *
- * `this` should be the context in which the code will be evaluated, so you will
- * normally invoke this function as `execute.call(myContext)`. The context can
- * expose a `scope` property that is a graph that will be searched to look up
- * the names of things to execute.
+ * `this` should be the scope used to look up references found in the code.
  *
- * @this {ExecutionContext}
+ * @this {GraphVariant}
  * @param {Code} code
  */
 export default async function execute(code) {
-  const context = this;
+  const scope = this;
 
   if (code === ops.scope) {
-    // ops.scope is a placeholder for the context's scope. If the context
-    // doesn't define a scope, assume the context is a graph and use the context
-    // itself as the scope.
-    return /** @type {any} */ (context)?.scope ?? context;
+    // ops.scope is a placeholder for the context's scope.
+    return scope;
   } else if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -34,7 +29,7 @@ export default async function execute(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => execute.call(context, instruction))
+      code.map((instruction) => execute.call(scope, instruction))
     );
   }
 
@@ -65,7 +60,7 @@ export default async function execute(code) {
     const result =
       fn instanceof Function
         ? // Invoke the function
-          await fn.call(context, ...args)
+          await fn.call(scope, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
     return result;

@@ -6,8 +6,11 @@ import MapGraph from "../core/MapGraph.js";
  * @this {Explorable}
  * @param {GraphVariant} [variant]
  */
-export default function nulls(variant) {
-  variant = variant ?? this;
+export default async function nulls(variant) {
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   return new MapGraph(variant, () => null);
 }
 

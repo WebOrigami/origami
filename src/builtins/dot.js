@@ -9,7 +9,10 @@ import { toSerializable } from "../core/utilities.js";
  * @param {GraphVariant} [variant]
  */
 export default async function dot(variant) {
-  variant = variant ?? this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const graphArcs = await statements(graph, "");
   return `digraph g {

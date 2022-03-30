@@ -2,6 +2,8 @@
 
 import process from "process";
 import config from "../builtins/config.js";
+import Scope from "../common/Scope.js";
+import AmbientPropertiesGraph from "../framework/AmbientPropertiesGraph.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
@@ -9,15 +11,27 @@ import showUsage from "./showUsage.js";
 
 async function main(...args) {
   // Set up
-  const scope = await config();
+  const currentConfig = await config();
+
+  // If no arguments were passed, show usage.
   const source = args.join(" ").trim();
   if (!source) {
-    await showUsage(scope);
+    await showUsage(currentConfig);
     return;
   }
-  const defaultGraph = await scope.get("defaultGraph");
-  const graph = await defaultGraph();
-  graph.parent = scope;
+
+  // Find the default graph.
+  const getDefaultGraph = await currentConfig.get("defaultGraph");
+  const defaultGraph = await getDefaultGraph();
+
+  // Construct scope, adding default graph as an ambient property.
+  const scope = new Scope(
+    new AmbientPropertiesGraph({
+      "@defaultGraph": defaultGraph,
+    }),
+    defaultGraph,
+    currentConfig
+  );
 
   // Parse
   const parsed = parse.expression(source);
@@ -34,7 +48,7 @@ async function main(...args) {
   }
 
   // Execute
-  let result = await execute.call(graph, code);
+  let result = await execute.call(scope, code);
 
   // If result was a function, execute it.
   if (typeof result === "function") {
@@ -42,7 +56,7 @@ async function main(...args) {
   }
 
   // Display the result.
-  const stdout = await scope.get("stdout");
+  const stdout = await currentConfig.get("stdout");
   await stdout(result);
 }
 

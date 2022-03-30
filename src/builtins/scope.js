@@ -7,8 +7,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {any[]} keys
  */
 export default async function scope(...keys) {
-  const scope = /** @type {any} */ (this).scope;
-  return ExplorableGraph.traverse(scope, ...keys);
+  return ExplorableGraph.traverse(this, ...keys);
 }
 
 scope.usage = `scope [...keys]\tReturns the current scope`;

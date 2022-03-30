@@ -1,11 +1,18 @@
+import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { parse } from "../core/utilities.js";
+import { parentScope } from "../framework/scopeUtilities.js";
 
 /**
  * Wrap a graph and redefine the key used to access nodes in it.
+ *
+ * @this {Explorable}
+ * @param {GraphVariant} variant
+ * @param {string} indexKey
  */
 export default async function mapKeys(variant, indexKey) {
   const graph = ExplorableGraph.from(variant);
+  const baseScope = parentScope(this);
   return {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph[Symbol.asyncIterator]()) {
@@ -30,6 +37,10 @@ export default async function mapKeys(variant, indexKey) {
         }
       }
       return undefined;
+    },
+
+    get scope() {
+      return new Scope(this, baseScope);
     },
   };
 }

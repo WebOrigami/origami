@@ -8,20 +8,27 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default async function concat(...args) {
   if (args.length === 0) {
-    args = [this];
+    const defaultGraph = await this.get("@defaultGraph");
+    if (defaultGraph === undefined) {
+      return undefined;
+    }
   }
-  const graph = this;
+  const scope = this;
   const textPromises = args.map(async (arg) => {
     if (typeof arg === "function") {
-      arg = await arg.call(graph);
+      arg = await arg.call(scope);
     }
-    return typeof arg === "string"
-      ? arg
-      : ExplorableGraph.canCastToExplorable(arg)
-      ? concat.call(graph, ...(await ExplorableGraph.values(arg)))
-      : arg === undefined
-      ? ""
-      : arg.toString();
+
+    if (typeof arg === "string") {
+      return arg;
+    } else if (ExplorableGraph.canCastToExplorable(arg)) {
+      const values = await ExplorableGraph.values(arg);
+      return concat.call(scope, ...values);
+    } else if (arg === undefined) {
+      return "";
+    } else {
+      return arg.toString();
+    }
   });
   const text = await Promise.all(textPromises);
   return text.join("");

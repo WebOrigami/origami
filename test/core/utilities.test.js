@@ -4,27 +4,6 @@ import * as utilities from "../../src/core/utilities.js";
 import assert from "../assert.js";
 
 describe("utilities", () => {
-  it("box can box up a primitive value as an object", () => {
-    const boxedString = utilities.box("Hello");
-    assert(boxedString instanceof String);
-    assert.equal(boxedString.toString(), "Hello");
-
-    const boxedNumber = utilities.box(42);
-    assert(boxedNumber instanceof Number);
-    assert.equal(boxedNumber, 42);
-
-    // Things that are already objects are not boxed.
-    const obj = { name: "value" };
-    const boxedObject = utilities.box(obj);
-    assert.deepEqual(boxedObject, obj);
-
-    // Null/undefined value boxed as an empty object.
-    const boxedNull = utilities.box(null);
-    assert.deepEqual(boxedNull, {});
-    const boxedUndefined = utilities.box(undefined);
-    assert.deepEqual(boxedUndefined, {});
-  });
-
   it("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {

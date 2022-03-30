@@ -8,7 +8,11 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function watch(variant) {
-  variant = variant ?? this;
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
+
   const graph = /** @type {any} */ (ExplorableGraph.from(variant));
 
   // HACK: walk up the graph tree to find a graph with a dirname.

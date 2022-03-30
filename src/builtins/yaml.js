@@ -6,17 +6,19 @@ import { toSerializable } from "../core/utilities.js";
  * Render the object as text in YAML format.
  *
  * @this {Explorable}
- * @param {GraphVariant} [obj]
+ * @param {GraphVariant} [variant]
  */
-export default async function yaml(obj) {
-  obj = obj ?? this;
-  if (obj instanceof Buffer) {
-    obj = String(obj);
+export default async function yaml(variant) {
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  } else if (variant instanceof Buffer) {
+    variant = String(variant);
   }
-  if (ExplorableGraph.canCastToExplorable(obj)) {
-    return await ExplorableGraph.toYaml(obj);
+  if (ExplorableGraph.canCastToExplorable(variant)) {
+    return await ExplorableGraph.toYaml(variant);
   } else {
-    const serializable = toSerializable(obj);
+    const serializable = toSerializable(variant);
     return YAML.stringify(serializable);
   }
 }

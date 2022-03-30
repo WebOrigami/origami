@@ -8,8 +8,11 @@ import { transformObject } from "../core/utilities.js";
  * @this {Explorable}
  * @param {GraphVariant} [variant]
  */
-export default function shuffle(variant) {
-  variant = variant ?? this;
+export default async function shuffle(variant) {
+  variant = variant ?? (await this.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const shuffled = transformObject(ShuffleTransform, graph);
   return shuffled;

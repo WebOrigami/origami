@@ -1,5 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { getScope } from "./scopeUtilities.js";
 
 const parentKey = Symbol("parent");
 
@@ -43,7 +44,7 @@ export default function InheritScopeTransform(Base) {
       const parent = this.parent;
       if (parent) {
         // Add parent to this graph's scope.
-        return new Scope(this, parent?.scope ?? parent);
+        return new Scope(this, getScope(parent));
       } else {
         // Scope is just the graph itself.
         return this;

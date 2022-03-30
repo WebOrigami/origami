@@ -3,6 +3,7 @@ import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
 import { additionsKey } from "./AdditionsTransform.js";
 import { ghostGraphExtension } from "./GhostValuesTransform.js";
+import { getScope } from "./scopeUtilities.js";
 
 export default class Formula {
   closure = {};
@@ -45,15 +46,15 @@ export default class Formula {
    * @param {Explorable} graph
    */
   async evaluate(graph) {
+    const scope = getScope(graph);
     if (this.expression) {
       const bindings = /** @type {any} */ (graph).bindings;
       const code = bindings
         ? this.bindCode(this.expression, bindings)
         : this.expression;
-      return await execute.call(graph, code);
+      return await execute.call(scope, code);
     } else {
       // Local variable declaration
-      const scope = /** @type {any} */ (graph).scope ?? graph;
       return await scope.get(this.source);
     }
   }

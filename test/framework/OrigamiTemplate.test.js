@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import map from "../../src/builtins/map.js";
+import shallowMap from "../../src/builtins/shallowMap.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
@@ -15,8 +15,8 @@ describe("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {
     const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };
-    const context = new ExplorableObject({ greeting: "Hello" });
-    const result = await template.apply(input, context);
+    const scope = new ExplorableObject({ greeting: "Hello" });
+    const result = await template.apply(input, scope);
     assert.equal(result, "Hello, world.");
   });
 
@@ -37,11 +37,11 @@ Hello, world.
 
   it("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
-      "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{shallowMap(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = new (InheritScopeTransform(ExplorableObject))({
       greeting: "Hello",
-      map,
+      shallowMap,
       // people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       people: {
         0: { name: "Alice" },
