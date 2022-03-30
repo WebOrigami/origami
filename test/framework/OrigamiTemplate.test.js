@@ -1,8 +1,8 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import map from "../../src/builtins/map.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
+import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
@@ -39,10 +39,15 @@ Hello, world.
     const template = new OrigamiTemplate(
       "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
-    const graph = ExplorableGraph.from({
+    const graph = new (InheritScopeTransform(ExplorableObject))({
       greeting: "Hello",
       map,
-      people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
+      // people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
+      people: {
+        0: { name: "Alice" },
+        1: { name: "Bob" },
+        2: { name: "Carol" },
+      },
     });
     const result = await template.apply(null, graph);
     assert.equal(

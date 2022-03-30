@@ -6,14 +6,15 @@ import config from "./config.js";
 /**
  * Evaluate the formulas in the keys of the graph.
  *
- * @this {Explorable}
+ * @this {ExecutionContext}
  * @param {GraphVariant} [variant]
  */
 export default async function meta(variant) {
   variant = variant ?? this;
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
-  meta.parent = this ?? (await config());
+  const scope = this?.scope ?? this ?? (await config());
+  meta.parent = scope;
   return meta;
 }
 

@@ -11,7 +11,7 @@ import * as ops from "./ops.js";
  * expose a `scope` property that is a graph that will be searched to look up
  * the names of things to execute.
  *
- * @this {any}
+ * @this {ExecutionContext}
  * @param {Code} code
  */
 export default async function execute(code) {

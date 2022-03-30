@@ -5,6 +5,7 @@ import ExplorableObject from "../core/ExplorableObject.js";
 import { extractFrontMatter } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
+import InheritScopeTransform from "./InheritScopeTransform.js";
 import { AmbientPropertyGraph, setScope } from "./scopeUtilities.js";
 import StringWithGraph from "./StringWithGraph.js";
 
@@ -71,6 +72,15 @@ export default class Template {
       "@text": text,
     });
 
+    // Construct new scope chain:
+    // (input or input frontData + template frontData) -> ambients -> container
+    /** @type {Explorable} */
+    let scope = new Scope(
+      ambients,
+      // Base scope is the container's scope (if defined) or the container itself.
+      container?.scope ?? container
+    );
+
     // Construct the graph for the data that the template will be applied to.
     // This graph combines the input data (if present) with the template data
     // (if present).
@@ -79,26 +89,25 @@ export default class Template {
         ? Object.assign({}, this.frontData, inputData)
         : null;
     const dataGraph = data
-      ? new (FormulasTransform(ExplorableObject))(data)
+      ? new (InheritScopeTransform(FormulasTransform(ExplorableObject)))(data)
       : null;
-
-    // Construct new scope chain:
-    // (input or input frontData + template frontData) -> ambients -> container
-    const scope = new Scope(
-      dataGraph,
-      ambients,
-      // Base scope is the container's scope (if defined) or the container itself.
-      container?.scope ?? container
-    );
-
-    // By default, the context object will be the input itself. In the case
-    // where we have front matter, the context object is the input text (the
-    // input without the front matter).
-    const contextObject = frontData ? text : dataGraph;
+    if (dataGraph) {
+      dataGraph.parent = scope;
+      scope = dataGraph.scope;
+    }
 
     // The complete context is the context object with the constructed scope
-    // attached to it.
-    const context = setScope(contextObject, scope);
+    // attached to it. By default, the context object will be the input itself.
+    // In the case where we have front matter, the context object is the input
+    // text (the input without the front matter).
+    let context;
+    if (frontData) {
+      context = setScope(text, scope);
+    } else if (dataGraph) {
+      context = dataGraph;
+    } else {
+      context = setScope(input, scope);
+    }
 
     return { context, dataGraph };
   }

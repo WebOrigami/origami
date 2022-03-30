@@ -26,7 +26,7 @@ export default class MapGraph {
     return ExplorableGraph.isExplorable(value)
       ? Reflect.construct(this.constructor, [value, this.mapFn]) // Return mapped subgraph
       : value !== undefined
-      ? await this.mapFn.call(this, value, key) // Return mapped value
+      ? await this.mapFn.call(this.graph, value, key) // Return mapped value
       : undefined;
   }
 

@@ -1,18 +1,23 @@
 import MapTypesGraph from "../common/MapTypesGraph.js";
 import Scope from "../common/Scope.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapGraph from "../core/MapGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { AmbientPropertyGraph, setScope } from "../framework/scopeUtilities.js";
 
 /**
- * @this {Explorable}
+ * @this {ExecutionContext}
  */
 export default function map(variant, mapFn, sourceExtension, targetExtension) {
-  // The function context for `map` (if defined) will become the basis for the
-  // graph that will be the context for the mapping function.
-  const graph = this;
-
-  // We extend the mapping function so that the function's `this` context's
-  // scope includes additional information.
+  /**
+   * Extend the mapping function so that the scope attached to its execution
+   * context includes additional information.
+   *
+   * @this {ExecutionContext}
+   * @param {any} value
+   * @param {any} key
+   */
   async function extendedMapFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
     // @value ambient properties.
@@ -21,11 +26,28 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
         "@key": key,
         "@value": value,
       }),
-      graph?.scope
+      this?.scope ?? this
     );
 
+    // Convert the value to a graph.
+    let valueGraph;
+    if (
+      typeof value !== "string" &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
+      valueGraph = ExplorableGraph.from(value);
+      // Apply InheritScopeTransform if necessary so graph can take a scope.
+      if (!("parent" in valueGraph)) {
+        valueGraph = transformObject(InheritScopeTransform, valueGraph);
+      }
+      valueGraph.parent = scope;
+    } else {
+      valueGraph = null;
+    }
+
     // Apply the scope to the value to create a context for the map function.
-    const context = setScope(value, scope);
+    // const context = setScope(value, scope);
+    const context = valueGraph ?? setScope(value, scope);
 
     // If the mapFn is a graph, convert it to a function.
     const fn = mapFn.toFunction?.() ?? mapFn;

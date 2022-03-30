@@ -18,7 +18,7 @@ export default async function concat(...args) {
     return typeof arg === "string"
       ? arg
       : ExplorableGraph.canCastToExplorable(arg)
-      ? concat(...(await ExplorableGraph.values(arg)))
+      ? concat.call(graph, ...(await ExplorableGraph.values(arg)))
       : arg === undefined
       ? ""
       : arg.toString();
