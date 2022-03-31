@@ -11,7 +11,10 @@ export { default as fetch } from "./src/builtins/fetch.js";
 export { default as files } from "./src/builtins/files.js";
 export { default as front } from "./src/builtins/front.js";
 export { default as graph } from "./src/builtins/graph.js";
-export { default as graphApp } from "./src/builtins/graphVirtual.js";
+export {
+  default as graphApp,
+  default as graphVirtual,
+} from "./src/builtins/graphVirtual.js";
 export { default as help } from "./src/builtins/help.js";
 export { default as http } from "./src/builtins/http.js";
 export { default as https } from "./src/builtins/https.js";
