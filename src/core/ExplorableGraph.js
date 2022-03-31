@@ -91,7 +91,7 @@ export default class ExplorableGraph {
     if (graph.isKeyExplorable) {
       return await graph.isKeyExplorable(key);
     }
-    const value = graph.get(key);
+    const value = await graph.get(key);
     return this.isExplorable(value);
   }
 
