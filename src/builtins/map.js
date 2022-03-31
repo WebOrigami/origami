@@ -3,7 +3,6 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapGraph from "../core/MapGraph.js";
 import { transformObject } from "../core/utilities.js";
-import AmbientPropertiesGraph from "../framework/AmbientPropertiesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
@@ -43,10 +42,10 @@ export function extendMapFn(mapFn) {
     // Create a scope graph by extending the context graph with the @key and
     // @value ambient properties.
     let scope = new Scope(
-      new AmbientPropertiesGraph({
+      {
         "@key": key,
         "@value": value,
-      }),
+      },
       getScope(this)
     );
 

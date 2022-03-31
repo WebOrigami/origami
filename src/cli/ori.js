@@ -3,7 +3,6 @@
 import process from "process";
 import config from "../builtins/config.js";
 import Scope from "../common/Scope.js";
-import AmbientPropertiesGraph from "../framework/AmbientPropertiesGraph.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
@@ -26,9 +25,9 @@ async function main(...args) {
 
   // Construct scope, adding default graph as an ambient property.
   const scope = new Scope(
-    new AmbientPropertiesGraph({
+    {
       "@defaultGraph": defaultGraph,
-    }),
+    },
     defaultGraph,
     currentConfig
   );

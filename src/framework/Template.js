@@ -3,7 +3,6 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ExplorableObject from "../core/ExplorableObject.js";
 import { extractFrontMatter } from "../core/utilities.js";
-import AmbientPropertiesGraph from "./AmbientPropertiesGraph.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
@@ -69,7 +68,7 @@ export default class Template {
     } = processedInput;
 
     // Ambient properties let the template reference specific input/template data.
-    const ambients = new AmbientPropertiesGraph({
+    const ambients = {
       "@frontData": frontData,
       "@input": input,
       "@template": {
@@ -78,7 +77,7 @@ export default class Template {
         text: this.text,
       },
       "@text": text,
-    });
+    };
 
     // Construct new scope chain:
     // (input or input frontData + template frontData) -> ambients -> container

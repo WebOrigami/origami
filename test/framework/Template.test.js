@@ -36,12 +36,10 @@ template`);
     });
     const input = { c: 3 };
     template.compiled = async (scope) => {
-      // Scope is combined input + template + container
-      assert.deepEqual(await ExplorableGraph.plain(scope), {
-        a: 1,
-        b: 2,
-        c: 3,
-      });
+      // Scope includes input + template + container
+      assert.equal(await scope.get("a"), 1);
+      assert.equal(await scope.get("b"), 2);
+      assert.equal(await scope.get("c"), 3);
       return "";
     };
     await template.apply(input, scope);
@@ -75,13 +73,14 @@ b: 2
 text`;
     template.compiled = async (scope) => {
       const templateInfo = await scope.get("@template");
-      assert.deepEqual(templateInfo, {
+      assert.deepEqual(await ExplorableGraph.plain(templateInfo), {
         scope: templateScope,
         frontData: { a: 1 },
         text: "template",
       });
 
-      assert.deepEqual(await scope.get("@frontData"), { b: 2 });
+      const frontData = await scope.get("@frontData");
+      assert.deepEqual(await ExplorableGraph.plain(frontData), { b: 2 });
       assert.equal(await scope.get("@input"), inputDocument);
       assert.equal(await scope.get("@text"), "text");
       return "";

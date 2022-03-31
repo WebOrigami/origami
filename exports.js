@@ -51,6 +51,7 @@ export { default as CachedValuesTransform } from "./src/common/CachedValuesTrans
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
 export { default as MapTypesGraph } from "./src/common/MapTypesGraph.js";
+export { default as Scope } from "./src/common/Scope.js";
 export { default as ShuffleTransform } from "./src/common/ShuffleTransform.js";
 export { default as SortTransform } from "./src/common/SortTransform.js";
 export { default as SubtractKeys } from "./src/common/SubtractKeys.js";
