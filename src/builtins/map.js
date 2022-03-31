@@ -35,14 +35,11 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
  */
 export function extendMapFn(mapFn) {
   /**
-   * @this {MapGraph|MapTypesGraph}
+   * @this {Explorable}
    * @param {any} value
    * @param {any} key
    */
   return async function extendedMapFn(value, key) {
-    // When this is called, `this` will be an instance of MapGraph or
-    // MapTypesGraph.
-
     // Create a scope graph by extending the context graph with the @key and
     // @value ambient properties.
     let scope = new Scope(
@@ -58,6 +55,7 @@ export function extendMapFn(mapFn) {
       typeof value !== "string" &&
       ExplorableGraph.canCastToExplorable(value)
     ) {
+      /** @type {any} */
       let valueGraph = ExplorableGraph.from(value);
       if (!("parent" in valueGraph)) {
         valueGraph = transformObject(InheritScopeTransform, valueGraph);
@@ -66,8 +64,14 @@ export function extendMapFn(mapFn) {
       scope = valueGraph.scope;
     }
 
-    // If the mapFn is a graph, convert it to a function.
-    const fn = mapFn.toFunction?.() ?? mapFn;
+    // Convert the mapFn from an Invocable to a real function.
+    /** @type {any} */
+    const fn =
+      "toFunction" in mapFn
+        ? mapFn.toFunction()
+        : ExplorableGraph.isExplorable(mapFn)
+        ? ExplorableGraph.toFunction(mapFn)
+        : mapFn;
 
     // Invoke the map function with our newly-created context.
     return await fn.call(scope, value, key);

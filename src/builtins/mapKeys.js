@@ -8,7 +8,7 @@ import { parentScope } from "../framework/scopeUtilities.js";
  *
  * @this {Explorable}
  * @param {GraphVariant} variant
- * @param {string} indexKey
+ * @param {string} [indexKey]
  */
 export default async function mapKeys(variant, indexKey) {
   const graph = ExplorableGraph.from(variant);

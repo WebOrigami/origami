@@ -28,7 +28,7 @@ describe("mapKeys", () => {
           name: "Carol",
         },
       ],
-      () => "id"
+      "id"
     );
     assert(await ExplorableGraph.plain(graph), {
       alice: {
