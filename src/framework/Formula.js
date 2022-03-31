@@ -64,9 +64,14 @@ export default class Formula {
   }
 
   static isFormula(key) {
+    // This check recapitulates some of what the parser does, although less
+    // flexibly. It might be preferable to actually invoke the parser here.
     return (
       typeof key === "string" &&
-      (key.includes("=") || key.startsWith("{") || key === additionsKey)
+      (key.includes("=") ||
+        key.startsWith("{") ||
+        key.startsWith("…") ||
+        key === additionsKey)
     );
   }
 
