@@ -9,6 +9,7 @@ export { default as dot } from "./src/builtins/dot.js";
 export { default as feedRss } from "./src/builtins/feedRss.js";
 export { default as fetch } from "./src/builtins/fetch.js";
 export { default as files } from "./src/builtins/files.js";
+export { default as filter } from "./src/builtins/filter.js";
 export { default as front } from "./src/builtins/front.js";
 export { default as graph } from "./src/builtins/graph.js";
 export {
@@ -53,6 +54,7 @@ export { default as Cache } from "./src/common/Cache.js";
 export { default as CachedValuesTransform } from "./src/common/CachedValuesTransform.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
+export { default as FilterGraph } from "./src/common/FilterGraph.js";
 export { default as MapTypesGraph } from "./src/common/MapTypesGraph.js";
 export { default as Scope } from "./src/common/Scope.js";
 export { default as ShuffleTransform } from "./src/common/ShuffleTransform.js";

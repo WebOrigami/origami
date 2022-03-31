@@ -2,7 +2,7 @@ import { ExplorableGraph } from "../../exports.js";
 import FilterGraph from "../../src/common/FilterGraph.js";
 import assert from "../assert.js";
 
-describe.only("FilterGraph", () => {
+describe("FilterGraph", () => {
   it("runs", async () => {
     const graph = {
       a: 1,
