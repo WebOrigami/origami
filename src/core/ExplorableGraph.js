@@ -196,7 +196,7 @@ export default class ExplorableGraph {
     try {
       return await this.traverseOrThrow(variant, ...keys);
     } catch (/** @type {any} */ error) {
-      if (error instanceof ReferenceError) {
+      if (error instanceof TraverseError) {
         return undefined;
       } else {
         throw error;
@@ -221,8 +221,10 @@ export default class ExplorableGraph {
     const remainingKeys = keys.slice();
     while (remainingKeys.length > 0) {
       if (value === undefined) {
-        throw new ReferenceError(
-          `Couldn't traverse the path: ${keys.join("/")}`
+        throw new TraverseError(
+          `Couldn't traverse the path: ${keys.join("/")}`,
+          value,
+          keys
         );
       }
 
@@ -271,4 +273,13 @@ function castArrayLike(obj) {
     array[index] = obj[key];
   }
   return array.length > 0 ? array : obj;
+}
+
+class TraverseError extends ReferenceError {
+  constructor(message, graph, keys) {
+    super(message);
+    this.graph = graph;
+    this.name = "TraverseError";
+    this.keys = keys;
+  }
 }
