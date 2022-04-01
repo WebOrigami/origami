@@ -22,7 +22,12 @@ export default class FilterGraph {
 
   async *[Symbol.asyncIterator]() {
     for await (const key of this.graph) {
-      const matches = await this.match(key);
+      let matches = await this.filter.get(key);
+      if (matches === undefined) {
+        // If filter doesn't explicitly set true/false, we assume true if the
+        // main graph indicates the key is explorable.
+        matches = await ExplorableGraph.isKeyExplorable(this.graph, key);
+      }
       if (matches) {
         yield key;
       }
@@ -30,40 +35,36 @@ export default class FilterGraph {
   }
 
   async get(key) {
-    const matches = await this.match(key);
-    if (!matches) {
-      return false;
+    const filterValue = await this.filter.get(key);
+    if (filterValue === false) {
+      // Explicitly filtered out
+      return undefined;
     }
 
     let value = await this.graph.get(key);
-
-    if (ExplorableGraph.isExplorable(value)) {
-      // Get the corresponding portion of the filter and return a new FilterGraph
-      let filter = await this.filter.get(key);
-      if (filter === undefined) {
-        // If the filter doesn't contain the key, it's possible that the filter
-        // nevertheless has inheritable formulas that might apply to the value
-        // we're returning.
-        filter = await inheritFormulas(this.filter);
-      }
-      return filter
-        ? Reflect.construct(this.constructor, [value, filter])
-        : undefined;
+    if (filterValue === true) {
+      // Explicitly included
+      return value;
     }
 
-    return value;
-  }
-
-  async match(key) {
-    const filterValue = await this.filter.get(key);
-    if (filterValue !== undefined) {
-      // Explicitly filtered
-      return !!filterValue;
+    if (!ExplorableGraph.isExplorable(value)) {
+      // Not explorable, so assume it should be filtered out
+      return undefined;
     }
 
-    // If filter value is undefined, return true if the key is explorable.
-    const explorable = await ExplorableGraph.isKeyExplorable(this.graph, key);
-    return explorable;
+    // At this point, we have an explorable value that isn't explicitly filtered
+    // out. It's possible that the filter nevertheless has inheritable formulas
+    // that might apply to the value we're returning.
+    const inheritedFilter = await inheritFormulas(this.filter);
+
+    if (!inheritedFilter) {
+      // No inherited formulas, so anything below this value is implicitly
+      // filtered out.
+      return undefined;
+    }
+
+    // Construct a new FilterGraph for the subvalue and inherited formulas.
+    return Reflect.construct(this.constructor, [value, inheritedFilter]);
   }
 }
 
