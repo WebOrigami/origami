@@ -3,7 +3,7 @@ import FilterGraph from "../../src/common/FilterGraph.js";
 import assert from "../assert.js";
 
 describe("FilterGraph", () => {
-  it.only("filters a graph", async () => {
+  it("filters a graph", async () => {
     const graph = {
       a: 1,
       b: 2,
