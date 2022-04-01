@@ -185,9 +185,18 @@ async function writeFiles(sourceGraph, targetGraph) {
   // Ensure the directory exists.
   await fs.mkdir(targetGraph.dirname, { recursive: true });
 
-  // Recursively write out the graph.
+  // Start copying all the files, then wait for all of them to finish.
+  const promises = [];
   for await (const key of sourceGraph) {
-    const value = await sourceGraph.get(key);
-    await targetGraph.set(key, value);
+    const writePromise = copyFileWithKey(sourceGraph, targetGraph, key);
+    promises.push(writePromise);
   }
+
+  return Promise.all(promises);
+}
+
+// Copy the file with the indicated key from the source to the target.
+async function copyFileWithKey(sourceGraph, targetGraph, key) {
+  const value = await sourceGraph.get(key);
+  await targetGraph.set(key, value);
 }
