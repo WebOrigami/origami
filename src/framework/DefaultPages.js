@@ -1,6 +1,7 @@
 import DefaultValues from "../common/DefaultValues.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
+import defaultScope from "./defaultScope.js";
 import defaultSvg from "./defaultSvg.js";
 import defaultYamlHtml from "./defaultYamlHtml.js";
 
@@ -15,6 +16,7 @@ export default class DefaultPages extends DefaultValues {
     super(graph, {
       ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
+      ".scope": defaultScope,
       ".svg": defaultSvg,
       ".yaml": defaultYamlHtml,
       "index.html": defaultIndexHtml,
