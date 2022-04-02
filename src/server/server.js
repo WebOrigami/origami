@@ -40,7 +40,7 @@ export async function handleRequest(request, response, graph) {
   }
 
   let mediaType;
-  if (resource !== undefined) {
+  if (resource != undefined) {
     // Determine media type, what data we'll send, and encoding.
     const extname = path.extname(request.url).toLowerCase();
     mediaType = extname ? mediaTypeForExtension[extname] : undefined;
