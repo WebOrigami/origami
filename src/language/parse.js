@@ -398,7 +398,26 @@ export function quotedTextWithEscapes(text) {
 
 // Parse a reference to a variable or literal.
 export function reference(text) {
-  return any(thisReference, variableReference, literal)(text);
+  return any(thisReference, referenceSubstitution, literal)(text);
+}
+
+// Parse a substitution in a reference like {{foo}}.html
+export function referenceSubstitution(text) {
+  const parsed = sequence(
+    terminal(/^\{\{/),
+    variableName,
+    terminal(/^\}\}/),
+    optional(literal)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: variable, 3: extension } = parsed.value;
+  const value = [ops.variable, variable, extension];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a right parenthesis.
@@ -703,29 +722,10 @@ export function variableName(text) {
   return regex(/^[$A-Za-z_][A-Za-z0-9_$]*/)(text);
 }
 
-// Parse a variable declaration like ${x}.json
+// Parse a variable declaration like {x}.json
 export function variableDeclaration(text) {
   const parsed = sequence(
     terminal(/^\{/),
-    variableName,
-    terminal(/^\}/),
-    optional(literal)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: variable, 3: extension } = parsed.value;
-  const value = [ops.variable, variable, extension];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a variable reference like $foo.html
-export function variableReference(text) {
-  const parsed = sequence(
-    terminal(/^\$\{/),
     variableName,
     terminal(/^\}/),
     optional(literal)

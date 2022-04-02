@@ -15,6 +15,7 @@ import {
   percentCall,
   percentPath,
   protocolCall,
+  referenceSubstitution,
   singleQuoteString,
   slashCall,
   slashPath,
@@ -26,7 +27,6 @@ import {
   templateLiteral,
   thisReference,
   variableName,
-  variableReference,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
@@ -83,7 +83,7 @@ describe("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assertParse(assignment("{name}.html = foo(${name}.json)"), [
+    assertParse(assignment("{name}.html = foo({{name}}.json)"), [
       "=",
       [ops.variable, "name", ".html"],
       [
@@ -152,7 +152,7 @@ describe("parse", () => {
   });
 
   it("functionComposition with variable reference", () => {
-    assertParse(functionComposition("fn(${name}.json)"), [
+    assertParse(functionComposition("fn({{name}}.json)"), [
       [ops.scope, "fn"],
       [ops.scope, [ops.variable, "name", ".json"]],
     ]);
@@ -189,7 +189,7 @@ describe("parse", () => {
   it("key", () => {
     assertParse(key("foo"), "foo");
     assertParse(key("{name}.yaml"), [ops.variable, "name", ".yaml"]);
-    assertParse(key("{x}.html = marked ${x}.md"), [
+    assertParse(key("{x}.html = marked {{x}}.md"), [
       "=",
       [ops.variable, "x", ".html"],
       [
@@ -291,6 +291,19 @@ describe("parse", () => {
     assertParse(expression("https://example.com/graph.yaml 'key'"), [
       [[ops.scope, "https"], "example.com", "graph.yaml"],
       "key",
+    ]);
+  });
+
+  it("referenceSubstitution", () => {
+    assertParse(referenceSubstitution("{{name}}"), [
+      ops.variable,
+      "name",
+      null,
+    ]);
+    assertParse(referenceSubstitution("{{name}}.json"), [
+      ops.variable,
+      "name",
+      ".json",
     ]);
   });
 
@@ -434,15 +447,6 @@ Block contents
       value: "foo",
       rest: ".bar",
     });
-  });
-
-  it("variableReference", () => {
-    assertParse(variableReference("${name}"), [ops.variable, "name", null]);
-    assertParse(variableReference("${name}.json"), [
-      ops.variable,
-      "name",
-      ".json",
-    ]);
   });
 
   it("whitespace", () => {

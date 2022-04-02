@@ -135,7 +135,7 @@ describe("MetaTransform", () => {
     const graph = new (MetaTransform(ExplorableObject))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
-      "…{x}.html = textToHtml(${x}.txt)": "",
+      "…{x}.html = textToHtml({{x}}.txt)": "",
       about: {
         "index.txt": "About",
       },
@@ -166,13 +166,13 @@ describe("MetaTransform", () => {
       "+": {
         "a.json": "Hello, a.",
       },
-      "{x}.txt = ${x}.json": "",
+      "{x}.txt = {{x}}.json": "",
     });
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       "+": {
         "a.json": "Hello, a.",
       },
-      "{x}.txt = ${x}.json": "",
+      "{x}.txt = {{x}}.json": "",
       "a.json": "Hello, a.",
       "a.txt": "Hello, a.",
     });
