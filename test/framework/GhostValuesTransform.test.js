@@ -33,10 +33,10 @@ describe("GhostValuesTransform", () => {
 
   it("adds ghost graphs from formulas to subgraphs", async () => {
     const graph = new GhostFormulasObject({
-      "{x}+": {
+      "[x]+": {
         b: 2,
       },
-      "{y}+": {
+      "[y]+": {
         c: 3,
       },
       subgraph: {
@@ -53,9 +53,9 @@ describe("GhostValuesTransform", () => {
 
   it("allows nested ghost graphs", async () => {
     const graph = new GhostFormulasObject({
-      "{x}+": {
+      "[x]+": {
         c: 3,
-        "{y}+": {
+        "[y]+": {
           d: 4,
         },
       },
@@ -81,8 +81,8 @@ describe("GhostValuesTransform", () => {
 
   it("parameters are passed down to ghost graphs", async () => {
     const graph = new GhostFormulasObject({
-      "{x}+": {
-        "{y}+": {
+      "[x]+": {
+        "[y]+": {
           "value = `{{x}}-{{y}}`": "",
         },
       },

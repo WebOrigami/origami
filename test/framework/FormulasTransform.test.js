@@ -9,7 +9,7 @@ class FormulasObject extends FormulasTransform(ExplorableObject) {}
 describe("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
-      "{x}.txt": "Default text",
+      "[x].txt": "Default text",
       "a.txt": "Specific text",
     });
     assert.equal(await fixture.get("a.txt"), "Specific text");
@@ -18,8 +18,8 @@ describe("FormulasTransform", () => {
 
   it("matches extensions", async () => {
     const fixture = new FormulasObject({
-      "{x}.html": "html",
-      "{y}": "no extension",
+      "[x].html": "html",
+      "[y]": "no extension",
     });
     assert.equal(await fixture.get("foo.html"), "html");
     assert.equal(await fixture.get("bar.baz.html"), "html");
@@ -29,16 +29,16 @@ describe("FormulasTransform", () => {
 
   it("can compute keys for variable patterns", async () => {
     const fixture = new FormulasObject({
-      "{x}.json": "html",
+      "[x].json": "html",
       a: "",
       b: "",
     });
     assert.deepEqual(await ExplorableGraph.keys(fixture), [
+      "[x].json",
       "a",
       "a.json",
       "b",
       "b.json",
-      "{x}.json",
     ]);
   });
 
@@ -71,7 +71,7 @@ describe("FormulasTransform", () => {
 
   it("can define assignments to variables", async () => {
     const fixture = new FormulasObject({
-      "{name} = 'FOO'": "",
+      "[name] = 'FOO'": "",
     });
     assert.equal(await fixture.get("alice"), "FOO");
     assert.equal(await fixture.get("bob"), "FOO");
@@ -79,7 +79,7 @@ describe("FormulasTransform", () => {
 
   it("can pass variable name to right-hand side", async () => {
     const fixture = new FormulasObject({
-      "{name} = `Hello, {{name}}.`": "",
+      "[name] = `Hello, {{name}}.`": "",
       Carol: "Hey, Carol.", // Explicit values preferred over formulas.
       "David = 'Hi, David.'": "", // Constant formulas preferred over patterns.
     });
@@ -92,8 +92,8 @@ describe("FormulasTransform", () => {
   // More focused version of test also performed in MetaTransform.tests.js.
   it("can inherit bound variables", async () => {
     const fixture = new (InheritScopeTransform(FormulasObject))({
-      "{x}": {
-        "{y} = `{{x}}{{y}}`": "",
+      "[x]": {
+        "[y] = `{{x}}{{y}}`": "",
       },
     });
     assert.equal(

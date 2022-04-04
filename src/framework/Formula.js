@@ -69,7 +69,7 @@ export default class Formula {
     return (
       typeof key === "string" &&
       (key.includes("=") ||
-        key.startsWith("{") ||
+        key.startsWith("[") ||
         key.startsWith("…") ||
         key === additionsKey)
     );

@@ -83,7 +83,7 @@ describe("parse", () => {
   });
 
   it("assignment with variable pattern", () => {
-    assertParse(assignment("{name}.html = foo({{name}}.json)"), [
+    assertParse(assignment("[name].html = foo({{name}}.json)"), [
       "=",
       [ops.variable, "name", ".html"],
       [
@@ -188,8 +188,8 @@ describe("parse", () => {
 
   it("key", () => {
     assertParse(key("foo"), "foo");
-    assertParse(key("{name}.yaml"), [ops.variable, "name", ".yaml"]);
-    assertParse(key("{x}.html = marked {{x}}.md"), [
+    assertParse(key("[name].yaml"), [ops.variable, "name", ".yaml"]);
+    assertParse(key("[x].html = marked {{x}}.md"), [
       "=",
       [ops.variable, "x", ".html"],
       [

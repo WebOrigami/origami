@@ -44,7 +44,7 @@ describe("Cache", () => {
         c: "c",
       },
       {
-        "{x}.txt": true,
+        "[x].txt": true,
       }
     );
     const cache = fixture.cache;

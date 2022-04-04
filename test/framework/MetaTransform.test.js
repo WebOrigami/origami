@@ -78,7 +78,7 @@ describe("MetaTransform", () => {
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
-  it.skip("can handle nested wildcard folders", async () => {
+  it("can handle nested wildcard folders", async () => {
     const graph = new (MetaTransform(ExplorableFiles))(
       path.join(fixturesDirectory, "wildcardFolders")
     );
@@ -135,7 +135,7 @@ describe("MetaTransform", () => {
     const graph = new (MetaTransform(ExplorableObject))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
-      "…{x}.html = textToHtml({{x}}.txt)": "",
+      "…[x].html = textToHtml({{x}}.txt)": "",
       about: {
         "index.txt": "About",
       },
@@ -147,8 +147,8 @@ describe("MetaTransform", () => {
 
   it("can inherit bound variables", async () => {
     const fixture = new (MetaTransform(ExplorableObject))({
-      "{x}": {
-        "{y} = `{{x}}{{y}}`": "",
+      "[x]": {
+        "[y] = `{{x}}{{y}}`": "",
       },
     });
     assert.equal(
@@ -166,13 +166,13 @@ describe("MetaTransform", () => {
       "+": {
         "a.json": "Hello, a.",
       },
-      "{x}.txt = {{x}}.json": "",
+      "[x].txt = {{x}}.json": "",
     });
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       "+": {
         "a.json": "Hello, a.",
       },
-      "{x}.txt = {{x}}.json": "",
+      "[x].txt = {{x}}.json": "",
       "a.json": "Hello, a.",
       "a.txt": "Hello, a.",
     });
@@ -199,7 +199,7 @@ describe("MetaTransform", () => {
 
   it("wildcard values do not apply in scope", async () => {
     const graph = new (MetaTransform(ExplorableObject))({
-      "{test}": {
+      "[test]": {
         a: 1,
       },
       subgraph: {
@@ -243,7 +243,7 @@ describe("MetaTransform", () => {
 
   it("ghost folders can define formulas that work on original graph values", async () => {
     const fixture = new (MetaTransform(ExplorableObject))({
-      "{x}": {
+      "[x]": {
         "message = `Hello, {{name}}.`": "",
       },
       sub: {

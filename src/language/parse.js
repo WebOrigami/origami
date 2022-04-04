@@ -722,12 +722,12 @@ export function variableName(text) {
   return regex(/^[$A-Za-z_][A-Za-z0-9_$]*/)(text);
 }
 
-// Parse a variable declaration like {x}.json
+// Parse a variable declaration like [x].json
 export function variableDeclaration(text) {
   const parsed = sequence(
-    terminal(/^\{/),
+    terminal(/^\[/),
     variableName,
-    terminal(/^\}/),
+    terminal(/^\]/),
     optional(literal)
   )(text);
   if (!parsed) {

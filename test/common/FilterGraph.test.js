@@ -17,7 +17,7 @@ describe("FilterGraph", () => {
     };
     const filter = {
       a: true,
-      "…{x}.txt": true,
+      "…[x].txt": true,
     };
     const fixture = new FilterGraph(graph, filter);
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
