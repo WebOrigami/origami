@@ -8,17 +8,25 @@ import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
 import showUsage from "./showUsage.js";
 
-async function main(...args) {
-  // Set up
-  const currentConfig = await config();
+// Set up
+const currentConfig = await config();
 
+async function main(...args) {
   // If no arguments were passed, show usage.
-  const source = args.join(" ").trim();
-  if (!source) {
+  const expression = args.join(" ").trim();
+  if (!expression) {
     await showUsage(currentConfig);
     return;
   }
 
+  const result = await ori(expression);
+
+  // Display the result.
+  const stdout = await currentConfig.get("stdout");
+  await stdout(result);
+}
+
+export default async function ori(expression) {
   // Find the default graph.
   const getDefaultGraph = await currentConfig.get("defaultGraph");
   const defaultGraph = await getDefaultGraph();
@@ -33,14 +41,14 @@ async function main(...args) {
   );
 
   // Parse
-  const parsed = parse.expression(source);
+  const parsed = parse.expression(expression);
   let code = parsed?.value;
   if (!code || parsed.rest !== "") {
-    console.error(`ori: could not recognize command: ${source}`);
+    console.error(`ori: could not recognize expression: ${expression}`);
     return;
   }
 
-  if (!source.endsWith(")")) {
+  if (!expression.endsWith(")")) {
     // The source ends without an explicit parenthesis. If the rightmost call in
     // the code tree is a function, we'll want to invoke it.
     code = patchDanglingFunction(code);
@@ -54,9 +62,7 @@ async function main(...args) {
     result = await result();
   }
 
-  // Display the result.
-  const stdout = await currentConfig.get("stdout");
-  await stdout(result);
+  return result;
 }
 
 // If the user didn't explicitly specify end the source with a parenthesis, but
