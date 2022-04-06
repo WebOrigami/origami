@@ -1,6 +1,8 @@
+import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import MetaTransform from "../framework/MetaTransform.js";
+import { getScope } from "../framework/scopeUtilities.js";
 import config from "./config.js";
 
 /**
@@ -16,8 +18,13 @@ export default async function meta(variant) {
   }
   const graph = ExplorableGraph.from(variant);
   const meta = transformObject(MetaTransform, graph);
-  const scope = this ?? (await config());
-  meta.parent = scope;
+  const parent = this ?? (await config());
+  meta.parent = new Scope(
+    {
+      "@defaultGraph": meta,
+    },
+    getScope(parent)
+  );
   return meta;
 }
 
