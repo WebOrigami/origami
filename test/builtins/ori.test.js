@@ -1,0 +1,23 @@
+import { ExplorableObject } from "../../exports.js";
+import ori from "../../src/builtins/ori.js";
+import builtins from "../../src/cli/builtins.js";
+import Scope from "../../src/common/Scope.js";
+import assert from "../assert.js";
+
+describe("ori builtin", () => {
+  it("evaluates an expression in the context of a scope and returns text result", async () => {
+    const graph = new ExplorableObject({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    /** @type {any} */ (graph).scope = new Scope(graph, builtins);
+    const result = await ori.call(graph, `keys`);
+    assert.equal(result, [
+      `- a
+- b
+- c
+`,
+    ]);
+  });
+});

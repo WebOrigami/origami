@@ -1,43 +1,35 @@
 #!/usr/bin/env node
 
-import process from "process";
-import config from "../builtins/config.js";
+import yaml from "../builtins/yaml.js";
+import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
+import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
-import showUsage from "./showUsage.js";
 
-// Set up
-const currentConfig = await config();
-
-async function main(...args) {
-  // If no arguments were passed, show usage.
-  const expression = args.join(" ").trim();
-  if (!expression) {
-    await showUsage(currentConfig);
-    return;
-  }
-
-  const result = await ori(expression);
-
-  // Display the result.
-  const stdout = await currentConfig.get("stdout");
-  await stdout(result);
-}
-
+/**
+ * Parse an Origami expression, evaluate it in the context of a graph (provided
+ * by `this`), and return the result as text.
+ *
+ * @this {Explorable}
+ * @param {string} expression
+ * @returns {Promise<string | Buffer | undefined>}
+ */
 export default async function ori(expression) {
-  // Find the default graph.
-  const getDefaultGraph = await currentConfig.get("defaultGraph");
-  const defaultGraph = await getDefaultGraph();
+  // In case expression is a Buffer, cast it to a string.
+  expression = String(expression).trim();
+
+  // Obtain the graph from `this`, or use the @defaultGraph if defined,
+  // otherwise use builtins.
+  const graph = (await this?.get("@defaultGraph")) ?? this ?? builtins;
 
   // Construct scope, adding default graph as an ambient property.
   const scope = new Scope(
     {
-      "@defaultGraph": defaultGraph,
+      "@defaultGraph": graph,
     },
-    defaultGraph,
-    currentConfig
+    getScope(graph)
   );
 
   // Parse
@@ -62,7 +54,21 @@ export default async function ori(expression) {
     result = await result();
   }
 
-  return result;
+  const formatted = await formatResult(result);
+  return formatted;
+}
+
+async function formatResult(result) {
+  let output =
+    typeof result === "string" || result instanceof Buffer
+      ? result
+      : result !== undefined
+      ? await yaml(result)
+      : undefined;
+  if (typeof output === "string" && !output.endsWith("\n")) {
+    output += "\n";
+  }
+  return output;
 }
 
 // If the user didn't explicitly specify end the source with a parenthesis, but
@@ -88,18 +94,4 @@ function patchDanglingFunction(code) {
   }
   // Return the code as is.
   return code;
-}
-
-// Process command line arguments
-const args = process.argv;
-args.shift(); // "node"
-args.shift(); // name of this script file
-// Not sure why we end up with blank arguments; skip them.
-while (args[0] === "") {
-  args.shift();
-}
-try {
-  await main(...args);
-} catch (/** @type {any} */ error) {
-  console.error(error);
 }

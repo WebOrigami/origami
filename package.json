@@ -3,7 +3,7 @@
   "version": "0.0.8",
   "type": "module",
   "bin": {
-    "ori": "src/cli/ori.js"
+    "ori": "src/cli/cli.js"
   },
   "main": "./exports.js",
   "devDependencies": {
