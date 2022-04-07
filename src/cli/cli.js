@@ -3,6 +3,8 @@
 import process, { stdout } from "process";
 import config from "../builtins/config.js";
 import ori from "../builtins/ori.js";
+import Scope from "../common/Scope.js";
+import { getScope } from "../framework/scopeUtilities.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -19,7 +21,15 @@ async function main(...args) {
   const defaultGraph = await currentConfig.get("defaultGraph");
   const graph = await defaultGraph();
 
-  const text = await ori.call(graph, expression);
+  // Add default graph to scope.
+  const scope = new Scope(
+    {
+      "@defaultGraph": graph,
+    },
+    getScope(graph)
+  );
+
+  const text = await ori.call(scope, expression);
   if (text) {
     await stdout.write(text);
   }

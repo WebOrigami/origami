@@ -2,8 +2,6 @@
 
 import yaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
-import Scope from "../common/Scope.js";
-import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
@@ -20,17 +18,8 @@ export default async function ori(expression) {
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression).trim();
 
-  // Obtain the graph from `this`, or use the @defaultGraph if defined,
-  // otherwise use builtins.
-  const graph = (await this?.get("@defaultGraph")) ?? this ?? builtins;
-
-  // Construct scope, adding default graph as an ambient property.
-  const scope = new Scope(
-    {
-      "@defaultGraph": graph,
-    },
-    getScope(graph)
-  );
+  // Obtain the scope from `this` or builtins.
+  const scope = this ?? builtins;
 
   // Parse
   const parsed = parse.expression(expression);

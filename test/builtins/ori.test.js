@@ -11,8 +11,14 @@ describe("ori builtin", () => {
       b: 2,
       c: 3,
     });
-    /** @type {any} */ (graph).scope = new Scope(graph, builtins);
-    const result = await ori.call(graph, `keys`);
+    const scope = new Scope(
+      {
+        "@defaultGraph": graph,
+      },
+      graph,
+      builtins
+    );
+    const result = await ori.call(scope, `keys`);
     assert.equal(result, [
       `- a
 - b
