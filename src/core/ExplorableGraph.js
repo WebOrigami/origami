@@ -108,47 +108,63 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Map and reduce a graph.
+   *
+   * This is done in as parallel fashion as possible. Each of the graph's values
+   * will be requested in an async call, then those results will be awaited
+   * collectively. If a mapFn is provided, it will be invoked to convert each
+   * value to a mapped value; otherwise, values will be used as is. When the
+   * values have been obtained, all the values and keys will be passed to the
+   * reduceFn, which should consolidate those into a single result.
+   *
+   * @param {GraphVariant} variant
+   * @param {function|null} mapFn
+   * @param {function} reduceFn
+   */
+  static async mapReduce(variant, mapFn, reduceFn) {
+    const graph = this.from(variant);
+
+    // We're going to fire off all the get requests in parallel, as quickly as
+    // the keys come in.
+    const keys = [];
+    const promises = [];
+    for await (const key of graph) {
+      keys.push(key);
+
+      // Call the graph's `get` method, but *don't* wait for it yet.
+      const promise = graph.get(key).then((value) =>
+        // If the value is itself a graph, recurse.
+        this.isExplorable(value)
+          ? this.mapReduce(value, mapFn, reduceFn)
+          : mapFn
+          ? mapFn(value, key)
+          : value
+      );
+      promises.push(promise);
+    }
+
+    // Wait for all the promises to resolve, then reduce.
+    const values = await Promise.all(promises);
+    return reduceFn(values, keys);
+  }
+
+  /**
    * Converts an asynchronous explorable graph into a synchronous plain
    * JavaScript object.
    *
    * The result's keys will be the graph's keys cast to strings. Any graph value
    * that is itself a graph will be similarly converted to a plain object.
    *
-   * This is done in as parallel fashion as possible. For each graph key, we
-   * fire off all the get requests for those values as once, then add them to
-   * the resulting object as the values come in.
-   *
-   * @param {GraphVariant} [variant]
+   * @param {GraphVariant} variant
    */
   static async plain(variant) {
-    const graph = this.from(variant);
-    const result = {};
-
-    // We're going to fire off all the get requests in parallel, as quickly as
-    // the keys come in.
-    let promises = [];
-    for await (const key of graph) {
-      // Create a key in the result object at this point as a placeholder so
-      // that, even if this value takes a long time to resolve, the key will
-      // still appear at the proper place in the result.
-      result[key] = undefined;
-
-      // Call the graph's `get` method, but *don't* wait for it yet.
-      const valuePromise = graph.get(key).then(async (value) => {
-        // If the value is itself a graph, recurse.
-        // Once we have a final value, add it to the result.
-        // The value will appear in the place reserved for it earlier.
-        result[key] = this.isExplorable(value)
-          ? await this.plain(value)
-          : value;
-      });
-      promises.push(valuePromise);
-    }
-
-    // Wait for all the promises to resolve.
-    await Promise.all(promises);
-
-    return result;
+    return this.mapReduce(variant, null, (values, keys) => {
+      const result = {};
+      for (let i = 0; i < keys.length; i++) {
+        result[keys[i]] = values[i];
+      }
+      return result;
+    });
   }
 
   /**

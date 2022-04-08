@@ -2,7 +2,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
-describe("ExplorableGraph", () => {
+describe.only("ExplorableGraph", () => {
   it("from() converts input to an explorable graph", async () => {
     const graph1 = ExplorableGraph.from(`a: Hello, a.`);
     assert(await ExplorableGraph.plain(graph1), {
@@ -70,6 +70,23 @@ describe("ExplorableGraph", () => {
       c: 3,
     });
     assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "c"]);
+  });
+
+  it("mapReduce() can map values and reduce them", async () => {
+    const graph = {
+      a: 1,
+      b: 2,
+      more: {
+        c: 3,
+      },
+      d: 4,
+    };
+    const reduced = await ExplorableGraph.mapReduce(
+      graph,
+      (value) => value,
+      (values) => String.prototype.concat.call(...values)
+    );
+    assert.deepEqual(reduced, "1234");
   });
 
   it("plain() produces a plain object version of a graph", async () => {
