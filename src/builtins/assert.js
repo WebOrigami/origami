@@ -21,8 +21,9 @@ export default async function assertBuiltin(variant) {
   if (!("formulas" in graph) || !("parent" in graph)) {
     graph = transformObject(MetaTransform, graph);
   }
-
-  graph.parent = this ?? builtins;
+  if (!graph.parent) {
+    graph.parent = this ?? builtins;
+  }
 
   const description = await graph.get("description");
   const expected = await graph.get("expected");
