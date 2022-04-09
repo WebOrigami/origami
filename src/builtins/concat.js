@@ -7,31 +7,33 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {any[]} args
  */
 export default async function concat(...args) {
+  let graph;
   if (args.length === 0) {
-    const defaultGraph = await this.get("@defaultGraph");
-    if (defaultGraph === undefined) {
+    graph = await this.get("@defaultGraph");
+    if (graph === undefined) {
       return undefined;
     }
+  } else {
+    graph = args.map((arg) =>
+      typeof arg !== "string" && ExplorableGraph.canCastToExplorable(arg)
+        ? ExplorableGraph.from(arg)
+        : arg
+    );
   }
-  const scope = this;
-  const textPromises = args.map(async (arg) => {
-    if (typeof arg === "function") {
-      arg = await arg.call(scope);
-    }
 
-    if (typeof arg === "string") {
-      return arg;
-    } else if (ExplorableGraph.canCastToExplorable(arg)) {
-      const values = await ExplorableGraph.values(arg);
-      return concat.call(scope, ...values);
-    } else if (arg === undefined) {
-      return "";
-    } else {
-      return arg.toString();
+  // The core concat operation is a map-reduce: convert everything to strings,
+  // then concatenate the strings.
+  const scope = this;
+  const mapFn = async (value) => {
+    // The value may be a function (perhaps a lambda), in which case call it.
+    if (typeof value === "function") {
+      value = await value.call(scope);
     }
-  });
-  const text = await Promise.all(textPromises);
-  return text.join("");
+    // Things that aren't stringify-able will be mapped to the empty string.
+    return value?.toString?.() ?? "";
+  };
+  const reduceFn = (values) => values.join("");
+  return ExplorableGraph.mapReduce(graph, mapFn, reduceFn);
 }
 
 concat.usage = `concat <...objs>\tConcatenate text and/or graphs of text`;

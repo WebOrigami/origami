@@ -88,7 +88,8 @@ describe("MetaTransform", () => {
       "01",
       "index.html"
     );
-    assert.equal(indexHtml, "Hello, world.\n");
+    const normalized = indexHtml?.toString().replace(/\r\n/g, "\n");
+    assert.equal(normalized, "Hello, world.\n");
   });
 
   it("can inherit ellipsis formulas", async () => {

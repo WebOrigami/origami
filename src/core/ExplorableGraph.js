@@ -143,8 +143,11 @@ export default class ExplorableGraph {
       promises.push(promise);
     }
 
-    // Wait for all the promises to resolve, then reduce.
+    // Wait for all the promises to resolve. Because the promises were captured
+    // in the same order as the keys, the values will also be in the same order.
     const values = await Promise.all(promises);
+
+    // Reduce the values to a single result.
     return reduceFn(values, keys);
   }
 
