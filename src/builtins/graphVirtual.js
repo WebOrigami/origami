@@ -12,7 +12,7 @@ import config from "./config.js";
  * @param {Explorable} [variant]
  */
 export default async function graphVirtual(variant) {
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
   }

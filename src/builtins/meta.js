@@ -12,7 +12,7 @@ import config from "./config.js";
  * @param {GraphVariant} [variant]
  */
 export default async function meta(variant) {
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
   }

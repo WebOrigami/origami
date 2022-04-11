@@ -8,7 +8,7 @@ import { toSerializable } from "../core/utilities.js";
  * @param {any} [obj]
  */
 export default async function json(obj) {
-  obj = obj ?? (await this.get("@defaultGraph"));
+  obj = obj ?? (await this?.get("@defaultGraph"));
   if (obj === undefined) {
     return undefined;
   }

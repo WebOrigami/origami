@@ -10,7 +10,7 @@ import { parentScope } from "../framework/scopeUtilities.js";
  * @param {GraphVariant} [variant]
  */
 export default async function results(variant) {
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
   }

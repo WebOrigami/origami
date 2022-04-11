@@ -9,7 +9,7 @@ import { toSerializable } from "../core/utilities.js";
  * @param {GraphVariant} [variant]
  */
 export default async function dot(variant) {
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
   }

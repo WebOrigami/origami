@@ -7,7 +7,7 @@ import MapGraph from "../core/MapGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function clean(variant) {
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return;
   }
