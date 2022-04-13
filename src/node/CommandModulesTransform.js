@@ -20,6 +20,8 @@ export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {
     async *[Symbol.asyncIterator]() {
       for await (const key of super[Symbol.asyncIterator]()) {
+        yield key;
+
         // If we find something like "foo.js", then yield "foo" as a key.
         if (key.endsWith(".js")) {
           yield path.basename(key, ".js");

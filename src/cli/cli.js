@@ -1,32 +1,32 @@
 #!/usr/bin/env node
 
 import process, { stdout } from "process";
-import config from "../builtins/config.js";
 import ori from "../builtins/ori.js";
 import Scope from "../common/Scope.js";
 import { getScope } from "../framework/scopeUtilities.js";
+import builtins from "./builtins.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
-  const currentConfig = await config();
-
-  // If no arguments were passed, show usage.
   const expression = args.join(" ");
-  if (!expression) {
-    await showUsage(currentConfig);
-    return;
-  }
 
   // Find the default graph.
-  const defaultGraph = await currentConfig.get("defaultGraph");
-  const graph = await defaultGraph();
+  const defaultGraph2 = await builtins.get("defaultGraph2");
+  const graph = await defaultGraph2();
+  const baseScope = getScope(graph);
+
+  // If no arguments were passed, show usage.
+  if (!expression) {
+    await showUsage(baseScope);
+    return;
+  }
 
   // Add default graph to scope.
   const scope = new Scope(
     {
       "@defaultGraph": graph,
     },
-    getScope(graph)
+    baseScope
   );
 
   const text = await ori.call(scope, expression);

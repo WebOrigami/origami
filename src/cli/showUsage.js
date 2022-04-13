@@ -1,21 +1,37 @@
-export default async function showUsage(commands) {
+import { transformObject } from "../core/utilities.js";
+import CommandsModulesTransform from "../node/CommandModulesTransform.js";
+
+export default async function showUsage(scope) {
   console.log(`Usage: ori <expression>, which could be:
-- a string like 'Hello' in single quotes
+- a string in single quotes, or a number
 - a file or folder name
 - an https: or http: URL
-- a name like "foo" that refers to an object/function exported by a local file foo.js
-- the name of a built-in function below:
+- a name like "foo" that refers to an object/function exported by a project file foo.js
+- the name of a function below:
 `);
+
+  const commands = transformObject(CommandsModulesTransform, scope);
 
   // Gather usages.
   const usages = [];
   for await (const key of commands) {
-    const command = await commands.get(key);
-    let usage = command?.usage;
-    if (!usage) {
-      usage = typeof command === "function" ? defaultUsage(key, command) : key;
+    let command;
+    // We get the command associated with the key in a try/catch because
+    // we want to ignore any syntax errors.
+    try {
+      command = await commands.get(key);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        continue;
+      }
     }
-    usages.push(usage);
+    if (typeof command === "function") {
+      let usage = command?.usage;
+      if (!usage) {
+        usage = defaultUsage(key, command);
+      }
+      usages.push(usage);
+    }
   }
 
   // Case-insensitive sort
