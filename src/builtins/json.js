@@ -13,7 +13,7 @@ export default async function json(obj) {
     return undefined;
   }
   if (ExplorableGraph.canCastToExplorable(obj)) {
-    return await ExplorableGraph.toJson(obj);
+    return ExplorableGraph.toJson(obj);
   } else {
     const serializable = toSerializable(obj);
     return JSON.stringify(serializable, null, 2);

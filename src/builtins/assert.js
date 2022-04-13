@@ -15,6 +15,8 @@ export default async function assertBuiltin(variant) {
   if (variant === undefined) {
     return undefined;
   }
+
+  /** @type {any} */
   let graph = ExplorableGraph.from(variant);
 
   // If the graph isn't already a MetaGraph, make it one.
@@ -31,10 +33,10 @@ export default async function assertBuiltin(variant) {
   let actual;
   try {
     actual = await graph.get("actual");
-  } catch (e) {
+  } catch (/** @type {any} */ error) {
     return {
       description,
-      exception: e.message,
+      exception: error.message,
     };
   }
 

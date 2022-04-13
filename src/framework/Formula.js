@@ -52,10 +52,10 @@ export default class Formula {
       const code = bindings
         ? this.bindCode(this.expression, bindings)
         : this.expression;
-      return await execute.call(scope, code);
+      return execute.call(scope, code);
     } else {
       // Local variable declaration
-      return await scope.get(this.source);
+      return scope.get(this.source);
     }
   }
 

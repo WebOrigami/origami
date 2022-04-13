@@ -73,7 +73,7 @@ export function extendMapFn(mapFn) {
         : mapFn;
 
     // Invoke the map function with our newly-created context.
-    return await fn.call(scope, value, key);
+    return fn.call(scope, value, key);
   };
 }
 

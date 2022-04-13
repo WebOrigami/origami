@@ -1,7 +1,7 @@
 import process from "process";
 
 export default async function stdin() {
-  return await readAll(process.stdin);
+  return readAll(process.stdin);
 }
 
 function readAll(readable) {

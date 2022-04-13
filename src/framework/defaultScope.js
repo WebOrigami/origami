@@ -7,7 +7,7 @@ import DefaultPages from "./DefaultPages.js";
  */
 export default async function defaultScope() {
   // Force use of default index.html page.
-  const scope = this.scope;
+  const scope = /** @type {any} */ (this).scope;
   const graph = new Compose(
     {
       "index.html": () => defaultIndexHtml.call(scope),

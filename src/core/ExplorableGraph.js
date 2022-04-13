@@ -89,7 +89,7 @@ export default class ExplorableGraph {
    */
   static async isKeyExplorable(graph, key) {
     if (graph.isKeyExplorable) {
-      return await graph.isKeyExplorable(key);
+      return graph.isKeyExplorable(key);
     }
     const value = await graph.get(key);
     return this.isExplorable(value);
@@ -213,6 +213,8 @@ export default class ExplorableGraph {
    */
   static async traverse(variant, ...keys) {
     try {
+      // Await the result here so that, if the file doesn't exist, the catch
+      // block below will catch the exception.
       return await this.traverseOrThrow(variant, ...keys);
     } catch (/** @type {any} */ error) {
       if (error instanceof TraverseError) {

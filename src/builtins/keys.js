@@ -12,7 +12,7 @@ export default async function keys(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  return await ExplorableGraph.keys(graph);
+  return ExplorableGraph.keys(graph);
 }
 
 keys.usage = `keys <graph>\tThe top-level keys in the graph`;

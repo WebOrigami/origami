@@ -7,7 +7,7 @@ import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 // the graph.
 export async function getResourceAtPath(graph, href) {
   const keys = keysFromHref(href);
-  return await ExplorableGraph.traverse(graph, ...keys);
+  return ExplorableGraph.traverse(graph, ...keys);
 }
 
 // Explorable graph router as Express middleware.

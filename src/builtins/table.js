@@ -13,9 +13,9 @@ export default async function table(variant) {
   const graph = ExplorableGraph.from(variant);
   const firstValue = await valueForFirstKey(graph);
   if (ExplorableGraph.isExplorable(firstValue)) {
-    return await fullTable(graph, firstValue);
+    return fullTable(graph, firstValue);
   } else {
-    return await simpleTable(graph);
+    return simpleTable(graph);
   }
 }
 

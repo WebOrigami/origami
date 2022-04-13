@@ -11,7 +11,7 @@ export default async function plain(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return await ExplorableGraph.plain(variant);
+  return ExplorableGraph.plain(variant);
 }
 
 plain.usage = `plain <graph>\tA plain JavaScript object representation of the graph`;

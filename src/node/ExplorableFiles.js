@@ -170,6 +170,8 @@ async function prepareData(key, value) {
 // If it does not exist, return undefined.
 async function stat(filePath) {
   try {
+    // Await the result here so that, if the file doesn't exist, the catch block
+    // below will catch the exception.
     return await fs.stat(filePath);
   } catch (/** @type {any} */ error) {
     if (error.code === "ENOENT" /* File not found */) {

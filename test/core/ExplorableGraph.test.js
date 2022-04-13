@@ -84,7 +84,7 @@ describe("ExplorableGraph", () => {
     const reduced = await ExplorableGraph.mapReduce(
       graph,
       (value) => value,
-      (values) => String.prototype.concat.call(...values)
+      (values) => String.prototype.concat(...values)
     );
     assert.deepEqual(reduced, "1234");
   });
