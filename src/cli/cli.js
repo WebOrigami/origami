@@ -11,8 +11,8 @@ async function main(...args) {
   const expression = args.join(" ");
 
   // Find the default graph.
-  const defaultGraph2 = await builtins.get("defaultGraph2");
-  const graph = await defaultGraph2();
+  const defaultGraph = await builtins.get("defaultGraph");
+  const graph = await defaultGraph();
   const baseScope = getScope(graph);
 
   // If no arguments were passed, show usage.
