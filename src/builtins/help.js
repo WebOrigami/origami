@@ -1,10 +1,14 @@
 import child_process from "child_process";
-import config from "./config.js";
+import defaultGraph from "./defaultGraph.js";
 
+/**
+ * @this {Explorable}
+ * @param {string} [name]
+ */
 export default async function help(name) {
   let url;
-  if (name) {
-    const scope = await config();
+  const scope = (await defaultGraph()).scope;
+  if (scope && name) {
     const fn = await scope.get(name);
     url = fn?.documentation;
     if (!url) {

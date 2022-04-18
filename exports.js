@@ -2,7 +2,6 @@
 export { default as cache } from "./src/builtins/cache.js";
 export { default as clean } from "./src/builtins/clean.js";
 export { default as compose } from "./src/builtins/compose.js";
-export { default as config } from "./src/builtins/config.js";
 export { default as copy } from "./src/builtins/copy.js";
 export { default as defaultGraph } from "./src/builtins/defaultGraph.js";
 export { default as dot } from "./src/builtins/dot.js";
@@ -12,10 +11,7 @@ export { default as files } from "./src/builtins/files.js";
 export { default as filter } from "./src/builtins/filter.js";
 export { default as front } from "./src/builtins/front.js";
 export { default as graph } from "./src/builtins/graph.js";
-export {
-  default as graphApp,
-  default as graphVirtual,
-} from "./src/builtins/graphVirtual.js";
+export { default as graphVirtual } from "./src/builtins/graphVirtual.js";
 export { default as help } from "./src/builtins/help.js";
 export { default as http } from "./src/builtins/http.js";
 export { default as https } from "./src/builtins/https.js";
