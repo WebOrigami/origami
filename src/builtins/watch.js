@@ -31,12 +31,24 @@ export default async function watch(variant) {
   const options = {
     recursive: true,
   };
-  fs.watch(dirname, options, (eventType, filename) => {
-    console.log(`File changed: ${filename}`);
-    if (graph.onChange) {
-      graph.onChange(eventType, filename);
+  try {
+    fs.watch(dirname, options, (eventType, filename) => {
+      console.log(`File changed: ${filename}`);
+      if (graph.onChange) {
+        graph.onChange(eventType, filename);
+      }
+    });
+  } catch (error) {
+    // The hosted StackBlitz service doesn't support the recursive option on
+    // fs.watch, rendering it mostly useless. In that case, we ignore it and
+    // this watch() builtin will just have no effect.
+    const ignore =
+      error instanceof TypeError &&
+      /** @type {any} */ (error).code === "ERR_FEATURE_UNAVAILABLE_ON_PLATFORM";
+    if (!ignore) {
+      throw error;
     }
-  });
+  }
   return graph;
 }
 
