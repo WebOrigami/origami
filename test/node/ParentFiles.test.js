@@ -12,7 +12,7 @@ describe("ParentFiles", () => {
     const parentFiles = new ParentFiles(folder);
     const configPath = await parentFiles.get("test.config");
     const expectedPath = path.join(fixturesDirectory, "test.config");
-    assert(configPath, expectedPath);
+    assert.equal(configPath, expectedPath);
   });
 
   it("returns undefined for a file that doesn't exist", async () => {

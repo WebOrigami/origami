@@ -1,11 +1,12 @@
 import mapKeys from "../../src/builtins/mapKeys.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("mapKeys", () => {
   it("by default makes the value itself the key", async () => {
     const graph = await mapKeys(["a", "b", "c"]);
-    assert(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
       a: "a",
       b: "b",
       c: "c",
@@ -28,9 +29,9 @@ describe("mapKeys", () => {
           name: "Carol",
         },
       ],
-      "id"
+      (value) => value.id
     );
-    assert(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
       alice: {
         id: "alice",
         name: "Alice",
@@ -43,6 +44,18 @@ describe("mapKeys", () => {
         id: "carol",
         name: "Carol",
       },
+    });
+  });
+
+  it("can define a key with a lambda", async () => {
+    const graph = await mapKeys(
+      [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
+      ops.lambda([ops.scope, "name"])
+    );
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      Alice: { name: "Alice" },
+      Bob: { name: "Bob" },
+      Carol: { name: "Carol" },
     });
   });
 });
