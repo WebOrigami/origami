@@ -20,7 +20,7 @@ export default async function dot(variant) {
   nodesep=1;
   rankdir=LR;
   ranksep=1.5;
-  node [shape=box; color=gray70; fillcolor="white"; fontname="Helvetica"; fontsize="10"; style="filled"];
+  node [color=gray70; fillcolor="white"; fontname="Helvetica"; fontsize="10"; nojustify=true; style="filled"; shape=box];
   edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; fontsize="10"; labeldistance=5];
 
 ${graphArcs.join("\n")}
@@ -86,9 +86,13 @@ async function statements(graph, nodePath) {
         label = label.slice(0, 40);
         clippedEnd = true;
       }
-      label = label.replace(/\n/g, " "); // Remove newlines
+
+      // Left justify node label using weird Dot escape character
+      // See https://stackoverflow.com/a/13104953/76472
+      label = label.replace(/\n/g, "\\l");
+
       label = label.replace(/"/g, '\\"'); // Escape quotes
-      label = label.replace(/\s+/g, " "); // Collapse whitespace
+      label = label.replace(/[\ \t]+/g, " "); // Collapse spaces and tabs
       label = label.replace(/[\u{0080}-\u{FFFF}]/gu, ""); // Remove non-ASCII characters
 
       if (clippedStart) {
