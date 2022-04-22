@@ -5,8 +5,10 @@ export default class Scope extends Compose {
   constructor(...variants) {
     const filtered = variants.filter((variant) => variant != undefined);
     const graphs = filtered.map((variant) => ExplorableGraph.from(variant));
-    const flattened = graphs.flatMap((graph) =>
-      graph instanceof Compose ? graph.graphs : graph
+
+    // If a graph argument has a `graphs` property, use that instead.
+    const flattened = graphs.flatMap(
+      (graph) => /** @type {any} */ (graph).graphs ?? graph
     );
 
     // Mark all graphs but the first as being in scope. TODO: the "is in scope"
