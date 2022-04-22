@@ -26,4 +26,21 @@ describe("ori builtin", () => {
 `,
     ]);
   });
+
+  it("evaluates an expression in the context of a specific path", async () => {
+    const graph = new ExplorableObject({
+      folder: {
+        message: "Hello",
+      },
+    });
+    const scope = new Scope(
+      {
+        "@defaultGraph": graph,
+      },
+      graph,
+      builtins
+    );
+    const result = await ori.call(scope, `message`, "folder");
+    assert.equal(result, "Hello\n");
+  });
 });

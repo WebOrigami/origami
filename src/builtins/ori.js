@@ -2,6 +2,10 @@
 
 import yaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
@@ -12,14 +16,15 @@ import * as parse from "../language/parse.js";
  *
  * @this {Explorable}
  * @param {string} expression
+ * @param {string} [path]
  * @returns {Promise<string | Buffer | undefined>}
  */
-export default async function ori(expression) {
+export default async function ori(expression, path) {
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression).trim();
 
   // Obtain the scope from `this` or builtins.
-  const scope = this ?? builtins;
+  let scope = this ?? builtins;
 
   // Parse
   const parsed = parse.expression(expression);
@@ -33,6 +38,25 @@ export default async function ori(expression) {
     // The source ends without an explicit parenthesis. If the rightmost call in
     // the code tree is a function, we'll want to invoke it.
     code = patchDanglingFunction(code);
+  }
+
+  // If a path was provided, traverse that before evaluating the code.
+  //
+  // REVIEW: This path-traversing feature of ori exists to support asserts,
+  // which often need to traverse a graph before evaluating an assertion. That
+  // feels too specific to support in this otherwise general-purpose function.
+  // The use of slash-separated paths also feels too specific.
+  if (path) {
+    const keys = path.split("/");
+    const [first, ...rest] = keys;
+    let graph = await scope.get(first);
+    if (!graph) {
+      return undefined;
+    }
+    graph = transformObject(InheritScopeTransform, graph);
+    graph.parent = scope;
+    graph = await ExplorableGraph.traverse(graph, ...rest);
+    scope = getScope(graph);
   }
 
   // Execute
