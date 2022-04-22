@@ -17,7 +17,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export function extractFrontMatter(text) {
   const regex =
-    /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
+    /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
   const match = regex.exec(text);
   if (match) {
     const { frontBlock, frontText, bodyText } = /** @type {any} */ (match)
