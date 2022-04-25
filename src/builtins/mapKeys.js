@@ -1,6 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { parse, transformObject } from "../core/utilities.js";
+import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
@@ -19,29 +19,23 @@ export default async function mapKeys(variant, keyFn) {
     async *[Symbol.asyncIterator]() {
       for await (const key of graph[Symbol.asyncIterator]()) {
         const value = await graph.get(key);
-        const data = value ? await dataFromInput(value) : undefined;
-        if (data !== undefined) {
-          const mappedKey =
-            extendedKeyFn === null
-              ? data
-              : await extendedKeyFn.call(scope, data, key);
-          yield mappedKey;
-        }
+        const mappedKey =
+          value !== undefined && extendedKeyFn
+            ? await extendedKeyFn.call(scope, value, key)
+            : value;
+        yield mappedKey;
       }
     },
 
     async get(key) {
       for await (const graphKey of graph[Symbol.asyncIterator]()) {
         const value = await graph.get(graphKey);
-        const data = value ? await dataFromInput(value) : undefined;
-        if (data !== undefined) {
-          const index =
-            extendedKeyFn === null
-              ? data
-              : await extendedKeyFn.call(scope, data, key);
-          if (index === key) {
-            return data;
-          }
+        const mappedKey =
+          value !== undefined && extendedKeyFn
+            ? await extendedKeyFn.call(scope, value, key)
+            : value;
+        if (mappedKey === key) {
+          return value;
         }
       }
       return undefined;
@@ -51,20 +45,6 @@ export default async function mapKeys(variant, keyFn) {
       return scope;
     },
   };
-}
-
-async function dataFromInput(input) {
-  let parsed = input;
-  if (typeof input === "string" || input instanceof Buffer) {
-    parsed = await parse(String(input));
-    if (typeof parsed === "string") {
-      return parsed;
-    }
-  }
-  const data = ExplorableGraph.isExplorable(parsed)
-    ? await ExplorableGraph.plain(parsed)
-    : parsed;
-  return data;
 }
 
 /**

@@ -29,7 +29,7 @@ describe("mapKeys", () => {
           name: "Carol",
         },
       ],
-      (value) => value.id
+      (value) => value.get("id")
     );
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       alice: {
