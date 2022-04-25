@@ -2,7 +2,6 @@ import MapTypesGraph from "../common/MapTypesGraph.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapGraph from "../core/MapGraph.js";
-import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
@@ -32,7 +31,7 @@ export default function map(variant, mapFn, sourceExtension, targetExtension) {
  *
  * @param {Invocable} mapFn
  */
-export function extendMapFn(mapFn) {
+function extendMapFn(mapFn) {
   /**
    * @this {Explorable}
    * @param {any} value
@@ -50,18 +49,18 @@ export function extendMapFn(mapFn) {
     );
 
     // Convert the value to a graph if possible.
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      /** @type {any} */
-      let valueGraph = ExplorableGraph.from(value);
-      if (!("parent" in valueGraph)) {
-        valueGraph = transformObject(InheritScopeTransform, valueGraph);
-      }
-      valueGraph.parent = scope;
-      scope = valueGraph.scope;
-    }
+    // if (
+    //   typeof value !== "string" &&
+    //   ExplorableGraph.canCastToExplorable(value)
+    // ) {
+    //   /** @type {any} */
+    //   let valueGraph = ExplorableGraph.from(value);
+    //   if (!("parent" in valueGraph)) {
+    //     valueGraph = transformObject(InheritScopeTransform, valueGraph);
+    //   }
+    //   valueGraph.parent = scope;
+    //   scope = valueGraph.scope;
+    // }
 
     // Convert the mapFn from an Invocable to a real function.
     /** @type {any} */

@@ -53,20 +53,4 @@ describe("map", () => {
       { key: "2", value: "c" },
     ]);
   });
-
-  it("mapping function context includes the value's graph", async () => {
-    const results = map(
-      [{ name: "Alice" }, { name: "Bob" }, { name: "Carol " }],
-      /** @this {any} */
-      async function () {
-        const name = await this.get("name");
-        return name;
-      }
-    );
-    assert.deepEqual(await ExplorableGraph.plain(results), [
-      "Alice",
-      "Bob",
-      "Carol ",
-    ]);
-  });
 });
