@@ -40,8 +40,18 @@ export default async function assertBuiltin(variant) {
     };
   }
 
+  const expectedPlain =
+    typeof expected !== "string" &&
+    ExplorableGraph.canCastToExplorable(expected)
+      ? await ExplorableGraph.plain(expected)
+      : expected;
+  const actualPlain =
+    typeof actual !== "string" && ExplorableGraph.canCastToExplorable(actual)
+      ? await ExplorableGraph.plain(actual)
+      : actual;
+
   try {
-    assert.deepStrictEqual(actual, expected);
+    assert.deepStrictEqual(actualPlain, expectedPlain);
     return undefined;
   } catch (e) {
     return {

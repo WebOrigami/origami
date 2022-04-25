@@ -104,6 +104,13 @@ describe("ExplorableGraph", () => {
     assert.deepEqual(plain, original);
   });
 
+  it("plain() produces an array for an array-like graph", async () => {
+    const original = ["a", "b", "c"];
+    const graph = new ExplorableObject(original);
+    const plain = await ExplorableGraph.plain(graph);
+    assert.deepEqual(plain, original);
+  });
+
   it("plain() can parse YAML (and so also JSON)", async () => {
     const yaml = `a: Hello, a.
 b: Hello, b.

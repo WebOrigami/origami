@@ -21,6 +21,11 @@ describe("ExplorableObject", () => {
     assert.deepEqual(keys, ["a", "b", "c"]);
   });
 
+  it("can explore a standard JavaScript Array", async () => {
+    const graph = new ExplorableObject(["a", "b", "c"]);
+    assert.deepEqual(await ExplorableGraph.plain(graph), ["a", "b", "c"]);
+  });
+
   it("can set a value", async () => {
     const graph = new ExplorableObject({
       a: 1,

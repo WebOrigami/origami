@@ -47,11 +47,11 @@ describe("map", () => {
         return { key, value };
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(results), {
-      0: { key: 0, value: "a" },
-      1: { key: 1, value: "b" },
-      2: { key: 2, value: "c" },
-    });
+    assert.deepEqual(await ExplorableGraph.plain(results), [
+      { key: "0", value: "a" },
+      { key: "1", value: "b" },
+      { key: "2", value: "c" },
+    ]);
   });
 
   it("mapping function context includes the value's graph", async () => {
@@ -63,10 +63,10 @@ describe("map", () => {
         return name;
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(results), {
-      0: "Alice",
-      1: "Bob",
-      2: "Carol ",
-    });
+    assert.deepEqual(await ExplorableGraph.plain(results), [
+      "Alice",
+      "Bob",
+      "Carol ",
+    ]);
   });
 });

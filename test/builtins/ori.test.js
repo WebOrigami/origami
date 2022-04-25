@@ -1,7 +1,7 @@
-import { ExplorableObject } from "../../exports.js";
 import ori from "../../src/builtins/ori.js";
 import builtins from "../../src/cli/builtins.js";
 import Scope from "../../src/common/Scope.js";
+import ExplorableObject from "../../src/core/ExplorableObject.js";
 import assert from "../assert.js";
 
 describe("ori builtin", () => {

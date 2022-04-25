@@ -307,8 +307,6 @@ export function pathKey(text) {
   return any(group, substitution, literal)(text);
 }
 
-// Parse a path key that contains substitutions
-
 // Parse a function call with percent syntax.
 export function percentCall(text) {
   const parsed = sequence(

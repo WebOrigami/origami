@@ -1,5 +1,4 @@
 import * as YAMLModule from "yaml";
-import ExplorableArray from "./ExplorableArray.js";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
 import MapGraph from "./MapGraph.js";
@@ -48,9 +47,7 @@ export default class ExplorableGraph {
     // Handle known types.
     if (obj instanceof Function) {
       return new ExplorableFunction(obj);
-    } else if (obj instanceof Array) {
-      return new ExplorableArray(obj);
-    } else if (utilities.isPlainObject(obj)) {
+    } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
       return new ExplorableObject(obj);
     } else if (typeof obj.toFunction === "function") {
       const fn = obj.toFunction();
@@ -162,9 +159,22 @@ export default class ExplorableGraph {
    */
   static async plain(variant) {
     return this.mapReduce(variant, null, (values, keys) => {
-      const result = {};
+      let result = {};
+      let numericKeysOnly = true;
       for (let i = 0; i < keys.length; i++) {
+        if (numericKeysOnly) {
+          const key = keys[i];
+          const index = Number(key);
+          if (isNaN(index)) {
+            // Found a non-numeric key, so not array-like.
+            numericKeysOnly = false;
+          }
+        }
         result[keys[i]] = values[i];
+      }
+      if (numericKeysOnly && keys.length > 0) {
+        // Array-like; return as array.
+        result = Object.values(result);
       }
       return result;
     });

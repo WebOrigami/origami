@@ -1,5 +1,5 @@
-import { ExplorableGraph } from "../../exports.js";
 import FilterGraph from "../../src/common/FilterGraph.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("FilterGraph", () => {

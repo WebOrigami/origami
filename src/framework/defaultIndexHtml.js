@@ -22,7 +22,7 @@ export default async function defaultIndexHtml() {
       } else {
         const parts = keyText.split("=");
         const lhs = parts[0].trim();
-        const rhs = parts[1].trim();
+        const rhs = parts[1]?.trim() ?? "";
         link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${keyText}">= ${rhs}</a></span></li>`;
       }
     } else {

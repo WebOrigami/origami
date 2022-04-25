@@ -3,9 +3,9 @@ import { isPlainObject } from "./utilities.js";
 
 export default class ExplorableObject {
   constructor(object) {
-    if (!isPlainObject(object)) {
+    if (!(object instanceof Array) && !isPlainObject(object)) {
       throw new TypeError(
-        "The argument to the ExplorableObject constructor must be a plain JavaScript object."
+        "The argument to the ExplorableObject constructor must be a plain JavaScript object or array."
       );
     }
     this.object = object;
@@ -23,8 +23,8 @@ export default class ExplorableObject {
    */
   async get(key) {
     let value = this.object[key];
-    if (isPlainObject(value)) {
-      // Wrap a returned plain object as an ExplorableObject.
+    if (value instanceof Array || isPlainObject(value)) {
+      // Wrap a returned array / plain object as an ExplorableObject.
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;

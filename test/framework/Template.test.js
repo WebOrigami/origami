@@ -1,4 +1,4 @@
-import { ExplorableGraph } from "../../exports.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import Template from "../../src/framework/Template.js";
 import assert from "../assert.js";
