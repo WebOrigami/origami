@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import shallowMap from "../../src/builtins/shallowMap.js";
+import map from "../../src/builtins/map.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
@@ -37,11 +37,11 @@ Hello, world.
 
   it("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
-      "Greetings:\n{{shallowMap(people, =`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
     const graph = new (InheritScopeTransform(ExplorableObject))({
       greeting: "Hello",
-      shallowMap,
+      map,
       // people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       people: {
         0: { name: "Alice" },

@@ -426,10 +426,10 @@ Block contents
       " bar",
     ]);
     assertParse(templateLiteral("`{{`nested`}}`"), "nested");
-    assertParse(templateLiteral("`{{shallowMap(people, =`{{name}}`)}}`"), [
+    assertParse(templateLiteral("`{{map(people, =`{{name}}`)}}`"), [
       ops.concat,
       [
-        [ops.scope, "shallowMap"],
+        [ops.scope, "map"],
         [ops.scope, "people"],
         [ops.lambda, [ops.concat, [ops.scope, "name"]]],
       ],

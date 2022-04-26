@@ -69,10 +69,8 @@ export default class MapKeysValuesGraph {
   }
 
   async mapApplies(innerValue, outerKey, innerKey) {
-    // By default, we only apply the map to real, non-explorable values.
-    return (
-      innerValue !== undefined && !ExplorableGraph.isExplorable(innerValue)
-    );
+    // By default, we only apply the map to real values.
+    return innerValue !== undefined;
   }
 
   async outerKeyForInnerKey(innerKey) {

@@ -2,26 +2,28 @@ import MapExtensionsGraph from "../common/MapExtensionsGraph.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapValuesGraph from "../core/MapValuesGraph.js";
+import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
 /**
+ * Map the top-level values of a graph with a map function.
+ *
  * @this {Explorable}
+ * @param {GraphVariant} variant
+ * @param {Invocable} mapFn
+ * @param {string} [innerExtension]
+ * @param {string} [outerExtension]
  */
 export default function map(variant, mapFn, innerExtension, outerExtension) {
   const extendedMapFn = extendMapFn(mapFn);
-  const options = { deep: true, innerExtension, outerExtension };
   const mappedGraph =
     innerExtension === undefined
-      ? new (InheritScopeTransform(MapValuesGraph))(
-          variant,
-          extendedMapFn,
-          options
-        )
+      ? new (InheritScopeTransform(MapValuesGraph))(variant, extendedMapFn)
       : new (InheritScopeTransform(MapExtensionsGraph))(
           variant,
           extendedMapFn,
-          options
+          { deep: false, innerExtension, outerExtension }
         );
   if (this) {
     mappedGraph.parent = this;
@@ -53,18 +55,18 @@ function extendMapFn(mapFn) {
     );
 
     // Convert the value to a graph if possible.
-    // if (
-    //   typeof value !== "string" &&
-    //   ExplorableGraph.canCastToExplorable(value)
-    // ) {
-    //   /** @type {any} */
-    //   let valueGraph = ExplorableGraph.from(value);
-    //   if (!("parent" in valueGraph)) {
-    //     valueGraph = transformObject(InheritScopeTransform, valueGraph);
-    //   }
-    //   valueGraph.parent = scope;
-    //   scope = valueGraph.scope;
-    // }
+    if (
+      typeof value !== "string" &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
+      /** @type {any} */
+      let valueGraph = ExplorableGraph.from(value);
+      if (!("parent" in valueGraph)) {
+        valueGraph = transformObject(InheritScopeTransform, valueGraph);
+      }
+      valueGraph.parent = scope;
+      scope = valueGraph.scope;
+    }
 
     // Convert the mapFn from an Invocable to a real function.
     /** @type {any} */
@@ -80,5 +82,5 @@ function extendMapFn(mapFn) {
   };
 }
 
-map.usage = `map <graph>, <mapFn>\tMap the values in a graph using a map function.`;
+map.usage = `map <graph, fn>\tMap the top-level values in a graph`;
 map.documentation = "https://explorablegraph.org/cli/builtins.html#map";
