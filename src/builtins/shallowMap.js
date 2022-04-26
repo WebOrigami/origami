@@ -1,6 +1,7 @@
 import Scope from "../common/Scope.js";
+import ShallowMapTypesGraph from "../common/ShallowMapTypesGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import * as utilities from "../core/utilities.js";
+import ShallowMapGraph from "../core/ShallowMapGraph.js";
 import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
@@ -12,38 +13,26 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {GraphVariant} variant
  * @param {Invocable} mapFn
  */
-export default function shallowMap(variant, mapFn) {
+export default function shallowMap(
+  variant,
+  mapFn,
+  sourceExtension,
+  targetExtension
+) {
   const extendedMapFn = extendMapFn(mapFn);
-  const mappedGraph = new (InheritScopeTransform(ShallowMapGraph))(
-    variant,
-    extendedMapFn
-  );
+  const mappedGraph =
+    sourceExtension === undefined
+      ? new (InheritScopeTransform(ShallowMapGraph))(variant, extendedMapFn)
+      : new (InheritScopeTransform(ShallowMapTypesGraph))(
+          variant,
+          extendedMapFn,
+          sourceExtension,
+          targetExtension
+        );
   if (this) {
     mappedGraph.parent = this;
   }
   return mappedGraph;
-}
-
-class ShallowMapGraph {
-  /**
-   * @param {GraphVariant} variant
-   * @param {Invocable} mapFn
-   */
-  constructor(variant, mapFn) {
-    this.graph = ExplorableGraph.from(variant);
-    this.mapFn = utilities.toFunction(mapFn);
-  }
-
-  async *[Symbol.asyncIterator]() {
-    yield* this.graph;
-  }
-
-  async get(key) {
-    let value = await this.graph.get(key);
-    return value !== undefined
-      ? await this.mapFn.call(this, value, key) // Return mapped value
-      : undefined;
-  }
 }
 
 /**
