@@ -1,7 +1,7 @@
 import * as YAMLModule from "yaml";
 import ExplorableFunction from "./ExplorableFunction.js";
 import ExplorableObject from "./ExplorableObject.js";
-import MapGraph from "./MapGraph.js";
+import MapValuesGraph from "./MapValuesGraph.js";
 import * as utilities from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -205,7 +205,9 @@ export default class ExplorableGraph {
    * @param {GraphVariant} variant
    */
   static async toSerializable(variant) {
-    const serializable = new MapGraph(variant, utilities.toSerializable);
+    const serializable = new MapValuesGraph(variant, utilities.toSerializable, {
+      deep: true,
+    });
     return this.plain(serializable);
   }
 

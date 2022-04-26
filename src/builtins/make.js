@@ -1,7 +1,7 @@
 import SubtractKeys from "../common/SubtractKeys.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 // import ExplorableGraph from "../../core/ExplorableGraph.js";
-import MapGraph from "../core/MapGraph.js";
+import MapValuesGraph from "../core/MapValuesGraph.js";
 import clean from "./clean.js";
 import copy from "./copy.js";
 import files from "./files.js";
@@ -20,10 +20,12 @@ export default async function make(virtual, destination) {
   const real = destination;
   await clean(real);
   const build = new SubtractKeys(virtual, real);
-  const empties = new MapGraph(build, (value) => "");
+  const empties = new MapValuesGraph(build, (value) => "", { deep: true });
   const cleanYaml = await yaml(empties);
   destination.set(".ori.clean.yaml", cleanYaml);
-  const undefineds = new MapGraph(build, (value) => undefined);
+  const undefineds = new MapValuesGraph(build, (value) => undefined, {
+    deep: true,
+  });
   await copy(undefineds, destination);
   await copy(build, destination);
 }

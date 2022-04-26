@@ -1,10 +1,10 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ExplorableObject from "../../src/core/ExplorableObject.js";
-import MapGraph from "../../src/core/MapGraph.js";
+import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 import assert from "../assert.js";
 
-describe("MapGraph", () => {
-  it("constructor returns a new explorable applying a mapping function", async () => {
+describe("MapValuesGraph", () => {
+  it("applies a mapping function to values", async () => {
     const graph = new ExplorableObject({
       a: 1,
       b: 2,
@@ -14,7 +14,9 @@ describe("MapGraph", () => {
         e: 5,
       },
     });
-    const doubled = new MapGraph(graph, (value) => 2 * value);
+    const doubled = new MapValuesGraph(graph, (value) => 2 * value, {
+      deep: true,
+    });
     const plain = await ExplorableGraph.plain(doubled);
     assert.deepEqual(plain, {
       a: 2,

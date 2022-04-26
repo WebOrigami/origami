@@ -1,7 +1,7 @@
+import MapExtensionsGraph from "../common/MapExtensionsGraph.js";
 import Scope from "../common/Scope.js";
-import ShallowMapTypesGraph from "../common/ShallowMapTypesGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ShallowMapGraph from "../core/ShallowMapGraph.js";
+import MapValuesGraph from "../core/MapValuesGraph.js";
 import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
@@ -16,18 +16,17 @@ import { getScope } from "../framework/scopeUtilities.js";
 export default function shallowMap(
   variant,
   mapFn,
-  sourceExtension,
-  targetExtension
+  innerExtension,
+  outerExtension
 ) {
   const extendedMapFn = extendMapFn(mapFn);
   const mappedGraph =
-    sourceExtension === undefined
-      ? new (InheritScopeTransform(ShallowMapGraph))(variant, extendedMapFn)
-      : new (InheritScopeTransform(ShallowMapTypesGraph))(
+    innerExtension === undefined
+      ? new (InheritScopeTransform(MapValuesGraph))(variant, extendedMapFn)
+      : new (InheritScopeTransform(MapExtensionsGraph))(
           variant,
           extendedMapFn,
-          sourceExtension,
-          targetExtension
+          { deep: false, innerExtension, outerExtension }
         );
   if (this) {
     mappedGraph.parent = this;

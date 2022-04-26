@@ -1,4 +1,4 @@
-import MapGraph from "../core/MapGraph.js";
+import MapValuesGraph from "../core/MapValuesGraph.js";
 
 /**
  * Return a new graph with all values equal to null.
@@ -11,7 +11,7 @@ export default async function nulls(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return new MapGraph(variant, () => null);
+  return new MapValuesGraph(variant, () => null, { deep: true });
 }
 
 nulls.usage = `nulls <graph>\tReturn a new graph with all values equal to null`;

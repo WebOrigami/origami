@@ -8,7 +8,7 @@ import "./core/ExplorableArray.test.js";
 import "./core/ExplorableFunction.test.js";
 import "./core/ExplorableGraph.test.js";
 import "./core/ExplorableObject.test.js";
-import "./core/MapGraph.test.js";
+import "./core/MapValuesGraph.test.js";
 import "./core/utilities.test.js";
 import "./framework/AdditionsTransform.test.js";
 import "./framework/FormulasTransform.test.js";

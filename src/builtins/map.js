@@ -1,23 +1,27 @@
-import MapTypesGraph from "../common/MapTypesGraph.js";
+import MapExtensionsGraph from "../common/MapExtensionsGraph.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import MapGraph from "../core/MapGraph.js";
+import MapValuesGraph from "../core/MapValuesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
 /**
  * @this {Explorable}
  */
-export default function map(variant, mapFn, sourceExtension, targetExtension) {
+export default function map(variant, mapFn, innerExtension, outerExtension) {
   const extendedMapFn = extendMapFn(mapFn);
+  const options = { deep: true, innerExtension, outerExtension };
   const mappedGraph =
-    sourceExtension === undefined
-      ? new (InheritScopeTransform(MapGraph))(variant, extendedMapFn)
-      : new (InheritScopeTransform(MapTypesGraph))(
+    innerExtension === undefined
+      ? new (InheritScopeTransform(MapValuesGraph))(
           variant,
           extendedMapFn,
-          sourceExtension,
-          targetExtension
+          options
+        )
+      : new (InheritScopeTransform(MapExtensionsGraph))(
+          variant,
+          extendedMapFn,
+          options
         );
   if (this) {
     mappedGraph.parent = this;

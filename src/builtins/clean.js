@@ -1,5 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import MapGraph from "../core/MapGraph.js";
+import MapValuesGraph from "../core/MapValuesGraph.js";
 
 /**
  *
@@ -17,7 +17,9 @@ export default async function clean(variant) {
     // Nothing to clean
     return;
   }
-  const undefineds = new MapGraph(cleanGraph, (value) => undefined);
+  const undefineds = new MapValuesGraph(cleanGraph, (value) => undefined, {
+    deep: true,
+  });
   // @ts-ignore
   await graph.set(undefineds);
 }

@@ -51,7 +51,7 @@ export { default as CachedValuesTransform } from "./src/common/CachedValuesTrans
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
 export { default as FilterGraph } from "./src/common/FilterGraph.js";
-export { default as MapTypesGraph } from "./src/common/MapTypesGraph.js";
+export { default as MapExtensionsGraph } from "./src/common/MapExtensionsGraph.js";
 export { default as Scope } from "./src/common/Scope.js";
 export { default as ShuffleTransform } from "./src/common/ShuffleTransform.js";
 export { default as SortTransform } from "./src/common/SortTransform.js";
@@ -60,7 +60,7 @@ export { default as ExplorableFunction } from "./src/core/ExplorableFunction.js"
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as ExplorableObject } from "./src/core/ExplorableObject.js";
 export { default as ExplorableSite } from "./src/core/ExplorableSite.js";
-export { default as MapGraph } from "./src/core/MapGraph.js";
+export { default as MapValuesGraph } from "./src/core/MapValuesGraph.js";
 export * from "./src/core/utilities.js";
 export { default as AdditionsTransform } from "./src/framework/AdditionsTransform.js";
 export { default as defaultIndexHtml } from "./src/framework/defaultIndexHtml.js";
