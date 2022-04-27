@@ -13,7 +13,9 @@ export default async function serve(variant, port = defaultPort) {
     : // @ts-ignore
       await watch.call(this, await virtual.call(this));
   http.createServer(requestListener(graph)).listen(port, undefined, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(
+      `Server running at http://localhost:${port}. Press Ctrl+C to stop.`
+    );
   });
 }
 
