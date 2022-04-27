@@ -22,7 +22,10 @@ export default class ExplorableObject {
    * @param {any} key
    */
   async get(key) {
-    let value = this.object[key];
+    // We check to make sure the object itself has the key as an `own` property
+    // because, if the object's an array, we don't want to return values for
+    // keys like `map` and `find` that are Array prototype methods.
+    let value = this.object.hasOwnProperty(key) ? this.object[key] : undefined;
     if (value instanceof Array || isPlainObject(value)) {
       // Wrap a returned array / plain object as an ExplorableObject.
       value = Reflect.construct(this.constructor, [value]);
