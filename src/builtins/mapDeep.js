@@ -17,19 +17,20 @@ export default function mapDeep(
   outerExtension
 ) {
   const extendedMapFn = extendMapFn(mapFn);
-  const options = { deep: true, innerExtension, outerExtension };
-  const mappedGraph =
-    innerExtension === undefined
-      ? new (InheritScopeTransform(MapValuesGraph))(
-          variant,
-          extendedMapFn,
-          options
-        )
-      : new (InheritScopeTransform(MapExtensionsGraph))(
-          variant,
-          extendedMapFn,
-          options
-        );
+  const options = { deep: true };
+  if (innerExtension !== undefined) {
+    options.innerExtension = innerExtension;
+  }
+  if (outerExtension !== undefined) {
+    options.outerExtension = outerExtension;
+  }
+  const GraphClass =
+    innerExtension === undefined ? MapValuesGraph : MapExtensionsGraph;
+  const mappedGraph = new (InheritScopeTransform(GraphClass))(
+    variant,
+    extendedMapFn,
+    options
+  );
   if (this) {
     mappedGraph.parent = this;
   }

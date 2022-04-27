@@ -17,14 +17,20 @@ import { getScope } from "../framework/scopeUtilities.js";
  */
 export default function map(variant, mapFn, innerExtension, outerExtension) {
   const extendedMapFn = extendMapFn(mapFn);
-  const mappedGraph =
-    innerExtension === undefined
-      ? new (InheritScopeTransform(MapValuesGraph))(variant, extendedMapFn)
-      : new (InheritScopeTransform(MapExtensionsGraph))(
-          variant,
-          extendedMapFn,
-          { deep: false, innerExtension, outerExtension }
-        );
+  const options = {};
+  if (innerExtension !== undefined) {
+    options.innerExtension = innerExtension;
+  }
+  if (outerExtension !== undefined) {
+    options.outerExtension = outerExtension;
+  }
+  const GraphClass =
+    innerExtension === undefined ? MapValuesGraph : MapExtensionsGraph;
+  const mappedGraph = new (InheritScopeTransform(GraphClass))(
+    variant,
+    extendedMapFn,
+    options
+  );
   if (this) {
     mappedGraph.parent = this;
   }
