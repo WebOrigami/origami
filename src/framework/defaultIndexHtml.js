@@ -20,9 +20,10 @@ export default async function defaultIndexHtml() {
       if (isWildcard) {
         link = `<li class="formula wildcard"><a href="${keyText}">${keyText}</a></li>`;
       } else {
-        const parts = keyText.split("=");
-        const lhs = parts[0].trim();
-        const rhs = parts[1]?.trim() ?? "";
+        // Split on first equals sign.
+        const equalsIndex = keyText.indexOf("=");
+        const lhs = keyText.substring(0, equalsIndex);
+        const rhs = keyText.substring(equalsIndex + 1);
         link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${keyText}">= ${rhs}</a></span></li>`;
       }
     } else {
