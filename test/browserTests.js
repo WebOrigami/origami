@@ -4,7 +4,6 @@ import "./common/Cache.test.js";
 import "./common/Compose.test.js";
 import "./common/DefaultValues.test.js";
 import "./common/SubtractKeys.test.js";
-import "./core/ExplorableArray.test.js";
 import "./core/ExplorableFunction.test.js";
 import "./core/ExplorableGraph.test.js";
 import "./core/ExplorableObject.test.js";
