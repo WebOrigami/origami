@@ -48,7 +48,7 @@ export default class MapKeysValuesGraph {
       const applyMap = await this.mapApplies(innerValue, outerKey, innerKey);
       // Apply map if desired, otherwise use inner value as is.
       outerValue = applyMap
-        ? await this.mapFn.call(this, innerValue, outerKey)
+        ? await this.mapFn.call(this, innerValue, outerKey, innerKey)
         : innerValue;
     }
 
