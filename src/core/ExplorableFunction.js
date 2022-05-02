@@ -1,15 +1,29 @@
+/**
+ * An explorable graph based on a function and an optional domain.
+ */
 export default class ExplorableFunction {
+  /**
+   * @param {function} fn the function to be explored
+   * @param {AsyncIterable|Iterable} [domain] optional domain of the function
+   */
   constructor(fn, domain = []) {
     this.fn = fn;
     this.domain = domain;
   }
 
-  // Yield the function's domain as its keys.
+  /**
+   * Yields the function's domain (if defined) as the graph's keys. If no domain
+   * was defined, this returns an empty iterable.
+   */
   async *[Symbol.asyncIterator]() {
     yield* this.domain;
   }
 
-  // Return the value for a given key.
+  /**
+   * Return the application of the function to the given key.
+   *
+   * @param {any} key
+   */
   async get(key) {
     let value =
       key === undefined || this.fn.length === 1

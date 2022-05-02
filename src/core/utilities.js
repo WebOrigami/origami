@@ -14,6 +14,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  * If the text does not contain front matter, this returns null.
  *
  * @param {string} text
+ * @returns {{ frontBlock: string, bodyText: string, frontData: PlainObject }|null}
  */
 export function extractFrontMatter(text) {
   const regex =
@@ -76,6 +77,12 @@ export function toFunction(obj) {
   return fn;
 }
 
+/**
+ * Attempt to convert the given object to something which can be serialized to
+ * text (e.g., as JSON): a plain object, an array, or a string.
+ *
+ * @param {any} obj
+ */
 export function toSerializable(obj) {
   if (isPlainObject(obj)) {
     const result = {};

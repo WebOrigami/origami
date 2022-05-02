@@ -18,12 +18,18 @@ export default class MapValuesGraph {
     this.options = options;
   }
 
-  // Return same keys as original graph.
+  /**
+   * Returns the same keys as the original `graph`.
+   */
   async *[Symbol.asyncIterator]() {
     yield* this.graph;
   }
 
-  // Apply the mapping function to the original graph's values.
+  /**
+   * Retrieves the value for the given key from the original `graph`.
+   * 
+   * @param {any} key 
+   */
   async get(key) {
     const value = await this.graph.get(key);
     return this.deep && ExplorableGraph.isExplorable(value)
