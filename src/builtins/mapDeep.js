@@ -16,6 +16,9 @@ export default function mapDeep(
   innerExtension,
   outerExtension
 ) {
+  if (!variant) {
+    return undefined;
+  }
   const extendedMapFn = extendMapFn(mapFn);
   const options = { deep: true };
   if (innerExtension !== undefined) {

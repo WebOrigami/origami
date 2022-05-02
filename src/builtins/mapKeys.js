@@ -12,6 +12,9 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {function} [keyFn]
  */
 export default async function mapKeys(variant, keyFn) {
+  if (!variant) {
+    return undefined;
+  }
   const graph = ExplorableGraph.from(variant);
   const extendedKeyFn = keyFn ? extendKeyFn(keyFn) : null;
   const scope = getScope(this);

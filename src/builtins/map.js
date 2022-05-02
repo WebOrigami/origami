@@ -16,6 +16,9 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {string} [outerExtension]
  */
 export default function map(variant, mapFn, innerExtension, outerExtension) {
+  if (!variant) {
+    return undefined;
+  }
   const extendedMapFn = extendMapFn(mapFn);
   const options = {};
   if (innerExtension !== undefined) {
