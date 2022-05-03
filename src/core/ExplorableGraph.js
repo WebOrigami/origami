@@ -128,8 +128,6 @@ export default class ExplorableGraph {
   static async mapReduce(variant, mapFn, reduceFn) {
     const graph = this.from(variant);
 
-    const foo = await this.keys(graph);
-
     // We're going to fire off all the get requests in parallel, as quickly as
     // the keys come in.
     const keys = [];

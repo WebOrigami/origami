@@ -27,8 +27,8 @@ export default class MapValuesGraph {
 
   /**
    * Retrieves the value for the given key from the original `graph`.
-   * 
-   * @param {any} key 
+   *
+   * @param {any} key
    */
   async get(key) {
     const value = await this.graph.get(key);
