@@ -4,6 +4,44 @@ import * as utilities from "../../src/core/utilities.js";
 import assert from "../assert.js";
 
 describe("utilities", () => {
+  it("extractFrontMatter() returns front matter if found", () => {
+    const text = utilities.extractFrontMatter(`---
+a: Hello, a.
+---
+This is the content.
+`);
+    assert.deepEqual(text, {
+      frontBlock: "---\na: Hello, a.\n---\n",
+      bodyText: "This is the content.\n",
+      frontData: {
+        a: "Hello, a.",
+      },
+    });
+  });
+
+  it("extractFrontMatter returns null if no front matter is found", () => {
+    const text = "a: Hello, a.";
+    assert.equal(utilities.extractFrontMatter(text), null);
+  });
+
+  it("parse can combine front matter and body text", () => {
+    const parsed = utilities.parse(`---
+a: Hello, a.
+---
+This is the content.
+`);
+    assert.deepEqual(parsed, {
+      a: "Hello, a.",
+      "@text": "This is the content.\n",
+    });
+  });
+
+  it("sortNatural can sort values by natural sort order", () => {
+    const keys = ["b", 10, 2, "c", 1, "a"];
+    const sorted = utilities.sortNatural(keys);
+    assert.deepEqual(sorted, [1, 2, 10, "a", "b", "c"]);
+  });
+
   it("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {
@@ -60,37 +98,5 @@ describe("utilities", () => {
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");
     assert.equal(await mixedMore.get("b"), "B");
-  });
-
-  it("extractFrontMatter() returns front matter if found", () => {
-    const text = utilities.extractFrontMatter(`---
-a: Hello, a.
----
-This is the content.
-`);
-    assert.deepEqual(text, {
-      frontBlock: "---\na: Hello, a.\n---\n",
-      bodyText: "This is the content.\n",
-      frontData: {
-        a: "Hello, a.",
-      },
-    });
-  });
-
-  it("extractFrontMatter returns null if no front matter is found", () => {
-    const text = "a: Hello, a.";
-    assert.equal(utilities.extractFrontMatter(text), null);
-  });
-
-  it("parse can combine front matter and body text", () => {
-    const parsed = utilities.parse(`---
-a: Hello, a.
----
-This is the content.
-`);
-    assert.deepEqual(parsed, {
-      a: "Hello, a.",
-      "@text": "This is the content.\n",
-    });
   });
 });

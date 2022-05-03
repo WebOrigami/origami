@@ -63,6 +63,20 @@ export function parse(text) {
 }
 
 /**
+ * Sort an array of values using natural sort order:
+ * https://en.wikipedia.org/wiki/Natural_sort_order
+ *
+ * @param {any[]} values
+ */
+export function sortNatural(values) {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+  return values.slice().sort(collator.compare);
+}
+
+/**
  * Convert the given object to a function.
  *
  * @param {Invocable} obj

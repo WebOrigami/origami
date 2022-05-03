@@ -1,3 +1,4 @@
+import { sortNatural } from "../core/utilities.js";
 import {
   ConstantFormula,
   default as Formula,
@@ -50,9 +51,8 @@ export default function FormulasTransform(Base) {
           }
         }
 
-        // Store keys in JavaScript sort order.
-        this[keysKey] = [...keys];
-        this[keysKey].sort();
+        // Store keys in natural sort order.
+        this[keysKey] = sortNatural([...keys]);
       }
       yield* this[keysKey];
     }
