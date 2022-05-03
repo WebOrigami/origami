@@ -24,6 +24,12 @@ export default class ExplorableGraph {
     );
   }
 
+  /**
+   * Attempts to cast the indicated graph variant to an explorable graph.
+   *
+   * @param {GraphVariant} variant
+   * @returns {Explorable}
+   */
   static from(variant) {
     // Use the object's toGraph() method if defined.
     let obj = variant;
@@ -78,12 +84,11 @@ export default class ExplorableGraph {
    * This defers to the graph's own isKeyExplorable method. If not found, this
    * gets the value of that key and returns true if the value is in fact
    * explorable.
-   *
-   * REVIEW: The name of this suggested that it examines whether the key itself
-   * is explorable, but really it's the value that matters. Calling this
-   * `isValueExplorable`, on the other hand, makes it sound like it takes a
-   * value argument instead of a key. `isKeyValueExplorable` is long.
    */
+  // REVIEW: The name of this suggests that it examines whether the key itself
+  // is explorable, but really it's the value that matters. Calling this
+  // `isValueExplorable`, on the other hand, makes it sound like it takes a
+  // value argument instead of a key.
   static async isKeyExplorable(graph, key) {
     if (graph.isKeyExplorable) {
       return graph.isKeyExplorable(key);
@@ -94,6 +99,8 @@ export default class ExplorableGraph {
 
   /**
    * Returns the graph's keys as an array.
+   *
+   * @param {GraphVariant} variant
    */
   static async keys(variant) {
     const graph = this.from(variant);
@@ -120,6 +127,8 @@ export default class ExplorableGraph {
    */
   static async mapReduce(variant, mapFn, reduceFn) {
     const graph = this.from(variant);
+
+    const foo = await this.keys(graph);
 
     // We're going to fire off all the get requests in parallel, as quickly as
     // the keys come in.
@@ -156,6 +165,7 @@ export default class ExplorableGraph {
    * that is itself a graph will be similarly converted to a plain object.
    *
    * @param {GraphVariant} variant
+   * @returns {Promise<PlainObject>}
    */
   static async plain(variant) {
     return this.mapReduce(variant, null, (values, keys) => {
@@ -243,7 +253,6 @@ export default class ExplorableGraph {
    *
    * @param {Explorable} variant
    * @param  {...any} keys
-   * @returns
    */
   static async traverseOrThrow(variant, ...keys) {
     // Start our traversal at the root of the graph.
