@@ -4,7 +4,11 @@ import process from "process";
 import { pathToFileURL } from "url";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject, toSerializable } from "../core/utilities.js";
+import {
+  isPlainObject,
+  sortNatural,
+  toSerializable,
+} from "../core/utilities.js";
 
 export default class ExplorableFiles {
   constructor(dirname) {
@@ -22,9 +26,9 @@ export default class ExplorableFiles {
       entries = [];
     }
     const names = entries.map((entry) => entry.name);
-    // Use JavaScript sort order instead of OS sort order.
-    names.sort();
-    yield* names;
+    // Use natural sort order instead of OS sort order.
+    const sorted = sortNatural(names);
+    yield* sorted;
   }
 
   // Get the contents of the file or directory named by the given key.
