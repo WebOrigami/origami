@@ -64,7 +64,7 @@ export default async function ori(expression, path) {
 
   // If result was a function, execute it.
   if (typeof result === "function") {
-    result = await result();
+    result = await result.call(scope);
   }
 
   const formatted = await formatResult(result);
