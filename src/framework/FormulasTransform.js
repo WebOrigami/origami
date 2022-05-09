@@ -6,7 +6,6 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
-const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasTransform(Base) {
@@ -16,11 +15,10 @@ export default function FormulasTransform(Base) {
       this.bindings = null;
       this[formulasKey] = null;
       this[keysKey] = null;
-      this[localFormulasKey] = null;
     }
 
     async *[Symbol.asyncIterator]() {
-      if (!this[keysKey]) {
+      if (!this.listeningForChanges || !this[keysKey]) {
         const keys = new Set();
         for await (const key of super[Symbol.asyncIterator]()) {
           keys.add(key);
@@ -99,7 +97,7 @@ export default function FormulasTransform(Base) {
     async formulas() {
       // REVIEW: This isn't saving us much, because InheritScopeTransform is
       // overriding the formulas() method.
-      if (!this[formulasKey]) {
+      if (!this.listeningForChanges || !this[formulasKey]) {
         this[formulasKey] = await this.localFormulas();
       }
       return this[formulasKey];
@@ -152,7 +150,6 @@ export default function FormulasTransform(Base) {
     onChange(eventType, filename) {
       super.onChange?.(eventType, filename);
       this[formulasKey] = null;
-      this[localFormulasKey] = null;
       this[keysKey] = null;
     }
   };

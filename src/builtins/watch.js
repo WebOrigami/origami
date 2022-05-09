@@ -38,6 +38,7 @@ export default async function watch(variant) {
         graph.onChange(eventType, filename);
       }
     });
+    graph.listeningForChanges = true;
   } catch (error) {
     // The hosted StackBlitz service doesn't support the recursive option on
     // fs.watch, rendering it mostly useless. In that case, we ignore it and

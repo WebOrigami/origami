@@ -11,7 +11,7 @@ export default function AdditionsTransform(Base) {
     }
 
     async additions() {
-      if (this[additions] === undefined) {
+      if (!this.listeningForChanges || this[additions] === undefined) {
         const variant = await super.get(additionsKey);
         this[additions] = variant ? ExplorableGraph.from(variant) : null;
       }
