@@ -10,11 +10,17 @@ import * as utilities from "./utilities.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
- * A collection of operations that can be performed on explorable graphs.
+ * A collection of static methods providing helpers for working with explorable
+ * graphs.
  */
 export default class ExplorableGraph {
-  // TODO: Report true for Buffer?
+  /**
+   * Returns true if the indicated object can be cast to an explorable graph.
+   *
+   * @param {any} obj
+   */
   static canCastToExplorable(obj) {
+    // TODO: Report true for Buffer?
     return (
       this.isExplorable(obj) ||
       typeof obj === "string" ||
@@ -33,8 +39,8 @@ export default class ExplorableGraph {
   static from(variant) {
     // Use the object's toGraph() method if defined.
     let obj = variant;
-    while (typeof obj.toGraph === "function") {
-      obj = obj.toGraph();
+    while (typeof (/** @type {any} */ (obj).toGraph) === "function") {
+      obj = /** @type {any} */ (obj).toGraph();
     }
 
     if (this.isExplorable(obj)) {
@@ -55,8 +61,8 @@ export default class ExplorableGraph {
       return new ExplorableFunction(obj);
     } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
       return new ExplorableObject(obj);
-    } else if (typeof obj.toFunction === "function") {
-      const fn = obj.toFunction();
+    } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
+      const fn = /** @type {any} */ (obj).toFunction();
       return new ExplorableFunction(fn);
     }
 
@@ -122,8 +128,8 @@ export default class ExplorableGraph {
    * reduceFn, which should consolidate those into a single result.
    *
    * @param {GraphVariant} variant
-   * @param {function|null} mapFn
-   * @param {function} reduceFn
+   * @param {Function|null} mapFn
+   * @param {Function} reduceFn
    */
   static async mapReduce(variant, mapFn, reduceFn) {
     const graph = this.from(variant);
@@ -163,7 +169,7 @@ export default class ExplorableGraph {
    * that is itself a graph will be similarly converted to a plain object.
    *
    * @param {GraphVariant} variant
-   * @returns {Promise<PlainObject>}
+   * @returns {Promise<PlainObject|Array>}
    */
   static async plain(variant) {
     return this.mapReduce(variant, null, (values, keys) => {
@@ -191,13 +197,19 @@ export default class ExplorableGraph {
   /**
    * Returns the graph in function form.
    *
-   * @param {GraphVariant} [variant]
+   * @param {GraphVariant} variant
+   * @returns {Function}
    */
   static toFunction(variant) {
     const graph = this.from(variant);
     return graph.get.bind(graph);
   }
 
+  /**
+   * Returns the graph as a JSON string.
+   *
+   * @param {GraphVariant} variant
+   */
   static async toJson(variant) {
     const serializable = await this.toSerializable(variant);
     const cast = castArrayLike(serializable);
@@ -219,6 +231,12 @@ export default class ExplorableGraph {
     return this.plain(serializable);
   }
 
+  /**
+   * Returns the graph as a YAML string.
+   *
+   * @param {GraphVariant} variant
+   * @returns {Promise<string>}
+   */
   static async toYaml(variant) {
     const serializable = await this.toSerializable(variant);
     const cast = castArrayLike(serializable);
@@ -228,7 +246,7 @@ export default class ExplorableGraph {
   /**
    * Return the value at the corresponding path of keys.
    *
-   * @param {Explorable} variant
+   * @param {GraphVariant} variant
    * @param {...any} keys
    */
   static async traverse(variant, ...keys) {
@@ -249,7 +267,7 @@ export default class ExplorableGraph {
    * Return the value at the corresponding path of keys. Throw if any interior
    * step of the path doesn't lead to a result.
    *
-   * @param {Explorable} variant
+   * @param {GraphVariant} variant
    * @param  {...any} keys
    */
   static async traverseOrThrow(variant, ...keys) {
@@ -289,6 +307,8 @@ export default class ExplorableGraph {
 
   /**
    * Returns the graph's values as an array.
+   *
+   * @param {GraphVariant} variant
    */
   static async values(variant) {
     const graph = this.from(variant);

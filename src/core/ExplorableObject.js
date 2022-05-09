@@ -2,6 +2,10 @@ import ExplorableGraph from "./ExplorableGraph.js";
 import { isPlainObject } from "./utilities.js";
 
 export default class ExplorableObject {
+  /**
+   *
+   * @param {PlainObject|Array} object
+   */
   constructor(object) {
     if (!(object instanceof Array) && !isPlainObject(object)) {
       throw new TypeError(
