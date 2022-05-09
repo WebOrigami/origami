@@ -10,6 +10,8 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 
+const pathFolderRefs = {};
+
 export default class ExplorableFiles {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
@@ -35,11 +37,25 @@ export default class ExplorableFiles {
   async get(key) {
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
-    return !stats
-      ? undefined
-      : stats.isDirectory()
-      ? Reflect.construct(this.constructor, [objPath])
-      : await fs.readFile(objPath);
+    if (!stats) {
+      return undefined;
+    } else if (stats.isDirectory()) {
+      const weakRef = pathFolderRefs[objPath];
+      const folder = weakRef?.deref();
+      // const folder = pathFolderRefs[objPath];
+      if (folder) {
+        return folder;
+      } else {
+        // Return an explorable graph for the subfolder.
+        const newFolder = Reflect.construct(this.constructor, [objPath]);
+        pathFolderRefs[objPath] = new WeakRef(newFolder);
+        // pathFolderRefs[objPath] = newFolder;
+        return newFolder;
+      }
+    } else {
+      // Return the file's contents as a Buffer.
+      return fs.readFile(objPath);
+    }
   }
 
   async import(...keys) {
