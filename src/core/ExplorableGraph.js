@@ -291,10 +291,10 @@ export default class ExplorableGraph {
       // as an explorable graph.
       const graph = ExplorableGraph.from(value);
 
-      // If the graph's get method accepts multiple keys, pass the remaining
-      // keys all at once.
-      if (graph.get.length !== 1) {
-        value = await graph.get(...remainingKeys);
+      // If the graph supports the traverse() method, pass the remaining keys
+      // all at once.
+      if (graph.traverse) {
+        value = await graph.traverse(...remainingKeys);
         break;
       }
 

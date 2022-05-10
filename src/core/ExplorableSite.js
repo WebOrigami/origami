@@ -28,7 +28,11 @@ export default class ExplorableSite {
     }
   }
 
-  async get(...keys) {
+  async get(key) {
+    return this.traverse(key);
+  }
+
+  async traverse(...keys) {
     if (keys.length === 0) {
       return this;
     }

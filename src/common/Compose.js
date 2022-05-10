@@ -24,7 +24,11 @@ export default class Compose {
     }
   }
 
-  async get(...keys) {
+  async get(key) {
+    return this.traverse(key);
+  }
+
+  async traverse(...keys) {
     for (const graph of this.graphs) {
       const obj = await ExplorableGraph.traverse(graph, ...keys);
       if (obj !== undefined) {
