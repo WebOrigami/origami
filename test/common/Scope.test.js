@@ -20,6 +20,20 @@ describe("Scope", () => {
     assert.deepEqual(objects, [graphA, graphB, graphC]);
   });
 
+  it("gets the first defined value from the scope graphs", async () => {
+    const scope = new Scope(
+      {
+        a: 1,
+      },
+      {
+        a: 2,
+        b: 3,
+      }
+    );
+    assert.equal(await scope.get("a"), 1);
+    assert.equal(await scope.get("b"), 3);
+  });
+
   it("sets isInScope on all graphs in scope but the first", async () => {
     const graphA = {
       a: 1,

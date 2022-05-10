@@ -77,6 +77,7 @@ export default class Template {
         text: this.text,
       },
       "@text": text,
+      ".": input ?? null,
     };
 
     // Construct new scope chain:

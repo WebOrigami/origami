@@ -1,7 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import Compose from "./Compose.js";
 
-export default class Scope extends Compose {
+export default class Scope {
   constructor(...variants) {
     const filtered = variants.filter((variant) => variant != undefined);
     const graphs = filtered.map((variant) => ExplorableGraph.from(variant));
@@ -18,7 +17,31 @@ export default class Scope extends Compose {
     const scopes = flattened.map((graph, index) =>
       markInScope(graph, index > 0)
     );
-    super(...scopes);
+
+    this.graphs = scopes;
+  }
+
+  async *[Symbol.asyncIterator]() {
+    // Use a Set to de-duplicate the keys from the graphs.
+    const set = new Set();
+    for (const graph of this.graphs) {
+      for await (const key of graph) {
+        if (!set.has(key)) {
+          set.add(key);
+          yield key;
+        }
+      }
+    }
+  }
+
+  async get(key) {
+    for (const graph of this.graphs) {
+      const value = await graph.get(key);
+      if (value !== undefined) {
+        return value;
+      }
+    }
+    return undefined;
   }
 }
 
