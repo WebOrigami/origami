@@ -54,12 +54,11 @@ function extendMapFn(mapFn) {
    */
   return async function extendedMapFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
-    // @value ambient properties.
+    // @dot ambient properties.
     let scope = new Scope(
       {
-        "@key": key,
-        "@value": value,
         ".": value ?? null,
+        "@key": key,
       },
       getScope(this)
     );

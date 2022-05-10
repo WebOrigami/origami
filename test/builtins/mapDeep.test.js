@@ -37,13 +37,13 @@ describe("map", () => {
     });
   });
 
-  it("mapping function context has @key and @value ambient properties", async () => {
+  it("mapping function context has @key and dot ambient properties", async () => {
     const results = mapDeep(
       ["a", "b", "c"],
       /** @this {any} */
       async function () {
         const key = await this.get("@key");
-        const value = await this.get("@value");
+        const value = await this.get(".");
         return { key, value };
       }
     );

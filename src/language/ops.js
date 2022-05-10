@@ -6,11 +6,6 @@ import execute from "./execute.js";
 /**
  * Return a function that will invoke the given code.
  *
- * The value passed to the function will have its scope extended to include the
- * graph defining the lambda. The scope will also include two special built-in
- * values: `@value` (which returns the value passed to the function) and `@key`
- * (which returns the optional key passed to the function).
- *
  * @this {Explorable}
  * @param {Code} code
  */

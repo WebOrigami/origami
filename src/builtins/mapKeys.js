@@ -64,11 +64,11 @@ export function extendKeyFn(keyFn) {
    */
   return async function extendedKeyFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
-    // @value ambient properties.
+    // dot ambient properties.
     let scope = new Scope(
       {
+        ".": value ?? null,
         "@key": key,
-        "@value": value,
       },
       getScope(this)
     );
