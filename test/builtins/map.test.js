@@ -4,6 +4,7 @@ import assert from "../assert.js";
 
 describe("map", () => {
   it("mapping function context includes the value's graph", async () => {
+    /** @type {any} */
     const results = map(
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       /** @this {any} */

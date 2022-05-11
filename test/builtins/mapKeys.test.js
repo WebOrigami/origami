@@ -5,6 +5,7 @@ import assert from "../assert.js";
 
 describe("mapKeys", () => {
   it("by default makes the value itself the key", async () => {
+    /** @type {any} */
     const graph = await mapKeys(["a", "b", "c"]);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       a: "a",
@@ -14,6 +15,7 @@ describe("mapKeys", () => {
   });
 
   it("can define a key from a value property", async () => {
+    /** @type {any} */
     const graph = await mapKeys(
       [
         {
@@ -48,6 +50,7 @@ describe("mapKeys", () => {
   });
 
   it("can define a key with a lambda", async () => {
+    /** @type {any} */
     const graph = await mapKeys(
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       ops.lambda([ops.scope, "name"])

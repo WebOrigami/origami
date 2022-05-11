@@ -23,7 +23,7 @@ describe("ExplorableFunction", () => {
 
   it("get executes if no keys are provided", async () => {
     const graph = new ExplorableFunction(() => `Hello.`, ["a", "b", "c"]);
-    const result = await graph.get();
+    const result = await graph.get(undefined);
     assert.equal(result, "Hello.");
   });
 });

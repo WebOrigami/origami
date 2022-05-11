@@ -9,7 +9,7 @@
 interface Explorable {
   [Symbol.asyncIterator](): AsyncIterableIterator<any>;
   get(key: any): Promise<any>;
-  isKeyExplorable?(key: any): boolean;
+  isKeyExplorable?(key: any): Promise<boolean>;
   set?(...args: any[]): Promise<void>;
   traverse?(...keys: any[]): Promise<any>;
 }

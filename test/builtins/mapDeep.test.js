@@ -4,6 +4,7 @@ import assert from "../assert.js";
 
 describe("map", () => {
   it("maps all the values in a graph", async () => {
+    /** @type {any} */
     const fixture = mapDeep(
       {
         a: "Hello, a.",
@@ -20,6 +21,7 @@ describe("map", () => {
   });
 
   it("applies a mapping function to convert designated file extensions", async () => {
+    /** @type {any} */
     const fixture = mapDeep(
       {
         "file1.txt": "will be mapped",
@@ -38,6 +40,7 @@ describe("map", () => {
   });
 
   it("mapping function context has @key and dot ambient properties", async () => {
+    /** @type {any} */
     const results = mapDeep(
       ["a", "b", "c"],
       /** @this {any} */

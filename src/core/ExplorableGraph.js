@@ -45,6 +45,7 @@ export default class ExplorableGraph {
 
     if (this.isExplorable(obj)) {
       // Object itself supports the ExplorableGraph interface.
+      // @ts-ignore
       return obj;
     }
 
@@ -60,6 +61,7 @@ export default class ExplorableGraph {
     if (obj instanceof Function) {
       return new ExplorableFunction(obj);
     } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
+      // @ts-ignore
       return new ExplorableObject(obj);
     } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
       const fn = /** @type {any} */ (obj).toFunction();
