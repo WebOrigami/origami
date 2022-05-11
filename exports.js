@@ -47,7 +47,6 @@ export { default as yaml } from "./src/builtins/yaml.js";
 export { default as builtins } from "./src/cli/builtins.js";
 export { default as defaultModuleExport } from "./src/cli/defaultModuleExport.js";
 export { default as Cache } from "./src/common/Cache.js";
-export { default as CachedValuesTransform } from "./src/common/CachedValuesTransform.js";
 export { default as Compose } from "./src/common/Compose.js";
 export { default as DefaultValues } from "./src/common/DefaultValues.js";
 export { default as FilterGraph } from "./src/common/FilterGraph.js";
