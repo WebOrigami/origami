@@ -4,48 +4,25 @@ export default function CachedValuesTransform(Base) {
   return class CachedValues extends Base {
     constructor(...args) {
       super(...args);
-      this[cacheKey] = new WeakRefCache();
+      this[cacheKey] = new Map();
     }
 
     async get(key) {
-      const cached = this[cacheKey].get(key);
-      if (cached) {
-        return cached;
+      const ref = this[cacheKey].get(key);
+      let value = ref?.deref();
+      if (value !== undefined) {
+        return value;
       }
-      const result = await super.get(key);
-      this[cacheKey].set(key, result);
-      return result;
+      value = await super.get(key);
+      if (value !== undefined && typeof value === "object") {
+        this[cacheKey].set(key, new WeakRef(value));
+      }
+      return value;
     }
 
     onChange(eventType, filename) {
       super.onChange(eventType, filename);
-      this[cacheKey] = new WeakRefCache();
+      this[cacheKey] = new Map();
     }
   };
-}
-
-// Cache that can hold weak references. This is similar to WeakMap, but also
-// allows for non-object keys, particularly strings.
-class WeakRefCache {
-  #objectKeyCache = new WeakMap();
-  #stringKeyCache = {};
-
-  get(key) {
-    if (typeof key === "object") {
-      return this.#objectKeyCache.get(key);
-    } else {
-      const ref = this.#stringKeyCache[key];
-      const value = ref instanceof WeakRef ? ref.deref() : ref;
-      return value;
-    }
-  }
-
-  set(key, value) {
-    if (typeof key === "object") {
-      this.#objectKeyCache.set(key, value);
-    } else {
-      const ref = typeof value === "object" ? new WeakRef(value) : value;
-      this.#stringKeyCache[key] = ref;
-    }
-  }
 }
