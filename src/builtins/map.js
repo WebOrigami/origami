@@ -47,6 +47,17 @@ export default function map(variant, mapFn, innerExtension, outerExtension) {
  * @param {Invocable} mapFn
  */
 function extendMapFn(mapFn) {
+  // Convert the mapFn from an Invocable to a real function.
+  /** @type {any} */
+  const fn =
+    typeof mapFn === "function"
+      ? mapFn
+      : typeof mapFn === "object" && "toFunction" in mapFn
+      ? mapFn.toFunction()
+      : ExplorableGraph.canCastToExplorable(mapFn)
+      ? ExplorableGraph.toFunction(mapFn)
+      : mapFn;
+
   /**
    * @this {Explorable}
    * @param {any} value
@@ -76,15 +87,6 @@ function extendMapFn(mapFn) {
       valueGraph.parent = scope;
       scope = valueGraph.scope;
     }
-
-    // Convert the mapFn from an Invocable to a real function.
-    /** @type {any} */
-    const fn =
-      "toFunction" in mapFn
-        ? mapFn.toFunction()
-        : ExplorableGraph.isExplorable(mapFn)
-        ? ExplorableGraph.toFunction(mapFn)
-        : mapFn;
 
     // Invoke the map function with our newly-created context.
     return fn.call(scope, value, key);
