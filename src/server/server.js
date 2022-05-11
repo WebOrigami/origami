@@ -23,6 +23,7 @@ export function graphRouter(graph) {
 }
 
 export async function handleRequest(request, response, graph) {
+  const timeStart = performance.now();
   const decodedUrl = decodeURI(request.url);
   const keys = keysFromHref(decodedUrl);
 
@@ -104,6 +105,10 @@ export async function handleRequest(request, response, graph) {
       "Content-Type": mediaType,
     });
     response.end(data, encoding);
+
+    const timeEnd = performance.now();
+    const timeElapsed = timeEnd - timeStart;
+    console.log(`${decodedUrl} ${timeElapsed.toFixed(2)}`);
 
     return true;
   }

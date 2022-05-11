@@ -10,11 +10,10 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 
-const pathFolderRefs = {};
-
 export default class ExplorableFiles {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
+    this.cache = new Map();
   }
 
   async *[Symbol.asyncIterator]() {
@@ -35,27 +34,26 @@ export default class ExplorableFiles {
 
   // Get the contents of the file or directory named by the given key.
   async get(key) {
+    const valueRef = this.cache.get(key);
+    let value = valueRef?.deref();
+    if (value) {
+      // Cache hit
+      return value;
+    }
+
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
     if (!stats) {
       return undefined;
     } else if (stats.isDirectory()) {
-      const weakRef = pathFolderRefs[objPath];
-      const folder = weakRef?.deref();
-      // const folder = pathFolderRefs[objPath];
-      if (folder) {
-        return folder;
-      } else {
-        // Return an explorable graph for the subfolder.
-        const newFolder = Reflect.construct(this.constructor, [objPath]);
-        pathFolderRefs[objPath] = new WeakRef(newFolder);
-        // pathFolderRefs[objPath] = newFolder;
-        return newFolder;
-      }
+      // Return an explorable graph for the subfolder.
+      value = Reflect.construct(this.constructor, [objPath]);
     } else {
       // Return the file's contents as a Buffer.
-      return fs.readFile(objPath);
+      value = await fs.readFile(objPath);
     }
+    this.cache.set(key, new WeakRef(value));
+    return value;
   }
 
   async import(...keys) {
