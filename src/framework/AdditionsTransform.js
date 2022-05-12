@@ -2,6 +2,8 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export const additionsKey = "+";
 const additions = Symbol("additions");
+
+// This flag is used to prevent infinite loops while getting the additions.
 const gettingAdditions = Symbol("gettingAdditions");
 
 export default function AdditionsTransform(Base) {
@@ -14,6 +16,11 @@ export default function AdditionsTransform(Base) {
 
     async additions() {
       if (/* !this.listeningForChanges || */ this[additions] === undefined) {
+        // If additions are defined in a metagraph, that will require us to get
+        // other values from this graph (e.g., to retrieve a definition for
+        // `meta`). To avoid an infinite loop, we set a flag to indicate that
+        // we're in the process of getting additions. During that process, the
+        // get method will be able to get other things, but not additions.
         this[gettingAdditions] = true;
         const variant = await super.get(additionsKey);
         this[additions] = variant ? ExplorableGraph.from(variant) : null;
