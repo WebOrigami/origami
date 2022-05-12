@@ -22,7 +22,7 @@ export default function AdditionsTransform(Base) {
         // we're in the process of getting additions. During that process, the
         // get method will be able to get other things, but not additions.
         this[gettingAdditions] = true;
-        const variant = await super.get(additionsKey);
+        const variant = await this.get(additionsKey);
         this[additions] = variant ? ExplorableGraph.from(variant) : null;
         this[gettingAdditions] = false;
       }
