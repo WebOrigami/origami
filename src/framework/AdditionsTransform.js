@@ -2,18 +2,22 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export const additionsKey = "+";
 const additions = Symbol("additions");
+const gettingAdditions = Symbol("gettingAdditions");
 
 export default function AdditionsTransform(Base) {
   return class Additions extends Base {
     constructor(...args) {
       super(...args);
       this[additions] = undefined;
+      this[gettingAdditions] = false;
     }
 
     async additions() {
-      if (!this.listeningForChanges || this[additions] === undefined) {
+      if (/* !this.listeningForChanges || */ this[additions] === undefined) {
+        this[gettingAdditions] = true;
         const variant = await super.get(additionsKey);
         this[additions] = variant ? ExplorableGraph.from(variant) : null;
+        this[gettingAdditions] = false;
       }
       return this[additions];
     }
@@ -33,7 +37,11 @@ export default function AdditionsTransform(Base) {
 
     async get(key) {
       let result = await super.get(key);
-      if (result === undefined) {
+      if (
+        result === undefined &&
+        key !== additionsKey &&
+        !this[gettingAdditions]
+      ) {
         // Not found locally, check additions.
         const additions = await this.additions();
         result = await additions?.get(key);
