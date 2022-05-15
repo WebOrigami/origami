@@ -16,11 +16,7 @@ export default class Formula {
     this.key = key;
     this.expression = expression;
     this.inheritable = inheritable;
-
-    // Special case: if the source ends in `.js`, we omit that from the stored
-    // source. We'll rely on code elsewhere to map an attempt to get `foo =
-    // this()` to loading the module `foo = this().js`.
-    this.source = source.endsWith(".js") ? source.slice(0, -3) : source;
+    this.source = source;
   }
 
   // Find unbound variables in the code and replace them with the given
@@ -34,7 +30,13 @@ export default class Formula {
       const [_, variable, extension] = code;
       return bindings[variable] + (extension ?? "");
     } else if (code[0] === ops.thisKey) {
-      return this.source;
+      // Special case: if the source ends in `.js`, we omit that from the
+      // source. We rely on ImplicitModulesTransform to map an attempt to get
+      // `foo = this()` to loading the module `foo = this().js`.
+      const source = this.source.endsWith(".js")
+        ? this.source.slice(0, -3)
+        : this.source;
+      return source;
     } else {
       return code.map((c) => this.bindCode(c, bindings));
     }
@@ -136,7 +138,7 @@ export class VariableFormula extends Formula {
   antecedents;
 
   constructor(variable, extension, expression, source, inheritable) {
-    const key = `{${variable}}${extension ?? ""}`;
+    const key = `[${variable}]${extension ?? ""}`;
     super(key, expression, source, inheritable);
     this.variable = variable;
     this.extension = extension;

@@ -10,6 +10,7 @@ describe("FilterGraph", () => {
       "hello.txt": "Hello",
       "goodbye.txt": "Goodbye",
       "something.obj": 3,
+      "fn.js": `export default true;`,
       more: {
         "hola.txt": "Hola",
         "extra.junk": 4,
@@ -17,6 +18,7 @@ describe("FilterGraph", () => {
     };
     const filter = {
       a: true,
+      "[x].js": true,
       "…[x].txt": true,
     };
     const fixture = new FilterGraph(graph, filter);
@@ -24,6 +26,7 @@ describe("FilterGraph", () => {
       a: 1,
       "hello.txt": "Hello",
       "goodbye.txt": "Goodbye",
+      "fn.js": `export default true;`,
       more: {
         "hola.txt": "Hola",
       },
