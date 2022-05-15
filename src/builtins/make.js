@@ -1,3 +1,4 @@
+import virtualBuiltin from "../builtins/virtual.js";
 import SubtractKeys from "../common/SubtractKeys.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 // import ExplorableGraph from "../../core/ExplorableGraph.js";
@@ -9,7 +10,9 @@ import yaml from "./yaml.js";
 
 export default async function make(virtual, destination) {
   // @ts-ignore
-  virtual = virtual ? ExplorableGraph.from(virtual) : await virtual.call(this);
+  virtual = virtual
+    ? ExplorableGraph.from(virtual)
+    : await virtualBuiltin.call(this);
   destination = destination
     ? ExplorableGraph.from(destination)
     : // @ts-ignore
