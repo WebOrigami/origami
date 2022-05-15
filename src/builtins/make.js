@@ -25,7 +25,7 @@ export default async function make(virtual, destination) {
   const build = new SubtractKeys(virtual, real);
   const empties = new MapValuesGraph(build, (value) => "", { deep: true });
   const cleanYaml = await yaml(empties);
-  destination.set(".ori.clean.yaml", cleanYaml);
+  await destination.set(".ori.clean.yaml", cleanYaml);
   const undefineds = new MapValuesGraph(build, (value) => undefined, {
     deep: true,
   });
