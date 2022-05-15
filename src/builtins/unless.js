@@ -9,7 +9,7 @@ export default async function unless(value, falseResult) {
 
   let result = condition ? undefined : falseResult;
   if (typeof result === "function") {
-    result = await result();
+    result = await result.call(this);
   }
   return result;
 }
