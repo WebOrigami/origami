@@ -1,0 +1,28 @@
+---
+#
+# This template is used to build the exports.js file exported by the package.
+#
+
+# Get source files that have a .js extension.
+# For now, hardcode this a list of files in /src/core.
+js = filter(../src/core, this):
+  ExplorableFunction.js: true
+  ExplorableGraph.js: true
+  ExplorableObject.js: true
+  ExplorableSite.js: true
+  IdentityGraph.js: true
+  MapKeyValuesGraph.js: true
+  MapValuesGraph.js: true
+  utilities.js: true
+
+# Map a file name like Foo.js to an object name like Foo.
+objects = map(js, =., '.js', ''):
+---
+{{#map objects}}
+{{#if hasDefaultExport(.)}}
+export { default as {{@key}} } from "./src/core/{{@key}}.js";
+{{/if}}
+{{#unless hasDefaultExport(.)}}
+export * as {{@key}} from "./src/core/{{@key}}.js";
+{{/unless}}
+{{/map}}
