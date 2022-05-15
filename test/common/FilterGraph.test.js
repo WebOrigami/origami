@@ -18,7 +18,7 @@ describe("FilterGraph", () => {
     };
     const filter = {
       a: true,
-      "[x].js": true,
+      "…[x].js": true,
       "…[x].txt": true,
     };
     const fixture = new FilterGraph(graph, filter);
