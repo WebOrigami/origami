@@ -16,7 +16,7 @@ export default async function meta(variant) {
   }
   const graph = ExplorableGraph.from(variant);
   const transformed = transformObject(MetaTransform, graph);
-  transformed.parent = this ?? (await defaultGraph());
+  transformed.parent = this ?? (await defaultGraph()).scope;
   return transformed;
 }
 
