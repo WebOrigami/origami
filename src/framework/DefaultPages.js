@@ -1,4 +1,5 @@
 import DefaultValues from "../common/DefaultValues.js";
+import defaultDataflow from "./defaultDataflow.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 import defaultScope from "./defaultScope.js";
@@ -14,6 +15,7 @@ import defaultYamlHtml from "./defaultYamlHtml.js";
 export default class DefaultPages extends DefaultValues {
   constructor(graph) {
     super(graph, {
+      ".dataflow": defaultDataflow,
       ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
       ".scope": defaultScope,
