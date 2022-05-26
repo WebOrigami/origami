@@ -9,17 +9,18 @@ export default async function flowSvg(flow) {
 function flowDot(flow) {
   const nodes = [];
   const edges = [];
-  for (const [node, dependencies] of Object.entries(flow)) {
-    const nodeLabel = node.toString();
+  for (const [key, record] of Object.entries(flow)) {
+    const dependencies = record.dependencies ?? [];
     const virtualNode = dependencies.length > 0;
-    const nodeUrl = `URL="${nodeLabel}"`;
-    const nodeStyle = virtualNode ? "style=dashed" : "";
-    const nodeAttributes = [nodeUrl, nodeStyle].join("; ");
-    const nodeDot = `  "${nodeLabel}" [${nodeAttributes}];`;
+    const nodeLabel = record.label ? `label="${record.label}"` : null;
+    const nodeUrl = `URL="${key}"`;
+    const nodeStyle = virtualNode ? `style="dashed"` : null;
+    const attributes = [nodeLabel, nodeUrl, nodeStyle].filter(attribute => attribute);
+    const nodeDot = `  "${key}" [${attributes.join("; ")}];`;
     nodes.push(nodeDot);
 
     for (const dependency of dependencies) {
-      edges.push(`  "${dependency}" -> "${node}";`);
+      edges.push(`  "${dependency}" -> "${key}";`);
     }
   }
 

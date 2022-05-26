@@ -12,22 +12,30 @@ describe.only("dataflow", () => {
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
-      a: ["fn", "b", "d"],
-      b: ["c"],
-      c: [],
-      d: [],
-      fn: [],
+      a: {
+        dependencies: ["fn", "b", "d"],
+      },
+      b: {
+        dependencies: ["c"],
+      },
+      c: {},
+      d: {},
+      fn: {},
     });
   });
 
-  it.only("if all dependencies are builtins, uses source expression as depenendcy", async () => {
+  it("if all dependencies are builtins, uses source expression as depenendcy", async () => {
     const graph = {
       "foo.html = mdHtml(this).md": "# Hello",
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
-      "foo.html": ["mdHtml(this).md"],
-      "mdHtml(this).md": [],
+      "foo.html": {
+        dependencies: ["foo.html = mdHtml(this).md"],
+      },
+      "foo.html = mdHtml(this).md": {
+        label: "mdHtml(this).md",
+      },
     });
   });
 });

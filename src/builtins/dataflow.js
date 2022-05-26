@@ -20,34 +20,53 @@ export default async function dataflow(variant) {
   const flow = {};
   const formulas = await graph.formulas();
   for (const formula of formulas) {
-    const { key, expression } = formula;
+    const { key, expression, source } = formula;
     const dependencies = expression
       ? findDependencies(expression, ignoreKeys)
       : null;
-    if (dependencies) {
-      if (dependencies.length === 0) {
-        // All dependencies are builtins.
-        // Use the RHS of the formula as the dependency.
-        const parts = formula.source.split("=");
-        const rhs = parts[parts.length - 1]?.trim();
-        if (rhs) {
-          dependencies.push(rhs);
-        }
+
+    if (dependencies?.length === 0) {
+      // All dependencies are builtins.
+      // Use the RHS of the formula as the dependency.
+      const parts = source.split("=");
+      const rhs = parts[parts.length - 1]?.trim();
+      if (rhs) {
+        updateFlowRecord(flow, key, {
+          dependencies: [source],
+        });
+        updateFlowRecord(flow, source, {
+          label: rhs,
+        });
+      } else {
+        // Formula is not an assignment.
       }
+    } else if (dependencies) {
+      // We have at least some dependencies on other values in the graph (not
+      // builtins).
+      updateFlowRecord(flow, key, { dependencies });
 
-      const existingDependencies = flow[key] ?? [];
-      flow[key] = existingDependencies.concat(dependencies);
-
-      // Add the dependencies to the dataflow.
+      // Also add the other dependencies to the dataflow.
       dependencies.forEach((dependency) => {
-        if (!flow[dependency]) {
-          flow[dependency] = [];
-        }
+        updateFlowRecord(flow, dependency, {});
       });
     }
   }
 
   return flow;
+}
+
+function updateFlowRecord(flow, key, record) {
+  const existingRecord = flow[key];
+  if (existingRecord) {
+    if (record.dependencies) {
+      const existingDependencies = existingRecord.dependencies ?? [];
+      existingRecord.dependencies = existingDependencies.concat(
+        record.dependencies
+      );
+    }
+  } else {
+    flow[key] = record;
+  }
 }
 
 function findDependencies(code, ignoreKeys) {
