@@ -7,10 +7,17 @@ export default async function flowSvg(flow) {
 }
 
 function flowDot(flow) {
-  const nodes = Object.keys(flow).map((key) => `  "${key}" [URL="${key}"];`);
-
+  const nodes = [];
   const edges = [];
   for (const [node, dependencies] of Object.entries(flow)) {
+    const nodeLabel = node.toString();
+    const virtualNode = dependencies.length > 0;
+    const nodeUrl = `URL="${nodeLabel}"`;
+    const nodeStyle = virtualNode ? "style=dashed" : "";
+    const nodeAttributes = [nodeUrl, nodeStyle].join("; ");
+    const nodeDot = `  "${nodeLabel}" [${nodeAttributes}];`;
+    nodes.push(nodeDot);
+
     for (const dependency of dependencies) {
       edges.push(`  "${dependency}" -> "${node}";`);
     }
