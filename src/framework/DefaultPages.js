@@ -16,7 +16,8 @@ export default class DefaultPages extends DefaultValues {
   constructor(graph) {
     super(graph, {
       ".dataflow": defaultDataflow,
-      ".index": defaultIndexHtml,
+      ".index": async () =>
+        defaultIndexHtml.call(this, { showDiagnosticLinks: true }),
       ".keys.json": defaultKeysJson,
       ".scope": defaultScope,
       ".svg": defaultSvg,

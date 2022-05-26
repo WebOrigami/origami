@@ -7,7 +7,9 @@ import StringWithGraph from "./StringWithGraph.js";
  *
  * @this {Explorable}
  */
-export default async function defaultIndexHtml() {
+export default async function defaultIndexHtml(
+  options = { showDiagnosticLinks: false }
+) {
   const graph = this;
   const keys = await ExplorableGraph.keys(graph);
   const filtered = filterKeys(keys);
@@ -39,6 +41,15 @@ export default async function defaultIndexHtml() {
     <h1>${heading.trim()}</h1>
     <ul>\n${links.join("\n").trim()}\n</ul>
   `;
+
+  const diagnosticLinks = options.showDiagnosticLinks
+    ? `<p>
+  <a href=".dataflow">dataflow</a>
+  <a href=".svg">svg</a>
+  <a href=".yaml">yaml</a>
+</p>`
+    : "";
+
   const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -72,6 +83,7 @@ export default async function defaultIndexHtml() {
       </head>
       <body>
         ${list.trim()}
+        ${diagnosticLinks}
       </body>
     </html>`;
   return new StringWithGraph(html.trim(), graph);
