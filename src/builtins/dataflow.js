@@ -15,6 +15,7 @@ export default async function dataflow(variant) {
 
   const ignoreKeys = await ExplorableGraph.keys(commands);
   ignoreKeys.push(".");
+  ignoreKeys.push(ops.thisKey);
 
   const flow = {};
   const formulas = await graph.formulas();
@@ -43,7 +44,9 @@ function findDependencies(code, ignoreKeys) {
   if (code instanceof Array) {
     if (code[0] === ops.scope) {
       const key = code[1];
-      return ignoreKeys.includes(key) ? [] : [key];
+      // HACK: instead of `instanceof Array` to catch ops.thisKey,
+      // have parser stop wrapping ops.thisKey in an array.
+      return key instanceof Array || ignoreKeys.includes(key) ? [] : [key];
     } else {
       return code.flatMap((instruction) =>
         findDependencies(instruction, ignoreKeys)
