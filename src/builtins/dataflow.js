@@ -1,3 +1,4 @@
+import path from "path";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
@@ -18,11 +19,28 @@ export default async function dataflow(variant) {
   ignoreKeys.push(ops.thisKey);
 
   const flow = {};
-  const formulas = await graph.formulas();
+  await addFormulaDependencies(flow, graph, ignoreKeys);
+  await addContentDependencies(flow, graph, ignoreKeys);
+  return flow;
+}
+
+async function addContentDependencies(flow, graph, ignoreKeys) {
+  for await (const key of graph) {
+    const extension = path.extname(key);
+    if (extension === ".ori") {
+      const value = await graph.get(key);
+      const dependencies = await origamiTemplateDependencies(value, ignoreKeys);
+      updateFlowRecord(flow, key, { dependencies });
+    }
+  }
+}
+
+async function addFormulaDependencies(flow, graph, ignoreKeys) {
+  const formulas = await /** @type {any} */ graph.formulas();
   for (const formula of formulas) {
     const { key, expression, source } = formula;
     const dependencies = expression
-      ? findDependencies(expression, ignoreKeys)
+      ? codeDependencies(expression, ignoreKeys)
       : null;
 
     if (dependencies?.length === 0) {
@@ -51,8 +69,31 @@ export default async function dataflow(variant) {
       });
     }
   }
+}
 
-  return flow;
+function codeDependencies(code, ignoreKeys) {
+  if (code instanceof Array) {
+    if (code[0] === ops.scope) {
+      const key = code[1];
+      // HACK: instead of `instanceof Array` to catch ops.thisKey,
+      // have parser stop wrapping ops.thisKey in an array.
+      return key instanceof Array || ignoreKeys.includes(key) ? [] : [key];
+    } else {
+      return code.flatMap((instruction) =>
+        codeDependencies(instruction, ignoreKeys)
+      );
+    }
+  } else {
+    return [];
+  }
+}
+
+async function origamiTemplateDependencies(template, ignoreKeys) {
+  if (!template.code) {
+    await template.compile();
+    return codeDependencies(template.code, ignoreKeys);
+  }
+  return [];
 }
 
 function updateFlowRecord(flow, key, record) {
@@ -66,22 +107,5 @@ function updateFlowRecord(flow, key, record) {
     }
   } else {
     flow[key] = record;
-  }
-}
-
-function findDependencies(code, ignoreKeys) {
-  if (code instanceof Array) {
-    if (code[0] === ops.scope) {
-      const key = code[1];
-      // HACK: instead of `instanceof Array` to catch ops.thisKey,
-      // have parser stop wrapping ops.thisKey in an array.
-      return key instanceof Array || ignoreKeys.includes(key) ? [] : [key];
-    } else {
-      return code.flatMap((instruction) =>
-        findDependencies(instruction, ignoreKeys)
-      );
-    }
-  } else {
-    return [];
   }
 }

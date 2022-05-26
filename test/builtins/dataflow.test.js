@@ -1,8 +1,8 @@
 import dataflow from "../../src/builtins/dataflow.js";
 import assert from "../assert.js";
 
-describe.only("dataflow", () => {
-  it("identifies dependencies", async () => {
+describe("dataflow", () => {
+  it("identifies dependencies in formulas", async () => {
     const graph = {
       "a = fn(b)": null,
       "a = d": null,
@@ -35,6 +35,18 @@ describe.only("dataflow", () => {
       },
       "foo.html = mdHtml(this).md": {
         label: "mdHtml(this).md",
+      },
+    });
+  });
+
+  it("identifies dependencies in Origami templates", async () => {
+    const graph = {
+      "index.ori": `{{ map(graph, fn) }}`,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      "index.ori": {
+        dependencies: ["fn"],
       },
     });
   });
