@@ -79,4 +79,24 @@ describe("dataflow", () => {
       fn: {},
     });
   });
+
+  it("starts with dependencies in .dataflow.yaml value", async () => {
+    const graph = {
+      ".dataflow.yaml": `
+a:
+  dependencies:
+    - b
+b: {}
+`,
+      "a = c": null,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      a: {
+        dependencies: ["b", "c"],
+      },
+      b: {},
+      c: {},
+    });
+  });
 });

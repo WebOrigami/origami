@@ -12,10 +12,13 @@ function flowDot(flow) {
   for (const [key, record] of Object.entries(flow)) {
     const dependencies = record.dependencies ?? [];
     const virtualNode = dependencies.length > 0;
+    const url = record.url ?? key;
     const nodeLabel = record.label ? `label="${record.label}"` : null;
-    const nodeUrl = `URL="${key}"`;
+    const nodeUrl = `URL="${url}"`;
     const nodeStyle = virtualNode ? `style="dashed"` : null;
-    const attributes = [nodeLabel, nodeUrl, nodeStyle].filter(attribute => attribute);
+    const attributes = [nodeLabel, nodeUrl, nodeStyle].filter(
+      (attribute) => attribute
+    );
     const nodeDot = `  "${key}" [${attributes.join("; ")}];`;
     nodes.push(nodeDot);
 

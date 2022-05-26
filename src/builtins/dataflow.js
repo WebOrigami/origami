@@ -1,10 +1,15 @@
 import path from "path";
+import * as YAMLModule from "yaml";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
 import CommandsModulesTransform from "../node/CommandModulesTransform.js";
+
+// See notes at ExplorableGraph.js
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 const commands = transformObject(CommandsModulesTransform, builtins);
 
@@ -19,7 +24,9 @@ export default async function dataflow(variant) {
     graph = transformObject(MetaTransform, graph);
   }
 
-  const flow = {};
+  const flowFile = await graph.get(".dataflow.yaml");
+  const flow = flowFile ? YAML.parse(String(flowFile)) : {};
+
   const formulas = await /** @type {any} */ (graph).formulas();
   await addFormulaDependencies(flow, formulas);
 
