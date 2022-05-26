@@ -24,6 +24,21 @@ describe("dataflow", () => {
     });
   });
 
+  it("treats @ graph properties as builtins", async () => {
+    const graph = {
+      "foo = @bar": null,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      foo: {
+        dependencies: ["foo = @bar"],
+      },
+      "foo = @bar": {
+        label: "@bar",
+      },
+    });
+  });
+
   it("if all dependencies are builtins, uses source expression as depenendcy", async () => {
     const graph = {
       "foo.html = mdHtml(this).md": "# Hello",
