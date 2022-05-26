@@ -25,7 +25,17 @@ export default async function dataflow(variant) {
       ? findDependencies(expression, ignoreKeys)
       : null;
     if (dependencies) {
-      const existingDependencies = flow[key] || [];
+      if (dependencies.length === 0) {
+        // All dependencies are builtins.
+        // Use the RHS of the formula as the dependency.
+        const parts = formula.source.split("=");
+        const rhs = parts[parts.length - 1]?.trim();
+        if (rhs) {
+          dependencies.push(rhs);
+        }
+      }
+
+      const existingDependencies = flow[key] ?? [];
       flow[key] = existingDependencies.concat(dependencies);
 
       // Add the dependencies to the dataflow.
