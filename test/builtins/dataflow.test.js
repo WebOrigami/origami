@@ -54,6 +54,19 @@ describe("dataflow", () => {
     });
   });
 
+  it("identifies dependencies in HTML img tags", async () => {
+    const graph = {
+      "foo.html": `<html><body><img src="images/a.jpg"></body></html>`,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      "foo.html": {
+        dependencies: ["images"],
+      },
+      images: {},
+    });
+  });
+
   it("identifies dependencies in Origami templates", async () => {
     const graph = {
       "index.ori": `{{ map(graph, fn) }}`,
@@ -63,6 +76,7 @@ describe("dataflow", () => {
       "index.ori": {
         dependencies: ["fn"],
       },
+      fn: {},
     });
   });
 });
