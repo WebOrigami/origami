@@ -54,9 +54,10 @@ describe("dataflow", () => {
     });
   });
 
-  it("identifies dependencies in HTML img tags", async () => {
+  it.only("identifies dependencies in HTML img tags", async () => {
     const graph = {
       "foo.html": `<html><body><img src="images/a.jpg"></body></html>`,
+      images: {},
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
@@ -67,16 +68,20 @@ describe("dataflow", () => {
     });
   });
 
-  it("identifies dependencies in Origami templates", async () => {
+  it("identifies referenced dependencies in Origami templates", async () => {
     const graph = {
-      "index.ori": `{{ map(graph, fn) }}`,
+      // Since bar isn't defined in graph, it will be assumed to be a value
+      // supplied to the template, and so will not be returned as part of the
+      // graph's dataflow.
+      "index.ori": `{{ map(foo, bar) }}`,
+      foo: {},
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       "index.ori": {
-        dependencies: ["fn"],
+        dependencies: ["foo"],
       },
-      fn: {},
+      foo: {},
     });
   });
 
