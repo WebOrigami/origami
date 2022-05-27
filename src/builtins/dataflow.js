@@ -35,10 +35,12 @@ export default async function dataflow(variant) {
   }
 
   const formulas = await /** @type {any} */ (graph).formulas();
-  await addFormulaDependencies(flow, formulas);
+  await addFormulaDependencies(flow, keysInScope, formulas);
 
   const formulaKeys = formulas.map((formula) => formula.key);
   await addContentDependencies(flow, graph, keysInScope, formulaKeys);
+
+  await markUndefinedDependencies(flow, keysInScope);
 
   return flow;
 }
@@ -57,7 +59,7 @@ async function addContentDependencies(flow, graph, keysInScope, formulaKeys) {
     const parser = dependencyParsers[extension];
     if (parser) {
       const value = await graph.get(key);
-      let dependencies = await parser(value);
+      let dependencies = await parser(value, keysInScope);
 
       // Only consider the dependencies that are in scope.
       dependencies = dependencies.filter((dependency) =>
@@ -74,10 +76,12 @@ async function addContentDependencies(flow, graph, keysInScope, formulaKeys) {
   }
 }
 
-async function addFormulaDependencies(flow, formulas) {
+async function addFormulaDependencies(flow, keysInScope, formulas) {
   for (const formula of formulas) {
     const { key, expression, source } = formula;
-    const dependencies = expression ? codeDependencies(expression) : null;
+    const dependencies = expression
+      ? codeDependencies(expression, keysInScope)
+      : null;
 
     if (dependencies?.length === 0) {
       // All dependencies are builtins.
@@ -107,13 +111,20 @@ async function addFormulaDependencies(flow, formulas) {
   }
 }
 
-function codeDependencies(code) {
+function codeDependencies(code, keysInScope, onlyDependenciesInScope = false) {
   if (code instanceof Array) {
     if (code[0] === ops.scope) {
       const key = code[1];
-      return ignoreKey(key) ? [] : [key];
+      const ignore =
+        ignoreKey(key) ||
+        (onlyDependenciesInScope && !keysInScope.includes(key));
+      return ignore ? [] : [key];
     } else {
-      return code.flatMap((instruction) => codeDependencies(instruction));
+      const limitDependencies =
+        onlyDependenciesInScope || code[0] === ops.lambda;
+      return code.flatMap((instruction) =>
+        codeDependencies(instruction, keysInScope, limitDependencies)
+      );
     }
   } else {
     return [];
@@ -123,7 +134,16 @@ function codeDependencies(code) {
 async function getKeysInScope(graph) {
   const scope = graph.scope ?? graph;
   let keysInScope = await ExplorableGraph.keys(scope);
-  return keysInScope.filter((key) => !ignoreKey(key));
+
+  // For any key `foo.js`, add `foo` as a key in scope.
+  const jsKeys = keysInScope.filter((key) => path.extname(key) === ".js");
+  const commandKeys = jsKeys.map((jsKey) => path.basename(jsKey, ".js"));
+  keysInScope.push(...commandKeys);
+
+  // Remove any keys that should be ignored.
+  keysInScope = keysInScope.filter((key) => !ignoreKey(key));
+
+  return unique(keysInScope);
 }
 
 function ignoreKey(key) {
@@ -139,7 +159,7 @@ function ignoreKey(key) {
   return ignoreKeys.includes(key);
 }
 
-async function htmlDependencies(html) {
+async function htmlDependencies(html, keysInScope) {
   // HACK: Use a regex to find img src attributes.
   // TODO: Use a real HTML parser.
   const imgSrcRegex = /<img[\s\S]+?src="(?<src>.+)"[\s\S]+?\/?>/g;
@@ -161,17 +181,32 @@ async function htmlDependencies(html) {
   return pathHeads;
 }
 
-async function origamiTemplateDependencies(template) {
+function markUndefinedDependencies(flow, keysInScope) {
+  for (const record of Object.values(flow)) {
+    record.dependencies?.forEach((dependency) => {
+      if (!keysInScope.includes(dependency)) {
+        const dependencyRecord = flow[dependency];
+        if (dependencyRecord) {
+          dependencyRecord.undefined = true;
+        }
+      }
+    });
+  }
+}
+
+async function origamiTemplateDependencies(template, keysInScope) {
   let dependencies = [];
   if (!template.code) {
     await template.compile();
-    dependencies = codeDependencies(template.code);
+    dependencies = codeDependencies(template.code, keysInScope);
   }
 
   // If the template appears to contain HTML, add the HTML dependencies.
   // HACK: Crude heuristic just sees if the first non-space is a "<".
   if (template.text.trim().startsWith("<")) {
-    dependencies = dependencies.concat(await htmlDependencies(template.text));
+    dependencies = dependencies.concat(
+      await htmlDependencies(template.text, keysInScope)
+    );
   }
 
   return dependencies;

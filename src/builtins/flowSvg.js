@@ -11,12 +11,17 @@ function flowDot(flow) {
   const edges = [];
   for (const [key, record] of Object.entries(flow)) {
     const dependencies = record.dependencies ?? [];
+    let label = record.label ?? key;
+    if (record.undefined) {
+      label += " (?)";
+    }
     const virtualNode = dependencies.length > 0;
     const url = record.url ?? key;
-    const nodeLabel = record.label ? `label="${record.label}"` : null;
+    const nodeLabel = `label="${label}"`;
     const nodeUrl = `URL="${url}"`;
+    const nodeShape = record.undefined ? `shape="none"` : "";
     const nodeStyle = virtualNode ? `style="dashed"` : null;
-    const attributes = [nodeLabel, nodeUrl, nodeStyle].filter(
+    const attributes = [nodeLabel, nodeShape, nodeStyle, nodeUrl].filter(
       (attribute) => attribute
     );
     const nodeDot = `  "${key}" [${attributes.join("; ")}];`;

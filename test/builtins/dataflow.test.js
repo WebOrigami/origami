@@ -19,8 +19,12 @@ describe("dataflow", () => {
         dependencies: ["c"],
       },
       c: {},
-      d: {},
-      fn: {},
+      d: {
+        undefined: true,
+      },
+      fn: {
+        undefined: true,
+      },
     });
   });
 
@@ -54,7 +58,7 @@ describe("dataflow", () => {
     });
   });
 
-  it.only("identifies dependencies in HTML img tags", async () => {
+  it("identifies dependencies in HTML img tags", async () => {
     const graph = {
       "foo.html": `<html><body><img src="images/a.jpg"></body></html>`,
       images: {},
@@ -101,7 +105,24 @@ b: {}
         dependencies: ["b", "c"],
       },
       b: {},
-      c: {},
+      c: {
+        undefined: true,
+      },
+    });
+  });
+
+  it("notes if a dependency is undefined", async () => {
+    const graph = {
+      "a = b": null,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      a: {
+        dependencies: ["b"],
+      },
+      b: {
+        undefined: true,
+      },
     });
   });
 });
