@@ -126,7 +126,7 @@ b: {}
     });
   });
 
-  it.only("creates implicit dependencies for .js files", async () => {
+  it("creates implicit dependencies for .js files", async () => {
     const graph = {
       "x = fn()": null,
       "fn.js": null,

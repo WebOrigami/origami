@@ -199,7 +199,12 @@ async function htmlDependencies(html, keysInScope) {
     return parts[0];
   });
 
-  return pathHeads;
+  // Only return path heads that are in scope.
+  const pathHeadsInScope = pathHeads.filter((pathHead) =>
+    keysInScope.includes(pathHead)
+  );
+
+  return pathHeadsInScope;
 }
 
 function markUndefinedDependencies(flow, keysInScope) {
