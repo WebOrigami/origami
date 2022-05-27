@@ -125,4 +125,21 @@ b: {}
       },
     });
   });
+
+  it.only("creates implicit dependencies for .js files", async () => {
+    const graph = {
+      "x = fn()": null,
+      "fn.js": null,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      x: {
+        dependencies: ["fn"],
+      },
+      fn: {
+        dependencies: ["fn.js"],
+      },
+      "fn.js": {},
+    });
+  });
 });

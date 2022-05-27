@@ -40,7 +40,8 @@ export default async function dataflow(variant) {
   const formulaKeys = formulas.map((formula) => formula.key);
   await addContentDependencies(flow, graph, keysInScope, formulaKeys);
 
-  await markUndefinedDependencies(flow, keysInScope);
+  addImplicitJavaScriptDependencies(flow, keysInScope);
+  markUndefinedDependencies(flow, keysInScope);
 
   return flow;
 }
@@ -107,6 +108,26 @@ async function addFormulaDependencies(flow, keysInScope, formulas) {
       dependencies.forEach((dependency) => {
         updateFlowRecord(flow, dependency, {});
       });
+    }
+  }
+}
+
+// If there's a dependency on `foo`, and `foo` isn't defined, but `foo.js`
+// is, then add an implicit dependency for `foo` on `foo.js`.
+function addImplicitJavaScriptDependencies(flow, keysInScope) {
+  for (const [key, record] of Object.entries(flow)) {
+    const dependencies = record.dependencies ?? [];
+    for (const dependency of dependencies) {
+      if (path.extname(dependency) === ".js") {
+        continue;
+      }
+      const dependencyJsKey = `${dependency}.js`;
+      if (!flow[dependencyJsKey] && keysInScope.includes(dependencyJsKey)) {
+        updateFlowRecord(flow, dependency, {
+          dependencies: [dependencyJsKey],
+        });
+        updateFlowRecord(flow, dependencyJsKey, {});
+      }
     }
   }
 }

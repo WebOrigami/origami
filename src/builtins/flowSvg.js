@@ -36,8 +36,8 @@ function flowDot(flow) {
   nodesep=1;
   rankdir=LR;
   ranksep=1.5;
-  node [color=gray70; fillcolor="white"; fontname="Helvetica"; fontsize="10"; nojustify=true; style="filled"; shape=box];
-  edge [arrowhead=vee; arrowsize=0.75; color=gray60; fontname="Helvetica"; fontsize="10"; labeldistance=5];
+  node [color="gray70"; fillcolor="white"; fontname="Helvetica"; fontsize="10"; nojustify="true"; style="filled"; shape="box"];
+  edge [arrowhead="onormal"; arrowsize="0.75"; color="gray60"; fontname="Helvetica"; fontsize="10"; labeldistance="5"];
 
 ${nodes.join("\n")}
 
