@@ -31,19 +31,18 @@ async function statements(graph, nodePath) {
   let result = [];
 
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10];`
+    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10; URL="${nodePath}"];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
   let labels = {};
   for await (const key of graph) {
-    const destPath = `${nodePath}/${key}`;
+    const destPath = nodePath ? `${nodePath}/${key}` : key;
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
     result.push(arc);
 
     const value = await graph.get(key);
     if (ExplorableGraph.isExplorable(value)) {
-      const destPath = `${nodePath}/${key}`;
       const subStatements = await statements(value, destPath);
       result = result.concat(subStatements);
     } else {
@@ -109,9 +108,9 @@ async function statements(graph, nodePath) {
 
   // Draw labels.
   for (const key in labels) {
-    const destPath = `${nodePath}/${key}`;
+    const destPath = nodePath ? `${nodePath}/${key}` : key;
     const label = labels[key];
-    result.push(`  "${destPath}" [label="${label}"];`);
+    result.push(`  "${destPath}" [label="${label}"; URL="${destPath}"];`);
   }
 
   return result;
