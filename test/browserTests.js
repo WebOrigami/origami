@@ -13,6 +13,6 @@ import "./framework/AdditionsTransform.test.js";
 import "./framework/FormulasTransform.test.js";
 // import "./app/GhostValuesTransform.test.js";
 import "./framework/InheritScopeTransform.test.js";
-// import "./core/ExplorableSite.test.js";
+// import "./core/SiteGraph.test.js";
 import "./language/execute.test.js";
 import "./language/parse.test.js";

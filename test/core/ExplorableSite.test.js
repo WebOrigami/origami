@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableSite from "../../src/core/ExplorableSite.js";
+import SiteGraph from "../../src/core/SiteGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,9 +11,9 @@ const siteDirectory = path.join(fixturesDirectory, "temp");
 // http/https call.
 const localSiteUrl = pathToFileURL(siteDirectory);
 
-describe.skip("ExplorableSite", () => {
+describe.skip("SiteGraph", () => {
   it("can get keys at a given route", async () => {
-    const graph = new ExplorableSite(localSiteUrl.href);
+    const graph = new SiteGraph(localSiteUrl.href);
     const keys = await ExplorableGraph.keys(graph);
     assert.deepEqual(keys, ["hello.txt"]);
   });

@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 
 const keysPromise = Symbol("keysPromise");
 
-export default class ExplorableSite {
+export default class SiteGraph {
   constructor(url = window?.location.href) {
     if (url?.startsWith(".") && window?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.
@@ -40,7 +40,7 @@ export default class ExplorableSite {
     const href = new URL(route, this.url).href;
     if (href.endsWith("/")) {
       // Explorable route
-      return new ExplorableSite(href);
+      return new SiteGraph(href);
     } else {
       // Fetch the data at the given endpoint.
       const response = await fetch(href);

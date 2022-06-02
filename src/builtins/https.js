@@ -1,8 +1,8 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ExplorableSite from "../core/ExplorableSite.js";
+import SiteGraph from "../core/SiteGraph.js";
 
 export default async function https(domain, ...keys) {
-  const site = new ExplorableSite(`https://${domain}`);
+  const site = new SiteGraph(`https://${domain}`);
   return ExplorableGraph.traverse(site, ...keys);
 }
 
