@@ -1,7 +1,7 @@
 /**
  * An explorable graph based on a function and an optional domain.
  */
-export default class ExplorableFunction {
+export default class FunctionGraph {
   /**
    * @param {function} fn the function to be explored
    * @param {AsyncIterable|Iterable} [domain] optional domain of the function

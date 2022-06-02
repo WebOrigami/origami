@@ -1,13 +1,10 @@
-import ExplorableFunction from "../../src/core/ExplorableFunction.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import FunctionGraph from "../../src/core/FunctionGraph.js";
 import assert from "../assert.js";
 
-describe("ExplorableFunction", () => {
+describe("FunctionGraph", () => {
   it("constructs an explorable function", async () => {
-    const graph = new ExplorableFunction(
-      (key) => `Hello, ${key}.`,
-      ["a", "b", "c"]
-    );
+    const graph = new FunctionGraph((key) => `Hello, ${key}.`, ["a", "b", "c"]);
 
     // Can get values for all defined keys.
     const plain = await ExplorableGraph.plain(graph);
@@ -22,7 +19,7 @@ describe("ExplorableFunction", () => {
   });
 
   it("get executes if no keys are provided", async () => {
-    const graph = new ExplorableFunction(() => `Hello.`, ["a", "b", "c"]);
+    const graph = new FunctionGraph(() => `Hello.`, ["a", "b", "c"]);
     const result = await graph.get(undefined);
     assert.equal(result, "Hello.");
   });

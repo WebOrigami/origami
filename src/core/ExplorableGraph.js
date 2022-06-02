@@ -1,5 +1,5 @@
 import * as YAMLModule from "yaml";
-import ExplorableFunction from "./ExplorableFunction.js";
+import FunctionGraph from "./FunctionGraph.js";
 import MapValuesGraph from "./MapValuesGraph.js";
 import ObjectGraph from "./ObjectGraph.js";
 import * as utilities from "./utilities.js";
@@ -59,13 +59,13 @@ export default class ExplorableGraph {
 
     // Handle known types.
     if (obj instanceof Function) {
-      return new ExplorableFunction(obj);
+      return new FunctionGraph(obj);
     } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
       // @ts-ignore
       return new ObjectGraph(obj);
     } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
       const fn = /** @type {any} */ (obj).toFunction();
-      return new ExplorableFunction(fn);
+      return new FunctionGraph(fn);
     }
 
     throw new TypeError("Couldn't convert object to an explorable graph");
