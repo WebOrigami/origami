@@ -1,6 +1,6 @@
 /// <reference path="explorable.ts"/>
 
-export default class ExplorableObject implements Explorable {
+export default class ObjectGraph implements Explorable {
   constructor(obj: PlainObject | Array<any>);
   [Symbol.asyncIterator](): AsyncIterableIterator<any>;
   get(...keys: any[]): Promise<any>;
