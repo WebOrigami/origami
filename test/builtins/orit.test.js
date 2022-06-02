@@ -1,13 +1,13 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import orit from "../../src/builtins/orit.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
+import FilesGraph from "../../src/node/FilesGraph.js";
 import ImplicitModulesTransform from "../../src/node/ImplicitModulesTransform.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const fixturesGraph = new (ImplicitModulesTransform(ExplorableFiles))(
+const fixturesGraph = new (ImplicitModulesTransform(FilesGraph))(
   fixturesDirectory
 );
 

@@ -10,7 +10,7 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 
-export default class ExplorableFiles {
+export default class FilesGraph {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
   }

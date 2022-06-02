@@ -4,12 +4,12 @@ import map from "../../src/builtins/map.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
+import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const templatesDirectory = path.join(dirname, "fixtures/templates");
-const templateFiles = new ExplorableFiles(templatesDirectory);
+const templateFiles = new FilesGraph(templatesDirectory);
 
 describe("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {

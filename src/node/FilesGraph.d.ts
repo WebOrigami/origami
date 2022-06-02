@@ -1,6 +1,6 @@
 /// <reference path="../core/explorable.ts"/>
 
-export default class ExplorableFiles implements Explorable {
+export default class FilesGraph implements Explorable {
   constructor(dirname: string);
   [Symbol.asyncIterator](): AsyncIterableIterator<any>;
   dirname: string;

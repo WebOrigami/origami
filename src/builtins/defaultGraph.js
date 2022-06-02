@@ -2,8 +2,8 @@ import path from "path";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import ExplorableFiles from "../node/ExplorableFiles.js";
 import FileLoadersTransform from "../node/FileLoadersTransform.js";
+import FilesGraph from "../node/FilesGraph.js";
 import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
 
 // ImplicitModulesTransform will add `.js` to this key.
@@ -11,7 +11,7 @@ const configKey = "ori.config";
 
 // The class used to wrap the default graph.
 class DefaultGraph extends FileLoadersTransform(
-  InheritScopeTransform(ImplicitModulesTransform(ExplorableFiles))
+  InheritScopeTransform(ImplicitModulesTransform(FilesGraph))
 ) {}
 
 export default async function defaultGraph() {

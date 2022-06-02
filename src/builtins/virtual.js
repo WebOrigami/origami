@@ -1,5 +1,5 @@
 import path from "path";
-import ExplorableFiles from "../node/ExplorableFiles.js";
+import FilesGraph from "../node/FilesGraph.js";
 import graphVirtual from "./graphVirtual.js";
 
 /**
@@ -7,7 +7,7 @@ import graphVirtual from "./graphVirtual.js";
  */
 export default async function virtual(key) {
   const dirname = path.resolve(process.cwd());
-  const files = new ExplorableFiles(dirname);
+  const files = new FilesGraph(dirname);
   const graph = await graphVirtual(files);
   return graph === undefined
     ? undefined

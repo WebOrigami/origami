@@ -3,17 +3,17 @@ import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
+import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("ExplorableFiles", () => {
+describe("FilesGraph", () => {
   it("Can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new ExplorableFiles(directory);
+    const files = new FilesGraph(directory);
     assert.deepEqual(await ExplorableGraph.keys(files), [
       "a.txt",
       "b.txt",
@@ -26,7 +26,7 @@ describe("ExplorableFiles", () => {
 
   it("Can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new ExplorableFiles(directory);
+    const files = new FilesGraph(directory);
     const plain = await ExplorableGraph.toSerializable(files);
     assert.deepEqual(plain, {
       "a.txt": "The letter A",
@@ -41,14 +41,14 @@ describe("ExplorableFiles", () => {
 
   it("Can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new ExplorableFiles(directory);
+    const files = new FilesGraph(directory);
     const file = await files.get("a.txt");
     assert.equal(String(file), "The letter A");
   });
 
   it("Can traverse a path of keys in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
-    const files = new ExplorableFiles(directory);
+    const files = new FilesGraph(directory);
     const file = await ExplorableGraph.traverse(files, "more", "e.txt");
     assert.equal(String(file), "The letter E");
   });
@@ -59,7 +59,7 @@ describe("ExplorableFiles", () => {
     // Write out a file.
     const fileName = "file1";
     const fileText = "This is the first file.";
-    const tempFiles = new ExplorableFiles(tempDirectory);
+    const tempFiles = new FilesGraph(tempDirectory);
     await tempFiles.set(fileName, fileText);
 
     // Read it back in.
@@ -84,11 +84,11 @@ describe("ExplorableFiles", () => {
     const files = new ObjectGraph(obj);
 
     // Write out files.
-    const tempFiles = new ExplorableFiles(tempDirectory);
+    const tempFiles = new FilesGraph(tempDirectory);
     await tempFiles.set(files);
 
     // Read them back in.
-    const actualFiles = new ExplorableFiles(tempDirectory);
+    const actualFiles = new FilesGraph(tempDirectory);
     const actualStrings = await ExplorableGraph.toSerializable(actualFiles);
     assert.deepEqual(actualStrings, obj);
 
@@ -99,7 +99,7 @@ describe("ExplorableFiles", () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");
     await fs.writeFile(tempFile, "");
-    const tempFiles = new ExplorableFiles(tempDirectory);
+    const tempFiles = new FilesGraph(tempDirectory);
     await tempFiles.set("file", undefined);
     let stats;
     try {
@@ -117,7 +117,7 @@ describe("ExplorableFiles", () => {
     await createTempDirectory();
     const folder = path.join(tempDirectory, "folder");
     await fs.mkdir(folder);
-    const tempFiles = new ExplorableFiles(tempDirectory);
+    const tempFiles = new FilesGraph(tempDirectory);
     await tempFiles.set("folder", undefined);
     let stats;
     try {
@@ -132,7 +132,7 @@ describe("ExplorableFiles", () => {
   });
 
   it("can indicate which values are explorable", async () => {
-    const graph = new ExplorableFiles(fixturesDirectory);
+    const graph = new FilesGraph(fixturesDirectory);
     const keys = await ExplorableGraph.keys(graph);
     const valuesExplorable = await Promise.all(
       keys.map(async (key) => await graph.isKeyExplorable(key))

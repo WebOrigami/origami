@@ -5,13 +5,13 @@ import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
-import ExplorableFiles from "../../src/node/ExplorableFiles.js";
+import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
-const metaGraph = new (MetaTransform(ExplorableFiles))(
+const metaGraph = new (MetaTransform(FilesGraph))(
   path.join(fixturesDirectory, "meta")
 );
 metaGraph.parent = new Compose(
@@ -72,14 +72,14 @@ describe("MetaTransform", () => {
   });
 
   it("Can navigate into a dynamic graph", async () => {
-    const graph = new (MetaTransform(ExplorableFiles))(fixturesDirectory);
+    const graph = new (MetaTransform(FilesGraph))(fixturesDirectory);
     const subgraph = await graph.get("subgraph");
     assert.deepEqual(await ExplorableGraph.keys(subgraph), ["a", "b"]);
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
   it("can handle nested wildcard folders", async () => {
-    const graph = new (MetaTransform(ExplorableFiles))(
+    const graph = new (MetaTransform(FilesGraph))(
       path.join(fixturesDirectory, "wildcardFolders")
     );
     const indexHtml = await ExplorableGraph.traverse(
