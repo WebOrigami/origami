@@ -1,11 +1,11 @@
 import clean from "../../src/builtins/clean.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("clean", () => {
   it("removes files indicated in .ori.clean.yaml", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       ".ori.clean.yaml": `a: ""\n`,
       "a = 'Hello'": "",
       a: "Hello",

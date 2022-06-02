@@ -1,13 +1,13 @@
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 
 describe("InheritScopeTransform", () => {
   it("creates a scope that includes a graph and its parent", async () => {
-    const fixture = new (InheritScopeTransform(ExplorableObject))({
+    const fixture = new (InheritScopeTransform(ObjectGraph))({
       b: 2,
     });
-    fixture.parent = new ExplorableObject({
+    fixture.parent = new ObjectGraph({
       a: 1,
     });
     assert.deepEqual(await fixture.scope.get("b"), 2);
@@ -15,7 +15,7 @@ describe("InheritScopeTransform", () => {
   });
 
   it("adds a subgraph's parent to the subgraphs's scope", async () => {
-    const fixture = new (InheritScopeTransform(ExplorableObject))({
+    const fixture = new (InheritScopeTransform(ObjectGraph))({
       a: 1,
       subgraph: {
         b: 2,

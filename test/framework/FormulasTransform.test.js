@@ -1,10 +1,10 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import FormulasTransform from "../../src/framework/FormulasTransform.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import assert from "../assert.js";
 
-class FormulasObject extends FormulasTransform(ExplorableObject) {}
+class FormulasObject extends FormulasTransform(ObjectGraph) {}
 
 describe("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {

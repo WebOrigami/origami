@@ -1,7 +1,7 @@
 import ExplorableGraph from "./ExplorableGraph.js";
 import { isPlainObject } from "./utilities.js";
 
-export default class ExplorableObject {
+export default class ObjectGraph {
   /**
    *
    * @param {PlainObject|Array} object
@@ -9,7 +9,7 @@ export default class ExplorableObject {
   constructor(object) {
     if (!(object instanceof Array) && !isPlainObject(object)) {
       throw new TypeError(
-        "The argument to the ExplorableObject constructor must be a plain JavaScript object or array."
+        "The argument to the ObjectGraph constructor must be a plain JavaScript object or array."
       );
     }
     this.object = object;
@@ -31,7 +31,7 @@ export default class ExplorableObject {
     // keys like `map` and `find` that are Array prototype methods.
     let value = this.object.hasOwnProperty(key) ? this.object[key] : undefined;
     if (value instanceof Array || isPlainObject(value)) {
-      // Wrap a returned array / plain object as an ExplorableObject.
+      // Wrap a returned array / plain object as an ObjectGraph.
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;

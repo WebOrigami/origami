@@ -1,6 +1,6 @@
 import make from "../../src/builtins/make.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import FormulasTransform from "../../src/framework/FormulasTransform.js";
 import assert from "../assert.js";
 
@@ -13,8 +13,8 @@ describe("make", () => {
         "c = 'Goodbye'": "",
       },
     };
-    const virtual = new (FormulasTransform(ExplorableObject))(graph);
-    const real = new ExplorableObject(graph);
+    const virtual = new (FormulasTransform(ObjectGraph))(graph);
+    const real = new ObjectGraph(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {
       ".ori.clean.yaml": `b: ""\nmore:\n  c: ""\n`,
@@ -35,8 +35,8 @@ describe("make", () => {
       a: "Hi", // make should update this value
       "b = 'Goodbye'": "", // make should create this value
     };
-    const virtual = new (FormulasTransform(ExplorableObject))(graph);
-    const real = new ExplorableObject(graph);
+    const virtual = new (FormulasTransform(ObjectGraph))(graph);
+    const real = new ObjectGraph(graph);
     await make(virtual, real);
     assert.deepEqual(await ExplorableGraph.plain(real), {
       ".ori.clean.yaml": `a: ""\nb: ""\n`,

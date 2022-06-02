@@ -1,4 +1,4 @@
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
@@ -20,7 +20,7 @@ describe("execute", () => {
       [ops.scope, "name"],
     ];
 
-    const scope = new ExplorableObject({
+    const scope = new ObjectGraph({
       async greet(name) {
         return `Hello ${name}`;
       },

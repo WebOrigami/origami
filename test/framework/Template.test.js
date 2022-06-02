@@ -1,5 +1,5 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import Template from "../../src/framework/Template.js";
 import assert from "../assert.js";
 
@@ -31,7 +31,7 @@ text`,
 b: 2
 ---
 template`);
-    const scope = new ExplorableObject({
+    const scope = new ObjectGraph({
       a: 1,
     });
     const input = { c: 3 };
@@ -47,7 +47,7 @@ template`);
 
   it("extends scope with input front matter", async () => {
     const template = new Template("");
-    const graph = new ExplorableObject({});
+    const graph = new ObjectGraph({});
     const input = `---
 a: 1
 ---
@@ -66,7 +66,7 @@ a: 1
 ---
 template`;
     const template = new Template(templateDocument, templateScope);
-    const inputScope = new ExplorableObject({});
+    const inputScope = new ObjectGraph({});
     const inputDocument = `---
 b: 2
 ---
@@ -93,7 +93,7 @@ text`;
 a = 1:
 ---
 template`);
-    const graph = new ExplorableObject({});
+    const graph = new ObjectGraph({});
     const input = `---
 b = 2:
 ---
@@ -111,7 +111,7 @@ text`;
 message = \`{{greeting}}, {{name}}.\`:
 ---
 template`);
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       greeting: "Hello",
     });
     const input = { name: "Alice" };

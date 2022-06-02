@@ -1,11 +1,11 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
 import MapValuesGraph from "../../src/core/MapValuesGraph.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("MapValuesGraph", () => {
   it("applies a mapping function to values", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,

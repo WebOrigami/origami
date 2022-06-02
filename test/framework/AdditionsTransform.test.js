@@ -1,11 +1,11 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import AdditionsTransform from "../../src/framework/AdditionsTransform.js";
 import assert from "../assert.js";
 
 describe("AdditionsTransform", () => {
   it("defines additional content with + key", async () => {
-    const graph = new (AdditionsTransform(ExplorableObject))({
+    const graph = new (AdditionsTransform(ObjectGraph))({
       a: 1,
       "+": {
         b: 2,

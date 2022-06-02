@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import map from "../../src/builtins/map.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
@@ -15,7 +15,7 @@ describe("OrigamiTemplate", () => {
   it("can make substitutions from input and context", async () => {
     const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };
-    const scope = new ExplorableObject({ greeting: "Hello" });
+    const scope = new ObjectGraph({ greeting: "Hello" });
     const result = await template.apply(input, scope);
     assert.equal(result, "Hello, world.");
   });
@@ -39,7 +39,7 @@ Hello, world.
     const template = new OrigamiTemplate(
       "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
     );
-    const graph = new (InheritScopeTransform(ExplorableObject))({
+    const graph = new (InheritScopeTransform(ObjectGraph))({
       greeting: "Hello",
       map,
       // people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],

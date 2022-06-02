@@ -1,7 +1,7 @@
 import * as YAMLModule from "yaml";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ExplorableObject from "../core/ExplorableObject.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 import { extractFrontMatter } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
@@ -93,7 +93,7 @@ export default class Template {
         ? Object.assign({}, this.frontData, inputData)
         : null;
     const dataGraph = data
-      ? new (InheritScopeTransform(FormulasTransform(ExplorableObject)))(data)
+      ? new (InheritScopeTransform(FormulasTransform(ObjectGraph)))(data)
       : null;
     if (dataGraph) {
       dataGraph.parent = scope;

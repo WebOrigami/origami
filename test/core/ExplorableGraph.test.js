@@ -1,5 +1,5 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("ExplorableGraph", () => {
@@ -53,7 +53,7 @@ describe("ExplorableGraph", () => {
   });
 
   it("isKeyExplorable() indicates whether a key is expected to produce an explorable value", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: {
         c: 2,
@@ -64,7 +64,7 @@ describe("ExplorableGraph", () => {
   });
 
   it("keys() returns an array of the graph's keys", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -99,14 +99,14 @@ describe("ExplorableGraph", () => {
         e: 5,
       },
     };
-    const graph = new ExplorableObject(original);
+    const graph = new ObjectGraph(original);
     const plain = await ExplorableGraph.plain(graph);
     assert.deepEqual(plain, original);
   });
 
   it("plain() produces an array for an array-like graph", async () => {
     const original = ["a", "b", "c"];
-    const graph = new ExplorableObject(original);
+    const graph = new ObjectGraph(original);
     const plain = await ExplorableGraph.plain(graph);
     assert.deepEqual(plain, original);
   });
@@ -123,7 +123,7 @@ c: Hello, c.`;
   });
 
   it("toFunction() returns the graph in function form", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -133,19 +133,19 @@ c: Hello, c.`;
   });
 
   it("toJson() renders a graph as JSON", async () => {
-    const graph = new ExplorableObject({ a: "Hello, a." });
+    const graph = new ObjectGraph({ a: "Hello, a." });
     const json = await ExplorableGraph.toJson(graph);
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
   it("toYaml() renders a graph as YAML", async () => {
-    const graph = new ExplorableObject({ a: "Hello, a." });
+    const graph = new ObjectGraph({ a: "Hello, a." });
     const yaml = await ExplorableGraph.toYaml(graph);
     assert.equal(yaml, `a: Hello, a.\n`);
   });
 
   it("traverse() a path of keys", async () => {
-    const obj = new ExplorableObject({
+    const obj = new ObjectGraph({
       a1: 1,
       a2: {
         b1: 2,
@@ -165,9 +165,9 @@ c: Hello, c.`;
   });
 
   it("traverse() from one explorable into another", async () => {
-    const obj = new ExplorableObject({
+    const obj = new ObjectGraph({
       a1: {
-        a2: new ExplorableObject({
+        a2: new ObjectGraph({
           b1: {
             b2: 1,
           },

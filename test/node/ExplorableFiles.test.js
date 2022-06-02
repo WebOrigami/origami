@@ -2,7 +2,7 @@ import * as fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
 
@@ -81,7 +81,7 @@ describe("ExplorableFiles", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new ExplorableObject(obj);
+    const files = new ObjectGraph(obj);
 
     // Write out files.
     const tempFiles = new ExplorableFiles(tempDirectory);

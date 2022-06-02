@@ -1,12 +1,12 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import FormulasTransform from "../../src/framework/FormulasTransform.js";
 import GhostValuesTransform from "../../src/framework/GhostValuesTransform.js";
 import assert from "../assert.js";
 
-class GhostValuesObject extends GhostValuesTransform(ExplorableObject) {}
+class GhostValuesObject extends GhostValuesTransform(ObjectGraph) {}
 class GhostFormulasObject extends FormulasTransform(
-  GhostValuesTransform(ExplorableObject)
+  GhostValuesTransform(ObjectGraph)
 ) {}
 
 describe("GhostValuesTransform", () => {
@@ -16,11 +16,11 @@ describe("GhostValuesTransform", () => {
     });
     // This will add 2 sets of ghost values to the above graph.
     graph.ghostGraphs = [
-      new ExplorableObject({
+      new ObjectGraph({
         a: 0, // Shouldn't affect anything
         b: 2,
       }),
-      new ExplorableObject({
+      new ObjectGraph({
         c: 3,
       }),
     ];

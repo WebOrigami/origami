@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import builtins from "../../src/cli/builtins.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import ExplorableFiles from "../../src/node/ExplorableFiles.js";
 import assert from "../assert.js";
@@ -93,7 +93,7 @@ describe("MetaTransform", () => {
   });
 
   it("can inherit ellipsis formulas", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "…greeting = message": "",
       message: "Hello",
       spanish: {
@@ -106,7 +106,7 @@ describe("MetaTransform", () => {
   });
 
   it("has access to concrete values in scope", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       greeting: "Hello",
       subgraph: {
         "message = greeting": "",
@@ -119,7 +119,7 @@ describe("MetaTransform", () => {
   });
 
   it("has access to virtual values in scope", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "greeting = `Hello`": "",
       subgraph: {
         "message = greeting": "",
@@ -133,7 +133,7 @@ describe("MetaTransform", () => {
   });
 
   it("can inherit functions", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
       "…[x].html = textToHtml({{x}}.txt)": "",
@@ -147,7 +147,7 @@ describe("MetaTransform", () => {
   });
 
   it("can inherit bound variables", async () => {
-    const fixture = new (MetaTransform(ExplorableObject))({
+    const fixture = new (MetaTransform(ObjectGraph))({
       "[x]": {
         "[y] = `{{x}}{{y}}`": "",
       },
@@ -163,7 +163,7 @@ describe("MetaTransform", () => {
   });
 
   it("can imply keys based on additions", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "+": {
         "a.json": "Hello, a.",
       },
@@ -180,7 +180,7 @@ describe("MetaTransform", () => {
   });
 
   it("real values take precedence over wildcards", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "…a": 1,
       subgraphWithA: {
         a: 2,
@@ -199,7 +199,7 @@ describe("MetaTransform", () => {
   });
 
   it("wildcard values do not apply in scope", async () => {
-    const graph = new (MetaTransform(ExplorableObject))({
+    const graph = new (MetaTransform(ObjectGraph))({
       "[test]": {
         a: 1,
       },
@@ -218,7 +218,7 @@ describe("MetaTransform", () => {
   });
 
   it("lets subgraphs inherit values", async () => {
-    const fixture = new (MetaTransform(ExplorableObject))({
+    const fixture = new (MetaTransform(ObjectGraph))({
       "…a": 1,
       "…b": 2,
       subgraph: {
@@ -243,7 +243,7 @@ describe("MetaTransform", () => {
   });
 
   it("ghost folders can define formulas that work on original graph values", async () => {
-    const fixture = new (MetaTransform(ExplorableObject))({
+    const fixture = new (MetaTransform(ObjectGraph))({
       "[x]": {
         "message = `Hello, {{name}}.`": "",
       },

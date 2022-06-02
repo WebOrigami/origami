@@ -1,5 +1,5 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import * as utilities from "../../src/core/utilities.js";
 import assert from "../assert.js";
 
@@ -88,7 +88,7 @@ This is the content.
         }
       };
     }
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: "a",
       more: {
         b: "b",

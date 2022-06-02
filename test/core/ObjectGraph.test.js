@@ -1,10 +1,10 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ExplorableObject from "../../src/core/ExplorableObject.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe("ExplorableObject", () => {
+describe("ObjectGraph", () => {
   it("can async explore a plain JavaScript object", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -22,12 +22,12 @@ describe("ExplorableObject", () => {
   });
 
   it("can explore a standard JavaScript Array", async () => {
-    const graph = new ExplorableObject(["a", "b", "c"]);
+    const graph = new ObjectGraph(["a", "b", "c"]);
     assert.deepEqual(await ExplorableGraph.plain(graph), ["a", "b", "c"]);
   });
 
   it("can set a value", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -50,7 +50,7 @@ describe("ExplorableObject", () => {
   });
 
   it("can apply updates with a single argument to set", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -77,7 +77,7 @@ describe("ExplorableObject", () => {
   });
 
   it("distinguishes between setting an explorable value and apply updates", async () => {
-    const graph1 = new ExplorableObject({
+    const graph1 = new ObjectGraph({
       a: 1,
       more: {
         b: 2,
@@ -87,7 +87,7 @@ describe("ExplorableObject", () => {
     // Setting key by name overwrites any existing value.
     await graph1.set(
       "more",
-      new ExplorableObject({
+      new ObjectGraph({
         c: 3,
       })
     );
@@ -99,7 +99,7 @@ describe("ExplorableObject", () => {
       },
     });
 
-    const graph2 = new ExplorableObject({
+    const graph2 = new ObjectGraph({
       a: 1,
       more: {
         b: 2,
@@ -108,7 +108,7 @@ describe("ExplorableObject", () => {
 
     // Passing an explorable as the single argument applies it as updates.
     await graph2.set(
-      new ExplorableObject({
+      new ObjectGraph({
         more: {
           c: 3,
         },
@@ -125,7 +125,7 @@ describe("ExplorableObject", () => {
   });
 
   it("can indicate which values are explorable", async () => {
-    const graph = new ExplorableObject({
+    const graph = new ObjectGraph({
       a1: 1,
       a2: {
         b1: 2,
