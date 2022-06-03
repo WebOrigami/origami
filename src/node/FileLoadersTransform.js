@@ -1,22 +1,19 @@
 import path from "path";
+import meta from "../builtins/meta.js";
 
 const defaultLoaders = {
-  ".css": bufferToString,
-  ".htm": bufferToString,
-  ".html": bufferToString,
-  ".js": bufferToString,
-  ".json": bufferToString,
-  ".md": bufferToString,
-  ".ori": async function (obj) {
-    const { default: OrigamiTemplate } = await import(
-      "../framework/OrigamiTemplate.js"
-    );
-    return new OrigamiTemplate(bufferToString(obj), this);
-  },
-  ".txt": bufferToString,
-  ".xhtml": bufferToString,
-  ".yml": bufferToString,
-  ".yaml": bufferToString,
+  ".css": loadText,
+  ".htm": loadText,
+  ".html": loadText,
+  ".js": loadText,
+  ".json": loadText,
+  ".meta": loadMetaGraph,
+  ".md": loadText,
+  ".ori": loadOrigamiTemplate,
+  ".txt": loadText,
+  ".xhtml": loadText,
+  ".yml": loadText,
+  ".yaml": loadText,
 };
 
 export default function FileLoadersTransform(Base) {
@@ -43,6 +40,18 @@ export default function FileLoadersTransform(Base) {
   };
 }
 
-function bufferToString(value) {
-  return value instanceof Buffer ? String(value) : value;
+async function loadMetaGraph(buffer) {
+  const yaml = loadText(buffer);
+  return meta(yaml);
+}
+
+async function loadOrigamiTemplate(buffer) {
+  const { default: OrigamiTemplate } = await import(
+    "../framework/OrigamiTemplate.js"
+  );
+  return new OrigamiTemplate(loadText(buffer), this);
+}
+
+function loadText(buffer) {
+  return buffer instanceof Buffer ? String(buffer) : buffer;
 }
