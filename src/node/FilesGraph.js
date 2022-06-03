@@ -92,6 +92,7 @@ export default class FilesGraph {
    * @param {any} value
    */
   async set(key, value) {
+    const escaped = escapeKey(key);
     if (arguments.length === 1) {
       // Take the single argument as a source graph and write its values into
       // the current graph.
@@ -99,7 +100,7 @@ export default class FilesGraph {
       await writeFiles(sourceGraph, this);
     } else if (value === undefined) {
       // Delete file or directory.
-      const objPath = path.join(this.dirname, key);
+      const objPath = path.join(this.dirname, escaped);
       const stats = await stat(objPath);
       if (stats?.isDirectory()) {
         // Delete directory.
@@ -110,12 +111,12 @@ export default class FilesGraph {
       }
     } else if (
       ExplorableGraph.isExplorable(value) &&
-      !(key?.endsWith(".json") || key?.endsWith(".yaml"))
+      !(escaped?.endsWith(".json") || escaped?.endsWith(".yaml"))
     ) {
       // Write the explorable's values into the subfolder named by the key.
       // However, if the key ends in .json or .yaml, let the next condition
       // write out the graph as a JSON/YAML file.
-      const subfolder = path.resolve(this.dirname, String(key));
+      const subfolder = path.resolve(this.dirname, escaped);
       const targetGraph = Reflect.construct(this.constructor, [subfolder]);
       await writeFiles(value, targetGraph);
     } else {
@@ -123,11 +124,17 @@ export default class FilesGraph {
       await fs.mkdir(this.dirname, { recursive: true });
 
       // Write out the value as the contents of a file.
-      const filePath = path.join(this.dirname, key.toString());
-      const data = await prepareData(key, value);
+      const filePath = path.join(this.dirname, escaped);
+      const data = await prepareData(escaped, value);
       await fs.writeFile(filePath, data);
     }
   }
+}
+
+function escapeKey(key) {
+  let keyText = key.toString();
+  const escaped = keyText.replaceAll("/", "%");
+  return escaped;
 }
 
 // Determine the form in which we want to write the data to disk under the given
