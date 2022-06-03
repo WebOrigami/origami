@@ -30,7 +30,10 @@ export default class ObjectGraph {
     // because, if the object's an array, we don't want to return values for
     // keys like `map` and `find` that are Array prototype methods.
     let value = this.object.hasOwnProperty(key) ? this.object[key] : undefined;
-    if (value instanceof Array || isPlainObject(value)) {
+    const isPlain =
+      value instanceof Array ||
+      (isPlainObject(value) && !ExplorableGraph.isExplorable(value));
+    if (isPlain) {
       // Wrap a returned array / plain object as an ObjectGraph.
       value = Reflect.construct(this.constructor, [value]);
     }

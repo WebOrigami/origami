@@ -49,6 +49,40 @@ describe("ObjectGraph", () => {
     });
   });
 
+  it("returns an ObjectGraph for value that's a plain sub-object or sub-array", async () => {
+    const graph = new ObjectGraph({
+      a: 1,
+      object: {
+        b: 2,
+      },
+      array: [3],
+    });
+
+    const object = await graph.get("object");
+    assert.equal(object instanceof ObjectGraph, true);
+    assert.deepEqual(await ExplorableGraph.plain(object), { b: 2 });
+
+    const array = await graph.get("array");
+    assert.equal(array instanceof ObjectGraph, true);
+    assert.deepEqual(await ExplorableGraph.plain(array), [3]);
+  });
+
+  it("returns an explorable value as is", async () => {
+    const explorable = {
+      async *[Symbol.asyncIterator]() {
+        yield "b";
+      },
+      async get(key) {
+        return key === "b" ? 2 : undefined;
+      },
+    };
+    const graph = new ObjectGraph({
+      a: 1,
+      explorable,
+    });
+    assert.equal(await graph.get("explorable"), explorable);
+  });
+
   it("can apply updates with a single argument to set", async () => {
     const graph = new ObjectGraph({
       a: 1,
