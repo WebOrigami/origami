@@ -25,7 +25,11 @@ export default async function dataflow(variant) {
   }
 
   const flowFile = await graph.get(".dataflow.yaml");
-  const flow = flowFile ? YAML.parse(String(flowFile)) : {};
+  const flow = ExplorableGraph.isExplorable(flowFile)
+    ? await ExplorableGraph.plain(flowFile)
+    : flowFile
+    ? YAML.parse(String(flowFile))
+    : {};
 
   // Determine what keys are relevant to this graph,
   let keysInScope = await getKeysInScope(graph);
