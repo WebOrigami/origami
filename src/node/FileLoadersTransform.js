@@ -1,5 +1,6 @@
 import path from "path";
 import meta from "../builtins/meta.js";
+import StringWithGraph from "../framework/StringWithGraph.js";
 
 const defaultLoaders = {
   ".css": loadText,
@@ -42,7 +43,8 @@ export default function FileLoadersTransform(Base) {
 
 async function loadMetaGraph(buffer) {
   const yaml = loadText(buffer);
-  return meta(yaml);
+  const graph = await meta.call(this, yaml);
+  return new StringWithGraph(yaml, graph);
 }
 
 async function loadOrigamiTemplate(buffer) {
