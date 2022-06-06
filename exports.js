@@ -57,6 +57,7 @@ export { default as SortTransform } from "./src/common/SortTransform.js";
 export { default as SubtractKeys } from "./src/common/SubtractKeys.js";
 export { default as ExplorableGraph } from "./src/core/ExplorableGraph.js";
 export { default as FunctionGraph } from "./src/core/FunctionGraph.js";
+export { default as MapKeysValuesGraph } from "./src/core/MapKeysValuesGraph.js";
 export { default as MapValuesGraph } from "./src/core/MapValuesGraph.js";
 export { default as ObjectGraph } from "./src/core/ObjectGraph.js";
 export { default as SiteGraph } from "./src/core/SiteGraph.js";
@@ -73,6 +74,7 @@ export { default as GhostValuesTransform } from "./src/framework/GhostValuesTran
 export { default as InheritScopeTransform } from "./src/framework/InheritScopeTransform.js";
 export { default as InheritValuesTransform } from "./src/framework/InheritValuesTransform.js";
 export { default as MetaTransform } from "./src/framework/MetaTransform.js";
+export { default as OrigamiTemplate } from "./src/framework/OrigamiTemplate.js";
 export * from "./src/framework/scopeUtilities.js";
 export { default as StringWithGraph } from "./src/framework/StringWithGraph.js";
 export * from "./src/language/combinators.js";
