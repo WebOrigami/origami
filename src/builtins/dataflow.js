@@ -3,6 +3,7 @@ import * as YAMLModule from "yaml";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
+import { additionsKey } from "../framework/AdditionsTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
 import CommandsModulesTransform from "../node/CommandModulesTransform.js";
@@ -39,6 +40,18 @@ export default async function dataflow(variant) {
   }
 
   const formulas = await /** @type {any} */ (graph).formulas();
+
+  // HACK: formulas() currently does not report formulas in graph additions.
+  // We manually add those here.
+  const additions = await graph.get(additionsKey);
+  if (additions) {
+    const additionsGraph = ExplorableGraph.from(additions);
+    const additionsFormulas = await additionsGraph.formulas?.();
+    if (additionsFormulas) {
+      formulas.push(...additionsFormulas);
+    }
+  }
+
   await addFormulaDependencies(flow, keysInScope, formulas);
 
   const formulaKeys = formulas.map((formula) => formula.key);

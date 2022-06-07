@@ -142,4 +142,21 @@ b: {}
       "fn.js": {},
     });
   });
+
+  it("reads formulas in graph additions", async () => {
+    const graph = {
+      "+": {
+        "a = b": null,
+      },
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      a: {
+        dependencies: ["b"],
+      },
+      b: {
+        undefined: true,
+      },
+    });
+  });
 });
