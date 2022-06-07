@@ -72,6 +72,7 @@ async function addContentDependencies(flow, graph, keysInScope, formulaKeys) {
     const extension = path.extname(key);
     const dependencyParsers = {
       ".html": htmlDependencies,
+      ".meta": metaDependencies,
       ".ori": origamiTemplateDependencies,
     };
     const parser = dependencyParsers[extension];
@@ -235,6 +236,10 @@ function markUndefinedDependencies(flow, keysInScope) {
       }
     });
   }
+}
+
+async function metaDependencies(meta, keysInScope) {
+  return [];
 }
 
 async function origamiTemplateDependencies(template, keysInScope) {

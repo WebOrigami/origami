@@ -89,6 +89,22 @@ describe("dataflow", () => {
     });
   });
 
+  it.skip("identifies dependencies in .meta files", async () => {
+    const graph = {
+      "foo.meta": `a = b: null`,
+    };
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      a: {
+        dependencies: ["b"],
+      },
+      b: {},
+      "foo.meta": {
+        dependencies: [],
+      },
+    });
+  });
+
   it("starts with dependencies in .dataflow.yaml value", async () => {
     const graph = {
       ".dataflow.yaml": `
