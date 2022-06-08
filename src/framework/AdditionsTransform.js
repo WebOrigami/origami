@@ -1,4 +1,3 @@
-import path from "path";
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
@@ -25,9 +24,10 @@ export default function AdditionsTransform(Base) {
         // get method will be able to get other things, but not additions.
         this[gettingAdditions] = true;
         const additionsGraphs = [];
+        const additionsKeyPrefix = `${additionsKey}.`;
         for await (const key of super[Symbol.asyncIterator]()) {
           const isAddition =
-            path.basename(key, path.extname(key)) === additionsKey;
+            key === additionsKey || key.startsWith(additionsKeyPrefix);
           if (isAddition) {
             const variant = await this.get(key);
             if (variant) {
@@ -49,14 +49,9 @@ export default function AdditionsTransform(Base) {
 
     async *[Symbol.asyncIterator]() {
       yield* super[Symbol.asyncIterator]();
-      // If FormulasTransform is applied, it will have already yielded the
-      // addition's keys. If the graph has no `formulas` property, we conclude
-      // FormualsTransform has *not* been applied, so yield the keys ourselves.
-      if (!this.formulas) {
-        const additions = await this.additions();
-        if (additions) {
-          yield* additions;
-        }
+      const additions = await this.additions();
+      if (additions) {
+        yield* additions;
       }
     }
 

@@ -6,10 +6,10 @@ import GhostValuesTransform from "./GhostValuesTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 export default function MetaTransform(Base) {
-  return class Meta extends FileLoadersTransform(
-    InheritScopeTransform(
-      GhostValuesTransform(
-        FormulasTransform(AdditionsTransform(ImplicitModulesTransform(Base)))
+  return class Meta extends InheritScopeTransform(
+    GhostValuesTransform(
+      FormulasTransform(
+        AdditionsTransform(FileLoadersTransform(ImplicitModulesTransform(Base)))
       )
     )
   ) {};
