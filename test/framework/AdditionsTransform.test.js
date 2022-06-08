@@ -33,7 +33,7 @@ describe("AdditionsTransform", () => {
     });
   });
 
-  it.only("adds all addition keys", async () => {
+  it("adds all addition keys", async () => {
     const graph = new (AdditionsTransform(ObjectGraph))({
       "+": {
         a: 1,

@@ -8,8 +8,8 @@ import InheritScopeTransform from "./InheritScopeTransform.js";
 export default function MetaTransform(Base) {
   return class Meta extends FileLoadersTransform(
     InheritScopeTransform(
-      AdditionsTransform(
-        GhostValuesTransform(FormulasTransform(ImplicitModulesTransform(Base)))
+      GhostValuesTransform(
+        FormulasTransform(AdditionsTransform(ImplicitModulesTransform(Base)))
       )
     )
   ) {};

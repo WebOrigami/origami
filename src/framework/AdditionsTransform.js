@@ -27,7 +27,6 @@ export default function AdditionsTransform(Base) {
         const additionsGraphs = [];
         for await (const key of super[Symbol.asyncIterator]()) {
           const isAddition =
-            key === additionsKey ||
             path.basename(key, path.extname(key)) === additionsKey;
           if (isAddition) {
             const variant = await this.get(key);
