@@ -1,3 +1,5 @@
+import path from "path";
+import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export const additionsKey = "+";
@@ -22,8 +24,25 @@ export default function AdditionsTransform(Base) {
         // we're in the process of getting additions. During that process, the
         // get method will be able to get other things, but not additions.
         this[gettingAdditions] = true;
-        const variant = await this.get(additionsKey);
-        this[additions] = variant ? ExplorableGraph.from(variant) : null;
+        const additionsGraphs = [];
+        for await (const key of super[Symbol.asyncIterator]()) {
+          const isAddition =
+            key === additionsKey ||
+            path.basename(key, path.extname(key)) === additionsKey;
+          if (isAddition) {
+            const variant = await this.get(key);
+            if (variant) {
+              const graph = ExplorableGraph.from(variant);
+              additionsGraphs.push(graph);
+            }
+          }
+        }
+        this[additions] =
+          additionsGraphs.length === 0
+            ? null
+            : additionsGraphs.length === 1
+            ? additionsGraphs[0]
+            : new Compose(...additionsGraphs);
         this[gettingAdditions] = false;
       }
       return this[additions];

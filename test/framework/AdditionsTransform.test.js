@@ -32,4 +32,21 @@ describe("AdditionsTransform", () => {
       },
     });
   });
+
+  it.only("adds all addition keys", async () => {
+    const graph = new (AdditionsTransform(ObjectGraph))({
+      "+": {
+        a: 1,
+      },
+      "+.yaml": `b: 2`,
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      b: 2,
+      "+": {
+        a: 1,
+      },
+      "+.yaml": `b: 2`,
+    });
+  });
 });
