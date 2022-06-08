@@ -23,6 +23,14 @@ export default class DefaultValues {
     if (value !== undefined || !this.defaults) {
       if (ExplorableGraph.isExplorable(value)) {
         value = Reflect.construct(this.constructor, [value, this.defaults]);
+      } else if (value?.toGraph) {
+        // If the value isn't a graph, but has a graph attached via a `toGraph`
+        // method, wrap the toGraph method to provide default values for it.
+        const original = value.toGraph.bind(value);
+        value.toGraph = () => {
+          const graph = original();
+          return Reflect.construct(this.constructor, [graph, this.defaults]);
+        };
       }
       return value;
     }
