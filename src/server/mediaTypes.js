@@ -91,4 +91,6 @@ export const mediaTypeIsText = {
   "text/html": true,
   "text/javascript": true,
   "text/plain": true,
+  "text/yaml": true,
+  "text/yml": true,
 };

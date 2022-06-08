@@ -1,20 +1,20 @@
 import path from "path";
 import meta from "../builtins/meta.js";
-import StringWithGraph from "../framework/StringWithGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
 const defaultLoaders = {
   ".css": loadText,
   ".htm": loadText,
   ".html": loadText,
   ".js": loadText,
-  ".json": loadText,
+  ".json": loadGraph,
   ".meta": loadMetaGraph,
   ".md": loadText,
   ".ori": loadOrigamiTemplate,
   ".txt": loadText,
   ".xhtml": loadText,
-  ".yml": loadText,
-  ".yaml": loadText,
+  ".yml": loadGraph,
+  ".yaml": loadGraph,
 };
 
 export default function FileLoadersTransform(Base) {
@@ -41,10 +41,24 @@ export default function FileLoadersTransform(Base) {
   };
 }
 
+async function loadGraph(buffer) {
+  const text = loadText(buffer);
+  const textWithGraph = new String(text);
+  /** @type {any} */ (textWithGraph).toGraph = () => ExplorableGraph.from(text);
+  return textWithGraph;
+}
+
 async function loadMetaGraph(buffer) {
-  const yaml = loadText(buffer);
-  const graph = await meta.call(this, yaml);
-  return new StringWithGraph(yaml, graph);
+  const text = loadText(buffer);
+  const textWithGraph = new String(text);
+  // REVIEW: Want to make toGraph lazy, but at the moment it can't be async.
+  // function toGraph() {
+  //   return meta.call(this, text);
+  // }
+  // /** @type {any} */ (textWithGraph).toGraph = toGraph;
+  const graph = await meta.call(this, text);
+  /** @type {any} */ (textWithGraph).toGraph = () => graph;
+  return textWithGraph;
 }
 
 async function loadOrigamiTemplate(buffer) {

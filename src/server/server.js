@@ -69,7 +69,11 @@ export async function handleRequest(request, response, graph) {
     // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
     if (
       (mediaType === "application/json" || mediaType === "text/yaml") &&
-      !(typeof resource === "string" || resource instanceof Buffer)
+      !(
+        typeof resource === "string" ||
+        resource instanceof String ||
+        resource instanceof Buffer
+      )
     ) {
       const graph = ExplorableGraph.from(resource);
       resource =
