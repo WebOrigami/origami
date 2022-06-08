@@ -53,7 +53,7 @@ describe("MetaTransform", () => {
 
   it("can get the value of a virtual key", async () => {
     const s = await metaGraph.get("string");
-    assert.equal(s.trim(), `"Hello, world."`);
+    assert.equal(s.toString().trim(), `"Hello, world."`);
   });
 
   it("can produce a value using a function", async () => {
