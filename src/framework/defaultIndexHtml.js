@@ -24,7 +24,7 @@ export default async function defaultIndexHtml(
       } else {
         // Split on first equals sign.
         const equalsIndex = keyText.indexOf("=");
-        const lhs = keyText.substring(0, equalsIndex);
+        const lhs = keyText.substring(0, equalsIndex).trim();
         const rhs = keyText.substring(equalsIndex + 1);
         link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${keyText}">= ${rhs}</a></span></li>`;
       }
