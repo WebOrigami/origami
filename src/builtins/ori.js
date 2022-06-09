@@ -3,7 +3,7 @@
 import yaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { stringLike, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
@@ -72,12 +72,11 @@ export default async function ori(expression, path) {
 }
 
 async function formatResult(result) {
-  let output =
-    typeof result === "string" || result instanceof Buffer
-      ? result
-      : result !== undefined
-      ? await yaml(result)
-      : undefined;
+  let output = stringLike(result)
+    ? String(result)
+    : result !== undefined
+    ? await yaml(result)
+    : undefined;
   if (typeof output === "string" && !output.endsWith("\n")) {
     output += "\n";
   }

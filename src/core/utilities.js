@@ -76,6 +76,14 @@ export function sortNatural(values) {
   return values.slice().sort(collator.compare);
 }
 
+export function stringLike(value) {
+  return (
+    typeof value === "string" ||
+    value instanceof String ||
+    (globalThis.Buffer && value instanceof Buffer)
+  );
+}
+
 /**
  * Convert the given object to a function.
  *

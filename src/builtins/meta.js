@@ -15,6 +15,12 @@ export default async function meta(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
+
+  // If graph already appears to be a metagraph, return it as is.
+  if ("formulas" in graph) {
+    return graph;
+  }
+
   const transformed = transformObject(MetaTransform, graph);
   transformed.parent = this ?? (await defaultGraph()).scope;
   return transformed;

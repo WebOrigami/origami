@@ -2,7 +2,7 @@ import * as YAMLModule from "yaml";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { extractFrontMatter } from "../core/utilities.js";
+import { extractFrontMatter, stringLike } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
@@ -143,11 +143,10 @@ async function processInput(input, scope) {
     input = await input.call(scope);
   }
 
-  let text =
-    typeof input === "string" || input instanceof Buffer ? String(input) : null;
+  let text = stringLike(input) ? String(input) : null;
 
   let inputData = input;
-  if (typeof input === "string" || input instanceof Buffer) {
+  if (stringLike(input)) {
     // Try parsing input as a document with front matter.
     const inputText = String(input);
     const parsedDocument = parseDocument(inputText);

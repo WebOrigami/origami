@@ -1,6 +1,6 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject } from "../core/utilities.js";
+import { isPlainObject, stringLike } from "../core/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
@@ -69,11 +69,7 @@ export async function handleRequest(request, response, graph) {
     // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
     if (
       (mediaType === "application/json" || mediaType === "text/yaml") &&
-      !(
-        typeof resource === "string" ||
-        resource instanceof String ||
-        resource instanceof Buffer
-      )
+      !stringLike(resource)
     ) {
       const graph = ExplorableGraph.from(resource);
       resource =

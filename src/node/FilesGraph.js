@@ -142,10 +142,11 @@ function escapeKey(key) {
 async function prepareData(key, value) {
   // If the value is already serializable, return it as is.
   if (
+    typeof value === "string" ||
+    value instanceof String ||
     value instanceof Buffer ||
     value instanceof Uint8Array ||
-    value instanceof DataView ||
-    typeof value === "string"
+    value instanceof DataView
   ) {
     return value;
   }

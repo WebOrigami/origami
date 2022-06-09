@@ -1,6 +1,6 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { stringLike, transformObject } from "../core/utilities.js";
 import MetaTransform from "../framework/MetaTransform.js";
 
 const defaultLoaders = {
@@ -27,10 +27,7 @@ export default function FileLoadersTransform(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (
-        (typeof value === "string" || value instanceof Buffer) &&
-        typeof key === "string"
-      ) {
+      if (stringLike(value) && typeof key === "string") {
         const extname = path.extname(key).toLowerCase();
         const loader = this.loaders[extname];
         if (loader) {
@@ -80,5 +77,7 @@ async function loadOrigamiTemplate(buffer) {
 }
 
 function loadText(buffer) {
-  return buffer instanceof Buffer ? String(buffer) : buffer;
+  return buffer instanceof Buffer || buffer instanceof String
+    ? String(buffer)
+    : buffer;
 }

@@ -1,13 +1,13 @@
 import { stdout } from "process";
+import { stringLike } from "../core/utilities.js";
 import yaml from "./yaml.js";
 
 export default async function stdoutCommand(obj) {
-  const output =
-    typeof obj === "string" || obj instanceof Buffer
-      ? obj
-      : obj !== undefined
-      ? await yaml(obj)
-      : undefined;
+  const output = stringLike(obj)
+    ? obj
+    : obj !== undefined
+    ? await yaml(obj)
+    : undefined;
   if (output !== undefined) {
     stdout.write(output);
     if (typeof output === "string" && !output.endsWith("\n")) {
