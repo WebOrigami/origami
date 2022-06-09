@@ -1,6 +1,7 @@
 import path from "path";
-import meta from "../builtins/meta.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import MetaTransform from "../framework/MetaTransform.js";
 
 const defaultLoaders = {
   ".css": loadText,
@@ -41,6 +42,9 @@ export default function FileLoadersTransform(Base) {
   };
 }
 
+/**
+ * @this {Explorable}
+ */
 async function loadGraph(buffer) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
@@ -48,19 +52,26 @@ async function loadGraph(buffer) {
   return textWithGraph;
 }
 
+/**
+ * @this {Explorable}
+ */
 async function loadMetaGraph(buffer) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
-  // REVIEW: Want to make toGraph lazy, but at the moment it can't be async.
-  // function toGraph() {
-  //   return meta.call(this, text);
-  // }
-  // /** @type {any} */ (textWithGraph).toGraph = toGraph;
-  const graph = await meta.call(this, text);
-  /** @type {any} */ (textWithGraph).toGraph = () => graph;
+  const scope = this;
+  function toGraph() {
+    const graph = ExplorableGraph.from(text);
+    const meta = transformObject(MetaTransform, graph);
+    meta.parent = scope;
+    return meta;
+  }
+  /** @type {any} */ (textWithGraph).toGraph = toGraph;
   return textWithGraph;
 }
 
+/**
+ * @this {Explorable}
+ */
 async function loadOrigamiTemplate(buffer) {
   const { default: OrigamiTemplate } = await import(
     "../framework/OrigamiTemplate.js"
