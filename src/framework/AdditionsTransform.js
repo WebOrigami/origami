@@ -1,7 +1,7 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-export const additionsKey = "+";
+export const additionsPrefix = "+";
 const additions = Symbol("additions");
 
 // This flag is used to prevent infinite loops while getting the additions.
@@ -24,12 +24,10 @@ export default function AdditionsTransform(Base) {
         // get method will be able to get other things, but not additions.
         this[gettingAdditions] = true;
         const additionsGraphs = [];
-        const additionsKeyPrefix = `${additionsKey}.`;
         for await (const key of super[Symbol.asyncIterator]()) {
-          const isAddition =
-            key === additionsKey || key.startsWith(additionsKeyPrefix);
+          const isAddition = key.startsWith(additionsPrefix);
           if (isAddition) {
-            const variant = await this.get(key);
+            const variant = await super.get(key);
             if (variant) {
               const graph = ExplorableGraph.from(variant);
               additionsGraphs.push(graph);
@@ -59,7 +57,7 @@ export default function AdditionsTransform(Base) {
       let result = await super.get(key);
       if (
         result === undefined &&
-        key !== additionsKey &&
+        !key.startsWith(additionsPrefix) &&
         !this[gettingAdditions]
       ) {
         // Not found locally, check additions.

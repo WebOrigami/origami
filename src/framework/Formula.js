@@ -1,7 +1,7 @@
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
-import { additionsKey } from "./AdditionsTransform.js";
+import { additionsPrefix } from "./AdditionsTransform.js";
 import { ghostGraphExtension } from "./GhostValuesTransform.js";
 import { getScope } from "./scopeUtilities.js";
 
@@ -73,7 +73,7 @@ export default class Formula {
       (key.includes("=") ||
         key.startsWith("[") ||
         key.startsWith("…") ||
-        key === additionsKey)
+        key.startsWith(additionsPrefix))
     );
   }
 

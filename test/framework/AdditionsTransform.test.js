@@ -4,7 +4,7 @@ import AdditionsTransform from "../../src/framework/AdditionsTransform.js";
 import assert from "../assert.js";
 
 describe("AdditionsTransform", () => {
-  it("defines additional content with + key", async () => {
+  it("defines additional content with + additions prefix", async () => {
     const graph = new (AdditionsTransform(ObjectGraph))({
       a: 1,
       "+": {
