@@ -58,6 +58,9 @@ async function loadMetaGraph(buffer) {
   const scope = this;
   function toGraph() {
     const graph = ExplorableGraph.from(text);
+    if ("formulas" in graph) {
+      return graph;
+    }
     const meta = transformObject(MetaTransform, graph);
     meta.parent = scope;
     return meta;
