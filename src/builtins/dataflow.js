@@ -190,7 +190,7 @@ function ignoreKey(key) {
   // have parser stop wrapping ops.thisKey in an array.
   if (key instanceof Array) {
     return true;
-  } else if (key.startsWith("@")) {
+  } else if (key.startsWith?.("@")) {
     return true;
   }
   if (!ignoreKeys) {

@@ -25,7 +25,7 @@ export default function AdditionsTransform(Base) {
         this[gettingAdditions] = true;
         const additionsGraphs = [];
         for await (const key of super[Symbol.asyncIterator]()) {
-          const isAddition = key.startsWith(additionsPrefix);
+          const isAddition = key.startsWith?.(additionsPrefix);
           if (isAddition) {
             const variant = await super.get(key);
             if (variant) {
@@ -57,7 +57,7 @@ export default function AdditionsTransform(Base) {
       let result = await super.get(key);
       if (
         result === undefined &&
-        !key.startsWith(additionsPrefix) &&
+        !key.startsWith?.(additionsPrefix) &&
         !this[gettingAdditions]
       ) {
         // Not found locally, check additions.

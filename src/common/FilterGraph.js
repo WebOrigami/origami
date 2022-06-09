@@ -76,7 +76,7 @@ async function inheritFormulas(filter) {
     // HACK: for now we just inspect the key to see if it starts with "…". It
     // would be better if we could get the parsed inheritable formulas from the
     // filter object itself.
-    if (key.startsWith("…")) {
+    if (key.startsWith?.("…")) {
       formulas[key] = await filter.get(key);
     }
   }
