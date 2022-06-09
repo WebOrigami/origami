@@ -8,14 +8,14 @@ const defaultLoaders = {
   ".htm": loadText,
   ".html": loadText,
   ".js": loadText,
-  // ".json": loadGraph,
+  ".json": loadText,
   ".meta": loadMetaGraph,
   ".md": loadText,
   ".ori": loadOrigamiTemplate,
   ".txt": loadText,
   ".xhtml": loadText,
-  // ".yml": loadGraph,
-  // ".yaml": loadGraph,
+  ".yml": loadText,
+  ".yaml": loadText,
 };
 
 export default function FileLoadersTransform(Base) {
