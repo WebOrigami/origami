@@ -5,8 +5,8 @@ import GhostValuesTransform from "../../src/framework/GhostValuesTransform.js";
 import assert from "../assert.js";
 
 class GhostValuesObject extends GhostValuesTransform(ObjectGraph) {}
-class GhostFormulasObject extends FormulasTransform(
-  GhostValuesTransform(ObjectGraph)
+class GhostFormulasObject extends GhostValuesTransform(
+  FormulasTransform(ObjectGraph)
 ) {}
 
 describe("GhostValuesTransform", () => {
@@ -28,6 +28,22 @@ describe("GhostValuesTransform", () => {
       a: 1,
       b: 2,
       c: 3,
+    });
+  });
+
+  it("adds ghost graphs marked with ghost extension", async () => {
+    const graph = new GhostFormulasObject({
+      a: {
+        b: 1,
+      },
+      "a+": {
+        c: 2,
+      },
+    });
+    const a = await graph.get("a");
+    assert.deepEqual(await ExplorableGraph.plain(a), {
+      b: 1,
+      c: 2,
     });
   });
 
@@ -69,8 +85,8 @@ describe("GhostValuesTransform", () => {
     const subgraph = await graph.get("subgraph");
     assert.deepEqual(await ExplorableGraph.keys(subgraph), [
       "a",
-      "c",
       "subsubgraph",
+      "c",
     ]);
     const subsubgraph = await subgraph.get("subsubgraph");
     assert.deepEqual(await ExplorableGraph.plain(subsubgraph), {

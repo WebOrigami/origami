@@ -25,6 +25,7 @@ export default function GhostValuesTransform(Base) {
     async get(key) {
       // Try local graph first.
       let value = await super.get(key);
+
       if (value === undefined) {
         // Wasn't found in local graph, try ghost graphs.
         for (const graph of this.ghostGraphs) {
@@ -34,10 +35,27 @@ export default function GhostValuesTransform(Base) {
           }
         }
       } else if (ExplorableGraph.isExplorable(value) && !isGhostKey(key)) {
-        // Add ghost graphs from local formulas.
         const ghostKey = `${key}${ghostGraphExtension}`;
-        value.ghostGraphs = await this.formulaResults(ghostKey);
+        let ghostGraphs = [];
+
+        // See if ghost key itself exists.
+        const ghostValue = await this.get(ghostKey);
+        if (ghostValue !== undefined) {
+          // HACK: Avoid adding a formula result that will come in next step.
+          if (!ghostValue.bindings) {
+            ghostGraphs.push(ghostValue);
+          }
+        }
+
+        // Add ghost graphs from local formulas.
+        const ghostResults = await this.formulaResults(ghostKey);
+        if (ghostResults) {
+          ghostGraphs = ghostGraphs.concat(ghostResults);
+        }
+
+        value.ghostGraphs = ghostGraphs;
       }
+
       return value;
     }
 
