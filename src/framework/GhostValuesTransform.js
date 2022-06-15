@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
 import Formula from "./Formula.js";
 import { sortFormulas } from "./FormulasTransform.js";
 
@@ -41,16 +42,18 @@ export default function GhostValuesTransform(Base) {
         // See if ghost key itself exists.
         const ghostValue = await this.get(ghostKey);
         if (ghostValue !== undefined) {
-          // HACK: Avoid adding a formula result that will come in next step.
-          if (!ghostValue.bindings) {
-            ghostGraphs.push(ghostValue);
-          }
+          ghostGraphs.push(ghostValue);
         }
-
+        
         // Add ghost graphs from local formulas.
-        const ghostResults = await this.formulaResults(ghostKey);
+        // TODO: prevent duplication of above ghostValue.
+        const ghostResults = await this.formulaResults?.(ghostKey);
         if (ghostResults) {
           ghostGraphs = ghostGraphs.concat(ghostResults);
+        }
+
+        if (!('ghostGraphs' in value)) {
+          value = transformObject(GhostValuesTransform, value);
         }
 
         value.ghostGraphs = ghostGraphs;

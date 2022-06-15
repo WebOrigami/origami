@@ -6,6 +6,7 @@ declare const FormulasTransform: Mixin<{
   scope: Explorable;
 }>;
 
+export function isFormulasTransformApplied(obj: any): boolean;
 export function sortFormulas(formulas: Formula[]): void;
 
 export default FormulasTransform;

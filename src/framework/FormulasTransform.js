@@ -155,6 +155,16 @@ export default function FormulasTransform(Base) {
   };
 }
 
+export function isFormulasTransformApplied(obj) {
+  // Walk up prototype chain looking for a constructor called FormulasTransform.
+  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
+    if (proto.constructor.name === "FormulasTransform") {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function sortFormulas(formulas) {
   // Sort constant formulas before variable formulas.
   formulas.sort((a, b) => {

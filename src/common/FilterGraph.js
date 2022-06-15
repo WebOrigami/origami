@@ -1,6 +1,8 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
-import FormulaTransform from "../framework/FormulasTransform.js";
+import FormulaTransform, {
+  isFormulasTransformApplied,
+} from "../framework/FormulasTransform.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 export default class FilterGraph {
@@ -10,7 +12,7 @@ export default class FilterGraph {
     // Apply the FormulaTransform and InheritScopeTransforms to the filter if
     // they're not already applied.
     filter = ExplorableGraph.from(filter);
-    if (!("formulas" in filter)) {
+    if (!isFormulasTransformApplied(filter)) {
       filter = transformObject(FormulaTransform, filter);
     }
     if (!("scope" in filter)) {

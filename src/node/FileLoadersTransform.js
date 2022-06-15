@@ -1,6 +1,7 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { stringLike, transformObject } from "../core/utilities.js";
+import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 
 const defaultLoaders = {
@@ -58,7 +59,7 @@ async function loadMetaGraph(buffer) {
   const scope = this;
   function toGraph() {
     const graph = ExplorableGraph.from(text);
-    if ("formulas" in graph) {
+    if (isFormulasTransformApplied(graph)) {
       return graph;
     }
     const meta = transformObject(MetaTransform, graph);

@@ -2,6 +2,7 @@ import assert from "assert/strict";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
+import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 
 /**
@@ -20,7 +21,7 @@ export default async function assertBuiltin(variant) {
   let graph = ExplorableGraph.from(variant);
 
   // If the graph isn't already a MetaGraph, make it one.
-  if (!("formulas" in graph) || !("parent" in graph)) {
+  if (!isFormulasTransformApplied(graph) || !("parent" in graph)) {
     graph = transformObject(MetaTransform, graph);
   }
   if (!graph.parent) {

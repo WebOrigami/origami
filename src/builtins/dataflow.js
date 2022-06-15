@@ -3,6 +3,7 @@ import * as YAMLModule from "yaml";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
+import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 // import { additionsPrefix } from "../framework/AdditionsTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
@@ -21,7 +22,7 @@ ignoreKeys.push(ops.thisKey);
 
 export default async function dataflow(variant) {
   let graph = ExplorableGraph.from(variant);
-  if (!("formulas" in graph)) {
+  if (!isFormulasTransformApplied(graph)) {
     graph = transformObject(MetaTransform, graph);
   }
 
