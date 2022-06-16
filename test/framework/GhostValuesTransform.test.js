@@ -87,6 +87,8 @@ describe("GhostValuesTransform", () => {
       "a",
       "subsubgraph",
       "c",
+      // Appears twice because GhostValuesTransform isn't smart to avoid duplicating keys.
+      "c",
     ]);
     const subsubgraph = await subgraph.get("subsubgraph");
     assert.deepEqual(await ExplorableGraph.plain(subsubgraph), {
