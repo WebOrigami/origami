@@ -40,10 +40,10 @@ export default function FormulasTransform(Base) {
 
         // Generate the set of implied keys in multiple passes until a pass
         // produces no new implied keys.
+        const formulas = await this.localFormulas();
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
           // Ask each formula to add any implied keys.
-          const formulas = await this.localFormulas();
           for await (const formula of formulas) {
             formula.addImpliedKeys(keys);
           }
