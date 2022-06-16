@@ -4,6 +4,7 @@ import process from "process";
 import { pathToFileURL } from "url";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { incrementCount } from "../core/measure.js";
 import {
   isPlainObject,
   sortNatural,
@@ -33,6 +34,7 @@ export default class FilesGraph {
 
   // Get the contents of the file or directory named by the given key.
   async get(key) {
+    incrementCount("FilesGraph get");
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
     return !stats

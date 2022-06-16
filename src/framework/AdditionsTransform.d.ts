@@ -2,6 +2,6 @@
 
 declare const AdditionsTransform: Mixin<{}>;
 
-export const additionsKey: string;
+export const additionsPrefix: string;
 
 export default AdditionsTransform;

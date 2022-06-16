@@ -3,6 +3,7 @@
 import yaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { incrementCount } from "../core/measure.js";
 import { stringLike, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
@@ -27,6 +28,7 @@ export default async function ori(expression, path) {
   let scope = this ?? builtins;
 
   // Parse
+  incrementCount("ori parse");
   const parsed = parse.expression(expression);
   let code = parsed?.value;
   if (!code || parsed.rest !== "") {

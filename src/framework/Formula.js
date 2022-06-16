@@ -1,3 +1,4 @@
+import { incrementCount } from "../core/measure.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
@@ -79,6 +80,7 @@ export default class Formula {
 
   static parse(source) {
     // Try to parse the base key as a key.
+    incrementCount("Formula parse");
     const { value: parsed, rest } = parse.key(source);
     if (!parsed || rest.length > 0) {
       // Unsuccessful parse

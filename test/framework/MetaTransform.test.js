@@ -12,7 +12,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
 const metaGraph = new (MetaTransform(FilesGraph))(
-  path.join(fixturesDirectory, "meta")
+  path.join(fixturesDirectory, "metagraphs")
 );
 metaGraph.parent = new Compose(
   {
