@@ -7,6 +7,6 @@ export default class FilesGraph implements Explorable {
   get(...keys: any[]): Promise<any>;
   isKeyExplorable(key: any): Promise<boolean>;
   set(...args: any[]): Promise<void>;
-  static unwatch(): Promise<void>;
-  static watch(): void;
+  unwatch(): Promise<void>;
+  watch(): Promise<void>;
 }

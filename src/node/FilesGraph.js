@@ -13,33 +13,20 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 
-let pathGraphMap;
-let watcher = null;
-
-// const registry = new FinalizationRegistry((dirname) => {
-//   watcher.unwatch(dirname);
-// });
+const pathGraphMap = new Map();
+const watcher = watch([]);
+watcher.on("all", async (eventType, filePath) => {
+  const dirname = path.dirname(filePath);
+  const graph = pathGraphMap.get(dirname);
+  if (graph) {
+    const key = path.basename(filePath);
+    graph.onChange(key);
+  }
+});
 
 export default class FilesGraph {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
-
-    if (watcher) {
-      // Turn on watching for the directory. The directory may not exist yet, in
-      // which case the call to watch() will throw ENOENT, so if we see ENOENT,
-      // we ignore the error.
-      //
-      // TODO: If a call to set() eventually creates the directory, begin
-      // watching it.
-      try {
-        watcher.add(dirname);
-        pathGraphMap.set(dirname, this);
-      } catch (/** @type {any} */ error) {
-        if (error.code !== "ENOENT") {
-          throw error;
-        }
-      }
-    }
   }
 
   async *[Symbol.asyncIterator]() {
@@ -162,23 +149,25 @@ export default class FilesGraph {
     }
   }
 
-  static async unwatch() {
-    await watcher.close();
-    pathGraphMap = null;
-    watcher = null;
+  async unwatch() {
+    watcher.unwatch(this.dirname);
+    pathGraphMap.delete(this.dirname);
   }
 
-  static watch() {
-    pathGraphMap = new Map();
-    watcher = watch([]);
-    watcher.on("all", async (eventType, filePath) => {
-      const dirname = path.dirname(filePath);
-      const graph = pathGraphMap.get(dirname);
-      if (graph) {
-        const key = path.basename(filePath);
-        graph.onChange(key);
+  // Turn on watching for the directory.
+  async watch() {
+    // The directory may not exist yet, in which case the call to watch() will
+    // throw ENOENT, so if we see ENOENT, we ignore the error.
+    //
+    // TODO: If set() eventually creates the directory, begin watching it.
+    try {
+      watcher.add(this.dirname);
+      pathGraphMap.set(this.dirname, this);
+    } catch (/** @type {any} */ error) {
+      if (error.code !== "ENOENT") {
+        throw error;
       }
-    });
+    }
   }
 }
 

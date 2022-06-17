@@ -142,25 +142,27 @@ describe("FilesGraph", () => {
 
   it("can watch its folder for changes", async () => {
     await createTempDirectory();
-    FilesGraph.watch();
-    let tempFiles;
+    class Fixture extends FilesGraph {
+      hook;
+
+      onChange(key) {
+        assert.equal(key, "file");
+        this.hook?.(key);
+      }
+    }
+    const tempFiles = new Fixture(tempDirectory);
+    tempFiles.watch();
     const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve(false), 1000);
+      setTimeout(() => resolve(false), 500);
     });
     const changePromise = new Promise(async (resolve) => {
-      class Fixture extends FilesGraph {
-        onChange(key) {
-          assert.equal(key, "file");
-          resolve(key);
-        }
-      }
-      tempFiles = new Fixture(tempDirectory);
+      tempFiles.hook = resolve;
       await tempFiles.set("file", "foo");
     });
     const result = await Promise.race([timeoutPromise, changePromise]);
     assert(result);
+    tempFiles.unwatch();
     await removeTempDirectory();
-    FilesGraph.unwatch();
   });
 });
 
