@@ -20,7 +20,7 @@ export default function FormulasTransform(Base) {
     }
 
     async *[Symbol.asyncIterator]() {
-      if (!this.listeningForChanges || !this[keysKey]) {
+      if (!this[keysKey]) {
         const keys = new Set();
         for await (const key of super[Symbol.asyncIterator]()) {
           keys.add(key);

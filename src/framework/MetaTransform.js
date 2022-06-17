@@ -1,3 +1,4 @@
+import CachedValuesTransform from "../common/CachedValuesTransform.js";
 import FileLoadersTransform from "../node/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
 import AdditionsTransform from "./AdditionsTransform.js";
@@ -6,11 +7,19 @@ import GhostValuesTransform from "./GhostValuesTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 export default function MetaTransform(Base) {
-  return class Meta extends InheritScopeTransform(
-    GhostValuesTransform(
-      FormulasTransform(
-        AdditionsTransform(FileLoadersTransform(ImplicitModulesTransform(Base)))
+  return class Meta extends CachedValuesTransform(
+    InheritScopeTransform(
+      GhostValuesTransform(
+        FormulasTransform(
+          AdditionsTransform(
+            FileLoadersTransform(ImplicitModulesTransform(Base))
+          )
+        )
       )
     )
-  ) {};
+  ) {
+    isKeyCachable(key) {
+      return key.endsWith?.(".meta") ?? false;
+    }
+  };
 }

@@ -57,13 +57,15 @@ async function loadMetaGraph(buffer) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
   const scope = this;
+  let meta;
   function toGraph() {
-    const graph = ExplorableGraph.from(text);
-    if (isFormulasTransformApplied(graph)) {
-      return graph;
+    if (!meta) {
+      const graph = ExplorableGraph.from(text);
+      meta = isFormulasTransformApplied(graph)
+        ? graph
+        : transformObject(MetaTransform, graph);
+      meta.parent = scope;
     }
-    const meta = transformObject(MetaTransform, graph);
-    meta.parent = scope;
     return meta;
   }
   /** @type {any} */ (textWithGraph).toGraph = toGraph;
