@@ -139,6 +139,29 @@ describe("FilesGraph", () => {
     );
     assert.deepEqual(valuesExplorable, [true, false, false]);
   });
+
+  it("can watch its folder for changes", async () => {
+    await createTempDirectory();
+    FilesGraph.watch();
+    let tempFiles;
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve(false), 1000);
+    });
+    const changePromise = new Promise(async (resolve) => {
+      class Fixture extends FilesGraph {
+        onChange(key) {
+          assert.equal(key, "file");
+          resolve(key);
+        }
+      }
+      tempFiles = new Fixture(tempDirectory);
+      await tempFiles.set("file", "foo");
+    });
+    const result = await Promise.race([timeoutPromise, changePromise]);
+    assert(result);
+    await removeTempDirectory();
+    FilesGraph.unwatch();
+  });
 });
 
 async function createTempDirectory() {

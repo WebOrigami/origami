@@ -1,3 +1,5 @@
+// import { watch } from "fs"; // Non-promise version of fs
+import { watch } from "chokidar";
 import * as fs from "fs/promises";
 import path from "path";
 import process from "process";
@@ -11,9 +13,33 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 
+let pathGraphMap;
+let watcher = null;
+
+// const registry = new FinalizationRegistry((dirname) => {
+//   watcher.unwatch(dirname);
+// });
+
 export default class FilesGraph {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
+
+    if (watcher) {
+      // Turn on watching for the directory. The directory may not exist yet, in
+      // which case the call to watch() will throw ENOENT, so if we see ENOENT,
+      // we ignore the error.
+      //
+      // TODO: If a call to set() eventually creates the directory, begin
+      // watching it.
+      try {
+        watcher.add(dirname);
+        pathGraphMap.set(dirname, this);
+      } catch (/** @type {any} */ error) {
+        if (error.code !== "ENOENT") {
+          throw error;
+        }
+      }
+    }
   }
 
   async *[Symbol.asyncIterator]() {
@@ -81,6 +107,10 @@ export default class FilesGraph {
     return stats ? stats.isDirectory() : false;
   }
 
+  onChange(key) {
+    // No-op
+  }
+
   get path() {
     return this.dirname;
   }
@@ -130,6 +160,25 @@ export default class FilesGraph {
       const data = await prepareData(escaped, value);
       await fs.writeFile(filePath, data);
     }
+  }
+
+  static async unwatch() {
+    await watcher.close();
+    pathGraphMap = null;
+    watcher = null;
+  }
+
+  static watch() {
+    pathGraphMap = new Map();
+    watcher = watch([]);
+    watcher.on("all", async (eventType, filePath) => {
+      const dirname = path.dirname(filePath);
+      const graph = pathGraphMap.get(dirname);
+      if (graph) {
+        const key = path.basename(filePath);
+        graph.onChange(key);
+      }
+    });
   }
 }
 
