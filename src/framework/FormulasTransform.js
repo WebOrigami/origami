@@ -6,6 +6,7 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
+const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasTransform(Base) {
@@ -14,6 +15,7 @@ export default function FormulasTransform(Base) {
       super(...args);
       this.bindings = null;
       this[formulasKey] = null;
+      this[localFormulasKey] = null;
       this[keysKey] = null;
     }
 
@@ -40,7 +42,7 @@ export default function FormulasTransform(Base) {
 
         // Generate the set of implied keys in multiple passes until a pass
         // produces no new implied keys.
-        const formulas = await this.localFormulas();
+        const formulas = await this.localFormulasCache();
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
           // Ask each formula to add any implied keys.
@@ -95,10 +97,14 @@ export default function FormulasTransform(Base) {
     }
 
     async formulas() {
-      // REVIEW: This isn't saving us much, because InheritScopeTransform is
-      // overriding the formulas() method.
-      if (!this.listeningForChanges || !this[formulasKey]) {
-        this[formulasKey] = await this.localFormulas();
+      const formulas = await this.localFormulasCache();
+      sortFormulas(formulas);
+      return formulas;
+    }
+
+    async formulasCache() {
+      if (!this[formulasKey]) {
+        this[formulasKey] = await this.formulas();
       }
       return this[formulasKey];
     }
@@ -115,7 +121,7 @@ export default function FormulasTransform(Base) {
 
       if (value === undefined) {
         // No real value defined; try our formulas.
-        const formulas = await this.formulas();
+        const formulas = await this.formulasCache();
         for (const formula of formulas) {
           value = await this.evaluateFormula(formula, key);
           if (value !== undefined) {
@@ -142,14 +148,23 @@ export default function FormulasTransform(Base) {
           formulas.push(formula);
         }
       }
-      sortFormulas(formulas);
       return formulas;
+    }
+
+    async localFormulasCache() {
+      if (!this[localFormulasKey]) {
+        const formulas = await this.localFormulas();
+        sortFormulas(formulas);
+        this[localFormulasKey] = formulas;
+      }
+      return this[localFormulasKey];
     }
 
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
       this[formulasKey] = null;
+      this[localFormulasKey] = null;
       this[keysKey] = null;
     }
   };

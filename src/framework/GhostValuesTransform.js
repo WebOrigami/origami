@@ -1,7 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import Formula from "./Formula.js";
-import { sortFormulas } from "./FormulasTransform.js";
 
 export const ghostGraphExtension = "+";
 
@@ -44,7 +43,7 @@ export default function GhostValuesTransform(Base) {
         if (ghostValue !== undefined) {
           ghostGraphs.push(ghostValue);
         }
-        
+
         // Add ghost graphs from local formulas.
         // TODO: prevent duplication of above ghostValue.
         const ghostResults = await this.formulaResults?.(ghostKey);
@@ -52,7 +51,7 @@ export default function GhostValuesTransform(Base) {
           ghostGraphs = ghostGraphs.concat(ghostResults);
         }
 
-        if (!('ghostGraphs' in value)) {
+        if (!("ghostGraphs" in value)) {
           value = transformObject(GhostValuesTransform, value);
         }
 
@@ -71,7 +70,6 @@ export default function GhostValuesTransform(Base) {
         const ghostFormulas = (await ghostGraph.localFormulas?.()) ?? [];
         formulas.push(...ghostFormulas);
       }
-      sortFormulas(formulas);
       return formulas;
     }
   };
