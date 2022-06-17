@@ -49,18 +49,14 @@ export default class DefaultValues {
     return value;
   }
 
-  get listeningForChanges() {
-    return /** @type {any} */ (this.graph).listeningForChanges;
-  }
-  set listeningForChanges(listeningForChanges) {
-    /** @type {any} */ (this.graph).listeningForChanges = listeningForChanges;
-  }
-
-  onChange(eventType, fileName) {
-    /** @type {any} */ (this.graph).onChange?.(eventType, fileName);
-  }
-
   get scope() {
     return /** @type {any} */ (this.graph).scope;
+  }
+
+  async unwatch() {
+    return /** @type {any} */ (this.graph).unwatch?.();
+  }
+  async watch() {
+    await /** @type {any} */ (this.graph).watch?.();
   }
 }

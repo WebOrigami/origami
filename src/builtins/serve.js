@@ -4,7 +4,7 @@ import process from "process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { requestListener } from "../server/server.js";
 import virtual from "./virtual.js";
-// import watch from "./watch.js";
+import watch from "./watch.js";
 
 const defaultPort = 5000;
 
@@ -13,13 +13,16 @@ const defaultPort = 5000;
  *
  * @param {GraphVariant} variant
  * @param {number} [port]
+ * @this {Explorable}
  */
 export default async function serve(variant, port) {
-  const graph = variant
-    ? ExplorableGraph.from(variant)
-    : // @ts-ignore
-      // await watch.call(this, await virtual.call(this));
-      await await virtual.call(this);
+  let graph;
+  if (variant) {
+    graph = ExplorableGraph.from(variant);
+  } else {
+    const virtualGraph = await virtual.call(this);
+    graph = await watch.call(this, virtualGraph);
+  }
 
   if (port === undefined) {
     if (process.env.PORT) {

@@ -147,8 +147,8 @@ export default function FormulasTransform(Base) {
     }
 
     // Reset memoized values when the underlying graph changes.
-    onChange(eventType, filename) {
-      super.onChange?.(eventType, filename);
+    onChange(key) {
+      super.onChange?.(key);
       this[formulasKey] = null;
       this[keysKey] = null;
     }

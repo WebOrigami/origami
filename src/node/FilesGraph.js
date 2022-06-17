@@ -14,13 +14,16 @@ import {
 } from "../core/utilities.js";
 
 const pathGraphMap = new Map();
-const watcher = watch([]);
+const watcher = watch([], { ignoreInitial: true });
 watcher.on("all", async (eventType, filePath) => {
-  const dirname = path.dirname(filePath);
-  const graph = pathGraphMap.get(dirname);
-  if (graph) {
-    const key = path.basename(filePath);
-    graph.onChange(key);
+  // Invoke onChange for graphs that contain the file path.
+  for (const [dirname, graph] of pathGraphMap) {
+    const relativePath = path.relative(dirname, filePath);
+    if (!relativePath.startsWith("..")) {
+      // Found -- graph contains this file
+      const key = path.basename(filePath);
+      graph.onChange(key);
+    }
   }
 });
 

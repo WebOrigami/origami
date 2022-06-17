@@ -68,10 +68,8 @@ export default function AdditionsTransform(Base) {
     }
 
     // Reset memoized values when the underlying graph changes.
-    onChange(eventType, filename) {
-      if (super.onChange) {
-        super.onChange(eventType, filename);
-      }
+    onChange(key) {
+      super.onChange?.(key);
       this[additions] = undefined;
     }
   };
