@@ -11,7 +11,7 @@ const fixturesDirectory = path.join(dirname, "fixtures");
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("FilesGraph", () => {
-  it("Can return the set of files in a folder tree", async () => {
+  it("can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     assert.deepEqual(await ExplorableGraph.keys(files), [
@@ -24,7 +24,14 @@ describe("FilesGraph", () => {
     assert.deepEqual(await ExplorableGraph.keys(more), ["d.txt", "e.txt"]);
   });
 
-  it("Can return the contents of files in a folder tree", async () => {
+  it("returns the same FilesGraph for the same subfolder", async () => {
+    const fixtures = new FilesGraph(fixturesDirectory);
+    const files1 = await fixtures.get("folder1");
+    const files2 = await fixtures.get("folder1");
+    assert.strictEqual(files1, files2);
+  });
+
+  it("can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const plain = await ExplorableGraph.toSerializable(files);
@@ -39,14 +46,14 @@ describe("FilesGraph", () => {
     });
   });
 
-  it("Can retrieve a file", async () => {
+  it("can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const file = await files.get("a.txt");
     assert.equal(String(file), "The letter A");
   });
 
-  it("Can traverse a path of keys in a folder tree", async () => {
+  it("can traverse a path of keys in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const file = await ExplorableGraph.traverse(files, "more", "e.txt");
@@ -153,7 +160,7 @@ describe("FilesGraph", () => {
     const tempFiles = new Fixture(tempDirectory);
     tempFiles.watch();
     const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve(false), 500);
+      setTimeout(() => resolve(false), 1000);
     });
     const changePromise = new Promise(async (resolve) => {
       tempFiles.hook = resolve;

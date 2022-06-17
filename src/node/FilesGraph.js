@@ -1,4 +1,3 @@
-// import { watch } from "fs"; // Non-promise version of fs
 import { watch } from "chokidar";
 import * as fs from "fs/promises";
 import path from "path";
@@ -30,6 +29,7 @@ watcher.on("all", async (eventType, filePath) => {
 export default class FilesGraph {
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
+    this.subfoldersMap = new Map();
   }
 
   async *[Symbol.asyncIterator]() {
@@ -53,11 +53,20 @@ export default class FilesGraph {
     incrementCount("FilesGraph get");
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
-    return !stats
-      ? undefined
-      : stats.isDirectory()
-      ? Reflect.construct(this.constructor, [objPath])
-      : await fs.readFile(objPath);
+    if (!stats) {
+      return undefined;
+    } else if (!stats.isDirectory()) {
+      // Return file
+      return fs.readFile(objPath);
+    } else {
+      let subfolder = this.subfoldersMap.get(key);
+      if (!subfolder) {
+        // Haven't seen this subfolder before.
+        subfolder = Reflect.construct(this.constructor, [objPath]);
+        this.subfoldersMap.set(key, subfolder);
+      }
+      return subfolder;
+    }
   }
 
   async import(...keys) {
