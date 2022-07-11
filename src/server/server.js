@@ -6,7 +6,7 @@ import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 // Given a relative web path like "/foo/bar", return the corresponding object in
 // the graph.
 export async function getResourceAtPath(graph, href) {
-  const keys = keysFromHref(href);
+  const keys = keysFromUrl(href);
   return ExplorableGraph.traverse(graph, ...keys);
 }
 
@@ -23,8 +23,9 @@ export function graphRouter(graph) {
 }
 
 export async function handleRequest(request, response, graph) {
-  const decodedUrl = decodeURI(request.url);
-  const keys = keysFromHref(decodedUrl);
+  // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
+  const url = new URL(request.url, `https://${request.headers.host}`);
+  const keys = keysFromUrl(url);
 
   // Ask the graph for the resource with those keys.
   let resource;
@@ -110,8 +111,8 @@ export async function handleRequest(request, response, graph) {
   return false;
 }
 
-export function keysFromHref(href) {
-  const keys = href.split("/");
+export function keysFromUrl(url) {
+  const keys = url.pathname.split("/");
   if (keys[0] === "") {
     // The path begins with a slash; drop that part.
     keys.shift();
