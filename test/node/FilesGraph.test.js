@@ -10,7 +10,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("FilesGraph", () => {
+describe.skip("FilesGraph", () => {
   it("can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
