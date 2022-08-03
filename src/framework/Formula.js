@@ -81,8 +81,10 @@ export default class Formula {
   static parse(source) {
     // Try to parse the base key as a key.
     incrementCount("Formula parse");
-    const { value: parsed, rest } = parse.key(source);
-    if (!parsed || rest.length > 0) {
+    const parsed = parse.key(source);
+    const value = parsed?.value ?? null;
+    const rest = parsed?.rest ?? null;
+    if (!value || rest.length > 0) {
       // Unsuccessful parse
       if (source.includes("=")) {
         console.warn(`Formula: couldn't parse formula: ${source}`);
@@ -90,9 +92,9 @@ export default class Formula {
       return null;
     }
     const inheritable = source.startsWith("…");
-    if (parsed[0] === ops.variable) {
+    if (value[0] === ops.variable) {
       // Variable pattern
-      const [_, variable, extension] = parsed;
+      const [_, variable, extension] = value;
       return new VariableFormula(
         variable,
         extension,
@@ -100,9 +102,9 @@ export default class Formula {
         source,
         inheritable
       );
-    } else if (parsed[0] === "=") {
+    } else if (value[0] === "=") {
       // Assignment
-      const [_, left, expression] = parsed;
+      const [_, left, expression] = value;
       if (left[0] === ops.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
@@ -118,7 +120,7 @@ export default class Formula {
         return new ConstantFormula(left, expression, source, inheritable);
       }
     } else {
-      return undefined;
+      return null;
     }
   }
 }
