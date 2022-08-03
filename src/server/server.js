@@ -112,7 +112,8 @@ export async function handleRequest(request, response, graph) {
 }
 
 export function keysFromUrl(url) {
-  const keys = url.pathname.split("/");
+  const decodedUrl = decodeURIComponent(url.pathname);
+  const keys = decodedUrl.split("/");
   if (keys[0] === "") {
     // The path begins with a slash; drop that part.
     keys.shift();
