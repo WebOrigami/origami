@@ -1,7 +1,24 @@
 import path from "path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 import { isPlainObject, stringLike } from "../core/utilities.js";
+import { addAncestor } from "../framework/scopeUtilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
+
+// Extend the graph with the URL's search parameters.
+function extendGraphWithParams(graph, url) {
+  const params = {};
+  for (const [key, value] of url.searchParams) {
+    params[key] = value;
+  }
+
+  const paramGraph = new ObjectGraph({
+    "@params": params,
+  });
+
+  const extended = addAncestor(graph, paramGraph);
+  return extended;
+}
 
 // Given a relative web path like "/foo/bar", return the corresponding object in
 // the graph.
@@ -27,10 +44,15 @@ export async function handleRequest(request, response, graph) {
   const url = new URL(request.url, `https://${request.headers.host}`);
   const keys = keysFromUrl(url);
 
+  const extendedGraph =
+    url.searchParams && "parent" in graph
+      ? extendGraphWithParams(graph, url)
+      : graph;
+
   // Ask the graph for the resource with those keys.
   let resource;
   try {
-    resource = await ExplorableGraph.traverse(graph, ...keys);
+    resource = await ExplorableGraph.traverse(extendedGraph, ...keys);
     // If resource is a function, invoke to get the object we want to return.
     if (typeof resource === "function") {
       resource = await resource();

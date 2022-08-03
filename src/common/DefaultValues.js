@@ -49,6 +49,13 @@ export default class DefaultValues {
     return value;
   }
 
+  get parent() {
+    return /** @type {any} */ (this.graph).parent;
+  }
+  set parent(parent) {
+    /** @type {any} */ (this.graph).parent = parent;
+  }
+
   get scope() {
     return /** @type {any} */ (this.graph).scope;
   }
