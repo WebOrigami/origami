@@ -232,7 +232,11 @@ export class VariableFormula extends Formula {
       if (key.length > extension.length && key.endsWith(extension)) {
         return key.substring(0, key.length - extension.length);
       }
-    } else if (typeof key === "string" && !key.includes(".")) {
+    } else if (
+      typeof key === "string" &&
+      !key.includes(".") &&
+      !key.endsWith(ghostGraphExtension)
+    ) {
       // Key matches if it has no extension
       return key;
     }

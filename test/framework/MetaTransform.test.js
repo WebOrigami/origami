@@ -78,7 +78,7 @@ describe("MetaTransform", () => {
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
-  it.skip("can handle nested wildcard folders", async () => {
+  it("can handle nested wildcard folders", async () => {
     const graph = new (MetaTransform(FilesGraph))(
       path.join(fixturesDirectory, "wildcardFolders")
     );
@@ -244,7 +244,7 @@ describe("MetaTransform", () => {
 
   it("ghost folders can define formulas that work on original graph values", async () => {
     const fixture = new (MetaTransform(ObjectGraph))({
-      "[x]": {
+      "[x]+": {
         "message = `Hello, {{name}}.`": "",
       },
       sub: {
