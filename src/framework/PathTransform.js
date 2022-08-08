@@ -1,0 +1,18 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
+const pathKey = Symbol("path");
+
+export default function PathTransform(Base) {
+  return class Path extends Base {
+    async get(key) {
+      let value = await super.get(key);
+      if (ExplorableGraph.isExplorable(value)) {
+        const path = this[pathKey] ? `${this[pathKey]}/${key}` : key;
+        value[pathKey] = path;
+      } else if (value === undefined && key === "@path") {
+        value = this[pathKey];
+      }
+      return value;
+    }
+  };
+}
