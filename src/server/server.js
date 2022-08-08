@@ -1,22 +1,40 @@
 import path from "path";
+import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { isPlainObject, stringLike } from "../core/utilities.js";
-import { addAncestor } from "../framework/scopeUtilities.js";
+import {
+  isPlainObject,
+  stringLike,
+  transformObject,
+} from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+// import { addAncestor } from "../framework/scopeUtilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
-// Extend the graph with the URL's search parameters.
-function extendGraphWithParams(graph, url) {
+// Extend the graph's scope with the URL's search parameters.
+function extendGraphScopeWithParams(graph, url) {
+  // Create a graph that includes the URL's search parameters.
   const params = {};
   for (const [key, value] of url.searchParams) {
     params[key] = value;
   }
-
   const paramGraph = new ObjectGraph({
     "@params": params,
   });
 
-  const extended = addAncestor(graph, paramGraph);
+  // Create a new scope that includes search parameter graph.
+  const oldScope = graph.scope;
+  const newScope = oldScope ? new Scope(paramGraph, oldScope) : paramGraph;
+
+  // Create a new graph that extends the prototype chain of the supplied graph.
+  const extended =
+    "parent" in graph
+      ? Object.create(graph)
+      : transformObject(InheritScopeTransform, graph);
+
+  // Give the new graph the extended scope.
+  extended.parent = newScope;
+
   return extended;
 }
 
@@ -46,7 +64,7 @@ export async function handleRequest(request, response, graph) {
 
   const extendedGraph =
     url.searchParams && "parent" in graph
-      ? extendGraphWithParams(graph, url)
+      ? extendGraphScopeWithParams(graph, url)
       : graph;
 
   // Ask the graph for the resource with those keys.

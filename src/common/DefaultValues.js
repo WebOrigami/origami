@@ -8,7 +8,8 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default class DefaultValues {
   constructor(graph, defaults) {
-    this.graph = ExplorableGraph.from(graph);
+    this.original = ExplorableGraph.from(graph);
+    this.graph = this.original;
     this.defaults = ExplorableGraph.from(defaults);
   }
 
@@ -53,6 +54,8 @@ export default class DefaultValues {
     return /** @type {any} */ (this.graph).parent;
   }
   set parent(parent) {
+    // Avoid destructive modification of the underlying graph.
+    this.graph = Object.create(this.original);
     /** @type {any} */ (this.graph).parent = parent;
   }
 
