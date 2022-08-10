@@ -9,6 +9,7 @@ export { default as feedRss } from "./src/builtins/feedRss.js";
 export { default as fetch } from "./src/builtins/fetch.js";
 export { default as files } from "./src/builtins/files.js";
 export { default as filter } from "./src/builtins/filter.js";
+export { default as first } from "./src/builtins/first.js";
 export { default as front } from "./src/builtins/front.js";
 export { default as graph } from "./src/builtins/graph.js";
 export { default as graphVirtual } from "./src/builtins/graphVirtual.js";
