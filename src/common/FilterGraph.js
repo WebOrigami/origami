@@ -55,24 +55,27 @@ export default class FilterGraph {
     }
 
     // At this point, we have an explorable value that isn't explicitly filtered
-    // out. It's possible that the filter nevertheless has inheritable formulas
-    // that might apply to the value we're returning.
-    const inheritedFilter = await inheritFormulas(this.filter);
-
-    if (!inheritedFilter) {
-      // No inherited formulas, so anything below this value is implicitly
-      // filtered out.
-      return undefined;
+    // out. It's possible that the filter has subkeys with explicit true/false
+    // values and/or it inherits formulas that might apply to the value we're
+    // returning.
+    const isFilterValueExplorable = await ExplorableGraph.isExplorable(
+      filterValue
+    );
+    const subfilter = isFilterValueExplorable
+      ? filterValue
+      : await inheritedFormulas(this.filter);
+    if (subfilter) {
+      // Construct a new FilterGraph for the subvalue and inherited formulas.
+      return Reflect.construct(this.constructor, [value, subfilter]);
     }
 
-    // Construct a new FilterGraph for the subvalue and inherited formulas.
-    return Reflect.construct(this.constructor, [value, inheritedFilter]);
+    return undefined;
   }
 }
 
-// Return a copy of the filter's inheritable formulas. If none are found, return
+// Return a copy of the filter's inherited formulas. If none are found, return
 // null.
-async function inheritFormulas(filter) {
+async function inheritedFormulas(filter) {
   const formulas = {};
   for await (const key of filter) {
     // HACK: for now we just inspect the key to see if it starts with "…". It
