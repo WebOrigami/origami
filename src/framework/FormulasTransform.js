@@ -171,9 +171,10 @@ export default function FormulasTransform(Base) {
 }
 
 export function isFormulasTransformApplied(obj) {
-  // Walk up prototype chain looking for a constructor called FormulasTransform.
+  // Walk up prototype chain looking for a constructor called Formulas, which is
+  // what is added by FormulasTransform.
   for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
-    if (proto.constructor.name === "FormulasTransform") {
+    if (proto.constructor.name === "Formulas") {
       return true;
     }
   }
