@@ -35,27 +35,26 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("filters a graph, but not when it's in scope", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
-      show: "A",
-      hide: "B",
-      more: {
-        "letter = hide": "",
+  it.only("filters a graph, but not when it's in scope", async () => {
+    const graph1 = new FilterGraph(
+      {
+        show: "A",
+        hide: "B",
       },
+      {
+        show: true,
+      }
+    );
+    const graph2 = new (MetaTransform(ObjectGraph))({
+      "letter = hide": "",
     });
-    const filter = {
-      show: true,
-      hide: false,
-      more: {
-        letter: true,
-      },
-    };
-    const fixture = new FilterGraph(graph, filter);
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
-      show: "A",
-      more: {
-        letter: "B",
-      },
-    });
+    graph2.parent = graph1;
+
+    // Direct get("hide") is filtered.
+    assert.equal(await graph1.get("hide"), undefined);
+
+    // But "hide" is in scope, so get("letter") is not filtered.
+    const letter = await graph2.get("letter");
+    assert.equal(letter, "B");
   });
 });

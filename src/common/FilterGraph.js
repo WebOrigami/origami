@@ -37,6 +37,11 @@ export default class FilterGraph {
   }
 
   async get(key) {
+    // Filter does not apply when graph is in scope.
+    if (this.isInScope) {
+      return this.graph.get(key);
+    }
+
     const filterValue = await this.filter.get(key);
     if (filterValue === false) {
       // Explicitly filtered out
