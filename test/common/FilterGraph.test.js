@@ -35,7 +35,7 @@ describe("FilterGraph", () => {
     });
   });
 
-  it.only("filters a graph, but not when it's in scope", async () => {
+  it("filters a graph, but not when it's in scope", async () => {
     const graph1 = new FilterGraph(
       {
         show: "A",
