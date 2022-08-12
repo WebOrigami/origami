@@ -1,6 +1,7 @@
 /// <reference path="./code.d.ts" />
 
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import format from "./format.js";
 import * as ops from "./ops.js";
 
 /**
@@ -65,8 +66,8 @@ export default async function execute(code) {
           await ExplorableGraph.traverseOrThrow(fn, ...args);
     return result;
   } catch (/** @type {any} */ error) {
-    console.error(`An Origami expression triggered an exception:`);
-    console.error(JSON.stringify(code));
+    const formatted = format(code);
+    console.error(`An Origami expression triggered an exception: ${formatted}`);
     console.error(error.stack);
     return undefined;
   }
