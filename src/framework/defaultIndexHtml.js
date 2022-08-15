@@ -1,5 +1,4 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import Formula from "./Formula.js";
 import StringWithGraph from "./StringWithGraph.js";
 
 /**
@@ -17,7 +16,7 @@ export default async function defaultIndexHtml(
   for (const key of filtered) {
     let link;
     const keyText = String(key);
-    if (Formula.isFormula(keyText)) {
+    if (keyText.includes("=")) {
       const isWildcard = keyText.startsWith("{");
       if (isWildcard) {
         link = `<li class="formula wildcard"><a href="${keyText}">${keyText}</a></li>`;
