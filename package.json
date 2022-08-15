@@ -1,6 +1,6 @@
 {
   "name": "@explorablegraph/explorable",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "bin": {
     "ori": "src/cli/cli.js"
