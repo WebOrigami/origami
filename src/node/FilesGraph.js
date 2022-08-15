@@ -19,9 +19,17 @@ watcher.on("all", async (eventType, filePath) => {
   for (const [dirname, graph] of pathGraphMap) {
     const relativePath = path.relative(dirname, filePath);
     if (!relativePath.startsWith("..")) {
-      // Found -- graph contains this file
-      const key = path.basename(filePath);
-      graph.onChange(key);
+      // Found -- graph contains this file as a descendant.
+      // Traverse to the graph that actually contains this file.
+      const keys = relativePath.split("/");
+      const containerKeys = keys.slice(0, -1);
+      const containerGraph =
+        containerKeys.length > 0
+          ? await ExplorableGraph.traverse(graph, ...containerKeys)
+          : graph;
+      const fileKey = keys[keys.length - 1];
+      // Let the container graph know the file with this key has changed.
+      containerGraph.onChange(fileKey);
     }
   }
 });
