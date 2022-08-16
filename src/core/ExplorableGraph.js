@@ -52,6 +52,10 @@ export default class ExplorableGraph {
     // Parse a string/buffer as YAML (which covers JSON too).
     if (utilities.stringLike(variant)) {
       obj = utilities.parse(String(variant));
+      if (obj === null) {
+        // String be empty or was just YAML with comments.
+        obj = {};
+      }
     }
 
     // Handle known types.
