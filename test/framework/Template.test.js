@@ -81,7 +81,7 @@ text`;
 
       const frontData = await scope.get("@frontData");
       assert.deepEqual(await ExplorableGraph.plain(frontData), { b: 2 });
-      assert.equal(await scope.get("@input"), inputDocument);
+      assert.equal(await scope.get("."), inputDocument);
       assert.equal(await scope.get("@text"), "text");
       return "";
     };

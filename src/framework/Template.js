@@ -70,7 +70,6 @@ export default class Template {
     // Ambient properties let the template reference specific input/template data.
     const ambients = {
       "@frontData": frontData,
-      "@input": input,
       "@template": {
         frontData: this.frontData,
         scope: this.scope,
