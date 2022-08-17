@@ -24,8 +24,10 @@ export default async function defaultIndexHtml(
         // Split on first equals sign.
         const equalsIndex = keyText.indexOf("=");
         const lhs = keyText.substring(0, equalsIndex).trim();
-        const rhs = keyText.substring(equalsIndex + 1);
-        link = `<li><a href="${lhs}">${lhs}</a> <span class="formula rhs"><a href="${keyText}">= ${rhs}</a></span></li>`;
+        const rhs = keyText.substring(equalsIndex + 1).trim();
+        link = `<li>
+  <a href="${lhs}">${lhs}</a><span class="formula rhs">&nbsp;&nbsp;<a href="${keyText}">=&nbsp;&nbsp;${rhs}</a></span>
+</li>`;
       }
     } else {
       // Simple key.
@@ -69,14 +71,9 @@ export default async function defaultIndexHtml(
 
           .formula {
             color: #888;
-            font-family: monospace;
           }
           .formula a {
             color: inherit;
-          }
-
-          .rhs {
-            margin-left: 1em;
           }
         </style>
       </head>
