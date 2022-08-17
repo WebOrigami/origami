@@ -67,8 +67,7 @@ export default async function execute(code) {
     return result;
   } catch (/** @type {any} */ error) {
     const formatted = format(code);
-    console.error(`An Origami expression triggered an exception: ${formatted}`);
-    console.error(error.stack);
-    return undefined;
+    const message = `Error triggered by Origami expression: ${formatted}`;
+    throw new Error(message, { cause: error });
   }
 }

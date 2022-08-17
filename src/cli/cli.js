@@ -46,5 +46,14 @@ while (args[0] === "") {
 try {
   await main(...args);
 } catch (/** @type {any} */ error) {
-  console.error(error);
+  // Work up to the root cause, displaying intermediate messages as we go up.
+  while (error.cause) {
+    console.error(error.message);
+    error = error.cause;
+  }
+  if (error.stack) {
+    // Display stack trace for root cause, under the theory that that's the most
+    // useful place to look for the problem.
+    console.error(error.stack);
+  }
 }
