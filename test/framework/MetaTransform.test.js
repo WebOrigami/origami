@@ -179,25 +179,6 @@ describe("MetaTransform", () => {
     });
   });
 
-  it("real values take precedence over wildcards", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
-      "…a": 1,
-      subgraphWithA: {
-        a: 2,
-      },
-      subgraphWithoutA: {},
-    });
-
-    assert.equal(
-      await ExplorableGraph.traverse(graph, "subgraphWithA", "a"),
-      2
-    );
-    assert.equal(
-      await ExplorableGraph.traverse(graph, "subgraphWithoutA", "a"),
-      1
-    );
-  });
-
   it("wildcard values do not apply in scope", async () => {
     const graph = new (MetaTransform(ObjectGraph))({
       "[test]": {
@@ -215,31 +196,6 @@ describe("MetaTransform", () => {
     // Wildcard folder is not found in search of scope.
     const match = await ExplorableGraph.traverse(graph, "subgraph", "match");
     assert.equal(match, undefined);
-  });
-
-  it("lets subgraphs inherit values", async () => {
-    const fixture = new (MetaTransform(ObjectGraph))({
-      "…a": 1,
-      "…b": 2,
-      subgraph: {
-        "…b": 3, // Overrides ancestor value
-        subsubgraph: {},
-      },
-    });
-
-    assert.equal(await fixture.get("a"), 1);
-
-    assert.equal(await ExplorableGraph.traverse(fixture, "subgraph", "a"), 1);
-    assert.equal(await ExplorableGraph.traverse(fixture, "subgraph", "b"), 3);
-
-    assert.equal(
-      await ExplorableGraph.traverse(fixture, "subgraph", "subsubgraph", "a"),
-      1
-    );
-    assert.equal(
-      await ExplorableGraph.traverse(fixture, "subgraph", "subsubgraph", "b"),
-      3
-    );
   });
 
   it("ghost folders can define formulas that work on original graph values", async () => {

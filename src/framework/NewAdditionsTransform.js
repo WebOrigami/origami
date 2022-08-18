@@ -1,9 +1,9 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 
 const childAdditions = Symbol("childAdditions");
 const gettingChildAdditions = Symbol("gettingChildAdditions");
-// const peerAdditions = Symbol("peerAdditions");
 const inheritedAdditions = Symbol("inheritedAdditions");
 
 export const additionsPrefix = "+";
@@ -16,19 +16,13 @@ export default function NewAdditionsTransform(Base) {
       super(...args);
       this[childAdditions] = undefined;
       this[gettingChildAdditions] = false;
-      // this[peerAdditions] = undefined;
       this[inheritedAdditions] = undefined;
     }
 
     async additions() {
       const childAdditions = await this.childAdditions();
-      // // const peerAdditions = await this.peerAdditions();
-      const inheritedAdditions = await this.inheritedAdditions();
-      const allAdditions = [
-        ...childAdditions,
-        // ...peerAdditions,
-        ...inheritedAdditions,
-      ];
+      const inherited = this[inheritedAdditions] || [];
+      const allAdditions = [...childAdditions, ...inherited];
       return allAdditions.length === 0
         ? null
         : allAdditions.length === 1
@@ -77,61 +71,66 @@ export default function NewAdditionsTransform(Base) {
         value = await additions?.get(key);
       }
 
-      // TODO: add inherited additions
-      // both … additions and foo+ additions
+      // If the value is an explorable graph, add inherited additions.
       if (ExplorableGraph.isExplorable(value)) {
-        const inheritedAdditions = [];
+        const inheritableValues = await getInheritableValues(this);
+        const peerValues = await getPeerValues(this, key);
 
-        if (!isPeerAdditionKey(key)) {
-          const ghostKey = `${key}${peerAdditionsSuffix}`;
+        // TODO: See if ghost key itself exists.
+        // TODO: prevent duplication of above ghostValue.
+        // const ghostValue = await this.get(ghostKey);
+        // if (ghostValue !== undefined) {
+        //   ghostGraphs.push(ghostValue);
+        // }
 
-          // See if ghost key itself exists.
-          const ghostValue = await this.get(ghostKey);
-          if (ghostValue !== undefined) {
-            ghostGraphs.push(ghostValue);
-          }
-
-          // Add ghost graphs from local formulas.
-          // TODO: prevent duplication of above ghostValue.
-          const ghostResults = await this.formulaResults?.(ghostKey);
-          if (ghostResults) {
-            ghostGraphs = ghostGraphs.concat(ghostResults);
-          }
-
-          if (!("ghostGraphs" in value)) {
-            value = transformObject(GhostValuesTransform, value);
-          }
-
-          value[inheritedAdditions] = inheritedAdditions;
+        // Treat peer additions as a form of inherited additions.
+        value[inheritedAdditions] = inheritableValues
+          ? [inheritableValues]
+          : [];
+        if (peerValues.length > 0) {
+          value[inheritedAdditions].push(...peerValues);
         }
       }
 
       return value;
     }
 
+    async matchAll(key) {
+      // Default behavior just includes the value obtained by get(key).
+      const value = await this.get(key);
+      return value ? [value] : [];
+    }
+
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
       this[childAdditions] = undefined;
-      // this[peerAdditions] = undefined;
       this[inheritedAdditions] = undefined;
     }
   };
 }
 
-async function inheritableValues(graph) {
-  const values = [];
+async function getInheritableValues(graph) {
+  let values = null;
   for await (const key of graph) {
     if (isInheritedAdditionKey(key)) {
       const value = await graph.get(key);
-      values.push(value);
-    } else {
-      const peerAdditionsKey = `${key}${peerAdditionsSuffix}`;
-      if (key === peerAdditionsKey) {
-        const value = await graph.get(key);
-        values.push(value);
+      if (values === null) {
+        values = {};
       }
+      values[key] = value;
     }
+  }
+  return values ? new ObjectGraph(values) : null;
+}
+
+async function getPeerValues(graph, graphKey) {
+  const values = [];
+  // A peer additions graph itself can't have peer values.
+  if (!isPeerAdditionKey(graphKey)) {
+    const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
+    const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
+    values.push(...peerAdditions);
   }
   return values;
 }
