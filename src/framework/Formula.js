@@ -2,8 +2,7 @@ import { incrementCount } from "../core/measure.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
-import { additionsPrefix } from "./AdditionsTransform.js";
-import { ghostGraphExtension } from "./GhostValuesTransform.js";
+import { additionsPrefix, peerAdditionsSuffix } from "./AdditionsTransform.js";
 import { getScope } from "./scopeUtilities.js";
 
 export default class Formula {
@@ -147,7 +146,7 @@ export class VariableFormula extends Formula {
     if (
       !this.antecedents ||
       this.extension === null ||
-      this.extension === ghostGraphExtension
+      this.extension === peerAdditionsSuffix
     ) {
       return;
     }
@@ -192,7 +191,7 @@ export class VariableFormula extends Formula {
   get foundInScope() {
     return (
       this.extension !== null &&
-      this.extension !== ghostGraphExtension &&
+      this.extension !== peerAdditionsSuffix &&
       super.foundInScope
     );
   }
@@ -220,7 +219,7 @@ export class VariableFormula extends Formula {
     } else if (
       typeof key === "string" &&
       !key.includes(".") &&
-      !key.endsWith(ghostGraphExtension)
+      !key.endsWith(peerAdditionsSuffix)
     ) {
       // Key matches if it has no extension
       return key;
