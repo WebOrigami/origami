@@ -6,7 +6,6 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
-const localFormulasKey = Symbol("localFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasTransform(Base) {
@@ -15,8 +14,16 @@ export default function FormulasTransform(Base) {
       super(...args);
       this.bindings = null;
       this[formulasKey] = null;
-      this[localFormulasKey] = null;
       this[keysKey] = null;
+    }
+
+    // We implement allKeys() so that, if a subclass implements it, it will
+    // invoke this implementation. We want to prevent the subclass from invoking
+    // this class' asyncIterator() directly -- because the asyncIterator invokes
+    // formulas(), which invokes allKeys(), that would cause an infinite loop.
+    async *allKeys() {
+      const base = super.allKeys ?? super[Symbol.asyncIterator];
+      yield* base?.call(this);
     }
 
     async *[Symbol.asyncIterator]() {
@@ -26,23 +33,9 @@ export default function FormulasTransform(Base) {
           keys.add(key);
         }
 
-        // Cooperate with AdditionsTransform: if the graph has addition, add the
-        // addition's keys to the graph's keys. We wouldn't normally pick those
-        // up, because MetaTransform applies AdditionsTransform after
-        // FormulasTransform. (If someone applies the mixins in the opposite
-        // order, the addition's keys will already have been picked up by the
-        // iterator above, but it won't hurt anything to add them to the set
-        // again.)
-        const additions = await this.additions?.();
-        if (additions) {
-          for await (const key of additions) {
-            keys.add(key);
-          }
-        }
-
         // Generate the set of implied keys in multiple passes until a pass
         // produces no new implied keys.
-        const formulas = await this.localFormulasCache();
+        const formulas = await this.formulas();
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
           // Ask each formula to add any implied keys.
@@ -97,14 +90,19 @@ export default function FormulasTransform(Base) {
     }
 
     async formulas() {
-      const formulas = await this.localFormulasCache();
-      sortFormulas(formulas);
-      return formulas;
-    }
-
-    async formulasCache() {
       if (!this[formulasKey]) {
-        this[formulasKey] = await this.formulas();
+        const formulas = [];
+        for await (const key of this.allKeys()) {
+          // Try to parse the key as a formula.
+          const formula = Formula.parse(String(key));
+          if (formula) {
+            // Successfully parsed key as a formula.
+            formula.closure = this.bindings ?? {};
+            formulas.push(formula);
+          }
+        }
+        sortFormulas(formulas);
+        this[formulasKey] = formulas;
       }
       return this[formulasKey];
     }
@@ -121,7 +119,7 @@ export default function FormulasTransform(Base) {
 
       if (value === undefined) {
         // No real value defined; try our formulas.
-        const formulas = await this.formulasCache();
+        const formulas = await this.formulas();
         for (const formula of formulas) {
           value = await this.evaluateFormula(formula, key);
           if (value !== undefined) {
@@ -134,37 +132,10 @@ export default function FormulasTransform(Base) {
       return value;
     }
 
-    // Find all formulas in this graph.
-    async localFormulas() {
-      // Start with super formulas, if any.
-      const formulas = (await super.localFormulas?.()) ?? [];
-      // Loop over all keys.
-      for await (const key of super[Symbol.asyncIterator]()) {
-        // Try to parse the key as a formula.
-        const formula = Formula.parse(String(key));
-        if (formula) {
-          // Successfully parsed key as a formula.
-          formula.closure = this.bindings ?? {};
-          formulas.push(formula);
-        }
-      }
-      return formulas;
-    }
-
-    async localFormulasCache() {
-      if (!this[localFormulasKey]) {
-        const formulas = await this.localFormulas();
-        sortFormulas(formulas);
-        this[localFormulasKey] = formulas;
-      }
-      return this[localFormulasKey];
-    }
-
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
       this[formulasKey] = null;
-      this[localFormulasKey] = null;
       this[keysKey] = null;
     }
   };

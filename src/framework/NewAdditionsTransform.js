@@ -51,8 +51,9 @@ export default function NewAdditionsTransform(Base) {
       return this[childAdditions];
     }
 
-    async *[Symbol.asyncIterator]() {
-      yield* super[Symbol.asyncIterator]();
+    async *allKeys() {
+      const base = super.allKeys ?? super[Symbol.asyncIterator];
+      yield* base?.call(this);
       const additions = await this.additions();
       if (additions) {
         yield* additions;
