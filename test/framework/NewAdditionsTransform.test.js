@@ -5,7 +5,7 @@ import NewAdditionsTransform from "../../src/framework/NewAdditionsTransform.js"
 import FileLoadersTransform from "../../src/node/FileLoadersTransform.js";
 import assert from "../assert.js";
 
-describe.only("NewAdditionsTransform", () => {
+describe("NewAdditionsTransform", () => {
   it("defines child additions with + additions prefix", async () => {
     const graph = new (NewAdditionsTransform(ObjectGraph))({
       a: 1,

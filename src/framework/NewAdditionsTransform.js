@@ -42,6 +42,7 @@ export default function NewAdditionsTransform(Base) {
             const addition = await this.get(key);
             if (addition) {
               const graph = ExplorableGraph.from(addition);
+              graph.applyFormulas = false;
               this[childAdditions].push(graph);
             }
           }
@@ -76,13 +77,6 @@ export default function NewAdditionsTransform(Base) {
       if (ExplorableGraph.isExplorable(value)) {
         const inheritableValues = await getInheritableValues(this);
         const peerValues = await getPeerValues(this, key);
-
-        // TODO: See if ghost key itself exists.
-        // TODO: prevent duplication of above ghostValue.
-        // const ghostValue = await this.get(ghostKey);
-        // if (ghostValue !== undefined) {
-        //   ghostGraphs.push(ghostValue);
-        // }
 
         // Treat peer additions as a form of inherited additions.
         value[inheritedAdditions] = inheritableValues
@@ -131,6 +125,9 @@ async function getPeerValues(graph, graphKey) {
   if (!isPeerAdditionKey(graphKey)) {
     const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
     const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
+    peerAdditions.forEach((peerGraph) => {
+      peerGraph.applyFormulas = false;
+    });
     values.push(...peerAdditions);
   }
   return values;

@@ -162,21 +162,14 @@ describe("MetaTransform", () => {
     );
   });
 
-  it("can imply keys based on additions", async () => {
+  it("a formula can reference a child addition", async () => {
     const graph = new (MetaTransform(ObjectGraph))({
       "+": {
         "a.json": "Hello, a.",
       },
       "[x].txt = {{x}}.json": "",
     });
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      "+": {
-        "a.json": "Hello, a.",
-      },
-      "[x].txt = {{x}}.json": "",
-      "a.json": "Hello, a.",
-      "a.txt": "Hello, a.",
-    });
+    assert.equal(await graph.get("a.txt"), "Hello, a.");
   });
 
   it("wildcard values do not apply in scope", async () => {
@@ -198,7 +191,7 @@ describe("MetaTransform", () => {
     assert.equal(match, undefined);
   });
 
-  it("ghost folders can define formulas that work on original graph values", async () => {
+  it("peer addition formulas can reference a local graph value", async () => {
     const fixture = new (MetaTransform(ObjectGraph))({
       "[x]+": {
         "message = `Hello, {{name}}.`": "",
@@ -207,9 +200,7 @@ describe("MetaTransform", () => {
         name: "Alice",
       },
     });
-    assert.equal(
-      await ExplorableGraph.traverse(fixture, "sub", "message"),
-      "Hello, Alice."
-    );
+    const sub = await fixture.get("sub");
+    assert.equal(await sub.get("message"), "Hello, Alice.");
   });
 });

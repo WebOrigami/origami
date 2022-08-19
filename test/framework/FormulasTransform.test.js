@@ -6,7 +6,7 @@ import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(ObjectGraph) {}
 
-describe.only("FormulasTransform", () => {
+describe("FormulasTransform", () => {
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "[x].txt": "Default text",
