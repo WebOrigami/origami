@@ -159,7 +159,7 @@ b: {}
     });
   });
 
-  it("reads formulas in graph additions", async () => {
+  it.skip("reads formulas in graph additions", async () => {
     const graph = {
       "+": {
         "a = b": null,

@@ -12,6 +12,7 @@ export default function FormulasTransform(Base) {
   return class Formulas extends Base {
     constructor(...args) {
       super(...args);
+      this.applyFormulas = true;
       this.bindings = null;
       this[formulasKey] = null;
       this[keysKey] = null;
@@ -117,7 +118,7 @@ export default function FormulasTransform(Base) {
         value = await super.get(key);
       }
 
-      if (value === undefined) {
+      if (value === undefined && this.applyFormulas) {
         // No real value defined; try our formulas.
         const formulas = await this.formulas();
         for (const formula of formulas) {
