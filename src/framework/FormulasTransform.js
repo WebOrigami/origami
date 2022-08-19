@@ -6,6 +6,7 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
+const gettingFormulas = Symbol("gettingFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasTransform(Base) {
@@ -18,24 +19,19 @@ export default function FormulasTransform(Base) {
       this[keysKey] = null;
     }
 
-    // We implement allKeys() so that, if a subclass implements it, it will
-    // invoke this implementation. We want to prevent the subclass from invoking
-    // this class' asyncIterator() directly -- because the asyncIterator invokes
-    // formulas(), which invokes allKeys(), that would cause an infinite loop.
-    async *allKeys() {
-      const base = super.allKeys ?? super[Symbol.asyncIterator];
-      yield* base?.call(this);
-    }
-
     async *[Symbol.asyncIterator]() {
       if (!this[keysKey]) {
         const keys = new Set();
+
+        // Start with the set of real keys.
         for await (const key of super[Symbol.asyncIterator]()) {
-          keys.add(key);
+          if (!Formula.isFormula(key)) {
+            keys.add(key);
+          }
         }
 
-        // Generate the set of implied keys in multiple passes until a pass
-        // produces no new implied keys.
+        // Generate the set of implied virtual keys in multiple passes until a
+        // pass produces no new virtual keys.
         const formulas = await this.formulas();
         for (let size = 0; size !== keys.size; ) {
           size = keys.size;
@@ -93,7 +89,7 @@ export default function FormulasTransform(Base) {
     async formulas() {
       if (!this[formulasKey]) {
         const formulas = [];
-        for await (const key of this.allKeys()) {
+        for await (const key of super[Symbol.asyncIterator]()) {
           // Try to parse the key as a formula.
           const formula = Formula.parse(String(key));
           if (formula) {

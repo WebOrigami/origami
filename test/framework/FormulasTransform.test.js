@@ -6,7 +6,15 @@ import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(ObjectGraph) {}
 
-describe("FormulasTransform", () => {
+describe.only("FormulasTransform", () => {
+  it("iterator includes virtual keys and excludes formulas", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      b: "Hello",
+    });
+    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
+  });
+
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "[x].txt": "Default text",
@@ -27,27 +35,18 @@ describe("FormulasTransform", () => {
     assert.equal(await fixture.get("foo"), "no extension");
   });
 
-  it("can compute keys for variable patterns", async () => {
+  it("can infer virtual keys for variable patterns", async () => {
     const fixture = new FormulasObject({
       "[x].json": "html",
       a: "",
       b: "",
     });
     assert.deepEqual(await ExplorableGraph.keys(fixture), [
-      "[x].json",
       "a",
       "a.json",
       "b",
       "b.json",
     ]);
-  });
-
-  it("can compute keys for assignments", async () => {
-    const fixture = new FormulasObject({
-      "a = b": "",
-      b: "Hello",
-    });
-    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "a = b", "b"]);
   });
 
   it("can get a value defined by an assignment", async () => {

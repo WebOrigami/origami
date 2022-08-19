@@ -2,6 +2,7 @@ import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 
+const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
 const gettingChildAdditions = Symbol("gettingChildAdditions");
 const inheritedAdditions = Symbol("inheritedAdditions");
@@ -20,14 +21,24 @@ export default function AdditionsTransform(Base) {
     }
 
     async additions() {
-      const childAdditions = await this.childAdditions();
-      const inherited = this[inheritedAdditions] || [];
-      const allAdditions = [...childAdditions, ...inherited];
-      return allAdditions.length === 0
-        ? null
-        : allAdditions.length === 1
-        ? allAdditions[0]
-        : new Compose(...allAdditions);
+      if (this[additions] === undefined) {
+        const childAdditions = await this.childAdditions();
+        const inherited = this[inheritedAdditions] || [];
+        const allAdditions = [...childAdditions, ...inherited];
+        this[additions] =
+          allAdditions.length === 0
+            ? []
+            : allAdditions.length === 1
+            ? allAdditions[0]
+            : new Compose(...allAdditions);
+      }
+      return this[additions];
+    }
+
+    async *[Symbol.asyncIterator]() {
+      // TODO: Sort keys together
+      yield* super[Symbol.asyncIterator]();
+      yield* await this.additions();
     }
 
     async childAdditions() {
@@ -50,15 +61,6 @@ export default function AdditionsTransform(Base) {
         this[gettingChildAdditions] = false;
       }
       return this[childAdditions];
-    }
-
-    async *allKeys() {
-      const base = super.allKeys ?? super[Symbol.asyncIterator];
-      yield* base?.call(this);
-      const additions = await this.additions();
-      if (additions) {
-        yield* additions;
-      }
     }
 
     async get(key) {
