@@ -1,9 +1,9 @@
 import CachedValuesTransform from "../common/CachedValuesTransform.js";
 import FileLoadersTransform from "../node/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
+import AdditionsTransform from "./AdditionsTransform.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-import NewAdditionsTransform from "./NewAdditionsTransform.js";
 import PathTransform from "./PathTransform.js";
 
 export default function MetaTransform(Base) {
@@ -11,7 +11,7 @@ export default function MetaTransform(Base) {
     PathTransform(
       InheritScopeTransform(
         FormulasTransform(
-          NewAdditionsTransform(
+          AdditionsTransform(
             FileLoadersTransform(ImplicitModulesTransform(Base))
           )
         )

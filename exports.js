@@ -71,7 +71,6 @@ export { default as defaultSvg } from "./src/framework/defaultSvg.js";
 export { default as defaultYamlHtml } from "./src/framework/defaultYamlHtml.js";
 export { default as Formula } from "./src/framework/Formula.js";
 export { default as FormulasTransform } from "./src/framework/FormulasTransform.js";
-export { default as GhostValuesTransform } from "./src/framework/GhostValuesTransform.js";
 export { default as InheritScopeTransform } from "./src/framework/InheritScopeTransform.js";
 export { default as MetaTransform } from "./src/framework/MetaTransform.js";
 export { default as OrigamiTemplate } from "./src/framework/OrigamiTemplate.js";

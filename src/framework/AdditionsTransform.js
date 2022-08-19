@@ -1,52 +1,60 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+
+const childAdditions = Symbol("childAdditions");
+const gettingChildAdditions = Symbol("gettingChildAdditions");
+const inheritedAdditions = Symbol("inheritedAdditions");
 
 export const additionsPrefix = "+";
-const additions = Symbol("additions");
-
-// This flag is used to prevent infinite loops while getting the additions.
-const gettingAdditions = Symbol("gettingAdditions");
+export const inheritedAdditionsPrefix = "…";
+export const peerAdditionsSuffix = "+";
 
 export default function AdditionsTransform(Base) {
   return class Additions extends Base {
     constructor(...args) {
       super(...args);
-      this[additions] = undefined;
-      this[gettingAdditions] = false;
+      this[childAdditions] = undefined;
+      this[gettingChildAdditions] = false;
+      this[inheritedAdditions] = undefined;
     }
 
     async additions() {
-      if (/* !this.listeningForChanges || */ this[additions] === undefined) {
-        // If additions are defined in a metagraph, that will require us to get
-        // other values from this graph (e.g., to retrieve a definition for
-        // `meta`). To avoid an infinite loop, we set a flag to indicate that
-        // we're in the process of getting additions. During that process, the
-        // get method will be able to get other things, but not additions.
-        this[gettingAdditions] = true;
-        const additionsGraphs = [];
+      const childAdditions = await this.childAdditions();
+      const inherited = this[inheritedAdditions] || [];
+      const allAdditions = [...childAdditions, ...inherited];
+      return allAdditions.length === 0
+        ? null
+        : allAdditions.length === 1
+        ? allAdditions[0]
+        : new Compose(...allAdditions);
+    }
+
+    async childAdditions() {
+      if (this[childAdditions] === undefined) {
+        // To avoid an infinite loop, we set a flag to indicate that we're in
+        // the process of getting additions. During that process, the get method
+        // will be able to get other things, but not additions.
+        this[gettingChildAdditions] = true;
+        this[childAdditions] = [];
         for await (const key of super[Symbol.asyncIterator]()) {
-          const isAddition = key.startsWith?.(additionsPrefix);
-          if (isAddition) {
-            const variant = await super.get(key);
-            if (variant) {
-              const graph = ExplorableGraph.from(variant);
-              additionsGraphs.push(graph);
+          if (isChildAdditionKey(key)) {
+            const addition = await this.get(key);
+            if (addition) {
+              const graph = ExplorableGraph.from(addition);
+              graph.applyFormulas = false;
+              this[childAdditions].push(graph);
             }
           }
         }
-        this[additions] =
-          additionsGraphs.length === 0
-            ? null
-            : additionsGraphs.length === 1
-            ? additionsGraphs[0]
-            : new Compose(...additionsGraphs);
-        this[gettingAdditions] = false;
+        this[gettingChildAdditions] = false;
       }
-      return this[additions];
+      return this[childAdditions];
     }
 
-    async *[Symbol.asyncIterator]() {
-      yield* super[Symbol.asyncIterator]();
+    async *allKeys() {
+      const base = super.allKeys ?? super[Symbol.asyncIterator];
+      yield* base?.call(this);
       const additions = await this.additions();
       if (additions) {
         yield* additions;
@@ -54,23 +62,85 @@ export default function AdditionsTransform(Base) {
     }
 
     async get(key) {
-      let result = await super.get(key);
+      let value = await super.get(key);
       if (
-        result === undefined &&
-        !key.startsWith?.(additionsPrefix) &&
-        !this[gettingAdditions]
+        value === undefined &&
+        !isChildAdditionKey(key) &&
+        !this[gettingChildAdditions]
       ) {
         // Not found locally, check additions.
         const additions = await this.additions();
-        result = await additions?.get(key);
+        value = await additions?.get(key);
       }
-      return result;
+
+      // If the value is an explorable graph, add inherited additions.
+      if (ExplorableGraph.isExplorable(value)) {
+        const inheritableValues = await getInheritableValues(this);
+        const peerValues = await getPeerValues(this, key);
+
+        // Treat peer additions as a form of inherited additions.
+        value[inheritedAdditions] = inheritableValues
+          ? [inheritableValues]
+          : [];
+        if (peerValues.length > 0) {
+          value[inheritedAdditions].push(...peerValues);
+        }
+      }
+
+      return value;
+    }
+
+    async matchAll(key) {
+      // Default behavior just includes the value obtained by get(key).
+      const value = await this.get(key);
+      return value ? [value] : [];
     }
 
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
-      this[additions] = undefined;
+      this[childAdditions] = undefined;
+      this[inheritedAdditions] = undefined;
     }
   };
+}
+
+async function getInheritableValues(graph) {
+  let values = null;
+  for await (const key of graph) {
+    if (isInheritedAdditionKey(key)) {
+      const value = await graph.get(key);
+      if (values === null) {
+        values = {};
+      }
+      values[key] = value;
+    }
+  }
+  return values ? new ObjectGraph(values) : null;
+}
+
+async function getPeerValues(graph, graphKey) {
+  const values = [];
+  // A peer additions graph itself can't have peer values.
+  if (!isPeerAdditionKey(graphKey)) {
+    const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
+    const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
+    peerAdditions.forEach((peerGraph) => {
+      peerGraph.applyFormulas = false;
+    });
+    values.push(...peerAdditions);
+  }
+  return values;
+}
+
+function isChildAdditionKey(key) {
+  return key.startsWith?.(additionsPrefix);
+}
+
+function isInheritedAdditionKey(key) {
+  return key.startsWith?.(inheritedAdditionsPrefix);
+}
+
+function isPeerAdditionKey(key) {
+  return key.endsWith?.(peerAdditionsSuffix);
 }
