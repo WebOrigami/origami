@@ -25,20 +25,15 @@ metaGraph.parent = new Compose(
 
 // Given the nature of MetaTransform, these are integration tests.
 
-describe("MetaTransform", () => {
+describe.only("MetaTransform", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(metaGraph), [
       "foo.txt",
       "greeting",
-      "greeting = this('world').js",
       "obj",
-      "obj = this.json",
       "sample.txt",
-      "sample.txt = this().js",
       "string",
-      "string = this.json",
       "value",
-      "value = fn()",
     ]);
   });
 
@@ -202,5 +197,59 @@ describe("MetaTransform", () => {
     });
     const sub = await fixture.get("sub");
     assert.equal(await sub.get("message"), "Hello, Alice.");
+  });
+
+  it("can inherit values prefixed with `…`", async () => {
+    const graph = new (MetaTransform(ObjectGraph))({
+      "…a": 1,
+      "…b": 2,
+      subgraph: {
+        "…b": 3, // Overrides ancestor value
+        subsubgraph: {},
+      },
+    });
+    assert.equal(await graph.get("b"), 2);
+    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "b"), 3);
+    assert.equal(
+      await ExplorableGraph.traverse(graph, "subgraph", "subsubgraph", "b"),
+      3
+    );
+  });
+
+  it("can inherit formulas prefixed with `…`", async () => {
+    const graph = new (MetaTransform(ObjectGraph))({
+      "…greeting = message": "",
+      message: "Hello",
+      spanish: {
+        message: "Hola",
+      },
+    });
+    assert.equal(await graph.get("greeting"), "Hello");
+    const spanish = await graph.get("spanish");
+    assert.equal(await spanish.get("greeting"), "Hola");
+  });
+
+  it("can define inherited additions with formulas", async () => {
+    const graph = new (MetaTransform(ObjectGraph))({
+      "…a = this": "inherited",
+      folder: {
+        b: "local",
+      },
+    });
+    const folder = await graph.get("folder");
+    assert.equal(await folder.get("a"), "inherited");
+    assert.equal(await folder.get("b"), "local");
+  });
+
+  it("can define peer additions with a formula", async () => {
+    const graph = new (MetaTransform(ObjectGraph))({
+      folder: {
+        a: "local",
+      },
+      "folder+ = this": new ObjectGraph({ b: "peer" }),
+    });
+    const folder = await graph.get("folder");
+    assert.equal(await folder.get("a"), "local");
+    assert.equal(await folder.get("b"), "peer");
   });
 });

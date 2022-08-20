@@ -5,15 +5,19 @@ import * as parse from "../language/parse.js";
 import { additionsPrefix, peerAdditionsSuffix } from "./AdditionsTransform.js";
 import { getScope } from "./scopeUtilities.js";
 
+export const inheritableFormulaPrefix = "…";
+
 export default class Formula {
   closure = {};
+  inheritable;
   key;
   expression;
   source;
 
-  constructor(key, expression, source) {
+  constructor(key, expression, source, inheritable) {
     this.key = key;
     this.expression = expression;
+    this.inheritable = inheritable;
     this.source = source;
   }
 
@@ -70,7 +74,7 @@ export default class Formula {
       typeof key === "string" &&
       (key.includes("=") ||
         key.startsWith("[") ||
-        key.startsWith("…") ||
+        key.startsWith(inheritableFormulaPrefix) ||
         key.startsWith(additionsPrefix))
     );
   }
@@ -88,20 +92,33 @@ export default class Formula {
       }
       return null;
     }
+    const inheritable = source.startsWith(inheritableFormulaPrefix);
     if (value[0] === ops.variable) {
       // Variable pattern
       const [_, variable, extension] = value;
-      return new VariableFormula(variable, extension, null, source);
+      return new VariableFormula(
+        variable,
+        extension,
+        null,
+        source,
+        inheritable
+      );
     } else if (value[0] === "=") {
       // Assignment
       const [_, left, expression] = value;
       if (left[0] === ops.variable) {
         // Variable assignment
         const [_, variable, extension] = left;
-        return new VariableFormula(variable, extension, expression, source);
+        return new VariableFormula(
+          variable,
+          extension,
+          expression,
+          source,
+          inheritable
+        );
       } else {
         // Constant assignment
-        return new ConstantFormula(left, expression, source);
+        return new ConstantFormula(left, expression, source, inheritable);
       }
     } else {
       return null;
@@ -125,9 +142,9 @@ export class VariableFormula extends Formula {
   extension;
   antecedents;
 
-  constructor(variable, extension, expression, source) {
+  constructor(variable, extension, expression, source, inheritable) {
     const key = `[${variable}]${extension ?? ""}`;
-    super(key, expression, source);
+    super(key, expression, source, inheritable);
     this.variable = variable;
     this.extension = extension;
     if (expression) {

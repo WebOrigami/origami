@@ -6,7 +6,7 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
-const gettingFormulas = Symbol("gettingFormulas");
+const inheritedFormulas = Symbol("inheritedFormulas");
 const keysKey = Symbol("keys");
 
 export default function FormulasTransform(Base) {
@@ -16,6 +16,7 @@ export default function FormulasTransform(Base) {
       this.applyFormulas = true;
       this.bindings = null;
       this[formulasKey] = null;
+      this[inheritedFormulas] = null;
       this[keysKey] = null;
     }
 
@@ -98,7 +99,17 @@ export default function FormulasTransform(Base) {
             formulas.push(formula);
           }
         }
+
+        if (this[inheritedFormulas]) {
+          // Inherited formulas are lower precedence, so come after local formulas.
+          formulas.push(...this[inheritedFormulas]);
+        }
+
+        // Sort formulas by precedence: constant formulas before variable
+        // formulas. Since the sort is stable, the inherited formulas in both
+        // categories will come after the respective local formulas.
         sortFormulas(formulas);
+
         this[formulasKey] = formulas;
       }
       return this[formulasKey];
@@ -114,9 +125,10 @@ export default function FormulasTransform(Base) {
         value = await super.get(key);
       }
 
+      let formulas;
       if (value === undefined && this.applyFormulas) {
         // No real value defined; try our formulas.
-        const formulas = await this.formulas();
+        formulas = await this.formulas();
         for (const formula of formulas) {
           value = await this.evaluateFormula(formula, key);
           if (value !== undefined) {
@@ -124,6 +136,16 @@ export default function FormulasTransform(Base) {
             break;
           }
         }
+      }
+
+      if (isFormulasTransformApplied(value)) {
+        if (!formulas) {
+          formulas = await this.formulas();
+        }
+        // Give the subgraph this graph's inheritable formulas.
+        value[inheritedFormulas] = formulas.filter(
+          (formula) => formula.inheritable
+        );
       }
 
       return value;
