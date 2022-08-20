@@ -29,9 +29,19 @@ async function main(...args) {
     baseScope
   );
 
-  const text = await ori.call(scope, expression);
-  if (text) {
-    await stdout.write(text);
+  const result = await ori.call(scope, expression);
+  if (result) {
+    await stdout.write(result);
+
+    // If stdout points to the console, and the result didn't end in a newline,
+    // then output a newline.
+    if (stdout.isTTY) {
+      const lastChar = result[result.length - 1];
+      const isNewLine = lastChar === "\n" || lastChar === 10;
+      if (!isNewLine) {
+        await stdout.write("\n");
+      }
+    }
   }
 }
 

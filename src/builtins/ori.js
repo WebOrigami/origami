@@ -4,7 +4,7 @@ import yaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
-import { stringLike, transformObject } from "../core/utilities.js";
+import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
@@ -18,7 +18,7 @@ import * as parse from "../language/parse.js";
  * @this {Explorable}
  * @param {string} expression
  * @param {string} [path]
- * @returns {Promise<string | Buffer | undefined>}
+ * @returns {Promise<string | String | Buffer | undefined>}
  */
 export default async function ori(expression, path) {
   // In case expression is a Buffer, cast it to a string.
@@ -74,14 +74,15 @@ export default async function ori(expression, path) {
 }
 
 async function formatResult(result) {
-  let output = stringLike(result)
-    ? String(result)
+  const stringOrBuffer =
+    typeof result === "string" ||
+    result instanceof String ||
+    (globalThis.Buffer && result instanceof Buffer);
+  let output = stringOrBuffer
+    ? result
     : result !== undefined
     ? await yaml(result)
     : undefined;
-  if (typeof output === "string" && !output.endsWith("\n")) {
-    output += "\n";
-  }
   return output;
 }
 
