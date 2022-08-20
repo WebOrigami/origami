@@ -27,9 +27,11 @@ watcher.on("all", async (eventType, filePath) => {
         containerKeys.length > 0
           ? await ExplorableGraph.traverse(graph, ...containerKeys)
           : graph;
-      const fileKey = keys[keys.length - 1];
-      // Let the container graph know the file with this key has changed.
-      containerGraph.onChange(fileKey);
+      if (containerGraph) {
+        const fileKey = keys[keys.length - 1];
+        // Let the container graph know the file with this key has changed.
+        containerGraph.onChange(fileKey);
+      }
     }
   }
 });
