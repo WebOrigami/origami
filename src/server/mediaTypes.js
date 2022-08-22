@@ -7,6 +7,7 @@ export const mediaTypeForExtension = {
   ".abw": "application/x-abiword",
   ".arc": "application/x-freearc",
   ".avi": "video/x-msvideo",
+  ".avif": "image/avif",
   ".azw": "application/vnd.amazon.ebook",
   ".bin": "application/octet-stream",
   ".bmp": "image/bmp",
