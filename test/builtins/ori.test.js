@@ -41,6 +41,6 @@ describe("ori builtin", () => {
       builtins
     );
     const result = await ori.call(scope, `message`, "folder");
-    assert.equal(result, "Hello\n");
+    assert.equal(result, "Hello");
   });
 });
