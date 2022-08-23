@@ -59,6 +59,18 @@ export default function AdditionsTransform(Base) {
       return value;
     }
 
+    async getFormulas() {
+      const formulas = (await super.getFormulas?.()) ?? [];
+      const children = await this.getChildAdditions();
+      const peers = this[peerAdditions] ?? [];
+      const allAdditions = [...children, ...peers];
+      for (const graph of allAdditions) {
+        const graphFormulas = await graph.getFormulas();
+        formulas.push(...graphFormulas);
+      }
+      return formulas;
+    }
+
     async getChildAdditions() {
       if (this[childAdditions] === undefined) {
         // To avoid an infinite loop, we set a flag to indicate that we're in
@@ -72,6 +84,7 @@ export default function AdditionsTransform(Base) {
             if (addition) {
               const graph = ExplorableGraph.from(addition);
               graph.applyFormulas = false;
+              graph.parent = null;
               this[childAdditions].push(graph);
             }
           }
@@ -104,6 +117,7 @@ async function getPeerValues(graph, graphKey) {
     const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
     peerAdditions.forEach((peerGraph) => {
       peerGraph.applyFormulas = false;
+      peerGraph.parent = null;
     });
     values.push(...peerAdditions);
   }

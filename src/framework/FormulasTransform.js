@@ -89,27 +89,9 @@ export default function FormulasTransform(Base) {
 
     async formulas() {
       if (!this[formulasKey]) {
-        const formulas = [];
-        for await (const key of super[Symbol.asyncIterator]()) {
-          // Try to parse the key as a formula.
-          const formula = Formula.parse(String(key));
-          if (formula) {
-            // Successfully parsed key as a formula.
-            formula.closure = this.bindings ?? {};
-            formulas.push(formula);
-          }
-        }
-
-        if (this[inheritedFormulas]) {
-          // Inherited formulas are lower precedence, so come after local formulas.
-          formulas.push(...this[inheritedFormulas]);
-        }
-
-        // Sort formulas by precedence: constant formulas before variable
-        // formulas. Since the sort is stable, the inherited formulas in both
-        // categories will come after the respective local formulas.
+        const formulas = await this.getFormulas();
+        // Sort by precedence: constant formulas before variable formulas.
         sortFormulas(formulas);
-
         this[formulasKey] = formulas;
       }
       return this[formulasKey];
@@ -138,17 +120,21 @@ export default function FormulasTransform(Base) {
         }
       }
 
-      if (isFormulasTransformApplied(value)) {
-        if (!formulas) {
-          formulas = await this.formulas();
-        }
-        // Give the subgraph this graph's inheritable formulas.
-        value[inheritedFormulas] = formulas.filter(
-          (formula) => formula.inheritable
-        );
-      }
-
       return value;
+    }
+
+    async getFormulas() {
+      const formulas = (await super.getFormulas?.()) ?? [];
+      for await (const key of super[Symbol.asyncIterator]()) {
+        // Try to parse the key as a formula.
+        const formula = Formula.parse(String(key));
+        if (formula) {
+          // Successfully parsed key as a formula.
+          formula.closure = this.bindings ?? {};
+          formulas.push(formula);
+        }
+      }
+      return formulas;
     }
 
     // Reset memoized values when the underlying graph changes.
@@ -171,8 +157,9 @@ export function isFormulasTransformApplied(obj) {
   return false;
 }
 
+// Sort constant formulas before variable formulas.
+// This sort is stable.
 export function sortFormulas(formulas) {
-  // Sort constant formulas before variable formulas.
   formulas.sort((a, b) => {
     if (a instanceof ConstantFormula && b instanceof VariableFormula) {
       return -1;

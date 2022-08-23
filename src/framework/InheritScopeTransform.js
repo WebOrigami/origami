@@ -20,17 +20,17 @@ export default function InheritScopeTransform(Base) {
       return value;
     }
 
-    async formulas() {
-      const base = (await super.formulas?.()) ?? [];
+    async getFormulas() {
+      const formulas = (await super.getFormulas?.()) ?? [];
       if (this.parent) {
-        const parentFormulas = (await this.parent.formulas?.()) ?? [];
+        const parentFormulas = (await this.parent.getFormulas?.()) ?? [];
         const inherited = parentFormulas.filter(
           (formula) => formula.inheritable
         );
         // Inherited formulas are lower priority, so come last.
-        return [...base, ...inherited];
+        formulas.push(...inherited);
       }
-      return base;
+      return formulas;
     }
 
     get parent() {
