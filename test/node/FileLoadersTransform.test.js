@@ -24,7 +24,6 @@ b = a:
     assert.deepEqual(await ExplorableGraph.plain(foo), {
       a: "Hello",
       b: "Hello",
-      "b = a": null,
     });
   });
 });

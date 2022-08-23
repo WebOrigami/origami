@@ -19,10 +19,8 @@ describe("make", () => {
     assert.deepEqual(await ExplorableGraph.plain(real), {
       ".ori.clean.yaml": `b: ""\nmore:\n  c: ""\n`,
       a: "Hello",
-      "b = a": "",
       b: "Hello",
       more: {
-        "c = 'Goodbye'": "",
         c: "Goodbye",
       },
     });

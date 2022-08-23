@@ -119,7 +119,6 @@ template`);
     const resultGraph = result.toGraph();
     assert.deepEqual(await ExplorableGraph.plain(resultGraph), {
       name: "Alice",
-      "message = `{{greeting}}, {{name}}.`": null,
       message: "Hello, Alice.",
     });
   });

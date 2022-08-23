@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 import { transformObject } from "../core/utilities.js";
 import FormulaTransform, {
   isFormulasTransformApplied,
@@ -66,29 +67,17 @@ export default class FilterGraph {
     const isFilterValueExplorable = await ExplorableGraph.isExplorable(
       filterValue
     );
-    const subfilter = isFilterValueExplorable
-      ? filterValue
-      : await inheritedFormulas(this.filter);
-    if (subfilter) {
-      // Construct a new FilterGraph for the subvalue and inherited formulas.
-      return Reflect.construct(this.constructor, [value, subfilter]);
+    let subfilter;
+    if (isFilterValueExplorable) {
+      subfilter = filterValue;
+    } else {
+      // Create an empty graph that inherits from this filter so that it picks
+      // up any inheritable formulas.
+      subfilter = new (InheritScopeTransform(FormulaTransform(ObjectGraph)))(
+        {}
+      );
+      subfilter.parent = this.filter;
     }
-
-    return undefined;
+    return Reflect.construct(this.constructor, [value, subfilter]);
   }
-}
-
-// Return a copy of the filter's inherited formulas. If none are found, return
-// null.
-async function inheritedFormulas(filter) {
-  const formulas = {};
-  for await (const key of filter) {
-    // HACK: for now we just inspect the key to see if it starts with "…". It
-    // would be better if we could get the parsed inheritable formulas from the
-    // filter object itself.
-    if (key.startsWith?.("…")) {
-      formulas[key] = await filter.get(key);
-    }
-  }
-  return Object.keys(formulas).length ? formulas : null;
 }
