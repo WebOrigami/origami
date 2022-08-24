@@ -31,7 +31,7 @@ export default function FormulasTransform(Base) {
         // Generate the set of implied virtual keys in multiple passes until a
         // pass produces no new virtual keys.
         const formulas = await this.formulas();
-        for (let size = 0; size !== keys.size; ) {
+        for (let size = -1; size !== keys.size; ) {
           size = keys.size;
           // Ask each formula to add any implied keys.
           for await (const formula of formulas) {

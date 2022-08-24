@@ -11,8 +11,13 @@ describe("FormulasTransform", () => {
     const fixture = new FormulasObject({
       "a = b": "",
       b: "Hello",
+      more: {
+        "c = 'Goodbye'": "",
+      },
     });
-    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
+    assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b", "more"]);
+    const more = await fixture.get("more");
+    assert.deepEqual(await ExplorableGraph.keys(more), ["c"]);
   });
 
   it("realKeys returns the real keys with no formulas", async () => {
