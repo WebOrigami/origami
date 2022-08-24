@@ -1,7 +1,7 @@
 import dataflow from "../../src/builtins/dataflow.js";
 import assert from "../assert.js";
 
-describe.skip("dataflow", () => {
+describe("dataflow", () => {
   it("identifies dependencies in formulas", async () => {
     const graph = {
       "a = fn(b)": null,
@@ -45,14 +45,14 @@ describe.skip("dataflow", () => {
 
   it("if all dependencies are builtins, uses source expression as depenendcy", async () => {
     const graph = {
-      "foo.html = mdHtml(this).md": "# Hello",
+      "foo = mdHtml(this).md": "# Hello",
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
-      "foo.html": {
-        dependencies: ["foo.html = mdHtml(this).md"],
+      foo: {
+        dependencies: ["foo = mdHtml(this).md"],
       },
-      "foo.html = mdHtml(this).md": {
+      "foo = mdHtml(this).md": {
         label: "mdHtml(this).md",
       },
     });
@@ -159,7 +159,7 @@ b: {}
     });
   });
 
-  it.skip("reads formulas in graph additions", async () => {
+  it("reads formulas in graph additions", async () => {
     const graph = {
       "+": {
         "a = b": null,
