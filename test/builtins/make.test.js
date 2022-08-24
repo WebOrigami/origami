@@ -4,7 +4,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import FormulasTransform from "../../src/framework/FormulasTransform.js";
 import assert from "../assert.js";
 
-describe("make", () => {
+describe.skip("make", () => {
   it("creates the virtual values in a graph", async () => {
     const graph = {
       a: "Hello",

@@ -8,6 +8,7 @@ import {
 const formulasKey = Symbol("formulas");
 const inheritedFormulas = Symbol("inheritedFormulas");
 const keysKey = Symbol("keys");
+const realKeys = Symbol("realKeys");
 
 export default function FormulasTransform(Base) {
   return class Formulas extends Base {
@@ -18,18 +19,14 @@ export default function FormulasTransform(Base) {
       this[formulasKey] = null;
       this[inheritedFormulas] = null;
       this[keysKey] = null;
+      this[realKeys] = null;
     }
 
     async *[Symbol.asyncIterator]() {
       if (!this[keysKey]) {
-        const keys = new Set();
-
         // Start with the set of real keys.
-        for await (const key of super[Symbol.asyncIterator]()) {
-          if (!Formula.isFormula(key)) {
-            keys.add(key);
-          }
-        }
+        const realKeys = await this.realKeys();
+        const keys = new Set(realKeys);
 
         // Generate the set of implied virtual keys in multiple passes until a
         // pass produces no new virtual keys.
@@ -142,6 +139,20 @@ export default function FormulasTransform(Base) {
       super.onChange?.(key);
       this[formulasKey] = null;
       this[keysKey] = null;
+      this[realKeys] = null;
+    }
+
+    async realKeys() {
+      const keys = [];
+      if (!this[realKeys]) {
+        for await (const key of super[Symbol.asyncIterator]()) {
+          if (!Formula.isFormula(key)) {
+            keys.push(key);
+          }
+        }
+        this[realKeys] = keys;
+      }
+      return this[realKeys];
     }
   };
 }

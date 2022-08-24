@@ -7,12 +7,20 @@ import assert from "../assert.js";
 class FormulasObject extends FormulasTransform(ObjectGraph) {}
 
 describe("FormulasTransform", () => {
-  it("iterator includes virtual keys and excludes formulas", async () => {
+  it("iterator includes real and virtual keys but not formulas", async () => {
     const fixture = new FormulasObject({
       "a = b": "",
       b: "Hello",
     });
     assert.deepEqual(await ExplorableGraph.keys(fixture), ["a", "b"]);
+  });
+
+  it("realKeys returns the real keys with no formulas", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      b: "Hello",
+    });
+    assert.deepEqual(await fixture.realKeys(), ["b"]);
   });
 
   it("can get a value defined by a variable pattern", async () => {

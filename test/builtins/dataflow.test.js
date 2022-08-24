@@ -1,7 +1,7 @@
 import dataflow from "../../src/builtins/dataflow.js";
 import assert from "../assert.js";
 
-describe("dataflow", () => {
+describe.skip("dataflow", () => {
   it("identifies dependencies in formulas", async () => {
     const graph = {
       "a = fn(b)": null,
