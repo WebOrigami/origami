@@ -1,10 +1,7 @@
 import make from "../../src/builtins/make.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-import FormulasTransform from "../../src/framework/FormulasTransform.js";
 import assert from "../assert.js";
 
-describe.skip("make", () => {
+describe("make", () => {
   it("creates the virtual values in a graph", async () => {
     const graph = {
       a: "Hello",
@@ -13,14 +10,14 @@ describe.skip("make", () => {
         "c = 'Goodbye'": "",
       },
     };
-    const virtual = new (FormulasTransform(ObjectGraph))(graph);
-    const real = new ObjectGraph(graph);
-    await make(virtual, real);
-    assert.deepEqual(await ExplorableGraph.plain(real), {
-      ".ori.clean.yaml": `b: ""\nmore:\n  c: ""\n`,
+    await make(graph);
+    assert.deepEqual(graph, {
+      ".ori.clean.yaml": `b: null\nmore:\n  ? c\n`,
       a: "Hello",
+      "b = a": "",
       b: "Hello",
       more: {
+        "c = 'Goodbye'": "",
         c: "Goodbye",
       },
     });
@@ -28,16 +25,14 @@ describe.skip("make", () => {
 
   it("Considers contents of .ori.clean.yaml to determine which values are real", async () => {
     const graph = {
-      ".ori.clean.yaml": `a: ""\n`,
+      ".ori.clean.yaml": `a: null\n`,
       "a = 'Hello'": "",
       a: "Hi", // make should update this value
       "b = 'Goodbye'": "", // make should create this value
     };
-    const virtual = new (FormulasTransform(ObjectGraph))(graph);
-    const real = new ObjectGraph(graph);
-    await make(virtual, real);
-    assert.deepEqual(await ExplorableGraph.plain(real), {
-      ".ori.clean.yaml": `a: ""\nb: ""\n`,
+    await make(graph);
+    assert.deepEqual(graph, {
+      ".ori.clean.yaml": `? a\n? b\n`,
       "a = 'Hello'": "",
       a: "Hello",
       "b = 'Goodbye'": "",

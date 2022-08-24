@@ -25,7 +25,12 @@ export default async function reals(variant) {
     },
 
     async get(key) {
-      return graph.get(key);
+      const realKeys = await /** @type {any} */ (graph).realKeys();
+      if (!realKeys.includes(key)) {
+        return undefined;
+      }
+      const value = await graph.get(key);
+      return ExplorableGraph.isExplorable(value) ? reals(value) : value;
     },
   };
 }

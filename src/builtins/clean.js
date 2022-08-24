@@ -22,6 +22,7 @@ export default async function clean(variant) {
   });
   // @ts-ignore
   await graph.set(undefineds);
+  await graph.set(".ori.clean.yaml", undefined);
 }
 
 clean.usage = `clean <graph>\tRemoves files created by the make command [experimental]`;
