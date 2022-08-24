@@ -7,8 +7,10 @@ import {
 
 const formulasKey = Symbol("formulas");
 const inheritedFormulas = Symbol("inheritedFormulas");
+const allKeys = Symbol("allKeys");
 const keysKey = Symbol("keys");
 const realKeys = Symbol("realKeys");
+const virtualKeys = Symbol("virtualKeys");
 
 export default function FormulasTransform(Base) {
   return class Formulas extends Base {
@@ -18,29 +20,39 @@ export default function FormulasTransform(Base) {
       this.bindings = null;
       this[formulasKey] = null;
       this[inheritedFormulas] = null;
+      this[allKeys] = null;
       this[keysKey] = null;
       this[realKeys] = null;
+      this[virtualKeys] = null;
     }
 
-    async *[Symbol.asyncIterator]() {
-      if (!this[keysKey]) {
-        // Start with the set of real keys.
+    async allKeys() {
+      if (!this[allKeys]) {
         const realKeys = await this.realKeys();
-        const keys = new Set(realKeys);
+        const virtualKeys = await this.virtualKeys();
 
-        // Generate the set of implied virtual keys in multiple passes until a
-        // pass produces no new virtual keys.
         const formulas = await this.formulas();
-        for (let size = -1; size !== keys.size; ) {
-          size = keys.size;
-          // Ask each formula to add any implied keys.
-          for await (const formula of formulas) {
-            formula.addImpliedKeys(keys);
-          }
+        const formulaKeys = [];
+        for (const formula of formulas) {
+          formulaKeys.push(formula.source);
         }
 
+        this[allKeys] = sortNatural([
+          ...realKeys,
+          ...formulaKeys,
+          ...virtualKeys,
+        ]);
+      }
+      return this[allKeys];
+    }
+
+    // Returns the real and virtual keys.
+    async *[Symbol.asyncIterator]() {
+      if (!this[keysKey]) {
+        const realKeys = await this.realKeys();
+        const virtualKeys = await this.virtualKeys();
         // Store keys in natural sort order.
-        this[keysKey] = sortNatural([...keys]);
+        this[keysKey] = sortNatural([...realKeys, ...virtualKeys]);
       }
       yield* this[keysKey];
     }
@@ -140,6 +152,8 @@ export default function FormulasTransform(Base) {
       this[formulasKey] = null;
       this[keysKey] = null;
       this[realKeys] = null;
+      this[virtualKeys] = null;
+      this[allKeys] = null;
     }
 
     async realKeys() {
@@ -153,6 +167,32 @@ export default function FormulasTransform(Base) {
         this[realKeys] = keys;
       }
       return this[realKeys];
+    }
+
+    async virtualKeys() {
+      if (!this[virtualKeys]) {
+        const realKeys = await this.realKeys();
+        const keys = new Set(realKeys);
+
+        // Generate the set of implied virtual keys in multiple passes until a
+        // pass produces no new virtual keys.
+        const formulas = await this.formulas();
+        for (let size = -1; size !== keys.size; ) {
+          size = keys.size;
+          // Ask each formula to add any implied keys.
+          for await (const formula of formulas) {
+            formula.addImpliedKeys(keys);
+          }
+        }
+
+        // Remove the real keys.
+        for (const key of realKeys) {
+          keys.delete(key);
+        }
+
+        this[virtualKeys] = [...keys];
+      }
+      return this[virtualKeys];
     }
   };
 }

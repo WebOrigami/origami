@@ -28,6 +28,22 @@ describe("FormulasTransform", () => {
     assert.deepEqual(await fixture.realKeys(), ["b"]);
   });
 
+  it("virtualKeys returns the virtual keys", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      b: "Hello",
+    });
+    assert.deepEqual(await fixture.virtualKeys(), ["a"]);
+  });
+
+  it("allKeys returns real, virtual, and formula keys", async () => {
+    const fixture = new FormulasObject({
+      "a = b": "",
+      b: "Hello",
+    });
+    assert.deepEqual(await fixture.allKeys(), ["a", "a = b", "b"]);
+  });
+
   it("can get a value defined by a variable pattern", async () => {
     const fixture = new FormulasObject({
       "[x].txt": "Default text",
