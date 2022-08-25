@@ -10,7 +10,16 @@ export default async function defaultIndexHtml(
   options = { showDiagnosticLinks: false }
 ) {
   const graph = this;
-  const keys = await ExplorableGraph.keys(graph);
+
+  // Prefer showing all keys if a) we're showing diagnostic info and b) the
+  // graph actually defines allKeys().
+  const allKeys = options.showDiagnosticLinks
+    ? /** @type {any} */ (graph).allKeys
+    : null;
+  const keys = allKeys
+    ? await allKeys.call(graph)
+    : await ExplorableGraph.keys(graph);
+
   const filtered = filterKeys(keys);
   const links = [];
   for (const key of filtered) {

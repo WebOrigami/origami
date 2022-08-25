@@ -13,6 +13,10 @@ export default class DefaultValues {
     this.defaults = ExplorableGraph.from(defaults);
   }
 
+  async allKeys() {
+    return /** @type {any} */ (this.graph).allKeys?.();
+  }
+
   async *[Symbol.asyncIterator]() {
     // Yield the graph's keys, not the defaults.
     yield* this.graph;
