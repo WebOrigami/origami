@@ -7,13 +7,13 @@ import StringWithGraph from "./StringWithGraph.js";
  * @this {Explorable}
  */
 export default async function defaultIndexHtml(
-  options = { showDiagnosticLinks: false }
+  options = { showDiagnostics: false }
 ) {
   const graph = this;
 
   // Prefer showing all keys if a) we're showing diagnostic info and b) the
   // graph actually defines allKeys().
-  const allKeys = options.showDiagnosticLinks
+  const allKeys = options.showDiagnostics
     ? /** @type {any} */ (graph).allKeys
     : null;
   const keys = allKeys
@@ -52,7 +52,7 @@ export default async function defaultIndexHtml(
     <ul>\n${links.join("\n").trim()}\n</ul>
   `;
 
-  const diagnosticLinks = options.showDiagnosticLinks
+  const diagnosticLinks = options.showDiagnostics
     ? `<p>
   <a href=".dataflow">dataflow</a>
   <a href=".svg">svg</a>
