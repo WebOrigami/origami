@@ -133,4 +133,15 @@ describe("FormulasTransform", () => {
       "fizzbuzz"
     );
   });
+
+  it("matchAll returns all matches against a key", async () => {
+    const fixture = new FormulasObject({
+      "[x] = `Hello, {{x}}.`": "",
+      "[y] = `Goodbye, {{y}}.`": "",
+    });
+    assert.deepEqual(await fixture.matchAll("Alice"), [
+      "Hello, Alice.",
+      "Goodbye, Alice.",
+    ]);
+  });
 });

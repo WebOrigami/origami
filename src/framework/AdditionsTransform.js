@@ -65,7 +65,7 @@ export default function AdditionsTransform(Base) {
       const peers = this[peerAdditions] ?? [];
       const allAdditions = [...children, ...peers];
       for (const graph of allAdditions) {
-        const graphFormulas = await graph.getFormulas();
+        const graphFormulas = (await graph.getFormulas?.()) ?? [];
         formulas.push(...graphFormulas);
       }
       return formulas;
@@ -94,8 +94,10 @@ export default function AdditionsTransform(Base) {
       return this[childAdditions];
     }
 
+    // This transform provides a default implentation of the matchAll method,
+    // but in typical use the implementation provided by FormulasTransform will
+    // be used instead.
     async matchAll(key) {
-      // Default behavior just includes the value obtained by get(key).
       const value = await this.get(key);
       return value ? [value] : [];
     }

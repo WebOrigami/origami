@@ -146,6 +146,20 @@ export default function FormulasTransform(Base) {
       return formulas;
     }
 
+    async matchAll(key) {
+      const formulas = await this.formulas();
+      const matches = [];
+      // If we ever decide we want to parallelize the set of async calls here,
+      // we'll need to make sure we keep them in the same order as the formulas.
+      for (const formula of formulas) {
+        const match = await this.evaluateFormula(formula, key);
+        if (match) {
+          matches.push(match);
+        }
+      }
+      return matches;
+    }
+
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
