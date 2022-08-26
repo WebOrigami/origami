@@ -36,7 +36,7 @@ describe("MapKeysValuesTest", () => {
     });
   });
 
-  it.only("can be told to not get values from the inner graph", async () => {
+  it("can be told to not get values from the inner graph", async () => {
     let calledGet = false;
     const domain = ["a", "b", "c"];
     const inner = new FunctionGraph((key) => {
