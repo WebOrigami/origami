@@ -24,7 +24,7 @@ export default class MapKeysValuesGraph {
     const keys = new Set();
     for await (const innerKey of this.graph) {
       const outerKey = await this.outerKeyForInnerKey(innerKey);
-      if (!keys.has(outerKey)) {
+      if (outerKey !== undefined && !keys.has(outerKey)) {
         keys.add(outerKey);
         yield outerKey;
       }

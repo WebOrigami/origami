@@ -1,3 +1,4 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
 
 /**
@@ -13,11 +14,17 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     this.innerExtension = options.innerExtension?.toLowerCase() ?? "";
     this.outerExtension =
       options.outerExtension?.toLowerCase() ?? this.innerExtension;
+    this.extensionMachesOnly = options.extensionMatchesOnly ?? false;
   }
 
   async innerKeyForOuterKey(outerKey) {
     const basename = matchExtension(outerKey, this.outerExtension);
-    return basename ? `${basename}${this.innerExtension}` : outerKey;
+    return basename
+      ? `${basename}${this.innerExtension}`
+      : !this.extensionMachesOnly ||
+        (await ExplorableGraph.isKeyExplorable(this.graph, outerKey))
+      ? outerKey
+      : undefined;
   }
 
   async mapApplies(innerValue, outerKey, innerKey) {
@@ -27,7 +34,12 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
 
   async outerKeyForInnerKey(innerKey) {
     const basename = matchExtension(innerKey, this.innerExtension);
-    return basename ? `${basename}${this.outerExtension}` : innerKey;
+    return basename
+      ? `${basename}${this.outerExtension}`
+      : !this.extensionMachesOnly ||
+        (await ExplorableGraph.isKeyExplorable(this.graph, innerKey))
+      ? innerKey
+      : undefined;
   }
 }
 
@@ -43,7 +55,10 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
 function matchExtension(key, extension) {
   if (extension) {
     // Key matches if it ends with the same extension
-    if (key.length > extension.length && key.endsWith(extension)) {
+    if (
+      key.length > extension.length &&
+      key.toLowerCase().endsWith(extension)
+    ) {
       return key.substring(0, key.length - extension.length);
     }
   } else if (!key.includes?.(".")) {

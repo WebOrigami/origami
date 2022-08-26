@@ -44,6 +44,33 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
+  it("can exclude non-explorable keys that don't match extension", async () => {
+    const fixture = new MapExtensionsGraph(
+      {
+        "file1.txt": "will be mapped",
+        file2: "won't be mapped",
+        "file3.foo": "won't be mapped",
+        more: {
+          "file4.txt": "will be mapped",
+          "file5.bar": "won't be mapped",
+        },
+      },
+      (s) => s.toUpperCase(),
+      {
+        deep: true,
+        innerExtension: ".txt",
+        outerExtension: ".upper",
+        extensionMatchesOnly: true,
+      }
+    );
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      "file1.upper": "WILL BE MAPPED",
+      more: {
+        "file4.upper": "WILL BE MAPPED",
+      },
+    });
+  });
+
   it("applies a mapping function to convert extensions in the middle of a path", async () => {
     const fixture = new MapExtensionsGraph(
       {
