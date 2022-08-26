@@ -10,7 +10,7 @@ import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
 export default class MapExtensionsGraph extends MapKeysValuesGraph {
   constructor(variant, mapFn, options = {}) {
     super(variant, mapFn, options);
-    this.innerExtension = options.innerExtension?.toLowerCase();
+    this.innerExtension = options.innerExtension?.toLowerCase() ?? "";
     this.outerExtension =
       options.outerExtension?.toLowerCase() ?? this.innerExtension;
   }
