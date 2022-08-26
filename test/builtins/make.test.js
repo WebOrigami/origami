@@ -1,7 +1,7 @@
 import make from "../../src/builtins/make.js";
 import assert from "../assert.js";
 
-describe("make", () => {
+describe.skip("make", () => {
   it("creates the virtual values in a graph", async () => {
     const graph = {
       a: "Hello",
