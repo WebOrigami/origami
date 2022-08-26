@@ -17,8 +17,9 @@ export default async function clean(variant) {
     // Nothing to clean
     return;
   }
-  const undefineds = new MapValuesGraph(cleanGraph, (value) => undefined, {
+  const undefineds = new MapValuesGraph(cleanGraph, () => undefined, {
     deep: true,
+    getValue: false,
   });
   // @ts-ignore
   await graph.set(undefineds);

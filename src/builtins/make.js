@@ -18,15 +18,28 @@ export default async function make(variant) {
   // const plainGraphStart = await ExplorableGraph.plain(graph);
   const real = await reals(graph);
   // const plainReal = await ExplorableGraph.plain(real);
+
+  // What keys do we need to build?
   const build = new SubtractKeys(graph, real);
   // const plainBuild = await ExplorableGraph.plain(build);
-  const undefineds = new MapValuesGraph(build, (value) => undefined, {
+
+  // Construct a parallel graph of `undefined` values that can be used to erase
+  // the current values in the graph. We'll also preserve that as a YAML file
+  // that clean() can use later to erase the built values.
+  const undefineds = new MapValuesGraph(build, () => undefined, {
     deep: true,
+    getValue: false,
   });
   // const plainUndefineds = await ExplorableGraph.plain(undefineds);
+
+  // Record which values we'll want to clean later.
   const cleanYaml = await yaml(undefineds);
   await graph.set(".ori.clean.yaml", cleanYaml);
+
+  // Clear out the current values in the graph.
   await copy(undefineds, graph);
+
+  // Build the needed values.
   await copy(build, graph);
   // const plainGraphEnd = await ExplorableGraph.plain(graph);
 }
