@@ -15,6 +15,7 @@ export default class MapValuesGraph {
     this.graph = ExplorableGraph.from(variant);
     this.mapFn = utilities.toFunction(mapFn);
     this.deep = options.deep ?? false;
+    this.getValue = options.getValue ?? true;
     this.options = options;
   }
 
@@ -31,11 +32,11 @@ export default class MapValuesGraph {
    * @param {any} key
    */
   async get(key) {
-    const value = await this.graph.get(key);
+    const value = this.getValue ? await this.graph.get(key) : undefined;
     return this.deep && ExplorableGraph.isExplorable(value)
       ? // Return mapped subgraph
         Reflect.construct(this.constructor, [value, this.mapFn, this.options])
-      : value !== undefined
+      : value !== undefined || !this.getValue
       ? await this.mapFn.call(this, value, key) // Return mapped value
       : undefined;
   }

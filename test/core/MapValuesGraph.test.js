@@ -1,3 +1,4 @@
+import { FunctionGraph } from "../../exports.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
@@ -27,5 +28,23 @@ describe("MapValuesGraph", () => {
         e: 10,
       },
     });
+  });
+
+  it("can be told to not get values from the inner graph", async () => {
+    let calledGet = false;
+    const inner = new FunctionGraph(
+      (key) => {
+        calledGet = true;
+        return false;
+      },
+      ["a", "b", "c"]
+    );
+    const mapped = new MapValuesGraph(inner, () => true, { getValue: false });
+    assert.deepEqual(await ExplorableGraph.plain(mapped), {
+      a: true,
+      b: true,
+      c: true,
+    });
+    assert(!calledGet);
   });
 });

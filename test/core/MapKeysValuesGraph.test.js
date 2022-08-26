@@ -1,4 +1,5 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import FunctionGraph from "../../src/core/FunctionGraph.js";
 import MapKeysValuesGraph from "../../src/core/MapKeysValuesGraph.js";
 import assert from "../assert.js";
 
@@ -33,5 +34,26 @@ describe("MapKeysValuesTest", () => {
       B: "Goodbye, B.",
       C: "GOODNIGHT, C.",
     });
+  });
+
+  it.only("can be told to not get values from the inner graph", async () => {
+    let calledGet = false;
+    const domain = ["a", "b", "c"];
+    const inner = new FunctionGraph((key) => {
+      if (domain.includes(key)) {
+        calledGet = true;
+        return false;
+      }
+      return undefined;
+    }, domain);
+    const mapped = new UppercaseKeysGraph(inner, () => true, {
+      getValue: false,
+    });
+    assert.deepEqual(await ExplorableGraph.plain(mapped), {
+      A: true,
+      B: true,
+      C: true,
+    });
+    assert(!calledGet);
   });
 });

@@ -16,6 +16,7 @@ export default class MapKeysValuesGraph {
     this.graph = ExplorableGraph.from(variant);
     this.mapFn = utilities.toFunction(mapFn);
     this.deep = options.deep ?? false;
+    this.getValue = options.getValue ?? true;
     this.options = options;
   }
 
@@ -43,7 +44,10 @@ export default class MapKeysValuesGraph {
     }
     if (outerValue === undefined) {
       // Ask inner graph for value.
-      const innerValue = await this.graph.get(innerKey);
+      const innerValue = this.getValue
+        ? await this.graph.get(innerKey)
+        : undefined;
+
       // Determine whether we want to apply the map to this value.
       const applyMap = await this.mapApplies(innerValue, outerKey, innerKey);
       // Apply map if desired, otherwise use inner value as is.
@@ -69,8 +73,9 @@ export default class MapKeysValuesGraph {
   }
 
   async mapApplies(innerValue, outerKey, innerKey) {
-    // By default, we only apply the map to real values.
-    return innerValue !== undefined;
+    // By default, we only apply the map to real values, or if we're not getting
+    // a value.
+    return innerValue !== undefined || !this.getValue;
   }
 
   async outerKeyForInnerKey(innerKey) {
