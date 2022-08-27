@@ -5,7 +5,7 @@
   "bin": {
     "ori": "src/cli/cli.js"
   },
-  "main": "./exports.js",
+  "main": "./exports/exports.js",
   "devDependencies": {
     "@types/chai": "4.3.0",
     "@types/mocha": "9.1.0",
@@ -24,6 +24,7 @@
     "yaml": "1.10.2"
   },
   "scripts": {
-    "typecheck": "node node_modules/typescript/bin/tsc"
+    "typecheck": "node node_modules/typescript/bin/tsc",
+    "prepublishOnly": "ori make exports"
   }
 }
