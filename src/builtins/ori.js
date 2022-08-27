@@ -76,10 +76,11 @@ export default async function ori(expression, path) {
 async function formatResult(result) {
   const stringOrBuffer =
     typeof result === "string" ||
-    result instanceof String ||
     (globalThis.Buffer && result instanceof Buffer);
   let output = stringOrBuffer
     ? result
+    : result instanceof String
+    ? result.toString()
     : result !== undefined
     ? await yaml(result)
     : undefined;
