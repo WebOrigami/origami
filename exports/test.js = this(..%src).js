@@ -48,5 +48,5 @@ async function exportStatementForCode(codeBuffer, key) {
   const container = (await this.get("@path")) ?? "";
   const path = `${container}/${key}`;
 
-  return `export ${exportName} from "../src/${path}";\n`;
+  return `export ${exportName} from "${path}";\n`;
 }
