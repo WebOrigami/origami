@@ -24,7 +24,7 @@
     "yaml": "1.10.2"
   },
   "scripts": {
-    "typecheck": "node node_modules/typescript/bin/tsc",
-    "prepublishOnly": "ori make exports"
+    "prepublishOnly": "ori make exports",
+    "typecheck": "node node_modules/typescript/bin/tsc"
   }
 }
