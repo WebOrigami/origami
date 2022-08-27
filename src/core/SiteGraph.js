@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 const keysPromise = Symbol("keysPromise");
 
 export default class SiteGraph {

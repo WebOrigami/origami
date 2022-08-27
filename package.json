@@ -19,7 +19,6 @@
     "handlebars": "4.7.7",
     "highlight.js": "11.5.0",
     "marked": "4.0.12",
-    "node-fetch": "3.2.3",
     "node-graphviz": "0.1.0",
     "yaml": "1.10.2"
   },
