@@ -14,7 +14,11 @@ export default class DefaultValues {
   }
 
   async allKeys() {
-    return /** @type {any} */ (this.graph).allKeys?.();
+    const graphAllKeys = /** @type {any} */ (this.graph).allKeys;
+    const keys = graphAllKeys
+      ? await graphAllKeys()
+      : await ExplorableGraph.keys(this.graph);
+    return keys;
   }
 
   async *[Symbol.asyncIterator]() {
