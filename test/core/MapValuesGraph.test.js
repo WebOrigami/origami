@@ -1,5 +1,5 @@
-import { FunctionGraph } from "../../exports.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import FunctionGraph from "../../src/core/FunctionGraph.js";
 import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
