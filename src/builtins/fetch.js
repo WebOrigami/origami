@@ -1,3 +1,5 @@
+import fetch from "node-fetch";
+
 export default async function fetchCommand(url) {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();

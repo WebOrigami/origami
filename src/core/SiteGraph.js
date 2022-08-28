@@ -1,4 +1,6 @@
-const keysPromise = Symbol("keysPromise");
+import fetch from "node-fetch";
+
+const keys = Symbol("keys");
 
 export default class SiteGraph {
   constructor(url = window?.location.href) {
@@ -8,22 +10,21 @@ export default class SiteGraph {
     } else {
       this.url = url;
     }
-    this[keysPromise] = null;
+    this[keys] = null;
   }
 
   async *[Symbol.asyncIterator]() {
-    if (!this[keysPromise]) {
+    if (!this[keys]) {
       const href = new URL(".keys.json", this.url).href;
-      this[keysPromise] = fetch(href);
+      const response = await fetch(href);
+      if (response.ok) {
+        const text = await response.text();
+        this[keys] = text ? JSON.parse(text) : [];
+      } else {
+        this[keys] = [];
+      }
     }
-    const response = await this[keysPromise];
-    if (response.ok) {
-      const text = await response.text();
-      const keys = text ? JSON.parse(text) : [];
-      yield* keys;
-    } else {
-      yield* [];
-    }
+    yield* this[keys];
   }
 
   async get(key) {
