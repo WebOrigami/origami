@@ -15,11 +15,11 @@
     "typescript": "4.6.3"
   },
   "dependencies": {
+    "@hpcc-js/wasm": "1.15.3",
+    "graphviz-wasm": "3.0.0",
     "chokidar": "3.5.3",
-    "handlebars": "4.7.7",
     "highlight.js": "11.5.0",
     "marked": "4.0.12",
-    "node-graphviz": "0.1.0",
     "yaml": "1.10.2"
   },
   "scripts": {

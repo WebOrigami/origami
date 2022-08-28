@@ -1,8 +1,11 @@
-import { graphviz } from "node-graphviz";
+import graphviz from "graphviz-wasm";
+
+const graphvizPromise = graphviz.loadWASM();
 
 export default async function flowSvg(flow) {
+  await graphvizPromise;
   const dot = flowDot(flow);
-  const svg = await graphviz.dot(dot, "svg");
+  const svg = await graphviz.layout(dot, "svg");
   return svg;
 }
 
