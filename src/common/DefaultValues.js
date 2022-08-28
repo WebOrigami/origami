@@ -16,7 +16,7 @@ export default class DefaultValues {
   async allKeys() {
     const graphAllKeys = /** @type {any} */ (this.graph).allKeys;
     const keys = graphAllKeys
-      ? await graphAllKeys()
+      ? await graphAllKeys.call(this.graph)
       : await ExplorableGraph.keys(this.graph);
     return keys;
   }
