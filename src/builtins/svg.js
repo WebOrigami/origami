@@ -2,7 +2,7 @@ import graphviz from "graphviz-wasm";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import dot from "./dot.js";
 
-const graphvizPromise = graphviz.loadWASM();
+let graphvizLoaded = false;
 
 /**
  * Render a graph visually in SVG format.
@@ -11,7 +11,10 @@ const graphvizPromise = graphviz.loadWASM();
  * @param {GraphVariant} [variant]
  */
 export default async function svg(variant) {
-  await graphvizPromise;
+  if (!graphvizLoaded) {
+    await graphviz.loadWASM();
+    graphvizLoaded = true;
+  }
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
