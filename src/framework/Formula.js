@@ -129,6 +129,11 @@ export default class Formula {
 export class ConstantFormula extends Formula {
   impliedKeys(keys) {
     // Constant formulas add the name of the constant they define.
+
+    // TODO: A constant formula can still depend on other values in scope. To be
+    // more precise, this function should inspect the supplied keys to see if
+    // those values are present before deciding whether to return this formula's
+    // key.
     return [this.key];
   }
 
