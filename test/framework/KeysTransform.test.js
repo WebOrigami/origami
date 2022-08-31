@@ -3,7 +3,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import KeysTransform from "../../src/framework/KeysTransform.js";
 import assert from "../assert.js";
 
-describe.only("KeysTransform", () => {
+describe("KeysTransform", () => {
   it("real and virtual keys can imply additional virtual keys", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
       async keyAdded(key, existingKeys) {

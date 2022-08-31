@@ -7,7 +7,7 @@ import assert from "../assert.js";
 
 class FormulasObject extends FormulasTransform(KeysTransform(ObjectGraph)) {}
 
-describe.only("FormulasTransform", () => {
+describe("FormulasTransform", () => {
   it("iterator includes public keys (which exclude formulas)", async () => {
     const fixture = new FormulasObject({
       "a = b": "",

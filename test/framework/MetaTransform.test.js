@@ -11,6 +11,8 @@ import assert from "../assert.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 
+class MetaObject extends MetaTransform(ObjectGraph) {}
+
 const metaGraph = new (MetaTransform(FilesGraph))(
   path.join(fixturesDirectory, "metagraphs")
 );
@@ -25,7 +27,7 @@ metaGraph.parent = new Compose(
 
 // Given the nature of MetaTransform, these are integration tests.
 
-describe("MetaTransform", () => {
+describe.only("MetaTransform", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(metaGraph), [
       "foo.txt",
@@ -87,8 +89,31 @@ describe("MetaTransform", () => {
     assert.equal(normalized, "Hello, world.\n");
   });
 
-  it("can inherit ellipsis formulas", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+  it("inherits keys prefixed with `…`", async () => {
+    const graph = new MetaObject({
+      "…a": 1,
+      sub: {
+        "…b": 2,
+        subsub: {
+          "…b": 3, // Overrides ancestor value
+        },
+      },
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      sub: {
+        a: 1,
+        b: 2,
+        subsub: {
+          a: 1,
+          b: 3,
+        },
+      },
+    });
+  });
+
+  it("inherits formulas prefixed with `…`", async () => {
+    const graph = new MetaObject({
       "…greeting = message": "",
       message: "Hello",
       spanish: {
@@ -101,7 +126,7 @@ describe("MetaTransform", () => {
   });
 
   it("has access to concrete values in scope", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       greeting: "Hello",
       subgraph: {
         "message = greeting": "",
@@ -114,7 +139,7 @@ describe("MetaTransform", () => {
   });
 
   it("has access to virtual values in scope", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "greeting = `Hello`": "",
       subgraph: {
         "message = greeting": "",
@@ -128,7 +153,7 @@ describe("MetaTransform", () => {
   });
 
   it("can inherit functions", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "index.txt": "Home",
       textToHtml: (text) => `<body>${text}</body>`,
       "…[x].html = textToHtml({{x}}.txt)": "",
@@ -142,7 +167,7 @@ describe("MetaTransform", () => {
   });
 
   it("can inherit bound variables", async () => {
-    const fixture = new (MetaTransform(ObjectGraph))({
+    const fixture = new MetaObject({
       "[x]": {
         "[y] = `{{x}}{{y}}`": "",
       },
@@ -158,17 +183,20 @@ describe("MetaTransform", () => {
   });
 
   it("a formula can reference a child addition", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "+": {
         "a.json": "Hello, a.",
       },
       "[x].txt = {{x}}.json": "",
     });
-    assert.equal(await graph.get("a.txt"), "Hello, a.");
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      "a.json": "Hello, a.",
+      "a.txt": "Hello, a.",
+    });
   });
 
   it("wildcard values do not apply in scope", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "[test]": {
         a: 1,
       },
@@ -187,7 +215,7 @@ describe("MetaTransform", () => {
   });
 
   it("peer addition formulas can reference a local graph value", async () => {
-    const fixture = new (MetaTransform(ObjectGraph))({
+    const fixture = new MetaObject({
       "[x]+": {
         "message = `Hello, {{name}}.`": "",
       },
@@ -199,25 +227,8 @@ describe("MetaTransform", () => {
     assert.equal(await sub.get("message"), "Hello, Alice.");
   });
 
-  it("can inherit values prefixed with `…`", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
-      "…a": 1,
-      "…b": 2,
-      subgraph: {
-        "…b": 3, // Overrides ancestor value
-        subsubgraph: {},
-      },
-    });
-    assert.equal(await graph.get("b"), 2);
-    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "b"), 3);
-    assert.equal(
-      await ExplorableGraph.traverse(graph, "subgraph", "subsubgraph", "b"),
-      3
-    );
-  });
-
   it("can inherit formulas prefixed with `…`", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "…greeting = message": "",
       message: "Hello",
       spanish: {
@@ -230,7 +241,7 @@ describe("MetaTransform", () => {
   });
 
   it("can define inherited additions with formulas", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       "…a = this": "inherited",
       folder: {
         b: "local",
@@ -242,7 +253,7 @@ describe("MetaTransform", () => {
   });
 
   it("can define peer additions with a formula", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
+    const graph = new MetaObject({
       folder: {
         a: "local",
       },

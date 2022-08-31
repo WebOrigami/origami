@@ -4,6 +4,7 @@ import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
 import AdditionsTransform from "./AdditionsTransform.js";
 import FormulasTransform from "./FormulasTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
+import KeysTransform from "./KeysTransform.js";
 import PathTransform from "./PathTransform.js";
 
 export default function MetaTransform(Base) {
@@ -12,7 +13,7 @@ export default function MetaTransform(Base) {
       InheritScopeTransform(
         FormulasTransform(
           AdditionsTransform(
-            FileLoadersTransform(ImplicitModulesTransform(Base))
+            FileLoadersTransform(ImplicitModulesTransform(KeysTransform(Base)))
           )
         )
       )

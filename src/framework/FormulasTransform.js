@@ -5,7 +5,6 @@ import {
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
-const inheritedFormulas = Symbol("inheritedFormulas");
 
 export default function FormulasTransform(Base) {
   return class Formulas extends Base {
@@ -14,7 +13,6 @@ export default function FormulasTransform(Base) {
       this.applyFormulas = true;
       this.bindings = null;
       this[formulasKey] = null;
-      this[inheritedFormulas] = null;
     }
 
     async evaluateFormula(formula, key) {
@@ -98,6 +96,7 @@ export default function FormulasTransform(Base) {
     }
 
     async keyAdded(key, existingKeys) {
+      const result = (await super.keyAdded?.(key, existingKeys)) ?? {};
       // Try to parse the key as a formula.
       const formula = Formula.parse(String(key));
       if (formula) {
@@ -111,12 +110,13 @@ export default function FormulasTransform(Base) {
         }
 
         // Hide the formula from the keys.
-        return { hidden: true };
+        result.hidden = true;
       }
-      return;
+      return result;
     }
 
     async keysAdded(keys) {
+      await super.keysAdded?.(keys);
       for (const formula of this[formulasKey]) {
         for (const key of formula.impliedKeys(keys)) {
           this.addKey(key);
@@ -142,7 +142,6 @@ export default function FormulasTransform(Base) {
     onChange(key) {
       super.onChange?.(key);
       this[formulasKey] = null;
-      this[inheritedFormulas] = null;
     }
   };
 }

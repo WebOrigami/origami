@@ -7,7 +7,7 @@ import assert from "../assert.js";
 
 class AdditionsObject extends AdditionsTransform(KeysTransform(ObjectGraph)) {}
 
-describe.only("AdditionsTransform", () => {
+describe("AdditionsTransform", () => {
   it("defines child additions with + additions prefix", async () => {
     const graph = new AdditionsObject({
       a: 1,

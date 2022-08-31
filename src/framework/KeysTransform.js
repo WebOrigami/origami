@@ -79,10 +79,11 @@ export default function KeysTransform(Base) {
           }
         }
 
-        if (keysThisCycle.length > 0) {
-          this[allKeys].push(...keysThisCycle);
-          await this.keysAdded(keysThisCycle);
-        }
+        this[allKeys].push(...keysThisCycle);
+
+        // Allow transforms to cope with new keys. We do this even if there are
+        // no new keys this cycle; a transform may have other sources of keys.
+        await this.keysAdded(keysThisCycle);
       }
 
       // REVIEW: Should sortNatural sort in place?

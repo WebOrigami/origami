@@ -20,18 +20,18 @@ export default function InheritScopeTransform(Base) {
       return value;
     }
 
-    async getFormulas() {
-      const formulas = (await super.getFormulas?.()) ?? [];
-      if (this.parent) {
-        const parentFormulas = (await this.parent.getFormulas?.()) ?? [];
-        const inherited = parentFormulas.filter(
-          (formula) => formula.inheritable
-        );
-        // Inherited formulas are lower priority, so come last.
-        formulas.push(...inherited);
-      }
-      return formulas;
-    }
+    // async getFormulas() {
+    //   const formulas = (await super.getFormulas?.()) ?? [];
+    //   if (this.parent) {
+    //     const parentFormulas = (await this.parent.getFormulas?.()) ?? [];
+    //     const inherited = parentFormulas.filter(
+    //       (formula) => formula.inheritable
+    //     );
+    //     // Inherited formulas are lower priority, so come last.
+    //     formulas.push(...inherited);
+    //   }
+    //   return formulas;
+    // }
 
     get parent() {
       return this[parentKey];

@@ -3,11 +3,14 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 
 const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
+const inheritedAdditions = Symbol("inheritedAdditions");
+const inheritableAdditions = Symbol("inheritableAdditions");
 const peerAdditions = Symbol("peerAdditions");
 const addedPeerAdditions = Symbol("addedPeerAdditions");
 const gettingChildAdditions = Symbol("gettingChildAdditions");
 
 export const additionsPrefix = "+";
+export const inheritableAdditionsPrefix = "…";
 export const peerAdditionsSuffix = "+";
 
 export default function AdditionsTransform(Base) {
@@ -15,6 +18,8 @@ export default function AdditionsTransform(Base) {
     constructor(...args) {
       super(...args);
       this[childAdditions] = undefined;
+      this[inheritedAdditions] = undefined;
+      this[inheritableAdditions] = undefined;
       this[peerAdditions] = undefined;
       this[addedPeerAdditions] = undefined;
       this[gettingChildAdditions] = false;
@@ -52,7 +57,11 @@ export default function AdditionsTransform(Base) {
 
       // If the value is an explorable graph, add inherited additions.
       if (ExplorableGraph.isExplorable(value)) {
+        if (!this[inheritableAdditions] && !this[gettingChildAdditions]) {
+          await this.getKeys();
+        }
         value[peerAdditions] = await getPeerValues(this, key);
+        value[inheritedAdditions] = this[inheritableAdditions] ?? [];
       }
 
       return value;
@@ -67,7 +76,7 @@ export default function AdditionsTransform(Base) {
     }
 
     async keyAdded(key, existingKeys) {
-      await super.keyAdded(key, existingKeys);
+      const result = (await super.keyAdded?.(key, existingKeys)) ?? {};
       if (isChildAdditionKey(key)) {
         // To avoid an infinite loop, we set a flag to indicate that we're in
         // the process of getting additions. During that process, the get method
@@ -85,9 +94,14 @@ export default function AdditionsTransform(Base) {
           }
         }
         // Hide this addition from the public keys.
-        return { hidden: true };
+        result.hidden = true;
+      } else if (isInheritableAdditionKey(key)) {
+        if (!this[inheritableAdditions]) {
+          this[inheritableAdditions] = [];
+        }
+        this[inheritableAdditions].push(key);
       }
-      return;
+      return result;
     }
 
     async keysAdded(keys) {
@@ -101,6 +115,13 @@ export default function AdditionsTransform(Base) {
             this.addKey(peerKey);
           }
         }
+
+        if (this[inheritedAdditions]) {
+          for (const inheritedKey of this[inheritedAdditions]) {
+            this.addKey(inheritedKey);
+          }
+        }
+
         this[addedPeerAdditions] = true;
       }
     }
@@ -139,6 +160,10 @@ async function getPeerValues(graph, graphKey) {
 
 function isChildAdditionKey(key) {
   return key.startsWith?.(additionsPrefix);
+}
+
+function isInheritableAdditionKey(key) {
+  return key.startsWith?.(inheritableAdditionsPrefix);
 }
 
 function isPeerAdditionKey(key) {
