@@ -3,10 +3,10 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import KeysTransform from "../../src/framework/KeysTransform.js";
 import assert from "../assert.js";
 
-describe.only("KeysTransform", () => {
+describe("KeysTransform", () => {
   it("real and virtual keys can imply additional virtual keys", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key) {
+      async keyAdded(key, existingKeys) {
         if (key === "a") {
           this.addKey("b");
         } else if (key === "b") {
@@ -26,7 +26,7 @@ describe.only("KeysTransform", () => {
 
   it("keys can be hidden", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key) {
+      async keyAdded(key, existingKeys) {
         if (key.startsWith(".")) {
           return { hidden: true };
         }
@@ -46,9 +46,9 @@ describe.only("KeysTransform", () => {
 
   it("keys can be implied", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      addImpliedKeys(newKeys) {
+      async keysAdded(keys) {
         // Every .foo key implies a .bar key
-        for (const key of newKeys) {
+        for (const key of keys) {
           if (key.endsWith(".foo")) {
             this.addKey(`${key.slice(0, -4)}.bar`);
           }

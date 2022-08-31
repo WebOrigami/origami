@@ -17,14 +17,6 @@ export default function FormulasTransform(Base) {
       this[inheritedFormulas] = null;
     }
 
-    addImpliedKeys(newKeys) {
-      const implied = [];
-      for (const formula of this[formulasKey]) {
-        implied.push(...formula.impliedKeys(newKeys));
-      }
-      return implied;
-    }
-
     async evaluateFormula(formula, key) {
       const keyBinding = formula.unify(key);
       let value;
@@ -98,6 +90,13 @@ export default function FormulasTransform(Base) {
       return value;
     }
 
+    async getKeys() {
+      this[formulasKey] = [];
+      await super.getKeys();
+      // Sort by precedence: constant formulas before variable formulas.
+      sortFormulas(this[formulasKey]);
+    }
+
     async keyAdded(key, existingKeys) {
       // Try to parse the key as a formula.
       const formula = Formula.parse(String(key));
@@ -106,9 +105,8 @@ export default function FormulasTransform(Base) {
         formula.closure = this.bindings ?? {};
         this[formulasKey].push(formula);
 
-        // Add any virtual keys implied by the formula.
-        const implied = formula.impliedKeys(existingKeys);
-        for (const impliedKey of implied) {
+        // Add keys that this formula implies based on the existing keys.
+        for (const impliedKey of formula.impliedKeys(existingKeys)) {
           this.addKey(impliedKey);
         }
 
@@ -116,6 +114,14 @@ export default function FormulasTransform(Base) {
         return { hidden: true };
       }
       return;
+    }
+
+    async keysAdded(keys) {
+      for (const formula of this[formulasKey]) {
+        for (const key of formula.impliedKeys(keys)) {
+          this.addKey(key);
+        }
+      }
     }
 
     async matchAll(key) {

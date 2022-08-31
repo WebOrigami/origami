@@ -15,17 +15,20 @@ export default function KeysTransform(Base) {
       this[newKeyQueue] = [];
     }
 
-    addImpliedKeys(newKeys) {
-      super.addImpliedKeys?.(newKeys);
-    }
-
     addKey(key, options = {}) {
       const entry = {
         key,
         virtual: options.virtual ?? true,
         hidden: options.hidden ?? false,
       };
-      this[newKeyQueue].push(entry);
+
+      // TODO: Use Set
+      const exists =
+        this[allKeys].includes(key) ||
+        this[newKeyQueue].find((entry) => entry.key === key);
+      if (!exists) {
+        this[newKeyQueue].push(entry);
+      }
     }
 
     async allKeys() {
@@ -52,7 +55,7 @@ export default function KeysTransform(Base) {
 
       for (
         let length = -1;
-        length !== this[allKeys].length && this[newKeyQueue].length > 0;
+        length !== this[allKeys].length || this[newKeyQueue].length > 0;
 
       ) {
         length = this[allKeys].length;
@@ -64,7 +67,6 @@ export default function KeysTransform(Base) {
           const key = entry.key;
           const options = await this.keyAdded(key, this[allKeys]);
 
-          this[allKeys].push(key);
           keysThisCycle.push(key);
 
           const virtual = options?.virtual ?? entry.virtual;
@@ -79,7 +81,8 @@ export default function KeysTransform(Base) {
         }
 
         if (keysThisCycle.length > 0) {
-          this.addImpliedKeys(keysThisCycle);
+          this[allKeys].push(...keysThisCycle);
+          await this.keysAdded(keysThisCycle);
         }
       }
 
@@ -91,6 +94,10 @@ export default function KeysTransform(Base) {
 
     async keyAdded(key, existingKeys) {
       return super.keyAdded?.(key, existingKeys);
+    }
+
+    async keysAdded(newKeys) {
+      return super.keysAdded?.(newKeys);
     }
 
     onChange(key) {
