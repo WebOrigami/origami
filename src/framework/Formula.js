@@ -127,9 +127,9 @@ export default class Formula {
 }
 
 export class ConstantFormula extends Formula {
-  addImpliedKeys(keys) {
+  impliedKeys(keys) {
     // Constant formulas add the name of the constant they define.
-    keys.add(this.key);
+    return [this.key];
   }
 
   unify(key) {
@@ -157,7 +157,7 @@ export class VariableFormula extends Formula {
     }
   }
 
-  addImpliedKeys(keys) {
+  impliedKeys(keys) {
     // Formulas with no antecedents don't imply any new keys, nor do formulas
     // without an extension, nor do ghost keys.
     if (
@@ -165,10 +165,11 @@ export class VariableFormula extends Formula {
       this.extension === null ||
       this.extension === peerAdditionsSuffix
     ) {
-      return;
+      return [];
     }
 
     // See which keys match the formula's antecedents.
+    const implied = [];
     for (const key of keys) {
       const base = this.#matchExtension(key, this.antecedents[0]);
       if (base) {
@@ -179,10 +180,12 @@ export class VariableFormula extends Formula {
         if (restMatched) {
           // Determine the consequent of this formula.
           const consequent = base + this.extension;
-          keys.add(consequent);
+          implied.push(consequent);
         }
       }
     }
+
+    return implied;
   }
 
   #findAntecedents(expression) {
