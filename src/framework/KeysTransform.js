@@ -22,7 +22,6 @@ export default function KeysTransform(Base) {
         hidden: options.hidden ?? false,
       };
 
-      // TODO: Use Set
       const exists =
         this[allKeys].includes(key) ||
         this[newKeyQueue].find((entry) => entry.key === key);
