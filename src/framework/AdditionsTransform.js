@@ -4,6 +4,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
 const peerAdditions = Symbol("peerAdditions");
+const addedPeerAdditions = Symbol("addedPeerAdditions");
 const gettingChildAdditions = Symbol("gettingChildAdditions");
 
 export const additionsPrefix = "+";
@@ -15,12 +16,16 @@ export default function AdditionsTransform(Base) {
       super(...args);
       this[childAdditions] = undefined;
       this[peerAdditions] = undefined;
+      this[addedPeerAdditions] = undefined;
       this[gettingChildAdditions] = false;
     }
 
     async additions() {
       if (this[additions] === undefined) {
-        const children = await this.getChildAdditions();
+        if (!this[childAdditions] || !this[peerAdditions]) {
+          await this.getKeys();
+        }
+        const children = this[childAdditions] ?? [];
         const peers = this[peerAdditions] ?? [];
         const allAdditions = [...children, ...peers];
         this[additions] =
@@ -31,12 +36,6 @@ export default function AdditionsTransform(Base) {
             : new Compose(...allAdditions);
       }
       return this[additions];
-    }
-
-    async *[Symbol.asyncIterator]() {
-      // TODO: Sort keys together
-      yield* super[Symbol.asyncIterator]();
-      yield* (await this.additions?.()) ?? [];
     }
 
     async get(key) {
@@ -59,39 +58,51 @@ export default function AdditionsTransform(Base) {
       return value;
     }
 
-    async getFormulas() {
-      const formulas = (await super.getFormulas?.()) ?? [];
-      const children = await this.getChildAdditions();
-      const peers = this[peerAdditions] ?? [];
-      const allAdditions = [...children, ...peers];
-      for (const graph of allAdditions) {
-        const graphFormulas = (await graph.getFormulas?.()) ?? [];
-        formulas.push(...graphFormulas);
+    async getKeys() {
+      this[childAdditions] = [];
+      if (!this[peerAdditions]) {
+        this[peerAdditions] = [];
       }
-      return formulas;
+      await super.getKeys();
     }
 
-    async getChildAdditions() {
-      if (this[childAdditions] === undefined) {
+    async keyAdded(key, existingKeys) {
+      await super.keyAdded(key, existingKeys);
+      if (isChildAdditionKey(key)) {
         // To avoid an infinite loop, we set a flag to indicate that we're in
         // the process of getting additions. During that process, the get method
         // will be able to get other things, but not additions.
         this[gettingChildAdditions] = true;
-        this[childAdditions] = [];
-        for await (const key of super[Symbol.asyncIterator]()) {
-          if (isChildAdditionKey(key)) {
-            const addition = await this.get(key);
-            if (addition) {
-              const graph = ExplorableGraph.from(addition);
-              graph.applyFormulas = false;
-              graph.parent = null;
-              this[childAdditions].push(graph);
-            }
+        const addition = await this.get(key);
+        this[gettingChildAdditions] = false;
+        if (addition) {
+          const graph = ExplorableGraph.from(addition);
+          graph.applyFormulas = false;
+          graph.parent = null;
+          this[childAdditions].push(graph);
+          for await (const graphKey of graph) {
+            this.addKey(graphKey);
           }
         }
-        this[gettingChildAdditions] = false;
+        // Hide this addition from the public keys.
+        return { hidden: true };
       }
-      return this[childAdditions];
+      return;
+    }
+
+    async keysAdded(keys) {
+      await super.keysAdded?.(keys);
+
+      // After the first cycle of keys have been added, add keys from any
+      // pending peer additions that were passed down to use from the parent.
+      if (!this[addedPeerAdditions]) {
+        for (const peerGraph of this[peerAdditions]) {
+          for await (const peerKey of peerGraph) {
+            this.addKey(peerKey);
+          }
+        }
+        this[addedPeerAdditions] = true;
+      }
     }
 
     // This transform provides a default implentation of the matchAll method,

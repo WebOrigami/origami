@@ -1,12 +1,15 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import AdditionsTransform from "../../src/framework/AdditionsTransform.js";
+import KeysTransform from "../../src/framework/KeysTransform.js";
 import FileLoadersTransform from "../../src/node/FileLoadersTransform.js";
 import assert from "../assert.js";
 
-describe("AdditionsTransform", () => {
+class AdditionsObject extends AdditionsTransform(KeysTransform(ObjectGraph)) {}
+
+describe.only("AdditionsTransform", () => {
   it("defines child additions with + additions prefix", async () => {
-    const graph = new (AdditionsTransform(ObjectGraph))({
+    const graph = new AdditionsObject({
       a: 1,
       "+": {
         b: 2,
@@ -18,21 +21,25 @@ describe("AdditionsTransform", () => {
         },
       },
     });
-    assert.equal(await graph.get("a"), 1);
-    assert.equal(await graph.get("b"), 2);
-    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "c"), 3);
-    assert.equal(await ExplorableGraph.traverse(graph, "subgraph", "d"), 4);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      b: 2,
+      subgraph: {
+        c: 3,
+        d: 4,
+      },
+    });
   });
 
   it("child additions can come from a different type of graph", async () => {
-    const graph = new (FileLoadersTransform(AdditionsTransform(ObjectGraph)))({
+    const graph = new (FileLoadersTransform(AdditionsObject))({
       "+.yaml": `a: 1`,
     });
     assert.equal(await graph.get("a"), 1);
   });
 
   it("adds values from peer graphs marked with `+` extension", async () => {
-    const graph = new (AdditionsTransform(ObjectGraph))({
+    const graph = new AdditionsObject({
       a: {
         b: 1,
       },
@@ -42,12 +49,14 @@ describe("AdditionsTransform", () => {
       },
     });
     const a = await graph.get("a");
-    assert.equal(await a.get("b"), 1);
-    assert.equal(await a.get("c"), 2);
+    assert.deepEqual(await ExplorableGraph.plain(a), {
+      b: 1,
+      c: 2,
+    });
   });
 
   it("prefers local values, then child additions, then peers", async () => {
-    const graph = new (AdditionsTransform(ObjectGraph))({
+    const graph = new AdditionsObject({
       "folder+": {
         // Peer additions
         a: "peer",
@@ -65,8 +74,10 @@ describe("AdditionsTransform", () => {
       },
     });
     const folder = await graph.get("folder");
-    assert.equal(await folder.get("a"), "local");
-    assert.equal(await folder.get("b"), "child");
-    assert.equal(await folder.get("c"), "peer");
+    assert.deepEqual(await ExplorableGraph.plain(folder), {
+      a: "local",
+      b: "child",
+      c: "peer",
+    });
   });
 });
