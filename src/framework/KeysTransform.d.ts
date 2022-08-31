@@ -3,7 +3,7 @@
 declare const FormulasTransform: Mixin<{
   addKey(key: any, options?: object): void;
   allKeys(): Promise<any[]>;
-  keyAdded(key: string, options: object): Promise<object>;
+  keyAdded(key: string, existingKeys: any[]): Promise<object | void>;
   publicKeys(): Promise<any[]>;
   realKeys(): Promise<any[]>;
 }>;

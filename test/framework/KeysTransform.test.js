@@ -6,13 +6,12 @@ import assert from "../assert.js";
 describe.only("KeysTransform", () => {
   it("real and virtual keys can imply additional virtual keys", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key, options) {
+      async keyAdded(key) {
         if (key === "a") {
           this.addKey("b");
         } else if (key === "b") {
           this.addKey("c");
         }
-        return options;
       }
     }
     const graph = new FixtureGraph({
@@ -27,11 +26,11 @@ describe.only("KeysTransform", () => {
 
   it("keys can be hidden", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key, options) {
+      async keyAdded(key) {
         if (key.startsWith(".")) {
-          options.hidden = true;
+          return { hidden: true };
         }
-        return options;
+        return;
       }
     }
     const graph = new FixtureGraph({
@@ -43,5 +42,25 @@ describe.only("KeysTransform", () => {
     assert.deepEqual(await graph.allKeys(), [".foo", "bar"]);
     assert.deepEqual(await graph.publicKeys(), ["bar"]);
     assert.deepEqual(await graph.realKeys(), [".foo", "bar"]);
+  });
+
+  it("keys can be implied", async () => {
+    class FixtureGraph extends KeysTransform(ObjectGraph) {
+      addImpliedKeys(newKeys) {
+        // Every .foo key implies a .bar key
+        for (const key of newKeys) {
+          if (key.endsWith(".foo")) {
+            this.addKey(`${key.slice(0, -4)}.bar`);
+          }
+        }
+      }
+    }
+    const graph = new FixtureGraph({
+      "a.foo": "",
+      "b.txt": "",
+      "c.foo": "",
+    });
+    const keys = await ExplorableGraph.keys(graph);
+    assert.deepEqual(keys, ["a.bar", "a.foo", "b.txt", "c.bar", "c.foo"]);
   });
 });

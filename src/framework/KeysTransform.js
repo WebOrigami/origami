@@ -15,11 +15,8 @@ export default function KeysTransform(Base) {
       this[newKeyQueue] = [];
     }
 
-    async *[Symbol.asyncIterator]() {
-      if (!this[publicKeys]) {
-        await this.getKeys();
-      }
-      yield* this[publicKeys];
+    addImpliedKeys(newKeys) {
+      super.addImpliedKeys?.(newKeys);
     }
 
     addKey(key, options = {}) {
@@ -38,6 +35,13 @@ export default function KeysTransform(Base) {
       return this[allKeys];
     }
 
+    async *[Symbol.asyncIterator]() {
+      if (!this[publicKeys]) {
+        await this.getKeys();
+      }
+      yield* this[publicKeys];
+    }
+
     async getKeys() {
       this[allKeys] = [];
       this[publicKeys] = [];
@@ -46,15 +50,36 @@ export default function KeysTransform(Base) {
         this.addKey(key, { virtual: false });
       }
 
-      while (this[newKeyQueue].length > 0) {
-        const { key, virtual, hidden } = this[newKeyQueue].shift();
-        const options = await this.keyAdded(key, { virtual, hidden });
-        this[allKeys].push(key);
-        if (!options.virtual) {
-          this[realKeys].push(key);
+      for (
+        let length = -1;
+        length !== this[allKeys].length && this[newKeyQueue].length > 0;
+
+      ) {
+        length = this[allKeys].length;
+
+        const keysThisCycle = [];
+
+        while (this[newKeyQueue].length > 0) {
+          const entry = this[newKeyQueue].shift();
+          const key = entry.key;
+          const options = await this.keyAdded(key, this[allKeys]);
+
+          this[allKeys].push(key);
+          keysThisCycle.push(key);
+
+          const virtual = options?.virtual ?? entry.virtual;
+          if (!virtual) {
+            this[realKeys].push(key);
+          }
+
+          const hidden = options?.hidden ?? entry.hidden;
+          if (!hidden) {
+            this[publicKeys].push(key);
+          }
         }
-        if (!options.hidden) {
-          this[publicKeys].push(key);
+
+        if (keysThisCycle.length > 0) {
+          this.addImpliedKeys(keysThisCycle);
         }
       }
 
@@ -64,8 +89,8 @@ export default function KeysTransform(Base) {
       this[allKeys] = sortNatural(this[allKeys]);
     }
 
-    async keyAdded(key, options) {
-      return super.keyAdded?.(key) ?? options;
+    async keyAdded(key, existingKeys) {
+      return super.keyAdded?.(key, existingKeys);
     }
 
     onChange(key) {
