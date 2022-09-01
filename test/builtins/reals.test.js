@@ -10,6 +10,7 @@ describe("reals", () => {
     };
     const result = await reals(fixture);
     assert.deepEqual(await ExplorableGraph.plain(result), {
+      "a = b": "",
       b: "Hello",
     });
   });

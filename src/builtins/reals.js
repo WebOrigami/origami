@@ -1,6 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
-import FormulasTransform from "../framework/FormulasTransform.js";
+import meta from "./meta.js";
 
 /**
  * Return only the real keys in the graph, removing virtual keys implied by
@@ -10,14 +9,15 @@ import FormulasTransform from "../framework/FormulasTransform.js";
  * @param {GraphVariant} [variant]
  */
 export default async function reals(variant) {
-  variant = variant ?? (await this?.get("@defaultGraph"));
-  if (variant === undefined) {
-    return undefined;
-  }
-  let graph = ExplorableGraph.from(variant);
-  if (!("realKeys" in graph)) {
-    graph = transformObject(FormulasTransform, graph);
-  }
+  // variant = variant ?? (await this?.get("@defaultGraph"));
+  // if (variant === undefined) {
+  //   return undefined;
+  // }
+  // let graph = ExplorableGraph.from(variant);
+  // if (!("realKeys" in graph)) {
+  //   graph = transformObject(FormulasTransform, graph);
+  // }
+  const graph = await meta.call(this, variant);
   return {
     async *[Symbol.asyncIterator]() {
       const realKeys = await /** @type {any} */ (graph).realKeys();

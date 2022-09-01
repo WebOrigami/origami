@@ -27,7 +27,7 @@ metaGraph.parent = new Compose(
 
 // Given the nature of MetaTransform, these are integration tests.
 
-describe.only("MetaTransform", () => {
+describe("MetaTransform", () => {
   it("keys include both real and virtual keys", async () => {
     assert.deepEqual(await ExplorableGraph.keys(metaGraph), [
       "foo.txt",
