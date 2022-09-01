@@ -1,5 +1,4 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import FunctionGraph from "../../src/core/FunctionGraph.js";
 import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
@@ -32,18 +31,35 @@ describe("MapValuesGraph", () => {
 
   it("can be told to not get values from the inner graph", async () => {
     let calledGet = false;
-    const inner = new FunctionGraph(
-      (key) => {
-        calledGet = true;
-        return false;
+    class FixtureGraph extends ObjectGraph {
+      async get(key) {
+        if (key !== "more") {
+          calledGet = true;
+        }
+        return super.get(key);
+      }
+    }
+    const graph = new FixtureGraph({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+        e: 5,
       },
-      ["a", "b", "c"]
-    );
-    const mapped = new MapValuesGraph(inner, () => true, { getValue: false });
+    });
+    const mapped = new MapValuesGraph(graph, () => true, {
+      deep: true,
+      getValue: false,
+    });
     assert.deepEqual(await ExplorableGraph.plain(mapped), {
       a: true,
       b: true,
       c: true,
+      more: {
+        d: true,
+        e: true,
+      },
     });
     assert(!calledGet);
   });

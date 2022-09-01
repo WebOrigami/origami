@@ -9,14 +9,6 @@ import meta from "./meta.js";
  * @param {GraphVariant} [variant]
  */
 export default async function reals(variant) {
-  // variant = variant ?? (await this?.get("@defaultGraph"));
-  // if (variant === undefined) {
-  //   return undefined;
-  // }
-  // let graph = ExplorableGraph.from(variant);
-  // if (!("realKeys" in graph)) {
-  //   graph = transformObject(FormulasTransform, graph);
-  // }
   const graph = await meta.call(this, variant);
   return {
     async *[Symbol.asyncIterator]() {

@@ -4,8 +4,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { extractFrontMatter, stringLike } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
-import FormulasTransform from "./FormulasTransform.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
+import MetaTransform from "./MetaTransform.js";
 import { getScope } from "./scopeUtilities.js";
 import StringWithGraph from "./StringWithGraph.js";
 
@@ -91,9 +90,7 @@ export default class Template {
       inputData || this.frontData
         ? Object.assign({}, this.frontData, inputData)
         : null;
-    const dataGraph = data
-      ? new (InheritScopeTransform(FormulasTransform(ObjectGraph)))(data)
-      : null;
+    const dataGraph = data ? new (MetaTransform(ObjectGraph))(data) : null;
     if (dataGraph) {
       dataGraph.parent = scope;
       scope = dataGraph.scope;

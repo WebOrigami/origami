@@ -1,7 +1,7 @@
 import make from "../../src/builtins/make.js";
 import assert from "../assert.js";
 
-describe.skip("make", () => {
+describe("make", () => {
   it("creates the virtual values in a graph", async () => {
     const graph = {
       a: "Hello",
@@ -12,7 +12,7 @@ describe.skip("make", () => {
     };
     await make(graph);
     assert.deepEqual(graph, {
-      ".ori.clean.yaml": `b: null\nmore:\n  ? c\n`,
+      ".ori.clean.yaml": `b: null\nmore:\n  c: null\n`,
       a: "Hello",
       "b = a": "",
       b: "Hello",
@@ -32,7 +32,7 @@ describe.skip("make", () => {
     };
     await make(graph);
     assert.deepEqual(graph, {
-      ".ori.clean.yaml": `? a\n? b\n`,
+      ".ori.clean.yaml": `a: null\nb: null\n`,
       "a = 'Hello'": "",
       a: "Hello",
       "b = 'Goodbye'": "",

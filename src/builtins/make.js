@@ -23,6 +23,14 @@ export default async function make(variant) {
   const build = new SubtractKeys(graph, real);
   // const plainBuild = await ExplorableGraph.plain(build);
 
+  // Record which values we'll want to clean later.
+  const nulls = new MapValuesGraph(build, () => null, {
+    deep: true,
+    getValue: false,
+  });
+  const cleanYaml = await yaml(nulls);
+  await graph.set(".ori.clean.yaml", cleanYaml);
+
   // Construct a parallel graph of `undefined` values that can be used to erase
   // the current values in the graph. We'll also preserve that as a YAML file
   // that clean() can use later to erase the built values.
@@ -31,10 +39,6 @@ export default async function make(variant) {
     getValue: false,
   });
   // const plainUndefineds = await ExplorableGraph.plain(undefineds);
-
-  // Record which values we'll want to clean later.
-  const cleanYaml = await yaml(undefineds);
-  await graph.set(".ori.clean.yaml", cleanYaml);
 
   // Clear out the current values in the graph.
   await copy(undefineds, graph);

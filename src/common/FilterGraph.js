@@ -1,23 +1,16 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { transformObject } from "../core/utilities.js";
-import FormulaTransform, {
-  isFormulasTransformApplied,
-} from "../framework/FormulasTransform.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
+import MetaTransform from "../framework/MetaTransform.js";
 
 export default class FilterGraph {
   constructor(graph, filter) {
     this.graph = ExplorableGraph.from(graph);
 
-    // Apply the FormulaTransform and InheritScopeTransforms to the filter if
-    // they're not already applied.
     filter = ExplorableGraph.from(filter);
     if (!isFormulasTransformApplied(filter)) {
-      filter = transformObject(FormulaTransform, filter);
-    }
-    if (!("scope" in filter)) {
-      filter = transformObject(InheritScopeTransform, filter);
+      filter = transformObject(MetaTransform, filter);
     }
 
     this.filter = filter;
@@ -73,9 +66,7 @@ export default class FilterGraph {
     } else {
       // Create an empty graph that inherits from this filter so that it picks
       // up any inheritable formulas.
-      subfilter = new (InheritScopeTransform(FormulaTransform(ObjectGraph)))(
-        {}
-      );
+      subfilter = new (MetaTransform(ObjectGraph))({});
       subfilter.parent = this.filter;
     }
     return Reflect.construct(this.constructor, [value, subfilter]);

@@ -1,5 +1,6 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { realKeys } from "./KeysTransform.js";
 
 const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
@@ -55,13 +56,12 @@ export default function AdditionsTransform(Base) {
         value = await additions?.get(key);
       }
 
-      // If the value is an explorable graph, add inherited additions.
       if (ExplorableGraph.isExplorable(value)) {
-        if (!this[inheritableAdditions] && !this[gettingChildAdditions]) {
+        // Add peer additions.
+        if (!this[gettingChildAdditions]) {
           await this.getKeys();
         }
         value[peerAdditions] = await getPeerValues(this, key);
-        value[inheritedAdditions] = this[inheritableAdditions] ?? [];
       }
 
       return value;
@@ -89,7 +89,7 @@ export default function AdditionsTransform(Base) {
           graph.applyFormulas = false;
           graph.parent = null;
           this[childAdditions].push(graph);
-          for await (const graphKey of graph) {
+          for (const graphKey of await realKeys(graph)) {
             this.addKey(graphKey);
           }
         }
@@ -111,16 +111,13 @@ export default function AdditionsTransform(Base) {
       // pending peer additions that were passed down to use from the parent.
       if (!this[addedPeerAdditions]) {
         for (const peerGraph of this[peerAdditions]) {
-          // Prefer realKeys to get access to formulas.
-          const iterator = peerGraph.realKeys
-            ? (await peerGraph.realKeys())[Symbol.iterator]()
-            : peerGraph[Symbol.asyncIterator]();
-          for await (const peerKey of iterator) {
+          for (const peerKey of await realKeys(peerGraph)) {
             this.addKey(peerKey, { source: peerGraph });
           }
         }
 
-        if (this[inheritedAdditions]) {
+        if (!this[inheritedAdditions]) {
+          this[inheritedAdditions] = this.parent?.[inheritableAdditions] ?? [];
           for (const inheritedKey of this[inheritedAdditions]) {
             this.addKey(inheritedKey);
           }

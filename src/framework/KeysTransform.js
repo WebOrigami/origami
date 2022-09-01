@@ -1,3 +1,4 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import { sortNatural } from "../core/utilities.js";
 
 const publicKeys = Symbol("publicKeys");
@@ -125,3 +126,10 @@ export default function KeysTransform(Base) {
     }
   };
 }
+
+// Static helper: use realKeys if defined, otherwise asyncIterator.
+async function getRealKeys(graph) {
+  return graph.realKeys ? graph.realKeys() : ExplorableGraph.keys(graph);
+}
+
+export { getRealKeys as realKeys };
