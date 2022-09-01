@@ -95,13 +95,14 @@ export default function FormulasTransform(Base) {
       sortFormulas(this[formulasKey]);
     }
 
-    async keyAdded(key, existingKeys) {
-      const result = (await super.keyAdded?.(key, existingKeys)) ?? {};
+    async keyAdded(key, options, existingKeys) {
+      const result = (await super.keyAdded?.(key, options, existingKeys)) ?? {};
       // Try to parse the key as a formula.
       const formula = Formula.parse(String(key));
       if (formula) {
         // Successfully parsed key as a formula.
-        formula.closure = this.bindings ?? {};
+        const source = options.source ?? this;
+        formula.closure = source.bindings ?? {};
         this[formulasKey].push(formula);
 
         // Add keys that this formula implies based on the existing keys.

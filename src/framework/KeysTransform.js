@@ -16,11 +16,11 @@ export default function KeysTransform(Base) {
     }
 
     addKey(key, options = {}) {
-      const entry = {
-        key,
-        virtual: options.virtual ?? true,
-        hidden: options.hidden ?? false,
+      const defaults = {
+        virtual: true,
+        hidden: false,
       };
+      const entry = { key, ...defaults, ...options };
 
       const exists =
         this[allKeys].includes(key) ||
@@ -64,7 +64,9 @@ export default function KeysTransform(Base) {
         while (this[newKeyQueue].length > 0) {
           const entry = this[newKeyQueue].shift();
           const key = entry.key;
-          const options = await this.keyAdded(key, this[allKeys]);
+          const entryOptions = { ...entry };
+          delete entryOptions.key;
+          const options = await this.keyAdded(key, entryOptions, this[allKeys]);
 
           keysThisCycle.push(key);
 
@@ -92,8 +94,8 @@ export default function KeysTransform(Base) {
       this[allKeys] = sortNatural(this[allKeys]);
     }
 
-    async keyAdded(key, existingKeys) {
-      return super.keyAdded?.(key, existingKeys);
+    async keyAdded(key, options, existingKeys) {
+      return super.keyAdded?.(key, options, existingKeys);
     }
 
     async keysAdded(newKeys) {

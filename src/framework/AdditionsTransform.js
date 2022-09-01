@@ -75,8 +75,8 @@ export default function AdditionsTransform(Base) {
       await super.getKeys();
     }
 
-    async keyAdded(key, existingKeys) {
-      const result = (await super.keyAdded?.(key, existingKeys)) ?? {};
+    async keyAdded(key, options, existingKeys) {
+      const result = (await super.keyAdded?.(key, options, existingKeys)) ?? {};
       if (isChildAdditionKey(key)) {
         // To avoid an infinite loop, we set a flag to indicate that we're in
         // the process of getting additions. During that process, the get method
@@ -111,8 +111,12 @@ export default function AdditionsTransform(Base) {
       // pending peer additions that were passed down to use from the parent.
       if (!this[addedPeerAdditions]) {
         for (const peerGraph of this[peerAdditions]) {
-          for await (const peerKey of peerGraph) {
-            this.addKey(peerKey);
+          // Prefer realKeys to get access to formulas.
+          const iterator = peerGraph.realKeys
+            ? (await peerGraph.realKeys())[Symbol.iterator]()
+            : peerGraph[Symbol.asyncIterator]();
+          for await (const peerKey of iterator) {
+            this.addKey(peerKey, { source: peerGraph });
           }
         }
 

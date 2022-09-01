@@ -6,7 +6,7 @@ import assert from "../assert.js";
 describe("KeysTransform", () => {
   it("real and virtual keys can imply additional virtual keys", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key, existingKeys) {
+      async keyAdded(key, options, existingKeys) {
         if (key === "a") {
           this.addKey("b");
         } else if (key === "b") {
@@ -26,7 +26,7 @@ describe("KeysTransform", () => {
 
   it("keys can be hidden", async () => {
     class FixtureGraph extends KeysTransform(ObjectGraph) {
-      async keyAdded(key, existingKeys) {
+      async keyAdded(key, options, existingKeys) {
         if (key.startsWith(".")) {
           return { hidden: true };
         }
