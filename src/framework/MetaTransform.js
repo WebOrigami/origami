@@ -11,8 +11,8 @@ export default function MetaTransform(Base) {
   return class Meta extends CachedValuesTransform(
     PathTransform(
       InheritScopeTransform(
-        FormulasTransform(
-          AdditionsTransform(
+        AdditionsTransform(
+          FormulasTransform(
             FileLoadersTransform(ImplicitModulesTransform(KeysTransform(Base)))
           )
         )
