@@ -263,4 +263,23 @@ describe("MetaTransform", () => {
     assert.equal(await folder.get("a"), "local");
     assert.equal(await folder.get("b"), "peer");
   });
+
+  it("a child addition can have peer additions", async () => {
+    const graph = new MetaObject({
+      "+": {
+        folder: {
+          a: "local",
+        },
+        "folder+": {
+          b: "peer",
+        },
+      },
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      folder: {
+        a: "local",
+        b: "peer",
+      },
+    });
+  });
 });

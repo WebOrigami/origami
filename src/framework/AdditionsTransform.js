@@ -100,6 +100,8 @@ export default function AdditionsTransform(Base) {
           this[inheritableAdditions] = [];
         }
         this[inheritableAdditions].push(key);
+      } else if (isPeerAdditionKey(key)) {
+        result.hidden = true;
       }
       return result;
     }
@@ -149,6 +151,20 @@ async function getPeerValues(graph, graphKey) {
   // A peer additions graph itself can't have peer values.
   if (!isPeerAdditionKey(graphKey)) {
     const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
+
+    // See if the peer addition key by itself ("foo+") exists. We can limit our
+    // search to real keys, since we'll use formulas to match virtual keys in
+    // the next step.
+    // const realKeys = await graph.realKeys();
+    // if (realKeys.includes(peerAdditionsKey)) {
+    const value = await graph.get(peerAdditionsKey);
+    if (value) {
+      value.applyFormulas = false;
+      value.parent = null;
+      values.push(value);
+    }
+    // }
+
     const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
     peerAdditions.forEach((peerGraph) => {
       peerGraph.applyFormulas = false;
