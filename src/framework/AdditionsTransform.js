@@ -58,7 +58,7 @@ export default function AdditionsTransform(Base) {
 
       if (ExplorableGraph.isExplorable(value)) {
         // Add peer additions.
-        if (!this[gettingChildAdditions]) {
+        if (!this[peerAdditions] && !this[gettingChildAdditions]) {
           await this.getKeys();
         }
         value[peerAdditions] = await getPeerValues(this, key);
