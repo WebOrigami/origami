@@ -19,7 +19,14 @@ export default class SiteGraph {
       const response = await fetch(href);
       if (response.ok) {
         const text = await response.text();
-        this[keys] = text ? JSON.parse(text) : [];
+        try {
+          this[keys] = text ? JSON.parse(text) : [];
+        } catch (error) {
+          // Got a response, but it's not JSON. Most likely the site doesn't
+          // actually have a .keys.json file, and is returning a Not Found page,
+          // but hasn't set the correct 404 status code.
+          this[keys] = [];
+        }
       } else {
         this[keys] = [];
       }
