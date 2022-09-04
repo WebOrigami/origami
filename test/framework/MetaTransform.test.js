@@ -264,7 +264,7 @@ describe("MetaTransform", () => {
     assert.equal(await folder.get("b"), "peer");
   });
 
-  it("a child addition can have peer additions", async () => {
+  it.only("a child addition can have peer additions", async () => {
     const graph = new MetaObject({
       "+": {
         folder: {
@@ -275,6 +275,8 @@ describe("MetaTransform", () => {
         },
       },
     });
+    const folder = await graph.get("folder");
+    const keys = await ExplorableGraph.keys(folder);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       folder: {
         a: "local",

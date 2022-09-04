@@ -136,14 +136,6 @@ export default function AdditionsTransform(Base) {
       }
     }
 
-    // This transform provides a default implentation of the matchAll method,
-    // but in typical use the implementation provided by FormulasTransform will
-    // be used instead.
-    async matchAll(key) {
-      const value = await this.get(key);
-      return value ? [value] : [];
-    }
-
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
@@ -159,29 +151,31 @@ export default function AdditionsTransform(Base) {
 
 async function getPeerValues(graph, graphKey) {
   const values = [];
-  // A peer additions graph itself can't have peer values.
-  if (!isPeerAdditionKey(graphKey)) {
+  // A child or peer additions graph itself can't have peer values.
+  if (!isChildAdditionKey(graphKey) && !isPeerAdditionKey(graphKey)) {
     const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
 
     // See if the peer addition key by itself ("foo+") exists. We can limit our
     // search to real keys, since we'll use formulas to match virtual keys in
     // the next step.
-    // const realKeys = await graph.realKeys();
-    // if (realKeys.includes(peerAdditionsKey)) {
-    const value = await graph.get(peerAdditionsKey);
-    if (value) {
-      value.applyFormulas = false;
-      value.parent = null;
-      values.push(value);
+    const realKeys = await graph.realKeys();
+    if (realKeys.includes(peerAdditionsKey)) {
+      const value = await graph.get(peerAdditionsKey);
+      if (value) {
+        value.applyFormulas = false;
+        value.parent = null;
+        values.push(value);
+      }
     }
-    // }
 
-    const peerAdditions = (await graph.matchAll?.(peerAdditionsKey)) || [];
-    peerAdditions.forEach((peerGraph) => {
+    const matches = (await graph.matchAll?.(peerAdditionsKey)) || [];
+    const peerGraphs = matches.map((match) => {
+      const peerGraph = ExplorableGraph.from(match);
       peerGraph.applyFormulas = false;
       peerGraph.parent = null;
+      return peerGraph;
     });
-    values.push(...peerAdditions);
+    values.push(...peerGraphs);
   }
   return values;
 }
