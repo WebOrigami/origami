@@ -6,9 +6,16 @@ const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
 const inheritedAdditions = Symbol("inheritedAdditions");
 const inheritableAdditions = Symbol("inheritableAdditions");
-const peerAdditions = Symbol("peerAdditions");
 const addedPeerAdditions = Symbol("addedPeerAdditions");
 const gettingChildAdditions = Symbol("gettingChildAdditions");
+// We used to define peerAdditions as a Symbol as well, but there seem to be
+// cases where Node loads two copies of this transform. One presumably is loaded
+// by the CLI, and the other is loaded later via a dynamic import. It's unclear
+// why they don't share the same copy of this module. In any event,
+// peerAdditions is the one property that's used to communicate between a parent
+// and a child, and the parent and child may be using a different copy of this
+// transform. To let them communicate, we define peerAdditions with a regular
+// string name.
 
 export const additionsPrefix = "+";
 export const inheritableAdditionsPrefix = "…";
@@ -21,18 +28,18 @@ export default function AdditionsTransform(Base) {
       this[childAdditions] = undefined;
       this[inheritedAdditions] = undefined;
       this[inheritableAdditions] = undefined;
-      this[peerAdditions] = undefined;
+      this.peerAdditions = undefined;
       this[addedPeerAdditions] = undefined;
       this[gettingChildAdditions] = false;
     }
 
     async additions() {
       if (this[additions] === undefined) {
-        if (!this[childAdditions] || !this[peerAdditions]) {
+        if (!this[childAdditions] || !this.peerAdditions) {
           await this.getKeys();
         }
         const children = this[childAdditions] ?? [];
-        const peers = this[peerAdditions] ?? [];
+        const peers = this.peerAdditions ?? [];
         const allAdditions = [...children, ...peers];
         this[additions] =
           allAdditions.length === 0
@@ -58,10 +65,10 @@ export default function AdditionsTransform(Base) {
 
       if (ExplorableGraph.isExplorable(value)) {
         // Add peer additions.
-        if (!this[peerAdditions] && !this[gettingChildAdditions]) {
+        if (!this.peerAdditions && !this[gettingChildAdditions]) {
           await this.getKeys();
         }
-        value[peerAdditions] = await getPeerValues(this, key);
+        value.peerAdditions = await getPeerValues(this, key);
       }
 
       return value;
@@ -69,8 +76,8 @@ export default function AdditionsTransform(Base) {
 
     async getKeys() {
       this[childAdditions] = [];
-      if (!this[peerAdditions]) {
-        this[peerAdditions] = [];
+      if (!this.peerAdditions) {
+        this.peerAdditions = [];
       }
       await super.getKeys();
     }
@@ -112,7 +119,7 @@ export default function AdditionsTransform(Base) {
       // After the first cycle of keys have been added, add keys from any
       // pending peer additions that were passed down to use from the parent.
       if (!this[addedPeerAdditions]) {
-        for (const peerGraph of this[peerAdditions]) {
+        for (const peerGraph of this.peerAdditions) {
           for (const peerKey of await realKeys(peerGraph)) {
             this.addKey(peerKey, { source: peerGraph });
           }
@@ -141,7 +148,11 @@ export default function AdditionsTransform(Base) {
     onChange(key) {
       super.onChange?.(key);
       this[childAdditions] = undefined;
-      this[peerAdditions] = undefined;
+      this[inheritedAdditions] = undefined;
+      this[inheritableAdditions] = undefined;
+      this.peerAdditions = undefined;
+      this[addedPeerAdditions] = undefined;
+      this[gettingChildAdditions] = false;
     }
   };
 }
