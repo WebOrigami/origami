@@ -81,8 +81,9 @@ export default class ExplorableGraph {
    */
   static isExplorable(obj) {
     return (
-      typeof obj?.[Symbol.asyncIterator] === "function" &&
-      typeof obj?.get === "function"
+      obj != null &&
+      typeof obj[Symbol.asyncIterator] === "function" &&
+      typeof obj.get === "function"
     );
   }
 

@@ -4,8 +4,32 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
 
-describe("FilterGraph", () => {
-  it("filters a graph", async () => {
+describe.only("FilterGraph", () => {
+  it("uses keys from filter, values from graph", async () => {
+    const graph = {
+      a: 1,
+      b: 2,
+      more: {
+        c: 3,
+        d: 4,
+      },
+    };
+    const filter = {
+      a: "",
+      more: {
+        d: "",
+      },
+    };
+    const filtered = new FilterGraph(graph, filter);
+    assert.deepEqual(await ExplorableGraph.plain(filtered), {
+      a: 1,
+      more: {
+        d: 4,
+      },
+    });
+  });
+
+  it("filter can include wildcards", async () => {
     const graph = {
       a: 1,
       b: 2,
@@ -17,6 +41,9 @@ describe("FilterGraph", () => {
         "hola.txt": "Hola",
         "extra.junk": 4,
       },
+      // It would be very expensive to filter out empty graphs, even if they
+      // don't contain anything that matches the filter, so for now we don't.
+      empty: {},
     };
     const filter = {
       a: true,
@@ -32,6 +59,7 @@ describe("FilterGraph", () => {
       more: {
         "hola.txt": "Hola",
       },
+      empty: {},
     });
   });
 

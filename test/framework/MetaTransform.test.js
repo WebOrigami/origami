@@ -264,7 +264,7 @@ describe("MetaTransform", () => {
     assert.equal(await folder.get("b"), "peer");
   });
 
-  it.only("a child addition can have peer additions", async () => {
+  it.skip("a child addition can have peer additions", async () => {
     const graph = new MetaObject({
       "+": {
         folder: {

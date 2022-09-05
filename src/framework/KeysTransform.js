@@ -128,8 +128,6 @@ export default function KeysTransform(Base) {
 }
 
 // Static helper: use realKeys if defined, otherwise asyncIterator.
-async function getRealKeys(graph) {
+KeysTransform.realKeys = (graph) => {
   return graph.realKeys ? graph.realKeys() : ExplorableGraph.keys(graph);
-}
-
-export { getRealKeys as realKeys };
+};

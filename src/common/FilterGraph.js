@@ -1,7 +1,9 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { transformObject } from "../core/utilities.js";
+import Formula from "../framework/Formula.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
+import KeysTransform from "../framework/KeysTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 
 export default class FilterGraph {
@@ -17,58 +19,49 @@ export default class FilterGraph {
   }
 
   async *[Symbol.asyncIterator]() {
-    for await (const key of this.graph) {
-      let matches = await this.filter.get(key);
-      if (matches === undefined) {
-        // If filter doesn't explicitly set true/false, we assume true if the
-        // main graph indicates the key is explorable.
-        matches = await ExplorableGraph.isKeyExplorable(this.graph, key);
-      }
-      if (matches) {
-        yield key;
+    // Yield all real keys in filter that aren't formulas.
+    const filterKeys = await KeysTransform.realKeys(this.filter);
+    const filtered = filterKeys.filter((key) => !Formula.isFormula(key));
+    const keys = new Set(...filtered);
+    yield* filtered;
+
+    // Yield all keys in graph that aren't in filter's public keys
+    // but are matched by wildcards in the filter..
+    for await (const graphKey of this.graph) {
+      if (!keys.has(graphKey)) {
+        const matches =
+          (await ExplorableGraph.isKeyExplorable(this.graph, graphKey)) ||
+          (await this.filter.get(graphKey));
+        if (matches !== undefined) {
+          keys.add(graphKey);
+          yield graphKey;
+        }
       }
     }
   }
 
   async get(key) {
-    // Filter does not apply when graph is in scope.
-    if (this.isInScope) {
-      return this.graph.get(key);
-    }
-
-    const filterValue = await this.filter.get(key);
-    if (filterValue === false) {
-      // Explicitly filtered out
-      return undefined;
-    }
-
     let value = await this.graph.get(key);
-    if (filterValue === true) {
-      // Explicitly included
-      return value;
+
+    // The filter only applies when graph is not in scope.
+    if (!this.isInScope) {
+      let filterValue = await this.filter.get(key);
+      if (ExplorableGraph.isExplorable(value)) {
+        // It's possible that the filter has subkeys and/or it inherits formulas
+        // that might apply to the value we're returning.
+        if (!ExplorableGraph.isExplorable(filterValue)) {
+          // Create an empty graph that inherits from this filter so that it
+          // picks up any inheritable formulas.
+          filterValue = new (MetaTransform(ObjectGraph))({});
+          filterValue.parent = this.filter;
+        }
+        value = Reflect.construct(this.constructor, [value, filterValue]);
+      } else if (filterValue === undefined) {
+        // Didn't match filter
+        value = undefined;
+      }
     }
 
-    if (!ExplorableGraph.isExplorable(value)) {
-      // Not explorable, so assume it should be filtered out
-      return undefined;
-    }
-
-    // At this point, we have an explorable value that isn't explicitly filtered
-    // out. It's possible that the filter has subkeys with explicit true/false
-    // values and/or it inherits formulas that might apply to the value we're
-    // returning.
-    const isFilterValueExplorable = await ExplorableGraph.isExplorable(
-      filterValue
-    );
-    let subfilter;
-    if (isFilterValueExplorable) {
-      subfilter = filterValue;
-    } else {
-      // Create an empty graph that inherits from this filter so that it picks
-      // up any inheritable formulas.
-      subfilter = new (MetaTransform(ObjectGraph))({});
-      subfilter.parent = this.filter;
-    }
-    return Reflect.construct(this.constructor, [value, subfilter]);
+    return value;
   }
 }

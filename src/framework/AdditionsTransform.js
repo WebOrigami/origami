@@ -1,6 +1,6 @@
 import Compose from "../common/Compose.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { realKeys } from "./KeysTransform.js";
+import KeysTransform from "./KeysTransform.js";
 
 const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
@@ -96,7 +96,7 @@ export default function AdditionsTransform(Base) {
           graph.applyFormulas = false;
           graph.parent = null;
           this[childAdditions].push(graph);
-          for (const graphKey of await realKeys(graph)) {
+          for (const graphKey of await KeysTransform.realKeys(graph)) {
             this.addKey(graphKey);
           }
         }

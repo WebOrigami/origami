@@ -7,6 +7,9 @@ declare const FormulasTransform: Mixin<{
   keysAdded(keys: any[]): Promise<void>;
   publicKeys(): Promise<any[]>;
   realKeys(): Promise<any[]>;
-}>;
+}> & {
+  // Static methods provided by transform
+  realKeys(graph: Explorable): Promise<any[]>
+};
 
 export default FormulasTransform;
