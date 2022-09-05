@@ -120,7 +120,7 @@ export default function AdditionsTransform(Base) {
       // pending peer additions that were passed down to use from the parent.
       if (!this[addedPeerAdditions]) {
         for (const peerGraph of this.peerAdditions) {
-          for (const peerKey of await realKeys(peerGraph)) {
+          for (const peerKey of await KeysTransform.realKeys(peerGraph)) {
             this.addKey(peerKey, { source: peerGraph });
           }
         }
