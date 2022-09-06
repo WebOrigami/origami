@@ -68,7 +68,11 @@ export default function AdditionsTransform(Base) {
         if (!this.peerAdditions && !this[gettingChildAdditions]) {
           await this.getKeys();
         }
-        value.peerAdditions = await getPeerValues(this, key);
+        // Preserve any peer additions on the value that were set by its
+        // containing graph as it was passed up to us.
+        const existingPeerAdditions = value.peerAdditions ?? [];
+        const localPeerAdditions = await getPeerValues(this, key);
+        value.peerAdditions = [...existingPeerAdditions, ...localPeerAdditions];
       }
 
       return value;
