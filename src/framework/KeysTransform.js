@@ -1,19 +1,21 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { sortNatural } from "../core/utilities.js";
 
+const allKeys = Symbol("allKeys");
+const keysPromise = Symbol("keysPromise");
+const newKeyQueue = Symbol("newKeyQueue");
 const publicKeys = Symbol("publicKeys");
 const realKeys = Symbol("realKeys");
-const allKeys = Symbol("allKeys");
-const newKeyQueue = Symbol("newKeyQueue");
 
 export default function KeysTransform(Base) {
   return class Keys extends Base {
     constructor(...args) {
       super(...args);
       this[allKeys] = null;
+      this[keysPromise] = null;
+      this[newKeyQueue] = [];
       this[publicKeys] = null;
       this[realKeys] = null;
-      this[newKeyQueue] = [];
     }
 
     addKey(key, options = {}) {
@@ -32,17 +34,20 @@ export default function KeysTransform(Base) {
     }
 
     async allKeys() {
-      if (!this[allKeys]) {
-        await this.getKeys();
-      }
+      await this.ensureKeys();
       return this[allKeys];
     }
 
     async *[Symbol.asyncIterator]() {
-      if (!this[publicKeys]) {
-        await this.getKeys();
-      }
+      await this.ensureKeys();
       yield* this[publicKeys];
+    }
+
+    async ensureKeys() {
+      if (!this[keysPromise]) {
+        this[keysPromise] = this.getKeys();
+      }
+      return this[keysPromise];
     }
 
     async getKeys() {
@@ -106,22 +111,19 @@ export default function KeysTransform(Base) {
     onChange(key) {
       super.onChange?.(key);
       this[allKeys] = null;
+      this[keysPromise] = null;
+      this[newKeyQueue] = [];
       this[publicKeys] = null;
       this[realKeys] = null;
-      this[newKeyQueue] = [];
     }
 
     async publicKeys() {
-      if (!this[publicKeys]) {
-        await this.getKeys();
-      }
+      await this.ensureKeys();
       return this[publicKeys];
     }
 
     async realKeys() {
-      if (!this[realKeys]) {
-        await this.getKeys();
-      }
+      await this.ensureKeys();
       return this[realKeys];
     }
   };

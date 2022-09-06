@@ -35,9 +35,7 @@ export default function AdditionsTransform(Base) {
 
     async additions() {
       if (this[additions] === undefined) {
-        if (!this[childAdditions] || !this.peerAdditions) {
-          await this.getKeys();
-        }
+        await this.ensureKeys();
         const children = this[childAdditions] ?? [];
         const peers = this.peerAdditions ?? [];
         const allAdditions = [...children, ...peers];

@@ -55,10 +55,7 @@ export default function FormulasTransform(Base) {
     }
 
     async formulas() {
-      if (!this[formulasKey]) {
-        this[formulasKey] = [];
-        await this.getKeys();
-      }
+      await this.ensureKeys();
       return this[formulasKey];
     }
 
