@@ -71,7 +71,6 @@ export function parse(text) {
 export function sortNatural(values) {
   const collator = new Intl.Collator(undefined, {
     numeric: true,
-    sensitivity: "base",
   });
   return values.slice().sort(collator.compare);
 }
