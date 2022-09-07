@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { sortNatural } from "../core/utilities.js";
 
+const addedKeys = Symbol("addedKeys");
 const allKeys = Symbol("allKeys");
 const keysPromise = Symbol("keysPromise");
 const newKeyQueue = Symbol("newKeyQueue");
@@ -11,9 +12,10 @@ export default function KeysTransform(Base) {
   return class Keys extends Base {
     constructor(...args) {
       super(...args);
+      this[addedKeys] = null;
       this[allKeys] = null;
       this[keysPromise] = null;
-      this[newKeyQueue] = [];
+      this[newKeyQueue] = null;
       this[publicKeys] = null;
       this[realKeys] = null;
     }
@@ -24,12 +26,9 @@ export default function KeysTransform(Base) {
         hidden: false,
       };
       const entry = { key, ...defaults, ...options };
-
-      const exists =
-        this[allKeys].includes(key) ||
-        this[newKeyQueue].find((entry) => entry.key === key);
-      if (!exists) {
+      if (!this[addedKeys].has(key)) {
         this[newKeyQueue].push(entry);
+        this[addedKeys].add(key);
       }
     }
 
@@ -54,6 +53,8 @@ export default function KeysTransform(Base) {
       this[allKeys] = [];
       this[publicKeys] = [];
       this[realKeys] = [];
+      this[newKeyQueue] = [];
+      this[addedKeys] = new Set();
       for await (const key of super[Symbol.asyncIterator]()) {
         this.addKey(key, { virtual: false });
       }
@@ -98,6 +99,7 @@ export default function KeysTransform(Base) {
       this[realKeys] = sortNatural(this[realKeys]);
       this[publicKeys] = sortNatural(this[publicKeys]);
       this[allKeys] = sortNatural(this[allKeys]);
+      this[addedKeys] = null;
     }
 
     async keyAdded(key, options, existingKeys) {
@@ -112,7 +114,7 @@ export default function KeysTransform(Base) {
       super.onChange?.(key);
       this[allKeys] = null;
       this[keysPromise] = null;
-      this[newKeyQueue] = [];
+      this[newKeyQueue] = null;
       this[publicKeys] = null;
       this[realKeys] = null;
     }

@@ -19,6 +19,10 @@ export default function MetaTransform(Base) {
       )
     )
   ) {
+    constructor(...args) {
+      super(...args);
+    }
+
     isKeyCachable(key) {
       return key.endsWith?.(".meta") ?? false;
     }
