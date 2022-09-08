@@ -24,6 +24,7 @@
   },
   "scripts": {
     "prepublishOnly": "ori make exports",
+    "test": "mocha --color --no-timeout --reporter min test/**/*.test.js",
     "typecheck": "node node_modules/typescript/bin/tsc"
   }
 }
