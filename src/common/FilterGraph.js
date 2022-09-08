@@ -44,7 +44,7 @@ export default class FilterGraph {
     let value = await this.graph.get(key);
 
     // The filter only applies when graph is not in scope.
-    if (!this.isInScope) {
+    if (!(/** @type {any} */ (this).isInScope)) {
       let filterValue = await this.filter.get(key);
       if (ExplorableGraph.isExplorable(value)) {
         // It's possible that the filter has subkeys and/or it inherits formulas

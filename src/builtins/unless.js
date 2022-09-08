@@ -1,5 +1,8 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
+/**
+ * @this {Explorable}
+ */
 export default async function unless(value, falseResult) {
   let condition = await value;
   if (ExplorableGraph.isExplorable(condition)) {

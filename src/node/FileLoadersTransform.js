@@ -43,16 +43,6 @@ export default function FileLoadersTransform(Base) {
 /**
  * @this {Explorable}
  */
-async function loadGraph(buffer) {
-  const text = loadText(buffer);
-  const textWithGraph = new String(text);
-  /** @type {any} */ (textWithGraph).toGraph = () => ExplorableGraph.from(text);
-  return textWithGraph;
-}
-
-/**
- * @this {Explorable}
- */
 async function loadMetaGraph(buffer) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);

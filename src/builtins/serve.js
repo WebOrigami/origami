@@ -34,6 +34,7 @@ export default async function serve(variant, port) {
     }
   }
 
+  // @ts-ignore
   http.createServer(requestListener(graph)).listen(port, undefined, () => {
     console.log(
       `Server running at http://localhost:${port}. Press Ctrl+C to stop.`

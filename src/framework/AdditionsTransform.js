@@ -94,6 +94,7 @@ export default function AdditionsTransform(Base) {
         const addition = await this.get(key);
         this[gettingChildAdditions] = false;
         if (addition) {
+          /** @type {any} */
           const graph = ExplorableGraph.from(addition);
           graph.applyFormulas = false;
           graph.parent = null;
@@ -121,7 +122,7 @@ export default function AdditionsTransform(Base) {
       // After the first cycle of keys have been added, add keys from any
       // pending peer additions that were passed down to use from the parent.
       if (!this[addedPeerAdditions]) {
-        for (const peerGraph of this.peerAdditions) {
+        for (const peerGraph of this.peerAdditions ?? []) {
           for (const peerKey of await KeysTransform.realKeys(peerGraph)) {
             this.addKey(peerKey, { source: peerGraph });
           }
@@ -172,6 +173,7 @@ async function getPeerValues(graph, graphKey) {
 
     const matches = (await graph.matchAll?.(peerAdditionsKey)) || [];
     const peerGraphs = matches.map((match) => {
+      /** @type {any} */
       const peerGraph = ExplorableGraph.from(match);
       peerGraph.applyFormulas = false;
       peerGraph.parent = null;

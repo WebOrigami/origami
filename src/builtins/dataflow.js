@@ -117,7 +117,7 @@ async function addFormulaDependencies(flow, keysInScope, formulas) {
 // If there's a dependency on `foo`, and `foo` isn't defined, but `foo.js`
 // is, then add an implicit dependency for `foo` on `foo.js`.
 function addImplicitJavaScriptDependencies(flow, keysInScope) {
-  for (const [key, record] of Object.entries(flow)) {
+  for (const [_, record] of Object.entries(flow)) {
     const dependencies = record.dependencies ?? [];
     for (const dependency of dependencies) {
       if (path.extname(dependency) === ".js") {
