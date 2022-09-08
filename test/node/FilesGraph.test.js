@@ -1,6 +1,6 @@
-import * as fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
+import * as fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import FilesGraph from "../../src/node/FilesGraph.js";

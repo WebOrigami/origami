@@ -1,5 +1,5 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import builtins from "../../src/cli/builtins.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";

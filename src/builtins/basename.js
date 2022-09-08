@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 export default function basename(filePath, extension) {
   return path.basename(filePath, extension);

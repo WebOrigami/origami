@@ -1,8 +1,8 @@
 import { watch } from "chokidar";
-import * as fs from "fs/promises";
-import path from "path";
-import process from "process";
-import { pathToFileURL } from "url";
+import * as fs from "node:fs/promises";
+import path from "node:path";
+import process from "node:process";
+import { pathToFileURL } from "node:url";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";

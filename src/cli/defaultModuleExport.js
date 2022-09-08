@@ -1,6 +1,6 @@
-import path from "path";
-import process from "process";
-import { pathToFileURL } from "url";
+import path from "node:path";
+import process from "node:process";
+import { pathToFileURL } from "node:url";
 
 export default async function defaultModuleExport(...keys) {
   // On Windows, absolute paths must be valid file:// URLs.

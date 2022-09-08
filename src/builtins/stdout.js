@@ -1,4 +1,4 @@
-import { stdout } from "process";
+import { stdout } from "node:process";
 import { stringLike } from "../core/utilities.js";
 import yaml from "./yaml.js";
 

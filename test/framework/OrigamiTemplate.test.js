@@ -1,5 +1,5 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import map from "../../src/builtins/map.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";

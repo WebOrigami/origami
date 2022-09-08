@@ -1,6 +1,6 @@
 // Manual server test runner.
 
-import http from "http";
+import http from "node:http";
 import { requestListener } from "../../src/server/server.js";
 import sample from "./sample.js";
 

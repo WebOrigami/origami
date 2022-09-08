@@ -1,6 +1,6 @@
-import http from "http";
-import { createServer } from "net";
-import process from "process";
+import http from "node:http";
+import { createServer } from "node:net";
+import process from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { requestListener } from "../server/server.js";
 import virtual from "./virtual.js";

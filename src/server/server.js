@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";

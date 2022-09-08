@@ -1,5 +1,5 @@
-import path from "path";
-import process from "process";
+import path from "node:path";
+import process from "node:process";
 import FilesGraph from "../node/FilesGraph.js";
 
 // TODO: Reconsider whether we can support a ...keys spread parameter.

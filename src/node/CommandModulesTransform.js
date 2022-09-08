@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 /***
  * This mixin is a companion to ImplicitModulesTransform.

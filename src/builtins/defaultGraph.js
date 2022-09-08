@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";

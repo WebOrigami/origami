@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import FilesGraph from "../node/FilesGraph.js";
 import graphVirtual from "./graphVirtual.js";
 

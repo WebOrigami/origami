@@ -1,5 +1,5 @@
-import path from "path";
-import { fileURLToPath, pathToFileURL } from "url";
+import path from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import SiteGraph from "../../src/core/SiteGraph.js";
 import assert from "../assert.js";

@@ -1,6 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-const pathKey = Symbol("path");
+const pathKey = Symbol("node:path");
 
 export default function PathTransform(Base) {
   return class Path extends Base {

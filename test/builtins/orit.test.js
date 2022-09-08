@@ -1,5 +1,5 @@
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import orit from "../../src/builtins/orit.js";
 import FilesGraph from "../../src/node/FilesGraph.js";
 import ImplicitModulesTransform from "../../src/node/ImplicitModulesTransform.js";

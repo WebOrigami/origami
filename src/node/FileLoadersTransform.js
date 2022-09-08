@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { stringLike, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
