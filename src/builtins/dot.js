@@ -88,17 +88,27 @@ async function statements(graph, nodePath) {
 
       // Left justify node label using weird Dot escape character
       // See https://stackoverflow.com/a/13104953/76472
+      const endsWithNewline = label.endsWith("\n");
       label = label.replace(/\n/g, "\\l");
 
       label = label.replace(/"/g, '\\"'); // Escape quotes
       label = label.replace(/[\ \t]+/g, " "); // Collapse spaces and tabs
       label = label.replace(/[\u{0080}-\u{FFFF}]/gu, ""); // Remove non-ASCII characters
 
+      // Add ellipses if we clipped the label. We'd prefer to end with a real
+      // ellipsis, but GraphViz warns about "non-ASCII character 226" if we do.
+      // (That's not even the ellipsis character!) We could use a real ellipsis
+      // for the start, but then they might look different.
       if (clippedStart) {
-        label = "…" + label;
+        label = "..." + label;
       }
       if (clippedEnd) {
-        label += "…";
+        label += "...";
+      }
+
+      if (!endsWithNewline) {
+        // See note above
+        label += "\\l";
       }
 
       labels[key] = label;
