@@ -99,7 +99,6 @@ export default function KeysTransform(Base) {
       this[realKeys] = sortNatural(this[realKeys]);
       this[publicKeys] = sortNatural(this[publicKeys]);
       this[allKeys] = sortNatural(this[allKeys]);
-      this[addedKeys] = null;
     }
 
     async keyAdded(key, options, existingKeys) {
@@ -112,6 +111,7 @@ export default function KeysTransform(Base) {
 
     onChange(key) {
       super.onChange?.(key);
+      this[addedKeys] = null;
       this[allKeys] = null;
       this[keysPromise] = null;
       this[newKeyQueue] = null;
