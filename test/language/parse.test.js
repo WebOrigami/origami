@@ -27,6 +27,7 @@ import {
   templateDocument,
   templateLiteral,
   thisReference,
+  urlProtocolCall,
   variableName,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
@@ -90,6 +91,25 @@ describe("parse", () => {
       [
         [ops.scope, "foo"],
         [ops.scope, [ops.variable, "name", ".json"]],
+      ],
+    ]);
+  });
+
+  it("colonCall", () => {
+    assertParse(colonCall("about:blank"), [
+      [ops.scope, "about"],
+      [ops.scope, "blank"],
+    ]);
+    assertParse(colonCall("fn:a/b"), [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse(colonCall("foo:bar:baz"), [
+      [ops.scope, "foo"],
+      [
+        [ops.scope, "bar"],
+        [ops.scope, "baz"],
       ],
     ]);
   });
@@ -271,45 +291,8 @@ describe("parse", () => {
   });
 
   it("protocolCall", () => {
+    assertParse(protocolCall("foo://bar"), [[ops.scope, "foo"], "bar"]);
     assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
-    assertParse(protocolCall("https://example.com/foo/"), [
-      [ops.scope, "https"],
-      "example.com",
-      "foo",
-      undefined,
-    ]);
-    assertParse(protocolCall("https://example.com/foo/bar.json"), [
-      [ops.scope, "https"],
-      "example.com",
-      "foo",
-      "bar.json",
-    ]);
-  });
-
-  it("colonCall", () => {
-    assertParse(colonCall("about:blank"), [
-      [ops.scope, "about"],
-      [ops.scope, "blank"],
-    ]);
-    assertParse(colonCall("fn:a/b"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse(colonCall("foo:bar:baz"), [
-      [ops.scope, "foo"],
-      [
-        [ops.scope, "bar"],
-        [ops.scope, "baz"],
-      ],
-    ]);
-  });
-
-  it("protocolCall with functionComposition", () => {
-    assertParse(expression("https://example.com/graph.yaml 'key'"), [
-      [[ops.scope, "https"], "example.com", "graph.yaml"],
-      "key",
-    ]);
   });
 
   it("referenceSubstitution", () => {
@@ -458,6 +441,32 @@ Block contents
     assertParse(thisReference("this"), [ops.thisKey]);
     // If there's an extension after the 'this' keyword, it's a reference.
     // assert.equal(thisReference("this.foo"), null);
+  });
+
+  it("urlProtocolCall", () => {
+    assertParse(urlProtocolCall("https://example.com/foo/"), [
+      [ops.scope, "https"],
+      "example.com",
+      "foo",
+      undefined,
+    ]);
+    assertParse(urlProtocolCall("https://example.com/foo/bar.json"), [
+      [ops.scope, "https"],
+      "example.com",
+      "foo",
+      "bar.json",
+    ]);
+    assertParse(urlProtocolCall("https:example.com"), [
+      [ops.scope, "https"],
+      "example.com",
+    ]);
+  });
+
+  it("urlProtocolCall with functionComposition", () => {
+    assertParse(expression("https://example.com/graph.yaml 'key'"), [
+      [[ops.scope, "https"], "example.com", "graph.yaml"],
+      "key",
+    ]);
   });
 
   it("variableName", () => {

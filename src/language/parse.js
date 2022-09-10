@@ -99,6 +99,7 @@ export function expression(text) {
     spaceUrl,
     spacePathCall,
     functionComposition,
+    urlProtocolCall,
     protocolCall,
     colonCall,
     slashCall,
@@ -138,6 +139,8 @@ export function expressionPathKey(text) {
     lambda,
     templateLiteral,
     functionComposition,
+    urlProtocolCall,
+    protocolCall,
     colonCall,
     group,
     number,
@@ -152,7 +155,15 @@ export function extension(text) {
 
 // Parse something that results in a function/graph that can be called.
 export function functionCallTarget(text) {
-  return any(group, protocolCall, slashCall, percentCall, getReference)(text);
+  return any(
+    group,
+    urlProtocolCall,
+    protocolCall,
+    colonCall,
+    slashCall,
+    percentCall,
+    getReference
+  )(text);
 }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
@@ -762,6 +773,25 @@ export function thisReference(text) {
 // Parse a URL protocol
 export function urlProtocol(text) {
   return regex(/^https?/)(text);
+}
+
+// Parse a URL protocol call like `https://example.com/foo/bar`.
+export function urlProtocolCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    urlProtocol,
+    terminal(/^:\/\/|^:\/|^:/),
+    slashPath
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: fnName, 3: fnArgs } = parsed.value;
+  const value = [[ops.scope, fnName], ...fnArgs];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a variable name
