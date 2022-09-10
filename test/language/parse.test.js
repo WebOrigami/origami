@@ -2,6 +2,7 @@ import * as ops from "../../src/language/ops.js";
 import {
   args,
   assignment,
+  colonCall,
   expression,
   functionComposition,
   getReference,
@@ -114,7 +115,10 @@ describe("parse", () => {
   it("expression with function with space-separated arguments, mixed argument types", () => {
     assertParse(expression(`copy app:formulas, files 'snapshot'`), [
       [ops.scope, "copy"],
-      [[ops.scope, "app"], "formulas"],
+      [
+        [ops.scope, "app"],
+        [ops.scope, "formulas"],
+      ],
       [[ops.scope, "files"], "snapshot"],
     ]);
   });
@@ -267,8 +271,7 @@ describe("parse", () => {
   });
 
   it("protocolCall", () => {
-    assertParse(protocolCall("fn:a/b"), [[ops.scope, "fn"], "a", "b"]);
-    assertParse(protocolCall("about:blank"), [[ops.scope, "about"], "blank"]);
+    assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
     assertParse(protocolCall("https://example.com/foo/"), [
       [ops.scope, "https"],
       "example.com",
@@ -281,9 +284,24 @@ describe("parse", () => {
       "foo",
       "bar.json",
     ]);
-    assertParse(protocolCall("foo:bar:baz"), [
+  });
+
+  it("colonCall", () => {
+    assertParse(colonCall("about:blank"), [
+      [ops.scope, "about"],
+      [ops.scope, "blank"],
+    ]);
+    assertParse(colonCall("fn:a/b"), [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse(colonCall("foo:bar:baz"), [
       [ops.scope, "foo"],
-      [[ops.scope, "bar"], "baz"],
+      [
+        [ops.scope, "bar"],
+        [ops.scope, "baz"],
+      ],
     ]);
   });
 

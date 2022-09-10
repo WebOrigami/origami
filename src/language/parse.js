@@ -61,6 +61,25 @@ export function assignment(text) {
   };
 }
 
+// Parse a right-associative function call like `fn:foo/bar` or `foo:bar:baz`.
+export function colonCall(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    reference,
+    terminal(/^:/),
+    expressionPath
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: fnName, 3: fnArgs } = parsed.value;
+  const value = [[ops.scope, fnName], ...fnArgs];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse a declaration.
 export function declaration(text) {
   return any(variableDeclaration, literal)(text);
@@ -81,8 +100,45 @@ export function expression(text) {
     spacePathCall,
     functionComposition,
     protocolCall,
+    colonCall,
     slashCall,
     percentCall,
+    group,
+    number,
+    getReference
+  )(text);
+}
+
+// Parse a slash-delimeted path of expressions
+export function expressionPath(text) {
+  const parsed = separatedList(
+    expressionPathKey,
+    terminal(/^\//),
+    regex(/^/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  // Remove the separators from the result.
+  const values = [];
+  while (parsed.value.length > 0) {
+    values.push(parsed.value.shift()); // Keep value
+    parsed.value.shift(); // Drop separator
+  }
+  return {
+    value: values,
+    rest: parsed.rest,
+  };
+}
+
+// Parse an expession in a path of expressions
+export function expressionPathKey(text) {
+  return any(
+    singleQuoteString,
+    lambda,
+    templateLiteral,
+    functionComposition,
+    colonCall,
     group,
     number,
     getReference
@@ -349,25 +405,19 @@ export function percentPath(text) {
   };
 }
 
-// Parse a right-associative protocol call like `fn:foo/bar` or `fn://foo/bar`.
+// Parse a protocol call like `fn://foo/bar`.
 export function protocolCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     reference,
-    terminal(/^:\/\/|^:/),
-    any(protocolCall, slashPath)
+    terminal(/^:\/\/|^:\//),
+    slashPath
   )(text);
   if (!parsed) {
     return null;
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
-  const value = [[ops.scope, fnName]];
-  const argIsNestedCall = fnArgs[0]?.[0] === ops.scope;
-  if (argIsNestedCall) {
-    value.push(fnArgs);
-  } else {
-    value.push(...fnArgs);
-  }
+  const value = [[ops.scope, fnName], ...fnArgs];
   return {
     value,
     rest: parsed.rest,
@@ -525,7 +575,7 @@ export function spacePathCall(text) {
 export function spaceUrl(text) {
   const parsed = sequence(
     optionalWhitespace,
-    spaceUrlProtocol,
+    urlProtocol,
     whitespace,
     spaceUrlPath
   )(text);
@@ -538,11 +588,6 @@ export function spaceUrl(text) {
     value,
     rest: parsed.rest,
   };
-}
-
-// Parse a URL protocol
-export function spaceUrlProtocol(text) {
-  return regex(/^https?/)(text);
 }
 
 // Parse a space-delimeted URL path
@@ -712,6 +757,11 @@ export function thisReference(text) {
     value,
     rest: parsed.rest,
   };
+}
+
+// Parse a URL protocol
+export function urlProtocol(text) {
+  return regex(/^https?/)(text);
 }
 
 // Parse a variable name
