@@ -4,7 +4,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
 
-describe("FilterGraph", () => {
+describe.only("FilterGraph", () => {
   it("uses keys from filter, values from graph", async () => {
     const graph = {
       a: 1,
@@ -13,18 +13,25 @@ describe("FilterGraph", () => {
         c: 3,
         d: 4,
       },
+      extra: {
+        e: 5,
+      },
     };
     const filter = {
       a: "",
       more: {
-        d: "",
+        d: "", // Ask for d, but not c.
       },
+      extra: "", // Ask for entire extra subtree.
     };
     const filtered = new FilterGraph(graph, filter);
     assert.deepEqual(await ExplorableGraph.plain(filtered), {
       a: 1,
       more: {
         d: 4,
+      },
+      extra: {
+        e: 5,
       },
     });
   });
