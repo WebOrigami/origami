@@ -102,8 +102,7 @@ describe("parse", () => {
     ]);
     assertParse(colonCall("fn:a/b"), [
       [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
+      [ops.scope, "a", "b"],
     ]);
     assertParse(colonCall("foo:bar:baz"), [
       [ops.scope, "foo"],

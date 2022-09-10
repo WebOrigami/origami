@@ -67,13 +67,13 @@ export function colonCall(text) {
     optionalWhitespace,
     reference,
     terminal(/^:/),
-    expressionPath
+    expression
   )(text);
   if (!parsed) {
     return null;
   }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
-  const value = [[ops.scope, fnName], ...fnArgs];
+  const { 1: fnName, 3: fnArg } = parsed.value;
+  const value = [[ops.scope, fnName], fnArg];
   return {
     value,
     rest: parsed.rest,
@@ -104,44 +104,6 @@ export function expression(text) {
     colonCall,
     slashCall,
     percentCall,
-    group,
-    number,
-    getReference
-  )(text);
-}
-
-// Parse a slash-delimeted path of expressions
-export function expressionPath(text) {
-  const parsed = separatedList(
-    expressionPathKey,
-    terminal(/^\//),
-    regex(/^/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  // Remove the separators from the result.
-  const values = [];
-  while (parsed.value.length > 0) {
-    values.push(parsed.value.shift()); // Keep value
-    parsed.value.shift(); // Drop separator
-  }
-  return {
-    value: values,
-    rest: parsed.rest,
-  };
-}
-
-// Parse an expession in a path of expressions
-export function expressionPathKey(text) {
-  return any(
-    singleQuoteString,
-    lambda,
-    templateLiteral,
-    functionComposition,
-    urlProtocolCall,
-    protocolCall,
-    colonCall,
     group,
     number,
     getReference
@@ -417,11 +379,12 @@ export function percentPath(text) {
 }
 
 // Parse a protocol call like `fn://foo/bar`.
+// There must be at least one slash after the colon.
 export function protocolCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     reference,
-    terminal(/^:\/\/|^:\//),
+    terminal(/^:\/\/?/),
     slashPath
   )(text);
   if (!parsed) {
@@ -564,7 +527,7 @@ export function slashPath(text) {
 export function spacePathCall(text) {
   const parsed = sequence(
     optionalWhitespace,
-    regex(/^\.\.|\./),
+    regex(/^\.\.?/),
     whitespace,
     spaceUrlPath
   )(text);
@@ -780,7 +743,7 @@ export function urlProtocolCall(text) {
   const parsed = sequence(
     optionalWhitespace,
     urlProtocol,
-    terminal(/^:\/\/|^:\/|^:/),
+    terminal(/^:\/?\/?/),
     slashPath
   )(text);
   if (!parsed) {
