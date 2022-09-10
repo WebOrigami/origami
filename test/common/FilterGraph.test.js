@@ -4,7 +4,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
 
-describe.only("FilterGraph", () => {
+describe("FilterGraph", () => {
   it("uses keys from filter, values from graph", async () => {
     const graph = {
       a: 1,
