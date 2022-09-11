@@ -392,6 +392,22 @@ Block contents
       templateDocument("Documents can contain ` backticks"),
       "Documents can contain ` backticks"
     );
+    assertParse(
+      templateDocument(`Start
+  {{#fn}}
+  Block contents
+  {{/fn}}
+End`),
+      [
+        ops.concat,
+        "Start\n",
+        [
+          [ops.scope, "fn"],
+          [ops.lambda, "  Block contents\n"],
+        ],
+        "End",
+      ]
+    );
   });
 
   it("templateLiteral", () => {

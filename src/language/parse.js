@@ -590,12 +590,12 @@ export function substitution(text) {
 // Parse a substitution block.
 export function substitutionBlock(text) {
   const parsed = sequence(
-    terminal(/^\{\{#\s*/),
+    terminal(/^[ \t]*\{\{#\s*/),
     functionCallTarget,
     optional(implicitParensArgs),
-    terminal(/^\s*\}\}(?:\s*\n)?/),
+    terminal(/^\s*\}\}(?:[ \t]*\r?\n)?/),
     templateDocument,
-    terminal(/^\{\{\/[^\}]*\}\}/)
+    terminal(/^[ \t]*\{\{\/[^\}]*\}\}(?:[ \t]*\r?\n)?/)
   )(text);
   if (!parsed) {
     return null;
@@ -699,12 +699,18 @@ function templateTextParser(allowBackticks) {
     // assertions, so we match this by hand.
     let i;
     let value = "";
+    let blockMarkerFollows = false;
+    let absorbSpaceBeforeBlockMarker = false;
+    let lastNewlinePos = -1;
     for (i = 0; i < text.length; i++) {
       const char = text[i];
       if (
         (char === "`" && !allowBackticks) ||
         (char === "{" && text[i + 1] === "{")
       ) {
+        if (text[i + 2] === "#" || text[i + 2] === "/") {
+          blockMarkerFollows = true;
+        }
         break;
       } else if (char === "\\") {
         i++;
@@ -712,9 +718,24 @@ function templateTextParser(allowBackticks) {
           value += text[i];
         }
       } else {
+        if (char === "\n") {
+          absorbSpaceBeforeBlockMarker = true;
+          lastNewlinePos = i;
+        } else if (!(char === " " || char === "\t")) {
+          absorbSpaceBeforeBlockMarker = false;
+        }
         value += char;
       }
     }
+
+    // If the text is followed by a {{# or {{/ block marker, then back up to the
+    // start of the line. This will leave it in place for the block parser to
+    // absorb the whitespace before the block marker.
+    if (blockMarkerFollows && absorbSpaceBeforeBlockMarker) {
+      value = text.slice(0, lastNewlinePos + 1);
+      i = lastNewlinePos + 1;
+    }
+
     const rest = text.slice(i);
     return i > 0 ? { value, rest } : null;
   };
