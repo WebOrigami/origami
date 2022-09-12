@@ -1,10 +1,10 @@
 import path from "node:path";
 import builtins from "../cli/builtins.js";
+import FileLoadersTransform from "../common/FileLoadersTransform.js";
+import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import FileLoadersTransform from "../node/FileLoadersTransform.js";
-import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
 
 // ImplicitModulesTransform will add `.js` to this key.
 const configKey = "ori.config";

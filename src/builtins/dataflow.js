@@ -1,13 +1,12 @@
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import builtins from "../cli/builtins.js";
+import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
-// import { additionsPrefix } from "../framework/AdditionsTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
-import CommandsModulesTransform from "../node/CommandModulesTransform.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore

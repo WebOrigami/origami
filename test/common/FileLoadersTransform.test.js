@@ -1,6 +1,6 @@
+import FileLoadersTransform from "../../src/common/FileLoadersTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import FileLoadersTransform from "../../src/node/FileLoadersTransform.js";
 import assert from "../assert.js";
 
 describe("FileLoadersTransform", () => {

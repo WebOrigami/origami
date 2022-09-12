@@ -1,8 +1,8 @@
+import FileLoadersTransform from "../../src/common/FileLoadersTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import AdditionsTransform from "../../src/framework/AdditionsTransform.js";
 import KeysTransform from "../../src/framework/KeysTransform.js";
-import FileLoadersTransform from "../../src/node/FileLoadersTransform.js";
 import assert from "../assert.js";
 
 class AdditionsObject extends AdditionsTransform(KeysTransform(ObjectGraph)) {}

@@ -1,5 +1,5 @@
+import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import { transformObject } from "../core/utilities.js";
-import CommandsModulesTransform from "../node/CommandModulesTransform.js";
 
 export default async function showUsage(scope) {
   console.log(`Usage: ori <expression>, which could be:
