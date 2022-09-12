@@ -2,8 +2,8 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -146,11 +146,9 @@ describe("FilesGraph", () => {
 
   it("can indicate which values are explorable", async () => {
     const graph = new FilesGraph(fixturesDirectory);
-    const keys = await ExplorableGraph.keys(graph);
-    const valuesExplorable = await Promise.all(
-      keys.map(async (key) => await graph.isKeyExplorable(key))
-    );
-    assert.deepEqual(valuesExplorable, [true, false, false]);
+    assert(await ExplorableGraph.isKeyExplorable(graph, "folder1"));
+    const folder1 = await graph.get("folder1");
+    assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
 
   // TODO: Rewrite to avoid apparent race condition

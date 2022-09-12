@@ -1,6 +1,6 @@
 import path from "node:path";
 import process from "node:process";
-import FilesGraph from "../node/FilesGraph.js";
+import FilesGraph from "../core/FilesGraph.js";
 
 // TODO: Reconsider whether we can support a ...keys spread parameter.
 export default async function files(dirname) {

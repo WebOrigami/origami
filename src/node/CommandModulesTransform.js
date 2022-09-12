@@ -12,9 +12,6 @@ import path from "node:path";
  * One case where we *do* want to expose such keys is as commands in the scope
  * used by the Origami CLI. This mixin takes care of that: if a folder contains
  * "foo.js", then this will expose "foo" as a key.
- *
- * As a side effect, however, this suppresses all other keys. The Origami CLI
- * scope only wants to consider commands.
  */
 export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {

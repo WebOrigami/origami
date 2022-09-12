@@ -1,9 +1,9 @@
 import path from "node:path";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import FilesGraph from "../core/FilesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import FileLoadersTransform from "../node/FileLoadersTransform.js";
-import FilesGraph from "../node/FilesGraph.js";
 import ImplicitModulesTransform from "../node/ImplicitModulesTransform.js";
 
 // ImplicitModulesTransform will add `.js` to this key.

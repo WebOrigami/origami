@@ -1,10 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import map from "../../src/builtins/map.js";
+import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
-import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

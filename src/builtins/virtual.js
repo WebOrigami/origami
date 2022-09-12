@@ -1,5 +1,5 @@
 import path from "node:path";
-import FilesGraph from "../node/FilesGraph.js";
+import FilesGraph from "../core/FilesGraph.js";
 import graphVirtual from "./graphVirtual.js";
 
 /**

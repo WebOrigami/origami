@@ -3,9 +3,9 @@ import { fileURLToPath } from "node:url";
 import builtins from "../../src/cli/builtins.js";
 import Compose from "../../src/common/Compose.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
-import FilesGraph from "../../src/node/FilesGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
