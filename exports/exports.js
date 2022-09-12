@@ -109,6 +109,5 @@ export { default as CommandModulesTransform } from "../src/node/CommandModulesTr
 export { default as FileLoadersTransform } from "../src/node/FileLoadersTransform.js";
 export { default as FilesGraph } from "../src/node/FilesGraph.js";
 export { default as ImplicitModulesTransform } from "../src/node/ImplicitModulesTransform.js";
-export { default as ParentFiles } from "../src/node/ParentFiles.js";
 export * from "../src/server/mediaTypes.js";
 export * from "../src/server/server.js";
