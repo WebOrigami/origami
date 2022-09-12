@@ -61,6 +61,13 @@ export default class FilesGraph {
   // Get the contents of the file or directory named by the given key.
   async get(key) {
     incrementCount("FilesGraph get");
+
+    // We define get(undefined) to be the graph itself. This lets an ori command
+    // like "ori folder/" with a trailing slash be equivalent to "ori folder".
+    if (key === undefined) {
+      return this;
+    }
+
     const objPath = path.resolve(this.dirname, String(key));
     const stats = await stat(objPath);
     if (!stats) {

@@ -46,6 +46,12 @@ describe("FilesGraph", () => {
     });
   });
 
+  it("getting undefined returns the graph itself", async () => {
+    const files = new FilesGraph(fixturesDirectory);
+    const result = await files.get(undefined);
+    assert.equal(result, files);
+  });
+
   it("can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
