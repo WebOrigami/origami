@@ -26,6 +26,11 @@ export default class ObjectGraph {
    * @param {any} key
    */
   async get(key) {
+    if (key === undefined) {
+      // Getting undefined returns the graph itself.
+      return this;
+    }
+
     // We check to make sure the object itself has the key as an `own` property
     // because, if the object's an array, we don't want to return values for
     // keys like `map` and `find` that are Array prototype methods.

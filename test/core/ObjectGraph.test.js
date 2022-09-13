@@ -26,6 +26,11 @@ describe("ObjectGraph", () => {
     assert.deepEqual(await ExplorableGraph.plain(graph), ["a", "b", "c"]);
   });
 
+  it("get(undefined) returns the graph itself", async () => {
+    const graph = new ObjectGraph({});
+    assert.equal(await graph.get(undefined), graph);
+  });
+
   it("can set a value", async () => {
     const graph = new ObjectGraph({
       a: 1,

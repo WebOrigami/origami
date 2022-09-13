@@ -8,7 +8,6 @@ import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import execute from "../language/execute.js";
-import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
 
 /**
@@ -34,12 +33,6 @@ export default async function ori(expression, path) {
   if (!code || parsed.rest !== "") {
     console.error(`ori: could not recognize expression: ${expression}`);
     return;
-  }
-
-  if (!expression.endsWith(")")) {
-    // The source ends without an explicit parenthesis. If the rightmost call in
-    // the code tree is a function, we'll want to invoke it.
-    code = patchDanglingFunction(code);
   }
 
   // If a path was provided, traverse that before evaluating the code.
@@ -85,29 +78,4 @@ async function formatResult(result) {
     ? await yaml(result)
     : undefined;
   return output;
-}
-
-// If the user didn't explicitly specify end the source with a parenthesis, but
-// the rightmost derivation of the code is a function, we'll want to implicitly
-// invoke it. We can't tell at this time whether the code is a function or not,
-// so we'll change the ops from `ops.scope` to `ops.implicitCall` to check for a
-// function at runtime and -- if it's a function -- invoke it.
-function patchDanglingFunction(code) {
-  if (code instanceof Array) {
-    const isGet =
-      code.length === 2 && code[0] === ops.scope && typeof code[1] === "string";
-    if (isGet) {
-      // Change ops.scope to ops.implicitCall
-      return [ops.implicitCall, code[1]];
-    } else {
-      // Recurse
-      const last = code[code.length - 1];
-      const patched = patchDanglingFunction(last);
-      const newCode = code.slice();
-      newCode[code.length - 1] = patched;
-      return newCode;
-    }
-  }
-  // Return the code as is.
-  return code;
 }
