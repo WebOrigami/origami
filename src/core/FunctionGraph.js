@@ -1,3 +1,5 @@
+import ExplorableGraph from "./ExplorableGraph.js";
+
 /**
  * An explorable graph based on a function and an optional domain.
  */
@@ -26,7 +28,7 @@ export default class FunctionGraph {
    */
   async get(key) {
     let value =
-      key === undefined || this.fn.length === 1
+      (key === undefined && this.fn.length === 0) || this.fn.length === 1
         ? // No key was provided, or function takes only one argument: invoke
           this.fn(key)
         : // Bind the key to the first parameter. Subsequent get calls will
@@ -40,6 +42,19 @@ export default class FunctionGraph {
    * Apply the function to the given keys as arguments.
    */
   async traverse(...keys) {
-    return this.fn.call(this, ...keys);
+    let args;
+    let rest;
+    if (this.fn.length > 0 && keys.length > this.fn.length) {
+      args = keys.slice(0, this.fn.length);
+      rest = keys.slice(this.fn.length);
+    } else {
+      args = keys;
+      rest = null;
+    }
+    let value = await this.fn.call(this, ...args);
+    if (rest) {
+      value = await ExplorableGraph.traverse(value, ...rest);
+    }
+    return value;
   }
 }

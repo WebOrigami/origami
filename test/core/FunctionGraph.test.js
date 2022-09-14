@@ -31,6 +31,19 @@ describe("FunctionGraph", () => {
     assert.equal(twoPlusThree, 5);
   });
 
+  it("can traverse more keys than its function accepts", async () => {
+    const obj = {
+      x: {
+        y: {
+          z: 1,
+        },
+      },
+    };
+    const graph = new FunctionGraph((a, b) => obj[a][b]);
+    const result = await ExplorableGraph.traverse(graph, "x", "y", "z");
+    assert.equal(result, 1);
+  });
+
   it("can traverse a function with a spread parameter", async () => {
     const graph = new FunctionGraph((...args) => args.join(", "));
     const result = await ExplorableGraph.traverse(graph, "a", "b", "c");
