@@ -1,6 +1,7 @@
 /// <reference path="./code.d.ts" />
 
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { isClass } from "../core/utilities.js";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -58,12 +59,14 @@ export default async function execute(code) {
   }
 
   try {
-    const result =
-      fn instanceof Function
-        ? // Invoke the function
-          await fn.call(scope, ...args)
-        : // Traverse the graph.
-          await ExplorableGraph.traverseOrThrow(fn, ...args);
+    const result = isClass(fn)
+      ? // Instantiate class.
+        new fn(...args)
+      : fn instanceof Function
+      ? // Invoke the function.
+        await fn.call(scope, ...args)
+      : // Traverse the graph.
+        await ExplorableGraph.traverseOrThrow(fn, ...args);
     return result;
   } catch (/** @type {any} */ error) {
     const formatted = format(code);

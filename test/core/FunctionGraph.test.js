@@ -24,6 +24,18 @@ describe("FunctionGraph", () => {
     assert.equal(result, "Hello.");
   });
 
+  it("can instantiate a class constructor", async () => {
+    class Foo {
+      constructor(arg) {
+        this.arg = arg;
+      }
+    }
+    const graph = new FunctionGraph(Foo, ["a", "b", "c"]);
+    const result = await graph.get("a");
+    assert(result instanceof Foo);
+    assert.equal(result.arg, "a");
+  });
+
   it("get curries a multi-argument function", async () => {
     const graph = new FunctionGraph((a, b) => a + b);
     const twoPlus = await graph.get(2);

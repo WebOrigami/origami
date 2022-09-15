@@ -40,4 +40,17 @@ describe("execute", () => {
     };
     await execute.call(scope, code);
   });
+
+  it("invokes a class constructor with new", async () => {
+    const code = [[ops.scope, "Foo"], "arg"];
+    const scope = {};
+    scope.Foo = class {
+      constructor(arg) {
+        this.arg = arg;
+      }
+    };
+    const result = await execute.call(scope, code);
+    assert(result instanceof scope.Foo);
+    assert.equal(result.arg, "arg");
+  });
 });

@@ -1,5 +1,6 @@
 export function box(value: any): any;
 export function extractFrontMatter(s: string): { frontBlock: string, bodyText: string, frontData: PlainObject };
+export function isClass(obj: any): boolean;
 export function isPlainObject(obj: any): boolean;
 export function parse(text: string): PlainObject;
 export function sortNatural(values: any[]): any[]

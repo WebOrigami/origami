@@ -1,15 +1,17 @@
 import ExplorableGraph from "./ExplorableGraph.js";
+import { isClass } from "./utilities.js";
 
 /**
  * An explorable graph based on a function and an optional domain.
  */
 export default class FunctionGraph {
   /**
-   * @param {function} fn the function to be explored
+   * @param {any} fn the function to be explored
    * @param {AsyncIterable|Iterable} [domain] optional domain of the function
    */
   constructor(fn, domain = []) {
     this.fn = fn;
+    this.isFnClass = isClass(fn);
     this.domain = domain;
   }
 
@@ -27,14 +29,16 @@ export default class FunctionGraph {
    * @param {any} key
    */
   async get(key) {
-    let value =
-      (key === undefined && this.fn.length === 0) || this.fn.length === 1
-        ? // No key was provided, or function takes only one argument: invoke
-          this.fn(key)
-        : // Bind the key to the first parameter. Subsequent get calls will
-          // eventually bind all parameters until only one remains. At that point,
-          // the above condition will apply and the function will be invoked.
-          Reflect.construct(this.constructor, [this.fn.bind(this, key)]);
+    let value;
+    if ((key === undefined && this.fn.length === 0) || this.fn.length === 1) {
+      // No key was provided, or function takes only one argument.
+      value = this.isFnClass ? new this.fn(key) : this.fn(key);
+    } else {
+      // Bind the key to the first parameter. Subsequent get calls will
+      // eventually bind all parameters until only one remains. At that point,
+      // the above condition will apply and the function will be invoked.
+      value = Reflect.construct(this.constructor, [this.fn.bind(this, key)]);
+    }
     return value;
   }
 
@@ -51,7 +55,9 @@ export default class FunctionGraph {
       args = keys;
       rest = null;
     }
-    let value = await this.fn.call(this, ...args);
+    let value = this.isFnClass
+      ? new this.fn(...args)
+      : await this.fn.call(this, ...args);
     if (rest) {
       value = await ExplorableGraph.traverse(value, ...rest);
     }

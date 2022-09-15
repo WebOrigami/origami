@@ -31,6 +31,18 @@ export function extractFrontMatter(text) {
 }
 
 /**
+ * Return true if the given obj is a JavaScript class.
+ *
+ * @param {any} obj
+ */
+export function isClass(obj) {
+  // Somewhat remarkably, in 2022 there is still no quick, side-effect-free way
+  // to determine if a function is a class that must be instantiated with `new`.
+  // The most reliable method is to inspect the function's source.
+  return obj instanceof Function && obj.toString().startsWith("class ");
+}
+
+/**
  * Return true if the object is a plain JavaScript object.
  *
  * @param {any} obj
