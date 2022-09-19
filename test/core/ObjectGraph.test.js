@@ -96,7 +96,7 @@ describe("ObjectGraph", () => {
     });
 
     // Apply changes.
-    await graph.set({
+    await graph.set(null, {
       a: 4,
       b: undefined,
       d: 5,
@@ -146,13 +146,11 @@ describe("ObjectGraph", () => {
     });
 
     // Passing an explorable as the single argument applies it as updates.
-    await graph2.set(
-      new ObjectGraph({
-        more: {
-          c: 3,
-        },
-      })
-    );
+    await graph2.set(null, {
+      more: {
+        c: 3,
+      },
+    });
 
     assert.deepEqual(await ExplorableGraph.plain(graph2), {
       a: 1,

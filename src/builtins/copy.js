@@ -14,7 +14,7 @@ export default async function copy(source, target) {
     countCopied = 0;
   }
 
-  await targetGraph.set(sourceGraph);
+  await targetGraph.set(null, sourceGraph);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);

@@ -3,7 +3,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -94,11 +93,10 @@ describe("FilesGraph", () => {
         file2: "This is the second file.",
       },
     };
-    const files = new ObjectGraph(obj);
 
     // Write out files.
     const tempFiles = new FilesGraph(tempDirectory);
-    await tempFiles.set(files);
+    await tempFiles.set(null, obj);
 
     // Read them back in.
     const actualFiles = new FilesGraph(tempDirectory);

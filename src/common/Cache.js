@@ -69,7 +69,7 @@ export default class Cache {
         }
         current[lastKey] = value;
 
-        await this.cache.set(updates);
+        await this.cache.set(null, updates);
       }
 
       return value;

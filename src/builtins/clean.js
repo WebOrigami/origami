@@ -22,7 +22,7 @@ export default async function clean(variant) {
     getValue: false,
   });
   // @ts-ignore
-  await graph.set(undefineds);
+  await graph.set(null, undefineds);
   // @ts-ignore
   await graph.set(".ori.clean.yaml", undefined);
 }

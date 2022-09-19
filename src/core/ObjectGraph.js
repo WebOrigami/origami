@@ -67,9 +67,9 @@ export default class ObjectGraph {
    * @param {any} value
    */
   async set(key, value) {
-    if (arguments.length === 1) {
+    if (key === null) {
       // Recursively write out an explorable argument as updates.
-      const graph = ExplorableGraph.from(key);
+      const graph = ExplorableGraph.from(value);
       await applyUpdates(graph, this);
     } else if (value === undefined) {
       // Delete the key.

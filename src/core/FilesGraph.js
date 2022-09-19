@@ -140,13 +140,15 @@ export default class FilesGraph {
    * @param {any} value
    */
   async set(key, value) {
-    const escaped = escapeKey(key);
-    if (arguments.length === 1) {
-      // Take the single argument as a source graph and write its values into
-      // the current graph.
-      const sourceGraph = ExplorableGraph.from(key);
+    if (key === null) {
+      // Recursively write out an explorable argument as updates.
+      const sourceGraph = ExplorableGraph.from(value);
       await writeFiles(sourceGraph, this);
-    } else if (value === undefined) {
+      return;
+    }
+
+    const escaped = escapeKey(key);
+    if (value === undefined) {
       // Delete file or directory.
       const objPath = path.join(this.dirname, escaped);
       const stats = await stat(objPath);
