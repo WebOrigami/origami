@@ -150,8 +150,7 @@ describe("FilesGraph", () => {
     assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
 
-  // TODO: Rewrite to avoid apparent race condition
-  it.skip("can watch its folder for changes", async () => {
+  it("can watch its folder for changes", async () => {
     await createTempDirectory();
     class Fixture extends FilesGraph {
       hook;
@@ -162,7 +161,7 @@ describe("FilesGraph", () => {
       }
     }
     const tempFiles = new Fixture(tempDirectory);
-    tempFiles.watch();
+    await tempFiles.watch();
     const timeoutPromise = new Promise((resolve) => {
       setTimeout(() => resolve(false), 1000);
     });
@@ -171,9 +170,9 @@ describe("FilesGraph", () => {
       await tempFiles.set("file", "foo");
     });
     const result = await Promise.race([timeoutPromise, changePromise]);
-    assert(result);
-    tempFiles.unwatch();
+    await tempFiles.unwatch();
     await removeTempDirectory();
+    assert(result);
   });
 });
 
