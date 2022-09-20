@@ -40,4 +40,10 @@ describe("setDeep", () => {
       },
     });
   });
+
+  it("can apply updates to an array", async () => {
+    const graph = new ObjectGraph(["a", "b", "c"]);
+    await setDeep(graph, ["d", "e"]);
+    assert.deepEqual(await ExplorableGraph.plain(graph), ["d", "e", "c"]);
+  });
 });
