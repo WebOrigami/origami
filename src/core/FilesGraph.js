@@ -133,24 +133,16 @@ export default class FilesGraph {
 
   /**
    * Write the contents for the file named by the given key. If the value is
-   * undefined, delete the file or directory. If only one argument is passed and
-   * it is explorable, apply the explorable's values to the current graph.
+   * undefined, delete the file or directory.
    *
    * @param {any} key
    * @param {any} value
    */
   async set(key, value) {
-    if (key === null) {
-      // Recursively write out an explorable argument as updates.
-      const sourceGraph = ExplorableGraph.from(value);
-      await writeFiles(sourceGraph, this);
-      return;
-    }
-
     const escaped = escapeKey(key);
+    const objPath = path.join(this.dirname, escaped);
     if (value === undefined) {
       // Delete file or directory.
-      const objPath = path.join(this.dirname, escaped);
       const stats = await stat(objPath);
       if (stats?.isDirectory()) {
         // Delete directory.
@@ -166,17 +158,15 @@ export default class FilesGraph {
       // Write the explorable's values into the subfolder named by the key.
       // However, if the key ends in .json or .yaml, let the next condition
       // write out the graph as a JSON/YAML file.
-      const subfolder = path.resolve(this.dirname, escaped);
-      const targetGraph = Reflect.construct(this.constructor, [subfolder]);
+      const targetGraph = Reflect.construct(this.constructor, [objPath]);
       await writeFiles(value, targetGraph);
     } else {
       // Ensure the directory exists.
       await fs.mkdir(this.dirname, { recursive: true });
 
       // Write out the value as the contents of a file.
-      const filePath = path.join(this.dirname, escaped);
       const data = await prepareData(escaped, value);
-      await fs.writeFile(filePath, data);
+      await fs.writeFile(objPath, data);
     }
   }
 
@@ -200,6 +190,12 @@ export default class FilesGraph {
       }
     }
   }
+}
+
+// Copy the file with the indicated key from the source to the target.
+async function copyFileWithKey(sourceGraph, targetGraph, key) {
+  const value = await sourceGraph.get(key);
+  await targetGraph.set(key, value);
 }
 
 function escapeKey(key) {
@@ -278,10 +274,4 @@ async function writeFiles(sourceGraph, targetGraph) {
   }
 
   return Promise.all(promises);
-}
-
-// Copy the file with the indicated key from the source to the target.
-async function copyFileWithKey(sourceGraph, targetGraph, key) {
-  const value = await sourceGraph.get(key);
-  await targetGraph.set(key, value);
 }

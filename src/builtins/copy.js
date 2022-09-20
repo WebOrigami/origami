@@ -1,6 +1,7 @@
 import process, { stdout } from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
+import setDeep from "./setDeep.js";
 
 export default async function copy(source, target) {
   // const start = performance.now();
@@ -14,7 +15,7 @@ export default async function copy(source, target) {
     countCopied = 0;
   }
 
-  await targetGraph.set(null, sourceGraph);
+  await setDeep(targetGraph, sourceGraph);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);

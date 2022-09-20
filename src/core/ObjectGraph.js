@@ -59,19 +59,13 @@ export default class ObjectGraph {
   }
 
   /**
-   * Add or overwrite the value for the given key. If the value is undefined,
-   * delete the key. If only one argument is passed and it is explorable, apply
-   * the explorable's values as updates to the current graph.
+   * Set the value for the given key. If the value is undefined, delete the key.
    *
    * @param {any} key
    * @param {any} value
    */
   async set(key, value) {
-    if (key === null) {
-      // Recursively write out an explorable argument as updates.
-      const graph = ExplorableGraph.from(value);
-      await applyUpdates(graph, this);
-    } else if (value === undefined) {
+    if (value === undefined) {
       // Delete the key.
       delete this.object[key];
     } else {

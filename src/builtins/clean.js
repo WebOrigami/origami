@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapValuesGraph from "../core/MapValuesGraph.js";
+import setDeep from "./setDeep.js";
 
 /**
  *
@@ -21,8 +22,7 @@ export default async function clean(variant) {
     deep: true,
     getValue: false,
   });
-  // @ts-ignore
-  await graph.set(null, undefineds);
+  await setDeep(graph, undefineds);
   // @ts-ignore
   await graph.set(".ori.clean.yaml", undefined);
 }

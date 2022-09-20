@@ -1,6 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import setDeep from "../../src/builtins/setDeep.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import assert from "../assert.js";
@@ -83,7 +84,7 @@ describe("FilesGraph", () => {
     await removeTempDirectory();
   });
 
-  it("can write out multiple files via set()", async () => {
+  it("can write out multiple files via setDeep()", async () => {
     await createTempDirectory();
 
     // Create a tiny set of "files".
@@ -96,7 +97,7 @@ describe("FilesGraph", () => {
 
     // Write out files.
     const tempFiles = new FilesGraph(tempDirectory);
-    await tempFiles.set(null, obj);
+    await setDeep(tempFiles, obj);
 
     // Read them back in.
     const actualFiles = new FilesGraph(tempDirectory);

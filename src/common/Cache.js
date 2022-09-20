@@ -1,3 +1,4 @@
+import setDeep from "../builtins/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
@@ -69,7 +70,7 @@ export default class Cache {
         }
         current[lastKey] = value;
 
-        await this.cache.set(null, updates);
+        await setDeep(this.cache, updates);
       }
 
       return value;
