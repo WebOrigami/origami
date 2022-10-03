@@ -24,4 +24,4 @@ export default async function graphVirtual(variant) {
 
 graphVirtual.usage = `graphVirtual <graph>\tWrap the indicatedd graph as a virtual app`;
 graphVirtual.documentation =
-  "https://explorablegraph.org/cli/builtins.html#graphVirtual";
+  "https://graphorigami.org/cli/builtins.html#graphVirtual";

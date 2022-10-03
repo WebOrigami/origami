@@ -49,4 +49,4 @@ export default async function make(variant) {
 }
 
 make.usage = `make\tMake real versions of any virtual values [experimental]`;
-make.documentation = "https://explorablegraph.org/cli/builtins.html#make";
+make.documentation = "https://graphorigami.org/cli/builtins.html#make";

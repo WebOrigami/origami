@@ -65,4 +65,4 @@ export default async function assertBuiltin(variant) {
 
 assertBuiltin.usage = `assert <graph>\tAssert that a graph's expected and actual values are equal`;
 assertBuiltin.documentation =
-  "https://explorablegraph.org/cli/builtins.html#assert";
+  "https://graphorigami.org/cli/builtins.html#assert";

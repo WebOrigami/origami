@@ -12,4 +12,4 @@ export default async function inline(text) {
 }
 
 inline.usage = `inline <text>\tInline Origami expressions found in the text`;
-inline.documentation = "https://explorablegraph.org/cli/builtins.html#inline";
+inline.documentation = "https://graphorigami.org/cli/builtins.html#inline";

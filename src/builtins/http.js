@@ -12,4 +12,4 @@ export default async function http(domain, ...keys) {
 }
 
 http.usage = `http <domain>, <...keys>\tA web resource via HTTP`;
-http.documentation = "http://explorablegraph.org/cli/builtins.html#http";
+http.documentation = "http://graphorigami.org/cli/builtins.html#http";

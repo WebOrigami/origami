@@ -31,4 +31,4 @@ export default async function inners(variant) {
 }
 
 inners.usage = `inners <graph>\tThe inner nodes of the graph`;
-inners.documentation = "https://explorablegraph.org/cli/builtins.html#inners";
+inners.documentation = "https://graphorigami.org/cli/builtins.html#inners";

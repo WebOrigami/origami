@@ -21,4 +21,4 @@ export default async function watch(variant) {
 }
 
 watch.usage = `watch <folder>\tLet a folder graph respond to changes`;
-watch.documentation = "https://explorablegraph.org/cli/builtins.html#watch";
+watch.documentation = "https://graphorigami.org/cli/builtins.html#watch";

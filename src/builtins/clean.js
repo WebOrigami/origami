@@ -28,4 +28,4 @@ export default async function clean(variant) {
 }
 
 clean.usage = `clean <graph>\tRemoves files created by the make command [experimental]`;
-clean.documentation = "https://explorablegraph.org/cli/builtins.html#clean";
+clean.documentation = "https://graphorigami.org/cli/builtins.html#clean";

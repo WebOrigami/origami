@@ -15,4 +15,4 @@ export default async function graph(variant) {
 }
 
 graph.usage = `graph <variant>\tConvert JSON, YAML, function, or plain object to a graph`;
-graph.documentation = "https://explorablegraph.org/cli/builtins.html#graph";
+graph.documentation = "https://graphorigami.org/cli/builtins.html#graph";

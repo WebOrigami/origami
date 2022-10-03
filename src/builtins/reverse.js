@@ -26,4 +26,4 @@ export default async function reverse(variant) {
 }
 
 reverse.usage = `reverse <graph>\tReverses the order of the graph's top-level keys`;
-reverse.documentation = "https://explorablegraph.org/cli/builtins.html#reverse";
+reverse.documentation = "https://graphorigami.org/cli/builtins.html#reverse";

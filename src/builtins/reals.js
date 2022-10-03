@@ -28,4 +28,4 @@ export default async function reals(variant) {
 }
 
 reals.usage = `reals <graph>\tOnly real (non-virtual) portion of the graph`;
-reals.documentation = "https://explorablegraph.org/cli/builtins.html#reals";
+reals.documentation = "https://graphorigami.org/cli/builtins.html#reals";

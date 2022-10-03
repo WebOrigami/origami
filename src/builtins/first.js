@@ -20,4 +20,4 @@ export default async function first(variant) {
 }
 
 first.usage = `first <graph>\tReturn the first value in the graph.`;
-first.documentation = "https://explorablegraph.org/cli/builtins.html#first";
+first.documentation = "https://graphorigami.org/cli/builtins.html#first";

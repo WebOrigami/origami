@@ -5,5 +5,4 @@ export default function basename(filePath, extension) {
 }
 
 basename.usage = `basename path, [extension]\tReturns the base part of a filename`;
-basename.documentation =
-  "https://explorablegraph.org/cli/builtins.html#basename";
+basename.documentation = "https://graphorigami.org/cli/builtins.html#basename";

@@ -19,4 +19,4 @@ export default async function config(key) {
 }
 
 config.usage = `@\tThe default graph used by the ori CLI`;
-config.documentation = "https://explorablegraph.org/cli/builtins.html#@";
+config.documentation = "https://graphorigami.org/cli/builtins.html#@";

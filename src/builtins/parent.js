@@ -16,4 +16,4 @@ export default async function parent(variant) {
 }
 
 parent.usage = `parent\tThe parent of the current graph`;
-parent.documentation = "https://explorablegraph.org/cli/builtins.html#parent";
+parent.documentation = "https://graphorigami.org/cli/builtins.html#parent";

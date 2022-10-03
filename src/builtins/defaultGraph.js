@@ -58,4 +58,4 @@ export async function findConfig(cwd) {
 
 defaultGraph.usage = `defaultGraph\tThe default graph used by the ori CLI`;
 defaultGraph.documentation =
-  "https://explorablegraph.org/cli/builtins.html#defaultGraph";
+  "https://graphorigami.org/cli/builtins.html#defaultGraph";

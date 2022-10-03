@@ -19,4 +19,4 @@ export default async function defaultPages(variant) {
 
 defaultPages.usage = `defaultPages <graph>\tAdd default pages like index.html to the graph`;
 defaultPages.documentation =
-  "https://explorablegraph.org/cli/builtins.html#defaultPages";
+  "https://graphorigami.org/cli/builtins.html#defaultPages";

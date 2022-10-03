@@ -36,4 +36,4 @@ export default async function results(variant) {
 }
 
 results.usage = `results <graph>\tOnly results (non-formulas) in the graph`;
-results.documentation = "https://explorablegraph.org/cli/builtins.html#results";
+results.documentation = "https://graphorigami.org/cli/builtins.html#results";

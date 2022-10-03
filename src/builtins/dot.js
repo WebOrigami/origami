@@ -147,4 +147,4 @@ function stringDiff(first, second) {
 }
 
 dot.usage = `dot <graph>\tRender a graph visually in dot language`;
-dot.documentation = "https://explorablegraph.org/cli/builtins.html#dot";
+dot.documentation = "https://graphorigami.org/cli/builtins.html#dot";

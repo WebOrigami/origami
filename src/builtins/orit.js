@@ -32,4 +32,4 @@ export default async function orit(
 }
 
 orit.usage = `orit template, input\tApply an Origami template to input data`;
-orit.documentation = "https://explorablegraph.org/cli/builtins.html#orit";
+orit.documentation = "https://graphorigami.org/cli/builtins.html#orit";

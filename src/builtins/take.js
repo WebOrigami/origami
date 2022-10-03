@@ -19,4 +19,4 @@ export default function take(graph, n) {
 }
 
 take.usage = `take graph, n\tReturn the first n items from graph`;
-take.documentation = "https://explorablegraph.org/cli/builtins.html#take";
+take.documentation = "https://graphorigami.org/cli/builtins.html#take";

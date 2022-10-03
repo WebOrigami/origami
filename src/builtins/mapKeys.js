@@ -102,4 +102,4 @@ export function extendKeyFn(keyFn) {
 }
 
 mapKeys.usage = `mapKeys <graph>\tDefine the key used to get nodes from the graph`;
-mapKeys.documentation = "https://explorablegraph.org/cli/builtins.html#mapKeys";
+mapKeys.documentation = "https://graphorigami.org/cli/builtins.html#mapKeys";

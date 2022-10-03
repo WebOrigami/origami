@@ -34,4 +34,4 @@ async function applyUpdateForKey(source, target, key) {
 }
 
 setDeep.usage = `setDeep <target>, <source>\tApplies the source graph to the target`;
-setDeep.documentation = "https://explorablegraph.org/cli/builtins.html#setDeep";
+setDeep.documentation = "https://graphorigami.org/cli/builtins.html#setDeep";

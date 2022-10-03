@@ -94,4 +94,4 @@ function extendMapFn(mapFn) {
 }
 
 map.usage = `map <graph, fn>\tMap the top-level values in a graph`;
-map.documentation = "https://explorablegraph.org/cli/builtins.html#map";
+map.documentation = "https://graphorigami.org/cli/builtins.html#map";

@@ -9,4 +9,4 @@ export default async function site(domain, ...keys) {
 }
 
 site.usage = `site <domain>, <...keys>\tA web site graph`;
-site.documentation = "https://explorablegraph.org/cli/builtins.html#site";
+site.documentation = "https://graphorigami.org/cli/builtins.html#site";

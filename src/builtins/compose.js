@@ -5,4 +5,4 @@ export default async function compose(...graphs) {
 }
 
 compose.usage = `compose <...graphs>\tCompose the given graphs`;
-compose.documentation = "https://explorablegraph.org/cli/builtins.html#compose";
+compose.documentation = "https://graphorigami.org/cli/builtins.html#compose";

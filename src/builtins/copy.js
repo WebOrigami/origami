@@ -53,4 +53,4 @@ function ProgressTransform(Base) {
 }
 
 copy.usage = `copy <source>, <target>\tCopies the source graph to the target`;
-copy.documentation = "https://explorablegraph.org/cli/builtins.html#copy";
+copy.documentation = "https://graphorigami.org/cli/builtins.html#copy";

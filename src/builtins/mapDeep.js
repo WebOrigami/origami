@@ -80,4 +80,4 @@ function extendMapFn(mapFn) {
 }
 
 mapDeep.usage = `mapDeep <graph>, <mapFn>\tMap the deep values in a graph using a map function.`;
-mapDeep.documentation = "https://explorablegraph.org/cli/builtins.html#mapDeep";
+mapDeep.documentation = "https://graphorigami.org/cli/builtins.html#mapDeep";

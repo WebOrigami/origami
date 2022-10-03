@@ -1,7 +1,7 @@
 /**
  * Parse statements in the Origami expression language.
  *
- * See https://explorablegraph.org/language/grammar.html for a formal grammar.
+ * See https://graphorigami.org/language/grammar.html for a formal grammar.
  *
  * This is a basic parser combinator-based parser: each term in the grammar is
  * handled by a function that can recognize that type of term at the start of a

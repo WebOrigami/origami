@@ -24,4 +24,4 @@ export default async function yaml(variant) {
 }
 
 yaml.usage = `yaml <obj>\tRender the object as text in YAML format`;
-yaml.documentation = "https://explorablegraph.org/cli/builtins.html#yaml";
+yaml.documentation = "https://graphorigami.org/cli/builtins.html#yaml";

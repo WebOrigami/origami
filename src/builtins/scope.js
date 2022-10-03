@@ -17,4 +17,4 @@ export default async function scope(variant) {
 }
 
 scope.usage = `scope <graph>]\tReturns the scope of the graph`;
-scope.documentation = "https://explorablegraph.org/cli/builtins.html#scope";
+scope.documentation = "https://graphorigami.org/cli/builtins.html#scope";

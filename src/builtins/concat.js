@@ -37,4 +37,4 @@ export default async function concat(...args) {
 }
 
 concat.usage = `concat <...objs>\tConcatenate text and/or graphs of text`;
-concat.documentation = "https://explorablegraph.org/cli/builtins.html#concat";
+concat.documentation = "https://graphorigami.org/cli/builtins.html#concat";

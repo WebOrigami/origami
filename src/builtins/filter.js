@@ -19,4 +19,4 @@ export default async function filter(graphVariant, filterVariant) {
 }
 
 filter.usage = `filter <graph>, <filter>\tOnly return values whose keys match the filter`;
-filter.documentation = "https://explorablegraph.org/cli/builtins.html#filter";
+filter.documentation = "https://graphorigami.org/cli/builtins.html#filter";

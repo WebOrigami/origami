@@ -19,4 +19,4 @@ export default async function shuffle(variant) {
 }
 
 shuffle.usage = `shuffle <graph>\tReturn a new graph with the original's keys shuffled`;
-shuffle.documentation = "https://explorablegraph.org/cli/builtins.html#shuffle";
+shuffle.documentation = "https://graphorigami.org/cli/builtins.html#shuffle";

@@ -38,4 +38,4 @@ function itemRss(jsonFeedItem) {
 }
 
 feedRss.usage = `feedRss <feed>\tTransforms a JSON Feed object to RSS XML`;
-feedRss.documentation = "https://explorablegraph.org/cli/builtins.html#feedRss";
+feedRss.documentation = "https://graphorigami.org/cli/builtins.html#feedRss";
