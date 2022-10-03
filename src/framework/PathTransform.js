@@ -4,10 +4,10 @@ const pathKey = Symbol("node:path");
 
 export default function PathTransform(Base) {
   return class Path extends Base {
-    // Initialize this[pathKey] to shut up TypeScript.
     constructor(...args) {
       super(...args);
-      this[pathKey] = null;
+      // Initialize this[pathKey] to shut up TypeScript.
+      this[pathKey] = undefined;
     }
 
     async get(key) {
