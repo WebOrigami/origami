@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/origami",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "type": "module",
   "bin": {
     "ori": "src/cli/cli.js"
@@ -8,19 +8,19 @@
   "main": "./exports/exports.js",
   "devDependencies": {
     "@types/chai": "4.3.3",
-    "@types/mocha": "9.1.1",
-    "@types/node": "18.7.13",
+    "@types/mocha": "10.0.0",
+    "@types/node": "18.8.2",
     "chai": "4.3.6",
     "mocha": "10.0.0",
-    "typescript": "4.8.2"
+    "typescript": "4.8.4"
   },
   "dependencies": {
     "graphviz-wasm": "3.0.0",
     "chokidar": "3.5.3",
     "highlight.js": "11.6.0",
     "node-fetch": "3.2.10",
-    "marked": "4.0.19",
-    "yaml": "2.1.1"
+    "marked": "4.1.1",
+    "yaml": "2.1.3"
   },
   "scripts": {
     "prepublishOnly": "ori make exports",
