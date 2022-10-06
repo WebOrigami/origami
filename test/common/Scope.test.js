@@ -51,4 +51,15 @@ describe("Scope", () => {
     assert.equal(graphs[1].isInScope, true);
     assert.equal(graphs[2].isInScope, true);
   });
+
+  it("binds functions to the scope", async () => {
+    const scope = new Scope({
+      fn: function () {
+        return this;
+      },
+    });
+    const fn = await scope.get("fn");
+    const result = fn();
+    assert.equal(result, scope);
+  });
 });

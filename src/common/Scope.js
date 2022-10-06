@@ -37,7 +37,10 @@ export default class Scope {
   async get(key) {
     for (const graph of this.graphs) {
       const value = await graph.get(key);
-      if (value !== undefined) {
+      if (value instanceof Function) {
+        // Bind function to this scope
+        return value.bind(this);
+      } else if (value !== undefined) {
         return value;
       }
     }
