@@ -2,6 +2,10 @@
   "name": "@graphorigami/origami",
   "version": "0.0.18",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/GraphOrigami/origami.git"
+  },
   "bin": {
     "ori": "src/cli/cli.js"
   },
