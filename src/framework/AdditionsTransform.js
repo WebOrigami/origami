@@ -1,4 +1,4 @@
-import Compose from "../common/Compose.js";
+import MergeGraph from "../common/MergeGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import KeysTransform from "./KeysTransform.js";
 
@@ -44,7 +44,7 @@ export default function AdditionsTransform(Base) {
             ? null
             : allAdditions.length === 1
             ? allAdditions[0]
-            : new Compose(...allAdditions);
+            : new MergeGraph(...allAdditions);
       }
       return this[additions];
     }

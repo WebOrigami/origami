@@ -1,7 +1,7 @@
 import builtins from "../../../src/cli/builtins.js";
-import Compose from "../../../src/common/Compose.js";
+import MergeGraph from "../../../src/common/MergeGraph.js";
 
-export default new Compose(
+export default new MergeGraph(
   {
     fn() {
       return "Hello, world.";

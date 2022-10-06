@@ -1,8 +1,8 @@
-// Should build this list of imports with ExplorableGraph
+// Should build this list programmatically
 // import "./app/MetaTransform.test.js";
 import "./common/Cache.test.js";
-import "./common/Compose.test.js";
 import "./common/DefaultValues.test.js";
+import "./common/MergeGraph.test.js";
 import "./common/SubtractKeys.test.js";
 import "./core/ExplorableGraph.test.js";
 import "./core/FunctionGraph.test.js";

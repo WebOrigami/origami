@@ -36,7 +36,11 @@ async function exportStatementForCode(codeBuffer, key) {
   if (exportsDefault) {
     // Has a default export
     const basename = key.slice(0, -3);
-    exportName = `{ default as ${basename} }`;
+    const identifier =
+      basename === "@"
+        ? "config" // Special case: "@" is not a valid JS identifier
+        : basename;
+    exportName = `{ default as ${identifier} }`;
   } else if (exportsAnything) {
     // Export everything
     exportName = "*";

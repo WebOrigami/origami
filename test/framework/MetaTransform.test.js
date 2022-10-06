@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/cli/builtins.js";
-import Compose from "../../src/common/Compose.js";
+import MergeGraph from "../../src/common/MergeGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
@@ -16,7 +16,7 @@ class MetaObject extends MetaTransform(ObjectGraph) {}
 const metaGraph = new (MetaTransform(FilesGraph))(
   path.join(fixturesDirectory, "metagraphs")
 );
-metaGraph.parent = new Compose(
+metaGraph.parent = new MergeGraph(
   {
     fn() {
       return "Hello, world.";

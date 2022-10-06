@@ -6,7 +6,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * defined value (i.e., not undefined), that value is returned. If the first
  * graph returns undefined, the second graph will be asked, and so on.
  */
-export default class Compose {
+export default class MergeGraph {
   constructor(...graphs) {
     this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
   }

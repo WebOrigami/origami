@@ -1,4 +1,4 @@
-import Compose from "../common/Compose.js";
+import MergeGraph from "../common/MergeGraph.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import DefaultPages from "./DefaultPages.js";
 
@@ -8,7 +8,7 @@ import DefaultPages from "./DefaultPages.js";
 export default async function defaultScope() {
   // Force use of default index.html page.
   const scope = /** @type {any} */ (this).scope;
-  const graph = new Compose(
+  const graph = new MergeGraph(
     {
       "index.html": () => defaultIndexHtml.call(scope),
     },

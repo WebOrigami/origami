@@ -1,10 +1,10 @@
-import Compose from "../../src/common/Compose.js";
+import MergeGraph from "../../src/common/MergeGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
-describe("Compose", () => {
+describe("MergeGraph", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const fixture = new Compose(
+    const fixture = new MergeGraph(
       {
         a: 1,
         c: 3,
