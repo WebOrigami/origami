@@ -39,7 +39,13 @@ export default class Scope {
       const value = await graph.get(key);
       if (value instanceof Function) {
         // Bind function to this scope
-        return value.bind(this);
+        const bound = value.bind(this);
+        // Set prototype to original function in case that function has any
+        // interesting properties hanging off of it. If anyone asks the bound
+        // function for such a property, the value will be retrieved from the
+        // original function.
+        Object.setPrototypeOf(bound, value);
+        return bound;
       } else if (value !== undefined) {
         return value;
       }
