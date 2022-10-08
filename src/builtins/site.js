@@ -3,7 +3,10 @@ import SiteGraph from "../core/SiteGraph.js";
 export default async function site(domain, ...keys) {
   let url = [domain, ...keys].join("/");
   if (!url.startsWith("https")) {
-    url = `https://${url}`;
+    if (!url.startsWith("//")) {
+      url = `//${url}`;
+    }
+    url = `https:${url}`;
   }
   if (!url.endsWith("/")) {
     url += "/";
