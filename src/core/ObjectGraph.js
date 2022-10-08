@@ -3,8 +3,9 @@ import { isPlainObject } from "./utilities.js";
 
 export default class ObjectGraph {
   /**
+   * Create an explorable graph wrapping a given plain object or array.
    *
-   * @param {PlainObject|Array} object
+   * @param {PlainObject|Array} object The object/array to wrap.
    */
   constructor(object) {
     if (!(object instanceof Array) && !isPlainObject(object)) {
@@ -15,8 +16,10 @@ export default class ObjectGraph {
     this.object = object;
   }
 
+  /**
+   * Yield the object's keys.
+   */
   async *[Symbol.asyncIterator]() {
-    // Iterate over the object's keys.
     yield* Object.keys(this.object);
   }
 

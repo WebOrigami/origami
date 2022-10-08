@@ -37,11 +37,20 @@ watcher.on("all", async (eventType, filePath) => {
 });
 
 export default class FilesGraph {
+  /**
+   * Create a new `FilesGraph` rooted at the given directory.
+   *
+   * @param {string} dirname the root directory. If this is not an absolute
+   * path, this is resolved relative to the current working directory.
+   */
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
     this.subfoldersMap = new Map();
   }
 
+  /**
+   * Yield the names of the files/subdirectories in this directory.
+   */
   async *[Symbol.asyncIterator]() {
     let entries;
     try {
@@ -58,7 +67,11 @@ export default class FilesGraph {
     yield* sorted;
   }
 
-  // Get the contents of the file or directory named by the given key.
+  /**
+   * Get the contents of the file or directory named by the given key.
+   *
+   * @param {string} key
+   */
   async get(key) {
     incrementCount("FilesGraph get");
 
@@ -133,7 +146,8 @@ export default class FilesGraph {
 
   /**
    * Write the contents for the file named by the given key. If the value is
-   * undefined, delete the file or directory.
+   * explorable, then write out its values as files in a subdirectory. If the
+   * value is undefined, delete the file or directory.
    *
    * @param {any} key
    * @param {any} value
