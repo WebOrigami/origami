@@ -1,7 +1,7 @@
 import { extractFrontMatter } from "../core/utilities.js";
 
 export default async function front(text) {
-  const frontMatter = extractFrontMatter(text);
+  const frontMatter = extractFrontMatter(text.toString());
   return frontMatter?.frontData;
 }
 
