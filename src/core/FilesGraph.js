@@ -36,6 +36,11 @@ watcher.on("all", async (eventType, filePath) => {
   }
 });
 
+// List of OS-generated files that should not be enumerated.
+const hiddenFileNames = {
+  ".DS_Store": true,
+};
+
 export default class FilesGraph {
   /**
    * Create a new `FilesGraph` rooted at the given directory.
@@ -61,9 +66,14 @@ export default class FilesGraph {
       }
       entries = [];
     }
+
     const names = entries.map((entry) => entry.name);
+
+    // Filter out unhelpful file names.
+    const filtered = names.filter((name) => !hiddenFileNames[name]);
+
     // Use natural sort order instead of OS sort order.
-    const sorted = sortNatural(names);
+    const sorted = sortNatural(filtered);
     yield* sorted;
   }
 
