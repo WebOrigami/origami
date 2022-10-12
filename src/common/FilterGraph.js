@@ -22,7 +22,7 @@ export default class FilterGraph {
     // Yield all real keys in filter that aren't formulas.
     const filterKeys = await KeysTransform.realKeys(this.filter);
     const filtered = filterKeys.filter((key) => !Formula.isFormula(key));
-    const keys = new Set(...filtered);
+    const keys = new Set(filtered);
     yield* filtered;
 
     // Yield all keys in graph that aren't in filter's public keys
