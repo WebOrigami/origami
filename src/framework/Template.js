@@ -141,8 +141,12 @@ async function processInput(input, scope) {
 
   let text = stringLike(input) ? String(input) : null;
 
-  let inputData = input;
-  if (stringLike(input)) {
+  let inputData;
+  if (ExplorableGraph.isExplorable(input)) {
+    inputData = await ExplorableGraph.plain(input);
+  } else if (text === null) {
+    inputData = input;
+  } else {
     // Try parsing input as a document with front matter.
     const inputText = String(input);
     const parsedDocument = parseDocument(inputText);
@@ -156,10 +160,9 @@ async function processInput(input, scope) {
         inputData = YAML.parse(inputText);
       } catch (e) {
         // Input is not YAML/JSON.
+        inputData = null;
       }
     }
-  } else if (ExplorableGraph.isExplorable(input)) {
-    inputData = await ExplorableGraph.plain(input);
   }
 
   return {
