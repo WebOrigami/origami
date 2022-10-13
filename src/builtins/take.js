@@ -1,5 +1,12 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
 // Given a graph, take the first n items from it.
-export default function take(graph, n) {
+export default async function take(variant, n) {
+  variant = variant ?? (await this?.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
+  const graph = ExplorableGraph.from(variant);
   return {
     async *[Symbol.asyncIterator]() {
       const iterator = graph[Symbol.asyncIterator]();
