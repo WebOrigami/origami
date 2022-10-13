@@ -38,15 +38,24 @@ export default class Scope {
     for (const graph of this.graphs) {
       const value = await graph.get(key);
       if (value instanceof Function) {
-        // Bind function to this scope
-        const bound = value.bind(this);
+        const scope = this;
+        // Wrap the function in a function that will use this scope as the call
+        // target if no call target has been set.
+        function callWithScope(...args) {
+          // @ts-ignore
+          const callTarget = this ?? scope;
+          return value.call(callTarget, ...args);
+        }
         // Set prototype to original function in case that function has any
         // interesting properties hanging off of it. If anyone asks the bound
         // function for such a property, the value will be retrieved from the
         // original function.
-        Object.setPrototypeOf(bound, value);
-        return bound;
+        Object.setPrototypeOf(callWithScope, value);
+        return callWithScope;
       } else if (value !== undefined) {
+        return value;
+      }
+      if (value !== undefined) {
         return value;
       }
     }
