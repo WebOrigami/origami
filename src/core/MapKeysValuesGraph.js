@@ -14,7 +14,7 @@ export default class MapKeysValuesGraph {
    */
   constructor(variant, mapFn, options = {}) {
     this.graph = ExplorableGraph.from(variant);
-    this.mapFn = utilities.toFunction(mapFn);
+    this.mapFn = mapFn ? utilities.toFunction(mapFn) : null;
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
     this.options = options;
@@ -51,7 +51,7 @@ export default class MapKeysValuesGraph {
       // Determine whether we want to apply the map to this value.
       const applyMap = await this.mapApplies(innerValue, outerKey, innerKey);
       // Apply map if desired, otherwise use inner value as is.
-      outerValue = applyMap
+      outerValue = applyMap && this.mapFn
         ? await this.mapFn.call(this, innerValue, outerKey, innerKey)
         : innerValue;
     }
