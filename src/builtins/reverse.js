@@ -20,7 +20,8 @@ export default async function reverse(variant) {
     },
 
     async get(key) {
-      return graph.get(key);
+      const value = await graph.get(key);
+      return ExplorableGraph.isExplorable(value) ? reverse(value) : value;
     },
   };
 }
