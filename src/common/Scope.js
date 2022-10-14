@@ -38,24 +38,23 @@ export default class Scope {
     for (const graph of this.graphs) {
       const value = await graph.get(key);
       if (value instanceof Function) {
+        // When returning a function, we want to adjust it so that, if it's
+        // called without a call target (`this`), we'll invoke it using this
+        // scope as the call target.
+        //
+        // We do this by returning a Proxy for the function. Beyond letting us
+        // intercept the function call, it also: 1) returns the correct `length`
+        // property for the function, which is necessary for FunctionGraph to
+        // work correctly, and 2) allows us to access any properties hanging off
+        // the function, such as documentation used by the ori CLI.
         const scope = this;
-        // Wrap the function in a function that will use this scope as the call
-        // target if no call target has been set.
-        function callWithScope(...args) {
-          // @ts-ignore
-          const callTarget = this ?? scope;
-          return value.call(callTarget, ...args);
-        }
-        // Set prototype to original function in case that function has any
-        // interesting properties hanging off of it. If anyone asks the bound
-        // function for such a property, the value will be retrieved from the
-        // original function.
-        Object.setPrototypeOf(callWithScope, value);
-        return callWithScope;
+        const proxy = new Proxy(value, {
+          apply(target, thisArg, args) {
+            return Reflect.apply(target, thisArg ?? scope, args);
+          },
+        });
+        return proxy;
       } else if (value !== undefined) {
-        return value;
-      }
-      if (value !== undefined) {
         return value;
       }
     }
