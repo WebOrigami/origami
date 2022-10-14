@@ -111,6 +111,18 @@ describe("ExplorableGraph", () => {
     assert.deepEqual(plain, original);
   });
 
+  it.only("plain() leaves an array-like graph as an object if keys aren't consecutive", async () => {
+    const original = {
+      0: "a",
+      1: "b",
+      // missing
+      3: "c",
+    };
+    const graph = new ObjectGraph(original);
+    const plain = await ExplorableGraph.plain(graph);
+    assert.deepEqual(plain, original);
+  });
+
   it("plain() can parse YAML (and so also JSON)", async () => {
     const yaml = `a: Hello, a.
 b: Hello, b.

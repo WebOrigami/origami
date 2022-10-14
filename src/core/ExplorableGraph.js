@@ -177,23 +177,11 @@ export default class ExplorableGraph {
    */
   static async plain(variant) {
     return this.mapReduce(variant, null, (values, keys) => {
-      let result = {};
-      let numericKeysOnly = true;
+      const obj = {};
       for (let i = 0; i < keys.length; i++) {
-        if (numericKeysOnly) {
-          const key = keys[i];
-          const index = Number(key);
-          if (isNaN(index)) {
-            // Found a non-numeric key, so not array-like.
-            numericKeysOnly = false;
-          }
-        }
-        result[keys[i]] = values[i];
+        obj[keys[i]] = values[i];
       }
-      if (numericKeysOnly && keys.length > 0) {
-        // Array-like; return as array.
-        result = Object.values(result);
-      }
+      const result = castArrayLike(obj);
       return result;
     });
   }
@@ -327,16 +315,18 @@ export default class ExplorableGraph {
 // If the given plain object has only integer keys, return it as an array.
 // Otherwise return it as is.
 function castArrayLike(obj) {
-  const array = [];
-  for (const key of Object.keys(obj)) {
+  let hasKeys = false;
+  let expectedIndex = 0;
+  for (const key in obj) {
+    hasKeys = true;
     const index = Number(key);
-    if (isNaN(index)) {
+    if (isNaN(index) || index !== expectedIndex) {
       // Not an array-like object.
       return obj;
     }
-    array[index] = obj[key];
+    expectedIndex++;
   }
-  return array.length > 0 ? array : obj;
+  return hasKeys ? Object.values(obj) : obj;
 }
 
 class TraverseError extends ReferenceError {
