@@ -111,7 +111,7 @@ describe("ExplorableGraph", () => {
     assert.deepEqual(plain, original);
   });
 
-  it.only("plain() leaves an array-like graph as an object if keys aren't consecutive", async () => {
+  it("plain() leaves an array-like graph as an object if keys aren't consecutive", async () => {
     const original = {
       0: "a",
       1: "b",
