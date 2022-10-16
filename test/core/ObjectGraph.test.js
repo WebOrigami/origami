@@ -105,4 +105,34 @@ describe("ObjectGraph", () => {
     );
     assert.deepEqual(valuesExplorable, [false, true, false, true]);
   });
+
+  it.only("can wrap a class instance", async () => {
+    class Foo {
+      constructor() {
+        this.a = 1;
+      }
+
+      get prop() {
+        return this._prop;
+      }
+      set prop(prop) {
+        this._prop = prop;
+      }
+    }
+    class Bar extends Foo {
+      method() {}
+    }
+    const bar = new Bar();
+    /** @type {any} */ (bar).extra = "Hello";
+    const graph = new ObjectGraph(bar);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      extra: "Hello",
+      prop: undefined,
+    });
+    assert.equal(await graph.get("a"), 1);
+    await graph.set("prop", "Goodbye");
+    assert.equal(bar.prop, "Goodbye");
+    assert.equal(await graph.get("prop"), "Goodbye");
+  });
 });

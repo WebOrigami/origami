@@ -8,11 +8,6 @@ export default class ObjectGraph {
    * @param {PlainObject|Array} object The object/array to wrap.
    */
   constructor(object) {
-    if (!(object instanceof Array) && !isPlainObject(object)) {
-      throw new TypeError(
-        "The argument to the ObjectGraph constructor must be a plain JavaScript object or array."
-      );
-    }
     this.object = object;
   }
 
@@ -20,7 +15,23 @@ export default class ObjectGraph {
    * Yield the object's keys.
    */
   async *[Symbol.asyncIterator]() {
-    yield* Object.keys(this.object);
+    // Walk up the prototype chain to Object.prototype.
+    let obj = this.object;
+    while (obj !== Object.prototype) {
+      // Get the enumerable instance properties and the get/set properties.
+      const names = Object.getOwnPropertyNames(obj);
+      const descriptors = Object.getOwnPropertyDescriptors(obj);
+      for (const [name, descriptor] of Object.entries(descriptors)) {
+        if (
+          name !== "constructor" &&
+          (descriptor.enumerable ||
+            (descriptor.get !== undefined && descriptor.set !== undefined))
+        ) {
+          yield name;
+        }
+      }
+      obj = Object.getPrototypeOf(obj);
+    }
   }
 
   /**
@@ -37,7 +48,10 @@ export default class ObjectGraph {
     // We check to make sure the object itself has the key as an `own` property
     // because, if the object's an array, we don't want to return values for
     // keys like `map` and `find` that are Array prototype methods.
-    let value = this.object.hasOwnProperty(key) ? this.object[key] : undefined;
+    let value =
+      !(this.object instanceof Array) || this.object.hasOwnProperty(key)
+        ? this.object[key]
+        : undefined;
     const isPlain =
       value instanceof Array ||
       (isPlainObject(value) && !ExplorableGraph.isExplorable(value));
