@@ -51,7 +51,7 @@ export default class FunctionGraph {
       args = keys;
       rest = null;
     }
-    let value = await this.fn.call(this, ...args);
+    let value = await this.fn.call(null, ...args);
     if (rest) {
       value = await ExplorableGraph.traverse(value, ...rest);
     }
