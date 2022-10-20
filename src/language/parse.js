@@ -272,7 +272,7 @@ function lparen(text) {
 export function number(text) {
   // Based on https://stackoverflow.com/a/51733563/76472
   // but only accepts integers or floats, not exponential notation.
-  const parsed = regex(/^-?\d+(?:\.\d*)?|\.\d+/)(text);
+  const parsed = regex(/^-?(?:\d+(?:\.\d*)?|\.\d+)/)(text);
   if (!parsed) {
     return null;
   }
