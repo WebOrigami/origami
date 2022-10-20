@@ -75,21 +75,23 @@ function extendMapFn(mapFn) {
     );
 
     // Convert the value to a graph if possible.
+    let extendedValue;
     if (
       typeof value !== "string" &&
       ExplorableGraph.canCastToExplorable(value)
     ) {
-      /** @type {any} */
-      let valueGraph = ExplorableGraph.from(value);
-      if (!("parent" in valueGraph)) {
-        valueGraph = transformObject(InheritScopeTransform, valueGraph);
+      extendedValue = ExplorableGraph.from(value);
+      if (!("parent" in extendedValue && "scope" in extendedValue)) {
+        extendedValue = transformObject(InheritScopeTransform, extendedValue);
       }
-      valueGraph.parent = scope;
-      scope = valueGraph.scope;
+      extendedValue.parent = scope;
+      scope = extendedValue.scope;
+    } else {
+      extendedValue = value;
     }
 
     // Invoke the map function with our newly-created context.
-    return fn.call(scope, value, key);
+    return fn.call(scope, extendedValue, key);
   };
 }
 
