@@ -150,7 +150,7 @@ describe("FilesGraph", () => {
     assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
 
-  it("can watch its folder for changes", async () => {
+  it.skip("can watch its folder for changes", async () => {
     await createTempDirectory();
     class Fixture extends FilesGraph {
       hook;
