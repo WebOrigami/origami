@@ -13,7 +13,7 @@ export default function InheritScopeTransform(Base) {
 
     async get(key) {
       const value = await super.get(key);
-      if (ExplorableGraph.isExplorable(value)) {
+      if (ExplorableGraph.isExplorable(value) && value.parent === null) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
       }
