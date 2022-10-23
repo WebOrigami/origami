@@ -76,7 +76,7 @@ export async function handleRequest(request, response, graph) {
       resource = await resource();
     }
   } catch (/** @type {any} */ error) {
-    console.log(error.message);
+    console.error(error.message);
     resource = undefined;
   }
 
@@ -144,7 +144,12 @@ export async function handleRequest(request, response, graph) {
     response.writeHead(200, {
       "Content-Type": mediaType,
     });
-    response.end(data, encoding);
+    try {
+      response.end(data, encoding);
+    } catch (/** @type {any} */ error) {
+      console.error(error.message);
+      return false;
+    }
 
     return true;
   }
