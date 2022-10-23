@@ -70,6 +70,7 @@ function extendMapFn(mapFn) {
       {
         ".": value ?? null,
         "@key": key,
+        "@value": value ?? null,
       },
       getScope(this)
     );
