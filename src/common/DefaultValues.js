@@ -70,6 +70,9 @@ export default class DefaultValues {
   get scope() {
     return /** @type {any} */ (this.graph).scope;
   }
+  set scope(scope) {
+    /** @type {any} */ (this.graph).scope = scope;
+  }
 
   async unwatch() {
     return /** @type {any} */ (this.graph).unwatch?.();

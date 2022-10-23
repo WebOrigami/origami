@@ -1,4 +1,4 @@
-import MergeGraph from "../common/MergeGraph.js";
+import Scope from "../common/Scope.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import DefaultPages from "./DefaultPages.js";
 
@@ -7,12 +7,16 @@ import DefaultPages from "./DefaultPages.js";
  */
 export default async function defaultScope() {
   // Force use of default index.html page.
-  const scope = /** @type {any} */ (this).scope;
-  const graph = new MergeGraph(
+  const baseScope = /** @type {any} */ (this).scope ?? this;
+  const scope = new Scope(
     {
-      "index.html": () => defaultIndexHtml.call(scope),
+      "@defaultGraph": this,
+      "index.html": () => defaultIndexHtml.call(baseScope),
     },
-    scope
+    baseScope
   );
-  return new DefaultPages(graph);
+  const graph = new DefaultPages(scope);
+  // Graph will be its own scope.
+  /** @type {any} */ (graph).scope = scope;
+  return graph;
 }
