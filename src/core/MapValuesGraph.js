@@ -55,4 +55,11 @@ export default class MapValuesGraph {
       ? await this.mapFn.call(this, value, key) // Return mapped value
       : undefined;
   }
+
+  async unwatch() {
+    return /** @type {any} */ (this.graph).unwatch?.();
+  }
+  async watch() {
+    await /** @type {any} */ (this.graph).watch?.();
+  }
 }

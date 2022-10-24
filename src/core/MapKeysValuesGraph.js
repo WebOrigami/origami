@@ -51,9 +51,10 @@ export default class MapKeysValuesGraph {
       // Determine whether we want to apply the map to this value.
       const applyMap = await this.mapApplies(innerValue, outerKey, innerKey);
       // Apply map if desired, otherwise use inner value as is.
-      outerValue = applyMap && this.mapFn
-        ? await this.mapFn.call(this, innerValue, outerKey, innerKey)
-        : innerValue;
+      outerValue =
+        applyMap && this.mapFn
+          ? await this.mapFn.call(this, innerValue, outerKey, innerKey)
+          : innerValue;
     }
 
     // If the value to return is an explorable graph, wrap it with a map.
@@ -80,5 +81,12 @@ export default class MapKeysValuesGraph {
 
   async outerKeyForInnerKey(innerKey) {
     return innerKey;
+  }
+
+  async unwatch() {
+    return /** @type {any} */ (this.graph).unwatch?.();
+  }
+  async watch() {
+    await /** @type {any} */ (this.graph).watch?.();
   }
 }

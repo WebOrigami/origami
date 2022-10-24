@@ -47,6 +47,13 @@ export default async function mapKeys(variant, keyFn) {
     get scope() {
       return scope;
     },
+
+    async unwatch() {
+      return /** @type {any} */ (this.graph).unwatch?.();
+    },
+    async watch() {
+      await /** @type {any} */ (this.graph).watch?.();
+    },
   };
 }
 
