@@ -137,7 +137,11 @@ export async function handleRequest(request, response, graph) {
     if (!mediaType) {
       // Can't identify media type; infer default type.
       mediaType =
-        typeof data === "string" ? "text/html" : "application/octet-stream";
+        typeof data !== "string"
+          ? "application/octet-stream"
+          : data.startsWith("<")
+          ? "text/html"
+          : "text/plain";
     }
     const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
 
