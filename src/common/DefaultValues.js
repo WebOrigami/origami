@@ -53,7 +53,7 @@ export default class DefaultValues {
     }
 
     // We have a default value function; give it the graph to work on.
-    value = defaultValue.call(this.graph);
+    value = await defaultValue.call(this.graph);
 
     return value;
   }
