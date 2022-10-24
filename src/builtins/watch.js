@@ -12,10 +12,13 @@ export default async function watch(variant) {
     return undefined;
   }
 
+  // Watch the indicated graph.
   const graph = ExplorableGraph.from(variant);
-  if ("watch" in graph) {
-    await /** @type {any} */ (graph).watch();
-  }
+  await /** @type {any} */ (graph).watch?.();
+
+  // Watch graphs in scope.
+  const scope = /** @type {any} */ (graph).scope;
+  await scope?.watch?.();
 
   return graph;
 }

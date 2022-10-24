@@ -60,6 +60,17 @@ export default class Scope {
     }
     return undefined;
   }
+
+  async unwatch() {
+    for (const graph of this.graphs) {
+      await /** @type {any} */ (graph).unwatch?.();
+    }
+  }
+  async watch() {
+    for (const graph of this.graphs) {
+      await /** @type {any} */ (graph).watch?.();
+    }
+  }
 }
 
 // Add a wrapper to indicate that, from the perspective of the subgraph, the
