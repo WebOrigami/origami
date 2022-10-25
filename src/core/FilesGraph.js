@@ -15,24 +15,20 @@ import {
 const pathGraphMap = new Map();
 const watcher = watch([], { ignoreInitial: true });
 watcher.on("all", async (eventType, filePath) => {
+  const fileDirname = path.dirname(filePath);
+  const fileName = path.basename(filePath);
   // Invoke onChange for graphs that contain the file path.
-  for (const [dirname, graph] of pathGraphMap) {
-    const relativePath = path.relative(dirname, filePath);
-    if (!relativePath.startsWith("..")) {
-      // Found -- graph contains this file as a descendant.
-      // Traverse to the graph that actually contains this file.
-      const keys = relativePath.split("/");
-      const containerKeys = keys.slice(0, -1);
-      const containerGraph =
-        containerKeys.length > 0
-          ? await ExplorableGraph.traverse(graph, ...containerKeys)
-          : graph;
-      if (containerGraph) {
-        const fileKey = keys[keys.length - 1];
-        // Let the container graph know the file with this key has changed.
-        containerGraph.onChange(fileKey);
+  for (const [dirname, graphRef] of pathGraphMap) {
+    // Is this directory the container of the changed file?
+    if (filePath === dirname || fileDirname === dirname) {
+      // Yes. Does anyone still have a reference to this graph?
+      const graph = graphRef.deref();
+      if (graph !== undefined) {
+        // Yes, let the graph know the file with that name has changed.
+        graph.onChange(fileName);
       }
     }
+    // TODO: If no one has a reference to the graph, remove it from the map.
   }
 });
 
@@ -50,7 +46,13 @@ export default class FilesGraph {
    */
   constructor(dirname) {
     this.dirname = path.resolve(process.cwd(), dirname);
+
+    // Map of subfolder names to subfolder graphs.
     this.subfoldersMap = new Map();
+
+    // Register this graph with the watcher.
+    watcher.add(this.dirname);
+    pathGraphMap.set(this.dirname, new WeakRef(this));
   }
 
   /**
@@ -147,7 +149,8 @@ export default class FilesGraph {
   }
 
   onChange(key) {
-    // No-op
+    // Reset cached values.
+    this.subfoldersMap = new Map();
   }
 
   get path() {
@@ -195,24 +198,24 @@ export default class FilesGraph {
   }
 
   async unwatch() {
-    watcher.unwatch(this.dirname);
-    pathGraphMap.delete(this.dirname);
+    // watcher.unwatch(this.dirname);
+    // pathGraphMap.delete(this.dirname);
   }
 
   // Turn on watching for the directory.
   async watch() {
-    // The directory may not exist yet, in which case the call to watch() will
-    // throw ENOENT, so if we see ENOENT, we ignore the error.
-    //
-    // TODO: If set() eventually creates the directory, begin watching it.
-    try {
-      watcher.add(this.dirname);
-      pathGraphMap.set(this.dirname, this);
-    } catch (/** @type {any} */ error) {
-      if (error.code !== "ENOENT") {
-        throw error;
-      }
-    }
+    // // The directory may not exist yet, in which case the call to watch() will
+    // // throw ENOENT, so if we see ENOENT, we ignore the error.
+    // //
+    // // TODO: If set() eventually creates the directory, begin watching it.
+    // try {
+    //   watcher.add(this.dirname);
+    //   pathGraphMap.set(this.dirname, this);
+    // } catch (/** @type {any} */ error) {
+    //   if (error.code !== "ENOENT") {
+    //     throw error;
+    //   }
+    // }
   }
 }
 

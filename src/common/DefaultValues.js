@@ -58,6 +58,10 @@ export default class DefaultValues {
     return value;
   }
 
+  onChange(key) {
+    debugger;
+  }
+
   get parent() {
     return /** @type {any} */ (this.graph).parent;
   }
