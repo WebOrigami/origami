@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{ @path }}</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        background: #333;
+        color: #eee;
+        display: grid;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 13px;
+        grid-template-columns: 200px 1fr;
+        grid-template-rows: minMax(0, 1fr);
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      nav {
+        overflow: auto;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: .25em;
+      }
+
+      ul + ul {
+        margin-top: .5em;
+      }
+
+      li {
+        padding: 0.25em;
+        padding-left: 1em;
+        text-indent: -0.75em;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .formula {
+        color: #999;
+      }
+
+      iframe {
+        background: white;
+        border: none;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <script>
+      let defaultPath;
+      let path;
+      let frame;
+
+      // Extract the path from the URL hash.
+      function getPathFromHash() {
+        const match = /#.*path=(?<path>[^&]+)/.exec(window.location.hash);
+        return match?.groups?.path;
+      }
+
+      function removeDocumentPath(path) {
+        const documentPath = document.location.pathname;
+        return (path.startsWith(documentPath))
+          // Remove the document path prefix.
+          ? path.slice(documentPath.length)
+          : path;
+      }
+
+      function setPath(path) {
+        currentPath = path;
+        // Show the indicated page in the frame.
+        const fullPath = document.location.pathname + path;
+        if (frame.contentDocument.location.pathname !== fullPath) {
+          // Use `replace` to avoid affecting browser history.
+          frame.contentWindow.location.replace(fullPath);
+        }
+      }
+
+      // When hash changes, load the indicated page.
+      window.addEventListener("hashchange", () => {
+        const newPath = getPathFromHash() || defaultPath;
+        if (newPath) {
+          setPath(newPath);
+        }
+      });
+
+      // Initialize
+      window.addEventListener("load", () => {
+        // Refresh title on page load.
+        frame = document.getElementById("frame");
+        frame.addEventListener("load", () => {
+          if (frame.contentDocument.location.href !== "about:blank") {
+            document.title = frame.contentDocument.title;
+            const newPath = removeDocumentPath(frame.contentDocument.location.pathname);
+            const hash = `#path=${newPath}`;
+            if (window.location.hash !== hash) {
+              // Use `replace` to avoid affecting browser history.
+              window.location.replace(hash);
+            }
+          }
+        });
+
+        // Navigate to any path already in the hash.
+        defaultPath = getPathFromHash();
+        if (defaultPath) {
+          setPath(defaultPath);
+        }
+      })
+    </script>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        {{#map @input }}
+        <ul>
+          {{#map @value}}
+          <li>
+            <a href="#path={{./text}}">{{./text}}</a>
+            {{#if ./formula }}
+            <span class="formula">= {{./formula}}</span>
+            {{/formula}}
+          </li>
+          {{/map}}
+        </ul>
+        {{/map}}
+      </ul>
+    </nav>
+    <iframe id="frame" name="frame"></iframe>
+  </body>
+</html>

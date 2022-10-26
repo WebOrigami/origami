@@ -5,6 +5,7 @@ import defaultKeysJson from "./defaultKeysJson.js";
 import defaultScope from "./defaultScope.js";
 import defaultSvg from "./defaultSvg.js";
 import defaultYamlHtml from "./defaultYamlHtml.js";
+import scopeExplorer from "./scopeExplorer.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
@@ -16,6 +17,7 @@ export default class DefaultPages extends DefaultValues {
   constructor(graph) {
     super(graph, {
       ".dataflow": defaultDataflow,
+      ".explore": scopeExplorer,
       ".index": async () =>
         defaultIndexHtml.call(this, { showDiagnostics: true }),
       ".keys.json": defaultKeysJson,
