@@ -21,6 +21,18 @@ export default class Scope {
     this.graphs = scopes;
   }
 
+  async allKeys() {
+    const keys = new Set();
+    for (const graph of this.graphs) {
+      const graphKeys = await (graph.allKeys?.() ??
+        ExplorableGraph.keys(graph));
+      for (const key of graphKeys) {
+        keys.add(key);
+      }
+    }
+    return keys;
+  }
+
   async *[Symbol.asyncIterator]() {
     // Use a Set to de-duplicate the keys from the graphs.
     const set = new Set();

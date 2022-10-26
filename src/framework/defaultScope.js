@@ -11,7 +11,8 @@ export default async function defaultScope() {
   const scope = new Scope(
     {
       "@defaultGraph": this,
-      "index.html": () => defaultIndexHtml.call(baseScope),
+      "index.html": () =>
+        defaultIndexHtml.call(baseScope, { showDiagnostics: true }),
     },
     baseScope
   );
