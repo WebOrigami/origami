@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
@@ -68,10 +69,26 @@ function filterKeys(keys) {
   return filtered;
 }
 
+// HACK: The prototype chain for graphs in scopes gets cluttered, so we have to
+// walk up the chain to see if the graph is the builtins graph.
+function isBuiltins(graph) {
+  while (graph) {
+    if (graph === builtins) {
+      return true;
+    }
+    graph = Object.getPrototypeOf(graph);
+  }
+  return false;
+}
+
 async function getKeyData(scope) {
   const graphs = scope.graphs ?? [scope];
   const keys = [];
   for (const graph of graphs) {
+    if (isBuiltins(graph)) {
+      // Skip builtins.
+      continue;
+    }
     const graphKeys = graph.allKeys
       ? await graph.allKeys()
       : await ExplorableGraph.keys(graph);
