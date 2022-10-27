@@ -15,7 +15,7 @@ export default class Scope {
     // graph is also "in scope", but has isInScope set to false. The marker
     // really means: Should this graph's non-inherited formulas be applied?
     const scopes = flattened.map((graph, index) =>
-      markInScope(graph, index > 0)
+      index > 0 ? markInScope(graph, true) : graph
     );
 
     this.graphs = scopes;
