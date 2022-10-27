@@ -36,8 +36,9 @@ function probablyBinary(text) {
 async function statements(graph, nodePath) {
   let result = [];
 
+  const rootUrl = nodePath || ".";
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10; URL="${nodePath}"];`
+    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10; URL="${rootUrl}"];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
