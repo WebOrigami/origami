@@ -18,6 +18,12 @@ function extendGraphScopeWithParams(graph, url) {
   for (const [key, value] of url.searchParams) {
     params[key] = value;
   }
+
+  if (Object.keys(params).length === 0) {
+    // No search parameters, so return the graph as is.
+    return graph;
+  }
+
   const paramGraph = new ObjectGraph({
     "@params": params,
   });
