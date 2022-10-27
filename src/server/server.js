@@ -23,7 +23,7 @@ function extendGraphScopeWithParams(graph, url) {
   });
 
   // Create a new scope that includes search parameter graph.
-  const oldScope = graph.scope;
+  const oldScope = graph.parent?.scope;
   const newScope = oldScope ? new Scope(paramGraph, oldScope) : paramGraph;
 
   // Create a new graph that extends the prototype chain of the supplied graph.
