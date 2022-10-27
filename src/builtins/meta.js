@@ -1,3 +1,4 @@
+import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
@@ -23,7 +24,19 @@ export default async function meta(variant) {
   }
 
   const transformed = transformObject(MetaTransform, graph);
-  transformed.parent = this ?? (await defaultGraph()).scope;
+
+  let parent = this;
+  if (!parent) {
+    // Get the scope of the default graph.
+    // Remove the default graph itself from its scope.
+    // HACK: This uses too much knowledge about Scope.
+    const graphDefault = await defaultGraph();
+    const scope = graphDefault.scope;
+    const graphs = scope.graphs;
+    graphs.shift(); // Remove default graph from scope.
+    parent = new Scope(...graphs);
+  }
+  transformed.parent = parent;
   return transformed;
 }
 
