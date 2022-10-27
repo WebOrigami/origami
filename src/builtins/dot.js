@@ -27,6 +27,12 @@ ${graphArcs.join("\n")}
 }`;
 }
 
+// Return true if the text appears to contain non-printable binary characters.
+function probablyBinary(text) {
+  // https://stackoverflow.com/a/1677660/76472
+  return /[\x00-\x09\x0E-\x1F\x80-\xFF]/.test(text);
+}
+
 async function statements(graph, nodePath) {
   let result = [];
 
@@ -67,7 +73,9 @@ async function statements(graph, nodePath) {
   let i = 0;
   for (const key of Object.keys(labels)) {
     let label = String(labels[key]);
-    if (label) {
+    if (probablyBinary(label)) {
+      labels[key] = "[binary data]";
+    } else if (label) {
       let clippedStart = false;
       let clippedEnd = false;
 
@@ -93,7 +101,6 @@ async function statements(graph, nodePath) {
 
       label = label.replace(/"/g, '\\"'); // Escape quotes
       label = label.replace(/[\ \t]+/g, " "); // Collapse spaces and tabs
-      label = label.replace(/[\u{0080}-\u{FFFF}]/gu, ""); // Remove non-ASCII characters
 
       // Add ellipses if we clipped the label. We'd prefer to end with a real
       // ellipsis, but GraphViz warns about "non-ASCII character 226" if we do.
