@@ -161,9 +161,10 @@ describe("FilesGraph", () => {
       }
     }
     const tempFiles = new Fixture(tempDirectory);
-    // const timeoutPromise = new Promise((resolve) => {
-    //   setTimeout(() => resolve(false), 1000);
-    // });
+    await tempFiles.watch();
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve(false), 1000);
+    });
     const changePromise = new Promise(async (resolve) => {
       tempFiles.hook = resolve;
       await tempFiles.set(
@@ -171,8 +172,9 @@ describe("FilesGraph", () => {
         "This file is left over from testing and can be removed."
       );
     });
-    // const result = await Promise.race([timeoutPromise, changePromise]);
+    // const changedFileName = await Promise.race([timeoutPromise, changePromise]);
     const changedFileName = await changePromise;
+    await tempFiles.unwatch();
     await removeTempDirectory();
     assert.equal(changedFileName, "foo.txt");
   });
