@@ -17,8 +17,8 @@ export default async function watch(variant) {
   await /** @type {any} */ (graph).watch?.();
 
   // // Watch graphs in scope.
-  // const scope = /** @type {any} */ (graph).scope;
-  // await scope?.watch?.();
+  const scope = /** @type {any} */ (graph).scope;
+  await scope?.watch?.();
 
   return graph;
 }

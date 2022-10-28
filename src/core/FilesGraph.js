@@ -91,7 +91,9 @@ export default class FilesGraph {
         // Haven't seen this subfolder before.
         subfolder = Reflect.construct(this.constructor, [objPath]);
         // If we're watching the current directory, watch the subfolder too.
-        subfolder.watching = this.watching;
+        if (this.watching) {
+          subfolder.watching = this.watching;
+        }
         // Remember this subfolder for later requests.
         this.subfoldersMap.set(key, subfolder);
       }
