@@ -25,6 +25,7 @@ export default function AdditionsTransform(Base) {
   return class Additions extends Base {
     constructor(...args) {
       super(...args);
+      this[additions] = undefined;
       this[childAdditions] = undefined;
       this[inheritedAdditions] = undefined;
       this[inheritableAdditions] = undefined;
@@ -142,6 +143,7 @@ export default function AdditionsTransform(Base) {
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
       super.onChange?.(key);
+      this[additions] = undefined;
       this[childAdditions] = undefined;
       this[inheritedAdditions] = undefined;
       this[inheritableAdditions] = undefined;
