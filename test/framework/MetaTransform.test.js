@@ -1,10 +1,12 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import map from "../../src/builtins/map.js";
 import builtins from "../../src/cli/builtins.js";
 import MergeGraph from "../../src/common/MergeGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
+import { transformObject } from "../../src/core/utilities.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
 
@@ -280,6 +282,23 @@ describe("MetaTransform", () => {
         a: "local",
         b: "peer",
       },
+    });
+  });
+
+  it.only("can add peer additions to a map", async () => {
+    const graph = new MetaObject({
+      child: transformObject(
+        MetaTransform,
+        map({ a: 1 }, (x) => 2 * x)
+      ),
+      "child+": {
+        b: 3,
+      },
+    });
+    const child = await graph.get("child");
+    assert.deepEqual(await ExplorableGraph.plain(child), {
+      a: 2,
+      b: 3,
     });
   });
 });
