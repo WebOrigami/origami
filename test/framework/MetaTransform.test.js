@@ -6,7 +6,6 @@ import MergeGraph from "../../src/common/MergeGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import { transformObject } from "../../src/core/utilities.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
 
@@ -285,12 +284,9 @@ describe("MetaTransform", () => {
     });
   });
 
-  it.only("can add peer additions to a map", async () => {
+  it("can add peer additions to a map", async () => {
     const graph = new MetaObject({
-      child: transformObject(
-        MetaTransform,
-        map({ a: 1 }, (x) => 2 * x)
-      ),
+      child: map({ a: 1 }, (x) => 2 * x),
       "child+": {
         b: 3,
       },

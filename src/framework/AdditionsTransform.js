@@ -1,6 +1,8 @@
 import MergeGraph from "../common/MergeGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
 import KeysTransform from "./KeysTransform.js";
+import MetaTransform from "./MetaTransform.js";
 
 const additions = Symbol("additions");
 const childAdditions = Symbol("childAdditions");
@@ -71,7 +73,14 @@ export default function AdditionsTransform(Base) {
         // containing graph as it was passed up to us.
         const existingPeerAdditions = value.peerAdditions ?? [];
         const localPeerAdditions = await getPeerValues(this, key);
-        value.peerAdditions = [...existingPeerAdditions, ...localPeerAdditions];
+        const additions = [...existingPeerAdditions, ...localPeerAdditions];
+        if (additions.length > 0) {
+          if (!("peerAdditions" in value)) {
+            // Make the value a metagraph so we can give it peer additions.
+            value = transformObject(MetaTransform, value);
+          }
+          value.peerAdditions = additions;
+        }
       }
 
       return value;
