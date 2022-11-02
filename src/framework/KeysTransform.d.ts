@@ -11,7 +11,9 @@ declare const FormulasTransform: Mixin<{
   realKeys(): Promise<any[]>;
 }> & {
   // Static methods provided by transform
-  realKeys(graph: Explorable): Promise<any[]>
+  allKeys(graph: Explorable): Promise<any[]>;
+  publicKeys(graph: Explorable): Promise<any[]>;
+  realKeys(graph: Explorable): Promise<any[]>;
 };
 
 export default FormulasTransform;

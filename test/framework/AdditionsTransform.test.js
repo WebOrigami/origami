@@ -31,6 +31,23 @@ describe("AdditionsTransform", () => {
     });
   });
 
+  it("a child addition can have child additions", async () => {
+    const graph = new AdditionsObject({
+      a: "local",
+      "+": {
+        b: "child",
+        "+": {
+          c: "grandchild",
+        },
+      },
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: "local",
+      b: "child",
+      c: "grandchild",
+    });
+  });
+
   it("child additions can come from a different type of graph", async () => {
     const graph = new (FileLoadersTransform(AdditionsObject))({
       "+.yaml": `a: 1`,

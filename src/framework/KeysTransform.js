@@ -131,6 +131,16 @@ export default function KeysTransform(Base) {
   };
 }
 
+// Static helper: use allKeys if defined, otherwise asyncIterator.
+KeysTransform.allKeys = async (graph) => {
+  return graph.allKeys?.() ?? ExplorableGraph.keys(graph);
+};
+
+// Static helper: use publicKeys if defined, otherwise asyncIterator.
+KeysTransform.publicKeys = async (graph) => {
+  return graph.publicKeys?.() ?? ExplorableGraph.keys(graph);
+};
+
 // Static helper: use realKeys if defined, otherwise asyncIterator.
 KeysTransform.realKeys = async (graph) => {
   return graph.realKeys?.() ?? ExplorableGraph.keys(graph);
