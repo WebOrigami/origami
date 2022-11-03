@@ -55,7 +55,9 @@ export default function FormulasTransform(Base) {
     }
 
     async formulas() {
-      await this.ensureKeys();
+      if (this[formulasKey] === null) {
+        await this.ensureKeys();
+      }
       return this[formulasKey];
     }
 
