@@ -114,7 +114,7 @@ export default function AdditionsTransform(Base) {
           // addition, since anything those add will already by included in
           // `allKeys`.
           for (const graphKey of await KeysTransform.allKeys(graph)) {
-            if (!isChildAdditionKey(graphKey) && !isPeerAdditionKey(graphKey)) {
+            if (!isChildAdditionKey(graphKey)) {
               this.addKey(graphKey);
             }
           }
@@ -175,11 +175,12 @@ async function getPeerValues(graph, graphKey) {
   if (!isChildAdditionKey(graphKey) && !isPeerAdditionKey(graphKey)) {
     const peerAdditionsKey = `${graphKey}${peerAdditionsSuffix}`;
 
-    // See if the peer addition key by itself ("foo+") exists. We can limit our
-    // search to real keys, since we'll use formulas to match virtual keys in
-    // the next step.
+    // Step 1: See if the peer addition key by itself ("foo+") exists. We can
+    // limit our search to real keys, since we'll use formulas to match virtual
+    // keys in step 2.
     const realKeys = await graph.realKeys();
-    if (realKeys.includes(peerAdditionsKey)) {
+    const peerAdditionsKeyIsRealKey = realKeys.includes(peerAdditionsKey);
+    if (peerAdditionsKeyIsRealKey) {
       const value = await graph.get(peerAdditionsKey);
       if (value) {
         value.applyFormulas = false;
@@ -188,6 +189,7 @@ async function getPeerValues(graph, graphKey) {
       }
     }
 
+    // Step 2: Look in formulas.
     const matches = (await graph.matchAll?.(peerAdditionsKey)) || [];
     const peerGraphs = matches.map((match) => {
       /** @type {any} */
@@ -197,6 +199,23 @@ async function getPeerValues(graph, graphKey) {
       return peerGraph;
     });
     values.push(...peerGraphs);
+
+    // Step 3: a child addition may have contributed a peer addition, a case
+    // that is not be picked up by either of the two steps above. As a last
+    // chance, we check allKeys, which will contain child additions that aren't
+    // real keys. We only do this if the formulas didn't already find a match,
+    // because formulas add their implied keys to allKeys.
+    if (values.length === 0 && !peerAdditionsKeyIsRealKey) {
+      const allKeys = await graph.allKeys();
+      if (allKeys.includes(peerAdditionsKey)) {
+        const value = await graph.get(peerAdditionsKey);
+        if (value) {
+          value.applyFormulas = false;
+          value.parent = null;
+          values.push(value);
+        }
+      }
+    }
   }
   return values;
 }

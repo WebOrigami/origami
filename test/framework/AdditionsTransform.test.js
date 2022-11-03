@@ -48,6 +48,25 @@ describe("AdditionsTransform", () => {
     });
   });
 
+  it("a child addition can define peer additions", async () => {
+    const graph = new AdditionsObject({
+      folder: {
+        a: "real",
+      },
+      "+": {
+        "folder+": {
+          b: "addition",
+        },
+      },
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      folder: {
+        a: "real",
+        b: "addition",
+      },
+    });
+  });
+
   it("child additions can come from a different type of graph", async () => {
     const graph = new (FileLoadersTransform(AdditionsObject))({
       "+.yaml": `a: 1`,

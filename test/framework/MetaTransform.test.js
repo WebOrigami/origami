@@ -196,6 +196,19 @@ describe("MetaTransform", () => {
     });
   });
 
+  it("a formula can define a child addition", async () => {
+    const graph = new MetaObject({
+      a: 1,
+      "+ = this": {
+        b: 2,
+      },
+    });
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      b: 2,
+    });
+  });
+
   it("wildcard values do not apply in scope", async () => {
     const graph = new MetaObject({
       "[test]": {
