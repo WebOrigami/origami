@@ -133,7 +133,7 @@
             <a href="#path={{./text}}">{{./text}}</a>
             {{#if ./formula }}
             <span class="formula">= {{./formula}}</span>
-            {{/formula}}
+            {{/if}}
           </li>
           {{/map}}
         </ul>
