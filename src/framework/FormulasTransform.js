@@ -1,7 +1,7 @@
 import {
   ConstantFormula,
   default as Formula,
-  VariableFormula,
+  VariableFormula
 } from "./Formula.js";
 
 const formulasKey = Symbol("formulas");
@@ -55,7 +55,11 @@ export default function FormulasTransform(Base) {
     }
 
     async formulas() {
-      if (this[formulasKey] === null) {
+      // HACK: If we've already computed the formulas, we should be able to skip
+      // the call to ensureKeys(). However, it appears there are cases where the
+      // formulas are computed as an empty array, but calling ensureKeys() again
+      // populates the formulas. Needs investigation.
+      if (this[formulasKey] === null || this[formulasKey].length === 0) {
         await this.ensureKeys();
       }
       return this[formulasKey];
