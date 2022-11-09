@@ -3,7 +3,7 @@ import * as YAMLModule from "yaml";
 import builtins from "../cli/builtins.js";
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { extname, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
@@ -52,7 +52,7 @@ export default async function dataflow(variant) {
 
 async function addContentDependencies(flow, graph, keysInScope) {
   for await (const key of graph) {
-    const extension = path.extname(key);
+    const extension = extname(key);
     const dependencyParsers = {
       ".html": htmlDependencies,
       ".meta": metaDependencies,
@@ -119,7 +119,7 @@ function addImplicitJavaScriptDependencies(flow, keysInScope) {
   for (const [_, record] of Object.entries(flow)) {
     const dependencies = record.dependencies ?? [];
     for (const dependency of dependencies) {
-      if (path.extname(dependency) === ".js") {
+      if (extname(dependency) === ".js") {
         continue;
       }
       const dependencyJsKey = `${dependency}.js`;
@@ -164,7 +164,7 @@ async function getKeysInScope(graph) {
   }
 
   // For any key `foo.js`, add `foo` as a key in scope.
-  const jsKeys = keysInScope.filter((key) => path.extname(key) === ".js");
+  const jsKeys = keysInScope.filter((key) => extname(key) === ".js");
   const commandKeys = jsKeys.map((jsKey) => path.basename(jsKey, ".js"));
   keysInScope.push(...commandKeys);
 

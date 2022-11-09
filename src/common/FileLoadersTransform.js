@@ -1,6 +1,5 @@
-import path from "node:path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { stringLike, transformObject } from "../core/utilities.js";
+import { extname, stringLike, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 
@@ -29,8 +28,8 @@ export default function FileLoadersTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (stringLike(value) && typeof key === "string") {
-        const extname = path.extname(key).toLowerCase();
-        const loader = this.loaders[extname];
+        const extension = extname(key).toLowerCase();
+        const loader = this.loaders[extension];
         if (loader) {
           value = await loader.call(this, value);
         }

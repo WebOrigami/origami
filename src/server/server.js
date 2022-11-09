@@ -1,8 +1,8 @@
-import path from "node:path";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import {
+  extname,
   isPlainObject,
   stringLike,
   transformObject,
@@ -89,8 +89,8 @@ export async function handleRequest(request, response, graph) {
   let mediaType;
   if (resource != undefined) {
     // Determine media type, what data we'll send, and encoding.
-    const extname = path.extname(url.pathname).toLowerCase();
-    mediaType = extname ? mediaTypeForExtension[extname] : undefined;
+    const extension = extname(url.pathname).toLowerCase();
+    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
 
     if (
       mediaType === undefined &&
