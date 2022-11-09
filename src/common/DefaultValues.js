@@ -27,35 +27,7 @@ export default class DefaultValues {
   }
 
   async get(key) {
-    // Try main graph first.
-    let value = await this.graph.get(key);
-    if (value !== undefined || !this.defaults) {
-      if (ExplorableGraph.isExplorable(value)) {
-        value = Reflect.construct(this.constructor, [value, this.defaults]);
-      } else if (value?.toGraph) {
-        // If the value isn't a graph, but has a graph attached via a `toGraph`
-        // method, wrap the toGraph method to provide default values for it.
-        const original = value.toGraph.bind(value);
-        value.toGraph = () => {
-          const graph = original();
-          return Reflect.construct(this.constructor, [graph, this.defaults]);
-        };
-      }
-      return value;
-    }
-
-    // See if we have a default value for this key.
-    const defaultValue = await this.defaults.get(key);
-    if (!(defaultValue instanceof Function)) {
-      // Either we have a fixed default value, or we don't have a default. In
-      // either case, return that.
-      return defaultValue;
-    }
-
-    // We have a default value function; give it the graph to work on.
-    value = await defaultValue.call(this.graph);
-
-    return value;
+    return this.traverse(key);
   }
 
   onChange(key) {
@@ -76,6 +48,52 @@ export default class DefaultValues {
   }
   set scope(scope) {
     /** @type {any} */ (this.graph).scope = scope;
+  }
+
+  async traverse(...keys) {
+    // Start our traversal at the root of the graph.
+    let value = this.graph;
+
+    // Process each key in turn.
+    for (const key of keys) {
+      if (value === undefined) {
+        // Can't traverse further
+        break;
+      }
+
+      // If the value isn't already explorable, cast it to an explorable graph.
+      // If someone is trying to traverse this thing, they mean to treat it as
+      // an explorable graph.
+      const graph = ExplorableGraph.from(value);
+
+      // Ask the graph if it has the key.
+      value = await graph.get(key);
+
+      if (value === undefined) {
+        // The graph doesn't have the key; try the defaults.
+        const defaultValue = await this.defaults.get(key);
+        value =
+          defaultValue instanceof Function
+            ? await defaultValue.call(graph)
+            : defaultValue;
+      }
+    }
+
+    // If the value we're returning is a graph, or convertible to a graph, wrap
+    // it in a DefaultValues instance so that it can provide default values.
+    if (ExplorableGraph.isExplorable(value)) {
+      value = Reflect.construct(this.constructor, [value, this.defaults]);
+    } else if (value?.toGraph) {
+      // If the value isn't a graph, but has a graph attached via a `toGraph`
+      // method, wrap the toGraph method to provide default values for it.
+      const original = value.toGraph.bind(value);
+      value.toGraph = () => {
+        const graph = original();
+        return Reflect.construct(this.constructor, [graph, this.defaults]);
+      };
+    }
+
+    return value;
   }
 
   async unwatch() {

@@ -28,4 +28,20 @@ describe("DefaultValues", () => {
     assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
     assert.equal(await ExplorableGraph.traverse(graph, "more", "d"), 5); // Default
   });
+
+  it("invokes a default value function", async () => {
+    const graph = new DefaultValues(
+      {
+        a: 1,
+        more: {
+          b: 2,
+        },
+      },
+      {
+        c: () => 3,
+      }
+    );
+    assert.equal(await graph.get("c"), 3);
+    assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
+  });
 });
