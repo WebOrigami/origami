@@ -19,8 +19,8 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export function extname(path) {
   // We want at least one character before the dot, then a dot, then a non-empty
-  // sequence of characters after the dot that aren't slahes.
-  const extnameRegex = /[^/](?<ext>\.[^/]+)$/;
+  // sequence of characters after the dot that aren't slahes or dots.
+  const extnameRegex = /[^/](?<ext>\.[^/\.]+)$/;
   const match = path.match(extnameRegex);
   const extension = match?.groups?.ext.toLowerCase() ?? "";
   return extension;
