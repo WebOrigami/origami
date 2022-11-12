@@ -4,6 +4,17 @@ import concatBuiltin from "../builtins/concat.js";
 import execute from "./execute.js";
 
 /**
+ * Concatenate the given arguments.
+ *
+ * @this {Explorable}
+ * @param {any[]} args
+ */
+export async function concat(...args) {
+  return concatBuiltin.call(this, ...args);
+}
+concat.toString = () => "«ops.concat»";
+
+/**
  * Return a function that will invoke the given code.
  *
  * @this {Explorable}
@@ -27,28 +38,3 @@ export const thisKey = "«ops.thisKey»";
 
 // The variable op is a placeholder that represents a variable.
 export const variable = "«ops.variable»";
-
-/**
- * Get the key from the current graph and, if it's a function, invoke it.
- *
- * @this {Explorable}
- * @param {any} key
- */
-export async function implicitCall(key) {
-  let value = await this.get(key);
-  if (typeof value === "function") {
-    value = await value.call(this);
-  }
-  return value;
-}
-
-/**
- * Concatenate the given arguments.
- *
- * @this {Explorable}
- * @param {any[]} args
- */
-export async function concat(...args) {
-  return concatBuiltin.call(this, ...args);
-}
-concat.toString = () => "«ops.concat»";
