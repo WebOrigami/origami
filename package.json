@@ -24,6 +24,7 @@
     "highlight.js": "11.6.0",
     "node-fetch": "3.2.10",
     "marked": "4.1.1",
+    "sharp": "0.31.2",
     "yaml": "2.1.3"
   },
   "scripts": {
