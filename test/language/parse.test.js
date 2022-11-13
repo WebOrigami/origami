@@ -12,6 +12,8 @@ import {
   list,
   literal,
   number,
+  objectLiteral,
+  objectProperty,
   optionalWhitespace,
   percentCall,
   percentPath,
@@ -129,6 +131,11 @@ describe("parse", () => {
     assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
     assertParse(expression("1"), 1);
     assert.equal(expression("(foo"), null);
+    assertParse(expression("a=1 b=2"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(expression("serve index.html='hello'"), [
+      [ops.scope, "serve"],
+      [ops.object, { "index.html": "hello" }],
+    ]);
   });
 
   it("expression with function with space-separated arguments, mixed argument types", () => {
@@ -272,6 +279,16 @@ describe("parse", () => {
     assertParse(number("1"), 1);
     assertParse(number("3.14159"), 3.14159);
     assertParse(number("-1"), -1);
+  });
+
+  it("objectLiteral", () => {
+    assertParse(objectLiteral("a=1 b=2"), [ops.object, { a: 1, b: 2 }]);
+  });
+
+  it("objectProperty", () => {
+    assertParse(objectProperty("a=1"), { a: 1 });
+    assertParse(objectProperty("name='Alice'"), { name: "Alice" });
+    assertParse(objectProperty("x=fn('a')"), { x: [[ops.scope, "fn"], "a"] });
   });
 
   it("percentCall", () => {

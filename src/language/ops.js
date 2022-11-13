@@ -29,6 +29,24 @@ export function lambda(code) {
 }
 lambda.toString = () => "«ops.lambda»";
 
+/**
+ * Construct an object. The keys will be the same as the given `obj`
+ * parameter's, and the values will be the results of evaluating the
+ * corresponding code values in `obj`.
+ *
+ * @this {Explorable}
+ * @param {PlainObject} obj
+ */
+export async function object(obj) {
+  const result = {};
+  for (const key in obj) {
+    const code = obj[key];
+    result[key] = await execute.call(this, code);
+  }
+  return result;
+}
+object.toString = () => "«ops.object»";
+
 // The scope op is a placeholder for the graph's scope.
 export const scope = "«ops.scope»";
 

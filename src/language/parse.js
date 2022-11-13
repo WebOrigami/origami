@@ -104,6 +104,7 @@ export function expression(text) {
     colonCall,
     slashCall,
     percentCall,
+    objectLiteral,
     group,
     number,
     getReference
@@ -277,6 +278,72 @@ export function number(text) {
     return null;
   }
   const value = Number(parsed.value);
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectLiteral(text) {
+  const parsed = separatedList(objectProperty, whitespace, regex(/^/))(text);
+  if (!parsed) {
+    return null;
+  }
+  // Collect properties, skip separators
+  const obj = {};
+  while (parsed.value.length > 0) {
+    const property = parsed.value.shift(); // Next parsed property key: value
+    Object.assign(obj, property);
+    parsed.value.shift(); // Drop separator
+  }
+  const value = [ops.object, obj];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectProperty(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    literal,
+    terminal(/^=/),
+    objectPropertyValue
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = {
+    [parsed.value[1]]: parsed.value[3],
+  };
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectPropertyValue(text) {
+  return any(
+    singleQuoteString,
+    templateLiteral,
+    objectPropertyValueFunctionCall,
+    urlProtocolCall,
+    protocolCall,
+    colonCall,
+    slashCall,
+    percentCall,
+    group,
+    number,
+    getReference
+  )(text);
+}
+
+export function objectPropertyValueFunctionCall(text) {
+  const parsed = sequence(functionCallTarget, parensArgs)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [parsed.value[0], ...parsed.value[1]];
   return {
     value,
     rest: parsed.rest,

@@ -29,4 +29,24 @@ describe("ops", () => {
     const result = await fn.call(scope);
     assert.equal(result, "Hello, world.");
   });
+
+  it("can instantiate an object", async () => {
+    const scope = new ObjectGraph({
+      upper: (s) => s.toUpperCase(),
+    });
+
+    const code = [
+      ops.object,
+      {
+        hello: [[ops.scope, "upper"], "hello"],
+        world: [[ops.scope, "upper"], "world"],
+      },
+    ];
+
+    const result = await execute.call(scope, code);
+    assert.deepEqual(result, {
+      hello: "HELLO",
+      world: "WORLD",
+    });
+  });
 });
