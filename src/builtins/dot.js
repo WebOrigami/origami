@@ -38,7 +38,7 @@ async function statements(graph, nodePath) {
 
   const rootUrl = nodePath || ".";
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.10; URL="${rootUrl}"];`
+    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.15; URL="${rootUrl}"];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
