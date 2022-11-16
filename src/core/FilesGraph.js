@@ -92,7 +92,7 @@ export default class FilesGraph {
         subfolder = Reflect.construct(this.constructor, [objPath]);
         // If we're watching the current directory, watch the subfolder too.
         if (this.watching) {
-          subfolder.watching = this.watching;
+          subfolder.watch();
         }
         // Remember this subfolder for later requests.
         this.subfoldersMap.set(key, subfolder);
