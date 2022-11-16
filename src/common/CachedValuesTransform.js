@@ -32,5 +32,10 @@ export default function CachedValuesTransform(Base) {
       super.onChange?.(key);
       this[cacheKey] = new Map();
     }
+
+    async set(key, value) {
+      this[cacheKey].delete(key);
+      return super.set(key, value);
+    }
   };
 }
