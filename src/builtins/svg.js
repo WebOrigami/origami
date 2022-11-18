@@ -9,8 +9,9 @@ let graphvizLoaded = false;
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
+ * @param {PlainObject} [options]
  */
-export default async function svg(variant) {
+export default async function svg(variant, options = {}) {
   if (!graphvizLoaded) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
@@ -20,7 +21,7 @@ export default async function svg(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const dotText = await dot(graph);
+  const dotText = await dot(graph, options);
   const result =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");
   return result;

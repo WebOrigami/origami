@@ -7,14 +7,15 @@ import { toSerializable } from "../core/utilities.js";
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
+ * @param {PlainObject} [options]
  */
-export default async function dot(variant) {
+export default async function dot(variant, options = {}) {
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const graphArcs = await statements(graph, "");
+  const graphArcs = await statements(graph, "", options);
   return `digraph g {
   bgcolor="transparent";
   nodesep=1;
@@ -33,8 +34,9 @@ function probablyBinary(text) {
   return /[\x00-\x09\x0E-\x1F\x80-\xFF]/.test(text);
 }
 
-async function statements(graph, nodePath) {
+async function statements(graph, nodePath, options) {
   let result = [];
+  const createLinks = options.createLinks ?? true;
 
   const rootUrl = nodePath || ".";
   result.push(
@@ -50,7 +52,7 @@ async function statements(graph, nodePath) {
 
     const value = await graph.get(key);
     if (ExplorableGraph.isExplorable(value)) {
-      const subStatements = await statements(value, destPath);
+      const subStatements = await statements(value, destPath, options);
       result = result.concat(subStatements);
     } else {
       const serializable = value ? toSerializable(value) : undefined;
@@ -128,7 +130,8 @@ async function statements(graph, nodePath) {
   for (const key in labels) {
     const destPath = nodePath ? `${nodePath}/${key}` : key;
     const label = labels[key];
-    result.push(`  "${destPath}" [label="${label}"; URL="${destPath}"];`);
+    const url = createLinks ? `; URL="${destPath}"` : "";
+    result.push(`  "${destPath}" [label="${label}"${url}];`);
   }
 
   return result;
