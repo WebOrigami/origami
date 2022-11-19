@@ -29,8 +29,7 @@ describe("map", () => {
         "file3.foo": "won't be mapped",
       },
       (value) => value.toUpperCase(),
-      ".txt",
-      ".upper"
+      { extension: "txt→upper" }
     );
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",

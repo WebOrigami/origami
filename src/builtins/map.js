@@ -12,23 +12,15 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @this {Explorable}
  * @param {GraphVariant} variant
  * @param {Invocable} mapFn
- * @param {string} [innerExtension]
- * @param {string} [outerExtension]
+ * @param {PlainObject} options
  */
-export default function map(variant, mapFn, innerExtension, outerExtension) {
+export default function map(variant, mapFn, options = {}) {
   if (!variant) {
     return undefined;
   }
   const extendedMapFn = extendMapFn(mapFn);
-  const options = {};
-  if (innerExtension !== undefined) {
-    options.innerExtension = innerExtension;
-  }
-  if (outerExtension !== undefined) {
-    options.outerExtension = outerExtension;
-  }
   const GraphClass =
-    innerExtension === undefined ? MapValuesGraph : MapExtensionsGraph;
+    options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   const mappedGraph = new (InheritScopeTransform(GraphClass))(
     variant,
     extendedMapFn,

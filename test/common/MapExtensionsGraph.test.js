@@ -13,7 +13,7 @@ describe("MapExtensionsGraph", () => {
       (s) => s.toUpperCase(),
       {
         deep: true,
-        innerExtension: ".txt",
+        extension: "txt",
       }
     );
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
@@ -33,8 +33,7 @@ describe("MapExtensionsGraph", () => {
       (s) => s.toUpperCase(),
       {
         deep: true,
-        innerExtension: ".txt",
-        outerExtension: ".upper",
+        extension: "txt→upper",
       }
     );
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
@@ -58,8 +57,7 @@ describe("MapExtensionsGraph", () => {
       (s) => s.toUpperCase(),
       {
         deep: true,
-        innerExtension: ".txt",
-        outerExtension: ".upper",
+        extension: "txt->upper",
         extensionMatchesOnly: true,
       }
     );
@@ -82,8 +80,7 @@ describe("MapExtensionsGraph", () => {
       }),
       {
         deep: true,
-        innerExtension: ".txt",
-        outerExtension: ".json",
+        extension: "txt→json",
       }
     );
     assert.deepEqual(await ExplorableGraph.plain(fixture), {

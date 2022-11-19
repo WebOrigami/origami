@@ -179,6 +179,12 @@ describe("parse", () => {
       [ops.scope, "fn1"],
       [[ops.scope, "fn2"], "arg"],
     ]);
+    assertParse(functionComposition("fn a, b, c=1"), [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.object, { c: 1 }],
+    ]);
   });
 
   it("functionComposition with variable reference", () => {

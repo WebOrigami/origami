@@ -10,25 +10,16 @@ import { getScope } from "../framework/scopeUtilities.js";
  *
  * @this {Explorable}
  */
-export default function mapDeep(
-  variant,
-  mapFn,
-  innerExtension,
-  outerExtension
-) {
+export default function mapDeep(variant, mapFn, options) {
   if (!variant) {
     return undefined;
   }
   const extendedMapFn = extendMapFn(mapFn);
-  const options = { deep: true };
-  if (innerExtension !== undefined) {
-    options.innerExtension = innerExtension;
-  }
-  if (outerExtension !== undefined) {
-    options.outerExtension = outerExtension;
-  }
   const GraphClass =
-    innerExtension === undefined ? MapValuesGraph : MapExtensionsGraph;
+    options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
+  if (options.deep === undefined) {
+    options.deep = true;
+  }
   const mappedGraph = new (InheritScopeTransform(GraphClass))(
     variant,
     extendedMapFn,

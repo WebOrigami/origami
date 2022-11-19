@@ -11,16 +11,18 @@ import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
 export default class MapExtensionsGraph extends MapKeysValuesGraph {
   constructor(variant, mapFn, options = {}) {
     super(variant, mapFn, options);
-    this.innerExtension = options.innerExtension?.toLowerCase() ?? "";
-    this.outerExtension =
-      options.outerExtension?.toLowerCase() ?? this.innerExtension;
+    const { innerExtension, outerExtension } = parseExtension(
+      options.extension
+    );
+    this.innerExtension = innerExtension;
+    this.outerExtension = outerExtension;
     this.extensionMachesOnly = options.extensionMatchesOnly ?? false;
   }
 
   async innerKeyForOuterKey(outerKey) {
     const basename = matchExtension(outerKey, this.outerExtension);
     return basename
-      ? `${basename}${this.innerExtension}`
+      ? `${basename}${dotPrefix(this.innerExtension)}`
       : !this.extensionMachesOnly ||
         (await ExplorableGraph.isKeyExplorable(this.graph, outerKey))
       ? outerKey
@@ -35,12 +37,16 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
   async outerKeyForInnerKey(innerKey) {
     const basename = matchExtension(innerKey, this.innerExtension);
     return basename
-      ? `${basename}${this.outerExtension}`
+      ? `${basename}${dotPrefix(this.outerExtension)}`
       : !this.extensionMachesOnly ||
         (await ExplorableGraph.isKeyExplorable(this.graph, innerKey))
       ? innerKey
       : undefined;
   }
+}
+
+function dotPrefix(extension) {
+  return extension ? `.${extension}` : "";
 }
 
 // See if the key ends with the given extension. If it does, return the basename
@@ -55,11 +61,12 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
 function matchExtension(key, extension) {
   if (extension) {
     // Key matches if it ends with the same extension
+    const dotExtension = dotPrefix(extension);
     if (
-      key.length > extension.length &&
-      key.toLowerCase().endsWith(extension)
+      key.length > dotExtension.length &&
+      key.toLowerCase().endsWith(dotExtension)
     ) {
-      return key.substring(0, key.length - extension.length);
+      return key.substring(0, key.length - dotExtension.length);
     }
   } else if (!key.includes?.(".")) {
     // Key matches if it has no extension
@@ -67,4 +74,24 @@ function matchExtension(key, extension) {
   }
   // Didn't match
   return null;
+}
+
+function parseExtension(specifier) {
+  const lowercase = specifier.toLowerCase();
+  // Syntax:
+  // foo
+  // foo→bar
+  // foo->bar
+  const extensionRegex = /^(?<inner>.*)(?:→|->)(?<outer>.+)$/;
+  let innerExtension;
+  let outerExtension;
+  const match = lowercase.match(extensionRegex);
+  if (match) {
+    innerExtension = match.groups.inner;
+    outerExtension = match.groups.outer;
+  } else {
+    innerExtension = lowercase;
+    outerExtension = lowercase;
+  }
+  return { innerExtension, outerExtension };
 }
