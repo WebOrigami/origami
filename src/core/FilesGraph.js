@@ -92,7 +92,7 @@ export default class FilesGraph {
         subfolder = Reflect.construct(this.constructor, [objPath]);
         // If we're watching the current directory, watch the subfolder too.
         if (this.watching) {
-          subfolder.watch();
+          await subfolder.watch();
         }
         // Remember this subfolder for later requests.
         this.subfoldersMap.set(key, subfolder);
@@ -188,11 +188,20 @@ export default class FilesGraph {
   }
 
   async unwatch() {
+    if (!this.watching) {
+      return;
+    }
     this.watching = false;
-    // If two instances of FilesGraph are watching the same directory, and we
-    // stop watching this instance, this also stops watching the other instance.
-    // TODO: Only stop watching if this is the last instance watching.
-    pathGraphMap.delete(this.dirname);
+
+    // Remove this FilesGraph instance from those watching this directory.
+    let graphRefs = pathGraphMap.get(this.dirname);
+    graphRefs = graphRefs.filter((graphRef) => graphRef.deref() !== this);
+    if (graphRefs.length === 0) {
+      pathGraphMap.delete(this.dirname);
+    } else {
+      pathGraphMap.set(this.dirname, graphRefs);
+    }
+
     watcher.unwatch(this.dirname);
 
     // If this is the last folder being watched, stop the watcher.
@@ -203,14 +212,23 @@ export default class FilesGraph {
 
   // Turn on watching for the directory.
   async watch() {
+    if (this.watching) {
+      return;
+    }
+    this.watching = true;
+
     if (!watcher) {
       watcherStart();
     }
+
     // Ensure the directory exists.
     await fs.mkdir(this.dirname, { recursive: true });
     watcher.add(this.dirname);
-    pathGraphMap.set(this.dirname, new WeakRef(this));
-    this.watching = true;
+
+    // Add to the list of FilesGraph instances watching this directory.
+    const graphRefs = pathGraphMap.get(this.dirname) ?? [];
+    graphRefs.push(new WeakRef(this));
+    pathGraphMap.set(this.dirname, graphRefs);
   }
 }
 
@@ -305,14 +323,16 @@ async function watcherStart() {
     const fileDirname = path.dirname(filePath);
     const fileName = path.basename(filePath);
     // Invoke onChange for graphs that contain the file path.
-    for (const [dirname, graphRef] of pathGraphMap) {
+    for (const [dirname, graphRefs] of pathGraphMap) {
       // Is this directory the container of the changed file?
       if (filePath === dirname || fileDirname === dirname) {
         // Yes. Does anyone still have a reference to this graph?
-        const graph = graphRef.deref();
-        if (graph !== undefined) {
-          // Yes, let the graph know the file with that name has changed.
-          graph.onChange(fileName);
+        for (const graphRef of graphRefs) {
+          const graph = graphRef.deref();
+          if (graph !== undefined) {
+            // Yes, let the graph know the file with that name has changed.
+            graph.onChange(fileName);
+          }
         }
       }
       // TODO: If no one has a reference to the graph, remove it from the map.
