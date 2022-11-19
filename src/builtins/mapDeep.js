@@ -10,7 +10,7 @@ import { getScope } from "../framework/scopeUtilities.js";
  *
  * @this {Explorable}
  */
-export default function mapDeep(variant, mapFn, options) {
+export default function mapDeep(variant, mapFn, options = {}) {
   if (!variant) {
     return undefined;
   }
