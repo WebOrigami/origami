@@ -55,6 +55,7 @@ export default async function defaultIndexHtml(
   const diagnosticLinks = options.showDiagnostics
     ? `<p>
   <a href=".dataflow">dataflow</a>
+  <a href=".scope">scope</a>
   <a href=".svg">svg</a>
   <a href=".yaml">yaml</a>
 </p>`

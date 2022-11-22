@@ -6,6 +6,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
 import DefaultPages from "./DefaultPages.js";
 import OrigamiTemplate from "./OrigamiTemplate.js";
+import StringWithGraph from "./StringWithGraph.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkFiles = new FilesGraph(dirname);
@@ -14,27 +15,23 @@ const frameworkFiles = new FilesGraph(dirname);
  * @this {Explorable}
  */
 export default async function scopeExplorer() {
-  // Force use of default index.html page.
-  const baseScope = /** @type {any} */ (this).scope ?? this;
-  const scope = new Scope(
-    {
-      "@defaultGraph": this,
-      "index.html": () => scopeExplorerPage.call(baseScope),
-    },
-    baseScope
-  );
-  const graph = new DefaultPages(scope);
-  // Graph will be its own scope.
-  /** @type {any} */ (graph).scope = scope;
-  return graph;
-}
-
-async function scopeExplorerPage() {
-  const scope = this;
+  const scope = /** @type {any} */ (this).scope ?? this;
   const templateText = await frameworkFiles.get("scopeExplorer.ori");
   const template = new OrigamiTemplate(templateText, scope);
   const data = await getKeyData(scope);
-  const result = await template.apply(data, scope);
+  const text = await template.apply(data, scope);
+
+  const extendedScope = new Scope(
+    {
+      "@defaultGraph": this,
+    },
+    scope
+  );
+  const graph = new DefaultPages(extendedScope);
+  // Graph will be its own scope.
+  /** @type {any} */ (graph).scope = scope;
+  const result = new StringWithGraph(text, graph);
+
   return result;
 }
 

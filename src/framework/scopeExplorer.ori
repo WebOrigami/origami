@@ -75,16 +75,21 @@
 
       function removeDocumentPath(path) {
         const documentPath = document.location.pathname;
-        return (path.startsWith(documentPath))
+        if (path.startsWith(documentPath)) {
           // Remove the document path prefix.
-          ? path.slice(documentPath.length)
-          : path;
+          path = path.slice(documentPath.length);
+        }
+        if (path.startsWith("/")) {
+          // Remove the leading slash.
+          path = path.slice(1);
+        }
+        return path;
       }
 
       function setPath(path) {
         currentPath = path;
         // Show the indicated page in the frame.
-        const fullPath = document.location.pathname + path;
+        const fullPath = `${document.location.pathname}/${path}`;
         if (frame.contentDocument.location.pathname !== fullPath) {
           // Use `replace` to avoid affecting browser history.
           frame.contentWindow.location.replace(fullPath);

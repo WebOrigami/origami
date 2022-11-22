@@ -2,7 +2,6 @@ import DefaultValues from "../common/DefaultValues.js";
 import defaultDataflow from "./defaultDataflow.js";
 import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
-import defaultScope from "./defaultScope.js";
 import defaultSvg from "./defaultSvg.js";
 import defaultYamlHtml from "./defaultYamlHtml.js";
 import scopeExplorer from "./scopeExplorer.js";
@@ -17,12 +16,11 @@ export default class DefaultPages extends DefaultValues {
   constructor(graph) {
     super(graph, {
       ".dataflow": defaultDataflow,
-      ".explore": scopeExplorer,
       ".index": function () {
         return defaultIndexHtml.call(this, { showDiagnostics: true });
       },
       ".keys.json": defaultKeysJson,
-      ".scope": defaultScope,
+      ".scope": scopeExplorer,
       ".svg": defaultSvg,
       ".yaml": defaultYamlHtml,
       "index.html": defaultIndexHtml,
