@@ -32,5 +32,10 @@ export default function HiddenKeysTransform(Base) {
       }
       return result;
     }
+
+    onChange(key) {
+      super.onChange?.(key);
+      this[hiddenKeys] = null;
+    }
   };
 }
