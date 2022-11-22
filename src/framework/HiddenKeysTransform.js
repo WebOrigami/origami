@@ -1,4 +1,5 @@
 const hiddenKeys = Symbol("hiddenKeys");
+import { literal } from "../language/parse.js";
 
 export default function HiddenKeysTransform(Base) {
   return class HiddenKeys extends Base {
@@ -22,13 +23,14 @@ export default function HiddenKeysTransform(Base) {
 
     async keyAdded(key, options, existingKeys) {
       const result = (await super.keyAdded?.(key, options, existingKeys)) ?? {};
-      const hiddenKeyRegex = /^\((?<key>.+)\)$/;
-      const match = hiddenKeyRegex.exec(key);
-      if (match) {
-        const hiddenKey = match.groups.key;
-        this[hiddenKeys].push(hiddenKey);
-        this.addKey(hiddenKey, { hidden: true });
-        result.hidden = true;
+      if (key.startsWith("(") && key.endsWith(")")) {
+        const text = key.slice(1, -1);
+        const parsed = literal(text);
+        if (parsed && parsed.rest === "") {
+          this[hiddenKeys].push(text);
+          this.addKey(text, { hidden: true });
+          result.hidden = true;
+        }
       }
       return result;
     }
