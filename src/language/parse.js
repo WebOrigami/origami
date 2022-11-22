@@ -82,7 +82,7 @@ export function colonCall(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return any(variableDeclaration, literal)(text);
+  return any(variableDeclaration, hiddenDeclaration, literal)(text);
 }
 
 // Parse an ellipsis.
@@ -182,6 +182,25 @@ export function group(text) {
     return null;
   }
   const value = parsed.value[3]; // the expression
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function hiddenDeclaration(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    terminal(/^\(/),
+    optionalWhitespace,
+    literal,
+    optionalWhitespace,
+    terminal(/^\)/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = `(${parsed.value[3]})`;
   return {
     value,
     rest: parsed.rest,
