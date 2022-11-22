@@ -32,8 +32,7 @@ export default async function make(variant) {
   await graph.set(".ori.clean.yaml", cleanYaml);
 
   // Construct a parallel graph of `undefined` values that can be used to erase
-  // the current values in the graph. We'll also preserve that as a YAML file
-  // that clean() can use later to erase the built values.
+  // the current values in the graph.
   const undefineds = new MapValuesGraph(build, () => undefined, {
     deep: true,
     getValue: false,

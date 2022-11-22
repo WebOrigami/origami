@@ -14,7 +14,15 @@ async function applyUpdates(source, target) {
     const updateKeyPromise = applyUpdateForKey(source, target, key);
     promises.push(updateKeyPromise);
   }
-  return Promise.all(promises);
+  await Promise.all(promises);
+
+  // HACK: Transforms like KeysTransform that maintain caches will need to
+  // recalculate things now that updates have been applied. This should be an
+  // automatic part of calling set() -- but triggering those changes inside
+  // set() produces cases where set() and get() calls can be interleaved. The
+  // atomicity of set() needs to be reconsidered. For now, we work around the
+  // problem by triggering `onChange` after the updates have been applied.
+  target.onChange?.();
 }
 
 // Copy the value for the given key from the source to the target.
