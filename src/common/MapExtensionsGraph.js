@@ -77,7 +77,7 @@ function matchExtension(key, extension) {
 }
 
 function parseExtension(specifier) {
-  const lowercase = specifier.toLowerCase();
+  const lowercase = specifier?.toLowerCase() ?? "";
   // Syntax:
   // foo
   // foo→bar

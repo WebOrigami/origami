@@ -15,7 +15,7 @@ export default async function (src) {
   // Map each source file to an export statement.
   const mapped = new MapExtensionGraph(withPaths, exportStatementForCode, {
     deep: true,
-    innerExtension: ".js",
+    extension: "js",
     extensionMatchesOnly: true,
   });
 
