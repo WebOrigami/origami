@@ -68,16 +68,22 @@ export default class Template {
 
     // Ambient properties let the template reference specific input/template data.
     const ambients = {
-      ".": input ?? null,
-      "@frontData": frontData,
-      "@input": input ?? null,
       "@template": {
         frontData: this.frontData,
         scope: this.scope,
         text: this.text,
       },
-      "@text": text,
     };
+    if (frontData) {
+      ambients["@frontData"] = frontData;
+    }
+    if (input) {
+      ambients["@input"] = input;
+      ambients["."] = input;
+    }
+    if (text) {
+      ambients["@text"] = text;
+    }
 
     // Construct new scope chain:
     // (input or input frontData + template frontData) -> ambients -> container
