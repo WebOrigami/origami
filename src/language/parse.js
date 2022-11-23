@@ -398,7 +398,7 @@ function parensArgs(text) {
 // Top-level parse function parses a expression and returns just the value.
 export default function parse(text) {
   const parsed = expression(text);
-  return parsed?.rest !== "" ? parsed.value : null;
+  return parsed?.rest === "" ? parsed.value : null;
 }
 
 // Parse the start of a path.
