@@ -59,6 +59,7 @@ export { default as sortBy } from "../src/builtins/sortBy.js";
 export { default as static } from "../src/builtins/static.js";
 export { default as stdin } from "../src/builtins/stdin.js";
 export { default as stdout } from "../src/builtins/stdout.js";
+export { default as string } from "../src/builtins/string.js";
 export { default as svg } from "../src/builtins/svg.js";
 export { default as table } from "../src/builtins/table.js";
 export { default as take } from "../src/builtins/take.js";
@@ -100,7 +101,6 @@ export { default as defaultDataflow } from "../src/framework/defaultDataflow.js"
 export { default as defaultIndexHtml } from "../src/framework/defaultIndexHtml.js";
 export { default as defaultKeysJson } from "../src/framework/defaultKeysJson.js";
 export { default as DefaultPages } from "../src/framework/DefaultPages.js";
-export { default as defaultScope } from "../src/framework/defaultScope.js";
 export { default as defaultSvg } from "../src/framework/defaultSvg.js";
 export { default as defaultYamlHtml } from "../src/framework/defaultYamlHtml.js";
 export { default as Formula } from "../src/framework/Formula.js";
