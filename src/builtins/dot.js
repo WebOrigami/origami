@@ -39,8 +39,9 @@ async function statements(graph, nodePath, options) {
   const createLinks = options.createLinks ?? true;
 
   const rootUrl = nodePath || ".";
+  const url = createLinks ? `; URL="${rootUrl}"` : "";
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.15; URL="${rootUrl}"];`
+    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.15${url}];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
