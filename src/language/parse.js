@@ -23,7 +23,7 @@ import {
   separatedList,
   sequence,
   series,
-  terminal,
+  terminal
 } from "./combinators.js";
 import * as ops from "./ops.js";
 
@@ -818,7 +818,11 @@ function templateTextParser(allowBackticks) {
     // start of the line. This will leave it in place for the block parser to
     // absorb the whitespace before the block marker.
     if (blockMarkerFollows && absorbSpaceBeforeBlockMarker) {
-      value = text.slice(0, lastNewlinePos + 1);
+      // How much whitespace do we need to remove from the value?
+      const whitespaceToRemove = i - lastNewlinePos - 1;
+      if (whitespaceToRemove > 0) {
+        value = value.slice(0, -whitespaceToRemove);
+      }
       i = lastNewlinePos + 1;
     }
 
