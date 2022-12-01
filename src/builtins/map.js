@@ -18,7 +18,23 @@ export default function map(variant, mapFn, options = {}) {
   if (!variant) {
     return undefined;
   }
-  const extendedMapFn = extendMapFn(mapFn);
+
+  // Convert the mapFn from an Invocable to a real function.
+  /** @type {any} */
+  const fn =
+    typeof mapFn === "function"
+      ? mapFn
+      : typeof mapFn === "object" && "toFunction" in mapFn
+      ? mapFn.toFunction()
+      : ExplorableGraph.canCastToExplorable(mapFn)
+      ? ExplorableGraph.toFunction(mapFn)
+      : null;
+  if (!fn) {
+    throw new TypeError("map(): the supplied map function is not valid.");
+  }
+
+  const extendedMapFn = extendMapFn(fn);
+
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   const mappedGraph = new (InheritScopeTransform(GraphClass))(
@@ -36,20 +52,9 @@ export default function map(variant, mapFn, options = {}) {
  * Extend the mapping function so that the scope attached to its execution
  * context includes additional information.
  *
- * @param {Invocable} mapFn
+ * @param {function} fn
  */
-function extendMapFn(mapFn) {
-  // Convert the mapFn from an Invocable to a real function.
-  /** @type {any} */
-  const fn =
-    typeof mapFn === "function"
-      ? mapFn
-      : typeof mapFn === "object" && "toFunction" in mapFn
-      ? mapFn.toFunction()
-      : ExplorableGraph.canCastToExplorable(mapFn)
-      ? ExplorableGraph.toFunction(mapFn)
-      : mapFn;
-
+function extendMapFn(fn) {
   /**
    * @this {Explorable}
    * @param {any} value
