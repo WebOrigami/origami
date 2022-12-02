@@ -9,11 +9,18 @@ export default function HiddenKeysTransform(Base) {
     }
 
     async get(key) {
-      if (this[hiddenKeys] === null) {
-        await this.ensureKeys();
+      let value = await super.get(key);
+      if (value === undefined) {
+        // Is the key a hidden key?
+        if (this[hiddenKeys] === null) {
+          await this.ensureKeys();
+        }
+        if (this[hiddenKeys].includes(key)) {
+          const keyWithParens = `(${key})`;
+          value = await super.get(keyWithParens);
+        }
       }
-      const baseKey = this[hiddenKeys].includes(key) ? `(${key})` : key;
-      return super.get(baseKey);
+      return value;
     }
 
     async getKeys() {
