@@ -33,7 +33,7 @@ export default function map(variant, mapFn, options = {}) {
     throw new TypeError("map(): the supplied map function is not valid.");
   }
 
-  const extendedMapFn = extendMapFn(fn);
+  const extendedMapFn = extendMapFn(fn, options);
 
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
@@ -54,7 +54,7 @@ export default function map(variant, mapFn, options = {}) {
  *
  * @param {function} fn
  */
-function extendMapFn(fn) {
+function extendMapFn(fn, options) {
   /**
    * @this {Explorable}
    * @param {any} value
@@ -63,10 +63,11 @@ function extendMapFn(fn) {
   return async function extendedMapFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
+    const keyName = options.keyName ?? "@key";
     let scope = new Scope(
       {
         ".": value ?? null,
-        "@key": key,
+        [keyName]: key,
         "@value": value ?? null,
       },
       getScope(this)
