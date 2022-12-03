@@ -14,7 +14,7 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {Invocable} mapFn
  * @param {PlainObject} options
  */
-export default function map(variant, mapFn, options = {}) {
+export default async function map(variant, mapFn, options = {}) {
   if (!variant) {
     return undefined;
   }
@@ -64,11 +64,12 @@ function extendMapFn(fn, options) {
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";
+    const valueName = options.valueName ?? "@value";
     let scope = new Scope(
       {
         ".": value ?? null,
         [keyName]: key,
-        "@value": value ?? null,
+        [valueName]: value ?? null,
       },
       getScope(this)
     );
