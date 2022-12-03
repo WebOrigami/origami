@@ -35,7 +35,9 @@ export default function match(pattern, resultFn, keys = []) {
 
   return {
     async *[Symbol.asyncIterator]() {
-      yield* keys;
+      const graphKeys =
+        typeof keys === "function" ? await keys.call(scope) : keys;
+      yield* graphKeys;
     },
 
     async get(key) {
