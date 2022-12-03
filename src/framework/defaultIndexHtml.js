@@ -33,7 +33,7 @@ export default async function defaultIndexHtml(
         // Split on first equals sign.
         const equalsIndex = keyText.indexOf("=");
         const lhs = keyText.substring(0, equalsIndex).trim();
-        const rhs = keyText.substring(equalsIndex + 1).trim();
+        const rhs = escapeHtml(keyText.substring(equalsIndex + 1).trim());
         link = `<li>
   <a href="${lhs}">${lhs}</a><span class="formula rhs">&nbsp;&nbsp;<a href="${keyText}">=&nbsp;&nbsp;${rhs}</a></span>
 </li>`;
@@ -93,6 +93,10 @@ export default async function defaultIndexHtml(
       </body>
     </html>`;
   return new StringWithGraph(html.trim(), graph);
+}
+
+function escapeHtml(/** @type {string} */ html) {
+  return html.replaceAll("<", "&lt;");
 }
 
 function filterKeys(keys) {
