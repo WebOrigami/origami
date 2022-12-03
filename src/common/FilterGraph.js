@@ -43,24 +43,21 @@ export default class FilterGraph {
   async get(key) {
     let value = await this.graph.get(key);
 
-    // The filter only applies when graph is not in scope.
-    if (!(/** @type {any} */ (this).isInScope)) {
-      let filterValue = await this.filter.get(key);
-      if (!ExplorableGraph.isExplorable(value)) {
-        if (filterValue === undefined) {
-          value = undefined;
-        }
-      } else if (filterValue === undefined) {
-        // It's possible that the filter inherits formulas that might apply to
-        // the value we're returning. Create an empty graph that inherits from
-        // this filter so that it picks up any inheritable formulas.
-        filterValue = new (MetaTransform(ObjectGraph))({});
-        filterValue.parent = this.filter;
-        value = Reflect.construct(this.constructor, [value, filterValue]);
-      } else if (ExplorableGraph.isExplorable(filterValue)) {
-        // Wrap value with corresponding filter.
-        value = Reflect.construct(this.constructor, [value, filterValue]);
+    let filterValue = await this.filter.get(key);
+    if (!ExplorableGraph.isExplorable(value)) {
+      if (filterValue === undefined) {
+        value = undefined;
       }
+    } else if (filterValue === undefined) {
+      // It's possible that the filter inherits formulas that might apply to
+      // the value we're returning. Create an empty graph that inherits from
+      // this filter so that it picks up any inheritable formulas.
+      filterValue = new (MetaTransform(ObjectGraph))({});
+      filterValue.parent = this.filter;
+      value = Reflect.construct(this.constructor, [value, filterValue]);
+    } else if (ExplorableGraph.isExplorable(filterValue)) {
+      // Wrap value with corresponding filter.
+      value = Reflect.construct(this.constructor, [value, filterValue]);
     }
 
     return value;

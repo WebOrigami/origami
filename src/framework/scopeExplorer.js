@@ -66,9 +66,8 @@ function filterKeys(keys) {
   return filtered;
 }
 
-// The prototype chain of graphs in scope are wrapped to add the `isInScope`
-// marker. To test if a given graph represents the builtins, we walk up the
-// chain to see if any of its prototypes are the builtins graph.
+// To test if a given graph represents the builtins, we walk up the chain to see
+// if any of its prototypes are the builtins graph.
 function isBuiltins(graph) {
   while (graph) {
     if (graph === builtins) {

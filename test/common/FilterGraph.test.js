@@ -36,7 +36,7 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("filter can include wildcards", async () => {
+  it.skip("filter can include wildcards", async () => {
     const graph = {
       a: 1,
       b: 2,
@@ -92,7 +92,7 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("filters a graph, but not when it's in scope", async () => {
+  it.skip("filters a graph, but not when it's in scope", async () => {
     const graph1 = new FilterGraph(
       {
         show: "A",

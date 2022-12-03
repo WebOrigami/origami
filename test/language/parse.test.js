@@ -18,7 +18,6 @@ import {
   percentCall,
   percentPath,
   protocolCall,
-  referenceSubstitution,
   singleQuoteString,
   slashCall,
   slashPath,
@@ -30,7 +29,6 @@ import {
   templateLiteral,
   thisReference,
   urlProtocolCall,
-  variableName,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
@@ -83,17 +81,6 @@ describe("parse", () => {
       "=",
       "foo",
       [[ops.scope, [ops.thisKey]], "bar"],
-    ]);
-  });
-
-  it("assignment with variable pattern", () => {
-    assertParse(assignment("[name].html = foo({{name}}.json)"), [
-      "=",
-      [ops.variable, "name", ".html"],
-      [
-        [ops.scope, "foo"],
-        [ops.scope, [ops.variable, "name", ".json"]],
-      ],
     ]);
   });
 
@@ -187,13 +174,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionComposition with variable reference", () => {
-    assertParse(functionComposition("fn({{name}}.json)"), [
-      [ops.scope, "fn"],
-      [ops.scope, [ops.variable, "name", ".json"]],
-    ]);
-  });
-
   it("functionComposition indirect", () => {
     assertParse(functionComposition("(fn()) 'arg'"), [
       [[ops.scope, "fn"]],
@@ -224,15 +204,6 @@ describe("parse", () => {
 
   it("key", () => {
     assertParse(key("foo"), "foo");
-    assertParse(key("[name].yaml"), [ops.variable, "name", ".yaml"]);
-    assertParse(key("[x].html = marked {{x}}.md"), [
-      "=",
-      [ops.variable, "x", ".html"],
-      [
-        [ops.scope, "marked"],
-        [ops.scope, [ops.variable, "x", ".md"]],
-      ],
-    ]);
   });
 
   it("key marked as inheritable", () => {
@@ -315,19 +286,6 @@ describe("parse", () => {
   it("protocolCall", () => {
     assertParse(protocolCall("foo://bar"), [[ops.scope, "foo"], "bar"]);
     assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
-  });
-
-  it("referenceSubstitution", () => {
-    assertParse(referenceSubstitution("{{name}}"), [
-      ops.variable,
-      "name",
-      null,
-    ]);
-    assertParse(referenceSubstitution("{{name}}.json"), [
-      ops.variable,
-      "name",
-      ".json",
-    ]);
   });
 
   it("singleQuoteString", () => {
@@ -505,13 +463,6 @@ End`),
       [[ops.scope, "https"], "example.com", "graph.yaml"],
       "key",
     ]);
-  });
-
-  it("variableName", () => {
-    assert.deepEqual(variableName("foo.bar"), {
-      value: "foo",
-      rest: ".bar",
-    });
   });
 
   it("whitespace", () => {

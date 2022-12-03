@@ -2,7 +2,6 @@
 
 declare const InheritScopeTransform: Mixin<{
   inheritsScope: boolean;
-  isInScope: boolean;
   parent: Explorable;
   scope: Explorable;
 }>;

@@ -76,20 +76,6 @@ describe("MetaTransform", () => {
     assert.equal(await subgraph.get("a"), "Hello, a.");
   });
 
-  it("can handle nested wildcard folders", async () => {
-    const graph = new (MetaTransform(FilesGraph))(
-      path.join(fixturesDirectory, "wildcardFolders")
-    );
-    const indexHtml = await ExplorableGraph.traverse(
-      graph,
-      "2000",
-      "01",
-      "index.html"
-    );
-    const normalized = indexHtml?.toString().replace(/\r\n/g, "\n");
-    assert.equal(normalized, "Hello, world.\n");
-  });
-
   it("inherits keys prefixed with `…`", async () => {
     const graph = new MetaObject({
       "…a": 1,
@@ -153,42 +139,12 @@ describe("MetaTransform", () => {
     );
   });
 
-  it("can inherit functions", async () => {
-    const graph = new MetaObject({
-      "index.txt": "Home",
-      textToHtml: (text) => `<body>${text}</body>`,
-      "…[x].html = textToHtml({{x}}.txt)": "",
-      about: {
-        "index.txt": "About",
-      },
-    });
-    assert.equal(await graph.get("index.html"), "<body>Home</body>");
-    const about = await graph.get("about");
-    assert.equal(await about.get("index.html"), "<body>About</body>");
-  });
-
-  it("can inherit bound variables", async () => {
-    const fixture = new MetaObject({
-      "[x]": {
-        "[y] = `{{x}}{{y}}`": "",
-      },
-    });
-    assert.equal(
-      await ExplorableGraph.traverse(fixture, "foo", "bar"),
-      "foobar"
-    );
-    assert.equal(
-      await ExplorableGraph.traverse(fixture, "fizz", "buzz"),
-      "fizzbuzz"
-    );
-  });
-
   it("a formula can reference a child addition", async () => {
     const graph = new MetaObject({
       "+": {
         "a.json": "Hello, a.",
       },
-      "[x].txt = {{x}}.json": "",
+      "a.txt = a.json": "",
     });
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       "a.json": "Hello, a.",
@@ -209,28 +165,9 @@ describe("MetaTransform", () => {
     });
   });
 
-  it("wildcard values do not apply in scope", async () => {
-    const graph = new MetaObject({
-      "[test]": {
-        a: 1,
-      },
-      subgraph: {
-        "match = foo": "",
-      },
-    });
-
-    // Wildcard folder matches direct request.
-    const foo = await graph.get("foo");
-    assert.deepEqual(await ExplorableGraph.plain(foo), { a: 1 });
-
-    // Wildcard folder is not found in search of scope.
-    const match = await ExplorableGraph.traverse(graph, "subgraph", "match");
-    assert.equal(match, undefined);
-  });
-
   it("peer addition formulas can reference a local graph value", async () => {
     const fixture = new MetaObject({
-      "[x]+": {
+      "sub+": {
         "message = `Hello, {{name}}.`": "",
       },
       sub: {

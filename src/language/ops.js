@@ -53,6 +53,3 @@ export const scope = "«ops.scope»";
 // The `thisKey` op is a placeholder that represents the key of the object that
 // resulted in the current code.
 export const thisKey = "«ops.thisKey»";
-
-// The variable op is a placeholder that represents a variable.
-export const variable = "«ops.variable»";

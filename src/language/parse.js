@@ -23,7 +23,7 @@ import {
   separatedList,
   sequence,
   series,
-  terminal
+  terminal,
 } from "./combinators.js";
 import * as ops from "./ops.js";
 
@@ -82,7 +82,7 @@ export function colonCall(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return any(variableDeclaration, hiddenDeclaration, literal)(text);
+  return any(hiddenDeclaration, literal)(text);
 }
 
 // Parse an ellipsis.
@@ -207,7 +207,7 @@ export function hiddenDeclaration(text) {
   };
 }
 
-// Parse an inheritable constant declaration or variable declaration.
+// Parse an inheritable declaration.
 export function inheritableDeclaration(text) {
   const parsed = sequence(ellipsis, declaration)(text);
   if (!parsed) {
@@ -504,28 +504,9 @@ export function quotedTextWithEscapes(text) {
   return { value, rest };
 }
 
-// Parse a reference to a variable or literal.
+// Parse a reference.
 export function reference(text) {
-  return any(thisReference, referenceSubstitution, literal)(text);
-}
-
-// Parse a substitution in a reference like {{foo}}.html
-export function referenceSubstitution(text) {
-  const parsed = sequence(
-    terminal(/^\{\{/),
-    variableName,
-    terminal(/^\}\}/),
-    optional(literal)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: variable, 3: extension } = parsed.value;
-  const value = [ops.variable, variable, extension];
-  return {
-    value,
-    rest: parsed.rest,
-  };
+  return any(thisReference, literal)(text);
 }
 
 // Parse a right parenthesis.
@@ -744,7 +725,7 @@ export function templateLiteral(text) {
   };
 }
 
-// Parse the text and variable references in a template.
+// Parse the text and substitutions in a template.
 function templateParser(allowBackticks) {
   const textParser = templateTextParser(allowBackticks);
   return function template(text) {
@@ -862,31 +843,6 @@ export function urlProtocolCall(text) {
   }
   const { 1: fnName, 3: fnArgs } = parsed.value;
   const value = [[ops.scope, fnName], ...fnArgs];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a variable name
-export function variableName(text) {
-  // For now, use JavaScript identifier rules.
-  return regex(/^[$A-Za-z_][A-Za-z0-9_$]*/)(text);
-}
-
-// Parse a variable declaration like [x].json
-export function variableDeclaration(text) {
-  const parsed = sequence(
-    terminal(/^\[/),
-    variableName,
-    terminal(/^\]/),
-    optional(literal)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: variable, 3: extension } = parsed.value;
-  const value = [ops.variable, variable, extension];
   return {
     value,
     rest: parsed.rest,
