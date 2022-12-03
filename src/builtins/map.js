@@ -14,7 +14,7 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {Invocable} mapFn
  * @param {PlainObject} options
  */
-export default async function map(variant, mapFn, options = {}) {
+export default function map(variant, mapFn, options = {}) {
   if (!variant) {
     return undefined;
   }
