@@ -4,17 +4,14 @@ import assert from "../assert.js";
 
 describe("Cache", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const fixture = new Cache(
-      {},
-      {
-        a: 1,
-        b: 2,
-        c: 3,
-        more: {
-          d: 4,
-        },
-      }
-    );
+    const fixture = new Cache({
+      a: 1,
+      b: 2,
+      c: 3,
+      more: {
+        d: 4,
+      },
+    });
     const cache = fixture.cache;
 
     const keys = await ExplorableGraph.keys(fixture);
@@ -37,12 +34,12 @@ describe("Cache", () => {
 
   it("if a cache filter is supplied, it only caches files that match the filter", async () => {
     const fixture = new Cache(
-      {},
       {
         "a.txt": "a",
         "b.txt": "b",
         c: "c",
       },
+      {},
       {
         "[x].txt": true,
       }

@@ -1,7 +1,7 @@
 import Cache from "../common/Cache.js";
 
-export default async function cacheCommand(cache, graph, filter) {
-  return new Cache(cache, graph, filter);
+export default async function cacheCommand(graph, cache, filter) {
+  return new Cache(graph, cache, filter);
 }
 
 cacheCommand.usage = `cache <cache>, <...graphs>\tCaches graph values in a storable cache`;

@@ -1,5 +1,6 @@
 import setDeep from "../builtins/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 
 /**
  * Similar to Compose, but the first graph is treated as a writable cache. If
@@ -9,18 +10,24 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default class Cache {
   /**
-   * @param {Explorable|object} cache
    * @param  {Explorable|object} graph
+   * @param {Explorable|object} [cache]
    * @param {Explorable|object} [filter]
    */
-  constructor(cache, graph, filter) {
-    /** @type {any} */ this.cache = ExplorableGraph.from(cache);
-    if (typeof this.cache.set !== "function") {
-      throw new TypeError(
-        `The first parameter to the Cache constructor must be a graph with a "set" method.`
-      );
-    }
+  constructor(graph, cache, filter) {
     this.graph = ExplorableGraph.from(graph);
+
+    if (cache === undefined) {
+      this.cache = new ObjectGraph({});
+    } else {
+      /** @type {any} */ this.cache = ExplorableGraph.from(cache);
+      if (typeof this.cache.set !== "function") {
+        throw new TypeError(
+          `The first parameter to the Cache constructor must be a graph with a "set" method.`
+        );
+      }
+    }
+
     this.filter = filter ? ExplorableGraph.from(filter) : undefined;
   }
 
