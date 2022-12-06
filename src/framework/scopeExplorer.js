@@ -1,5 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import ifBuiltin from "../builtins/if.js";
+import mapBuiltin from "../builtins/map.js";
 import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -17,9 +19,16 @@ const frameworkFiles = new FilesGraph(dirname);
 export default async function scopeExplorer() {
   const scope = /** @type {any} */ (this).scope ?? this;
   const templateText = await frameworkFiles.get("scopeExplorer.ori");
-  const template = new OrigamiTemplate(templateText, scope);
+  const templateScope = new Scope(
+    {
+      map: mapBuiltin,
+      if: ifBuiltin,
+    },
+    scope
+  );
+  const template = new OrigamiTemplate(templateText, templateScope);
   const data = await getKeyData(scope);
-  const text = await template.apply(data, scope);
+  const text = await template.apply(data, templateScope);
 
   const extendedScope = new Scope(
     {
