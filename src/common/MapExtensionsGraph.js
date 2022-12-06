@@ -16,14 +16,14 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     );
     this.innerExtension = innerExtension;
     this.outerExtension = outerExtension;
-    this.extensionMachesOnly = options.extensionMatchesOnly ?? false;
+    this.extensionMatchesOnly = options.extensionMatchesOnly ?? false;
   }
 
   async innerKeyForOuterKey(outerKey) {
     const basename = matchExtension(outerKey, this.outerExtension);
     return basename
       ? `${basename}${dotPrefix(this.innerExtension)}`
-      : !this.extensionMachesOnly ||
+      : !this.extensionMatchesOnly ||
         (await ExplorableGraph.isKeyExplorable(this.graph, outerKey))
       ? outerKey
       : undefined;
@@ -38,7 +38,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     const basename = matchExtension(innerKey, this.innerExtension);
     return basename
       ? `${basename}${dotPrefix(this.outerExtension)}`
-      : !this.extensionMachesOnly ||
+      : !this.extensionMatchesOnly ||
         (await ExplorableGraph.isKeyExplorable(this.graph, innerKey))
       ? innerKey
       : undefined;

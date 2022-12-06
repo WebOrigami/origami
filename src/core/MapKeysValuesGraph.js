@@ -42,7 +42,7 @@ export default class MapKeysValuesGraph {
       // that value instead of mapping it ourselves.
       outerValue = await this.graph.get(outerKey);
     }
-    if (outerValue === undefined) {
+    if (outerValue === undefined && innerKey !== undefined) {
       // Ask inner graph for value.
       const innerValue = this.getValue
         ? await this.graph.get(innerKey)
