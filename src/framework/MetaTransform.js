@@ -21,7 +21,7 @@ export default function MetaTransform(Base) {
     }
 
     isKeyCachable(key) {
-      return key.endsWith?.(".meta") ?? false;
+      return (key.endsWith?.(".meta") || key.endsWith?.(".vfiles")) ?? false;
     }
   };
 }
