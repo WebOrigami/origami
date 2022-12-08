@@ -2,21 +2,16 @@ import { incrementCount } from "../core/measure.js";
 import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import * as parse from "../language/parse.js";
-import { additionsPrefix } from "./AdditionsTransform.js";
 import { getScope } from "./scopeUtilities.js";
 
-export const inheritableFormulaPrefix = "…";
-
 export default class Formula {
-  inheritable;
   key;
   expression;
   source;
 
-  constructor(key, expression, source, inheritable) {
+  constructor(key, expression, source) {
     this.key = key;
     this.expression = expression;
-    this.inheritable = inheritable;
     this.source = source;
   }
 
@@ -59,11 +54,7 @@ export default class Formula {
     // This check recapitulates some of what the parser does, although less
     // flexibly. It might be preferable to actually invoke the parser here.
     return (
-      typeof key === "string" &&
-      (key.includes("=") ||
-        key.startsWith("[") ||
-        key.startsWith(inheritableFormulaPrefix) ||
-        key.startsWith(additionsPrefix))
+      typeof key === "string" && (key.includes("=") || key.startsWith("["))
     );
   }
 
@@ -80,11 +71,10 @@ export default class Formula {
       }
       return null;
     }
-    const inheritable = source.startsWith(inheritableFormulaPrefix);
     if (value[0] === "=") {
       // Assignment
       const [_, left, expression] = value;
-      return new Formula(left, expression, source, inheritable);
+      return new Formula(left, expression, source);
     } else {
       return null;
     }

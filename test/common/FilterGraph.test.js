@@ -70,28 +70,6 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("can use a filter wildcard to extract a hidden key from the graph", async () => {
-    const graph = new (MetaTransform(ObjectGraph))({
-      "…index.html": "Index",
-      folder: {
-        sub: {},
-      },
-    });
-    const filter = {
-      "…index.html": true,
-    };
-    const fixture = new FilterGraph(graph, filter);
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
-      "index.html": "Index",
-      folder: {
-        "index.html": "Index",
-        sub: {
-          "index.html": "Index",
-        },
-      },
-    });
-  });
-
   it.skip("filters a graph, but not when it's in scope", async () => {
     const graph1 = new FilterGraph(
       {

@@ -1,7 +1,6 @@
 import CachedValuesTransform from "../common/CachedValuesTransform.js";
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
-import AdditionsTransform from "./AdditionsTransform.js";
 import FormulasTransform from "./FormulasTransform.js";
 import HiddenKeysTransform from "./HiddenKeysTransform.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
@@ -13,12 +12,8 @@ export default function MetaTransform(Base) {
     PathTransform(
       InheritScopeTransform(
         HiddenKeysTransform(
-          AdditionsTransform(
-            FormulasTransform(
-              FileLoadersTransform(
-                ImplicitModulesTransform(KeysTransform(Base))
-              )
-            )
+          FormulasTransform(
+            FileLoadersTransform(ImplicitModulesTransform(KeysTransform(Base)))
           )
         )
       )
