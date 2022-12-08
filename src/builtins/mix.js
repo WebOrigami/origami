@@ -5,7 +5,8 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import merge from "./merge.js";
 
 export default async function mix(...graphs) {
-  const scopedGraphs = graphs.map((graph) => {
+  const filtered = graphs.filter((graph) => graph !== undefined);
+  const scopedGraphs = filtered.map((graph) => {
     const otherGraphs = graphs.filter((g) => g !== graph);
     const scope = new Scope(...otherGraphs, this);
     let scopedGraph = ExplorableGraph.isExplorable(graph)
