@@ -12,6 +12,7 @@ const defaultLoaders = {
   ".meta": loadMetaGraph,
   ".md": loadText,
   ".ori": loadOrigamiTemplate,
+  ".template": loadOrigamiTemplate,
   ".txt": loadText,
   ".vfiles": loadMetaGraph,
   ".xhtml": loadText,
