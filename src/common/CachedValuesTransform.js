@@ -29,8 +29,8 @@ export default function CachedValuesTransform(Base) {
     }
 
     onChange(key) {
-      super.onChange?.(key);
       this[cacheKey] = new Map();
+      super.onChange?.(key);
     }
 
     async set(key, value) {

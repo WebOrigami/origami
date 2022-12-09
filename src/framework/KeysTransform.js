@@ -110,13 +110,13 @@ export default function KeysTransform(Base) {
     }
 
     onChange(key) {
-      super.onChange?.(key);
       this[addedKeys] = null;
       this[allKeys] = null;
       this[keysPromise] = null;
       this[newKeyQueue] = null;
       this[publicKeys] = null;
       this[realKeys] = null;
+      super.onChange?.(key);
     }
 
     async publicKeys() {

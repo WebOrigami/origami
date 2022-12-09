@@ -23,7 +23,7 @@ const hiddenFileNames = {
   ".DS_Store": true,
 };
 
-export default class FilesGraph {
+export default class FilesGraph extends EventTarget {
   /**
    * Create a new `FilesGraph` rooted at the given directory.
    *
@@ -31,6 +31,8 @@ export default class FilesGraph {
    * path, this is resolved relative to the current working directory.
    */
   constructor(dirname) {
+    super();
+
     this.dirname = path.resolve(process.cwd(), dirname);
 
     // Map of subfolder names to subfolder graphs.
@@ -141,6 +143,7 @@ export default class FilesGraph {
   onChange(key) {
     // Reset cached values.
     this.subfoldersMap = new Map();
+    this.dispatchEvent(new Event("change"));
   }
 
   get path() {

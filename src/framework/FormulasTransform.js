@@ -94,8 +94,8 @@ export default function FormulasTransform(Base) {
 
     // Reset memoized values when the underlying graph changes.
     onChange(key) {
-      super.onChange?.(key);
       this[formulasKey] = null;
+      super.onChange?.(key);
     }
   };
 }

@@ -30,10 +30,6 @@ export default class DefaultValues {
     return this.traverse(key);
   }
 
-  onChange(key) {
-    debugger;
-  }
-
   get parent() {
     return /** @type {any} */ (this.graph).parent;
   }
