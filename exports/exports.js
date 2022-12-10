@@ -40,7 +40,6 @@ export { default as mdHtml } from "../src/builtins/mdHtml.js";
 export { default as merge } from "../src/builtins/merge.js";
 export { default as mergeDeep } from "../src/builtins/mergeDeep.js";
 export { default as meta } from "../src/builtins/meta.js";
-export { default as mix } from "../src/builtins/mix.js";
 export { default as nulls } from "../src/builtins/nulls.js";
 export { default as ori } from "../src/builtins/ori.js";
 export { default as orit } from "../src/builtins/orit.js";
