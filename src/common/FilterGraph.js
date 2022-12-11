@@ -1,41 +1,38 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
-import { transformObject } from "../core/utilities.js";
-import Formula from "../framework/Formula.js";
-import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
-import KeysTransform from "../framework/KeysTransform.js";
-import MetaTransform from "../framework/MetaTransform.js";
 
 export default class FilterGraph {
   constructor(graph, filter) {
     this.graph = ExplorableGraph.from(graph);
-
-    filter = ExplorableGraph.from(filter);
-    if (!isFormulasTransformApplied(filter)) {
-      filter = transformObject(MetaTransform, filter);
-    }
-
-    this.filter = filter;
+    this.filter = ExplorableGraph.from(filter);
   }
 
   async *[Symbol.asyncIterator]() {
-    // Yield all real keys in filter that aren't formulas.
-    const filterKeys = await KeysTransform.realKeys(this.filter);
-    const filtered = filterKeys.filter((key) => !Formula.isFormula(key));
-    const keys = new Set(filtered);
-    yield* filtered;
+    const keys = new Set();
 
-    // Yield all keys in graph that aren't in filter's public keys
-    // but are matched by wildcards in the filter..
-    for await (const graphKey of this.graph) {
-      if (!keys.has(graphKey)) {
-        const matches =
-          (await ExplorableGraph.isKeyExplorable(this.graph, graphKey)) ||
-          (await this.filter.get(graphKey));
-        if (matches !== undefined) {
-          keys.add(graphKey);
-          yield graphKey;
-        }
+    // Yield all keys in the graph that can be found in the filter graph.
+    for await (const key of this.graph) {
+      const filterValue = await this.filter.get(key);
+      const filterValueExplorable = ExplorableGraph.isExplorable(filterValue);
+      // If the filter value is explorable, the corresponding value in the graph
+      // must be explorable too.
+      const match =
+        (!filterValueExplorable && filterValue) ||
+        (filterValueExplorable &&
+          (await ExplorableGraph.isKeyExplorable(this.graph, key)));
+      if (match && !keys.has(key)) {
+        keys.add(key);
+        yield key;
+      }
+    }
+
+    // Also yield any keys in the filter that are found in the graph. This lets
+    // the filter "pull" values from a graph that, e.g., is defined by a
+    // function without an explicit domain.
+    for await (const key of this.filter) {
+      const value = await this.graph.get(key);
+      if (value !== undefined && !keys.has(key)) {
+        keys.add(key);
+        yield key;
       }
     }
   }
@@ -47,14 +44,9 @@ export default class FilterGraph {
     if (!ExplorableGraph.isExplorable(value)) {
       if (filterValue === undefined) {
         value = undefined;
+      } else if (ExplorableGraph.isExplorable(filterValue)) {
+        value = undefined;
       }
-    } else if (filterValue === undefined) {
-      // It's possible that the filter inherits formulas that might apply to
-      // the value we're returning. Create an empty graph that inherits from
-      // this filter so that it picks up any inheritable formulas.
-      filterValue = new (MetaTransform(ObjectGraph))({});
-      filterValue.parent = this.filter;
-      value = Reflect.construct(this.constructor, [value, filterValue]);
     } else if (ExplorableGraph.isExplorable(filterValue)) {
       // Wrap value with corresponding filter.
       value = Reflect.construct(this.constructor, [value, filterValue]);

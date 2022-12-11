@@ -1,4 +1,8 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import MergeGraph from "./MergeGraph.js";
+
+const globstar = "**";
 
 export default class GlobGraph {
   constructor(globs) {
@@ -6,21 +10,18 @@ export default class GlobGraph {
   }
 
   async *[Symbol.asyncIterator]() {
-    yield this.globs;
+    yield* this.globs;
   }
 
   async get(key) {
     if (typeof key !== "string") {
       return undefined;
     }
-
-    for await (const glob of this.globs) {
-      if (matchGlob(glob, key)) {
-        return await this.globs.get(glob);
-      }
+    let value = await matchGlobs(this.globs, key);
+    if (ExplorableGraph.isExplorable(value)) {
+      value = Reflect.construct(this.constructor, [value]);
     }
-
-    return false;
+    return value;
   }
 }
 
@@ -34,4 +35,31 @@ function matchGlob(glob, text) {
     .replace(/\?/g, ".");
   const regex = new RegExp(`^${regexText}$`);
   return regex.test(text);
+}
+
+async function matchGlobs(globs, text) {
+  let value;
+  for await (const glob of globs) {
+    if (typeof glob !== "string") {
+      continue;
+    } else if (glob !== globstar && matchGlob(glob, text)) {
+      value = await globs.get(glob);
+      if (value !== undefined) {
+        break;
+      }
+    }
+  }
+
+  const globstarGlobs = await globs.get(globstar);
+  if (globstarGlobs) {
+    const globstarGraph = new ObjectGraph({ [globstar]: globstarGlobs });
+    if (value === undefined) {
+      const globstarValue = await matchGlobs(globstarGlobs, text);
+      value = globstarValue !== undefined ? globstarValue : globstarGraph;
+    } else if (ExplorableGraph.isExplorable(value)) {
+      value = new MergeGraph(value, globstarGraph);
+    }
+  }
+
+  return value;
 }
