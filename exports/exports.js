@@ -19,6 +19,7 @@ export { default as filter } from "../src/builtins/filter.js";
 export { default as first } from "../src/builtins/first.js";
 export { default as flowSvg } from "../src/builtins/flowSvg.js";
 export { default as front } from "../src/builtins/front.js";
+export { default as globs } from "../src/builtins/globs.js";
 export { default as graph } from "../src/builtins/graph.js";
 export { default as graphVirtual } from "../src/builtins/graphVirtual.js";
 export { default as help } from "../src/builtins/help.js";
@@ -85,6 +86,7 @@ export { default as CommandModulesTransform } from "../src/common/CommandModules
 export { default as DefaultValues } from "../src/common/DefaultValues.js";
 export { default as FileLoadersTransform } from "../src/common/FileLoadersTransform.js";
 export { default as FilterGraph } from "../src/common/FilterGraph.js";
+export { default as GlobGraph } from "../src/common/GlobGraph.js";
 export { default as ImplicitModulesTransform } from "../src/common/ImplicitModulesTransform.js";
 export { default as MapExtensionsGraph } from "../src/common/MapExtensionsGraph.js";
 export { default as MergeDeepGraph } from "../src/common/MergeDeepGraph.js";
