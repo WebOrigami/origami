@@ -356,6 +356,15 @@ describe("parse", () => {
 
   it("substitution", () => {
     assertParse(substitution("{{foo}}"), [ops.scope, "foo"]);
+    assertParse(
+      substitution(`{{fn =\`
+        Block contents
+      \` }}`),
+      [
+        [ops.scope, "fn"],
+        [ops.lambda, "        Block contents\n"],
+      ]
+    );
   });
 
   it("templateDocument", () => {
@@ -421,15 +430,6 @@ describe("parse", () => {
         [ops.lambda, [ops.concat, [ops.scope, "name"]]],
       ],
     ]);
-    //     assertParse(
-    //       templateLiteral(`{{fn =\`
-    // Block contents
-    // \` }}`),
-    //       [
-    //         [ops.scope, "fn"],
-    //         [ops.lambda, "Block contents\n"],
-    //       ]
-    //     );
   });
 
   it("thisReference", () => {

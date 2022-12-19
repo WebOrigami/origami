@@ -746,18 +746,15 @@ function templateTextParser(allowBackticks) {
     // assertions, so we match this by hand.
     let i;
     let value = "";
-    let blockMarkerFollows = false;
-    let absorbSpaceBeforeBlockMarker = false;
+    let absorbSpaceOnFirstLine = true;
     let lastNewlinePos = -1;
+    let absorbSpaceOnLastLine = true;
     for (i = 0; i < text.length; i++) {
       const char = text[i];
       if (
         (char === "`" && !allowBackticks) ||
         (char === "{" && text[i + 1] === "{")
       ) {
-        if (text[i + 2] === "#" || text[i + 2] === "/") {
-          blockMarkerFollows = true;
-        }
         break;
       } else if (char === "\\") {
         i++;
@@ -766,25 +763,30 @@ function templateTextParser(allowBackticks) {
         }
       } else {
         if (char === "\n") {
-          absorbSpaceBeforeBlockMarker = true;
+          if (absorbSpaceOnFirstLine) {
+            // Ignore the whitespace we encountered before the first newline,
+            // as well as this first newline character.
+            value = "";
+            absorbSpaceOnFirstLine = false;
+            continue;
+          }
+          absorbSpaceOnLastLine = true;
           lastNewlinePos = i;
         } else if (!(char === " " || char === "\t")) {
-          absorbSpaceBeforeBlockMarker = false;
+          // Non-whitespace character
+          absorbSpaceOnFirstLine = false;
+          absorbSpaceOnLastLine = false;
         }
         value += char;
       }
     }
 
-    // If the text is followed by a {{# or {{/ block marker, then back up to the
-    // start of the line. This will leave it in place for the block parser to
-    // absorb the whitespace before the block marker.
-    if (blockMarkerFollows && absorbSpaceBeforeBlockMarker) {
+    if (absorbSpaceOnLastLine && lastNewlinePos >= 0) {
       // How much whitespace do we need to remove from the value?
       const whitespaceToRemove = i - lastNewlinePos - 1;
       if (whitespaceToRemove > 0) {
         value = value.slice(0, -whitespaceToRemove);
       }
-      i = lastNewlinePos + 1;
     }
 
     const rest = text.slice(i);
