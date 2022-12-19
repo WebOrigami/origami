@@ -56,6 +56,7 @@ export function assignment(text) {
   let { 2: left, 6: right } = parsed.value;
 
   // Special case: RHS is an extension
+  // `index.html=.ori` is shorthand for `index.html = this().ori`
   if (
     right instanceof Array &&
     right.length === 2 &&
