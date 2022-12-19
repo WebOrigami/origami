@@ -84,6 +84,14 @@ describe("parse", () => {
     ]);
   });
 
+  it("assignment with extension on right-hand side", () => {
+    assertParse(assignment("foo.html = .ori"), [
+      "=",
+      "foo.html",
+      [[ops.scope, [ops.thisKey]]],
+    ]);
+  });
+
   it("colonCall", () => {
     assertParse(colonCall("about:blank"), [
       [ops.scope, "about"],

@@ -53,7 +53,18 @@ export function assignment(text) {
   if (!parsed) {
     return null;
   }
-  const { 2: left, 6: right } = parsed.value;
+  let { 2: left, 6: right } = parsed.value;
+
+  // Special case: RHS is an extension
+  if (
+    right instanceof Array &&
+    right.length === 2 &&
+    right[0] === ops.scope &&
+    right[1].startsWith?.(".")
+  ) {
+    right = [[ops.scope, [ops.thisKey]]];
+  }
+
   const value = ["=", left, right];
   return {
     value,
