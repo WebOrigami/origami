@@ -23,8 +23,7 @@ import {
   slashPath,
   spacePathCall,
   spaceUrl,
-  substitutionBlock,
-  substitutionInline,
+  substitution,
   templateDocument,
   templateLiteral,
   thisReference,
@@ -355,25 +354,8 @@ describe("parse", () => {
     ]);
   });
 
-  it("substitutionBlock", () => {
-    assertParse(
-      substitutionBlock(`{{#fn}}
-Block contents
-{{/fn}}`),
-      [
-        [ops.scope, "fn"],
-        [ops.lambda, "Block contents\n"],
-      ]
-    );
-    assertParse(substitutionBlock(`{{# fn 'a'}}Block contents{{/end}}`), [
-      [ops.scope, "fn"],
-      "a",
-      [ops.lambda, "Block contents"],
-    ]);
-  });
-
-  it("substitutionInline", () => {
-    assertParse(substitutionInline("{{foo}}"), [ops.scope, "foo"]);
+  it("substitution", () => {
+    assertParse(substitution("{{foo}}"), [ops.scope, "foo"]);
   });
 
   it("templateDocument", () => {
@@ -381,22 +363,22 @@ Block contents
       templateDocument("Documents can contain ` backticks"),
       "Documents can contain ` backticks"
     );
-    assertParse(
-      templateDocument(`Start
-  {{#fn}}
-  Block contents
-  {{/fn}}
-End`),
-      [
-        ops.concat,
-        "Start\n",
-        [
-          [ops.scope, "fn"],
-          [ops.lambda, "  Block contents\n"],
-        ],
-        "End",
-      ]
-    );
+    //     assertParse(
+    //       templateDocument(`Start
+    //   {{#fn}}
+    //   Block contents
+    //   {{/fn}}
+    // End`),
+    //       [
+    //         ops.concat,
+    //         "Start\n",
+    //         [
+    //           [ops.scope, "fn"],
+    //           [ops.lambda, "  Block contents\n"],
+    //         ],
+    //         "End",
+    //       ]
+    //     );
   });
 
   it("templateLiteral", () => {
@@ -439,6 +421,15 @@ End`),
         [ops.lambda, [ops.concat, [ops.scope, "name"]]],
       ],
     ]);
+    //     assertParse(
+    //       templateLiteral(`{{fn =\`
+    // Block contents
+    // \` }}`),
+    //       [
+    //         [ops.scope, "fn"],
+    //         [ops.lambda, "Block contents\n"],
+    //       ]
+    //     );
   });
 
   it("thisReference", () => {

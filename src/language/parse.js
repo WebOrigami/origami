@@ -661,40 +661,8 @@ export function spaceUrlPath(text) {
   };
 }
 
-// Parse a block or inline substitution in a template.
+// Parse a substitution like {{foo}} in a template.
 export function substitution(text) {
-  return any(substitutionInline, substitutionBlock)(text);
-}
-
-// Parse a substitution block.
-export function substitutionBlock(text) {
-  const parsed = sequence(
-    terminal(/^[ \t]*\{\{#\s*/),
-    functionCallTarget,
-    optional(implicitParensArgs),
-    terminal(/^\s*\}\}(?:[ \t]*\r?\n)?/),
-    templateDocument,
-    terminal(/^[ \t]*\{\{\/[^\}]*\}\}(?:[ \t]*\r?\n)?/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: fn, 2: fnArgs, 4: lastFnArg } = parsed.value;
-  const value = [fn];
-  if (fnArgs) {
-    value.push(...fnArgs);
-  }
-  if (lastFnArg) {
-    value.push([ops.lambda, lastFnArg]);
-  }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse an inline substitution like {{foo}} found in a template.
-export function substitutionInline(text) {
   const parsed = sequence(
     terminal(/^\{\{/),
     optionalWhitespace,
