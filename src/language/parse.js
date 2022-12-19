@@ -720,16 +720,40 @@ function templateParser(allowBackticks) {
     if (!parsed) {
       return null;
     }
+
     // Drop empty/null strings.
     const filtered = parsed.value.filter((item) => item);
+
+    // Trim whitespace from the beginning and end of string items.
+    const trimmed = filtered.map((item) => {
+      if (typeof item === "string") {
+        // If the first line is only spaces and tabs, drop that line.
+        const specialCaseRegex1 = /^(?:[ \t]*\n)([\s\S]+)$/;
+        const match1 = specialCaseRegex1.exec(item);
+        if (match1) {
+          item = match1[1];
+        }
+
+        // If the last line is only spaces and tabs, keep the newline but drop
+        // the spaces and tabs.
+        const specialCaseRegex2 = /^([\s\S]+?\n)(?:[ \t]+)$/;
+        const match2 = specialCaseRegex2.exec(item);
+        if (match2) {
+          item = match2[1];
+        }
+      }
+      return item;
+    });
+
     // Return a concatenation of the values. If there are no values, return the
     // empty string. If there's just one string, return that directly.
     const value =
-      filtered.length === 0
+      trimmed.length === 0
         ? ""
-        : filtered.length === 1 && typeof filtered[0] === "string"
-        ? filtered[0]
-        : [ops.concat, ...filtered];
+        : trimmed.length === 1 && typeof trimmed[0] === "string"
+        ? trimmed[0]
+        : [ops.concat, ...trimmed];
+
     return {
       value,
       rest: parsed.rest,
@@ -746,9 +770,6 @@ function templateTextParser(allowBackticks) {
     // assertions, so we match this by hand.
     let i;
     let value = "";
-    let absorbSpaceOnFirstLine = true;
-    let lastNewlinePos = -1;
-    let absorbSpaceOnLastLine = true;
     for (i = 0; i < text.length; i++) {
       const char = text[i];
       if (
@@ -762,30 +783,7 @@ function templateTextParser(allowBackticks) {
           value += text[i];
         }
       } else {
-        if (char === "\n") {
-          if (absorbSpaceOnFirstLine) {
-            // Ignore the whitespace we encountered before the first newline,
-            // as well as this first newline character.
-            value = "";
-            absorbSpaceOnFirstLine = false;
-            continue;
-          }
-          absorbSpaceOnLastLine = true;
-          lastNewlinePos = i;
-        } else if (!(char === " " || char === "\t")) {
-          // Non-whitespace character
-          absorbSpaceOnFirstLine = false;
-          absorbSpaceOnLastLine = false;
-        }
         value += char;
-      }
-    }
-
-    if (absorbSpaceOnLastLine && lastNewlinePos >= 0) {
-      // How much whitespace do we need to remove from the value?
-      const whitespaceToRemove = i - lastNewlinePos - 1;
-      if (whitespaceToRemove > 0) {
-        value = value.slice(0, -whitespaceToRemove);
       }
     }
 

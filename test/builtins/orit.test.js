@@ -12,7 +12,7 @@ const fixturesGraph = new (ImplicitModulesTransform(FilesGraph))(
 );
 
 describe("orit (apply Origami template)", () => {
-  it.only("substitutes values from the supplied graph", async () => {
+  it("substitutes values from the supplied graph", async () => {
     const template = await fixturesGraph.get("inline.ori");
     const result = await orit.call(fixturesGraph, template);
     const normalized = result?.toString().replace(/\r\n/g, "\n");
