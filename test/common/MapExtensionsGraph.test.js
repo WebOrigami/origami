@@ -69,6 +69,23 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
+  it("extension can include a period", async () => {
+    const fixture = new MapExtensionsGraph(
+      {
+        "file1.txt": "will be mapped",
+        file2: "won't be mapped",
+      },
+      (s) => s.toUpperCase(),
+      {
+        extension: ".txt → .upper",
+        extensionMatchesOnly: true,
+      }
+    );
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      "file1.upper": "WILL BE MAPPED",
+    });
+  });
+
   it("applies a mapping function to convert extensions in the middle of a path", async () => {
     const fixture = new MapExtensionsGraph(
       {

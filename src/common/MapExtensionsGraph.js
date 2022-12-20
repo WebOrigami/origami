@@ -82,7 +82,7 @@ function parseExtension(specifier) {
   // foo
   // foo→bar
   // foo->bar
-  const extensionRegex = /^(?<inner>.*)(?:→|->)(?<outer>.+)$/;
+  const extensionRegex = /^\.?(?<inner>\S*)(?:\s*(→|->)\s*)\.?(?<outer>\S+)$/;
   let innerExtension;
   let outerExtension;
   const match = lowercase.match(extensionRegex);
