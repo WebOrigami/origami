@@ -141,8 +141,8 @@ async function processInput(input, scope) {
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
     // common scenario for this would be an Origami template like foo.ori being
-    // called as a block: {{#foo.ori}}...{{/foo.ori}}. The inner contents of the
-    // block will be a lambda, i.e., a function that we want to invoke.
+    // called as a block: {{foo.ori =`Hello, {{name}}.`}}. The inner contents of
+    // the block will be a lambda, i.e., a function that we want to invoke.
     input = await input.call(scope);
   }
 

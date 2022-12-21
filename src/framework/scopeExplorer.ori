@@ -130,20 +130,18 @@
   </head>
   <body>
     <nav>
+    {{map @input, =`
       <ul>
-        {{#map @input }}
-        <ul>
-          {{#map @value}}
-          <li>
-            <a href="#path={{./text}}">{{./text}}</a>
-            {{#if ./formula }}
-            <span class="formula">= {{./formula}}</span>
-            {{/if}}
-          </li>
-          {{/map}}
-        </ul>
-        {{/map}}
+      {{map @value, =`
+        <li>
+          <a href="#path={{./text}}">{{./text}}</a>
+          {{if ./formula, =`
+          <span class="formula">= {{./formula}}</span>
+          `}}
+        </li>
+      `}}
       </ul>
+    `}}
     </nav>
     <iframe id="frame" name="frame"></iframe>
   </body>
