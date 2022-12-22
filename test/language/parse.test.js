@@ -356,15 +356,6 @@ describe("parse", () => {
 
   it("substitution", () => {
     assertParse(substitution("{{foo}}"), [ops.scope, "foo"]);
-    assertParse(
-      substitution(`{{fn =\`
-        Block contents
-      \` }}`),
-      [
-        [ops.scope, "fn"],
-        [ops.lambda, "        Block contents\n"],
-      ]
-    );
   });
 
   it("templateDocument", () => {
@@ -372,30 +363,68 @@ describe("parse", () => {
       templateDocument("Documents can contain ` backticks"),
       "Documents can contain ` backticks"
     );
-    // assertParse(
-    //   templateDocument(`Start
-    //   {{fn =\`
-    //     Block contents
-    //   \`}}
-    // End`),
-    //   [
-    //     ops.concat,
-    //     "Start\n",
-    //     [
-    //       [ops.scope, "fn"],
-    //       [ops.lambda, "    Block contents\n"],
-    //     ],
-    //     "End",
-    //   ]
-    // );
-    //     assertParse(
-    //       templateDocument(`
-    // \`\`\`md
-    // {{ sample.md }}
-    // \`\`\`
-    // `),
-    //       [ops.concat, "\n```md\n", [ops.scope, "sample.md"], "\n```\n"]
-    //     );
+
+    assertParse(
+      templateDocument(`{{fn =\`
+        Hello
+      \` }}`),
+      [
+        ops.concat,
+        [
+          [ops.scope, "fn"],
+          [ops.lambda, "        Hello\n"],
+        ],
+      ]
+    );
+
+    assertParse(
+      templateDocument(`Start
+  {{fn =\`
+    Block contents
+  \`}}
+End`),
+      [
+        ops.concat,
+        "Start\n",
+        [
+          [ops.scope, "fn"],
+          [ops.lambda, "    Block contents\n"],
+        ],
+        "End",
+      ]
+    );
+
+    assertParse(
+      templateDocument(`
+\`\`\`md
+{{ sample.md }}
+\`\`\`
+`),
+      [ops.concat, "\n```md\n", [ops.scope, "sample.md"], "\n```\n"]
+    );
+
+    assertParse(
+      templateDocument(`
+  <ul>
+  {{ map names, =\`
+    <li>{{ @value }}</li>
+  \`}}
+  </ul>
+`),
+      [
+        ops.concat,
+        "\n  <ul>\n",
+        [
+          [ops.scope, "map"],
+          [ops.scope, "names"],
+          [
+            ops.lambda,
+            [ops.concat, "    <li>", [ops.scope, "@value"], "</li>\n"],
+          ],
+        ],
+        "  </ul>\n",
+      ]
+    );
   });
 
   it("templateLiteral", () => {

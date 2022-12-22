@@ -683,7 +683,8 @@ export function substitution(text) {
 // Parse a template document.
 export function templateDocument(text) {
   const allowBackticks = true;
-  return templateParser(allowBackticks)(text);
+  const trimmed = trimTemplateWhitespace(text);
+  return templateParser(allowBackticks)(trimmed);
 }
 
 // Parse a backtick-quoted template literal.
@@ -724,35 +725,14 @@ function templateParser(allowBackticks) {
     // Drop empty/null strings.
     const filtered = parsed.value.filter((item) => item);
 
-    // Trim whitespace from the beginning and end of string items.
-    const trimmed = filtered.map((item) => {
-      if (typeof item === "string") {
-        // If the first line is only spaces and tabs, drop that line.
-        const specialCaseRegex1 = /^(?:[ \t]*\n)([\s\S]+)$/;
-        const match1 = specialCaseRegex1.exec(item);
-        if (match1) {
-          item = match1[1];
-        }
-
-        // If the last line is only spaces and tabs, keep the newline but drop
-        // the spaces and tabs.
-        const specialCaseRegex2 = /^([\s\S]+?\n)(?:[ \t]+)$/;
-        const match2 = specialCaseRegex2.exec(item);
-        if (match2) {
-          item = match2[1];
-        }
-      }
-      return item;
-    });
-
     // Return a concatenation of the values. If there are no values, return the
     // empty string. If there's just one string, return that directly.
     const value =
-      trimmed.length === 0
+      filtered.length === 0
         ? ""
-        : trimmed.length === 1 && typeof trimmed[0] === "string"
-        ? trimmed[0]
-        : [ops.concat, ...trimmed];
+        : filtered.length === 1 && typeof filtered[0] === "string"
+        ? filtered[0]
+        : [ops.concat, ...filtered];
 
     return {
       value,
@@ -803,6 +783,42 @@ export function thisReference(text) {
     value,
     rest: parsed.rest,
   };
+}
+
+// Trim the whitespace around and in substitution blocks in a template. There's
+// no explicit syntax for blocks, but we infer them as any place where a
+// substitution itself contains a multi-line template literal.
+//
+// Example:
+//
+//     {{ if `
+//       true text
+//     `, `
+//       false text
+//     ` }}
+//
+// Case 1: a substitution that starts the text or starts a line (there's only
+// whitespace before the `{{`), and has the line end with the start of a
+// template literal (there's only whitespace after the backtick) marks the start
+// of a block.
+//
+// Case 2: a line in the middle that ends one template literal and starts
+// another is an internal break in the block. Edge case: three backticks in a
+// row, like ```, are common in markdown and are not treated as a break.
+//
+// Case 3: a line that ends a template literal and ends with `}}` or ends the
+// text marks the end of the block.
+//
+// In all three cases, we trim spaces and tabs from the start and end of the
+// line. In case 1, we also remove the preceding newline.
+function trimTemplateWhitespace(text) {
+  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
+  const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
+  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
+  const trimBlockStarts = text.replace(regex1, "$1$2");
+  const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
+  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
+  return trimBlockEnds;
 }
 
 // Parse a URL protocol
