@@ -150,35 +150,22 @@ describe("FilesGraph", () => {
     assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
 
-  it.skip("can watch its folder for changes", async () => {
+  it.only("can watch its folder for changes", async () => {
     await createTempDirectory();
-    class Fixture extends FilesGraph {
-      hook;
-
-      onChange(key) {
-        assert.equal(key, "foo.txt");
-        this.hook?.(key);
-      }
-    }
-    const tempFiles = new Fixture(tempDirectory);
-    await tempFiles.watch();
-    const timeoutPromise = new Promise((resolve) => {
-      setTimeout(() => resolve(false), 2000);
-    });
-    const changePromise = new Promise(async (resolve) => {
-      tempFiles.hook = resolve;
+    const tempFiles = new FilesGraph(tempDirectory);
+    const changedFileName = await new Promise(async (resolve) => {
+      tempFiles.addEventListener("change", (event) => {
+        resolve(event.options.key);
+      });
       await tempFiles.set(
         "foo.txt",
         "This file is left over from testing and can be removed."
       );
     });
-    const changedFileName = await Promise.race([timeoutPromise, changePromise]);
-    // const changedFileName = await changePromise;
-    await tempFiles.unwatch();
     await removeTempDirectory();
     assert.equal(changedFileName, "foo.txt");
   });
-});
+}).timeout(2000);
 
 async function createTempDirectory() {
   await fs.mkdir(tempDirectory, { recursive: true });

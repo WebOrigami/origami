@@ -33,7 +33,7 @@ export default function FileLoadersTransform(Base) {
         const extension = extname(key).toLowerCase();
         const loader = this.loaders[extension];
         if (loader) {
-          value = await loader.call(this, value);
+          value = await loader.call(this, value, key);
         }
       }
       return value;
@@ -44,7 +44,7 @@ export default function FileLoadersTransform(Base) {
 /**
  * @this {Explorable}
  */
-async function loadMetaGraph(buffer) {
+async function loadMetaGraph(buffer, key) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
   const scope = this;
@@ -60,6 +60,13 @@ async function loadMetaGraph(buffer) {
     return meta;
   }
   /** @type {any} */ (textWithGraph).toGraph = toGraph;
+
+  this.addEventListener?.("change", (event) => {
+    if (event.options.key === key) {
+      console.log("changed");
+    }
+  });
+
   return textWithGraph;
 }
 

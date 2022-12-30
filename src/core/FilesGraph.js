@@ -1,8 +1,9 @@
-import { watch } from "chokidar";
+// import { watch } from "chokidar";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
+import Watcher from "watcher";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
@@ -11,6 +12,7 @@ import {
   sortNatural,
   toSerializable,
 } from "../core/utilities.js";
+import GraphEvent from "./GraphEvent.js";
 
 // File system watcher
 let watcher;
@@ -40,6 +42,13 @@ export default class FilesGraph extends EventTarget {
 
     // Don't watch unless explicitly requested.
     this.watching = false;
+  }
+
+  addEventListener(type, listener) {
+    super.addEventListener(type, listener);
+    if (type === "change") {
+      this.watch();
+    }
   }
 
   /**
@@ -93,9 +102,9 @@ export default class FilesGraph extends EventTarget {
         // Haven't seen this subfolder before.
         subfolder = Reflect.construct(this.constructor, [objPath]);
         // If we're watching the current directory, watch the subfolder too.
-        if (this.watching) {
-          await subfolder.watch();
-        }
+        // if (this.watching) {
+        //   await subfolder.watch();
+        // }
         // Remember this subfolder for later requests.
         this.subfoldersMap.set(key, subfolder);
       }
@@ -143,7 +152,7 @@ export default class FilesGraph extends EventTarget {
   onChange(key) {
     // Reset cached values.
     this.subfoldersMap = new Map();
-    this.dispatchEvent(new Event("change"));
+    this.dispatchEvent(new GraphEvent("change", { key }));
   }
 
   get path() {
@@ -194,23 +203,25 @@ export default class FilesGraph extends EventTarget {
     if (!this.watching) {
       return;
     }
+
+    this.watcher?.close();
     this.watching = false;
 
-    // Remove this FilesGraph instance from those watching this directory.
-    let graphRefs = pathGraphMap.get(this.dirname);
-    graphRefs = graphRefs.filter((graphRef) => graphRef.deref() !== this);
-    if (graphRefs.length === 0) {
-      pathGraphMap.delete(this.dirname);
-    } else {
-      pathGraphMap.set(this.dirname, graphRefs);
-    }
+    // // Remove this FilesGraph instance from those watching this directory.
+    // let graphRefs = pathGraphMap.get(this.dirname);
+    // graphRefs = graphRefs.filter((graphRef) => graphRef.deref() !== this);
+    // if (graphRefs.length === 0) {
+    //   pathGraphMap.delete(this.dirname);
+    // } else {
+    //   pathGraphMap.set(this.dirname, graphRefs);
+    // }
 
-    watcher.unwatch(this.dirname);
+    // watcher.unwatch(this.dirname);
 
-    // If this is the last folder being watched, stop the watcher.
-    if (pathGraphMap.size === 0) {
-      await watcherStop();
-    }
+    // // If this is the last folder being watched, stop the watcher.
+    // if (pathGraphMap.size === 0) {
+    //   await watcherStop();
+    // }
   }
 
   // Turn on watching for the directory.
@@ -220,13 +231,17 @@ export default class FilesGraph extends EventTarget {
     }
     this.watching = true;
 
-    if (!watcher) {
-      watcherStart();
-    }
-
     // Ensure the directory exists.
     await fs.mkdir(this.dirname, { recursive: true });
-    watcher.add(this.dirname);
+
+    this.watcher = new Watcher(this.dirname, {
+      ignoreInitial: true,
+      persistent: false,
+    });
+    this.watcher.on("all", (event, filePath) => {
+      const key = path.basename(filePath);
+      this.onChange(key);
+    });
 
     // Add to the list of FilesGraph instances watching this directory.
     const graphRefs = pathGraphMap.get(this.dirname) ?? [];
