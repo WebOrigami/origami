@@ -18,5 +18,5 @@ export default async function config(key) {
   return key === undefined ? config : config.get(key);
 }
 
-config.usage = `@\tThe default graph used by the ori CLI`;
+config.usage = `@\tThe default built-ins used by the ori CLI`;
 config.documentation = "https://graphorigami.org/cli/builtins.html#@";

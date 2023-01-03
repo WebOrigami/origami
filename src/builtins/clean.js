@@ -27,5 +27,5 @@ export default async function clean(variant) {
   await graph.set(".ori.clean.yaml", undefined);
 }
 
-clean.usage = `clean <graph>\tRemoves files created by the make command [experimental]`;
+clean.usage = `clean <graph>\tRemoves files created by the make command`;
 clean.documentation = "https://graphorigami.org/cli/builtins.html#clean";

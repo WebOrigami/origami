@@ -6,5 +6,5 @@ export default async function cacheCommand(graph, cache, filter) {
   return result;
 }
 
-cacheCommand.usage = `cache <cache>, <...graphs>\tCaches graph values in a storable cache`;
+cacheCommand.usage = `cache graph, [cache], [filter]\tCaches graph values in a storable cache`;
 cacheCommand.documentation = "https://graphorigami.org/cli/builtins.html#cache";

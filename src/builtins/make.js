@@ -47,5 +47,5 @@ export default async function make(variant) {
   // const plainGraphEnd = await ExplorableGraph.plain(graph);
 }
 
-make.usage = `make\tMake real versions of any virtual values [experimental]`;
+make.usage = `make\tMake real versions of any virtual values`;
 make.documentation = "https://graphorigami.org/cli/builtins.html#make";
