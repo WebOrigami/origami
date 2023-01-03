@@ -47,9 +47,9 @@ export default async function watch(variant, fn) {
 
 async function evaluateGraph(scope, fn) {
   const result = await fn.call(scope);
-  const graph = ExplorableGraph.from(result);
+  const graph = result ? ExplorableGraph.from(result) : undefined;
   if (!graph) {
-    throw `watch: Expression did not return a graph`;
+    throw new Error(`watch: Expression did not return a graph`);
   }
   return graph;
 }
