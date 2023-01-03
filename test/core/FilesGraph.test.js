@@ -150,7 +150,7 @@ describe("FilesGraph", () => {
     assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
 
-  it.only("can watch its folder for changes", async () => {
+  it("can watch its folder for changes", async () => {
     await createTempDirectory();
     const tempFiles = new FilesGraph(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
