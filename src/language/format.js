@@ -21,9 +21,6 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.thisKey:
         return formatThisKey(code);
 
-      case ops.variable:
-        return formatVariableReference(code);
-
       case "=":
         return formatAssignment(code);
 
@@ -46,13 +43,7 @@ function formatArguments(args) {
 
 function formatAssignment(code) {
   const [_, declaration, expression] = code;
-  return `${formatDeclaration(declaration)} = ${format(expression)}`;
-}
-
-function formatDeclaration(declaration) {
-  return declaration instanceof Array && declaration[0] === ops.variable
-    ? formatVariablePattern(declaration)
-    : declaration;
+  return `${declaration} = ${format(expression)}`;
 }
 
 function formatIndirectFunctionCall(code) {
@@ -98,14 +89,4 @@ function formatTemplate(code) {
 
 function formatThisKey(code) {
   return "this";
-}
-
-function formatVariablePattern(code) {
-  const [_, name, extension] = code;
-  return `[${name}]${extension}`;
-}
-
-function formatVariableReference(code) {
-  const [_, name, extension] = code;
-  return `{{${name}}}${extension}`;
 }

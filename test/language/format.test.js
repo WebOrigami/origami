@@ -49,18 +49,8 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code), "this");
   });
 
-  it("variable reference", () => {
-    const code = [ops.variable, "name", ".json"];
-    assert.equal(format(code), "{{name}}.json");
-  });
-
   it("assignment", () => {
     const code = ["=", "foo", [ops.scope, "bar"]];
     assert.equal(format(code), "foo = bar");
-  });
-
-  it("assignment to variable pattern", () => {
-    const code = ["=", [ops.variable, "x", ".html"], [ops.scope, "bar"]];
-    assert.equal(format(code), "[x].html = bar");
   });
 });
