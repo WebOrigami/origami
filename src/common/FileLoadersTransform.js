@@ -61,12 +61,6 @@ async function loadMetaGraph(buffer, key) {
   }
   /** @type {any} */ (textWithGraph).toGraph = toGraph;
 
-  this.addEventListener?.("change", (event) => {
-    if (event.options.key === key) {
-      console.log("changed");
-    }
-  });
-
   return textWithGraph;
 }
 

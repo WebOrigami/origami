@@ -1,4 +1,3 @@
-// import { watch } from "chokidar";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -13,9 +12,6 @@ import {
   toSerializable,
 } from "../core/utilities.js";
 import GraphEvent from "./GraphEvent.js";
-
-// File system watcher
-let watcher;
 
 // Map of paths to graphs used by watcher
 const pathGraphMap = new Map();
@@ -206,22 +202,6 @@ export default class FilesGraph extends EventTarget {
 
     this.watcher?.close();
     this.watching = false;
-
-    // // Remove this FilesGraph instance from those watching this directory.
-    // let graphRefs = pathGraphMap.get(this.dirname);
-    // graphRefs = graphRefs.filter((graphRef) => graphRef.deref() !== this);
-    // if (graphRefs.length === 0) {
-    //   pathGraphMap.delete(this.dirname);
-    // } else {
-    //   pathGraphMap.set(this.dirname, graphRefs);
-    // }
-
-    // watcher.unwatch(this.dirname);
-
-    // // If this is the last folder being watched, stop the watcher.
-    // if (pathGraphMap.size === 0) {
-    //   await watcherStop();
-    // }
   }
 
   // Turn on watching for the directory.
@@ -332,35 +312,4 @@ async function writeFiles(sourceGraph, targetGraph) {
   }
 
   return Promise.all(promises);
-}
-
-async function watcherStart() {
-  await watcherStop(); // Stop any existing watcher.
-  watcher = watch([], { ignoreInitial: true });
-  watcher.on("all", async (eventType, filePath) => {
-    const fileDirname = path.dirname(filePath);
-    const fileName = path.basename(filePath);
-    // Invoke onChange for graphs that contain the file path.
-    for (const [dirname, graphRefs] of pathGraphMap) {
-      // Is this directory the container of the changed file?
-      if (filePath === dirname || fileDirname === dirname) {
-        // Yes. Does anyone still have a reference to this graph?
-        for (const graphRef of graphRefs) {
-          const graph = graphRef.deref();
-          if (graph !== undefined) {
-            // Yes, let the graph know the file with that name has changed.
-            graph.onChange(fileName);
-          }
-        }
-      }
-      // TODO: If no one has a reference to the graph, remove it from the map.
-    }
-  });
-}
-
-async function watcherStop() {
-  if (watcher) {
-    await watcher.close();
-    watcher = null;
-  }
 }
