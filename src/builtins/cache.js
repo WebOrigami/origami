@@ -1,8 +1,16 @@
 import Cache from "../common/Cache.js";
 
+/**
+ * Caches graph values in a storable cache.
+ *
+ * @param {GraphVariant} graph
+ * @param {GraphVariant} [cache]
+ * @param {GraphVariant} [filter]
+ * @this {Explorable}
+ */
 export default async function cacheCommand(graph, cache, filter) {
   const result = new Cache(graph, cache, filter);
-  result.scope = this;
+  /** @type {any} */ (result).scope = this;
   return result;
 }
 

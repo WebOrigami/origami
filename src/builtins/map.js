@@ -35,6 +35,7 @@ export default function map(variant, mapFn, options = {}) {
 
   const extendedMapFn = extendMapFn(fn, options);
 
+  /** @type {any} */
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   const mappedGraph = new (InheritScopeTransform(GraphClass))(

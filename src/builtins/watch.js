@@ -14,6 +14,7 @@ export default async function watch(variant, fn) {
   }
 
   // Watch the indicated graph.
+  /** @type {any} */
   const container = ExplorableGraph.from(variant);
   await /** @type {any} */ (container).watch?.();
 

@@ -12,7 +12,6 @@ import * as parse from "../language/parse.js";
  *
  * @this {Explorable}
  * @param {string} expression
- * @param {string} [path]
  * @returns {Promise<string | String | Buffer | undefined>}
  */
 export default async function ori(expression) {

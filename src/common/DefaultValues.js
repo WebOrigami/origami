@@ -48,6 +48,7 @@ export default class DefaultValues {
 
   async traverse(...keys) {
     // Start our traversal at the root of the graph.
+    /** @type {any} */
     let value = this.graph;
 
     // Process each key in turn.

@@ -1,6 +1,13 @@
 import Scope from "../common/Scope.js";
 import meta from "./meta.js";
 
+/**
+ * Return a copy of the given graph that has the indicated graphs as its scope.
+ *
+ * @param {GraphVariant} graph
+ * @param  {...GraphVariant} scopeGraphs
+ * @this {Explorable}
+ */
 export default async function setScope(graph, ...scopeGraphs) {
   // Setting scope implies the use of MetaTransform.
   let result = await meta.call(this, graph);

@@ -15,6 +15,7 @@ export default function mapDeep(variant, mapFn, options = {}) {
     return undefined;
   }
   const extendedMapFn = extendMapFn(mapFn);
+  /** @type {any} */
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   if (options.deep === undefined) {

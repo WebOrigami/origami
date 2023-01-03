@@ -155,7 +155,7 @@ describe("FilesGraph", () => {
     const tempFiles = new FilesGraph(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
       tempFiles.addEventListener("change", (event) => {
-        resolve(event.options.key);
+        resolve(/** @type {any} */ (event).options.key);
       });
       await tempFiles.set(
         "foo.txt",

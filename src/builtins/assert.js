@@ -17,14 +17,13 @@ export default async function assertBuiltin(variant) {
     return undefined;
   }
 
-  /** @type {any} */
   let graph = ExplorableGraph.from(variant);
 
   // If the graph isn't already a MetaGraph, make it one.
   if (!isFormulasTransformApplied(graph) || !("parent" in graph)) {
     graph = transformObject(MetaTransform, graph);
   }
-  if (!graph.parent) {
+  if ("parent" in graph && !graph.parent) {
     graph.parent = this ?? builtins;
   }
 

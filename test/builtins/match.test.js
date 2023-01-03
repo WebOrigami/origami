@@ -4,14 +4,16 @@ import assert from "../assert.js";
 
 describe("match", () => {
   it("matches keys against a simplified pattern", async () => {
-    const graph = match(
-      "[name].html",
-      async function () {
-        const name = await this.get("name");
-        return `Hello, ${name}!`;
-      },
-      ["Alice.html", "Bob.html", "Carol.html"]
-    );
+    /** @this {Explorable} */
+    async function fn() {
+      const name = await this.get("name");
+      return `Hello, ${name}!`;
+    }
+    const graph = match("[name].html", fn, [
+      "Alice.html",
+      "Bob.html",
+      "Carol.html",
+    ]);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       "Alice.html": "Hello, Alice!",
       "Bob.html": "Hello, Bob!",
@@ -22,10 +24,12 @@ describe("match", () => {
   });
 
   it("matches keys against a regular expression", async () => {
-    const graph = match(/^(?<name>.+)\.html$/, async function () {
+    /** @this {Explorable} */
+    async function fn() {
       const name = await this.get("name");
       return `Hello, ${name}!`;
-    });
+    }
+    const graph = match(/^(?<name>.+)\.html$/, fn);
     const value = await graph.get("Alice.html");
     assert.equal(value, "Hello, Alice!");
   });

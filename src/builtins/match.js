@@ -14,6 +14,11 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * If a key is requested, match against the given pattern and, if matches,
  * incorporate the matched pattern's wildcard values into the scope and invoke
  * the indicated function to produce a result.
+ *
+ * @param {string|RegExp} pattern
+ * @param {Invocable} resultFn
+ * @param {GraphVariant} [keys]
+ * @this {Explorable}
  */
 export default function match(pattern, resultFn, keys = []) {
   let regex;

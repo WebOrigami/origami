@@ -1,6 +1,12 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
-// Given a graph, take the first n items from it.
+/**
+ * Given a graph, take the first n items from it.
+ *
+ * @param {GraphVariant} variant
+ * @param {number} n
+ * @this {Explorable}
+ */
 export default async function take(variant, n) {
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {

@@ -1,8 +1,14 @@
 import GlobGraph from "../common/GlobGraph.js";
 
+/**
+ * Define a graph whose keys are globs.
+ *
+ * @param {GraphVariant} graph
+ * @this {Explorable}
+ */
 export default async function globs(graph) {
   const result = new GlobGraph(graph);
-  result.scope = this;
+  /** @type {any} */ (result).scope = this;
   return result;
 }
 
