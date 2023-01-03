@@ -50,6 +50,9 @@ export default async function dataflow(variant) {
   return flow;
 }
 
+dataflow.usage = `dataflow <graph>\tReturns an analysis of the data flow in the graph`;
+dataflow.documentation = "https://graphorigami.org/cli/builtins.html#dataflow";
+
 async function addContentDependencies(flow, graph, keysInScope) {
   for await (const key of graph) {
     const extension = extname(key);
