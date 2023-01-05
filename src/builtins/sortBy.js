@@ -79,11 +79,14 @@ function extendFn(fn) {
 
     // Convert the value to a graph if possible.
     let extendedValue;
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      extendedValue = ExplorableGraph.from(value);
+    if (ExplorableGraph.canCastToExplorable(value)) {
+      try {
+        extendedValue = ExplorableGraph.from(value);
+      } catch (error) {
+        // Couldn't create a graph; probably text that's not a graph.
+      }
+    }
+    if (extendedValue) {
       if (!("parent" in extendedValue && "scope" in extendedValue)) {
         extendedValue = transformObject(InheritScopeTransform, extendedValue);
       }
