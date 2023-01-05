@@ -5,7 +5,7 @@ import DefaultPages from "../framework/DefaultPages.js";
  * Add default pages to the indicated graph.
  *
  * @this {Explorable}
- * @param {Explorable} [variant]
+ * @param {GraphVariant} [variant]
  */
 export default async function defaultPages(variant) {
   variant = variant ?? (await this?.get("@defaultGraph"));
