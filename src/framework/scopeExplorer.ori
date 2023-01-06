@@ -27,17 +27,46 @@
       }
 
       nav {
+        display: grid;
+        gap: 1em;
+        grid-auto-rows: min-content;
+        grid-template-columns: minmax(0, 1fr);
         overflow: auto;
+        padding: 1em 0.5em;
+      }
+
+      #label {
+        font-weight: bold;
+      }
+
+      #scopeToolbar {
+        display: grid;
+        grid-template-columns: repeat(4, auto);        
+      }
+
+      button {
+        background: transparent;
+        border: solid 1px #555;
+        color: inherit;
+        font-size: smaller;
+        font-family: inherit;
+        font-weight: inherit;
+        padding: 0.25em;
+      }
+      button:hover {
+        border-color: #999;
+      }
+      button:active {
+        border-color: #eee;
+      }
+      button[aria-pressed="true"] {
+        background: #555;
       }
 
       ul {
         list-style: none;
         margin: 0;
-        padding: .25em;
-      }
-
-      ul + ul {
-        margin-top: .5em;
+        padding: 0;
       }
 
       li {
@@ -67,10 +96,25 @@
       let path;
       let frame;
 
+      const modes = {
+        Content: "",
+        Index: ".index",
+        YAML: ".yaml",
+        SVG: ".svg",
+      };
+
       // Extract the path from the URL hash.
       function getPathFromHash() {
-        const match = /#.*path=(?<path>[^&]+)/.exec(window.location.hash);
+        const match = /#.*path=(?<path>[^&]*)/.exec(window.location.hash);
         return match?.groups?.path;
+      }
+
+      function getModeFromLocation() {
+        const href = document.location.href;
+        const match = /[\/](?<extension>\.(?:index|yaml|svg))$/.exec(href);
+        const extension = match?.groups.extension ?? "";
+        const mode = Object.keys(modes).find(key => modes[key] === extension) ?? "Content";
+        return mode;
       }
 
       function removeDocumentPath(path) {
@@ -86,14 +130,39 @@
         return path;
       }
 
+      function selectMode(newMode) {
+        const currentMode = getModeFromLocation();
+        if (newMode !== currentMode) {
+          let newPath = removeDocumentPath(frame.contentDocument.location.pathname);
+          const currentExtension = modes[currentMode];
+          if (currentExtension && newPath.endsWith(currentExtension)) {
+            // Remove the current extension.
+            newPath = newPath.slice(0, -currentExtension.length);
+          }
+          const newExtension = modes[newMode];
+          const newFullPath = `${newPath}${newExtension}`;
+          setPath(newFullPath);
+        }
+      }
+
       function setPath(path) {
         currentPath = path;
+
         // Show the indicated page in the frame.
         const fullPath = `${document.location.pathname}/${path}`;
         if (frame.contentDocument.location.pathname !== fullPath) {
           // Use `replace` to avoid affecting browser history.
           frame.contentWindow.location.replace(fullPath);
         }
+
+        // If the path ends with a file name corresponding to a mode, select
+        // the corresponding mode button.
+        const mode = getModeFromLocation();
+        const selectedButtonId = `button${mode}`;
+        scopeToolbar.querySelectorAll("button").forEach(button => {
+          const pressed = button.id === selectedButtonId ? "true" : "false";
+          button.setAttribute("aria-pressed", pressed);
+        });
       }
 
       // When hash changes, load the indicated page.
@@ -120,6 +189,19 @@
           }
         });
 
+        buttonContent.addEventListener("click", () => {
+          selectMode("Content");
+        });
+        buttonIndex.addEventListener("click", () => {
+          selectMode("Index");
+        });
+        buttonYAML.addEventListener("click", () => {
+          selectMode("YAML");
+        });
+        buttonSVG.addEventListener("click", () => {
+          selectMode("SVG");
+        });
+
         // Navigate to any path already in the hash.
         defaultPath = getPathFromHash();
         if (defaultPath) {
@@ -130,6 +212,13 @@
   </head>
   <body>
     <nav>
+    <div id="label">Origami Scope Explorer</div>
+    <div id="scopeToolbar">
+      <button id="buttonContent">Content</button>
+      <button id="buttonIndex">Index</button>
+      <button id="buttonYAML">YAML</button>
+      <button id="buttonSVG">SVG</button>
+    </div>
     {{map @input, =`
       <ul>
       {{map @value, =`
