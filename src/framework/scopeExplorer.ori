@@ -149,8 +149,10 @@
         currentPath = path;
 
         // Show the indicated page in the frame.
+        const abbreviatedPath = `/${path}`;
         const fullPath = `${document.location.pathname}/${path}`;
-        if (frame.contentDocument.location.pathname !== fullPath) {
+        const framePathname = frame.contentDocument.location.pathname;
+        if (framePathname !== abbreviatedPath && framePathname !== fullPath) {
           // Use `replace` to avoid affecting browser history.
           frame.contentWindow.location.replace(fullPath);
         }
@@ -167,7 +169,8 @@
 
       // When hash changes, load the indicated page.
       window.addEventListener("hashchange", () => {
-        const newPath = getPathFromHash() || defaultPath;
+        const hashPath = getPathFromHash();
+        const newPath = hashPath !== undefined ? hashPath : defaultPath;
         if (newPath) {
           setPath(newPath);
         }
@@ -223,7 +226,7 @@
       <ul>
       {{map @value, =`
         <li>
-          <a href="#path={{./text}}">{{./text}}</a>
+          <a href=".scope/{{./text}}" target="frame">{{./text}}</a>
           {{if ./formula, =`
           <span class="formula">= {{./formula}}</span>
           `}}
