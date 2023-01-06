@@ -39,7 +39,8 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.outerExtension)}`
       : !this.extensionMatchesOnly ||
-        (await ExplorableGraph.isKeyExplorable(this.graph, innerKey))
+        (this.deep &&
+          (await ExplorableGraph.isKeyExplorable(this.graph, innerKey)))
       ? innerKey
       : undefined;
   }
