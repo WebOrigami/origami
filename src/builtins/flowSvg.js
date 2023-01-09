@@ -24,7 +24,7 @@ function flowDot(flow) {
     const virtualNode = dependencies.length > 0;
     const url = record.url ?? key;
     const nodeLabel = `label="${label}"`;
-    const nodeUrl = `URL="${url}"`;
+    const nodeUrl = `URL=".scope/${url}"`;
     const nodeShape = record.undefined ? `shape="none"` : "";
     const nodeStyle = virtualNode ? `style="dashed"` : null;
     const attributes = [nodeLabel, nodeShape, nodeStyle, nodeUrl].filter(

@@ -6,9 +6,8 @@ declare const FormulasTransform: Mixin<{
   formulas(): Promise<Formula[]>;
   matchAll(key: string): Promise<any[]>;
   scope: Explorable;
-}>;
+}>
 
 export function isFormulasTransformApplied(obj: any): boolean;
-export function sortFormulas(formulas: Formula[]): void;
 
 export default FormulasTransform;

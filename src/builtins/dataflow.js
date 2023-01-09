@@ -4,6 +4,8 @@ import builtins from "../cli/builtins.js";
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, transformObject } from "../core/utilities.js";
+import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
+import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
 
 // See notes at ExplorableGraph.js
@@ -30,13 +32,13 @@ export default async function dataflow(variant) {
   // Determine what keys are relevant to this graph,
   let keysInScope = await getKeysInScope(graph);
   if (flowFile) {
-    // Add it any keys defined by the flow file.
+    // Add in any keys defined by the flow file.
     keysInScope = unique(keysInScope, Object.keys(flow));
   }
 
-  const formulas = await getFormulasInGraph(graph);
-
+  const formulas = await getFormulasInScope(graph);
   await addFormulaDependencies(flow, keysInScope, formulas);
+
   await addContentDependencies(flow, graph, keysInScope);
 
   addImplicitJavaScriptDependencies(flow, keysInScope);
@@ -49,7 +51,7 @@ dataflow.usage = `dataflow <graph>\tReturns an analysis of the data flow in the 
 dataflow.documentation = "https://graphorigami.org/cli/builtins.html#dataflow";
 
 async function addContentDependencies(flow, graph, keysInScope) {
-  for await (const key of graph) {
+  for await (const key of keysInScope) {
     const extension = extname(key);
     const dependencyParsers = {
       ".html": htmlDependencies,
@@ -59,20 +61,23 @@ async function addContentDependencies(flow, graph, keysInScope) {
     };
     const parser = dependencyParsers[extension];
     if (parser) {
-      const value = await graph.get(key);
-      let dependencies = await parser(value, keysInScope);
+      const scope = graph.scope ?? graph;
+      const value = await scope.get(key);
+      if (value) {
+        let dependencies = await parser(value, keysInScope);
 
-      // Only consider the dependencies that are in scope.
-      dependencies = dependencies.filter((dependency) =>
-        keysInScope.includes(dependency)
-      );
+        // Only consider the dependencies that are in scope.
+        dependencies = dependencies.filter((dependency) =>
+          keysInScope.includes(dependency)
+        );
 
-      updateFlowRecord(flow, key, { dependencies });
+        updateFlowRecord(flow, key, { dependencies });
 
-      // Also add the dependencies as nodes in the dataflow.
-      dependencies.forEach((dependency) => {
-        updateFlowRecord(flow, dependency, {});
-      });
+        // Also add the dependencies as nodes in the dataflow.
+        dependencies.forEach((dependency) => {
+          updateFlowRecord(flow, dependency, {});
+        });
+      }
     }
   }
 }
@@ -152,16 +157,12 @@ function codeDependencies(code, keysInScope, onlyDependenciesInScope = false) {
   }
 }
 
-async function getFormulasInGraph(graph) {
+async function getFormulasInScope(graph) {
+  const scopeGraphs = graph.scope?.graphs ?? [graph];
   let formulas = [];
-  if (graph.formulas) {
-    formulas.push(...(await graph.formulas()));
-  }
-  if (graph.graphs) {
-    // For merged graphs, also add each graph separately.
-    for (const subgraph of /** @type {any} */ (graph).graphs) {
-      formulas.push(...(await getFormulasInGraph(subgraph)));
-    }
+  for (const scopeGraph of scopeGraphs) {
+    const graphFormulas = (await scopeGraph.formulas?.()) ?? [];
+    formulas.push(...graphFormulas);
   }
   return formulas;
 }
@@ -239,6 +240,10 @@ function markUndefinedDependencies(flow, keysInScope) {
 }
 
 async function metaDependencies(meta, keysInScope) {
+  meta = ExplorableGraph.from(meta);
+  if (!isFormulasTransformApplied(meta)) {
+    meta = await transformObject(MetaTransform, meta);
+  }
   return [];
 }
 

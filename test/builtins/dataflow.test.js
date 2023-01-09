@@ -1,4 +1,5 @@
 import dataflow from "../../src/builtins/dataflow.js";
+import Scope from "../../src/common/Scope.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
@@ -93,9 +94,31 @@ describe("dataflow", () => {
     });
   });
 
-  it.skip("identifies dependencies in .meta files", async () => {
+  it("identified dependencies in scope", async () => {
+    const graph = new MetaGraph({
+      "a = b": null,
+    });
+    graph.parent = new Scope(
+      new MetaGraph({
+        "b = c": null,
+        c: null,
+      })
+    );
+    const flow = await dataflow(graph);
+    assert.deepEqual(flow, {
+      a: {
+        dependencies: ["b"],
+      },
+      b: {
+        dependencies: ["c"],
+      },
+      c: {},
+    });
+  });
+
+  it.skip("identifies dependencies in .vfiles files", async () => {
     const graph = {
-      "foo.meta": `a = b: null`,
+      "foo.vfiles": `a = b: null`,
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
@@ -103,7 +126,7 @@ describe("dataflow", () => {
         dependencies: ["b"],
       },
       b: {},
-      "foo.meta": {
+      "foo.vfiles": {
         dependencies: [],
       },
     });
