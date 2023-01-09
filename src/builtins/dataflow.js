@@ -4,8 +4,6 @@ import builtins from "../cli/builtins.js";
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, transformObject } from "../core/utilities.js";
-import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
-import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
 
 // See notes at ExplorableGraph.js
@@ -20,10 +18,7 @@ ignoreKeys.push("..");
 ignoreKeys.push(ops.thisKey);
 
 export default async function dataflow(variant) {
-  let graph = ExplorableGraph.from(variant);
-  if (!isFormulasTransformApplied(graph)) {
-    graph = transformObject(MetaTransform, graph);
-  }
+  const graph = ExplorableGraph.from(variant);
 
   const flowFile = await graph.get(".dataflow.yaml");
   const flow = ExplorableGraph.isExplorable(flowFile)
@@ -39,7 +34,7 @@ export default async function dataflow(variant) {
     keysInScope = unique(keysInScope, Object.keys(flow));
   }
 
-  const formulas = await /** @type {any} */ (graph).formulas();
+  const formulas = await getFormulasInGraph(graph);
 
   await addFormulaDependencies(flow, keysInScope, formulas);
   await addContentDependencies(flow, graph, keysInScope);
@@ -60,6 +55,7 @@ async function addContentDependencies(flow, graph, keysInScope) {
       ".html": htmlDependencies,
       ".meta": metaDependencies,
       ".ori": origamiTemplateDependencies,
+      ".vfiles": metaDependencies,
     };
     const parser = dependencyParsers[extension];
     if (parser) {
@@ -154,6 +150,20 @@ function codeDependencies(code, keysInScope, onlyDependenciesInScope = false) {
   } else {
     return [];
   }
+}
+
+async function getFormulasInGraph(graph) {
+  let formulas = [];
+  if (graph.formulas) {
+    formulas.push(...(await graph.formulas()));
+  }
+  if (graph.graphs) {
+    // For merged graphs, also add each graph separately.
+    for (const subgraph of /** @type {any} */ (graph).graphs) {
+      formulas.push(...(await getFormulasInGraph(subgraph)));
+    }
+  }
+  return formulas;
 }
 
 async function getKeysInScope(graph) {

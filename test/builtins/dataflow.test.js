@@ -1,15 +1,19 @@
 import dataflow from "../../src/builtins/dataflow.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
+import MetaTransform from "../../src/framework/MetaTransform.js";
 import assert from "../assert.js";
+
+const MetaGraph = MetaTransform(ObjectGraph);
 
 describe("dataflow", () => {
   it("identifies dependencies in formulas", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       "a = fn(b)": null,
       "a = d": null,
       // builtin map will be ignored, as will ./foo
       "b = map(c, =./foo)": null,
       c: "Hello",
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       a: {
@@ -29,9 +33,9 @@ describe("dataflow", () => {
   });
 
   it("treats @ graph properties as builtins", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       "foo = @bar": null,
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       foo: {
@@ -44,9 +48,9 @@ describe("dataflow", () => {
   });
 
   it("if all dependencies are builtins, uses source expression as depenendcy", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       "foo = mdHtml(this).md": "# Hello",
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       foo: {
@@ -73,13 +77,13 @@ describe("dataflow", () => {
   });
 
   it("identifies referenced dependencies in Origami templates", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
       // graph's dataflow.
       "index.ori": `{{ map(foo, bar) }}`,
       foo: {},
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       "index.ori": {
@@ -106,7 +110,7 @@ describe("dataflow", () => {
   });
 
   it("starts with dependencies in .dataflow.yaml value", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       ".dataflow.yaml": `
 a:
   dependencies:
@@ -114,7 +118,7 @@ a:
 b: {}
 `,
       "a = c": null,
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       a: {
@@ -128,9 +132,9 @@ b: {}
   });
 
   it("notes if a dependency is undefined", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       "a = b": null,
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       a: {
@@ -143,10 +147,10 @@ b: {}
   });
 
   it("creates implicit dependencies for .js files", async () => {
-    const graph = {
+    const graph = new MetaGraph({
       "x = fn()": null,
       "fn.js": null,
-    };
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       x: {
