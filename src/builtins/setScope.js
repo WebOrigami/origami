@@ -20,3 +20,6 @@ export default async function setScope(graph, ...scopeGraphs) {
   result.parent = scope;
   return result;
 }
+
+setScope.usage = `setScope <graph>, <...graphs>\tReturns a graph copy with the given scope`;
+setScope.documentation = "https://graphorigami.org/cli/builtins.html#setScope";

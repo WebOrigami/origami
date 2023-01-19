@@ -55,3 +55,6 @@ async function formatResult(result) {
     : undefined;
   return output;
 }
+
+ori.usage = `ori <text>\tEvaluates the Origami expression`;
+ori.documentation = "https://graphorigami.org/cli/builtins.html#ori";

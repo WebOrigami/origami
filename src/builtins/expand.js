@@ -32,5 +32,5 @@ function expandValue(value) {
   return result;
 }
 
-expand.usage = `expand <graph>\tExpand values that can be treated as explorable graphs into graphs`;
+expand.usage = `expand <graph>\tExpand values that can be treated as explorable graphs`;
 expand.documentation = "https://graphorigami.org/cli/builtins.html#expand";

@@ -80,3 +80,6 @@ export default function match(pattern, resultFn, keys = []) {
     },
   };
 }
+
+match.usage = `match <pattern>, <fn>, [<keys>]\tMatches simple patterns or regular expressions`;
+match.documentation = "https://graphorigami.org/cli/builtins.html#match";

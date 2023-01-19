@@ -15,3 +15,7 @@ export default async function inherited(key) {
   const newScope = new Scope(...scopeGraphs.slice(1));
   return newScope.get(key);
 }
+
+inherited.usage = `inherited <key>\tThe value of the key in the graph's scope`;
+inherited.documentation =
+  "https://graphorigami.org/cli/builtins.html#inherited";

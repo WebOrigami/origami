@@ -20,5 +20,5 @@ export default async function ifCommand(value, trueResult, falseResult) {
   return result;
 }
 
-ifCommand.usage = `if <value>, <true> [, <false>]\tReturns the true result if true, the false result otherwise`;
+ifCommand.usage = `if <value>, <true>, [<false>]\tThe true or false result based on the value`;
 ifCommand.documentation = "https://graphorigami.org/cli/builtins.html#if";
