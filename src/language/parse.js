@@ -25,6 +25,7 @@ import {
   series,
   terminal,
 } from "./combinators.js";
+import format from "./format.js";
 import * as ops from "./ops.js";
 
 // Parse arguments to a function, with either explicit or implicit parentheses.
@@ -94,7 +95,7 @@ export function assignment(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return any(hiddenDeclaration, literal)(text);
+  return literal(text);
 }
 
 // Parse an ellipsis.
@@ -200,25 +201,6 @@ export function group(text) {
   };
 }
 
-export function hiddenDeclaration(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^\(/),
-    optionalWhitespace,
-    literal,
-    optionalWhitespace,
-    terminal(/^\)/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = `(${parsed.value[3]})`;
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse an inheritable declaration.
 export function inheritableDeclaration(text) {
   const parsed = sequence(ellipsis, declaration)(text);
@@ -316,7 +298,7 @@ export function number(text) {
 }
 
 export function objectLiteral(text) {
-  const parsed = separatedList(objectProperty, whitespace, regex(/^/))(text);
+  const parsed = separatedList(objectThing, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
@@ -332,6 +314,23 @@ export function objectLiteral(text) {
     value,
     rest: parsed.rest,
   };
+}
+
+export function objectAssignment(text) {
+  const parsed = assignment(text);
+  if (!parsed) {
+    return null;
+  }
+  const key = format(parsed.value);
+  const value = { [key]: null };
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectThing(text) {
+  return any(objectProperty, objectAssignment)(text);
 }
 
 export function objectProperty(text) {

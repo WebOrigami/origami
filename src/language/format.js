@@ -15,6 +15,9 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.lambda:
         return formatLambda(code);
 
+      case ops.object:
+        return formatObject(code);
+
       case ops.scope:
         return formatScopeTraversal(code, implicitFunctionCall);
 
@@ -48,6 +51,14 @@ function formatAssignment(code) {
 
 function formatIndirectFunctionCall(code) {
   return `${format(code[0])}(${formatArguments(code.slice(1))})`;
+}
+
+function formatObject(code) {
+  const [_, properties] = code;
+  const formatted = Object.entries(properties).map(([key, value]) => {
+    return value === null ? key : `${key}:${format(value)}`;
+  });
+  return `(${formatted.join(" ")})`;
 }
 
 function formatName(name) {

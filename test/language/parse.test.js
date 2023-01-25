@@ -267,6 +267,19 @@ describe.only("parse", () => {
 
   it("objectLiteral", () => {
     assertParse(objectLiteral("a:1 b:2"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(objectLiteral("x = fn('a')"), [
+      ops.object,
+      {
+        "x = fn('a')": null,
+      },
+    ]);
+    assertParse(objectLiteral("a:1 x=fn('a')"), [
+      ops.object,
+      {
+        a: 1,
+        "x = fn('a')": null,
+      },
+    ]);
   });
 
   it("objectProperty", () => {
