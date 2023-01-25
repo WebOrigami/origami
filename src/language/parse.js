@@ -74,23 +74,23 @@ export function assignment(text) {
 }
 
 // Parse a right-associative function call like `fn:foo/bar` or `foo:bar:baz`.
-export function colonCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    reference,
-    terminal(/^:/),
-    expression
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: fnName, 3: fnArg } = parsed.value;
-  const value = [[ops.scope, fnName], fnArg];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
+// export function colonCall(text) {
+//   const parsed = sequence(
+//     optionalWhitespace,
+//     reference,
+//     terminal(/^:/),
+//     expression
+//   )(text);
+//   if (!parsed) {
+//     return null;
+//   }
+//   const { 1: fnName, 3: fnArg } = parsed.value;
+//   const value = [[ops.scope, fnName], fnArg];
+//   return {
+//     value,
+//     rest: parsed.rest,
+//   };
+// }
 
 // Parse a declaration.
 export function declaration(text) {
@@ -113,7 +113,7 @@ export function expression(text) {
     functionComposition,
     urlProtocolCall,
     protocolCall,
-    colonCall,
+    // colonCall,
     slashCall,
     percentCall,
     objectLiteral,
@@ -134,7 +134,7 @@ export function functionCallTarget(text) {
     group,
     urlProtocolCall,
     protocolCall,
-    colonCall,
+    // colonCall,
     slashCall,
     percentCall,
     getReference
@@ -304,7 +304,7 @@ function lparen(text) {
 export function number(text) {
   // Based on https://stackoverflow.com/a/51733563/76472
   // but only accepts integers or floats, not exponential notation.
-  const parsed = regex(/^-?(?:\d+(?:\.\d*)?|\.\d+)/)(text);
+  const parsed = regex(/^\s*-?(?:\d+(?:\.\d*)?|\.\d+)/)(text);
   if (!parsed) {
     return null;
   }
@@ -338,14 +338,15 @@ export function objectProperty(text) {
   const parsed = sequence(
     optionalWhitespace,
     literal,
-    terminal(/^=/),
+    optionalWhitespace,
+    terminal(/^:/),
     objectPropertyValue
   )(text);
   if (!parsed) {
     return null;
   }
   const value = {
-    [parsed.value[1]]: parsed.value[3],
+    [parsed.value[1]]: parsed.value[4],
   };
   return {
     value,
@@ -360,7 +361,7 @@ export function objectPropertyValue(text) {
     objectPropertyValueFunctionCall,
     urlProtocolCall,
     protocolCall,
-    colonCall,
+    // colonCall,
     slashCall,
     percentCall,
     group,
@@ -370,11 +371,15 @@ export function objectPropertyValue(text) {
 }
 
 export function objectPropertyValueFunctionCall(text) {
-  const parsed = sequence(functionCallTarget, parensArgs)(text);
+  const parsed = sequence(
+    optionalWhitespace,
+    functionCallTarget,
+    parensArgs
+  )(text);
   if (!parsed) {
     return null;
   }
-  const value = [parsed.value[0], ...parsed.value[1]];
+  const value = [parsed.value[1], ...parsed.value[2]];
   return {
     value,
     rest: parsed.rest,

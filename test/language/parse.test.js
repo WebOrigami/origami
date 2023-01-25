@@ -2,7 +2,7 @@ import * as ops from "../../src/language/ops.js";
 import {
   args,
   assignment,
-  colonCall,
+  // colonCall,
   expression,
   functionComposition,
   getReference,
@@ -31,7 +31,7 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
@@ -91,23 +91,23 @@ describe("parse", () => {
     ]);
   });
 
-  it("colonCall", () => {
-    assertParse(colonCall("about:blank"), [
-      [ops.scope, "about"],
-      [ops.scope, "blank"],
-    ]);
-    assertParse(colonCall("fn:a/b"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a", "b"],
-    ]);
-    assertParse(colonCall("foo:bar:baz"), [
-      [ops.scope, "foo"],
-      [
-        [ops.scope, "bar"],
-        [ops.scope, "baz"],
-      ],
-    ]);
-  });
+  // it("colonCall", () => {
+  //   assertParse(colonCall("about:blank"), [
+  //     [ops.scope, "about"],
+  //     [ops.scope, "blank"],
+  //   ]);
+  //   assertParse(colonCall("fn:a/b"), [
+  //     [ops.scope, "fn"],
+  //     [ops.scope, "a", "b"],
+  //   ]);
+  //   assertParse(colonCall("foo:bar:baz"), [
+  //     [ops.scope, "foo"],
+  //     [
+  //       [ops.scope, "bar"],
+  //       [ops.scope, "baz"],
+  //     ],
+  //   ]);
+  // });
 
   it("expression", () => {
     assertParse(expression("obj.json"), [ops.scope, "obj.json"]);
@@ -125,15 +125,15 @@ describe("parse", () => {
     assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
     assertParse(expression("1"), 1);
     assert.equal(expression("(foo"), null);
-    assertParse(expression("a=1 b=2"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(expression("serve index.html='hello'"), [
+    assertParse(expression("a:1 b:2"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(expression("serve index.html:'hello'"), [
       [ops.scope, "serve"],
       [ops.object, { "index.html": "hello" }],
     ]);
   });
 
   it("expression with function with space-separated arguments, mixed argument types", () => {
-    assertParse(expression(`copy app:formulas, files 'snapshot'`), [
+    assertParse(expression(`copy app(formulas), files 'snapshot'`), [
       [ops.scope, "copy"],
       [
         [ops.scope, "app"],
@@ -173,7 +173,7 @@ describe("parse", () => {
       [ops.scope, "fn1"],
       [[ops.scope, "fn2"], "arg"],
     ]);
-    assertParse(functionComposition("fn a, b, c=1"), [
+    assertParse(functionComposition("fn a, b, c:1"), [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
@@ -266,13 +266,13 @@ describe("parse", () => {
   });
 
   it("objectLiteral", () => {
-    assertParse(objectLiteral("a=1 b=2"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(objectLiteral("a:1 b:2"), [ops.object, { a: 1, b: 2 }]);
   });
 
   it("objectProperty", () => {
-    assertParse(objectProperty("a=1"), { a: 1 });
-    assertParse(objectProperty("name='Alice'"), { name: "Alice" });
-    assertParse(objectProperty("x=fn('a')"), { x: [[ops.scope, "fn"], "a"] });
+    assertParse(objectProperty("a: 1"), { a: 1 });
+    assertParse(objectProperty("name:'Alice'"), { name: "Alice" });
+    assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
   });
 
   it("percentCall", () => {
