@@ -161,6 +161,8 @@ describe.only("parse", () => {
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
+    // A call with implicit parentheses can't span newlines.
+    assertParse(functionComposition("fn\na, b"), null);
     assertParse(functionComposition("fn a(b), c"), [
       [ops.scope, "fn"],
       [
@@ -523,7 +525,11 @@ End`),
 });
 
 function assertParse(parseResult, expected) {
-  assert(parseResult);
-  assert.equal(parseResult.rest, "");
-  assert.deepEqual(parseResult.value, expected);
+  if (expected === null) {
+    assert.isNull(parseResult);
+  } else {
+    assert(parseResult);
+    assert.equal(parseResult.rest, "");
+    assert.deepEqual(parseResult.value, expected);
+  }
 }

@@ -216,7 +216,8 @@ export function inheritableDeclaration(text) {
 
 // Parse the arguments to a function where the parentheses have been omitted.
 export function implicitParensArgs(text) {
-  const parsed = sequence(whitespace, list)(text);
+  // Whitespace here can only be spaces or tabs -- not newlines.
+  const parsed = sequence(terminal(/^[ \t]+/), list)(text);
   if (!parsed) {
     return null;
   }
