@@ -25,7 +25,6 @@ import {
   series,
   terminal,
 } from "./combinators.js";
-import format from "./format.js";
 import * as ops from "./ops.js";
 
 // Parse arguments to a function, with either explicit or implicit parentheses.
@@ -97,7 +96,7 @@ export function expression(text) {
     protocolCall,
     slashCall,
     percentCall,
-    objectLiteral,
+    objectDefinitions,
     group,
     number,
     getReference
@@ -277,8 +276,30 @@ export function number(text) {
   };
 }
 
-export function objectLiteral(text) {
-  const parsed = separatedList(objectThing, whitespace, regex(/^/))(text);
+export function object(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    regex(/^{/),
+    objectDefinitions,
+    optionalWhitespace,
+    regex(/^}/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[2];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectDefinition(text) {
+  return any(objectProperty, objectAssignment)(text);
+}
+
+export function objectDefinitions(text) {
+  const parsed = separatedList(objectDefinition, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
@@ -301,16 +322,12 @@ export function objectAssignment(text) {
   if (!parsed) {
     return null;
   }
-  const key = format(parsed.value);
-  const value = { [key]: null };
+  const { 1: key, 2: formula } = parsed.value;
+  const value = { [key]: formula };
   return {
     value,
     rest: parsed.rest,
   };
-}
-
-export function objectThing(text) {
-  return any(objectProperty, objectAssignment)(text);
 }
 
 export function objectProperty(text) {

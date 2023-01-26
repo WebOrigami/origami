@@ -4,7 +4,7 @@ import { extname, stringLike, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import execute from "../language/execute.js";
-import { objectLiteral } from "../language/parse.js";
+import { objectDefinitions } from "../language/parse.js";
 
 const defaultLoaders = {
   ".css": loadText,
@@ -54,7 +54,7 @@ async function loadOrigamiGraph(buffer, key) {
   const scope = this;
   // let meta;
   // function toGraph() {
-  const parsed = objectLiteral(text);
+  const parsed = objectDefinitions(text);
   if (!parsed || parsed.rest !== "") {
     console.error(`could not load ${key} as an Origami graph`);
     return;

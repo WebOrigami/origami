@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe.only("FileLoadersTransform", () => {
+describe("FileLoadersTransform", () => {
   it("returns the contents of text keys/files as text", async () => {
     const graph = new (FileLoadersTransform(ObjectGraph))({
       foo: 1, // should be left alone

@@ -1,13 +1,13 @@
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import * as ops from "../language/ops.js";
-import { objectLiteral } from "../language/parse.js";
+import { objectDefinitions } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
 
 class OrigamiGraphBase {
   constructor(text) {
     // Parse the text.
-    const parsed = objectLiteral(text);
+    const parsed = objectDefinitions(text);
     const code = parsed?.value;
     if (!parsed || parsed.rest !== "" || code?.[0] !== ops.object) {
       console.error(`could not parse as an Origami graph: ${text}`);

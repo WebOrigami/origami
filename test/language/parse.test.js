@@ -11,7 +11,7 @@ import {
   list,
   literal,
   number,
-  objectLiteral,
+  object,
   objectProperty,
   optionalWhitespace,
   percentCall,
@@ -248,19 +248,19 @@ describe.only("parse", () => {
     assertParse(number("-1"), -1);
   });
 
-  it("objectLiteral", () => {
-    assertParse(objectLiteral("a:1 b:2"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(objectLiteral("x = fn('a')"), [
+  it.only("object", () => {
+    assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(object("{ x = fn('a') }"), [
       ops.object,
       {
-        "x = fn('a')": null,
+        x: [[ops.scope, "fn"], "a"],
       },
     ]);
-    assertParse(objectLiteral("a:1 x=fn('a')"), [
+    assertParse(object("{ a:1 \n x=fn('a') }"), [
       ops.object,
       {
         a: 1,
-        "x = fn('a')": null,
+        x: [[ops.scope, "fn"], "a"],
       },
     ]);
   });
