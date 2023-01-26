@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe("FileLoadersTransform", () => {
+describe.only("FileLoadersTransform", () => {
   it("returns the contents of text keys/files as text", async () => {
     const graph = new (FileLoadersTransform(ObjectGraph))({
       foo: 1, // should be left alone
@@ -14,7 +14,44 @@ describe("FileLoadersTransform", () => {
     assert.equal(await graph.get("bar.txt"), "1");
   });
 
-  it("interprets .meta files as a metagraph", async () => {
+  it("interprets .graph files as an Origami metagraph", async () => {
+    const files = new (FileLoadersTransform(ObjectGraph))({
+      "test.graph": `
+        name: 'world'
+        message = \`Hello, {{ name }}!\`
+      `,
+    });
+    const fixture = await files.get("test.graph");
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      name: "world",
+      message: "Hello, world!",
+    });
+  });
+
+  it(".graph file can contain nested graph", async () => {
+    const files = new (FileLoadersTransform(ObjectGraph))({
+      "test.graph": `
+        public: (
+          index.html: 'Hello'
+        )
+      `,
+    });
+    const text = await files.get("test.graph");
+    const graph = ExplorableGraph.from(text);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      public: {
+        "index.html": "Hello",
+      },
+    });
+    const indexHtml = await ExplorableGraph.traverse(
+      graph,
+      "public",
+      "index.html"
+    );
+    assert.equal(indexHtml, "Hello");
+  });
+
+  it("interprets .meta files as a YAML/JSON metagraph", async () => {
     const graph = new (FileLoadersTransform(ObjectGraph))({
       "foo.meta": `a: Hello
 b = a:
