@@ -74,25 +74,6 @@ export function assignment(text) {
   };
 }
 
-// Parse a right-associative function call like `fn:foo/bar` or `foo:bar:baz`.
-// export function colonCall(text) {
-//   const parsed = sequence(
-//     optionalWhitespace,
-//     reference,
-//     terminal(/^:/),
-//     expression
-//   )(text);
-//   if (!parsed) {
-//     return null;
-//   }
-//   const { 1: fnName, 3: fnArg } = parsed.value;
-//   const value = [[ops.scope, fnName], fnArg];
-//   return {
-//     value,
-//     rest: parsed.rest,
-//   };
-// }
-
 // Parse a declaration.
 export function declaration(text) {
   return literal(text);
@@ -114,7 +95,6 @@ export function expression(text) {
     functionComposition,
     urlProtocolCall,
     protocolCall,
-    // colonCall,
     slashCall,
     percentCall,
     objectLiteral,
@@ -135,7 +115,6 @@ export function functionCallTarget(text) {
     group,
     urlProtocolCall,
     protocolCall,
-    // colonCall,
     slashCall,
     percentCall,
     getReference
@@ -361,7 +340,6 @@ export function objectPropertyValue(text) {
     objectPropertyValueFunctionCall,
     urlProtocolCall,
     protocolCall,
-    // colonCall,
     slashCall,
     percentCall,
     group,

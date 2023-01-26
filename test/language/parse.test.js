@@ -2,7 +2,6 @@ import * as ops from "../../src/language/ops.js";
 import {
   args,
   assignment,
-  // colonCall,
   expression,
   functionComposition,
   getReference,
@@ -90,24 +89,6 @@ describe.only("parse", () => {
       [[ops.scope, [ops.thisKey]]],
     ]);
   });
-
-  // it("colonCall", () => {
-  //   assertParse(colonCall("about:blank"), [
-  //     [ops.scope, "about"],
-  //     [ops.scope, "blank"],
-  //   ]);
-  //   assertParse(colonCall("fn:a/b"), [
-  //     [ops.scope, "fn"],
-  //     [ops.scope, "a", "b"],
-  //   ]);
-  //   assertParse(colonCall("foo:bar:baz"), [
-  //     [ops.scope, "foo"],
-  //     [
-  //       [ops.scope, "bar"],
-  //       [ops.scope, "baz"],
-  //     ],
-  //   ]);
-  // });
 
   it("expression", () => {
     assertParse(expression("obj.json"), [ops.scope, "obj.json"]);
