@@ -106,8 +106,8 @@ describe.only("parse", () => {
     assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
     assertParse(expression("1"), 1);
     assert.equal(expression("(foo"), null);
-    assertParse(expression("a:1 b:2"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(expression("serve index.html:'hello'"), [
+    assertParse(expression("{ a:1 b:2 }"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(expression("serve { index.html: 'hello' }"), [
       [ops.scope, "serve"],
       [ops.object, { "index.html": "hello" }],
     ]);
@@ -156,7 +156,7 @@ describe.only("parse", () => {
       [ops.scope, "fn1"],
       [[ops.scope, "fn2"], "arg"],
     ]);
-    assertParse(functionComposition("fn a, b, c:1"), [
+    assertParse(functionComposition("fn a, b, { c:1 }"), [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
@@ -248,7 +248,7 @@ describe.only("parse", () => {
     assertParse(number("-1"), -1);
   });
 
-  it.only("object", () => {
+  it("object", () => {
     assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
     assertParse(object("{ x = fn('a') }"), [
       ops.object,
@@ -261,6 +261,12 @@ describe.only("parse", () => {
       {
         a: 1,
         x: [[ops.scope, "fn"], "a"],
+      },
+    ]);
+    assertParse(object("{ a: { b: { c: 0 } } }"), [
+      ops.object,
+      {
+        a: [ops.object, { b: [ops.object, { c: 0 }] }],
       },
     ]);
   });

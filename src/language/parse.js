@@ -87,8 +87,10 @@ function ellipsis(text) {
 export function expression(text) {
   return any(
     singleQuoteString,
+    number,
     lambda,
     templateLiteral,
+    object,
     spaceUrl,
     spacePathCall,
     functionComposition,
@@ -96,9 +98,7 @@ export function expression(text) {
     protocolCall,
     slashCall,
     percentCall,
-    objectDefinitions,
     group,
-    number,
     getReference
   )(text);
 }
@@ -336,7 +336,7 @@ export function objectProperty(text) {
     literal,
     optionalWhitespace,
     terminal(/^:/),
-    objectPropertyValue
+    expression
   )(text);
   if (!parsed) {
     return null;
@@ -350,36 +350,36 @@ export function objectProperty(text) {
   };
 }
 
-export function objectPropertyValue(text) {
-  return any(
-    singleQuoteString,
-    templateLiteral,
-    objectPropertyValueFunctionCall,
-    urlProtocolCall,
-    protocolCall,
-    slashCall,
-    percentCall,
-    group,
-    number,
-    getReference
-  )(text);
-}
+// export function objectPropertyValue(text) {
+//   return any(
+//     singleQuoteString,
+//     templateLiteral,
+//     objectPropertyValueFunctionCall,
+//     urlProtocolCall,
+//     protocolCall,
+//     slashCall,
+//     percentCall,
+//     group,
+//     number,
+//     getReference
+//   )(text);
+// }
 
-export function objectPropertyValueFunctionCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    functionCallTarget,
-    parensArgs
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [parsed.value[1], ...parsed.value[2]];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
+// export function objectPropertyValueFunctionCall(text) {
+//   const parsed = sequence(
+//     optionalWhitespace,
+//     functionCallTarget,
+//     parensArgs
+//   )(text);
+//   if (!parsed) {
+//     return null;
+//   }
+//   const value = [parsed.value[1], ...parsed.value[2]];
+//   return {
+//     value,
+//     rest: parsed.rest,
+//   };
+// }
 
 // Parse an optional whitespace sequence.
 export function optionalWhitespace(text) {

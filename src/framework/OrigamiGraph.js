@@ -1,4 +1,5 @@
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
+import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 import { objectDefinitions } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
@@ -24,6 +25,26 @@ class OrigamiGraphBase {
         this.properties[key] = value;
       }
     }
+  }
+
+  async *[Symbol.asyncIterator]() {
+    yield* Object.keys(this.properties);
+    yield* Object.keys(this.formulas);
+  }
+
+  async get(key) {
+    // Try properties first.
+    let value = this.properties[key];
+    if (value !== undefined) {
+      return value;
+    }
+
+    // Then try formulas.
+    const formula = this.formulas[key];
+    if (formula) {
+      value = await execute.call(this, formula);
+    }
+    return value;
   }
 }
 

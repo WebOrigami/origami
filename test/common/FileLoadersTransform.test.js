@@ -28,29 +28,6 @@ describe("FileLoadersTransform", () => {
     });
   });
 
-  it(".graph file can contain nested graph", async () => {
-    const files = new (FileLoadersTransform(ObjectGraph))({
-      "test.graph": `
-        public: (
-          index.html: 'Hello'
-        )
-      `,
-    });
-    const text = await files.get("test.graph");
-    const graph = ExplorableGraph.from(text);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      public: {
-        "index.html": "Hello",
-      },
-    });
-    const indexHtml = await ExplorableGraph.traverse(
-      graph,
-      "public",
-      "index.html"
-    );
-    assert.equal(indexHtml, "Hello");
-  });
-
   it("interprets .meta files as a YAML/JSON metagraph", async () => {
     const graph = new (FileLoadersTransform(ObjectGraph))({
       "foo.meta": `a: Hello
