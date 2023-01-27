@@ -71,7 +71,7 @@ export default class Formula {
       }
       return null;
     }
-    if (value[0] === "=") {
+    if (value[0] === ops.assign) {
       // Assignment
       const [_, left, expression] = value;
       return new Formula(left, expression, source);

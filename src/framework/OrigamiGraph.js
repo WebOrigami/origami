@@ -11,7 +11,11 @@ class OrigamiGraphBase {
     if (typeof definitions === "string") {
       const parsed = objectDefinitions(definitions);
       const code = parsed?.value;
-      if (!parsed || parsed.rest !== "" || code?.[0] !== ops.object) {
+      if (
+        !parsed ||
+        parsed.rest !== "" ||
+        !(code?.[0] === ops.graph || code?.[0] === ops.object)
+      ) {
         console.error(`could not parse as an Origami graph: ${definitions}`);
         return;
       }

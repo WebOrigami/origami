@@ -4,6 +4,10 @@ import concatBuiltin from "../builtins/concat.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 
+// The assign op is a placeholder for an assignment declaration.
+// It is only used during parsing -- it shouldn't be executed.
+export const assign = "«ops.assign»";
+
 /**
  * Concatenate the given arguments.
  *

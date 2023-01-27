@@ -9,6 +9,9 @@ export default function format(code, implicitFunctionCall = false) {
     return code;
   } else {
     switch (code[0]) {
+      case ops.assign:
+        return formatAssignment(code);
+
       case ops.concat:
         return formatTemplate(code);
 
@@ -26,9 +29,6 @@ export default function format(code, implicitFunctionCall = false) {
 
       case ops.thisKey:
         return formatThisKey(code);
-
-      case "=":
-        return formatAssignment(code);
 
       default:
         return code[0] instanceof Array

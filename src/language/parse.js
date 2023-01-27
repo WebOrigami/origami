@@ -65,7 +65,7 @@ export function assignment(text) {
     right = [[ops.scope, [ops.thisKey]]];
   }
 
-  const value = ["=", left, right];
+  const value = [ops.assign, left, right];
   return {
     value,
     rest: parsed.rest,
@@ -182,7 +182,7 @@ export function inheritableDeclaration(text) {
   if (!parsed) {
     return null;
   }
-  const value = ["=", parsed.value[1], [ops.scope, [ops.thisKey]]];
+  const value = [ops.assign, parsed.value[1], [ops.scope, [ops.thisKey]]];
   return {
     value,
     rest: parsed.rest,
@@ -292,7 +292,7 @@ export function object(text) {
 }
 
 export function objectDefinition(text) {
-  return any(objectProperty, objectAssignment)(text);
+  return any(objectProperty, assignment)(text);
 }
 
 export function objectDefinitions(text) {
@@ -302,12 +302,19 @@ export function objectDefinitions(text) {
   }
   // Collect properties, skip separators
   const obj = {};
+  let containsAssignment = false;
   while (parsed.value.length > 0) {
-    const property = parsed.value.shift(); // Next parsed property key: value
-    Object.assign(obj, property);
-    parsed.value.shift(); // Drop separator
+    const property = parsed.value.shift(); // Next parsed property key:value
+    if (property) {
+      Object.assign(obj, property);
+      if (Object.values(property)[0] instanceof Array) {
+        containsAssignment = true;
+      }
+      parsed.value.shift(); // Drop separator
+    }
   }
-  const value = [ops.object, obj];
+  const op = containsAssignment ? ops.graph : ops.object;
+  const value = [op, obj];
   return {
     value,
     rest: parsed.rest,
