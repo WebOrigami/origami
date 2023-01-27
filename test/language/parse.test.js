@@ -189,15 +189,6 @@ describe.only("parse", () => {
     assertParse(key("foo"), "foo");
   });
 
-  it("key marked as inheritable", () => {
-    assertParse(key("…index.html = foo()"), [
-      ops.assign,
-      "index.html",
-      [[ops.scope, "foo"]],
-    ]);
-    assertParse(key("…a"), [ops.assign, "a", [ops.scope, [ops.thisKey]]]);
-  });
-
   it("lambda", () => {
     assertParse(lambda("= message"), [ops.lambda, [ops.scope, "message"]]);
     assertParse(lambda("=`Hello, {{name}}.`"), [

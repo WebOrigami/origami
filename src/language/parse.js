@@ -176,19 +176,6 @@ export function group(text) {
   };
 }
 
-// Parse an inheritable declaration.
-export function inheritableDeclaration(text) {
-  const parsed = sequence(ellipsis, declaration)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.assign, parsed.value[1], [ops.scope, [ops.thisKey]]];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse the arguments to a function where the parentheses have been omitted.
 export function implicitParensArgs(text) {
   // Whitespace here can only be spaces or tabs -- not newlines.
@@ -205,7 +192,7 @@ export function implicitParensArgs(text) {
 
 // A key in an Explorable App
 export function key(text) {
-  return any(assignment, inheritableDeclaration, declaration)(text);
+  return any(assignment, declaration)(text);
 }
 
 // A lambda expression
