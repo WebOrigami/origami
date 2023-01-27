@@ -243,23 +243,26 @@ describe("parse", () => {
 
   it("object", () => {
     assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(object("{ x = fn('a') }"), [
+    assertParse(object("{ a: { b: { c: 0 } } }"), [
       ops.object,
+      {
+        a: [ops.object, { b: [ops.object, { c: 0 }] }],
+      },
+    ]);
+  });
+
+  it("graph", () => {
+    assertParse(object("{ x = fn('a') }"), [
+      ops.graph,
       {
         x: [[ops.scope, "fn"], "a"],
       },
     ]);
     assertParse(object("{ a:1 \n x=fn('a') }"), [
-      ops.object,
+      ops.graph,
       {
         a: 1,
         x: [[ops.scope, "fn"], "a"],
-      },
-    ]);
-    assertParse(object("{ a: { b: { c: 0 } } }"), [
-      ops.object,
-      {
-        a: [ops.object, { b: [ops.object, { c: 0 }] }],
       },
     ]);
   });

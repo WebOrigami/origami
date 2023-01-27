@@ -34,6 +34,11 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code), "fn('a')('b')");
   });
 
+  it("graph", () => {
+    const code = [ops.graph, { x: [[ops.scope, "fn"]] }];
+    assert.equal(format(code), "{ x = fn() }");
+  });
+
   it("lambda", () => {
     const code = [ops.lambda, [ops.scope, "message"]];
     assert.equal(format(code), "=message");

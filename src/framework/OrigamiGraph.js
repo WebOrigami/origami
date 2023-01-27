@@ -6,19 +6,22 @@ import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
 
 class OrigamiGraphBase {
-  constructor(text) {
-    // Parse the text.
-    const parsed = objectDefinitions(text);
-    const code = parsed?.value;
-    if (!parsed || parsed.rest !== "" || code?.[0] !== ops.object) {
-      console.error(`could not parse as an Origami graph: ${text}`);
-      return;
+  constructor(definitions) {
+    // If the definition is text parse it, otherwise use as is.
+    if (typeof definitions === "string") {
+      const parsed = objectDefinitions(definitions);
+      const code = parsed?.value;
+      if (!parsed || parsed.rest !== "" || code?.[0] !== ops.object) {
+        console.error(`could not parse as an Origami graph: ${definitions}`);
+        return;
+      }
+      definitions = code[1];
     }
 
     // Separate the parsed simple properties from the formulas.
     this.properties = {};
     this.formulas = {};
-    for (const [key, value] of Object.entries(code[1])) {
+    for (const [key, value] of Object.entries(definitions)) {
       if (value instanceof Array) {
         this.formulas[key] = value;
       } else {

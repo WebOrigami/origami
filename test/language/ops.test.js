@@ -1,4 +1,5 @@
 import ObjectGraph from "../../src/core/ObjectGraph.js";
+import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
@@ -47,6 +48,24 @@ describe("ops", () => {
     assert.deepEqual(result, {
       hello: "HELLO",
       world: "WORLD",
+    });
+  });
+
+  it("can instantiate an Origami graph", async () => {
+    const code = [
+      ops.graph,
+      {
+        name: "world",
+        message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
+      },
+    ];
+    const result = await execute.call({}, code);
+    assert(result instanceof OrigamiGraph);
+    assert.deepEqual(result.properties, {
+      name: "world",
+    });
+    assert.deepEqual(result.formulas, {
+      message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
     });
   });
 });

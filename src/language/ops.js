@@ -1,6 +1,7 @@
 /// <reference path="./code.d.ts" />
 
 import concatBuiltin from "../builtins/concat.js";
+import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 
 /**
@@ -13,6 +14,18 @@ export async function concat(...args) {
   return concatBuiltin.call(this, ...args);
 }
 concat.toString = () => "«ops.concat»";
+
+/**
+ * Construct an graph. This is similar to ops.object but the result is an
+ * OrigamiGraph instance.
+ *
+ * @this {Explorable}
+ * @param {PlainObject} obj
+ */
+export async function graph(obj) {
+  return new OrigamiGraph(obj);
+}
+graph.toString = () => "«ops.graph»";
 
 /**
  * Return a function that will invoke the given code.

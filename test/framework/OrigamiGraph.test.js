@@ -17,12 +17,14 @@ describe("OrigamiGraph", () => {
   it("graph can contain nested graph", async () => {
     const graph = new OrigamiGraph(`
       public: {
-        index.html: 'Hello'
+        name: 'world'
+        message = \`Hello, {{ name }}!\`
       }
     `);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       public: {
-        "index.html": "Hello",
+        name: "world",
+        message: "Hello, world!",
       },
     });
     const indexHtml = await ExplorableGraph.traverse(
@@ -30,6 +32,6 @@ describe("OrigamiGraph", () => {
       "public",
       "index.html"
     );
-    assert.equal(indexHtml, "Hello");
+    assert.equal(indexHtml, "Hello, world!");
   });
 });

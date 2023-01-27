@@ -12,6 +12,9 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.concat:
         return formatTemplate(code);
 
+      case ops.graph:
+        return formatGraph(code);
+
       case ops.lambda:
         return formatLambda(code);
 
@@ -47,6 +50,15 @@ function formatArguments(args) {
 function formatAssignment(code) {
   const [_, declaration, expression] = code;
   return `${declaration} = ${format(expression)}`;
+}
+
+function formatGraph(code) {
+  const [_, properties] = code;
+  const formatted = Object.entries(properties).map(([key, value]) => {
+    const operator = value instanceof Array ? " = " : ": ";
+    return `${key}${operator}${format(value)}`;
+  });
+  return formatted ? `{ ${formatted.join(" ")} }` : "{}";
 }
 
 function formatIndirectFunctionCall(code) {
