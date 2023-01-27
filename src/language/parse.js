@@ -47,7 +47,6 @@ export function assignment(text) {
     terminal(/^=/),
     optionalWhitespace,
     expression,
-    optionalWhitespace,
     optional(extension)
   )(text);
   if (!parsed) {
@@ -105,7 +104,7 @@ export function expression(text) {
 
 // Parse a file extension
 export function extension(text) {
-  return sequence(terminal(/^./), literal)(text);
+  return sequence(terminal(/^\s*\./), literal)(text);
 }
 
 // Parse something that results in a function/graph that can be called.
@@ -349,37 +348,6 @@ export function objectProperty(text) {
     rest: parsed.rest,
   };
 }
-
-// export function objectPropertyValue(text) {
-//   return any(
-//     singleQuoteString,
-//     templateLiteral,
-//     objectPropertyValueFunctionCall,
-//     urlProtocolCall,
-//     protocolCall,
-//     slashCall,
-//     percentCall,
-//     group,
-//     number,
-//     getReference
-//   )(text);
-// }
-
-// export function objectPropertyValueFunctionCall(text) {
-//   const parsed = sequence(
-//     optionalWhitespace,
-//     functionCallTarget,
-//     parensArgs
-//   )(text);
-//   if (!parsed) {
-//     return null;
-//   }
-//   const value = [parsed.value[1], ...parsed.value[2]];
-//   return {
-//     value,
-//     rest: parsed.rest,
-//   };
-// }
 
 // Parse an optional whitespace sequence.
 export function optionalWhitespace(text) {

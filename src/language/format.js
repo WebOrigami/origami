@@ -56,9 +56,9 @@ function formatIndirectFunctionCall(code) {
 function formatObject(code) {
   const [_, properties] = code;
   const formatted = Object.entries(properties).map(([key, value]) => {
-    return value === null ? key : `${key}:${format(value)}`;
+    return value === null ? key : `${key}: ${format(value)}`;
   });
-  return `(${formatted.join(" ")})`;
+  return formatted ? `{ ${formatted.join(" ")} }` : "{}";
 }
 
 function formatName(name) {

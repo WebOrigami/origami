@@ -1,10 +1,8 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 import { extname, stringLike, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
-import execute from "../language/execute.js";
-import { objectDefinitions } from "../language/parse.js";
+import OrigamiGraph from "../framework/OrigamiGraph.js";
 
 const defaultLoaders = {
   ".css": loadText,
@@ -51,20 +49,10 @@ export default function FileLoadersTransform(Base) {
 async function loadOrigamiGraph(buffer, key) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
+  const graph = new OrigamiGraph(text);
   const scope = this;
-  // let meta;
-  // function toGraph() {
-  const parsed = objectDefinitions(text);
-  if (!parsed || parsed.rest !== "") {
-    console.error(`could not load ${key} as an Origami graph`);
-    return;
-  }
-  const code = parsed.value;
-  const object = await execute(code);
-  const meta = new (MetaTransform(ObjectGraph))(object);
-  meta.parent = scope;
-  const plain = await ExplorableGraph.plain(meta);
-  /** @type {any} */ (textWithGraph).toGraph = () => meta;
+  graph.parent = scope;
+  /** @type {any} */ (textWithGraph).toGraph = () => graph;
   return textWithGraph;
 }
 

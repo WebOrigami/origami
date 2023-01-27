@@ -33,6 +33,11 @@ class OrigamiGraphBase {
   }
 
   async get(key) {
+    if (key === undefined) {
+      // Getting undefined returns the graph itself.
+      return this;
+    }
+
     // Try properties first.
     let value = this.properties[key];
     if (value !== undefined) {
@@ -42,7 +47,8 @@ class OrigamiGraphBase {
     // Then try formulas.
     const formula = this.formulas[key];
     if (formula) {
-      value = await execute.call(this, formula);
+      const scope = this.scope ?? this;
+      value = await execute.call(scope, formula);
     }
     return value;
   }
