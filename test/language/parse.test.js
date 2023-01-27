@@ -20,8 +20,6 @@ import {
   singleQuoteString,
   slashCall,
   slashPath,
-  spacePathCall,
-  spaceUrl,
   substitution,
   templateDocument,
   templateLiteral,
@@ -56,11 +54,6 @@ describe.only("parse", () => {
       "=",
       "data",
       [ops.scope, "obj.json"],
-    ]);
-    assertParse(assignment("match = .. .. .. foo bar"), [
-      "=",
-      "match",
-      [ops.scope, "..", "..", "..", "foo", "bar"],
     ]);
   });
 
@@ -328,32 +321,6 @@ describe.only("parse", () => {
     ]);
     assertParse(expression("graph/key()"), [[ops.scope, "graph", "key"]]);
     assertParse(expression("fn1()/fn2()"), [[[[ops.scope, "fn1"]], "fn2"]]);
-  });
-
-  it("spacePathCall", () => {
-    assertParse(spacePathCall(".. .. .. foo bar"), [
-      ops.scope,
-      "..",
-      "..",
-      "..",
-      "foo",
-      "bar",
-    ]);
-  });
-
-  it("spaceUrl", () => {
-    assertParse(spaceUrl("https example.com foo bar.json"), [
-      [ops.scope, "https"],
-      "example.com",
-      "foo",
-      "bar.json",
-    ]);
-    assertParse(spaceUrl("http example.org {{x}} data.json"), [
-      [ops.scope, "http"],
-      "example.org",
-      [ops.scope, "x"],
-      "data.json",
-    ]);
   });
 
   it("substitution", () => {

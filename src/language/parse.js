@@ -90,8 +90,6 @@ export function expression(text) {
     lambda,
     templateLiteral,
     object,
-    spaceUrl,
-    spacePathCall,
     functionComposition,
     urlProtocolCall,
     protocolCall,
@@ -555,65 +553,6 @@ export function slashCall(text) {
 // Parse a slash-delimeted path
 export function slashPath(text) {
   const parsed = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
-  if (!parsed) {
-    return null;
-  }
-  // Remove the separators from the result.
-  const values = [];
-  while (parsed.value.length > 0) {
-    values.push(parsed.value.shift()); // Keep value
-    parsed.value.shift(); // Drop separator
-  }
-  return {
-    value: values,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a space-delimited path function call that starts with "." or ".."
-export function spacePathCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    regex(/^\.\.?/),
-    whitespace,
-    spaceUrlPath
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
-  let value = [ops.scope, fnName];
-  if (fnArgs) {
-    value.push(...fnArgs);
-  }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a space-delimeted URL
-export function spaceUrl(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    urlProtocol,
-    whitespace,
-    spaceUrlPath
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: protocol, 3: path } = parsed.value;
-  const value = [[ops.scope, protocol], ...path];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a space-delimeted URL path
-export function spaceUrlPath(text) {
-  const parsed = separatedList(pathKey, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
