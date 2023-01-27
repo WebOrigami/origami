@@ -27,7 +27,9 @@ concat.toString = () => "«ops.concat»";
  * @param {PlainObject} obj
  */
 export async function graph(obj) {
-  return new OrigamiGraph(obj);
+  const result = new OrigamiGraph(obj);
+  result.parent = this;
+  return result;
 }
 graph.toString = () => "«ops.graph»";
 

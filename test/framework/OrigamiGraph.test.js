@@ -18,13 +18,13 @@ describe("OrigamiGraph", () => {
     const graph = new OrigamiGraph(`
       public: {
         name: 'world'
-        message = \`Hello, {{ name }}!\`
+        index.html = \`Hello, {{ name }}!\`
       }
     `);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       public: {
         name: "world",
-        message: "Hello, world!",
+        "index.html": "Hello, world!",
       },
     });
     const indexHtml = await ExplorableGraph.traverse(

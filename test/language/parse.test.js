@@ -28,7 +28,7 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
@@ -232,8 +232,8 @@ describe.only("parse", () => {
     assertParse(number("-1"), -1);
   });
 
-  it.skip("object", () => {
-    // assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
+  it("object", () => {
+    assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
     assertParse(object("{ a: { b: { c: 0 } } }"), [
       ops.object,
       {
@@ -242,7 +242,7 @@ describe.only("parse", () => {
     ]);
   });
 
-  it.skip("graph", () => {
+  it("graph", () => {
     assertParse(object("{ x = fn('a') }"), [
       ops.graph,
       {

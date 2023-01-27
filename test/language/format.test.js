@@ -3,6 +3,11 @@ import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("Origami language code formatter", () => {
+  it("assignment", () => {
+    const code = [ops.assign, "foo", [ops.scope, "bar"]];
+    assert.equal(format(code), "foo = bar");
+  });
+
   it("scope reference", () => {
     const code = [ops.scope, "foo"];
     assert.equal(format(code), "foo");
@@ -57,10 +62,5 @@ describe("Origami language code formatter", () => {
   it("this", () => {
     const code = [ops.thisKey];
     assert.equal(format(code), "this");
-  });
-
-  it("assignment", () => {
-    const code = ["=", "foo", [ops.scope, "bar"]];
-    assert.equal(format(code), "foo = bar");
   });
 });

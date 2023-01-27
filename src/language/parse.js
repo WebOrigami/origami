@@ -292,29 +292,22 @@ export function objectDefinitions(text) {
   let containsAssignment = false;
   while (parsed.value.length > 0) {
     const property = parsed.value.shift(); // Next parsed property key:value
-    if (property) {
+    if (!property) {
+      // Skip trailing separator
+      continue;
+    } else if (property instanceof Array && property[0] === ops.assign) {
+      // Assignment
+      const [_, key, value] = property;
+      obj[key] = value;
+      containsAssignment = true;
+    } else {
+      // Regular object property
       Object.assign(obj, property);
-      if (Object.values(property)[0] instanceof Array) {
-        containsAssignment = true;
-      }
-      parsed.value.shift(); // Drop separator
     }
+    parsed.value.shift(); // Drop separator
   }
   const op = containsAssignment ? ops.graph : ops.object;
   const value = [op, obj];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-export function objectAssignment(text) {
-  const parsed = assignment(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: key, 2: formula } = parsed.value;
-  const value = { [key]: formula };
   return {
     value,
     rest: parsed.rest,
