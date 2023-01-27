@@ -2,7 +2,7 @@ import format from "../../src/language/format.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
-describe.only("Origami language code formatter", () => {
+describe("Origami language code formatter", () => {
   it("scope reference", () => {
     const code = [ops.scope, "foo"];
     assert.equal(format(code), "foo");
