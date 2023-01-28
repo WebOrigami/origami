@@ -11,26 +11,15 @@ class OrigamiGraphBase {
     if (typeof definitions === "string") {
       const parsed = objectDefinitions(definitions);
       const code = parsed?.value;
-      if (
-        !parsed ||
-        parsed.rest !== "" ||
-        !(code?.[0] === ops.graph || code?.[0] === ops.object)
-      ) {
+      if (!parsed || parsed.rest !== "" || !isGraphCode(code)) {
         console.error(`could not parse as an Origami graph: ${definitions}`);
         return;
       }
-      definitions = code[1];
-    }
-
-    // Separate the parsed simple properties from the formulas.
-    this.properties = {};
-    this.formulas = {};
-    for (const [key, value] of Object.entries(definitions)) {
-      if (value instanceof Array) {
-        this.formulas[key] = value;
-      } else {
-        this.properties[key] = value;
-      }
+      this.properties = code[1] || {};
+      this.formulas = code[2] || {};
+    } else {
+      this.properties = definitions.properties ?? {};
+      this.formulas = definitions.formulas ?? {};
     }
   }
 
@@ -48,6 +37,10 @@ class OrigamiGraphBase {
     // Try properties first.
     let value = this.properties[key];
     if (value !== undefined) {
+      if (isGraphCode(value)) {
+        const [_, properties, formulas] = value;
+        value = Reflect.construct(this.constructor, [{ properties, formulas }]);
+      }
       return value;
     }
 
@@ -61,8 +54,10 @@ class OrigamiGraphBase {
   }
 }
 
-const OrigamiGraph = PathTransform(
-  InheritScopeTransform(FileLoadersTransform(OrigamiGraphBase))
-);
+function isGraphCode(obj) {
+  return obj?.[0] === ops.graph || obj?.[0] === ops.object;
+}
 
-export default OrigamiGraph;
+export default class OrigamiGraph extends PathTransform(
+  InheritScopeTransform(FileLoadersTransform(OrigamiGraphBase))
+) {}

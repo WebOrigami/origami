@@ -288,8 +288,8 @@ export function objectDefinitions(text) {
     return null;
   }
   // Collect properties, skip separators
-  const obj = {};
-  let containsAssignment = false;
+  const properties = {};
+  const formulas = {};
   while (parsed.value.length > 0) {
     const property = parsed.value.shift(); // Next parsed property key:value
     if (!property) {
@@ -298,16 +298,17 @@ export function objectDefinitions(text) {
     } else if (property instanceof Array && property[0] === ops.assign) {
       // Assignment
       const [_, key, value] = property;
-      obj[key] = value;
-      containsAssignment = true;
+      formulas[key] = value;
     } else {
       // Regular object property
-      Object.assign(obj, property);
+      Object.assign(properties, property);
     }
     parsed.value.shift(); // Drop separator
   }
-  const op = containsAssignment ? ops.graph : ops.object;
-  const value = [op, obj];
+  const value =
+    Object.keys(formulas).length > 0
+      ? [ops.graph, properties, formulas]
+      : [ops.object, properties];
   return {
     value,
     rest: parsed.rest,

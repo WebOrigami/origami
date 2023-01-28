@@ -54,8 +54,8 @@ describe("ops", () => {
   it("can instantiate an Origami graph", async () => {
     const code = [
       ops.graph,
+      { name: "world" },
       {
-        name: "world",
         message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
       },
     ];

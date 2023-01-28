@@ -178,6 +178,25 @@ describe("parse", () => {
     assertParse(getReference("hello"), [ops.scope, "hello"]);
   });
 
+  it("graph", () => {
+    assertParse(object("{ x = fn('a') }"), [
+      ops.graph,
+      {},
+      {
+        x: [[ops.scope, "fn"], "a"],
+      },
+    ]);
+    assertParse(object("{ a:1 \n x=fn('a') }"), [
+      ops.graph,
+      {
+        a: 1,
+      },
+      {
+        x: [[ops.scope, "fn"], "a"],
+      },
+    ]);
+  });
+
   it("group", () => {
     assertParse(group(" ( hello )"), [ops.scope, "hello"]);
     assertParse(group("(((nested)))"), [ops.scope, "nested"]);
@@ -238,22 +257,6 @@ describe("parse", () => {
       ops.object,
       {
         a: [ops.object, { b: [ops.object, { c: 0 }] }],
-      },
-    ]);
-  });
-
-  it("graph", () => {
-    assertParse(object("{ x = fn('a') }"), [
-      ops.graph,
-      {
-        x: [[ops.scope, "fn"], "a"],
-      },
-    ]);
-    assertParse(object("{ a:1 \n x=fn('a') }"), [
-      ops.graph,
-      {
-        a: 1,
-        x: [[ops.scope, "fn"], "a"],
       },
     ]);
   });
