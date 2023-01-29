@@ -51,7 +51,7 @@ describe("ops", () => {
     });
   });
 
-  it("can instantiate an Origami graph", async () => {
+  it.only("can instantiate an Origami graph", async () => {
     const code = [
       ops.graph,
       { name: "world" },

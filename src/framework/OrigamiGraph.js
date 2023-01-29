@@ -40,6 +40,9 @@ class OrigamiGraphBase {
       if (isGraphCode(value)) {
         const [_, properties, formulas] = value;
         value = Reflect.construct(this.constructor, [{ properties, formulas }]);
+      } else if (value instanceof Array) {
+        // TODO: Condition above should be more specific test of Origami code
+        value = await execute.call(this.scope ?? this, value);
       }
       return value;
     }
