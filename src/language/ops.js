@@ -28,17 +28,7 @@ concat.toString = () => "«ops.concat»";
  * @param {PlainObject} formulas
  */
 export async function graph(properties, formulas) {
-  // Evaluate the properties.
-  const evaluated = {};
-  for (const key in properties) {
-    const code = properties[key];
-    evaluated[key] = await execute.call(this, code);
-  }
-
-  const result = new OrigamiGraph({
-    properties: evaluated,
-    formulas,
-  });
+  const result = new OrigamiGraph({ properties, formulas });
   result.parent = this;
   return result;
 }
