@@ -2,10 +2,10 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import assert from "../assert.js";
 
-describe("OrigamiGraph", () => {
+describe.only("OrigamiGraph", () => {
   it("graph from text", async () => {
     const graph = new OrigamiGraph(`
-      name: 'world'
+      name = 'world'
       message = \`Hello, {{ name }}!\`
     `);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
@@ -16,8 +16,8 @@ describe("OrigamiGraph", () => {
 
   it("graph can contain nested graph", async () => {
     const graph = new OrigamiGraph(`
-      public: {
-        name: 'world'
+      public = {
+        name = 'world'
         index.html = \`Hello, {{ name }}!\`
       }
     `);

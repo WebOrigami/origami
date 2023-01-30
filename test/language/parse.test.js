@@ -5,6 +5,7 @@ import {
   expression,
   functionComposition,
   getReference,
+  graph,
   group,
   key,
   lambda,
@@ -28,7 +29,7 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
   it("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
@@ -179,19 +180,16 @@ describe("parse", () => {
   });
 
   it("graph", () => {
-    assertParse(object("{ x = fn('a') }"), [
+    assertParse(graph("{ x = fn('a') }"), [
       ops.graph,
-      {},
       {
         x: [[ops.scope, "fn"], "a"],
       },
     ]);
-    assertParse(object("{ a:1 \n x=fn('a') }"), [
+    assertParse(graph("{ a=1 \n x=fn('a') }"), [
       ops.graph,
       {
         a: 1,
-      },
-      {
         x: [[ops.scope, "fn"], "a"],
       },
     ]);

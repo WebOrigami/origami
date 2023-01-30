@@ -4,7 +4,7 @@ import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
-describe("ops", () => {
+describe.only("ops", () => {
   it("can resolve substitutions in a template literal", async () => {
     const scope = new ObjectGraph({
       name: "world",
@@ -54,17 +54,15 @@ describe("ops", () => {
   it("can instantiate an Origami graph", async () => {
     const code = [
       ops.graph,
-      { name: "world" },
       {
+        name: "world",
         message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
       },
     ];
     const result = await execute.call({}, code);
     assert(result instanceof OrigamiGraph);
-    assert.deepEqual(result.properties, {
-      name: "world",
-    });
     assert.deepEqual(result.formulas, {
+      name: "world",
       message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
     });
   });

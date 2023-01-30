@@ -1,30 +1,27 @@
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import execute from "../language/execute.js";
-import * as ops from "../language/ops.js";
-import { objectDefinitions } from "../language/parse.js";
+import { graphFormulas } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
 
 class OrigamiGraphBase {
-  constructor(definitions) {
+  constructor(definition) {
     // If the definition is text parse it, otherwise use as is.
-    if (typeof definitions === "string") {
-      const parsed = objectDefinitions(definitions);
-      const code = parsed?.value;
-      if (!parsed || parsed.rest !== "" || !isGraphCode(code)) {
-        console.error(`could not parse as an Origami graph: ${definitions}`);
+    let formulas;
+    if (typeof definition === "string") {
+      const parsed = graphFormulas(definition);
+      if (!parsed || parsed.rest !== "") {
+        console.error(`could not parse as an Origami graph: ${definition}`);
         return;
       }
-      this.properties = code[1] || {};
-      this.formulas = code[2] || {};
+      formulas = parsed.value[1];
     } else {
-      this.properties = definitions.properties ?? {};
-      this.formulas = definitions.formulas ?? {};
+      formulas = definition;
     }
+    this.formulas = formulas ?? {};
   }
 
   async *[Symbol.asyncIterator]() {
-    yield* Object.keys(this.properties);
     yield* Object.keys(this.formulas);
   }
 
@@ -34,31 +31,15 @@ class OrigamiGraphBase {
       return this;
     }
 
-    // Try properties first.
-    let value = this.properties[key];
-    if (value !== undefined) {
-      if (isGraphCode(value)) {
-        const [_, properties, formulas] = value;
-        value = Reflect.construct(this.constructor, [{ properties, formulas }]);
-      } else if (value instanceof Array) {
-        // TODO: Condition above should be more specific test of Origami code
-        value = await execute.call(this.scope ?? this, value);
-      }
-      return value;
-    }
-
-    // Then try formulas.
     const formula = this.formulas[key];
+    let value;
     if (formula) {
       const scope = this.scope ?? this;
       value = await execute.call(scope, formula);
     }
+
     return value;
   }
-}
-
-function isGraphCode(obj) {
-  return obj?.[0] === ops.graph || obj?.[0] === ops.object;
 }
 
 export default class OrigamiGraph extends PathTransform(

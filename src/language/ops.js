@@ -24,11 +24,10 @@ concat.toString = () => "«ops.concat»";
  * OrigamiGraph instance.
  *
  * @this {Explorable}
- * @param {PlainObject} properties
  * @param {PlainObject} formulas
  */
-export async function graph(properties, formulas) {
-  const result = new OrigamiGraph({ properties, formulas });
+export async function graph(formulas) {
+  const result = new OrigamiGraph(formulas);
   result.parent = this;
   return result;
 }

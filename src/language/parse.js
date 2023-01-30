@@ -89,6 +89,7 @@ export function expression(text) {
     number,
     lambda,
     templateLiteral,
+    graph,
     object,
     functionComposition,
     urlProtocolCall,
@@ -150,6 +151,50 @@ export function getReference(text) {
     return null;
   }
   const value = [ops.scope, parsed.value];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function graph(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    regex(/^{/),
+    graphFormulas,
+    optionalWhitespace,
+    regex(/^}/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[2];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function graphFormulas(text) {
+  const parsed = separatedList(assignment, whitespace, regex(/^/))(text);
+  if (!parsed) {
+    return null;
+  }
+  // Collect formulas, skip separators
+  const formulas = {};
+  while (parsed.value.length > 0) {
+    const formula = parsed.value.shift(); // Next parsed assignment key=value
+    if (!formula) {
+      // Skip trailing separator
+      continue;
+    } else {
+      // Formula
+      const [_, key, value] = formula;
+      formulas[key] = value;
+    }
+    parsed.value.shift(); // Drop separator
+  }
+  const value = [ops.graph, formulas];
   return {
     value,
     rest: parsed.rest,
@@ -264,7 +309,7 @@ export function object(text) {
   const parsed = sequence(
     optionalWhitespace,
     regex(/^{/),
-    objectDefinitions,
+    objectProperties,
     optionalWhitespace,
     regex(/^}/)
   )(text);
@@ -278,37 +323,25 @@ export function object(text) {
   };
 }
 
-export function objectDefinition(text) {
-  return any(objectProperty, assignment)(text);
-}
-
-export function objectDefinitions(text) {
-  const parsed = separatedList(objectDefinition, whitespace, regex(/^/))(text);
+export function objectProperties(text) {
+  const parsed = separatedList(objectProperty, whitespace, regex(/^/))(text);
   if (!parsed) {
     return null;
   }
   // Collect properties, skip separators
   const properties = {};
-  const formulas = {};
   while (parsed.value.length > 0) {
     const property = parsed.value.shift(); // Next parsed property key:value
     if (!property) {
       // Skip trailing separator
       continue;
-    } else if (property instanceof Array && property[0] === ops.assign) {
-      // Assignment
-      const [_, key, value] = property;
-      formulas[key] = value;
     } else {
-      // Regular object property
+      // Object property
       Object.assign(properties, property);
     }
     parsed.value.shift(); // Drop separator
   }
-  const value =
-    Object.keys(formulas).length > 0
-      ? [ops.graph, properties, formulas]
-      : [ops.object, properties];
+  const value = [ops.object, properties];
   return {
     value,
     rest: parsed.rest,
