@@ -66,32 +66,30 @@ export function sequence(...parsers) {
   };
 }
 
-export function separatedList(termParser, separatorParser, whitespaceParser) {
+export function separatedList(termParser, separatorParser) {
   return function parseSeparatedList(text) {
-    const whitespace1 = whitespaceParser(text);
-    let parsedTerm = termParser(whitespace1.rest);
+    let parsedTerm = termParser(text);
     if (!parsedTerm) {
       return null;
     }
-    const value = [parsedTerm.value];
+    const value = [];
     let rest;
     while (parsedTerm) {
+      value.push(parsedTerm.value);
       rest = parsedTerm.rest;
-      const whitespace2 = whitespaceParser(parsedTerm.rest);
-      const parsedSeparator = separatorParser(whitespace2.rest);
-      if (parsedSeparator) {
-        value.push(parsedSeparator.value);
-        const whitespace3 = whitespaceParser(parsedSeparator.rest);
-        parsedTerm = termParser(whitespace3.rest);
-        if (parsedTerm) {
-          value.push(parsedTerm.value);
-        } else {
-          // Trailing separator
-          value.push(undefined);
-          rest = parsedSeparator.rest;
-        }
-      } else {
-        parsedTerm = null;
+      const parsedSeparator = separatorParser(parsedTerm.rest);
+      if (!parsedSeparator) {
+        // Reached end of list
+        break;
+      }
+      value.push(parsedSeparator.value);
+      rest = parsedSeparator.rest;
+      parsedTerm = termParser(parsedSeparator.rest);
+      if (!parsedTerm) {
+        // There's a trailing separator, which we indicate by
+        // ending the list with an undefined value.
+        value.push(undefined);
+        break;
       }
     }
     return {

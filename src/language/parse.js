@@ -146,11 +146,11 @@ export function functionComposition(text) {
 
 // Parse a call to get a value.
 export function getReference(text) {
-  const parsed = reference(text);
+  const parsed = sequence(optionalWhitespace, reference)(text);
   if (!parsed) {
     return null;
   }
-  const value = [ops.scope, parsed.value];
+  const value = [ops.scope, parsed.value[1]];
   return {
     value,
     rest: parsed.rest,
@@ -176,7 +176,7 @@ export function graph(text) {
 }
 
 export function graphFormulas(text) {
-  const parsed = separatedList(assignment, whitespace, regex(/^/))(text);
+  const parsed = separatedList(assignment, whitespace)(text);
   if (!parsed) {
     return null;
   }
@@ -260,18 +260,18 @@ export function lambda(text) {
 
 // Parse a comma-separated list with at least one term.
 export function list(text) {
-  const parsed = separatedList(
-    expression,
-    terminal(/^,/),
-    optionalWhitespace
-  )(text);
+  const parsed = separatedList(expression, terminal(/^\s*,/))(text);
   if (!parsed) {
     return null;
   }
-  // Remove the separators from the result.
+  // Remove the parsed separators, which will be in the even positions.
   const value = [];
   while (parsed.value.length > 0) {
-    value.push(parsed.value.shift()); // Keep value
+    const item = parsed.value.shift();
+    // Skip undefined at end of list, which marks a trailing separator.
+    if (item !== undefined || parsed.value.length !== 0) {
+      value.push(item);
+    }
     parsed.value.shift(); // Drop separator
   }
   return {
@@ -324,7 +324,7 @@ export function object(text) {
 }
 
 export function objectProperties(text) {
-  const parsed = separatedList(objectProperty, whitespace, regex(/^/))(text);
+  const parsed = separatedList(objectProperty, whitespace)(text);
   if (!parsed) {
     return null;
   }
@@ -447,7 +447,7 @@ export function percentCall(text) {
 
 // Parse a percent-delimeted path
 export function percentPath(text) {
-  const parsed = separatedList(pathKey, terminal(/^%/), regex(/^/))(text);
+  const parsed = separatedList(pathKey, terminal(/^%/))(text);
   if (!parsed) {
     return null;
   }
@@ -573,7 +573,7 @@ export function slashCall(text) {
 
 // Parse a slash-delimeted path
 export function slashPath(text) {
-  const parsed = separatedList(pathKey, terminal(/^\//), regex(/^/))(text);
+  const parsed = separatedList(pathKey, terminal(/^\//))(text);
   if (!parsed) {
     return null;
   }
@@ -638,14 +638,9 @@ export function templateLiteral(text) {
 function templateParser(allowBackticks) {
   const textParser = templateTextParser(allowBackticks);
   return function template(text) {
-    // It's a stretch to use the separated list parser for this, but it works. We
-    // treat the plain text as the list items, and the substitutions as
-    // separators.
-    const parsed = separatedList(
-      optional(textParser),
-      substitution,
-      regex(/^/)
-    )(text);
+    // We use the separated list parser to parse the text and substitutions: the
+    // plain text are the list items, and the substitutions are the separators.
+    const parsed = separatedList(optional(textParser), substitution)(text);
     if (!parsed) {
       return null;
     }

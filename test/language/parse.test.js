@@ -177,6 +177,7 @@ describe("parse", () => {
 
   it("getReference", () => {
     assertParse(getReference("hello"), [ops.scope, "hello"]);
+    assertParse(getReference("    foo"), [ops.scope, "foo"]);
   });
 
   it("graph", () => {
@@ -224,7 +225,7 @@ describe("parse", () => {
       [ops.scope, "d"],
       [ops.scope, "e"],
     ]);
-    assertParse(list(`'foo', 'bar'`), ["foo", "bar"]);
+    assertParse(list(`'foo', 'bar',`), ["foo", "bar"]);
     assertParse(list("a(b), c"), [
       [
         [ops.scope, "a"],
