@@ -2,7 +2,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import assert from "../assert.js";
 
-describe.only("OrigamiGraph", () => {
+describe("OrigamiGraph", () => {
   it("graph from text", async () => {
     const graph = new OrigamiGraph(`
       name = 'world'

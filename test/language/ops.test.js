@@ -4,7 +4,7 @@ import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
-describe.only("ops", () => {
+describe("ops", () => {
   it("can resolve substitutions in a template literal", async () => {
     const scope = new ObjectGraph({
       name: "world",

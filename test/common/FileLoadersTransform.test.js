@@ -17,7 +17,7 @@ describe("FileLoadersTransform", () => {
   it("interprets .graph files as an Origami metagraph", async () => {
     const files = new (FileLoadersTransform(ObjectGraph))({
       "test.graph": `
-        name: 'world'
+        name = 'world'
         message = \`Hello, {{ name }}!\`
       `,
     });
