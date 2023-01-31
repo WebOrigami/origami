@@ -37,6 +37,25 @@ export function argsChain(text) {
   return series(args)(text);
 }
 
+// Parse an array like `[1, 2, 3]`.
+export function array(text) {
+  const parsed = sequence(
+    optionalWhitespace,
+    regex(/^\[/),
+    list,
+    optionalWhitespace,
+    regex(/^\]/)
+  )(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.array, ...parsed.value[2]];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse an assignment statment.
 export function assignment(text) {
   const parsed = sequence(
@@ -91,6 +110,7 @@ export function expression(text) {
     templateLiteral,
     graph,
     object,
+    array,
     functionComposition,
     urlProtocolCall,
     protocolCall,
@@ -283,7 +303,7 @@ export function list(text) {
 // Parse a reference to a literal
 export function literal(text) {
   // Literals are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\$"'/:`%,#\s]+/)(text);
+  return regex(/^[^=\(\)\{\}\[\]\$"'/:`%,#\s]+/)(text);
 }
 
 // Parse a left parenthesis.

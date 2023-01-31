@@ -51,6 +51,15 @@ describe("ops", () => {
     });
   });
 
+  it("can instantiate an array", async () => {
+    const scope = new ObjectGraph({
+      upper: (s) => s.toUpperCase(),
+    });
+    const code = [ops.array, "Hello", 1, [[ops.scope, "upper"], "world"]];
+    const result = await execute.call(scope, code);
+    assert.deepEqual(result, ["Hello", 1, "WORLD"]);
+  });
+
   it("can instantiate an Origami graph", async () => {
     const code = [
       ops.graph,

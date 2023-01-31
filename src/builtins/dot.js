@@ -52,8 +52,12 @@ async function statements(graph, nodePath, options) {
     result.push(arc);
 
     const value = await graph.get(key);
-    if (ExplorableGraph.isExplorable(value)) {
-      const subStatements = await statements(value, destPath, options);
+    if (
+      typeof value !== "string" &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
+      const subgraph = ExplorableGraph.from(value);
+      const subStatements = await statements(subgraph, destPath, options);
       result = result.concat(subStatements);
     } else {
       const serializable = value ? toSerializable(value) : undefined;

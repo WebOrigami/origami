@@ -1,6 +1,7 @@
 import * as ops from "../../src/language/ops.js";
 import {
   args,
+  array,
   assignment,
   expression,
   functionComposition,
@@ -43,6 +44,10 @@ describe("parse", () => {
     ]);
     assertParse(args("()"), []);
     assert.equal(args(""), null);
+  });
+
+  it("array", () => {
+    assertParse(array("[ 1, 2, 3, ]"), [ops.array, 1, 2, 3]);
   });
 
   it("assignment", () => {

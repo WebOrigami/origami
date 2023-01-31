@@ -4,6 +4,17 @@ import concatBuiltin from "../builtins/concat.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 
+/**
+ * Construct an array.
+ *
+ * @this {Explorable}
+ * @param {any[]} items
+ */
+export async function array(...items) {
+  return Array(...items);
+}
+array.toString = () => "«ops.array»";
+
 // The assign op is a placeholder for an assignment declaration.
 // It is only used during parsing -- it shouldn't be executed.
 export const assign = "«ops.assign»";
