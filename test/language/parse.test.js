@@ -15,7 +15,6 @@ import {
   number,
   object,
   objectProperty,
-  optionalWhitespace,
   percentCall,
   percentPath,
   protocolCall,
@@ -27,6 +26,7 @@ import {
   templateLiteral,
   thisReference,
   urlProtocolCall,
+  whitespace,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
@@ -230,6 +230,10 @@ describe("parse", () => {
       [ops.scope, "d"],
       [ops.scope, "e"],
     ]);
+    assertParse(list("a, # Comment\nb"), [
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
     assertParse(list(`'foo', 'bar',`), ["foo", "bar"]);
     assertParse(list("a(b), c"), [
       [
@@ -251,7 +255,7 @@ describe("parse", () => {
 
   it("number", () => {
     assertParse(number("1"), 1);
-    assertParse(number("3.14159"), 3.14159);
+    assertParse(number(" 3.14159"), 3.14159);
     assertParse(number("-1"), -1);
   });
 
@@ -472,9 +476,13 @@ End`),
   });
 
   it("whitespace", () => {
-    assert.deepEqual(optionalWhitespace("   hello"), {
+    assert.deepEqual(whitespace("   hello"), {
       value: true,
       rest: "hello",
+    });
+    assert.deepEqual(whitespace("\n# Comment\n3"), {
+      value: true,
+      rest: "3",
     });
   });
 });

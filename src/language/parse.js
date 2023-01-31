@@ -91,6 +91,11 @@ export function assignment(text) {
   };
 }
 
+// Parse a comma with optional whitespace before it.
+export function comma(text) {
+  return sequence(optionalWhitespace, terminal(/^,/))(text);
+}
+
 // Parse a declaration.
 export function declaration(text) {
   return literal(text);
@@ -123,7 +128,7 @@ export function expression(text) {
 
 // Parse a file extension
 export function extension(text) {
-  return sequence(terminal(/^\s*\./), literal)(text);
+  return sequence(terminal(/^[ \t]*\./), literal)(text);
 }
 
 // Parse something that results in a function/graph that can be called.
@@ -280,7 +285,7 @@ export function lambda(text) {
 
 // Parse a comma-separated list with at least one term.
 export function list(text) {
-  const parsed = separatedList(expression, terminal(/^\s*,/))(text);
+  const parsed = separatedList(expression, comma)(text);
   if (!parsed) {
     return null;
   }
@@ -314,11 +319,14 @@ function lparen(text) {
 export function number(text) {
   // Based on https://stackoverflow.com/a/51733563/76472
   // but only accepts integers or floats, not exponential notation.
-  const parsed = regex(/^\s*-?(?:\d+(?:\.\d*)?|\.\d+)/)(text);
+  const parsed = sequence(
+    optionalWhitespace,
+    regex(/^-?(?:\d+(?:\.\d*)?|\.\d+)/)
+  )(text);
   if (!parsed) {
     return null;
   }
-  const value = Number(parsed.value);
+  const value = Number(parsed.value[1]);
   return {
     value,
     rest: parsed.rest,
@@ -390,7 +398,7 @@ export function objectProperty(text) {
 
 // Parse an optional whitespace sequence.
 export function optionalWhitespace(text) {
-  return terminal(/^\s*/)(text);
+  return optional(whitespace)(text);
 }
 
 // Parse function arguments enclosed in parentheses.
@@ -789,6 +797,7 @@ export function urlProtocolCall(text) {
 }
 
 // Parse a whitespace sequence.
+// We consider comments (from a `#` to a newline) to be whitespace.
 export function whitespace(text) {
-  return terminal(/^\s+/)(text);
+  return terminal(/^(?:[\s]|(?:#.*\n))+/)(text);
 }
