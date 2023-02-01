@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 
 /**
  * Let a graph (e.g., of files) respond to changes.
@@ -47,9 +48,11 @@ export default async function watch(variant, fn) {
 
 async function evaluateGraph(scope, fn) {
   const result = await fn.call(scope);
-  const graph = result ? ExplorableGraph.from(result) : undefined;
+  let graph = result ? ExplorableGraph.from(result) : undefined;
   if (!graph) {
-    throw new Error(`watch: Expression did not return a graph`);
+    console.warn(`warning: watch expression did not return a graph`);
+    // Return an empty graph.
+    graph = new ObjectGraph({});
   }
   return graph;
 }
