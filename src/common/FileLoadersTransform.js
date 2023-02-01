@@ -49,10 +49,17 @@ export default function FileLoadersTransform(Base) {
 async function loadOrigamiGraph(buffer, key) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
-  const graph = new OrigamiGraph(text);
   const scope = this;
-  graph.parent = scope;
-  /** @type {any} */ (textWithGraph).toGraph = () => graph;
+  let graph;
+
+  /** @type {any} */ (textWithGraph).toGraph = () => {
+    if (!graph) {
+      graph = new OrigamiGraph(text);
+      graph.parent = scope;
+    }
+    return graph;
+  };
+
   return textWithGraph;
 }
 
@@ -63,8 +70,9 @@ async function loadMetaGraph(buffer, key) {
   const text = loadText(buffer);
   const textWithGraph = new String(text);
   const scope = this;
+
   let meta;
-  function toGraph() {
+  /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!meta) {
       const graph = ExplorableGraph.from(text);
       meta = isFormulasTransformApplied(graph)
@@ -73,8 +81,7 @@ async function loadMetaGraph(buffer, key) {
       meta.parent = scope;
     }
     return meta;
-  }
-  /** @type {any} */ (textWithGraph).toGraph = toGraph;
+  };
 
   return textWithGraph;
 }
