@@ -203,6 +203,21 @@ export function graph(text) {
   };
 }
 
+// Parse a graph document.
+// This allows for the possibility that there may be whitespace (including
+// comments) after a (possibly empty) set of graph formulas.
+export function graphDocument(text) {
+  const parsed = sequence(graphFormulas, optionalWhitespace)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[0];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 export function graphFormulas(text) {
   const parsed = separatedList(assignment, whitespace)(text);
   // Collect formulas, skip separators
@@ -800,5 +815,5 @@ export function urlProtocolCall(text) {
 // Parse a whitespace sequence.
 // We consider comments (from a `#` to a newline) to be whitespace.
 export function whitespace(text) {
-  return terminal(/^(?:[\s]|(?:#.*\n))+/)(text);
+  return terminal(/^(?:[\s]|(?:#.*(?:\n|$)))+/)(text);
 }

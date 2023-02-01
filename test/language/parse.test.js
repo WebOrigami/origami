@@ -7,6 +7,7 @@ import {
   functionComposition,
   getReference,
   graph,
+  graphDocument,
   group,
   key,
   lambda,
@@ -201,6 +202,12 @@ describe("parse", () => {
         x: [[ops.scope, "fn"], "a"],
       },
     ]);
+  });
+
+  it("graphDocument", () => {
+    assertParse(graphDocument(""), [ops.graph, {}]);
+    assertParse(graphDocument("# Comment"), [ops.graph, {}]);
+    assertParse(graphDocument("a = 1 b = 2"), [ops.graph, { a: 1, b: 2 }]);
   });
 
   it("group", () => {
@@ -485,6 +492,10 @@ End`),
     assert.deepEqual(whitespace("\n# Comment\n3"), {
       value: true,
       rest: "3",
+    });
+    assert.deepEqual(whitespace("# Comment"), {
+      value: true,
+      rest: "",
     });
   });
 });

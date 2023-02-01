@@ -1,7 +1,7 @@
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import execute from "../language/execute.js";
-import { graphFormulas } from "../language/parse.js";
+import { graphDocument } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
 
@@ -10,7 +10,7 @@ class OrigamiGraphBase {
     // If the definition is text parse it, otherwise use as is.
     let formulas;
     if (typeof definition === "string") {
-      const parsed = graphFormulas(definition);
+      const parsed = graphDocument(definition);
       if (!parsed || parsed.rest !== "") {
         throw new Error(`Couldn't parse Origami graph: ${definition}`);
       }
