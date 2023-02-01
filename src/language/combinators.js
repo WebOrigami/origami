@@ -66,14 +66,13 @@ export function sequence(...parsers) {
   };
 }
 
+// Parse a list of terms separated by a separator. This parser always succeeds
+// -- if there are no terms, it returns an empty array as the value.
 export function separatedList(termParser, separatorParser) {
   return function parseSeparatedList(text) {
-    let parsedTerm = termParser(text);
-    if (!parsedTerm) {
-      return null;
-    }
     const value = [];
-    let rest;
+    let parsedTerm = termParser(text);
+    let rest = parsedTerm?.rest ?? text;
     while (parsedTerm) {
       value.push(parsedTerm.value);
       rest = parsedTerm.rest;

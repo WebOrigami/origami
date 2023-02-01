@@ -47,6 +47,7 @@ describe("parse", () => {
   });
 
   it("array", () => {
+    assertParse(array("[]"), [ops.array]);
     assertParse(array("[ 1, 2, 3, ]"), [ops.array, 1, 2, 3]);
   });
 
@@ -186,6 +187,7 @@ describe("parse", () => {
   });
 
   it("graph", () => {
+    assertParse(graph("{}"), [ops.graph, {}]);
     assertParse(graph("{ x = fn('a') }"), [
       ops.graph,
       {
@@ -221,7 +223,7 @@ describe("parse", () => {
   });
 
   it("list", () => {
-    assert.equal(list(""), null);
+    assertParse(list(""), []);
     assertParse(list(" a"), [[ops.scope, "a"]]);
     assertParse(list(" a , b,c, d , e"), [
       [ops.scope, "a"],

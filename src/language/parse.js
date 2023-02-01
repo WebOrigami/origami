@@ -108,19 +108,22 @@ function ellipsis(text) {
 
 // Parse an Origami expression.
 export function expression(text) {
+  // First try parsers for things that have a distinguishing character at the
+  // start, e.g., an opening quote, bracket, etc.
   return any(
     singleQuoteString,
-    number,
-    lambda,
     templateLiteral,
     graph,
     object,
     array,
+    lambda,
+    number,
     functionComposition,
     urlProtocolCall,
     protocolCall,
     slashCall,
     percentCall,
+    // Groups can start function calls or paths, so need to come after those.
     group,
     getReference
   )(text);
@@ -202,9 +205,6 @@ export function graph(text) {
 
 export function graphFormulas(text) {
   const parsed = separatedList(assignment, whitespace)(text);
-  if (!parsed) {
-    return null;
-  }
   // Collect formulas, skip separators
   const formulas = {};
   while (parsed.value.length > 0) {
@@ -251,9 +251,14 @@ export function implicitParensArgs(text) {
   // Whitespace here can only be spaces or tabs -- not newlines.
   const parsed = sequence(terminal(/^[ \t]+/), list)(text);
   if (!parsed) {
+    // No arguments
     return null;
   }
   const value = parsed.value[1];
+  if (value.length === 0) {
+    // No arguments
+    return null;
+  }
   return {
     value,
     rest: parsed.rest,
@@ -283,12 +288,9 @@ export function lambda(text) {
   };
 }
 
-// Parse a comma-separated list with at least one term.
+// Parse a comma-separated list.
 export function list(text) {
   const parsed = separatedList(expression, comma)(text);
-  if (!parsed) {
-    return null;
-  }
   // Remove the parsed separators, which will be in the even positions.
   const value = [];
   while (parsed.value.length > 0) {
@@ -476,7 +478,8 @@ export function percentCall(text) {
 // Parse a percent-delimeted path
 export function percentPath(text) {
   const parsed = separatedList(pathKey, terminal(/^%/))(text);
-  if (!parsed) {
+  if (parsed.value.length === 0) {
+    // No path keys
     return null;
   }
   // Remove the separators from the result.
@@ -602,7 +605,8 @@ export function slashCall(text) {
 // Parse a slash-delimeted path
 export function slashPath(text) {
   const parsed = separatedList(pathKey, terminal(/^\//))(text);
-  if (!parsed) {
+  if (parsed.value.length === 0) {
+    // No path keys
     return null;
   }
   // Remove the separators from the result.
@@ -669,9 +673,6 @@ function templateParser(allowBackticks) {
     // We use the separated list parser to parse the text and substitutions: the
     // plain text are the list items, and the substitutions are the separators.
     const parsed = separatedList(optional(textParser), substitution)(text);
-    if (!parsed) {
-      return null;
-    }
 
     // Drop empty/null strings.
     const filtered = parsed.value.filter((item) => item);
