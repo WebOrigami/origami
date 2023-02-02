@@ -1,21 +1,27 @@
+import ExplorableGraph from "@graphorigami/origami/src/core/ExplorableGraph.js";
+import { transformObject } from "@graphorigami/origami/src/core/utilities.js";
+import InheritScopeTransform from "@graphorigami/origami/src/framework/InheritScopeTransform.js";
 import Scope from "../common/Scope.js";
-import meta from "./meta.js";
 
 /**
  * Return a copy of the given graph that has the indicated graphs as its scope.
  *
- * @param {GraphVariant} graph
+ * @param {GraphVariant} variant
  * @param  {...GraphVariant} scopeGraphs
  * @this {Explorable}
  */
-export default async function setScope(graph, ...scopeGraphs) {
-  // Setting scope implies the use of MetaTransform.
-  let result = await meta.call(this, graph);
-  // If the graph is already a metagraph, it will be returned as is.
-  if (result === graph) {
+export default async function setScope(variant, ...scopeGraphs) {
+  const graph = ExplorableGraph.from(variant);
+  
+  let result;
+  if ('parent' in graph) {
     // Extend prototype chain to avoid destructively modifying the original.
-    result = Object.create(result);
+    result = Object.create(graph);
+  } else {
+    // Setting scope implies the use of InheritScopeTransform.
+    result = transformObject(InheritScopeTransform, graph);
   }
+
   const scope = scopeGraphs.length === 0 ? this : new Scope(...scopeGraphs);
   result.parent = scope;
   return result;
