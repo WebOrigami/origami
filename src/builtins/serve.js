@@ -3,7 +3,7 @@ import { createServer } from "node:net";
 import process from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { requestListener } from "../server/server.js";
-import virtual from "./virtual.js";
+import defaultPages from "./defaultPages.js";
 import watch from "./watch.js";
 
 const defaultPort = 5000;
@@ -20,8 +20,9 @@ export default async function serve(variant, port) {
   if (variant) {
     graph = ExplorableGraph.from(variant);
   } else {
-    const virtualGraph = await virtual.call(this);
-    graph = await watch.call(this, virtualGraph);
+    // By default, watch the default graph and add default pages.
+    const withDefaults = await defaultPages.call(this);
+    graph = await watch.call(this, withDefaults);
   }
 
   if (port === undefined) {
