@@ -1,7 +1,7 @@
-import ExplorableGraph from "@graphorigami/origami/src/core/ExplorableGraph.js";
-import { transformObject } from "@graphorigami/origami/src/core/utilities.js";
-import InheritScopeTransform from "@graphorigami/origami/src/framework/InheritScopeTransform.js";
 import Scope from "../common/Scope.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
  * Return a copy of the given graph that has the indicated graphs as its scope.
@@ -12,9 +12,9 @@ import Scope from "../common/Scope.js";
  */
 export default async function setScope(variant, ...scopeGraphs) {
   const graph = ExplorableGraph.from(variant);
-  
+
   let result;
-  if ('parent' in graph) {
+  if ("parent" in graph) {
     // Extend prototype chain to avoid destructively modifying the original.
     result = Object.create(graph);
   } else {
