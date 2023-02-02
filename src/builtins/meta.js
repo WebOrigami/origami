@@ -1,7 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
-import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import defaultGraph from "./defaultGraph.js";
 
@@ -19,7 +18,7 @@ export default async function meta(variant) {
   const graph = ExplorableGraph.from(variant);
 
   // If graph already appears to be a metagraph, return it as is.
-  if (isFormulasTransformApplied(graph)) {
+  if ("formulas" in graph) {
     return graph;
   }
 
