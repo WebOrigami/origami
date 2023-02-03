@@ -5,7 +5,7 @@ import {
   extname,
   isPlainObject,
   stringLike,
-  transformObject,
+  transformObject
 } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 // import { addAncestor } from "../framework/scopeUtilities.js";
@@ -81,6 +81,11 @@ export async function handleRequest(request, response, graph) {
       resource = await resource();
     }
   } catch (/** @type {any} */ error) {
+    // Work up to the root cause, displaying intermediate messages as we go up.
+    while (error.cause) {
+      console.error(error.message);
+      error = error.cause;
+    }
     console.error(error.message);
     resource = undefined;
   }
