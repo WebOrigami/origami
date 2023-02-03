@@ -42,7 +42,6 @@ Hello, world.
     const graph = new (InheritScopeTransform(ObjectGraph))({
       greeting: "Hello",
       map,
-      // people: [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       people: {
         0: { name: "Alice" },
         1: { name: "Bob" },
