@@ -3,6 +3,66 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("map", () => {
+  it("maps all the values in a graph", async () => {
+    /** @type {any} */
+    const fixture = map(
+      {
+        a: "Hello, a.",
+        b: "Hello, b.",
+        c: "Hello, c.",
+      },
+      (value) => value.toUpperCase()
+    );
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      a: "HELLO, A.",
+      b: "HELLO, B.",
+      c: "HELLO, C.",
+    });
+  });
+
+  it("maps subobjects as values by default", async () => {
+    /** @type {any} */
+    const fixture = map(
+      {
+        english: {
+          a: "Hello, a.",
+        },
+        french: {
+          a: "Bonjour, a.",
+        },
+      },
+      async (value) => JSON.stringify(await ExplorableGraph.plain(value))
+    );
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      english: '{"a":"Hello, a."}',
+      french: '{"a":"Bonjour, a."}',
+    });
+  });
+
+  it("setting deep option maps subobjects deeply", async () => {
+    /** @type {any} */
+    const fixture = map(
+      {
+        english: {
+          a: "Hello, a.",
+        },
+        french: {
+          a: "Bonjour, a.",
+        },
+      },
+      (value) => value.toUpperCase(),
+      { deep: true }
+    );
+    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      english: {
+        a: "HELLO, A.",
+      },
+      french: {
+        a: "BONJOUR, A.",
+      },
+    });
+  });
+
   it("mapping function context includes the value's graph", async () => {
     /** @type {any} */
     const results = map(

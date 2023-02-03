@@ -7,7 +7,6 @@ export default class ExplorableGraph {
   static isKeyExplorable(graph: Explorable, obj: any): Promise<boolean>;
   static keys(graph: GraphVariant): Promise<any[]>;
   static mapReduce(graph: GraphVariant, mapFn: null|((any) => any|null), reduceFn: (any) => any): Explorable;
-  static parse(text: string): Explorable;
   static plain(graph: GraphVariant): Promise<PlainObject>;
   static toFunction(graph: GraphVariant): Function;
   static toJson(graph: GraphVariant | object): Promise<string>;
