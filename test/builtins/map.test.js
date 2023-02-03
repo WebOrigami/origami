@@ -71,7 +71,8 @@ describe("map", () => {
       async function () {
         const name = await this.get("name");
         return name;
-      }
+      },
+      { addValueToScope: true }
     );
     assert.deepEqual(await ExplorableGraph.plain(results), [
       "Alice",

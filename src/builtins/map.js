@@ -19,21 +19,7 @@ export default function map(variant, mapFn, options = {}) {
     return undefined;
   }
 
-  // Convert the mapFn from an Invocable to a real function.
-  /** @type {any} */
-  const fn =
-    typeof mapFn === "function"
-      ? mapFn
-      : typeof mapFn === "object" && "toFunction" in mapFn
-      ? mapFn.toFunction()
-      : ExplorableGraph.canCastToExplorable(mapFn)
-      ? ExplorableGraph.toFunction(mapFn)
-      : null;
-  if (!fn) {
-    throw new TypeError("map(): the supplied map function is not valid.");
-  }
-
-  const extendedMapFn = extendMapFn(fn, options);
+  const extendedMapFn = extendMapFn(mapFn, options);
 
   /** @type {any} */
   const GraphClass =
@@ -53,9 +39,20 @@ export default function map(variant, mapFn, options = {}) {
  * Extend the mapping function so that the scope attached to its execution
  * context includes additional information.
  *
- * @param {function} fn
+ * @param {Invocable} mapFn
  */
-function extendMapFn(fn, options) {
+function extendMapFn(mapFn, options) {
+  // Convert the mapFn from an Invocable to a real function.
+  /** @type {any} */
+  const fn =
+    typeof mapFn === "function"
+      ? mapFn
+      : typeof mapFn === "object" && "toFunction" in mapFn
+      ? mapFn.toFunction()
+      : ExplorableGraph.canCastToExplorable(mapFn)
+      ? ExplorableGraph.toFunction(mapFn)
+      : mapFn;
+
   /**
    * @this {Explorable}
    * @param {any} value
@@ -66,36 +63,45 @@ function extendMapFn(fn, options) {
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";
     const valueName = options.valueName ?? "@value";
-    let scope = new Scope(
-      {
-        ".": value ?? null,
-        [keyName]: key,
-        [valueName]: value ?? null,
-      },
-      getScope(this)
-    );
 
-    // Convert the value to a graph if possible.
-    let extendedValue;
-    if (ExplorableGraph.canCastToExplorable(value)) {
+    let valueInScope;
+    if (
+      !ExplorableGraph.isExplorable(value) &&
+      ExplorableGraph.canCastToExplorable(value)
+    ) {
       try {
-        extendedValue = ExplorableGraph.from(value);
+        valueInScope = ExplorableGraph.from(value);
       } catch (error) {
         // Couldn't create a graph; probably text that's not a graph.
       }
     }
-    if (extendedValue) {
-      if (!("parent" in extendedValue && "scope" in extendedValue)) {
-        extendedValue = transformObject(InheritScopeTransform, extendedValue);
-      }
-      extendedValue.parent = scope;
-      scope = extendedValue.scope;
-    } else {
-      extendedValue = value;
+    if (!valueInScope) {
+      valueInScope = typeof value === "object" ? Object.create(value) : value;
+    }
+    if (
+      typeof valueInScope === "object" &&
+      !("parent" in valueInScope && "scope" in valueInScope)
+    ) {
+      valueInScope = transformObject(InheritScopeTransform, valueInScope);
     }
 
-    // Invoke the map function with our newly-created context.
-    return fn.call(scope, extendedValue, key);
+    let scope = new Scope(
+      {
+        ".": valueInScope ?? null,
+        [keyName]: key,
+        [valueName]: valueInScope ?? null,
+      },
+      getScope(this)
+    );
+
+    if (typeof valueInScope === "object") {
+      valueInScope.parent = scope;
+      if (options.addValueToScope) {
+        scope = valueInScope.scope;
+      }
+    }
+
+    return fn.call(scope, value, key);
   };
 }
 

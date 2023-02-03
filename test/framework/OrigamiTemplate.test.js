@@ -37,7 +37,7 @@ Hello, world.
 
   it("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
-      "Greetings:\n{{map(people, =`{{greeting}}, {{name}}.\n`)}}"
+      "Greetings:\n{{map(people, =`{{greeting}}, {{./name}}.\n`)}}"
     );
     const graph = new (InheritScopeTransform(ObjectGraph))({
       greeting: "Hello",
