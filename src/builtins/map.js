@@ -1,4 +1,4 @@
-import extendMapFn from "../common/extendMapFn.js";
+import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import MapExtensionsGraph from "../common/MapExtensionsGraph.js";
 import MapValuesGraph from "../core/MapValuesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -16,7 +16,7 @@ export default function map(variant, mapFn, options = {}) {
     return undefined;
   }
 
-  const extendedMapFn = extendMapFn(mapFn, options);
+  const extendedMapFn = extendValueKeyFn(mapFn, options);
 
   /** @type {any} */
   const GraphClass =

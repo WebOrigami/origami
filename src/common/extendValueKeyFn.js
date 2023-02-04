@@ -5,29 +5,30 @@ import { getScope } from "../framework/scopeUtilities.js";
 import Scope from "./Scope.js";
 
 /**
- * Extend the mapping function so that the scope attached to its execution
- * context includes additional information.
+ * Builtins like map() want to call a function that takes a value and a key.
+ * They want to extend the scope passed to such a function to include the value
+ * and key. This helper does that.
  *
- * @param {Invocable} mapFn
+ * @param {Invocable} valueKeyFn
  */
-export default function extendMapFn(mapFn, options = {}) {
-  // Convert the mapFn from an Invocable to a real function.
+export default function extendValueKeyFn(valueKeyFn, options = {}) {
+  // Convert from an Invocable to a real function.
   /** @type {any} */
   const fn =
-    typeof mapFn === "function"
-      ? mapFn
-      : typeof mapFn === "object" && "toFunction" in mapFn
-      ? mapFn.toFunction()
-      : ExplorableGraph.canCastToExplorable(mapFn)
-      ? ExplorableGraph.toFunction(mapFn)
-      : mapFn;
+    typeof valueKeyFn === "function"
+      ? valueKeyFn
+      : typeof valueKeyFn === "object" && "toFunction" in valueKeyFn
+      ? valueKeyFn.toFunction()
+      : ExplorableGraph.canCastToExplorable(valueKeyFn)
+      ? ExplorableGraph.toFunction(valueKeyFn)
+      : valueKeyFn;
 
   /**
    * @this {Explorable}
    * @param {any} value
    * @param {any} key
    */
-  return async function extendedMapFn(value, key) {
+  return async function extendedValueKeyFn(value, key) {
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";

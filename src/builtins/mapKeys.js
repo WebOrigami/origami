@@ -1,7 +1,5 @@
-import Scope from "../common/Scope.js";
+import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 
 /**
@@ -16,7 +14,7 @@ export default async function mapKeys(variant, keyFn) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const extendedKeyFn = keyFn ? extendKeyFn(keyFn) : null;
+  const extendedKeyFn = keyFn ? extendValueKeyFn(keyFn) : null;
   const scope = getScope(this);
   return {
     async *[Symbol.asyncIterator]() {
@@ -54,57 +52,6 @@ export default async function mapKeys(variant, keyFn) {
     async watch() {
       await /** @type {any} */ (this.graph).watch?.();
     },
-  };
-}
-
-/**
- * Extend the key function so that the scope attached to its execution context
- * includes additional information.
- *
- * @param {Invocable} keyFn
- */
-export function extendKeyFn(keyFn) {
-  /**
-   * @this {Explorable}
-   * @param {any} value
-   * @param {any} key
-   */
-  return async function extendedKeyFn(value, key) {
-    // Create a scope graph by extending the context graph with the @key and
-    // dot ambient properties.
-    let scope = new Scope(
-      {
-        ".": value ?? null,
-        "@key": key,
-      },
-      getScope(this)
-    );
-
-    // Convert the value to a graph if possible.
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      /** @type {any} */
-      let valueGraph = ExplorableGraph.from(value);
-      if (!("parent" in valueGraph)) {
-        valueGraph = transformObject(InheritScopeTransform, valueGraph);
-      }
-      valueGraph.parent = scope;
-      scope = valueGraph.scope;
-    }
-
-    // Convert the keyFn from an Invocable to a real function.
-    /** @type {any} */
-    const fn =
-      "toFunction" in keyFn
-        ? keyFn.toFunction()
-        : ExplorableGraph.isExplorable(keyFn)
-        ? ExplorableGraph.toFunction(keyFn)
-        : keyFn;
-
-    // Invoke the map function with our newly-created context.
-    return fn.call(scope, value, key);
   };
 }
 
