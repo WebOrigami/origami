@@ -10,7 +10,7 @@ const modules = new (ImplicitModulesTransform(FilesGraph))(fixturesDirectory);
 
 describe("ImplicitModulesTransform", () => {
   it("Gets the exports of the .js file named by the key", async () => {
-    const result = await modules.get("module1");
+    const result = await modules.get("text");
     assert.equal(result, "This is the default export.");
   });
 });

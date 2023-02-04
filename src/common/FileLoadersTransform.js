@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, stringLike, transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 
@@ -9,7 +10,7 @@ const defaultLoaders = {
   ".graph": loadOrigamiGraph,
   ".htm": loadText,
   ".html": loadText,
-  ".js": loadText,
+  ".js": loadJavaScript,
   ".json": loadText,
   ".meta": loadMetaGraph,
   ".md": loadText,
@@ -46,21 +47,67 @@ export default function FileLoadersTransform(Base) {
 /**
  * @this {Explorable}
  */
-async function loadOrigamiGraph(buffer, key) {
+async function loadJavaScript(buffer, key) {
   const text = loadText(buffer);
-  const textWithGraph = new String(text);
-  const scope = this;
-  let graph;
+  const textWithFunction = new String(text);
+  const graph = this;
+  const scope = graph?.scope ?? graph;
 
-  /** @type {any} */ (textWithGraph).toGraph = () => {
-    if (!graph) {
-      graph = new OrigamiGraph(text);
-      graph.parent = scope;
+  let moduleExport;
+  async function importModule() {
+    if (!moduleExport) {
+      moduleExport = graph.import?.(key);
     }
-    return graph;
+    return moduleExport;
+  }
+
+  /** @type {any} */ (textWithFunction).toFunction = function loadAndInvoke() {
+    let fn;
+    return async function (...args) {
+      if (!fn) {
+        fn = await importModule();
+        if (
+          typeof fn !== "function" &&
+          typeof fn !== "string" &&
+          ExplorableGraph.canCastToExplorable(fn)
+        ) {
+          fn = ExplorableGraph.toFunction(fn);
+        }
+      }
+      return fn?.call(scope, ...args);
+    };
   };
 
-  return textWithGraph;
+  /** @type {any} */ (textWithFunction).toGraph = function loadGraph() {
+    let loadedGraph;
+    return {
+      async *[Symbol.asyncIterator]() {
+        const loaded = await this.load();
+        yield* loaded;
+      },
+
+      async get(key) {
+        const loaded = await this.load();
+        return loaded.get(key);
+      },
+
+      async load() {
+        if (!loadedGraph) {
+          const variant = await importModule();
+          if (variant) {
+            loadedGraph = ExplorableGraph.from(variant);
+            if (!("parent" in loadedGraph)) {
+              loadedGraph = transformObject(InheritScopeTransform, loadedGraph);
+            }
+            loadedGraph.parent = scope;
+          }
+        }
+        return loadedGraph;
+      },
+    };
+  };
+
+  return textWithFunction;
 }
 
 /**
@@ -81,6 +128,26 @@ async function loadMetaGraph(buffer, key) {
       meta.parent = scope;
     }
     return meta;
+  };
+
+  return textWithGraph;
+}
+
+/**
+ * @this {Explorable}
+ */
+async function loadOrigamiGraph(buffer, key) {
+  const text = loadText(buffer);
+  const textWithGraph = new String(text);
+  const scope = this;
+  let graph;
+
+  /** @type {any} */ (textWithGraph).toGraph = () => {
+    if (!graph) {
+      graph = new OrigamiGraph(text);
+      graph.parent = scope;
+    }
+    return graph;
   };
 
   return textWithGraph;
