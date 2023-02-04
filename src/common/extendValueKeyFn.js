@@ -66,6 +66,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
 
     if (typeof valueAsGraph === "object") {
       valueAsGraph.parent = scope;
+      // REVIEW: If this option doesn't prove valuable, remove it
       if (options.addValueToScope) {
         scope = valueAsGraph.scope;
       }
