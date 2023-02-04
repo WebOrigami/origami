@@ -64,40 +64,40 @@ function extendMapFn(mapFn, options) {
     const keyName = options.keyName ?? "@key";
     const valueName = options.valueName ?? "@value";
 
-    let extendedValue;
+    let valueAsGraph;
     if (
       !ExplorableGraph.isExplorable(value) &&
       ExplorableGraph.canCastToExplorable(value)
     ) {
       try {
-        extendedValue = ExplorableGraph.from(value);
+        valueAsGraph = ExplorableGraph.from(value);
       } catch (error) {
         // Couldn't create a graph; probably text that's not a graph.
       }
     }
-    if (!extendedValue) {
-      extendedValue = typeof value === "object" ? Object.create(value) : value;
+    if (!valueAsGraph) {
+      valueAsGraph = typeof value === "object" ? Object.create(value) : value;
     }
     if (
-      typeof extendedValue === "object" &&
-      !("parent" in extendedValue && "scope" in extendedValue)
+      typeof valueAsGraph === "object" &&
+      !("parent" in valueAsGraph && "scope" in valueAsGraph)
     ) {
-      extendedValue = transformObject(InheritScopeTransform, extendedValue);
+      valueAsGraph = transformObject(InheritScopeTransform, valueAsGraph);
     }
 
     let scope = new Scope(
       {
-        ".": extendedValue ?? null,
+        ".": valueAsGraph ?? null,
         [keyName]: key,
-        [valueName]: extendedValue ?? null,
+        [valueName]: value ?? null,
       },
       getScope(this)
     );
 
-    if (typeof extendedValue === "object") {
-      extendedValue.parent = scope;
+    if (typeof valueAsGraph === "object") {
+      valueAsGraph.parent = scope;
       if (options.addValueToScope) {
-        scope = extendedValue.scope;
+        scope = valueAsGraph.scope;
       }
     }
 
