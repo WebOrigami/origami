@@ -9,7 +9,7 @@ import map from "./map.js";
  */
 export default function mapDeep(variant, mapFn, options = {}) {
   Object.assign(options, { deep: true });
-  return map(variant, mapFn, options);
+  return map.call(this, variant, mapFn, options);
 }
 
 mapDeep.usage = `mapDeep <graph>, <mapFn>\tMap the deep values in a graph using a map function.`;
