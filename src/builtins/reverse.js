@@ -1,6 +1,6 @@
-import { transformObject } from "@graphorigami/origami/src/core/utilities.js";
-import InheritScopeTransform from "@graphorigami/origami/src/framework/InheritScopeTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
  * Reverse the order of the top-level keys in the graph.
@@ -23,7 +23,9 @@ export default async function reverse(variant) {
 
     async get(key) {
       const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value) ? reverse.call(this.scope, value) : value;
+      return ExplorableGraph.isExplorable(value)
+        ? reverse.call(this.scope, value)
+        : value;
     },
   };
   const result = transformObject(InheritScopeTransform, reversed);
