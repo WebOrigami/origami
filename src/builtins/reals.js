@@ -1,4 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import meta from "./meta.js";
 
 /**
@@ -10,7 +12,7 @@ import meta from "./meta.js";
  */
 export default async function reals(variant) {
   const graph = await meta.call(this, variant);
-  return {
+  const realsGraph = {
     async *[Symbol.asyncIterator]() {
       const realKeys = await /** @type {any} */ (graph).realKeys();
       yield* realKeys;
@@ -25,6 +27,9 @@ export default async function reals(variant) {
       return ExplorableGraph.isExplorable(value) ? reals(value) : value;
     },
   };
+  const result = transformObject(InheritScopeTransform, realsGraph);
+  result.parent = this;
+  return result;
 }
 
 reals.usage = `reals <graph>\tOnly real (non-virtual) portion of the graph`;

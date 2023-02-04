@@ -1,4 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { transformObject } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
  * Given a graph, take the first n items from it.
@@ -13,7 +15,7 @@ export default async function take(variant, n) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  return {
+  const takeGraph = {
     async *[Symbol.asyncIterator]() {
       const iterator = graph[Symbol.asyncIterator]();
       for (let i = 0; i < n; i++) {
@@ -29,6 +31,9 @@ export default async function take(variant, n) {
       return graph.get(key);
     },
   };
+  const result = transformObject(InheritScopeTransform, takeGraph);
+  result.parent = this;
+  return result;
 }
 
 take.usage = `take graph, n\tReturn the first n items from graph`;
