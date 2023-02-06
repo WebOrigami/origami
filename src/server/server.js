@@ -5,7 +5,7 @@ import {
   extname,
   isPlainObject,
   stringLike,
-  transformObject
+  transformObject,
 } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 // import { addAncestor } from "../framework/scopeUtilities.js";
@@ -149,7 +149,7 @@ export async function handleRequest(request, response, graph) {
       mediaType =
         typeof data !== "string"
           ? "application/octet-stream"
-          : data.startsWith("<")
+          : data.trimStart().startsWith("<")
           ? "text/html"
           : "text/plain";
     }
