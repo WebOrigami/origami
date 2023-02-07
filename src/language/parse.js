@@ -213,6 +213,7 @@ export function graphDocument(text) {
   };
 }
 
+// Parse a set of graph formulas.
 export function graphFormulas(text) {
   const parsed = separatedList(formulaOrShorthand, termSeparator)(text);
   // Collect formulas, skip separators
@@ -236,6 +237,7 @@ export function graphFormulas(text) {
   };
 }
 
+// Parse an assignment formula or shorthand assignment.
 export function formulaOrShorthand(text) {
   const parsed = any(assignment, shorthandReference)(text);
   if (!parsed) {
