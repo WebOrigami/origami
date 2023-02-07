@@ -16,6 +16,7 @@ import {
   number,
   object,
   objectProperty,
+  objectPropertyOrShorthand,
   percentCall,
   percentPath,
   protocolCall,
@@ -289,12 +290,25 @@ describe("parse", () => {
         a: [ops.object, { b: [ops.object, { c: 0 }] }],
       },
     ]);
+    assertParse(object("{ a: 1, b }"), [
+      ops.object,
+      {
+        a: 1,
+        b: [ops.inherited, "b"],
+      },
+    ]);
   });
 
   it("objectProperty", () => {
     assertParse(objectProperty("a: 1"), { a: 1 });
     assertParse(objectProperty("name:'Alice'"), { name: "Alice" });
     assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
+  });
+
+  it("objectPropertyOrShorthand", () => {
+    assertParse(objectPropertyOrShorthand("foo"), {
+      foo: [ops.inherited, "foo"],
+    });
   });
 
   it("percentCall", () => {

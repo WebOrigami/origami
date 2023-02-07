@@ -364,7 +364,7 @@ export function object(text) {
 }
 
 export function objectProperties(text) {
-  const parsed = separatedList(objectProperty, termSeparator)(text);
+  const parsed = separatedList(objectPropertyOrShorthand, termSeparator)(text);
   if (!parsed) {
     return null;
   }
@@ -402,6 +402,24 @@ export function objectProperty(text) {
   const value = {
     [parsed.value[1]]: parsed.value[4],
   };
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function objectPropertyOrShorthand(text) {
+  const parsed = any(objectProperty, shorthandReference)(text);
+  if (!parsed) {
+    return null;
+  }
+  let { value } = parsed;
+  if (typeof value === "string") {
+    // Shorthand property
+    value = {
+      [value]: [ops.inherited, value],
+    };
+  }
   return {
     value,
     rest: parsed.rest,
@@ -552,6 +570,18 @@ export function reference(text) {
 // Parse a right parenthesis.
 function rparen(text) {
   return terminal(/^\)/)(text);
+}
+
+export function shorthandReference(text) {
+  const parsed = sequence(optionalWhitespace, literal)(text);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a function call that's just `<name>([...args])`.

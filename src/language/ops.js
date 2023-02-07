@@ -1,6 +1,7 @@
 /// <reference path="./code.d.ts" />
 
 import concatBuiltin from "../builtins/concat.js";
+import Scope from "../common/Scope.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 
@@ -43,6 +44,21 @@ export async function graph(formulas) {
   return result;
 }
 graph.toString = () => "«ops.graph»";
+
+/**
+ * Search the inherited scope -- i.e., exclude the current graph -- for the
+ * given key.
+ *
+ * @this {Explorable}
+ * @param {*} key
+ */
+export async function inherited(key) {
+  const scope = this;
+  const scopeGraphs = /** @type {any} */ (scope).graphs ?? scope;
+  const inheritedScope = new Scope(...scopeGraphs.slice(1));
+  return inheritedScope.get(key);
+}
+inherited.toString = () => "«ops.inherited»";
 
 /**
  * Return a function that will invoke the given code.

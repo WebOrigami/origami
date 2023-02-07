@@ -1,3 +1,4 @@
+import Scope from "../../src/common/Scope.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
@@ -74,5 +75,18 @@ describe("ops", () => {
       name: "world",
       message: [ops.concat, "Hello, ", [ops.scope, "name"], "!"],
     });
+  });
+
+  it("can search inherited scope", async () => {
+    const a = new ObjectGraph({
+      a: 1, // This is the inherited value we want
+    });
+    const b = new ObjectGraph({
+      a: 2, // Should be ignored
+    });
+    /** @type {any} */ (b).scope = new Scope(b, a);
+    const code = [ops.inherited, "a"];
+    const result = await execute.call(b.scope, code);
+    assert.equal(result, 1);
   });
 });
