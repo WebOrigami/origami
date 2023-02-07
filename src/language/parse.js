@@ -91,11 +91,6 @@ export function assignment(text) {
   };
 }
 
-// Parse a comma with optional whitespace before it.
-export function comma(text) {
-  return sequence(optionalWhitespace, terminal(/^,/))(text);
-}
-
 // Parse a declaration.
 export function declaration(text) {
   return literal(text);
@@ -305,7 +300,7 @@ export function lambda(text) {
 
 // Parse a comma-separated list.
 export function list(text) {
-  const parsed = separatedList(expression, comma)(text);
+  const parsed = separatedList(expression, listSeparator)(text);
   // Remove the parsed separators, which will be in the even positions.
   const value = [];
   while (parsed.value.length > 0) {
@@ -320,6 +315,14 @@ export function list(text) {
     value: value,
     rest: parsed.rest,
   };
+}
+
+// Parse a list separator, which is either:
+// * optional whitespace followed by a comma
+// * optional whitespace followed by a newline
+// The whitespace can include comments, which are ignored.
+export function listSeparator(text) {
+  return terminal(/^(((\s|(#.*(\n)))*,)|(\s*((#.*)?\n))+)/)(text);
 }
 
 // Parse a reference to a literal
@@ -815,5 +818,5 @@ export function urlProtocolCall(text) {
 // Parse a whitespace sequence.
 // We consider comments (from a `#` to a newline) to be whitespace.
 export function whitespace(text) {
-  return terminal(/^(?:[\s]|(?:#.*(?:\n|$)))+/)(text);
+  return terminal(/^(?:\s|(?:#.*(?:\n|$)))+/)(text);
 }

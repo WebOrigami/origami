@@ -12,6 +12,7 @@ import {
   key,
   lambda,
   list,
+  listSeparator,
   literal,
   number,
   object,
@@ -239,6 +240,11 @@ describe("parse", () => {
       [ops.scope, "d"],
       [ops.scope, "e"],
     ]);
+    assertParse(list("a\nb\nc"), [
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+    ]);
     assertParse(list("a, # Comment\nb"), [
       [ops.scope, "a"],
       [ops.scope, "b"],
@@ -251,6 +257,14 @@ describe("parse", () => {
       ],
       [ops.scope, "c"],
     ]);
+  });
+
+  it("listSeparator", () => {
+    assertParse(listSeparator(","), true);
+    assertParse(listSeparator("   ,"), true);
+    assertParse(listSeparator(" # Comment\n   ,"), true);
+    assertParse(listSeparator("\n"), true);
+    assertParse(listSeparator(" # Comment\n# More comment \n"), true);
   });
 
   it("literalReference", () => {
