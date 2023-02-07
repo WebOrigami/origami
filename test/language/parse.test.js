@@ -12,7 +12,6 @@ import {
   key,
   lambda,
   list,
-  listSeparator,
   literal,
   number,
   object,
@@ -26,6 +25,7 @@ import {
   substitution,
   templateDocument,
   templateLiteral,
+  termSeparator,
   thisReference,
   urlProtocolCall,
   whitespace,
@@ -108,7 +108,7 @@ describe("parse", () => {
     assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
     assertParse(expression("1"), 1);
     assert.equal(expression("(foo"), null);
-    assertParse(expression("{ a:1 b:2 }"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(expression("{ a:1, b:2 }"), [ops.object, { a: 1, b: 2 }]);
     assertParse(expression("serve { index.html: 'hello' }"), [
       [ops.scope, "serve"],
       [ops.object, { "index.html": "hello" }],
@@ -146,6 +146,11 @@ describe("parse", () => {
     ]);
     // A call with implicit parentheses can't span newlines.
     assertParse(functionComposition("fn\na, b"), null);
+    assertParse(functionComposition("fn(\n  a\n  b\n)"), [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
     assertParse(functionComposition("fn a(b), c"), [
       [ops.scope, "fn"],
       [
@@ -208,7 +213,8 @@ describe("parse", () => {
   it("graphDocument", () => {
     assertParse(graphDocument(""), [ops.graph, {}]);
     assertParse(graphDocument("# Comment"), [ops.graph, {}]);
-    assertParse(graphDocument("a = 1 b = 2"), [ops.graph, { a: 1, b: 2 }]);
+    assertParse(graphDocument("a = 1, b = 2"), [ops.graph, { a: 1, b: 2 }]);
+    assertParse(graphDocument("a = 1\nb = 2"), [ops.graph, { a: 1, b: 2 }]);
   });
 
   it("group", () => {
@@ -259,14 +265,6 @@ describe("parse", () => {
     ]);
   });
 
-  it("listSeparator", () => {
-    assertParse(listSeparator(","), true);
-    assertParse(listSeparator("   ,"), true);
-    assertParse(listSeparator(" # Comment\n   ,"), true);
-    assertParse(listSeparator("\n"), true);
-    assertParse(listSeparator(" # Comment\n# More comment \n"), true);
-  });
-
   it("literalReference", () => {
     assert.deepEqual(literal("hello"), {
       value: "hello",
@@ -283,7 +281,8 @@ describe("parse", () => {
   });
 
   it("object", () => {
-    assertParse(object("{a:1 b:2}"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(object("{a:1, b:2}"), [ops.object, { a: 1, b: 2 }]);
+    assertParse(object("{\n  a:1\n  b:2\n}"), [ops.object, { a: 1, b: 2 }]);
     assertParse(object("{ a: { b: { c: 0 } } }"), [
       ops.object,
       {
@@ -464,6 +463,14 @@ End`),
         [ops.lambda, [ops.concat, [ops.scope, "name"]]],
       ],
     ]);
+  });
+
+  it("termSeparator", () => {
+    assertParse(termSeparator(","), true);
+    assertParse(termSeparator("   ,"), true);
+    assertParse(termSeparator(" # Comment\n   ,"), true);
+    assertParse(termSeparator("\n"), true);
+    assertParse(termSeparator(" # Comment\n# More comment \n"), true);
   });
 
   it("thisReference", () => {

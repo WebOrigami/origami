@@ -214,7 +214,7 @@ export function graphDocument(text) {
 }
 
 export function graphFormulas(text) {
-  const parsed = separatedList(assignment, whitespace)(text);
+  const parsed = separatedList(assignment, termSeparator)(text);
   // Collect formulas, skip separators
   const formulas = {};
   while (parsed.value.length > 0) {
@@ -300,7 +300,7 @@ export function lambda(text) {
 
 // Parse a comma-separated list.
 export function list(text) {
-  const parsed = separatedList(expression, listSeparator)(text);
+  const parsed = separatedList(expression, termSeparator)(text);
   // Remove the parsed separators, which will be in the even positions.
   const value = [];
   while (parsed.value.length > 0) {
@@ -315,14 +315,6 @@ export function list(text) {
     value: value,
     rest: parsed.rest,
   };
-}
-
-// Parse a list separator, which is either:
-// * optional whitespace followed by a comma
-// * optional whitespace followed by a newline
-// The whitespace can include comments, which are ignored.
-export function listSeparator(text) {
-  return terminal(/^(((\s|(#.*(\n)))*,)|(\s*((#.*)?\n))+)/)(text);
 }
 
 // Parse a reference to a literal
@@ -372,7 +364,7 @@ export function object(text) {
 }
 
 export function objectProperties(text) {
-  const parsed = separatedList(objectProperty, whitespace)(text);
+  const parsed = separatedList(objectProperty, termSeparator)(text);
   if (!parsed) {
     return null;
   }
@@ -740,6 +732,14 @@ function templateTextParser(allowBackticks) {
     const rest = text.slice(i);
     return i > 0 ? { value, rest } : null;
   };
+}
+
+// Parse a term (list) separator, which is either:
+// * optional whitespace followed by a comma
+// * optional whitespace followed by a newline
+// The whitespace can include comments, which are ignored.
+export function termSeparator(text) {
+  return terminal(/^(((\s|(#.*(\n)))*,)|(\s*((#.*)?\n))+)/)(text);
 }
 
 // Parse a reference to "this".
