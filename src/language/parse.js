@@ -214,7 +214,7 @@ export function graphDocument(text) {
 }
 
 export function graphFormulas(text) {
-  const parsed = separatedList(assignment, termSeparator)(text);
+  const parsed = separatedList(formulaOrShorthand, termSeparator)(text);
   // Collect formulas, skip separators
   const formulas = {};
   while (parsed.value.length > 0) {
@@ -230,6 +230,22 @@ export function graphFormulas(text) {
     parsed.value.shift(); // Drop separator
   }
   const value = [ops.graph, formulas];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function formulaOrShorthand(text) {
+  const parsed = any(assignment, shorthandReference)(text);
+  if (!parsed) {
+    return null;
+  }
+  let { value } = parsed;
+  if (typeof value === "string") {
+    // Shorthand assignment
+    value = [ops.assign, value, [ops.inherited, value]];
+  }
   return {
     value,
     rest: parsed.rest,

@@ -216,6 +216,10 @@ describe("parse", () => {
     assertParse(graphDocument("# Comment"), [ops.graph, {}]);
     assertParse(graphDocument("a = 1, b = 2"), [ops.graph, { a: 1, b: 2 }]);
     assertParse(graphDocument("a = 1\nb = 2"), [ops.graph, { a: 1, b: 2 }]);
+    assertParse(graphDocument("a = 1\nb"), [
+      ops.graph,
+      { a: 1, b: [ops.inherited, "b"] },
+    ]);
   });
 
   it("group", () => {
