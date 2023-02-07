@@ -4,11 +4,11 @@ import ifBuiltin from "../builtins/if.js";
 import mapBuiltin from "../builtins/map.js";
 import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
+import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
 import DefaultPages from "./DefaultPages.js";
 import OrigamiTemplate from "./OrigamiTemplate.js";
-import StringWithGraph from "./StringWithGraph.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkFiles = new FilesGraph(dirname);

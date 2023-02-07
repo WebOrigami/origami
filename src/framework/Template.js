@@ -1,12 +1,12 @@
 import * as YAMLModule from "yaml";
 import Scope from "../common/Scope.js";
+import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { extractFrontMatter, stringLike } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import MetaTransform from "./MetaTransform.js";
 import { getScope } from "./scopeUtilities.js";
-import StringWithGraph from "./StringWithGraph.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore

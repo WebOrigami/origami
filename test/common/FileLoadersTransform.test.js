@@ -16,9 +16,12 @@ describe("FileLoadersTransform", () => {
       foo: 1, // should be left alone
       "bar.txt": 1, // should be cast to a string
     });
-
-    assert.equal(await graph.get("foo"), 1);
-    assert.equal(await graph.get("bar.txt"), "1");
+    const foo = await graph.get("foo");
+    assert(typeof foo === "number");
+    assert.equal(foo, 1);
+    const bar = await graph.get("bar.txt");
+    assert(typeof bar === "string");
+    assert.equal(bar, "1");
   });
 
   it("interprets .graph files as an Origami metagraph", async () => {

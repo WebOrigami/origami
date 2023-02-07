@@ -1,5 +1,5 @@
+import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import StringWithGraph from "./StringWithGraph.js";
 
 /**
  * Return a default index.html page for the current graph.
