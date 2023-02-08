@@ -34,22 +34,15 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     const keyName = options.keyName ?? "@key";
     const valueName = options.valueName ?? "@value";
 
+    // See if the value is a graph or can be cast to a graph.
     let valueAsGraph;
-    if (
-      !ExplorableGraph.isExplorable(value) &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
-      try {
-        valueAsGraph = ExplorableGraph.from(value);
-      } catch (error) {
-        // Couldn't create a graph; probably text that's not a graph.
-      }
-    }
-    if (!valueAsGraph) {
-      valueAsGraph = typeof value === "object" ? Object.create(value) : value;
+    if (ExplorableGraph.isExplorable(value)) {
+      valueAsGraph = value;
+    } else if (ExplorableGraph.canCastToExplorable(value)) {
+      valueAsGraph = ExplorableGraph.from(value);
     }
     if (
-      typeof valueAsGraph === "object" &&
+      valueAsGraph &&
       !("parent" in valueAsGraph && "scope" in valueAsGraph)
     ) {
       valueAsGraph = transformObject(InheritScopeTransform, valueAsGraph);
@@ -64,7 +57,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
       getScope(this)
     );
 
-    if (typeof valueAsGraph === "object") {
+    if (valueAsGraph) {
       valueAsGraph.parent = scope;
       // REVIEW: If this option doesn't prove valuable, remove it
       if (options.addValueToScope) {
