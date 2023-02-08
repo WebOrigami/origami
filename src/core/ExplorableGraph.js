@@ -20,12 +20,12 @@ export default class ExplorableGraph {
    * @param {any} obj
    */
   static canCastToExplorable(obj) {
-    // TODO: Report true for Buffer?
     return (
       this.isExplorable(obj) ||
-      typeof obj === "string" ||
       obj instanceof Function ||
       obj instanceof Array ||
+      obj?.toFunction instanceof Function ||
+      obj?.toGraph instanceof Function ||
       utilities.isPlainObject(obj)
     );
   }
@@ -47,15 +47,6 @@ export default class ExplorableGraph {
       // Object itself supports the ExplorableGraph interface.
       // @ts-ignore
       return obj;
-    }
-
-    // Parse a string/buffer as YAML (which covers JSON too).
-    if (utilities.stringLike(variant)) {
-      obj = utilities.parse(String(variant));
-      if (obj === null) {
-        // String be empty or was just YAML with comments.
-        obj = {};
-      }
     }
 
     // Handle known types.

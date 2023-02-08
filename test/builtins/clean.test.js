@@ -6,7 +6,7 @@ import assert from "../assert.js";
 describe("clean", () => {
   it("removes files indicated in .ori.clean.yaml", async () => {
     const graph = new ObjectGraph({
-      ".ori.clean.yaml": `? a\n`,
+      ".ori.clean.yaml": ExplorableGraph.fromYaml("? a"),
       "a = 'Hello'": "",
       a: "Hello",
     });

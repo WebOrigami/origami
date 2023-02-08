@@ -18,7 +18,7 @@ export default function loadMeta(buffer, key) {
   let meta;
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!meta) {
-      const graph = ExplorableGraph.from(text);
+      const graph = ExplorableGraph.fromYaml(text);
       meta = isFormulasTransformApplied(graph)
         ? graph
         : transformObject(MetaTransform, graph);

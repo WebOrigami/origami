@@ -3,19 +3,12 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("ExplorableGraph", () => {
-  it("from() converts input to an explorable graph", async () => {
-    const graph1 = ExplorableGraph.from(`a: Hello, a.`);
-    assert(await ExplorableGraph.plain(graph1), {
+  it("from() returns an explorable graph as is", async () => {
+    const graph1 = new ObjectGraph({
       a: "Hello, a.",
     });
-    const graph2 = ExplorableGraph.from(graph1); // Already explorable
+    const graph2 = ExplorableGraph.from(graph1);
     assert.equal(graph2, graph1);
-    const graph3 = ExplorableGraph.from({
-      b: "Hello, b.",
-    });
-    assert.deepEqual(await ExplorableGraph.plain(graph3), {
-      b: "Hello, b.",
-    });
   });
 
   it("from() uses an object's toGraph() method if defined", async () => {

@@ -43,6 +43,10 @@ interface HasFunction {
   toFunction(): Function;
 }
 
+interface HasGraph {
+  toGraph(): Explorable;
+}
+
 type Invocable = Explorable | Function | HasFunction;
 
-type GraphVariant = Explorable | PlainObject | string | Function | any[];
+type GraphVariant = Explorable | Function | HasGraph | PlainObject | any[];
