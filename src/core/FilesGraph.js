@@ -261,7 +261,7 @@ async function prepareData(key, value) {
     return "";
   }
 
-  // Explorable values are written out as JSON or, if the key ends in ".yaml",
+  // Explorable graphs are written out as JSON or, if the key ends in ".yaml",
   // as YAML.
   if (ExplorableGraph.canCastToExplorable(value)) {
     const graph = ExplorableGraph.from(value);
