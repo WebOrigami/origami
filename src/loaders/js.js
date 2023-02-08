@@ -9,23 +9,25 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
+ * @returns {HasFunction & HasGraph}
  * @this {Explorable}
  */
 export default function loadJs(buffer, key) {
   const text = String(buffer);
+  /** @type {any} */
   const textWithFunction = new String(text);
   const graph = this;
-  const scope = graph?.scope ?? graph;
+  const scope = "scope" in graph ? graph.scope : graph;
 
   let moduleExport;
   async function importModule() {
-    if (!moduleExport) {
-      moduleExport = graph.import?.(key);
+    if (!moduleExport && "import" in graph) {
+      moduleExport = /** @type {any} */ (graph).import(key);
     }
     return moduleExport;
   }
 
-  /** @type {any} */ (textWithFunction).toFunction = function loadAndInvoke() {
+  textWithFunction.toFunction = function loadAndInvoke() {
     let fn;
     return async function (...args) {
       if (!fn) {
@@ -42,7 +44,7 @@ export default function loadJs(buffer, key) {
     };
   };
 
-  /** @type {any} */ (textWithFunction).toGraph = function loadGraph() {
+  textWithFunction.toGraph = function loadGraph() {
     let loadedGraph;
     return {
       async *[Symbol.asyncIterator]() {

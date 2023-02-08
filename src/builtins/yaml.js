@@ -12,10 +12,7 @@ export default async function yaml(variant) {
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
-  } else if (variant instanceof Buffer) {
-    variant = String(variant);
-  }
-  if (ExplorableGraph.canCastToExplorable(variant)) {
+  } else if (ExplorableGraph.canCastToExplorable(variant)) {
     return ExplorableGraph.toYaml(variant);
   } else {
     const serializable = toSerializable(variant);

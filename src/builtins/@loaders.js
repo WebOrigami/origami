@@ -5,6 +5,7 @@ import FilesGraph from "../core/FilesGraph.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const loadersFolder = path.resolve(dirname, "../loaders");
+/** @type {any} */
 const loaders = new (ImplicitModulesTransform(FilesGraph))(loadersFolder);
 
 export default loaders;

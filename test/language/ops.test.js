@@ -81,10 +81,11 @@ describe("ops", () => {
     const a = new ObjectGraph({
       a: 1, // This is the inherited value we want
     });
+    /** @type {any} */
     const b = new ObjectGraph({
       a: 2, // Should be ignored
     });
-    /** @type {any} */ (b).scope = new Scope(b, a);
+    b.scope = new Scope(b, a);
     const code = [ops.inherited, "a"];
     const result = await execute.call(b.scope, code);
     assert.equal(result, 1);
