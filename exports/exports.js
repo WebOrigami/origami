@@ -19,6 +19,8 @@ export { default as files } from "../src/builtins/files.js";
 export { default as filter } from "../src/builtins/filter.js";
 export { default as first } from "../src/builtins/first.js";
 export { default as flowSvg } from "../src/builtins/flowSvg.js";
+export { default as fromJson } from "../src/builtins/fromJson.js";
+export { default as fromYaml } from "../src/builtins/fromYaml.js";
 export { default as front } from "../src/builtins/front.js";
 export { default as globs } from "../src/builtins/globs.js";
 export { default as graph } from "../src/builtins/graph.js";

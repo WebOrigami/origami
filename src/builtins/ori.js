@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import yaml from "../builtins/yaml.js";
+import toYaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import { incrementCount } from "../core/measure.js";
 import execute from "../language/execute.js";
@@ -51,7 +51,7 @@ async function formatResult(result) {
     : result instanceof String
     ? result.toString()
     : result !== undefined
-    ? await yaml(result)
+    ? await toYaml(result)
     : undefined;
   return output;
 }

@@ -1,12 +1,12 @@
 import { stdout } from "node:process";
 import { stringLike } from "../core/utilities.js";
-import yaml from "./yaml.js";
+import toYaml from "./yaml.js";
 
 export default async function stdoutCommand(obj) {
   const output = stringLike(obj)
     ? obj
     : obj !== undefined
-    ? await yaml(obj)
+    ? await toYaml(obj)
     : undefined;
   if (output !== undefined) {
     stdout.write(output);

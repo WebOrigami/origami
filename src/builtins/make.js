@@ -4,7 +4,7 @@ import clean from "./clean.js";
 import copy from "./copy.js";
 import meta from "./meta.js";
 import reals from "./reals.js";
-import yaml from "./yaml.js";
+import toYaml from "./yaml.js";
 
 /**
  * Make the virtual values in a graph real.
@@ -28,7 +28,7 @@ export default async function make(variant) {
     deep: true,
     getValue: false,
   });
-  const cleanYaml = await yaml(nulls);
+  const cleanYaml = await toYaml(nulls);
   await graph.set(".ori.clean.yaml", cleanYaml);
 
   // Construct a parallel graph of `undefined` values that can be used to erase

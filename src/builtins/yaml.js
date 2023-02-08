@@ -8,7 +8,7 @@ import { toSerializable } from "../core/utilities.js";
  * @this {Explorable}
  * @param {GraphVariant} [variant]
  */
-export default async function yaml(variant) {
+export default async function toYaml(variant) {
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
@@ -20,5 +20,5 @@ export default async function yaml(variant) {
   }
 }
 
-yaml.usage = `yaml <obj>\tRender the object as text in YAML format`;
-yaml.documentation = "https://graphorigami.org/cli/builtins.html#yaml";
+toYaml.usage = `yaml <obj>\tRender the object as text in YAML format`;
+toYaml.documentation = "https://graphorigami.org/cli/builtins.html#yaml";
