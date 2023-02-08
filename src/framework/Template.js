@@ -162,13 +162,8 @@ async function processInput(input, scope) {
       inputData = frontData;
       text = parsedDocument.text;
     } else {
-      // Input has no front matter, but input itself may be YAML/JSON.
-      try {
-        inputData = YAML.parse(inputText);
-      } catch (e) {
-        // Input is not YAML/JSON.
-        inputData = null;
-      }
+      // Input has no front matter; treat as plain text.
+      inputData = null;
     }
   }
 
