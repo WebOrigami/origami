@@ -3,7 +3,7 @@ import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
- * Load a file as YAML or JSON.
+ * Load a file as YAML.
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
@@ -17,7 +17,7 @@ export default function loadYaml(buffer, key) {
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = ExplorableGraph.from(text);
+      graph = ExplorableGraph.fromYaml(text);
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }
