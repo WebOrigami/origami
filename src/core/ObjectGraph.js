@@ -50,15 +50,7 @@ export default class ObjectGraph {
 
   async isKeyExplorable(key) {
     const value = this.object[key];
-    // This definition is different than ExplorableGraph.canCastToExplorable
-    // because it excludes strings. String values can be explorable if they're
-    // JSON/YAML, but without further information, we assume they're not.
-    return (
-      value instanceof Array ||
-      value instanceof Function ||
-      ExplorableGraph.isExplorable(value) ||
-      isPlainObject(value)
-    );
+    return ExplorableGraph.canCastToExplorable(value);
   }
 
   /**

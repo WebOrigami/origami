@@ -15,9 +15,7 @@ export default async function concat(...args) {
     }
   } else {
     graph = args.map((arg) =>
-      typeof arg !== "string" && ExplorableGraph.canCastToExplorable(arg)
-        ? ExplorableGraph.from(arg)
-        : arg
+      ExplorableGraph.canCastToExplorable(arg) ? ExplorableGraph.from(arg) : arg
     );
   }
 

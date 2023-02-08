@@ -34,7 +34,6 @@ export default function loadJs(buffer, key) {
         fn = await importModule();
         if (
           typeof fn !== "function" &&
-          typeof fn !== "string" &&
           ExplorableGraph.canCastToExplorable(fn)
         ) {
           fn = ExplorableGraph.toFunction(fn);

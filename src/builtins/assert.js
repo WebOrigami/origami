@@ -40,15 +40,12 @@ export default async function assertBuiltin(variant) {
     };
   }
 
-  const expectedPlain =
-    typeof expected !== "string" &&
-    ExplorableGraph.canCastToExplorable(expected)
-      ? await ExplorableGraph.plain(expected)
-      : expected;
-  const actualPlain =
-    typeof actual !== "string" && ExplorableGraph.canCastToExplorable(actual)
-      ? await ExplorableGraph.plain(actual)
-      : actual;
+  const expectedPlain = ExplorableGraph.canCastToExplorable(expected)
+    ? await ExplorableGraph.plain(expected)
+    : expected;
+  const actualPlain = ExplorableGraph.canCastToExplorable(actual)
+    ? await ExplorableGraph.plain(actual)
+    : actual;
 
   try {
     assert.deepStrictEqual(actualPlain, expectedPlain);
