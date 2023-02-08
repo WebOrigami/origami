@@ -1,3 +1,4 @@
+import DeferredGraph from "../common/DeferredGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -22,7 +23,7 @@ export default function loadJs(buffer, key) {
   let moduleExport;
   async function importModule() {
     if (!moduleExport && "import" in graph) {
-      moduleExport = /** @type {any} */ (graph).import(key);
+      moduleExport = await /** @type {any} */ (graph).import(key);
     }
     return moduleExport;
   }
@@ -43,34 +44,23 @@ export default function loadJs(buffer, key) {
     };
   };
 
-  textWithFunction.toGraph = function loadGraph() {
-    let loadedGraph;
-    return {
-      async *[Symbol.asyncIterator]() {
-        const loaded = await this.load();
-        yield* loaded;
-      },
+  const exportedGraph = new DeferredGraph(async () => {
+    const variant = await importModule();
+    if (!variant) {
+      return null;
+    }
 
-      async get(key) {
-        const loaded = await this.load();
-        return loaded.get(key);
-      },
+    /** @type {any} */
+    let loadedGraph = ExplorableGraph.from(variant);
+    if (!("parent" in loadedGraph)) {
+      loadedGraph = transformObject(InheritScopeTransform, loadedGraph);
+    }
+    loadedGraph.parent = scope;
 
-      async load() {
-        if (!loadedGraph) {
-          const variant = await importModule();
-          if (variant) {
-            loadedGraph = ExplorableGraph.from(variant);
-            if (!("parent" in loadedGraph)) {
-              loadedGraph = transformObject(InheritScopeTransform, loadedGraph);
-            }
-            loadedGraph.parent = scope;
-          }
-        }
-        return loadedGraph;
-      },
-    };
-  };
+    return loadedGraph;
+  });
+
+  textWithFunction.toGraph = () => exportedGraph;
 
   return textWithFunction;
 }
