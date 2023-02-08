@@ -1,6 +1,6 @@
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { toSerializable } from "../core/utilities.js";
+import { extname, toSerializable } from "../core/utilities.js";
 
 /**
  * Render a graph in DOT format.
@@ -52,10 +52,17 @@ async function statements(graph, nodePath, options) {
     result.push(arc);
 
     const value = await graph.get(key);
-    if (
-      typeof value !== "string" &&
-      ExplorableGraph.canCastToExplorable(value)
-    ) {
+
+    // We expand certain types of files known to contain graphs.
+    const extension = extname(key);
+    const expand =
+      {
+        ".graph": true,
+        ".json": true,
+        ".yaml": true,
+      }[extension] ?? extension === "";
+
+    if (expand && ExplorableGraph.canCastToExplorable(value)) {
       const subgraph = ExplorableGraph.from(value);
       const subStatements = await statements(subgraph, destPath, options);
       result = result.concat(subStatements);
