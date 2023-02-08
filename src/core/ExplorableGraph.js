@@ -73,6 +73,40 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Parse the given object as JSON text and return the corresponding explorable
+   * graph.
+   *
+   * Empty text will be treated as an empty object.
+   *
+   * @param {any} obj
+   */
+  static fromJson(obj) {
+    let parsed = JSON.parse(obj);
+    if (parsed === null) {
+      // String was empty or just YAML comments.
+      parsed = {};
+    }
+    return new ObjectGraph(parsed);
+  }
+
+  /**
+   * Parse the given object as YAML text and return the corresponding explorable
+   * graph.
+   *
+   * Empty text (or text with just comments) will be treated as an empty object.
+   *
+   * @param {any} obj
+   */
+  static fromYaml(obj) {
+    let parsed = utilities.parse(String(obj));
+    if (parsed === null) {
+      // String was empty or just YAML comments.
+      parsed = {};
+    }
+    return new ObjectGraph(parsed);
+  }
+
+  /**
    * Return true if the given object implements the necessary explorable graph
    * members: a function identified with `Symbol.asyncIterator`, and a function
    * named `get`.

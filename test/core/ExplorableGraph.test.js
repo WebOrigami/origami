@@ -123,11 +123,22 @@ describe("ExplorableGraph", () => {
     assert.deepEqual(plain, original);
   });
 
-  it("plain() can parse YAML (and so also JSON)", async () => {
+  it("fromJson() can parse JSON text", async () => {
+    const yaml = `{"a": 1, "b": 2, "c": 3}`;
+    const graph = ExplorableGraph.fromJson(yaml);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+  });
+
+  it("fromYaml() can parse YAML text", async () => {
     const yaml = `a: Hello, a.
 b: Hello, b.
 c: Hello, c.`;
-    assert.deepEqual(await ExplorableGraph.plain(yaml), {
+    const graph = ExplorableGraph.fromYaml(yaml);
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
       a: "Hello, a.",
       b: "Hello, b.",
       c: "Hello, c.",

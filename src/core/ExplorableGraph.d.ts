@@ -3,6 +3,8 @@
 export default class ExplorableGraph {
   static canCastToExplorable(obj: any): boolean;
   static from(graph: GraphVariant): Explorable;
+  static fromJson(obj: any): Explorable;
+  static fromYaml(obj: any): Explorable;
   static isExplorable(obj: any): boolean;
   static isKeyExplorable(graph: Explorable, obj: any): Promise<boolean>;
   static keys(graph: GraphVariant): Promise<any[]>;
