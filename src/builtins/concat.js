@@ -15,7 +15,12 @@ export default async function concat(...args) {
     }
   } else {
     graph = args.map((arg) =>
-      ExplorableGraph.canCastToExplorable(arg) ? ExplorableGraph.from(arg) : arg
+      // Strings are used as is, even if they have a .toGraph method
+      arg instanceof String
+        ? arg
+        : ExplorableGraph.canCastToExplorable(arg)
+        ? ExplorableGraph.from(arg)
+        : arg
     );
   }
 
