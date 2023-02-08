@@ -140,7 +140,8 @@
             newPath = newPath.slice(0, -currentExtension.length);
           }
           const newExtension = modes[newMode];
-          const newFullPath = `${newPath}${newExtension}`;
+          const separator = newPath.endsWith("/") ? "" : "/";
+          const newFullPath = `${newPath}${separator}${newExtension}`;
           setPath(newFullPath);
         }
       }
