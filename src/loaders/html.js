@@ -1,4 +1,4 @@
-import txt from "./txt.js";
+import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
 
-// .html files use the text loader
-export default txt;
+// .html files use the loader for text with front matter
+export default loadTextWithFrontMatter;

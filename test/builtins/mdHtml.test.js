@@ -25,7 +25,7 @@ title: Hello
     );
   });
 
-  it.only("output includes a graph representation", async () => {
+  it("output includes a graph representation", async () => {
     const markdown = `---
 title: Hello
 ---
