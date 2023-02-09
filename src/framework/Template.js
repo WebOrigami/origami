@@ -1,3 +1,4 @@
+import DeferredGraph from "@graphorigami/origami/src/common/DeferredGraph.js";
 import * as YAMLModule from "yaml";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
@@ -42,8 +43,8 @@ export default class Template {
     const text = await this.compiled(extendedScope);
 
     // Attach a graph of the resolved template and input data.
-    const result = new StringWithGraph(text, null);
-    result.toGraph = () => this.createResultGraph(dataGraph);
+    const deferredGraph = new DeferredGraph(() => new DefaultPages(dataGraph));
+    const result = new StringWithGraph(text, deferredGraph);
     return result;
   }
 
@@ -104,11 +105,6 @@ export default class Template {
     }
 
     return { dataGraph, scope };
-  }
-
-  createResultGraph(dataGraph) {
-    const withPages = new DefaultPages(dataGraph);
-    return withPages;
   }
 
   toFunction() {
