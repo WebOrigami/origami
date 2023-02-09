@@ -25,7 +25,7 @@ This is the content.
   });
 
   it("parse can combine front matter and body text", () => {
-    const parsed = utilities.parse(`---
+    const parsed = utilities.parseYaml(`---
 a: Hello, a.
 ---
 This is the content.

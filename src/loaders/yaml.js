@@ -1,23 +1,38 @@
+import * as YAMLModule from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import * as utilities from "../core/utilities.js";
+import { isPlainObject, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+
+// See notes at ExplorableGraph.js
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * Load a file as YAML.
  *
- * @param {Buffer|string} buffer
+ * @param {string|HasString|PlainObject|Array} input
  * @param {any} [key]
  * @this {Explorable}
  */
-export default function loadYaml(buffer, key) {
-  const text = String(buffer);
+export default function loadYaml(input, key) {
+  let text;
+  let data;
+  if (isPlainObject(input) || input instanceof Array) {
+    data = input;
+    text = YAML.stringify(data);
+  } else {
+    text = String(input);
+    data = utilities.parseYaml(text);
+  }
+
   const textWithGraph = new String(text);
   const scope = this;
   let graph;
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = ExplorableGraph.fromYaml(text);
+      graph = ExplorableGraph.from(data);
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }

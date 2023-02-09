@@ -47,6 +47,10 @@ interface HasGraph {
   toGraph(): Explorable;
 }
 
+interface HasString {
+  toString(): string;
+}
+
 type Invocable = Explorable | Function | HasFunction;
 
 type GraphVariant = Explorable | Function | HasGraph | PlainObject | any[];

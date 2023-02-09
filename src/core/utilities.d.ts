@@ -2,7 +2,7 @@ export function box(value: any): any;
 export function extname(path: string): string;
 export function extractFrontMatter(s: string): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function isPlainObject(obj: any): boolean;
-export function parse(text: string): PlainObject;
+export function parseYaml(text: string): PlainObject;
 export function sortNatural(values: any[]): any[]
 export function stringLike(value: any): boolean;
 export function toFunction(obj: Invocable): Function;

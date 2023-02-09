@@ -1,5 +1,6 @@
-import meta from "../builtins/meta.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 import { extractFrontMatter } from "../core/utilities.js";
+import MetaTransform from "../framework/MetaTransform.js";
 
 /**
  * Load a file as markdown.
@@ -24,6 +25,7 @@ export default function loadMd(buffer, key) {
 
   const textWithGraph = new String(text);
   const scope = this;
+
   let graph;
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
@@ -32,7 +34,8 @@ export default function loadMd(buffer, key) {
       const data = Object.assign(frontData, {
         "@text": bodyText,
       });
-      graph = meta.call(scope, data);
+      graph = new (MetaTransform(ObjectGraph))(data);
+      graph.parent = scope;
     }
     return graph;
   };

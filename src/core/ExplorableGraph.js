@@ -89,7 +89,7 @@ export default class ExplorableGraph {
    * @param {any} obj
    */
   static fromYaml(obj) {
-    let parsed = utilities.parse(String(obj));
+    let parsed = utilities.parseYaml(String(obj));
     if (parsed === null) {
       // String was empty or just YAML comments.
       parsed = {};

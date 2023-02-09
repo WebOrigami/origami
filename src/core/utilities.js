@@ -70,7 +70,7 @@ export function isPlainObject(obj) {
   return Object.getPrototypeOf(obj) === proto;
 }
 
-export function parse(text) {
+export function parseYaml(text) {
   const frontMatter = extractFrontMatter(text);
   if (frontMatter) {
     const { frontData, bodyText } = frontMatter;
