@@ -1,4 +1,5 @@
 import mdHtml from "../../src/builtins/mdHtml.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("mdHtml", () => {
@@ -22,5 +23,18 @@ title: Hello
 <h1 id="hello-world">Hello, world.</h1>
 `
     );
+  });
+
+  it.only("output includes a graph representation", async () => {
+    const markdown = `---
+title: Hello
+---
+# Hello, world.`;
+    const html = await mdHtml(markdown);
+    const graph = html.toGraph();
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      title: "Hello",
+      "@text": `<h1 id="hello-world">Hello, world.</h1>\n`,
+    });
   });
 });

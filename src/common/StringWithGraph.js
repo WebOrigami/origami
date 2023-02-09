@@ -1,7 +1,9 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+
 export default class StringWithGraph extends String {
-  constructor(string, graph) {
+  constructor(string, variant) {
     super(string);
-    this.graph = graph;
+    this.graph = ExplorableGraph.from(variant);
   }
 
   toGraph() {

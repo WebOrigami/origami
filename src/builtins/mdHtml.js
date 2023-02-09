@@ -1,5 +1,6 @@
 import highlight from "highlight.js";
 import { marked } from "marked";
+import StringWithGraph from "../common/StringWithGraph.js";
 import { extractFrontMatter } from "../core/utilities.js";
 
 marked.setOptions({
@@ -11,16 +12,32 @@ marked.setOptions({
   smartypants: true,
 });
 
-export default async function mdHtml(markdown) {
-  if (!markdown) {
+export default async function mdHtml(input) {
+  if (!input) {
     return undefined;
   }
-  // Preserve any front matter.
-  const frontMatter = extractFrontMatter(markdown);
-  const bodyText = frontMatter?.bodyText ?? markdown;
-  const frontBlock = frontMatter?.frontBlock ?? "";
-  const html = marked(String(bodyText));
-  const output = `${frontBlock}${html}`;
+
+  // If there's front matter, extract it and the body text.
+  const text = String(input);
+  const frontMatter = extractFrontMatter(text);
+  const markdown = frontMatter?.bodyText ?? text;
+
+  const html = marked(markdown);
+
+  let output;
+  if (frontMatter) {
+    // Preserve front matter
+    const { frontBlock, frontData } = frontMatter;
+    const outputText = `${frontBlock}${html}`;
+    const outputData = {
+      ...frontData,
+      "@text": html,
+    };
+    output = new StringWithGraph(outputText, outputData);
+  } else {
+    output = html;
+  }
+
   return output;
 }
 
