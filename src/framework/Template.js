@@ -1,5 +1,5 @@
-import DeferredGraph from "@graphorigami/origami/src/common/DeferredGraph.js";
 import * as YAMLModule from "yaml";
+import DeferredGraph from "../common/DeferredGraph.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -145,7 +145,7 @@ async function processInput(input, scope) {
   let text = stringLike(input) ? String(input) : null;
 
   let inputData;
-  if (ExplorableGraph.isExplorable(input)) {
+  if (ExplorableGraph.canCastToExplorable(input)) {
     inputData = await ExplorableGraph.plain(input);
   } else if (text === null) {
     inputData = input;
