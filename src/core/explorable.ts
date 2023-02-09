@@ -53,4 +53,4 @@ interface HasString {
 
 type Invocable = Explorable | Function | HasFunction;
 
-type GraphVariant = Explorable | Function | HasGraph | PlainObject | any[];
+type GraphVariant = Explorable | Function | HasGraph | PlainObject | Array<any> | any[];
