@@ -1,44 +1,30 @@
+import ExpressionGraph from "../common/ExpressionGraph.js";
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
-import execute from "../language/execute.js";
+import Expression from "../language/Expression.js";
 import { graphDocument } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
 
-class OrigamiGraphBase {
+class OrigamiGraphBase extends ExpressionGraph {
   constructor(definition) {
     // If the definition is text parse it, otherwise use as is.
-    let formulas;
     if (typeof definition === "string") {
       const parsed = graphDocument(definition);
       if (!parsed || parsed.rest !== "") {
         throw new Error(`Couldn't parse Origami graph: ${definition}`);
       }
-      formulas = parsed.value[1];
-    } else {
-      formulas = definition;
+      const assignments = parsed.value[1];
+      const expressions = {};
+      for (const key in assignments) {
+        const value = assignments[key];
+        const expression =
+          value instanceof Array ? new Expression(value) : value;
+        expressions[key] = expression;
+      }
+      definition = expressions;
     }
-    this.formulas = formulas ?? {};
-  }
-
-  async *[Symbol.asyncIterator]() {
-    yield* Object.keys(this.formulas);
-  }
-
-  async get(key) {
-    if (key === undefined) {
-      // Getting undefined returns the graph itself.
-      return this;
-    }
-
-    const formula = this.formulas[key];
-    let value;
-    if (formula) {
-      const scope = this.scope ?? this;
-      value = await execute.call(scope, formula);
-    }
-
-    return value;
+    super(definition);
   }
 }
 
