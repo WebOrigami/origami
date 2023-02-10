@@ -1,5 +1,6 @@
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
+import MetaTransform from "../../src/framework/MetaTransform.js";
 import Template from "../../src/framework/Template.js";
 import assert from "../assert.js";
 
@@ -26,6 +27,17 @@ text`,
     assert.equal(template.scope, container);
   });
 
+  it("extends scope with input data", async () => {
+    const template = new Template("");
+    const scope = new ObjectGraph({});
+    const input = { a: 1 };
+    template.compiled = async (scope) => {
+      assert.equal(await scope.get("a"), 1);
+      return "";
+    };
+    await template.apply(input, scope);
+  });
+
   it("extends container scope with template and input data", async () => {
     const template = new Template(`---
 b: 2
@@ -45,20 +57,6 @@ template`);
     await template.apply(input, scope);
   });
 
-  it("extends scope with input front matter", async () => {
-    const template = new Template("");
-    const graph = new ObjectGraph({});
-    const input = `---
-a: 1
----
-text`;
-    template.compiled = async (scope) => {
-      assert.equal(await scope.get("a"), 1);
-      return "";
-    };
-    await template.apply(input, graph);
-  });
-
   it("defines ambient properties for input and template data", async () => {
     const templateScope = {};
     const templateDocument = `---
@@ -67,10 +65,9 @@ a: 1
 template`;
     const template = new Template(templateDocument, templateScope);
     const inputScope = new ObjectGraph({});
-    const inputDocument = `---
-b: 2
----
-text`;
+    const input = {
+      b: 2,
+    };
     template.compiled = async (scope) => {
       const templateInfo = await scope.get("@template");
       assert.deepEqual(await ExplorableGraph.plain(templateInfo), {
@@ -79,28 +76,28 @@ text`;
         text: "template",
       });
 
-      const frontData = await scope.get("@frontData");
-      assert.deepEqual(await ExplorableGraph.plain(frontData), { b: 2 });
-      assert.equal(await scope.get("."), inputDocument);
-      assert.equal(await scope.get("@text"), "text");
+      const dot = await scope.get(".");
+      assert.deepEqual(await ExplorableGraph.plain(dot), { b: 2 });
+      assert.equal(await scope.get("@text"), "[object Object]");
       return "";
     };
-    await template.apply(inputDocument, inputScope);
+    await template.apply(input, inputScope);
   });
 
-  it("interprets input and template data as metagraphs", async () => {
+  it("input and template data graphs are merged", async () => {
     const template = new Template(`---
-a = 1:
+a: 1
+b2 = b:
 ---
 template`);
     const graph = new ObjectGraph({});
-    const input = `---
-b = 2:
----
-text`;
+    const input = new (MetaTransform(ObjectGraph))({
+      b: 2,
+      "a2 = a": null,
+    });
     template.compiled = async (scope) => {
-      assert.equal(await scope.get("a"), 1);
-      assert.equal(await scope.get("b"), 2);
+      assert.equal(await scope.get("b2"), 2);
+      assert.equal(await scope.get("a2"), 1);
       return "";
     };
     await template.apply(input, graph);

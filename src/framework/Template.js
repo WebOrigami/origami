@@ -1,11 +1,13 @@
 import * as YAMLModule from "yaml";
+import merge from "../builtins/merge.js";
 import DeferredGraph from "../common/DeferredGraph.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { extractFrontMatter, stringLike } from "../core/utilities.js";
+import { extractFrontMatter, transformObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
+import { isFormulasTransformApplied } from "./FormulasTransform.js";
 import MetaTransform from "./MetaTransform.js";
 import { getScope } from "./scopeUtilities.js";
 
@@ -19,6 +21,9 @@ export default class Template {
     this.scope = scope;
     const { frontData, text } = parseDocument(String(document));
     this.frontData = frontData;
+    this.frontGraph = frontData
+      ? new (MetaTransform(ObjectGraph))(frontData)
+      : null;
     this.text = text;
   }
 
@@ -26,18 +31,19 @@ export default class Template {
    * Apply the template to the given input data in the context of a graph.
    *
    * @param {any} [input]
-   * @param {Explorable} [scope]
+   * @param {Explorable} [inputScope]
    */
-  async apply(input, scope) {
+  async apply(input, inputScope) {
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
     }
 
     // Create the execution context for the compiled template.
-    const processedInput = await processInput(input, scope);
-    const { dataGraph, scope: extendedScope } = await this.createContext(
-      processedInput
+    const processedInput = await processInput(input, inputScope);
+    const { dataGraph, extendedScope } = await this.createContext(
+      processedInput,
+      inputScope
     );
 
     const text = await this.compiled(extendedScope);
@@ -58,14 +64,8 @@ export default class Template {
    * includes input data, template data, ambient properties, and the input's
    * container.
    */
-  async createContext(processedInput) {
-    const {
-      frontData,
-      input,
-      inputData,
-      scope: inputScope,
-      text,
-    } = processedInput;
+  async createContext(processedInput, inputScope) {
+    const { input, inputGraph, text } = processedInput;
 
     // Ambient properties let the template reference specific input/template data.
     const ambients = {
@@ -75,12 +75,9 @@ export default class Template {
         text: this.text,
       },
     };
-    if (frontData) {
-      ambients["@frontData"] = frontData;
-    }
     if (input) {
       ambients["@input"] = input;
-      ambients["."] = input;
+      ambients["."] = inputGraph;
     }
     if (text) {
       ambients["@text"] = text;
@@ -91,20 +88,27 @@ export default class Template {
     /** @type {Explorable} */
     let scope = new Scope(ambients, getScope(inputScope));
 
-    // Construct the graph for the data that the template will be applied to.
-    // This graph combines the input data (if present) with the template data
-    // (if present).
-    const data =
-      inputData || this.frontData
-        ? Object.assign({}, this.frontData, inputData)
-        : null;
-    const dataGraph = data ? new (MetaTransform(ObjectGraph))(data) : null;
-    if (dataGraph) {
-      dataGraph.parent = scope;
-      scope = dataGraph.scope;
+    // Construct the data graph from the input graph and/or template front
+    // matter graph, merging if both are present.
+    const frontGraph = this.frontGraph;
+    let dataGraph;
+    let extendedScope = scope;
+    if (inputGraph && frontGraph) {
+      // Merge the input and template front data.
+      // This will set scope on the merged graph.
+      dataGraph = await merge.call(scope, inputGraph, frontGraph);
+      extendedScope = dataGraph.scope;
+    } else if (inputGraph) {
+      inputGraph.parent = scope;
+      dataGraph = inputGraph;
+      extendedScope = inputGraph.scope;
+    } else if (frontGraph) {
+      dataGraph = frontGraph;
+    } else {
+      dataGraph = null;
     }
 
-    return { dataGraph, scope };
+    return { dataGraph, extendedScope };
   }
 
   toFunction() {
@@ -132,8 +136,6 @@ function parseDocument(document) {
 
 // If the input is a string, parse it as a document that may have front matter.
 async function processInput(input, scope) {
-  let frontData;
-
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
     // common scenario for this would be an Origami template like foo.ori being
@@ -142,32 +144,21 @@ async function processInput(input, scope) {
     input = await input.call(scope);
   }
 
-  let text = stringLike(input) ? String(input) : null;
-
-  let inputData;
+  let inputGraph;
   if (ExplorableGraph.canCastToExplorable(input)) {
-    inputData = await ExplorableGraph.plain(input);
-  } else if (text === null) {
-    inputData = input;
-  } else {
-    // Try parsing input as a document with front matter.
-    const inputText = String(input);
-    const parsedDocument = parseDocument(inputText);
-    if (parsedDocument.frontData) {
-      frontData = parsedDocument.frontData;
-      inputData = frontData;
-      text = parsedDocument.text;
-    } else {
-      // Input has no front matter; treat as plain text.
-      inputData = null;
+    inputGraph = ExplorableGraph.from(input);
+    if (!isFormulasTransformApplied(inputGraph)) {
+      inputGraph = transformObject(MetaTransform, inputGraph);
     }
+  } else {
+    inputGraph = null;
   }
 
+  let text = input?.toString?.();
+
   return {
-    frontData,
     input,
-    inputData,
-    scope,
+    inputGraph,
     text,
   };
 }
