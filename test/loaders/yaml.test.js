@@ -33,7 +33,7 @@ b: 2
   it("can parse tagged Origami expressions", async () => {
     const text = `
 a: 1
-b: != a
+b: !ori a
 `;
     const textWithGraph = await loadYaml.call(null, text);
     const graph = /** @type {any} */ (textWithGraph).toGraph();

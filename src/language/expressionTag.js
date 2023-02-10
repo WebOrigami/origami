@@ -15,5 +15,5 @@ export default {
     return new Expression(parsed.value);
   },
 
-  tag: "!=",
+  tag: "!ori",
 };
