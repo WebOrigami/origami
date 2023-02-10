@@ -29,4 +29,17 @@ b: 2
       b: 2,
     });
   });
+
+  it("can parse tagged Origami expressions", async () => {
+    const text = `
+a: 1
+b: != a
+`;
+    const textWithGraph = await loadYaml.call(null, text);
+    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    assert.deepEqual(await ExplorableGraph.plain(graph), {
+      a: 1,
+      b: 1,
+    });
+  });
 });

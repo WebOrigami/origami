@@ -1,4 +1,5 @@
 import * as YAMLModule from "yaml";
+import expressionTag from "../language/expressionTag.js";
 import ExplorableGraph from "./ExplorableGraph.js";
 
 // See notes at ExplorableGraph.js
@@ -44,7 +45,7 @@ export function extractFrontMatter(text) {
   if (match) {
     const { frontBlock, frontText, bodyText } = /** @type {any} */ (match)
       .groups;
-    const frontData = YAML.parse(frontText);
+    const frontData = parseYamlWithExpressions(frontText);
     return { frontBlock, bodyText, frontData };
   } else {
     return null;
@@ -79,8 +80,14 @@ export function parseYaml(text) {
     });
     return data;
   } else {
-    return YAML.parse(text);
+    return parseYamlWithExpressions(text);
   }
+}
+
+function parseYamlWithExpressions(text) {
+  return YAML.parse(text, {
+    customTags: [expressionTag],
+  });
 }
 
 /**

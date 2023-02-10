@@ -11,5 +11,9 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["src/**/*.js", "test/**/*.js"]
+  "include": [
+    "src/**/*.js",
+    "test/**/*.js",
+    "test/common/ExpressionGraph.testjs"
+  ]
 }

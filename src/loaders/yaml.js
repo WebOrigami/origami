@@ -1,7 +1,10 @@
 import * as YAMLModule from "yaml";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import * as utilities from "../core/utilities.js";
-import { isPlainObject, transformObject } from "../core/utilities.js";
+import ExpressionGraph from "../common/ExpressionGraph.js";
+import {
+  isPlainObject,
+  parseYaml,
+  transformObject,
+} from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 // See notes at ExplorableGraph.js
@@ -23,7 +26,7 @@ export default function loadYaml(input, key) {
     text = YAML.stringify(data);
   } else {
     text = String(input);
-    data = utilities.parseYaml(text);
+    data = parseYaml(text);
   }
 
   const textWithGraph = new String(text);
@@ -32,8 +35,9 @@ export default function loadYaml(input, key) {
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = ExplorableGraph.from(data);
-      if (!("parent" in graph)) {
+      if (isPlainObject(data) || data instanceof Array) {
+        graph = new (InheritScopeTransform(ExpressionGraph))(data);
+      } else if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }
       graph.parent = scope;
