@@ -13,17 +13,12 @@ describe(".json loader", () => {
     });
   });
 
-  it("if input is already a plain object, treats that as the parsed JSON", async () => {
+  it("input that is already a graph variant is returned as is", async () => {
     const input = {
       a: 1,
       b: 2,
     };
-    const textWithGraph = await loadJson.call(null, input);
-    assert.equal(String(textWithGraph), `{\n  "a": 1,\n  "b": 2\n}`);
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: 1,
-      b: 2,
-    });
+    const result = await loadJson.call(null, input);
+    assert.equal(result, input);
   });
 });

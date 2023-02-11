@@ -16,18 +16,13 @@ b: 2
     });
   });
 
-  it("if input is already a plain object, treats that as the parsed YAML", async () => {
+  it("input that is already a graph variant is returned as is", async () => {
     const input = {
       a: 1,
       b: 2,
     };
-    const textWithGraph = await loadYaml.call(null, input);
-    assert.equal(String(textWithGraph), "a: 1\nb: 2\n");
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: 1,
-      b: 2,
-    });
+    const result = await loadYaml.call(null, input);
+    assert.deepEqual(result, input);
   });
 
   it("can parse tagged Origami expressions", async () => {
