@@ -129,6 +129,23 @@ export function extension(text) {
   return sequence(terminal(/^[ \t]*\./), literal)(text);
 }
 
+// Parse an assignment formula or shorthand assignment.
+export function formulaOrShorthand(text) {
+  const parsed = any(assignment, shorthandReference)(text);
+  if (!parsed) {
+    return null;
+  }
+  let { value } = parsed;
+  if (typeof value === "string") {
+    // Shorthand assignment
+    value = [ops.assign, value, [ops.inherited, value]];
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse something that results in a function/graph that can be called.
 export function functionCallTarget(text) {
   return any(
@@ -231,23 +248,6 @@ export function graphFormulas(text) {
     parsed.value.shift(); // Drop separator
   }
   const value = [ops.graph, formulas];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse an assignment formula or shorthand assignment.
-export function formulaOrShorthand(text) {
-  const parsed = any(assignment, shorthandReference)(text);
-  if (!parsed) {
-    return null;
-  }
-  let { value } = parsed;
-  if (typeof value === "string") {
-    // Shorthand assignment
-    value = [ops.assign, value, [ops.inherited, value]];
-  }
   return {
     value,
     rest: parsed.rest,

@@ -1,18 +1,19 @@
-import Expression from "./Expression.js";
+import expressionFunction from "./expressionFunction.js";
 import { expression } from "./parse.js";
 
 /**
  * A YAML tag for an Origami expression.
  */
 export default {
-  identify: (value) => value instanceof Expression,
+  identify: (value) => typeof value === "function" && value.code !== undefined,
 
   resolve(str) {
     const parsed = expression(str);
     if (!parsed || parsed.rest !== "") {
       throw new Error(`Couldn't parse Origami expression: ${str}`);
     }
-    return new Expression(parsed.value);
+    const code = parsed.value;
+    return expressionFunction(code);
   },
 
   tag: "!ori",

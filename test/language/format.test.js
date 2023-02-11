@@ -51,7 +51,7 @@ describe("Origami language code formatter", () => {
 
   it("object", () => {
     const code = [ops.object, { a: "Hello", b: "Goodbye" }];
-    assert.equal(format(code), "{ a: 'Hello' b: 'Goodbye' }");
+    assert.equal(format(code), "{ a: 'Hello', b: 'Goodbye' }");
   });
 
   it("template", () => {

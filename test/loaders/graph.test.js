@@ -3,7 +3,7 @@ import loadGraph from "../../src/loaders/graph.js";
 import assert from "../assert.js";
 
 describe(".graph loader", () => {
-  it.only("loads a file as an Origami graph", async () => {
+  it("loads a file as an Origami graph", async () => {
     const text = `
       name = 'world'
       message = \`Hello, {{ name }}!\`

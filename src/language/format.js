@@ -55,10 +55,13 @@ function formatAssignment(code) {
 function formatGraph(code) {
   const [_, properties] = code;
   const formatted = Object.entries(properties).map(([key, value]) => {
-    const operator = value instanceof Array ? " = " : ": ";
-    return `${key}${operator}${format(value)}`;
+    const rhs =
+      typeof value === "function" && value.code !== undefined
+        ? value.code
+        : value;
+    return `${key} = ${format(rhs)}`;
   });
-  return formatted ? `{ ${formatted.join(" ")} }` : "{}";
+  return formatted ? `{ ${formatted.join(", ")} }` : "{}";
 }
 
 function formatIndirectFunctionCall(code) {
@@ -70,7 +73,7 @@ function formatObject(code) {
   const formatted = Object.entries(properties).map(([key, value]) => {
     return value === null ? key : `${key}: ${format(value)}`;
   });
-  return formatted ? `{ ${formatted.join(" ")} }` : "{}";
+  return formatted ? `{ ${formatted.join(", ")} }` : "{}";
 }
 
 function formatName(name) {
