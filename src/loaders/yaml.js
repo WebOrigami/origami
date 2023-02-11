@@ -6,7 +6,7 @@ import {
   parseYaml,
   transformObject,
 } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import FileTreeTransform from "../framework/FileTreeTransform.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -39,9 +39,9 @@ export default function loadYaml(input, key) {
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
       if (isPlainObject(data) || data instanceof Array) {
-        graph = new (InheritScopeTransform(ExpressionGraph))(data);
+        graph = new (FileTreeTransform(ExpressionGraph))(data);
       } else if (!("parent" in graph)) {
-        graph = transformObject(InheritScopeTransform, graph);
+        graph = transformObject(FileTreeTransform, graph);
       }
       graph.parent = scope;
     }
