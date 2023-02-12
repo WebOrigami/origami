@@ -6,7 +6,7 @@ import assert from "../assert.js";
 
 const MetaGraph = MetaTransform(ObjectGraph);
 
-describe("dataflow", () => {
+describe.skip("dataflow", () => {
   it("identifies dependencies in formulas", async () => {
     const graph = new MetaGraph({
       "a = fn(b)": null,

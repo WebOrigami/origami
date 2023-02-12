@@ -1,33 +1,40 @@
-import { extractFrontMatter } from "../core/utilities.js";
+import StringWithGraph from "../common/StringWithGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
- * Apply the indicated Origami template to the given data and return the result.
+ * Apply the indicated Origami template to the given input and return the
+ * result. If the input is text with front matter, the front matter will be
+ * preserved.
  *
  * @this {Explorable}
- * @param {Buffer|string} templateContent
- * @param {Explorable|PlainObject|Buffer|string|null} [input]
+ * @param {StringLike} document
+ * @param {any} [input]
  * @param {boolean} [preserveFrontMatter]
  */
 export default async function orit(
-  templateContent,
+  document,
   input,
   preserveFrontMatter = false
 ) {
-  let templateText = String(templateContent);
-  let frontBlock;
-  if (preserveFrontMatter) {
-    const frontMatter = extractFrontMatter(templateText);
-    if (frontMatter) {
-      frontBlock = frontMatter.frontBlock;
-    }
-  }
-  const template = new OrigamiTemplate(templateText, this);
+  const template = new OrigamiTemplate(document, this);
+
   /** @type {any} */
-  let result = await template.apply(input, this);
-  if (frontBlock) {
-    result = frontBlock + result;
+  let templateResult = await template.apply(input, this);
+
+  let result;
+  const frontGraph = document.toGraph?.();
+  if (frontGraph) {
+    const frontData = await ExplorableGraph.toYaml(frontGraph);
+    const text = `---
+${frontData.trimEnd()}
+---
+${templateResult}`;
+    result = new StringWithGraph(text, frontGraph);
+  } else {
+    result = templateResult;
   }
+
   return result;
 }
 

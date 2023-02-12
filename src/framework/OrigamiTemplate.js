@@ -9,7 +9,7 @@ export default class OrigamiTemplate extends Template {
   }
 
   async compile() {
-    const parsed = await parse.templateDocument(this.text);
+    const parsed = await parse.templateDocument(this.templateText);
     if (!parsed || parsed.rest !== "") {
       throw new Error(`Couldn't parse Origami template`);
     }

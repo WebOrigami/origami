@@ -23,6 +23,13 @@ interface Explorable {
  */
 type Constructor<T> = new (...args: any[]) => T;
 
+
+interface HasString {
+  toString(): string;
+}
+
+type StringLike = string | HasString;
+
 /*
  * A mixin is a function that takes an existing class and returns a new class.
  *
@@ -45,10 +52,6 @@ interface HasFunction {
 
 interface HasGraph {
   toGraph(): Explorable;
-}
-
-interface HasString {
-  toString(): string;
 }
 
 type Invocable = Explorable | Function | HasFunction;

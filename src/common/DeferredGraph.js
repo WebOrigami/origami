@@ -1,3 +1,6 @@
+import { getScope } from "../framework/scopeUtilities.js";
+import Scope from "./Scope.js";
+
 /**
  * A graph that is loaded lazily.
  *
@@ -9,6 +12,7 @@
  */
 export default class DeferredGraph {
   constructor(loadFn) {
+    this.deferredParent = null;
     this.graph = null;
     this.loadFn = loadFn;
   }
@@ -26,7 +30,31 @@ export default class DeferredGraph {
   async load() {
     if (!this.graph) {
       this.graph = await this.loadFn();
+      if (this.deferredParent) {
+        if ("parent" in this.graph) {
+          this.graph.parent = this.deferredParent;
+        }
+        this.deferredParent = null;
+      }
     }
     return this.graph;
+  }
+
+  get parent() {
+    return this.deferredParent ?? /** @type {any} */ (this.graph).parent;
+  }
+  set parent(parent) {
+    if (!this.graph) {
+      // Not ready to set the parent yet.
+      this.deferredParent = parent;
+    } else {
+      // Avoid destructive modification of the underlying graph.
+      this.graph = Object.create(this.graph);
+      /** @type {any} */ (this.graph).parent = parent;
+    }
+  }
+
+  get scope() {
+    return new Scope(this, getScope(this.parent));
   }
 }

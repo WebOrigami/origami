@@ -24,18 +24,16 @@ export default function loadTextWithFrontMatter(buffer, key) {
     return text;
   }
 
+  const { frontData, bodyText } = frontMatter;
   const scope = this;
 
   const deferredGraph = new DeferredGraph(() => {
-    const { frontData, bodyText } = frontMatter;
-    const data = Object.assign(frontData, {
-      "@text": bodyText,
-    });
-    const graph = new (MetaTransform(ObjectGraph))(data);
+    const graph = new (MetaTransform(ObjectGraph))(frontData);
     graph.parent = scope;
     return graph;
   });
-  const textWithGraph = new StringWithGraph(text, deferredGraph);
+
+  const textWithGraph = new StringWithGraph(bodyText, deferredGraph);
 
   return textWithGraph;
 }

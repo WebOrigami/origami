@@ -10,7 +10,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * @param  {...GraphVariant} scopeGraphs
  * @this {Explorable}
  */
-export default async function setScope(variant, ...scopeGraphs) {
+export default function setScope(variant, ...scopeGraphs) {
   const graph = ExplorableGraph.from(variant);
 
   let result;

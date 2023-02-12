@@ -1,15 +1,13 @@
 import * as YAMLModule from "yaml";
-import merge from "../builtins/merge.js";
+import setScope from "../builtins/setScope.js";
 import DeferredGraph from "../common/DeferredGraph.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
-import { extractFrontMatter, transformObject } from "../core/utilities.js";
+import { transformObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import { isFormulasTransformApplied } from "./FormulasTransform.js";
 import MetaTransform from "./MetaTransform.js";
-import { getScope } from "./scopeUtilities.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -18,13 +16,9 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 export default class Template {
   constructor(document, scope) {
     this.compiled = null;
+    this.templateText = String(document);
+    this.templateGraph = document.toGraph?.() ?? null;
     this.scope = scope;
-    const { frontData, text } = parseDocument(String(document));
-    this.frontData = frontData;
-    this.frontGraph = frontData
-      ? new (MetaTransform(ObjectGraph))(frontData)
-      : null;
-    this.text = text;
   }
 
   /**
@@ -41,7 +35,7 @@ export default class Template {
 
     // Create the execution context for the compiled template.
     const processedInput = await processInput(input, inputScope);
-    const { dataGraph, extendedScope } = await this.createContext(
+    const { inputGraph, extendedScope } = await this.createContext(
       processedInput,
       inputScope
     );
@@ -49,7 +43,7 @@ export default class Template {
     const text = await this.compiled(extendedScope);
 
     // Attach a graph of the resolved template and input data.
-    const deferredGraph = new DeferredGraph(() => new DefaultPages(dataGraph));
+    const deferredGraph = new DeferredGraph(() => new DefaultPages(inputGraph));
     const result = new StringWithGraph(text, deferredGraph);
     return result;
   }
@@ -59,56 +53,34 @@ export default class Template {
   }
 
   /**
-   * Create an object that will be the context for executing the compiled
-   * template. This will be some form of the input, along with a scope that
-   * includes input data, template data, ambient properties, and the input's
-   * container.
+   * Create a scope that will be the context for executing the compiled
+   * template. This scope will include the input, the template front matter (if
+   * present), some ambient properties, and the input's scope.
    */
   async createContext(processedInput, inputScope) {
-    const { input, inputGraph, text } = processedInput;
-
     // Ambient properties let the template reference specific input/template data.
     const ambients = {
       "@template": {
-        frontData: this.frontData,
+        graph: this.templateGraph,
         scope: this.scope,
-        text: this.text,
+        text: this.templateText,
       },
+      "@input": processedInput.input,
+      ".": processedInput.inputGraph,
+      "@text": processedInput.text,
     };
-    if (input) {
-      ambients["@input"] = input;
-      ambients["."] = inputGraph;
-    }
-    if (text) {
-      ambients["@text"] = text;
-    }
 
-    // Construct new scope chain:
-    // (input or input frontData + template frontData) -> ambients -> container
-    /** @type {Explorable} */
-    let scope = new Scope(ambients, getScope(inputScope));
+    const baseScope = new Scope(ambients, inputScope);
+    const templateGraph = this.templateGraph
+      ? setScope(this.templateGraph, baseScope)
+      : null;
+    const inputParent = templateGraph?.scope ?? baseScope;
+    const inputGraph = processedInput.inputGraph
+      ? setScope(processedInput.inputGraph, inputParent)
+      : null;
+    const extendedScope = inputGraph?.scope ?? inputParent;
 
-    // Construct the data graph from the input graph and/or template front
-    // matter graph, merging if both are present.
-    const frontGraph = this.frontGraph;
-    let dataGraph;
-    let extendedScope = scope;
-    if (inputGraph && frontGraph) {
-      // Merge the input and template front data.
-      // This will set scope on the merged graph.
-      dataGraph = await merge.call(scope, inputGraph, frontGraph);
-      extendedScope = dataGraph.scope;
-    } else if (inputGraph) {
-      inputGraph.parent = scope;
-      dataGraph = inputGraph;
-      extendedScope = inputGraph.scope;
-    } else if (frontGraph) {
-      dataGraph = frontGraph;
-    } else {
-      dataGraph = null;
-    }
-
-    return { dataGraph, extendedScope };
+    return { inputGraph, templateGraph, extendedScope };
   }
 
   toFunction() {
@@ -122,16 +94,8 @@ export default class Template {
   }
 
   toString() {
-    return this.text;
+    return this.templateText;
   }
-}
-
-// Extract the body text and any front matter from a template document.
-function parseDocument(document) {
-  const frontMatter = extractFrontMatter(document);
-  const frontData = frontMatter?.frontData;
-  const text = frontMatter?.bodyText ?? document;
-  return { frontData, text };
 }
 
 // If the input is a string, parse it as a document that may have front matter.

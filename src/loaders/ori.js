@@ -1,3 +1,4 @@
+import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
@@ -8,5 +9,6 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @this {Explorable}
  */
 export default function loadOri(buffer, key) {
-  return new OrigamiTemplate(String(buffer), this);
+  const textWithGraph = loadTextWithFrontMatter(buffer, key);
+  return new OrigamiTemplate(textWithGraph, this);
 }

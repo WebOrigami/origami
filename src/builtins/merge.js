@@ -9,8 +9,13 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant[]} graphs
  */
 export default async function merge(...graphs) {
-  // Filter out undefined graphs.
-  const filtered = graphs.filter((graph) => graph !== undefined);
+  // Filter out null or undefined graphs.
+  const filtered = graphs.filter((graph) => graph);
+
+  if (filtered.length === 1) {
+    // Only one graph, no need to merge.
+    return filtered[0];
+  }
 
   // If a graph can take a scope, give it one that includes the other graphs and
   // the current scope.
