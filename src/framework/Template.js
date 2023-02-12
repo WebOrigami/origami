@@ -4,10 +4,7 @@ import DeferredGraph from "../common/DeferredGraph.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
-import { isFormulasTransformApplied } from "./FormulasTransform.js";
-import MetaTransform from "./MetaTransform.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -98,7 +95,6 @@ export default class Template {
   }
 }
 
-// If the input is a string, parse it as a document that may have front matter.
 async function processInput(input, scope) {
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
@@ -108,15 +104,9 @@ async function processInput(input, scope) {
     input = await input.call(scope);
   }
 
-  let inputGraph;
-  if (ExplorableGraph.canCastToExplorable(input)) {
-    inputGraph = ExplorableGraph.from(input);
-    if (!isFormulasTransformApplied(inputGraph)) {
-      inputGraph = transformObject(MetaTransform, inputGraph);
-    }
-  } else {
-    inputGraph = null;
-  }
+  let inputGraph = ExplorableGraph.canCastToExplorable(input)
+    ? ExplorableGraph.from(input)
+    : null;
 
   let text = input?.toString?.();
 
