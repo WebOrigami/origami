@@ -1,4 +1,3 @@
-import { getScope } from "../framework/scopeUtilities.js";
 import Scope from "./Scope.js";
 
 /**
@@ -55,6 +54,8 @@ export default class DeferredGraph {
   }
 
   get scope() {
-    return new Scope(this, getScope(this.parent));
+    const parent = this.parent;
+    const parentScope = parent.scope ?? parent;
+    return new Scope(this, parentScope);
   }
 }
