@@ -41,8 +41,8 @@ export default class Template {
     const deferredGraph = new DeferredGraph(
       () =>
         new DefaultPages({
-          "@input": inputGraph,
-          "@template": templateGraph,
+          inputGraph: inputGraph,
+          templateGraph: templateGraph,
         })
     );
     const result = new StringWithGraph(text, deferredGraph);

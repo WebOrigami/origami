@@ -109,7 +109,7 @@ template`)
   it("template graph can refer to input graph via dot (.) ambient", async () => {
     const template = new Template(
       loadTextWithFrontMatter(`---
-a = ./b:
+a: !ori ./b
 ---
 `)
     );
@@ -136,7 +136,12 @@ template`)
     const result = await template.apply(input, graph);
     const resultGraph = result.toGraph();
     assert.deepEqual(await ExplorableGraph.plain(resultGraph), {
-      b: 2,
+      inputGraph: {
+        b: 2,
+      },
+      templateGraph: {
+        a: 1,
+      },
     });
   });
 });

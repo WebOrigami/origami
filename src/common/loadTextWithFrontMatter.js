@@ -1,7 +1,8 @@
 import ObjectGraph from "../core/ObjectGraph.js";
-import { extractFrontMatter } from "../core/utilities.js";
-import MetaTransform from "../framework/MetaTransform.js";
+import { extractFrontMatter, isPlainObject } from "../core/utilities.js";
+import FileTreeTransform from "../framework/FileTreeTransform.js";
 import DeferredGraph from "./DeferredGraph.js";
+import ExpressionGraph from "./ExpressionGraph.js";
 import StringWithGraph from "./StringWithGraph.js";
 
 /**
@@ -28,12 +29,32 @@ export default function loadTextWithFrontMatter(buffer, key) {
   const scope = this;
 
   const deferredGraph = new DeferredGraph(() => {
-    const graph = new (MetaTransform(ObjectGraph))(frontData);
+    const graphClass = containsExpression(frontData)
+      ? ExpressionGraph
+      : ObjectGraph;
+    const graph = new (FileTreeTransform(graphClass))(frontData);
     graph.parent = scope;
     return graph;
   });
 
   const textWithGraph = new StringWithGraph(bodyText, deferredGraph);
+  textWithGraph.frontData = frontData;
 
   return textWithGraph;
+}
+
+// Return true if the given graph contains an expression
+function containsExpression(obj) {
+  for (const key in obj) {
+    const value = obj[key];
+    if (typeof value === "function" && value.code) {
+      return true;
+    } else if (isPlainObject(value)) {
+      const valueContainsExpression = containsExpression(value);
+      if (valueContainsExpression) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
