@@ -133,7 +133,7 @@ export * from "../src/framework/scopeUtilities.js";
 export { default as Template } from "../src/framework/Template.js";
 export * from "../src/language/combinators.js";
 export { default as execute } from "../src/language/execute.js";
-export { default as expressionFunction } from "../src/language/expressionFunction.js";
+export * from "../src/language/expressionFunction.js";
 export { default as expressionTag } from "../src/language/expressionTag.js";
 export { default as format } from "../src/language/format.js";
 export * from "../src/language/ops.js";

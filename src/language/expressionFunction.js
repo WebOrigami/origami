@@ -7,7 +7,7 @@ import format from "./format.js";
  * @param {Array} code - parsed Origami code
  * @param {string} [name] - optional name of the function
  */
-export default function expressionFunction(code, name) {
+export function createExpressionFunction(code, name) {
   /** @this {Explorable} */
   async function fn() {
     return execute.call(this, code);
@@ -19,4 +19,14 @@ export default function expressionFunction(code, name) {
   fn.source = format(code);
   fn.toString = () => fn.source;
   return fn;
+}
+
+/**
+ * Return true if the given object is a function that executes an Origami
+ * expression.
+ *
+ * @param {any} obj
+ */
+export function isExpressionFunction(obj) {
+  return typeof obj === "function" && obj.code;
 }

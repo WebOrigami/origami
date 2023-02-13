@@ -1,7 +1,7 @@
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
-import expressionFunction from "../language/expressionFunction.js";
+import { createExpressionFunction } from "../language/expressionFunction.js";
 import { graphDocument } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 import PathTransform from "./PathTransform.js";
@@ -25,7 +25,7 @@ class OrigamiGraphBase extends ExpressionGraph {
     for (const key in assignments) {
       const value = assignments[key];
       const expression =
-        value instanceof Array ? expressionFunction(value) : value;
+        value instanceof Array ? createExpressionFunction(value) : value;
       expressions[key] = expression;
     }
 

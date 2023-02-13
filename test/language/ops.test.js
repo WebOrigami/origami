@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
-import expressionFunction from "../../src/language/expressionFunction.js";
+import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
@@ -68,7 +68,7 @@ describe("ops", () => {
       ops.graph,
       {
         name: "world",
-        message: expressionFunction([
+        message: createExpressionFunction([
           ops.concat,
           "Hello, ",
           [ops.scope, "name"],
