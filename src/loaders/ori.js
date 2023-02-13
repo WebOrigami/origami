@@ -9,6 +9,6 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @this {Explorable}
  */
 export default function loadOri(buffer, key) {
-  const textWithGraph = loadTextWithFrontMatter(buffer, key);
+  const textWithGraph = loadTextWithFrontMatter.call(this, buffer, key);
   return new OrigamiTemplate(textWithGraph, this);
 }
