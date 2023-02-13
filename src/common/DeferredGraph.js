@@ -40,7 +40,7 @@ export default class DeferredGraph {
   }
 
   get parent() {
-    return this.deferredParent ?? /** @type {any} */ (this.graph).parent;
+    return this.deferredParent ?? /** @type {any} */ (this.graph)?.parent;
   }
   set parent(parent) {
     if (!this.graph) {
@@ -55,7 +55,7 @@ export default class DeferredGraph {
 
   get scope() {
     const parent = this.parent;
-    const parentScope = parent.scope ?? parent;
+    const parentScope = parent?.scope ?? parent;
     return new Scope(this, parentScope);
   }
 }
