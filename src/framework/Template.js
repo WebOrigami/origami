@@ -1,6 +1,6 @@
 import * as YAMLModule from "yaml";
 import setScope from "../builtins/setScope.js";
-import DeferredGraph from "../common/DeferredGraph.js";
+import MergeGraph from "../common/MergeGraph.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -37,15 +37,7 @@ export default class Template {
 
     const text = await this.compiled(extendedScope);
 
-    // Attach a graph of the resolved template and input data.
-    const deferredGraph = new DeferredGraph(
-      () =>
-        new DefaultPages({
-          inputGraph: inputGraph,
-          templateGraph: templateGraph,
-        })
-    );
-    const result = new StringWithGraph(text, deferredGraph);
+    const result = createResult(text, inputGraph, templateGraph);
     return result;
   }
 
@@ -97,6 +89,29 @@ export default class Template {
   toString() {
     return this.templateText;
   }
+}
+
+function createResult(text, inputGraph, templateGraph) {
+  if (!inputGraph && !templateGraph) {
+    return text;
+  }
+
+  let dataGraph;
+  if (inputGraph && !templateGraph) {
+    dataGraph = inputGraph;
+  } else if (!inputGraph && templateGraph) {
+    dataGraph = templateGraph;
+  } else {
+    // Merge the template graph as "@template" into the input graph.
+    dataGraph = new MergeGraph(inputGraph, {
+      "@template": templateGraph,
+    });
+  }
+
+  const attachedGraph = new DefaultPages(dataGraph);
+
+  const result = new StringWithGraph(text, attachedGraph);
+  return result;
 }
 
 async function processInput(input, scope) {

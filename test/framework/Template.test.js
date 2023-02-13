@@ -136,10 +136,8 @@ template`)
     const result = await template.apply(input, graph);
     const resultGraph = result.toGraph();
     assert.deepEqual(await ExplorableGraph.plain(resultGraph), {
-      inputGraph: {
-        b: 2,
-      },
-      templateGraph: {
+      b: 2,
+      "@template": {
         a: 1,
       },
     });
