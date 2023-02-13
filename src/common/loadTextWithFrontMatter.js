@@ -12,17 +12,26 @@ import StringWithGraph from "./StringWithGraph.js";
  * If successful, the document will be returned as a String with an attached
  * graph with the front matter and document content as data.
  *
- * @param {Buffer|string} buffer
+ * @param {string|HasString} input
  * @param {any} [key]
  * @this {Explorable}
  */
-export default function loadTextWithFrontMatter(buffer, key) {
-  const text = String(buffer);
+export default function loadTextWithFrontMatter(input, key) {
+  const text = String(input);
+
+  const attachedGraph =
+    typeof input === "object" && /** @type {any} */ (input).toGraph?.();
 
   const frontMatter = extractFrontMatter(text);
   if (!frontMatter) {
     // Didn't find, or couldn't parse, front matter
-    return text;
+    if (attachedGraph) {
+      // Input has graph; attach that to the text.
+      return new StringWithGraph(text, attachedGraph);
+    } else {
+      // Return plain text as is
+      return text;
+    }
   }
 
   const { frontData, bodyText } = frontMatter;
@@ -38,7 +47,7 @@ export default function loadTextWithFrontMatter(buffer, key) {
   });
 
   const textWithGraph = new StringWithGraph(bodyText, deferredGraph);
-  textWithGraph.frontData = frontData;
+  /** @type {any} */ (textWithGraph).frontData = frontData;
 
   return textWithGraph;
 }
