@@ -32,15 +32,19 @@ export default class Template {
 
     // Create the execution context for the compiled template.
     const processedInput = await processInput(input, inputScope);
-    const { inputGraph, extendedScope } = await this.createContext(
-      processedInput,
-      inputScope
-    );
+    const { extendedScope, inputGraph, templateGraph } =
+      await this.createContext(processedInput, inputScope);
 
     const text = await this.compiled(extendedScope);
 
     // Attach a graph of the resolved template and input data.
-    const deferredGraph = new DeferredGraph(() => new DefaultPages(inputGraph));
+    const deferredGraph = new DeferredGraph(
+      () =>
+        new DefaultPages({
+          "@input": inputGraph,
+          "@template": templateGraph,
+        })
+    );
     const result = new StringWithGraph(text, deferredGraph);
     return result;
   }
