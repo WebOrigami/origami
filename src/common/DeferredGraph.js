@@ -14,6 +14,7 @@ export default class DeferredGraph {
     this.deferredParent = null;
     this.graph = null;
     this.loadFn = loadFn;
+    this.loadPromise = null;
   }
 
   async *[Symbol.asyncIterator]() {
@@ -27,16 +28,21 @@ export default class DeferredGraph {
   }
 
   async load() {
-    if (!this.graph) {
-      this.graph = await this.loadFn();
+    if (this.loadPromise) {
+      return this.loadPromise;
+    }
+    this.loadPromise = new Promise(async (resolve) => {
+      const graph = await this.loadFn();
       if (this.deferredParent) {
-        if ("parent" in this.graph) {
-          this.graph.parent = this.deferredParent;
+        if ("parent" in graph) {
+          graph.parent = this.deferredParent;
         }
         this.deferredParent = null;
       }
-    }
-    return this.graph;
+      this.graph = graph;
+      resolve(graph);
+    });
+    return this.loadPromise;
   }
 
   get parent() {
