@@ -4,7 +4,6 @@ import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import { createExpressionFunction } from "../language/expressionFunction.js";
 import { graphDocument } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-import PathTransform from "./PathTransform.js";
 
 class OrigamiGraphBase extends ExpressionGraph {
   constructor(definition) {
@@ -33,8 +32,6 @@ class OrigamiGraphBase extends ExpressionGraph {
   }
 }
 
-export default class OrigamiGraph extends PathTransform(
-  InheritScopeTransform(
-    FileLoadersTransform(ImplicitModulesTransform(OrigamiGraphBase))
-  )
+export default class OrigamiGraph extends InheritScopeTransform(
+  FileLoadersTransform(ImplicitModulesTransform(OrigamiGraphBase))
 ) {}

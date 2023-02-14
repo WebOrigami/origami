@@ -127,7 +127,6 @@ export { default as KeysTransform } from "../src/framework/KeysTransform.js";
 export { default as MetaTransform } from "../src/framework/MetaTransform.js";
 export { default as OrigamiGraph } from "../src/framework/OrigamiGraph.js";
 export { default as OrigamiTemplate } from "../src/framework/OrigamiTemplate.js";
-export { default as PathTransform } from "../src/framework/PathTransform.js";
 export { default as scopeExplorer } from "../src/framework/scopeExplorer.js";
 export * from "../src/framework/scopeUtilities.js";
 export { default as Template } from "../src/framework/Template.js";

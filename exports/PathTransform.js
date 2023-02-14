@@ -1,4 +1,4 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import ExplorableGraph from "../src/core/ExplorableGraph.js";
 
 const pathKey = Symbol("path");
 
