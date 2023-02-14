@@ -4,8 +4,6 @@ import builtins from "../cli/builtins.js";
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, transformObject } from "../core/utilities.js";
-import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
-import MetaTransform from "../framework/MetaTransform.js";
 import * as ops from "../language/ops.js";
 
 // See notes at ExplorableGraph.js
@@ -36,8 +34,8 @@ export default async function dataflow(variant) {
     keysInScope = unique(keysInScope, Object.keys(flow));
   }
 
-  const formulas = await getFormulasInScope(graph);
-  await addFormulaDependencies(flow, keysInScope, formulas);
+  const expressions = await getExpressionsInScope(graph);
+  await addExpressionDependencies(flow, keysInScope, expressions);
 
   await addContentDependencies(flow, graph, keysInScope);
 
@@ -51,25 +49,20 @@ dataflow.usage = `dataflow <graph>\tReturns an analysis of the data flow in the 
 dataflow.documentation = "https://graphorigami.org/cli/builtins.html#dataflow";
 
 async function addContentDependencies(flow, graph, keysInScope) {
+  const scope = graph.scope ?? graph;
   for await (const key of keysInScope) {
     const extension = extname(key);
+
     const dependencyParsers = {
+      ".graph": graphDependencies,
       ".html": htmlDependencies,
-      ".meta": metaDependencies,
       ".ori": origamiTemplateDependencies,
-      ".vfiles": metaDependencies,
     };
     const parser = dependencyParsers[extension];
     if (parser) {
-      const scope = graph.scope ?? graph;
       const value = await scope.get(key);
       if (value) {
         let dependencies = await parser(value, keysInScope);
-
-        // Only consider the dependencies that are in scope.
-        dependencies = dependencies.filter((dependency) =>
-          keysInScope.includes(dependency)
-        );
 
         updateFlowRecord(flow, key, { dependencies });
 
@@ -82,32 +75,19 @@ async function addContentDependencies(flow, graph, keysInScope) {
   }
 }
 
-async function addFormulaDependencies(flow, keysInScope, formulas) {
-  for (const formula of formulas) {
-    const { key, expression, source } = formula;
-    const dependencies = expression
-      ? codeDependencies(expression, keysInScope)
-      : null;
+async function addExpressionDependencies(
+  flow,
+  keysInScope,
+  expressions,
+  dependentKey = null
+) {
+  for (const [key, code] of Object.entries(expressions)) {
+    const dependencies = code ? codeDependencies(code, keysInScope) : null;
 
-    if (dependencies?.length === 0) {
-      // All dependencies are builtins.
-      // Use the RHS of the formula as the dependency.
-      const parts = source.split("=");
-      const rhs = parts[parts.length - 1]?.trim();
-      if (rhs) {
-        updateFlowRecord(flow, key, {
-          dependencies: [source],
-        });
-        updateFlowRecord(flow, source, {
-          label: rhs,
-        });
-      } else {
-        // Formula is not an assignment.
-      }
-    } else if (dependencies) {
+    if (dependencies) {
       // We have at least some dependencies on other values in the graph (not
       // builtins).
-      updateFlowRecord(flow, key, { dependencies });
+      updateFlowRecord(flow, dependentKey ?? key, { dependencies });
 
       // Also add the dependencies as nodes in the dataflow.
       dependencies.forEach((dependency) => {
@@ -157,14 +137,18 @@ function codeDependencies(code, keysInScope, onlyDependenciesInScope = false) {
   }
 }
 
-async function getFormulasInScope(graph) {
+async function getExpressionsInScope(graph) {
   const scopeGraphs = graph.scope?.graphs ?? [graph];
-  let formulas = [];
+  let expressions = {};
   for (const scopeGraph of scopeGraphs) {
-    const graphFormulas = (await scopeGraph.formulas?.()) ?? [];
-    formulas.push(...graphFormulas);
+    const graphExpressions = (await scopeGraph.expressions?.()) ?? [];
+    for (const key in graphExpressions) {
+      if (!expressions[key]) {
+        expressions[key] = graphExpressions[key];
+      }
+    }
   }
-  return formulas;
+  return expressions;
 }
 
 async function getKeysInScope(graph) {
@@ -188,15 +172,24 @@ async function getKeysInScope(graph) {
   return unique(keysInScope);
 }
 
-function ignoreKey(key) {
-  // HACK: instead of `instanceof Array` to catch ops.thisKey,
-  // have parser stop wrapping ops.thisKey in an array.
-  if (key instanceof Array) {
-    return true;
-  } else if (key.startsWith?.("@")) {
-    return true;
+// Add dependnecies found in a graph file.
+async function graphDependencies(graphFile, keysInScope) {
+  const dependencies = [];
+  const attachedGraph = graphFile.toGraph?.();
+  if (attachedGraph) {
+    const expressions = await attachedGraph.expressions?.();
+    if (expressions) {
+      for (const [key, code] of Object.entries(expressions)) {
+        const expressionDependencies = code
+          ? codeDependencies(code, keysInScope)
+          : null;
+        if (expressionDependencies) {
+          dependencies.push(...expressionDependencies);
+        }
+      }
+    }
   }
-  return ignoreKeys.includes(key);
+  return dependencies;
 }
 
 async function htmlDependencies(html, keysInScope) {
@@ -226,6 +219,13 @@ async function htmlDependencies(html, keysInScope) {
   return pathHeadsInScope;
 }
 
+function ignoreKey(key) {
+  if (key.startsWith?.("@")) {
+    return true;
+  }
+  return ignoreKeys.includes(key);
+}
+
 function markUndefinedDependencies(flow, keysInScope) {
   for (const record of Object.values(flow)) {
     record.dependencies?.forEach((dependency) => {
@@ -239,14 +239,6 @@ function markUndefinedDependencies(flow, keysInScope) {
   }
 }
 
-async function metaDependencies(meta, keysInScope) {
-  meta = ExplorableGraph.from(meta);
-  if (!isFormulasTransformApplied(meta)) {
-    meta = await transformObject(MetaTransform, meta);
-  }
-  return [];
-}
-
 async function origamiTemplateDependencies(template, keysInScope) {
   let dependencies = [];
   if (!template.code) {
@@ -256,11 +248,18 @@ async function origamiTemplateDependencies(template, keysInScope) {
 
   // If the template appears to contain HTML, add the HTML dependencies.
   // HACK: Crude heuristic just sees if the first non-space is a "<".
-  if (template.text.trim().startsWith("<")) {
+  if (template.templateText.trim().startsWith("<")) {
     dependencies = dependencies.concat(
       await htmlDependencies(template.text, keysInScope)
     );
   }
+
+  // For templates, we only consider dependencies that are in scope. References
+  // to dependencies not in scope are assumed to refer to keys in the input
+  // supplied to the template.
+  dependencies = dependencies.filter((dependency) =>
+    keysInScope.includes(dependency)
+  );
 
   return dependencies;
 }

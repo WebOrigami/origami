@@ -1,64 +1,59 @@
 import dataflow from "../../src/builtins/dataflow.js";
-import Scope from "../../src/common/Scope.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-import MetaTransform from "../../src/framework/MetaTransform.js";
+import ExpressionGraph from "../../src/common/ExpressionGraph.js";
+import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
+import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
+import { createExpressionFunction } from "../../src/language/expressionFunction.js";
+import * as ops from "../../src/language/ops.js";
+import loadGraph from "../../src/loaders/graph.js";
+import loadYaml from "../../src/loaders/yaml.js";
 import assert from "../assert.js";
 
-const MetaGraph = MetaTransform(ObjectGraph);
-
-describe.skip("dataflow", () => {
-  it("identifies dependencies in formulas", async () => {
-    const graph = new MetaGraph({
-      "a = fn(b)": null,
-      "a = d": null,
-      // builtin map will be ignored, as will ./foo
-      "b = map(c, =./foo)": null,
-      c: "Hello",
-    });
+describe.only("dataflow", () => {
+  it("identifies dependencies in expressions", async () => {
+    const textWithGraph = loadYaml(`
+      a: !ori fn(b)
+      # builtin map will be ignored, as will ./foo
+      b: !ori map(c, =./foo)
+      c: Hello
+    `);
+    const graph = textWithGraph.toGraph();
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       a: {
-        dependencies: ["fn", "b", "d"],
+        dependencies: ["fn", "b"],
       },
       b: {
         dependencies: ["c"],
       },
       c: {},
-      d: {
-        undefined: true,
-      },
       fn: {
         undefined: true,
       },
     });
   });
 
-  it("treats @ graph properties as builtins", async () => {
-    const graph = new MetaGraph({
-      "foo = @bar": null,
-    });
+  it("ignore @ ambients", async () => {
+    const textWithGraph = loadYaml(`
+      foo: !ori (@bar)
+    `);
+    const graph = textWithGraph.toGraph();
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       foo: {
-        dependencies: ["foo = @bar"],
-      },
-      "foo = @bar": {
-        label: "@bar",
+        dependencies: [],
       },
     });
   });
 
-  it("if all dependencies are builtins, uses source expression as depenendcy", async () => {
-    const graph = new MetaGraph({
-      "foo = mdHtml(this).md": "# Hello",
-    });
+  it("if all dependencies are builtins, uses source expression as dependency", async () => {
+    const textWithGraph = loadYaml(`
+      foo: !ori mdHtml()
+    `);
+    const graph = textWithGraph.toGraph();
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       foo: {
-        dependencies: ["foo = mdHtml(this).md"],
-      },
-      "foo = mdHtml(this).md": {
-        label: "mdHtml(this).md",
+        dependencies: [],
       },
     });
   });
@@ -78,13 +73,13 @@ describe.skip("dataflow", () => {
   });
 
   it("identifies referenced dependencies in Origami templates", async () => {
-    const graph = new MetaGraph({
+    const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
       // graph's dataflow.
-      "index.ori": `{{ map(foo, bar) }}`,
+      "index.ori": new OrigamiTemplate(`{{ map(foo, bar) }}`),
       foo: {},
-    });
+    };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       "index.ori": {
@@ -95,15 +90,13 @@ describe.skip("dataflow", () => {
   });
 
   it("identified dependencies in scope", async () => {
-    const graph = new MetaGraph({
-      "a = b": null,
+    const graph = new (InheritScopeTransform(ExpressionGraph))({
+      a: createExpressionFunction([ops.scope, "b"]),
     });
-    graph.parent = new Scope(
-      new MetaGraph({
-        "b = c": null,
-        c: null,
-      })
-    );
+    graph.parent = new ExpressionGraph({
+      b: createExpressionFunction([ops.scope, "c"]),
+      c: null,
+    });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
       a: {
@@ -116,31 +109,30 @@ describe.skip("dataflow", () => {
     });
   });
 
-  it.skip("identifies dependencies in .vfiles files", async () => {
+  it("identifies dependencies in .graph files", async () => {
     const graph = {
-      "foo.vfiles": `a = b: null`,
+      "foo.graph": loadGraph(`a = b`),
     };
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
-      a: {
+      "foo.graph": {
         dependencies: ["b"],
       },
-      b: {},
-      "foo.vfiles": {
-        dependencies: [],
+      b: {
+        undefined: true,
       },
     });
   });
 
   it("starts with dependencies in .dataflow.yaml value", async () => {
-    const graph = new MetaGraph({
+    const graph = new ExpressionGraph({
       ".dataflow.yaml": `
 a:
   dependencies:
     - b
 b: {}
 `,
-      "a = c": null,
+      a: createExpressionFunction([ops.scope, "c"]),
     });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
@@ -155,8 +147,8 @@ b: {}
   });
 
   it("notes if a dependency is undefined", async () => {
-    const graph = new MetaGraph({
-      "a = b": null,
+    const graph = new ExpressionGraph({
+      a: createExpressionFunction([ops.scope, "b"]),
     });
     const flow = await dataflow(graph);
     assert.deepEqual(flow, {
@@ -170,8 +162,8 @@ b: {}
   });
 
   it("creates implicit dependencies for .js files", async () => {
-    const graph = new MetaGraph({
-      "x = fn()": null,
+    const graph = new ExpressionGraph({
+      x: createExpressionFunction([[ops.scope, "fn"]]),
       "fn.js": null,
     });
     const flow = await dataflow(graph);
