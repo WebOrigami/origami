@@ -1,10 +1,11 @@
 import * as YAMLModule from "yaml";
-import setScope from "../builtins/setScope.js";
 import MergeGraph from "../common/MergeGraph.js";
-import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import { transformObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
+import InheritScopeTransform from "./InheritScopeTransform.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -22,18 +23,18 @@ export default class Template {
    * Apply the template to the given input data in the context of a graph.
    *
    * @param {any} [input]
-   * @param {Explorable} [inputScope]
+   * @param {Explorable} [baseScope]
    */
-  async apply(input, inputScope) {
+  async apply(input, baseScope) {
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
     }
 
     // Create the execution context for the compiled template.
-    const processedInput = await processInput(input, inputScope);
+    const processedInput = await processInput(input, baseScope);
     const { extendedScope, inputGraph, templateGraph } =
-      await this.createContext(processedInput, inputScope);
+      await this.createContext(processedInput, baseScope);
 
     const text = await this.compiled(extendedScope);
 
@@ -47,31 +48,45 @@ export default class Template {
 
   /**
    * Create a scope that will be the context for executing the compiled
-   * template. This scope will include the input, the template front matter (if
-   * present), some ambient properties, and the input's scope.
+   * template. This scope will be
+   *
+   * input → template front matter → ambient properties → base scope
    */
-  async createContext(processedInput, inputScope) {
+  async createContext(processedInput, baseScope) {
+    // Create the three graphs we'll add to the scope.
+    let inputGraph = processedInput.inputGraph ?? null;
+    if (inputGraph && !("parent" in inputGraph)) {
+      inputGraph = transformObject(InheritScopeTransform, inputGraph);
+    }
+
+    let templateGraph = this.templateGraph ?? null;
+    if (templateGraph && !("parent" in templateGraph)) {
+      templateGraph = transformObject(InheritScopeTransform, templateGraph);
+    }
+
     // Ambient properties let the template reference specific input/template data.
-    const ambients = {
+    const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({
       "@template": {
-        graph: this.templateGraph,
+        graph: templateGraph,
         scope: this.scope,
         text: this.templateText,
       },
       "@input": processedInput.input,
-      ".": processedInput.inputGraph,
+      ".": inputGraph,
       "@text": processedInput.text,
-    };
+    });
 
-    const baseScope = new Scope(ambients, inputScope);
-    const templateGraph = this.templateGraph
-      ? setScope(this.templateGraph, baseScope)
-      : null;
-    const inputParent = templateGraph?.scope ?? baseScope;
-    const inputGraph = processedInput.inputGraph
-      ? setScope(processedInput.inputGraph, inputParent)
-      : null;
-    const extendedScope = inputGraph?.scope ?? inputParent;
+    // Set all the scopes
+    ambientsGraph.parent = baseScope;
+    if (templateGraph) {
+      templateGraph.parent = ambientsGraph;
+    }
+    if (inputGraph) {
+      inputGraph.parent = templateGraph ?? ambientsGraph;
+    }
+
+    const extendedScope =
+      inputGraph?.scope ?? templateGraph?.scope ?? ambientsGraph.scope;
 
     return { inputGraph, templateGraph, extendedScope };
   }
@@ -114,13 +129,13 @@ function createResult(text, inputGraph, templateGraph) {
   return result;
 }
 
-async function processInput(input, scope) {
+async function processInput(input, baseScope) {
   if (typeof input === "function") {
     // The input is a function that must be evaluated to get the actual input. A
     // common scenario for this would be an Origami template like foo.ori being
     // called as a block: {{foo.ori =`Hello, {{name}}.`}}. The inner contents of
     // the block will be a lambda, i.e., a function that we want to invoke.
-    input = await input.call(scope);
+    input = await input.call(baseScope);
   }
 
   let inputGraph = ExplorableGraph.canCastToExplorable(input)
