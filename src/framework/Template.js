@@ -65,16 +65,19 @@ export default class Template {
     }
 
     // Ambient properties let the template reference specific input/template data.
-    const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({
+    const ambients = {
       "@template": {
         graph: templateGraph,
         scope: this.scope,
         text: this.templateText,
       },
       "@input": processedInput.input,
-      ".": inputGraph,
       "@text": processedInput.text,
-    });
+    };
+    if (inputGraph) {
+      ambients["."] = inputGraph;
+    }
+    const ambientsGraph = new (InheritScopeTransform(ObjectGraph))(ambients);
 
     // Set all the scopes
     ambientsGraph.parent = baseScope;
