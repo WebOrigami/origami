@@ -8,7 +8,7 @@ import loadGraph from "../../src/loaders/graph.js";
 import loadYaml from "../../src/loaders/yaml.js";
 import assert from "../assert.js";
 
-describe.only("dataflow", () => {
+describe("dataflow", () => {
   it("identifies dependencies in expressions", async () => {
     const textWithGraph = loadYaml(`
       a: !ori fn(b)
