@@ -5,11 +5,11 @@ import assert from "../assert.js";
 
 describe("inline", () => {
   it("inlines Origami expressions found in input text, preserving front matter", async () => {
-    const graph = new ObjectGraph({
+    const scope = new ObjectGraph({
       name: "Alice",
     });
     const text = `Hello, {{name}}!`;
-    const inlined = await inline.call(graph, text);
+    const inlined = await inline.call(scope, text);
     assert.equal(inlined, "Hello, Alice!");
   });
 
