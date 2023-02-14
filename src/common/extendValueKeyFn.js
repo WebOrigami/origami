@@ -35,33 +35,31 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     const valueName = options.valueName ?? "@value";
 
     // See if the value is a graph or can be cast to a graph.
-    let valueAsGraph;
+    let valueGraph;
     if (ExplorableGraph.isExplorable(value)) {
-      valueAsGraph = value;
+      valueGraph = value;
     } else if (ExplorableGraph.canCastToExplorable(value)) {
-      valueAsGraph = ExplorableGraph.from(value);
+      valueGraph = ExplorableGraph.from(value);
     }
-    if (
-      valueAsGraph &&
-      !("parent" in valueAsGraph && "scope" in valueAsGraph)
-    ) {
-      valueAsGraph = transformObject(InheritScopeTransform, valueAsGraph);
+    if (valueGraph && !("parent" in valueGraph && "scope" in valueGraph)) {
+      valueGraph = transformObject(InheritScopeTransform, valueGraph);
     }
 
     let scope = new Scope(
+      valueGraph,
       {
-        ".": valueAsGraph ?? null,
+        ".": valueGraph ?? null,
         [keyName]: key,
         [valueName]: value ?? null,
       },
       getScope(this)
     );
 
-    if (valueAsGraph) {
-      valueAsGraph.parent = scope;
+    if (valueGraph) {
+      valueGraph.parent = scope;
       // REVIEW: If this option doesn't prove valuable, remove it
       if (options.addValueToScope) {
-        scope = valueAsGraph.scope;
+        scope = valueGraph.scope;
       }
     }
 
