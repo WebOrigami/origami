@@ -1,7 +1,9 @@
 import merge from "../../src/builtins/merge.js";
+import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-import MetaTransform from "../../src/framework/MetaTransform.js";
+import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
+import { createExpressionFunction } from "../../src/language/expressionFunction.js";
+import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("merge", () => {
@@ -26,13 +28,13 @@ describe("merge", () => {
 
   it("puts all graphs in scope", async () => {
     const graph = await merge(
-      new (MetaTransform(ObjectGraph))({
+      new (InheritScopeTransform(ExpressionGraph))({
         a: 1,
-        "b = c": null,
+        b: createExpressionFunction([ops.scope, "c"]),
       }),
-      new (MetaTransform(ObjectGraph))({
+      new (InheritScopeTransform(ExpressionGraph))({
         c: 2,
-        "d = a": null,
+        d: createExpressionFunction([ops.scope, "a"]),
       })
     );
     assert.deepEqual(await ExplorableGraph.plain(graph), {
