@@ -4,6 +4,8 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
+const expressionSymbol = Symbol("expression");
+
 /**
  * Evaluate the given code and return the result.
  *
@@ -57,6 +59,8 @@ export default async function execute(code) {
     fn = fn.toFunction();
   }
 
+  const formattedCode = format(code);
+
   try {
     const result =
       fn instanceof Function
@@ -64,10 +68,12 @@ export default async function execute(code) {
           await fn.call(scope, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
+    if (typeof result === "object") {
+      result[expressionSymbol] = formattedCode;
+    }
     return result;
   } catch (/** @type {any} */ error) {
-    const formatted = format(code);
-    const message = `Error triggered by Origami expression: ${formatted}`;
+    const message = `Error triggered by Origami expression: ${formattedCode}`;
     throw new Error(message, { cause: error });
   }
 }

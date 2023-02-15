@@ -1,5 +1,7 @@
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 
+const keyKey = Symbol("key");
+
 /**
  * Load a file as an Origami graph.
  *
@@ -10,6 +12,7 @@ import OrigamiGraph from "../framework/OrigamiGraph.js";
 export default function loadGraph(buffer, key) {
   const text = String(buffer);
   const textWithGraph = new String(text);
+
   const scope = this;
   let graph;
 
@@ -17,6 +20,7 @@ export default function loadGraph(buffer, key) {
     if (!graph) {
       graph = new OrigamiGraph(text);
       graph.parent = scope;
+      graph[keyKey] = key;
     }
     return graph;
   };
