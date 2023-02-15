@@ -250,7 +250,7 @@ async function origamiTemplateDependencies(template, keysInScope) {
   // HACK: Crude heuristic just sees if the first non-space is a "<".
   if (template.templateText.trim().startsWith("<")) {
     dependencies = dependencies.concat(
-      await htmlDependencies(template.text, keysInScope)
+      await htmlDependencies(template.templateText, keysInScope)
     );
   }
 
