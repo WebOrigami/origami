@@ -6,19 +6,10 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  *
  * @this {Explorable}
  */
-export default async function defaultIndexHtml(
-  options = { showDiagnostics: false }
-) {
+export default async function defaultIndexHtml() {
   const graph = this;
 
-  // Prefer showing all keys if a) we're showing diagnostic info and b) the
-  // graph actually defines allKeys().
-  const allKeys = options.showDiagnostics
-    ? /** @type {any} */ (graph).allKeys
-    : null;
-  const keys = allKeys
-    ? await allKeys.call(graph)
-    : await ExplorableGraph.keys(graph);
+  const keys = await ExplorableGraph.keys(graph);
 
   const filtered = filterKeys(keys);
   const links = [];
@@ -52,15 +43,6 @@ export default async function defaultIndexHtml(
     <ul>\n${links.join("\n").trim()}\n</ul>
   `;
 
-  const diagnosticLinks = options.showDiagnostics
-    ? `<p>
-  <a href=".dataflow">dataflow</a>
-  <a href=".scope">scope</a>
-  <a href=".svg">svg</a>
-  <a href=".yaml">yaml</a>
-</p>`
-    : "";
-
   const html = `
     <!DOCTYPE html>
     <html lang="en">
@@ -89,7 +71,6 @@ export default async function defaultIndexHtml(
       </head>
       <body>
         ${list.trim()}
-        ${diagnosticLinks}
       </body>
     </html>`;
   return new StringWithGraph(html.trim(), graph);

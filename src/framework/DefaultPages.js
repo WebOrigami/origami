@@ -16,9 +16,7 @@ export default class DefaultPages extends DefaultValues {
   constructor(graph) {
     super(graph, {
       ".dataflow": defaultDataflow,
-      ".index": function () {
-        return defaultIndexHtml.call(this, { showDiagnostics: true });
-      },
+      ".index": defaultIndexHtml,
       ".keys.json": defaultKeysJson,
       ".scope": scopeExplorer,
       ".svg": defaultSvg,
