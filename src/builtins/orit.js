@@ -1,4 +1,4 @@
-import { outputFrontMatter } from "../core/utilities.js";
+import { outputWithGraph } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
@@ -9,20 +9,20 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @this {Explorable}
  * @param {StringLike} document
  * @param {any} [input]
- * @param {boolean} [preserveFrontMatter]
+ * @param {boolean} [emitFrontMatter]
  */
-export default async function orit(
-  document,
-  input,
-  preserveFrontMatter = false
-) {
+export default async function orit(document, input, emitFrontMatter = false) {
   const template = new OrigamiTemplate(document, this);
 
   /** @type {any} */
-  let templateResult = await template.apply(input, this);
-
-  let result = await outputFrontMatter(templateResult, document.toGraph?.());
-
+  const templateResult = await template.apply(input, this);
+  const result = emitFrontMatter
+    ? await outputWithGraph(
+        templateResult,
+        document.toGraph?.(),
+        emitFrontMatter
+      )
+    : templateResult;
   return result;
 }
 

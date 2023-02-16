@@ -74,20 +74,22 @@ export function isPlainObject(obj) {
 
 export const keySymbol = Symbol("key");
 
-export async function outputFrontMatter(obj, frontGraph) {
+export async function outputWithGraph(obj, graph, emitFrontMatter = false) {
+  if (!graph) {
+    return obj;
+  }
   const objText = String(obj);
-  let result;
-  if (frontGraph) {
-    const frontData = await ExplorableGraph.toYaml(frontGraph);
-    const text = `---
+  let outputText;
+  if (emitFrontMatter) {
+    const frontData = await ExplorableGraph.toYaml(graph);
+    outputText = `---
 ${frontData.trimEnd()}
 ---
 ${objText}`;
-    result = new StringWithGraph(text, frontGraph);
   } else {
-    result = objText;
+    outputText = objText;
   }
-  return result;
+  return new StringWithGraph(outputText, graph);
 }
 
 export function parseYaml(text) {

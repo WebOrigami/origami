@@ -36,16 +36,27 @@ This is the content.
     });
   });
 
-  it("outputFrontMatter writes text as output has no graph", async () => {
+  it("outputFrontMatter writes output as text if there's no graph", async () => {
     const text = "This is the content.";
-    const output = await utilities.outputFrontMatter(text);
+    const output = await utilities.outputWithGraph(text);
     assert.equal(output, text);
   });
 
-  it("outputFrontMatter includes front matter if output has a graph", async () => {
+  it("outputFrontMatter adds graph to output", async () => {
     const text = "This is the content.";
     const graph = new ObjectGraph({ a: "Hello, a." });
-    const output = await utilities.outputFrontMatter(text, graph);
+    const output = await utilities.outputWithGraph(text, graph);
+    assert.equal(String(output), text);
+    const outputGraph = output.toGraph();
+    assert.deepEqual(await ExplorableGraph.plain(outputGraph), {
+      a: "Hello, a.",
+    });
+  });
+
+  it("outputFrontMatter can include front matter", async () => {
+    const text = "This is the content.";
+    const graph = new ObjectGraph({ a: "Hello, a." });
+    const output = await utilities.outputWithGraph(text, graph, true);
     assert.equal(
       output,
       `---

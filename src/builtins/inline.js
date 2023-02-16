@@ -4,10 +4,10 @@ import orit from "./orit.js";
  * Concatenate the text content of objects or graphs.
  *
  * @this {Explorable}
- * @param {StringLike} text
+ * @param {StringLike} input
  */
-export default async function inline(text) {
-  const result = await orit.call(this, text, null, true);
+export default async function inline(input) {
+  const result = await orit.call(this, input, null, true);
   return result;
 }
 
