@@ -1,6 +1,5 @@
+import { keySymbol } from "../core/utilities.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
-
-const keyKey = Symbol("key");
 
 /**
  * Load a file as an Origami graph.
@@ -20,7 +19,7 @@ export default function loadGraph(buffer, key) {
     if (!graph) {
       graph = new OrigamiGraph(text);
       graph.parent = scope;
-      graph[keyKey] = key;
+      graph[keySymbol] = key;
     }
     return graph;
   };

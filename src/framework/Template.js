@@ -3,7 +3,7 @@ import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { keySymbol, transformObject } from "../core/utilities.js";
 import DefaultPages from "./DefaultPages.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
@@ -78,6 +78,7 @@ export default class Template {
       ambients["."] = inputGraph;
     }
     const ambientsGraph = new (InheritScopeTransform(ObjectGraph))(ambients);
+    ambientsGraph[keySymbol] = this[keySymbol];
 
     // Set all the scopes
     ambientsGraph.parent = baseScope;

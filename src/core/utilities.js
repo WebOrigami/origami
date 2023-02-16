@@ -71,6 +71,8 @@ export function isPlainObject(obj) {
   return Object.getPrototypeOf(obj) === proto;
 }
 
+export const keySymbol = Symbol("key");
+
 export function parseYaml(text) {
   const frontMatter = extractFrontMatter(text);
   if (frontMatter) {

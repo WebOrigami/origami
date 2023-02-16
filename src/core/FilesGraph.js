@@ -32,6 +32,7 @@ export default class FilesGraph extends EventTarget {
     super();
 
     this.dirname = path.resolve(process.cwd(), dirname);
+    this.basename = path.basename(this.dirname);
 
     // Map of subfolder names to subfolder graphs.
     this.subfoldersMap = new Map();

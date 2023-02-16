@@ -1,3 +1,4 @@
+import { keySymbol } from "../core/utilities.js";
 import Scope from "./Scope.js";
 
 /**
@@ -40,6 +41,9 @@ export default class DeferredGraph {
         this.deferredParent = null;
       }
       this.graph = graph;
+      if (!this[keySymbol]) {
+        this[keySymbol] = graph[keySymbol];
+      }
       resolve(graph);
     });
     return this.loadPromise;

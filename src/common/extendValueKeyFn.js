@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import Scope from "./Scope.js";
@@ -45,15 +46,14 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
       valueGraph = transformObject(InheritScopeTransform, valueGraph);
     }
 
-    let scope = new Scope(
-      valueGraph,
-      {
-        ".": valueGraph ?? null,
-        [keyName]: key,
-        [valueName]: value ?? null,
-      },
-      getScope(this)
-    );
+    const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({
+      ".": valueGraph ?? null,
+      [keyName]: key,
+      [valueName]: value ?? null,
+    });
+    ambientsGraph[keySymbol] = key;
+
+    let scope = new Scope(valueGraph, ambientsGraph, getScope(this));
 
     if (valueGraph) {
       valueGraph.parent = scope;

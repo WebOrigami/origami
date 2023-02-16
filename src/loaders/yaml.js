@@ -3,6 +3,7 @@ import ExpressionGraph from "../common/ExpressionGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   isPlainObject,
+  keySymbol,
   parseYaml,
   transformObject,
 } from "../core/utilities.js";
@@ -44,6 +45,7 @@ export default function loadYaml(input, key) {
         graph = transformObject(FileTreeTransform, graph);
       }
       graph.parent = scope;
+      graph[keySymbol] = key;
     }
     return graph;
   };

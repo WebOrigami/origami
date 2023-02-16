@@ -1,6 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -21,6 +21,7 @@ export default function setScope(variant, ...scopeGraphs) {
     // Setting scope implies the use of InheritScopeTransform.
     result = transformObject(InheritScopeTransform, graph);
   }
+  result[keySymbol] = graph[keySymbol];
 
   const scope = scopeGraphs.length === 0 ? this : new Scope(...scopeGraphs);
   result.parent = scope;

@@ -1,10 +1,10 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { keySymbol } from "../core/utilities.js";
 import { getScope } from "./scopeUtilities.js";
 
 const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");
-const keyKey = Symbol("key");
 
 export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {
@@ -20,8 +20,8 @@ export default function InheritScopeTransform(Base) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
       }
-      if (typeof value === "object") {
-        value[keyKey] = key;
+      if (value && typeof value === "object") {
+        value[keySymbol] = key;
       }
       return value;
     }

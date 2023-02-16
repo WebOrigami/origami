@@ -1,6 +1,6 @@
 import DeferredGraph from "../common/DeferredGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -56,6 +56,8 @@ export default function loadJs(buffer, key) {
       loadedGraph = transformObject(InheritScopeTransform, loadedGraph);
     }
     loadedGraph.parent = scope;
+
+    loadedGraph[keySymbol] = key;
 
     return loadedGraph;
   });

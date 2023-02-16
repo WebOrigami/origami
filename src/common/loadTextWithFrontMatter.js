@@ -1,5 +1,9 @@
 import ObjectGraph from "../core/ObjectGraph.js";
-import { extractFrontMatter, isPlainObject } from "../core/utilities.js";
+import {
+  extractFrontMatter,
+  isPlainObject,
+  keySymbol,
+} from "../core/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
@@ -43,6 +47,7 @@ export default function loadTextWithFrontMatter(input, key) {
       : ObjectGraph;
     const graph = new (FileTreeTransform(graphClass))(frontData);
     graph.parent = scope;
+    graph[keySymbol] = key;
     return graph;
   });
 

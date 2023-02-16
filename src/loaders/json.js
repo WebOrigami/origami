@@ -1,5 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -29,6 +29,7 @@ export default function loadJson(input, key) {
         graph = transformObject(InheritScopeTransform, graph);
       }
       graph.parent = scope;
+      graph[keySymbol] = key;
     }
     return graph;
   };

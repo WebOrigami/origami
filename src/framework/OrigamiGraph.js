@@ -1,6 +1,7 @@
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
+import { keySymbol } from "../core/utilities.js";
 import { createExpressionFunction } from "../language/expressionFunction.js";
 import { graphDocument } from "../language/parse.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
@@ -29,6 +30,8 @@ class OrigamiGraphBase extends ExpressionGraph {
     }
 
     super(expressions);
+
+    this[keySymbol] = "[graph literal]";
   }
 }
 
