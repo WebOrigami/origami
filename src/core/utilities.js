@@ -1,4 +1,5 @@
 import * as YAMLModule from "yaml";
+import StringWithGraph from "../common/StringWithGraph.js";
 import expressionTag from "../language/expressionTag.js";
 import ExplorableGraph from "./ExplorableGraph.js";
 
@@ -72,6 +73,22 @@ export function isPlainObject(obj) {
 }
 
 export const keySymbol = Symbol("key");
+
+export async function outputFrontMatter(obj, frontGraph) {
+  const objText = String(obj);
+  let result;
+  if (frontGraph) {
+    const frontData = await ExplorableGraph.toYaml(frontGraph);
+    const text = `---
+${frontData.trimEnd()}
+---
+${objText}`;
+    result = new StringWithGraph(text, frontGraph);
+  } else {
+    result = objText;
+  }
+  return result;
+}
 
 export function parseYaml(text) {
   const frontMatter = extractFrontMatter(text);

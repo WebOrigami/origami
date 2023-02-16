@@ -1,5 +1,4 @@
-import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { outputFrontMatter } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
@@ -22,18 +21,7 @@ export default async function orit(
   /** @type {any} */
   let templateResult = await template.apply(input, this);
 
-  let result;
-  const frontGraph = document.toGraph?.();
-  if (frontGraph) {
-    const frontData = await ExplorableGraph.toYaml(frontGraph);
-    const text = `---
-${frontData.trimEnd()}
----
-${templateResult}`;
-    result = new StringWithGraph(text, frontGraph);
-  } else {
-    result = templateResult;
-  }
+  let result = await outputFrontMatter(templateResult, document.toGraph?.());
 
   return result;
 }

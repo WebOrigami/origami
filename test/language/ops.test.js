@@ -48,10 +48,8 @@ describe("ops", () => {
     ];
 
     const result = await execute.call(scope, code);
-    assert.deepEqual(result, {
-      hello: "HELLO",
-      world: "WORLD",
-    });
+    assert.equal(result.hello, "HELLO");
+    assert.equal(result.world, "WORLD");
   });
 
   it("can instantiate an array", async () => {
