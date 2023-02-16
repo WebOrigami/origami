@@ -4,7 +4,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("inline", () => {
-  it("inlines Origami expressions found in input text, preserving front matter", async () => {
+  it("inlines Origami expressions found in input text", async () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
@@ -20,12 +20,6 @@ name: Bob
 Hello, {{ name }}!`;
     const textWithGraph = loadTextWithFrontMatter(text);
     const inlined = await inline(textWithGraph);
-    assert.equal(
-      inlined,
-      `---
-name: Bob
----
-Hello, Bob!`
-    );
+    assert.equal(inlined, `Hello, Bob!`);
   });
 });

@@ -5,9 +5,10 @@ import orit from "./orit.js";
  *
  * @this {Explorable}
  * @param {StringLike} input
+ * @param {boolean} [emitFrontMatter]
  */
-export default async function inline(input) {
-  const result = await orit.call(this, input, null, true);
+export default async function inline(input, emitFrontMatter) {
+  const result = await orit.call(this, input, null, emitFrontMatter);
   return result;
 }
 
