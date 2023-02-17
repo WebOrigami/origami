@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import DefaultPages from "../framework/DefaultPages.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Add default pages to the indicated graph.
@@ -8,6 +9,7 @@ import DefaultPages from "../framework/DefaultPages.js";
  * @param {GraphVariant} [variant]
  */
 export default async function defaultPages(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return;

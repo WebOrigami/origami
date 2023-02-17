@@ -17,7 +17,7 @@ describe("dataflow", () => {
       c: Hello
     `);
     const graph = textWithGraph.toGraph();
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
         dependencies: ["fn", "b"],
@@ -37,7 +37,7 @@ describe("dataflow", () => {
       foo: !ori (@bar)
     `);
     const graph = textWithGraph.toGraph();
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
         dependencies: [],
@@ -50,7 +50,7 @@ describe("dataflow", () => {
       foo: !ori mdHtml()
     `);
     const graph = textWithGraph.toGraph();
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
         dependencies: [],
@@ -63,7 +63,7 @@ describe("dataflow", () => {
       "foo.html": `<html><body><img src="images/a.jpg"></body></html>`,
       images: {},
     };
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       "foo.html": {
         dependencies: ["images"],
@@ -80,7 +80,7 @@ describe("dataflow", () => {
       "index.ori": new OrigamiTemplate(`{{ map(foo, bar) }}`),
       foo: {},
     };
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       "index.ori": {
         dependencies: ["foo"],
@@ -97,7 +97,7 @@ describe("dataflow", () => {
       b: createExpressionFunction([ops.scope, "c"]),
       c: null,
     });
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
         dependencies: ["b"],
@@ -113,7 +113,7 @@ describe("dataflow", () => {
     const graph = {
       "foo.graph": loadGraph(`a = b`),
     };
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       "foo.graph": {
         dependencies: ["b"],
@@ -134,7 +134,7 @@ b: {}
 `,
       a: createExpressionFunction([ops.scope, "c"]),
     });
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
         dependencies: ["b", "c"],
@@ -150,7 +150,7 @@ b: {}
     const graph = new ExpressionGraph({
       a: createExpressionFunction([ops.scope, "b"]),
     });
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
         dependencies: ["b"],
@@ -166,7 +166,7 @@ b: {}
       x: createExpressionFunction([[ops.scope, "fn"]]),
       "fn.js": null,
     });
-    const flow = await dataflow(graph);
+    const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       x: {
         dependencies: ["fn"],

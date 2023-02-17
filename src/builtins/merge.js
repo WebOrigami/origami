@@ -1,6 +1,7 @@
 import MergeGraph from "../common/MergeGraph.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Create a graph that's the result of merging the given graphs.
@@ -9,6 +10,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant[]} graphs
  */
 export default async function merge(...graphs) {
+  assertScopeIsDefined(this);
   // Filter out null or undefined graphs.
   const filtered = graphs.filter((graph) => graph);
 

@@ -1,4 +1,5 @@
 import MapValuesGraph from "../core/MapValuesGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Return a new graph with all values equal to null.
@@ -7,6 +8,7 @@ import MapValuesGraph from "../core/MapValuesGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function nulls(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

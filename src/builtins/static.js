@@ -1,6 +1,7 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { parentScope } from "../framework/scopeUtilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Expose common static keys (index.html, .keys.json) for a graph.
@@ -9,6 +10,7 @@ import { parentScope } from "../framework/scopeUtilities.js";
  * @param {GraphVariant} variant
  */
 export default async function staticGraph(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

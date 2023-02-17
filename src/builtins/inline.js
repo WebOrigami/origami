@@ -1,3 +1,4 @@
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import orit from "./orit.js";
 
 /**
@@ -8,6 +9,7 @@ import orit from "./orit.js";
  * @param {boolean} [emitFrontMatter]
  */
 export default async function inline(input, emitFrontMatter) {
+  assertScopeIsDefined(this);
   const result = await orit.call(this, input, null, emitFrontMatter);
   return result;
 }

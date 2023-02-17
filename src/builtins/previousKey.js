@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Returns the key before the indicated key.
@@ -8,6 +9,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @this {Explorable}
  */
 export default async function previousKey(variant, key) {
+  assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
   let previousKey = undefined;
   for await (const graphKey of graph) {

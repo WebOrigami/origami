@@ -3,7 +3,7 @@ import assert from "../assert.js";
 
 describe("concat", () => {
   it("concatenates multiple strings", async () => {
-    const result = await concat("a", "b", "c");
+    const result = await concat.call(null, "a", "b", "c");
     assert.equal(result, "abc");
   });
 
@@ -17,7 +17,7 @@ describe("concat", () => {
         e: "E",
       },
     };
-    const result = await concat(graph);
+    const result = await concat.call(null, graph);
     assert.equal(result, "ABCDE");
   });
 });

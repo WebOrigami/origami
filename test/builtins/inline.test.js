@@ -19,7 +19,7 @@ name: Bob
 ---
 Hello, {{ name }}!`;
     const textWithGraph = loadTextWithFrontMatter(text);
-    const inlined = await inline(textWithGraph);
+    const inlined = await inline.call(null, textWithGraph);
     assert.equal(inlined, `Hello, Bob!`);
   });
 });

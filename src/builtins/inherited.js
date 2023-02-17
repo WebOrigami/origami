@@ -1,3 +1,4 @@
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as ops from "../language/ops.js";
 
 /**
@@ -7,6 +8,7 @@ import * as ops from "../language/ops.js";
  * @this {Explorable}
  */
 export default async function inherited(key) {
+  assertScopeIsDefined(this);
   return ops.inherited.call(this, key);
 }
 

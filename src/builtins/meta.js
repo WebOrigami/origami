@@ -2,6 +2,7 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import MetaTransform from "../framework/MetaTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import defaultGraph from "./defaultGraph.js";
 
 /**
@@ -11,6 +12,7 @@ import defaultGraph from "./defaultGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function meta(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

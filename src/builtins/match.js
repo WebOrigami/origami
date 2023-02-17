@@ -1,5 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Return a graph with the indicated keys (if provided).
@@ -21,6 +22,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @this {Explorable}
  */
 export default function match(pattern, resultFn, keys = []) {
+  assertScopeIsDefined(this);
   let regex;
   if (typeof pattern === "string") {
     // Convert the simple pattern format into a regular expression.

@@ -1,5 +1,6 @@
 import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Return a new graph with the original's keys sorted using the given function.
@@ -9,6 +10,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {Invocable} sortKeyFn
  */
 export default async function sortBy(variant, sortKeyFn) {
+  assertScopeIsDefined(this);
   if (variant === undefined) {
     return undefined;
   }

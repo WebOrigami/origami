@@ -1,6 +1,12 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
+/**
+ * @this {Explorable}
+ * @param {GraphVariant} jsonFeedGraph
+ */
 export default async function feedRss(jsonFeedGraph) {
+  assertScopeIsDefined(this);
   const jsonFeed = await ExplorableGraph.plain(jsonFeedGraph);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 

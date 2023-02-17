@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Concatenate the text content of objects or graphs.
@@ -7,6 +8,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {any[]} args
  */
 export default async function concat(...args) {
+  assertScopeIsDefined(this);
   let graph;
   if (args.length === 0) {
     graph = await this.get("@defaultGraph");

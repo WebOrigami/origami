@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Cast the indicated variant to a graph.
@@ -7,6 +8,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function graph(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

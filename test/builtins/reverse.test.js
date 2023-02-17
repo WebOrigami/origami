@@ -9,7 +9,7 @@ describe("reverse", () => {
       b: "B",
       c: "C",
     };
-    const reversed = await reverse(graph);
+    const reversed = await reverse.call(null, graph);
     // @ts-ignore
     assert.deepEqual(await ExplorableGraph.keys(reversed), ["c", "b", "a"]);
     // @ts-ignore

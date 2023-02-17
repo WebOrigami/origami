@@ -1,3 +1,4 @@
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setScope from "./setScope.js";
 
 /**
@@ -9,6 +10,7 @@ import setScope from "./setScope.js";
  * @this {Explorable}
  */
 export default function extendScope(variant, ...scopeGraphs) {
+  assertScopeIsDefined(this);
   const scope = this;
   return setScope.call(scope, variant, ...scopeGraphs, scope);
 }

@@ -5,7 +5,8 @@ import assert from "../assert.js";
 describe("map", () => {
   it("maps all the values in a graph", async () => {
     /** @type {any} */
-    const fixture = map(
+    const fixture = map.call(
+      null,
       {
         a: "Hello, a.",
         b: "Hello, b.",
@@ -22,7 +23,8 @@ describe("map", () => {
 
   it("maps subobjects as values by default", async () => {
     /** @type {any} */
-    const fixture = map(
+    const fixture = map.call(
+      null,
       {
         english: {
           a: "Hello, a.",
@@ -41,7 +43,8 @@ describe("map", () => {
 
   it("setting deep option maps subobjects deeply", async () => {
     /** @type {any} */
-    const fixture = map(
+    const fixture = map.call(
+      null,
       {
         english: {
           a: "Hello, a.",
@@ -65,7 +68,8 @@ describe("map", () => {
 
   it("mapping function context includes the value's graph", async () => {
     /** @type {any} */
-    const results = map(
+    const results = map.call(
+      null,
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       /** @this {any} */
       async function () {
@@ -83,7 +87,8 @@ describe("map", () => {
 
   it("extended map function includes @key and @value", async () => {
     /** @type {any} */
-    const results = map(
+    const results = map.call(
+      null,
       { a: 1, b: 2, c: 3 },
       /** @this {any} */
       async function () {
@@ -101,7 +106,8 @@ describe("map", () => {
 
   it("can specify how @key should be added to scope", async () => {
     /** @type {any} */
-    const results = map(
+    const results = map.call(
+      null,
       { a: 1, b: 2, c: 3 },
       /** @this {any} */
       async function () {

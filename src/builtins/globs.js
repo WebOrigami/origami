@@ -1,4 +1,5 @@
 import GlobGraph from "../common/GlobGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Define a graph whose keys are globs.
@@ -7,6 +8,7 @@ import GlobGraph from "../common/GlobGraph.js";
  * @this {Explorable}
  */
 export default async function globs(graph) {
+  assertScopeIsDefined(this);
   const result = new GlobGraph(graph);
   /** @type {any} */ (result).scope = this;
   return result;

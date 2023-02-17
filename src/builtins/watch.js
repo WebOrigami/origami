@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Let a graph (e.g., of files) respond to changes.
@@ -9,6 +10,7 @@ import ObjectGraph from "../core/ObjectGraph.js";
  * @param {Invocable} [fn]
  */
 export default async function watch(variant, fn) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

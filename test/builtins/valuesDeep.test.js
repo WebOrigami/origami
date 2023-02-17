@@ -15,7 +15,7 @@ describe("valuesDeep", () => {
         g: 4,
       },
     };
-    const values = await valuesDeep(graph);
+    const values = await valuesDeep.call(null, graph);
     assert.deepEqual(values, [1, 2, 3, 4]);
   });
 });

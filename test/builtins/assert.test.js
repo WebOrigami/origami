@@ -3,7 +3,7 @@ import assert from "../assert.js";
 
 describe("assert", () => {
   it("returns undefined if actual value equals expected value", async () => {
-    const result = await assertBuiltin({
+    const result = await assertBuiltin.call(null, {
       description: "Should pass",
       expected: "foo",
       "actual ='foo'": "",
@@ -12,7 +12,7 @@ describe("assert", () => {
   });
 
   it("returns record if actual value doesn't equal expected value", async () => {
-    const result = await assertBuiltin({
+    const result = await assertBuiltin.call(null, {
       description: "Shouldn't pass",
       expected: "foo",
       "actual ='bar'": "",
@@ -25,7 +25,7 @@ describe("assert", () => {
   });
 
   it("gives fixture graph a default scope of builtins before evaluating", async () => {
-    const result = await assertBuiltin({
+    const result = await assertBuiltin.call(null, {
       description: "keys builtin returns keys",
       expected: ["a", "b", "c"],
       "actual = keys(fixture)": "",

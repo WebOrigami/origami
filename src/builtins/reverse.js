@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Reverse the order of the top-level keys in the graph.
@@ -9,6 +10,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * @param {GraphVariant} [variant]
  */
 export default async function reverse(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

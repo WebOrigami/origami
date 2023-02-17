@@ -3,6 +3,7 @@
 import toYaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import { incrementCount } from "../core/measure.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import execute from "../language/execute.js";
 import * as parse from "../language/parse.js";
 
@@ -15,6 +16,7 @@ import * as parse from "../language/parse.js";
  * @returns {Promise<string | String | Buffer | undefined>}
  */
 export default async function ori(expression) {
+  assertScopeIsDefined(this);
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression).trim();
 
@@ -38,11 +40,11 @@ export default async function ori(expression) {
     result = await result.call(scope);
   }
 
-  const formatted = await formatResult(result);
+  const formatted = await formatResult(this, result);
   return formatted;
 }
 
-async function formatResult(result) {
+async function formatResult(scope, result) {
   const stringOrBuffer =
     typeof result === "string" ||
     (globalThis.Buffer && result instanceof Buffer);
@@ -51,7 +53,7 @@ async function formatResult(result) {
     : result instanceof String
     ? result.toString()
     : result !== undefined
-    ? await toYaml(result)
+    ? await toYaml.call(scope, result)
     : undefined;
   return output;
 }

@@ -9,7 +9,7 @@ describe("sortBy", () => {
       Bob: { age: 36 },
       Carol: { age: 42 },
     };
-    const sorted = await sortBy(graph, (scope) => scope.get("age"));
+    const sorted = await sortBy.call(null, graph, (scope) => scope.get("age"));
     assert.deepEqual(await ExplorableGraph.keys(sorted), [
       "Bob",
       "Carol",

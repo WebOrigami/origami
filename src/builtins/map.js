@@ -2,6 +2,7 @@ import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import MapExtensionsGraph from "../common/MapExtensionsGraph.js";
 import MapValuesGraph from "../core/MapValuesGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Map the top-level values of a graph with a map function.
@@ -12,6 +13,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * @param {PlainObject} options
  */
 export default function map(variant, mapFn, options = {}) {
+  assertScopeIsDefined(this);
   if (!variant) {
     return undefined;
   }

@@ -9,7 +9,7 @@ describe("match", () => {
       const name = await this.get("name");
       return `Hello, ${name}!`;
     }
-    const graph = match("[name].html", fn, [
+    const graph = match.call(null, "[name].html", fn, [
       "Alice.html",
       "Bob.html",
       "Carol.html",
@@ -29,7 +29,7 @@ describe("match", () => {
       const name = await this.get("name");
       return `Hello, ${name}!`;
     }
-    const graph = match(/^(?<name>.+)\.html$/, fn);
+    const graph = match.call(null, /^(?<name>.+)\.html$/, fn);
     const value = await graph.get("Alice.html");
     assert.equal(value, "Hello, Alice!");
   });

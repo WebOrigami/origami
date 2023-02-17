@@ -2,6 +2,7 @@ import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import defaultPages from "./defaultPages.js";
 import watch from "./watch.js";
@@ -16,6 +17,7 @@ const defaultPort = 5000;
  * @this {Explorable}
  */
 export default async function serve(variant, port) {
+  assertScopeIsDefined(this);
   let graph;
   if (variant) {
     graph = ExplorableGraph.from(variant);

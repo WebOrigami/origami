@@ -1,9 +1,14 @@
 import path from "node:path";
 import process from "node:process";
 import FilesGraph from "../core/FilesGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
-// TODO: Reconsider whether we can support a ...keys spread parameter.
+/**
+ * @this {Explorable}
+ * @param {string} dirname
+ */
 export default async function files(dirname) {
+  assertScopeIsDefined(this);
   const resolved = dirname
     ? path.resolve(process.cwd(), dirname)
     : process.cwd();

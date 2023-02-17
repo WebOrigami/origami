@@ -1,4 +1,5 @@
 import Cache from "../common/Cache.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Caches graph values in a storable cache.
@@ -9,6 +10,7 @@ import Cache from "../common/Cache.js";
  * @this {Explorable}
  */
 export default async function cacheCommand(graph, cache, filter) {
+  assertScopeIsDefined(this);
   const result = new Cache(graph, cache, filter);
   /** @type {any} */ (result).scope = this;
   return result;

@@ -8,7 +8,8 @@ import assert from "../assert.js";
 
 describe("merge", () => {
   it("merges graphs", async () => {
-    const graph = await merge(
+    const graph = await merge.call(
+      null,
       {
         a: 1,
         b: 2,
@@ -27,7 +28,8 @@ describe("merge", () => {
   });
 
   it("puts all graphs in scope", async () => {
-    const graph = await merge(
+    const graph = await merge.call(
+      null,
       new (InheritScopeTransform(ExpressionGraph))({
         a: 1,
         b: createExpressionFunction([ops.scope, "c"]),

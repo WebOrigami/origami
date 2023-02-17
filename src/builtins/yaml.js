@@ -1,6 +1,7 @@
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { toSerializable } from "../core/utilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Render the object as text in YAML format.
@@ -9,6 +10,7 @@ import { toSerializable } from "../core/utilities.js";
  * @param {GraphVariant} [variant]
  */
 export default async function toYaml(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

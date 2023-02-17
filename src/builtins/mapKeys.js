@@ -1,6 +1,7 @@
 import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope } from "../framework/scopeUtilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Wrap a graph and redefine the key used to access nodes in it.
@@ -10,6 +11,7 @@ import { getScope } from "../framework/scopeUtilities.js";
  * @param {function} [keyFn]
  */
 export default async function mapKeys(variant, keyFn) {
+  assertScopeIsDefined(this);
   if (!variant) {
     return undefined;
   }

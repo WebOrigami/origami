@@ -1,4 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Returns the scope of the indicated graph or the current scope.
@@ -7,6 +8,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function scope(variant) {
+  assertScopeIsDefined(this);
   let scope;
   if (variant) {
     const graph = ExplorableGraph.from(variant);

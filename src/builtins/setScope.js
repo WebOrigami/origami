@@ -2,6 +2,7 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Return a copy of the given graph that has the indicated graphs as its scope.
@@ -11,6 +12,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * @this {Explorable}
  */
 export default function setScope(variant, ...scopeGraphs) {
+  assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
 
   let result;

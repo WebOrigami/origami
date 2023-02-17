@@ -1,6 +1,12 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
+/**
+ * @this {Explorable}
+ * @param {GraphVariant} variant
+ */
 export default function exceptions(variant) {
+  assertScopeIsDefined(this);
   return new ExceptionsGraph(variant);
 }
 

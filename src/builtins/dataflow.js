@@ -4,6 +4,7 @@ import builtins from "../cli/builtins.js";
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, transformObject } from "../core/utilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as ops from "../language/ops.js";
 
 // See notes at ExplorableGraph.js
@@ -17,7 +18,12 @@ ignoreKeys.push(".");
 ignoreKeys.push("..");
 ignoreKeys.push(ops.thisKey);
 
+/**
+ * @this {Explorable}
+ * @param {GraphVariant} variant
+ */
 export default async function dataflow(variant) {
+  assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
 
   const flowFile = await graph.get(".dataflow.yaml");

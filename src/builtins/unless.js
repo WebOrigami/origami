@@ -1,9 +1,11 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @this {Explorable}
  */
 export default async function unless(value, falseResult) {
+  assertScopeIsDefined(this);
   let condition = await value;
   if (ExplorableGraph.isExplorable(condition)) {
     const keys = await ExplorableGraph.keys(condition);

@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export default async function http(domain, ...keys) {
-  const url = ["http:/", domain, ...keys].join("/");
+  const url = ["http://", domain, ...keys].join("/");
   const response = await fetch(url);
   if (response.ok) {
     const arrayBuffer = await response.arrayBuffer();

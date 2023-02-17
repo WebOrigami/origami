@@ -1,5 +1,6 @@
 import { outputWithGraph } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Apply the indicated Origami template to the given input and return the
@@ -12,6 +13,7 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @param {boolean} [emitFrontMatter]
  */
 export default async function orit(document, input, emitFrontMatter = false) {
+  assertScopeIsDefined(this);
   const template = new OrigamiTemplate(document, this);
 
   /** @type {any} */

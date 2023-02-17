@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { toSerializable } from "../core/utilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Render the given object in JSON format.
@@ -8,6 +9,7 @@ import { toSerializable } from "../core/utilities.js";
  * @param {any} [obj]
  */
 export default async function json(obj) {
+  assertScopeIsDefined(this);
   obj = obj ?? (await this?.get("@defaultGraph"));
   if (obj === undefined) {
     return undefined;

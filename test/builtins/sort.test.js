@@ -9,7 +9,7 @@ describe("sort", () => {
       c: 3,
       a: 1,
     };
-    const sorted = await sort(graph);
+    const sorted = await sort.call(null, graph);
     assert.deepEqual(await ExplorableGraph.keys(sorted), ["a", "b", "c"]);
   });
 });

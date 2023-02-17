@@ -8,8 +8,8 @@ describe("previousKey", () => {
       b: null,
       c: null,
     };
-    assert.equal(await previousKey(graph, "a"), undefined);
-    assert.equal(await previousKey(graph, "b"), "a");
-    assert.equal(await previousKey(graph, "c"), "b");
+    assert.equal(await previousKey.call(null, graph, "a"), undefined);
+    assert.equal(await previousKey.call(null, graph, "b"), "a");
+    assert.equal(await previousKey.call(null, graph, "c"), "b");
   });
 });

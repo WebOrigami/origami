@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MapValuesGraph from "../core/MapValuesGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Expand values that can be treated as explorable graphs into graphs.
@@ -8,6 +9,7 @@ import MapValuesGraph from "../core/MapValuesGraph.js";
  * @param {GraphVariant} [variant]
  */
 export default async function expand(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

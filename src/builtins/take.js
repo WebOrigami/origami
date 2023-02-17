@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Given a graph, take the first n items from it.
@@ -10,6 +11,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  * @this {Explorable}
  */
 export default async function take(variant, n) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

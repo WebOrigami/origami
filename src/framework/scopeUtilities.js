@@ -6,7 +6,7 @@
  * @returns {Explorable}
  */
 export function getScope(graph) {
-  return graph !== undefined && "scope" in graph ? graph.scope : graph;
+  return graph && "scope" in graph ? graph.scope : graph;
 }
 
 /**

@@ -1,6 +1,7 @@
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { extname, toSerializable } from "../core/utilities.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Render a graph in DOT format.
@@ -10,6 +11,7 @@ import { extname, toSerializable } from "../core/utilities.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(variant, options = {}) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;

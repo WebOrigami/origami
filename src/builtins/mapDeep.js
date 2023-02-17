@@ -1,3 +1,4 @@
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import map from "./map.js";
 
 /**
@@ -8,6 +9,7 @@ import map from "./map.js";
  * @this {Explorable}
  */
 export default function mapDeep(variant, mapFn, options = {}) {
+  assertScopeIsDefined(this);
   Object.assign(options, { deep: true });
   return map.call(this, variant, mapFn, options);
 }

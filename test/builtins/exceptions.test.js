@@ -18,7 +18,7 @@ describe("exceptions", () => {
         },
       },
     });
-    const fixture = exceptions(graph);
+    const fixture = exceptions.call(null, graph);
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
       a: undefined,
       b: "b throws",

@@ -4,6 +4,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import { isFormulasTransformApplied } from "../framework/FormulasTransform.js";
 import MetaTransform from "../framework/MetaTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Assert that the expected and actual values in the graph are equal.
@@ -12,6 +13,7 @@ import MetaTransform from "../framework/MetaTransform.js";
  * @param {GraphVariant} [variant]
  */
 export default async function assertBuiltin(variant) {
+  assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
