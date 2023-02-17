@@ -38,6 +38,7 @@ async function statements(graph, nodePath, options) {
   let result = [];
   const createLinks = options.createLinks ?? true;
 
+  // Add a node for the root of this (sub)graph.
   const rootUrl = nodePath || ".";
   const url = createLinks ? `; URL="${rootUrl}"` : "";
   result.push(
@@ -45,13 +46,23 @@ async function statements(graph, nodePath, options) {
   );
 
   // Draw edges and collect labels for the nodes they lead to.
-  let labels = {};
+  let nodes = {};
   for await (const key of graph) {
     const destPath = nodePath ? `${nodePath}/${key}` : key;
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
     result.push(arc);
 
-    const value = await graph.get(key);
+    let isError = false;
+    let value;
+    try {
+      value = await graph.get(key);
+    } catch (error) {
+      isError = true;
+      value =
+        error.name && error.message
+          ? `${error.name}: ${error.message}`
+          : error.name ?? error.message ?? error;
+    }
 
     // We expand certain types of files known to contain graphs.
     const extension = extname(key);
@@ -72,24 +83,27 @@ async function statements(graph, nodePath, options) {
         typeof serializable === "object"
           ? YAML.stringify(serializable)
           : serializable ?? "";
-      labels[key] = label;
+      nodes[key] = { label };
+      if (isError) {
+        nodes[key].isError = true;
+      }
     }
   }
 
   // If we have more than one label, we'll focus on the labels' differences.
   // We'll use the first label as a representative baseline for all labels but
   // the first (which will use the second label as a baseline).
-  const values = Object.values(labels);
+  const values = Object.values(nodes);
   const showLabelDiffs = values.length > 1;
-  const label1 = showLabelDiffs ? String(values[0]) : undefined;
-  const label2 = showLabelDiffs ? String(values[1]) : undefined;
+  const label1 = showLabelDiffs ? String(values[0].label) : undefined;
+  const label2 = showLabelDiffs ? String(values[1].label) : undefined;
 
   // Trim labels.
   let i = 0;
-  for (const key of Object.keys(labels)) {
-    let label = String(labels[key]);
+  for (const key of Object.keys(nodes)) {
+    let label = String(nodes[key].label);
     if (probablyBinary(label)) {
-      labels[key] = "[binary data]";
+      nodes[key].label = "[binary data]";
     } else if (label) {
       let clippedStart = false;
       let clippedEnd = false;
@@ -133,17 +147,21 @@ async function statements(graph, nodePath, options) {
         label += "\\l";
       }
 
-      labels[key] = label;
+      nodes[key].label = label;
     }
     i++;
   }
 
   // Draw labels.
-  for (const key in labels) {
+  for (const key in nodes) {
+    const node = nodes[key];
+    const icon = node.isError ? "⚠️ " : "";
+    const label = `label="${icon}${node.label}"`;
+    const color = node.isError ? `; color="red"` : "";
+    const fill = node.isError ? `; fillcolor="#FFF4F4"` : "";
     const destPath = nodePath ? `${nodePath}/${key}` : key;
-    const label = labels[key];
     const url = createLinks ? `; URL="${destPath}"` : "";
-    result.push(`  "${destPath}" [label="${label}"${url}];`);
+    result.push(`  "${destPath}" [${label}${color}${fill}${url}];`);
   }
 
   return result;
