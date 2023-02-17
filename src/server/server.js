@@ -81,13 +81,8 @@ export async function handleRequest(request, response, graph) {
       resource = await resource();
     }
   } catch (/** @type {any} */ error) {
-    // Work up to the root cause, displaying intermediate messages as we go up.
-    while (error.cause) {
-      console.error(error.message);
-      error = error.cause;
-    }
-    console.error(error.message);
-    resource = undefined;
+    respondWithError(response, error);
+    return true;
   }
 
   let mediaType;
@@ -202,6 +197,39 @@ export function requestListener(variant) {
       response.end(`Not found`, "utf-8");
     }
   };
+}
+
+/**
+ * Construct a page in response in the given error, and also show the error in
+ * the console.
+ */
+function respondWithError(response, error) {
+  let message = "";
+  // Work up to the root cause, displaying intermediate messages as we go up.
+  while (error.cause) {
+    message += error.message + `\n`;
+    error = error.cause;
+  }
+  if (error.name) {
+    message += `${error.name}: `;
+  }
+  message += error.message;
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<title>Error: ${error.message}</title>
+</head>
+<body>
+<h1>Error</h1>
+<pre><code>
+${message}
+</code></pre>
+</body>
+</html>
+`;
+  response.writeHead(404, { "Content-Type": "text/html" });
+  response.end(html, "utf-8");
+  console.error(message);
 }
 
 /**
