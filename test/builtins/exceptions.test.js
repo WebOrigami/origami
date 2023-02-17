@@ -4,7 +4,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe.only("exceptions", () => {
+describe("exceptions", () => {
   it("returns the exceptions thrown in a graph", async () => {
     const graph = new (InvokeFunctionsTransform(ObjectGraph))({
       a: "fine",
@@ -20,8 +20,10 @@ describe.only("exceptions", () => {
     });
     const fixture = exceptions(graph);
     assert.deepEqual(await ExplorableGraph.plain(fixture), {
+      a: undefined,
       b: "b throws",
       more: {
+        c: undefined,
         d: "TypeError: d throws",
       },
     });
