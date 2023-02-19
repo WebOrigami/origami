@@ -5,6 +5,7 @@ import ori from "../builtins/ori.js";
 import Scope from "../common/Scope.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import builtins from "./builtins.js";
+import formatOriResult from "./formatOriResult.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -31,12 +32,14 @@ async function main(...args) {
 
   const result = await ori.call(scope, expression);
   if (result) {
-    await stdout.write(result);
+    const formatted = await formatOriResult(scope, result);
+
+    await stdout.write(formatted);
 
     // If stdout points to the console, and the result didn't end in a newline,
     // then output a newline.
     if (stdout.isTTY) {
-      const lastChar = result[result.length - 1];
+      const lastChar = formatted[formatted.length - 1];
       const isNewLine = lastChar === "\n" || lastChar === 10;
       if (!isNewLine) {
         await stdout.write("\n");

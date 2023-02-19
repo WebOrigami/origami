@@ -5,7 +5,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("ori builtin", () => {
-  it("evaluates an expression in the context of a scope and returns text result", async () => {
+  it("evaluates an expression in the context of a scope and returns result", async () => {
     const graph = new ObjectGraph({
       a: 1,
       b: 2,
@@ -19,11 +19,6 @@ describe("ori builtin", () => {
       builtins
     );
     const result = await ori.call(scope, `keys`);
-    assert.equal(result, [
-      `- a
-- b
-- c
-`,
-    ]);
+    assert.deepEqual(result, ["a", "b", "c"]);
   });
 });

@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import toYaml from "../builtins/yaml.js";
 import builtins from "../cli/builtins.js";
 import { incrementCount } from "../core/measure.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -13,7 +12,6 @@ import * as parse from "../language/parse.js";
  *
  * @this {Explorable}
  * @param {string} expression
- * @returns {Promise<string | String | Buffer | undefined>}
  */
 export default async function ori(expression) {
   assertScopeIsDefined(this);
@@ -40,22 +38,7 @@ export default async function ori(expression) {
     result = await result.call(scope);
   }
 
-  const formatted = await formatResult(this, result);
-  return formatted;
-}
-
-async function formatResult(scope, result) {
-  const stringOrBuffer =
-    typeof result === "string" ||
-    (globalThis.Buffer && result instanceof Buffer);
-  let output = stringOrBuffer
-    ? result
-    : result instanceof String
-    ? result.toString()
-    : result !== undefined
-    ? await toYaml.call(scope, result)
-    : undefined;
-  return output;
+  return result;
 }
 
 ori.usage = `ori <text>\tEvaluates the Origami expression`;
