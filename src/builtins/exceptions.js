@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import defineds from "./defineds.js";
 
 /**
  * @this {Explorable}
@@ -8,7 +9,8 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 export default async function exceptions(variant) {
   assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@defaultGraph"));
-  return new ExceptionsGraph(variant);
+  const exceptionsGraph = new ExceptionsGraph(variant);
+  return defineds.call(this, exceptionsGraph);
 }
 
 class ExceptionsGraph {
