@@ -1,3 +1,6 @@
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import { isTransformApplied, transformObject } from "../core/utilities.js";
+
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
  * default values, this returns values as usual from the main graph. If a
@@ -22,6 +25,23 @@ export default function DefaultValuesTransform(Base) {
           defaultValue instanceof Function
             ? await defaultValue.call(this)
             : defaultValue;
+
+        // Since this transform is for diagnostic purposes, prefer explorable
+        // results.
+        if (
+          !ExplorableGraph.isExplorable(value) &&
+          ExplorableGraph.canCastToExplorable(value)
+        ) {
+          value = ExplorableGraph.from(value);
+        }
+      }
+
+      // Ensure this transform is applied to any explorable result.
+      if (
+        ExplorableGraph.isExplorable(value) &&
+        !isTransformApplied(DefaultValuesTransform, value)
+      ) {
+        value = transformObject(DefaultValuesTransform, value);
       }
 
       if (value?.defaults) {

@@ -1,4 +1,5 @@
 import builtins from "../../src/cli/builtins.js";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OriCommandTransform from "../../src/framework/OriCommandTransform.js";
 import assert from "../assert.js";
@@ -19,6 +20,6 @@ describe("OriCommandTransform", () => {
     });
     graph.scope = builtins;
     const value = await graph.get("!keys");
-    assert.deepEqual(value, ["a", "b"]);
+    assert.deepEqual(await ExplorableGraph.plain(value), ["a", "b"]);
   });
 });

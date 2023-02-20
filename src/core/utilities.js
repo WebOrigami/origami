@@ -181,6 +181,17 @@ export function toSerializable(obj) {
   }
 }
 
+export function isTransformApplied(Transform, obj) {
+  // Walk up prototype chain looking for a constructor with the same name as the
+  // transform. This is not a great test.
+  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
+    if (proto.constructor.name === Transform.name) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Apply a functional class mixin to an individual object instance.
  *
