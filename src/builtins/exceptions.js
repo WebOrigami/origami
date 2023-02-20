@@ -5,8 +5,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @this {Explorable}
  * @param {GraphVariant} variant
  */
-export default function exceptions(variant) {
+export default async function exceptions(variant) {
   assertScopeIsDefined(this);
+  variant = variant ?? (await this?.get("@defaultGraph"));
   return new ExceptionsGraph(variant);
 }
 

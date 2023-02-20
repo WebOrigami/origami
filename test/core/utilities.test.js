@@ -126,11 +126,16 @@ This is the content.`
       a: "a",
       more: {
         b: "b",
+        sub: {
+          c: "c",
+        },
       },
     });
     const mixed = utilities.transformObject(UppercaseTransform, graph);
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");
     assert.equal(await mixedMore.get("b"), "B");
+    const mixedSub = await mixedMore.get("sub");
+    assert.equal(await mixedSub.get("c"), "C");
   });
 });

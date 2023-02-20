@@ -58,10 +58,17 @@ export default class DefaultValues {
         break;
       }
 
-      // If the value isn't already explorable, cast it to an explorable graph.
-      // If someone is trying to traverse this thing, they mean to treat it as
-      // an explorable graph.
-      const graph = ExplorableGraph.from(value);
+      if (
+        !ExplorableGraph.isExplorable(value) &&
+        ExplorableGraph.canCastToExplorable(value)
+      ) {
+        // If the value isn't already explorable, cast it to an explorable graph.
+        // If someone is trying to traverse this thing, they mean to treat it as
+        // an explorable graph.
+        value = ExplorableGraph.from(value);
+        value = Reflect.construct(this.constructor, [value, this.defaults]);
+      }
+      const graph = value;
 
       // Ask the graph if it has the key.
       value = await graph.get(key);

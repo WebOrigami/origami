@@ -1,6 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
+// import { transformObject } from "../core/utilities.js";
 import DefaultPages from "../framework/DefaultPages.js";
-import OriCommandTransform from "../framework/OriCommandTransform.js";
+// import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -16,7 +17,8 @@ export default async function defaultPages(variant) {
     return;
   }
   const graph = ExplorableGraph.from(variant);
-  const result = new (OriCommandTransform(DefaultPages))(graph);
+  // const result = new (OriCommandTransform(DefaultPages))(graph);
+  const result = new DefaultPages(graph);
   return result;
 }
 
