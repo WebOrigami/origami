@@ -4,7 +4,7 @@ import process from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
-import defaultPages from "./defaultPages.js";
+import debug from "./debug.js";
 import watch from "./watch.js";
 
 const defaultPort = 5000;
@@ -23,7 +23,7 @@ export default async function serve(variant, port) {
     graph = ExplorableGraph.from(variant);
   } else {
     // By default, watch the default graph and add default pages.
-    const withDefaults = await defaultPages.call(this);
+    const withDefaults = await debug.call(this);
     graph = await watch.call(this, withDefaults);
   }
 

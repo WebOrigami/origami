@@ -1,5 +1,5 @@
 import * as YAMLModule from "yaml";
-import defaultPages from "../builtins/defaultPages.js";
+import debug from "../builtins/debug.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -129,7 +129,7 @@ async function createResult(text, inputGraph, templateGraph) {
   }
 
   const scope = getScope(dataGraph);
-  const attachedGraph = await defaultPages.call(scope, dataGraph);
+  const attachedGraph = await debug.call(scope, dataGraph);
 
   const result = new StringWithGraph(text, attachedGraph);
   return result;

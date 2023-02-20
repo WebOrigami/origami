@@ -25,15 +25,6 @@ export default function DefaultValuesTransform(Base) {
           defaultValue instanceof Function
             ? await defaultValue.call(this)
             : defaultValue;
-
-        // Since this transform is for diagnostic purposes, prefer explorable
-        // results.
-        if (
-          !ExplorableGraph.isExplorable(value) &&
-          ExplorableGraph.canCastToExplorable(value)
-        ) {
-          value = ExplorableGraph.from(value);
-        }
       }
 
       // Ensure this transform is applied to any explorable result.
@@ -46,16 +37,6 @@ export default function DefaultValuesTransform(Base) {
 
       if (value?.defaults) {
         Object.assign(value.defaults, this.defaults);
-      }
-
-      if (value?.toGraph) {
-        // If the value isn't a graph, but has a graph attached via a `toGraph`
-        // method, wrap the toGraph method to provide default values for it.
-        const original = value.toGraph.bind(value);
-        value.toGraph = () => {
-          const graph = original();
-          return Reflect.construct(this.constructor, [graph]);
-        };
       }
 
       return value;

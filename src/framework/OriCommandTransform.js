@@ -27,22 +27,13 @@ export default function OriCommandTransform(Base) {
         const source = key.slice(1).trim();
         value = await ori.call(extendedScope, source);
 
-        // Since this transform is for diagnostic purposes, prefer explorable
-        // results.
+        // Ensure this transform is applied to any explorable result.
         if (
-          !ExplorableGraph.isExplorable(value) &&
-          ExplorableGraph.canCastToExplorable(value)
+          ExplorableGraph.isExplorable(value) &&
+          !isTransformApplied(OriCommandTransform, value)
         ) {
-          value = ExplorableGraph.from(value);
+          value = transformObject(OriCommandTransform, value);
         }
-      }
-
-      // Ensure this transform is applied to any explorable result.
-      if (
-        ExplorableGraph.isExplorable(value) &&
-        !isTransformApplied(OriCommandTransform, value)
-      ) {
-        value = transformObject(OriCommandTransform, value);
       }
 
       return value;

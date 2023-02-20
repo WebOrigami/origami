@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import defaultPages from "../builtins/defaultPages.js";
+import debug from "../builtins/debug.js";
 import ifBuiltin from "../builtins/if.js";
 import mapBuiltin from "../builtins/map.js";
 import builtins from "../cli/builtins.js";
@@ -36,7 +36,7 @@ export default async function scopeExplorer() {
     },
     scope
   );
-  const graph = await defaultPages.call(this, extendedScope);
+  const graph = await debug.call(this, extendedScope);
   // Graph will be its own scope.
   /** @type {any} */ (graph).scope = scope;
   const result = new StringWithGraph(text, graph);
