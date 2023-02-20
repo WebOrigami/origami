@@ -13,74 +13,22 @@ export default class DefaultValues {
     this.defaults = ExplorableGraph.from(defaults);
   }
 
-  async allKeys() {
-    const graphAllKeys = /** @type {any} */ (this.graph).allKeys;
-    const keys = graphAllKeys
-      ? await graphAllKeys.call(this.graph)
-      : await ExplorableGraph.keys(this.graph);
-    return keys;
-  }
-
   async *[Symbol.asyncIterator]() {
     // Yield the graph's keys, not the defaults.
     yield* this.graph;
   }
 
   async get(key) {
-    return this.traverse(key);
-  }
+    // Ask the graph if it has the key.
+    let value = await this.graph.get(key);
 
-  get parent() {
-    return /** @type {any} */ (this.graph).parent;
-  }
-  set parent(parent) {
-    // Avoid destructive modification of the underlying graph.
-    this.graph = Object.create(this.original);
-    /** @type {any} */ (this.graph).parent = parent;
-  }
-
-  get scope() {
-    return /** @type {any} */ (this.graph).scope;
-  }
-  set scope(scope) {
-    /** @type {any} */ (this.graph).scope = scope;
-  }
-
-  async traverse(...keys) {
-    // Start our traversal at the root of the graph.
-    /** @type {any} */
-    let value = this.graph;
-
-    // Process each key in turn.
-    for (const key of keys) {
-      if (value === undefined) {
-        // Can't traverse further
-        break;
-      }
-
-      if (
-        !ExplorableGraph.isExplorable(value) &&
-        ExplorableGraph.canCastToExplorable(value)
-      ) {
-        // If the value isn't already explorable, cast it to an explorable graph.
-        // If someone is trying to traverse this thing, they mean to treat it as
-        // an explorable graph.
-        value = ExplorableGraph.from(value);
-        value = Reflect.construct(this.constructor, [value, this.defaults]);
-      }
-      const graph = value;
-
-      // Ask the graph if it has the key.
-      value = await graph.get(key);
-
-      if (value === undefined) {
-        // The graph doesn't have the key; try the defaults.
-        const defaultValue = await this.defaults.get(key);
-        value =
-          defaultValue instanceof Function
-            ? await defaultValue.call(graph)
-            : defaultValue;
-      }
+    if (value === undefined) {
+      // The graph doesn't have the key; try the defaults.
+      const defaultValue = await this.defaults.get(key);
+      value =
+        defaultValue instanceof Function
+          ? await defaultValue.call(this.graph)
+          : defaultValue;
     }
 
     // If the value we're returning is a graph, or convertible to a graph, wrap
@@ -98,6 +46,22 @@ export default class DefaultValues {
     }
 
     return value;
+  }
+
+  get parent() {
+    return /** @type {any} */ (this.graph).parent;
+  }
+  set parent(parent) {
+    // Avoid destructive modification of the underlying graph.
+    this.graph = Object.create(this.original);
+    /** @type {any} */ (this.graph).parent = parent;
+  }
+
+  get scope() {
+    return /** @type {any} */ (this.graph).scope;
+  }
+  set scope(scope) {
+    /** @type {any} */ (this.graph).scope = scope;
   }
 
   async unwatch() {
