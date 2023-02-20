@@ -1,22 +1,21 @@
-import DefaultValues from "../../src/common/DefaultValues.js";
+import DefaultValuesTransform from "../../src/common/DefaultValuesTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe("DefaultValues", () => {
+describe("DefaultValuesTransform", () => {
   it("provides default values for missing keys at any point in graph", async () => {
-    const graph = new DefaultValues(
-      {
-        a: 1,
-        b: 2,
-        more: {
-          c: 3,
-        },
+    const graph = new (DefaultValuesTransform(ObjectGraph))({
+      a: 1,
+      b: 2,
+      more: {
+        c: 3,
       },
-      {
-        b: 4,
-        d: 5,
-      }
-    );
+    });
+    graph.defaults = {
+      b: 4,
+      d: 5,
+    };
 
     // Default values don't show up in keys
     assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "more"]);
@@ -30,17 +29,15 @@ describe("DefaultValues", () => {
   });
 
   it("invokes a default value function", async () => {
-    const graph = new DefaultValues(
-      {
-        a: 1,
-        more: {
-          b: 2,
-        },
+    const graph = new (DefaultValuesTransform(ObjectGraph))({
+      a: 1,
+      more: {
+        b: 2,
       },
-      {
-        c: () => 3,
-      }
-    );
+    });
+    graph.defaults = {
+      c: () => 3,
+    };
     assert.equal(await graph.get("c"), 3);
     assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
   });

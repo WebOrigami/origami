@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import defaultPages from "../builtins/defaultPages.js";
 import ifBuiltin from "../builtins/if.js";
 import mapBuiltin from "../builtins/map.js";
 import builtins from "../cli/builtins.js";
@@ -7,7 +8,6 @@ import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
-import DefaultPages from "./DefaultPages.js";
 import OrigamiTemplate from "./OrigamiTemplate.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -36,7 +36,7 @@ export default async function scopeExplorer() {
     },
     scope
   );
-  const graph = new DefaultPages(extendedScope);
+  const graph = await defaultPages.call(this, extendedScope);
   // Graph will be its own scope.
   /** @type {any} */ (graph).scope = scope;
   const result = new StringWithGraph(text, graph);

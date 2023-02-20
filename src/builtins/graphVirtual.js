@@ -1,4 +1,3 @@
-import DefaultPages from "../framework/DefaultPages.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import meta from "./meta.js";
 
@@ -11,7 +10,7 @@ import meta from "./meta.js";
 export default async function graphVirtual(variant) {
   assertScopeIsDefined(this);
   const graph = await meta.call(this, variant);
-  const result = new DefaultPages(graph);
+  const result = await defaultPages.call(this, graph);
   return result;
 }
 

@@ -1,11 +1,12 @@
 import * as YAMLModule from "yaml";
+import defaultPages from "../builtins/defaultPages.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { keySymbol, transformObject } from "../core/utilities.js";
-import DefaultPages from "./DefaultPages.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
+import { getScope } from "./scopeUtilities.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore
@@ -38,7 +39,7 @@ export default class Template {
 
     const text = await this.compiled(extendedScope);
 
-    const result = createResult(text, inputGraph, templateGraph);
+    const result = await createResult(text, inputGraph, templateGraph);
     return result;
   }
 
@@ -110,7 +111,7 @@ export default class Template {
   }
 }
 
-function createResult(text, inputGraph, templateGraph) {
+async function createResult(text, inputGraph, templateGraph) {
   if (!inputGraph && !templateGraph) {
     return text;
   }
@@ -127,7 +128,8 @@ function createResult(text, inputGraph, templateGraph) {
     });
   }
 
-  const attachedGraph = new DefaultPages(dataGraph);
+  const scope = getScope(dataGraph);
+  const attachedGraph = await defaultPages.call(scope, dataGraph);
 
   const result = new StringWithGraph(text, attachedGraph);
   return result;
