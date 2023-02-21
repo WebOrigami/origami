@@ -23,7 +23,7 @@ export default function DefaultValuesTransform(Base) {
         const defaultValue = await this.defaults[key];
         value =
           defaultValue instanceof Function
-            ? await defaultValue.call(this)
+            ? await defaultValue.call(this, this)
             : defaultValue;
       }
 

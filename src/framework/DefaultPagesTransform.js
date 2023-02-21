@@ -1,5 +1,5 @@
+import index from "../builtins/index.js";
 import DefaultValues from "../common/DefaultValuesTransform.js";
-import defaultIndexHtml from "./defaultIndexHtml.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 
 export default function DefaultPagesTransform(Base) {
@@ -8,7 +8,7 @@ export default function DefaultPagesTransform(Base) {
       super(...args);
       Object.assign(this.defaults, {
         ".keys.json": defaultKeysJson,
-        "index.html": defaultIndexHtml,
+        "index.html": index,
       });
     }
   };
