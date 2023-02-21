@@ -1,24 +1,25 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import debug from "../builtins/debug.js";
-import ifBuiltin from "../builtins/if.js";
-import mapBuiltin from "../builtins/map.js";
 import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
-import OrigamiTemplate from "./OrigamiTemplate.js";
+import OrigamiTemplate from "../framework/OrigamiTemplate.js";
+import debug from "./debug.js";
+import ifBuiltin from "./if.js";
+import mapBuiltin from "./map.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const frameworkFiles = new FilesGraph(dirname);
+const frameworkDir = path.resolve(dirname, "../framework");
+const frameworkFiles = new FilesGraph(frameworkDir);
 
 /**
  * @this {Explorable}
  */
-export default async function scopeExplorer() {
+export default async function explore() {
   const scope = /** @type {any} */ (this).scope ?? this;
-  const templateText = await frameworkFiles.get("scopeExplorer.ori");
+  const templateText = await frameworkFiles.get("explore.ori");
   const templateScope = new Scope(
     {
       map: mapBuiltin,
