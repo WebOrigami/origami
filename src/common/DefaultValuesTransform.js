@@ -1,5 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { isTransformApplied, transformObject } from "../core/utilities.js";
+import { getScope } from "../framework/scopeUtilities.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of
@@ -21,9 +22,10 @@ export default function DefaultValuesTransform(Base) {
       if (value === undefined) {
         // The graph doesn't have the key; try the defaults.
         const defaultValue = await this.defaults[key];
+        const scope = getScope(this);
         value =
           defaultValue instanceof Function
-            ? await defaultValue.call(this, this)
+            ? await defaultValue.call(scope, this)
             : defaultValue;
       }
 

@@ -37,12 +37,14 @@ function DebugTransform(Base) {
         value = ExplorableGraph.from(value);
       }
 
+      const parent = this;
+
       // Ensure debug transforms are applied to explorable results.
       if (ExplorableGraph.isExplorable(value)) {
         if (!isTransformApplied(InheritScopeTransform, value)) {
           value = transformObject(InheritScopeTransform, value);
         }
-        value.parent = this;
+        value.parent = parent;
 
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
@@ -59,7 +61,9 @@ function DebugTransform(Base) {
         const original = value.toGraph.bind(value);
         value.toGraph = () => {
           let graph = original();
+          graph = transformObject(InheritScopeTransform, graph);
           graph = transformObject(DebugTransform, graph);
+          graph.parent = parent;
           return graph;
         };
       }
