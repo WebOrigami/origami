@@ -65,9 +65,7 @@ async function getKeyData(scope) {
       // Skip builtins.
       continue;
     }
-    const graphKeys = graph.allKeys
-      ? await graph.allKeys()
-      : await ExplorableGraph.keys(graph);
+    const graphKeys = await ExplorableGraph.keys(graph);
     // Skip system-ish files that start with a period.
     const filtered = graphKeys.filter((key) => !key.startsWith?.("."));
     keys.push(filtered);
