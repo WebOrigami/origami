@@ -45,37 +45,6 @@ export default async function explore() {
   return result;
 }
 
-function filterKeys(keys) {
-  const filtered = [];
-  let previous = null;
-  for (const key of keys) {
-    const keyText = key.toString();
-    if (keyText.startsWith(".")) {
-      // Skip "private" files.
-      continue;
-    }
-    if (previous && keyText.includes("=")) {
-      const equalsIndex = keyText.indexOf("=");
-      const lhs = keyText.substring(0, equalsIndex).trim();
-      const rhs = keyText.substring(equalsIndex + 1).trim();
-      if (lhs.trim() === previous) {
-        // Formula for the previous key replaces it.
-        filtered.pop();
-      }
-      filtered.push({
-        text: lhs,
-        formula: rhs,
-      });
-    } else {
-      filtered.push({
-        text: key,
-      });
-    }
-    previous = keyText;
-  }
-  return filtered;
-}
-
 // To test if a given graph represents the builtins, we walk up the chain to see
 // if any of its prototypes are the builtins graph.
 function isBuiltins(graph) {
@@ -99,7 +68,8 @@ async function getKeyData(scope) {
     const graphKeys = graph.allKeys
       ? await graph.allKeys()
       : await ExplorableGraph.keys(graph);
-    const filtered = filterKeys(graphKeys);
+    // Skip system-ish files that start with a period.
+    const filtered = graphKeys.filter((key) => !key.startsWith?.("."));
     keys.push(filtered);
   }
   return keys;

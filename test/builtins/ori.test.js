@@ -19,6 +19,12 @@ describe("ori builtin", () => {
       builtins
     );
     const result = await ori.call(scope, `keys`);
-    assert.deepEqual(result, ["a", "b", "c"]);
+    assert.equal(
+      String(result),
+      `- a
+- b
+- c
+`
+    );
   });
 });

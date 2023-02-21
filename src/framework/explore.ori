@@ -80,10 +80,6 @@
         text-decoration: none;
       }
 
-      .formula {
-        color: #999;
-      }
-
       iframe {
         background: white;
         border: none;

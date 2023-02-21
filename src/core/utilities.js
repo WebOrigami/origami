@@ -72,6 +72,24 @@ export function isPlainObject(obj) {
   return Object.getPrototypeOf(obj) === proto;
 }
 
+export function isTransformApplied(Transform, obj) {
+  let transformName = Transform.name;
+  if (!transformName) {
+    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
+  }
+  if (transformName.endsWith("Transform")) {
+    transformName = transformName.slice(0, -9);
+  }
+  // Walk up prototype chain looking for a constructor with the same name as the
+  // transform. This is not a great test.
+  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
+    if (proto.constructor.name === transformName) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export const keySymbol = Symbol("key");
 
 export async function outputWithGraph(obj, graph, emitFrontMatter = false) {
@@ -179,24 +197,6 @@ export function toSerializable(obj) {
       return obj?.toString?.();
     }
   }
-}
-
-export function isTransformApplied(Transform, obj) {
-  let transformName = Transform.name;
-  if (!transformName) {
-    throw `isTransformApplied was called on an unnamed transform function, but a name is required.`;
-  }
-  if (transformName.endsWith("Transform")) {
-    transformName = transformName.slice(0, -9);
-  }
-  // Walk up prototype chain looking for a constructor with the same name as the
-  // transform. This is not a great test.
-  for (let proto = obj; proto; proto = Object.getPrototypeOf(proto)) {
-    if (proto.constructor.name === transformName) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**

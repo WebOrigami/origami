@@ -1,8 +1,10 @@
+import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import MetaTransform from "../../src/framework/MetaTransform.js";
 import Template from "../../src/framework/Template.js";
+import { createExpressionFunction } from "../../src/language/expressionFunction.js";
+import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("Template", () => {
@@ -96,8 +98,8 @@ a: 1
 template`)
     );
     const graph = new ObjectGraph({});
-    const input = new (MetaTransform(ObjectGraph))({
-      "b = a": null,
+    const input = new ExpressionGraph({
+      b: createExpressionFunction([ops.scope, "a"]),
     });
     template.compiled = async (scope) => {
       assert.equal(await scope.get("b"), 1);

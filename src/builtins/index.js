@@ -54,13 +54,6 @@ export default async function index(variant) {
           a:hover {
             text-decoration: revert;
           }
-
-          .formula {
-            color: #888;
-          }
-          .formula a {
-            color: inherit;
-          }
         </style>
       </head>
       <body>
