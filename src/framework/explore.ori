@@ -105,8 +105,7 @@
 
       // Extract the path from the URL hash.
       function getPathFromHash() {
-        const match = /#.*path=(?<path>[^&]*)/.exec(window.location.hash);
-        return match?.groups?.path;
+        return window.location.hash.slice(1); // Remove `#`
       }
 
       function getModeFromLocation() {
@@ -185,7 +184,7 @@
           if (frame.contentDocument.location.href !== "about:blank") {
             document.title = frame.contentDocument.title;
             const newPath = removeDocumentPath(frame.contentDocument.location.pathname);
-            const hash = `#path=${newPath}`;
+            const hash = `#${newPath}`;
             if (window.location.hash !== hash) {
               // Use `replace` to avoid affecting browser history.
               window.location.replace(hash);
