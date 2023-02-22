@@ -31,7 +31,7 @@ class OrigamiGraphBase extends ExpressionGraph {
 
     super(expressions);
 
-    this[keySymbol] = "[graph literal]";
+    this[keySymbol] = "Origami graph literal";
   }
 }
 

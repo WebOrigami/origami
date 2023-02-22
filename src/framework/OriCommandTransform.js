@@ -1,7 +1,12 @@
 import ori from "../builtins/ori.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isTransformApplied, transformObject } from "../core/utilities.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import {
+  isTransformApplied,
+  keySymbol,
+  transformObject,
+} from "../core/utilities.js";
 import { getScope } from "./scopeUtilities.js";
 
 export default function OriCommandTransform(Base) {
@@ -18,12 +23,11 @@ export default function OriCommandTransform(Base) {
           return undefined;
         }
         // Key is an Origami command; invoke it.
-        const extendedScope = new Scope(
-          {
-            "@defaultGraph": this,
-          },
-          getScope(this)
-        );
+        const ambientsGraph = new ObjectGraph({
+          "@defaultGraph": this,
+        });
+        ambientsGraph[keySymbol] = "ori command";
+        const extendedScope = new Scope(ambientsGraph, getScope(this));
         const source = key.slice(1).trim();
         value = await ori.call(extendedScope, source);
 

@@ -69,6 +69,13 @@
         padding: 0;
       }
 
+      h2 {
+        color: #999;
+        font-size: inherit;
+        margin: 0.25em 0;
+        padding-left: 0.25em;
+      }
+
       li {
         padding: 0.25em;
         padding-left: 1em;
@@ -220,13 +227,14 @@
     </div>
     {{map @input, =`
       <ul>
-      {{map @value, =`
+        <h2>{{ ./name }}</h2>
+        {{map ./keys, =`
         <li>
-          <a href="./!explore/{{ text }}" target="frame">{{ text }}</a>
+          <a href="./!explore/{{ @value }}" target="frame">{{ @value }}</a>
         </li>
-      `}}
+        `}}
       </ul>
-    `}}
+    ` }}
     </nav>
     <iframe id="frame" name="frame"></iframe>
   </body>

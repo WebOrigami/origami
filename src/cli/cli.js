@@ -3,6 +3,8 @@
 import process, { stdout } from "node:process";
 import ori from "../builtins/ori.js";
 import Scope from "../common/Scope.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import { keySymbol } from "../core/utilities.js";
 import { getScope } from "../framework/scopeUtilities.js";
 import builtins from "./builtins.js";
 import showUsage from "./showUsage.js";
@@ -22,12 +24,11 @@ async function main(...args) {
   }
 
   // Add default graph to scope.
-  const scope = new Scope(
-    {
-      "@defaultGraph": graph,
-    },
-    baseScope
-  );
+  const ambientsGraph = new ObjectGraph({
+    "@defaultGraph": graph,
+  });
+  ambientsGraph[keySymbol] = "Origami CLI";
+  const scope = new Scope(ambientsGraph, baseScope);
 
   const result = await ori.call(scope, expression);
   if (result) {

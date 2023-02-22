@@ -20,7 +20,7 @@ export default function InheritScopeTransform(Base) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
       }
-      if (value && typeof value === "object") {
+      if (value && typeof value === "object" && !value[keySymbol]) {
         value[keySymbol] = key;
       }
       return value;

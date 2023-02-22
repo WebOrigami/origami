@@ -5,6 +5,8 @@ import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
+import { keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 import debug from "./debug.js";
 import ifBuiltin from "./if.js";
@@ -23,20 +25,24 @@ export default async function explore() {
   const templateScope = new Scope(
     {
       map: mapBuiltin,
+      // getKeySymbol: (obj) => obj?.[keySymbol],
       if: ifBuiltin,
     },
     scope
   );
   const template = new OrigamiTemplate(templateText, templateScope);
-  const data = await getKeyData(scope);
+
+  // const scopeGraphs = scope.graphs ?? [scope];
+  // const withoutBuiltins = scopeGraphs.filter((graph) => !isBuiltins(graph));
+  const data = await getScopeData(scope);
   const text = await template.apply(data, templateScope);
 
-  const extendedScope = new Scope(
-    {
-      "@defaultGraph": this,
-    },
-    scope
-  );
+  const ambientsGraph = new ObjectGraph({
+    "@defaultGraph": this,
+  });
+  ambientsGraph[keySymbol] = "explore command";
+  const extendedScope = new Scope(ambientsGraph, scope);
+
   const graph = await debug.call(this, extendedScope);
   // Graph will be its own scope.
   /** @type {any} */ (graph).scope = scope;
@@ -57,18 +63,19 @@ function isBuiltins(graph) {
   return false;
 }
 
-async function getKeyData(scope) {
+async function getScopeData(scope) {
   const graphs = scope.graphs ?? [scope];
-  const keys = [];
+  const data = [];
   for (const graph of graphs) {
     if (isBuiltins(graph)) {
       // Skip builtins.
       continue;
     }
+    const name = graph[keySymbol];
     const graphKeys = await ExplorableGraph.keys(graph);
     // Skip system-ish files that start with a period.
-    const filtered = graphKeys.filter((key) => !key.startsWith?.("."));
-    keys.push(filtered);
+    const keys = graphKeys.filter((key) => !key.startsWith?.("."));
+    data.push({ name, keys });
   }
-  return keys;
+  return data;
 }
