@@ -14,7 +14,6 @@ const ignoredBuiltins = {
 // For builtins whose names are not valid JS identifiers
 const specialIdentifiers = {
   "@": "config",
-  "@loaders": "loaders",
   "…": "inherited",
 };
 
@@ -52,7 +51,10 @@ async function exportStatementForCode(codeBuffer, key) {
     if (ignoredBuiltins[basename]) {
       return ""; // Don't export
     }
-    const identifier = specialIdentifiers[basename] || basename;
+    let identifier = specialIdentifiers[basename] || basename;
+    if (identifier.startsWith("@")) {
+      identifier = identifier.slice(1);
+    }
     exportName = `{ default as ${identifier} }`;
   } else if (exportsAnything) {
     // Export everything
