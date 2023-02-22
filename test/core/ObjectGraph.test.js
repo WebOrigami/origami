@@ -106,7 +106,7 @@ describe("ObjectGraph", () => {
     assert.deepEqual(valuesExplorable, [false, true, false, true]);
   });
 
-  it.only("can wrap a class instance", async () => {
+  it("can wrap a class instance", async () => {
     class Foo {
       constructor() {
         this.a = 1;
