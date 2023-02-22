@@ -23,4 +23,26 @@ describe("MergeGraph", () => {
     assert.equal(await fixture.get("d"), 4);
     assert.equal(await fixture.get("x"), undefined);
   });
+
+  it("performs a shallow merge", async () => {
+    const fixture = new MergeGraph(
+      {
+        a: 1,
+        b: {
+          c: 2,
+        },
+      },
+      {
+        b: {
+          d: 3,
+        },
+      }
+    );
+    const b = await fixture.get("b");
+    assert.deepEqual(await ExplorableGraph.plain(b), {
+      c: 2,
+    });
+    const d = await ExplorableGraph.traverse(fixture, "b", "d");
+    assert.equal(d, undefined);
+  });
 });
