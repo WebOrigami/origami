@@ -1,6 +1,6 @@
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { getScope } from "../framework/scopeUtilities.js";
+import { keySymbol } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -29,9 +29,7 @@ export default async function index(variant) {
     links.push(link);
   }
 
-  const scope = getScope(graph);
-  const graphKey = await scope.get("@key");
-  const heading = graphKey ?? "Index";
+  const heading = graph[keySymbol] ?? "Index";
   const list = `
     <h1>${heading.trim()}</h1>
     <ul>\n${links.join("\n").trim()}\n</ul>
