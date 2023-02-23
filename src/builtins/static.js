@@ -1,6 +1,7 @@
-import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { parentScope } from "../framework/scopeUtilities.js";
+import { transformObject } from "../core/utilities.js";
+import defaultKeysJson from "../framework/defaultKeysJson.js";
+import { getScope } from "../framework/scopeUtilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -16,30 +17,36 @@ export default async function staticGraph(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const baseScope = parentScope(this);
-  return {
+  const result = transformObject(StaticTransform, graph);
+  return result;
+}
+
+function StaticTransform(Base) {
+  return class Static extends Base {
     async *[Symbol.asyncIterator]() {
       const keys = new Set();
-      for await (const key of graph) {
+      for await (const key of super[Symbol.asyncIterator]()) {
         keys.add(key);
         yield key;
       }
-      if (!keys.has("index.html")) {
-        yield "index.html";
-      }
+      // if (!keys.has("index.html")) {
+      //   yield "index.html";
+      // }
       if (!keys.has(".keys.json")) {
         yield ".keys.json";
       }
-    },
+    }
 
     async get(key) {
-      const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value) ? staticGraph(value) : value;
-    },
-
-    get scope() {
-      return new Scope(this, baseScope);
-    },
+      let value = await super.get(key);
+      if (value === undefined && key === ".keys.json") {
+        const scope = getScope(this);
+        value = defaultKeysJson.call(scope, this);
+      } else if (ExplorableGraph.isExplorable(value)) {
+        value = transformObject(StaticTransform, value);
+      }
+      return value;
+    }
   };
 }
 
