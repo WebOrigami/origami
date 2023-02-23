@@ -1,6 +1,6 @@
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { extname, toSerializable } from "../core/utilities.js";
+import { extname, isPlainObject, toSerializable } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -70,12 +70,12 @@ async function statements(graph, nodePath, options) {
     const extension = extname(key);
     const expand =
       {
-        ".graph": true,
         ".json": true,
         ".yaml": true,
       }[extension] ?? extension === "";
 
-    if (expand && ExplorableGraph.canCastToExplorable(value)) {
+    const expandable = value instanceof Array || isPlainObject(value);
+    if (expand && expandable) {
       const subgraph = ExplorableGraph.from(value);
       const subStatements = await statements(subgraph, destPath, options);
       result = result.concat(subStatements);
