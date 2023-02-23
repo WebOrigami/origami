@@ -4,6 +4,7 @@ export const token = {
   COMMA: "COMMA",
   DOUBLE_LEFT_BRACE: "DOUBLE_LEFT_BRACE",
   DOUBLE_RIGHT_BRACE: "DOUBLE_RIGHT_BRACE",
+  EQUAL: "EQUAL",
   LEFT_BRACE: "LEFT_BRACE",
   LEFT_BRACKET: "LEFT_BRACKET",
   LEFT_PAREN: "LEFT_PAREN",
@@ -21,6 +22,7 @@ const characterToToken = {
   ",": token.COMMA,
   "/": token.SLASH,
   ":": token.COLON,
+  "=": token.EQUAL,
   "[": token.LEFT_BRACKET,
   "]": token.RIGHT_BRACKET,
   "`": token.BACKTICK,
@@ -28,43 +30,69 @@ const characterToToken = {
   "}": token.RIGHT_BRACE,
 };
 
-const EOF = "\x04";
+const EOF = "\0";
 
-const state = {
+export const state = {
   COMMENT: "COMMENT",
+  DOUBLE_QUOTE_STRING: "DOUBLE_QUOTE_STRING",
   EXPRESSION: "EXPRESSION",
-  STRING: "STRING",
-  TEMPLATE_TEXT: "TEMPLATE_TEXT",
+  SINGLE_QUOTE_STRING: "SINGLE_QUOTE_STRING",
+  TEMPLATE_DOCUMENT: "TEMPLATE_DOCUMENT",
+  TEMPLATE_LITERAL: "TEMPLATE_LITERAL",
 };
 
+/**
+ * Lexes the given text into an array of tokens.
+ *
+ * @param {string} text
+ * @param {any} initialState
+ */
 export function lex(text, initialState = state.EXPRESSION) {
   const tokens = [];
   let currentState = initialState;
   let lexeme = "";
-  let i = 0;
+  let templateContextStack = [];
 
   // Append an end-of-file character to the end of the text. This is a
   // convenience for the lexer so that it doesn't have to check for the end of
   // the text in every state.
   text += EOF;
 
+  // Main state machine.
+  let i = 0;
   while (i < text.length) {
-    const c = text[i];
+    const c = text[i++];
 
     // A backslash in any state means the next character (with the exception of
-    // a newline) is escaped. The backslash is skipped.
-    // if (c === "\\") {
-    //   i++;
-    //   if (text[i] === "\n") {
-    //     throw "Unexpected newline after backslash.";
-    //   }
-    //   continue;
-    // }
+    // a newline or EOF) is escaped. The backslash is skipped.
+    if (c === "\\") {
+      if (text[i] === "\n") {
+        throw new SyntaxError("Unexpected newline after backslash.");
+      }
+      if (text[i] === EOF) {
+        throw new SyntaxError("Unexpected end of file after backslash.");
+      }
+      lexeme += text[i++];
+      continue;
+    }
 
     switch (currentState) {
       case state.COMMENT:
-        if (c === "\n" || c === "\r") {
+        if (c === EOF || c === "\n" || c === "\r") {
           currentState = state.EXPRESSION;
+        }
+        break;
+
+      case state.DOUBLE_QUOTE_STRING:
+        if (c === '"') {
+          tokens.push({
+            type: token.STRING,
+            lexeme,
+          });
+          lexeme = "";
+          currentState = state.EXPRESSION;
+        } else {
+          lexeme += c;
         }
         break;
 
@@ -86,17 +114,24 @@ export function lex(text, initialState = state.EXPRESSION) {
             break;
           case "'":
             completedReference = true;
-            currentState = state.STRING;
+            currentState = state.SINGLE_QUOTE_STRING;
+            break;
+          case '"':
+            completedReference = true;
+            currentState = state.DOUBLE_QUOTE_STRING;
             break;
           case "`":
             completedReference = true;
-            currentState = state.TEMPLATE_TEXT;
+            completedToken = { type: token.BACKTICK };
+            currentState = state.TEMPLATE_LITERAL;
             break;
           default:
-            if (c === "}" && text[i + 1] === "}") {
+            if (c === "}" && text[i] === "}") {
               completedReference = true;
               completedToken = { type: token.DOUBLE_RIGHT_BRACE };
-              currentState = state.TEMPLATE_TEXT;
+              // If we see a "}}" without a matching "{{", the lexer doesn't
+              // fuss about it; the parser will.
+              currentState = templateContextStack.pop() ?? initialState;
               i++;
             } else if (characterToToken[c]) {
               completedReference = true;
@@ -118,7 +153,7 @@ export function lex(text, initialState = state.EXPRESSION) {
         }
         break;
 
-      case state.STRING:
+      case state.SINGLE_QUOTE_STRING:
         if (c === "'") {
           tokens.push({
             type: token.STRING,
@@ -131,20 +166,54 @@ export function lex(text, initialState = state.EXPRESSION) {
         }
         break;
 
-      case state.TEMPLATE_TEXT:
-        if (c === "`") {
-          tokens.push({
-            type: token.TEMPLATE,
-            lexeme,
-          });
-          lexeme = "";
+      case state.TEMPLATE_DOCUMENT:
+        // Note: template documents don't treat backticks specially.
+        if (c === EOF) {
+          if (lexeme.length > 0) {
+            tokens.push({
+              type: token.STRING,
+              lexeme,
+            });
+            lexeme = "";
+          }
+        } else if (c === "{" && text[i] === "{") {
+          if (lexeme.length > 0) {
+            tokens.push({
+              type: token.STRING,
+              lexeme,
+            });
+            lexeme = "";
+          }
+          tokens.push({ type: token.DOUBLE_LEFT_BRACE });
+          templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
-        } else if (c === "{" && text[i + 1] === "{") {
-          tokens.push({
-            type: token.TEMPLATE,
-            lexeme,
-          });
-          lexeme = "";
+          i++;
+        } else {
+          lexeme += c;
+        }
+        break;
+
+      case state.TEMPLATE_LITERAL:
+        if (c === "`") {
+          if (lexeme.length > 0) {
+            tokens.push({
+              type: token.STRING,
+              lexeme,
+            });
+            lexeme = "";
+          }
+          tokens.push({ type: token.BACKTICK });
+          currentState = state.EXPRESSION;
+        } else if (c === "{" && text[i] === "{") {
+          if (lexeme.length > 0) {
+            tokens.push({
+              type: token.STRING,
+              lexeme,
+            });
+            lexeme = "";
+          }
+          tokens.push({ type: token.DOUBLE_LEFT_BRACE });
+          templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
         } else {
@@ -152,8 +221,10 @@ export function lex(text, initialState = state.EXPRESSION) {
         }
         break;
     }
+  }
 
-    i++;
+  if (currentState !== initialState) {
+    throw new SyntaxError("Unexpected end of input.");
   }
 
   return tokens;
