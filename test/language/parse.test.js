@@ -12,7 +12,6 @@ import {
   key,
   lambda,
   list,
-  literal,
   number,
   object,
   objectProperty,
@@ -20,6 +19,7 @@ import {
   percentCall,
   percentPath,
   protocolCall,
+  reference,
   singleQuoteString,
   slashCall,
   slashPath,
@@ -27,7 +27,6 @@ import {
   templateDocument,
   templateLiteral,
   termSeparator,
-  thisReference,
   urlProtocolCall,
   whitespace,
 } from "../../src/language/parse.js";
@@ -64,32 +63,6 @@ describe("parse", () => {
       ops.assign,
       "data",
       [ops.scope, "obj.json"],
-    ]);
-  });
-
-  it("assignment with `this` on right-hand side", () => {
-    assertParse(assignment("foo = this.json"), [
-      ops.assign,
-      "foo",
-      [ops.scope, [ops.thisKey]],
-    ]);
-    assertParse(assignment("foo = this().js"), [
-      ops.assign,
-      "foo",
-      [[ops.scope, [ops.thisKey]]],
-    ]);
-    assertParse(assignment("foo = this('bar').js"), [
-      ops.assign,
-      "foo",
-      [[ops.scope, [ops.thisKey]], "bar"],
-    ]);
-  });
-
-  it("assignment with extension on right-hand side", () => {
-    assertParse(assignment("foo.html = .ori"), [
-      ops.assign,
-      "foo.html",
-      [[ops.scope, [ops.thisKey]]],
     ]);
   });
 
@@ -271,12 +244,12 @@ describe("parse", () => {
   });
 
   it("literalReference", () => {
-    assert.deepEqual(literal("hello"), {
+    assert.deepEqual(reference("hello"), {
       value: "hello",
       rest: "",
     });
-    assert.equal(literal(""), null);
-    assert.equal(literal("()"), null);
+    assert.equal(reference(""), null);
+    assert.equal(reference("()"), null);
   });
 
   it("number", () => {
@@ -489,12 +462,6 @@ End`),
     assertParse(termSeparator(" # Comment\n   ,"), true);
     assertParse(termSeparator("\n"), true);
     assertParse(termSeparator(" # Comment\n# More comment \n"), true);
-  });
-
-  it("thisReference", () => {
-    assertParse(thisReference("this"), [ops.thisKey]);
-    // If there's an extension after the 'this' keyword, it's a reference.
-    // assert.equal(thisReference("this.foo"), null);
   });
 
   it("urlProtocolCall", () => {

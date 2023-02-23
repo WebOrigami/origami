@@ -65,24 +65,12 @@ export function assignment(text) {
     optionalWhitespace,
     terminal(/^=/),
     optionalWhitespace,
-    expression,
-    optional(extension)
+    expression
   )(text);
   if (!parsed) {
     return null;
   }
   let { 2: left, 6: right } = parsed.value;
-
-  // Special case: RHS is an extension
-  // `index.html=.ori` is shorthand for `index.html = this().ori`
-  if (
-    right instanceof Array &&
-    right.length === 2 &&
-    right[0] === ops.scope &&
-    right[1].startsWith?.(".")
-  ) {
-    right = [[ops.scope, [ops.thisKey]]];
-  }
 
   const value = [ops.assign, left, right];
   return {
@@ -93,7 +81,7 @@ export function assignment(text) {
 
 // Parse a declaration.
 export function declaration(text) {
-  return literal(text);
+  return reference(text);
 }
 
 // Parse an ellipsis.
@@ -122,11 +110,6 @@ export function expression(text) {
     group,
     getReference
   )(text);
-}
-
-// Parse a file extension
-export function extension(text) {
-  return sequence(terminal(/^[ \t]*\./), literal)(text);
 }
 
 // Parse an assignment formula or shorthand assignment.
@@ -335,12 +318,6 @@ export function list(text) {
   };
 }
 
-// Parse a reference to a literal
-export function literal(text) {
-  // Literals are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\[\]\$"'/:`%,#\s]+/)(text);
-}
-
 // Parse a left parenthesis.
 function lparen(text) {
   return terminal(/^\(/)(text);
@@ -409,7 +386,7 @@ export function objectProperties(text) {
 export function objectProperty(text) {
   const parsed = sequence(
     optionalWhitespace,
-    literal,
+    reference,
     optionalWhitespace,
     terminal(/^:/),
     expression
@@ -494,7 +471,7 @@ export function pathHead(text) {
 
 // Parse a key in a path.
 export function pathKey(text) {
-  return any(group, substitution, literal)(text);
+  return any(group, substitution, reference)(text);
 }
 
 // Parse a function call with percent syntax.
@@ -580,9 +557,10 @@ export function quotedTextWithEscapes(text) {
   return { value, rest };
 }
 
-// Parse a reference.
+// Parse a reference
 export function reference(text) {
-  return any(thisReference, literal)(text);
+  // References are sequences of everything but terminal characters.
+  return regex(/^[^=\(\)\{\}\[\]\$"'/:`%,#\s]+/)(text);
 }
 
 // Parse a right parenthesis.
@@ -591,7 +569,7 @@ function rparen(text) {
 }
 
 export function shorthandReference(text) {
-  const parsed = sequence(optionalWhitespace, literal)(text);
+  const parsed = sequence(optionalWhitespace, reference)(text);
   if (!parsed) {
     return null;
   }
@@ -788,19 +766,6 @@ function templateTextParser(allowBackticks) {
 // The whitespace can include comments, which are ignored.
 export function termSeparator(text) {
   return terminal(/^(((\s|(#.*(\n)))*,)|(\s*((#.*)?\n))+)/)(text);
-}
-
-// Parse a reference to "this".
-export function thisReference(text) {
-  const parsed = terminal(/^this/)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.thisKey];
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's
