@@ -54,6 +54,12 @@ describe.only("lex", () => {
     ]);
   });
 
+  it("number", () => {
+    const text = "123";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [{ type: token.NUMBER, lexeme: "123" }]);
+  });
+
   it("list with commas", () => {
     const text = "foo,bar,baz";
     const tokens = lex(text);

@@ -7,6 +7,7 @@ export const token = {
   LEFT_BRACE: "LEFT_BRACE",
   LEFT_BRACKET: "LEFT_BRACKET",
   LEFT_PAREN: "LEFT_PAREN",
+  NUMBER: "NUMBER",
   REFERENCE: "REFERENCE",
   RIGHT_BRACE: "RIGHT_BRACE",
   RIGHT_BRACKET: "RIGHT_BRACKET",
@@ -28,6 +29,13 @@ const characterToToken = {
   "`": token.BACKTICK,
   "{": token.LEFT_BRACE,
   "}": token.RIGHT_BRACE,
+};
+
+const isWhitespace = {
+  " ": true,
+  "\n": true,
+  "\r": true,
+  "\t": true,
 };
 
 const EOF = "\0";
@@ -99,91 +107,58 @@ export function lex(text, initialState = state.EXPRESSION) {
         break;
 
       case state.EXPRESSION:
-        switch (c) {
-          case EOF:
-            break;
-          case " ":
-          case "\t":
-          case "\r":
-          case "\n":
-            lexeme = c;
-            currentState = state.WHITESPACE;
-            break;
-          case "#":
-            currentState = state.COMMENT;
-            break;
-          case "'":
-            lexeme = "";
-            currentState = state.SINGLE_QUOTE_STRING;
-            break;
-          case '"':
-            lexeme = "";
-            currentState = state.DOUBLE_QUOTE_STRING;
-            break;
-          case "`":
-            lexeme = "";
-            tokens.push({ type: token.BACKTICK });
-            currentState = state.TEMPLATE_LITERAL;
-            break;
-          default:
-            if (c === "}" && text[i] === "}") {
-              tokens.push({ type: token.DOUBLE_RIGHT_BRACE });
-              // If we see a "}}" without a matching "{{", the lexer doesn't
-              // fuss about it; the parser will.
-              currentState = templateContextStack.pop() ?? initialState;
-              lexeme =
-                currentState === state.TEMPLATE_DOCUMENT ||
-                currentState === state.TEMPLATE_LITERAL
-                  ? ""
-                  : null;
-              i++;
-            } else if (characterToToken[c]) {
-              tokens.push({ type: characterToToken[c] });
-            } else {
-              lexeme = c;
-              currentState = state.REFERENCE;
-            }
-            break;
+        if (c === EOF) {
+          // Do nothing; will fall out of loop
+        } else if (c === "#") {
+          currentState = state.COMMENT;
+        } else if (c === "'") {
+          lexeme = "";
+          currentState = state.SINGLE_QUOTE_STRING;
+        } else if (c === '"') {
+          lexeme = "";
+          currentState = state.DOUBLE_QUOTE_STRING;
+        } else if (c === "`") {
+          lexeme = "";
+          tokens.push({ type: token.BACKTICK });
+          currentState = state.TEMPLATE_LITERAL;
+        } else if (isWhitespace[c]) {
+          lexeme = c;
+          currentState = state.WHITESPACE;
+        } else if (c === "}" && text[i] === "}") {
+          tokens.push({ type: token.DOUBLE_RIGHT_BRACE });
+          // If we see a "}}" without a matching "{{", the lexer doesn't
+          // fuss about it; the parser will.
+          currentState = templateContextStack.pop() ?? initialState;
+          lexeme =
+            currentState === state.TEMPLATE_DOCUMENT ||
+            currentState === state.TEMPLATE_LITERAL
+              ? ""
+              : null;
+          i++;
+        } else if (characterToToken[c]) {
+          tokens.push({ type: characterToToken[c] });
+        } else {
+          lexeme = c;
+          currentState = state.REFERENCE;
         }
         break;
 
       case state.REFERENCE:
-        switch (c) {
-          case EOF:
-          case " ":
-          case "\t":
-          case "\r":
-          case "\n":
-          case "#":
-          case "'":
-          case '"':
-          case "`":
-          case "(":
-          case ")":
-          case ",":
-          case "/":
-          case ":":
-          case "=":
-          case "[":
-          case "]":
-          case "`":
-          case "{":
-          case "}":
-            // Reached end of reference.
-            if (lexeme.length > 0) {
-              tokens.push({
-                type: token.REFERENCE,
-                lexeme,
-              });
-              lexeme = null;
-            }
-            currentState = state.EXPRESSION;
-            i--; // Back up to consider the character again in the new state.
-            break;
-          default:
-            // Extend reference.
-            lexeme += c;
-            break;
+        if (isWhitespace[c] || characterToToken[c] || c === EOF) {
+          // Reached end of reference.
+          if (lexeme.length > 0) {
+            const type = isNumber(lexeme) ? token.NUMBER : token.REFERENCE;
+            tokens.push({
+              type,
+              lexeme,
+            });
+            lexeme = null;
+          }
+          currentState = state.EXPRESSION;
+          i--; // Back up to consider the character again in the new state.
+        } else {
+          // Extend reference.
+          lexeme += c;
         }
         break;
 
@@ -256,26 +231,19 @@ export function lex(text, initialState = state.EXPRESSION) {
         break;
 
       case state.WHITESPACE:
-        switch (c) {
-          case " ":
-          case "\t":
-          case "\r":
-          case "\n":
-            // Extend whitespace run.
-            lexeme += c;
-            break;
-          default:
-            // Reached end of whitespace.
-            if (lexeme.includes("\n")) {
-              tokens.push({
-                type: token.SEPARATOR,
-              });
-            }
-            lexeme = null;
-            currentState = state.EXPRESSION;
-            // Back up to consider the character again in the new state.
-            i--;
-            break;
+        if (isWhitespace[c]) {
+          // Extend whitespace run.
+          lexeme += c;
+        } else {
+          // Reached end of whitespace.
+          if (lexeme.includes("\n")) {
+            tokens.push({
+              type: token.SEPARATOR,
+            });
+          }
+          lexeme = null;
+          currentState = state.EXPRESSION;
+          i--; // Back up to consider the character again in the new state.
         }
         break;
     }
@@ -286,4 +254,11 @@ export function lex(text, initialState = state.EXPRESSION) {
   }
 
   return tokens;
+}
+
+function isNumber(text) {
+  // Based on https://stackoverflow.com/a/51733563/76472
+  // but only accepts integers or floats, not exponential notation.
+  const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)/;
+  return numberRegex.test(text);
 }
