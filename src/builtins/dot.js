@@ -74,7 +74,10 @@ async function statements(graph, nodePath, options) {
         ".yaml": true,
       }[extension] ?? extension === "";
 
-    const expandable = value instanceof Array || isPlainObject(value);
+    const expandable =
+      value instanceof Array ||
+      isPlainObject(value) ||
+      ExplorableGraph.isExplorable(value);
     if (expand && expandable) {
       const subgraph = ExplorableGraph.from(value);
       const subStatements = await statements(subgraph, destPath, options);
