@@ -25,6 +25,7 @@ import {
   series,
   terminal,
 } from "./combinators.js";
+import { tokenType } from "./lex.js";
 import * as ops from "./ops.js";
 
 // Parse arguments to a function, with either explicit or implicit parentheses.
@@ -38,18 +39,16 @@ export function argsChain(text) {
 }
 
 // Parse an array like `[1, 2, 3]`.
-export function array(text) {
+export function array(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    regex(/^\[/),
+    matchTokenType(tokenType.LEFT_BRACKET),
     list,
-    optionalWhitespace,
-    regex(/^\]/)
-  )(text);
+    matchTokenType(tokenType.RIGHT_BRACKET)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const value = [ops.array, ...parsed.value[2]];
+  const value = [ops.array, ...parsed.value[1]];
   return {
     value,
     rest: parsed.rest,
@@ -57,21 +56,16 @@ export function array(text) {
 }
 
 // Parse an assignment statment.
-export function assignment(text) {
+export function assignment(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    optional(ellipsis),
-    declaration,
-    optionalWhitespace,
-    terminal(/^=/),
-    optionalWhitespace,
+    reference,
+    matchTokenType(tokenType.EQUALS),
     expression
-  )(text);
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  let { 2: left, 6: right } = parsed.value;
-
+  let { 0: left, 2: right } = parsed.value;
   const value = [ops.assign, left, right];
   return {
     value,
@@ -79,37 +73,27 @@ export function assignment(text) {
   };
 }
 
-// Parse a declaration.
-export function declaration(text) {
-  return reference(text);
-}
-
-// Parse an ellipsis.
-function ellipsis(text) {
-  return terminal(/^…/)(text);
-}
-
 // Parse an Origami expression.
-export function expression(text) {
+export function expression(tokens) {
   // First try parsers for things that have a distinguishing character at the
   // start, e.g., an opening quote, bracket, etc.
   return any(
-    singleQuoteString,
-    templateLiteral,
-    graph,
+    string,
+    // templateLiteral,
+    // graph,
     object,
     array,
-    lambda,
+    // lambda,
     number,
-    functionComposition,
-    urlProtocolCall,
-    protocolCall,
-    slashCall,
-    percentCall,
+    // functionComposition,
+    // urlProtocolCall,
+    // protocolCall,
+    // slashCall,
+    // percentCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
     getReference
-  )(text);
+  )(tokens);
 }
 
 // Parse an assignment formula or shorthand assignment.
@@ -168,12 +152,12 @@ export function functionComposition(text) {
 }
 
 // Parse a call to get a value.
-export function getReference(text) {
-  const parsed = sequence(optionalWhitespace, reference)(text);
+export function getReference(tokens) {
+  const parsed = reference(tokens);
   if (!parsed) {
     return null;
   }
-  const value = [ops.scope, parsed.value[1]];
+  const value = [ops.scope, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -238,19 +222,16 @@ export function graphFormulas(text) {
 }
 
 // Parse a parenthetical group.
-export function group(text) {
+export function group(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    lparen,
-    optionalWhitespace,
+    matchTokenType(tokenType.LEFT_PAREN),
     expression,
-    optionalWhitespace,
-    rparen
-  )(text);
+    matchTokenType(tokenType.RIGHT_PAREN)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[3]; // the expression
+  const value = parsed.value[1]; // the expression
   return {
     value,
     rest: parsed.rest,
@@ -276,11 +257,6 @@ export function implicitParensArgs(text) {
   };
 }
 
-// A key in an Explorable App
-export function key(text) {
-  return any(assignment, declaration)(text);
-}
-
 // A lambda expression
 export function lambda(text) {
   const parsed = sequence(
@@ -300,8 +276,11 @@ export function lambda(text) {
 }
 
 // Parse a comma-separated list.
-export function list(text) {
-  const parsed = separatedList(expression, termSeparator)(text);
+export function list(tokens) {
+  const parsed = separatedList(
+    expression,
+    matchTokenType(tokenType.SEPARATOR)
+  )(tokens);
   // Remove the parsed separators, which will be in the even positions.
   const value = [];
   while (parsed.value.length > 0) {
@@ -323,43 +302,52 @@ function lparen(text) {
   return terminal(/^\(/)(text);
 }
 
-export function number(text) {
-  // Based on https://stackoverflow.com/a/51733563/76472
-  // but only accepts integers or floats, not exponential notation.
-  const parsed = sequence(
-    optionalWhitespace,
-    regex(/^-?(?:\d+(?:\.\d*)?|\.\d+)/)
-  )(text);
+function matchTokenType(tokenType) {
+  return function (tokens) {
+    const [head, ...tail] = tokens;
+    if (head?.type === tokenType) {
+      return {
+        value: head.lexeme,
+        rest: tail,
+      };
+    }
+    return null;
+  };
+}
+
+export function number(tokens) {
+  const parsed = matchTokenType(tokenType.NUMBER)(tokens);
   if (!parsed) {
     return null;
   }
-  const value = Number(parsed.value[1]);
+  const value = Number(parsed.value);
   return {
     value,
     rest: parsed.rest,
   };
 }
 
-export function object(text) {
+export function object(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    regex(/^{/),
+    matchTokenType(tokenType.LEFT_BRACE),
     objectProperties,
-    optionalWhitespace,
-    regex(/^}/)
-  )(text);
+    matchTokenType(tokenType.RIGHT_BRACE)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[2];
+  const value = parsed.value[1];
   return {
     value,
     rest: parsed.rest,
   };
 }
 
-export function objectProperties(text) {
-  const parsed = separatedList(objectPropertyOrShorthand, termSeparator)(text);
+export function objectProperties(tokens) {
+  const parsed = separatedList(
+    objectPropertyOrShorthand,
+    matchTokenType(tokenType.SEPARATOR)
+  )(tokens);
   if (!parsed) {
     return null;
   }
@@ -383,19 +371,17 @@ export function objectProperties(text) {
   };
 }
 
-export function objectProperty(text) {
+export function objectProperty(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
     reference,
-    optionalWhitespace,
-    terminal(/^:/),
+    matchTokenType(tokenType.COLON),
     expression
-  )(text);
+  )(tokens);
   if (!parsed) {
     return null;
   }
   const value = {
-    [parsed.value[1]]: parsed.value[4],
+    [parsed.value[0]]: parsed.value[2],
   };
   return {
     value,
@@ -404,7 +390,7 @@ export function objectProperty(text) {
 }
 
 export function objectPropertyOrShorthand(text) {
-  const parsed = any(objectProperty, shorthandReference)(text);
+  const parsed = any(objectProperty, reference)(text);
   if (!parsed) {
     return null;
   }
@@ -558,9 +544,8 @@ export function quotedTextWithEscapes(text) {
 }
 
 // Parse a reference
-export function reference(text) {
-  // References are sequences of everything but terminal characters.
-  return regex(/^[^=\(\)\{\}\[\]\$"'/:`%,#\s]+/)(text);
+export function reference(tokens) {
+  return matchTokenType(tokenType.REFERENCE)(tokens);
 }
 
 // Parse a right parenthesis.
@@ -588,25 +573,6 @@ export function simpleFunctionCall(text) {
     return null;
   }
   const value = [parsed.value[1], ...parsed.value[2]]; // function and args
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a single-quoted string.
-export function singleQuoteString(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^'/),
-    quotedTextWithEscapes,
-    terminal(/^'/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  // Remove quotes.
-  const { 2: value } = parsed.value;
   return {
     value,
     rest: parsed.rest,
@@ -655,6 +621,11 @@ export function slashPath(text) {
     value: values,
     rest: parsed.rest,
   };
+}
+
+// Parse a string.
+export function string(tokens) {
+  return matchTokenType(tokenType.STRING)(tokens);
 }
 
 // Parse a substitution like {{foo}} in a template.

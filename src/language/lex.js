@@ -1,9 +1,9 @@
-export const token = {
+export const tokenType = {
   BACKTICK: "BACKTICK",
   COLON: "COLON",
   DOUBLE_LEFT_BRACE: "DOUBLE_LEFT_BRACE",
   DOUBLE_RIGHT_BRACE: "DOUBLE_RIGHT_BRACE",
-  EQUAL: "EQUAL",
+  EQUALS: "EQUAL",
   LEFT_BRACE: "LEFT_BRACE",
   LEFT_BRACKET: "LEFT_BRACKET",
   LEFT_PAREN: "LEFT_PAREN",
@@ -18,17 +18,17 @@ export const token = {
 };
 
 const characterToToken = {
-  "(": token.LEFT_PAREN,
-  ")": token.RIGHT_PAREN,
-  ",": token.SEPARATOR,
-  "/": token.SLASH,
-  ":": token.COLON,
-  "=": token.EQUAL,
-  "[": token.LEFT_BRACKET,
-  "]": token.RIGHT_BRACKET,
-  "`": token.BACKTICK,
-  "{": token.LEFT_BRACE,
-  "}": token.RIGHT_BRACE,
+  "(": tokenType.LEFT_PAREN,
+  ")": tokenType.RIGHT_PAREN,
+  ",": tokenType.SEPARATOR,
+  "/": tokenType.SLASH,
+  ":": tokenType.COLON,
+  "=": tokenType.EQUALS,
+  "[": tokenType.LEFT_BRACKET,
+  "]": tokenType.RIGHT_BRACKET,
+  "`": tokenType.BACKTICK,
+  "{": tokenType.LEFT_BRACE,
+  "}": tokenType.RIGHT_BRACE,
 };
 
 const isWhitespace = {
@@ -96,7 +96,7 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.DOUBLE_QUOTE_STRING:
         if (c === '"') {
           tokens.push({
-            type: token.STRING,
+            type: tokenType.STRING,
             lexeme,
           });
           lexeme = null;
@@ -119,13 +119,13 @@ export function lex(text, initialState = state.EXPRESSION) {
           currentState = state.DOUBLE_QUOTE_STRING;
         } else if (c === "`") {
           lexeme = "";
-          tokens.push({ type: token.BACKTICK });
+          tokens.push({ type: tokenType.BACKTICK });
           currentState = state.TEMPLATE_LITERAL;
         } else if (isWhitespace[c]) {
           lexeme = c;
           currentState = state.WHITESPACE;
         } else if (c === "}" && text[i] === "}") {
-          tokens.push({ type: token.DOUBLE_RIGHT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_RIGHT_BRACE });
           // If we see a "}}" without a matching "{{", the lexer doesn't
           // fuss about it; the parser will.
           currentState = templateContextStack.pop() ?? initialState;
@@ -148,7 +148,9 @@ export function lex(text, initialState = state.EXPRESSION) {
         if (isWhitespace[c] || characterToToken[c] || c === EOF) {
           // Reached end of reference.
           if (lexeme.length > 0) {
-            const type = isNumber(lexeme) ? token.NUMBER : token.REFERENCE;
+            const type = isNumber(lexeme)
+              ? tokenType.NUMBER
+              : tokenType.REFERENCE;
             tokens.push({
               type,
               lexeme,
@@ -166,7 +168,7 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.SINGLE_QUOTE_STRING:
         if (c === "'") {
           tokens.push({
-            type: token.STRING,
+            type: tokenType.STRING,
             lexeme,
           });
           lexeme = "";
@@ -181,7 +183,7 @@ export function lex(text, initialState = state.EXPRESSION) {
         if (c === EOF) {
           if (lexeme.length > 0) {
             tokens.push({
-              type: token.STRING,
+              type: tokenType.STRING,
               lexeme,
             });
             lexeme = "";
@@ -189,12 +191,12 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else if (c === "{" && text[i] === "{") {
           if (lexeme.length > 0) {
             tokens.push({
-              type: token.STRING,
+              type: tokenType.STRING,
               lexeme,
             });
             lexeme = "";
           }
-          tokens.push({ type: token.DOUBLE_LEFT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
@@ -207,22 +209,22 @@ export function lex(text, initialState = state.EXPRESSION) {
         if (c === "`") {
           if (lexeme.length > 0) {
             tokens.push({
-              type: token.STRING,
+              type: tokenType.STRING,
               lexeme,
             });
             lexeme = null;
           }
-          tokens.push({ type: token.BACKTICK });
+          tokens.push({ type: tokenType.BACKTICK });
           currentState = state.EXPRESSION;
         } else if (c === "{" && text[i] === "{") {
           if (lexeme.length > 0) {
             tokens.push({
-              type: token.STRING,
+              type: tokenType.STRING,
               lexeme,
             });
             lexeme = "";
           }
-          tokens.push({ type: token.DOUBLE_LEFT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
@@ -239,7 +241,7 @@ export function lex(text, initialState = state.EXPRESSION) {
           // Reached end of whitespace.
           if (lexeme.includes("\n")) {
             tokens.push({
-              type: token.SEPARATOR,
+              type: tokenType.SEPARATOR,
             });
           }
           lexeme = null;

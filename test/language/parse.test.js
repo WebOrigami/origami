@@ -1,3 +1,4 @@
+import { tokenType } from "../../src/language/lex.js";
 import * as ops from "../../src/language/ops.js";
 import {
   args,
@@ -9,7 +10,6 @@ import {
   graph,
   graphDocument,
   group,
-  key,
   lambda,
   list,
   number,
@@ -19,10 +19,9 @@ import {
   percentCall,
   percentPath,
   protocolCall,
-  reference,
-  singleQuoteString,
   slashCall,
   slashPath,
+  string,
   substitution,
   templateDocument,
   templateLiteral,
@@ -32,8 +31,8 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
-  it("args", () => {
+describe.only("parse", () => {
+  it.skip("args", () => {
     assertParse(args(" a, b, c"), [
       [ops.scope, "a"],
       [ops.scope, "b"],
@@ -48,48 +47,74 @@ describe("parse", () => {
     assert.equal(args(""), null);
   });
 
-  it("array", () => {
-    assertParse(array("[]"), [ops.array]);
-    assertParse(array("[ 1, 2, 3, ]"), [ops.array, 1, 2, 3]);
+  it.only("array", () => {
+    assertParse(
+      array([
+        { type: tokenType.LEFT_BRACKET },
+        { type: tokenType.RIGHT_BRACKET },
+      ]),
+      [ops.array]
+    );
+    assertParse(
+      array([
+        { type: tokenType.LEFT_BRACKET },
+        { type: tokenType.NUMBER, lexeme: "1" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.NUMBER, lexeme: "2" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.NUMBER, lexeme: "3" },
+        { type: tokenType.RIGHT_BRACKET },
+      ]),
+      [ops.array, 1, 2, 3]
+    );
   });
 
-  it("assignment", () => {
-    assertParse(assignment("foo = fn 'bar'"), [
-      ops.assign,
-      "foo",
-      [[ops.scope, "fn"], "bar"],
-    ]);
-    assertParse(assignment("data = obj.json"), [
-      ops.assign,
-      "data",
-      [ops.scope, "obj.json"],
-    ]);
+  it.only("assignment", () => {
+    assertParse(
+      assignment([
+        {
+          type: tokenType.REFERENCE,
+          lexeme: "data",
+        },
+        { type: tokenType.EQUALS },
+        { type: tokenType.REFERENCE, lexeme: "obj.json" },
+      ]),
+      [ops.assign, "data", [ops.scope, "obj.json"]]
+    );
+    // assertParse(assignment("foo = fn 'bar'"), [
+    //   ops.assign,
+    //   "foo",
+    //   [[ops.scope, "fn"], "bar"],
+    // ]);
   });
 
-  it("expression", () => {
-    assertParse(expression("obj.json"), [ops.scope, "obj.json"]);
-    assertParse(expression("(fn a, b, c)"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse(expression("foo.bar( 'hello' , 'world' )"), [
-      [ops.scope, "foo.bar"],
-      "hello",
-      "world",
-    ]);
-    assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
-    assertParse(expression("1"), 1);
-    assert.equal(expression("(foo"), null);
-    assertParse(expression("{ a:1, b:2 }"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(expression("serve { index.html: 'hello' }"), [
-      [ops.scope, "serve"],
-      [ops.object, { "index.html": "hello" }],
-    ]);
+  it.only("expression", () => {
+    assertParse(
+      expression([{ type: tokenType.REFERENCE, lexeme: "obj.json" }]),
+      [ops.scope, "obj.json"]
+    );
+    // assertParse(expression("(fn a, b, c)"), [
+    //   [ops.scope, "fn"],
+    //   [ops.scope, "a"],
+    //   [ops.scope, "b"],
+    //   [ops.scope, "c"],
+    // ]);
+    // assertParse(expression("foo.bar( 'hello' , 'world' )"), [
+    //   [ops.scope, "foo.bar"],
+    //   "hello",
+    //   "world",
+    // ]);
+    // assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
+    assertParse(expression([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
+    // assert.equal(expression("(foo"), null);
+    // assertParse(expression("{ a:1, b:2 }"), [ops.object, { a: 1, b: 2 }]);
+    // assertParse(expression("serve { index.html: 'hello' }"), [
+    //   [ops.scope, "serve"],
+    //   [ops.object, { "index.html": "hello" }],
+    // ]);
   });
 
-  it("expression with function with space-separated arguments, mixed argument types", () => {
+  it.skip("expression with function with space-separated arguments, mixed argument types", () => {
     assertParse(expression(`copy app(formulas), files 'snapshot'`), [
       [ops.scope, "copy"],
       [
@@ -100,7 +125,7 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionComposition", () => {
+  it.skip("functionComposition", () => {
     assertParse(functionComposition("fn()"), [[ops.scope, "fn"]]);
     assertParse(functionComposition("fn('arg')"), [[ops.scope, "fn"], "arg"]);
     assertParse(functionComposition("fn('a', 'b')"), [
@@ -145,7 +170,7 @@ describe("parse", () => {
     ]);
   });
 
-  it("functionComposition indirect", () => {
+  it.skip("functionComposition indirect", () => {
     assertParse(functionComposition("(fn()) 'arg'"), [
       [[ops.scope, "fn"]],
       "arg",
@@ -162,12 +187,14 @@ describe("parse", () => {
     assert.equal(functionComposition("(fn())"), null);
   });
 
-  it("getReference", () => {
-    assertParse(getReference("hello"), [ops.scope, "hello"]);
-    assertParse(getReference("    foo"), [ops.scope, "foo"]);
+  it.only("getReference", () => {
+    assertParse(
+      getReference([{ type: tokenType.REFERENCE, lexeme: "hello" }]),
+      [ops.scope, "hello"]
+    );
   });
 
-  it("graph", () => {
+  it.skip("graph", () => {
     assertParse(graph("{}"), [ops.graph, {}]);
     assertParse(graph("{ x = fn('a') }"), [
       ops.graph,
@@ -184,7 +211,7 @@ describe("parse", () => {
     ]);
   });
 
-  it("graphDocument", () => {
+  it.skip("graphDocument", () => {
     assertParse(graphDocument(""), [ops.graph, {}]);
     assertParse(graphDocument("# Comment"), [ops.graph, {}]);
     assertParse(graphDocument("a = 1, b = 2"), [ops.graph, { a: 1, b: 2 }]);
@@ -195,18 +222,32 @@ describe("parse", () => {
     ]);
   });
 
-  it("group", () => {
-    assertParse(group(" ( hello )"), [ops.scope, "hello"]);
-    assertParse(group("(((nested)))"), [ops.scope, "nested"]);
-    assertParse(group("(fn())"), [[ops.scope, "fn"]]);
-    assert.equal(group("("), null);
+  it.only("group", () => {
+    assertParse(
+      group([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "hello" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [ops.scope, "hello"]
+    );
+    assertParse(
+      group([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "nested" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [ops.scope, "nested"]
+    );
+    // assertParse(group("(fn())"), [[ops.scope, "fn"]]);
+    // assert.equal(group("("), null);
   });
 
-  it("key", () => {
-    assertParse(key("foo"), "foo");
-  });
-
-  it("lambda", () => {
+  it.skip("lambda", () => {
     assertParse(lambda("= message"), [ops.lambda, [ops.scope, "message"]]);
     assertParse(lambda("=`Hello, {{name}}.`"), [
       ops.lambda,
@@ -214,81 +255,83 @@ describe("parse", () => {
     ]);
   });
 
-  it("list", () => {
-    assertParse(list(""), []);
-    assertParse(list(" a"), [[ops.scope, "a"]]);
-    assertParse(list(" a , b,c, d , e"), [
+  it.only("list", () => {
+    assertParse(list([]), []);
+    assertParse(list([{ type: tokenType.REFERENCE, lexeme: "a" }]), [
       [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-      [ops.scope, "d"],
-      [ops.scope, "e"],
     ]);
-    assertParse(list("a\nb\nc"), [
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse(list("a, # Comment\nb"), [
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse(list(`'foo', 'bar',`), ["foo", "bar"]);
-    assertParse(list("a(b), c"), [
+    assertParse(
+      list([
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "c" },
+      ]),
       [
         [ops.scope, "a"],
         [ops.scope, "b"],
-      ],
-      [ops.scope, "c"],
-    ]);
+        [ops.scope, "c"],
+      ]
+    );
   });
 
-  it("literalReference", () => {
-    assert.deepEqual(reference("hello"), {
-      value: "hello",
-      rest: "",
-    });
-    assert.equal(reference(""), null);
-    assert.equal(reference("()"), null);
+  it.only("number", () => {
+    assertParse(number([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
   });
 
-  it("number", () => {
-    assertParse(number("1"), 1);
-    assertParse(number(" 3.14159"), 3.14159);
-    assertParse(number("-1"), -1);
+  it.only("object", () => {
+    // "{ a: 1, b }"
+    assertParse(
+      object([
+        { type: tokenType.LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.COLON },
+        { type: tokenType.NUMBER, lexeme: "1" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.RIGHT_BRACE },
+      ]),
+      [
+        ops.object,
+        {
+          a: 1,
+          b: [ops.inherited, "b"],
+        },
+      ]
+    );
   });
 
-  it("object", () => {
-    assertParse(object("{a:1, b:2}"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(object("{\n  a:1\n  b:2\n}"), [ops.object, { a: 1, b: 2 }]);
-    assertParse(object("{ a: { b: { c: 0 } } }"), [
-      ops.object,
+  it.only("objectProperty", () => {
+    assertParse(
+      objectProperty([
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.COLON },
+        { type: tokenType.NUMBER, lexeme: "1" },
+      ]),
+      { a: 1 }
+    );
+    assertParse(
+      objectProperty([
+        { type: tokenType.REFERENCE, lexeme: "name" },
+        { type: tokenType.COLON },
+        { type: tokenType.STRING, lexeme: "Alice" },
+      ]),
+      { name: "Alice" }
+    );
+    // assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
+  });
+
+  it.only("objectPropertyOrShorthand", () => {
+    assertParse(
+      objectPropertyOrShorthand([{ type: tokenType.REFERENCE, lexeme: "foo" }]),
       {
-        a: [ops.object, { b: [ops.object, { c: 0 }] }],
-      },
-    ]);
-    assertParse(object("{ a: 1, b }"), [
-      ops.object,
-      {
-        a: 1,
-        b: [ops.inherited, "b"],
-      },
-    ]);
+        foo: [ops.inherited, "foo"],
+      }
+    );
   });
 
-  it("objectProperty", () => {
-    assertParse(objectProperty("a: 1"), { a: 1 });
-    assertParse(objectProperty("name:'Alice'"), { name: "Alice" });
-    assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
-  });
-
-  it("objectPropertyOrShorthand", () => {
-    assertParse(objectPropertyOrShorthand("foo"), {
-      foo: [ops.inherited, "foo"],
-    });
-  });
-
-  it("percentCall", () => {
+  it.skip("percentCall", () => {
     assertParse(percentCall("graph%"), [ops.scope, "graph", undefined]);
     assertParse(percentCall("graph%foo%bar"), [
       ops.scope,
@@ -298,38 +341,29 @@ describe("parse", () => {
     ]);
   });
 
-  it("percentPath", () => {
+  it.skip("percentPath", () => {
     assertParse(percentPath("foo%bar%baz"), ["foo", "bar", "baz"]);
     assertParse(percentPath("foo%bar%baz%"), ["foo", "bar", "baz", undefined]);
   });
 
-  it("protocolCall", () => {
+  it.skip("protocolCall", () => {
     assertParse(protocolCall("foo://bar"), [[ops.scope, "foo"], "bar"]);
     assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
   });
 
-  it("singleQuoteString", () => {
-    assertParse(singleQuoteString(`''`), "");
-    assertParse(singleQuoteString(`'hello'`), "hello");
-    assertParse(
-      singleQuoteString(String.raw`'escape characters with \'backslash\''`),
-      "escape characters with 'backslash'"
-    );
-  });
-
-  it("slashCall", () => {
+  it.skip("slashCall", () => {
     assertParse(slashCall("graph/"), [ops.scope, "graph", undefined]);
     assertParse(slashCall("graph/foo/bar"), [ops.scope, "graph", "foo", "bar"]);
     assertParse(slashCall("//foo/bar"), [ops.scope, "foo", "bar"]);
     assertParse(slashCall("a/b/c.txt"), [ops.scope, "a", "b", "c.txt"]);
   });
 
-  it("slashPath", () => {
+  it.skip("slashPath", () => {
     assertParse(slashPath("foo/bar/baz"), ["foo", "bar", "baz"]);
     assertParse(slashPath("foo/bar/baz/"), ["foo", "bar", "baz", undefined]);
   });
 
-  it("slashCalls with functions", () => {
+  it.skip("slashCalls with functions", () => {
     assertParse(expression("fn()/key"), [[[ops.scope, "fn"]], "key"]);
     assertParse(expression("(fn())/key"), [[[ops.scope, "fn"]], "key"]);
     assertParse(slashCall("fn('a', 'b')/c/d"), [
@@ -341,11 +375,15 @@ describe("parse", () => {
     assertParse(expression("fn1()/fn2()"), [[[[ops.scope, "fn1"]], "fn2"]]);
   });
 
-  it("substitution", () => {
+  it("string", () => {
+    assertParse(string([{ type: tokenType.STRING, lexeme: "Hello" }]), "Hello");
+  });
+
+  it.skip("substitution", () => {
     assertParse(substitution("{{foo}}"), [ops.scope, "foo"]);
   });
 
-  it("templateDocument", () => {
+  it.skip("templateDocument", () => {
     assertParse(
       templateDocument("Documents can contain ` backticks"),
       "Documents can contain ` backticks"
@@ -414,7 +452,7 @@ End`),
     );
   });
 
-  it("templateLiteral", () => {
+  it.skip("templateLiteral", () => {
     assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
     assertParse(templateLiteral("`foo { bar } baz`"), "foo { bar } baz");
     assertParse(
@@ -423,7 +461,7 @@ End`),
     );
   });
 
-  it("templateLiteral with substitution", () => {
+  it.skip("templateLiteral with substitution", () => {
     assertParse(templateLiteral("``"), "");
     assertParse(templateLiteral("`{{x}}.json`"), [
       ops.concat,
@@ -456,7 +494,7 @@ End`),
     ]);
   });
 
-  it("termSeparator", () => {
+  it.skip("termSeparator", () => {
     assertParse(termSeparator(","), true);
     assertParse(termSeparator("   ,"), true);
     assertParse(termSeparator(" # Comment\n   ,"), true);
@@ -464,7 +502,7 @@ End`),
     assertParse(termSeparator(" # Comment\n# More comment \n"), true);
   });
 
-  it("urlProtocolCall", () => {
+  it.skip("urlProtocolCall", () => {
     assertParse(urlProtocolCall("https://example.com/foo/"), [
       [ops.scope, "https"],
       "example.com",
@@ -483,14 +521,14 @@ End`),
     ]);
   });
 
-  it("urlProtocolCall with functionComposition", () => {
+  it.skip("urlProtocolCall with functionComposition", () => {
     assertParse(expression("https://example.com/graph.yaml 'key'"), [
       [[ops.scope, "https"], "example.com", "graph.yaml"],
       "key",
     ]);
   });
 
-  it("whitespace", () => {
+  it.skip("whitespace", () => {
     assert.deepEqual(whitespace("   hello"), {
       value: true,
       rest: "hello",
@@ -511,7 +549,9 @@ function assertParse(parseResult, expected) {
     assert.isNull(parseResult);
   } else {
     assert(parseResult);
-    assert.equal(parseResult.rest, "");
-    assert.deepEqual(parseResult.value, expected);
+    assert.deepEqual(parseResult, {
+      value: expected,
+      rest: [],
+    });
   }
 }

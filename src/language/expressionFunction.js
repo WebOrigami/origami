@@ -4,7 +4,7 @@ import format from "./format.js";
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
- * @param {Array} code - parsed Origami code
+ * @param {string|number|Array} code - parsed Origami code
  * @param {string} [name] - optional name of the function
  */
 export function createExpressionFunction(code, name) {

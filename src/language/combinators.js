@@ -1,8 +1,8 @@
 // Any combinator: return result of whichever parser matches first.
 export function any(...parsers) {
-  return function parseAny(text) {
+  return function parseAny(tokens) {
     for (const parser of parsers) {
-      const parsed = parser(text);
+      const parsed = parser(tokens);
       if (parsed) {
         return parsed;
       }
@@ -51,8 +51,8 @@ export function regex(regex) {
 // Sequence combinator: succeeds if all the parsers succeed in turn.
 // Returns an array with the results of the individual parsers.
 export function sequence(...parsers) {
-  return function parseSequence(text) {
-    let rest = text;
+  return function parseSequence(tokens) {
+    let rest = tokens;
     const value = [];
     for (const parser of parsers) {
       const parsed = parser(rest);
@@ -69,10 +69,10 @@ export function sequence(...parsers) {
 // Parse a list of terms separated by a separator. This parser always succeeds
 // -- if there are no terms, it returns an empty array as the value.
 export function separatedList(termParser, separatorParser) {
-  return function parseSeparatedList(text) {
+  return function parseSeparatedList(tokens) {
     const value = [];
-    let parsedTerm = termParser(text);
-    let rest = parsedTerm?.rest ?? text;
+    let parsedTerm = termParser(tokens);
+    let rest = parsedTerm?.rest ?? tokens;
     while (parsedTerm) {
       value.push(parsedTerm.value);
       rest = parsedTerm.rest;
