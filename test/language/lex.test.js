@@ -8,7 +8,7 @@ describe.only("lex", () => {
     assert.deepEqual(tokens, [
       { type: token.LEFT_BRACKET },
       { type: token.REFERENCE, lexeme: "foo" },
-      { type: token.COMMA },
+      { type: token.SEPARATOR },
       { type: token.REFERENCE, lexeme: "bar" },
       { type: token.RIGHT_BRACKET },
     ]);
@@ -48,9 +48,35 @@ describe.only("lex", () => {
       { type: token.REFERENCE, lexeme: "foo" },
       { type: token.LEFT_PAREN },
       { type: token.REFERENCE, lexeme: "bar" },
-      { type: token.COMMA },
+      { type: token.SEPARATOR },
       { type: token.REFERENCE, lexeme: "baz" },
       { type: token.RIGHT_PAREN },
+    ]);
+  });
+
+  it("list with commas", () => {
+    const text = "foo,bar,baz";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: token.REFERENCE, lexeme: "foo" },
+      { type: token.SEPARATOR },
+      { type: token.REFERENCE, lexeme: "bar" },
+      { type: token.SEPARATOR },
+      { type: token.REFERENCE, lexeme: "baz" },
+    ]);
+  });
+
+  it("list with line breaks", () => {
+    const text = `foo
+bar
+baz`;
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: token.REFERENCE, lexeme: "foo" },
+      { type: token.SEPARATOR },
+      { type: token.REFERENCE, lexeme: "bar" },
+      { type: token.SEPARATOR },
+      { type: token.REFERENCE, lexeme: "baz" },
     ]);
   });
 
@@ -62,7 +88,7 @@ describe.only("lex", () => {
       { type: token.REFERENCE, lexeme: "foo" },
       { type: token.COLON },
       { type: token.REFERENCE, lexeme: "bar" },
-      { type: token.COMMA },
+      { type: token.SEPARATOR },
       { type: token.REFERENCE, lexeme: "baz" },
       { type: token.COLON },
       { type: token.REFERENCE, lexeme: "qux" },
@@ -111,7 +137,7 @@ describe.only("lex", () => {
     assert.deepEqual(tokens, [
       { type: token.LEFT_PAREN },
       { type: token.RIGHT_PAREN },
-      { type: token.COMMA },
+      { type: token.SEPARATOR },
       { type: token.SLASH },
       { type: token.COLON },
       { type: token.EQUAL },
