@@ -1,5 +1,5 @@
+import ConstantGraph from "../common/ConstantGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -49,14 +49,36 @@ export default async function watch(variant, fn) {
 }
 
 async function evaluateGraph(scope, fn) {
-  const result = await fn.call(scope);
-  let graph = result ? ExplorableGraph.from(result) : undefined;
-  if (!graph) {
-    console.warn(`warning: watch expression did not return a graph`);
-    // Return an empty graph.
-    graph = new ObjectGraph({});
+  let graph;
+  let message;
+  try {
+    const result = await fn.call(scope);
+    graph = result ? ExplorableGraph.from(result) : undefined;
+    if (!graph) {
+      message = `warning: watch expression did not return a graph`;
+    }
+  } catch (error) {
+    message = messageForError(error);
+  }
+  if (message) {
+    console.warn(message);
+    graph = new ConstantGraph(message);
   }
   return graph;
+}
+
+function messageForError(error) {
+  let message = "";
+  // Work up to the root cause, displaying intermediate messages as we go up.
+  while (error.cause) {
+    message += error.message + `\n`;
+    error = error.cause;
+  }
+  if (error.name) {
+    message += `${error.name}: `;
+  }
+  message += error.message;
+  return message;
 }
 
 watch.usage = `watch <folder>, [expr]\tLet a folder graph respond to changes`;
