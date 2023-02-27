@@ -138,6 +138,7 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else if (characterToToken[c]) {
           tokens.push({ type: characterToToken[c] });
         } else {
+          // Anything else begins a reference.
           lexeme = c;
           currentState = state.REFERENCE;
         }
@@ -250,7 +251,13 @@ export function lex(text, initialState = state.EXPRESSION) {
   }
 
   if (currentState !== initialState) {
-    throw new SyntaxError("Unexpected end of input.");
+    const message =
+      {
+        [state.SINGLE_QUOTE_STRING]: "Missing closing single quote (')",
+        [state.DOUBLE_QUOTE_STRING]: 'Missing closing double quote (")',
+        [state.TEMPLATE_LITERAL]: "Missing closing backtick (`)",
+      }[currentState] || "Unexpected end of input.";
+    throw new SyntaxError(message);
   }
 
   return tokens;
