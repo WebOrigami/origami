@@ -194,14 +194,17 @@ baz`;
     const text = "{{ `foo {{bar}}` }}";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
     assert.deepEqual(tokens, [
+      { type: tokenType.STRING, lexeme: "" },
       { type: tokenType.DOUBLE_LEFT_BRACE },
       { type: tokenType.BACKTICK },
       { type: tokenType.STRING, lexeme: "foo " },
       { type: tokenType.DOUBLE_LEFT_BRACE },
       { type: tokenType.REFERENCE, lexeme: "bar" },
       { type: tokenType.DOUBLE_RIGHT_BRACE },
+      { type: tokenType.STRING, lexeme: "" },
       { type: tokenType.BACKTICK },
       { type: tokenType.DOUBLE_RIGHT_BRACE },
+      { type: tokenType.STRING, lexeme: "" },
     ]);
   });
 

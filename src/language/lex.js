@@ -181,21 +181,17 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.TEMPLATE_DOCUMENT:
         // Note: template documents don't treat backticks specially.
         if (c === EOF) {
-          if (lexeme.length > 0) {
-            tokens.push({
-              type: tokenType.STRING,
-              lexeme,
-            });
-            lexeme = "";
-          }
+          tokens.push({
+            type: tokenType.STRING,
+            lexeme,
+          });
+          lexeme = null;
         } else if (c === "{" && text[i] === "{") {
-          if (lexeme.length > 0) {
-            tokens.push({
-              type: tokenType.STRING,
-              lexeme,
-            });
-            lexeme = "";
-          }
+          tokens.push({
+            type: tokenType.STRING,
+            lexeme,
+          });
+          lexeme = null;
           tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
@@ -207,23 +203,19 @@ export function lex(text, initialState = state.EXPRESSION) {
 
       case state.TEMPLATE_LITERAL:
         if (c === "`") {
-          if (lexeme.length > 0) {
-            tokens.push({
-              type: tokenType.STRING,
-              lexeme,
-            });
-            lexeme = null;
-          }
+          tokens.push({
+            type: tokenType.STRING,
+            lexeme,
+          });
+          lexeme = null;
           tokens.push({ type: tokenType.BACKTICK });
           currentState = state.EXPRESSION;
         } else if (c === "{" && text[i] === "{") {
-          if (lexeme.length > 0) {
-            tokens.push({
-              type: tokenType.STRING,
-              lexeme,
-            });
-            lexeme = "";
-          }
+          tokens.push({
+            type: tokenType.STRING,
+            lexeme,
+          });
+          lexeme = null;
           tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;

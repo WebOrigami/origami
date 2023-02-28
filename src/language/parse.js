@@ -29,8 +29,8 @@ import { tokenType } from "./lex.js";
 import * as ops from "./ops.js";
 
 // Parse arguments to a function, with either explicit or implicit parentheses.
-export function args(text) {
-  return any(parensArgs, implicitParensArgs)(text);
+export function args(tokens) {
+  return any(parensArgs, implicitParensArgs)(tokens);
 }
 
 // Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
@@ -79,16 +79,16 @@ export function expression(tokens) {
   // start, e.g., an opening quote, bracket, etc.
   return any(
     string,
-    // templateLiteral,
-    // graph,
+    templateLiteral,
+    graph,
     object,
     array,
-    // lambda,
+    lambda,
     number,
     // functionComposition,
     // urlProtocolCall,
     // protocolCall,
-    // slashCall,
+    slashCall,
     // percentCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
@@ -164,33 +164,16 @@ export function getReference(tokens) {
   };
 }
 
-export function graph(text) {
+export function graph(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    regex(/^{/),
-    graphFormulas,
-    optionalWhitespace,
-    regex(/^}/)
-  )(text);
+    matchTokenType(tokenType.LEFT_BRACE),
+    graphDocument,
+    matchTokenType(tokenType.RIGHT_BRACE)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[2];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a graph document.
-// This allows for the possibility that there may be whitespace (including
-// comments) after a (possibly empty) set of graph formulas.
-export function graphDocument(text) {
-  const parsed = sequence(graphFormulas, optionalWhitespace)(text);
-  if (!parsed) {
-    return null;
-  }
-  const value = parsed.value[0];
+  const value = parsed.value[1];
   return {
     value,
     rest: parsed.rest,
@@ -198,8 +181,11 @@ export function graphDocument(text) {
 }
 
 // Parse a set of graph formulas.
-export function graphFormulas(text) {
-  const parsed = separatedList(formulaOrShorthand, termSeparator)(text);
+export function graphDocument(tokens) {
+  const parsed = separatedList(
+    formulaOrShorthand,
+    matchTokenType(tokenType.SEPARATOR)
+  )(tokens);
   // Collect formulas, skip separators
   const formulas = {};
   while (parsed.value.length > 0) {
@@ -239,36 +225,22 @@ export function group(tokens) {
 }
 
 // Parse the arguments to a function where the parentheses have been omitted.
-export function implicitParensArgs(text) {
-  // Whitespace here can only be spaces or tabs -- not newlines.
-  const parsed = sequence(terminal(/^[ \t]+/), list)(text);
-  if (!parsed) {
+export function implicitParensArgs(tokens) {
+  const parsed = list(tokens);
+  if (!parsed || parsed?.value.length === 0) {
     // No arguments
     return null;
   }
-  const value = parsed.value[1];
-  if (value.length === 0) {
-    // No arguments
-    return null;
-  }
-  return {
-    value,
-    rest: parsed.rest,
-  };
+  return parsed;
 }
 
 // A lambda expression
-export function lambda(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^=/),
-    optionalWhitespace,
-    expression
-  )(text);
+export function lambda(tokens) {
+  const parsed = sequence(matchTokenType(tokenType.EQUALS), expression)(tokens);
   if (!parsed) {
     return null;
   }
-  const value = [ops.lambda, parsed.value[3]];
+  const value = [ops.lambda, parsed.value[1]];
   return {
     value,
     rest: parsed.rest,
@@ -413,20 +385,19 @@ export function optionalWhitespace(text) {
 }
 
 // Parse function arguments enclosed in parentheses.
-function parensArgs(text) {
+function parensArgs(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    lparen,
-    optional(list),
-    optionalWhitespace,
-    rparen
-  )(text);
+    matchTokenType(tokenType.LEFT_PAREN),
+    list,
+    matchTokenType(tokenType.RIGHT_PAREN)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const listValue = parsed.value[2];
-  const value =
-    listValue === undefined ? undefined : listValue === null ? [] : listValue;
+  // const listValue = parsed.value[1];
+  // const value =
+  //   listValue === undefined ? undefined : listValue === null ? [] : listValue;
+  const value = parsed.value[1];
   return {
     value,
     rest: parsed.rest,
@@ -580,14 +551,14 @@ export function simpleFunctionCall(text) {
 }
 
 // Parse a function call with slash syntax.
-export function slashCall(text) {
+export function slashCall(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    optional(terminal(/^\/\//)),
+    optional(matchTokenType(tokenType.SLASH)),
+    optional(matchTokenType(tokenType.SLASH)),
     pathHead,
-    terminal(/^\//),
+    matchTokenType(tokenType.SLASH),
     optional(slashPath)
-  )(text);
+  )(tokens);
   if (!parsed) {
     return null;
   }
@@ -605,13 +576,22 @@ export function slashCall(text) {
 }
 
 // Parse a slash-delimeted path
-export function slashPath(text) {
-  const parsed = separatedList(pathKey, terminal(/^\//))(text);
+export function slashPath(tokens) {
+  const parsed = separatedList(
+    pathKey,
+    matchTokenType(tokenType.SLASH)
+  )(tokens);
   if (parsed.value.length === 0) {
     // No path keys
     return null;
   }
+
   // Remove the separators from the result.
+
+  //
+  // TODO: separatedList removes separators
+  //
+
   const values = [];
   while (parsed.value.length > 0) {
     values.push(parsed.value.shift()); // Keep value
@@ -629,44 +609,16 @@ export function string(tokens) {
 }
 
 // Parse a substitution like {{foo}} in a template.
-export function substitution(text) {
+export function substitution(tokens) {
   const parsed = sequence(
-    terminal(/^\{\{/),
-    optionalWhitespace,
+    matchTokenType(tokenType.DOUBLE_LEFT_BRACE),
     expression,
-    optionalWhitespace,
-    terminal(/^\}\}/)
-  )(text);
+    matchTokenType(tokenType.DOUBLE_RIGHT_BRACE)
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const { 2: value } = parsed.value;
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a template document.
-export function templateDocument(text) {
-  const allowBackticks = true;
-  const trimmed = trimTemplateWhitespace(text);
-  return templateParser(allowBackticks)(trimmed);
-}
-
-// Parse a backtick-quoted template literal.
-export function templateLiteral(text) {
-  const allowBackticks = false;
-  const parsed = sequence(
-    optionalWhitespace,
-    terminal(/^`/),
-    templateParser(allowBackticks),
-    terminal(/^`/)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 2: value } = parsed.value;
+  const value = parsed.value[1];
   return {
     value,
     rest: parsed.rest,
@@ -674,69 +626,44 @@ export function templateLiteral(text) {
 }
 
 // Parse the text and substitutions in a template.
-function templateParser(allowBackticks) {
-  const textParser = templateTextParser(allowBackticks);
-  return function template(text) {
-    // We use the separated list parser to parse the text and substitutions: the
-    // plain text are the list items, and the substitutions are the separators.
-    const parsed = separatedList(optional(textParser), substitution)(text);
+export function templateDocument(tokens) {
+  // We use the separated list parser: the plain text strings are the list
+  // items, and the substitutions are the separators.
+  const parsed = separatedList(string, substitution)(tokens);
 
-    // Drop empty/null strings.
-    const filtered = parsed.value.filter((item) => item);
+  // Drop empty/null strings.
+  const filtered = parsed.value.filter((item) => item);
 
-    // Return a concatenation of the values. If there are no values, return the
-    // empty string. If there's just one string, return that directly.
-    const value =
-      filtered.length === 0
-        ? ""
-        : filtered.length === 1 && typeof filtered[0] === "string"
-        ? filtered[0]
-        : [ops.concat, ...filtered];
+  // Return a concatenation of the values. If there are no values, return the
+  // empty string. If there's just one string, return that directly.
+  const value =
+    filtered.length === 0
+      ? ""
+      : filtered.length === 1 && typeof filtered[0] === "string"
+      ? filtered[0]
+      : [ops.concat, ...filtered];
 
-    return {
-      value,
-      rest: parsed.rest,
-    };
+  return {
+    value,
+    rest: parsed.rest,
   };
 }
 
-// Return a parser for the text of a template.
-function templateTextParser(allowBackticks) {
-  return function templateText(text) {
-    // Match up to the first backtick (if backticks aren't allowed) or double
-    // left curly bracket. This seems challenging/impossible in JavaScript
-    // regular expressions, especially without support for lookbehind
-    // assertions, so we match this by hand.
-    let i;
-    let value = "";
-    for (i = 0; i < text.length; i++) {
-      const char = text[i];
-      if (
-        (char === "`" && !allowBackticks) ||
-        (char === "{" && text[i + 1] === "{")
-      ) {
-        break;
-      } else if (char === "\\") {
-        i++;
-        if (i < text.length) {
-          value += text[i];
-        }
-      } else {
-        value += char;
-      }
-    }
-
-    const rest = text.slice(i);
-    return i > 0 ? { value, rest } : null;
+// Parse a backtick-quoted template literal.
+export function templateLiteral(tokens) {
+  const parsed = sequence(
+    matchTokenType(tokenType.BACKTICK),
+    templateDocument,
+    matchTokenType(tokenType.BACKTICK)
+  )(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const { 1: value } = parsed.value;
+  return {
+    value,
+    rest: parsed.rest,
   };
-}
-
-// Parse a term (list) separator, which is either:
-// * optional whitespace followed by a comma
-// * optional whitespace followed by a newline
-// The whitespace can include comments, which are ignored.
-export function termSeparator(text) {
-  return terminal(/^(((\s|(#.*(\n)))*,)|(\s*((#.*)?\n))+)/)(text);
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's

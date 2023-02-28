@@ -25,29 +25,50 @@ import {
   substitution,
   templateDocument,
   templateLiteral,
-  termSeparator,
   urlProtocolCall,
-  whitespace,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
 describe.only("parse", () => {
-  it.skip("args", () => {
-    assertParse(args(" a, b, c"), [
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse(args("(a, b, c)"), [
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse(args("()"), []);
-    assert.equal(args(""), null);
+  it("args", () => {
+    assert.equal(args([]), null);
+    assertParse(
+      args([
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "c" },
+      ]),
+      [
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+        [ops.scope, "c"],
+      ]
+    );
+    assertParse(
+      args([{ type: tokenType.LEFT_PAREN }, { type: tokenType.RIGHT_PAREN }]),
+      []
+    );
+    assertParse(
+      args([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "c" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+        [ops.scope, "c"],
+      ]
+    );
   });
 
-  it.only("array", () => {
+  it("array", () => {
     assertParse(
       array([
         { type: tokenType.LEFT_BRACKET },
@@ -69,7 +90,7 @@ describe.only("parse", () => {
     );
   });
 
-  it.only("assignment", () => {
+  it("assignment", () => {
     assertParse(
       assignment([
         {
@@ -88,7 +109,7 @@ describe.only("parse", () => {
     // ]);
   });
 
-  it.only("expression", () => {
+  it("expression", () => {
     assertParse(
       expression([{ type: tokenType.REFERENCE, lexeme: "obj.json" }]),
       [ops.scope, "obj.json"]
@@ -187,42 +208,41 @@ describe.only("parse", () => {
     assert.equal(functionComposition("(fn())"), null);
   });
 
-  it.only("getReference", () => {
+  it("getReference", () => {
     assertParse(
       getReference([{ type: tokenType.REFERENCE, lexeme: "hello" }]),
       [ops.scope, "hello"]
     );
   });
 
-  it.skip("graph", () => {
-    assertParse(graph("{}"), [ops.graph, {}]);
-    assertParse(graph("{ x = fn('a') }"), [
-      ops.graph,
-      {
-        x: [[ops.scope, "fn"], "a"],
-      },
-    ]);
-    assertParse(graph("{ a=1 \n x=fn('a') }"), [
-      ops.graph,
-      {
-        a: 1,
-        x: [[ops.scope, "fn"], "a"],
-      },
-    ]);
+  it("graph", () => {
+    assertParse(
+      graph([{ type: tokenType.LEFT_BRACE }, { type: tokenType.RIGHT_BRACE }]),
+      [ops.graph, {}]
+    );
+    // assertParse(graph("{ x = fn('a') }"), [
+    //   ops.graph,
+    //   {
+    //     x: [[ops.scope, "fn"], "a"],
+    //   },
+    // ]);
   });
 
-  it.skip("graphDocument", () => {
-    assertParse(graphDocument(""), [ops.graph, {}]);
-    assertParse(graphDocument("# Comment"), [ops.graph, {}]);
-    assertParse(graphDocument("a = 1, b = 2"), [ops.graph, { a: 1, b: 2 }]);
-    assertParse(graphDocument("a = 1\nb = 2"), [ops.graph, { a: 1, b: 2 }]);
-    assertParse(graphDocument("a = 1\nb"), [
-      ops.graph,
-      { a: 1, b: [ops.inherited, "b"] },
-    ]);
+  it("graphDocument", () => {
+    assertParse(graphDocument([]), [ops.graph, {}]);
+    assertParse(
+      graphDocument([
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.EQUALS },
+        { type: tokenType.NUMBER, lexeme: "1" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+      ]),
+      [ops.graph, { a: 1, b: [ops.inherited, "b"] }]
+    );
   });
 
-  it.only("group", () => {
+  it("group", () => {
     assertParse(
       group([
         { type: tokenType.LEFT_PAREN },
@@ -247,15 +267,21 @@ describe.only("parse", () => {
     // assert.equal(group("("), null);
   });
 
-  it.skip("lambda", () => {
-    assertParse(lambda("= message"), [ops.lambda, [ops.scope, "message"]]);
-    assertParse(lambda("=`Hello, {{name}}.`"), [
-      ops.lambda,
-      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
-    ]);
+  it("lambda", () => {
+    assertParse(
+      lambda([
+        { type: tokenType.EQUALS },
+        { type: tokenType.REFERENCE, lexeme: "message" },
+      ]),
+      [ops.lambda, [ops.scope, "message"]]
+    );
+    // assertParse(lambda("=`Hello, {{name}}.`"), [
+    //   ops.lambda,
+    //   [ops.concat, "Hello, ", [ops.scope, "name"], "."],
+    // ]);
   });
 
-  it.only("list", () => {
+  it("list", () => {
     assertParse(list([]), []);
     assertParse(list([{ type: tokenType.REFERENCE, lexeme: "a" }]), [
       [ops.scope, "a"],
@@ -276,11 +302,11 @@ describe.only("parse", () => {
     );
   });
 
-  it.only("number", () => {
+  it("number", () => {
     assertParse(number([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
   });
 
-  it.only("object", () => {
+  it("object", () => {
     // "{ a: 1, b }"
     assertParse(
       object([
@@ -302,7 +328,7 @@ describe.only("parse", () => {
     );
   });
 
-  it.only("objectProperty", () => {
+  it("objectProperty", () => {
     assertParse(
       objectProperty([
         { type: tokenType.REFERENCE, lexeme: "a" },
@@ -322,7 +348,7 @@ describe.only("parse", () => {
     // assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
   });
 
-  it.only("objectPropertyOrShorthand", () => {
+  it("objectPropertyOrShorthand", () => {
     assertParse(
       objectPropertyOrShorthand([{ type: tokenType.REFERENCE, lexeme: "foo" }]),
       {
@@ -351,16 +377,54 @@ describe.only("parse", () => {
     assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
   });
 
-  it.skip("slashCall", () => {
-    assertParse(slashCall("graph/"), [ops.scope, "graph", undefined]);
-    assertParse(slashCall("graph/foo/bar"), [ops.scope, "graph", "foo", "bar"]);
-    assertParse(slashCall("//foo/bar"), [ops.scope, "foo", "bar"]);
-    assertParse(slashCall("a/b/c.txt"), [ops.scope, "a", "b", "c.txt"]);
+  it("slashCall", () => {
+    assertParse(
+      slashCall([
+        { type: tokenType.REFERENCE, lexeme: "graph" },
+        { type: tokenType.SLASH },
+      ]),
+      [ops.scope, "graph", undefined]
+    );
+    assertParse(
+      slashCall([
+        { type: tokenType.REFERENCE, lexeme: "graph" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "bar" },
+      ]),
+      [ops.scope, "graph", "foo", "bar"]
+    );
+    assertParse(
+      slashCall([
+        { type: tokenType.SLASH },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "bar" },
+      ]),
+      [ops.scope, "foo", "bar"]
+    );
   });
 
-  it.skip("slashPath", () => {
-    assertParse(slashPath("foo/bar/baz"), ["foo", "bar", "baz"]);
-    assertParse(slashPath("foo/bar/baz/"), ["foo", "bar", "baz", undefined]);
+  it("slashPath", () => {
+    assertParse(
+      slashPath([
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "bar" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "baz" },
+      ]),
+      ["foo", "bar", "baz"]
+    );
+    assertParse(
+      slashPath([
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH },
+      ]),
+      ["foo", undefined]
+    );
   });
 
   it.skip("slashCalls with functions", () => {
@@ -379,127 +443,76 @@ describe.only("parse", () => {
     assertParse(string([{ type: tokenType.STRING, lexeme: "Hello" }]), "Hello");
   });
 
-  it.skip("substitution", () => {
-    assertParse(substitution("{{foo}}"), [ops.scope, "foo"]);
-  });
-
-  it.skip("templateDocument", () => {
+  it("substitution", () => {
     assertParse(
-      templateDocument("Documents can contain ` backticks"),
-      "Documents can contain ` backticks"
-    );
-
-    assertParse(
-      templateDocument(`{{fn =\`
-        Hello
-      \` }}`),
-      [
-        ops.concat,
-        [
-          [ops.scope, "fn"],
-          [ops.lambda, "        Hello\n"],
-        ],
-      ]
-    );
-
-    assertParse(
-      templateDocument(`Start
-  {{fn =\`
-    Block contents
-  \`}}
-End`),
-      [
-        ops.concat,
-        "Start\n",
-        [
-          [ops.scope, "fn"],
-          [ops.lambda, "    Block contents\n"],
-        ],
-        "End",
-      ]
-    );
-
-    assertParse(
-      templateDocument(`
-\`\`\`md
-{{ sample.md }}
-\`\`\`
-`),
-      [ops.concat, "\n```md\n", [ops.scope, "sample.md"], "\n```\n"]
-    );
-
-    assertParse(
-      templateDocument(`
-  <ul>
-  {{ map names, =\`
-    <li>{{ @value }}</li>
-  \`}}
-  </ul>
-`),
-      [
-        ops.concat,
-        "\n  <ul>\n",
-        [
-          [ops.scope, "map"],
-          [ops.scope, "names"],
-          [
-            ops.lambda,
-            [ops.concat, "    <li>", [ops.scope, "@value"], "</li>\n"],
-          ],
-        ],
-        "  </ul>\n",
-      ]
+      substitution([
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+      ]),
+      [ops.scope, "foo"]
     );
   });
 
-  it.skip("templateLiteral", () => {
-    assertParse(templateLiteral("`Hello, world.`"), "Hello, world.");
-    assertParse(templateLiteral("`foo { bar } baz`"), "foo { bar } baz");
+  it("templateDocument", () => {
     assertParse(
-      templateLiteral("`escape characters with \\`backslash\\``"),
-      "escape characters with `backslash`"
+      templateDocument([
+        { type: tokenType.STRING, lexeme: "hello" },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: "world" },
+      ]),
+      [ops.concat, "hello", [ops.scope, "foo"], "world"]
     );
   });
 
-  it.skip("templateLiteral with substitution", () => {
-    assertParse(templateLiteral("``"), "");
-    assertParse(templateLiteral("`{{x}}.json`"), [
-      ops.concat,
-      [ops.scope, "x"],
-      ".json",
-    ]);
-    assertParse(templateLiteral("`foo {{x}}.json bar`"), [
-      ops.concat,
-      "foo ",
-      [ops.scope, "x"],
-      ".json bar",
-    ]);
-    assertParse(templateLiteral("`foo {{ fn(a) }} bar`"), [
-      ops.concat,
-      "foo ",
-      [
-        [ops.scope, "fn"],
-        [ops.scope, "a"],
-      ],
-      " bar",
-    ]);
-    assertParse(templateLiteral("`{{`nested`}}`"), "nested");
-    assertParse(templateLiteral("`{{map(people, =`{{name}}`)}}`"), [
-      ops.concat,
-      [
-        [ops.scope, "map"],
-        [ops.scope, "people"],
-        [ops.lambda, [ops.concat, [ops.scope, "name"]]],
-      ],
-    ]);
+  it("templateLiteral", () => {
+    assertParse(
+      templateLiteral([
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "Hello, world." },
+        { type: tokenType.BACKTICK },
+      ]),
+      "Hello, world."
+    );
   });
 
-  it.skip("termSeparator", () => {
-    assertParse(termSeparator(","), true);
-    assertParse(termSeparator("   ,"), true);
-    assertParse(termSeparator(" # Comment\n   ,"), true);
-    assertParse(termSeparator("\n"), true);
-    assertParse(termSeparator(" # Comment\n# More comment \n"), true);
+  it("templateLiteral with substitution", () => {
+    assertParse(
+      templateLiteral([
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "foo " },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "x" },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: " bar" },
+        { type: tokenType.BACKTICK },
+      ]),
+      [ops.concat, "foo ", [ops.scope, "x"], " bar"]
+    );
+    assertParse(
+      templateLiteral([
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "nested" },
+        { type: tokenType.BACKTICK },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.BACKTICK },
+      ]),
+      "nested"
+    );
+    // assertParse(templateLiteral("`{{map(people, =`{{name}}`)}}`"), [
+    //   ops.concat,
+    //   [
+    //     [ops.scope, "map"],
+    //     [ops.scope, "people"],
+    //     [ops.lambda, [ops.concat, [ops.scope, "name"]]],
+    //   ],
+    // ]);
   });
 
   it.skip("urlProtocolCall", () => {
@@ -526,21 +539,6 @@ End`),
       [[ops.scope, "https"], "example.com", "graph.yaml"],
       "key",
     ]);
-  });
-
-  it.skip("whitespace", () => {
-    assert.deepEqual(whitespace("   hello"), {
-      value: true,
-      rest: "hello",
-    });
-    assert.deepEqual(whitespace("\n# Comment\n3"), {
-      value: true,
-      rest: "3",
-    });
-    assert.deepEqual(whitespace("# Comment"), {
-      value: true,
-      rest: "",
-    });
   });
 });
 
