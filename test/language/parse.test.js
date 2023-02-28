@@ -6,7 +6,6 @@ import {
   assignment,
   expression,
   functionComposition,
-  getReference,
   graph,
   graphDocument,
   group,
@@ -16,16 +15,14 @@ import {
   object,
   objectProperty,
   objectPropertyOrShorthand,
-  percentCall,
-  percentPath,
   protocolCall,
+  scopeReference,
   slashCall,
   slashPath,
   string,
   substitution,
   templateDocument,
   templateLiteral,
-  urlProtocolCall,
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
@@ -91,6 +88,7 @@ describe.only("parse", () => {
   });
 
   it("assignment", () => {
+    // data = obj.json
     assertParse(
       assignment([
         {
@@ -102,134 +100,273 @@ describe.only("parse", () => {
       ]),
       [ops.assign, "data", [ops.scope, "obj.json"]]
     );
-    // assertParse(assignment("foo = fn 'bar'"), [
-    //   ops.assign,
-    //   "foo",
-    //   [[ops.scope, "fn"], "bar"],
-    // ]);
+    // foo = fn 'bar'
+    assertParse(
+      assignment([
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.EQUALS },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.STRING, lexeme: "bar" },
+      ]),
+      [ops.assign, "foo", [[ops.scope, "fn"], "bar"]]
+    );
   });
 
   it("expression", () => {
+    // obj.json
     assertParse(
       expression([{ type: tokenType.REFERENCE, lexeme: "obj.json" }]),
       [ops.scope, "obj.json"]
     );
-    // assertParse(expression("(fn a, b, c)"), [
-    //   [ops.scope, "fn"],
-    //   [ops.scope, "a"],
-    //   [ops.scope, "b"],
-    //   [ops.scope, "c"],
-    // ]);
-    // assertParse(expression("foo.bar( 'hello' , 'world' )"), [
-    //   [ops.scope, "foo.bar"],
-    //   "hello",
-    //   "world",
-    // ]);
-    // assertParse(expression("(fn)('a')"), [[ops.scope, "fn"], "a"]);
-    assertParse(expression([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
-    // assert.equal(expression("(foo"), null);
-    // assertParse(expression("{ a:1, b:2 }"), [ops.object, { a: 1, b: 2 }]);
-    // assertParse(expression("serve { index.html: 'hello' }"), [
-    //   [ops.scope, "serve"],
-    //   [ops.object, { "index.html": "hello" }],
-    // ]);
-  });
-
-  it.skip("expression with function with space-separated arguments, mixed argument types", () => {
-    assertParse(expression(`copy app(formulas), files 'snapshot'`), [
-      [ops.scope, "copy"],
+    // (fn a, b, c)
+    assertParse(
+      expression([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "c" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
       [
-        [ops.scope, "app"],
-        [ops.scope, "formulas"],
-      ],
-      [[ops.scope, "files"], "snapshot"],
-    ]);
-  });
-
-  it.skip("functionComposition", () => {
-    assertParse(functionComposition("fn()"), [[ops.scope, "fn"]]);
-    assertParse(functionComposition("fn('arg')"), [[ops.scope, "fn"], "arg"]);
-    assertParse(functionComposition("fn('a', 'b')"), [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assertParse(functionComposition("fn 'a', 'b'"), [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assertParse(functionComposition("fn a, b"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    // A call with implicit parentheses can't span newlines.
-    assertParse(functionComposition("fn\na, b"), null);
-    assertParse(functionComposition("fn(\n  a\n  b\n)"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse(functionComposition("fn a(b), c"), [
-      [ops.scope, "fn"],
-      [
+        [ops.scope, "fn"],
         [ops.scope, "a"],
         [ops.scope, "b"],
-      ],
-      [ops.scope, "c"],
-    ]);
-    assertParse(functionComposition("fn1 fn2 'arg'"), [
-      [ops.scope, "fn1"],
-      [[ops.scope, "fn2"], "arg"],
-    ]);
-    assertParse(functionComposition("fn a, b, { c:1 }"), [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.object, { c: 1 }],
-    ]);
-  });
-
-  it.skip("functionComposition indirect", () => {
-    assertParse(functionComposition("(fn()) 'arg'"), [
-      [[ops.scope, "fn"]],
-      "arg",
-    ]);
-    assertParse(functionComposition("(fn()) (a, b)"), [
-      [[ops.scope, "fn"]],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse(functionComposition("fn('a')('b')"), [
-      [[ops.scope, "fn"], "a"],
-      "b",
-    ]);
-    assert.equal(functionComposition("(fn())"), null);
-  });
-
-  it("getReference", () => {
+        [ops.scope, "c"],
+      ]
+    );
+    // foo.bar('hello', 'world')
     assertParse(
-      getReference([{ type: tokenType.REFERENCE, lexeme: "hello" }]),
-      [ops.scope, "hello"]
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "foo.bar" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "hello" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.STRING, lexeme: "world" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "foo.bar"], "hello", "world"]
+    );
+    // (fn)('a')
+    assertParse(
+      expression([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "fn"], "a"]
+    );
+    assertParse(expression([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
+    // (foo
+    assert.equal(
+      expression([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+      ]),
+      null
+    );
+    // { a: 1, b: 2 }
+    assertParse(
+      expression([
+        { type: tokenType.LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.COLON },
+        { type: tokenType.NUMBER, lexeme: "1" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.COLON },
+        { type: tokenType.NUMBER, lexeme: "2" },
+        { type: tokenType.RIGHT_BRACE },
+      ]),
+      [ops.object, { a: 1, b: 2 }]
+    );
+    // serve { index.html: 'hello' }
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "serve" },
+        { type: tokenType.LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "index.html" },
+        { type: tokenType.COLON },
+        { type: tokenType.STRING, lexeme: "hello" },
+        { type: tokenType.RIGHT_BRACE },
+      ]),
+      [
+        [ops.scope, "serve"],
+        [ops.object, { "index.html": "hello" }],
+      ]
+    );
+  });
+
+  it("expression with function with space-separated arguments, mixed argument types", () => {
+    // copy app(formulas), files 'snapshot'
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "copy" },
+        { type: tokenType.REFERENCE, lexeme: "app" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "formulas" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "files" },
+        { type: tokenType.STRING, lexeme: "snapshot" },
+      ]),
+      [
+        [ops.scope, "copy"],
+        [
+          [ops.scope, "app"],
+          [ops.scope, "formulas"],
+        ],
+        [[ops.scope, "files"], "snapshot"],
+      ]
+    );
+  });
+
+  it("functionComposition", () => {
+    // fn()
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "fn"]]
+    );
+    // fn(a, b)
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.STRING, lexeme: "b" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "fn"], "a", "b"]
+    );
+    // fn a, b
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.STRING, lexeme: "b" },
+      ]),
+      [[ops.scope, "fn"], "a", "b"]
+    );
+    // fn a(b), c
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "c" },
+      ]),
+      [
+        [ops.scope, "fn"],
+        [
+          [ops.scope, "a"],
+          [ops.scope, "b"],
+        ],
+        [ops.scope, "c"],
+      ]
+    );
+    // fn1 fn2 'arg'
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn1" },
+        { type: tokenType.REFERENCE, lexeme: "fn2" },
+        { type: tokenType.STRING, lexeme: "arg" },
+      ]),
+      [
+        [ops.scope, "fn1"],
+        [[ops.scope, "fn2"], "arg"],
+      ]
+    );
+  });
+
+  it("functionComposition indirect", () => {
+    // (fn()) 'arg'
+    assertParse(
+      functionComposition([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.STRING, lexeme: "arg" },
+      ]),
+      [[[ops.scope, "fn"]], "arg"]
+    );
+    // (fn()) (a, b)
+    assertParse(
+      functionComposition([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "a" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.REFERENCE, lexeme: "b" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[[ops.scope, "fn"]], [ops.scope, "a"], [ops.scope, "b"]]
+    );
+    // fn('a')('b')
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "b" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[[ops.scope, "fn"], "a"], "b"]
     );
   });
 
   it("graph", () => {
+    // {}
     assertParse(
       graph([{ type: tokenType.LEFT_BRACE }, { type: tokenType.RIGHT_BRACE }]),
       [ops.graph, {}]
     );
-    // assertParse(graph("{ x = fn('a') }"), [
-    //   ops.graph,
-    //   {
-    //     x: [[ops.scope, "fn"], "a"],
-    //   },
-    // ]);
+    // { x = fn('a') }
+    assertParse(
+      graph([
+        { type: tokenType.LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "x" },
+        { type: tokenType.EQUALS },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_BRACE },
+      ]),
+      [
+        ops.graph,
+        {
+          x: [[ops.scope, "fn"], "a"],
+        },
+      ]
+    );
   });
 
   it("graphDocument", () => {
+    // {}
     assertParse(graphDocument([]), [ops.graph, {}]);
+    // { a = 1, b }
     assertParse(
       graphDocument([
         { type: tokenType.REFERENCE, lexeme: "a" },
@@ -243,6 +380,7 @@ describe.only("parse", () => {
   });
 
   it("group", () => {
+    // (hello)
     assertParse(
       group([
         { type: tokenType.LEFT_PAREN },
@@ -251,6 +389,7 @@ describe.only("parse", () => {
       ]),
       [ops.scope, "hello"]
     );
+    // (((nested)))
     assertParse(
       group([
         { type: tokenType.LEFT_PAREN },
@@ -263,11 +402,23 @@ describe.only("parse", () => {
       ]),
       [ops.scope, "nested"]
     );
-    // assertParse(group("(fn())"), [[ops.scope, "fn"]]);
-    // assert.equal(group("("), null);
+    // (fn())
+    assertParse(
+      group([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "fn"]]
+    );
+    // (
+    assert.equal(group([{ type: tokenType.LEFT_PAREN }]), null);
   });
 
   it("lambda", () => {
+    // =message
     assertParse(
       lambda([
         { type: tokenType.EQUALS },
@@ -275,10 +426,20 @@ describe.only("parse", () => {
       ]),
       [ops.lambda, [ops.scope, "message"]]
     );
-    // assertParse(lambda("=`Hello, {{name}}.`"), [
-    //   ops.lambda,
-    //   [ops.concat, "Hello, ", [ops.scope, "name"], "."],
-    // ]);
+    // =`Hello, {{name}}.`
+    assertParse(
+      lambda([
+        { type: tokenType.EQUALS },
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "Hello, " },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "name" },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: "." },
+        { type: tokenType.BACKTICK },
+      ]),
+      [ops.lambda, [ops.concat, "Hello, ", [ops.scope, "name"], "."]]
+    );
   });
 
   it("list", () => {
@@ -307,7 +468,12 @@ describe.only("parse", () => {
   });
 
   it("object", () => {
-    // "{ a: 1, b }"
+    // {}
+    assertParse(
+      object([{ type: tokenType.LEFT_BRACE }, { type: tokenType.RIGHT_BRACE }]),
+      [ops.object, {}]
+    );
+    // { a: 1, b }
     assertParse(
       object([
         { type: tokenType.LEFT_BRACE },
@@ -329,6 +495,7 @@ describe.only("parse", () => {
   });
 
   it("objectProperty", () => {
+    // { a: 1 }
     assertParse(
       objectProperty([
         { type: tokenType.REFERENCE, lexeme: "a" },
@@ -337,6 +504,7 @@ describe.only("parse", () => {
       ]),
       { a: 1 }
     );
+    // { name: 'Alice' }
     assertParse(
       objectProperty([
         { type: tokenType.REFERENCE, lexeme: "name" },
@@ -345,7 +513,18 @@ describe.only("parse", () => {
       ]),
       { name: "Alice" }
     );
-    // assertParse(objectProperty("x : fn('a')"), { x: [[ops.scope, "fn"], "a"] });
+    // x: fn('a')
+    assertParse(
+      objectProperty([
+        { type: tokenType.REFERENCE, lexeme: "x" },
+        { type: tokenType.COLON },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.STRING, lexeme: "a" },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      { x: [[ops.scope, "fn"], "a"] }
+    );
   });
 
   it("objectPropertyOrShorthand", () => {
@@ -357,27 +536,69 @@ describe.only("parse", () => {
     );
   });
 
-  it.skip("percentCall", () => {
-    assertParse(percentCall("graph%"), [ops.scope, "graph", undefined]);
-    assertParse(percentCall("graph%foo%bar"), [
-      ops.scope,
-      "graph",
-      "foo",
-      "bar",
-    ]);
+  it("protocolCall", () => {
+    // foo://bar
+    assertParse(
+      protocolCall([
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.COLON },
+        { type: tokenType.SLASH },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "bar" },
+      ]),
+      [[ops.scope, "foo"], "bar"]
+    );
+    // https://example.com/foo/
+    assertParse(
+      protocolCall([
+        { type: tokenType.REFERENCE, lexeme: "https" },
+        { type: tokenType.COLON },
+        { type: tokenType.SLASH },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "example.com" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH },
+      ]),
+      [[ops.scope, "https"], "example.com", "foo", undefined]
+    );
+    // http:example.com
+    assertParse(
+      protocolCall([
+        { type: tokenType.REFERENCE, lexeme: "http" },
+        { type: tokenType.COLON },
+        { type: tokenType.REFERENCE, lexeme: "example.com" },
+      ]),
+      [[ops.scope, "http"], "example.com"]
+    );
   });
 
-  it.skip("percentPath", () => {
-    assertParse(percentPath("foo%bar%baz"), ["foo", "bar", "baz"]);
-    assertParse(percentPath("foo%bar%baz%"), ["foo", "bar", "baz", undefined]);
+  it("protocolCall with functionComposition", () => {
+    // https://example.com/graph.yaml 'key'
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "https" },
+        { type: tokenType.COLON },
+        { type: tokenType.SLASH },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "example.com" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
+        { type: tokenType.STRING, lexeme: "key" },
+      ]),
+      [[[ops.scope, "https"], "example.com", "graph.yaml"], "key"]
+    );
   });
 
-  it.skip("protocolCall", () => {
-    assertParse(protocolCall("foo://bar"), [[ops.scope, "foo"], "bar"]);
-    assertParse(protocolCall("fn:/a/b"), [[ops.scope, "fn"], "a", "b"]);
+  it("scopeReference", () => {
+    assertParse(
+      scopeReference([{ type: tokenType.REFERENCE, lexeme: "hello" }]),
+      [ops.scope, "hello"]
+    );
   });
 
   it("slashCall", () => {
+    // graph/
     assertParse(
       slashCall([
         { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -385,6 +606,7 @@ describe.only("parse", () => {
       ]),
       [ops.scope, "graph", undefined]
     );
+    // graph/foo/bar
     assertParse(
       slashCall([
         { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -395,6 +617,7 @@ describe.only("parse", () => {
       ]),
       [ops.scope, "graph", "foo", "bar"]
     );
+    // //foo/bar
     assertParse(
       slashCall([
         { type: tokenType.SLASH },
@@ -408,6 +631,7 @@ describe.only("parse", () => {
   });
 
   it("slashPath", () => {
+    // foo/bar/baz
     assertParse(
       slashPath([
         { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -418,6 +642,7 @@ describe.only("parse", () => {
       ]),
       ["foo", "bar", "baz"]
     );
+    // foo/
     assertParse(
       slashPath([
         { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -427,16 +652,55 @@ describe.only("parse", () => {
     );
   });
 
-  it.skip("slashCalls with functions", () => {
-    assertParse(expression("fn()/key"), [[[ops.scope, "fn"]], "key"]);
-    assertParse(expression("(fn())/key"), [[[ops.scope, "fn"]], "key"]);
-    assertParse(slashCall("fn('a', 'b')/c/d"), [
-      [[ops.scope, "fn"], "a", "b"],
-      "c",
-      "d",
-    ]);
-    assertParse(expression("graph/key()"), [[ops.scope, "graph", "key"]]);
-    assertParse(expression("fn1()/fn2()"), [[[[ops.scope, "fn1"]], "fn2"]]);
+  it("slashCalls with functions", () => {
+    // fn()/key
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "key" },
+      ]),
+      [[[ops.scope, "fn"]], "key"]
+    );
+    // (fn())/key
+    assertParse(
+      expression([
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "key" },
+      ]),
+      [[[ops.scope, "fn"]], "key"]
+    );
+    // graph/key()
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "graph" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "key" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[ops.scope, "graph", "key"]]
+    );
+    // fn1()/fn2()
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "fn1" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "fn2" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.RIGHT_PAREN },
+      ]),
+      [[[[ops.scope, "fn1"]], "fn2"]]
+    );
   });
 
   it("string", () => {
@@ -479,6 +743,7 @@ describe.only("parse", () => {
   });
 
   it("templateLiteral with substitution", () => {
+    // `foo {{x}} bar`
     assertParse(
       templateLiteral([
         { type: tokenType.BACKTICK },
@@ -491,6 +756,7 @@ describe.only("parse", () => {
       ]),
       [ops.concat, "foo ", [ops.scope, "x"], " bar"]
     );
+    // `{{`nested`}}`
     assertParse(
       templateLiteral([
         { type: tokenType.BACKTICK },
@@ -505,40 +771,38 @@ describe.only("parse", () => {
       ]),
       "nested"
     );
-    // assertParse(templateLiteral("`{{map(people, =`{{name}}`)}}`"), [
-    //   ops.concat,
-    //   [
-    //     [ops.scope, "map"],
-    //     [ops.scope, "people"],
-    //     [ops.lambda, [ops.concat, [ops.scope, "name"]]],
-    //   ],
-    // ]);
-  });
-
-  it.skip("urlProtocolCall", () => {
-    assertParse(urlProtocolCall("https://example.com/foo/"), [
-      [ops.scope, "https"],
-      "example.com",
-      "foo",
-      undefined,
-    ]);
-    assertParse(urlProtocolCall("https://example.com/foo/bar.json"), [
-      [ops.scope, "https"],
-      "example.com",
-      "foo",
-      "bar.json",
-    ]);
-    assertParse(urlProtocolCall("https:example.com"), [
-      [ops.scope, "https"],
-      "example.com",
-    ]);
-  });
-
-  it.skip("urlProtocolCall with functionComposition", () => {
-    assertParse(expression("https://example.com/graph.yaml 'key'"), [
-      [[ops.scope, "https"], "example.com", "graph.yaml"],
-      "key",
-    ]);
+    // `{{map(people, =`{{name}}`)}}`
+    assertParse(
+      templateLiteral([
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "map" },
+        { type: tokenType.LEFT_PAREN },
+        { type: tokenType.REFERENCE, lexeme: "people" },
+        { type: tokenType.SEPARATOR },
+        { type: tokenType.EQUALS },
+        { type: tokenType.BACKTICK },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.DOUBLE_LEFT_BRACE },
+        { type: tokenType.REFERENCE, lexeme: "name" },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.BACKTICK },
+        { type: tokenType.RIGHT_PAREN },
+        { type: tokenType.DOUBLE_RIGHT_BRACE },
+        { type: tokenType.STRING, lexeme: "" },
+        { type: tokenType.BACKTICK },
+      ]),
+      [
+        ops.concat,
+        [
+          [ops.scope, "map"],
+          [ops.scope, "people"],
+          [ops.lambda, [ops.concat, [ops.scope, "name"]]],
+        ],
+      ]
+    );
   });
 });
 

@@ -68,7 +68,11 @@ export function sequence(...parsers) {
 
 // Parse a list of terms separated by a separator. This parser always succeeds
 // -- if there are no terms, it returns an empty array as the value.
-export function separatedList(termParser, separatorParser) {
+export function separatedList(
+  termParser,
+  separatorParser,
+  returnSeparators = false
+) {
   return function parseSeparatedList(tokens) {
     const value = [];
     let parsedTerm = termParser(tokens);
@@ -81,7 +85,9 @@ export function separatedList(termParser, separatorParser) {
         // Reached end of list
         break;
       }
-      value.push(parsedSeparator.value);
+      if (returnSeparators) {
+        value.push(parsedSeparator.value);
+      }
       rest = parsedSeparator.rest;
       parsedTerm = termParser(parsedSeparator.rest);
       if (!parsedTerm) {

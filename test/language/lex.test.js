@@ -2,7 +2,7 @@ import { lex, state, tokenType } from "../../src/language/lex.js";
 import assert from "../assert.js";
 
 describe.only("lex", () => {
-  it("array", () => {
+  it("array with comma separator", () => {
     const text = "[foo, bar]";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -10,6 +10,19 @@ describe.only("lex", () => {
       { type: tokenType.REFERENCE, lexeme: "foo" },
       { type: tokenType.SEPARATOR },
       { type: tokenType.REFERENCE, lexeme: "bar" },
+      { type: tokenType.RIGHT_BRACKET },
+    ]);
+  });
+
+  it("array with newline separators", () => {
+    const text = "[\nfoo\nbar\n]";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: tokenType.LEFT_BRACKET },
+      { type: tokenType.REFERENCE, lexeme: "foo" },
+      { type: tokenType.SEPARATOR },
+      { type: tokenType.REFERENCE, lexeme: "bar" },
+      { type: tokenType.SEPARATOR },
       { type: tokenType.RIGHT_BRACKET },
     ]);
   });

@@ -230,8 +230,17 @@ export function lex(text, initialState = state.EXPRESSION) {
           // Extend whitespace run.
           lexeme += c;
         } else {
-          // Reached end of whitespace.
-          if (lexeme.includes("\n")) {
+          // Reached end of whitespace. We add the whitespace as a separator
+          // token if it contains a newline. We only this if the previous token
+          // was not a left bracket, left brace, or left parenthesis. That feels
+          // more like a parser responsibility, but it's easier to do it here.
+          const previousToken = tokens[tokens.length - 1];
+          if (
+            lexeme.includes("\n") &&
+            previousToken?.type !== tokenType.LEFT_BRACKET &&
+            previousToken?.type !== tokenType.LEFT_BRACE &&
+            previousToken?.type !== tokenType.LEFT_PAREN
+          ) {
             tokens.push({
               type: tokenType.SEPARATOR,
             });
@@ -262,4 +271,40 @@ function isNumber(text) {
   // but only accepts integers or floats, not exponential notation.
   const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)/;
   return numberRegex.test(text);
+}
+
+// Trim the whitespace around and in substitution blocks in a template. There's
+// no explicit syntax for blocks, but we infer them as any place where a
+// substitution itself contains a multi-line template literal.
+//
+// Example:
+//
+//     {{ if `
+//       true text
+//     `, `
+//       false text
+//     ` }}
+//
+// Case 1: a substitution that starts the text or starts a line (there's only
+// whitespace before the `{{`), and has the line end with the start of a
+// template literal (there's only whitespace after the backtick) marks the start
+// of a block.
+//
+// Case 2: a line in the middle that ends one template literal and starts
+// another is an internal break in the block. Edge case: three backticks in a
+// row, like ```, are common in markdown and are not treated as a break.
+//
+// Case 3: a line that ends a template literal and ends with `}}` or ends the
+// text marks the end of the block.
+//
+// In all three cases, we trim spaces and tabs from the start and end of the
+// line. In case 1, we also remove the preceding newline.
+function trimTemplateWhitespace(text) {
+  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
+  const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
+  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
+  const trimBlockStarts = text.replace(regex1, "$1$2");
+  const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
+  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
+  return trimBlockEnds;
 }

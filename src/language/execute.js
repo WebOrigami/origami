@@ -1,6 +1,7 @@
 /// <reference path="./code.d.ts" />
 
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { isPlainObject } from "../core/utilities.js";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -68,7 +69,7 @@ export default async function execute(code) {
           await fn.call(scope, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
-    if (result && typeof result === "object") {
+    if (result && typeof result === "object" && !isPlainObject(result)) {
       result[expressionSymbol] = formattedCode;
     }
     return result;

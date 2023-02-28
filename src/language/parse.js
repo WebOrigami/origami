@@ -19,11 +19,9 @@
 import {
   any,
   optional,
-  regex,
   separatedList,
   sequence,
   series,
-  terminal,
 } from "./combinators.js";
 import { tokenType } from "./lex.js";
 import * as ops from "./ops.js";
@@ -34,8 +32,8 @@ export function args(tokens) {
 }
 
 // Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
-export function argsChain(text) {
-  return series(args)(text);
+export function argsChain(tokens) {
+  return series(args)(tokens);
 }
 
 // Parse an array like `[1, 2, 3]`.
@@ -58,7 +56,7 @@ export function array(tokens) {
 // Parse an assignment statment.
 export function assignment(tokens) {
   const parsed = sequence(
-    reference,
+    identifier,
     matchTokenType(tokenType.EQUALS),
     expression
   )(tokens);
@@ -80,25 +78,23 @@ export function expression(tokens) {
   return any(
     string,
     templateLiteral,
-    graph,
     object,
+    graph,
     array,
     lambda,
     number,
-    // functionComposition,
-    // urlProtocolCall,
-    // protocolCall,
+    functionComposition,
+    protocolCall,
     slashCall,
-    // percentCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
-    getReference
+    scopeReference
   )(tokens);
 }
 
 // Parse an assignment formula or shorthand assignment.
-export function formulaOrShorthand(text) {
-  const parsed = any(assignment, shorthandReference)(text);
+export function formulaOrShorthand(tokens) {
+  const parsed = any(assignment, identifier)(tokens);
   if (!parsed) {
     return null;
   }
@@ -114,29 +110,18 @@ export function formulaOrShorthand(text) {
 }
 
 // Parse something that results in a function/graph that can be called.
-export function functionCallTarget(text) {
-  return any(
-    group,
-    urlProtocolCall,
-    protocolCall,
-    slashCall,
-    percentCall,
-    getReference
-  )(text);
+export function functionCallTarget(tokens) {
+  return any(group, protocolCall, slashCall, scopeReference)(tokens);
 }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
-export function functionComposition(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    functionCallTarget,
-    argsChain
-  )(text);
+export function functionComposition(tokens) {
+  const parsed = sequence(functionCallTarget, argsChain)(tokens);
   if (!parsed) {
     return null;
   }
-  const { 1: target, 2: chain } = parsed.value;
+  const { 0: target, 1: chain } = parsed.value;
   // The argsChain is an array of arguments (which are themselves arrays). The
   // `target` represents the function call target at the head of the chain.
   // Successively apply the arguments in the chain to build up the function
@@ -145,19 +130,6 @@ export function functionComposition(text) {
   for (const args of chain) {
     value = [value, ...args];
   }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a call to get a value.
-export function getReference(tokens) {
-  const parsed = reference(tokens);
-  if (!parsed) {
-    return null;
-  }
-  const value = [ops.scope, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -186,19 +158,11 @@ export function graphDocument(tokens) {
     formulaOrShorthand,
     matchTokenType(tokenType.SEPARATOR)
   )(tokens);
-  // Collect formulas, skip separators
+  // Collect formulas
   const formulas = {};
-  while (parsed.value.length > 0) {
-    const formula = parsed.value.shift(); // Next parsed assignment key=value
-    if (!formula) {
-      // Skip trailing separator
-      continue;
-    } else {
-      // Formula
-      const [_, key, value] = formula;
-      formulas[key] = value;
-    }
-    parsed.value.shift(); // Drop separator
+  for (const formula of parsed.value) {
+    const [_, key, value] = formula;
+    formulas[key] = value;
   }
   const value = [ops.graph, formulas];
   return {
@@ -222,6 +186,11 @@ export function group(tokens) {
     value,
     rest: parsed.rest,
   };
+}
+
+// Parse an identifier
+export function identifier(tokens) {
+  return matchTokenType(tokenType.REFERENCE)(tokens);
 }
 
 // Parse the arguments to a function where the parentheses have been omitted.
@@ -253,25 +222,15 @@ export function list(tokens) {
     expression,
     matchTokenType(tokenType.SEPARATOR)
   )(tokens);
-  // Remove the parsed separators, which will be in the even positions.
-  const value = [];
-  while (parsed.value.length > 0) {
-    const item = parsed.value.shift();
-    // Skip undefined at end of list, which marks a trailing separator.
-    if (item !== undefined || parsed.value.length !== 0) {
-      value.push(item);
-    }
-    parsed.value.shift(); // Drop separator
+  const value = parsed.value;
+  // If the last item is undefined, it's a trailing separator, so drop it.
+  if (value.length > 1 && value[value.length - 1] === undefined) {
+    value.pop();
   }
   return {
-    value: value,
+    value,
     rest: parsed.rest,
   };
-}
-
-// Parse a left parenthesis.
-function lparen(text) {
-  return terminal(/^\(/)(text);
 }
 
 function matchTokenType(tokenType) {
@@ -323,18 +282,10 @@ export function objectProperties(tokens) {
   if (!parsed) {
     return null;
   }
-  // Collect properties, skip separators
+  // Collect properties
   const properties = {};
-  while (parsed.value.length > 0) {
-    const property = parsed.value.shift(); // Next parsed property key:value
-    if (!property) {
-      // Skip trailing separator
-      continue;
-    } else {
-      // Object property
-      Object.assign(properties, property);
-    }
-    parsed.value.shift(); // Drop separator
+  for (const property of parsed.value) {
+    Object.assign(properties, property);
   }
   const value = [ops.object, properties];
   return {
@@ -345,7 +296,7 @@ export function objectProperties(tokens) {
 
 export function objectProperty(tokens) {
   const parsed = sequence(
-    reference,
+    identifier,
     matchTokenType(tokenType.COLON),
     expression
   )(tokens);
@@ -361,8 +312,8 @@ export function objectProperty(tokens) {
   };
 }
 
-export function objectPropertyOrShorthand(text) {
-  const parsed = any(objectProperty, reference)(text);
+export function objectPropertyOrShorthand(tokens) {
+  const parsed = any(objectProperty, identifier)(tokens);
   if (!parsed) {
     return null;
   }
@@ -379,11 +330,6 @@ export function objectPropertyOrShorthand(text) {
   };
 }
 
-// Parse an optional whitespace sequence.
-export function optionalWhitespace(text) {
-  return optional(whitespace)(text);
-}
-
 // Parse function arguments enclosed in parentheses.
 function parensArgs(tokens) {
   const parsed = sequence(
@@ -394,9 +340,6 @@ function parensArgs(tokens) {
   if (!parsed) {
     return null;
   }
-  // const listValue = parsed.value[1];
-  // const value =
-  //   listValue === undefined ? undefined : listValue === null ? [] : listValue;
   const value = parsed.value[1];
   return {
     value,
@@ -405,14 +348,14 @@ function parensArgs(tokens) {
 }
 
 // Top-level parse function parses a expression and returns just the value.
-export default function parse(text) {
-  const parsed = expression(text);
+export default function parse(tokens) {
+  const parsed = expression(tokens);
   return parsed?.rest === "" ? parsed.value : null;
 }
 
 // Parse the start of a path.
-export function pathHead(text) {
-  const parsed = any(group, simpleFunctionCall, getReference)(text);
+export function pathHead(tokens) {
+  const parsed = any(group, simpleFunctionCall, scopeReference)(tokens);
   if (!parsed) {
     return null;
   }
@@ -427,66 +370,24 @@ export function pathHead(text) {
 }
 
 // Parse a key in a path.
-export function pathKey(text) {
-  return any(group, substitution, reference)(text);
-}
-
-// Parse a function call with percent syntax.
-export function percentCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    pathHead,
-    terminal(/^%/),
-    optional(percentPath)
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: value, 3: path } = parsed.value;
-  if (path) {
-    value.push(...path);
-  } else {
-    // Trailing separator
-    value.push(undefined);
-  }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a percent-delimeted path
-export function percentPath(text) {
-  const parsed = separatedList(pathKey, terminal(/^%/))(text);
-  if (parsed.value.length === 0) {
-    // No path keys
-    return null;
-  }
-  // Remove the separators from the result.
-  const values = [];
-  while (parsed.value.length > 0) {
-    values.push(parsed.value.shift()); // Keep value
-    parsed.value.shift(); // Drop separator
-  }
-  return {
-    value: values,
-    rest: parsed.rest,
-  };
+export function pathKey(tokens) {
+  return any(group, substitution, identifier)(tokens);
 }
 
 // Parse a protocol call like `fn://foo/bar`.
-// There must be at least one slash after the colon.
-export function protocolCall(text) {
+// There can be zere, one, or two slashes after the colon.
+export function protocolCall(tokens) {
   const parsed = sequence(
-    optionalWhitespace,
-    reference,
-    terminal(/^:\/\/?/),
+    identifier,
+    matchTokenType(tokenType.COLON),
+    optional(matchTokenType(tokenType.SLASH)),
+    optional(matchTokenType(tokenType.SLASH)),
     slashPath
-  )(text);
+  )(tokens);
   if (!parsed) {
     return null;
   }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
+  const { 0: fnName, 4: fnArgs } = parsed.value;
   const value = [[ops.scope, fnName], ...fnArgs];
   return {
     value,
@@ -494,42 +395,13 @@ export function protocolCall(text) {
   };
 }
 
-export function quotedTextWithEscapes(text) {
-  let i;
-  let value = "";
-  for (i = 0; i < text.length; i++) {
-    const char = text[i];
-    if (char === "'") {
-      break;
-    } else if (char === "\\") {
-      i++;
-      if (i < text.length) {
-        value += text[i];
-      }
-    } else {
-      value += char;
-    }
-  }
-  const rest = text.slice(i);
-  return { value, rest };
-}
-
-// Parse a reference
-export function reference(tokens) {
-  return matchTokenType(tokenType.REFERENCE)(tokens);
-}
-
-// Parse a right parenthesis.
-function rparen(text) {
-  return terminal(/^\)/)(text);
-}
-
-export function shorthandReference(text) {
-  const parsed = sequence(optionalWhitespace, reference)(text);
+// Parse a call to look up a value from scope.
+export function scopeReference(tokens) {
+  const parsed = identifier(tokens);
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[1];
+  const value = [ops.scope, parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -538,12 +410,12 @@ export function shorthandReference(text) {
 
 // Parse a function call that's just `<name>([...args])`.
 // This is the only function call form can appear at the head of a path.
-export function simpleFunctionCall(text) {
-  const parsed = sequence(optionalWhitespace, getReference, parensArgs)(text);
+export function simpleFunctionCall(tokens) {
+  const parsed = sequence(scopeReference, parensArgs)(tokens);
   if (!parsed) {
     return null;
   }
-  const value = [parsed.value[1], ...parsed.value[2]]; // function and args
+  const value = [parsed.value[0], ...parsed.value[1]]; // function and args
   return {
     value,
     rest: parsed.rest,
@@ -585,22 +457,7 @@ export function slashPath(tokens) {
     // No path keys
     return null;
   }
-
-  // Remove the separators from the result.
-
-  //
-  // TODO: separatedList removes separators
-  //
-
-  const values = [];
-  while (parsed.value.length > 0) {
-    values.push(parsed.value.shift()); // Keep value
-    parsed.value.shift(); // Drop separator
-  }
-  return {
-    value: values,
-    rest: parsed.rest,
-  };
+  return parsed;
 }
 
 // Parse a string.
@@ -629,7 +486,7 @@ export function substitution(tokens) {
 export function templateDocument(tokens) {
   // We use the separated list parser: the plain text strings are the list
   // items, and the substitutions are the separators.
-  const parsed = separatedList(string, substitution)(tokens);
+  const parsed = separatedList(string, substitution, true)(tokens);
 
   // Drop empty/null strings.
   const filtered = parsed.value.filter((item) => item);
@@ -664,70 +521,4 @@ export function templateLiteral(tokens) {
     value,
     rest: parsed.rest,
   };
-}
-
-// Trim the whitespace around and in substitution blocks in a template. There's
-// no explicit syntax for blocks, but we infer them as any place where a
-// substitution itself contains a multi-line template literal.
-//
-// Example:
-//
-//     {{ if `
-//       true text
-//     `, `
-//       false text
-//     ` }}
-//
-// Case 1: a substitution that starts the text or starts a line (there's only
-// whitespace before the `{{`), and has the line end with the start of a
-// template literal (there's only whitespace after the backtick) marks the start
-// of a block.
-//
-// Case 2: a line in the middle that ends one template literal and starts
-// another is an internal break in the block. Edge case: three backticks in a
-// row, like ```, are common in markdown and are not treated as a break.
-//
-// Case 3: a line that ends a template literal and ends with `}}` or ends the
-// text marks the end of the block.
-//
-// In all three cases, we trim spaces and tabs from the start and end of the
-// line. In case 1, we also remove the preceding newline.
-function trimTemplateWhitespace(text) {
-  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
-  const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
-  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
-  const trimBlockStarts = text.replace(regex1, "$1$2");
-  const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
-  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
-  return trimBlockEnds;
-}
-
-// Parse a URL protocol
-export function urlProtocol(text) {
-  return regex(/^https?/)(text);
-}
-
-// Parse a URL protocol call like `https://example.com/foo/bar`.
-export function urlProtocolCall(text) {
-  const parsed = sequence(
-    optionalWhitespace,
-    urlProtocol,
-    terminal(/^:\/?\/?/),
-    slashPath
-  )(text);
-  if (!parsed) {
-    return null;
-  }
-  const { 1: fnName, 3: fnArgs } = parsed.value;
-  const value = [[ops.scope, fnName], ...fnArgs];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a whitespace sequence.
-// We consider comments (from a `#` to a newline) to be whitespace.
-export function whitespace(text) {
-  return terminal(/^(?:\s|(?:#.*(?:\n|$)))+/)(text);
 }
