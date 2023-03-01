@@ -374,7 +374,7 @@ export function pathHead(tokens) {
 
 // Parse a key in a path.
 export function pathKey(tokens) {
-  return any(group, substitution, identifier)(tokens);
+  return any(group, identifier)(tokens);
 }
 
 // Parse a protocol call like `fn://foo/bar`.
