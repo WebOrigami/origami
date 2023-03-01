@@ -203,6 +203,21 @@ baz`;
     ]);
   });
 
+  it("template document with extra whitespace", () => {
+    const text = "start\n{{ fn `\nnested\n` }}\nend";
+    const tokens = lex(text, state.TEMPLATE_DOCUMENT);
+    assert.deepEqual(tokens, [
+      { type: tokenType.STRING, lexeme: "start\n" },
+      { type: tokenType.DOUBLE_LEFT_BRACE },
+      { type: tokenType.REFERENCE, lexeme: "fn" },
+      { type: tokenType.BACKTICK },
+      { type: tokenType.STRING, lexeme: "nested\n" },
+      { type: tokenType.BACKTICK },
+      { type: tokenType.DOUBLE_RIGHT_BRACE },
+      { type: tokenType.STRING, lexeme: "end" },
+    ]);
+  });
+
   it("template document with nested template", () => {
     const text = "{{ `foo {{bar}}` }}";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
@@ -218,16 +233,6 @@ baz`;
       { type: tokenType.BACKTICK },
       { type: tokenType.DOUBLE_RIGHT_BRACE },
       { type: tokenType.STRING, lexeme: "" },
-    ]);
-  });
-
-  it("template literal with opening and closing whitespace lines", () => {
-    const text = "`  \nfoo\n  `";
-    const tokens = lex(text);
-    assert.deepEqual(tokens, [
-      { type: tokenType.BACKTICK },
-      { type: tokenType.STRING, lexeme: "foo\n" },
-      { type: tokenType.BACKTICK },
     ]);
   });
 
