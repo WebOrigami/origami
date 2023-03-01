@@ -350,12 +350,6 @@ function parensArgs(tokens) {
   };
 }
 
-// Top-level parse function parses a expression and returns just the value.
-export default function parse(tokens) {
-  const parsed = expression(tokens);
-  return parsed?.rest === "" ? parsed.value : null;
-}
-
 // Parse the start of a path.
 export function pathHead(tokens) {
   const parsed = any(group, simpleFunctionCall, scopeReference)(tokens);
@@ -381,7 +375,7 @@ export function pathKey(tokens) {
 // There can be zere, one, or two slashes after the colon.
 export function protocolCall(tokens) {
   const parsed = sequence(
-    identifier,
+    scopeReference,
     matchTokenType(tokenType.COLON),
     optional(matchTokenType(tokenType.SLASH)),
     optional(matchTokenType(tokenType.SLASH)),
@@ -390,8 +384,8 @@ export function protocolCall(tokens) {
   if (!parsed) {
     return null;
   }
-  const { 0: fnName, 4: fnArgs } = parsed.value;
-  const value = [[ops.scope, fnName], ...fnArgs];
+  const { 0: fn, 4: fnArgs } = parsed.value;
+  const value = [fn, ...fnArgs];
   return {
     value,
     rest: parsed.rest,
