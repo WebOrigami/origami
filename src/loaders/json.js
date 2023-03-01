@@ -3,7 +3,7 @@ import { keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
- * Load a file as YAML.
+ * Load a file as JSON.
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
