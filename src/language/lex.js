@@ -203,9 +203,10 @@ export function lex(text, initialState = state.EXPRESSION) {
 
       case state.TEMPLATE_LITERAL:
         if (c === "`") {
+          const trimmed = trimTemplateWhitespace(lexeme);
           tokens.push({
             type: tokenType.STRING,
-            lexeme,
+            lexeme: trimmed,
           });
           lexeme = null;
           tokens.push({ type: tokenType.BACKTICK });
@@ -280,38 +281,26 @@ function tokenCanEndItem(token) {
   );
 }
 
-// Trim the whitespace around and in substitution blocks in a template. There's
-// no explicit syntax for blocks, but we infer them as any place where a
-// substitution itself contains a multi-line template literal.
+// Trim the whitespace from the start and end of a template literal.
+//
+// This condition applies if the first and last line of the template content are
+// only whitespace. If that case holds, then the first line (including its
+// newline) will be removed, and the last line (not including its starting
+// newline) will be removed.
 //
 // Example:
 //
-//     {{ if `
+//     if(`
 //       true text
 //     `, `
-//       false text
-//     ` }}
+//       false text`)
 //
-// Case 1: a substitution that starts the text or starts a line (there's only
-// whitespace before the `{{`), and has the line end with the start of a
-// template literal (there's only whitespace after the backtick) marks the start
-// of a block.
-//
-// Case 2: a line in the middle that ends one template literal and starts
-// another is an internal break in the block. Edge case: three backticks in a
-// row, like ```, are common in markdown and are not treated as a break.
-//
-// Case 3: a line that ends a template literal and ends with `}}` or ends the
-// text marks the end of the block.
-//
-// In all three cases, we trim spaces and tabs from the start and end of the
-// line. In case 1, we also remove the preceding newline.
+// In this case, the first template literal will be trimmed to "true text",
+// because both its first and last lines are only whitespace. The second
+// template literal will not be trimmed, because its last line is not only
+// whitespace.
 function trimTemplateWhitespace(text) {
-  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
-  const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
-  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
-  const trimBlockStarts = text.replace(regex1, "$1$2");
-  const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
-  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
-  return trimBlockEnds;
+  const regex = /^[ \t]*\n(?<content>[\s\S]*?\n)[ \t]*$/;
+  const match = regex.exec(text);
+  return match?.groups.content ?? text;
 }

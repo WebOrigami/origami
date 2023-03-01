@@ -221,6 +221,16 @@ baz`;
     ]);
   });
 
+  it("template literal with opening and closing whitespace lines", () => {
+    const text = "`  \nfoo\n  `";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: tokenType.BACKTICK },
+      { type: tokenType.STRING, lexeme: "foo\n" },
+      { type: tokenType.BACKTICK },
+    ]);
+  });
+
   it("template literal with embedded expression", () => {
     const text = "`foo {{ bar }} baz`";
     const tokens = lex(text);
