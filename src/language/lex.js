@@ -232,16 +232,9 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else {
           // Reached end of whitespace. We add the whitespace as a separator
           // token if it contains a newline. We only this if the previous token
-          // was not a left bracket, left brace, or left parenthesis. That feels
-          // more like a parser responsibility, but it's easier to do it here.
+          // is one that can end an item in a list.
           const previousToken = tokens[tokens.length - 1];
-          if (
-            lexeme.includes("\n") &&
-            previousToken &&
-            previousToken.type !== tokenType.LEFT_BRACKET &&
-            previousToken.type !== tokenType.LEFT_BRACE &&
-            previousToken.type !== tokenType.LEFT_PAREN
-          ) {
+          if (lexeme.includes("\n") && tokenCanEndItem(previousToken)) {
             tokens.push({
               type: tokenType.SEPARATOR,
             });
@@ -272,6 +265,19 @@ function isNumber(text) {
   // but only accepts integers or floats, not exponential notation.
   const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)/;
   return numberRegex.test(text);
+}
+
+function tokenCanEndItem(token) {
+  const type = token?.type;
+  return (
+    type === tokenType.BACKTICK ||
+    type === tokenType.NUMBER ||
+    type === tokenType.REFERENCE ||
+    type === tokenType.RIGHT_BRACE ||
+    type === tokenType.RIGHT_BRACKET ||
+    type === tokenType.RIGHT_PAREN ||
+    type === tokenType.STRING
+  );
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's
