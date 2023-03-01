@@ -1,7 +1,7 @@
 import { lex, state, tokenType } from "../../src/language/lex.js";
 import assert from "../assert.js";
 
-describe.only("lex", () => {
+describe("lex", () => {
   it("array with comma separator", () => {
     const text = "[foo, bar]";
     const tokens = lex(text);

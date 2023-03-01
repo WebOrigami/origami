@@ -1,5 +1,7 @@
+import DeferredGraph from "../common/DeferredGraph.js";
+import StringWithGraph from "../common/StringWithGraph.js";
 import { keySymbol } from "../core/utilities.js";
-import OrigamiGraph from "../framework/OrigamiGraph.js";
+import * as compile from "../language/compile.js";
 
 /**
  * Load a file as an Origami graph.
@@ -10,19 +12,12 @@ import OrigamiGraph from "../framework/OrigamiGraph.js";
  */
 export default function loadGraph(buffer, key) {
   const text = String(buffer);
-  const textWithGraph = new String(text);
-
   const scope = this;
-  let graph;
-
-  /** @type {any} */ (textWithGraph).toGraph = () => {
-    if (!graph) {
-      graph = new OrigamiGraph(text);
-      graph.parent = scope;
-      graph[keySymbol] = key;
-    }
+  const deferredGraph = new DeferredGraph(async () => {
+    const fn = compile.graphDocument(text);
+    const graph = await fn.call(scope);
+    graph[keySymbol] = key;
     return graph;
-  };
-
-  return textWithGraph;
+  });
+  return new StringWithGraph(text, deferredGraph);
 }

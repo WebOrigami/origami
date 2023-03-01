@@ -160,9 +160,12 @@ export function graphDocument(tokens) {
   )(tokens);
   // Collect formulas
   const formulas = {};
-  for (const formula of parsed.value) {
-    const [_, key, value] = formula;
-    formulas[key] = value;
+  for (const assignment of parsed.value) {
+    // Skip any undefined assignment, which would be a trailing separator
+    if (assignment) {
+      const [_, key, value] = assignment;
+      formulas[key] = value;
+    }
   }
   const value = [ops.graph, formulas];
   return {

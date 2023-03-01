@@ -17,6 +17,10 @@ export function expression(text) {
   return compile(text, parse.expression);
 }
 
+export function graphDocument(text) {
+  return compile(text, parse.graphDocument);
+}
+
 export function templateDocument(text) {
   return compile(text, parse.templateDocument, state.TEMPLATE_DOCUMENT);
 }

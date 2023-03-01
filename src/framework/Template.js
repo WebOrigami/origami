@@ -37,7 +37,7 @@ export default class Template {
     const { extendedScope, inputGraph, templateGraph } =
       await this.createContext(processedInput, baseScope);
 
-    const text = await this.compiled(extendedScope);
+    const text = await this.compiled.call(extendedScope);
 
     const result = await createResult(text, inputGraph, templateGraph);
     return result;

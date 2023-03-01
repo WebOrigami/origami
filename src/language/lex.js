@@ -237,9 +237,10 @@ export function lex(text, initialState = state.EXPRESSION) {
           const previousToken = tokens[tokens.length - 1];
           if (
             lexeme.includes("\n") &&
-            previousToken?.type !== tokenType.LEFT_BRACKET &&
-            previousToken?.type !== tokenType.LEFT_BRACE &&
-            previousToken?.type !== tokenType.LEFT_PAREN
+            previousToken &&
+            previousToken.type !== tokenType.LEFT_BRACKET &&
+            previousToken.type !== tokenType.LEFT_BRACE &&
+            previousToken.type !== tokenType.LEFT_PAREN
           ) {
             tokens.push({
               type: tokenType.SEPARATOR,

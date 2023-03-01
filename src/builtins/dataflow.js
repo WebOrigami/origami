@@ -177,11 +177,15 @@ async function getKeysInScope(graph) {
   return unique(keysInScope);
 }
 
-// Add dependnecies found in a graph file.
+// Add dependencies found in a graph file.
 async function graphDependencies(graphFile, keysInScope) {
   const dependencies = [];
-  const attachedGraph = graphFile.toGraph?.();
+  let attachedGraph = graphFile.toGraph?.();
   if (attachedGraph) {
+    // HACK: Special case for a DeferredGraph returned by the .graph loader.
+    if (attachedGraph.load) {
+      attachedGraph = await attachedGraph.load();
+    }
     const expressions = await attachedGraph.expressions?.();
     if (expressions) {
       for (const [key, code] of Object.entries(expressions)) {
@@ -247,8 +251,8 @@ function markUndefinedDependencies(flow, keysInScope) {
 async function origamiTemplateDependencies(template, keysInScope) {
   let dependencies = [];
   if (!template.code) {
-    await template.compile();
-    dependencies = codeDependencies(template.code, keysInScope);
+    const fn = await template.compile();
+    dependencies = codeDependencies(fn.code, keysInScope);
   }
 
   // If the template appears to contain HTML, add the HTML dependencies.

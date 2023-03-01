@@ -4,8 +4,7 @@ import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import execute from "../language/execute.js";
-import * as parse from "../language/parse.js";
+import * as compile from "../language/compile.js";
 
 /**
  * Parse an Origami expression, evaluate it in the context of a graph (provided
@@ -24,15 +23,10 @@ export default async function ori(expression) {
 
   // Parse
   incrementCount("ori parse");
-  const parsed = parse.expression(expression);
-  let code = parsed?.value;
-  if (!code || parsed.rest !== "") {
-    console.error(`ori: could not recognize expression: ${expression}`);
-    return;
-  }
+  const fn = compile.expression(expression);
 
   // Execute
-  let result = await execute.call(scope, code);
+  let result = await fn.call(scope);
 
   // If result was a function, execute it.
   if (typeof result === "function") {

@@ -8,7 +8,7 @@ const scope = new ObjectGraph({
   name: "Alice",
 });
 
-describe.only("compile", () => {
+describe("compile", () => {
   it("array", async () => {
     await assertCompile("[]", []);
     await assertCompile("[ 1, 2, 3, ]", [1, 2, 3]);

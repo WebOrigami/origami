@@ -13,7 +13,7 @@ import Scope from "./Scope.js";
 export default class DeferredGraph {
   constructor(loadFn) {
     this.deferredParent = null;
-    this.graph = null;
+    this._graph = null;
     this.loadFn = loadFn;
     this.loadPromise = null;
   }
@@ -40,7 +40,7 @@ export default class DeferredGraph {
         }
         this.deferredParent = null;
       }
-      this.graph = graph;
+      this._graph = graph;
       if (!this[keySymbol]) {
         this[keySymbol] = graph[keySymbol];
       }
@@ -50,16 +50,16 @@ export default class DeferredGraph {
   }
 
   get parent() {
-    return this.deferredParent ?? /** @type {any} */ (this.graph)?.parent;
+    return this.deferredParent ?? /** @type {any} */ (this._graph)?.parent;
   }
   set parent(parent) {
-    if (!this.graph) {
+    if (!this._graph) {
       // Not ready to set the parent yet.
       this.deferredParent = parent;
     } else {
       // Avoid destructive modification of the underlying graph.
-      this.graph = Object.create(this.graph);
-      /** @type {any} */ (this.graph).parent = parent;
+      this._graph = Object.create(this._graph);
+      /** @type {any} */ (this._graph).parent = parent;
     }
   }
 
