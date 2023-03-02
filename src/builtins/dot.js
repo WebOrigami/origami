@@ -33,7 +33,7 @@ ${graphArcs.join("\n")}
 // Return true if the text appears to contain non-printable binary characters.
 function probablyBinary(text) {
   // https://stackoverflow.com/a/1677660/76472
-  return /[\x00-\x09\x0E-\x1F\x80-\xFF]/.test(text);
+  return /[\x00-\x08\x0E-\x1F]/.test(text);
 }
 
 async function statements(graph, nodePath, options) {
