@@ -41,8 +41,7 @@ export default async function watch(variant, fn) {
   // Reevaluate the function whenever the graph changes.
   container.addEventListener?.("change", async () => {
     const graph = await evaluateGraph(container.scope, fn);
-    // Update the indirect pointer.
-    Object.setPrototypeOf(indirect, graph);
+    updateIndirectPointer(indirect, graph);
   });
 
   return indirect;
@@ -79,6 +78,20 @@ function messageForError(error) {
   }
   message += error.message;
   return message;
+}
+
+// Update an indirect pointer to a target.
+function updateIndirectPointer(indirect, target) {
+  // Clean the pointer of any named properties or symbols that have been set
+  // directly on it.
+  for (const key of Object.getOwnPropertyNames(indirect)) {
+    delete indirect[key];
+  }
+  for (const key of Object.getOwnPropertySymbols(indirect)) {
+    delete indirect[key];
+  }
+
+  Object.setPrototypeOf(indirect, target);
 }
 
 watch.usage = `watch <folder>, [expr]\tLet a folder graph respond to changes`;
