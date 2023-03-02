@@ -368,7 +368,19 @@ export function pathHead(tokens) {
 
 // Parse a key in a path.
 export function pathKey(tokens) {
-  return any(group, identifier)(tokens);
+  const parsed = any(group, number, identifier)(tokens);
+  if (!parsed) {
+    return null;
+  }
+  let value = parsed.value;
+  // If the key is a number, convert it to a string.
+  if (typeof value === "number") {
+    value = value.toString();
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a protocol call like `fn://foo/bar`.

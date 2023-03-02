@@ -650,6 +650,15 @@ describe("parse", () => {
       ]),
       ["foo", undefined]
     );
+    // month/12
+    assertParse(
+      slashPath([
+        { type: tokenType.REFERENCE, lexeme: "month" },
+        { type: tokenType.SLASH },
+        { type: tokenType.NUMBER, lexeme: "12" },
+      ]),
+      ["month", "12"]
+    );
   });
 
   it("slashCalls with functions", () => {
