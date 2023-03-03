@@ -224,6 +224,29 @@ export function identifier(tokens) {
   return matchTokenType(tokenType.REFERENCE)(tokens);
 }
 
+// Parse an identifier that may include a colon and port number, like
+// `example.com:80`. This is used as a special case at the head of a path, where
+// we want to interpret a colon as part of a text identifier instead of as a
+// colon token.
+export function identifierWithPort(tokens) {
+  const parsed = sequence(
+    identifier,
+    optional(sequence(matchTokenType(tokenType.COLON), number))
+  )(tokens);
+  if (!parsed) {
+    return null;
+  }
+  let value = parsed.value[0];
+  if (parsed.value[1]) {
+    // Append port number
+    value += `:${parsed.value[1][1]}`;
+  }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse the arguments to a function where the parentheses have been omitted.
 export function implicitParensArgs(tokens) {
   const parsed = list(tokens);
@@ -433,20 +456,24 @@ export function protocolCall(tokens) {
     matchTokenType(tokenType.COLON),
     optional(matchTokenType(tokenType.SLASH)),
     optional(matchTokenType(tokenType.SLASH)),
-    slashPath
+    identifierWithPort,
+    optional(sequence(matchTokenType(tokenType.SLASH), slashPath))
   )(tokens);
   if (!parsed) {
     return null;
   }
-  const { 0: fn, 4: fnArgs } = parsed.value;
-  const value = [fn, ...fnArgs];
+  const { 0: fn, 4: pathHead, 5: path } = parsed.value;
+  const value = [fn, pathHead];
+  if (path) {
+    value.push(...path[1]);
+  }
   return {
     value,
     rest: parsed.rest,
   };
 }
 
-// Parse a call to look up a value from scope.
+// Parse a call to look up an identifier in scope.
 export function scopeReference(tokens) {
   const parsed = identifier(tokens);
   if (!parsed) {

@@ -15,6 +15,7 @@ import {
   object,
   objectProperty,
   objectPropertyOrShorthand,
+  pathHead,
   protocolCall,
   scopeReference,
   slashCall,
@@ -546,6 +547,14 @@ describe("parse", () => {
     );
   });
 
+  it("pathHead", () => {
+    // example.com
+    assertParse(
+      pathHead([{ type: tokenType.REFERENCE, lexeme: "example.com" }]),
+      [ops.scope, "example.com"]
+    );
+  });
+
   it("protocolCall", () => {
     // foo://bar
     assertParse(
@@ -580,6 +589,19 @@ describe("parse", () => {
         { type: tokenType.REFERENCE, lexeme: "example.com" },
       ]),
       [[ops.scope, "http"], "example.com"]
+    );
+    // http://localhost:5000
+    assertParse(
+      protocolCall([
+        { type: tokenType.REFERENCE, lexeme: "http" },
+        { type: tokenType.COLON },
+        { type: tokenType.SLASH },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "localhost" },
+        { type: tokenType.COLON },
+        { type: tokenType.NUMBER, lexeme: "5000" },
+      ]),
+      [[ops.scope, "http"], "localhost:5000"]
     );
   });
 
