@@ -4,6 +4,11 @@ import { transformObject } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./setDeep.js";
 
+/**
+ * @this {Explorable}
+ * @param {GraphVariant} source
+ * @param {GraphVariant} target
+ */
 export default async function copy(source, target) {
   assertScopeIsDefined(this);
   // const start = performance.now();

@@ -50,19 +50,21 @@ export default async function watch(variant, fn) {
 async function evaluateGraph(scope, fn) {
   let graph;
   let message;
+  let result;
   try {
-    const result = await fn.call(scope);
-    graph = result ? ExplorableGraph.from(result) : undefined;
-    if (!graph) {
-      message = `warning: watch expression did not return a graph`;
-    }
+    result = await fn.call(scope);
   } catch (error) {
     message = messageForError(error);
   }
-  if (message) {
-    console.warn(message);
-    graph = new ConstantGraph(message);
+  graph = result ? ExplorableGraph.from(result) : undefined;
+  if (graph) {
+    return graph;
   }
+  if (!message) {
+    message = `warning: watch expression did not return a graph`;
+  }
+  console.warn(message);
+  graph = new ConstantGraph(message);
   return graph;
 }
 

@@ -18,7 +18,7 @@ describe("OriCommandTransform", () => {
       a: 1,
       b: 2,
     });
-    graph.scope = builtins;
+    /** @type {any} */ (graph).scope = builtins;
     const value = await graph.get("!keys");
     assert.deepEqual(await ExplorableGraph.plain(value), ["a", "b"]);
   });

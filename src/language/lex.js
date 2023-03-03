@@ -151,7 +151,7 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.REFERENCE:
         if (isWhitespace[c] || characterToToken[c] || c === EOF) {
           // Reached end of reference.
-          if (lexeme.length > 0) {
+          if (lexeme && lexeme.length > 0) {
             const type = isNumber(lexeme)
               ? tokenType.NUMBER
               : tokenType.REFERENCE;
@@ -238,7 +238,7 @@ export function lex(text, initialState = state.EXPRESSION) {
           // token if it contains a newline. We only this if the previous token
           // is one that can end an item in a list.
           const previousToken = tokens[tokens.length - 1];
-          if (lexeme.includes("\n") && tokenCanEndItem(previousToken)) {
+          if (lexeme?.includes("\n") && tokenCanEndItem(previousToken)) {
             tokens.push({
               type: tokenType.SEPARATOR,
             });

@@ -47,6 +47,7 @@ export default function loadTextWithFrontMatter(input, key) {
       : ObjectGraph;
     const graph = new (FileTreeTransform(graphClass))(frontData);
     graph.parent = scope;
+    // @ts-ignore
     graph[keySymbol] = key;
     return graph;
   });

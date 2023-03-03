@@ -9,6 +9,14 @@ import {
 } from "../core/utilities.js";
 import { getScope } from "./scopeUtilities.js";
 
+/**
+ * Add support for commands prefixed with `!`.
+ *
+ * E.g., asking this graph for `!yaml` will invoke the yaml() builtin function
+ * in the context of this graph.
+ *
+ * @param {Constructor<Explorable>} Base
+ */
 export default function OriCommandTransform(Base) {
   return class OriCommand extends Base {
     async get(key) {

@@ -21,7 +21,7 @@ export default async function orit(document, input, emitFrontMatter = false) {
   const result = emitFrontMatter
     ? await outputWithGraph(
         templateResult,
-        document.toGraph?.(),
+        /** @type {any} */ (document).toGraph?.(),
         emitFrontMatter
       )
     : templateResult;

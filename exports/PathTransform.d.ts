@@ -1,4 +1,4 @@
-/// <reference path="../core/explorable.ts"/>
+/// <reference path="../src/core/explorable.ts"/>
 
 declare const PathTransform: Mixin<{}>;
 

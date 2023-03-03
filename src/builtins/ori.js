@@ -41,6 +41,7 @@ async function formatResult(scope, result) {
   const stringOrBuffer =
     typeof result === "string" ||
     (globalThis.Buffer && result instanceof Buffer);
+  /** @type {string|Buffer|StringWithGraph|undefined} */
   let output = stringOrBuffer
     ? result
     : result instanceof String
@@ -51,7 +52,7 @@ async function formatResult(scope, result) {
   if (ExplorableGraph.canCastToExplorable(result)) {
     const graph = ExplorableGraph.from(result);
     if (output instanceof Buffer) {
-      output.toGraph = () => graph;
+      /** @type {any} */ (output).toGraph = () => graph;
     } else {
       output = new StringWithGraph(output, graph);
     }

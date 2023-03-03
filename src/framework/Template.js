@@ -84,6 +84,7 @@ export default class Template {
     // Set all the scopes
     ambientsGraph.parent = baseScope;
     if (templateGraph) {
+      // @ts-ignore
       templateGraph.parent = ambientsGraph;
     }
     if (inputGraph) {
@@ -91,6 +92,7 @@ export default class Template {
     }
 
     const extendedScope =
+      // @ts-ignore
       inputGraph?.scope ?? templateGraph?.scope ?? ambientsGraph.scope;
 
     return { inputGraph, templateGraph, extendedScope };

@@ -47,7 +47,7 @@ This is the content.
     const graph = new ObjectGraph({ a: "Hello, a." });
     const output = await utilities.outputWithGraph(text, graph);
     assert.equal(String(output), text);
-    const outputGraph = output.toGraph();
+    const outputGraph = /** @type {any} */ (output).toGraph();
     assert.deepEqual(await ExplorableGraph.plain(outputGraph), {
       a: "Hello, a.",
     });
@@ -64,7 +64,7 @@ a: Hello, a.
 ---
 This is the content.`
     );
-    const outputGraph = output.toGraph();
+    const outputGraph = /** @type {any} */ (output).toGraph();
     assert.deepEqual(await ExplorableGraph.plain(outputGraph), {
       a: "Hello, a.",
     });

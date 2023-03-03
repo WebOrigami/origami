@@ -11,7 +11,7 @@ export default async function defineds(variant) {
   assertScopeIsDefined(this);
   variant = variant ?? (await this.get("@defaultGraph"));
   if (variant === undefined) {
-    return undefined;
+    throw new TypeError("A graph variant is required");
   }
   return ExplorableGraph.mapReduce(variant, null, (values, keys) => {
     const result = {};

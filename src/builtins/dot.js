@@ -58,7 +58,7 @@ async function statements(graph, nodePath, options) {
     let value;
     try {
       value = await graph.get(key);
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       isError = true;
       value =
         error.name && error.message

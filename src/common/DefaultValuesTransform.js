@@ -7,6 +7,8 @@ import { getScope } from "../framework/scopeUtilities.js";
  * default values, this returns values as usual from the main graph. If a
  * requested key is missing from the main graph, but exists in the default
  * values graph, the value will be returned from that graph.
+ *
+ * @param {Constructor<Explorable>} Base
  */
 export default function DefaultValuesTransform(Base) {
   return class DefaultValues extends Base {

@@ -32,7 +32,7 @@ title: Hello
 ---
 # Hello, world.`;
     const html = await mdHtml(md(markdown));
-    const graph = html.toGraph();
+    const graph = /** @type {any} */ (html).toGraph();
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       title: "Hello",
     });

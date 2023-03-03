@@ -188,7 +188,7 @@ async function graphDependencies(graphFile, keysInScope) {
     }
     const expressions = await attachedGraph.expressions?.();
     if (expressions) {
-      for (const [key, code] of Object.entries(expressions)) {
+      for (const code of Object.values(expressions)) {
         const expressionDependencies = code
           ? codeDependencies(code, keysInScope)
           : null;

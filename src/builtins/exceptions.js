@@ -28,7 +28,7 @@ class ExceptionsGraph {
       return ExplorableGraph.isExplorable(value)
         ? Reflect.construct(this.constructor, [value])
         : undefined;
-    } catch (error) {
+    } catch (/** @type {any} */ error) {
       return error.name && error.message
         ? `${error.name}: ${error.message}`
         : error.name ?? error.message ?? error;

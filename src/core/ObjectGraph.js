@@ -19,7 +19,6 @@ export default class ObjectGraph {
     let obj = this.object;
     while (obj !== Object.prototype) {
       // Get the enumerable instance properties and the get/set properties.
-      const names = Object.getOwnPropertyNames(obj);
       const descriptors = Object.getOwnPropertyDescriptors(obj);
       for (const [name, descriptor] of Object.entries(descriptors)) {
         if (
