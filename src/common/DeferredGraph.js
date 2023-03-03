@@ -29,11 +29,21 @@ export default class DeferredGraph {
   }
 
   async load() {
+    // We use a promise to ensure that the load function is only invoked once.
     if (this.loadPromise) {
       return this.loadPromise;
     }
-    this.loadPromise = new Promise(async (resolve) => {
-      const graph = await this.loadFn();
+
+    // Invoke the load function.
+    let loadResult = this.loadFn();
+
+    // Cast the result to a promise if it isn't one.
+    if (!("then" in loadResult)) {
+      loadResult = Promise.resolve(loadResult);
+    }
+
+    // Arrange to set the parent of the graph once it's loaded.
+    this.loadPromise = loadResult.then((graph) => {
       if (this.deferredParent) {
         if ("parent" in graph) {
           graph.parent = this.deferredParent;
@@ -44,8 +54,9 @@ export default class DeferredGraph {
       if (!this[keySymbol]) {
         this[keySymbol] = graph[keySymbol];
       }
-      resolve(graph);
+      return graph;
     });
+
     return this.loadPromise;
   }
 
