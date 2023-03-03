@@ -18,6 +18,7 @@
 
 import {
   any,
+  forcedSequence,
   optional,
   separatedList,
   sequence,
@@ -38,11 +39,22 @@ export function argsChain(tokens) {
 
 // Parse an array like `[1, 2, 3]`.
 export function array(tokens) {
-  const parsed = sequence(
-    matchTokenType(tokenType.LEFT_BRACKET),
-    list,
-    matchTokenType(tokenType.RIGHT_BRACKET)
-  )(tokens);
+  let parsed;
+  try {
+    parsed = forcedSequence(
+      matchTokenType(tokenType.LEFT_BRACKET),
+      list,
+      matchTokenType(tokenType.RIGHT_BRACKET)
+    )(tokens);
+  } catch (error) {
+    if (error instanceof SyntaxError && !error.message) {
+      throw new SyntaxError(
+        'An opening "[" wasn\'t followed by a valid array.'
+      );
+    } else {
+      throw error;
+    }
+  }
   if (!parsed) {
     return null;
   }
@@ -73,21 +85,24 @@ export function assignment(tokens) {
 
 // Parse an Origami expression.
 export function expression(tokens) {
-  // First try parsers for things that have a distinguishing character at the
-  // start, e.g., an opening quote, bracket, etc.
   return any(
+    // First try parsers that directly match a single token.
     string,
+    number,
+    // Then try parsers that look for a distinctive token at the start,
+    // e.g., an opening quote, bracket, etc.
     templateLiteral,
     object,
     graph,
     array,
     lambda,
-    number,
+    // Then we have various types of function calls.
     functionComposition,
     protocolCall,
     slashCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
+    // Last option is a simple scope reference.
     scopeReference
   )(tokens);
 }
@@ -137,11 +152,24 @@ export function functionComposition(tokens) {
 }
 
 export function graph(tokens) {
-  const parsed = sequence(
-    matchTokenType(tokenType.LEFT_BRACE),
-    graphDocument,
-    matchTokenType(tokenType.RIGHT_BRACE)
-  )(tokens);
+  // Expressions try to parse graphs after objects, so if we see a left brace
+  // here, but the rest doesn't parse, it's a syntax error.
+  let parsed;
+  try {
+    parsed = forcedSequence(
+      matchTokenType(tokenType.LEFT_BRACE),
+      graphDocument,
+      matchTokenType(tokenType.RIGHT_BRACE)
+    )(tokens);
+  } catch (error) {
+    if (error instanceof SyntaxError && !error.message) {
+      throw new SyntaxError(
+        'An opening "{" brace was not followed by a valid object or graph definition.'
+      );
+    } else {
+      throw error;
+    }
+  }
   if (!parsed) {
     return null;
   }
@@ -208,7 +236,21 @@ export function implicitParensArgs(tokens) {
 
 // A lambda expression
 export function lambda(tokens) {
-  const parsed = sequence(matchTokenType(tokenType.EQUALS), expression)(tokens);
+  let parsed;
+  try {
+    parsed = forcedSequence(
+      matchTokenType(tokenType.EQUALS),
+      expression
+    )(tokens);
+  } catch (error) {
+    if (error instanceof SyntaxError && !error.message) {
+      throw new SyntaxError(
+        'An equals sign "=" was not followed by a valid expression.'
+      );
+    } else {
+      throw error;
+    }
+  }
   if (!parsed) {
     return null;
   }
@@ -517,6 +559,8 @@ export function templateDocument(tokens) {
 
 // Parse a backtick-quoted template literal.
 export function templateLiteral(tokens) {
+  // The lexer generates an error for an unterminated template literal, so we
+  // don't need to check for that here.
   const parsed = sequence(
     matchTokenType(tokenType.BACKTICK),
     templateDocument,

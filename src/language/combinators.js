@@ -18,6 +18,32 @@ export function empty(text) {
   };
 }
 
+// A variation of the sequence combinator that matches a sequence of parsers. If
+// the first parser fails, this returns null as usual — but if the first parser
+// succeeds, the rest must also succeed or an exception is thrown.
+export function forcedSequence(...parsers) {
+  return function parseSequence(tokens) {
+    let rest = tokens;
+    const value = [];
+    const [optionalParser, ...requiredParsers] = parsers;
+    const parsed = optionalParser(rest);
+    if (!parsed) {
+      return null;
+    }
+    value.push(parsed.value);
+    rest = parsed.rest;
+    for (const parser of requiredParsers) {
+      const parsed = parser(rest);
+      if (!parsed) {
+        throw new SyntaxError();
+      }
+      value.push(parsed.value);
+      rest = parsed.rest;
+    }
+    return { value, rest };
+  };
+}
+
 // Optional combinator: if the given parser succeeded, return its result,
 // otherwise return a null value.
 export function optional(parser) {

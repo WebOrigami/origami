@@ -87,6 +87,16 @@ describe("parse", () => {
     );
   });
 
+  it("array with unmatched bracket", () => {
+    // [1
+    assert.throws(() =>
+      array([
+        { type: tokenType.LEFT_BRACKET },
+        { type: tokenType.NUMBER, lexeme: "1" },
+      ])
+    );
+  });
+
   it("assignment", () => {
     // data = obj.json
     assertParse(
