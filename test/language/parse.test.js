@@ -590,7 +590,7 @@ describe("parse", () => {
       ]),
       [[ops.scope, "http"], "example.com"]
     );
-    // http://localhost:5000
+    // http://localhost:5000/foo
     assertParse(
       protocolCall([
         { type: tokenType.REFERENCE, lexeme: "http" },
@@ -600,8 +600,10 @@ describe("parse", () => {
         { type: tokenType.REFERENCE, lexeme: "localhost" },
         { type: tokenType.COLON },
         { type: tokenType.NUMBER, lexeme: "5000" },
+        { type: tokenType.SLASH },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
       ]),
-      [[ops.scope, "http"], "localhost:5000"]
+      [[ops.scope, "http"], "localhost:5000", "foo"]
     );
   });
 
