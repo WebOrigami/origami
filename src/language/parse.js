@@ -457,15 +457,16 @@ export function protocolCall(tokens) {
     optional(matchTokenType(tokenType.SLASH)),
     optional(matchTokenType(tokenType.SLASH)),
     identifierWithPort,
-    optional(sequence(matchTokenType(tokenType.SLASH), slashPath))
+    optional(matchTokenType(tokenType.SLASH)),
+    optional(slashPath)
   )(tokens);
   if (!parsed) {
     return null;
   }
-  const { 0: fn, 4: pathHead, 5: path } = parsed.value;
+  const { 0: fn, 4: pathHead, 6: path } = parsed.value;
   const value = [fn, pathHead];
   if (path) {
-    value.push(...path[1]);
+    value.push(...path);
   }
   return {
     value,
