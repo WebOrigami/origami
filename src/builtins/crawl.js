@@ -1,7 +1,9 @@
-import { dirname, extname, resolve } from "node:path";
+import { extname } from "node:path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+
+const localProtocol = "local:";
 
 /**
  * Crawl a graph, starting its root index.html page, and following links to
@@ -19,18 +21,9 @@ export default async function crawl(variant) {
 
   while (pathQueue.length > 0) {
     const path = pathQueue.shift();
-
-    const keys = path.split("/");
-    if (keys.length === 0) {
+    const keys = keysFromPath(path);
+    if (!keys) {
       continue;
-    }
-    if (keys[0] === "") {
-      // Discard first empty key
-      keys.shift();
-    }
-    if (keys[keys.length - 1] === "") {
-      // Trailing slash; get index.html
-      keys[keys.length - 1] = "index.html";
     }
 
     // Get value from graph
@@ -40,68 +33,69 @@ export default async function crawl(variant) {
       keys.push("index.html");
       value = await ExplorableGraph.traverse(value, "index.html");
     }
-
     if (value === undefined) {
       continue;
     }
 
-    // Cache value
-    let parent = cache;
-    while (keys.length > 1) {
-      const key = keys.shift();
-      if (!parent[key]) {
-        parent[key] = {};
-      }
-      parent = parent[key];
-    }
-    const key = keys.shift();
-    parent[key] = value;
+    // Cache the value
+    addValueToObject(cache, keys, value);
 
-    // We guess the value is HTML is if its key has an .html extension or
-    // doesn't have an extension, or the value starts with `<`.
-    const ext = extname(key);
-    const probablyHtml =
-      ext === ".html" || ext === "" || value.trim?.().startsWith("<");
-    let paths;
-    if (probablyHtml) {
-      paths = await findPathsInHtml(String(value));
-    } else if (ext === ".css") {
-      paths = await findPathsInCss(String(value));
-    } else {
-      // Don't crawl non-HTML or non-CSS files.
-      continue;
-    }
-
-    // Filter out paths that start with a protocol that's not http or https.
-    const httpPaths = paths.filter((path) => {
-      const protocolRegex = /^(?<protocol>[^:]+):/;
-      const match = path.match(protocolRegex);
-      const protocol = match?.groups.protocol ?? "";
-      return protocol === "http" || protocol === "https" || protocol === "";
-    });
-
-    // Filter out non-local paths.
-    const localPaths = httpPaths.filter((path) => !path.startsWith("http"));
-
-    // Resolve paths relative to the current directory.
-    const dir = dirname(path);
-    const resolvedPaths = localPaths.map((localPath) =>
-      resolve(dir, localPath)
-    );
-
-    // Filter out paths we've already seen.
-    const newPaths = resolvedPaths.filter((path) => !seenPaths.has(path));
+    // Find paths in the value
+    const key = keys[keys.length - 1];
+    const paths = await findPaths(value, key, path);
 
     // Add new paths to the queue.
+    const newPaths = paths.filter((path) => !seenPaths.has(path));
     pathQueue.push(...newPaths);
-
-    // Add new paths to the set of paths we've seen.
     newPaths.forEach((path) => seenPaths.add(path));
   }
 
   const result = new (InheritScopeTransform(ObjectGraph))(cache);
   result.parent = this;
   return result;
+}
+
+function addValueToObject(object, keys, value) {
+  for (let i = 0, current = object; i < keys.length; i++) {
+    const key = keys[i];
+    if (i === keys.length - 1) {
+      current[key] = value;
+    } else {
+      if (!current[key]) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+  }
+}
+
+function findPaths(value, key, basePath) {
+  // We guess the value is HTML is if its key has an .html extension or
+  // doesn't have an extension, or the value starts with `<`.
+  const ext = extname(key);
+  const probablyHtml =
+    ext === ".html" || ext === "" || value.trim?.().startsWith("<");
+  let paths;
+  if (probablyHtml) {
+    paths = findPathsInHtml(String(value));
+  } else if (ext === ".css") {
+    paths = findPathsInCss(String(value));
+  } else {
+    // Has some extension we want need to process
+    return [];
+  }
+
+  // Convert paths to URLs relative to the given base path.
+  const baseUrl = new URL(`${localProtocol}/${basePath}`);
+  const urls = paths.map((path) => new URL(path, baseUrl));
+
+  // Filter URLs that start with our fake local protocol.
+  // This weeds out URLs pointing to other sites.
+  const localUrls = urls.filter((url) => url.protocol === localProtocol);
+
+  // Convert URLs back to paths.
+  const localPaths = localUrls.map((url) => url.pathname);
+  return localPaths;
 }
 
 function findPathsInCss(css) {
@@ -140,6 +134,22 @@ function findPathsInHtml(html) {
   }
 
   return paths;
+}
+
+function keysFromPath(path) {
+  if (path.length === 0) {
+    return null;
+  }
+  const keys = path.split("/");
+  if (keys[0] === "") {
+    // Discard first empty key
+    keys.shift();
+  }
+  if (keys[keys.length - 1] === "") {
+    // Trailing slash; get index.html
+    keys[keys.length - 1] = "index.html";
+  }
+  return keys;
 }
 
 crawl.usage = `crawl <graph>\tCrawl a graph`;
