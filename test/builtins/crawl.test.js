@@ -2,7 +2,7 @@ import crawl from "../../src/builtins/crawl.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
-describe.only("crawl", () => {
+describe("crawl", () => {
   it("finds linked pages", async () => {
     const graph = {
       "index.html": `
