@@ -1,6 +1,7 @@
 import { extname } from "node:path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
+import { isPlainObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 const localProtocol = "local:";
@@ -63,6 +64,12 @@ function addValueToObject(object, keys, value) {
     } else {
       if (!current[key]) {
         current[key] = {};
+      } else if (!isPlainObject(current[key])) {
+        // Already have a value at this point. The site has a page
+        // at a route like /foo, and the site also has resources
+        // within that at routes like /foo/bar.jpg. We move the
+        // current value to "index.html".
+        current[key] = { "index.html": current[key] };
       }
       current = current[key];
     }
@@ -145,10 +152,10 @@ function keysFromPath(path) {
     // Discard first empty key
     keys.shift();
   }
-  if (keys[keys.length - 1] === "") {
-    // Trailing slash; get index.html
-    keys[keys.length - 1] = "index.html";
-  }
+  // if (keys[keys.length - 1] === "") {
+  //   // Trailing slash; get index.html
+  //   keys[keys.length - 1] = "index.html";
+  // }
   return keys;
 }
 
