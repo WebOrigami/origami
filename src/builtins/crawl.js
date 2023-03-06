@@ -152,10 +152,10 @@ function keysFromPath(path) {
     // Discard first empty key
     keys.shift();
   }
-  // if (keys[keys.length - 1] === "") {
-  //   // Trailing slash; get index.html
-  //   keys[keys.length - 1] = "index.html";
-  // }
+  if (keys[keys.length - 1] === "") {
+    // Trailing slash; get index.html
+    keys[keys.length - 1] = "index.html";
+  }
   return keys;
 }
 
