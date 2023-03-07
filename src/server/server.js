@@ -172,11 +172,11 @@ export function keysFromUrl(url) {
     // The path begins with a slash; drop that part.
     keys.shift();
   }
-  if (keys[keys.length - 1] === "") {
-    // The path ends with a slash; replace that with index.html as the default key.
-    keys.pop();
-    keys.push("index.html");
-  }
+  // if (keys[keys.length - 1] === "") {
+  //   // The path ends with a slash; replace that with index.html as the default key.
+  //   keys.pop();
+  //   keys.push("index.html");
+  // }
   return keys;
 }
 

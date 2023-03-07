@@ -17,18 +17,27 @@ import { getScope } from "../framework/scopeUtilities.js";
  * The first convention is handled by the Graph Origami server. This transform
  * handles the second and third conventions.
  *
+ * As a convenience, this transform also provides a default index.html page if
+ * the graph doesn't define one.
+ *
  * @param {Constructor<Explorable>} Base
  */
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
+      // An empty key "" occurs when the user navigates to a path that ends in
+      // a trailing slash, and is equivalent to "index.html".
+      if (key === "") {
+        key = "index.html";
+      }
+
       // Ask the graph if it has the key.
       let value = await super.get(key);
 
       if (value === undefined) {
         // The graph doesn't have the key; try the defaults.
         const scope = getScope(this);
-        if (key === undefined || key === "index.html") {
+        if (key === "index.html") {
           value = await index.call(scope, this);
         } else if (key === ".keys.json") {
           value = await defaultKeysJson.call(scope, this);
