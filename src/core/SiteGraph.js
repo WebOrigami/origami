@@ -46,7 +46,7 @@ export default class SiteGraph {
     const href = new URL(route, this.url).href;
     if (href.endsWith("/")) {
       // Explorable route
-      return new SiteGraph(href);
+      return Reflect.construct(this.constructor, [href]);
     } else {
       // Fetch the data at the given endpoint.
       const response = await fetch(href);
