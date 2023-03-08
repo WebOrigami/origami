@@ -104,6 +104,8 @@ function findPaths(value, key, basePath) {
     paths = findPathsInHtml(String(value));
   } else if (ext === ".css") {
     paths = findPathsInCss(String(value));
+  } else if (ext === ".js") {
+    paths = findPathsInJs(String(value));
   } else {
     // Has some extension we want need to process
     return [];
@@ -130,6 +132,19 @@ function findPathsInCss(css) {
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(css))) {
     paths.push(match.groups.url);
+  }
+
+  return paths;
+}
+
+function findPathsInJs(js) {
+  const paths = [];
+  let match;
+
+  // Find `import` statements.
+  const importRegex = /import [\s\S]+?from\s+["'](?<import>[^"']*)["'];/g;
+  while ((match = importRegex.exec(js))) {
+    paths.push(match.groups.import);
   }
 
   return paths;

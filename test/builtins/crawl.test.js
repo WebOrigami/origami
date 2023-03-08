@@ -17,4 +17,20 @@ describe("crawl", () => {
       "about.html",
     ]);
   });
+
+  it("finds linked JavaScript files", async () => {
+    const graph = {
+      "index.html": `
+        <script src="a.js" type="module"></script>
+      `,
+      "a.js": "import b from './b.js';",
+      "b.js": "export default true;",
+    };
+    const crawled = await crawl(graph);
+    assert.deepEqual(await ExplorableGraph.keys(crawled), [
+      "index.html",
+      "a.js",
+      "b.js",
+    ]);
+  });
 });
