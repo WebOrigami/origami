@@ -25,9 +25,10 @@ import { getScope } from "../framework/scopeUtilities.js";
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
-      // An empty key "" occurs when the user navigates to a path that ends in
-      // a trailing slash, and is equivalent to "index.html".
-      if (key === "") {
+      // An `undefined` key occurs, e.g., when a user tries to browse to a path
+      // with a trailing slash, like foo/. This is equivalent to requesting
+      // foo/index.html.
+      if (key === undefined) {
         key = "index.html";
       }
 
