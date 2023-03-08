@@ -1,19 +1,19 @@
 import SiteGraph from "../core/SiteGraph.js";
 
-export default async function site(domain, ...keys) {
-  let url = [domain, ...keys].join("/");
-  if (!url.startsWith("https") || !url.startsWith("http")) {
-    if (!url.startsWith("//")) {
-      url = `//${url}`;
+export default async function site(host, ...keys) {
+  let href = [host, ...keys].join("/");
+  if (!href.startsWith("https") || !href.startsWith("http")) {
+    if (!href.startsWith("//")) {
+      href = `//${href}`;
     }
-    if (!url.startsWith("http")) {
-      url = `https:${url}`;
+    if (!href.startsWith("http")) {
+      href = `https:${href}`;
     }
   }
-  if (!url.endsWith("/")) {
-    url += "/";
+  if (!href.endsWith("/")) {
+    href += "/";
   }
-  return new SiteGraph(url);
+  return new SiteGraph(href);
 }
 
 site.usage = `site <domain>, <...keys>\tA web site graph via HTTPS`;

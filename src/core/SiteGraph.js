@@ -1,12 +1,12 @@
 import fetch from "node-fetch";
 
 export default class SiteGraph {
-  constructor(url = window?.location.href) {
-    if (url?.startsWith(".") && window?.location !== undefined) {
+  constructor(href = window?.location.href) {
+    if (href?.startsWith(".") && window?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.
-      this.url = new URL(url, window.location.href).href;
+      this.href = new URL(href, window.location.href).href;
     } else {
-      this.url = url;
+      this.href = href;
     }
     this.keysPromise = undefined;
   }
@@ -26,7 +26,7 @@ export default class SiteGraph {
       return this.keysPromise;
     }
 
-    const href = new URL(".keys.json", this.url).href;
+    const href = new URL(".keys.json", this.href).href;
     this.keysPromise = fetch(href)
       .then((response) => (response.ok ? response.text() : null))
       .then((text) => {
@@ -57,15 +57,23 @@ export default class SiteGraph {
     // see is the last key being `undefined`, which indicates a trailing slash.
     // As it happens, join() will correctly handle that case, treating undefined
     // as an empty string.
-    const route = keys.join("/");
-    const href = new URL(route, this.url).href;
+    let route = keys.join("/");
 
-    if (href.endsWith("/")) {
-      // If the site is an explorable site, and the route ends with a slash, we
-      // return a graph for the indicated route.
-      if (await this.isExplorableSite()) {
-        return Reflect.construct(this.constructor, [href]);
-      }
+    // If there is only one key and it's undefined, and the site is explorable,
+    // we take the route as "index.html". With this and subsequent checks, we
+    // try to avoid sniffing the site to see if it's explorable, as that
+    // necessitates an extra network request per SiteGraph instance. In many
+    // cases, that can be avoided.
+    if (route === "" && (await this.isExplorableSite())) {
+      route = "index.html";
+    }
+
+    const href = new URL(route, this.href).href;
+
+    // If the (possibly adjusted) route ends with a slash and the site is an
+    // explorable site, we return a graph for the indicated route.
+    if (href.endsWith("/") && (await this.isExplorableSite())) {
+      return Reflect.construct(this.constructor, [href]);
     }
 
     // Fetch the data at the given route.
