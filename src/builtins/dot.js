@@ -87,7 +87,7 @@ async function statements(graph, nodePath, options) {
       let label =
         typeof serializable === "object"
           ? YAML.stringify(serializable)
-          : serializable ?? "";
+          : serializable?.trim?.() ?? "";
       nodes[key] = { label };
       if (isError) {
         nodes[key].isError = true;
