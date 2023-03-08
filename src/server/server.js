@@ -4,6 +4,7 @@ import ObjectGraph from "../core/ObjectGraph.js";
 import {
   extname,
   isPlainObject,
+  keysFromPath,
   stringLike,
   transformObject,
 } from "../core/utilities.js";
@@ -43,13 +44,6 @@ function extendGraphScopeWithParams(graph, url) {
   return extended;
 }
 
-// Given a relative web path like "/foo/bar", return the corresponding object in
-// the graph.
-export async function getResourceAtPath(graph, href) {
-  const keys = keysFromUrl(href);
-  return ExplorableGraph.traverse(graph, ...keys);
-}
-
 // Explorable graph router as Express middleware.
 export function graphRouter(graph) {
   // Return a router for the graph source.
@@ -65,7 +59,8 @@ export function graphRouter(graph) {
 export async function handleRequest(request, response, graph) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url, `https://${request.headers.host}`);
-  const keys = keysFromUrl(url);
+  const pathname = decodeURIComponent(url.pathname);
+  const keys = keysFromPath(pathname);
 
   const extendedGraph =
     url.searchParams && "parent" in graph
@@ -163,21 +158,6 @@ export async function handleRequest(request, response, graph) {
     return true;
   }
   return false;
-}
-
-export function keysFromUrl(url) {
-  const decodedUrl = decodeURIComponent(url.pathname);
-  const keys = decodedUrl.split("/");
-  if (keys[0] === "") {
-    // The path begins with a slash; drop that part.
-    keys.shift();
-  }
-  if (keys[keys.length - 1] === "") {
-    // The path ends with a slash; replace that with `undefined`
-    // @ts-ignore
-    keys[keys.length - 1] = undefined;
-  }
-  return keys;
 }
 
 /**

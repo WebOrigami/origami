@@ -323,6 +323,18 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Given a slash-separated path like "foo/bar", traverse the keys "foo" and
+   * "bar" and return the resulting value.
+   *
+   * @param {GraphVariant} graph
+   * @param {string} path
+   */
+  static async traversePath(graph, path) {
+    const keys = utilities.keysFromPath(path);
+    return ExplorableGraph.traverse(graph, ...keys);
+  }
+
+  /**
    * Returns the graph's values as an array.
    *
    * @param {GraphVariant} variant

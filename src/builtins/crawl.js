@@ -1,7 +1,7 @@
 import { extname } from "node:path";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { isPlainObject } from "../core/utilities.js";
+import { isPlainObject, keysFromPath } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 const localProtocol = "local:";
@@ -22,31 +22,41 @@ export default async function crawl(variant) {
 
   while (pathQueue.length > 0) {
     const path = pathQueue.shift();
-    const keys = keysFromPath(path);
-    if (!keys) {
+    if (!path) {
       continue;
     }
 
-    // Get value from graph
+    // Get value at path
+    const keys = keysFromPath(path);
     let value = await ExplorableGraph.traverse(graph, ...keys);
     if (ExplorableGraph.isExplorable(value)) {
       // Path is actually a directory; see if it has an index.html
+      if (keys.at(-1) === undefined) {
+        keys.pop();
+      }
       keys.push("index.html");
       value = await ExplorableGraph.traverse(value, "index.html");
     }
+
     if (value === undefined) {
       continue;
+    }
+
+    if (keys.at(-1) === undefined) {
+      // For indexing and storage purposes, treat a path that ends in a
+      // trailing slash as if it ends in index.html.
+      keys[keys.length - 1] = "index.html";
     }
 
     // Cache the value
     addValueToObject(cache, keys, value);
 
     // Find paths in the value
-    const key = keys[keys.length - 1];
+    const key = keys.at(-1);
     const paths = await findPaths(value, key, path);
 
     // Add new paths to the queue.
-    const newPaths = paths.filter((path) => !seenPaths.has(path));
+    const newPaths = new Set(paths.filter((path) => !seenPaths.has(path)));
     pathQueue.push(...newPaths);
     newPaths.forEach((path) => seenPaths.add(path));
   }
@@ -60,8 +70,15 @@ function addValueToObject(object, keys, value) {
   for (let i = 0, current = object; i < keys.length; i++) {
     const key = keys[i];
     if (i === keys.length - 1) {
-      current[key] = value;
+      // Write out value
+      if (isPlainObject(current[key])) {
+        // Route with existing values; treat the new value as an index.html
+        current[key]["index.html"] = value;
+      } else {
+        current[key] = value;
+      }
     } else {
+      // Traverse further
       if (!current[key]) {
         current[key] = {};
       } else if (!isPlainObject(current[key])) {
@@ -79,7 +96,7 @@ function addValueToObject(object, keys, value) {
 function findPaths(value, key, basePath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
-  const ext = extname(key);
+  const ext = key ? extname(key) : "";
   const probablyHtml =
     ext === ".html" || ext === "" || value.trim?.().startsWith("<");
   let paths;
@@ -141,22 +158,6 @@ function findPathsInHtml(html) {
   }
 
   return paths;
-}
-
-function keysFromPath(path) {
-  if (path.length === 0) {
-    return null;
-  }
-  const keys = path.split("/");
-  if (keys[0] === "") {
-    // Discard first empty key
-    keys.shift();
-  }
-  if (keys[keys.length - 1] === "") {
-    // Trailing slash; get index.html
-    keys[keys.length - 1] = "index.html";
-  }
-  return keys;
 }
 
 crawl.usage = `crawl <graph>\tCrawl a graph`;
