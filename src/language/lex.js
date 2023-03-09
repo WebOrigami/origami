@@ -267,7 +267,7 @@ export function lex(text, initialState = state.EXPRESSION) {
 function isNumber(text) {
   // Based on https://stackoverflow.com/a/51733563/76472
   // but only accepts integers or floats, not exponential notation.
-  const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)/;
+  const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)$/;
   return numberRegex.test(text);
 }
 
