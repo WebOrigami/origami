@@ -1,8 +1,8 @@
 import { extname } from "node:path";
+import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { isPlainObject, keysFromPath } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 const localProtocol = "local:";
 
@@ -26,8 +26,19 @@ export default async function crawl(variant) {
       continue;
     }
 
-    // Get value at path
+    // Based on the extension, do we want to get the value?
     const keys = keysFromPath(path);
+    if (!hasCrawlableExtension(keys.at(-1))) {
+      // Don't get the value now. Add a function to the cache that will retrieve
+      // the value when needed.
+      const fn = async () => {
+        return ExplorableGraph.traverse(graph, ...keys);
+      };
+      addValueToObject(cache, keys, fn);
+      continue;
+    }
+
+    // Get value at path
     let value = await ExplorableGraph.traverse(graph, ...keys);
     if (ExplorableGraph.isExplorable(value)) {
       // Path is actually a directory; see if it has an index.html
@@ -61,8 +72,7 @@ export default async function crawl(variant) {
     newPaths.forEach((path) => seenPaths.add(path));
   }
 
-  const result = new (InheritScopeTransform(ObjectGraph))(cache);
-  result.parent = this;
+  const result = new (InvokeFunctionsTransform(ObjectGraph))(cache);
   return result;
 }
 
@@ -93,6 +103,31 @@ function addValueToObject(object, keys, value) {
   }
 }
 
+class CrawledGraph {
+  constructor(graph, cache) {
+    this.graph = graph;
+    this.cache = cache;
+  }
+
+  async *[Symbol.asyncIterator]() {
+    yield* this.cache;
+  }
+
+  async get(key) {
+    return this.traverse(key);
+  }
+
+  async traverse(...keys) {
+    const cacheValue = await ExplorableGraph.traverse(this.cache, ...keys);
+    const graphValue =
+      cacheValue === undefined
+        ? await ExplorableGraph.traverse(this.graph, ...keys)
+        : undefined;
+    if (ExplorableGraph) {
+    }
+  }
+}
+
 function findPaths(value, key, basePath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
@@ -107,7 +142,7 @@ function findPaths(value, key, basePath) {
   } else if (ext === ".js") {
     paths = findPathsInJs(String(value));
   } else {
-    // Has some extension we want need to process
+    // Doesn't have an extension we want to process
     return [];
   }
 
@@ -173,6 +208,16 @@ function findPathsInHtml(html) {
   }
 
   return paths;
+}
+
+function hasCrawlableExtension(key) {
+  if (key === undefined) {
+    // Tantamount to "index.html"
+    return true;
+  }
+  const ext = extname(key);
+  const crawlableExtensions = [".html", ".css", ".js", ""];
+  return crawlableExtensions.includes(ext);
 }
 
 crawl.usage = `crawl <graph>\tCrawl a graph`;

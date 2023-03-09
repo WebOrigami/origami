@@ -18,6 +18,18 @@ describe("crawl", () => {
     ]);
   });
 
+  it("finds linked images", async () => {
+    const graph = {
+      "index.html": `<img src="logo.png">`,
+      "logo.png": "PNG data",
+    };
+    const crawled = await crawl(graph);
+    assert.deepEqual(await ExplorableGraph.keys(crawled), [
+      "index.html",
+      "logo.png",
+    ]);
+  });
+
   it("finds linked JavaScript files", async () => {
     const graph = {
       "index.html": `
