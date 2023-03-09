@@ -4,20 +4,35 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { isPlainObject, keysFromPath } from "../core/utilities.js";
 
-const localProtocol = "local:";
-
 /**
  * Crawl a graph, starting its root index.html page, and following links to
  * other pages and resources. Return a new graph of the crawled content.
  *
  * @this {Explorable}
  * @param {GraphVariant} variant
+ * @param {string} [baseHref]
  * @returns {Promise<Explorable>}
  */
-export default async function crawl(variant) {
+export default async function crawl(variant, baseHref) {
   const graph = ExplorableGraph.from(variant);
+
+  if (baseHref === undefined) {
+    // Ask graph or original variant if it has an `href` property we can use as
+    // the base href to determine whether a link is local within the graph or
+    // not. If not, use a fake `local:/` href.
+    baseHref =
+      /** @type {any} */ (graph).href ??
+      /** @type {any} */ (variant).href ??
+      "local:/";
+    if (!baseHref?.endsWith("/")) {
+      baseHref += "/";
+    }
+  }
+  // @ts-ignore
+  const baseUrl = new URL(baseHref);
+
   const cache = {};
-  const pathQueue = ["/"];
+  const pathQueue = ["/robots.txt", "/"];
   const seenPaths = new Set();
 
   while (pathQueue.length > 0) {
@@ -28,7 +43,7 @@ export default async function crawl(variant) {
 
     // Based on the extension, do we want to get the value?
     const keys = keysFromPath(path);
-    if (!hasCrawlableExtension(keys.at(-1))) {
+    if (!isKeyForCrawlableFile(keys.at(-1))) {
       // Don't get the value now. Add a function to the cache that will retrieve
       // the value when needed.
       const fn = async () => {
@@ -64,7 +79,7 @@ export default async function crawl(variant) {
 
     // Find paths in the value
     const key = keys.at(-1);
-    const paths = await findPaths(value, key, path);
+    const paths = await findPaths(value, key, baseUrl, path);
 
     // Add new paths to the queue.
     const newPaths = new Set(paths.filter((path) => !seenPaths.has(path)));
@@ -103,60 +118,52 @@ function addValueToObject(object, keys, value) {
   }
 }
 
-class CrawledGraph {
-  constructor(graph, cache) {
-    this.graph = graph;
-    this.cache = cache;
-  }
-
-  async *[Symbol.asyncIterator]() {
-    yield* this.cache;
-  }
-
-  async get(key) {
-    return this.traverse(key);
-  }
-
-  async traverse(...keys) {
-    const cacheValue = await ExplorableGraph.traverse(this.cache, ...keys);
-    const graphValue =
-      cacheValue === undefined
-        ? await ExplorableGraph.traverse(this.graph, ...keys)
-        : undefined;
-    if (ExplorableGraph) {
-    }
-  }
-}
-
-function findPaths(value, key, basePath) {
+function findPaths(value, key, baseUrl, localPath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
   const ext = key ? extname(key) : "";
-  const probablyHtml =
-    ext === ".html" || ext === "" || value.trim?.().startsWith("<");
-  let paths;
-  if (probablyHtml) {
-    paths = findPathsInHtml(String(value));
+  const maybeHtml = ext === "" || value.trim?.().startsWith("<");
+  let foundPaths;
+  if (ext === ".html") {
+    foundPaths = findPathsInHtml(String(value));
   } else if (ext === ".css") {
-    paths = findPathsInCss(String(value));
+    foundPaths = findPathsInCss(String(value));
   } else if (ext === ".js") {
-    paths = findPathsInJs(String(value));
+    foundPaths = findPathsInJs(String(value));
+  } else if (key === "robots.txt") {
+    foundPaths = findPathsInRobotsTxt(String(value));
+  } else if (key === "sitemap.xml") {
+    foundPaths = findPathsInSitemapXml(String(value));
+  } else if (maybeHtml) {
+    foundPaths = findPathsInHtml(String(value));
   } else {
     // Doesn't have an extension we want to process
     return [];
   }
 
-  // Convert paths to URLs relative to the given base path.
-  const baseUrl = new URL(`${localProtocol}/${basePath}`);
-  const urls = paths.map((path) => new URL(path, baseUrl));
+  // Convert paths to absolute URLs.
+  const localUrl = new URL(localPath, baseUrl);
+  const basePathname = baseUrl.pathname;
+  // @ts-ignore
+  const absoluteUrls = foundPaths.map((path) => new URL(path, localUrl));
 
-  // Filter URLs that start with our fake local protocol.
-  // This weeds out URLs pointing to other sites.
-  const localUrls = urls.filter((url) => url.protocol === localProtocol);
+  // Convert the absolute URLs to paths relative to the baseHref. If the URL
+  // points outside the tree rooted at the baseHref, the relative path will be
+  // null. We ignore the protocol in this test, because in practice sites often
+  // fumble the use of http and https, treating them interchangeably.
+  const relativePaths = absoluteUrls.map((url) => {
+    if (url.host === baseUrl.host && url.pathname.startsWith(basePathname)) {
+      return url.pathname.slice(basePathname.length);
+    } else {
+      return null;
+    }
+  });
 
-  // Convert URLs back to paths.
-  const localPaths = localUrls.map((url) => url.pathname);
-  return localPaths;
+  // Filter out the null paths.
+  /** @type {string[]} */
+  // @ts-ignore
+  const paths = relativePaths.filter((path) => path !== null);
+  return paths;
 }
 
 function findPathsInCss(css) {
@@ -166,7 +173,7 @@ function findPathsInCss(css) {
   // Find `url()` functions.
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(css))) {
-    paths.push(match.groups.url);
+    paths.push(match.groups?.url);
   }
 
   return paths;
@@ -179,7 +186,7 @@ function findPathsInJs(js) {
   // Find `import` statements.
   const importRegex = /import [\s\S]+?from\s+["'](?<import>[^"']*)["'];/g;
   while ((match = importRegex.exec(js))) {
-    paths.push(match.groups.import);
+    paths.push(match.groups?.import);
   }
 
   return paths;
@@ -192,27 +199,53 @@ function findPathsInHtml(html) {
   // Find `href` attributes in anchor and link tags.
   const linkRegex = /<(?:a|link) [^>]*?href=["'](?<link>[^>]*?)["'][^>]*>/g;
   while ((match = linkRegex.exec(html))) {
-    paths.push(match.groups.link);
+    paths.push(match.groups?.link);
   }
 
   // Find `src` attributes in img and script tags.
   const srcRegex = /<(?:img|script) [^>]*?src=["'](?<src>[^>]*?)["'][^>]*>/g;
   while ((match = srcRegex.exec(html))) {
-    paths.push(match.groups.src);
+    paths.push(match.groups?.src);
   }
 
   // Find `url()` functions in CSS.
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(html))) {
-    paths.push(match.groups.url);
+    paths.push(match.groups?.url);
   }
 
   return paths;
 }
 
-function hasCrawlableExtension(key) {
-  if (key === undefined) {
-    // Tantamount to "index.html"
+function findPathsInRobotsTxt(txt) {
+  const paths = [];
+  let match;
+
+  // Find `Sitemap` directives.
+  const sitemapRegex = /Sitemap:\s*(?<sitemap>[^\s]*)/g;
+  while ((match = sitemapRegex.exec(txt))) {
+    paths.push(match.groups?.sitemap);
+  }
+
+  return paths;
+}
+
+function findPathsInSitemapXml(xml) {
+  const paths = [];
+  let match;
+
+  // Find `loc` elements.
+  const locRegex = /<loc>(?<loc>[^<]*)<\/loc>/g;
+  while ((match = locRegex.exec(xml))) {
+    paths.push(match.groups?.loc);
+  }
+
+  return paths;
+}
+
+function isKeyForCrawlableFile(key) {
+  // Undefined key is tantamount to "index.html"
+  if (key === undefined || key === "robots.txt" || key === "sitemap.xml") {
     return true;
   }
   const ext = extname(key);
