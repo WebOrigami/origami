@@ -60,8 +60,12 @@ function DebugTransform(Base) {
         const original = value.toGraph.bind(value);
         value.toGraph = () => {
           let graph = original();
-          graph = transformObject(InheritScopeTransform, graph);
-          graph = transformObject(DebugTransform, graph);
+          if (!isTransformApplied(InheritScopeTransform, graph)) {
+            graph = transformObject(InheritScopeTransform, graph);
+          }
+          if (!isTransformApplied(DebugTransform, graph)) {
+            graph = transformObject(DebugTransform, graph);
+          }
           graph.parent = parent;
           return graph;
         };

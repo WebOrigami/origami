@@ -55,6 +55,18 @@ export default function ExplorableSiteTransform(Base) {
         value = transformObject(ExplorableSiteTransform, value);
       }
 
+      if (value?.toGraph) {
+        // If the value isn't a graph, but has a graph attached via a `toGraph`
+        // method, wrap the toGraph method to add this transform.
+        const original = value.toGraph.bind(value);
+        value.toGraph = () => {
+          let graph = original();
+          if (!isTransformApplied(ExplorableSiteTransform, graph)) {
+            graph = transformObject(ExplorableSiteTransform, graph);
+          }
+          return graph;
+        };
+      }
       return value;
     }
   };
