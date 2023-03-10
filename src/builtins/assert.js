@@ -1,6 +1,7 @@
 import assert from "assert/strict";
 import builtins from "../cli/builtins.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { graphInContext } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -16,11 +17,8 @@ export default async function assertBuiltin(variant) {
     return undefined;
   }
 
-  let graph = ExplorableGraph.from(variant);
-
-  if ("parent" in graph && !graph.parent) {
-    graph.parent = this ?? builtins;
-  }
+  const scope = this ?? builtins;
+  const graph = graphInContext(ExplorableGraph.from(variant), scope);
 
   const description = await graph.get("description");
   const expected = await graph.get("expected");

@@ -17,7 +17,7 @@ export default async function filter(graphVariant, filterVariant) {
     filterVariant
   );
   const parent = /** @type {any} */ (this).parent;
-  /** @type {any} */ (filtered).parent = getScope(parent);
+  filtered.parent = getScope(parent);
   return filtered;
 }
 

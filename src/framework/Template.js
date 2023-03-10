@@ -4,7 +4,7 @@ import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { getScope, keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 // See notes at ExplorableGraph.js
@@ -48,25 +48,18 @@ export default class Template {
 
   /**
    * Create a scope that will be the context for executing the compiled
-   * template. This scope will be
+   * template. This scope will be:
    *
    * input → template front matter → ambient properties → base scope
    */
   async createContext(processedInput, baseScope) {
     // Create the three graphs we'll add to the scope.
-    let inputGraph = processedInput.inputGraph
-      ? Object.create(processedInput.inputGraph)
+    const inputGraph = processedInput.inputGraph
+      ? graphInContext(processedInput.inputGraph, baseScope)
       : null;
-    if (inputGraph && !("parent" in inputGraph)) {
-      inputGraph = transformObject(InheritScopeTransform, inputGraph);
-    }
-
-    let templateGraph = this.templateGraph
-      ? Object.create(this.templateGraph)
+    const templateGraph = this.templateGraph
+      ? graphInContext(this.templateGraph, baseScope)
       : null;
-    if (templateGraph && !("parent" in templateGraph)) {
-      templateGraph = transformObject(InheritScopeTransform, templateGraph);
-    }
 
     // Ambient properties let the template reference specific input/template data.
     const ambients = {
@@ -87,7 +80,6 @@ export default class Template {
     // Set all the scopes
     ambientsGraph.parent = baseScope;
     if (templateGraph) {
-      // @ts-ignore
       templateGraph.parent = ambientsGraph;
     }
     if (inputGraph) {

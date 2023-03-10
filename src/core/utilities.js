@@ -1,5 +1,6 @@
 import * as YAMLModule from "yaml";
 import StringWithGraph from "../common/StringWithGraph.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import expressionTag from "../language/expressionTag.js";
 import ExplorableGraph from "./ExplorableGraph.js";
 
@@ -161,6 +162,26 @@ function parseYamlWithExpressions(text) {
   return YAML.parse(text, {
     customTags: [expressionTag],
   });
+}
+
+/**
+ * Return a new graph equivalent to the given graph, but with the given context.
+ *
+ * If the graph already has a `parent` property, this uses the graph as a
+ * prototype for the result -- the original graph is not modified. If the graph
+ * doesn't have a `parent` property, this applies InheritScopeTransform.
+ *
+ * @param {Explorable} graph
+ * @returns {Explorable & { parent: Explorable }}
+ */
+export function graphInContext(graph, context) {
+  // Either method of constructing the target produces a new graph.
+  const target =
+    "parent" in graph
+      ? Object.create(graph)
+      : transformObject(InheritScopeTransform, graph);
+  target.parent = context;
+  return target;
 }
 
 /**

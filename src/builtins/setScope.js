@@ -1,7 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { keySymbol, transformObject } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import { graphInContext, keySymbol } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -14,19 +13,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 export default function setScope(variant, ...scopeGraphs) {
   assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
-
-  let result;
-  if ("parent" in graph) {
-    // Extend prototype chain to avoid destructively modifying the original.
-    result = Object.create(graph);
-  } else {
-    // Setting scope implies the use of InheritScopeTransform.
-    result = transformObject(InheritScopeTransform, graph);
-  }
-  result[keySymbol] = graph[keySymbol];
-
   const scope = scopeGraphs.length === 0 ? this : new Scope(...scopeGraphs);
-  result.parent = scope;
+  const result = graphInContext(graph, scope);
+  result[keySymbol] = graph[keySymbol];
   return result;
 }
 

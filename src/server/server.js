@@ -3,12 +3,11 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import {
   extname,
+  graphInContext,
   isPlainObject,
   keysFromPath,
   stringLike,
-  transformObject,
 } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 // import { addAncestor } from "../framework/scopeUtilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -33,15 +32,9 @@ function extendGraphScopeWithParams(graph, url) {
   const newScope = new Scope(paramGraph, graph.parent);
 
   // Create a new graph that extends the prototype chain of the supplied graph.
-  const extended =
-    "parent" in graph
-      ? Object.create(graph)
-      : transformObject(InheritScopeTransform, graph);
+  const extendedGraph = graphInContext(graph, newScope);
 
-  // Give the new graph the extended scope.
-  extended.parent = newScope;
-
-  return extended;
+  return extendedGraph;
 }
 
 // Explorable graph router as Express middleware.

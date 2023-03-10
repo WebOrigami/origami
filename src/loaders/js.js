@@ -1,7 +1,6 @@
 import DeferredGraph from "../common/DeferredGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { keySymbol, transformObject } from "../core/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
 
 /**
  * Load a .js file as a String with a toFunction() method that returns a
@@ -18,7 +17,7 @@ export default function loadJs(buffer, key) {
   /** @type {any} */
   const textWithFunction = new String(text);
   const graph = this;
-  const scope = "scope" in graph ? graph.scope : graph;
+  const scope = getScope(graph);
 
   let moduleExport;
   async function importModule() {
@@ -50,13 +49,7 @@ export default function loadJs(buffer, key) {
       return null;
     }
 
-    /** @type {any} */
-    let loadedGraph = ExplorableGraph.from(variant);
-    if (!("parent" in loadedGraph)) {
-      loadedGraph = transformObject(InheritScopeTransform, loadedGraph);
-    }
-    loadedGraph.parent = scope;
-
+    const loadedGraph = graphInContext(ExplorableGraph.from(variant), scope);
     loadedGraph[keySymbol] = key;
 
     return loadedGraph;
