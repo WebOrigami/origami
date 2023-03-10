@@ -13,7 +13,7 @@ describe("Template", () => {
     const template = new Template("text", container);
     assert.equal(template.templateGraph, null);
     assert.equal(template.templateText, "text");
-    assert.equal(template.scope, container);
+    assert.equal(template.templateScope, container);
   });
 
   it("accepts template with front matter graph", async () => {
@@ -28,7 +28,7 @@ text`;
       a: 1,
     });
     assert.equal(template.templateText, "text");
-    assert.equal(template.scope, scope);
+    assert.equal(template.templateScope, scope);
   });
 
   it("extends scope with input data", async () => {

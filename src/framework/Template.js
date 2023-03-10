@@ -17,7 +17,7 @@ export default class Template {
     this.compiled = null;
     this.templateText = String(document);
     this.templateGraph = document.toGraph?.() ?? null;
-    this.scope = scope;
+    this.templateScope = scope;
   }
 
   /**
@@ -55,12 +55,16 @@ export default class Template {
    */
   async createContext(processedInput, baseScope) {
     // Create the three graphs we'll add to the scope.
-    let inputGraph = processedInput.inputGraph ?? null;
+    let inputGraph = processedInput.inputGraph
+      ? Object.create(processedInput.inputGraph)
+      : null;
     if (inputGraph && !("parent" in inputGraph)) {
       inputGraph = transformObject(InheritScopeTransform, inputGraph);
     }
 
-    let templateGraph = this.templateGraph ?? null;
+    let templateGraph = this.templateGraph
+      ? Object.create(this.templateGraph)
+      : null;
     if (templateGraph && !("parent" in templateGraph)) {
       templateGraph = transformObject(InheritScopeTransform, templateGraph);
     }
@@ -69,7 +73,7 @@ export default class Template {
     const ambients = {
       "@template": {
         graph: templateGraph,
-        scope: this.scope,
+        scope: this.templateScope,
         text: this.templateText,
       },
       "@input": processedInput.input,
