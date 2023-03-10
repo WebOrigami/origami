@@ -100,6 +100,7 @@ export { default as ImplicitModulesTransform } from "../src/common/ImplicitModul
 export { default as InvokeFunctionsTransform } from "../src/common/InvokeFunctionsTransform.js";
 export { default as loadTextWithFrontMatter } from "../src/common/loadTextWithFrontMatter.js";
 export { default as MapExtensionsGraph } from "../src/common/MapExtensionsGraph.js";
+export { default as MapInnerKeysGraph } from "../src/common/MapInnerKeysGraph.js";
 export { default as MergeDeepGraph } from "../src/common/MergeDeepGraph.js";
 export { default as MergeGraph } from "../src/common/MergeGraph.js";
 export { default as Scope } from "../src/common/Scope.js";

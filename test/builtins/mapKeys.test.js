@@ -4,16 +4,6 @@ import * as ops from "../../src/language/ops.js";
 import assert from "../assert.js";
 
 describe("mapKeys", () => {
-  it("by default makes the value itself the key", async () => {
-    /** @type {any} */
-    const graph = await mapKeys.call(null, ["a", "b", "c"]);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: "a",
-      b: "b",
-      c: "c",
-    });
-  });
-
   it("can define a key from a value property", async () => {
     /** @type {any} */
     const graph = await mapKeys.call(

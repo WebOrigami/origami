@@ -9,7 +9,7 @@ import * as utilities from "./utilities.js";
 export default class MapKeysValuesGraph {
   /**
    * @param {GraphVariant} variant
-   * @param {Invocable} mapFn
+   * @param {Invocable | null} mapFn
    * @param {PlainObject} options
    */
   constructor(variant, mapFn, options = {}) {
@@ -49,12 +49,12 @@ export default class MapKeysValuesGraph {
         : undefined;
 
       // Determine whether we want to apply the map to this value.
-      const applyMap = await this.mapApplies(innerValue, outerKey, innerKey);
+      const applyMap =
+        this.mapFn && (await this.mapApplies(innerValue, outerKey, innerKey));
       // Apply map if desired, otherwise use inner value as is.
-      outerValue =
-        applyMap && this.mapFn
-          ? await this.mapFn.call(this, innerValue, outerKey, innerKey)
-          : innerValue;
+      outerValue = applyMap
+        ? await this.mapFn?.call(this, innerValue, outerKey, innerKey)
+        : innerValue;
     }
 
     // If the value to return is an explorable graph, wrap it with a map.
