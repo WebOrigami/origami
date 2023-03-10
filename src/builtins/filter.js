@@ -1,6 +1,6 @@
 import FilterGraph from "../common/FilterGraph.js";
+import { getScope } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import { parentScope } from "../framework/scopeUtilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -16,7 +16,8 @@ export default async function filter(graphVariant, filterVariant) {
     graphVariant,
     filterVariant
   );
-  /** @type {any} */ (filtered).parent = parentScope(this);
+  const parent = /** @type {any} */ (this).parent;
+  /** @type {any} */ (filtered).parent = getScope(parent);
   return filtered;
 }
 

@@ -1,4 +1,4 @@
-import { keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../core/utilities.js";
 import Scope from "./Scope.js";
 
 /**
@@ -75,8 +75,6 @@ export default class DeferredGraph {
   }
 
   get scope() {
-    const parent = this.parent;
-    const parentScope = parent?.scope ?? parent;
-    return new Scope(this, parentScope);
+    return this.parent ? new Scope(this, getScope(this.parent)) : this;
   }
 }
