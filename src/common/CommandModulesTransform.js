@@ -1,6 +1,6 @@
 import path from "node:path";
 
-/***
+/**
  * This mixin is a companion to ImplicitModulesTransform.
  *
  * ImplicitModulesTransform takes care of loading "foo.js" if a request to load
@@ -12,6 +12,8 @@ import path from "node:path";
  * One case where we *do* want to expose such keys is as commands in the scope
  * used by the Origami CLI. This mixin takes care of that: if a folder contains
  * "foo.js", then this will expose "foo" as a key.
+ *
+ * @param {Constructor<Explorable>} Base
  */
 export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {

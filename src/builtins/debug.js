@@ -25,6 +25,9 @@ export default async function debug(variant) {
   return result;
 }
 
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {
     async get(key) {
@@ -48,10 +51,6 @@ function DebugTransform(Base) {
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
         }
-      }
-
-      if (value?.defaults) {
-        Object.assign(value.defaults, this.defaults);
       }
 
       if (value?.toGraph) {

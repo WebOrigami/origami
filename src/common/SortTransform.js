@@ -1,3 +1,6 @@
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 export default function SortTransform(Base) {
   return class Sort extends Base {
     async *[Symbol.asyncIterator]() {

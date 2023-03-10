@@ -1,6 +1,10 @@
 import builtinLoaders from "../builtins/@loaders.js";
 import { extname } from "../core/utilities.js";
+import { getScope } from "../framework/scopeUtilities.js";
 
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {
     constructor(...args) {
@@ -16,7 +20,7 @@ export default function FileLoadersTransform(Base) {
           if (!this.loaders) {
             // Give the scope a chance to contribute loaders, otherwise fall
             // back to the built-in loaders.
-            const scope = this.scope ?? this;
+            const scope = getScope(this);
             const customLoaders = await scope.get("@loaders");
             this.loaders = customLoaders ?? builtinLoaders;
           }

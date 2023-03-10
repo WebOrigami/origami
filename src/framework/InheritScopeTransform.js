@@ -6,6 +6,9 @@ import { getScope } from "./scopeUtilities.js";
 const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");
 
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {
     constructor(...args) {

@@ -1,3 +1,6 @@
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 export default function ShuffleTransform(Base) {
   return class Shuffle extends Base {
     async *[Symbol.asyncIterator]() {

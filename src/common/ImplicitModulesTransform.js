@@ -1,3 +1,6 @@
+/**
+ * @param {Constructor<Explorable>} Base
+ */
 export default function ImplicitModulesTransform(Base) {
   return class ImplicitModules extends Base {
     async get(key) {
@@ -12,7 +15,7 @@ export default function ImplicitModulesTransform(Base) {
       }
 
       const moduleKey = `${key}.js`;
-      return this.import?.(moduleKey);
+      return /** @type {any} */ (this).import?.(moduleKey);
     }
   };
 }
