@@ -4,9 +4,8 @@ import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-import { getScope } from "./scopeUtilities.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore

@@ -1,8 +1,11 @@
 import index from "../builtins/index.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isTransformApplied, transformObject } from "../core/utilities.js";
+import {
+  getScope,
+  isTransformApplied,
+  transformObject,
+} from "../core/utilities.js";
 import defaultKeysJson from "../framework/defaultKeysJson.js";
-import { getScope } from "../framework/scopeUtilities.js";
 
 /**
  * Wraps a graph (typically a SiteGraph) to turn a standard site into an

@@ -1,6 +1,5 @@
 import builtinLoaders from "../builtins/@loaders.js";
-import { extname } from "../core/utilities.js";
-import { getScope } from "../framework/scopeUtilities.js";
+import { extname, getScope } from "../core/utilities.js";
 
 /**
  * @param {Constructor<Explorable>} Base

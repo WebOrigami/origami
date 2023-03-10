@@ -1,6 +1,9 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isTransformApplied, transformObject } from "../core/utilities.js";
-import { getScope } from "../framework/scopeUtilities.js";
+import {
+  getScope,
+  isTransformApplied,
+  transformObject,
+} from "../core/utilities.js";
 
 /**
  * Given a main graph of arbitrary depth, and a shallow secondary graph of

@@ -1,8 +1,7 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import { getScope } from "../framework/scopeUtilities.js";
 import Scope from "./Scope.js";
 
 /**

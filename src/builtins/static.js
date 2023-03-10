@@ -1,7 +1,6 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { transformObject } from "../core/utilities.js";
+import { getScope, transformObject } from "../core/utilities.js";
 import defaultKeysJson from "../framework/defaultKeysJson.js";
-import { getScope } from "../framework/scopeUtilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

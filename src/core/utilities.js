@@ -54,6 +54,17 @@ export function extractFrontMatter(text) {
 }
 
 /**
+ * If the given graph has a `scope` property, return that. Otherwise, return the
+ * graph itself.
+ *
+ * @param {Explorable} graph
+ * @returns {Explorable}
+ */
+export function getScope(graph) {
+  return /** @type {any} */ (graph)?.scope ?? graph;
+}
+
+/**
  * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
  * "baz"].
  *

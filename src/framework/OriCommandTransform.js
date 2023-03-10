@@ -3,11 +3,11 @@ import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import {
+  getScope,
   isTransformApplied,
   keySymbol,
   transformObject,
 } from "../core/utilities.js";
-import { getScope } from "./scopeUtilities.js";
 
 /**
  * Add support for commands prefixed with `!`.

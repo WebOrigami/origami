@@ -4,8 +4,7 @@ import process, { stdout } from "node:process";
 import ori from "../builtins/ori.js";
 import Scope from "../common/Scope.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { keySymbol } from "../core/utilities.js";
-import { getScope } from "../framework/scopeUtilities.js";
+import { getScope, keySymbol } from "../core/utilities.js";
 import builtins from "./builtins.js";
 import showUsage from "./showUsage.js";
 

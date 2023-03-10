@@ -1,6 +1,6 @@
 import extendValueKeyFn from "../common/extendValueKeyFn.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { getScope } from "../framework/scopeUtilities.js";
+import { getScope } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

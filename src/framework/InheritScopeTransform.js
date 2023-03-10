@@ -1,7 +1,6 @@
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { keySymbol } from "../core/utilities.js";
-import { getScope } from "./scopeUtilities.js";
+import { getScope, keySymbol } from "../core/utilities.js";
 
 const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");
