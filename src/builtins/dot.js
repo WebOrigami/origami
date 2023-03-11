@@ -67,7 +67,7 @@ async function statements(graph, nodePath, options) {
     }
 
     // We expand certain types of files known to contain graphs.
-    const extension = extname(key);
+    const extension = extname(key.toString?.() ?? "");
     const expand =
       {
         ".json": true,
