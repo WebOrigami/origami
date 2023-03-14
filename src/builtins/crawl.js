@@ -3,6 +3,8 @@ import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { isPlainObject, keysFromPath } from "../core/utilities.js";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Crawl a graph, starting its root index.html page, and following links to
@@ -14,6 +16,7 @@ import { isPlainObject, keysFromPath } from "../core/utilities.js";
  * @returns {Promise<Explorable>}
  */
 export default async function crawl(variant, baseHref) {
+  assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
 
   if (baseHref === undefined) {
@@ -87,7 +90,10 @@ export default async function crawl(variant, baseHref) {
     newPaths.forEach((path) => seenPaths.add(path));
   }
 
-  const result = new (InvokeFunctionsTransform(ObjectGraph))(cache);
+  const result = new (InheritScopeTransform(
+    InvokeFunctionsTransform(ObjectGraph)
+  ))(cache);
+  result.parent = this;
   return result;
 }
 
