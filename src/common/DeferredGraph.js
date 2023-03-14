@@ -18,14 +18,14 @@ export default class DeferredGraph {
     this.loadPromise = null;
   }
 
-  async *[Symbol.asyncIterator]() {
-    const loaded = await this.load();
-    yield* loaded ?? [];
-  }
-
   async get(key) {
     const loaded = await this.load();
     return loaded?.get(key);
+  }
+
+  async keys() {
+    const loaded = await this.load();
+    return loaded.keys();
   }
 
   async load() {

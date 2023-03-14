@@ -22,20 +22,6 @@ export default async function staticGraph(variant) {
 
 function StaticTransform(Base) {
   return class Static extends Base {
-    async *[Symbol.asyncIterator]() {
-      const keys = new Set();
-      for await (const key of super[Symbol.asyncIterator]()) {
-        keys.add(key);
-        yield key;
-      }
-      // if (!keys.has("index.html")) {
-      //   yield "index.html";
-      // }
-      if (!keys.has(".keys.json")) {
-        yield ".keys.json";
-      }
-    }
-
     async get(key) {
       let value = await super.get(key);
       if (value === undefined && key === ".keys.json") {
@@ -45,6 +31,12 @@ function StaticTransform(Base) {
         value = transformObject(StaticTransform, value);
       }
       return value;
+    }
+
+    async keys() {
+      const keys = new Set(await super.keys());
+      keys.add(".keys.json");
+      return keys;
     }
   };
 }

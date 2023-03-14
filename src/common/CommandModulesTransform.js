@@ -17,15 +17,15 @@ import path from "node:path";
  */
 export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {
-    async *[Symbol.asyncIterator]() {
-      for await (const key of super[Symbol.asyncIterator]()) {
-        yield key;
-
-        // If we find something like "foo.js", then yield "foo" as a key.
+    async keys() {
+      const keys = new Set(await super.keys());
+      for (const key of keys.keys()) {
+        // If we find something like "foo.js", then include "foo" as a key.
         if (key.endsWith(".js")) {
-          yield path.basename(key, ".js");
+          keys.add(path.basename(key, ".js"));
         }
       }
+      return keys;
     }
   };
 }

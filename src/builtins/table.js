@@ -36,10 +36,10 @@ async function fullTable(graph, model) {
   const rows = [header];
 
   // Add a row for each top-level object.
-  for await (const key of graph) {
+  for (const key of await graph.keys()) {
     let row = key;
     const value = await graph.get(key);
-    for await (const modelKey of model) {
+    for (const modelKey of await model.keys()) {
       const value2 = await value.get(modelKey);
       row += `\t${value2}`;
     }
@@ -54,7 +54,7 @@ async function fullTable(graph, model) {
 async function simpleTable(graph) {
   const header = `Key\tValue`;
   const rows = [header];
-  for await (const key of graph) {
+  for (const key of await graph.keys()) {
     const value = await graph.get(key);
     const valueText = toSerializable(value);
     rows.push(`${key}\t${valueText}`);
@@ -65,11 +65,7 @@ async function simpleTable(graph) {
 
 // Return the value for the graph's first key.
 async function valueForFirstKey(graph) {
-  let value;
-  for await (const key of graph) {
-    value = await graph.get(key);
-    break;
-  }
+  const [value] = await graph.keys();
   return value;
 }
 

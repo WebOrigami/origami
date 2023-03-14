@@ -20,13 +20,6 @@ export default class MapValuesGraph {
   }
 
   /**
-   * Returns the same keys as the original `graph`.
-   */
-  async *[Symbol.asyncIterator]() {
-    yield* this.graph;
-  }
-
-  /**
    * Retrieves the value for the given key from the original `graph`.
    *
    * @param {any} key
@@ -54,6 +47,13 @@ export default class MapValuesGraph {
       : invokeMapFn
       ? await this.mapFn.call(this, value, key) // Return mapped value
       : undefined;
+  }
+
+  /**
+   * Returns the same keys as the original `graph`.
+   */
+  async keys() {
+    return this.graph.keys();
   }
 
   async unwatch() {

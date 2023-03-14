@@ -4,10 +4,6 @@ const letters = ["a", "b", "c", "d", "e", "f", "g", "i", "j"];
 const routes = ["index.html", ...letters];
 
 export default {
-  async *[Symbol.asyncIterator]() {
-    yield* routes;
-  },
-
   async get(key) {
     switch (key) {
       case "index.html":
@@ -21,5 +17,9 @@ export default {
       default:
         return `Hello, ${key}.`;
     }
+  },
+
+  async keys() {
+    return routes;
   },
 };

@@ -11,11 +11,6 @@ export default class SiteGraph {
     this.keysPromise = undefined;
   }
 
-  async *[Symbol.asyncIterator]() {
-    const keys = await this.getKeys();
-    yield* keys ?? [];
-  }
-
   async get(key) {
     return this.traverse(key);
   }
@@ -41,6 +36,10 @@ export default class SiteGraph {
       });
 
     return this.keysPromise;
+  }
+
+  async keys() {
+    return (await this.getKeys()) ?? [];
   }
 
   async isExplorableSite() {

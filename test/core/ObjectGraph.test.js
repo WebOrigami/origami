@@ -13,12 +13,7 @@ describe("ObjectGraph", () => {
     assert.equal(await graph.get("b"), 2);
     assert.equal(await graph.get("c"), 3);
     assert.equal(await graph.get("x"), undefined);
-
-    const keys = [];
-    for await (const key of graph) {
-      keys.push(key);
-    }
-    assert.deepEqual(keys, ["a", "b", "c"]);
+    assert.deepEqual(Array.from(await graph.keys()), ["a", "b", "c"]);
   });
 
   it("can explore a standard JavaScript Array", async () => {
@@ -74,11 +69,11 @@ describe("ObjectGraph", () => {
 
   it("returns an explorable value as is", async () => {
     const explorable = {
-      async *[Symbol.asyncIterator]() {
-        yield "b";
-      },
       async get(key) {
         return key === "b" ? 2 : undefined;
+      },
+      async keys() {
+        return ["b"];
       },
     };
     const graph = new ObjectGraph({

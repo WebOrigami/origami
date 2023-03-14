@@ -34,13 +34,13 @@ describe("ExplorableGraph", () => {
     assert(!ExplorableGraph.isExplorable(missingIterator));
 
     const missingGet = {
-      async *[Symbol.asyncIterator]() {},
+      async keys() {},
     };
     assert(!ExplorableGraph.isExplorable(missingGet));
 
     const graph = {
-      async *[Symbol.asyncIterator]() {},
       async get() {},
+      async keys() {},
     };
     assert(ExplorableGraph.isExplorable(graph));
   });
@@ -194,5 +194,18 @@ c: Hello, c.`;
       await ExplorableGraph.traverse(obj, "a1", "a2", "b1", "b2"),
       1
     );
+  });
+
+  it("values() returns an iterator for the graph's values", async () => {
+    const graph = new ObjectGraph({
+      a: 1,
+      b: 2,
+      c: 3,
+    });
+    assert.deepEqual(Array.from(await ExplorableGraph.keys(graph)), [
+      "a",
+      "b",
+      "c",
+    ]);
   });
 });

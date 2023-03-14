@@ -11,7 +11,7 @@ describe("crawl", () => {
       `,
       "about.html": "About page",
     };
-    const crawled = await crawl(graph);
+    const crawled = await crawl.call(null, graph);
     assert.deepEqual(await ExplorableGraph.keys(crawled), [
       "index.html",
       "about.html",
@@ -23,7 +23,7 @@ describe("crawl", () => {
       "index.html": `<img src="logo.png">`,
       "logo.png": "PNG data",
     };
-    const crawled = await crawl(graph);
+    const crawled = await crawl.call(null, graph);
     assert.deepEqual(await ExplorableGraph.keys(crawled), [
       "index.html",
       "logo.png",
@@ -38,7 +38,7 @@ describe("crawl", () => {
       "a.js": "import b from './b.js';",
       "b.js": "export default true;",
     };
-    const crawled = await crawl(graph);
+    const crawled = await crawl.call(null, graph);
     assert.deepEqual(await ExplorableGraph.keys(crawled), [
       "index.html",
       "a.js",
@@ -62,7 +62,7 @@ describe("crawl", () => {
 </urlset>`,
       "robots.txt": "Sitemap: http://example.com/sitemap.xml",
     };
-    const crawled = await crawl(graph, "https://example.com");
+    const crawled = await crawl.call(null, graph, "https://example.com");
     assert.deepEqual(await ExplorableGraph.keys(crawled), [
       "robots.txt",
       "sitemap.xml",

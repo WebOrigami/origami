@@ -14,7 +14,7 @@ export default async function showUsage(scope) {
 
   // Gather usages.
   const usages = [];
-  for await (const key of commands) {
+  for (const key of await commands.keys()) {
     let command;
     // We get the command associated with the key in a try/catch because
     // we want to ignore any syntax errors.

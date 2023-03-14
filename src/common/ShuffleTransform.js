@@ -3,24 +3,25 @@
  */
 export default function ShuffleTransform(Base) {
   return class Shuffle extends Base {
-    async *[Symbol.asyncIterator]() {
-      // Get base keys.
-      const keys = [];
-      for await (const key of super[Symbol.asyncIterator]()) {
-        keys.push(key);
-      }
-
-      // We use the keys array as a "hat" from which we draw random keys.
-      // This is effectively a Fisher-Yates shuffle.
-      while (keys.length > 0) {
-        // Pick a random key from the hat.
-        const index = Math.floor(Math.random() * keys.length);
-        const key = keys[index];
-        // Remove the key from the hat.
-        keys.splice(index, 1);
-        // Yield the key we picked.
-        yield key;
-      }
+    async keys() {
+      const keys = Array.from(await super.keys());
+      shuffle(keys);
+      return keys;
     }
   };
+}
+
+/*
+ * Shuffle an array.
+ *
+ * Performs a Fisher-Yates shuffle. From http://sedition.com/perl/javascript-fy.html
+ */
+function shuffle(array) {
+  var i = array.length;
+  while (--i >= 0) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 }

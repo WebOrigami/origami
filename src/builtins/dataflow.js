@@ -13,10 +13,9 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 const commands = transformObject(CommandsModulesTransform, builtins);
 
-const ignoreKeys = await ExplorableGraph.keys(commands);
+const ignoreKeys = Array.from(await commands.keys());
 ignoreKeys.push(".");
 ignoreKeys.push("..");
-ignoreKeys.push(ops.thisKey);
 
 /**
  * @this {Explorable}
@@ -56,7 +55,7 @@ dataflow.documentation = "https://graphorigami.org/cli/builtins.html#dataflow";
 
 async function addContentDependencies(flow, graph, keysInScope) {
   const scope = graph.scope ?? graph;
-  for await (const key of keysInScope) {
+  for (const key of keysInScope) {
     const extension = extname(key);
 
     const dependencyParsers = {

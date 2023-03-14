@@ -18,9 +18,9 @@ export default async function sortBy(variant, sortKeyFn) {
   const result = Object.create(graph);
   const extendedSortFn = extendValueKeyFn(sortKeyFn);
 
-  result[Symbol.asyncIterator] = async function* () {
+  result.keys = async function () {
     const sorted = [];
-    for await (const key of graph[Symbol.asyncIterator]()) {
+    for (const key of await graph.keys()) {
       const value = await graph.get(key);
       const sortKey = await extendedSortFn.call(this, value, key);
       sorted.push({ key, sortKey });
@@ -35,7 +35,7 @@ export default async function sortBy(variant, sortKeyFn) {
       return 0;
     });
     const keys = sorted.map(({ key }) => key);
-    yield* keys;
+    return keys;
   };
 
   return result;

@@ -18,10 +18,6 @@ class ExceptionsGraph {
     this.graph = ExplorableGraph.from(variant);
   }
 
-  async *[Symbol.asyncIterator]() {
-    yield* this.graph;
-  }
-
   async get(key) {
     try {
       const value = await this.graph.get(key);
@@ -33,5 +29,9 @@ class ExceptionsGraph {
         ? `${error.name}: ${error.message}`
         : error.name ?? error.message ?? error;
     }
+  }
+
+  async keys() {
+    return this.graph.keys();
   }
 }

@@ -14,7 +14,8 @@ export default async function first(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  for await (const key of graph) {
+  for (const key of await graph.keys()) {
+    // Just return first value immediately.
     const value = await graph.get(key);
     return value;
   }

@@ -12,28 +12,6 @@ export default class ObjectGraph {
   }
 
   /**
-   * Yield the object's keys.
-   */
-  async *[Symbol.asyncIterator]() {
-    // Walk up the prototype chain to Object.prototype.
-    let obj = this.object;
-    while (obj !== Object.prototype) {
-      // Get the enumerable instance properties and the get/set properties.
-      const descriptors = Object.getOwnPropertyDescriptors(obj);
-      for (const [name, descriptor] of Object.entries(descriptors)) {
-        if (
-          name !== "constructor" &&
-          (descriptor.enumerable ||
-            (descriptor.get !== undefined && descriptor.set !== undefined))
-        ) {
-          yield name;
-        }
-      }
-      obj = Object.getPrototypeOf(obj);
-    }
-  }
-
-  /**
    * Return the value for the given key.
    *
    * @param {any} key
@@ -67,6 +45,31 @@ export default class ObjectGraph {
   }
 
   /**
+   * Enumerate the object's keys.
+   *
+   * This is a graph substrate, so we can use a generator to produce the keys to
+   * avoid creating intermediate arrays.
+   */
+  *keys() {
+    // Walk up the prototype chain to Object.prototype.
+    let obj = this.object;
+    while (obj !== Object.prototype) {
+      // Get the enumerable instance properties and the get/set properties.
+      const descriptors = Object.getOwnPropertyDescriptors(obj);
+      for (const [name, descriptor] of Object.entries(descriptors)) {
+        if (
+          name !== "constructor" &&
+          (descriptor.enumerable ||
+            (descriptor.get !== undefined && descriptor.set !== undefined))
+        ) {
+          yield name;
+        }
+      }
+      obj = Object.getPrototypeOf(obj);
+    }
+  }
+
+  /**
    * Set the value for the given key. If the value is undefined, delete the key.
    *
    * @param {any} key
@@ -86,11 +89,9 @@ export default class ObjectGraph {
 // Apply all updates from the source to the target.
 async function applyUpdates(source, target) {
   // Fire off requests to update all keys, then wait for all of them to finish.
-  const promises = [];
-  for await (const key of source) {
-    const updateKeyPromise = applyUpdateForKey(source, target, key);
-    promises.push(updateKeyPromise);
-  }
+  const promises = Array.from(await source.keys(), (key) =>
+    applyUpdateForKey(source, target, key)
+  );
   return Promise.all(promises);
 }
 

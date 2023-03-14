@@ -6,9 +6,11 @@ export default class ConstantGraph extends ExplorableGraph {
     this.value = value;
   }
 
-  async *[Symbol.asyncIterator]() {}
-
   async get(key) {
     return this.value;
+  }
+
+  async keys() {
+    return [];
   }
 }

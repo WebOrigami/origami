@@ -9,10 +9,6 @@ export default class GlobGraph {
     this.globs = ExplorableGraph.from(globs);
   }
 
-  async *[Symbol.asyncIterator]() {
-    yield* this.globs;
-  }
-
   async get(key) {
     if (typeof key !== "string") {
       return undefined;
@@ -22,6 +18,10 @@ export default class GlobGraph {
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;
+  }
+
+  async keys() {
+    return this.globs.keys();
   }
 }
 
@@ -39,7 +39,7 @@ function matchGlob(glob, text) {
 
 async function matchGlobs(globs, text) {
   let value;
-  for await (const glob of globs) {
+  for (const glob of await globs.keys()) {
     if (typeof glob !== "string") {
       continue;
     } else if (glob !== globstar && matchGlob(glob, text)) {

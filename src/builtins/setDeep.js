@@ -10,7 +10,7 @@ export default async function setDeep(target, source) {
 async function applyUpdates(source, target) {
   // Fire off requests to update all keys, then wait for all of them to finish.
   const promises = [];
-  for await (const key of source) {
+  for (const key of await source.keys()) {
     const updateKeyPromise = applyUpdateForKey(source, target, key);
     promises.push(updateKeyPromise);
   }

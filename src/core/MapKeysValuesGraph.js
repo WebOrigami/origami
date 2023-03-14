@@ -20,17 +20,6 @@ export default class MapKeysValuesGraph {
     this.options = options;
   }
 
-  async *[Symbol.asyncIterator]() {
-    const keys = new Set();
-    for await (const innerKey of this.graph) {
-      const outerKey = await this.outerKeyForInnerKey(innerKey);
-      if (outerKey !== undefined && !keys.has(outerKey)) {
-        keys.add(outerKey);
-        yield outerKey;
-      }
-    }
-  }
-
   // Apply the mapping function to the original graph's values.
   async get(outerKey) {
     const innerKey = await this.innerKeyForOuterKey(outerKey);
@@ -71,6 +60,17 @@ export default class MapKeysValuesGraph {
 
   async innerKeyForOuterKey(outerKey) {
     return outerKey;
+  }
+
+  async keys() {
+    const keys = new Set();
+    for (const innerKey of await this.graph.keys()) {
+      const outerKey = await this.outerKeyForInnerKey(innerKey);
+      if (outerKey !== undefined) {
+        keys.add(outerKey);
+      }
+    }
+    return keys;
   }
 
   async mapApplies(innerValue, outerKey, innerKey) {

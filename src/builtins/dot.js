@@ -49,7 +49,7 @@ async function statements(graph, nodePath, options) {
 
   // Draw edges and collect labels for the nodes they lead to.
   let nodes = {};
-  for await (const key of graph) {
+  for (const key of await graph.keys()) {
     const destPath = nodePath ? `${nodePath}/${key}` : key;
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
     result.push(arc);

@@ -41,12 +41,6 @@ export default function match(pattern, resultFn, keys = []) {
   const scope = this;
 
   return {
-    async *[Symbol.asyncIterator]() {
-      const graphKeys =
-        typeof keys === "function" ? await keys.call(scope) : keys;
-      yield* graphKeys;
-    },
-
     async get(key) {
       const keyMatch = regex.exec(key);
       if (!keyMatch) {
@@ -79,6 +73,10 @@ export default function match(pattern, resultFn, keys = []) {
       }
 
       return value;
+    },
+
+    async keys() {
+      return typeof keys === "function" ? await keys.call(scope) : keys;
     },
   };
 }

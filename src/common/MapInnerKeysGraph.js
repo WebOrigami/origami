@@ -14,7 +14,7 @@ export default class MapInnerKeysGraph extends MapKeysValuesGraph {
   async innerKeyForOuterKey(outerKey) {
     if (!this.mapOuterKeyToInnerKey.has(outerKey)) {
       let innerKey = undefined;
-      for await (const key of this.graph) {
+      for (const key of await this.graph.keys()) {
         const mappedKey = await this.outerKeyForInnerKey(key);
         if (mappedKey === outerKey) {
           innerKey = mappedKey;

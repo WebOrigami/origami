@@ -15,18 +15,19 @@ export default async function inners(variant) {
   }
   const graph = ExplorableGraph.from(variant);
   const inner = {
-    async *[Symbol.asyncIterator]() {
-      for await (const key of graph) {
-        const value = await graph.get(key);
-        if (ExplorableGraph.isExplorable(value)) {
-          yield key;
-        }
-      }
-    },
-
     async get(key) {
       const value = await graph.get(key);
       return ExplorableGraph.isExplorable(value) ? inners(value) : undefined;
+    },
+
+    async keys() {
+      const explorableKeys = [];
+      for (const key of await graph.keys()) {
+        if (await ExplorableGraph.isKeyExplorable(graph, key)) {
+          explorableKeys.push(key);
+        }
+      }
+      return explorableKeys;
     },
   };
   return inner;

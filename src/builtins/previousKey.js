@@ -12,7 +12,7 @@ export default async function previousKey(variant, key) {
   assertScopeIsDefined(this);
   const graph = ExplorableGraph.from(variant);
   let previousKey = undefined;
-  for await (const graphKey of graph) {
+  for (const graphKey of await graph.keys()) {
     if (graphKey === key) {
       return previousKey;
     }

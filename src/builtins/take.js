@@ -18,15 +18,9 @@ export default async function take(variant, n) {
   }
   const graph = ExplorableGraph.from(variant);
   const takeGraph = {
-    async *[Symbol.asyncIterator]() {
-      const iterator = graph[Symbol.asyncIterator]();
-      for (let i = 0; i < n; i++) {
-        const item = await iterator.next();
-        if (item.done) {
-          break;
-        }
-        yield item.value;
-      }
+    async keys() {
+      const keys = Array.from(await graph.keys());
+      return keys.slice(0, n);
     },
 
     async get(key) {

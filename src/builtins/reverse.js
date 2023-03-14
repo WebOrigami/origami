@@ -17,17 +17,17 @@ export default async function reverse(variant) {
   }
   const graph = ExplorableGraph.from(variant);
   const reversed = {
-    async *[Symbol.asyncIterator]() {
-      const keys = await ExplorableGraph.keys(graph);
-      keys.reverse();
-      yield* keys;
-    },
-
     async get(key) {
       const value = await graph.get(key);
       return ExplorableGraph.isExplorable(value)
         ? reverse.call(this.scope, value)
         : value;
+    },
+
+    async keys() {
+      const keys = Array.from(await graph.keys());
+      keys.reverse();
+      return keys;
     },
   };
   const result = transformObject(InheritScopeTransform, reversed);

@@ -99,16 +99,15 @@ export default class ExplorableGraph {
 
   /**
    * Return true if the given object implements the necessary explorable graph
-   * members: a function identified with `Symbol.asyncIterator`, and a function
-   * named `get`.
+   * members: a function named `keys` and a function named `get`.
    *
    * @param {any} obj
    */
   static isExplorable(obj) {
     return (
       obj != null &&
-      typeof obj[Symbol.asyncIterator] === "function" &&
-      typeof obj.get === "function"
+      typeof obj.get === "function" &&
+      typeof obj.keys === "function"
     );
   }
 
@@ -139,11 +138,7 @@ export default class ExplorableGraph {
    */
   static async keys(variant) {
     const graph = this.from(variant);
-    const result = [];
-    for await (const key of graph) {
-      result.push(key);
-    }
-    return result;
+    return Array.from(await graph.keys());
   }
 
   /**
@@ -164,23 +159,19 @@ export default class ExplorableGraph {
     const graph = this.from(variant);
 
     // We're going to fire off all the get requests in parallel, as quickly as
-    // the keys come in.
-    const keys = [];
-    const promises = [];
-    for await (const key of graph) {
-      keys.push(key);
-
-      // Call the graph's `get` method, but *don't* wait for it yet.
-      const promise = graph.get(key).then((value) =>
+    // the keys come in. We call the graph's `get` method for each key, but
+    // *don't* wait for it yet.
+    const keys = Array.from(await graph.keys());
+    const promises = keys.map((key) =>
+      graph.get(key).then((value) =>
         // If the value is itself a graph, recurse.
         this.isExplorable(value)
           ? this.mapReduce(value, mapFn, reduceFn)
           : mapFn
           ? mapFn(value, key)
           : value
-      );
-      promises.push(promise);
-    }
+      )
+    );
 
     // Wait for all the promises to resolve. Because the promises were captured
     // in the same order as the keys, the values will also be in the same order.
@@ -335,17 +326,15 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Returns the graph's values as an array.
+   * Returns an iterator for the graph's values.
    *
    * @param {GraphVariant} variant
    */
   static async values(variant) {
     const graph = this.from(variant);
-    const result = [];
-    for await (const key of graph) {
-      result.push(await graph.get(key));
-    }
-    return result;
+    const keys = await graph.keys();
+    const promises = Array.from(keys, (key) => graph.get(key));
+    return Promise.all(promises);
   }
 }
 

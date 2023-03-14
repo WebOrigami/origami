@@ -49,30 +49,6 @@ export default class FilesGraph extends EventTarget {
   }
 
   /**
-   * Yield the names of the files/subdirectories in this directory.
-   */
-  async *[Symbol.asyncIterator]() {
-    let entries;
-    try {
-      entries = await fs.readdir(this.dirname, { withFileTypes: true });
-    } catch (/** @type {any} */ error) {
-      if (error.code !== "ENOENT") {
-        throw error;
-      }
-      entries = [];
-    }
-
-    const names = entries.map((entry) => entry.name);
-
-    // Filter out unhelpful file names.
-    const filtered = names.filter((name) => !hiddenFileNames[name]);
-
-    // Use natural sort order instead of OS sort order.
-    const sorted = sortNatural(filtered);
-    yield* sorted;
-  }
-
-  /**
    * Get the contents of the file or directory named by the given key.
    *
    * @param {string} key
@@ -144,6 +120,30 @@ export default class FilesGraph extends EventTarget {
     const filePath = path.join(this.dirname, key);
     const stats = await stat(filePath);
     return stats ? stats.isDirectory() : false;
+  }
+
+  /**
+   * Enumerate the names of the files/subdirectories in this directory.
+   */
+  async keys() {
+    let entries;
+    try {
+      entries = await fs.readdir(this.dirname, { withFileTypes: true });
+    } catch (/** @type {any} */ error) {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+      entries = [];
+    }
+
+    const names = entries.map((entry) => entry.name);
+
+    // Filter out unhelpful file names.
+    const filtered = names.filter((name) => !hiddenFileNames[name]);
+
+    // Use natural sort order instead of OS sort order.
+    const sorted = sortNatural(filtered);
+    return sorted;
   }
 
   onChange(key) {
@@ -307,7 +307,7 @@ async function writeFiles(sourceGraph, targetGraph) {
 
   // Start copying all the files, then wait for all of them to finish.
   const promises = [];
-  for await (const key of sourceGraph) {
+  for (const key of await sourceGraph.keys()) {
     const writePromise = copyFileWithKey(sourceGraph, targetGraph, key);
     promises.push(writePromise);
   }

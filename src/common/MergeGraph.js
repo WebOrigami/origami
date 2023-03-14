@@ -14,19 +14,6 @@ export default class MergeGraph {
     this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
   }
 
-  async *[Symbol.asyncIterator]() {
-    // Use a Set to de-duplicate the keys from the graphs.
-    const set = new Set();
-    for (const graph of this.graphs) {
-      for await (const key of graph) {
-        if (!set.has(key)) {
-          set.add(key);
-          yield key;
-        }
-      }
-    }
-  }
-
   async get(key) {
     for (const graph of this.graphs) {
       const value = await graph.get(key);
@@ -35,5 +22,15 @@ export default class MergeGraph {
       }
     }
     return undefined;
+  }
+
+  async keys() {
+    const keys = new Set();
+    for (const graph of this.graphs) {
+      for (const key of await graph.keys()) {
+        keys.add(key);
+      }
+    }
+    return keys;
   }
 }

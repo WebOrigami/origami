@@ -31,23 +31,18 @@ export default class Cache {
     this.filter = filter ? ExplorableGraph.from(filter) : undefined;
   }
 
-  async *[Symbol.asyncIterator]() {
-    // Use a Set to de-duplicate the keys from the graphs.
-    const set = new Set();
-    // We also check the cache in case the keys provided by the other graphs
-    // have changed since the cache was updated.
-    for (const graph of [this.cache, this.graph]) {
-      for await (const key of graph) {
-        if (!set.has(key)) {
-          set.add(key);
-          yield key;
-        }
-      }
-    }
-  }
-
   async get(key) {
     return this.traverse(key);
+  }
+
+  async keys() {
+    // We also check the cache in case the keys provided by the other graphs
+    // have changed since the cache was updated.
+    const keys = new Set(await this.cache.keys());
+    for (const key of await this.graph.keys()) {
+      keys.add(key);
+    }
+    return keys;
   }
 
   async traverse(...keys) {
