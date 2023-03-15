@@ -31,11 +31,12 @@ export default class MapInnerKeysGraph {
   // cache the result, so this is only done once per outer key.
   async innerKeyForOuterKey(outerKey) {
     if (!this.mapOuterKeyToInnerKey.has(outerKey)) {
+      // We will also memoize a mapping of an outer key to undefined.
       let innerKey = undefined;
       for (const key of await this.graph.keys()) {
         const mappedKey = await this.outerKeyForInnerKey(key);
         if (mappedKey === outerKey) {
-          innerKey = mappedKey;
+          innerKey = key;
           break;
         }
       }
