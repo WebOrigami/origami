@@ -1,11 +1,29 @@
-import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 
-export default class MapInnerKeysGraph extends MapKeysValuesGraph {
+export default class MapInnerKeysGraph {
   constructor(variant, keyFn, options = {}) {
-    super(variant, null, options);
+    this.graph = ExplorableGraph.from(variant);
     this.keyFn = keyFn;
+    this.deep = options.deep ?? false;
     this.mapInnerKeyToOuterKey = new Map();
     this.mapOuterKeyToInnerKey = new Map();
+    this.options = options;
+  }
+  async get(outerKey) {
+    const innerKey = await this.innerKeyForOuterKey(outerKey);
+    let value =
+      innerKey === undefined ? undefined : await this.graph.get(innerKey);
+
+    // If the value to return is an explorable graph, wrap it with a map.
+    if (this.deep && ExplorableGraph.isExplorable(value)) {
+      value = Reflect.construct(this.constructor, [
+        value,
+        this.keyFn,
+        this.options,
+      ]);
+    }
+
+    return value;
   }
 
   // This is expensive, as we have to loop through all the keys in the inner
@@ -26,8 +44,18 @@ export default class MapInnerKeysGraph extends MapKeysValuesGraph {
     return this.mapOuterKeyToInnerKey.get(outerKey);
   }
 
+  async keys() {
+    const keys = new Set();
+    for (const innerKey of await this.graph.keys()) {
+      const outerKey = await this.outerKeyForInnerKey(innerKey);
+      if (outerKey !== undefined) {
+        keys.add(outerKey);
+      }
+    }
+    return keys;
+  }
+
   onChange(key) {
-    // super.onChange?.(key);
     this.mapInnerKeyToOuterKey.clear();
     this.mapOuterKeyToInnerKey.clear();
   }
@@ -43,5 +71,12 @@ export default class MapInnerKeysGraph extends MapKeysValuesGraph {
       this.mapInnerKeyToOuterKey.set(innerKey, outerKey);
     }
     return this.mapInnerKeyToOuterKey.get(innerKey);
+  }
+
+  async unwatch() {
+    return /** @type {any} */ (this.graph).unwatch?.();
+  }
+  async watch() {
+    await /** @type {any} */ (this.graph).watch?.();
   }
 }
