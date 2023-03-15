@@ -1,5 +1,4 @@
 node_modules
-.ori.clean.yaml
 .DS_Store
 
 # For now we include the built exports.js so that we can depend on specific
