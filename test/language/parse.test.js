@@ -16,6 +16,7 @@ import {
   objectProperty,
   objectPropertyOrShorthand,
   pathHead,
+  pathKey,
   protocolCall,
   scopeReference,
   slashCall,
@@ -553,6 +554,11 @@ describe("parse", () => {
       pathHead([{ type: tokenType.REFERENCE, lexeme: "example.com" }]),
       [ops.scope, "example.com"]
     );
+  });
+
+  it("pathKey", () => {
+    // 01 [a path key that's a valid number but should be treated as a string]
+    assertParse(pathKey([{ type: tokenType.NUMBER, lexeme: "01" }]), "01");
   });
 
   it("protocolCall", () => {
