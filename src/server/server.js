@@ -187,6 +187,8 @@ function respondWithError(response, error) {
     message += `${error.name}: `;
   }
   message += error.message;
+  // Prevent HTML in the error message from being interpreted as HTML.
+  message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const html = `<!DOCTYPE html>
 <html>
 <head>
