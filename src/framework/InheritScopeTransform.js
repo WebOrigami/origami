@@ -22,7 +22,12 @@ export default function InheritScopeTransform(Base) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
       }
-      if (value && typeof value === "object" && !value[keySymbol]) {
+      if (
+        value &&
+        typeof value === "object" &&
+        Object.isExtensible(value) &&
+        !value[keySymbol]
+      ) {
         value[keySymbol] = key;
       }
       return value;

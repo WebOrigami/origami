@@ -69,7 +69,12 @@ export default async function execute(code) {
           await fn.call(scope, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
-    if (result && typeof result === "object" && !isPlainObject(result)) {
+    if (
+      result &&
+      typeof result === "object" &&
+      Object.isExtensible(result) &&
+      !isPlainObject(result)
+    ) {
       result[expressionSymbol] = formattedCode;
     }
     return result;
