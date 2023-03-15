@@ -20,9 +20,15 @@ export default async function debug(variant) {
   if (variant === undefined) {
     return;
   }
-  const graph = ExplorableGraph.from(variant);
-  const result = transformObject(DebugTransform, graph);
-  return result;
+  let graph = ExplorableGraph.from(variant);
+
+  if (!isTransformApplied(InheritScopeTransform, graph)) {
+    graph = transformObject(InheritScopeTransform, graph);
+  }
+  /** @type {any} */ (graph).parent = this;
+
+  graph = transformObject(DebugTransform, graph);
+  return graph;
 }
 
 /**
