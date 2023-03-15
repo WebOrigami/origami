@@ -37,25 +37,22 @@ describe("Cache", () => {
       {
         "a.txt": "a",
         "b.txt": "b",
-        c: "c",
       },
       {},
       {
-        "[x].txt": true,
+        "a.txt": true,
       }
     );
     const cache = fixture.cache;
 
     // Access some values to populate the cache.
-    await fixture.get("a.txt");
-    await fixture.get("b.txt");
-    await fixture.get("c");
+    assert.equal(await fixture.get("a.txt"), "a");
+    assert.equal(await fixture.get("b.txt"), "b");
 
-    // The a.txt and b.txt values should be cached because they match the filter.
-    // assert.equal(await cache.get("a.txt"), "a");
-    // assert.equal(await cache.get("b.txt"), "b");
+    // The a.txt value should be cached because it matches the filter.
+    assert.equal(await cache.get("a.txt"), "a");
 
-    // The c value should not be cached because it does not match the filter.
-    assert.isUndefined(await cache.get("c"));
+    // The b.txt value should not be cached because it does not match the filter.
+    assert.isUndefined(await cache.get("b.txt"));
   });
 });

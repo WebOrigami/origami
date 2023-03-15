@@ -1,12 +1,9 @@
-import setDeep from "../builtins/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 
 /**
- * Similar to Compose, but the first graph is treated as a writable cache. If
- * the key cannot be found in the cache, the other graphs are asked in turn for
- * that key. If a value is found, the value is written into the cache before
- * being returned.
+ * Caches non-explorable values from the first (source) graph in a second
+ * (cache) graph. If no second graph is supplied, an in-memory cache is used.
  */
 export default class Cache {
   /**
@@ -32,7 +29,49 @@ export default class Cache {
   }
 
   async get(key) {
-    return this.traverse(key);
+    // Check cache graph first.
+    let cacheValue = await this.cache.get(key);
+    if (cacheValue !== undefined && !ExplorableGraph.isExplorable(cacheValue)) {
+      // Non-explorable cache hit
+      return cacheValue;
+    }
+
+    // Cache miss or explorable cache hit.
+    let value = await this.graph.get(key);
+    if (value !== undefined) {
+      // Does this key match the filter?
+      let match;
+      let filterValue;
+      if (this.filter === undefined) {
+        match = true;
+      } else {
+        filterValue = await this.filter.get(key);
+        match = filterValue !== undefined;
+      }
+      if (match) {
+        if (ExplorableGraph.isExplorable(value)) {
+          // Construct merged graph for an explorable result.
+          if (cacheValue === undefined) {
+            // Construct new container in cache
+            // TODO: .set() should return the value it set.
+            await this.cache.set(key, {});
+            cacheValue = await this.cache.get(key);
+          }
+          value = Reflect.construct(this.constructor, [
+            value,
+            cacheValue,
+            filterValue,
+          ]);
+        } else {
+          // Save in cache before returning.
+          await this.cache.set(key, value);
+        }
+      }
+
+      return value;
+    }
+
+    return undefined;
   }
 
   async keys() {
@@ -43,41 +82,5 @@ export default class Cache {
       keys.add(key);
     }
     return keys;
-  }
-
-  async traverse(...keys) {
-    const cachedValue = await ExplorableGraph.traverse(this.cache, ...keys);
-    if (cachedValue !== undefined) {
-      // Cache hit
-      return cachedValue;
-    }
-
-    // Cache miss
-    const value = await ExplorableGraph.traverse(this.graph, ...keys);
-    if (value !== undefined) {
-      // Does this key match the filter?
-      const matches =
-        this.filter === undefined ||
-        (await ExplorableGraph.traverse(this.filter, ...keys));
-      if (matches) {
-        // Save in cache before returning.
-
-        // Convert keys and value to an object that can be applied.
-        const updates = {};
-        let current = updates;
-        const lastKey = keys.pop();
-        for (const key of keys) {
-          current[key] = {};
-          current = current[key];
-        }
-        current[lastKey] = value;
-
-        await setDeep(this.cache, updates);
-      }
-
-      return value;
-    }
-
-    return undefined;
   }
 }
