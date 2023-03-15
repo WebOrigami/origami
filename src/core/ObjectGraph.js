@@ -46,10 +46,9 @@ export default class ObjectGraph {
 
   /**
    * Enumerate the object's keys.
-   *
-   * This is a graph substrate, so we can use a generator to produce the keys to
-   * avoid creating intermediate arrays.
    */
+  // This is a graph substrate, so we can use a generator to produce the keys to
+  // avoid creating intermediate arrays.
   *keys() {
     // Walk up the prototype chain to Object.prototype.
     let obj = this.object;
