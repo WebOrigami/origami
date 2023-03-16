@@ -46,9 +46,9 @@ async function formatResult(scope, result) {
     ? result
     : result instanceof String
     ? result.toString()
-    : result !== undefined
+    : result !== null && typeof result === "object"
     ? await toYaml.call(scope, result)
-    : undefined;
+    : result;
   if (ExplorableGraph.canCastToExplorable(result)) {
     const graph = ExplorableGraph.from(result);
     if (output instanceof Buffer) {

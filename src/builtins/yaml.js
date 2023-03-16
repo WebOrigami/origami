@@ -14,7 +14,7 @@ export default async function toYaml(variant) {
   variant = variant ?? (await this?.get("@defaultGraph"));
   if (variant === undefined) {
     return undefined;
-  } else if (ExplorableGraph.canCastToExplorable(variant)) {
+  } else if (typeof variant === "object") {
     return ExplorableGraph.toYaml(variant);
   } else {
     const serializable = toSerializable(variant);
