@@ -2,7 +2,6 @@
 
 import concatBuiltin from "../builtins/concat.js";
 import Scope from "../common/Scope.js";
-import { keySymbol } from "../core/utilities.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 import { createExpressionFunction } from "./expressionFunction.js";
@@ -48,7 +47,6 @@ export function graph(formulas) {
     fns[key] = fn;
   }
   const result = new OrigamiGraph(fns);
-  result[keySymbol] = "Origami graph literal";
   result.parent = this;
   return result;
 }

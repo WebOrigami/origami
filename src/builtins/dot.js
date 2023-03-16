@@ -1,6 +1,11 @@
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { extname, isPlainObject, toSerializable } from "../core/utilities.js";
+import {
+  extname,
+  isPlainObject,
+  keySymbol,
+  toSerializable,
+} from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -17,7 +22,8 @@ export default async function dot(variant, options = {}) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const graphArcs = await statements(graph, "", options);
+  const rootLabel = graph[keySymbol] ?? "";
+  const graphArcs = await statements(graph, "", rootLabel, options);
   return `digraph g {
   bgcolor="transparent";
   nodesep=1;
@@ -36,15 +42,16 @@ function probablyBinary(text) {
   return /[\x00-\x08\x0E-\x1F]/.test(text);
 }
 
-async function statements(graph, nodePath, options) {
+async function statements(graph, nodePath, nodeLabel, options) {
   let result = [];
   const createLinks = options.createLinks ?? true;
 
   // Add a node for the root of this (sub)graph.
   const rootUrl = nodePath || ".";
   const url = createLinks ? `; URL="${rootUrl}"` : "";
+  const rootLabel = nodeLabel ? `; xlabel="${nodeLabel}"` : "";
   result.push(
-    `  "${nodePath}" [label=""; shape=circle; color=gray40; width=0.15${url}];`
+    `  "${nodePath}" [shape=circle${rootLabel}; label=""; color=gray40; width=0.15${url}];`
   );
 
   // Draw edges and collect labels for the nodes they lead to.
@@ -80,7 +87,7 @@ async function statements(graph, nodePath, options) {
       ExplorableGraph.isExplorable(value);
     if (expand && expandable) {
       const subgraph = ExplorableGraph.from(value);
-      const subStatements = await statements(subgraph, destPath, options);
+      const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {
       const serializable = value ? toSerializable(value) : undefined;
