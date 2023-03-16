@@ -44,8 +44,6 @@ export default async function explore() {
   const extendedScope = new Scope(ambientsGraph, scope);
 
   const graph = await debug.call(this, extendedScope);
-  // Graph will be its own scope.
-  /** @type {any} */ (graph).scope = scope;
   const result = new StringWithGraph(text, graph);
 
   return result;
