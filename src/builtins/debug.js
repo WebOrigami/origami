@@ -20,12 +20,16 @@ export default async function debug(variant) {
   if (variant === undefined) {
     return;
   }
+
+  /** @type {any} */
   let graph = ExplorableGraph.from(variant);
 
   if (!isTransformApplied(InheritScopeTransform, graph)) {
     graph = transformObject(InheritScopeTransform, graph);
   }
-  /** @type {any} */ (graph).parent = this;
+  if (!graph.parent) {
+    graph.parent = this;
+  }
 
   graph = transformObject(DebugTransform, graph);
   return graph;
