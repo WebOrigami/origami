@@ -58,6 +58,10 @@ export default class ExplorableGraph {
     } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
       const fn = /** @type {any} */ (obj).toFunction();
       return new FunctionGraph(fn);
+    } else if (obj !== null && typeof obj === "object") {
+      // An instance of some class. This is our last choice because it's the
+      // least specific.
+      return new ObjectGraph(obj);
     }
 
     throw new TypeError("Couldn't convert object to an explorable graph");

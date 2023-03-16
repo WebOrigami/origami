@@ -75,7 +75,13 @@ export default async function execute(code) {
       Object.isExtensible(result) &&
       !isPlainObject(result)
     ) {
-      result[expressionSymbol] = formattedCode;
+      // Setting a Symbol-keyed property on some objects fails with `TypeError:
+      // Cannot convert a Symbol value to a string` but it's unclear why
+      // implicit casting of the symbol to a string occurs. Since this is not a
+      // vital operation, we ignore such errors.
+      try {
+        result[expressionSymbol] = formattedCode;
+      } catch (error) {}
     }
     return result;
   } catch (/** @type {any} */ error) {
