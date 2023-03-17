@@ -8,7 +8,7 @@ export default async function unless(value, falseResult) {
   assertScopeIsDefined(this);
   let condition = await value;
   if (ExplorableGraph.isExplorable(condition)) {
-    const keys = await ExplorableGraph.keys(condition);
+    const keys = await condition.keys();
     condition = keys.length > 0;
   }
 

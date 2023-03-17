@@ -136,16 +136,6 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Returns the graph's keys as an array.
-   *
-   * @param {GraphVariant} variant
-   */
-  static async keys(variant) {
-    const graph = this.from(variant);
-    return Array.from(await graph.keys());
-  }
-
-  /**
    * Map and reduce a graph.
    *
    * This is done in as parallel fashion as possible. Each of the graph's values

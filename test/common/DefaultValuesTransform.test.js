@@ -18,7 +18,7 @@ describe("DefaultValuesTransform", () => {
     };
 
     // Default values don't show up in keys
-    assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "more"]);
+    assert.deepEqual(await graph.keys(), ["a", "b", "more"]);
 
     assert.equal(await graph.get("a"), 1);
     assert.equal(await graph.get("b"), 2); // Respects main graph

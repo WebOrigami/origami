@@ -16,7 +16,7 @@ export default async function index(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  const keys = await ExplorableGraph.keys(graph);
+  const keys = Array.from(await graph.keys());
 
   // Skip system-ish files that start with a period.
   const filtered = keys.filter((key) => !key.startsWith?.("."));

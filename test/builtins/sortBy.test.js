@@ -1,5 +1,4 @@
 import sortBy from "../../src/builtins/sortBy.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("sortBy", () => {
@@ -10,10 +9,6 @@ describe("sortBy", () => {
       Carol: { age: 42 },
     };
     const sorted = await sortBy.call(null, graph, (scope) => scope.get("age"));
-    assert.deepEqual(await ExplorableGraph.keys(sorted), [
-      "Bob",
-      "Carol",
-      "Alice",
-    ]);
+    assert.deepEqual(await sorted.keys(), ["Bob", "Carol", "Alice"]);
   });
 });

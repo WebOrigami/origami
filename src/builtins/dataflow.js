@@ -161,7 +161,7 @@ async function getKeysInScope(graph) {
   const scopeGraphs = graph.scope?.graphs ?? [graph];
   let keysInScope = [];
   for (const scopeGraph of scopeGraphs) {
-    const scopeGraphKeys = await ExplorableGraph.keys(scopeGraph);
+    const scopeGraphKeys = await scopeGraph.keys();
     keysInScope.push(...scopeGraphKeys);
   }
 

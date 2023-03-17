@@ -15,7 +15,7 @@ describe("MergeGraph", () => {
         d: 4,
       }
     );
-    const keys = await ExplorableGraph.keys(fixture);
+    const keys = Array.from(await fixture.keys());
     assert.deepEqual(keys, ["a", "c", "b", "d"]);
     assert.equal(await fixture.get("a"), 1);
     assert.equal(await fixture.get("b"), 2);

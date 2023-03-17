@@ -31,7 +31,7 @@ export default async function table(variant) {
 // taken to represent top-level objects in the graph.
 async function fullTable(graph, model) {
   // Construct the header.
-  const modelKeys = await ExplorableGraph.keys(model);
+  const modelKeys = Array.from(await model.keys());
   const header = " \t" + modelKeys.join("\t");
   const rows = [header];
 

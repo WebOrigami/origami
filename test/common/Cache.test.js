@@ -14,7 +14,7 @@ describe("Cache", () => {
     });
     const cache = fixture.cache;
 
-    const keys = await ExplorableGraph.keys(fixture);
+    const keys = Array.from(await fixture.keys());
     assert.deepEqual(keys, ["a", "b", "c", "more"]);
 
     assert.isUndefined(await cache.get("a"));

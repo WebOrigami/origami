@@ -94,7 +94,7 @@ describe("ObjectGraph", () => {
         b2: 4,
       },
     });
-    const keys = await ExplorableGraph.keys(graph);
+    const keys = await graph.keys();
     const valuesExplorable = await Promise.all(
       keys.map(async (key) => await graph.isKeyExplorable(key))
     );

@@ -56,15 +56,6 @@ describe("ExplorableGraph", () => {
     assert(await ExplorableGraph.isKeyExplorable(graph, "b"));
   });
 
-  it("keys() returns an array of the graph's keys", async () => {
-    const graph = new ObjectGraph({
-      a: 1,
-      b: 2,
-      c: 3,
-    });
-    assert.deepEqual(await ExplorableGraph.keys(graph), ["a", "b", "c"]);
-  });
-
   it("mapReduce() can map values and reduce them", async () => {
     const graph = {
       a: 1,
@@ -202,10 +193,6 @@ c: Hello, c.`;
       b: 2,
       c: 3,
     });
-    assert.deepEqual(Array.from(await ExplorableGraph.keys(graph)), [
-      "a",
-      "b",
-      "c",
-    ]);
+    assert.deepEqual(Array.from(await graph.keys()), ["a", "b", "c"]);
   });
 });

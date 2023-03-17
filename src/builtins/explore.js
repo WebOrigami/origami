@@ -3,7 +3,6 @@ import { fileURLToPath } from "node:url";
 import builtins from "../cli/builtins.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import FilesGraph from "../core/FilesGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { keySymbol } from "../core/utilities.js";
@@ -70,7 +69,7 @@ async function getScopeData(scope) {
       continue;
     }
     const name = graph[keySymbol];
-    const graphKeys = await ExplorableGraph.keys(graph);
+    const graphKeys = await graph.keys();
     // Skip system-ish files that start with a period.
     const keys = graphKeys.filter((key) => !key.startsWith?.("."));
     data.push({ name, keys });

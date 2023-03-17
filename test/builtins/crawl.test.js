@@ -1,5 +1,4 @@
 import crawl from "../../src/builtins/crawl.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("crawl", () => {
@@ -12,10 +11,7 @@ describe("crawl", () => {
       "about.html": "About page",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await ExplorableGraph.keys(crawled), [
-      "index.html",
-      "about.html",
-    ]);
+    assert.deepEqual(await crawled.keys(), ["index.html", "about.html"]);
   });
 
   it("finds linked images", async () => {
@@ -24,10 +20,7 @@ describe("crawl", () => {
       "logo.png": "PNG data",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await ExplorableGraph.keys(crawled), [
-      "index.html",
-      "logo.png",
-    ]);
+    assert.deepEqual(await crawled.keys(), ["index.html", "logo.png"]);
   });
 
   it("finds linked JavaScript files", async () => {
@@ -39,11 +32,7 @@ describe("crawl", () => {
       "b.js": "export default true;",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await ExplorableGraph.keys(crawled), [
-      "index.html",
-      "a.js",
-      "b.js",
-    ]);
+    assert.deepEqual(await crawled.keys(), ["index.html", "a.js", "b.js"]);
   });
 
   it("finds a robots.txt file and sitemap", async () => {
@@ -63,7 +52,7 @@ describe("crawl", () => {
       "robots.txt": "Sitemap: http://example.com/sitemap.xml",
     };
     const crawled = await crawl.call(null, graph, "https://example.com");
-    assert.deepEqual(await ExplorableGraph.keys(crawled), [
+    assert.deepEqual(await crawled.keys(), [
       "robots.txt",
       "sitemap.xml",
       "foo.html",

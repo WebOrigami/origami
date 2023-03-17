@@ -7,7 +7,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default async function defaultKeysJson(variant) {
   const graph = ExplorableGraph.from(variant);
-  const keys = await ExplorableGraph.keys(graph);
+  const keys = Array.from(await graph.keys());
   const json = JSON.stringify(keys);
   return json;
 }

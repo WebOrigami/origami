@@ -1,5 +1,4 @@
 import sort from "../../src/builtins/sort.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
 describe("sort", () => {
@@ -10,6 +9,6 @@ describe("sort", () => {
       a: 1,
     };
     const sorted = await sort.call(null, graph);
-    assert.deepEqual(await ExplorableGraph.keys(sorted), ["a", "b", "c"]);
+    assert.deepEqual(await sorted.keys(), ["a", "b", "c"]);
   });
 });
