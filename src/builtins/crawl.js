@@ -35,7 +35,7 @@ export default async function crawl(variant, baseHref) {
   const baseUrl = new URL(baseHref);
 
   const cache = {};
-  const pathQueue = ["/robots.txt", "/"];
+  const pathQueue = ["/robots.txt", "."];
   const seenPaths = new Set();
 
   while (pathQueue.length > 0) {
@@ -71,9 +71,10 @@ export default async function crawl(variant, baseHref) {
       continue;
     }
 
-    if (keys.at(-1) === undefined) {
-      // For indexing and storage purposes, treat a path that ends in a
-      // trailing slash as if it ends in index.html.
+    if (keys.at(-1) === undefined || keys.at(-1) === ".") {
+      // For indexing and storage purposes, treat a path that ends in a trailing
+      // slash (or the dot we use to seed the queue) as if it ends in
+      // index.html.
       keys[keys.length - 1] = "index.html";
     }
 
@@ -130,7 +131,7 @@ function findPaths(value, key, baseUrl, localPath) {
   const ext = key ? extname(key) : "";
   const maybeHtml = ext === "" || value.trim?.().startsWith("<");
   let foundPaths;
-  if (ext === ".html") {
+  if (ext === ".html" || ext === ".htm") {
     foundPaths = findPathsInHtml(String(value));
   } else if (ext === ".css") {
     foundPaths = findPathsInCss(String(value));
@@ -168,7 +169,7 @@ function findPaths(value, key, baseUrl, localPath) {
   // Filter out the null paths.
   /** @type {string[]} */
   // @ts-ignore
-  const paths = relativePaths.filter((path) => path !== null);
+  const paths = relativePaths.filter((path) => path);
   return paths;
 }
 
@@ -203,13 +204,15 @@ function findPathsInHtml(html) {
   let match;
 
   // Find `href` attributes in anchor and link tags.
-  const linkRegex = /<(?:a|link) [^>]*?href=["'](?<link>[^>]*?)["'][^>]*>/g;
+  const linkRegex =
+    /<(?:a|A|link|LINK) [^>]*?(?:href|HREF)=["'](?<link>[^>]*?)["'][^>]*>/g;
   while ((match = linkRegex.exec(html))) {
     paths.push(match.groups?.link);
   }
 
   // Find `src` attributes in img and script tags.
-  const srcRegex = /<(?:img|script) [^>]*?src=["'](?<src>[^>]*?)["'][^>]*>/g;
+  const srcRegex =
+    /<(?:img|IMG|script|SCRIPT) [^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
   while ((match = srcRegex.exec(html))) {
     paths.push(match.groups?.src);
   }
@@ -218,6 +221,20 @@ function findPathsInHtml(html) {
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(html))) {
     paths.push(match.groups?.url);
+  }
+
+  // Find ancient `src` attribute on frame tags.
+  const frameRegex =
+    /<(?:frame|FRAME) [^>]*?(?:src|SRC)=["'](?<frame>[^>]*?)["'][^>]*>/g;
+  while ((match = frameRegex.exec(html))) {
+    paths.push(match.groups?.frame);
+  }
+
+  // Find ancient `background` attribute on body tag.
+  const backgroundRegex =
+    /<(?:body|BODY) [^>]*?(?:background|BACKGROUND)=["'](?<background>[^>]*?)["'][^>]*>/g;
+  while ((match = backgroundRegex.exec(html))) {
+    paths.push(match.groups?.background);
   }
 
   return paths;
