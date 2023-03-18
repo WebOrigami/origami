@@ -1,5 +1,6 @@
 import * as YAMLModule from "yaml";
 import debug from "../builtins/debug.js";
+import builtins from "../cli/builtins.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -25,7 +26,7 @@ export default class Template {
    * @param {any} [input]
    * @param {Explorable} [baseScope]
    */
-  async apply(input, baseScope) {
+  async apply(input, baseScope = builtins) {
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
