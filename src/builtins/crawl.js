@@ -8,7 +8,11 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Crawl a graph, starting its root index.html page, and following links to
- * other pages and resources. Return a new graph of the crawled content.
+ * crawlable pages, scripts, and stylesheets.
+ *
+ * Returns a new graph of the crawled content. The crawled content will be
+ * in-memory. Referenced resources like images will be represented as functions
+ * that obtain the requested value from the original site.
  *
  * @this {Explorable}
  * @param {GraphVariant} variant
@@ -46,19 +50,8 @@ export default async function crawl(variant, baseHref) {
       continue;
     }
 
-    // Based on the extension, do we want to get the value?
-    const keys = keysFromPath(path);
-    if (!isKeyForCrawlableFile(keys.at(-1))) {
-      // Don't get the value now. Add a function to the cache that will retrieve
-      // the value when needed.
-      const fn = async () => {
-        return ExplorableGraph.traverse(graph, ...keys);
-      };
-      addValueToObject(cache, keys, fn);
-      continue;
-    }
-
     // Get value at path
+    const keys = keysFromPath(path);
     let value = await ExplorableGraph.traverse(graph, ...keys);
     if (ExplorableGraph.isExplorable(value)) {
       // Path is actually a directory; see if it has an index.html
@@ -85,12 +78,28 @@ export default async function crawl(variant, baseHref) {
 
     // Find paths in the value
     const key = keys.at(-1);
-    const paths = await findPaths(value, key, baseUrl, path);
+    const { crawlablePaths, resourcePaths } = await findPaths(
+      value,
+      key,
+      baseUrl,
+      path
+    );
 
     // Add new paths to the queue.
-    const newPaths = new Set(paths.filter((path) => !seenPaths.has(path)));
+    const newPaths = new Set(
+      crawlablePaths.filter((path) => !seenPaths.has(path))
+    );
     pathQueue.push(...newPaths);
     newPaths.forEach((path) => seenPaths.add(path));
+
+    // Add indirect resource references to the cache.
+    for (const resourcePath of resourcePaths) {
+      const fn = () => {
+        return ExplorableGraph.traversePath(graph, resourcePath);
+      };
+      const resourceKeys = keysFromPath(resourcePath);
+      addValueToObject(cache, resourceKeys, fn);
+    }
   }
 
   const result = new (InheritScopeTransform(
@@ -127,6 +136,33 @@ function addValueToObject(object, keys, value) {
   }
 }
 
+// Filter the paths to those that are local to the site.
+function filterPaths(paths, baseUrl, localPath) {
+  // Convert paths to absolute URLs.
+  const localUrl = new URL(localPath, baseUrl);
+  const basePathname = baseUrl.pathname;
+  // @ts-ignore
+  const absoluteUrls = paths.map((path) => new URL(path, localUrl));
+
+  // Convert the absolute URLs to paths relative to the baseHref. If the URL
+  // points outside the tree rooted at the baseHref, the relative path will be
+  // null. We ignore the protocol in this test, because in practice sites often
+  // fumble the use of http and https, treating them interchangeably.
+  const relativePaths = absoluteUrls.map((url) => {
+    if (url.host === baseUrl.host && url.pathname.startsWith(basePathname)) {
+      return url.pathname.slice(basePathname.length);
+    } else {
+      return null;
+    }
+  });
+
+  // Filter out the null paths.
+  /** @type {string[]} */
+  // @ts-ignore
+  const filteredPaths = relativePaths.filter((path) => path);
+  return filteredPaths;
+}
+
 function findPaths(value, key, baseUrl, localPath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
@@ -147,133 +183,163 @@ function findPaths(value, key, baseUrl, localPath) {
     foundPaths = findPathsInHtml(String(value));
   } else {
     // Doesn't have an extension we want to process
-    return [];
+    return {
+      crawlablePaths: [],
+      resourcePaths: [],
+    };
   }
 
-  // Convert paths to absolute URLs.
-  const localUrl = new URL(localPath, baseUrl);
-  const basePathname = baseUrl.pathname;
-  // @ts-ignore
-  const absoluteUrls = foundPaths.map((path) => new URL(path, localUrl));
-
-  // Convert the absolute URLs to paths relative to the baseHref. If the URL
-  // points outside the tree rooted at the baseHref, the relative path will be
-  // null. We ignore the protocol in this test, because in practice sites often
-  // fumble the use of http and https, treating them interchangeably.
-  const relativePaths = absoluteUrls.map((url) => {
-    if (url.host === baseUrl.host && url.pathname.startsWith(basePathname)) {
-      return url.pathname.slice(basePathname.length);
-    } else {
-      return null;
-    }
-  });
-
-  // Filter out the null paths.
-  /** @type {string[]} */
-  // @ts-ignore
-  const paths = relativePaths.filter((path) => path);
-  return paths;
+  const crawlablePaths = filterPaths(
+    foundPaths.crawlablePaths,
+    baseUrl,
+    localPath
+  );
+  const resourcePaths = filterPaths(
+    foundPaths.resourcePaths,
+    baseUrl,
+    localPath
+  );
+  return {
+    crawlablePaths,
+    resourcePaths,
+  };
 }
 
 function findPathsInCss(css) {
-  const paths = [];
+  const resourcePaths = [];
   let match;
 
   // Find `url()` functions.
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(css))) {
-    paths.push(match.groups?.url);
+    resourcePaths.push(match.groups?.url);
   }
 
-  return paths;
+  return {
+    crawlablePaths: [],
+    resourcePaths,
+  };
 }
 
 function findPathsInJs(js) {
-  const paths = [];
+  const crawlablePaths = [];
   let match;
 
   // Find `import` statements.
   const importRegex = /import [\s\S]+?from\s+["'](?<import>[^"']*)["'];/g;
   while ((match = importRegex.exec(js))) {
-    paths.push(match.groups?.import);
+    crawlablePaths.push(match.groups?.import);
   }
 
-  return paths;
+  return {
+    crawlablePaths,
+    resourcePaths: [],
+  };
 }
 
 function findPathsInHtml(html) {
-  const paths = [];
+  const crawlablePaths = [];
+  const resourcePaths = [];
   let match;
 
   // Find `href` attributes in anchor and link tags.
   const linkRegex =
     /<(?:a|A|link|LINK) [^>]*?(?:href|HREF)=["'](?<link>[^>]*?)["'][^>]*>/g;
   while ((match = linkRegex.exec(html))) {
-    paths.push(match.groups?.link);
+    // Links can point to be other crawlable paths and resource paths.
+    // We guess the type based on the extension.
+    const href = match.groups?.link;
+    if (isCrawlableHref(href)) {
+      crawlablePaths.push(href);
+    } else {
+      resourcePaths.push(href);
+    }
   }
 
   // Find `src` attributes in img and script tags.
   const srcRegex =
-    /<(?:img|IMG|script|SCRIPT) [^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
+    /<(?<tag>img|IMG|script|SCRIPT) [^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
   while ((match = srcRegex.exec(html))) {
-    paths.push(match.groups?.src);
+    const tag = match.groups?.tag;
+    if (tag === "script" || tag === "SCRIPT") {
+      crawlablePaths.push(match.groups?.src);
+    } else {
+      resourcePaths.push(match.groups?.src);
+    }
   }
 
   // Find `url()` functions in CSS.
   const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(html))) {
-    paths.push(match.groups?.url);
+    resourcePaths.push(match.groups?.url);
   }
 
-  // Find ancient `src` attribute on frame tags.
+  // Find `src` attribute on frame tags.
   const frameRegex =
     /<(?:frame|FRAME) [^>]*?(?:src|SRC)=["'](?<frame>[^>]*?)["'][^>]*>/g;
   while ((match = frameRegex.exec(html))) {
-    paths.push(match.groups?.frame);
+    crawlablePaths.push(match.groups?.frame);
   }
 
   // Find ancient `background` attribute on body tag.
   const backgroundRegex =
     /<(?:body|BODY) [^>]*?(?:background|BACKGROUND)=["'](?<background>[^>]*?)["'][^>]*>/g;
   while ((match = backgroundRegex.exec(html))) {
-    paths.push(match.groups?.background);
+    resourcePaths.push(match.groups?.background);
   }
 
-  return paths;
+  // Find `href` attribute on area tags.
+  const areaRegex =
+    /<(?:area|AREA) [^>]*?(?:href|HREF)=["'](?<href>[^>]*?)["'][^>]*>/g;
+  while ((match = areaRegex.exec(html))) {
+    crawlablePaths.push(match.groups?.href);
+  }
+
+  return { crawlablePaths, resourcePaths };
 }
 
 function findPathsInRobotsTxt(txt) {
-  const paths = [];
+  const crawlablePaths = [];
   let match;
 
   // Find `Sitemap` directives.
   const sitemapRegex = /Sitemap:\s*(?<sitemap>[^\s]*)/g;
   while ((match = sitemapRegex.exec(txt))) {
-    paths.push(match.groups?.sitemap);
+    crawlablePaths.push(match.groups?.sitemap);
   }
 
-  return paths;
+  return {
+    crawlablePaths,
+    resourcePaths: [],
+  };
 }
 
 function findPathsInSitemapXml(xml) {
-  const paths = [];
+  const crawlablePaths = [];
   let match;
 
   // Find `loc` elements.
   const locRegex = /<loc>(?<loc>[^<]*)<\/loc>/g;
   while ((match = locRegex.exec(xml))) {
-    paths.push(match.groups?.loc);
+    crawlablePaths.push(match.groups?.loc);
   }
 
-  return paths;
+  return {
+    crawlablePaths,
+    resourcePaths: [],
+  };
 }
 
-function isKeyForCrawlableFile(key) {
-  // Undefined key is tantamount to "index.html"
-  if (key === undefined || key === "robots.txt" || key === "sitemap.xml") {
+function isCrawlableHref(href) {
+  // Use a fake base URL to cover the case where the href is relative.
+  const url = new URL(href, "fake://");
+  const pathname = url.pathname;
+  const lastKey = pathname.split("/").pop() ?? "";
+  if (lastKey === "robots.txt" || lastKey === "sitemap.xml") {
     return true;
   }
-  const ext = extname(key);
+  const ext = extname(lastKey);
+  // We assume an empty extension is HTML.
   const crawlableExtensions = [".html", ".css", ".js", ""];
   return crawlableExtensions.includes(ext);
 }
