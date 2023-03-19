@@ -35,12 +35,14 @@ export default async function crawl(variant, baseHref) {
   const baseUrl = new URL(baseHref);
 
   const cache = {};
-  const pathQueue = ["/robots.txt", "."];
+  // Seed the queue with robots.txt and an empty path that will be equivalent to
+  // the base URL.
+  const pathQueue = ["/robots.txt", ""];
   const seenPaths = new Set();
 
   while (pathQueue.length > 0) {
     const path = pathQueue.shift();
-    if (!path) {
+    if (path === undefined) {
       continue;
     }
 
@@ -71,7 +73,7 @@ export default async function crawl(variant, baseHref) {
       continue;
     }
 
-    if (keys.at(-1) === undefined || keys.at(-1) === ".") {
+    if (keys.at(-1) === undefined) {
       // For indexing and storage purposes, treat a path that ends in a trailing
       // slash (or the dot we use to seed the queue) as if it ends in
       // index.html.
