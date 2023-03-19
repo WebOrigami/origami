@@ -41,64 +41,42 @@ export default async function crawl(variant, baseHref) {
   const cache = {};
   // Seed the queue with robots.txt and an empty path that will be equivalent to
   // the base URL.
-  const pathQueue = ["/robots.txt", ""];
+  let pathQueue = ["/robots.txt", ""];
   const seenPaths = new Set();
 
+  // We process the whole queue in parallel.
   while (pathQueue.length > 0) {
-    const path = pathQueue.shift();
-    if (path === undefined) {
-      continue;
-    }
+    const results = await Promise.all(
+      pathQueue.map((path) => processPath(graph, path, baseUrl))
+    );
 
-    // Get value at path
-    const keys = keysFromPath(path);
-    let value = await ExplorableGraph.traverse(graph, ...keys);
-    if (ExplorableGraph.isExplorable(value)) {
-      // Path is actually a directory; see if it has an index.html
-      if (keys.at(-1) === undefined) {
-        keys.pop();
+    // Clear the queue.
+    pathQueue = [];
+
+    // Process the results.
+    for (const result of results) {
+      const { crawlablePaths, keys, resourcePaths, value } = result;
+
+      // Cache the value
+      if (value) {
+        addValueToObject(cache, keys, value);
       }
-      keys.push("index.html");
-      value = await ExplorableGraph.traverse(value, "index.html");
-    }
 
-    if (value === undefined) {
-      continue;
-    }
+      // Add new paths to the queue.
+      const newPaths = new Set(
+        crawlablePaths.filter((path) => !seenPaths.has(path))
+      );
+      pathQueue.push(...newPaths);
+      newPaths.forEach((path) => seenPaths.add(path));
 
-    if (keys.at(-1) === undefined) {
-      // For indexing and storage purposes, treat a path that ends in a trailing
-      // slash (or the dot we use to seed the queue) as if it ends in
-      // index.html.
-      keys[keys.length - 1] = "index.html";
-    }
-
-    // Cache the value
-    addValueToObject(cache, keys, value);
-
-    // Find paths in the value
-    const key = keys.at(-1);
-    const { crawlablePaths, resourcePaths } = await findPaths(
-      value,
-      key,
-      baseUrl,
-      path
-    );
-
-    // Add new paths to the queue.
-    const newPaths = new Set(
-      crawlablePaths.filter((path) => !seenPaths.has(path))
-    );
-    pathQueue.push(...newPaths);
-    newPaths.forEach((path) => seenPaths.add(path));
-
-    // Add indirect resource references to the cache.
-    for (const resourcePath of resourcePaths) {
-      const fn = () => {
-        return ExplorableGraph.traversePath(graph, resourcePath);
-      };
-      const resourceKeys = keysFromPath(resourcePath);
-      addValueToObject(cache, resourceKeys, fn);
+      // Add indirect resource references to the cache.
+      for (const resourcePath of resourcePaths) {
+        const fn = () => {
+          return ExplorableGraph.traversePath(graph, resourcePath);
+        };
+        const resourceKeys = keysFromPath(resourcePath);
+        addValueToObject(cache, resourceKeys, fn);
+      }
     }
   }
 
@@ -342,6 +320,46 @@ function isCrawlableHref(href) {
   // We assume an empty extension is HTML.
   const crawlableExtensions = [".html", ".css", ".js", ""];
   return crawlableExtensions.includes(ext);
+}
+
+async function processPath(graph, path, baseUrl) {
+  if (path === undefined) {
+    return { crawlablePaths: [], keys: null, resourcePaths: [], value: null };
+  }
+
+  // Get value at path
+  const keys = keysFromPath(path);
+  let value = await ExplorableGraph.traverse(graph, ...keys);
+  if (ExplorableGraph.isExplorable(value)) {
+    // Path is actually a directory; see if it has an index.html
+    if (keys.at(-1) === undefined) {
+      keys.pop();
+    }
+    keys.push("index.html");
+    value = await ExplorableGraph.traverse(value, "index.html");
+  }
+
+  if (value === undefined) {
+    return { crawlablePaths: [], keys, resourcePaths: [], value: null };
+  }
+
+  if (keys.at(-1) === undefined) {
+    // For indexing and storage purposes, treat a path that ends in a trailing
+    // slash (or the dot we use to seed the queue) as if it ends in
+    // index.html.
+    keys[keys.length - 1] = "index.html";
+  }
+
+  // Find paths in the value
+  const key = keys.at(-1);
+  const { crawlablePaths, resourcePaths } = await findPaths(
+    value,
+    key,
+    baseUrl,
+    path
+  );
+
+  return { crawlablePaths, keys, resourcePaths, value };
 }
 
 crawl.usage = `crawl <graph>\tCrawl a graph`;
