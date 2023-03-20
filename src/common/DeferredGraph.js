@@ -7,8 +7,8 @@ import Scope from "./Scope.js";
  * This is useful in situations like a toGraph() function, which is expected to
  * return a graph synchronously. If constructing the graph requires an
  * asynchronous operation, this class can be used as a wrapper that can be
- * returned immediately. When the graph's asyncIterator or get functions are
- * called, the graph will be loaded as necessary.
+ * returned immediately. When the graph's keys or get functions are called, the
+ * graph will be loaded as necessary.
  */
 export default class DeferredGraph {
   constructor(loadFn) {
