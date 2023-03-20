@@ -25,6 +25,7 @@ export default class ExplorableGraph {
       this.isExplorable(obj) ||
       obj instanceof Function ||
       obj instanceof Array ||
+      obj instanceof Set ||
       obj?.toFunction instanceof Function ||
       obj?.toGraph instanceof Function ||
       utilities.isPlainObject(obj)
