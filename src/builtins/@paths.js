@@ -15,9 +15,9 @@ export default async function paths(variant, prefix = "") {
   const result = [];
   for (const key of await graph.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
-    if (await ExplorableGraph.isKeyExplorable(graph, key)) {
-      const subgraph = await graph.get(key);
-      const subPaths = await paths.call(this, subgraph, valuePath);
+    const value = await graph.get(key);
+    if (await ExplorableGraph.isExplorable(value)) {
+      const subPaths = await paths.call(this, value, valuePath);
       result.push(...subPaths);
     } else {
       result.push(valuePath);
