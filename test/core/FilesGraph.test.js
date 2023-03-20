@@ -14,9 +14,14 @@ describe("FilesGraph", () => {
   it("can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
-    assert.deepEqual(await files.keys(), ["a.txt", "b.txt", "c.txt", "more"]);
+    assert.deepEqual(Array.from(await files.keys()), [
+      "a.txt",
+      "b.txt",
+      "c.txt",
+      "more",
+    ]);
     const more = await files.get("more");
-    assert.deepEqual(await more.keys(), ["d.txt", "e.txt"]);
+    assert.deepEqual(Array.from(await more.keys()), ["d.txt", "e.txt"]);
   });
 
   it("returns the same FilesGraph for the same subfolder", async () => {

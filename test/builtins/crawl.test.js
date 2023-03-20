@@ -11,7 +11,10 @@ describe("crawl", () => {
       "about.html": "About page",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await crawled.keys(), ["index.html", "about.html"]);
+    assert.deepEqual(Array.from(await crawled.keys()), [
+      "index.html",
+      "about.html",
+    ]);
   });
 
   it("finds linked images", async () => {
@@ -20,7 +23,10 @@ describe("crawl", () => {
       "logo.png": "PNG data",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await crawled.keys(), ["index.html", "logo.png"]);
+    assert.deepEqual(Array.from(await crawled.keys()), [
+      "index.html",
+      "logo.png",
+    ]);
   });
 
   it("finds linked JavaScript files", async () => {
@@ -32,7 +38,11 @@ describe("crawl", () => {
       "b.js": "export default true;",
     };
     const crawled = await crawl.call(null, graph);
-    assert.deepEqual(await crawled.keys(), ["index.html", "a.js", "b.js"]);
+    assert.deepEqual(Array.from(await crawled.keys()), [
+      "index.html",
+      "a.js",
+      "b.js",
+    ]);
   });
 
   it("finds a robots.txt file and sitemap", async () => {
@@ -52,7 +62,7 @@ describe("crawl", () => {
       "robots.txt": "Sitemap: http://example.com/sitemap.xml",
     };
     const crawled = await crawl.call(null, graph, "https://example.com");
-    assert.deepEqual(await crawled.keys(), [
+    assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
       "sitemap.xml",
       "foo.html",

@@ -9,6 +9,6 @@ describe("sort", () => {
       a: 1,
     };
     const sorted = await sort.call(null, graph);
-    assert.deepEqual(await sorted.keys(), ["a", "b", "c"]);
+    assert.deepEqual(Array.from(await sorted.keys()), ["a", "b", "c"]);
   });
 });

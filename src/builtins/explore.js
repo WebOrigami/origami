@@ -69,7 +69,7 @@ async function getScopeData(scope) {
       continue;
     }
     const name = graph[keySymbol];
-    const graphKeys = await graph.keys();
+    const graphKeys = Array.from(await graph.keys());
     // Skip system-ish files that start with a period.
     const keys = graphKeys.filter((key) => !key.startsWith?.("."));
     data.push({ name, keys });

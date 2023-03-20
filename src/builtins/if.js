@@ -11,7 +11,7 @@ export default async function ifCommand(value, trueResult, falseResult) {
   assertScopeIsDefined(this);
   let condition = await value;
   if (ExplorableGraph.isExplorable(condition)) {
-    const keys = await condition.keys();
+    const keys = Array.from(await condition.keys());
     condition = keys.length > 0;
   }
 

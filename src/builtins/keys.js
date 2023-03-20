@@ -2,7 +2,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Return the top-level keys in the graph.
+ * Return the top-level keys in the graph as an array.
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
@@ -14,7 +14,8 @@ export default async function keys(variant) {
     return undefined;
   }
   const graph = ExplorableGraph.from(variant);
-  return graph.keys();
+  const keys = await graph.keys();
+  return Array.from(keys);
 }
 
 keys.usage = `keys <graph>\tThe top-level keys in the graph`;

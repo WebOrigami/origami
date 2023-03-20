@@ -9,6 +9,10 @@ describe("sortBy", () => {
       Carol: { age: 42 },
     };
     const sorted = await sortBy.call(null, graph, (scope) => scope.get("age"));
-    assert.deepEqual(await sorted.keys(), ["Bob", "Carol", "Alice"]);
+    assert.deepEqual(Array.from(await sorted.keys()), [
+      "Bob",
+      "Carol",
+      "Alice",
+    ]);
   });
 });

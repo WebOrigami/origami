@@ -13,7 +13,7 @@ const localSiteUrl = pathToFileURL(siteDirectory);
 describe.skip("SiteGraph", () => {
   it("can get keys at a given route", async () => {
     const graph = new SiteGraph(localSiteUrl.href);
-    const keys = await graph.keys();
+    const keys = Array.from(await graph.keys());
     assert.deepEqual(keys, ["hello.txt"]);
   });
 });
