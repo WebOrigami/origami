@@ -24,10 +24,12 @@ export default async function debug(variant) {
   /** @type {any} */
   let graph = ExplorableGraph.from(variant);
 
-  if (!isTransformApplied(InheritScopeTransform, graph)) {
-    graph = transformObject(InheritScopeTransform, graph);
-  }
-  if (!graph.parent) {
+  // Apply InheritScopeTransform to the graph if it doesn't have a scope yet so
+  // that we can view scope when debugging values inside it.
+  if (!graph.scope) {
+    if (!isTransformApplied(InheritScopeTransform, graph)) {
+      graph = transformObject(InheritScopeTransform, graph);
+    }
     graph.parent = this;
   }
 
