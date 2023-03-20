@@ -2,6 +2,7 @@ import * as YAMLModule from "yaml";
 import FunctionGraph from "./FunctionGraph.js";
 import MapValuesGraph from "./MapValuesGraph.js";
 import ObjectGraph from "./ObjectGraph.js";
+import SetGraph from "./SetGraph.js";
 import * as utilities from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -55,6 +56,8 @@ export default class ExplorableGraph {
     } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
       // @ts-ignore
       return new ObjectGraph(obj);
+    } else if (obj instanceof Set) {
+      return new SetGraph(obj);
     } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
       const fn = /** @type {any} */ (obj).toFunction();
       return new FunctionGraph(fn);

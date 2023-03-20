@@ -235,6 +235,9 @@ export function toSerializable(obj) {
     return result;
   } else if (obj instanceof Array) {
     return obj.map((value) => toSerializable(value));
+  } else if (obj instanceof Set) {
+    const array = Array.from(obj);
+    return array.map((value) => toSerializable(value));
   } else {
     // Leave primitive and built-in types alone
     const t = typeof obj;
