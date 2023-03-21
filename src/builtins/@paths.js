@@ -10,9 +10,12 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function paths(variant, prefix = "") {
   assertScopeIsDefined(this);
-  variant = variant ?? this;
-  const graph = ExplorableGraph.from(variant);
+  variant = variant ?? (await this?.get("@defaultGraph"));
+  if (variant === undefined) {
+    return undefined;
+  }
   const result = [];
+  const graph = ExplorableGraph.from(variant);
   for (const key of await graph.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
     const value = await graph.get(key);
