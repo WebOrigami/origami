@@ -4,7 +4,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
-import toYaml from "./yaml.js";
+import toYaml from "./@yaml.js";
 
 /**
  * Parse an Origami expression, evaluate it in the context of a graph (provided

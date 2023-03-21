@@ -29,5 +29,5 @@ export default async function svg(variant, options = {}) {
   return result;
 }
 
-svg.usage = `svg <graph>\tRender a graph visually as in SVG format`;
-svg.documentation = "https://graphorigami.org/cli/builtins.html#svg";
+svg.usage = `@svg <graph>\tRender a graph visually as in SVG format`;
+svg.documentation = "https://graphorigami.org/cli/builtins.html#@svg";

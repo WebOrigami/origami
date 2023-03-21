@@ -22,5 +22,5 @@ export default async function json(obj) {
   }
 }
 
-json.usage = "json <obj>\tRender the object as text in JSON format";
-json.documentation = "https://graphorigami.org/cli/builtins.html#json";
+json.usage = "@json <obj>\tRender the object as text in JSON format";
+json.documentation = "https://graphorigami.org/cli/builtins.html#@json";

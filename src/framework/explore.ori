@@ -101,9 +101,9 @@
 
       const modes = {
         Content: "",
-        Index: "!index",
-        YAML: "!yaml",
-        SVG: "!svg",
+        Index: "!@index",
+        YAML: "!@yaml",
+        SVG: "!@svg",
       };
 
       // Extract the path from the URL hash.
@@ -113,7 +113,7 @@
 
       function getModeFromLocation() {
         const href = document.location.href;
-        const match = /[\/](?<command>\!(?:index|yaml|svg))$/.exec(href);
+        const match = /[\/](?<command>\!(?:@index|@yaml|@svg))$/.exec(href);
         const command = match?.groups.command ?? "";
         const mode = Object.keys(modes).find(key => modes[key] === command) ?? "Content";
         return mode;

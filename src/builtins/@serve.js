@@ -8,7 +8,7 @@ import { transformObject } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./@debug.js";
-import watch from "./watch.js";
+import watch from "./@watch.js";
 
 const defaultPort = 5000;
 
