@@ -43,5 +43,5 @@ export default async function merge(...graphs) {
   return result;
 }
 
-merge.usage = `merge <...graphs>\tMerge the given graphs`;
-merge.documentation = "https://graphorigami.org/cli/builtins.html#merge";
+merge.usage = `@merge <...graphs>\tMerge the given graphs`;
+merge.documentation = "https://graphorigami.org/cli/builtins.html#@merge";

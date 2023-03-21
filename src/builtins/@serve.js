@@ -7,7 +7,7 @@ import SiteGraph from "../core/SiteGraph.js";
 import { transformObject } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
-import debug from "./debug.js";
+import debug from "./@debug.js";
 import watch from "./watch.js";
 
 const defaultPort = 5000;
@@ -66,5 +66,5 @@ function findOpenPort(port) {
   );
 }
 
-serve.usage = `serve <graph>, [port]\tStart a local web server for the graph`;
-serve.documentation = "https://graphorigami.org/cli/builtins.html#serve";
+serve.usage = `@serve <graph>, [port]\tStart a web server for the graph`;
+serve.documentation = "https://graphorigami.org/cli/builtins.html#@serve";

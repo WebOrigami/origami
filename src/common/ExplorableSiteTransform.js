@@ -1,4 +1,4 @@
-import index from "../builtins/index.js";
+import index from "../builtins/@index.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   getScope,

@@ -230,7 +230,7 @@
         <h2>{{ ./name }}</h2>
         {{map ./keys, =`
         <li>
-          <a href="./!explore/{{ @value }}" target="frame">{{ @value }}</a>
+          <a href="./!@explore/{{ @value }}" target="frame">{{ @value }}</a>
         </li>
         `}}
       </ul>

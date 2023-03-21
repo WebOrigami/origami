@@ -1,4 +1,4 @@
-import merge from "../../src/builtins/merge.js";
+import merge from "../../src/builtins/@merge.js";
 import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";

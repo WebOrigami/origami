@@ -1,4 +1,4 @@
-import index from "../builtins/index.js";
+import index from "../builtins/@index.js";
 import DefaultValues from "../common/DefaultValuesTransform.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 

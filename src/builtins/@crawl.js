@@ -425,5 +425,5 @@ async function processPath(graph, path, baseUrl) {
   return { crawlablePaths, keys, path, resourcePaths, value };
 }
 
-crawl.usage = `crawl <graph>\tCrawl a graph`;
-crawl.documentation = "https://graphorigami.org/cli/builtins.html#crawl";
+crawl.usage = `@crawl <graph>\tCrawl a graph`;
+crawl.documentation = "https://graphorigami.org/cli/builtins.html#@crawl";

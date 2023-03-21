@@ -59,5 +59,5 @@ function ProgressTransform(Base) {
   };
 }
 
-copy.usage = `copy <source>, <target>\tCopies the source graph to the target`;
-copy.documentation = "https://graphorigami.org/cli/builtins.html#copy";
+copy.usage = `@copy <source>, <target>\tCopies the source graph to the target`;
+copy.documentation = "https://graphorigami.org/cli/builtins.html#@copy";

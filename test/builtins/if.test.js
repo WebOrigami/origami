@@ -1,4 +1,4 @@
-import ifBuiltin from "../../src/builtins/if.js";
+import ifBuiltin from "../../src/builtins/@if.js";
 import assert from "../assert.js";
 
 describe("if", () => {

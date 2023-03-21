@@ -12,5 +12,5 @@ export default async function shell(command) {
   }
 }
 
-shell.usage = `shell <command>\tExecutes the shell command and returns the output`;
-shell.documentation = "https://graphorigami.org/cli/builtins.html#shell";
+shell.usage = `@shell <command>\tExecutes the shell command and returns the output`;
+shell.documentation = "https://graphorigami.org/cli/builtins.html#@shell";

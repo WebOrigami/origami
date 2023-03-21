@@ -1,4 +1,4 @@
-import ori from "../builtins/ori.js";
+import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";

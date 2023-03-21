@@ -7,8 +7,8 @@ import FilesGraph from "../core/FilesGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
-import debug from "./debug.js";
-import ifBuiltin from "./if.js";
+import debug from "./@debug.js";
+import ifBuiltin from "./@if.js";
 import mapBuiltin from "./map.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

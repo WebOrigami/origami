@@ -1,4 +1,4 @@
-import crawl from "../../src/builtins/crawl.js";
+import crawl from "../../src/builtins/@crawl.js";
 import assert from "../assert.js";
 
 describe("crawl", () => {

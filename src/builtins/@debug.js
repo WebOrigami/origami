@@ -87,5 +87,5 @@ function DebugTransform(Base) {
   };
 }
 
-debug.usage = `defaultPages <graph>\tAdd default pages like index.html to the graph`;
-debug.documentation = "https://graphorigami.org/cli/builtins.html#defaultPages";
+debug.usage = `@debug <graph>\tAdd debug features to the indicated graph`;
+debug.documentation = "https://graphorigami.org/cli/builtins.html#@debug";

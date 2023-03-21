@@ -21,5 +21,5 @@ export default async function filter(graphVariant, filterVariant) {
   return filtered;
 }
 
-filter.usage = `filter <graph>, <filter>\tOnly returns values whose keys match the filter`;
-filter.documentation = "https://graphorigami.org/cli/builtins.html#filter";
+filter.usage = `@filter <graph>, <filter>\tOnly returns values whose keys match the filter`;
+filter.documentation = "https://graphorigami.org/cli/builtins.html#@filter";

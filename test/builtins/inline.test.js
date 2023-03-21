@@ -1,4 +1,4 @@
-import inline from "../../src/builtins/inline.js";
+import inline from "../../src/builtins/@inline.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
@@ -20,6 +20,16 @@ name: Bob
 Hello, {{ name }}!`;
     const textWithGraph = loadTextWithFrontMatter(text);
     const inlined = await inline.call(null, textWithGraph);
+    assert.equal(inlined, `Hello, Bob!`);
+  });
+
+  it("can preserve front matter", async () => {
+    const text = `---
+name: Bob
+---
+Hello, {{ name }}!`;
+    const textWithGraph = loadTextWithFrontMatter(text);
+    const inlined = await inline.call(null, textWithGraph, true);
     assert.equal(inlined, `Hello, Bob!`);
   });
 });

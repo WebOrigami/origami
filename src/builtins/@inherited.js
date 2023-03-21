@@ -12,6 +12,6 @@ export default async function inherited(key) {
   return ops.inherited.call(this, key);
 }
 
-inherited.usage = `inherited <key>\tThe value of the key in the graph's inherited scope`;
+inherited.usage = `@inherited <key>\tThe value of the key in the graph's inherited scope`;
 inherited.documentation =
-  "https://graphorigami.org/cli/builtins.html#inherited";
+  "https://graphorigami.org/cli/builtins.html#@inherited";

@@ -61,7 +61,7 @@ export default async function showUsage(scope) {
 
   console.log(formatted.join("\n"));
   console.log(
-    `\nMore details: "ori help"; or get help on a function like serve with "ori help/serve"`
+    `\nMore details: "ori @help"; or get help on a function like serve with "ori @help/serve"`
   );
 }
 

@@ -19,5 +19,5 @@ export default async function scope(variant) {
   return scope;
 }
 
-scope.usage = `scope [<graph>]\tReturns the scope of the graph or the current scope`;
-scope.documentation = "https://graphorigami.org/cli/builtins.html#scope";
+scope.usage = `@scope [<graph>]\tReturns the scope of the graph or the current scope`;
+scope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";

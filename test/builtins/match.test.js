@@ -1,4 +1,4 @@
-import match from "../../src/builtins/match.js";
+import match from "../../src/builtins/@match.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 

@@ -1,4 +1,4 @@
-import ori from "../../src/builtins/ori.js";
+import ori from "../../src/builtins/@ori.js";
 import builtins from "../../src/cli/builtins.js";
 import Scope from "../../src/common/Scope.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";

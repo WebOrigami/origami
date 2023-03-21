@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import process, { stdout } from "node:process";
-import ori from "../builtins/ori.js";
+import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { getScope, keySymbol } from "../core/utilities.js";

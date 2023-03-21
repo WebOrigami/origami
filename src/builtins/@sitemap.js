@@ -52,3 +52,6 @@ export default async function sitemap(variant, baseHref = "") {
   const resultText = resultWithGraph.toString();
   return resultText;
 }
+
+sitemap.usage = `@sitemap <graph>\tGenerate a sitemap for a graph`;
+sitemap.documentation = "https://graphorigami.org/cli/builtins.html#@sitemap";
