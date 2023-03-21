@@ -23,16 +23,18 @@ export default async function sitemap(variant, baseHref = "") {
   variant = variant ?? (await this?.get("@defaultGraph"));
   const graph = ExplorableGraph.from(variant);
 
-  // Filter out `sitemap.xml` from the graph to avoid recursion.
-  const sitemapKey = "sitemap.xml";
+  // We're only interested in keys that end in .html or with no extension.
+  function test(key) {
+    return key.endsWith?.(".html") || !key.includes?.(".");
+  }
   const filterGraph = {
     async keys() {
       const keys = Array.from(await graph.keys());
-      return keys.filter((key) => key !== sitemapKey);
+      return keys.filter((key) => test(key));
     },
 
     async get(key) {
-      return key === sitemapKey ? undefined : graph.get(key);
+      return test(key) ? graph.get(key) : undefined;
     },
   };
 
