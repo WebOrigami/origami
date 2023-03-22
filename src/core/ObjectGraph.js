@@ -1,5 +1,5 @@
 import ExplorableGraph from "./ExplorableGraph.js";
-import { isPlainObject } from "./utilities.js";
+import { isPlainObject, keySymbol } from "./utilities.js";
 
 export default class ObjectGraph {
   /**
@@ -9,6 +9,9 @@ export default class ObjectGraph {
    */
   constructor(object) {
     this.object = object;
+    if (object[keySymbol]) {
+      this[keySymbol] = object[keySymbol];
+    }
   }
 
   /**
