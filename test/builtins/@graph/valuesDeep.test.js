@@ -1,7 +1,7 @@
-import valuesDeep from "../../src/builtins/@graph/valuesDeep.js";
-import assert from "../assert.js";
+import valuesDeep from "../../../src/builtins/@graph/valuesDeep.js";
+import assert from "../../assert.js";
 
-describe("valuesDeep", () => {
+describe("@graph/valuesDeep", () => {
   it("returns in-order array of a graph's values", async () => {
     const graph = {
       a: 1,

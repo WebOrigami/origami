@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @this {Explorable}
  * @param {GraphVariant} jsonFeedGraph
  */
-export default async function feedRss(jsonFeedGraph) {
+export default async function rss(jsonFeedGraph) {
   assertScopeIsDefined(this);
   const jsonFeed = await ExplorableGraph.plain(jsonFeedGraph);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
@@ -43,5 +43,5 @@ function itemRss(jsonFeedItem) {
 `;
 }
 
-feedRss.usage = `feedRss <feed>\tTransforms a JSON Feed object to RSS XML`;
-feedRss.documentation = "https://graphorigami.org/cli/builtins.html#feedRss";
+rss.usage = `@rss <feed>\tTransforms a JSON Feed graph to RSS XML`;
+rss.documentation = "https://graphorigami.org/cli/builtins.html#@rss";

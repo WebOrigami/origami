@@ -1,7 +1,7 @@
-import MergeDeepGraph from "../common/MergeDeepGraph.js";
-import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import MergeDeepGraph from "../../common/MergeDeepGraph.js";
+import Scope from "../../common/Scope.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Create a graph that's the result of deep merging the given graphs.

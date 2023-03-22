@@ -1,7 +1,7 @@
 import sort from "../../../src/builtins/@graph/sort.js";
 import assert from "../../assert.js";
 
-describe("sort", () => {
+describe("@graph/sort", () => {
   it("sorts keys", async () => {
     const graph = {
       b: 2,

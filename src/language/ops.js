@@ -1,6 +1,6 @@
 /// <reference path="./code.d.ts" />
 
-import concatBuiltin from "../builtins/@concat.js";
+import concatBuiltin from "../builtins/@graph/concat.js";
 import Scope from "../common/Scope.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";

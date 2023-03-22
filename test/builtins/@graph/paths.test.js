@@ -1,7 +1,7 @@
 import paths from "../../../src/builtins/@graph/paths.js";
 import assert from "../../assert.js";
 
-describe("@paths", () => {
+describe("@graph/paths", () => {
   it("returns an array of paths to the values in the graph", async () => {
     const graph = {
       a: 1,

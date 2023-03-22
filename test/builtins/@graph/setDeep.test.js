@@ -3,7 +3,7 @@ import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../../src/core/ObjectGraph.js";
 import assert from "../../assert.js";
 
-describe("setDeep", () => {
+describe("@graph/setDeep", () => {
   it("can apply updates with a single argument to set", async () => {
     const graph = new ObjectGraph({
       a: 1,

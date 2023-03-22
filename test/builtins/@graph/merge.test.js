@@ -1,12 +1,12 @@
-import merge from "../../src/builtins/@merge.js";
-import ExpressionGraph from "../../src/common/ExpressionGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
-import { createExpressionFunction } from "../../src/language/expressionFunction.js";
-import * as ops from "../../src/language/ops.js";
-import assert from "../assert.js";
+import merge from "../../../src/builtins/@graph/merge.js";
+import ExpressionGraph from "../../../src/common/ExpressionGraph.js";
+import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
+import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
+import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
+import * as ops from "../../../src/language/ops.js";
+import assert from "../../assert.js";
 
-describe("merge", () => {
+describe("@graph/merge", () => {
   it("merges graphs", async () => {
     const graph = await merge.call(
       null,

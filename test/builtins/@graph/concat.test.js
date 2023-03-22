@@ -1,7 +1,7 @@
-import concat from "../../src/builtins/@concat.js";
-import assert from "../assert.js";
+import concat from "../../../src/builtins/@graph/concat.js";
+import assert from "../../assert.js";
 
-describe("concat", () => {
+describe("@graph/concat", () => {
   it("concatenates multiple strings", async () => {
     const result = await concat.call(null, "a", "b", "c");
     assert.equal(result, "abc");

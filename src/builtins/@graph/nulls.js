@@ -1,5 +1,5 @@
-import MapValuesGraph from "../core/MapValuesGraph.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import MapValuesGraph from "../../core/MapValuesGraph.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return a new graph with all values equal to null.
