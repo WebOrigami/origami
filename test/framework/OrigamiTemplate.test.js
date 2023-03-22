@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import map from "../../src/builtins/map.js";
+import mapValues from "../../src/builtins/@map/values.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
@@ -41,7 +41,7 @@ Hello, world.
     );
     const graph = new (InheritScopeTransform(ObjectGraph))({
       greeting: "Hello",
-      map,
+      map: mapValues,
       people: {
         0: { name: "Alice" },
         1: { name: "Bob" },

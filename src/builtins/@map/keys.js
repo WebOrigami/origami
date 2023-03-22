@@ -1,7 +1,7 @@
-import extendValueKeyFn from "../common/extendValueKeyFn.js";
-import MapInnerKeysGraph from "../common/MapInnerKeysGraph.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import extendValueKeyFn from "../../common/extendValueKeyFn.js";
+import MapInnerKeysGraph from "../../common/MapInnerKeysGraph.js";
+import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Wrap a graph and redefine the key used to access nodes in it.

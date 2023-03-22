@@ -1,6 +1,6 @@
-import map from "../../src/builtins/map.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
+import map from "../../../src/builtins/@map/values.js";
+import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
+import assert from "../../assert.js";
 
 describe("map", () => {
   it("maps all the values in a graph", async () => {

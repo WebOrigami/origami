@@ -9,7 +9,7 @@ import { keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 import debug from "./@debug.js";
 import ifBuiltin from "./@if.js";
-import mapBuiltin from "./map.js";
+import mapBuiltin from "./@map/values.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkDir = path.resolve(dirname, "../framework");

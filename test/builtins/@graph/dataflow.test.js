@@ -13,7 +13,7 @@ describe("@graph/dataflow", () => {
     const textWithGraph = loadYaml(`
       a: !ori fn(b)
       # builtin map will be ignored, as will ./foo
-      b: !ori map(c, =./foo)
+      b: !ori (@graph/map(c, =./foo))
       c: Hello
     `);
     const graph = /** @type {any} */ (textWithGraph).toGraph();

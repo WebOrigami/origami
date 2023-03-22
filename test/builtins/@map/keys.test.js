@@ -1,9 +1,9 @@
-import mapKeys from "../../src/builtins/mapKeys.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import * as ops from "../../src/language/ops.js";
-import assert from "../assert.js";
+import mapKeys from "../../../src/builtins/@map/keys.js";
+import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
+import * as ops from "../../../src/language/ops.js";
+import assert from "../../assert.js";
 
-describe("mapKeys", () => {
+describe("@map/keys", () => {
   it("can define a key from a value property", async () => {
     /** @type {any} */
     const graph = await mapKeys.call(
