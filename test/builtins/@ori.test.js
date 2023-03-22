@@ -18,7 +18,7 @@ describe("ori builtin", () => {
       graph,
       builtins
     );
-    const result = await ori.call(scope, `keys`);
+    const result = await ori.call(scope, `@graph/keys`);
     assert.equal(
       String(result),
       `- a

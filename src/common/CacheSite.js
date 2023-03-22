@@ -1,4 +1,4 @@
-import setDeep from "../builtins/setDeep.js";
+import setDeep from "../builtins/@graph/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 

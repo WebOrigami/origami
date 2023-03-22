@@ -1,5 +1,5 @@
-import dataflow from "../builtins/dataflow.js";
-import flowSvg from "../builtins/flowSvg.js";
+import dataflow from "../builtins/@graph/dataflow.js";
+import flowSvg from "../builtins/@graph/flowSvg.js";
 
 /**
  * Return an SVG representing the data flow for the current graph.

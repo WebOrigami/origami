@@ -1,4 +1,4 @@
-import valuesDeep from "../../src/builtins/valuesDeep.js";
+import valuesDeep from "../../src/builtins/@graph/valuesDeep.js";
 import assert from "../assert.js";
 
 describe("valuesDeep", () => {

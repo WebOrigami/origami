@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import setDeep from "../../src/builtins/setDeep.js";
+import setDeep from "../../src/builtins/@graph/setDeep.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import assert from "../assert.js";

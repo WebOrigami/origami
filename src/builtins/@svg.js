@@ -1,7 +1,7 @@
 import graphviz from "graphviz-wasm";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import dot from "./dot.js";
+import dot from "./@graph/dot.js";
 
 let graphvizLoaded = false;
 
