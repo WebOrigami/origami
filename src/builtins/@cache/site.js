@@ -1,8 +1,8 @@
-import CacheSite from "../common/CacheSite.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import CacheSite from "../../common/CacheSite.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * Caches graph values in a storable cache.
+ * Caches fetch requests for a standard site.
  *
  * @param {GraphVariant} graph
  * @param {GraphVariant} [cache]
@@ -16,6 +16,5 @@ export default async function cacheSite(graph, cache, filter) {
   return result;
 }
 
-cacheSite.usage = `cacheSite site, [cache], [filter]\tCaches site values in a storable cache`;
-cacheSite.documentation =
-  "https://graphorigami.org/cli/builtins.html#cacheSite";
+cacheSite.usage = `@cache/site site, [cache], [filter]\tCaches site fetch requests`;
+cacheSite.documentation = "https://graphorigami.org/cli/builtins.html#@cache";

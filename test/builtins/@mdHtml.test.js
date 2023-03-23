@@ -1,4 +1,4 @@
-import mdHtml from "../../src/builtins/mdHtml.js";
+import mdHtml from "../../src/builtins/@mdHtml.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import md from "../../src/loaders/md.js";
 import assert from "../assert.js";

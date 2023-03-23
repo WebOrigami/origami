@@ -1,5 +1,5 @@
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import setScope from "./setScope.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import setScope from "./set.js";
 
 /**
  * Return a copy of the given graph whose scope includes the given graphs *and*
@@ -15,6 +15,5 @@ export default function extendScope(variant, ...scopeGraphs) {
   return setScope.call(scope, variant, ...scopeGraphs, scope);
 }
 
-extendScope.usage = `extendScope <graph>, <...graphs>\tExtends graph's scope with the given graphs`;
-extendScope.documentation =
-  "https://graphorigami.org/cli/builtins.html#extendScope";
+extendScope.usage = `@scope/extend <graph>, <...graphs>\tExtends graph's scope with the given graphs`;
+extendScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";

@@ -450,7 +450,7 @@ export function pathKey(tokens) {
 }
 
 // Parse a protocol call like `fn://foo/bar`.
-// There can be zere, one, or two slashes after the colon.
+// There can be zero, one, or two slashes after the colon.
 export function protocolCall(tokens) {
   const parsed = sequence(
     scopeReference,
@@ -464,7 +464,20 @@ export function protocolCall(tokens) {
   if (!parsed) {
     return null;
   }
-  const { 0: fn, 4: pathHead, 6: path } = parsed.value;
+  let { 0: fn, 4: pathHead, 6: path } = parsed.value;
+  // Certain protocols like http: and https: are special-cased to always
+  // reference built-in functions.
+  const builtInProtocols = {
+    http: ops.http,
+    https: ops.https,
+    graph: ops.graphHttps, // Shorthand for graphHttps:
+    graphHttp: ops.graphHttp,
+    graphHttps: ops.graphHttps,
+  };
+  // Prefer built-in protocol, otherwise treat the protocol as a normal function.
+  if (fn[0] === ops.scope && builtInProtocols[fn[1]]) {
+    fn = builtInProtocols[fn[1]];
+  }
   const value = [fn, pathHead];
   if (path) {
     value.push(...path);

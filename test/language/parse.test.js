@@ -585,7 +585,7 @@ describe("parse", () => {
         { type: tokenType.REFERENCE, lexeme: "foo" },
         { type: tokenType.SLASH },
       ]),
-      [[ops.scope, "https"], "example.com", "foo", undefined]
+      [ops.https, "example.com", "foo", undefined]
     );
     // http:example.com
     assertParse(
@@ -594,7 +594,7 @@ describe("parse", () => {
         { type: tokenType.COLON },
         { type: tokenType.REFERENCE, lexeme: "example.com" },
       ]),
-      [[ops.scope, "http"], "example.com"]
+      [ops.http, "example.com"]
     );
     // http://localhost:5000/foo
     assertParse(
@@ -609,7 +609,7 @@ describe("parse", () => {
         { type: tokenType.SLASH },
         { type: tokenType.REFERENCE, lexeme: "foo" },
       ]),
-      [[ops.scope, "http"], "localhost:5000", "foo"]
+      [ops.http, "localhost:5000", "foo"]
     );
   });
 
@@ -626,7 +626,7 @@ describe("parse", () => {
         { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
         { type: tokenType.STRING, lexeme: "key" },
       ]),
-      [[[ops.scope, "https"], "example.com", "graph.yaml"], "key"]
+      [[ops.https, "example.com", "graph.yaml"], "key"]
     );
   });
 

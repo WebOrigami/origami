@@ -1,6 +1,6 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import MapValuesGraph from "../core/MapValuesGraph.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
+import MapValuesGraph from "../../core/MapValuesGraph.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Expand values that can be treated as explorable graphs into graphs.
@@ -34,5 +34,5 @@ function expandValue(value) {
   return result;
 }
 
-expand.usage = `expand <graph>\tExpand values that can be treated as explorable graphs`;
-expand.documentation = "https://graphorigami.org/cli/builtins.html#expand";
+expand.usage = `@graph/expand <graph>\tExpand values that can be treated as explorable graphs`;
+expand.documentation = "https://graphorigami.org/cli/builtins.html#@graph";

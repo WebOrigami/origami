@@ -1,7 +1,7 @@
-import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { graphInContext, keySymbol } from "../core/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import Scope from "../../common/Scope.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { graphInContext, keySymbol } from "../../core/utilities.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return a copy of the given graph that has the indicated graphs as its scope.
@@ -19,5 +19,5 @@ export default function setScope(variant, ...scopeGraphs) {
   return result;
 }
 
-setScope.usage = `setScope <graph>, <...graphs>\tReturns a graph copy with the given scope`;
-setScope.documentation = "https://graphorigami.org/cli/builtins.html#setScope";
+setScope.usage = `@scope/set <graph>, <...graphs>\tReturns a graph copy with the given scope`;
+setScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";

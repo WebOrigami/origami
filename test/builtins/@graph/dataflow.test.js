@@ -47,7 +47,7 @@ describe("@graph/dataflow", () => {
 
   it("if all dependencies are builtins, uses source expression as dependency", async () => {
     const textWithGraph = loadYaml(`
-      foo: !ori mdHtml()
+      foo: !ori (@mdHtml())
     `);
     const graph = /** @type {any} */ (textWithGraph).toGraph();
     const flow = await dataflow.call(null, graph);

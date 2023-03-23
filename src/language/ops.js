@@ -1,6 +1,10 @@
 /// <reference path="./code.d.ts" />
 
 import concatBuiltin from "../builtins/@graph/concat.js";
+import graphHttpBuiltin from "../builtins/@graphHttp.js";
+import graphHttpsBuiltin from "../builtins/@graphHttps.js";
+import httpBuiltin from "../builtins/@http.js";
+import httpsBuiltin from "../builtins/@https.js";
 import Scope from "../common/Scope.js";
 import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
@@ -51,6 +55,54 @@ export function graph(formulas) {
   return result;
 }
 graph.toString = () => "«ops.graph»";
+
+/**
+ * A website graph via HTTP.
+ *
+ * @this {Explorable}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function graphHttp(domain, ...keys) {
+  return graphHttpBuiltin.call(this, domain, ...keys);
+}
+graphHttp.toString = () => "«ops.graphHttp»";
+
+/**
+ * A website graph via HTTPS.
+ *
+ * @this {Explorable}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function graphHttps(domain, ...keys) {
+  return graphHttpsBuiltin.call(this, domain, ...keys);
+}
+graphHttps.toString = () => "«ops.graphHttps»";
+
+/**
+ * Retrieve a web resource via HTTP.
+ *
+ * @this {Explorable}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function http(domain, ...keys) {
+  return httpBuiltin.call(this, domain, ...keys);
+}
+http.toString = () => "«ops.http»";
+
+/**
+ * Retrieve a web resource via HTTPS.
+ *
+ * @this {Explorable}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function https(domain, ...keys) {
+  return httpsBuiltin.call(this, domain, ...keys);
+}
+https.toString = () => "«ops.https»";
 
 /**
  * Search the inherited scope -- i.e., exclude the current graph -- for the

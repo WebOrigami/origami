@@ -25,5 +25,5 @@ export default async function mdHtml(input, emitFrontMatter = false) {
   return result;
 }
 
-mdHtml.usage = `mdHtml <markdown>\tRender the markdown text as HTML`;
-mdHtml.documentation = "https://graphorigami.org/cli/builtins.html#mdHtml";
+mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
+mdHtml.documentation = "https://graphorigami.org/cli/builtins.html#@mdHtml";
