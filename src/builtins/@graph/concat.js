@@ -11,7 +11,7 @@ export default async function concat(...args) {
   assertScopeIsDefined(this);
   let graph;
   if (args.length === 0) {
-    graph = await this.get("@defaultGraph");
+    graph = await this.get("@current");
     if (graph === undefined) {
       return undefined;
     }

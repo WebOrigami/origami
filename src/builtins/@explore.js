@@ -37,7 +37,7 @@ export default async function explore() {
   const text = await template.apply(data, templateScope);
 
   const ambientsGraph = new ObjectGraph({
-    "@defaultGraph": this,
+    "@current": this,
   });
   ambientsGraph[keySymbol] = "explore command";
   const extendedScope = new Scope(ambientsGraph, scope);

@@ -13,7 +13,7 @@ describe("ori builtin", () => {
     });
     const scope = new Scope(
       {
-        "@defaultGraph": graph,
+        "@current": graph,
       },
       graph,
       builtins

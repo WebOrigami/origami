@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default async function paths(variant, prefix = "") {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@current"));
   if (variant === undefined) {
     return undefined;
   }

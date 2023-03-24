@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function json(obj) {
   assertScopeIsDefined(this);
-  obj = obj ?? (await this?.get("@defaultGraph"));
+  obj = obj ?? (await this?.get("@current"));
   if (obj === undefined) {
     return undefined;
   }

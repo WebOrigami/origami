@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default async function defineds(variant) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this.get("@defaultGraph"));
+  variant = variant ?? (await this.get("@current"));
   if (variant === undefined) {
     throw new TypeError("A graph variant is required");
   }

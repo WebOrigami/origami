@@ -32,7 +32,7 @@ async function main(...args) {
 
   // Add default graph to scope.
   const ambientsGraph = new ObjectGraph({
-    "@defaultGraph": graph,
+    "@current": graph,
   });
   ambientsGraph[keySymbol] = "Origami CLI";
   const scope = new Scope(ambientsGraph, baseScope);

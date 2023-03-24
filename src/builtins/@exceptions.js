@@ -8,7 +8,7 @@ import defineds from "./@graph/defineds.js";
  */
 export default async function exceptions(variant) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@current"));
   const exceptionsGraph = new ExceptionsGraph(variant);
   return defineds.call(this, exceptionsGraph);
 }

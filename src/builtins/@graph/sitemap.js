@@ -20,7 +20,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
  */
 export default async function sitemap(variant, baseHref = "") {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@current"));
   const graph = ExplorableGraph.from(variant);
 
   // We're only interested in keys that end in .html or with no extension.

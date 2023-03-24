@@ -32,7 +32,7 @@ export default function OriCommandTransform(Base) {
         }
         // Key is an Origami command; invoke it.
         const ambientsGraph = new ObjectGraph({
-          "@defaultGraph": this,
+          "@current": this,
         });
         ambientsGraph[keySymbol] = "ori command";
         const extendedScope = new Scope(ambientsGraph, getScope(this));

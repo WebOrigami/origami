@@ -19,7 +19,7 @@ export default async function svg(variant, options = {}) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  variant = variant ?? (await this?.get("@defaultGraph"));
+  variant = variant ?? (await this?.get("@current"));
   if (variant === undefined) {
     return undefined;
   }
