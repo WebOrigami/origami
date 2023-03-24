@@ -58,7 +58,7 @@ try {
   await main(...args);
 } catch (/** @type {any} */ error) {
   // Work up to the root cause, displaying intermediate messages as we go up.
-  if (!error.cause) {
+  if (!error.cause && !error.stack) {
     console.error(error.message);
   } else {
     while (error.cause) {

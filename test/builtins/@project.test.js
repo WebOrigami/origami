@@ -3,7 +3,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
-describe.only("@project", () => {
+describe("@project", () => {
   it("finds the closest ori.config.js in the ancestor tree", async () => {
     const subsubfolder = {
       /* Empty */

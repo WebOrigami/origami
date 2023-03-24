@@ -42,16 +42,11 @@ export default async function execute(code) {
 
   if (fn === undefined) {
     // The most common cause of an undefined function at this point is that the
-    // code tried to get a member that doesn't exist in the local graph. To
-    // give a better error message for that common case, we inspect the code to
-    // see if it was a get.
-    const name =
-      code instanceof Array &&
-      code[0] instanceof Array &&
-      code[0][0] === ops.scope
-        ? code[0][1]
-        : "(unknown)";
-    throw ReferenceError(`Couldn't find function or graph key: ${name}`);
+    // code tried to get a member that doesn't exist in the local graph.
+    const unknownFunction = format(code[0]);
+    throw ReferenceError(
+      `Couldn't find function or graph key: ${unknownFunction}`
+    );
   }
 
   // If the "function" is currently an object with a .toFunction() method, get
@@ -60,32 +55,36 @@ export default async function execute(code) {
     fn = fn.toFunction();
   }
 
-  const formattedCode = format(code);
-
+  // Execute the function or traverse the graph.
+  let result;
   try {
-    const result =
+    result =
       fn instanceof Function
         ? // Invoke the function
           await fn.call(scope, ...args)
         : // Traverse the graph.
           await ExplorableGraph.traverseOrThrow(fn, ...args);
-    if (
-      result &&
-      typeof result === "object" &&
-      Object.isExtensible(result) &&
-      !isPlainObject(result)
-    ) {
+  } catch (/** @type {any} */ error) {
+    const message = `Error triggered by Origami expression: ${format(code)}`;
+    throw new Error(message, { cause: error });
+  }
+
+  // To aid debugging, add the expression source to the result.
+  if (
+    result &&
+    typeof result === "object" &&
+    Object.isExtensible(result) &&
+    !isPlainObject(result)
+  ) {
+    try {
+      result[expressionSymbol] = format(code);
+    } catch (error) {
       // Setting a Symbol-keyed property on some objects fails with `TypeError:
       // Cannot convert a Symbol value to a string` but it's unclear why
       // implicit casting of the symbol to a string occurs. Since this is not a
       // vital operation, we ignore such errors.
-      try {
-        result[expressionSymbol] = formattedCode;
-      } catch (error) {}
     }
-    return result;
-  } catch (/** @type {any} */ error) {
-    const message = `Error triggered by Origami expression: ${formattedCode}`;
-    throw new Error(message, { cause: error });
   }
+
+  return result;
 }
