@@ -1,13 +1,14 @@
 import child_process from "node:child_process";
-import defaultGraph from "./defaultGraph.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @this {Explorable}
  * @param {string} [name]
  */
 export default async function help(name) {
+  assertScopeIsDefined(this);
   let url;
-  const scope = (await defaultGraph()).scope;
+  const scope = this;
   if (scope && name) {
     const fn = await scope.get(name);
     url = fn?.documentation;

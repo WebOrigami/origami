@@ -1,4 +1,4 @@
-import builtins from "../../../src/cli/builtins.js";
+import builtins from "../../../src/builtins/@builtins.js";
 import MergeGraph from "../../../src/common/MergeGraph.js";
 
 export default new MergeGraph(
@@ -6,6 +6,7 @@ export default new MergeGraph(
     fn() {
       return "Hello, world.";
     },
+    message: "Hello",
   },
   builtins
 );

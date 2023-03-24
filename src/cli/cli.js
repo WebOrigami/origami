@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 
+import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
+import project from "../builtins/@project.js";
 import Scope from "../common/Scope.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
 import { getScope, keySymbol } from "../core/utilities.js";
-import builtins from "./builtins.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
   const expression = args.join(" ");
 
-  // Find the default graph.
-  const defaultGraph = await builtins.get("defaultGraph");
-  const graph = await defaultGraph();
+  // Find the project root.
+  const projectGraph = await project.call(null);
+
+  // Traverse from the project root to the current directory.
+  const currentDirectory = process.cwd();
+  const relative = path.relative(projectGraph.path, currentDirectory);
+  const keys = relative.split(path.sep);
+  const graph = await ExplorableGraph.traverse(projectGraph, ...keys);
+
   const baseScope = getScope(graph);
 
   // If no arguments were passed, show usage.

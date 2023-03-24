@@ -1,4 +1,4 @@
-import builtins from "../../src/cli/builtins.js";
+import builtins from "../../src/builtins/@builtins.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OriCommandTransform from "../../src/framework/OriCommandTransform.js";

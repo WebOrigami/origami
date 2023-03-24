@@ -7,4 +7,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsFolder = path.resolve(dirname, "../builtins");
 const builtins = new (ImplicitModulesTransform(FilesGraph))(commandsFolder);
 
+builtins.usage = `@builtins\tThe Graph Origami built-in functions`;
+builtins.documentation = "https://graphorigami.org/cli/builtins.html#@builtins";
+
 export default builtins;

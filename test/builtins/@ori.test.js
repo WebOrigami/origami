@@ -1,5 +1,5 @@
+import builtins from "../../src/builtins/@builtins.js";
 import ori from "../../src/builtins/@ori.js";
-import builtins from "../../src/cli/builtins.js";
 import Scope from "../../src/common/Scope.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";

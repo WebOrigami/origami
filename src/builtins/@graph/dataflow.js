@@ -1,11 +1,11 @@
 import path from "node:path";
 import * as YAMLModule from "yaml";
-import builtins from "../../cli/builtins.js";
 import CommandsModulesTransform from "../../common/CommandModulesTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { extname, transformObject } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import * as ops from "../../language/ops.js";
+import builtins from "../@builtins.js";
 
 // See notes at ExplorableGraph.js
 // @ts-ignore

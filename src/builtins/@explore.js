@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import builtins from "../cli/builtins.js";
+import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import FilesGraph from "../core/FilesGraph.js";

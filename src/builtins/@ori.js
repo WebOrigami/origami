@@ -1,4 +1,4 @@
-import builtins from "../cli/builtins.js";
+import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
