@@ -10,9 +10,11 @@ const configFileName = "ori.config.js";
 class DefaultGraph extends FileTreeTransform(FilesGraph) {}
 
 /**
- * Search the current directory and its ancestors for an Origami configuration
- * file. If a variant is provided, the ancestor search will begin at that point;
- * otherwise, the search begins at the current directory.
+ * Return the graph for the current project's root folder.
+ *
+ * This searches the current directory and its ancestors for an Origami
+ * configuration file. If a variant is provided, the ancestor search will begin
+ * at that point; otherwise, the search begins at the current directory.
  *
  * If an Origami configuration file is found, the containing folder is
  * considered to be the project root. This returns a graph for that folder, with

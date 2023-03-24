@@ -5,6 +5,8 @@ import FilesGraph from "../core/FilesGraph.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsFolder = path.resolve(dirname, "../builtins");
+
+/** @type {any} */
 const builtins = new (ImplicitModulesTransform(FilesGraph))(commandsFolder);
 
 builtins.usage = `@builtins\tThe Graph Origami built-in functions`;

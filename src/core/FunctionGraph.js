@@ -6,7 +6,7 @@ import ExplorableGraph from "./ExplorableGraph.js";
 export default class FunctionGraph {
   /**
    * @param {function} fn the function to be explored
-   * @param {Iterable} [domain] optional domain of the function
+   * @param {Iterable<any>} [domain] optional domain of the function
    */
   constructor(fn, domain = []) {
     this.fn = fn;
@@ -32,7 +32,7 @@ export default class FunctionGraph {
 
   /**
    * Enumerates the function's domain (if defined) as the graph's keys. If no domain
-   * was defined, this returns an empty iterable.
+   * was defined, this returns an empty iterator.
    */
   async keys() {
     return this.domain;

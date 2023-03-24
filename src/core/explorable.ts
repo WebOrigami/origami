@@ -9,7 +9,7 @@
 interface Explorable {
   get(key: any): Promise<any>;
   isKeyExplorable?(key: any): Promise<boolean>;
-  keys(): Promise<IterableIterator<any>>;
+  keys(): Promise<Iterable<any>|IterableIterator<any>>;
   // TODO: How can we enforce the constraint that, if the key is null, the value
   // is a GraphVariant? Right now this all ends up as set(key: any, value: any).
   set?(key: null, value: GraphVariant): Promise<void>;
