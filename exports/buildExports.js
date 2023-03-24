@@ -1,4 +1,4 @@
-import concat from "../src/builtins/concat.js";
+import concat from "../src/builtins/@graph/concat.js";
 import MapExtensionGraph from "../src/common/MapExtensionsGraph.js";
 import { transformObject } from "../src/core/utilities.js";
 import PathTransform from "./PathTransform.js";
