@@ -1,4 +1,5 @@
 import graphviz from "graphviz-wasm";
+import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import dot from "./@graph/dot.js";
@@ -24,8 +25,9 @@ export default async function svg(variant, options = {}) {
   }
   const graph = ExplorableGraph.from(variant);
   const dotText = await dot.call(this, graph, options);
-  const result =
+  const svgText =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");
+  const result = svgText ? new StringWithGraph(svgText, graph) : undefined;
   return result;
 }
 
