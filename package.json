@@ -28,7 +28,7 @@
     "yaml": "2.2.1"
   },
   "scripts": {
-    "prepublishOnly": "ori exports/buildExports src > exports/exports.js",
+    "prepublishOnly": "ori exports/buildExports/exportFile src > exports/exports.js",
     "test": "mocha --color --no-timeout --reporter min test/**/*.test.js",
     "typecheck": "node node_modules/typescript/bin/tsc"
   }
