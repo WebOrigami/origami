@@ -1,4 +1,4 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 export default async function fromYaml(text) {
   return text ? ExplorableGraph.fromYaml(text) : undefined;

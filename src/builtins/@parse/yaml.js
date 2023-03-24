@@ -1,4 +1,4 @@
-import * as utilities from "../core/utilities.js";
+import * as utilities from "../../core/utilities.js";
 
 export default async function parseYaml(text) {
   return text ? utilities.parseYaml(String(text)) : undefined;
