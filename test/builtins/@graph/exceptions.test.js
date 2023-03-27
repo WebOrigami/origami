@@ -1,8 +1,8 @@
-import exceptions from "../../src/builtins/@exceptions.js";
-import InvokeFunctionsTransform from "../../src/common/InvokeFunctionsTransform.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
+import exceptions from "../../../src/builtins/@graph/exceptions.js";
+import InvokeFunctionsTransform from "../../../src/common/InvokeFunctionsTransform.js";
+import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
+import ObjectGraph from "../../../src/core/ObjectGraph.js";
+import assert from "../../assert.js";
 
 describe("exceptions", () => {
   it("returns the exceptions thrown in a graph", async () => {

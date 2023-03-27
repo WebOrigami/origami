@@ -1,6 +1,6 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import defineds from "./@graph/defineds.js";
+import ExplorableGraph from "../../core/ExplorableGraph.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import defineds from "./defineds.js";
 
 /**
  * @this {Explorable}
@@ -35,3 +35,7 @@ class ExceptionsGraph {
     return this.graph.keys();
   }
 }
+
+exceptions.usage = `@graph/exceptions graph\tReturn a graph of exceptions thrown in the graph`;
+exceptions.documentation =
+  "https://graphorigami.org/cli/builtins.html#exceptions";
