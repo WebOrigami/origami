@@ -58,4 +58,23 @@ Hello, Carol.
 `
     );
   });
+
+  it("can recurse via @template/apply", async () => {
+    const template = new OrigamiTemplate(
+      `{{ @if @graph/isExplorable(@input)
+        =\`({{ @map/values(@input, @template/recurse) }})\`
+        =\`{{ @input }} \`
+      }}`
+    );
+    const obj = {
+      a: 1,
+      b: 2,
+      more: {
+        c: 3,
+        d: 4,
+      },
+    };
+    const result = await template.apply(obj);
+    assert.equal(String(result), "(1 2 (3 4 ))");
+  });
 });

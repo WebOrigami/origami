@@ -79,11 +79,11 @@ template`);
     /** @this {Explorable} */
     template.compiled = async function () {
       const templateInfo = await this.get("@template");
-      assert.deepEqual(await ExplorableGraph.plain(templateInfo), {
-        graph: { a: 1 },
-        scope: templateScope,
-        text: "template",
-      });
+      const infoPlain = await ExplorableGraph.plain(templateInfo);
+      const { graph, scope, text } = infoPlain;
+      assert.deepEqual(graph, { a: 1 });
+      assert.deepEqual(scope, templateScope);
+      assert.equal(text, "template");
 
       const dot = await this.get(".");
       assert.deepEqual(await ExplorableGraph.plain(dot), { b: 2 });

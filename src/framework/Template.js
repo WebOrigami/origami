@@ -66,6 +66,7 @@ export default class Template {
     const ambients = {
       "@template": {
         graph: templateGraph,
+        recurse: this.toFunction(),
         scope: this.templateScope,
         text: this.templateText,
       },
