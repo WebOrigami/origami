@@ -16,4 +16,4 @@ Graph Origami is a research project started in 2020 by [Jan Miksovsky](https://j
 
 At this early stage, if you're interested in the project, please introduce yourself to Jan.
 
-Bugs are an unavoidable aspect of software development but a lousy way for you to introduce yourself to someone. If you find an issue and haven't already said hello, please say hello first.
+Bugs are an unavoidable aspect of software development — but a lousy way for you to introduce yourself to someone. If you find an issue and haven't already said hello, please say hello first.
