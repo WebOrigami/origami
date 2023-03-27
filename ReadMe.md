@@ -14,4 +14,6 @@ The fundamental interface for defining a node in an explorable graph is small; s
 
 Graph Origami is a research project started in 2020 by [Jan Miksovsky](https://jan.miksovsky.com/). Jan's used the project to create a number of applications and web sites, and is currently collecting feedback on the concepts, tools, and documentation.
 
-Bugs are a lousy way for you to introduce yourself to someone. If you find anything about the project interesting, ping [@JanMiksovsky@fosstodon.org](https://fosstodon.org/@JanMiksovsky) and say hello first.
+At this early stage, if you're interested in the project, please introduce yourself to Jan.
+
+Bugs are an unavoidable aspect of software development but a lousy way for you to introduce yourself to someone. If you find an issue and haven't already said hello, please say hello first.
