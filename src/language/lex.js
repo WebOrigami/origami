@@ -123,13 +123,13 @@ export function lex(text, initialState = state.EXPRESSION) {
           currentState = state.DOUBLE_QUOTE_STRING;
         } else if (c === "`") {
           lexeme = "";
-          tokens.push({ type: tokenType.BACKTICK });
+          tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
           currentState = state.TEMPLATE_LITERAL;
         } else if (isWhitespace[c]) {
           lexeme = c;
           currentState = state.WHITESPACE;
         } else if (c === "}" && text[i] === "}") {
-          tokens.push({ type: tokenType.DOUBLE_RIGHT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_RIGHT_BRACE, lexeme: "}}" });
           // If we see a "}}" without a matching "{{", the lexer doesn't
           // fuss about it; the parser will.
           currentState = templateContextStack.pop() ?? initialState;
@@ -140,7 +140,7 @@ export function lex(text, initialState = state.EXPRESSION) {
               : null;
           i++;
         } else if (characterToToken[c]) {
-          tokens.push({ type: characterToToken[c] });
+          tokens.push({ type: characterToToken[c], lexeme: c });
         } else {
           // Anything else begins a reference.
           lexeme = c;
@@ -196,7 +196,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             lexeme,
           });
           lexeme = null;
-          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
@@ -212,7 +212,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             lexeme,
           });
           lexeme = null;
-          tokens.push({ type: tokenType.BACKTICK });
+          tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
           currentState = state.EXPRESSION;
         } else if (c === "{" && text[i] === "{") {
           tokens.push({
@@ -220,7 +220,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             lexeme,
           });
           lexeme = null;
-          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE });
+          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
@@ -241,6 +241,7 @@ export function lex(text, initialState = state.EXPRESSION) {
           if (lexeme?.includes("\n") && tokenCanEndItem(previousToken)) {
             tokens.push({
               type: tokenType.SEPARATOR,
+              lexeme,
             });
           }
           lexeme = null;

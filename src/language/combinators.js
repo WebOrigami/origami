@@ -47,10 +47,10 @@ export function forcedSequence(...parsers) {
 // Optional combinator: if the given parser succeeded, return its result,
 // otherwise return a null value.
 export function optional(parser) {
-  return function parseOptional(text) {
-    const parsed = parser(text);
+  return function parseOptional(tokens) {
+    const parsed = parser(tokens);
     const value = parsed?.value ?? null;
-    const rest = parsed?.rest ?? text;
+    const rest = parsed?.rest ?? tokens;
     return {
       value,
       rest,

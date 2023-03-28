@@ -524,16 +524,37 @@ export function slashCall(tokens) {
     optional(matchTokenType(tokenType.SLASH)),
     optional(matchTokenType(tokenType.SLASH)),
     pathHead,
-    matchTokenType(tokenType.SLASH),
+    optional(matchTokenType(tokenType.SLASH)),
     optional(slashPath)
   )(tokens);
   if (!parsed) {
     return null;
   }
-  let { 2: value, 4: path } = parsed.value;
+  let [firstSlash, secondSlash, head, thirdSlash, path] = parsed.value;
+  // Need at least one slash to be a slash call.
+  if (!firstSlash && !secondSlash && !thirdSlash) {
+    return null;
+  }
+  let value;
+  if (firstSlash || secondSlash) {
+    value = secondSlash
+      ? // Path within the current graph
+        [ops.scope, "@current"]
+      : // Absolute path within the filesystem graph
+        [ops.scope, "@files", "/"];
+    if (head[0] === ops.scope) {
+      // Extract the reference that ops.scope would have looked up.
+      value.push(head[1]);
+    } else {
+      value.push(head);
+    }
+  } else {
+    // Path in scope
+    value = head;
+  }
   if (path) {
     value.push(...path);
-  } else {
+  } else if (thirdSlash) {
     // Trailing separator
     value.push(undefined);
   }
