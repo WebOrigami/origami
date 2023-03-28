@@ -27,6 +27,23 @@ import {
 import { tokenType } from "./lex.js";
 import * as ops from "./ops.js";
 
+// Parse an absolute file path like /foo/bar.
+export function absoluteFilePath(tokens) {
+  const parsed = sequence(
+    matchTokenType(tokenType.SLASH),
+    optional(slashPath)
+  )(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const dirname = ["", ...parsed.value[1]].join("/");
+  const value = [ops.files, dirname];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse arguments to a function, with either explicit or implicit parentheses.
 export function args(tokens) {
   return any(parensArgs, implicitParensArgs)(tokens);
@@ -91,15 +108,16 @@ export function expression(tokens) {
     number,
     // Then try parsers that look for a distinctive token at the start,
     // e.g., an opening quote, bracket, etc.
-    templateLiteral,
+    absoluteFilePath,
+    array,
     object,
     graph,
-    array,
     lambda,
+    templateLiteral,
     // Then we have various types of function calls.
+    slashCall,
     functionComposition,
     protocolCall,
-    slashCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
     // Last option is a simple scope reference.
@@ -521,43 +539,19 @@ export function simpleFunctionCall(tokens) {
 // Parse a function call with slash syntax.
 export function slashCall(tokens) {
   const parsed = sequence(
-    optional(matchTokenType(tokenType.SLASH)),
-    optional(matchTokenType(tokenType.SLASH)),
     pathHead,
-    optional(matchTokenType(tokenType.SLASH)),
+    matchTokenType(tokenType.SLASH),
     optional(slashPath)
   )(tokens);
   if (!parsed) {
     return null;
   }
-  let [firstSlash, secondSlash, head, thirdSlash, path] = parsed.value;
-  // Need at least one slash to be a slash call.
-  if (!firstSlash && !secondSlash && !thirdSlash) {
-    return null;
+  let { 0: head, 2: path } = parsed.value;
+  if (!path) {
+    // Trailing slash: foo/
+    path = [undefined];
   }
-  let value;
-  if (firstSlash || secondSlash) {
-    value = secondSlash
-      ? // Path within the current graph
-        [ops.scope, "@current"]
-      : // Absolute path within the filesystem graph
-        [ops.scope, "@files", "/"];
-    if (head[0] === ops.scope) {
-      // Extract the reference that ops.scope would have looked up.
-      value.push(head[1]);
-    } else {
-      value.push(head);
-    }
-  } else {
-    // Path in scope
-    value = head;
-  }
-  if (path) {
-    value.push(...path);
-  } else if (thirdSlash) {
-    // Trailing separator
-    value.push(undefined);
-  }
+  const value = [...head, ...path];
   return {
     value,
     rest: parsed.rest,

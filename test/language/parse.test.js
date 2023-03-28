@@ -1,6 +1,7 @@
 import { tokenType } from "../../src/language/lex.js";
 import * as ops from "../../src/language/ops.js";
 import {
+  absoluteFilePath,
   args,
   array,
   assignment,
@@ -28,7 +29,20 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe("parse", () => {
+describe.only("parse", () => {
+  it("absoluteFilePath", () => {
+    // /foo/bar -- a leading slash indicates absolute file path
+    assertParse(
+      absoluteFilePath([
+        { type: tokenType.SLASH, lexeme: "/" },
+        { type: tokenType.REFERENCE, lexeme: "foo" },
+        { type: tokenType.SLASH, lexeme: "/" },
+        { type: tokenType.REFERENCE, lexeme: "bar" },
+      ]),
+      [ops.files, "/foo/bar"]
+    );
+  });
+
   it("args", () => {
     assert.equal(args([]), null);
     assertParse(
@@ -657,27 +671,6 @@ describe("parse", () => {
       ]),
       [ops.scope, "graph", "foo", "bar"]
     );
-    // /foo/bar -- one leading slash indicates absolute path in files graph
-    assertParse(
-      slashCall([
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.REFERENCE, lexeme: "foo" },
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.REFERENCE, lexeme: "bar" },
-      ]),
-      [ops.scope, "@files", "/", "foo", "bar"]
-    );
-    //foo/bar -- two leading slahes indicates path in current graph
-    assertParse(
-      slashCall([
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.REFERENCE, lexeme: "foo" },
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.REFERENCE, lexeme: "bar" },
-      ]),
-      [ops.scope, "@current", "foo", "bar"]
-    );
   });
 
   it("slashPath", () => {
@@ -712,17 +705,17 @@ describe("parse", () => {
   });
 
   it.only("slashCalls with functions", () => {
-    // // fn()/key
-    // assertParse(
-    //   expression([
-    //     { type: tokenType.REFERENCE, lexeme: "fn" },
-    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
-    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-    //     { type: tokenType.SLASH, lexeme: "/" },
-    //     { type: tokenType.REFERENCE, lexeme: "key" },
-    //   ]),
-    //   [[[ops.scope, "fn"]], "key"]
-    // );
+    // fn()/key
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+        { type: tokenType.SLASH, lexeme: "/" },
+        { type: tokenType.REFERENCE, lexeme: "key" },
+      ]),
+      [[[ops.scope, "fn"]], "key"]
+    );
     // (fn())/key
     assertParse(
       expression([
@@ -736,30 +729,30 @@ describe("parse", () => {
       ]),
       [[[ops.scope, "fn"]], "key"]
     );
-    // // graph/key()
-    // assertParse(
-    //   expression([
-    //     { type: tokenType.REFERENCE, lexeme: "graph" },
-    //     { type: tokenType.SLASH, lexeme: "/" },
-    //     { type: tokenType.REFERENCE, lexeme: "key" },
-    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
-    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-    //   ]),
-    //   [[ops.scope, "graph", "key"]]
-    // );
-    // // fn1()/fn2()
-    // assertParse(
-    //   expression([
-    //     { type: tokenType.REFERENCE, lexeme: "fn1" },
-    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
-    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-    //     { type: tokenType.SLASH, lexeme: "/" },
-    //     { type: tokenType.REFERENCE, lexeme: "fn2" },
-    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
-    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-    //   ]),
-    //   [[[[ops.scope, "fn1"]], "fn2"]]
-    // );
+    // graph/key()
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "graph" },
+        { type: tokenType.SLASH, lexeme: "/" },
+        { type: tokenType.REFERENCE, lexeme: "key" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+      ]),
+      [[ops.scope, "graph", "key"]]
+    );
+    // fn1()/fn2()
+    assertParse(
+      expression([
+        { type: tokenType.REFERENCE, lexeme: "fn1" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+        { type: tokenType.SLASH, lexeme: "/" },
+        { type: tokenType.REFERENCE, lexeme: "fn2" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+      ]),
+      [[[[ops.scope, "fn1"]], "fn2"]]
+    );
   });
 
   it("string", () => {

@@ -1,5 +1,6 @@
 /// <reference path="./code.d.ts" />
 
+import filesBuiltin from "../builtins/@files.js";
 import concatBuiltin from "../builtins/@graph/concat.js";
 import graphHttpBuiltin from "../builtins/@graphHttp.js";
 import graphHttpsBuiltin from "../builtins/@graphHttps.js";
@@ -35,6 +36,16 @@ export async function concat(...args) {
   return concatBuiltin.call(this, ...args);
 }
 concat.toString = () => "«ops.concat»";
+
+/**
+ * Construct a files graph for the given directory.
+ *
+ * @this {Explorable}
+ * @param {string} dirname
+ */
+export function files(dirname) {
+  return filesBuiltin.call(this, dirname);
+}
 
 /**
  * Construct an graph. This is similar to ops.object but the result is an
