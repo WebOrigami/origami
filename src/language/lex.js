@@ -4,6 +4,7 @@ export const tokenType = {
   DOUBLE_LEFT_BRACE: "DOUBLE_LEFT_BRACE",
   DOUBLE_RIGHT_BRACE: "DOUBLE_RIGHT_BRACE",
   EQUALS: "EQUAL",
+  IMPLICIT_PARENS: "IMPLICIT_PARENS",
   LEFT_BRACE: "LEFT_BRACE",
   LEFT_BRACKET: "LEFT_BRACKET",
   LEFT_PAREN: "LEFT_PAREN",
@@ -74,6 +75,7 @@ export function lex(text, initialState = state.EXPRESSION) {
 
   // Main state machine.
   let i = 0;
+  let newlineSeenSinceLastToken = false;
   while (i < text.length) {
     const c = text[i++];
 
@@ -93,6 +95,7 @@ export function lex(text, initialState = state.EXPRESSION) {
     switch (currentState) {
       case state.COMMENT:
         if (c === EOF || c === "\n" || c === "\r") {
+          newlineSeenSinceLastToken = true;
           currentState = state.EXPRESSION;
         }
         break;
@@ -104,6 +107,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             lexeme,
           });
           lexeme = null;
+          newlineSeenSinceLastToken = false;
           currentState = state.EXPRESSION;
         } else {
           lexeme += c;
@@ -116,20 +120,28 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else if (c === "#") {
           currentState = state.COMMENT;
         } else if (c === "'") {
+          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
           currentState = state.SINGLE_QUOTE_STRING;
         } else if (c === '"') {
+          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
           currentState = state.DOUBLE_QUOTE_STRING;
         } else if (c === "`") {
+          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
           tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
+          newlineSeenSinceLastToken = false;
           currentState = state.TEMPLATE_LITERAL;
         } else if (isWhitespace[c]) {
+          if (c === "\n") {
+            newlineSeenSinceLastToken = true;
+          }
           lexeme = c;
           currentState = state.WHITESPACE;
         } else if (c === "}" && text[i] === "}") {
           tokens.push({ type: tokenType.DOUBLE_RIGHT_BRACE, lexeme: "}}" });
+          newlineSeenSinceLastToken = false;
           // If we see a "}}" without a matching "{{", the lexer doesn't
           // fuss about it; the parser will.
           currentState = templateContextStack.pop() ?? initialState;
@@ -141,8 +153,10 @@ export function lex(text, initialState = state.EXPRESSION) {
           i++;
         } else if (characterToToken[c]) {
           tokens.push({ type: characterToToken[c], lexeme: c });
+          newlineSeenSinceLastToken = false;
         } else {
           // Anything else begins a reference.
+          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = c;
           currentState = state.REFERENCE;
         }
@@ -159,6 +173,7 @@ export function lex(text, initialState = state.EXPRESSION) {
               type,
               lexeme,
             });
+            newlineSeenSinceLastToken = false;
             lexeme = null;
           }
           currentState = state.EXPRESSION;
@@ -176,6 +191,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             lexeme,
           });
           lexeme = "";
+          newlineSeenSinceLastToken = false;
           currentState = state.EXPRESSION;
         } else {
           lexeme += c;
@@ -189,12 +205,14 @@ export function lex(text, initialState = state.EXPRESSION) {
             type: tokenType.STRING,
             lexeme,
           });
+          newlineSeenSinceLastToken = false;
           lexeme = null;
         } else if (c === "{" && text[i] === "{") {
           tokens.push({
             type: tokenType.STRING,
             lexeme,
           });
+          newlineSeenSinceLastToken = false;
           lexeme = null;
           tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
           templateContextStack.push(currentState);
@@ -211,6 +229,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             type: tokenType.STRING,
             lexeme,
           });
+          newlineSeenSinceLastToken = false;
           lexeme = null;
           tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
           currentState = state.EXPRESSION;
@@ -219,6 +238,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             type: tokenType.STRING,
             lexeme,
           });
+          newlineSeenSinceLastToken = false;
           lexeme = null;
           tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
           templateContextStack.push(currentState);
@@ -232,17 +252,21 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.WHITESPACE:
         if (isWhitespace[c]) {
           // Extend whitespace run.
+          if (c === "\n") {
+            newlineSeenSinceLastToken = true;
+          }
           lexeme += c;
         } else {
           // Reached end of whitespace. We add the whitespace as a separator
           // token if it contains a newline. We only this if the previous token
           // is one that can end an item in a list.
           const previousToken = tokens[tokens.length - 1];
-          if (lexeme?.includes("\n") && tokenCanEndItem(previousToken)) {
+          if (newlineSeenSinceLastToken && tokenCanEndItem(previousToken)) {
             tokens.push({
               type: tokenType.SEPARATOR,
               lexeme,
             });
+            newlineSeenSinceLastToken = false;
           }
           lexeme = null;
           currentState = state.EXPRESSION;
@@ -263,6 +287,19 @@ export function lex(text, initialState = state.EXPRESSION) {
   }
 
   return tokens;
+}
+
+function considerImplicitParens(tokens, newlineSeenSinceLastToken) {
+  // If the previous token is one that can end an item, there must have been
+  // intervening significant whitespace. In that case, we emit a token for
+  // implicit parentheses.
+  const previousToken = tokens[tokens.length - 1];
+  if (!newlineSeenSinceLastToken && tokenCanEndItem(previousToken)) {
+    tokens.push({
+      type: tokenType.IMPLICIT_PARENS,
+      lexeme: " ",
+    });
+  }
 }
 
 function isNumber(text) {

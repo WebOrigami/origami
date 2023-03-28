@@ -46,7 +46,7 @@ export function absoluteFilePath(tokens) {
 
 // Parse arguments to a function, with either explicit or implicit parentheses.
 export function args(tokens) {
-  return any(parensArgs, implicitParensArgs)(tokens);
+  return any(parensArgs, slashPathArgs, implicitParensArgs)(tokens);
 }
 
 // Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
@@ -115,7 +115,7 @@ export function expression(tokens) {
     lambda,
     templateLiteral,
     // Then we have various types of function calls.
-    slashCall,
+    // slashCall,
     functionComposition,
     protocolCall,
     // Groups can start function calls or paths, so need to come after those.
@@ -144,7 +144,19 @@ export function formulaOrShorthand(tokens) {
 
 // Parse something that results in a function/graph that can be called.
 export function functionCallTarget(tokens) {
-  return any(group, protocolCall, slashCall, scopeReference)(tokens);
+  return any(
+    string,
+    number,
+    // absoluteFilePath,
+    array,
+    object,
+    graph,
+    lambda,
+    templateLiteral,
+    protocolCall,
+    group,
+    scopeReference
+  )(tokens);
 }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
@@ -267,12 +279,22 @@ export function identifierWithPort(tokens) {
 
 // Parse the arguments to a function where the parentheses have been omitted.
 export function implicitParensArgs(tokens) {
-  const parsed = list(tokens);
-  if (!parsed || parsed?.value.length === 0) {
+  const parsed = sequence(
+    matchTokenType(tokenType.IMPLICIT_PARENS),
+    list
+  )(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  if (value.length === 0) {
     // No arguments
     return null;
   }
-  return parsed;
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // A lambda expression
@@ -541,7 +563,7 @@ export function slashCall(tokens) {
   const parsed = sequence(
     pathHead,
     matchTokenType(tokenType.SLASH),
-    optional(slashPath)
+    slashPath
   )(tokens);
   if (!parsed) {
     return null;
@@ -564,11 +586,26 @@ export function slashPath(tokens) {
     pathKey,
     matchTokenType(tokenType.SLASH)
   )(tokens);
+  if (!parsed) {
+    return null;
+  }
   if (parsed.value.length === 0) {
-    // No path keys
+    // No keys
     return null;
   }
   return parsed;
+}
+
+export function slashPathArgs(tokens) {
+  const parsed = sequence(matchTokenType(tokenType.SLASH), slashPath)(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse a string.

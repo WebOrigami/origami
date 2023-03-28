@@ -29,7 +29,7 @@ import {
 } from "../../src/language/parse.js";
 import assert from "../assert.js";
 
-describe.only("parse", () => {
+describe("parse", () => {
   it("absoluteFilePath", () => {
     // /foo/bar -- a leading slash indicates absolute file path
     assertParse(
@@ -704,10 +704,52 @@ describe.only("parse", () => {
     );
   });
 
-  it.only("slashCalls with functions", () => {
-    // fn()/key
+  it.only("functionComposition: fn(arg)", () => {
     assertParse(
-      expression([
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.REFERENCE, lexeme: "arg" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+      ]),
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "arg"],
+      ]
+    );
+  });
+
+  it.only("functionComposition: fn arg", () => {
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+        { type: tokenType.REFERENCE, lexeme: "arg" },
+      ]),
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "arg"],
+      ]
+    );
+  });
+
+  it.only("functionComposition: fn()(arg)", () => {
+    assertParse(
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "fn" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+        { type: tokenType.LEFT_PAREN, lexeme: "(" },
+        { type: tokenType.REFERENCE, lexeme: "arg" },
+        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+      ]),
+      [[[ops.scope, "fn"]], [ops.scope, "arg"]]
+    );
+  });
+
+  it.only("functionComposition: fn()/key", () => {
+    assertParse(
+      functionComposition([
         { type: tokenType.REFERENCE, lexeme: "fn" },
         { type: tokenType.LEFT_PAREN, lexeme: "(" },
         { type: tokenType.RIGHT_PAREN, lexeme: ")" },
@@ -716,22 +758,22 @@ describe.only("parse", () => {
       ]),
       [[[ops.scope, "fn"]], "key"]
     );
-    // (fn())/key
+  });
+
+  it.only("functionComposition: graph/key", () => {
     assertParse(
-      expression([
-        { type: tokenType.LEFT_PAREN, lexeme: "(" },
-        { type: tokenType.REFERENCE, lexeme: "fn" },
-        { type: tokenType.LEFT_PAREN, lexeme: "(" },
-        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+      functionComposition([
+        { type: tokenType.REFERENCE, lexeme: "graph" },
         { type: tokenType.SLASH, lexeme: "/" },
         { type: tokenType.REFERENCE, lexeme: "key" },
       ]),
-      [[[ops.scope, "fn"]], "key"]
+      [[ops.scope, "graph"], "key"]
     );
-    // graph/key()
+  });
+
+  it.only("functionComposition: graph/key()", () => {
     assertParse(
-      expression([
+      functionComposition([
         { type: tokenType.REFERENCE, lexeme: "graph" },
         { type: tokenType.SLASH, lexeme: "/" },
         { type: tokenType.REFERENCE, lexeme: "key" },
@@ -740,19 +782,22 @@ describe.only("parse", () => {
       ]),
       [[ops.scope, "graph", "key"]]
     );
-    // fn1()/fn2()
-    assertParse(
-      expression([
-        { type: tokenType.REFERENCE, lexeme: "fn1" },
-        { type: tokenType.LEFT_PAREN, lexeme: "(" },
-        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-        { type: tokenType.SLASH, lexeme: "/" },
-        { type: tokenType.REFERENCE, lexeme: "fn2" },
-        { type: tokenType.LEFT_PAREN, lexeme: "(" },
-        { type: tokenType.RIGHT_PAREN, lexeme: ")" },
-      ]),
-      [[[[ops.scope, "fn1"]], "fn2"]]
-    );
+  });
+
+  it("slashCalls with functions", () => {
+    // // fn1()/fn2()
+    // assertParse(
+    //   expression([
+    //     { type: tokenType.REFERENCE, lexeme: "fn1" },
+    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
+    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+    //     { type: tokenType.SLASH, lexeme: "/" },
+    //     { type: tokenType.REFERENCE, lexeme: "fn2" },
+    //     { type: tokenType.LEFT_PAREN, lexeme: "(" },
+    //     { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+    //   ]),
+    //   [[[[ops.scope, "fn1"]], "fn2"]]
+    // );
   });
 
   it("string", () => {
