@@ -74,8 +74,7 @@ export function getScope(graph) {
  * @param {string} pathname
  */
 export function keysFromPath(pathname) {
-  const decodedPathname = decodeURIComponent(pathname);
-  const keys = decodedPathname.split("/");
+  const keys = pathname.split("/");
   if (keys[0] === "") {
     // The path begins with a slash; drop that part.
     keys.shift();

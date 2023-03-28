@@ -52,8 +52,10 @@ export function graphRouter(graph) {
 export async function handleRequest(request, response, graph) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url, `https://${request.headers.host}`);
-  const pathname = decodeURIComponent(url.pathname);
-  const keys = keysFromPath(pathname);
+
+  // We allow the use of %2F in paths as a way to insert a slash into a key, so
+  // we parse the path into keys first, then decode them.
+  const keys = keysFromPath(url.pathname).map((key) => decodeURIComponent(key));
 
   const extendedGraph =
     url.searchParams && "parent" in graph
