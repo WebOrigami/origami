@@ -1,10 +1,10 @@
-import Cache from "../../src/common/Cache.js";
+import CacheGraph from "../../src/common/CacheGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import assert from "../assert.js";
 
-describe("Cache", () => {
+describe("CacheGraph", () => {
   it("returns the first defined value from an ordered list of graphs", async () => {
-    const fixture = new Cache({
+    const fixture = new CacheGraph({
       a: 1,
       b: 2,
       c: 3,
@@ -33,7 +33,7 @@ describe("Cache", () => {
   });
 
   it("if a cache filter is supplied, it only caches files that match the filter", async () => {
-    const fixture = new Cache(
+    const fixture = new CacheGraph(
       {
         "a.txt": "a",
         "b.txt": "b",

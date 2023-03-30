@@ -5,7 +5,7 @@ import ObjectGraph from "../core/ObjectGraph.js";
  * Caches non-explorable values from the first (source) graph in a second
  * (cache) graph. If no second graph is supplied, an in-memory cache is used.
  */
-export default class Cache {
+export default class CacheGraph {
   /**
    * @param  {Explorable|object} graph
    * @param {Explorable|object} [cache]

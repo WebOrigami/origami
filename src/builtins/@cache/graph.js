@@ -1,4 +1,4 @@
-import Cache from "../../common/Cache.js";
+import CacheGraph from "../../common/CacheGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default async function cacheGraph(graph, cache, filter) {
   assertScopeIsDefined(this);
-  const result = new Cache(graph, cache, filter);
+  const result = new CacheGraph(graph, cache, filter);
   /** @type {any} */ (result).scope = this;
   return result;
 }

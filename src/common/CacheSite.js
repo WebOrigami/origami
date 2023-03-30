@@ -44,20 +44,29 @@ export default class CacheSite {
   }
 
   async traverse(...keys) {
-    const cachedValue = await ExplorableGraph.traverse(this.cache, ...keys);
-    if (cachedValue !== undefined) {
-      // Cache hit
-      return cachedValue;
+    if (keys.length === 0 || keys[0] === undefined) {
+      return this;
+    }
+
+    let cacheValue = await ExplorableGraph.traverse(this.cache, ...keys);
+    if (cacheValue !== undefined && !ExplorableGraph.isExplorable(cacheValue)) {
+      // Non-explorable cache hit
+      return cacheValue;
     }
 
     // Cache miss
-    const value = await ExplorableGraph.traverse(this.graph, ...keys);
+    let value = await ExplorableGraph.traverse(this.graph, ...keys);
     if (value !== undefined) {
       // Does this key match the filter?
-      const matches =
-        this.filter === undefined ||
-        (await ExplorableGraph.traverse(this.filter, ...keys));
-      if (matches) {
+      let match;
+      let filterValue;
+      if (this.filter === undefined) {
+        match = true;
+      } else {
+        filterValue = await ExplorableGraph.traverse(this.filter, ...keys);
+        match = filterValue !== undefined;
+      }
+      if (match) {
         // Save in cache before returning.
 
         // Convert keys and value to an object that can be applied.
@@ -68,9 +77,26 @@ export default class CacheSite {
           current[key] = {};
           current = current[key];
         }
-        current[lastKey] = value;
+        // If we have an explorable value, we don't cache the entire thing, just
+        // an empty graph.
+        current[lastKey] = ExplorableGraph.isExplorable(value) ? {} : value;
 
+        // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
+        cacheValue = await ExplorableGraph.traverse(
+          this.cache,
+          ...keys,
+          lastKey
+        );
+      }
+
+      if (ExplorableGraph.isExplorable(value)) {
+        // Construct merged graph for an explorable result.
+        value = Reflect.construct(this.constructor, [
+          value,
+          cacheValue,
+          filterValue,
+        ]);
       }
 
       return value;

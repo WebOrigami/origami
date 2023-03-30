@@ -1,6 +1,6 @@
 // Should build this list programmatically
 // import "./app/MetaTransform.test.js";
-import "./common/Cache.test.js";
+import "./common/CacheGraph.test.js";
 import "./common/DefaultValuesTransform.test.js";
 import "./common/MergeGraph.test.js";
 import "./common/SubtractKeys.test.js";
