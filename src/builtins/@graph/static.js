@@ -2,6 +2,7 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import index from "../@index.js";
 
 /**
  * Expose common static keys (index.html, .keys.json) for a graph.
@@ -24,7 +25,9 @@ function StaticTransform(Base) {
   return class Static extends Base {
     async get(key) {
       let value = await super.get(key);
-      if (value === undefined && key === ".keys.json") {
+      if (value === undefined && key === "index.html") {
+        value = index.call(this, this);
+      } else if (value === undefined && key === ".keys.json") {
         const scope = getScope(this);
         value = defaultKeysJson.call(scope, this);
       } else if (ExplorableGraph.isExplorable(value)) {
@@ -35,6 +38,7 @@ function StaticTransform(Base) {
 
     async keys() {
       const keys = new Set(await super.keys());
+      keys.add("index.html");
       keys.add(".keys.json");
       return keys;
     }

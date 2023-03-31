@@ -18,8 +18,10 @@ export default async function index(variant) {
   const graph = ExplorableGraph.from(variant);
   const keys = Array.from(await graph.keys());
 
-  // Skip system-ish files that start with a period.
-  const filtered = keys.filter((key) => !key.startsWith?.("."));
+  // Skip system-ish files that start with a period. Also skip `index.html`.
+  const filtered = keys.filter(
+    (key) => !(key.startsWith?.(".") || key === "index.html")
+  );
 
   const links = [];
   for (const key of filtered) {
