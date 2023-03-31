@@ -1,6 +1,9 @@
 import fetch from "node-fetch";
 
 export default class SiteGraph {
+  /**
+   * @param {string} href
+   */
   constructor(href = window?.location.href) {
     if (href?.startsWith(".") && window?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.

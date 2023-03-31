@@ -471,12 +471,15 @@ export function protocolCall(tokens) {
     http: ops.http,
     https: ops.https,
     graph: ops.graphHttps, // Shorthand for graphHttps:
-    graphHttp: ops.graphHttp,
-    graphHttps: ops.graphHttps,
+    graphhttp: ops.graphHttp,
+    graphhttps: ops.graphHttps,
   };
   // Prefer built-in protocol, otherwise treat the protocol as a normal function.
-  if (fn[0] === ops.scope && builtInProtocols[fn[1]]) {
-    fn = builtInProtocols[fn[1]];
+  if (fn[0] === ops.scope) {
+    const protocol = fn[1]?.toLowerCase();
+    if (builtInProtocols[protocol]) {
+      fn = builtInProtocols[protocol];
+    }
   }
   const value = [fn, pathHead];
   if (path) {
