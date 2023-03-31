@@ -1,4 +1,5 @@
 export default {
+  Array,
   Boolean,
   Date,
   Error,
