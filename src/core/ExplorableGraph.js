@@ -62,6 +62,13 @@ export default class ExplorableGraph {
     } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
       const fn = /** @type {any} */ (obj).toFunction();
       return new FunctionGraph(fn);
+    } else if (
+      typeof obj === "string" ||
+      obj instanceof String ||
+      obj instanceof Buffer
+    ) {
+      // Attempt to parse the string as JSON or YAML.
+      return this.fromYaml(obj);
     } else if (obj !== null && typeof obj === "object") {
       // An instance of some class. This is our last choice because it's the
       // least specific.
