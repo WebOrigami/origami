@@ -38,13 +38,12 @@ export async function concat(...args) {
 concat.toString = () => "«ops.concat»";
 
 /**
- * Construct a files graph for the given directory.
+ * Construct a files graph for the filesystem root.
  *
  * @this {Explorable}
- * @param {string} dirname
  */
-export function files(dirname) {
-  return filesBuiltin.call(this, dirname);
+export function filesRoot() {
+  return filesBuiltin.call(this, "/");
 }
 
 /**

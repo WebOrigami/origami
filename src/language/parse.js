@@ -27,17 +27,13 @@ import {
 import { tokenType } from "./lex.js";
 import * as ops from "./ops.js";
 
-// Parse an absolute file path like /foo/bar.
+// Parse an absolute file path like `/foo/bar`.
 export function absoluteFilePath(tokens) {
-  const parsed = sequence(
-    matchTokenType(tokenType.SLASH),
-    optional(slashPath)
-  )(tokens);
+  const parsed = leadingSlashPath(tokens);
   if (!parsed) {
     return null;
   }
-  const dirname = ["", ...parsed.value[1]].join("/");
-  const value = [ops.files, dirname];
+  const value = [[ops.filesRoot], ...parsed.value];
   return {
     value,
     rest: parsed.rest,
@@ -46,7 +42,7 @@ export function absoluteFilePath(tokens) {
 
 // Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
 export function argsChain(tokens) {
-  const parsed = series(any(parensArgs, slashPathArgs))(tokens);
+  const parsed = series(any(parensArgs, leadingSlashPath))(tokens);
   if (!parsed) {
     return null;
   }
@@ -103,7 +99,9 @@ export function assignment(tokens) {
   };
 }
 
-// Parse something that results in a function/graph that can be called.
+// Parse something that results in a function/graph that can be called. This is
+// more restrictive than the `expression` parser -- it doesn't accept function
+// calls -- to avoid infinite recursion.
 export function callTarget(tokens) {
   return any(
     absoluteFilePath,
@@ -276,36 +274,25 @@ export function identifierWithPort(tokens) {
   };
 }
 
-// Parse the arguments to a function where the parentheses have been omitted.
-export function implicitParensArgs(tokens) {
+export function implicitParensCallTarget(tokens) {
+  return any(functionComposition, callTarget)(tokens);
+}
+
+// Parse a function call with implicit parentheses, like: `fn 1, 2, 3`.
+export function implicitParensCall(tokens) {
   const parsed = sequence(
+    implicitParensCallTarget,
     matchTokenType(tokenType.IMPLICIT_PARENS),
     list
   )(tokens);
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[1];
-  if (value.length === 0) {
+  const { 0: fn, 2: fnArgs } = parsed.value;
+  if (fnArgs.length === 0) {
     // No arguments
     return null;
   }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-export function implicitParensCallTarget(tokens) {
-  return any(functionComposition, callTarget)(tokens);
-}
-
-export function implicitParensCall(tokens) {
-  const parsed = sequence(implicitParensCallTarget, implicitParensArgs)(tokens);
-  if (!parsed) {
-    return null;
-  }
-  const { 0: fn, 1: fnArgs } = parsed.value;
   const value = [fn, ...fnArgs];
   return {
     value,
@@ -334,6 +321,26 @@ export function lambda(tokens) {
     return null;
   }
   const value = [ops.lambda, parsed.value[1]];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a path that begins with a slash, like `/foo/bar`.
+export function leadingSlashPath(tokens) {
+  const parsed = sequence(
+    matchTokenType(tokenType.SLASH),
+    optional(slashPath)
+  )(tokens);
+  if (!parsed) {
+    return null;
+  }
+  let { 1: value } = parsed.value;
+  if (!value) {
+    // Input is just a slash with no following path: /
+    value = [undefined];
+  }
   return {
     value,
     rest: parsed.rest,
@@ -455,7 +462,7 @@ export function objectPropertyOrShorthand(tokens) {
 }
 
 // Parse function arguments enclosed in parentheses.
-function parensArgs(tokens) {
+export function parensArgs(tokens) {
   const parsed = sequence(
     matchTokenType(tokenType.LEFT_PAREN),
     list,
@@ -471,26 +478,9 @@ function parensArgs(tokens) {
   };
 }
 
-// Parse the start of a path.
-export function pathHead(tokens) {
-  const parsed = any(group, simpleFunctionCall, scopeReference)(tokens);
-  if (!parsed) {
-    return null;
-  }
-  let value = parsed.value;
-  if (value[0] !== ops.scope) {
-    value = [value];
-  }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse a key in a path.
 export function pathKey(tokens) {
   const parsed = any(
-    group,
     // We treat number in paths as strings, so don't use the number() parser.
     matchTokenType(tokenType.NUMBER),
     identifier
@@ -574,28 +564,6 @@ export function simpleFunctionCall(tokens) {
   };
 }
 
-// Parse a function call with slash syntax.
-export function slashCall(tokens) {
-  const parsed = sequence(
-    pathHead,
-    matchTokenType(tokenType.SLASH),
-    slashPath
-  )(tokens);
-  if (!parsed) {
-    return null;
-  }
-  let { 0: head, 2: path } = parsed.value;
-  if (!path) {
-    // Trailing slash: foo/
-    path = [undefined];
-  }
-  const value = [...head, ...path];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse a slash-delimeted path
 export function slashPath(tokens) {
   const parsed = separatedList(
@@ -610,18 +578,6 @@ export function slashPath(tokens) {
     return null;
   }
   return parsed;
-}
-
-export function slashPathArgs(tokens) {
-  const parsed = sequence(matchTokenType(tokenType.SLASH), slashPath)(tokens);
-  if (!parsed) {
-    return null;
-  }
-  const value = parsed.value[1];
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 // Parse a string.
