@@ -259,9 +259,9 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else {
           // Reached end of whitespace. We add the whitespace as a separator
           // token if it contains a newline. We only this if the previous token
-          // is one that can end an item in a list.
+          // is one that can end a term in a list.
           const previousToken = tokens[tokens.length - 1];
-          if (newlineSeenSinceLastToken && tokenCanEndItem(previousToken)) {
+          if (newlineSeenSinceLastToken && tokenCanEndTerm(previousToken)) {
             tokens.push({
               type: tokenType.SEPARATOR,
               lexeme,
@@ -290,11 +290,11 @@ export function lex(text, initialState = state.EXPRESSION) {
 }
 
 function considerImplicitParens(tokens, newlineSeenSinceLastToken) {
-  // If the previous token is one that can end an item, there must have been
+  // If the previous token is one that can end a term, there must have been
   // intervening significant whitespace. In that case, we emit a token for
   // implicit parentheses.
   const previousToken = tokens[tokens.length - 1];
-  if (!newlineSeenSinceLastToken && tokenCanEndItem(previousToken)) {
+  if (!newlineSeenSinceLastToken && tokenCanEndTerm(previousToken)) {
     tokens.push({
       type: tokenType.IMPLICIT_PARENS,
       lexeme: " ",
@@ -309,7 +309,7 @@ function isNumber(text) {
   return numberRegex.test(text);
 }
 
-function tokenCanEndItem(token) {
+function tokenCanEndTerm(token) {
   const type = token?.type;
   return (
     type === tokenType.BACKTICK ||

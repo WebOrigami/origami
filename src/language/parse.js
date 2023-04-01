@@ -44,14 +44,17 @@ export function absoluteFilePath(tokens) {
   };
 }
 
-// Parse arguments to a function, with either explicit or implicit parentheses.
-export function args(tokens) {
-  return any(parensArgs, slashPathArgs, implicitParensArgs)(tokens);
-}
-
 // Parse a chain of arguments like `(arg1)(arg2)(arg3)`.
 export function argsChain(tokens) {
-  return series(args)(tokens);
+  const parsed = series(any(parensArgs, slashPathArgs))(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value;
+  return {
+    value,
+    rest: parsed.rest,
+  };
 }
 
 // Parse an array like `[1, 2, 3]`.
@@ -100,14 +103,28 @@ export function assignment(tokens) {
   };
 }
 
+// Parse something that results in a function/graph that can be called.
+export function callTarget(tokens) {
+  return any(
+    absoluteFilePath,
+    array,
+    object,
+    graph,
+    lambda,
+    protocolCall,
+    group,
+    scopeReference
+  )(tokens);
+}
+
 // Parse an Origami expression.
 export function expression(tokens) {
   return any(
     // First try parsers that directly match a single token.
     string,
     number,
-    // Then try parsers that look for a distinctive token at the start,
-    // e.g., an opening quote, bracket, etc.
+    // Then try parsers that look for a distinctive token at the start: an
+    // opening slash, bracket, curly brace, etc.
     absoluteFilePath,
     array,
     object,
@@ -115,8 +132,8 @@ export function expression(tokens) {
     lambda,
     templateLiteral,
     // Then we have various types of function calls.
-    // slashCall,
     functionComposition,
+    implicitParensCall,
     protocolCall,
     // Groups can start function calls or paths, so need to come after those.
     group,
@@ -142,36 +159,18 @@ export function formulaOrShorthand(tokens) {
   };
 }
 
-// Parse something that results in a function/graph that can be called.
-export function functionCallTarget(tokens) {
-  return any(
-    string,
-    number,
-    // absoluteFilePath,
-    array,
-    object,
-    graph,
-    lambda,
-    templateLiteral,
-    protocolCall,
-    group,
-    scopeReference
-  )(tokens);
-}
-
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 export function functionComposition(tokens) {
-  const parsed = sequence(functionCallTarget, argsChain)(tokens);
+  const parsed = sequence(callTarget, argsChain)(tokens);
   if (!parsed) {
     return null;
   }
   const { 0: target, 1: chain } = parsed.value;
-  // The argsChain is an array of arguments (which are themselves arrays). The
-  // `target` represents the function call target at the head of the chain.
-  // Successively apply the arguments in the chain to build up the function
-  // composition.
   let value = target;
+  // The argsChain is an array of arguments (which are themselves arrays). We
+  // successively apply the top-level elements of that chain to build up the
+  // function composition.
   for (const args of chain) {
     value = [value, ...args];
   }
@@ -291,6 +290,23 @@ export function implicitParensArgs(tokens) {
     // No arguments
     return null;
   }
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function implicitParensCallTarget(tokens) {
+  return any(functionComposition, callTarget)(tokens);
+}
+
+export function implicitParensCall(tokens) {
+  const parsed = sequence(implicitParensCallTarget, implicitParensArgs)(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const { 0: fn, 1: fnArgs } = parsed.value;
+  const value = [fn, ...fnArgs];
   return {
     value,
     rest: parsed.rest,
