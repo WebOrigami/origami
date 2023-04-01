@@ -4,7 +4,6 @@ export const tokenType = {
   DOUBLE_LEFT_BRACE: "DOUBLE_LEFT_BRACE",
   DOUBLE_RIGHT_BRACE: "DOUBLE_RIGHT_BRACE",
   EQUALS: "EQUALS",
-  IMPLICIT_PARENS: "IMPLICIT_PARENS",
   LEFT_BRACE: "LEFT_BRACE",
   LEFT_BRACKET: "LEFT_BRACKET",
   LEFT_PAREN: "LEFT_PAREN",
@@ -14,8 +13,10 @@ export const tokenType = {
   RIGHT_BRACKET: "RIGHT_BRACKET",
   RIGHT_PAREN: "RIGHT_PAREN",
   SEPARATOR: "SEPARATOR",
+  SIGNIFICANT_SPACE: "SIGNIFICANT_SPACE",
   SLASH: "SLASH",
   STRING: "STRING",
+  WHITESPACE: "WHITESPACE", // Internal; never returned by the lexer.
 };
 
 const characterToToken = {
@@ -30,6 +31,27 @@ const characterToToken = {
   "`": tokenType.BACKTICK,
   "{": tokenType.LEFT_BRACE,
   "}": tokenType.RIGHT_BRACE,
+};
+
+const tokenCanBeginTerm = {
+  [tokenType.BACKTICK]: true,
+  [tokenType.EQUALS]: true,
+  [tokenType.LEFT_BRACE]: true,
+  [tokenType.LEFT_BRACKET]: true,
+  [tokenType.LEFT_PAREN]: true,
+  [tokenType.NUMBER]: true,
+  [tokenType.REFERENCE]: true,
+  [tokenType.STRING]: true,
+};
+
+const tokenCanEndTerm = {
+  [tokenType.BACKTICK]: true,
+  [tokenType.NUMBER]: true,
+  [tokenType.REFERENCE]: true,
+  [tokenType.RIGHT_BRACE]: true,
+  [tokenType.RIGHT_BRACKET]: true,
+  [tokenType.RIGHT_PAREN]: true,
+  [tokenType.STRING]: true,
 };
 
 const isWhitespace = {
@@ -75,7 +97,6 @@ export function lex(text, initialState = state.EXPRESSION) {
 
   // Main state machine.
   let i = 0;
-  let newlineSeenSinceLastToken = false;
   while (i < text.length) {
     const c = text[i++];
 
@@ -94,20 +115,26 @@ export function lex(text, initialState = state.EXPRESSION) {
 
     switch (currentState) {
       case state.COMMENT:
-        if (c === EOF || c === "\n" || c === "\r") {
-          newlineSeenSinceLastToken = true;
+        if (c === EOF) {
           currentState = state.EXPRESSION;
+        } else if (c === EOF || c === "\n" || c === "\r") {
+          // We count the newline that ends a comment as whitespace. If the
+          // previous token was whitespace, we resume that state.
+          if (tokens.at(-1)?.type === tokenType.WHITESPACE) {
+            const lastWhitespaceToken = tokens.pop();
+            // @ts-ignore
+            lexeme = lastWhitespaceToken.lexeme + c;
+            currentState = state.WHITESPACE;
+          } else {
+            currentState = state.EXPRESSION;
+          }
         }
         break;
 
       case state.DOUBLE_QUOTE_STRING:
         if (c === '"') {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
+          addToken(tokens, tokenType.STRING, lexeme);
           lexeme = null;
-          newlineSeenSinceLastToken = false;
           currentState = state.EXPRESSION;
         } else {
           lexeme += c;
@@ -120,30 +147,23 @@ export function lex(text, initialState = state.EXPRESSION) {
         } else if (c === "#") {
           currentState = state.COMMENT;
         } else if (c === "'") {
-          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
           currentState = state.SINGLE_QUOTE_STRING;
         } else if (c === '"') {
-          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
           currentState = state.DOUBLE_QUOTE_STRING;
         } else if (c === "`") {
-          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = "";
-          tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.BACKTICK, "`");
           currentState = state.TEMPLATE_LITERAL;
         } else if (isWhitespace[c]) {
-          if (c === "\n") {
-            newlineSeenSinceLastToken = true;
-          }
+          // Start whitespace run.
           lexeme = c;
           currentState = state.WHITESPACE;
         } else if (c === "}" && text[i] === "}") {
-          tokens.push({ type: tokenType.DOUBLE_RIGHT_BRACE, lexeme: "}}" });
-          newlineSeenSinceLastToken = false;
-          // If we see a "}}" without a matching "{{", the lexer doesn't
-          // fuss about it; the parser will.
+          addToken(tokens, tokenType.DOUBLE_RIGHT_BRACE, "}}");
+          // If we see a "}}" without a matching "{{", the lexer doesn't fuss
+          // about it; the parser will.
           currentState = templateContextStack.pop() ?? initialState;
           lexeme =
             currentState === state.TEMPLATE_DOCUMENT ||
@@ -152,11 +172,10 @@ export function lex(text, initialState = state.EXPRESSION) {
               : null;
           i++;
         } else if (characterToToken[c]) {
-          tokens.push({ type: characterToToken[c], lexeme: c });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, characterToToken[c], c);
+          lexeme = "";
         } else {
           // Anything else begins a reference.
-          considerImplicitParens(tokens, newlineSeenSinceLastToken);
           lexeme = c;
           currentState = state.REFERENCE;
         }
@@ -169,11 +188,7 @@ export function lex(text, initialState = state.EXPRESSION) {
             const type = isNumber(lexeme)
               ? tokenType.NUMBER
               : tokenType.REFERENCE;
-            tokens.push({
-              type,
-              lexeme,
-            });
-            newlineSeenSinceLastToken = false;
+            addToken(tokens, type, lexeme);
             lexeme = null;
           }
           currentState = state.EXPRESSION;
@@ -186,12 +201,8 @@ export function lex(text, initialState = state.EXPRESSION) {
 
       case state.SINGLE_QUOTE_STRING:
         if (c === "'") {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
-          lexeme = "";
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.STRING, lexeme);
+          lexeme = null;
           currentState = state.EXPRESSION;
         } else {
           lexeme += c;
@@ -201,20 +212,12 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.TEMPLATE_DOCUMENT:
         // Note: template documents don't treat backticks specially.
         if (c === EOF) {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.STRING, lexeme);
           lexeme = null;
         } else if (c === "{" && text[i] === "{") {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.STRING, lexeme);
           lexeme = null;
-          tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
+          addToken(tokens, tokenType.DOUBLE_LEFT_BRACE, "{{");
           templateContextStack.push(currentState);
           currentState = state.EXPRESSION;
           i++;
@@ -225,20 +228,12 @@ export function lex(text, initialState = state.EXPRESSION) {
 
       case state.TEMPLATE_LITERAL:
         if (c === "`") {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.STRING, lexeme);
           lexeme = null;
           tokens.push({ type: tokenType.BACKTICK, lexeme: "`" });
           currentState = state.EXPRESSION;
         } else if (c === "{" && text[i] === "{") {
-          tokens.push({
-            type: tokenType.STRING,
-            lexeme,
-          });
-          newlineSeenSinceLastToken = false;
+          addToken(tokens, tokenType.STRING, lexeme);
           lexeme = null;
           tokens.push({ type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" });
           templateContextStack.push(currentState);
@@ -252,22 +247,10 @@ export function lex(text, initialState = state.EXPRESSION) {
       case state.WHITESPACE:
         if (isWhitespace[c]) {
           // Extend whitespace run.
-          if (c === "\n") {
-            newlineSeenSinceLastToken = true;
-          }
           lexeme += c;
         } else {
-          // Reached end of whitespace. We add the whitespace as a separator
-          // token if it contains a newline. We only this if the previous token
-          // is one that can end a term in a list.
-          const previousToken = tokens[tokens.length - 1];
-          if (newlineSeenSinceLastToken && tokenCanEndTerm(previousToken)) {
-            tokens.push({
-              type: tokenType.SEPARATOR,
-              lexeme,
-            });
-            newlineSeenSinceLastToken = false;
-          }
+          // End whitespace run.
+          addToken(tokens, tokenType.WHITESPACE, lexeme);
           lexeme = null;
           currentState = state.EXPRESSION;
           i--; // Back up to consider the character again in the new state.
@@ -286,20 +269,37 @@ export function lex(text, initialState = state.EXPRESSION) {
     throw new SyntaxError(message);
   }
 
+  if (tokens.at(-1)?.type === tokenType.WHITESPACE) {
+    // Remove final whitespace token.
+    tokens.pop();
+  }
+
   return tokens;
 }
 
-function considerImplicitParens(tokens, newlineSeenSinceLastToken) {
-  // If the previous token is one that can end a term, there must have been
-  // intervening significant whitespace. In that case, we emit a token for
-  // implicit parentheses.
-  const previousToken = tokens[tokens.length - 1];
-  if (!newlineSeenSinceLastToken && tokenCanEndTerm(previousToken)) {
-    tokens.push({
-      type: tokenType.IMPLICIT_PARENS,
-      lexeme: " ",
-    });
+function addToken(tokens, type, lexeme) {
+  const oneBack = tokens[tokens.length - 1];
+  if (oneBack && oneBack.type === tokenType.WHITESPACE) {
+    // We don't keep whitespace tokens. However, we handle two special cases
+    // that follow this pattern:
+    //
+    //     n-2: token that can end a term
+    //     n-1: whitespace
+    //     n  : token that can begin a term
+    //
+    // then we convert the whitespace token into a significant space token (if
+    // the whitespace didn't contain a newline) or else a separator token.
+    const twoBack = tokens[tokens.length - 2];
+    tokens.pop(); // Remove whitespace token.
+    const containedNewline = oneBack.lexeme.indexOf("\n") >= 0;
+    if (twoBack && tokenCanEndTerm[twoBack.type] && tokenCanBeginTerm[type]) {
+      const convertedType = !containedNewline
+        ? tokenType.SIGNIFICANT_SPACE
+        : tokenType.SEPARATOR;
+      tokens.push({ type: convertedType, lexeme: oneBack.lexeme });
+    }
   }
+  tokens.push({ type, lexeme });
 }
 
 function isNumber(text) {
@@ -307,19 +307,6 @@ function isNumber(text) {
   // but only accepts integers or floats, not exponential notation.
   const numberRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)$/;
   return numberRegex.test(text);
-}
-
-function tokenCanEndTerm(token) {
-  const type = token?.type;
-  return (
-    type === tokenType.BACKTICK ||
-    type === tokenType.NUMBER ||
-    type === tokenType.REFERENCE ||
-    type === tokenType.RIGHT_BRACE ||
-    type === tokenType.RIGHT_BRACKET ||
-    type === tokenType.RIGHT_PAREN ||
-    type === tokenType.STRING
-  );
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's

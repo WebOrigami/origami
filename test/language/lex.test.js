@@ -22,7 +22,6 @@ describe("lex", () => {
       { type: tokenType.REFERENCE, lexeme: "foo" },
       { type: tokenType.SEPARATOR, lexeme: "\n" },
       { type: tokenType.REFERENCE, lexeme: "bar" },
-      { type: tokenType.SEPARATOR, lexeme: "\n" },
       { type: tokenType.RIGHT_BRACKET, lexeme: "]" },
     ]);
   });
@@ -32,6 +31,7 @@ describe("lex", () => {
     const tokens = lex(text);
     assert.deepEqual(tokens, [
       { type: tokenType.REFERENCE, lexeme: "foo" },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
       { type: tokenType.EQUALS, lexeme: "=" },
       { type: tokenType.REFERENCE, lexeme: "bar" },
     ]);
@@ -66,6 +66,19 @@ describe("lex", () => {
       { type: tokenType.SEPARATOR, lexeme: "," },
       { type: tokenType.REFERENCE, lexeme: "baz" },
       { type: tokenType.RIGHT_PAREN, lexeme: ")" },
+    ]);
+  });
+
+  it("function call with implicit parentheses and lambda argument", () => {
+    const text = "fn =`x`";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: tokenType.REFERENCE, lexeme: "fn" },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
+      { type: tokenType.EQUALS, lexeme: "=" },
+      { type: tokenType.BACKTICK, lexeme: "`" },
+      { type: tokenType.STRING, lexeme: "x" },
+      { type: tokenType.BACKTICK, lexeme: "`" },
     ]);
   });
 
@@ -123,7 +136,7 @@ baz`;
     const tokens = lex(text);
     assert.deepEqual(tokens, [
       { type: tokenType.REFERENCE, lexeme: "foo" },
-      { type: tokenType.SEPARATOR, lexeme: "    " },
+      { type: tokenType.SEPARATOR, lexeme: "   \n\n    " },
       { type: tokenType.REFERENCE, lexeme: "bar" },
     ]);
   });
@@ -133,7 +146,7 @@ baz`;
     const tokens = lex(text);
     assert.deepEqual(tokens, [
       { type: tokenType.REFERENCE, lexeme: "foo" },
-      { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
       { type: tokenType.STRING, lexeme: "bar" },
     ]);
   });
@@ -151,9 +164,9 @@ baz`;
     const tokens = lex(text);
     assert.deepEqual(tokens, [
       { type: tokenType.REFERENCE, lexeme: "foo" },
-      { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
       { type: tokenType.REFERENCE, lexeme: "bar" },
-      { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
       { type: tokenType.REFERENCE, lexeme: "baz" },
     ]);
   });
@@ -214,7 +227,7 @@ baz`;
       { type: tokenType.STRING, lexeme: "start\n" },
       { type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" },
       { type: tokenType.REFERENCE, lexeme: "fn" },
-      { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
       { type: tokenType.BACKTICK, lexeme: "`" },
       { type: tokenType.STRING, lexeme: "nested\n" },
       { type: tokenType.BACKTICK, lexeme: "`" },

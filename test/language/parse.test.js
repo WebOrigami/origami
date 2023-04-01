@@ -88,6 +88,7 @@ describe("parse", () => {
             type: tokenType.REFERENCE,
             lexeme: "data",
           },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.EQUALS },
           { type: tokenType.REFERENCE, lexeme: "obj.json" },
         ]),
@@ -101,7 +102,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.EQUALS },
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "bar" },
         ]),
         [ops.assign, "foo", [[ops.scope, "fn"], "bar"]]
@@ -122,7 +123,7 @@ describe("parse", () => {
         expression([
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "a" },
           { type: tokenType.SEPARATOR },
           { type: tokenType.REFERENCE, lexeme: "b" },
@@ -202,7 +203,7 @@ describe("parse", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "serve" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.LEFT_BRACE },
           { type: tokenType.REFERENCE, lexeme: "index.html" },
           { type: tokenType.COLON },
@@ -220,7 +221,7 @@ describe("parse", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.EQUALS },
           { type: tokenType.BACKTICK },
           { type: tokenType.STRING, lexeme: "x" },
@@ -237,14 +238,14 @@ describe("parse", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "copy" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "app" },
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.REFERENCE, lexeme: "formulas" },
           { type: tokenType.RIGHT_PAREN },
           { type: tokenType.SEPARATOR },
           { type: tokenType.REFERENCE, lexeme: "files" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "snapshot" },
         ]),
         [
@@ -264,7 +265,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "@map" },
           { type: tokenType.SLASH },
           { type: tokenType.REFERENCE, lexeme: "values" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "@input" },
           { type: tokenType.SEPARATOR, lexeme: "," },
           { type: tokenType.EQUALS, lexeme: "=" },
@@ -568,7 +569,7 @@ describe("parse", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "arg" },
         ]),
         [
@@ -582,7 +583,7 @@ describe("parse", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "a" },
           { type: tokenType.SEPARATOR },
           { type: tokenType.STRING, lexeme: "b" },
@@ -595,7 +596,7 @@ describe("parse", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "a" },
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.REFERENCE, lexeme: "b" },
@@ -618,9 +619,9 @@ describe("parse", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn1" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.REFERENCE, lexeme: "fn2" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "arg" },
         ]),
         [
@@ -638,7 +639,7 @@ describe("parse", () => {
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.RIGHT_PAREN },
           { type: tokenType.RIGHT_PAREN },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "arg" },
         ]),
         [[[ops.scope, "fn"]], "arg"]
@@ -655,7 +656,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "example.com" },
           { type: tokenType.SLASH },
           { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "key" },
         ]),
         [[ops.https, "example.com", "graph.yaml"], "key"]

@@ -85,13 +85,14 @@ export function array(tokens) {
 export function assignment(tokens) {
   const parsed = sequence(
     identifier,
+    optional(matchTokenType(tokenType.SIGNIFICANT_SPACE)),
     matchTokenType(tokenType.EQUALS),
     expression
   )(tokens);
   if (!parsed) {
     return null;
   }
-  let { 0: left, 2: right } = parsed.value;
+  let { 0: left, 3: right } = parsed.value;
   const value = [ops.assign, left, right];
   return {
     value,
@@ -282,7 +283,7 @@ export function implicitParensCallTarget(tokens) {
 export function implicitParensCall(tokens) {
   const parsed = sequence(
     implicitParensCallTarget,
-    matchTokenType(tokenType.IMPLICIT_PARENS),
+    matchTokenType(tokenType.SIGNIFICANT_SPACE),
     list
   )(tokens);
   if (!parsed) {
