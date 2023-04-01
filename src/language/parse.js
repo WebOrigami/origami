@@ -130,8 +130,8 @@ export function expression(tokens) {
     lambda,
     templateLiteral,
     // Then we have various types of function calls.
-    functionComposition,
     implicitParensCall,
+    functionComposition,
     protocolCall,
     // Groups can start function calls or paths, so need to come after those.
     group,

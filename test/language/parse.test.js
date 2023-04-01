@@ -216,6 +216,23 @@ describe("parse", () => {
       );
     });
 
+    it("fn =`x`", () => {
+      assertParse(
+        expression([
+          { type: tokenType.REFERENCE, lexeme: "fn" },
+          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.EQUALS },
+          { type: tokenType.BACKTICK },
+          { type: tokenType.STRING, lexeme: "x" },
+          { type: tokenType.BACKTICK },
+        ]),
+        [
+          [ops.scope, "fn"],
+          [ops.lambda, "x"],
+        ]
+      );
+    });
+
     it("copy app(formulas), files 'snapshot'", () => {
       assertParse(
         expression([
@@ -237,6 +254,32 @@ describe("parse", () => {
             [ops.scope, "formulas"],
           ],
           [[ops.scope, "files"], "snapshot"],
+        ]
+      );
+    });
+
+    it("@map/values @input, =`<li>{{@value}}</li>`", () => {
+      assertParse(
+        expression([
+          { type: tokenType.REFERENCE, lexeme: "@map" },
+          { type: tokenType.SLASH },
+          { type: tokenType.REFERENCE, lexeme: "values" },
+          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.REFERENCE, lexeme: "@input" },
+          { type: tokenType.SEPARATOR, lexeme: "," },
+          { type: tokenType.EQUALS, lexeme: "=" },
+          { type: tokenType.BACKTICK, lexeme: "`" },
+          { type: tokenType.STRING, lexeme: "<li>" },
+          { type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" },
+          { type: tokenType.REFERENCE, lexeme: "@value" },
+          { type: tokenType.DOUBLE_RIGHT_BRACE, lexeme: "}}" },
+          { type: tokenType.STRING, lexeme: "</li>" },
+          { type: tokenType.BACKTICK, lexeme: "`" },
+        ]),
+        [
+          [[ops.scope, "@map"], "values"],
+          [ops.scope, "@input"],
+          [ops.lambda, [ops.concat, "<li>", [ops.scope, "@value"], "</li>"]],
         ]
       );
     });
@@ -420,23 +463,6 @@ describe("parse", () => {
         [[[ops.scope, "fn"]], [ops.scope, "a"], [ops.scope, "b"]]
       );
     });
-
-    it("https://example.com/graph.yaml 'key'", () => {
-      assertParse(
-        expression([
-          { type: tokenType.REFERENCE, lexeme: "https" },
-          { type: tokenType.COLON },
-          { type: tokenType.SLASH },
-          { type: tokenType.SLASH },
-          { type: tokenType.REFERENCE, lexeme: "example.com" },
-          { type: tokenType.SLASH },
-          { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
-          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
-          { type: tokenType.STRING, lexeme: "key" },
-        ]),
-        [[ops.https, "example.com", "graph.yaml"], "key"]
-      );
-    });
   });
 
   describe("graph", () => {
@@ -616,6 +642,23 @@ describe("parse", () => {
           { type: tokenType.STRING, lexeme: "arg" },
         ]),
         [[[ops.scope, "fn"]], "arg"]
+      );
+    });
+
+    it("https://example.com/graph.yaml 'key'", () => {
+      assertParse(
+        implicitParensCall([
+          { type: tokenType.REFERENCE, lexeme: "https" },
+          { type: tokenType.COLON },
+          { type: tokenType.SLASH },
+          { type: tokenType.SLASH },
+          { type: tokenType.REFERENCE, lexeme: "example.com" },
+          { type: tokenType.SLASH },
+          { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
+          { type: tokenType.IMPLICIT_PARENS, lexeme: " " },
+          { type: tokenType.STRING, lexeme: "key" },
+        ]),
+        [[ops.https, "example.com", "graph.yaml"], "key"]
       );
     });
   });
