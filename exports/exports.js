@@ -24,6 +24,7 @@ export { default as graphFromYaml } from "../src/builtins/@graph/fromYaml.js";
 export { default as graphInners } from "../src/builtins/@graph/inners.js";
 export { default as graphIsExplorable } from "../src/builtins/@graph/isExplorable.js";
 export { default as graphKeys } from "../src/builtins/@graph/keys.js";
+export { default as graphKeysJson } from "../src/builtins/@graph/keysJson.js";
 export { default as graphMerge } from "../src/builtins/@graph/merge.js";
 export { default as graphMergeDeep } from "../src/builtins/@graph/mergeDeep.js";
 export { default as graphNextKey } from "../src/builtins/@graph/nextKey.js";
