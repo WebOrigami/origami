@@ -17,3 +17,9 @@ Graph Origami is a research project started in 2020 by [Jan Miksovsky](https://j
 At this early stage, if you're interested in the project, please introduce yourself to Jan.
 
 Bugs are an unavoidable aspect of software development — but a lousy way for you to introduce yourself to someone. If you find an issue and haven't already said hello, please say hello first.
+
+# Acknowledgments
+
+Many thanks to the people who contributed their time time to watch a demo, provide feedback, review documentation, participate in a usability test, etc.
+
+Chris Zimmerman・Rob Bearman・Derik Stenerson・Bruce Oberg・Alex Russell・Jade Pennig・Wolfram Kriesing・Dan Clark・Nolan Lawson・Eric Candell・Robby Ingebretsen・Joel Fillmore・Lee White・Bill Barnes・Brandon Ferrua・Pierre-Marie Dartus・Liron Shapira・Chris Miksovsky・Will Friedman・Josie Bolotski・Peter Chane
