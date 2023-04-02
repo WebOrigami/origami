@@ -551,20 +551,6 @@ export function scopeReference(tokens) {
   };
 }
 
-// Parse a function call that's just `<name>([...args])`.
-// This is the only function call form can appear at the head of a path.
-export function simpleFunctionCall(tokens) {
-  const parsed = sequence(scopeReference, parensArgs)(tokens);
-  if (!parsed) {
-    return null;
-  }
-  const value = [parsed.value[0], ...parsed.value[1]]; // function and args
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
 // Parse a slash-delimeted path
 export function slashPath(tokens) {
   const parsed = separatedList(
