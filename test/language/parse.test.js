@@ -464,6 +464,25 @@ describe("parse", () => {
         [[[ops.scope, "fn"]], [ops.scope, "a"], [ops.scope, "b"]]
       );
     });
+
+    it("{ a: 1, b: 2}/b", () => {
+      assertParse(
+        functionComposition([
+          { type: tokenType.LEFT_BRACE },
+          { type: tokenType.REFERENCE, lexeme: "a" },
+          { type: tokenType.COLON },
+          { type: tokenType.NUMBER, lexeme: "1" },
+          { type: tokenType.SEPARATOR },
+          { type: tokenType.REFERENCE, lexeme: "b" },
+          { type: tokenType.COLON },
+          { type: tokenType.NUMBER, lexeme: "2" },
+          { type: tokenType.RIGHT_BRACE },
+          { type: tokenType.SLASH },
+          { type: tokenType.REFERENCE, lexeme: "b" },
+        ]),
+        [[ops.object, { a: 1, b: 2 }], "b"]
+      );
+    });
   });
 
   describe("graph", () => {

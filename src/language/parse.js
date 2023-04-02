@@ -122,6 +122,11 @@ export function expression(tokens) {
     // First try parsers that directly match a single token.
     string,
     number,
+    // Function calls come next, as they can start with the expression types
+    // that follow (array, object, etc.); we want to parse the largest thing
+    // possible first.
+    implicitParensCall,
+    functionComposition,
     // Then try parsers that look for a distinctive token at the start: an
     // opening slash, bracket, curly brace, etc.
     absoluteFilePath,
@@ -130,12 +135,10 @@ export function expression(tokens) {
     graph,
     lambda,
     templateLiteral,
-    // Then we have various types of function calls.
-    implicitParensCall,
-    functionComposition,
-    protocolCall,
-    // Groups can start function calls or paths, so need to come after those.
     group,
+    // Protocol calls are distinguished by a colon, but the colon doesn't appear
+    // at the start.
+    protocolCall,
     // Last option is a simple scope reference.
     scopeReference
   )(tokens);
