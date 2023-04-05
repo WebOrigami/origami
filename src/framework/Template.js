@@ -97,11 +97,13 @@ export default class Template {
 
   toFunction() {
     const templateFunction = this.apply.bind(this);
+    const templateScope = this.templateScope;
     /** @this {Explorable} */
     return async function (data) {
+      const scope = this ?? templateScope;
       return data !== undefined
-        ? await templateFunction(data, this)
-        : await templateFunction(undefined, this);
+        ? await templateFunction(data, scope)
+        : await templateFunction(undefined, scope);
     };
   }
 
