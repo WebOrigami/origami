@@ -27,4 +27,4 @@ export default async function https(host, ...keys) {
 }
 
 https.usage = `@https <host>, <...keys>\tA web resource via HTTPS`;
-https.documentation = "https://graphorigami.org/cli/builtins.html#@https";
+https.documentation = "https://graphorigami.org/language/@https.html";

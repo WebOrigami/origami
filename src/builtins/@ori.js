@@ -61,4 +61,4 @@ async function formatResult(scope, result) {
 }
 
 ori.usage = `@ori <text>\tEvaluates the text as an Origami expression`;
-ori.documentation = "https://graphorigami.org/cli/builtins.html#@ori";
+ori.documentation = "https://graphorigami.org/language/@ori.html";

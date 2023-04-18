@@ -27,4 +27,4 @@ export default async function http(host, ...keys) {
 }
 
 http.usage = `@http <host>, <...keys>\tA web resource via HTTP`;
-http.documentation = "http://graphorigami.org/cli/builtins.html#@http";
+http.documentation = "https://graphorigami.org/language/@http.html";

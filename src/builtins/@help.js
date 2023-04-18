@@ -1,6 +1,15 @@
 import child_process from "node:child_process";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
+const groupUrls = {
+  "@cache": "https://graphorigami.org/language/@cache.html",
+  "@graph": "https://graphorigami.org/language/@graph.html",
+  "@image": "https://graphorigami.org/language/@image.html",
+  "@map": "https://graphorigami.org/language/@map.html",
+  "@parse": "https://graphorigami.org/language/@parse.html",
+  "@scope": "https://graphorigami.org/language/@scope.html",
+};
+
 /**
  * @this {Explorable}
  * @param {string} [name]
@@ -10,8 +19,12 @@ export default async function help(name) {
   let url;
   const scope = this;
   if (scope && name) {
-    const fn = await scope.get(name);
-    url = fn?.documentation;
+    if (groupUrls[name]) {
+      url = groupUrls[name];
+    } else {
+      const fn = await scope.get(name);
+      url = fn?.documentation;
+    }
     if (!url) {
       console.error(
         `help: ${name} does not have a property called "documentation" linking to its documentation`
@@ -33,4 +46,4 @@ export default async function help(name) {
 }
 
 help.usage = `@help/<name>\tOpens documentation for the named built-in command`;
-help.documentation = "https://graphorigami.org/cli/builtins.html#@help";
+help.documentation = "https://graphorigami.org/language/@help.html";

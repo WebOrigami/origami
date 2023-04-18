@@ -67,4 +67,4 @@ function findOpenPort(port) {
 }
 
 serve.usage = `@serve <graph>, [port]\tStart a web server for the graph`;
-serve.documentation = "https://graphorigami.org/cli/builtins.html#@serve";
+serve.documentation = "https://graphorigami.org/language/@serve.html";

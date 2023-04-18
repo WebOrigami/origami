@@ -5,4 +5,4 @@ export default async function repeat(count, content) {
 }
 
 repeat.usage = `@repeat <count>, <content>\tRepeats the content the given number of times`;
-repeat.documentation = "https://graphorigami.org/cli/builtins.html#@repeat";
+repeat.documentation = "https://graphorigami.org/language/@repeat.html";

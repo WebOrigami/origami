@@ -62,3 +62,6 @@ export default async function index(variant) {
     </html>`;
   return new StringWithGraph(html.trim(), graph);
 }
+
+index.usage = `@index\tReturn a default index.html page for the current graph`;
+index.documentation = "https://graphorigami.org/language/@index.html";

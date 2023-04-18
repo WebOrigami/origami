@@ -13,5 +13,4 @@ export default async function inherited(key) {
 }
 
 inherited.usage = `@inherited <key>\tThe value of the key in the graph's inherited scope`;
-inherited.documentation =
-  "https://graphorigami.org/cli/builtins.html#@inherited";
+inherited.documentation = "https://graphorigami.org/language/@inherited.html";

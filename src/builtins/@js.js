@@ -1,4 +1,4 @@
-export default {
+const js = {
   Array,
   Boolean,
   Date,
@@ -26,3 +26,8 @@ export default {
   true: true,
   undefined: undefined,
 };
+
+js.usage = "@js\tAccess JavaScript classes and utility functions";
+js.documentation = "https://graphorigami.org/language/@js.html";
+
+export default js;

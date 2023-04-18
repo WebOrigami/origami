@@ -20,4 +20,4 @@ export default async function config(key) {
 }
 
 config.usage = `@config\tThe current project's configuration graph`;
-config.documentation = "https://graphorigami.org/cli/builtins.html#@config";
+config.documentation = "https://graphorigami.org/language/@config.html";

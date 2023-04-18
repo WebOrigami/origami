@@ -76,3 +76,6 @@ async function getScopeData(scope) {
   }
   return data;
 }
+
+explore.usage = "@explore\tExplore the current scope in the browser";
+explore.documentation = "https://graphorigami.org/language/@explore.html";

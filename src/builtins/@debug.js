@@ -88,4 +88,4 @@ function DebugTransform(Base) {
 }
 
 debug.usage = `@debug <graph>\tAdd debug features to a graph`;
-debug.documentation = "https://graphorigami.org/cli/builtins.html#@debug";
+debug.documentation = "https://graphorigami.org/language/@debug.html";

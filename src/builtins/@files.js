@@ -16,4 +16,4 @@ export default async function files(dirname) {
 }
 
 files.usage = `@files [path]\tThe explorable files at the given path`;
-files.documentation = "https://graphorigami.org/cli/builtins.html#@files";
+files.documentation = "https://graphorigami.org/language/@files.html";

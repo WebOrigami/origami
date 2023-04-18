@@ -426,4 +426,4 @@ async function processPath(graph, path, baseUrl) {
 }
 
 crawl.usage = `@crawl <graph>\tCrawl a graph`;
-crawl.documentation = "https://graphorigami.org/cli/builtins.html#@crawl";
+crawl.documentation = "https://graphorigami.org/language/@crawl.html";

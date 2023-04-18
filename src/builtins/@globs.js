@@ -15,4 +15,4 @@ export default async function globs(graph) {
 }
 
 globs.usage = `@globs <patterns>\tDefine a graph whose keys can include wildcard globs`;
-globs.documentation = "https://graphorigami.org/cli/builtins.html#@globs";
+globs.documentation = "https://graphorigami.org/language/@globs.html";

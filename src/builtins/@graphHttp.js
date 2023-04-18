@@ -17,5 +17,4 @@ export default async function graphHttp(host, ...keys) {
 }
 
 graphHttp.usage = `@graphHttp <domain>, <...keys>\tA web site graph via HTTP`;
-graphHttp.documentation =
-  "https://graphorigami.org/cli/builtins.html#@graphHttp";
+graphHttp.documentation = "https://graphorigami.org/language/@graphHttp.html";

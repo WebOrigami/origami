@@ -44,4 +44,4 @@ function itemRss(jsonFeedItem) {
 }
 
 rss.usage = `@rss <feed>\tTransforms a JSON Feed graph to RSS XML`;
-rss.documentation = "https://graphorigami.org/cli/builtins.html#@rss";
+rss.documentation = "https://graphorigami.org/language/@rss.html";

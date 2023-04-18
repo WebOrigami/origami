@@ -75,4 +75,4 @@ async function findConfigContainer(start) {
 }
 
 project.usage = `@project\tThe root of the current Graph Origami project`;
-project.documentation = "https://graphorigami.org/cli/builtins.html#@project";
+project.documentation = "https://graphorigami.org/language/@project.html";

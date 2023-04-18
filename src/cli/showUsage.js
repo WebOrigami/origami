@@ -1,6 +1,15 @@
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
 import { transformObject } from "../core/utilities.js";
 
+const groupDescriptions = {
+  "@cache": "Functions for caching data",
+  "@graph": "Functions for working with graphs",
+  "@image": "Functions for working with images",
+  "@map": "Functions for mapping graphs",
+  "@parse": "Parsing functions",
+  "@scope": "Functions for working with graph scopes",
+};
+
 export default async function showUsage(scope) {
   console.log(`Usage: ori <expression>, which could be:
 - a string in single quotes, or a number
@@ -25,7 +34,9 @@ export default async function showUsage(scope) {
         continue;
       }
     }
-    if (typeof command === "function") {
+    if (groupDescriptions[key]) {
+      usages.push(`${key}\t${groupDescriptions[key]}`);
+    } else if (typeof command === "function") {
       let usage = command?.usage;
       if (!usage) {
         usage = defaultUsage(key, command);
@@ -61,7 +72,7 @@ export default async function showUsage(scope) {
 
   console.log(formatted.join("\n"));
   console.log(
-    `\nMore details: "ori @help"; or get help on a function like serve with "ori @help/serve"`
+    `\nMore details: "ori @help"; or get help on a function like @serve with "ori @help/@serve"`
   );
 }
 

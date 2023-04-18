@@ -23,4 +23,4 @@ export default async function toYaml(variant) {
 }
 
 toYaml.usage = `@yaml <obj>\tRender the object as text in YAML format`;
-toYaml.documentation = "https://graphorigami.org/cli/builtins.html#@yaml";
+toYaml.documentation = "https://graphorigami.org/language/@yaml.html";

@@ -3,4 +3,4 @@ export default function not(value) {
 }
 
 not.usage = `@not <value>\tThe logical inverse of the value`;
-not.documentation = "https://graphorigami.org/cli/builtins.html#@not";
+not.documentation = "https://graphorigami.org/language/@not.html";

@@ -20,5 +20,5 @@ const loaders = new DeferredGraph(
 
 export default loaders;
 
-loaders.usage = `loaders\tThe default file loaders used by the ori CLI`;
-loaders.documentation = "https://graphorigami.org/cli/builtins.html#loaders";
+// loaders.usage = `loaders\tThe default file loaders used by the ori CLI`;
+// loaders.documentation = "https://graphorigami.org/cli/builtins.html#loaders";
