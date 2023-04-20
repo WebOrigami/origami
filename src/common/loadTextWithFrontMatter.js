@@ -27,7 +27,7 @@ export default function loadTextWithFrontMatter(input, key) {
     typeof input === "object" && /** @type {any} */ (input).toGraph?.();
 
   const frontMatter = extractFrontMatter(text);
-  if (!frontMatter) {
+  if (!frontMatter?.frontData) {
     // Didn't find, or couldn't parse, front matter
     if (attachedGraph) {
       // Input has graph; attach that to the text.
