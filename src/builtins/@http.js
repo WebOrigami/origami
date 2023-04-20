@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 /**
  * Retrieve the indicated web resource via HTTP.
  *

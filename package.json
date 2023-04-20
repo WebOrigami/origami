@@ -22,7 +22,6 @@
     "graphviz-wasm": "3.0.0",
     "highlight.js": "11.7.0",
     "marked": "4.2.12",
-    "node-fetch": "3.3.0",
     "sharp": "0.31.3",
     "watcher": "2.2.2",
     "yaml": "2.2.1"

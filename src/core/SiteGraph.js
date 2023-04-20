@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export default class SiteGraph {
   /**
    * @param {string} href
