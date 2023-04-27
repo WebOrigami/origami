@@ -1,5 +1,5 @@
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -19,7 +19,7 @@ export default function loadJson(input, key) {
   const data = JSON.parse(text);
 
   const textWithGraph = new String(text);
-  const scope = this;
+  const scope = getScope(this);
   let graph;
 
   /** @type {any} */ (textWithGraph).toGraph = () => {

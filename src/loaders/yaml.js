@@ -2,6 +2,7 @@ import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
+  getScope,
   isPlainObject,
   keySymbol,
   parseYaml,
@@ -34,7 +35,7 @@ export default function loadYaml(input, key) {
   const data = parseYaml(text);
 
   const textWithGraph = new String(text);
-  const scope = this;
+  const scope = getScope(this);
   let graph;
 
   /** @type {any} */ (textWithGraph).toGraph = () => {

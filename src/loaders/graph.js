@@ -1,6 +1,6 @@
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../core/utilities.js";
 import * as compile from "../language/compile.js";
 
 /**
@@ -12,7 +12,7 @@ import * as compile from "../language/compile.js";
  */
 export default function loadGraph(buffer, key) {
   const text = String(buffer);
-  const scope = this;
+  const scope = getScope(this);
   const deferredGraph = new DeferredGraph(async () => {
     const fn = compile.graphDocument(text);
     const graph = await fn.call(scope);

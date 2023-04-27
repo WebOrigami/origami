@@ -1,5 +1,5 @@
 import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
-import { keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**
@@ -10,8 +10,9 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @this {Explorable}
  */
 export default function loadOri(buffer, key) {
-  const textWithGraph = loadTextWithFrontMatter.call(this, buffer, key);
-  const template = new OrigamiTemplate(textWithGraph, this);
+  const scope = getScope(this);
+  const textWithGraph = loadTextWithFrontMatter.call(scope, buffer, key);
+  const template = new OrigamiTemplate(textWithGraph, scope);
   template[keySymbol] = key;
   return template;
 }
