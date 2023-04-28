@@ -34,11 +34,12 @@ export default function loadYaml(input, key) {
   const text = String(input);
   const data = parseYaml(text);
 
+  /** @type {any} */
   const textWithGraph = new String(text);
   const scope = getScope(this);
   let graph;
 
-  /** @type {any} */ (textWithGraph).toGraph = () => {
+  textWithGraph.toGraph = () => {
     if (!graph) {
       if (isPlainObject(data) || data instanceof Array) {
         graph = new (FileTreeTransform(ExpressionGraph))(data);
@@ -49,6 +50,11 @@ export default function loadYaml(input, key) {
       graph[keySymbol] = key;
     }
     return graph;
+  };
+
+  textWithGraph.toFunction = () => {
+    const graph = textWithGraph.toGraph();
+    return ExplorableGraph.toFunction(graph);
   };
 
   return textWithGraph;
