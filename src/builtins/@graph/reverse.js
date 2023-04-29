@@ -8,20 +8,27 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @this {Explorable}
  * @param {GraphVariant} [variant]
+ * @param {PlainObject} [options]
  */
-export default async function reverse(variant) {
+export default async function reverse(variant, options = {}) {
   assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@current"));
   if (variant === undefined) {
     return undefined;
   }
+  const scope = this;
   const graph = ExplorableGraph.from(variant);
+  const deep = options.deep ?? false;
+
   const reversed = {
     async get(key) {
-      const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value)
-        ? reverse.call(this.scope, value)
-        : value;
+      let value = await graph.get(key);
+
+      if (deep && ExplorableGraph.isExplorable(value)) {
+        value = reverse.call(scope, value, options);
+      }
+
+      return value;
     },
 
     async keys() {
@@ -30,8 +37,10 @@ export default async function reverse(variant) {
       return keys;
     },
   };
+
   const result = transformObject(InheritScopeTransform, reversed);
-  result.parent = this;
+  result.parent = scope;
+
   return result;
 }
 
