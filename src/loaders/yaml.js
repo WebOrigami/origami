@@ -1,8 +1,10 @@
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import ObjectGraph from "../core/ObjectGraph.js";
 import {
   getScope,
+  graphInContext,
   isPlainObject,
   keySymbol,
   parseYaml,
@@ -54,7 +56,22 @@ export default function loadYaml(input, key) {
 
   textWithGraph.toFunction = () => {
     const graph = textWithGraph.toGraph();
-    return ExplorableGraph.toFunction(graph);
+    async function fn(input) {
+      let graphWithExtendedScope = graph;
+      if (input !== undefined) {
+        // Add input to scope as @input
+        const ambients = new ObjectGraph({
+          "@input": input,
+        });
+        const ambientsGraph = graphInContext(ambients, graph.parent);
+        ambientsGraph[keySymbol] = graph[keySymbol];
+
+        // Splice ambients into scope.
+        graphWithExtendedScope = graphInContext(graph, ambientsGraph);
+      }
+      return graphWithExtendedScope;
+    }
+    return fn;
   };
 
   return textWithGraph;
