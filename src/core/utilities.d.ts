@@ -1,7 +1,7 @@
 export function extname(path: string): string;
 export function extractFrontMatter(s: string): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function getScope(graph: Explorable): Explorable;
-export function graphInContext(graph: Explorable, context: Explorable): Explorable & { parent: Explorable };
+export function graphInContext(graph: GraphVariant, context: Explorable): Explorable & { parent: Explorable };
 export function isPlainObject(obj: any): boolean;
 export function isTransformApplied(Transform: Function, obj: any): boolean;
 export function keysFromPath(pathname: string): string[];

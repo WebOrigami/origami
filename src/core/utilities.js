@@ -170,11 +170,12 @@ function parseYamlWithExpressions(text) {
  * prototype for the result -- the original graph is not modified. If the graph
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
- * @param {Explorable} graph
+ * @param {GraphVariant} variant
  * @returns {Explorable & { parent: Explorable }}
  */
-export function graphInContext(graph, context) {
+export function graphInContext(variant, context) {
   // Either method of constructing the target produces a new graph.
+  const graph = ExplorableGraph.from(variant);
   const target =
     "parent" in graph
       ? Object.create(graph)
