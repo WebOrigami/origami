@@ -32,8 +32,12 @@ export default class EqualFilesGraph extends InheritScopeTransform(
 }
 
 // If the value has an attached function, return it.
-function getAttachedFunction(value) {
-  return value?.toFunction?.() ?? value;
+function getAttachedFunction(value, outerKey, innerKey) {
+  if (parseArrowKey(innerKey)) {
+    return value?.toFunction?.() ?? value;
+  } else {
+    return value;
+  }
 }
 
 // If the key is of the form "lhs←rhs", return "lhs".
