@@ -32,14 +32,12 @@ export default function loadJs(buffer, key) {
     return async function (...args) {
       if (!fn) {
         fn = await importModule();
-        if (
-          typeof fn !== "function" &&
-          ExplorableGraph.canCastToExplorable(fn)
-        ) {
-          fn = ExplorableGraph.toFunction(fn);
-        }
       }
-      return fn?.call(scope, ...args);
+      return fn instanceof Function
+        ? // Invoke the function
+          await fn.call(scope, ...args)
+        : // Traverse the graph.
+          await ExplorableGraph.traverseOrThrow(fn, ...args);
     };
   };
 
