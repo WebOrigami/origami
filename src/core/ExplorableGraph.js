@@ -33,6 +33,18 @@ export default class ExplorableGraph {
   }
 
   /**
+   * Returns [key, value] pairs for the graph.
+   *
+   * @param {GraphVariant} variant
+   */
+  static async entries(variant) {
+    const graph = this.from(variant);
+    const keys = [...(await graph.keys())];
+    const promises = keys.map(async (key) => [key, await graph.get(key)]);
+    return Promise.all(promises);
+  }
+
+  /**
    * Attempts to cast the indicated graph variant to an explorable graph.
    *
    * @param {GraphVariant} variant

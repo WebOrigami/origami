@@ -3,6 +3,18 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import assert from "../assert.js";
 
 describe("ExplorableGraph", () => {
+  it("entries() returns [key, value] pairs for the graph", async () => {
+    const graph = new ObjectGraph({
+      a: 1,
+      b: 2,
+    });
+    const entries = await ExplorableGraph.entries(graph);
+    assert.deepEqual(entries, [
+      ["a", 1],
+      ["b", 2],
+    ]);
+  });
+
   it("from() returns an explorable graph as is", async () => {
     const graph1 = new ObjectGraph({
       a: "Hello, a.",
