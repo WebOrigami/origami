@@ -98,11 +98,19 @@ export function isPlainObject(obj) {
     return false;
   }
 
+  // We treat object-like things with no prototype (like a Module) as plain
+  // objects.
+  if (Object.getPrototypeOf(obj) === null) {
+    return true;
+  }
+
+  // Find the Object constructor at the root of the prototype chain.
   let proto = obj;
   while (Object.getPrototypeOf(proto) !== null) {
     proto = Object.getPrototypeOf(proto);
   }
 
+  // Do we inherit directly from Object?
   return Object.getPrototypeOf(obj) === proto;
 }
 
