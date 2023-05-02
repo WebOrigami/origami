@@ -54,7 +54,7 @@ export default class ObjectGraph {
     // Walk up the prototype chain to Object.prototype.
     let obj = this.object;
     const result = [];
-    while (obj !== Object.prototype) {
+    while (obj && obj !== Object.prototype) {
       // Get the enumerable instance properties and the get/set properties.
       const descriptors = Object.getOwnPropertyDescriptors(obj);
       const propertyNames = Object.entries(descriptors)
