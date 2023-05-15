@@ -29,6 +29,11 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
    * @param {any} key
    */
   return async function extendedValueKeyFn(value, key) {
+    if (typeof fn !== "function") {
+      // Constant value, return as is.
+      return fn;
+    }
+
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";

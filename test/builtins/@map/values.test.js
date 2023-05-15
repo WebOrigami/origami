@@ -121,4 +121,14 @@ describe("map", () => {
       c: "c",
     });
   });
+
+  it("can map to a constant value", async () => {
+    /** @type {any} */
+    const results = map.call(null, { a: 1, b: 2, c: 3 }, "constant");
+    assert.deepEqual(await ExplorableGraph.plain(results), {
+      a: "constant",
+      b: "constant",
+      c: "constant",
+    });
+  });
 });
