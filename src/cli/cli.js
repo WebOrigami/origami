@@ -38,7 +38,7 @@ async function main(...args) {
   const scope = new Scope(ambientsGraph, baseScope);
 
   const result = await ori.call(scope, expression);
-  if (result) {
+  if (result !== undefined) {
     const output = result instanceof Buffer ? result : String(result);
     await stdout.write(output);
 
