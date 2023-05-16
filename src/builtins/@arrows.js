@@ -1,3 +1,4 @@
+import { keySymbol } from "../core/utilities.js";
 import ArrowGraph from "../framework/ArrowGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -14,6 +15,7 @@ export default async function arrows(variant) {
     return undefined;
   }
   const graph = new ArrowGraph(variant, { deep: true });
+  graph[keySymbol] = "@arrows";
   graph.parent = this;
   return graph;
 }
