@@ -56,32 +56,31 @@ export default function loadYaml(input, key) {
 
   textWithGraph.toFunction = () => {
     const graph = textWithGraph.toGraph();
-    async function fn(input) {
-      if (input === undefined) {
+    const fn = async function fn(key, ...rest) {
+      if (key === undefined) {
         return graph;
-      } else if (
-        typeof input === "string" ||
-        input instanceof String ||
-        typeof input === "number"
-      ) {
-        return await graph.get(input);
-      } else {
-        // Add input to scope as @input and return new graph.
-        let graphWithExtendedScope = graph;
-        if (input !== undefined) {
-          // Add input to scope as @input
-          const ambients = new ObjectGraph({
-            "@input": input,
-          });
-          const ambientsGraph = graphInContext(ambients, graph.parent);
-          ambientsGraph[keySymbol] = graph[keySymbol];
-
-          // Splice ambients into scope.
-          graphWithExtendedScope = graphInContext(graph, ambientsGraph);
-        }
-        return graphWithExtendedScope;
       }
-    }
+      let value;
+      if (
+        typeof key === "string" ||
+        key instanceof String ||
+        typeof key === "number"
+      ) {
+        value = await graph.get(key);
+      } else {
+        // Construct new graph with key in scope as @input.
+        const ambients = new ObjectGraph({
+          "@input": key,
+        });
+        const ambientsGraph = graphInContext(ambients, graph.parent);
+        ambientsGraph[keySymbol] = graph[keySymbol];
+        value = graphInContext(graph, ambientsGraph);
+      }
+      if (rest.length > 0) {
+        value = await ExplorableGraph.traverse(value, ...rest);
+      }
+      return value;
+    };
     return fn;
   };
 
