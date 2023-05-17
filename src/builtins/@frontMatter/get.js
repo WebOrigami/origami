@@ -1,3 +1,3 @@
 export default function get(obj) {
-  return obj?.toGraph?.() ?? undefined;
+  return obj?.toFrontMatter?.() ?? obj?.toGraph?.() ?? undefined;
 }

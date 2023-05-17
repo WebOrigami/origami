@@ -95,6 +95,10 @@ export default class Template {
     return { inputGraph, templateGraph, extendedScope };
   }
 
+  toFrontMatter() {
+    return this.templateGraph;
+  }
+
   toFunction() {
     const templateFunction = this.apply.bind(this);
     const templateScope = this.templateScope;
@@ -105,10 +109,6 @@ export default class Template {
         ? await templateFunction(data, scope)
         : await templateFunction(undefined, scope);
     };
-  }
-
-  toGraph() {
-    return this.templateGraph;
   }
 
   toString() {
