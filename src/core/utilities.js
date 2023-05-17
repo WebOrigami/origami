@@ -145,10 +145,10 @@ export function keysFromPath(pathname) {
 export const keySymbol = Symbol("key");
 
 export async function outputWithGraph(obj, graph, emitFrontMatter = false) {
-  if (!graph) {
-    return obj;
-  }
   const objText = String(obj);
+  if (!graph) {
+    return objText;
+  }
   let outputText;
   if (emitFrontMatter) {
     const frontData = await ExplorableGraph.toYaml(graph);

@@ -107,6 +107,10 @@ export default class Template {
     };
   }
 
+  toGraph() {
+    return this.templateGraph;
+  }
+
   toString() {
     return this.templateText;
   }
