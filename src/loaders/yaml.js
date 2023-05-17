@@ -57,19 +57,30 @@ export default function loadYaml(input, key) {
   textWithGraph.toFunction = () => {
     const graph = textWithGraph.toGraph();
     async function fn(input) {
-      let graphWithExtendedScope = graph;
-      if (input !== undefined) {
-        // Add input to scope as @input
-        const ambients = new ObjectGraph({
-          "@input": input,
-        });
-        const ambientsGraph = graphInContext(ambients, graph.parent);
-        ambientsGraph[keySymbol] = graph[keySymbol];
+      if (input === undefined) {
+        return graph;
+      } else if (
+        typeof input === "string" ||
+        input instanceof String ||
+        typeof input === "number"
+      ) {
+        return await graph.get(input);
+      } else {
+        // Add input to scope as @input and return new graph.
+        let graphWithExtendedScope = graph;
+        if (input !== undefined) {
+          // Add input to scope as @input
+          const ambients = new ObjectGraph({
+            "@input": input,
+          });
+          const ambientsGraph = graphInContext(ambients, graph.parent);
+          ambientsGraph[keySymbol] = graph[keySymbol];
 
-        // Splice ambients into scope.
-        graphWithExtendedScope = graphInContext(graph, ambientsGraph);
+          // Splice ambients into scope.
+          graphWithExtendedScope = graphInContext(graph, ambientsGraph);
+        }
+        return graphWithExtendedScope;
       }
-      return graphWithExtendedScope;
     }
     return fn;
   };

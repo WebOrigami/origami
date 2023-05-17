@@ -37,4 +37,23 @@ b: !ori a
       b: 1,
     });
   });
+
+  it("invoking loaded YAML as function with string argument gets value", async () => {
+    const text = `
+a: 1
+`;
+    const textWithGraph = await loadYaml.call(null, text);
+    const fn = textWithGraph.toFunction();
+    assert.equal(await fn("a"), 1);
+  });
+
+  it("invoking loaded YAML as function with object argument puts argument in scope", async () => {
+    const text = `
+  foo: !ori (@input/bar)
+  `;
+    const textWithGraph = await loadYaml.call(null, text);
+    const fn = textWithGraph.toFunction();
+    const graph = await fn({ bar: 1 });
+    assert.equal(await graph.get("foo"), 1);
+  });
 });
