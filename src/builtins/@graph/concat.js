@@ -1,4 +1,5 @@
 import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { getRealmObjectPrototype } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -16,29 +17,43 @@ export default async function concat(...args) {
       return undefined;
     }
   } else {
-    graph = args.map((arg) =>
-      // Strings are used as is, even if they have a .toGraph method
-      arg instanceof String
-        ? arg
-        : ExplorableGraph.canCastToExplorable(arg)
-        ? ExplorableGraph.from(arg)
-        : arg
-    );
+    graph = ExplorableGraph.from(args);
   }
 
   // The core concat operation is a map-reduce: convert everything to strings,
   // then concatenate the strings.
   const scope = this;
-  const mapFn = async (value) => {
-    // The value may be a function (perhaps a lambda), in which case call it.
-    if (typeof value === "function") {
-      value = await value.call(scope);
-    }
-    // Things that aren't stringify-able will be mapped to the empty string.
-    return value?.toString?.() ?? "";
-  };
+  const mapFn = async (value) => getText(value, scope);
   const reduceFn = (values) => values.join("");
   return ExplorableGraph.mapReduce(graph, mapFn, reduceFn);
+}
+
+async function getText(value, scope) {
+  // If the value is a function (e.g., a lambda), use its result.
+  if (typeof value === "function") {
+    value = await value.call(scope);
+  }
+
+  // Convert to text, preferring .toString over .toGraph, but avoid dumb
+  // Object.toString. Exception: if the result is an array, we'll concatenate
+  // the values.
+  let text;
+  if (!value) {
+    // Treat falsy values as the empty string.
+    text = "";
+  } else if (typeof value === "string") {
+    text = value;
+  } else if (
+    !(value instanceof Array) &&
+    value.toString !== getRealmObjectPrototype(value).toString
+  ) {
+    text = value.toString();
+  } else {
+    // Anything else maps to the empty string.
+    text = "";
+  }
+
+  return text;
 }
 
 concat.usage = `concat <...objs>\tConcatenate text and/or graphs of text`;

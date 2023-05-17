@@ -55,6 +55,22 @@ export function extractFrontMatter(text) {
 }
 
 /**
+ * Return the Object prototype at the root of the object's prototype chain.
+ *
+ * This is used by functions like isPlainObject() to handle cases where the
+ * `Object` at the root prototype chain is in a different realm.
+ *
+ * @param {any} obj
+ */
+export function getRealmObjectPrototype(obj) {
+  let proto = obj;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+  return proto;
+}
+
+/**
  * If the given graph has a `scope` property, return that. Otherwise, return the
  * graph itself.
  *
@@ -82,14 +98,8 @@ export function isPlainObject(obj) {
     return true;
   }
 
-  // Find the Object constructor at the root of the prototype chain.
-  let proto = obj;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-
-  // Do we inherit directly from Object?
-  return Object.getPrototypeOf(obj) === proto;
+  // Do we inherit directly from Object in this realm?
+  return Object.getPrototypeOf(obj) === getRealmObjectPrototype(obj);
 }
 
 export function isTransformApplied(Transform, obj) {
@@ -223,8 +233,8 @@ export function toFunction(obj) {
     typeof obj === "function"
       ? obj
       : typeof (/** @type {any} */ (obj).toFunction) === "function"
-        ? /** @type {any} */ (obj).toFunction()
-        : ExplorableGraph.toFunction(obj);
+      ? /** @type {any} */ (obj).toFunction()
+      : ExplorableGraph.toFunction(obj);
   return fn;
 }
 

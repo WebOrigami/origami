@@ -2,6 +2,7 @@ import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
+import { getRealmObjectPrototype } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
 import toYaml from "./@yaml.js";
@@ -38,26 +39,48 @@ export default async function ori(expression) {
 }
 
 async function formatResult(scope, result) {
-  const stringOrBuffer =
+  if (
     typeof result === "string" ||
-    (globalThis.Buffer && result instanceof Buffer);
+    (globalThis.Buffer && result instanceof Buffer)
+  ) {
+    // Use as is
+    return result;
+  }
+
   /** @type {string|Buffer|StringWithGraph|undefined} */
-  let output = stringOrBuffer
-    ? result
-    : result instanceof String
-    ? result.toString()
-    : result !== null && typeof result === "object"
-    ? await toYaml.call(scope, result)
-    : result;
+  let text;
+
+  // Does the result have a meaningful toString() method (and not the dumb
+  // Object.toString)? Exception: if the result is an array, we'll use YAML
+  // instead.
+  if (!result) {
+    // Return falsy values as is.
+    text = result;
+  } else if (
+    !(result instanceof Array) &&
+    "toString" in result &&
+    result.toString !== getRealmObjectPrototype(result).toString
+  ) {
+    text = result.toString();
+  } else if (typeof result === "object") {
+    // Render YAML
+    text = await toYaml.call(scope, result);
+  } else {
+    // Use result itself.
+    text = result;
+  }
+
+  // If the result is a graph, attach the graph to the text output.
   if (ExplorableGraph.canCastToExplorable(result)) {
     const graph = ExplorableGraph.from(result);
-    if (output instanceof Buffer) {
-      /** @type {any} */ (output).toGraph = () => graph;
+    if (text instanceof Buffer) {
+      /** @type {any} */ (text).toGraph = () => graph;
     } else {
-      output = new StringWithGraph(output, graph);
+      text = new StringWithGraph(text, graph);
     }
   }
-  return output;
+
+  return text;
 }
 
 ori.usage = `@ori <text>\tEvaluates the text as an Origami expression`;
