@@ -51,43 +51,44 @@ export default class ExplorableGraph {
    * @returns {Explorable}
    */
   static from(variant) {
-    // Use the object's toGraph() method if defined.
-    let obj = variant;
-    while (typeof (/** @type {any} */ (obj).toGraph) === "function") {
-      obj = /** @type {any} */ (obj).toGraph();
+    if (this.isExplorable(variant)) {
+      // Argument already supports the ExplorableGraph interface.
+      // @ts-ignore
+      return variant;
     }
 
-    if (this.isExplorable(obj)) {
-      // Object itself supports the ExplorableGraph interface.
-      // @ts-ignore
-      return obj;
+    // Use toGraph() if defined.
+    if ("toGraph" in variant) {
+      return variant.toGraph();
+    }
+
+    // Use toFunction() if defined.
+    if ("toFunction" in variant) {
+      const fn = variant.toFunction();
+      return new FunctionGraph(fn);
     }
 
     // Handle known types.
-    if (obj instanceof Function) {
-      return new FunctionGraph(obj);
-    } else if (obj instanceof Array || utilities.isPlainObject(obj)) {
-      // @ts-ignore
-      return new ObjectGraph(obj);
-    } else if (obj instanceof Set) {
-      return new SetGraph(obj);
-    } else if (typeof (/** @type {any} */ (obj).toFunction) === "function") {
-      const fn = /** @type {any} */ (obj).toFunction();
-      return new FunctionGraph(fn);
+    if (variant instanceof Function) {
+      return new FunctionGraph(variant);
+    } else if (variant instanceof Array || utilities.isPlainObject(variant)) {
+      return new ObjectGraph(variant);
+    } else if (variant instanceof Set) {
+      return new SetGraph(variant);
     } else if (
-      typeof obj === "string" ||
-      obj instanceof String ||
-      obj instanceof Buffer
+      typeof variant === "string" ||
+      variant instanceof String ||
+      variant instanceof Buffer
     ) {
       // Attempt to parse the string as JSON or YAML.
-      return this.fromYaml(obj);
-    } else if (obj !== null && typeof obj === "object") {
+      return this.fromYaml(variant);
+    } else if (variant !== null && typeof variant === "object") {
       // An instance of some class. This is our last choice because it's the
       // least specific.
-      return new ObjectGraph(obj);
+      return new ObjectGraph(variant);
     }
 
-    throw new TypeError("Couldn't convert object to an explorable graph");
+    throw new TypeError("Couldn't convert argument to an explorable graph");
   }
 
   /**
