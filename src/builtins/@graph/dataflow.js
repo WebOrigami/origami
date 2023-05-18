@@ -256,7 +256,7 @@ async function origamiTemplateDependencies(template, keysInScope) {
 
   // If the template appears to contain HTML, add the HTML dependencies.
   // HACK: Crude heuristic just sees if the first non-space is a "<".
-  if (template.templateText.trim().startsWith("<")) {
+  if (template.text.trim().startsWith("<")) {
     dependencies = dependencies.concat(
       await htmlDependencies(template.templateText, keysInScope)
     );

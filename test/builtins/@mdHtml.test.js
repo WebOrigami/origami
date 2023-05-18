@@ -11,13 +11,14 @@ describe("mdHtml", () => {
   });
 
   it("outputs frontmatter", async () => {
-    const markdown = `---
+    const text = `---
 title: Hello
 ---
 # Hello, world.`;
-    const html = await mdHtml(md(markdown), true);
+    const markdown = md.call(null, text);
+    const html = await mdHtml(markdown, true);
     assert.equal(
-      html,
+      String(html),
       `---
 title: Hello
 ---
@@ -31,7 +32,7 @@ title: Hello
 title: Hello
 ---
 # Hello, world.`;
-    const html = await mdHtml(md(markdown));
+    const html = await mdHtml(md.call(null, markdown));
     const graph = /** @type {any} */ (html).toGraph();
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       title: "Hello",

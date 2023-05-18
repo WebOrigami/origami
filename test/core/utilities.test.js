@@ -11,6 +11,7 @@ a: Hello, a.
 This is the content.
 `);
     assert.deepEqual(text, {
+      frontText: "a: Hello, a.\n",
       frontBlock: "---\na: Hello, a.\n---\n",
       bodyText: "This is the content.\n",
       frontData: {
@@ -19,9 +20,11 @@ This is the content.
     });
   });
 
-  it("extractFrontMatter returns null if no front matter is found", () => {
+  it("extractFrontMatter returns body text if no front matter is found", () => {
     const text = "a: Hello, a.";
-    assert.equal(utilities.extractFrontMatter(text), null);
+    const { bodyText, frontData } = utilities.extractFrontMatter(text);
+    assert.equal(frontData, null);
+    assert.equal(bodyText, text);
   });
 
   it("parse can combine front matter and body text", () => {

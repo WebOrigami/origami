@@ -5,7 +5,12 @@ import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import ObjectGraph from "../core/ObjectGraph.js";
-import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
+import {
+  extractFrontMatter,
+  getScope,
+  graphInContext,
+  keySymbol,
+} from "../core/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 // See notes at ExplorableGraph.js
@@ -15,9 +20,16 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 export default class Template {
   constructor(document, scope) {
     this.compiled = null;
-    this.templateText = String(document);
-    this.templateGraph = document.toGraph?.() ?? null;
-    this.templateScope = scope;
+    const text = String(document);
+    this.bodyText = document.bodyText ?? text;
+    if (document.toGraph) {
+      this.graph = document.toGraph();
+    } else {
+      const { frontData } = extractFrontMatter(text);
+      this.graph = frontData;
+    }
+    this.scope = scope;
+    this.text = text;
   }
 
   /**
@@ -58,8 +70,8 @@ export default class Template {
     const inputGraph = processedInput.inputGraph
       ? graphInContext(processedInput.inputGraph, baseScope)
       : null;
-    const templateGraph = this.templateGraph
-      ? graphInContext(this.templateGraph, baseScope)
+    const templateGraph = this.graph
+      ? graphInContext(this.graph, baseScope)
       : null;
 
     // Ambient properties let the template reference specific input/template data.
@@ -67,8 +79,8 @@ export default class Template {
       "@template": {
         graph: templateGraph,
         recurse: this.toFunction(),
-        scope: this.templateScope,
-        text: this.templateText,
+        scope: this.scope,
+        text: this.bodyText,
       },
       "@input": processedInput.input,
       "@text": processedInput.text,
@@ -95,13 +107,9 @@ export default class Template {
     return { inputGraph, templateGraph, extendedScope };
   }
 
-  toFrontMatter() {
-    return this.templateGraph;
-  }
-
   toFunction() {
     const templateFunction = this.apply.bind(this);
-    const templateScope = this.templateScope;
+    const templateScope = this.scope;
     /** @this {Explorable} */
     return async function (data) {
       const scope = this ?? templateScope;
@@ -112,7 +120,7 @@ export default class Template {
   }
 
   toString() {
-    return this.templateText;
+    return this.text;
   }
 }
 

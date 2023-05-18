@@ -1,5 +1,5 @@
 export function extname(path: string): string;
-export function extractFrontMatter(s: string): { frontBlock: string, bodyText: string, frontData: PlainObject };
+export function extractFrontMatter(s: StringLike): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function getRealmObjectPrototype(obj: any): any;
 export function getScope(graph: Explorable): Explorable;
 export function graphInContext(graph: GraphVariant, context: Explorable): Explorable & { parent: Explorable };

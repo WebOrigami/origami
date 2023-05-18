@@ -18,7 +18,7 @@ describe("inline", () => {
 name: Bob
 ---
 Hello, {{ name }}!`;
-    const textWithGraph = loadTextWithFrontMatter(text);
+    const textWithGraph = loadTextWithFrontMatter.call(null, text);
     const inlined = await inline.call(null, textWithGraph);
     assert.equal(inlined, `Hello, Bob!`);
   });
@@ -28,7 +28,7 @@ Hello, {{ name }}!`;
 name: Bob
 ---
 Hello, {{ name }}!`;
-    const textWithGraph = loadTextWithFrontMatter(text);
+    const textWithGraph = loadTextWithFrontMatter.call(null, text);
     const inlined = await inline.call(null, textWithGraph, true);
     assert.equal(inlined, `Hello, Bob!`);
   });

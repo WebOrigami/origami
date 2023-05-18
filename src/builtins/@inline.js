@@ -5,14 +5,14 @@ import loadOrigamiTemplate from "../loaders/ori.js";
 /**
  * Concatenate the text content of objects or graphs.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {StringLike} input
  * @param {boolean} [emitFrontMatter]
  */
 export default async function inline(input, emitFrontMatter) {
   assertScopeIsDefined(this);
   const inputText = String(input);
-  const template = await loadOrigamiTemplate(inputText);
+  const template = await loadOrigamiTemplate.call(this, inputText);
   const templateResult = await template.apply(input, this);
   const result = emitFrontMatter
     ? await outputWithGraph(

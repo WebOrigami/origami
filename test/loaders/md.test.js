@@ -15,7 +15,7 @@ a: !ori 1
 ---
 # Title`;
     const loaded = await loadMarkdown.call(null, text);
-    assert.equal(String(loaded), `# Title`);
+    assert.equal(loaded.bodyText, `# Title`);
     const graph = /** @type {any} */ (loaded).toGraph();
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       a: 1,

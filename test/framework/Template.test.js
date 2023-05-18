@@ -11,9 +11,10 @@ describe("Template", () => {
   it("accepts template that has no front matter", () => {
     const container = {};
     const template = new Template("text", container);
-    assert.equal(template.templateGraph, null);
-    assert.equal(template.templateText, "text");
-    assert.equal(template.templateScope, container);
+    assert.equal(template.graph, null);
+    assert.equal(template.bodyText, "text");
+    assert.equal(template.scope, container);
+    assert.equal(template.text, "text");
   });
 
   it("accepts template with front matter graph", async () => {
@@ -22,13 +23,14 @@ describe("Template", () => {
 a: 1
 ---
 text`;
-    const document = loadTextWithFrontMatter(text);
+    const document = loadTextWithFrontMatter.call(null, text);
     const template = new Template(document, scope);
-    assert.deepEqual(await ExplorableGraph.plain(template.templateGraph), {
+    assert.deepEqual(await ExplorableGraph.plain(template.graph), {
       a: 1,
     });
-    assert.equal(template.templateText, "text");
-    assert.equal(template.templateScope, scope);
+    assert.equal(template.bodyText, "text");
+    assert.equal(template.scope, scope);
+    assert.equal(template.text, text);
   });
 
   it("extends scope with input data", async () => {
@@ -45,10 +47,13 @@ text`;
 
   it("extends container scope with template and input data", async () => {
     const template = new Template(
-      loadTextWithFrontMatter(`---
+      loadTextWithFrontMatter.call(
+        null,
+        `---
 b: 2
 ---
-template`)
+template`
+      )
     );
     const scope = new ObjectGraph({
       a: 1,
@@ -66,11 +71,12 @@ template`)
   });
 
   it("defines ambient properties for input and template data", async () => {
-    const templateScope = {};
-    const templateDocument = loadTextWithFrontMatter(`---
+    const text = `---
 a: 1
 ---
-template`);
+template`;
+    const templateScope = {};
+    const templateDocument = loadTextWithFrontMatter.call(null, text);
     const template = new Template(templateDocument, templateScope);
     const inputScope = new ObjectGraph({});
     const input = {
@@ -79,11 +85,10 @@ template`);
     /** @this {Explorable} */
     template.compiled = async function () {
       const templateInfo = await this.get("@template");
-      const infoPlain = await ExplorableGraph.plain(templateInfo);
-      const { graph, scope, text } = infoPlain;
-      assert.deepEqual(graph, { a: 1 });
-      assert.deepEqual(scope, templateScope);
-      assert.equal(text, "template");
+      const info = await ExplorableGraph.plain(templateInfo);
+      assert.deepEqual(info.graph, { a: 1 });
+      assert.deepEqual(info.scope, templateScope);
+      assert.equal(info.text, "template");
 
       const dot = await this.get(".");
       assert.deepEqual(await ExplorableGraph.plain(dot), { b: 2 });
@@ -95,10 +100,13 @@ template`);
 
   it("input graph can refer to template graph", async () => {
     const template = new Template(
-      loadTextWithFrontMatter(`---
+      loadTextWithFrontMatter.call(
+        null,
+        `---
 a: 1
 ---
-template`)
+template`
+      )
     );
     const graph = new ObjectGraph({});
     const input = new ExpressionGraph({
@@ -114,10 +122,13 @@ template`)
 
   it("template graph can refer to input graph via dot (.) ambient", async () => {
     const template = new Template(
-      loadTextWithFrontMatter(`---
+      loadTextWithFrontMatter.call(
+        null,
+        `---
 a: !ori ./b
 ---
-`)
+`
+      )
     );
     const graph = new ObjectGraph({});
     const input = {
@@ -133,10 +144,13 @@ a: !ori ./b
 
   it("template result has graph of input data", async () => {
     const template = new Template(
-      loadTextWithFrontMatter(`---
+      loadTextWithFrontMatter.call(
+        null,
+        `---
 a: 1
 ---
-template`)
+template`
+      )
     );
     const graph = new ObjectGraph({});
     const input = { b: 2 };

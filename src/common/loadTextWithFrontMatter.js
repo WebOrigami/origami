@@ -16,53 +16,53 @@ import StringWithGraph from "./StringWithGraph.js";
  * If successful, the document will be returned as a String with an attached
  * graph with the front matter and document content as data.
  *
- * @param {string|HasString} input
+ * @param {StringLike} input
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadTextWithFrontMatter(input, key) {
-  const text = String(input);
+  /** @type {any} */
+  let text;
 
   const attachedGraph =
     typeof input === "object" && /** @type {any} */ (input).toGraph?.();
 
-  const frontMatter = extractFrontMatter(text);
-  if (!frontMatter?.frontData) {
-    // Didn't find, or couldn't parse, front matter
-    if (attachedGraph) {
-      // Input has graph; attach that to the text.
-      return new StringWithGraph(text, attachedGraph);
-    } else {
-      // Return plain text as is
-      return text;
-    }
+  const { bodyText, frontData } = extractFrontMatter(input);
+  if (frontData) {
+    const scope = this;
+
+    const deferredGraph = new DeferredGraph(() => {
+      const graphClass = containsExpression(frontData)
+        ? ExpressionGraph
+        : ObjectGraph;
+      const graph = new (FileTreeTransform(graphClass))(frontData);
+      if (scope) {
+        graph.parent = scope;
+      }
+      // @ts-ignore
+      graph[keySymbol] = key;
+      return graph;
+    });
+
+    text = new StringWithGraph(input, deferredGraph);
+    text.frontData = frontData;
+    text.bodyText = bodyText;
+  } else if (attachedGraph) {
+    // Input has graph; attach that to the text.
+    text = new StringWithGraph(input, attachedGraph);
+    text.bodyText = text;
+  } else {
+    text = String(input);
   }
 
-  const { frontData, bodyText } = frontMatter;
-  const scope = this;
-
-  const deferredGraph = new DeferredGraph(() => {
-    const graphClass = containsExpression(frontData)
-      ? ExpressionGraph
-      : ObjectGraph;
-    const graph = new (FileTreeTransform(graphClass))(frontData);
-    graph.parent = scope;
-    // @ts-ignore
-    graph[keySymbol] = key;
-    return graph;
-  });
-
-  const textWithGraph = new StringWithGraph(bodyText, deferredGraph);
-  /** @type {any} */ (textWithGraph).frontData = frontData;
-
-  return textWithGraph;
+  return text;
 }
 
 // Return true if the given graph contains an expression
 function containsExpression(obj) {
   for (const key in obj) {
     const value = obj[key];
-    if (typeof value === "function" && value.code) {
+    if (typeof value === "function") {
       return true;
     } else if (isPlainObject(value)) {
       const valueContainsExpression = containsExpression(value);

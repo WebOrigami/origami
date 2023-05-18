@@ -16,7 +16,8 @@ export default async function mdHtml(input, emitFrontMatter = false) {
     return undefined;
   }
 
-  const html = marked(String(input));
+  const markdown = input.bodyText ?? String(input);
+  const html = marked(markdown);
   const result = await outputWithGraph(
     html,
     input.toGraph?.(),

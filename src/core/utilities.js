@@ -35,23 +35,35 @@ export function extname(path) {
  * "---". Any lines following will be returned added to the data under a
  * `content` key.
  *
- * If the text does not contain front matter, this returns null.
+ * If the text does not contain front matter, the front matter properties will
+ * be null.
  *
- * @param {string} text
- * @returns {{ frontBlock: string, bodyText: string, frontData: PlainObject }|null}
+ * @param {StringLike} input
+ * @returns {{ bodyText: string, frontBlock: string|null, frontData: PlainObject|null,
+ * frontText: string|null }}
  */
-export function extractFrontMatter(text) {
+export function extractFrontMatter(input) {
+  const text = String(input);
   const regex =
     /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
   const match = regex.exec(text);
-  if (match) {
-    const { frontBlock, frontText, bodyText } = /** @type {any} */ (match)
-      .groups;
-    const frontData = parseYamlWithExpressions(frontText);
-    return { frontBlock, bodyText, frontData };
+  let frontBlock;
+  let frontData;
+  let frontText;
+  let bodyText;
+  if (match?.groups) {
+    bodyText = match.groups.bodyText;
+    frontBlock = match.groups.frontBlock;
+    frontText = match.groups.frontText;
+
+    frontData = parseYamlWithExpressions(frontText);
   } else {
-    return null;
+    frontBlock = null;
+    frontData = null;
+    frontText = null;
+    bodyText = text;
   }
+  return { bodyText, frontBlock, frontData, frontText };
 }
 
 /**
@@ -163,9 +175,8 @@ ${objText}`;
 }
 
 export function parseYaml(text) {
-  const frontMatter = extractFrontMatter(text);
-  if (frontMatter) {
-    const { frontData, bodyText } = frontMatter;
+  const { frontData, bodyText } = extractFrontMatter(text);
+  if (frontData) {
     const data = Object.assign(frontData, {
       "@text": bodyText,
     });

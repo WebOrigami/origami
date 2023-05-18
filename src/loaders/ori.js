@@ -7,10 +7,10 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadOri(buffer, key) {
-  const scope = getScope(this);
+  const scope = this ? getScope(this) : null;
   const textWithGraph = loadTextWithFrontMatter.call(scope, buffer, key);
   const template = new OrigamiTemplate(textWithGraph, scope);
   template[keySymbol] = key;
