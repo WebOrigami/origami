@@ -58,12 +58,12 @@ export default class ExplorableGraph {
     }
 
     // Use toGraph() if defined.
-    if ("toGraph" in variant) {
+    if (typeof variant === "object" && "toGraph" in variant) {
       return variant.toGraph();
     }
 
     // Use toFunction() if defined.
-    if ("toFunction" in variant) {
+    if (typeof variant === "object" && "toFunction" in variant) {
       const fn = variant.toFunction();
       return new FunctionGraph(fn);
     }
