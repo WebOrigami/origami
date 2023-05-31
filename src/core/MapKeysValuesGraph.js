@@ -17,6 +17,7 @@ export default class MapKeysValuesGraph {
     this.mapFn = mapFn ? utilities.toFunction(mapFn) : null;
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
+    this.preferExistingValue = options.preferExistingValue ?? false;
     this.options = options;
   }
 
@@ -25,7 +26,7 @@ export default class MapKeysValuesGraph {
     const innerKey = await this.innerKeyForOuterKey(outerKey);
 
     let outerValue;
-    if (innerKey !== outerKey) {
+    if (this.preferExistingValue && innerKey !== outerKey) {
       // First check to see if the outer key already exists in the source graph.
       // If it does, we assume it's already been explicitly mapped, so we'll use
       // that value instead of mapping it ourselves.

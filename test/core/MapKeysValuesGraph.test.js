@@ -28,7 +28,13 @@ describe("MapKeysValuesTest", () => {
       B: "Goodbye, B.",
       c: "goodnight, c.",
     };
-    const outer = new UppercaseKeysGraph(inner, (value) => value.toUpperCase());
+    const outer = new UppercaseKeysGraph(
+      inner,
+      (value) => value.toUpperCase(),
+      {
+        preferExistingValue: true,
+      }
+    );
     assert.deepEqual(await ExplorableGraph.plain(outer), {
       A: "HELLO, A.",
       B: "Goodbye, B.",
