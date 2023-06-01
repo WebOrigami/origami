@@ -34,17 +34,17 @@ export default async function watch(variant, fn) {
 
   // We want to return a stable reference to the graph, so we'll use a prototype
   // chain that will always point to the latest graph. We'll extend the graph's
-  // prototype chain with an empty object, and hand that object to the caller as
-  // an indirect pointer.
-  const indirect = Object.create(graph);
+  // prototype chain with an empty object, and use that as a handle (pointer to
+  // a pointer) to the graph. This is what we'll return to the caller.
+  const handle = Object.create(graph);
 
   // Reevaluate the function whenever the graph changes.
   container.addEventListener?.("change", async () => {
     const graph = await evaluateGraph(container.scope, fn);
-    updateIndirectPointer(indirect, graph);
+    updateIndirectPointer(handle, graph);
   });
 
-  return indirect;
+  return handle;
 }
 
 async function evaluateGraph(scope, fn) {
