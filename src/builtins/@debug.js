@@ -1,3 +1,4 @@
+import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   isPlainObject,
@@ -23,6 +24,10 @@ export default async function debug(variant) {
 
   /** @type {any} */
   let graph = ExplorableGraph.from(variant);
+
+  if (!isTransformApplied(ExplorableSiteTransform, graph)) {
+    graph = transformObject(ExplorableSiteTransform, graph);
+  }
 
   // Apply InheritScopeTransform to the graph if it doesn't have a scope yet so
   // that we can view scope when debugging values inside it.
@@ -55,6 +60,10 @@ function DebugTransform(Base) {
 
       // Ensure debug transforms are applied to explorable results.
       if (ExplorableGraph.isExplorable(value)) {
+        if (!isTransformApplied(ExplorableSiteTransform, value)) {
+          value = transformObject(ExplorableSiteTransform, value);
+        }
+
         if (!isTransformApplied(InheritScopeTransform, value)) {
           value = transformObject(InheritScopeTransform, value);
         }
@@ -71,6 +80,9 @@ function DebugTransform(Base) {
         const original = value.toGraph.bind(value);
         value.toGraph = () => {
           let graph = original();
+          if (!isTransformApplied(ExplorableSiteTransform, graph)) {
+            graph = transformObject(ExplorableSiteTransform, graph);
+          }
           if (!isTransformApplied(InheritScopeTransform, graph)) {
             graph = transformObject(InheritScopeTransform, graph);
           }

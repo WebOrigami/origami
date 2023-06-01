@@ -1,10 +1,7 @@
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
-import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import SiteGraph from "../core/SiteGraph.js";
-import { transformObject } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./@debug.js";
@@ -28,10 +25,6 @@ export default async function serve(variant, port) {
     // By default, watch the default graph and add default pages.
     const withDefaults = await debug.call(this);
     graph = await watch.call(this, withDefaults);
-  }
-
-  if (!(graph instanceof SiteGraph)) {
-    graph = transformObject(ExplorableSiteTransform, graph);
   }
 
   if (port === undefined) {
