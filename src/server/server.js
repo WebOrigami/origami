@@ -78,83 +78,100 @@ export async function handleRequest(request, response, graph) {
   }
 
   let mediaType;
-  if (resource != undefined) {
-    // Determine media type, what data we'll send, and encoding.
-    const extension = extname(url.pathname).toLowerCase();
-    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
 
-    if (
-      mediaType === undefined &&
-      !request.url.endsWith("/") &&
-      (ExplorableGraph.isExplorable(resource) ||
-        isPlainObject(resource) ||
-        resource instanceof Array)
-    ) {
-      // Redirect to an index page for the result.
-      // Redirect to the root of the explorable graph.
-      const Location = `${request.url}/`;
-      response.writeHead(307, { Location });
-      response.end("ok");
-      return true;
-    }
+  if (resource === undefined) {
+    return false;
+  }
 
-    if (resource instanceof ArrayBuffer) {
-      // Convert JavaScript ArrayBuffer to Node Buffer.
-      resource = Buffer.from(resource);
-    }
+  // Determine media type, what data we'll send, and encoding.
+  const extension = extname(url.pathname).toLowerCase();
+  mediaType = extension ? mediaTypeForExtension[extension] : undefined;
 
-    // If the request is for a JSON or YAML result, and the resource we got
-    // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
-    if (
-      (mediaType === "application/json" || mediaType === "text/yaml") &&
-      !stringLike(resource)
-    ) {
-      const graph = ExplorableGraph.from(resource);
-      resource =
-        mediaType === "text/yaml"
-          ? await ExplorableGraph.toYaml(graph)
-          : await ExplorableGraph.toJson(graph);
-    } else if (
-      mediaType === undefined &&
-      (isPlainObject(resource) || resource instanceof Array)
-    ) {
-      // The resource is data, try showing it as YAML.
-      const graph = ExplorableGraph.from(resource);
-      resource = await ExplorableGraph.toYaml(graph);
-      mediaType = "text/yaml";
-    }
-
-    let data;
-    if (mediaType) {
-      data = mediaTypeIsText[mediaType] ? String(resource) : resource;
-    } else {
-      data = textOrObject(resource);
-    }
-
-    if (!mediaType) {
-      // Can't identify media type; infer default type.
-      mediaType =
-        typeof data !== "string"
-          ? "application/octet-stream"
-          : data.trimStart().startsWith("<")
-          ? "text/html"
-          : "text/plain";
-    }
-    const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
-
-    response.writeHead(200, {
-      "Content-Type": mediaType,
-    });
-    try {
-      response.end(data, encoding);
-    } catch (/** @type {any} */ error) {
-      console.error(error.message);
-      return false;
-    }
-
+  if (
+    mediaType === undefined &&
+    !request.url.endsWith("/") &&
+    (ExplorableGraph.isExplorable(resource) ||
+      isPlainObject(resource) ||
+      resource instanceof Array)
+  ) {
+    // Redirect to an index page for the result.
+    // Redirect to the root of the explorable graph.
+    const Location = `${request.url}/`;
+    response.writeHead(307, { Location });
+    response.end("ok");
     return true;
   }
-  return false;
+
+  if (resource instanceof ArrayBuffer) {
+    // Convert JavaScript ArrayBuffer to Node Buffer.
+    resource = Buffer.from(resource);
+  }
+
+  // If the request is for a JSON or YAML result, and the resource we got
+  // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
+  if (
+    (mediaType === "application/json" || mediaType === "text/yaml") &&
+    !stringLike(resource)
+  ) {
+    const graph = ExplorableGraph.from(resource);
+    resource =
+      mediaType === "text/yaml"
+        ? await ExplorableGraph.toYaml(graph)
+        : await ExplorableGraph.toJson(graph);
+  } else if (
+    mediaType === undefined &&
+    (isPlainObject(resource) || resource instanceof Array)
+  ) {
+    // The resource is data, try showing it as YAML.
+    const graph = ExplorableGraph.from(resource);
+    resource = await ExplorableGraph.toYaml(graph);
+    mediaType = "text/yaml";
+  }
+
+  let data;
+  if (mediaType) {
+    data = mediaTypeIsText[mediaType] ? String(resource) : resource;
+  } else {
+    data = textOrObject(resource);
+  }
+
+  if (!mediaType) {
+    // Can't identify media type; infer default type.
+    mediaType =
+      typeof data !== "string"
+        ? "application/octet-stream"
+        : data.trimStart().startsWith("<")
+        ? "text/html"
+        : "text/plain";
+  }
+  const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
+
+  // If we didn't get back some kind of data that response.write() accepts,
+  // assume it was an error.
+  const validResponse =
+    typeof data === "string" ||
+    data instanceof Buffer ||
+    data instanceof Uint8Array;
+
+  if (!validResponse) {
+    const typeName = data.constructor?.name ?? typeof data;
+    console.error(
+      `A served graph must return a string, Buffer, or Uint8Array, but returned an instance of ${typeName}.`
+    );
+    return false;
+  }
+
+  response.writeHead(200, {
+    "Content-Type": mediaType,
+  });
+  try {
+    response.end(data, encoding);
+  } catch (/** @type {any} */ error) {
+    console.error(error.message);
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -170,8 +187,11 @@ export function requestListener(variant) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);
     if (!handled) {
-      response.writeHead(404, { "Content-Type": "text/html" });
-      response.end(`Not found`, "utf-8");
+      // Ignore exceptions that come up with sending a Not Found response.
+      try {
+        response.writeHead(404, { "Content-Type": "text/html" });
+        response.end(`Not found`, "utf-8");
+      } catch (error) {}
     }
   };
 }
