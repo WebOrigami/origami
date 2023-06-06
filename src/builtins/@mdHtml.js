@@ -1,15 +1,26 @@
 import highlight from "highlight.js";
 import { marked } from "marked";
+import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
+import { markedHighlight } from "marked-highlight";
+import { markedSmartypants } from "marked-smartypants";
 import { outputWithGraph } from "../core/utilities.js";
 
-marked.setOptions({
-  gfm: true, // Use GitHub-flavored markdown.
-  highlight: (code, lang) => {
-    const language = highlight.getLanguage(lang) ? lang : "plaintext";
-    return highlight.highlight(code, { language }).value;
-  },
-  smartypants: true,
-});
+marked.use(
+  markedGfmHeadingId(),
+  markedHighlight({
+    highlight(code, lang) {
+      const language = highlight.getLanguage(lang) ? lang : "plaintext";
+      return highlight.highlight(code, { language }).value;
+    },
+
+    langPrefix: "hljs language-",
+  }),
+  markedSmartypants(),
+  {
+    gfm: true, // Use GitHub-flavored markdown.
+    mangle: false,
+  }
+);
 
 export default async function mdHtml(input, emitFrontMatter = false) {
   if (!input) {
