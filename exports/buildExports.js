@@ -93,6 +93,7 @@ export function exportStatements(src) {
     deep: true,
     extension: "js",
     extensionMatchesOnly: true,
+    preferExistingValue: true,
   });
 
   return mapped;
