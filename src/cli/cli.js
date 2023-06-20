@@ -79,4 +79,5 @@ try {
     // useful place to look for the problem.
     console.error(error.stack);
   }
+  process.exitCode = 1;
 }
