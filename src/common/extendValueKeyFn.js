@@ -17,7 +17,9 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
   const fn =
     typeof valueKeyFn === "function"
       ? valueKeyFn
-      : typeof valueKeyFn === "object" && "toFunction" in valueKeyFn
+      : valueKeyFn &&
+        typeof valueKeyFn === "object" &&
+        "toFunction" in valueKeyFn
       ? valueKeyFn.toFunction()
       : ExplorableGraph.canCastToExplorable(valueKeyFn)
       ? ExplorableGraph.toFunction(valueKeyFn)
