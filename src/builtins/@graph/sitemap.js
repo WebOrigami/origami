@@ -14,7 +14,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 `;
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  * @param {string} [baseHref ]
  */

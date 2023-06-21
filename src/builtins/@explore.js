@@ -16,7 +16,7 @@ const frameworkDir = path.resolve(dirname, "../framework");
 const frameworkFiles = new FilesGraph(frameworkDir);
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function explore() {
   const scope = /** @type {any} */ (this).scope ?? this;

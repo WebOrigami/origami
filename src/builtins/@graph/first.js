@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return the first value in the graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function first(variant) {

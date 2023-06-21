@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new graph with all values equal to null.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function nulls(variant) {

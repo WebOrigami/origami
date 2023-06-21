@@ -4,7 +4,7 @@ import FilesGraph from "../core/FilesGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} dirname
  */
 export default async function files(dirname) {

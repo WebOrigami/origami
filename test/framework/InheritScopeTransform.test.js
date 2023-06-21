@@ -10,8 +10,8 @@ describe("InheritScopeTransform", () => {
     fixture.parent = new ObjectGraph({
       a: 1,
     });
-    assert.deepEqual(await fixture.scope.get("b"), 2);
-    assert.deepEqual(await fixture.scope.get("a"), 1);
+    assert.deepEqual(await fixture.scope?.get("b"), 2);
+    assert.deepEqual(await fixture.scope?.get("a"), 1);
   });
 
   it("adds a subgraph's parent to the subgraphs's scope", async () => {

@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Define a graph whose keys are globs.
  *
  * @param {GraphVariant} graph
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function globs(graph) {
   assertScopeIsDefined(this);

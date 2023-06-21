@@ -86,7 +86,7 @@ export function getRealmObjectPrototype(obj) {
  * If the given graph has a `scope` property, return that. Otherwise, return the
  * graph itself.
  *
- * @param {Explorable} graph
+ * @param {Explorable|null} graph
  * @returns {Explorable}
  */
 export function getScope(graph) {
@@ -200,6 +200,7 @@ function parseYamlWithExpressions(text) {
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
  * @param {GraphVariant} variant
+ * @param {Explorable|null} context
  * @returns {Explorable & { parent: Explorable }}
  */
 export function graphInContext(variant, context) {

@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @param {GraphVariant} graph
  * @param {GraphVariant} [cache]
  * @param {GraphVariant} [filter]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function cacheSite(graph, cache, filter) {
   assertScopeIsDefined(this);

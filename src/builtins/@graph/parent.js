@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Returns the parent of the current graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function parent(variant) {

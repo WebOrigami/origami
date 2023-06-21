@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the given object in JSON format.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any} [obj]
  */
 export default async function json(obj) {

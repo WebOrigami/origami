@@ -7,8 +7,8 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return a copy of the given graph that has the indicated graphs as its scope.
  *
  * @param {GraphVariant} variant
- * @param  {...GraphVariant} scopeGraphs
- * @this {Explorable}
+ * @param  {...(GraphVariant|null)} scopeGraphs
+ * @this {Explorable|null}
  */
 export default function setScope(variant, ...scopeGraphs) {
   assertScopeIsDefined(this);

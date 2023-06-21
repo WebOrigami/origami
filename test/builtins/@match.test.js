@@ -4,9 +4,9 @@ import assert from "../assert.js";
 
 describe("match", () => {
   it("matches keys against a simplified pattern", async () => {
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     async function fn() {
-      const name = await this.get("name");
+      const name = await this?.get("name");
       return `Hello, ${name}!`;
     }
     const graph = match.call(null, "[name].html", fn, [
@@ -24,9 +24,9 @@ describe("match", () => {
   });
 
   it("matches keys against a regular expression", async () => {
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     async function fn() {
-      const name = await this.get("name");
+      const name = await this?.get("name");
       return `Hello, ${name}!`;
     }
     const graph = match.call(null, /^(?<name>.+)\.html$/, fn);

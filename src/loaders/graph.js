@@ -8,7 +8,7 @@ import * as compile from "../language/compile.js";
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadGraph(buffer, key) {
   const text = String(buffer);

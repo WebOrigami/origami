@@ -14,7 +14,7 @@ const defaultPort = 5000;
  *
  * @param {GraphVariant} variant
  * @param {number} [port]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function serve(variant, port) {
   assertScopeIsDefined(this);

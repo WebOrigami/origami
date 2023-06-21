@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new graph with the original's keys sorted
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  * @param {Invocable} [keyFn]
  */

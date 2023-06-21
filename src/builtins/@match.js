@@ -19,7 +19,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
  * @param {GraphVariant} [keys]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function match(pattern, resultFn, keys = []) {
   assertScopeIsDefined(this);

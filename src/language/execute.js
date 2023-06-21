@@ -12,7 +12,7 @@ const expressionSymbol = Symbol("expression");
  *
  * `this` should be the scope used to look up references found in the code.
  *
- * @this {GraphVariant}
+ * @this {GraphVariant|null}
  * @param {Code} code
  */
 export default async function execute(code) {

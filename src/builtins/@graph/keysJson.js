@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expose .keys.json for a graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function keysJson(variant) {

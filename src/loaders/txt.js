@@ -3,7 +3,7 @@
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadText(buffer, key) {
   return String(buffer);

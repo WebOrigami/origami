@@ -26,7 +26,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
       : valueKeyFn;
 
   /**
-   * @this {Explorable}
+   * @this {Explorable|null}
    * @param {any} value
    * @param {any} key
    */

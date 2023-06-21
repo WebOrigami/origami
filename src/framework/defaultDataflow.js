@@ -4,10 +4,13 @@ import flowSvg from "../builtins/@graph/flowSvg.js";
 /**
  * Return an SVG representing the data flow for the current graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function defaultDataflow() {
-  const flow = await dataflow(this);
+  if (!this) {
+    return undefined;
+  }
+  const flow = await dataflow.call(this, this);
   const svg = await flowSvg(flow);
   return svg;
 }

@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Interpret arrow keys in the graph as function calls.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function arrows(variant) {

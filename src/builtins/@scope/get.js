@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Returns the scope of the indicated graph or the current scope.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function getScope(variant) {

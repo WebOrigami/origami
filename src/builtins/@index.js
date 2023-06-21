@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Return a default index.html page for the current graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function index(variant) {

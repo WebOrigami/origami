@@ -21,7 +21,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadYaml(input, key) {
   // If the input is a graph variant, return it as is. This situation can arise

@@ -4,12 +4,12 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return only the defined (not `undefined`) values in the graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function defineds(variant) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this.get("@current"));
+  variant = variant ?? (await this?.get("@current"));
   if (variant === undefined) {
     throw new TypeError("A graph variant is required");
   }

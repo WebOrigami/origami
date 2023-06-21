@@ -5,14 +5,14 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Concatenate the text content of objects or graphs.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any[]} args
  */
 export default async function concat(...args) {
   assertScopeIsDefined(this);
   let graph;
   if (args.length === 0) {
-    graph = await this.get("@current");
+    graph = await this?.get("@current");
     if (graph === undefined) {
       return undefined;
     }

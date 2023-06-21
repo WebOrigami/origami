@@ -11,7 +11,7 @@ const groupUrls = {
 };
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} [name]
  */
 export default async function help(name) {

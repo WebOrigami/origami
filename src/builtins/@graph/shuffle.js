@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new graph with the original's keys shuffled
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function shuffle(variant) {

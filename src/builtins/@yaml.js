@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the object as text in YAML format.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function toYaml(variant) {

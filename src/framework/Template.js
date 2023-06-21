@@ -36,7 +36,7 @@ export default class Template {
    * Apply the template to the given input data in the context of a graph.
    *
    * @param {any} [input]
-   * @param {Explorable} [baseScope]
+   * @param {Explorable|null} [baseScope]
    */
   async apply(input, baseScope = builtins) {
     // Compile the template if we haven't already done so.
@@ -110,7 +110,7 @@ export default class Template {
   toFunction() {
     const templateFunction = this.apply.bind(this);
     const templateScope = this.scope;
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     return async function (data) {
       const scope = this ?? templateScope;
       return data !== undefined

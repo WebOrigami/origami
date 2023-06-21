@@ -12,7 +12,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function debug(variant) {

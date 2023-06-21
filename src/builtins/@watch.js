@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Let a graph (e.g., of files) respond to changes.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  * @param {Invocable} [fn]
  */

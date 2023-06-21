@@ -7,7 +7,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadJson(input, key) {
   // See notes at yaml.js

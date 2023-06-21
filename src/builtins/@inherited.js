@@ -5,7 +5,7 @@ import * as ops from "../language/ops.js";
  * Return the inherited value (if any) for the indicated key.
  *
  * @param {any} key
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function inherited(key) {
   assertScopeIsDefined(this);

@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @param {GraphVariant} variant
  * @param {any} key
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function nextKey(variant, key) {
   assertScopeIsDefined(this);

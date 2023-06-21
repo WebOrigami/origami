@@ -3,7 +3,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import defineds from "./defineds.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function exceptions(variant) {

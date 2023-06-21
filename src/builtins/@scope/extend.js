@@ -7,7 +7,7 @@ import setScope from "./set.js";
  *
  * @param {GraphVariant} variant
  * @param  {...GraphVariant} scopeGraphs
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function extendScope(variant, ...scopeGraphs) {
   assertScopeIsDefined(this);

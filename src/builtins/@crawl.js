@@ -14,7 +14,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  * @param {string} [baseHref]
  * @returns {Promise<Explorable>}

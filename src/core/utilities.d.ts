@@ -1,8 +1,8 @@
 export function extname(path: string): string;
 export function extractFrontMatter(s: StringLike): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function getRealmObjectPrototype(obj: any): any;
-export function getScope(graph: Explorable): Explorable;
-export function graphInContext(graph: GraphVariant, context: Explorable): Explorable & { parent: Explorable };
+export function getScope(graph: Explorable|null): Explorable;
+export function graphInContext(graph: GraphVariant, context: Explorable|null): Explorable & { parent: Explorable };
 export function isPlainObject(obj: any): boolean;
 export function isTransformApplied(Transform: Function, obj: any): boolean;
 export function keysFromPath(pathname: string): string[];

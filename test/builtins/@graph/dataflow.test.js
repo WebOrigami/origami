@@ -10,12 +10,15 @@ import assert from "../../assert.js";
 
 describe("@graph/dataflow", () => {
   it("identifies dependencies in expressions", async () => {
-    const textWithGraph = loadYaml(`
+    const textWithGraph = loadYaml.call(
+      null,
+      `
       a: !ori fn(b)
       # builtin map will be ignored, as will ./foo
       b: !ori (@graph/map(c, =./foo))
       c: Hello
-    `);
+    `
+    );
     const graph = /** @type {any} */ (textWithGraph).toGraph();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
@@ -33,9 +36,12 @@ describe("@graph/dataflow", () => {
   });
 
   it("ignore @ ambients", async () => {
-    const textWithGraph = loadYaml(`
+    const textWithGraph = loadYaml.call(
+      null,
+      `
       foo: !ori (@bar)
-    `);
+    `
+    );
     const graph = /** @type {any} */ (textWithGraph).toGraph();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
@@ -46,9 +52,12 @@ describe("@graph/dataflow", () => {
   });
 
   it("if all dependencies are builtins, uses source expression as dependency", async () => {
-    const textWithGraph = loadYaml(`
+    const textWithGraph = loadYaml.call(
+      null,
+      `
       foo: !ori (@mdHtml())
-    `);
+    `
+    );
     const graph = /** @type {any} */ (textWithGraph).toGraph();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
@@ -111,7 +120,7 @@ describe("@graph/dataflow", () => {
 
   it("identifies dependencies in .graph files", async () => {
     const graph = {
-      "foo.graph": loadGraph(`a = b`),
+      "foo.graph": loadGraph.call(null, `a = b`),
     };
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {

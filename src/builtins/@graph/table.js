@@ -3,7 +3,7 @@ import { toSerializable } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function table(variant) {

@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Apply a filter to a graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} graphVariant
  * @param {GraphVariant} filterVariant
  */

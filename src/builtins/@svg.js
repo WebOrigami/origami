@@ -9,7 +9,7 @@ let graphvizLoaded = false;
 /**
  * Render a graph visually in SVG format.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  * @param {PlainObject} [options]
  */

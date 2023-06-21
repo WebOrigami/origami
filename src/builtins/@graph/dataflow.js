@@ -18,7 +18,7 @@ ignoreKeys.push(".");
 ignoreKeys.push("..");
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function dataflow(variant) {

@@ -14,7 +14,7 @@ import { createExpressionFunction } from "./expressionFunction.js";
 /**
  * Construct an array.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any[]} items
  */
 export async function array(...items) {
@@ -29,7 +29,7 @@ export const assign = "«ops.assign»";
 /**
  * Concatenate the given arguments.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any[]} args
  */
 export async function concat(...args) {
@@ -40,7 +40,7 @@ concat.toString = () => "«ops.concat»";
 /**
  * Construct a files graph for the filesystem root.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export function filesRoot() {
   return filesBuiltin.call(this, "/");
@@ -50,7 +50,7 @@ export function filesRoot() {
  * Construct an graph. This is similar to ops.object but the result is an
  * OrigamiGraph instance.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {PlainObject} formulas
  */
 export function graph(formulas) {
@@ -69,7 +69,7 @@ graph.toString = () => "«ops.graph»";
 /**
  * A website graph via HTTP.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -81,7 +81,7 @@ graphHttp.toString = () => "«ops.graphHttp»";
 /**
  * A website graph via HTTPS.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -93,7 +93,7 @@ graphHttps.toString = () => "«ops.graphHttps»";
 /**
  * Retrieve a web resource via HTTP.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -105,7 +105,7 @@ http.toString = () => "«ops.http»";
 /**
  * Retrieve a web resource via HTTPS.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -118,7 +118,7 @@ https.toString = () => "«ops.https»";
  * Search the inherited scope -- i.e., exclude the current graph -- for the
  * given key.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {*} key
  */
 export async function inherited(key) {
@@ -132,11 +132,11 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {Code} code
  */
 export function lambda(code) {
-  /** @this {Explorable} */
+  /** @this {Explorable|null} */
   return async function () {
     const result = await execute.call(this, code);
     return result;
@@ -149,7 +149,7 @@ lambda.toString = () => "«ops.lambda»";
  * parameter's, and the values will be the results of evaluating the
  * corresponding code values in `obj`.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {PlainObject} obj
  */
 export async function object(obj) {

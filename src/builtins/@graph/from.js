@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Cast the indicated variant to a graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function graph(variant) {

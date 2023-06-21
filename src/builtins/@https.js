@@ -1,7 +1,7 @@
 /**
  * Retrieve the indicated web resource via HTTPS.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {string} host
  * @param  {...string} keys
  */

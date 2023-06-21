@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Reverse the order of the top-level keys in the graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  * @param {PlainObject} [options]
  */

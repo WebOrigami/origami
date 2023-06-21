@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @param {GraphVariant} variant
  * @param {number} n
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default async function take(variant, n) {
   assertScopeIsDefined(this);

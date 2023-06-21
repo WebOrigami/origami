@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Render a graph in DOT format.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  * @param {PlainObject} [options]
  */

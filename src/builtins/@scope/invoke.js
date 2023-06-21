@@ -3,7 +3,7 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 /**
  * Invokes the given function in the context of the current scope.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {Explorable} scope
  * @param {Invocable} invocable
  */

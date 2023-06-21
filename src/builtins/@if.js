@@ -2,7 +2,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any} value
  * @param {any} trueResult
  * @param {any} [falseResult]

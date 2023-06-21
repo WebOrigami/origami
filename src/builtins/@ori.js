@@ -10,7 +10,7 @@ import toYaml from "./@yaml.js";
 /**
  * Parse an Origami expression, evaluate it in the context of a graph (provided
  * by `this`), and return the result as text.
- * @this {Explorable}
+ * @this {Explorable|null}
  *
  * @param {string} expression
  */

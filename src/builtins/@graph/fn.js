@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a graph from a function and a set of keys.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {Invocable} [invocable]
  */
 export default async function fn(invocable, keys = []) {
@@ -17,7 +17,7 @@ export default async function fn(invocable, keys = []) {
   const invocableFn =
     typeof invocable === "function" ? invocable : invocable.toFunction();
 
-  /** @this {Explorable} */
+  /** @this {Explorable|null} */
   async function extendedFn(key) {
     const scope = this;
     const ambientsGraph = graphInContext(

@@ -8,7 +8,7 @@ import format from "./format.js";
  * @param {string} [name] - optional name of the function
  */
 export function createExpressionFunction(code, name) {
-  /** @this {Explorable} */
+  /** @this {Explorable|null} */
   async function fn() {
     return execute.call(this, code);
   }

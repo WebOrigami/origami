@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expand values that can be treated as explorable graphs into graphs.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function expand(variant) {

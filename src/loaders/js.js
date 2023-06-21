@@ -10,7 +10,7 @@ import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
  * @param {Buffer|string} buffer
  * @param {any} [key]
  * @returns {HasFunction & HasGraph}
- * @this {Explorable}
+ * @this {Explorable|null}
  */
 export default function loadJs(buffer, key) {
   const text = String(buffer);
@@ -21,7 +21,7 @@ export default function loadJs(buffer, key) {
 
   let moduleExport;
   async function importModule() {
-    if (!moduleExport && "import" in graph) {
+    if (!moduleExport && graph && "import" in graph) {
       moduleExport = await /** @type {any} */ (graph).import?.(key);
     }
     return moduleExport;

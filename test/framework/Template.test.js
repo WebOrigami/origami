@@ -37,9 +37,9 @@ text`;
     const template = new Template("");
     const scope = new ObjectGraph({});
     const input = { a: 1 };
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     template.compiled = async function () {
-      assert.equal(await this.get("a"), 1);
+      assert.equal(await this?.get("a"), 1);
       return "";
     };
     await template.apply(input, scope);
@@ -59,12 +59,12 @@ template`
       a: 1,
     });
     const input = { c: 3 };
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     template.compiled = async function () {
       // Scope includes input + template + container
-      assert.equal(await this.get("a"), 1);
-      assert.equal(await this.get("b"), 2);
-      assert.equal(await this.get("c"), 3);
+      assert.equal(await this?.get("a"), 1);
+      assert.equal(await this?.get("b"), 2);
+      assert.equal(await this?.get("c"), 3);
       return "";
     };
     await template.apply(input, scope);
@@ -82,17 +82,17 @@ template`;
     const input = {
       b: 2,
     };
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     template.compiled = async function () {
-      const templateInfo = await this.get("@template");
+      const templateInfo = await this?.get("@template");
       const info = await ExplorableGraph.plain(templateInfo);
       assert.deepEqual(info.graph, { a: 1 });
       assert.deepEqual(info.scope, templateScope);
       assert.equal(info.text, "template");
 
-      const dot = await this.get(".");
+      const dot = await this?.get(".");
       assert.deepEqual(await ExplorableGraph.plain(dot), { b: 2 });
-      assert.equal(await this.get("@text"), "[object Object]");
+      assert.equal(await this?.get("@text"), "[object Object]");
       return "";
     };
     await template.apply(input, inputScope);
@@ -112,9 +112,9 @@ template`
     const input = new ExpressionGraph({
       b: createExpressionFunction([ops.scope, "a"]),
     });
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     template.compiled = async function () {
-      assert.equal(await this.get("b"), 1);
+      assert.equal(await this?.get("b"), 1);
       return "";
     };
     await template.apply(input, graph);
@@ -134,9 +134,9 @@ a: !ori ./b
     const input = {
       b: 2,
     };
-    /** @this {Explorable} */
+    /** @this {Explorable|null} */
     template.compiled = async function () {
-      assert.equal(await this.get("a"), 2);
+      assert.equal(await this?.get("a"), 2);
       return "";
     };
     await template.apply(input, graph);

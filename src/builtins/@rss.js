@@ -2,7 +2,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} jsonFeedGraph
  */
 export default async function rss(jsonFeedGraph) {

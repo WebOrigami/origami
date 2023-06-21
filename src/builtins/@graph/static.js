@@ -7,7 +7,7 @@ import index from "../@index.js";
 /**
  * Expose common static keys (index.html, .keys.json) for a graph.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  */
 export default async function staticGraph(variant) {

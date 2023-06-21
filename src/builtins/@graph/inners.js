@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return the inner nodes of the graph: the nodes with children.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} [variant]
  */
 export default async function inners(variant) {
@@ -17,7 +17,9 @@ export default async function inners(variant) {
   const inner = {
     async get(key) {
       const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value) ? inners(value) : undefined;
+      return ExplorableGraph.isExplorable(value)
+        ? inners.call(this, value)
+        : undefined;
     },
 
     async keys() {

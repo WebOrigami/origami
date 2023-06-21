@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Wrap a graph and redefine the key used to access nodes in it.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  * @param {function} keyFn
  * @param {PlainObject} [options]

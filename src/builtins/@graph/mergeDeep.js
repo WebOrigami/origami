@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a graph that's the result of deep merging the given graphs.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant[]} graphs
  */
 export default async function mergeDeep(...graphs) {

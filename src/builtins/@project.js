@@ -20,7 +20,7 @@ const configFileName = "ori.config.js";
  * If no Origami configuration file is found, the current folder will be
  * returned as a graph, with the builtins as its parent.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any} [key]
  */
 export default async function project(key) {

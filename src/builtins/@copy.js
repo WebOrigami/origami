@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./@graph/setDeep.js";
 
 /**
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} source
  * @param {GraphVariant} target
  */

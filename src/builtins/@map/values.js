@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Map the top-level values of a graph with a map function.
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {GraphVariant} variant
  * @param {Invocable} mapFn
  * @param {PlainObject} options

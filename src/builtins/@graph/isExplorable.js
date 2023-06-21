@@ -3,7 +3,7 @@ import ExplorableGraph from "../../core/ExplorableGraph.js";
 /**
  * Return true if the value is explorable
  *
- * @this {Explorable}
+ * @this {Explorable|null}
  * @param {any} value
  */
 export default function isExplorable(value) {
