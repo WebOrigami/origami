@@ -1,20 +1,12 @@
-import FileLoadersTransform from "../common/FileLoadersTransform.js";
-import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
+import FileTreeTransform from "./FileTreeTransform.js";
 
-export default class ArrowGraph extends InheritScopeTransform(
-  FileLoadersTransform(
-    InvokeFunctionsTransform(ImplicitModulesTransform(MapKeysValuesGraph))
-  )
+export default class ArrowGraph extends FileTreeTransform(
+  InvokeFunctionsTransform(MapKeysValuesGraph)
 ) {
   constructor(variant, options = {}) {
     super(variant, getAttachedFunction, options);
-  }
-
-  async import(key) {
-    return this.graph?.import?.(key);
   }
 
   async innerKeyForOuterKey(outerKey) {

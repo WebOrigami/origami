@@ -1,3 +1,4 @@
+import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import FilesGraph from "../core/FilesGraph.js";
 import { graphInContext } from "../core/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
@@ -7,7 +8,9 @@ import builtins from "./@builtins.js";
 const configFileName = "ori.config.js";
 
 // The class used to wrap the default graph.
-class DefaultGraph extends FileTreeTransform(FilesGraph) {}
+class DefaultGraph extends FileTreeTransform(
+  ImplicitModulesTransform(FilesGraph)
+) {}
 
 /**
  * Return the graph for the current project's root folder.
