@@ -12,6 +12,11 @@ const loadersFolder = path.resolve(dirname, "../loaders");
 // introduced at the point when we added Origami expression tags to the .yaml
 // loader. It was difficult to diagnose the root of that problem, so for now we
 // just defer loading of the graph.
+//
+// We don't apply FileTreeTransform here because that imports
+// FileLoadersTransform which eventually imports this file. For the loaders, we
+// don't need the InheritScopeTransform, so we can just apply
+// ImplicitModulesTransform directly.
 
 /** @type {any} */
 const loaders = new DeferredGraph(

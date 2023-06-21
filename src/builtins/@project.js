@@ -1,16 +1,9 @@
-import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
-import FilesGraph from "../core/FilesGraph.js";
 import { graphInContext } from "../core/utilities.js";
-import FileTreeTransform from "../framework/FileTreeTransform.js";
+import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
 
 const configFileName = "ori.config.js";
-
-// The class used to wrap the default graph.
-class DefaultGraph extends FileTreeTransform(
-  ImplicitModulesTransform(FilesGraph)
-) {}
 
 /**
  * Return the graph for the current project's root folder.
@@ -34,7 +27,7 @@ export default async function project(key) {
   assertScopeIsDefined(this);
 
   const dirname = process.cwd();
-  const currentGraph = new DefaultGraph(dirname);
+  const currentGraph = new OrigamiFiles(dirname);
   let projectGraph = await findConfigContainer(currentGraph);
 
   let config;
