@@ -4,7 +4,7 @@ import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
-export default class EqualFilesGraph extends InheritScopeTransform(
+export default class ArrowGraph extends InheritScopeTransform(
   FileLoadersTransform(
     InvokeFunctionsTransform(ImplicitModulesTransform(MapKeysValuesGraph))
   )
