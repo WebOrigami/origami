@@ -1,5 +1,5 @@
 import FunctionGraph from "../../core/FunctionGraph.js";
-import { graphInContext } from "../../core/utilities.js";
+import { graphInContext, toFunction } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -14,8 +14,7 @@ export default async function fn(invocable, keys = []) {
   if (invocable === undefined) {
     return undefined;
   }
-  const invocableFn =
-    typeof invocable === "function" ? invocable : invocable.toFunction();
+  const invocableFn = toFunction(invocable);
 
   /** @this {Explorable|null} */
   async function extendedFn(key) {
