@@ -1,8 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import DeferredGraph from "../common/DeferredGraph.js";
-import ImplicitModulesTransform from "../common/ImplicitModulesTransform.js";
 import FilesGraph from "../core/FilesGraph.js";
+import ImplicitModulesTransform from "../framework/ImplicitModulesTransform.js";
+import ImportModulesMixin from "../framework/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const loadersFolder = path.resolve(dirname, "../loaders");
@@ -16,11 +17,14 @@ const loadersFolder = path.resolve(dirname, "../loaders");
 // We don't apply FileTreeTransform here because that imports
 // FileLoadersTransform which eventually imports this file. For the loaders, we
 // don't need the InheritScopeTransform, so we can just apply
-// ImplicitModulesTransform directly.
+// ImplicitModulesTransform and ImportModulesMixin directly.
 
 /** @type {any} */
 const loaders = new DeferredGraph(
-  () => new (ImplicitModulesTransform(FilesGraph))(loadersFolder)
+  () =>
+    new (ImplicitModulesTransform(ImportModulesMixin(FilesGraph)))(
+      loadersFolder
+    )
 );
 
 export default loaders;

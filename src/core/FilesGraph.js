@@ -1,7 +1,6 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { pathToFileURL } from "node:url";
 import Watcher from "watcher";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -83,37 +82,6 @@ export default class FilesGraph extends EventTarget {
       }
       return subfolder;
     }
-  }
-
-  async import(...keys) {
-    const filePath = path.join(this.dirname, ...keys);
-    // On Windows, absolute paths must be valid file:// URLs.
-    const fileUrl = pathToFileURL(filePath);
-    const modulePath = fileUrl.href;
-
-    // Try to load the module.
-    let obj;
-    try {
-      obj = await import(modulePath);
-    } catch (/** @type {any} */ error) {
-      if (error.code !== "ERR_MODULE_NOT_FOUND") {
-        throw error;
-      }
-
-      // Does the module exist as a file?
-      const stats = await stat(filePath);
-      if (stats) {
-        // Module exists, but we can't load it, probably due to a syntax error.
-        throw new SyntaxError(`Error loading ${filePath}`);
-      }
-
-      // Module doesn't exist.
-      return undefined;
-    }
-
-    // If the module loaded and defines a default export, return that, otherwise
-    // return the overall module.
-    return obj?.default ?? obj;
   }
 
   async isKeyExplorable(key) {

@@ -2,12 +2,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
+import ImportModulesMixin from "../../src/framework/ImportModulesMixin.js";
 import loadJs from "../../src/loaders/js.js";
 import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const fixturesGraph = new FilesGraph(fixturesDirectory);
+const fixturesGraph = new (ImportModulesMixin(FilesGraph))(fixturesDirectory);
 
 describe(".js loader", () => {
   it("interprets .js files as a function", async () => {

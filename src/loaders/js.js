@@ -22,7 +22,7 @@ export default function loadJs(buffer, key) {
   let moduleExport;
   async function importModule() {
     if (!moduleExport && "import" in graph) {
-      moduleExport = await /** @type {any} */ (graph).import(key);
+      moduleExport = await /** @type {any} */ (graph).import?.(key);
     }
     return moduleExport;
   }

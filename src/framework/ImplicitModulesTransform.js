@@ -1,5 +1,5 @@
 /**
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<Explorable & { import: function }>} Base
  */
 export default function ImplicitModulesTransform(Base) {
   return class ImplicitModules extends Base {
@@ -15,7 +15,7 @@ export default function ImplicitModulesTransform(Base) {
       }
 
       const moduleKey = `${key}.js`;
-      return /** @type {any} */ (this).import?.(moduleKey);
+      return this.import?.(moduleKey);
     }
   };
 }
