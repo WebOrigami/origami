@@ -109,7 +109,11 @@ export default class FilesGraph extends EventTarget {
     // Filter out unhelpful file names.
     const filtered = names.filter((name) => !hiddenFileNames[name]);
 
-    // Use natural sort order instead of OS sort order.
+    // Node fs.readdir sort order appears to be unreliable; see, e.g.,
+    // https://github.com/nodejs/node/issues/3232. That seems unhelpful for many
+    // applications. Since it's quite common for file names to include numbers,
+    // we use natural sort order: ["file1", "file9", "file10"] instead of
+    // ["file1", "file10", "file9"].
     const sorted = sortNatural(filtered);
     return sorted;
   }
