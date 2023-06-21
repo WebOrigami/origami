@@ -1,7 +1,6 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import Watcher from "watcher";
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { incrementCount } from "../core/measure.js";
@@ -10,10 +9,6 @@ import {
   sortNatural,
   toSerializable,
 } from "../core/utilities.js";
-import GraphEvent from "./GraphEvent.js";
-
-// Map of paths to graphs used by watcher
-const pathGraphMap = new Map();
 
 // List of OS-generated files that should not be enumerated
 const hiddenFileNames = {
@@ -38,13 +33,6 @@ export default class FilesGraph extends EventTarget {
 
     // Don't watch unless explicitly requested.
     this.watching = false;
-  }
-
-  addEventListener(type, listener) {
-    super.addEventListener(type, listener);
-    if (type === "change") {
-      this.watch();
-    }
   }
 
   /**
@@ -118,12 +106,6 @@ export default class FilesGraph extends EventTarget {
     return sorted;
   }
 
-  onChange(key) {
-    // Reset cached values.
-    this.subfoldersMap = new Map();
-    this.dispatchEvent(new GraphEvent("change", { key }));
-  }
-
   get path() {
     return this.dirname;
   }
@@ -166,40 +148,6 @@ export default class FilesGraph extends EventTarget {
       const data = await prepareData(escaped, value);
       await fs.writeFile(objPath, data);
     }
-  }
-
-  async unwatch() {
-    if (!this.watching) {
-      return;
-    }
-
-    this.watcher?.close();
-    this.watching = false;
-  }
-
-  // Turn on watching for the directory.
-  async watch() {
-    if (this.watching) {
-      return;
-    }
-    this.watching = true;
-
-    // Ensure the directory exists.
-    await fs.mkdir(this.dirname, { recursive: true });
-
-    this.watcher = new Watcher(this.dirname, {
-      ignoreInitial: true,
-      persistent: false,
-    });
-    this.watcher.on("all", (event, filePath) => {
-      const key = path.basename(filePath);
-      this.onChange(key);
-    });
-
-    // Add to the list of FilesGraph instances watching this directory.
-    const graphRefs = pathGraphMap.get(this.dirname) ?? [];
-    graphRefs.push(new WeakRef(this));
-    pathGraphMap.set(this.dirname, graphRefs);
   }
 }
 

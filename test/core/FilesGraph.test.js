@@ -149,23 +149,7 @@ describe("FilesGraph", () => {
     const folder1 = await graph.get("folder1");
     assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
   });
-
-  it("can watch its folder for changes", async () => {
-    await createTempDirectory();
-    const tempFiles = new FilesGraph(tempDirectory);
-    const changedFileName = await new Promise(async (resolve) => {
-      tempFiles.addEventListener("change", (event) => {
-        resolve(/** @type {any} */ (event).options.key);
-      });
-      await tempFiles.set(
-        "foo.txt",
-        "This file is left over from testing and can be removed."
-      );
-    });
-    await removeTempDirectory();
-    assert.equal(changedFileName, "foo.txt");
-  });
-}).timeout(2000);
+});
 
 async function createTempDirectory() {
   await fs.mkdir(tempDirectory, { recursive: true });
