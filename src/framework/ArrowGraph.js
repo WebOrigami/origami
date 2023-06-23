@@ -1,9 +1,8 @@
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
-import FileTreeTransform from "./FileTreeTransform.js";
 
-export default class ArrowGraph extends FileTreeTransform(
-  InvokeFunctionsTransform(MapKeysValuesGraph)
+export default class ArrowGraph extends InvokeFunctionsTransform(
+  MapKeysValuesGraph
 ) {
   constructor(variant, options = {}) {
     super(variant, getAttachedFunction, options);
