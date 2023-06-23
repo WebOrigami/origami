@@ -2,7 +2,9 @@
   "name": "@graphorigami/monorepo",
   "version": "0.0.1",
   "workspaces": [
-    "packages/origami"
+    "packages/core",
+    "packages/origami",
+    "packages/types"
   ],
   "scripts": {
     "test": "node --test",

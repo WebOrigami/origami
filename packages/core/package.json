@@ -1,0 +1,16 @@
+{
+  "name": "@graphorigami/core",
+  "version": "0.0.1",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "20.2.4",
+    "typescript": "5.0.4"
+  },
+  "dependencies": {
+    "@graphorigami/types": "0.0.1"
+  },
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc"
+  }
+}
