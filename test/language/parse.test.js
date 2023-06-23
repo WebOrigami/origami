@@ -1089,7 +1089,7 @@ describe("parse", () => {
 
 function assertParse(parseResult, expected) {
   if (expected === null) {
-    assert.isNull(parseResult);
+    assert.equal(parseResult, null);
   } else {
     assert(parseResult);
     assert.deepEqual(parseResult, {

@@ -6,6 +6,7 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 
+// @ts-ignore
 const triggerCircularDependency = ExplorableGraph;
 
 describe("execute", () => {

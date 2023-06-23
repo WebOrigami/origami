@@ -4,6 +4,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point 
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 
+// @ts-ignore
 const triggerCircularDependency = ExplorableGraph;
 
 describe("InheritScopeTransform", () => {
