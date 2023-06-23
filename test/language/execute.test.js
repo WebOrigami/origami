@@ -1,7 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
+
+import ObjectGraph from "../../src/core/ObjectGraph.js";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
+
+const triggerCircularDependency = ExplorableGraph;
 
 describe("execute", () => {
   test("can retrieve values from scope", async () => {
@@ -20,24 +25,14 @@ describe("execute", () => {
       [ops.scope, "name"],
     ];
 
-    const scope = {
+    const scope = new ObjectGraph({
       async greet(name) {
         return `Hello ${name}`;
       },
       name: "world",
-    };
+    });
 
-    // Rudimentary ObjectGraph implementation
-    const scopeGraph = {
-      async get(key) {
-        return scope[key];
-      },
-      async keys() {
-        return Object.keys(scope);
-      },
-    };
-
-    const result = await execute.call(scopeGraph, code);
+    const result = await execute.call(scope, code);
     assert.equal(result, "Hello world");
   });
 

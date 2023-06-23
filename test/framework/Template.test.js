@@ -1,8 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
+
 import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import Template from "../../src/framework/Template.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";

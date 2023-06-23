@@ -1,7 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
+
 import DeferredGraph from "../../src/common/DeferredGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 
 describe("DeferredGraph", () => {
