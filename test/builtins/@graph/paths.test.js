@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import paths from "../../../src/builtins/@graph/paths.js";
-import assert from "../../assert.js";
 
 describe("@graph/paths", () => {
   test("returns an array of paths to the values in the graph", async () => {

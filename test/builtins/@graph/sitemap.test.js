@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import sitemap from "../../../src/builtins/@graph/sitemap.js";
-import assert from "../../assert.js";
 
 describe("@graph/sitemap", () => {
   test("returns a sitemap for a graph", async () => {

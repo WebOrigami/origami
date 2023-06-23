@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import previousKey from "../../../src/builtins/@graph/previousKey.js";
-import assert from "../../assert.js";
 
 describe("@graph/previousKey", () => {
   test("gets the previous key in the graph", async () => {

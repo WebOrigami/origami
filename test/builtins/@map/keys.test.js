@@ -1,7 +1,8 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import mapKeys from "../../../src/builtins/@map/keys.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import * as ops from "../../../src/language/ops.js";
-import assert from "../../assert.js";
 
 describe("@map/keys", () => {
   test("can define a key from a value property", async () => {

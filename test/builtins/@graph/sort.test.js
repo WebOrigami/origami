@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import sort from "../../../src/builtins/@graph/sort.js";
-import assert from "../../assert.js";
 
 describe("@graph/sort", () => {
   test("sorts keys", async () => {

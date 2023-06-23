@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import merge from "../../../src/builtins/@graph/merge.js";
 import ExpressionGraph from "../../../src/common/ExpressionGraph.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
-import assert from "../../assert.js";
 
 describe("@graph/merge", () => {
   test("merges graphs", async () => {

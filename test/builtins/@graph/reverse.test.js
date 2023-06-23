@@ -1,6 +1,7 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import reverse from "../../../src/builtins/@graph/reverse.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
-import assert from "../../assert.js";
 
 describe("@graph/reverse", () => {
   test("reverses a graph's top-level keys", async () => {

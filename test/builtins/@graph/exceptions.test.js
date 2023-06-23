@@ -1,8 +1,9 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import exceptions from "../../../src/builtins/@graph/exceptions.js";
 import InvokeFunctionsTransform from "../../../src/common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../../src/core/ObjectGraph.js";
-import assert from "../../assert.js";
 
 describe("exceptions", () => {
   test("returns the exceptions thrown in a graph", async () => {

@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import concat from "../../../src/builtins/@graph/concat.js";
-import assert from "../../assert.js";
 
 describe("@graph/concat", () => {
   test("concatenates multiple strings", async () => {

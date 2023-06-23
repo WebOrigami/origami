@@ -1,5 +1,6 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import nextKey from "../../../src/builtins/@graph/nextKey.js";
-import assert from "../../assert.js";
 
 describe("@graph/nextKey", () => {
   test("gets the next key in the graph", async () => {

@@ -1,6 +1,7 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import render from "../../../src/builtins/@frontMatter/render.js";
 import StringWithGraph from "../../../src/common/StringWithGraph.js";
-import assert from "../../assert.js";
 
 describe("@frontMatter/render", () => {
   test("renders front matter as YAML", async () => {

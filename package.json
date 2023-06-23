@@ -29,7 +29,7 @@
   },
   "scripts": {
     "prepublishOnly": "ori exports/buildExports/exportFile src > exports/exports.js",
-    "test": "node --test --test-reporter=spec test/**/*.test.js",
+    "test": "node --test --test-reporter=spec test/*/*.test.js test/*/*/*.test.js",
     "typecheck": "node node_modules/typescript/bin/tsc"
   }
 }

@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import dataflow from "../../../src/builtins/@graph/dataflow.js";
 import ExpressionGraph from "../../../src/common/ExpressionGraph.js";
 import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
@@ -6,7 +8,6 @@ import { createExpressionFunction } from "../../../src/language/expressionFuncti
 import * as ops from "../../../src/language/ops.js";
 import loadGraph from "../../../src/loaders/graph.js";
 import loadYaml from "../../../src/loaders/yaml.js";
-import assert from "../../assert.js";
 
 describe("@graph/dataflow", () => {
   test("identifies dependencies in expressions", async () => {

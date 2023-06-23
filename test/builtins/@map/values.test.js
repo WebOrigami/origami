@@ -1,6 +1,7 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import map from "../../../src/builtins/@map/values.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
-import assert from "../../assert.js";
 
 describe("map", () => {
   test("maps all the values in a graph", async () => {
