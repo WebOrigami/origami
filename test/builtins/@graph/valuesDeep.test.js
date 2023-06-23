@@ -2,7 +2,7 @@ import valuesDeep from "../../../src/builtins/@graph/valuesDeep.js";
 import assert from "../../assert.js";
 
 describe("@graph/valuesDeep", () => {
-  it("returns in-order array of a graph's values", async () => {
+  test("returns in-order array of a graph's values", async () => {
     const graph = {
       a: 1,
       b: {

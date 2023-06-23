@@ -1,7 +1,8 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FunctionGraph from "../../src/core/FunctionGraph.js";
 import MapKeysValuesGraph from "../../src/core/MapKeysValuesGraph.js";
-import assert from "../assert.js";
 
 // Test graph changes a lowercase inner key and its value to uppercase, but
 // leaves uppercase inner keys and their values alone.
@@ -21,7 +22,7 @@ class UppercaseKeysGraph extends MapKeysValuesGraph {
 }
 
 describe("MapKeysValuesTest", () => {
-  it("maps keys and values", async () => {
+  test("maps keys and values", async () => {
     const inner = {
       a: "hello, a.",
       // This manually-specified uppercase key should be used directly.
@@ -42,7 +43,7 @@ describe("MapKeysValuesTest", () => {
     });
   });
 
-  it("can be told to not get values from the inner graph", async () => {
+  test("can be told to not get values from the inner graph", async () => {
     let calledGet = false;
     const domain = ["a", "b", "c"];
     const inner = new FunctionGraph((key) => {

@@ -2,7 +2,7 @@ import previousKey from "../../../src/builtins/@graph/previousKey.js";
 import assert from "../../assert.js";
 
 describe("@graph/previousKey", () => {
-  it("gets the previous key in the graph", async () => {
+  test("gets the previous key in the graph", async () => {
     const graph = {
       a: null,
       b: null,

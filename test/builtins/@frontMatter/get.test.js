@@ -4,7 +4,7 @@ import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import assert from "../../assert.js";
 
 describe("@frontMatter/get", () => {
-  it("returns associated front matter", async () => {
+  test("returns associated front matter", async () => {
     const text = new StringWithGraph("text", {
       a: 1,
     });

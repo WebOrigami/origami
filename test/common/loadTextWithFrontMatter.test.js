@@ -1,16 +1,17 @@
-import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import StringWithGraph from "../../src/common/StringWithGraph.js";
+import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("loadTextWithFrontMatter", () => {
-  it("returns plain text input as is", () => {
+  test("returns plain text input as is", () => {
     const result = loadTextWithFrontMatter.call(null, "text");
     assert.equal(result, "text");
   });
 
-  it("attaches YAML/JSON front matter as a graph", async () => {
+  test("attaches YAML/JSON front matter as a graph", async () => {
     const text = `---
 a: 1
 ---
@@ -21,7 +22,7 @@ text`;
     assert.deepEqual(await ExplorableGraph.plain(graph), { a: 1 });
   });
 
-  it("passes along an attached graph if no front matter", async () => {
+  test("passes along an attached graph if no front matter", async () => {
     const input = new StringWithGraph("text", new ObjectGraph({ a: 1 }));
     const result = await loadTextWithFrontMatter.call(null, input);
     assert.equal(String(result), "text");

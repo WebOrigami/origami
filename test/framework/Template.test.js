@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
@@ -5,10 +7,9 @@ import ObjectGraph from "../../src/core/ObjectGraph.js";
 import Template from "../../src/framework/Template.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import * as ops from "../../src/language/ops.js";
-import assert from "../assert.js";
 
 describe("Template", () => {
-  it("accepts template that has no front matter", () => {
+  test("accepts template that has no front matter", () => {
     const container = {};
     const template = new Template("text", container);
     assert.equal(template.graph, null);
@@ -17,7 +18,7 @@ describe("Template", () => {
     assert.equal(template.text, "text");
   });
 
-  it("accepts template with front matter graph", async () => {
+  test("accepts template with front matter graph", async () => {
     const scope = {};
     const text = `---
 a: 1
@@ -33,7 +34,7 @@ text`;
     assert.equal(template.text, text);
   });
 
-  it("extends scope with input data", async () => {
+  test("extends scope with input data", async () => {
     const template = new Template("");
     const scope = new ObjectGraph({});
     const input = { a: 1 };
@@ -45,7 +46,7 @@ text`;
     await template.apply(input, scope);
   });
 
-  it("extends container scope with template and input data", async () => {
+  test("extends container scope with template and input data", async () => {
     const template = new Template(
       loadTextWithFrontMatter.call(
         null,
@@ -70,7 +71,7 @@ template`
     await template.apply(input, scope);
   });
 
-  it("defines ambient properties for input and template data", async () => {
+  test("defines ambient properties for input and template data", async () => {
     const text = `---
 a: 1
 ---
@@ -98,7 +99,7 @@ template`;
     await template.apply(input, inputScope);
   });
 
-  it("input graph can refer to template graph", async () => {
+  test("input graph can refer to template graph", async () => {
     const template = new Template(
       loadTextWithFrontMatter.call(
         null,
@@ -120,7 +121,7 @@ template`
     await template.apply(input, graph);
   });
 
-  it("template graph can refer to input graph via dot (.) ambient", async () => {
+  test("template graph can refer to input graph via dot (.) ambient", async () => {
     const template = new Template(
       loadTextWithFrontMatter.call(
         null,
@@ -142,7 +143,7 @@ a: !ori ./b
     await template.apply(input, graph);
   });
 
-  it("template result has graph of input data", async () => {
+  test("template result has graph of input data", async () => {
     const template = new Template(
       loadTextWithFrontMatter.call(
         null,

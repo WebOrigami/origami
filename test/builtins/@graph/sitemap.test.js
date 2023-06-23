@@ -2,7 +2,7 @@ import sitemap from "../../../src/builtins/@graph/sitemap.js";
 import assert from "../../assert.js";
 
 describe("@graph/sitemap", () => {
-  it("returns a sitemap for a graph", async () => {
+  test("returns a sitemap for a graph", async () => {
     const graph = {
       "a.html": "A",
       b: {

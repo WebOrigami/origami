@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("MapValuesGraph", () => {
-  it("applies a mapping function to values", async () => {
+  test("applies a mapping function to values", async () => {
     const graph = new ObjectGraph({
       a: 1,
       b: 2,
@@ -29,7 +30,7 @@ describe("MapValuesGraph", () => {
     });
   });
 
-  it("can be told to not get values from the inner graph", async () => {
+  test("can be told to not get values from the inner graph", async () => {
     let calledGet = false;
     class FixtureGraph extends ObjectGraph {
       async get(key) {

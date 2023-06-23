@@ -1,11 +1,12 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OriCommandTransform from "../../src/framework/OriCommandTransform.js";
-import assert from "../assert.js";
 
 describe("OriCommandTransform", () => {
-  it("prefers value defined by base graph even if it starts with '!'", async () => {
+  test("prefers value defined by base graph even if it starts with '!'", async () => {
     const graph = new (OriCommandTransform(ObjectGraph))({
       "!yaml": "foo",
     });
@@ -13,7 +14,7 @@ describe("OriCommandTransform", () => {
     assert.equal(value, "foo");
   });
 
-  it("evaluates an Origami expression in the graph's scope", async () => {
+  test("evaluates an Origami expression in the graph's scope", async () => {
     const graph = new (OriCommandTransform(ObjectGraph))({
       a: 1,
       b: 2,

@@ -1,11 +1,12 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import FilterGraph from "../../src/common/FilterGraph.js";
 import GlobGraph from "../../src/common/GlobGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FunctionGraph from "../../src/core/FunctionGraph.js";
-import assert from "../assert.js";
 
 describe("FilterGraph", () => {
-  it("uses keys from filter, values from graph", async () => {
+  test("uses keys from filter, values from graph", async () => {
     const graph = new FilterGraph(
       // Graph
       {
@@ -40,7 +41,7 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("filter can define keys that are available but hidden in graph", async () => {
+  test("filter can define keys that are available but hidden in graph", async () => {
     const graph = new FilterGraph(
       new FunctionGraph((name) => `Hello, ${name}!`),
       {
@@ -56,7 +57,7 @@ describe("FilterGraph", () => {
     });
   });
 
-  it("filter be defined with globs", async () => {
+  test("filter be defined with globs", async () => {
     const fixture = new FilterGraph(
       // Graph
       {

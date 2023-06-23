@@ -1,14 +1,15 @@
+import assert from "node:assert";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
-import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("OrigamiFiles", () => {
-  it("can watch its folder for changes", async () => {
+  test("can watch its folder for changes", { timeout: 2000 }, async () => {
     await createTempDirectory();
     const tempFiles = new OrigamiFiles(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
@@ -25,7 +26,7 @@ describe("OrigamiFiles", () => {
     await removeTempDirectory();
     assert.equal(changedFileName, "foo.txt");
   });
-}).timeout(2000);
+});
 
 async function createTempDirectory() {
   await fs.mkdir(tempDirectory, { recursive: true });

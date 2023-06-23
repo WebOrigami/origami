@@ -1,17 +1,18 @@
+import assert from "node:assert";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import setDeep from "../../src/builtins/@graph/setDeep.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
-import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("FilesGraph", () => {
-  it("can return the set of files in a folder tree", async () => {
+  test("can return the set of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     assert.deepEqual(Array.from(await files.keys()), [
@@ -24,14 +25,14 @@ describe("FilesGraph", () => {
     assert.deepEqual(Array.from(await more.keys()), ["d.txt", "e.txt"]);
   });
 
-  it("returns the same FilesGraph for the same subfolder", async () => {
+  test("returns the same FilesGraph for the same subfolder", async () => {
     const fixtures = new FilesGraph(fixturesDirectory);
     const files1 = await fixtures.get("folder1");
     const files2 = await fixtures.get("folder1");
     assert.strictEqual(files1, files2);
   });
 
-  it("can return the contents of files in a folder tree", async () => {
+  test("can return the contents of files in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const plain = await ExplorableGraph.toSerializable(files);
@@ -46,27 +47,27 @@ describe("FilesGraph", () => {
     });
   });
 
-  it("getting undefined returns the graph itself", async () => {
+  test("getting undefined returns the graph itself", async () => {
     const files = new FilesGraph(fixturesDirectory);
     const result = await files.get(undefined);
     assert.equal(result, files);
   });
 
-  it("can retrieve a file", async () => {
+  test("can retrieve a file", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const file = await files.get("a.txt");
     assert.equal(String(file), "The letter A");
   });
 
-  it("can traverse a path of keys in a folder tree", async () => {
+  test("can traverse a path of keys in a folder tree", async () => {
     const directory = path.join(fixturesDirectory, "folder1");
     const files = new FilesGraph(directory);
     const file = await ExplorableGraph.traverse(files, "more", "e.txt");
     assert.equal(String(file), "The letter E");
   });
 
-  it("can write out a file via set()", async () => {
+  test("can write out a file via set()", async () => {
     await createTempDirectory();
 
     // Write out a file.
@@ -84,7 +85,7 @@ describe("FilesGraph", () => {
     await removeTempDirectory();
   });
 
-  it("can write out multiple files via setDeep()", async () => {
+  test("can write out multiple files via setDeep()", async () => {
     await createTempDirectory();
 
     // Create a tiny set of "files".
@@ -107,7 +108,7 @@ describe("FilesGraph", () => {
     await removeTempDirectory();
   });
 
-  it("can delete a file via set()", async () => {
+  test("can delete a file via set()", async () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");
     await fs.writeFile(tempFile, "");
@@ -121,11 +122,11 @@ describe("FilesGraph", () => {
         throw error;
       }
     }
-    assert.isUndefined(stats);
+    assert.equal(stats, undefined);
     await removeTempDirectory();
   });
 
-  it("can delete a folder via set()", async () => {
+  test("can delete a folder via set()", async () => {
     await createTempDirectory();
     const folder = path.join(tempDirectory, "folder");
     await fs.mkdir(folder);
@@ -139,11 +140,11 @@ describe("FilesGraph", () => {
         throw error;
       }
     }
-    assert.isUndefined(stats);
+    assert.equal(stats, undefined);
     await removeTempDirectory();
   });
 
-  it("can indicate which values are explorable", async () => {
+  test("can indicate which values are explorable", async () => {
     const graph = new FilesGraph(fixturesDirectory);
     assert(await ExplorableGraph.isKeyExplorable(graph, "folder1"));
     const folder1 = await graph.get("folder1");

@@ -2,12 +2,12 @@ import concat from "../../../src/builtins/@graph/concat.js";
 import assert from "../../assert.js";
 
 describe("@graph/concat", () => {
-  it("concatenates multiple strings", async () => {
+  test("concatenates multiple strings", async () => {
     const result = await concat.call(null, "a", "b", "c");
     assert.equal(result, "abc");
   });
 
-  it("concatenates graph text", async () => {
+  test("concatenates graph text", async () => {
     const graph = {
       a: "A",
       b: "B",

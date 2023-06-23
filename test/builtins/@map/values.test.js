@@ -3,7 +3,7 @@ import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import assert from "../../assert.js";
 
 describe("map", () => {
-  it("maps all the values in a graph", async () => {
+  test("maps all the values in a graph", async () => {
     /** @type {any} */
     const fixture = map.call(
       null,
@@ -21,7 +21,7 @@ describe("map", () => {
     });
   });
 
-  it("maps subobjects as values by default", async () => {
+  test("maps subobjects as values by default", async () => {
     /** @type {any} */
     const fixture = map.call(
       null,
@@ -41,7 +41,7 @@ describe("map", () => {
     });
   });
 
-  it("setting deep option maps subobjects deeply", async () => {
+  test("setting deep option maps subobjects deeply", async () => {
     /** @type {any} */
     const fixture = map.call(
       null,
@@ -66,7 +66,7 @@ describe("map", () => {
     });
   });
 
-  it("mapping function context includes the value's graph", async () => {
+  test("mapping function context includes the value's graph", async () => {
     /** @type {any} */
     const results = map.call(
       null,
@@ -85,7 +85,7 @@ describe("map", () => {
     ]);
   });
 
-  it("extended map function includes @key and @value", async () => {
+  test("extended map function includes @key and @value", async () => {
     /** @type {any} */
     const results = map.call(
       null,
@@ -104,7 +104,7 @@ describe("map", () => {
     });
   });
 
-  it("can specify how @key should be added to scope", async () => {
+  test("can specify how @key should be added to scope", async () => {
     /** @type {any} */
     const results = map.call(
       null,
@@ -122,7 +122,7 @@ describe("map", () => {
     });
   });
 
-  it("can map to a constant value", async () => {
+  test("can map to a constant value", async () => {
     /** @type {any} */
     const results = map.call(null, { a: 1, b: 2, c: 3 }, () => "constant");
     assert.deepEqual(await ExplorableGraph.plain(results), {

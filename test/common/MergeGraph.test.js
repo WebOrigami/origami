@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import MergeGraph from "../../src/common/MergeGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("MergeGraph", () => {
-  it("returns the first defined value from an ordered list of graphs", async () => {
+  test("returns the first defined value from an ordered list of graphs", async () => {
     const fixture = new MergeGraph(
       {
         a: 1,
@@ -24,7 +25,7 @@ describe("MergeGraph", () => {
     assert.equal(await fixture.get("x"), undefined);
   });
 
-  it("performs a shallow merge", async () => {
+  test("performs a shallow merge", async () => {
     const fixture = new MergeGraph(
       {
         a: 1,

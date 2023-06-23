@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import GlobGraph from "../../src/common/GlobGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("GlobGraph", () => {
-  it("matches globs", async () => {
+  test("matches globs", async () => {
     const globGraph = new GlobGraph({
       "*.txt": true,
       "*.js": false,
@@ -18,7 +19,7 @@ describe("GlobGraph", () => {
     assert(!(await globGraph.get("foo")));
   });
 
-  it("matches nested globs", async () => {
+  test("matches nested globs", async () => {
     const globGraph = new GlobGraph({
       sub: {
         foo: "bar",

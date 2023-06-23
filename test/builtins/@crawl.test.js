@@ -1,8 +1,9 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import crawl from "../../src/builtins/@crawl.js";
-import assert from "../assert.js";
 
 describe("crawl", () => {
-  it("finds linked pages", async () => {
+  test("finds linked pages", async () => {
     const graph = {
       "index.html": `
         <a href="about.html">About</a>
@@ -17,7 +18,7 @@ describe("crawl", () => {
     ]);
   });
 
-  it("finds linked images", async () => {
+  test("finds linked images", async () => {
     const graph = {
       "index.html": `<img src="logo.png">`,
       "logo.png": "PNG data",
@@ -29,7 +30,7 @@ describe("crawl", () => {
     ]);
   });
 
-  it("finds linked JavaScript files", async () => {
+  test("finds linked JavaScript files", async () => {
     const graph = {
       "index.html": `
         <script src="a.js" type="module"></script>
@@ -45,7 +46,7 @@ describe("crawl", () => {
     ]);
   });
 
-  it("finds a robots.txt file and sitemap", async () => {
+  test("finds a robots.txt file and sitemap", async () => {
     // Note: the robots.txt file uses an `http:` URL for the sitemap even though
     // the (fake) site is defined as `https:`. This tests a situation we've hit
     // in practice, where a site's robots.txt file is out of date. We test that

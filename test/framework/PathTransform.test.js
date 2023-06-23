@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import PathTransform from "../../exports/PathTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("PathTransform", () => {
-  it("defines an ambient @path value for explorable results", async () => {
+  test("defines an ambient @path value for explorable results", async () => {
     const graph = new (PathTransform(ObjectGraph))({
       a: {
         b: {

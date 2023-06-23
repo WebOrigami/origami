@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import * as compile from "../../src/language/compile.js";
-import assert from "../assert.js";
 
 describe("OrigamiGraph", () => {
-  it("graph from text", async () => {
+  test("graph from text", async () => {
     const fn = compile.graphDocument(`
       name = 'world'
       message = \`Hello, {{ name }}!\`
@@ -15,7 +16,7 @@ describe("OrigamiGraph", () => {
     });
   });
 
-  it("graph can contain nested graph", async () => {
+  test("graph can contain nested graph", async () => {
     const fn = compile.graphDocument(`
       public = {
         name = 'world'

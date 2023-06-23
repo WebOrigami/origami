@@ -9,7 +9,7 @@ import loadYaml from "../../../src/loaders/yaml.js";
 import assert from "../../assert.js";
 
 describe("@graph/dataflow", () => {
-  it("identifies dependencies in expressions", async () => {
+  test("identifies dependencies in expressions", async () => {
     const textWithGraph = loadYaml.call(
       null,
       `
@@ -35,7 +35,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("ignore @ ambients", async () => {
+  test("ignore @ ambients", async () => {
     const textWithGraph = loadYaml.call(
       null,
       `
@@ -51,7 +51,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("if all dependencies are builtins, uses source expression as dependency", async () => {
+  test("if all dependencies are builtins, uses source expression as dependency", async () => {
     const textWithGraph = loadYaml.call(
       null,
       `
@@ -67,7 +67,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("identifies dependencies in HTML img tags", async () => {
+  test("identifies dependencies in HTML img tags", async () => {
     const graph = {
       "foo.html": `<html><body><img src="images/a.jpg"></body></html>`,
       images: {},
@@ -81,7 +81,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("identifies referenced dependencies in Origami templates", async () => {
+  test("identifies referenced dependencies in Origami templates", async () => {
     const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
@@ -98,7 +98,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("identified dependencies in scope", async () => {
+  test("identified dependencies in scope", async () => {
     const graph = new (InheritScopeTransform(ExpressionGraph))({
       a: createExpressionFunction([ops.scope, "b"]),
     });
@@ -118,7 +118,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("identifies dependencies in .graph files", async () => {
+  test("identifies dependencies in .graph files", async () => {
     const graph = {
       "foo.graph": loadGraph.call(null, `a = b`),
     };
@@ -133,7 +133,7 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  it("starts with dependencies in .dataflow.yaml value", async () => {
+  test("starts with dependencies in .dataflow.yaml value", async () => {
     const graph = new ExpressionGraph({
       ".dataflow.yaml": `
 a:
@@ -155,7 +155,7 @@ b: {}
     });
   });
 
-  it("notes if a dependency is undefined", async () => {
+  test("notes if a dependency is undefined", async () => {
     const graph = new ExpressionGraph({
       a: createExpressionFunction([ops.scope, "b"]),
     });
@@ -170,7 +170,7 @@ b: {}
     });
   });
 
-  it("creates implicit dependencies for .js files", async () => {
+  test("creates implicit dependencies for .js files", async () => {
     const graph = new ExpressionGraph({
       x: createExpressionFunction([[ops.scope, "fn"]]),
       "fn.js": null,

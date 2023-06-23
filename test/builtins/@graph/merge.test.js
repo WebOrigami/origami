@@ -7,7 +7,7 @@ import * as ops from "../../../src/language/ops.js";
 import assert from "../../assert.js";
 
 describe("@graph/merge", () => {
-  it("merges graphs", async () => {
+  test("merges graphs", async () => {
     const graph = await merge.call(
       null,
       {
@@ -27,7 +27,7 @@ describe("@graph/merge", () => {
     });
   });
 
-  it("puts all graphs in scope", async () => {
+  test("puts all graphs in scope", async () => {
     const graph = await merge.call(
       null,
       new (InheritScopeTransform(ExpressionGraph))({

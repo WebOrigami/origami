@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import loadGraph from "../../src/loaders/graph.js";
-import assert from "../assert.js";
 
 describe(".graph loader", () => {
-  it("loads a file as an Origami graph", async () => {
+  test("loads a file as an Origami graph", async () => {
     const text = `
       name = 'world'
       message = \`Hello, {{ name }}!\`

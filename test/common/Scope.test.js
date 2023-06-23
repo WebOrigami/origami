@@ -1,8 +1,9 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
-import assert from "../assert.js";
 
 describe("Scope", () => {
-  it("composes and flattens scopes and graphs passed to it", async () => {
+  test("composes and flattens scopes and graphs passed to it", async () => {
     const graphA = {
       a: 1,
     };
@@ -20,7 +21,7 @@ describe("Scope", () => {
     assert.deepEqual(objects, [graphA, graphB, graphC]);
   });
 
-  it("gets the first defined value from the scope graphs", async () => {
+  test("gets the first defined value from the scope graphs", async () => {
     const scope = new Scope(
       {
         a: 1,
@@ -34,7 +35,7 @@ describe("Scope", () => {
     assert.equal(await scope.get("b"), 3);
   });
 
-  it("binds functions to the scope", async () => {
+  test("binds functions to the scope", async () => {
     const scope = new Scope({
       fn: function () {
         return this;

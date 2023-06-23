@@ -2,7 +2,7 @@ import sort from "../../../src/builtins/@graph/sort.js";
 import assert from "../../assert.js";
 
 describe("@graph/sort", () => {
-  it("sorts keys", async () => {
+  test("sorts keys", async () => {
     const graph = {
       b: 2,
       c: 3,
@@ -12,7 +12,7 @@ describe("@graph/sort", () => {
     assert.deepEqual(Array.from(await sorted.keys()), ["a", "b", "c"]);
   });
 
-  it("sorts keys using a provided sort function", async () => {
+  test("sorts keys using a provided sort function", async () => {
     const graph = {
       Alice: { age: 48 },
       Bob: { age: 36 },

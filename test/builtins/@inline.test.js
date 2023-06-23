@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("inline", () => {
-  it("inlines Origami expressions found in input text", async () => {
+  test("inlines Origami expressions found in input text", async () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
@@ -13,7 +14,7 @@ describe("inline", () => {
     assert.equal(inlined, "Hello, Alice!");
   });
 
-  it("can reference keys in an attached graph", async () => {
+  test("can reference keys in an attached graph", async () => {
     const text = `---
 name: Bob
 ---
@@ -23,7 +24,7 @@ Hello, {{ name }}!`;
     assert.equal(inlined, `Hello, Bob!`);
   });
 
-  it("can preserve front matter", async () => {
+  test("can preserve front matter", async () => {
     const text = `---
 name: Bob
 ---

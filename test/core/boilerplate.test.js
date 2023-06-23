@@ -1,7 +1,7 @@
-// import assert from "../assert.js";
+// import assert from "node:assert";
 
 // describe("Fixture name goes here", () => {
-//   it("runs", async () => {
+//   test("runs", async () => {
 //     assert(false);
 //   });
 // });

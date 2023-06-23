@@ -5,7 +5,7 @@ import ObjectGraph from "../../../src/core/ObjectGraph.js";
 import assert from "../../assert.js";
 
 describe("exceptions", () => {
-  it("returns the exceptions thrown in a graph", async () => {
+  test("returns the exceptions thrown in a graph", async () => {
     const graph = new (InvokeFunctionsTransform(ObjectGraph))({
       a: "fine",
       b: () => {

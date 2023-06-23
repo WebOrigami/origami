@@ -3,7 +3,7 @@ import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 import assert from "../../assert.js";
 
 describe("@graph/reverse", () => {
-  it("reverses a graph's top-level keys", async () => {
+  test("reverses a graph's top-level keys", async () => {
     const graph = {
       a: "A",
       b: "B",

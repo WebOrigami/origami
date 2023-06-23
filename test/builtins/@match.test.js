@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import match from "../../src/builtins/@match.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("match", () => {
-  it("matches keys against a simplified pattern", async () => {
+  test("matches keys against a simplified pattern", async () => {
     /** @this {Explorable|null} */
     async function fn() {
       const name = await this?.get("name");
@@ -23,7 +24,7 @@ describe("match", () => {
     assert.equal(value, "Hello, David!");
   });
 
-  it("matches keys against a regular expression", async () => {
+  test("matches keys against a regular expression", async () => {
     /** @this {Explorable|null} */
     async function fn() {
       const name = await this?.get("name");

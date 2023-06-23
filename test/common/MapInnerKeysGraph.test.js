@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import MapInnerKeysGraph from "../../src/common/MapInnerKeysGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("MapInnerKeysGraph", () => {
-  it("maps inner keys to outer keys", async () => {
+  test("maps inner keys to outer keys", async () => {
     const graph = new MapInnerKeysGraph(
       {
         a: 1,

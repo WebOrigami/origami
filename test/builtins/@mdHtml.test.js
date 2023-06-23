@@ -1,16 +1,17 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import mdHtml from "../../src/builtins/@mdHtml.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import md from "../../src/loaders/md.js";
-import assert from "../assert.js";
 
 describe("mdHtml", () => {
-  it("transforms markdown to HTML", async () => {
+  test("transforms markdown to HTML", async () => {
     const markdown = `# Hello, world.`;
     const html = await mdHtml(markdown);
     assert.equal(html, `<h1 id="hello-world">Hello, world.</h1>\n`);
   });
 
-  it("outputs frontmatter", async () => {
+  test("outputs frontmatter", async () => {
     const text = `---
 title: Hello
 ---
@@ -27,7 +28,7 @@ title: Hello
     );
   });
 
-  it("output includes a graph representation", async () => {
+  test("output includes a graph representation", async () => {
     const markdown = `---
 title: Hello
 ---

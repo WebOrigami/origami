@@ -3,7 +3,7 @@ import StringWithGraph from "../../../src/common/StringWithGraph.js";
 import assert from "../../assert.js";
 
 describe("@frontMatter/render", () => {
-  it("renders front matter as YAML", async () => {
+  test("renders front matter as YAML", async () => {
     const value = new StringWithGraph("text", {
       a: 1,
     });

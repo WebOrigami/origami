@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import DefaultValuesTransform from "../../src/common/DefaultValuesTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("DefaultValuesTransform", () => {
-  it("provides default values for missing keys at any point in graph", async () => {
+  test("provides default values for missing keys at any point in graph", async () => {
     const graph = new (DefaultValuesTransform(ObjectGraph))({
       a: 1,
       b: 2,
@@ -28,7 +29,7 @@ describe("DefaultValuesTransform", () => {
     assert.equal(await ExplorableGraph.traverse(graph, "more", "d"), 5); // Default
   });
 
-  it("invokes a default value function", async () => {
+  test("invokes a default value function", async () => {
     const graph = new (DefaultValuesTransform(ObjectGraph))({
       a: 1,
       more: {

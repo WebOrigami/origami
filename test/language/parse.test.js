@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import { tokenType } from "../../src/language/lex.js";
 import * as ops from "../../src/language/ops.js";
 import {
@@ -26,11 +28,10 @@ import {
   templateDocument,
   templateLiteral,
 } from "../../src/language/parse.js";
-import assert from "../assert.js";
 
 describe("parse", () => {
   describe("absoluteFilePath", () => {
-    it("/foo/bar", () => {
+    test("/foo/bar", () => {
       assertParse(
         absoluteFilePath([
           { type: tokenType.SLASH, lexeme: "/" },
@@ -44,7 +45,7 @@ describe("parse", () => {
   });
 
   describe("array", () => {
-    it("[]", () => {
+    test("[]", () => {
       assertParse(
         array([
           { type: tokenType.LEFT_BRACKET },
@@ -54,7 +55,7 @@ describe("parse", () => {
       );
     });
 
-    it("[1, 2, 3]", () => {
+    test("[1, 2, 3]", () => {
       assertParse(
         array([
           { type: tokenType.LEFT_BRACKET },
@@ -70,7 +71,7 @@ describe("parse", () => {
     });
 
     // Unmatched bracket
-    it("[1", () => {
+    test("[1", () => {
       assert.throws(() =>
         array([
           { type: tokenType.LEFT_BRACKET },
@@ -81,7 +82,7 @@ describe("parse", () => {
   });
 
   describe("assignment", () => {
-    it("data = obj.json", () => {
+    test("data = obj.json", () => {
       assertParse(
         assignment([
           {
@@ -96,7 +97,7 @@ describe("parse", () => {
       );
     });
 
-    it("foo = fn 'bar'", () => {
+    test("foo = fn 'bar'", () => {
       assertParse(
         assignment([
           { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -111,14 +112,14 @@ describe("parse", () => {
   });
 
   describe("expression", () => {
-    it("obj.json", () => {
+    test("obj.json", () => {
       assertParse(
         expression([{ type: tokenType.REFERENCE, lexeme: "obj.json" }]),
         [ops.scope, "obj.json"]
       );
     });
 
-    it("(fn a, b, c)", () => {
+    test("(fn a, b, c)", () => {
       assertParse(
         expression([
           { type: tokenType.LEFT_PAREN },
@@ -140,7 +141,7 @@ describe("parse", () => {
       );
     });
 
-    it("foo.bar('hello', 'world')", () => {
+    test("foo.bar('hello', 'world')", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "foo.bar" },
@@ -154,7 +155,7 @@ describe("parse", () => {
       );
     });
 
-    it("(fn)('a')", () => {
+    test("(fn)('a')", () => {
       assertParse(
         expression([
           { type: tokenType.LEFT_PAREN },
@@ -168,11 +169,11 @@ describe("parse", () => {
       );
     });
 
-    it("1", () => {
+    test("1", () => {
       assertParse(expression([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
     });
 
-    it("(foo", () => {
+    test("(foo", () => {
       assert.equal(
         expression([
           { type: tokenType.LEFT_PAREN },
@@ -182,7 +183,7 @@ describe("parse", () => {
       );
     });
 
-    it("{ a: 1, b: 2 }", () => {
+    test("{ a: 1, b: 2 }", () => {
       assertParse(
         expression([
           { type: tokenType.LEFT_BRACE },
@@ -199,7 +200,7 @@ describe("parse", () => {
       );
     });
 
-    it("serve { index.html: 'hello' }", () => {
+    test("serve { index.html: 'hello' }", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "serve" },
@@ -217,7 +218,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn =`x`", () => {
+    test("fn =`x`", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -234,7 +235,7 @@ describe("parse", () => {
       );
     });
 
-    it("copy app(formulas), files 'snapshot'", () => {
+    test("copy app(formulas), files 'snapshot'", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "copy" },
@@ -259,7 +260,7 @@ describe("parse", () => {
       );
     });
 
-    it("@map/values @input, =`<li>{{@value}}</li>`", () => {
+    test("@map/values @input, =`<li>{{@value}}</li>`", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "@map" },
@@ -287,7 +288,7 @@ describe("parse", () => {
   });
 
   describe("functionComposition", () => {
-    it("fn()", () => {
+    test("fn()", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -298,7 +299,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn(arg)", () => {
+    test("fn(arg)", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -313,7 +314,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn(a, b)", () => {
+    test("fn(a, b)", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -327,7 +328,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn()(arg)", () => {
+    test("fn()(arg)", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -341,7 +342,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn()/key", () => {
+    test("fn()/key", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -354,7 +355,7 @@ describe("parse", () => {
       );
     });
 
-    it("graph/", () => {
+    test("graph/", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -364,7 +365,7 @@ describe("parse", () => {
       );
     });
 
-    it("graph/key", () => {
+    test("graph/key", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -375,7 +376,7 @@ describe("parse", () => {
       );
     });
 
-    it("graph/foo/bar", () => {
+    test("graph/foo/bar", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -388,7 +389,7 @@ describe("parse", () => {
       );
     });
 
-    it("graph/key()", () => {
+    test("graph/key()", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "graph" },
@@ -401,7 +402,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn()/key()", () => {
+    test("fn()/key()", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -416,7 +417,7 @@ describe("parse", () => {
       );
     });
 
-    it("(fn())('arg')", () => {
+    test("(fn())('arg')", () => {
       assertParse(
         functionComposition([
           { type: tokenType.LEFT_PAREN },
@@ -432,7 +433,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn('a')('b')", () => {
+    test("fn('a')('b')", () => {
       assertParse(
         functionComposition([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -447,7 +448,7 @@ describe("parse", () => {
       );
     });
 
-    it("(fn())(a, b)", () => {
+    test("(fn())(a, b)", () => {
       assertParse(
         functionComposition([
           { type: tokenType.LEFT_PAREN },
@@ -465,7 +466,7 @@ describe("parse", () => {
       );
     });
 
-    it("{ a: 1, b: 2}/b", () => {
+    test("{ a: 1, b: 2}/b", () => {
       assertParse(
         functionComposition([
           { type: tokenType.LEFT_BRACE },
@@ -486,7 +487,7 @@ describe("parse", () => {
   });
 
   describe("graph", () => {
-    it("{}", () => {
+    test("{}", () => {
       assertParse(
         graph([
           { type: tokenType.LEFT_BRACE },
@@ -496,7 +497,7 @@ describe("parse", () => {
       );
     });
 
-    it("{ x = fn('a') }", () => {
+    test("{ x = fn('a') }", () => {
       assertParse(
         graph([
           { type: tokenType.LEFT_BRACE },
@@ -519,11 +520,11 @@ describe("parse", () => {
   });
 
   describe("graphDocument", () => {
-    it("{}", () => {
+    test("{}", () => {
       assertParse(graphDocument([]), [ops.graph, {}]);
     });
 
-    it("{ a = 1, b }", () => {
+    test("{ a = 1, b }", () => {
       assertParse(
         graphDocument([
           { type: tokenType.REFERENCE, lexeme: "a" },
@@ -538,7 +539,7 @@ describe("parse", () => {
   });
 
   describe("group", () => {
-    it("(hello)", () => {
+    test("(hello)", () => {
       assertParse(
         group([
           { type: tokenType.LEFT_PAREN },
@@ -549,7 +550,7 @@ describe("parse", () => {
       );
     });
 
-    it("(((nested)))", () => {
+    test("(((nested)))", () => {
       assertParse(
         group([
           { type: tokenType.LEFT_PAREN },
@@ -564,7 +565,7 @@ describe("parse", () => {
       );
     });
 
-    it("(fn())", () => {
+    test("(fn())", () => {
       assertParse(
         group([
           { type: tokenType.LEFT_PAREN },
@@ -578,13 +579,13 @@ describe("parse", () => {
     });
 
     // Unmatched parenthesis
-    it("(", () => {
+    test("(", () => {
       assert.equal(group([{ type: tokenType.LEFT_PAREN }]), null);
     });
   });
 
   describe("implicitParensCall", () => {
-    it("fn arg", () => {
+    test("fn arg", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -598,7 +599,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn 'a', 'b'", () => {
+    test("fn 'a', 'b'", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -611,7 +612,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn a(b), c", () => {
+    test("fn a(b), c", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn" },
@@ -634,7 +635,7 @@ describe("parse", () => {
       );
     });
 
-    it("fn1 fn2 'arg'", () => {
+    test("fn1 fn2 'arg'", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "fn1" },
@@ -650,7 +651,7 @@ describe("parse", () => {
       );
     });
 
-    it("(fn()) 'arg'", () => {
+    test("(fn()) 'arg'", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.LEFT_PAREN },
@@ -665,7 +666,7 @@ describe("parse", () => {
       );
     });
 
-    it("https://example.com/graph.yaml 'key'", () => {
+    test("https://example.com/graph.yaml 'key'", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "https" },
@@ -684,7 +685,7 @@ describe("parse", () => {
   });
 
   describe("lambda", () => {
-    it("=message", () => {
+    test("=message", () => {
       assertParse(
         lambda([
           { type: tokenType.EQUALS },
@@ -694,7 +695,7 @@ describe("parse", () => {
       );
     });
 
-    it("=`Hello, {{name}}.`", () => {
+    test("=`Hello, {{name}}.`", () => {
       assertParse(
         lambda([
           { type: tokenType.EQUALS },
@@ -712,17 +713,17 @@ describe("parse", () => {
   });
 
   describe("list", () => {
-    it("", () => {
+    test("", () => {
       assertParse(list([]), []);
     });
 
-    it("a", () => {
+    test("a", () => {
       assertParse(list([{ type: tokenType.REFERENCE, lexeme: "a" }]), [
         [ops.scope, "a"],
       ]);
     });
 
-    it("a, b, c", () => {
+    test("a, b, c", () => {
       assertParse(
         list([
           { type: tokenType.REFERENCE, lexeme: "a" },
@@ -741,13 +742,13 @@ describe("parse", () => {
   });
 
   describe("number", () => {
-    it("1", () => {
+    test("1", () => {
       assertParse(number([{ type: tokenType.NUMBER, lexeme: "1" }]), 1);
     });
   });
 
   describe("object", () => {
-    it("{}", () => {
+    test("{}", () => {
       assertParse(
         object([
           { type: tokenType.LEFT_BRACE },
@@ -757,7 +758,7 @@ describe("parse", () => {
       );
     });
 
-    it("{ a: 1, b }", () => {
+    test("{ a: 1, b }", () => {
       assertParse(
         object([
           { type: tokenType.LEFT_BRACE },
@@ -780,7 +781,7 @@ describe("parse", () => {
   });
 
   describe("objectProperty", () => {
-    it("{ a: 1 }", () => {
+    test("{ a: 1 }", () => {
       assertParse(
         objectProperty([
           { type: tokenType.REFERENCE, lexeme: "a" },
@@ -791,7 +792,7 @@ describe("parse", () => {
       );
     });
 
-    it("{ name: 'Alice' }", () => {
+    test("{ name: 'Alice' }", () => {
       assertParse(
         objectProperty([
           { type: tokenType.REFERENCE, lexeme: "name" },
@@ -802,7 +803,7 @@ describe("parse", () => {
       );
     });
 
-    it("x: fn('a')", () => {
+    test("x: fn('a')", () => {
       assertParse(
         objectProperty([
           { type: tokenType.REFERENCE, lexeme: "x" },
@@ -818,7 +819,7 @@ describe("parse", () => {
   });
 
   describe("objectPropertyOrShorthand", () => {
-    it("foo", () => {
+    test("foo", () => {
       assertParse(
         objectPropertyOrShorthand([
           { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -831,7 +832,7 @@ describe("parse", () => {
   });
 
   describe("parensArgs", () => {
-    it("()", () => {
+    test("()", () => {
       assertParse(
         parensArgs([
           { type: tokenType.LEFT_PAREN },
@@ -840,7 +841,7 @@ describe("parse", () => {
         []
       );
     });
-    it("(a, b, c)", () => {
+    test("(a, b, c)", () => {
       assertParse(
         parensArgs([
           { type: tokenType.LEFT_PAREN },
@@ -862,13 +863,13 @@ describe("parse", () => {
 
   describe("pathKey", () => {
     // A path key that's a valid number but should be treated as a string
-    it("01", () => {
+    test("01", () => {
       assertParse(pathKey([{ type: tokenType.NUMBER, lexeme: "01" }]), "01");
     });
   });
 
   describe("protocolCall", () => {
-    it("foo://bar", () => {
+    test("foo://bar", () => {
       assertParse(
         protocolCall([
           { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -881,7 +882,7 @@ describe("parse", () => {
       );
     });
 
-    it("https://example.com/foo/", () => {
+    test("https://example.com/foo/", () => {
       assertParse(
         protocolCall([
           { type: tokenType.REFERENCE, lexeme: "https" },
@@ -897,7 +898,7 @@ describe("parse", () => {
       );
     });
 
-    it("http:example.com", () => {
+    test("http:example.com", () => {
       assertParse(
         protocolCall([
           { type: tokenType.REFERENCE, lexeme: "http" },
@@ -908,7 +909,7 @@ describe("parse", () => {
       );
     });
 
-    it("http://localhost:5000/foo", () => {
+    test("http://localhost:5000/foo", () => {
       assertParse(
         protocolCall([
           { type: tokenType.REFERENCE, lexeme: "http" },
@@ -927,7 +928,7 @@ describe("parse", () => {
   });
 
   describe("scopeReference", () => {
-    it("hello", () => {
+    test("hello", () => {
       assertParse(
         scopeReference([{ type: tokenType.REFERENCE, lexeme: "hello" }]),
         [ops.scope, "hello"]
@@ -936,7 +937,7 @@ describe("parse", () => {
   });
 
   describe("slashPath", () => {
-    it("foo/bar/baz", () => {
+    test("foo/bar/baz", () => {
       assertParse(
         slashPath([
           { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -948,7 +949,7 @@ describe("parse", () => {
         ["foo", "bar", "baz"]
       );
     });
-    it("foo/", () => {
+    test("foo/", () => {
       assertParse(
         slashPath([
           { type: tokenType.REFERENCE, lexeme: "foo" },
@@ -957,7 +958,7 @@ describe("parse", () => {
         ["foo", undefined]
       );
     });
-    it("month/12", () => {
+    test("month/12", () => {
       assertParse(
         slashPath([
           { type: tokenType.REFERENCE, lexeme: "month" },
@@ -970,7 +971,7 @@ describe("parse", () => {
   });
 
   describe("string", () => {
-    it("Hello", () => {
+    test("Hello", () => {
       assertParse(
         string([{ type: tokenType.STRING, lexeme: "Hello" }]),
         "Hello"
@@ -979,7 +980,7 @@ describe("parse", () => {
   });
 
   describe("substitution", () => {
-    it("{{foo}}", () => {
+    test("{{foo}}", () => {
       assertParse(
         substitution([
           { type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" },
@@ -992,7 +993,7 @@ describe("parse", () => {
   });
 
   describe("templateDocument", () => {
-    it("hello{{foo}}world", () => {
+    test("hello{{foo}}world", () => {
       assertParse(
         templateDocument([
           { type: tokenType.STRING, lexeme: "hello" },
@@ -1007,7 +1008,7 @@ describe("parse", () => {
   });
 
   describe("templateLiteral", () => {
-    it("`Hello, world.`", () => {
+    test("`Hello, world.`", () => {
       assertParse(
         templateLiteral([
           { type: tokenType.BACKTICK },
@@ -1018,7 +1019,7 @@ describe("parse", () => {
       );
     });
 
-    it("`foo {{x}} bar`", () => {
+    test("`foo {{x}} bar`", () => {
       assertParse(
         templateLiteral([
           { type: tokenType.BACKTICK },
@@ -1033,7 +1034,7 @@ describe("parse", () => {
       );
     });
 
-    it("`{{`nested`}}`", () => {
+    test("`{{`nested`}}`", () => {
       assertParse(
         templateLiteral([
           { type: tokenType.BACKTICK },
@@ -1050,7 +1051,7 @@ describe("parse", () => {
       );
     });
 
-    it("`{{map(people, =`{{name}}`)}}`", () => {
+    test("`{{map(people, =`{{name}}`)}}`", () => {
       assertParse(
         templateLiteral([
           { type: tokenType.BACKTICK },

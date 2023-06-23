@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import MapExtensionsGraph from "../../src/common/MapExtensionsGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("MapExtensionsGraph", () => {
-  it("applies a mapping function to keys that end in a given extension", async () => {
+  test("applies a mapping function to keys that end in a given extension", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "will be mapped",
@@ -23,7 +24,7 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
-  it("can change a key's extension", async () => {
+  test("can change a key's extension", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "will be mapped",
@@ -43,7 +44,7 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
-  it("can exclude non-explorable keys that don't match extension", async () => {
+  test("can exclude non-explorable keys that don't match extension", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "will be mapped",
@@ -69,7 +70,7 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
-  it("extension can include a period", async () => {
+  test("extension can include a period", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "will be mapped",
@@ -86,7 +87,7 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
-  it("applies a mapping function to convert extensions in the middle of a path", async () => {
+  test("applies a mapping function to convert extensions in the middle of a path", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "Hello, a.",

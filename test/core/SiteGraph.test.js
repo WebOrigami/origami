@@ -1,7 +1,8 @@
+import assert from "node:assert";
 import path from "node:path";
+import { describe, test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import SiteGraph from "../../src/core/SiteGraph.js";
-import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
@@ -11,7 +12,7 @@ const siteDirectory = path.join(fixturesDirectory, "temp");
 const localSiteUrl = pathToFileURL(siteDirectory);
 
 describe.skip("SiteGraph", () => {
-  it("can get keys at a given route", async () => {
+  test("can get keys at a given route", async () => {
     const graph = new SiteGraph(localSiteUrl.href);
     const keys = Array.from(await graph.keys());
     assert.deepEqual(keys, ["hello.txt"]);

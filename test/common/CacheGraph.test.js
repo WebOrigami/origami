@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import CacheGraph from "../../src/common/CacheGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import assert from "../assert.js";
 
 describe("CacheGraph", () => {
-  it("returns the first defined value from an ordered list of graphs", async () => {
+  test("returns the first defined value from an ordered list of graphs", async () => {
     const fixture = new CacheGraph({
       a: 1,
       b: 2,
@@ -17,22 +18,23 @@ describe("CacheGraph", () => {
     const keys = Array.from(await fixture.keys());
     assert.deepEqual(keys, ["a", "b", "c", "more"]);
 
-    assert.isUndefined(await cache.get("a"));
+    assert.equal(await cache.get("a"), undefined);
     assert.equal(await fixture.get("a"), 1);
     assert.equal(await cache.get("a"), 1);
 
-    assert.isUndefined(await cache.get("b"));
+    assert.equal(await cache.get("b"), undefined);
     assert.equal(await fixture.get("b"), 2);
     assert.equal(await cache.get("b"), 2);
 
-    assert.isUndefined(
-      await ExplorableGraph.traverse(fixture.cache, "more", "d")
+    assert.equal(
+      await ExplorableGraph.traverse(fixture.cache, "more", "d"),
+      undefined
     );
     assert.equal(await ExplorableGraph.traverse(fixture, "more", "d"), 4);
     assert.equal(await ExplorableGraph.traverse(fixture.cache, "more", "d"), 4);
   });
 
-  it("if a cache filter is supplied, it only caches files that match the filter", async () => {
+  test("if a cache filter is supplied, it only caches files that match the filter", async () => {
     const fixture = new CacheGraph(
       {
         "a.txt": "a",
@@ -53,6 +55,6 @@ describe("CacheGraph", () => {
     assert.equal(await cache.get("a.txt"), "a");
 
     // The b.txt value should not be cached because it does not match the filter.
-    assert.isUndefined(await cache.get("b.txt"));
+    assert.equal(await cache.get("b.txt"), undefined);
   });
 });

@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import loadYaml from "../../src/loaders/yaml.js";
-import assert from "../assert.js";
 
 describe(".yaml loader", () => {
-  it("loads input as a YAML file", async () => {
+  test("loads input as a YAML file", async () => {
     const text = `
 a: 1
 b: 2
@@ -16,7 +17,7 @@ b: 2
     });
   });
 
-  it("input that is already a graph variant is returned as is", async () => {
+  test("input that is already a graph variant is returned as is", async () => {
     const input = {
       a: 1,
       b: 2,
@@ -25,7 +26,7 @@ b: 2
     assert.deepEqual(result, input);
   });
 
-  it("can parse tagged Origami expressions", async () => {
+  test("can parse tagged Origami expressions", async () => {
     const text = `
 a: 1
 b: !ori a
@@ -38,7 +39,7 @@ b: !ori a
     });
   });
 
-  it("invoking loaded YAML as function with string argument gets value", async () => {
+  test("invoking loaded YAML as function with string argument gets value", async () => {
     const text = `
 a: 1
 `;
@@ -47,7 +48,7 @@ a: 1
     assert.equal(await fn("a"), 1);
   });
 
-  it("invoking loaded YAML as function with object argument puts argument in scope", async () => {
+  test("invoking loaded YAML as function with object argument puts argument in scope", async () => {
     const text = `
   foo: !ori (@input/bar)
   `;

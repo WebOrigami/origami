@@ -1,15 +1,16 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import loadMarkdown from "../../src/loaders/md.js";
-import assert from "../assert.js";
 
 describe(".md loader", () => {
-  it("loads markdown without front matter as text", async () => {
+  test("loads markdown without front matter as text", async () => {
     const text = `# Title`;
     const loaded = await loadMarkdown.call(null, text);
     assert.equal(loaded, text);
   });
 
-  it("loads markdown with front matter as an expression graph", async () => {
+  test("loads markdown with front matter as an expression graph", async () => {
     const text = `---
 a: !ori 1
 ---

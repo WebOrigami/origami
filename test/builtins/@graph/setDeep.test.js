@@ -4,7 +4,7 @@ import ObjectGraph from "../../../src/core/ObjectGraph.js";
 import assert from "../../assert.js";
 
 describe("@graph/setDeep", () => {
-  it("can apply updates with a single argument to set", async () => {
+  test("can apply updates with a single argument to set", async () => {
     const graph = new ObjectGraph({
       a: 1,
       b: 2,
@@ -41,7 +41,7 @@ describe("@graph/setDeep", () => {
     });
   });
 
-  it("can apply updates to an array", async () => {
+  test("can apply updates to an array", async () => {
     const graph = new ObjectGraph(["a", "b", "c"]);
     await setDeep(graph, ["d", "e"]);
     assert.deepEqual(await ExplorableGraph.plain(graph), ["d", "e", "c"]);

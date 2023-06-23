@@ -1,8 +1,9 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import { lex, state, tokenType } from "../../src/language/lex.js";
-import assert from "../assert.js";
 
 describe("lex", () => {
-  it("array with comma separator", () => {
+  test("array with comma separator", () => {
     const text = "[foo, bar]";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -14,7 +15,7 @@ describe("lex", () => {
     ]);
   });
 
-  it("array with newline separators", () => {
+  test("array with newline separators", () => {
     const text = "[\nfoo\nbar\n]";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -26,7 +27,7 @@ describe("lex", () => {
     ]);
   });
 
-  it("assignment", () => {
+  test("assignment", () => {
     const text = "foo = bar";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -37,13 +38,13 @@ describe("lex", () => {
     ]);
   });
 
-  it("double quoted string", () => {
+  test("double quoted string", () => {
     const text = '"foo"';
     const tokens = lex(text);
     assert.deepEqual(tokens, [{ type: tokenType.STRING, lexeme: "foo" }]);
   });
 
-  it("double quoted string with escaped double quote", () => {
+  test("double quoted string with escaped double quote", () => {
     const text = `"foo \\"bar\\" baz"`;
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -51,12 +52,12 @@ describe("lex", () => {
     ]);
   });
 
-  it("double quoted string with no closing quote", () => {
+  test("double quoted string with no closing quote", () => {
     const text = '"foo';
     assert.throws(() => lex(text));
   });
 
-  it("function call with arguments in parentheses", () => {
+  test("function call with arguments in parentheses", () => {
     const text = "foo(bar, baz)";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -69,7 +70,7 @@ describe("lex", () => {
     ]);
   });
 
-  it("function call with implicit parentheses and lambda argument", () => {
+  test("function call with implicit parentheses and lambda argument", () => {
     const text = "fn =`x`";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -82,13 +83,13 @@ describe("lex", () => {
     ]);
   });
 
-  it("number", () => {
+  test("number", () => {
     const text = "123";
     const tokens = lex(text);
     assert.deepEqual(tokens, [{ type: tokenType.NUMBER, lexeme: "123" }]);
   });
 
-  it("list with commas", () => {
+  test("list with commas", () => {
     const text = "foo,bar,baz";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -100,7 +101,7 @@ describe("lex", () => {
     ]);
   });
 
-  it("list with line breaks", () => {
+  test("list with line breaks", () => {
     const text = `foo
 bar
 baz`;
@@ -114,7 +115,7 @@ baz`;
     ]);
   });
 
-  it("object literal", () => {
+  test("object literal", () => {
     const text = "{ foo: bar, baz: qux }";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -130,7 +131,7 @@ baz`;
     ]);
   });
 
-  it("reference, comments, reference", () => {
+  test("reference, comments, reference", () => {
     const text =
       "   foo   # This is a comment\n# And another comment\n    bar   ";
     const tokens = lex(text);
@@ -141,7 +142,7 @@ baz`;
     ]);
   });
 
-  it("reference and a single quoted string", () => {
+  test("reference and a single quoted string", () => {
     const text = "foo 'bar'";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -151,7 +152,7 @@ baz`;
     ]);
   });
 
-  it("reference with escaped whitespace", () => {
+  test("reference with escaped whitespace", () => {
     const text = "foo\\ bar";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -159,7 +160,7 @@ baz`;
     ]);
   });
 
-  it("references separated by whitespace", () => {
+  test("references separated by whitespace", () => {
     const text = "foo bar baz";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -171,7 +172,7 @@ baz`;
     ]);
   });
 
-  it("single character tokens", () => {
+  test("single character tokens", () => {
     const text = "(),/:=[]{}";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -188,7 +189,7 @@ baz`;
     ]);
   });
 
-  it("slash-separated path", () => {
+  test("slash-separated path", () => {
     const text = "foo/bar/baz";
     const tokens = lex(text);
     assert.deepEqual(tokens, [
@@ -200,7 +201,7 @@ baz`;
     ]);
   });
 
-  it("template document with embedded expression", () => {
+  test("template document with embedded expression", () => {
     const text = "`foo` {{ bar }} baz";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
     assert.deepEqual(tokens, [
@@ -212,7 +213,7 @@ baz`;
     ]);
   });
 
-  it("template document with escaped left and right brace", () => {
+  test("template document with escaped left and right brace", () => {
     const text = "foo \\{{ bar \\}} baz";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
     assert.deepEqual(tokens, [
@@ -220,7 +221,7 @@ baz`;
     ]);
   });
 
-  it("template document with extra whitespace", () => {
+  test("template document with extra whitespace", () => {
     const text = "start\n{{ fn `\nnested\n` }}\nend";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
     assert.deepEqual(tokens, [
@@ -236,7 +237,7 @@ baz`;
     ]);
   });
 
-  it("template document with nested template", () => {
+  test("template document with nested template", () => {
     const text = "{{ `foo {{bar}}` }}";
     const tokens = lex(text, state.TEMPLATE_DOCUMENT);
     assert.deepEqual(tokens, [
@@ -254,7 +255,7 @@ baz`;
     ]);
   });
 
-  it("template literal with embedded expression", () => {
+  test("template literal with embedded expression", () => {
     const text = "`foo {{ bar }} baz`";
     const tokens = lex(text);
     assert.deepEqual(tokens, [

@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import EventTargetMixin from "../../src/framework/EventTargetMixin.js";
-import assert from "../assert.js";
 
 class EventTargetTest extends EventTargetMixin(Object) {}
 
 describe("EventTargetMixin", () => {
-  it("add and dispatch event", () => {
+  test("add and dispatch event", () => {
     const fixture = new EventTargetTest();
     const event = new Event("test");
     let callCount = 0;
@@ -19,14 +20,14 @@ describe("EventTargetMixin", () => {
     assert.equal(callCount, 1);
   });
 
-  it("dispatch event with no listeners", () => {
+  test("dispatch event with no listeners", () => {
     const fixture = new EventTargetTest();
     const event = new Event("test");
     const takeDefaultAction = fixture.dispatchEvent(event);
     assert(takeDefaultAction);
   });
 
-  it("remove event listener", () => {
+  test("remove event listener", () => {
     const fixture = new EventTargetTest();
     const event = new Event("test");
     let callCount = 0;
@@ -39,7 +40,7 @@ describe("EventTargetMixin", () => {
     assert.equal(callCount, 0);
   });
 
-  it("stop immediate propagation", () => {
+  test("stop immediate propagation", () => {
     const fixture = new EventTargetTest();
     const event = new Event("test");
     let callCount = 0;
@@ -54,7 +55,7 @@ describe("EventTargetMixin", () => {
     assert.equal(callCount, 1);
   });
 
-  it("prevent default", () => {
+  test("prevent default", () => {
     const fixture = new EventTargetTest();
     const event = new Event("test");
     fixture.addEventListener("test", (event) => {

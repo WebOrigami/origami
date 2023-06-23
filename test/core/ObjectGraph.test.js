@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
-import assert from "../assert.js";
 
 describe("ObjectGraph", () => {
-  it("can async explore a plain JavaScript object", async () => {
+  test("can async explore a plain JavaScript object", async () => {
     const graph = new ObjectGraph({
       a: 1,
       b: 2,
@@ -16,17 +17,17 @@ describe("ObjectGraph", () => {
     assert.deepEqual(Array.from(await graph.keys()), ["a", "b", "c"]);
   });
 
-  it("can explore a standard JavaScript Array", async () => {
+  test("can explore a standard JavaScript Array", async () => {
     const graph = new ObjectGraph(["a", "b", "c"]);
     assert.deepEqual(await ExplorableGraph.plain(graph), ["a", "b", "c"]);
   });
 
-  it("get(undefined) returns the graph itself", async () => {
+  test("get(undefined) returns the graph itself", async () => {
     const graph = new ObjectGraph({});
     assert.equal(await graph.get(undefined), graph);
   });
 
-  it("can set a value", async () => {
+  test("can set a value", async () => {
     const graph = new ObjectGraph({
       a: 1,
       b: 2,
@@ -49,7 +50,7 @@ describe("ObjectGraph", () => {
     });
   });
 
-  it("returns an ObjectGraph for value that's a plain sub-object or sub-array", async () => {
+  test("returns an ObjectGraph for value that's a plain sub-object or sub-array", async () => {
     const graph = new ObjectGraph({
       a: 1,
       object: {
@@ -67,7 +68,7 @@ describe("ObjectGraph", () => {
     assert.deepEqual(await ExplorableGraph.plain(array), [3]);
   });
 
-  it("returns an explorable value as is", async () => {
+  test("returns an explorable value as is", async () => {
     const explorable = {
       async get(key) {
         return key === "b" ? 2 : undefined;
@@ -83,7 +84,7 @@ describe("ObjectGraph", () => {
     assert.equal(await graph.get("explorable"), explorable);
   });
 
-  it("can indicate which values are explorable", async () => {
+  test("can indicate which values are explorable", async () => {
     const graph = new ObjectGraph({
       a1: 1,
       a2: {
@@ -101,7 +102,7 @@ describe("ObjectGraph", () => {
     assert.deepEqual(valuesExplorable, [false, true, false, true]);
   });
 
-  it("can wrap a class instance", async () => {
+  test("can wrap a class instance", async () => {
     class Foo {
       constructor() {
         this.a = 1;

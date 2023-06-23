@@ -1,3 +1,5 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
@@ -5,10 +7,9 @@ import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import * as ops from "../../src/language/ops.js";
-import assert from "../assert.js";
 
 describe("ops", () => {
-  it("can resolve substitutions in a template literal", async () => {
+  test("can resolve substitutions in a template literal", async () => {
     const scope = new ObjectGraph({
       name: "world",
     });
@@ -19,7 +20,7 @@ describe("ops", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  it("can invoke a lambda", async () => {
+  test("can invoke a lambda", async () => {
     const scope = new ObjectGraph({
       name: "world",
     });
@@ -34,7 +35,7 @@ describe("ops", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  it("can instantiate an object", async () => {
+  test("can instantiate an object", async () => {
     const scope = new ObjectGraph({
       upper: (s) => s.toUpperCase(),
     });
@@ -52,7 +53,7 @@ describe("ops", () => {
     assert.equal(result.world, "WORLD");
   });
 
-  it("can instantiate an array", async () => {
+  test("can instantiate an array", async () => {
     const scope = new ObjectGraph({
       upper: (s) => s.toUpperCase(),
     });
@@ -61,7 +62,7 @@ describe("ops", () => {
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
-  it("can instantiate an Origami graph", async () => {
+  test("can instantiate an Origami graph", async () => {
     const code = [
       ops.graph,
       {
@@ -82,7 +83,7 @@ describe("ops", () => {
     });
   });
 
-  it("can search inherited scope", async () => {
+  test("can search inherited scope", async () => {
     const a = new ObjectGraph({
       a: 1, // This is the inherited value we want
     });

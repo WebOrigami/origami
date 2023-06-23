@@ -1,9 +1,10 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
-import assert from "../assert.js";
 
 describe("InheritScopeTransform", () => {
-  it("creates a scope that includes a graph and its parent", async () => {
+  test("creates a scope that includes a graph and its parent", async () => {
     const fixture = new (InheritScopeTransform(ObjectGraph))({
       b: 2,
     });
@@ -14,7 +15,7 @@ describe("InheritScopeTransform", () => {
     assert.deepEqual(await fixture.scope?.get("a"), 1);
   });
 
-  it("adds a subgraph's parent to the subgraphs's scope", async () => {
+  test("adds a subgraph's parent to the subgraphs's scope", async () => {
     const fixture = new (InheritScopeTransform(ObjectGraph))({
       a: 1,
       subgraph: {

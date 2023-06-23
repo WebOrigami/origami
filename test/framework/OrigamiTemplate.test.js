@@ -1,18 +1,19 @@
+import assert from "node:assert";
 import path from "node:path";
+import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import mapValues from "../../src/builtins/@map/values.js";
 import FilesGraph from "../../src/core/FilesGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
-import assert from "../assert.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const templatesDirectory = path.join(dirname, "fixtures/templates");
 const templateFiles = new FilesGraph(templatesDirectory);
 
 describe("OrigamiTemplate", () => {
-  it("can make substitutions from input and context", async () => {
+  test("can make substitutions from input and context", async () => {
     const template = new OrigamiTemplate("{{greeting}}, {{name}}.");
     const input = { name: "world" };
     const scope = new ObjectGraph({ greeting: "Hello" });
@@ -20,7 +21,7 @@ describe("OrigamiTemplate", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  it("can inline files", async () => {
+  test("can inline files", async () => {
     const template = new OrigamiTemplate(
       `This template inlines a file.
 {{ plain.txt }}`
@@ -35,7 +36,7 @@ Hello, world.
     );
   });
 
-  it("can map data to a nested template", async () => {
+  test("can map data to a nested template", async () => {
     const template = new OrigamiTemplate(
       "Greetings:\n{{map(people, =`{{greeting}}, {{./name}}.\n`)}}"
     );
@@ -59,7 +60,7 @@ Hello, Carol.
     );
   });
 
-  it("can recurse via @template/apply", async () => {
+  test("can recurse via @template/apply", async () => {
     const template = new OrigamiTemplate(
       `{{ @if @graph/isExplorable(@input)
         =\`({{ @map/values(@input, @template/recurse) }})\`

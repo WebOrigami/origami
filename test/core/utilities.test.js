@@ -1,10 +1,11 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ObjectGraph from "../../src/core/ObjectGraph.js";
 import * as utilities from "../../src/core/utilities.js";
-import assert from "../assert.js";
 
 describe("utilities", () => {
-  it("extractFrontMatter() returns front matter if found", () => {
+  test("extractFrontMatter() returns front matter if found", () => {
     const text = utilities.extractFrontMatter(`---
 a: Hello, a.
 ---
@@ -20,14 +21,14 @@ This is the content.
     });
   });
 
-  it("extractFrontMatter returns body text if no front matter is found", () => {
+  test("extractFrontMatter returns body text if no front matter is found", () => {
     const text = "a: Hello, a.";
     const { bodyText, frontData } = utilities.extractFrontMatter(text);
     assert.equal(frontData, null);
     assert.equal(bodyText, text);
   });
 
-  it("parse can combine front matter and body text", () => {
+  test("parse can combine front matter and body text", () => {
     const parsed = utilities.parseYaml(`---
 a: Hello, a.
 ---
@@ -39,13 +40,13 @@ This is the content.
     });
   });
 
-  it("outputFrontMatter writes output as text if there's no graph", async () => {
+  test("outputFrontMatter writes output as text if there's no graph", async () => {
     const text = "This is the content.";
     const output = await utilities.outputWithGraph(text);
     assert.equal(output, text);
   });
 
-  it("outputFrontMatter adds graph to output", async () => {
+  test("outputFrontMatter adds graph to output", async () => {
     const text = "This is the content.";
     const graph = new ObjectGraph({ a: "Hello, a." });
     const output = await utilities.outputWithGraph(text, graph);
@@ -56,7 +57,7 @@ This is the content.
     });
   });
 
-  it("outputFrontMatter can include front matter", async () => {
+  test("outputFrontMatter can include front matter", async () => {
     const text = "This is the content.";
     const graph = new ObjectGraph({ a: "Hello, a." });
     const output = await utilities.outputWithGraph(text, graph, true);
@@ -73,13 +74,13 @@ This is the content.`
     });
   });
 
-  it("sortNatural can sort values by natural sort order", () => {
+  test("sortNatural can sort values by natural sort order", () => {
     const keys = ["b", 10, 2, "c", 1, "a"];
     const sorted = utilities.sortNatural(keys);
     assert.deepEqual(sorted, [1, 2, 10, "a", "b", "c"]);
   });
 
-  it("transformObject can apply a class mixin to a single object instance", () => {
+  test("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {
         get name() {
@@ -114,7 +115,7 @@ This is the content.`
     assert("extra" in fixture);
   });
 
-  it("transformObject applies the same mixin to explorable results", async () => {
+  test("transformObject applies the same mixin to explorable results", async () => {
     function UppercaseTransform(Base) {
       return class Uppercase extends Base {
         async get(key) {
