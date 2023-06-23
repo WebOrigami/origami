@@ -8,7 +8,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("OrigamiFiles", () => {
-  it.only("can watch its folder for changes", async () => {
+  it("can watch its folder for changes", async () => {
     await createTempDirectory();
     const tempFiles = new OrigamiFiles(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
