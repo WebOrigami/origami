@@ -2,6 +2,7 @@
   "name": "@graphorigami/core",
   "version": "0.0.1",
   "type": "module",
+  "main": "./exports.js",
   "devDependencies": {
     "@types/node": "20.2.4",
     "typescript": "5.0.4"
