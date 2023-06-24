@@ -1,8 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";

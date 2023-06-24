@@ -1,10 +1,10 @@
+import { ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 import {
   extractFrontMatter,
   getScope,

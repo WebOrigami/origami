@@ -10,7 +10,11 @@ import ObjectDictionary from "./ObjectDictionary.js";
 export default class ObjectGraph extends ObjectDictionary {
   async get(key) {
     let value = await super.get(key);
-    if (GraphHelpers.isPlainObject(value)) {
+    const isPlain =
+      value instanceof Array ||
+      (GraphHelpers.isPlainObject(value) &&
+        !GraphHelpers.isAsyncDictionary(value));
+    if (isPlain) {
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;

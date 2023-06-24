@@ -1,7 +1,7 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
 import * as compile from "../../src/language/compile.js";
 
 const scope = new ObjectGraph({

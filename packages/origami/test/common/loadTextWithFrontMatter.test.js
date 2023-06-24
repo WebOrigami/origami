@@ -1,10 +1,9 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import StringWithGraph from "../../src/common/StringWithGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("loadTextWithFrontMatter", () => {
   test("returns plain text input as is", () => {
     const result = loadTextWithFrontMatter.call(null, "text");

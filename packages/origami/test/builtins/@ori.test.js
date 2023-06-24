@@ -1,10 +1,9 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
 import ori from "../../src/builtins/@ori.js";
 import Scope from "../../src/common/Scope.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("ori builtin", () => {
   test("evaluates an expression in the context of a scope and returns result", async () => {
     const graph = new ObjectGraph({

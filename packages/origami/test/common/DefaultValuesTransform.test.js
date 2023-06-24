@@ -1,9 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import DefaultValuesTransform from "../../src/common/DefaultValuesTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("DefaultValuesTransform", () => {
   test("provides default values for missing keys at any point in graph", async () => {
     const graph = new (DefaultValuesTransform(ObjectGraph))({

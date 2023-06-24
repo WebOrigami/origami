@@ -1,8 +1,7 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("ExplorableGraph", () => {
   test("entries() returns [key, value] pairs for the graph", async () => {
     const graph = new ObjectGraph({

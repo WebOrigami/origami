@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "./ExplorableGraph.js";
 import * as utilities from "./utilities.js";
 
@@ -26,22 +27,22 @@ export default class MapValuesGraph {
    */
   async get(key) {
     let value;
-    let isExplorable;
+    let isSubgraph;
     let invokeMapFn;
-    if (this.getValue || this.graph.isKeyExplorable === undefined) {
+    if (this.getValue || this.graph.isKeyForSubgraph === undefined) {
       value = await this.graph.get(key);
-      isExplorable = ExplorableGraph.isExplorable(value);
+      isSubgraph = GraphHelpers.isAsyncDictionary(value);
       invokeMapFn = value !== undefined;
     } else {
-      isExplorable = await this.graph.isKeyExplorable(key);
+      isSubgraph = await this.graph.isKeyForSubgraph(key);
       invokeMapFn = true;
-      value = isExplorable
+      value = isSubgraph
         ? // Will need to get value to create subgraph.
           await this.graph.get(key)
         : // Don't need value
           undefined;
     }
-    return this.deep && isExplorable
+    return this.deep && isSubgraph
       ? // Return mapped subgraph
         Reflect.construct(this.constructor, [value, this.mapFn, this.options])
       : invokeMapFn

@@ -1,9 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableSiteTransform from "../../src/common/ExplorableSiteTransform.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("ExplorableSiteTransform", () => {
   test.skip("treats an undefined key at the end of a traversal as index.html", async () => {
     const graph = new (ExplorableSiteTransform(ObjectGraph))({

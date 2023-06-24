@@ -1,10 +1,9 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import exceptions from "../../../src/builtins/@graph/exceptions.js";
 import InvokeFunctionsTransform from "../../../src/common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../../src/core/ObjectGraph.js";
-
 describe("exceptions", () => {
   test("returns the exceptions thrown in a graph", async () => {
     const graph = new (InvokeFunctionsTransform(ObjectGraph))({

@@ -25,13 +25,14 @@ export default class ObjectDictionary {
       return this;
     }
 
-    // We check to make sure the object itself has the key as one of its "own"
-    // properties because, if the object's an array, we don't want to return
-    // values for keys like `map` and `find` that are Array prototype methods.
-    const value =
-      !(this.object instanceof Array) || this.object.hasOwnProperty(key)
-        ? this.object[key]
-        : undefined;
+    // If the value is an array, we require that the key be one of its own
+    // properties: we don't want to return Array prototype methods like `map`
+    // and `find`.
+    if (this.object instanceof Array && !this.object.hasOwnProperty(key)) {
+      return undefined;
+    }
+
+    const value = this.object[key];
     return value;
   }
 

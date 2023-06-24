@@ -1,5 +1,5 @@
+import { ObjectGraph } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 
 /**
  * Caches non-explorable values from the first (source) graph in a second

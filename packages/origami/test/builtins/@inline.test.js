@@ -1,9 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
-import ObjectGraph from "../../src/core/ObjectGraph.js";
-
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
     const scope = new ObjectGraph({

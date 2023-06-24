@@ -1,7 +1,7 @@
+import { ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import FunctionGraph from "./FunctionGraph.js";
 import MapValuesGraph from "./MapValuesGraph.js";
-import ObjectGraph from "./ObjectGraph.js";
 import SetGraph from "./SetGraph.js";
 import * as utilities from "./utilities.js";
 
@@ -152,6 +152,9 @@ export default class ExplorableGraph {
   // `isValueExplorable`, on the other hand, makes it sound like it takes a
   // value argument instead of a key.
   static async isKeyExplorable(graph, key) {
+    if (graph.isKeyForSubgraph) {
+      return graph.isKeyForSubgraph(key);
+    }
     if (graph.isKeyExplorable) {
       return graph.isKeyExplorable(key);
     }

@@ -1,9 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import setDeep from "../../../src/builtins/@graph/setDeep.js";
 import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
-import ObjectGraph from "../../../src/core/ObjectGraph.js";
-
 describe("@graph/setDeep", () => {
   test("can apply updates with a single argument to set", async () => {
     const graph = new ObjectGraph({

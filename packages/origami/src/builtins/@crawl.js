@@ -1,7 +1,7 @@
+import { ObjectGraph } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 import { isPlainObject, keysFromPath } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";

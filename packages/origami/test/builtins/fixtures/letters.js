@@ -1,5 +1,4 @@
-import ObjectGraph from "../../../src/core/ObjectGraph.js";
-
+import { ObjectGraph } from "@graphorigami/core";
 export default new ObjectGraph({
   a: "The letter A",
   b: "The letter B",

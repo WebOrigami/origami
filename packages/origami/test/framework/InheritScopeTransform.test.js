@@ -1,7 +1,7 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
-import ObjectGraph from "../../src/core/ObjectGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 
 // @ts-ignore

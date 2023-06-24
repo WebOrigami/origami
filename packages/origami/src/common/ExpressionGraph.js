@@ -1,4 +1,4 @@
-import ObjectGraph from "../core/ObjectGraph.js";
+import { ObjectGraph } from "@graphorigami/core";
 import { isExpressionFunction } from "../language/expressionFunction.js";
 import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
 

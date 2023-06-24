@@ -1,5 +1,5 @@
+import { ObjectGraph } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 import MergeGraph from "./MergeGraph.js";
 
 const globstar = "**";

@@ -1,6 +1,6 @@
+import { ObjectGraph } from "@graphorigami/core";
 import setDeep from "../builtins/@graph/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import ObjectGraph from "../core/ObjectGraph.js";
 
 /**
  * Caches the results retrieved from one source graph in a second cache graph.
