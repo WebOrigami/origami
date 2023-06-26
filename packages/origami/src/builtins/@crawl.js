@@ -53,7 +53,7 @@ export default async function crawl(variant, baseHref) {
     // Add indirect resource references to the cache.
     for (const resourcePath of resourcePaths) {
       const fn = () => {
-        return ExplorableGraph.traversePath(graph, resourcePath);
+        return GraphHelpers.traversePath(graph, resourcePath);
       };
       const resourceKeys = keysFromPath(resourcePath);
       addValueToObject(cache, resourceKeys, fn);

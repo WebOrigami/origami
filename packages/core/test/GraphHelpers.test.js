@@ -207,4 +207,15 @@ describe("GraphHelpers", () => {
     });
     assert.equal(await GraphHelpers.traverse(obj, "a", "b", "c"), "Hello");
   });
+
+  test("traversePath() traverses a slash-separated path", async () => {
+    const obj = new ObjectGraph({
+      a: {
+        b: {
+          c: "Hello",
+        },
+      },
+    });
+    assert.equal(await GraphHelpers.traversePath(obj, "a/b/c"), "Hello");
+  });
 });

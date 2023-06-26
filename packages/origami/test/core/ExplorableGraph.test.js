@@ -38,13 +38,4 @@ describe("ExplorableGraph", () => {
       1
     );
   });
-
-  test("values() returns an iterator for the graph's values", async () => {
-    const graph = new ObjectGraph({
-      a: 1,
-      b: 2,
-      c: 3,
-    });
-    assert.deepEqual(Array.from(await graph.keys()), ["a", "b", "c"]);
-  });
 });

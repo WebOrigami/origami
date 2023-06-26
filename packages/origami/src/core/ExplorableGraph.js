@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import * as utilities from "./utilities.js";
 
 /**
  * A collection of static methods providing helpers for working with explorable
@@ -67,18 +66,6 @@ export default class ExplorableGraph {
       value = await graph.get(key);
     }
     return value;
-  }
-
-  /**
-   * Given a slash-separated path like "foo/bar", traverse the keys "foo" and
-   * "bar" and return the resulting value.
-   *
-   * @param {GraphVariant} graph
-   * @param {string} path
-   */
-  static async traversePath(graph, path) {
-    const keys = utilities.keysFromPath(path);
-    return ExplorableGraph.traverse(graph, ...keys);
   }
 }
 
