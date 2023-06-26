@@ -1,8 +1,8 @@
 import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import MapValuesGraph from "../../src/common/MapValuesGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import MapValuesGraph from "../../src/core/MapValuesGraph.js";
 
 describe("MapValuesGraph", () => {
   test("applies a mapping function to values", async () => {

@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
-import MapValuesGraph from "./MapValuesGraph.js";
+import MapValuesGraph from "../common/MapValuesGraph.js";
 import * as utilities from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can

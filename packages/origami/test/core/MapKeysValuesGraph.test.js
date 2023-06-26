@@ -1,8 +1,8 @@
 import { FunctionGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import MapKeysValuesGraph from "../../src/common/MapKeysValuesGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import MapKeysValuesGraph from "../../src/core/MapKeysValuesGraph.js";
 
 // Test graph changes a lowercase inner key and its value to uppercase, but
 // leaves uppercase inner keys and their values alone.

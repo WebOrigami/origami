@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import MapExtensionsGraph from "../../common/MapExtensionsGraph.js";
-import MapValuesGraph from "../../core/MapValuesGraph.js";
+import MapValuesGraph from "../../common/MapValuesGraph.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 

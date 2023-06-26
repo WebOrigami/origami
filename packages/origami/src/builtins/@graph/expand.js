@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
+import MapValuesGraph from "../../common/MapValuesGraph.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
-import MapValuesGraph from "../../core/MapValuesGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

@@ -1,5 +1,5 @@
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
-import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
+import MapKeysValuesGraph from "../common/MapKeysValuesGraph.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 export default class ArrowGraph extends InvokeFunctionsTransform(

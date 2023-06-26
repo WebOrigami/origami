@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "./ExplorableGraph.js";
-import * as utilities from "./utilities.js";
+import ExplorableGraph from "../core/ExplorableGraph.js";
+import * as utilities from "../core/utilities.js";
 
 /**
  * Given a graph and a function, return a new explorable graph that applies the
