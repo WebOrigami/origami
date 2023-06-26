@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../../common/Scope.js";
 import { graphInContext, keySymbol } from "../../core/utilities.js";
@@ -7,6 +6,8 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a copy of the given graph that has the indicated graphs as its scope.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} variant
  * @param  {...(GraphVariant|null)} scopeGraphs
  * @this {AsyncDictionary|null}

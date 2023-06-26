@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
 import * as serialize from "../../core/serialize.js";
@@ -7,6 +6,10 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Render a graph in DOT format.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]

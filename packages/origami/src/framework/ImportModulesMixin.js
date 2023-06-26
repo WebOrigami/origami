@@ -1,10 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 /**
- * @param {Constructor<AsyncDictionary & { dirname: string }>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary & { dirname: string }>} BaseConstructor
+ * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {
   return class ImportModules extends Base {

@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import { transformObject } from "../../core/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
@@ -7,9 +6,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Given a graph, take the first n items from it.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param {number} n
- * @this {AsyncDictionary|null}
  */
 export default async function take(variant, n) {
   assertScopeIsDefined(this);

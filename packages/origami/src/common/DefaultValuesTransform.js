@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import {
   getScope,
@@ -12,7 +11,9 @@ import {
  * requested key is missing from the main graph, but exists in the default
  * values graph, the value will be returned from that graph.
  *
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function DefaultValuesTransform(Base) {
   return class DefaultValues extends Base {

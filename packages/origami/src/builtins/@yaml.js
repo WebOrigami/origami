@@ -6,6 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the object as text in YAML format.
  *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */

@@ -1,10 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import CacheSite from "../../common/CacheSite.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Caches fetch requests for a standard site.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} graph
  * @param {GraphVariant} [cache]
  * @param {GraphVariant} [filter]

@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("../core/explorable").StringLike} StringLike
+ */
+
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";

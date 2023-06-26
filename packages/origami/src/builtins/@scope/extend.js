@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import setScope from "./set.js";
 
@@ -6,6 +5,9 @@ import setScope from "./set.js";
  * Return a copy of the given graph whose scope includes the given graphs *and*
  * the current scope.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param  {...GraphVariant} scopeGraphs
  * @this {AsyncDictionary|null}

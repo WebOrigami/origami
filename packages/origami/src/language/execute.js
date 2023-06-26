@@ -1,5 +1,3 @@
-/// <reference path="./code.d.ts" />
-
 import { GraphHelpers } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
@@ -10,6 +8,9 @@ const expressionSymbol = Symbol("expression");
  * Evaluate the given code and return the result.
  *
  * `this` should be the scope used to look up references found in the code.
+ *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("./code").Code} Code
  *
  * @this {GraphVariant|null}
  * @param {Code} code

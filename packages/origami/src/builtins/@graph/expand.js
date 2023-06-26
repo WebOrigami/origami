@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import MapValuesGraph from "../../common/MapValuesGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -6,6 +5,8 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expand values that can be treated as explorable graphs into graphs.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */

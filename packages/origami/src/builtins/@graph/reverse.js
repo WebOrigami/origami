@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import { transformObject } from "../../core/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
@@ -6,6 +5,10 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Reverse the order of the top-level keys in the graph.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]

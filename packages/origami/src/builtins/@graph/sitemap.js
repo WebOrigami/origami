@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import OrigamiTemplate from "../../framework/OrigamiTemplate.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -15,6 +14,8 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 `;
 
 /**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param {string} [baseHref ]

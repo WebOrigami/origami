@@ -1,10 +1,10 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-
 /**
  * When using `get` to retrieve a value from a graph, if the value is a
  * function, invoke it and return the result.
  *
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function InvokeFunctionsTransform(Base) {
   return class InvokeFunctions extends Base {

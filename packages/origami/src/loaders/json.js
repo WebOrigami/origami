@@ -6,6 +6,8 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 /**
  * Load a file as JSON.
  *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("../core/explorable").HasString} HasString
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
  * @this {AsyncDictionary|null}

@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import MapInnerKeysGraph from "../../common/MapInnerKeysGraph.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
@@ -6,6 +5,10 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Wrap a graph and redefine the key used to access nodes in it.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant

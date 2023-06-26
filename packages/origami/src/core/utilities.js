@@ -137,6 +137,7 @@ export const keySymbol = Symbol("key");
  * prototype for the result -- the original graph is not modified. If the graph
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} variant
  * @param {AsyncDictionary|null} context
  * @returns {AsyncDictionary & { parent: AsyncDictionary }}
@@ -176,6 +177,7 @@ export function stringLike(value) {
 /**
  * Convert the given object to a function.
  *
+ * @typedef {import("./explorable").Invocable} Invocable
  * @param {Invocable} obj
  */
 export function toFunction(obj) {

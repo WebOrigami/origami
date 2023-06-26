@@ -6,9 +6,10 @@ import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
  */
 export default class CacheGraph {
   /**
-   * @param  {Explorable|object} graph
-   * @param {Explorable|object} [cache]
-   * @param {Explorable|object} [filter]
+   * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+   * @param {GraphVariant} graph
+   * @param {GraphVariant} [cache]
+   * @param {GraphVariant} [filter]
    */
   constructor(graph, cache, filter) {
     this.graph = GraphHelpers.from(graph);

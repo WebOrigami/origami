@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import { extractFrontMatter } from "../core/serialize.js";
 import { isPlainObject, keySymbol } from "../core/utilities.js";
@@ -13,6 +12,9 @@ import StringWithGraph from "./StringWithGraph.js";
  * If the text starts with `---`, the loader attempts to parse the front matter.
  * If successful, the document will be returned as a String with an attached
  * graph with the front matter and document content as data.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").StringLike} StringLike
  *
  * @param {StringLike} input
  * @param {any} [key]

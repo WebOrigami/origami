@@ -1,4 +1,7 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ */
+
 import { GraphHelpers } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import {
@@ -13,6 +16,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated graph.
  *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
@@ -44,7 +48,8 @@ export default async function debug(variant) {
 }
 
 /**
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {

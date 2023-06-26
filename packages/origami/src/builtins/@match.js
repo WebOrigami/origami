@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -16,6 +15,10 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * If a key is requested, match against the given pattern and, if matches,
  * incorporate the matched pattern's wildcard values into the scope and invoke
  * the indicated function to produce a result.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("../core/explorable").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn

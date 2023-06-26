@@ -1,10 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import GlobGraph from "../common/GlobGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Define a graph whose keys are globs.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} graph
  * @this {AsyncDictionary|null}
  */

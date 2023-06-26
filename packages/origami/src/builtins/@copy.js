@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import process, { stdout } from "node:process";
 import { transformObject } from "../core/utilities.js";
@@ -6,6 +5,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./@graph/setDeep.js";
 
 /**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} source
  * @param {GraphVariant} target

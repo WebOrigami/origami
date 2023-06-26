@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import StringWithGraph from "../common/StringWithGraph.js";
 import { keySymbol } from "../core/utilities.js";
@@ -7,6 +6,8 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Return a default index.html page for the current graph.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */

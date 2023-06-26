@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import { getScope, keySymbol } from "../core/utilities.js";
@@ -7,7 +6,9 @@ const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");
 
 /**
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function InheritScopeTransform(Base) {
   return class InheritScope extends Base {

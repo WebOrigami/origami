@@ -1,13 +1,14 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Returns the key after the indicated key.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param {any} key
- * @this {AsyncDictionary|null}
  */
 export default async function nextKey(variant, key) {
   assertScopeIsDefined(this);

@@ -1,4 +1,4 @@
-/// <reference path="../core/explorable.ts"/>
+import { Mixin } from "../core/explorable";
 
 declare const EventTargetMixin: Mixin<{
   addEventListener(type: string, listener: EventListener): void;

@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
@@ -19,6 +18,8 @@ ignoreKeys.push(".");
 ignoreKeys.push("..");
 
 /**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  */

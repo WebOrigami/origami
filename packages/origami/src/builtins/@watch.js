@@ -1,10 +1,13 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import ConstantGraph from "../common/ConstantGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Let a graph (e.g., of files) respond to changes.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("../core/explorable").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]

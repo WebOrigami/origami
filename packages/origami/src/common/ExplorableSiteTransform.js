@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
@@ -24,7 +23,9 @@ import defaultKeysJson from "../framework/defaultKeysJson.js";
  * As a convenience, this transform also provides a default index.html page if
  * the graph doesn't define one.
  *
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {

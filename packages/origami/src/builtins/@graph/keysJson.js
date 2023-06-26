@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
@@ -7,6 +6,8 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expose .keys.json for a graph.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  */

@@ -1,4 +1,4 @@
-/// <reference path="../core/explorable.ts"/>
+import { Mixin } from "../core/explorable";
 
 import type { AsyncDictionary } from "@graphorigami/types";
 

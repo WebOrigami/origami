@@ -1,5 +1,7 @@
 /**
- * @param {Constructor<Explorable & { import: function }>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary & { import: function }>} BaseConstructor
+ * @param {BaseConstructor} Base
  */
 export default function ImplicitModulesTransform(Base) {
   return class ImplicitModules extends Base {

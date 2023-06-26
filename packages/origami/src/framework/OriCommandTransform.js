@@ -15,7 +15,8 @@ import {
  * E.g., asking this graph for `!yaml` will invoke the yaml() builtin function
  * in the context of this graph.
  *
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function OriCommandTransform(Base) {
   return class OriCommand extends Base {

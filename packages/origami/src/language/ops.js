@@ -1,5 +1,7 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-/// <reference path="./code.d.ts" />
+/**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ */
 
 import filesBuiltin from "../builtins/@files.js";
 import concatBuiltin from "../builtins/@graph/concat.js";
@@ -140,6 +142,7 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
+ * @typedef {import("./code").Code} Code
  * @this {AsyncDictionary|null}
  * @param {Code} code
  */

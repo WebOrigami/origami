@@ -36,7 +36,7 @@ function extendGraphScopeWithParams(graph, url) {
   return extendedGraph;
 }
 
-// Explorable graph router as Express middleware.
+// Asynchronous graph router as Express middleware.
 export function graphRouter(graph) {
   // Return a router for the graph source.
   return async function (request, response, next) {
@@ -178,6 +178,7 @@ export async function handleRequest(request, response, graph) {
  * https.createServer calls, letting you serve an explorable function as a set
  * of pages.
  *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} variant
  */
 export function requestListener(variant) {

@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import MapExtensionsGraph from "../../common/MapExtensionsGraph.js";
 import MapValuesGraph from "../../common/MapValuesGraph.js";
@@ -7,6 +6,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Map the top-level values of a graph with a map function.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("../../core/explorable").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant

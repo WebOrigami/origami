@@ -1,10 +1,13 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { FunctionGraph } from "@graphorigami/core";
 import { graphInContext, toFunction } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Create a graph from a function and a set of keys.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("../../core/explorable").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
  * @param {Invocable} [invocable]

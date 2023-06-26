@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
@@ -18,6 +17,10 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * Load a file as YAML.
+ *
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").HasString} HasString
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]

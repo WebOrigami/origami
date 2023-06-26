@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import graphviz from "graphviz-wasm";
 import StringWithGraph from "../common/StringWithGraph.js";
@@ -9,6 +8,10 @@ let graphvizLoaded = false;
 
 /**
  * Render a graph visually in SVG format.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]

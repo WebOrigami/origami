@@ -1,4 +1,4 @@
-/// <reference path="../src/core/explorable.ts"/>
+import type { Mixin } from "../src/core/explorable";
 
 declare const PathTransform: Mixin<{}>;
 

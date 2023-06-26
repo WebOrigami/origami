@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
 import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
@@ -7,6 +6,10 @@ import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
  * Load a .js file as a String with a toFunction() method that returns a
  * function that invokes the module's default export, and a toGraph() method
  * that returns a graph for the module's default export.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").HasGraph} HasGraph
+ * @typedef {import("../core/explorable").HasFunction} HasFunction
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]

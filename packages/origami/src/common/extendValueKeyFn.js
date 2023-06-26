@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -9,6 +8,8 @@ import Scope from "./Scope.js";
  * They want to extend the scope passed to such a function to include the value
  * and key. This helper does that.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Invocable} Invocable
  * @param {Invocable} valueKeyFn
  */
 export default function extendValueKeyFn(valueKeyFn, options = {}) {

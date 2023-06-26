@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import MergeDeepGraph from "../../common/MergeDeepGraph.js";
 import Scope from "../../common/Scope.js";
@@ -7,6 +6,8 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a graph that's the result of deep merging the given graphs.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant[]} graphs
  */

@@ -1,7 +1,7 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-
 /**
- * @param {Constructor<AsyncDictionary>} Base
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @param {AsyncDictionaryConstructor} Base
  */
 export default function SortTransform(Base) {
   return class Sort extends Base {
