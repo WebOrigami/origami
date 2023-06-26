@@ -1,7 +1,7 @@
+import { FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import DeferredGraph from "../common/DeferredGraph.js";
-import FilesGraph from "../core/FilesGraph.js";
 import ImplicitModulesTransform from "../framework/ImplicitModulesTransform.js";
 import ImportModulesMixin from "../framework/ImportModulesMixin.js";
 

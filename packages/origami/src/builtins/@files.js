@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import process from "node:process";
-import FilesGraph from "../core/FilesGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

@@ -89,6 +89,10 @@ export default class FilesGraph {
     return names;
   }
 
+  get path() {
+    return this.dirname;
+  }
+
   async set(key, value) {
     // Where are we going to write this value?
     const stringKey = key ? String(key) : "";

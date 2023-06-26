@@ -1,11 +1,10 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { FilesGraph, ObjectGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import FilesGraph from "../core/FilesGraph.js";
 import { keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 import debug from "./@debug.js";

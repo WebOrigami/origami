@@ -1,9 +1,9 @@
+import { FilesGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import FilesGraph from "../../src/core/FilesGraph.js";
 import ImportModulesMixin from "../../src/framework/ImportModulesMixin.js";
 import loadJs from "../../src/loaders/js.js";
 

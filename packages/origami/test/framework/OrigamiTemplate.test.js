@@ -1,10 +1,9 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { FilesGraph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import mapValues from "../../src/builtins/@map/values.js";
-import FilesGraph from "../../src/core/FilesGraph.js";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 import OrigamiTemplate from "../../src/framework/OrigamiTemplate.js";
 
