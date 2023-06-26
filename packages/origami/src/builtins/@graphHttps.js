@@ -1,4 +1,4 @@
-import SiteGraph from "../core/SiteGraph.js";
+import { SiteGraph } from "@graphorigami/core";
 
 export default async function graphHttps(host, ...keys) {
   let href = [host, ...keys].join("/");

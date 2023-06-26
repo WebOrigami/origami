@@ -1,9 +1,9 @@
+import { FunctionGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterGraph from "../../src/common/FilterGraph.js";
 import GlobGraph from "../../src/common/GlobGraph.js";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
-import FunctionGraph from "../../src/core/FunctionGraph.js";
 
 describe("FilterGraph", () => {
   test("uses keys from filter, values from graph", async () => {
