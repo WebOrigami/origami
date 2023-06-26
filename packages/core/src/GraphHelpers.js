@@ -228,6 +228,17 @@ export default class GraphHelpers extends DictionaryHelpers {
   }
 
   /**
+   * Returns a function that invokes the graph's `get` method.
+   *
+   * @param {GraphVariant} variant
+   * @returns {Function}
+   */
+  static toFunction(variant) {
+    const graph = this.from(variant);
+    return graph.get.bind(graph);
+  }
+
+  /**
    * Return the value at the corresponding path of keys.
    *
    * @param {GraphVariant} variant

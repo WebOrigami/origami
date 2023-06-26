@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 
 /**
  * Invokes the given function in the context of the current scope.
@@ -14,7 +14,7 @@ export default async function invoke(scope, invocable, ...args) {
       ? invocable
       : "toFunction" in invocable
       ? invocable.toFunction()
-      : ExplorableGraph.toFunction(invocable);
+      : GraphHelpers.toFunction(invocable);
   const result = await invocableFn.call(scope, ...args);
   return result;
 }

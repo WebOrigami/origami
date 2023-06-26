@@ -8,17 +8,6 @@ import * as utilities from "./utilities.js";
  */
 export default class ExplorableGraph {
   /**
-   * Returns the graph in function form.
-   *
-   * @param {GraphVariant} variant
-   * @returns {Function}
-   */
-  static toFunction(variant) {
-    const graph = GraphHelpers.from(variant);
-    return graph.get.bind(graph);
-  }
-
-  /**
    * Return the value at the corresponding path of keys.
    *
    * @param {GraphVariant} variant

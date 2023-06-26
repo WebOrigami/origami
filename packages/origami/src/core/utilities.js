@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import ExplorableGraph from "./ExplorableGraph.js";
 
 // If the given plain object has only integer keys, return it as an array.
 // Otherwise return it as is.
@@ -185,7 +184,7 @@ export function toFunction(obj) {
       ? obj
       : typeof (/** @type {any} */ (obj).toFunction) === "function"
       ? /** @type {any} */ (obj).toFunction()
-      : ExplorableGraph.toFunction(obj);
+      : GraphHelpers.toFunction(obj);
   return fn;
 }
 

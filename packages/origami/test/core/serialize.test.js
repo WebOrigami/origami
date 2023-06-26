@@ -1,7 +1,6 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import * as serialize from "../../src/core/serialize.js";
 
 describe("serialize", () => {
@@ -56,7 +55,7 @@ c: Hello, c.`;
       b: 2,
       c: 3,
     });
-    const fn = ExplorableGraph.toFunction(graph);
+    const fn = GraphHelpers.toFunction(graph);
     assert.equal(await fn("a"), 1);
   });
 

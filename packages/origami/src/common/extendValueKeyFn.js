@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
@@ -23,7 +22,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
         "toFunction" in valueKeyFn
       ? valueKeyFn.toFunction()
       : GraphHelpers.isGraphable(valueKeyFn)
-      ? ExplorableGraph.toFunction(valueKeyFn)
+      ? GraphHelpers.toFunction(valueKeyFn)
       : valueKeyFn;
 
   /**

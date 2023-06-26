@@ -166,6 +166,16 @@ describe("GraphHelpers", () => {
     assert.deepEqual(plain, original);
   });
 
+  test("toFunction returns a function that invokes a graph's get() method", async () => {
+    const graph = new ObjectGraph({
+      a: 1,
+      b: 2,
+    });
+    const fn = GraphHelpers.toFunction(graph);
+    assert.equal(await fn("a"), 1);
+    assert.equal(await fn("b"), 2);
+  });
+
   test("traverse() a path of keys", async () => {
     const obj = new ObjectGraph({
       a1: 1,
