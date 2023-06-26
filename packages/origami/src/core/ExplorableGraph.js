@@ -91,18 +91,6 @@ export default class ExplorableGraph {
     const keys = utilities.keysFromPath(path);
     return ExplorableGraph.traverse(graph, ...keys);
   }
-
-  /**
-   * Returns an iterator for the graph's values.
-   *
-   * @param {GraphVariant} variant
-   */
-  static async values(variant) {
-    const graph = GraphHelpers.from(variant);
-    const keys = await graph.keys();
-    const promises = Array.from(keys, (key) => graph.get(key));
-    return Promise.all(promises);
-  }
 }
 
 class TraverseError extends ReferenceError {

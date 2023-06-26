@@ -1,10 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return the interior nodes of the graph.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
@@ -14,7 +15,8 @@ export default async function values(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return ExplorableGraph.values(variant);
+  const graph = GraphHelpers.from(variant);
+  return GraphHelpers.values(graph);
 }
 
 values.usage = `values <graph>\tThe top-level values in the graph`;
