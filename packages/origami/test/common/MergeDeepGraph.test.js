@@ -1,7 +1,7 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MergeDeepGraph from "../../src/common/MergeDeepGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("MergeDeepGraph", () => {
   test("can merge deep", async () => {
@@ -24,7 +24,7 @@ describe("MergeDeepGraph", () => {
         },
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+    assert.deepEqual(await GraphHelpers.plain(fixture), {
       a: {
         b: 1,
         c: {

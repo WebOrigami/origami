@@ -1,7 +1,6 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ArrowGraph from "../../src/framework/ArrowGraph.js";
 import FileTreeTransform from "../../src/framework/FileTreeTransform.js";
 
@@ -12,7 +11,7 @@ describe.only("ArrowGraph", () => {
       title: "Our Site",
     });
     const arrows = new ArrowGraph(graph);
-    assert.deepEqual(await ExplorableGraph.plain(arrows), {
+    assert.deepEqual(await GraphHelpers.plain(arrows), {
       "index.html": "<h1>Our Site</h1>",
       title: "Our Site",
     });

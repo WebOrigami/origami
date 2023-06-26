@@ -1,9 +1,8 @@
-import { FunctionGraph } from "@graphorigami/core";
+import { FunctionGraph, GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterGraph from "../../src/common/FilterGraph.js";
 import GlobGraph from "../../src/common/GlobGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("FilterGraph", () => {
   test("uses keys from filter, values from graph", async () => {
@@ -30,7 +29,7 @@ describe("FilterGraph", () => {
         extra: true, // Ask for entire extra subtree.
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       a: 1,
       more: {
         d: 4,
@@ -50,7 +49,7 @@ describe("FilterGraph", () => {
         Carol: true,
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       Alice: "Hello, Alice!",
       Bob: "Hello, Bob!",
       Carol: "Hello, Carol!",
@@ -86,7 +85,7 @@ describe("FilterGraph", () => {
         },
       })
     );
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+    assert.deepEqual(await GraphHelpers.plain(fixture), {
       a: 1,
       "hello.txt": "Hello",
       "goodbye.txt": "Goodbye",

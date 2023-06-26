@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
@@ -31,7 +31,7 @@ This is the content.
   test("fromJson() can parse JSON text", async () => {
     const yaml = `{"a": 1, "b": 2, "c": 3}`;
     const graph = serialize.fromJson(yaml);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       a: 1,
       b: 2,
       c: 3,
@@ -43,7 +43,7 @@ This is the content.
 b: Hello, b.
 c: Hello, c.`;
     const graph = serialize.fromYaml(yaml);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       a: "Hello, a.",
       b: "Hello, b.",
       c: "Hello, c.",
@@ -84,7 +84,7 @@ This is the content.
     const output = await serialize.outputWithGraph(text, graph);
     assert.equal(String(output), text);
     const outputGraph = /** @type {any} */ (output).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(outputGraph), {
+    assert.deepEqual(await GraphHelpers.plain(outputGraph), {
       a: "Hello, a.",
     });
   });
@@ -101,7 +101,7 @@ a: Hello, a.
 This is the content.`
     );
     const outputGraph = /** @type {any} */ (output).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(outputGraph), {
+    assert.deepEqual(await GraphHelpers.plain(outputGraph), {
       a: "Hello, a.",
     });
   });

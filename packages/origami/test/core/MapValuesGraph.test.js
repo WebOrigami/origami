@@ -1,8 +1,7 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapValuesGraph from "../../src/common/MapValuesGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("MapValuesGraph", () => {
   test("applies a mapping function to values", async () => {
@@ -18,7 +17,7 @@ describe("MapValuesGraph", () => {
     const doubled = new MapValuesGraph(graph, (value) => 2 * value, {
       deep: true,
     });
-    const plain = await ExplorableGraph.plain(doubled);
+    const plain = await GraphHelpers.plain(doubled);
     assert.deepEqual(plain, {
       a: 2,
       b: 4,
@@ -53,7 +52,7 @@ describe("MapValuesGraph", () => {
       deep: true,
       getValue: false,
     });
-    assert.deepEqual(await ExplorableGraph.plain(mapped), {
+    assert.deepEqual(await GraphHelpers.plain(mapped), {
       a: true,
       b: true,
       c: true,

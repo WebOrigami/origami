@@ -1,8 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import match from "../../src/builtins/@match.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
@@ -16,7 +16,7 @@ describe("match", () => {
       "Bob.html",
       "Carol.html",
     ]);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       "Alice.html": "Hello, Alice!",
       "Bob.html": "Hello, Bob!",
       "Carol.html": "Hello, Carol!",

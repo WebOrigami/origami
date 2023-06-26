@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function rss(jsonFeedGraph) {
   assertScopeIsDefined(this);
-  const jsonFeed = await ExplorableGraph.plain(jsonFeedGraph);
+  const jsonFeed = await GraphHelpers.plain(jsonFeedGraph);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 
   // Presume that the RSS feed lives in same location as feed_url.

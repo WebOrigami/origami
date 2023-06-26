@@ -1,6 +1,6 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import loadMarkdown from "../../src/loaders/md.js";
 
 describe(".md loader", () => {
@@ -18,7 +18,7 @@ a: !ori 1
     const loaded = await loadMarkdown.call(null, text);
     assert.equal(loaded.bodyText, `# Title`);
     const graph = /** @type {any} */ (loaded).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       a: 1,
     });
   });

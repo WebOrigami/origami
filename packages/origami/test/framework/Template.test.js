@@ -1,9 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
 
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import ExpressionGraph from "../../src/common/ExpressionGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import Template from "../../src/framework/Template.js";
@@ -28,7 +27,7 @@ a: 1
 text`;
     const document = loadTextWithFrontMatter.call(null, text);
     const template = new Template(document, scope);
-    assert.deepEqual(await ExplorableGraph.plain(template.graph), {
+    assert.deepEqual(await GraphHelpers.plain(template.graph), {
       a: 1,
     });
     assert.equal(template.bodyText, "text");
@@ -88,13 +87,13 @@ template`;
     /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       const templateInfo = await this?.get("@template");
-      const info = await ExplorableGraph.plain(templateInfo);
+      const info = await GraphHelpers.plain(templateInfo);
       assert.deepEqual(info.graph, { a: 1 });
       assert.deepEqual(info.scope, templateScope);
       assert.equal(info.text, "template");
 
       const dot = await this?.get(".");
-      assert.deepEqual(await ExplorableGraph.plain(dot), { b: 2 });
+      assert.deepEqual(await GraphHelpers.plain(dot), { b: 2 });
       assert.equal(await this?.get("@text"), "[object Object]");
       return "";
     };
@@ -159,7 +158,7 @@ template`
     const input = { b: 2 };
     const result = await template.apply(input, graph);
     const resultGraph = result.toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(resultGraph), {
+    assert.deepEqual(await GraphHelpers.plain(resultGraph), {
       b: 2,
       "@template": {
         a: 1,

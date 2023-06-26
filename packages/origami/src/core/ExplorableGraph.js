@@ -8,27 +8,6 @@ import * as utilities from "./utilities.js";
  */
 export default class ExplorableGraph {
   /**
-   * Converts an asynchronous explorable graph into a synchronous plain
-   * JavaScript object.
-   *
-   * The result's keys will be the graph's keys cast to strings. Any graph value
-   * that is itself a graph will be similarly converted to a plain object.
-   *
-   * @param {GraphVariant} variant
-   * @returns {Promise<PlainObject|Array>}
-   */
-  static async plain(variant) {
-    return GraphHelpers.mapReduce(variant, null, (values, keys) => {
-      const obj = {};
-      for (let i = 0; i < keys.length; i++) {
-        obj[keys[i]] = values[i];
-      }
-      const result = utilities.castArrayLike(obj);
-      return result;
-    });
-  }
-
-  /**
    * Returns the graph in function form.
    *
    * @param {GraphVariant} variant

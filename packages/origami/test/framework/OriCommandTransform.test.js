@@ -1,8 +1,7 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import OriCommandTransform from "../../src/framework/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {
@@ -21,6 +20,6 @@ describe("OriCommandTransform", () => {
     });
     /** @type {any} */ (graph).scope = builtins;
     const value = await graph.get("!@graph/keys");
-    assert.deepEqual(await ExplorableGraph.plain(value), ["a", "b"]);
+    assert.deepEqual(await GraphHelpers.plain(value), ["a", "b"]);
   });
 });

@@ -1,7 +1,7 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import map from "../../../src/builtins/@map/values.js";
-import ExplorableGraph from "../../../src/core/ExplorableGraph.js";
 
 describe("map", () => {
   test("maps all the values in a graph", async () => {
@@ -15,7 +15,7 @@ describe("map", () => {
       },
       (value) => value.toUpperCase()
     );
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+    assert.deepEqual(await GraphHelpers.plain(fixture), {
       a: "HELLO, A.",
       b: "HELLO, B.",
       c: "HELLO, C.",
@@ -34,9 +34,9 @@ describe("map", () => {
           a: "Bonjour, a.",
         },
       },
-      async (value) => JSON.stringify(await ExplorableGraph.plain(value))
+      async (value) => JSON.stringify(await GraphHelpers.plain(value))
     );
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+    assert.deepEqual(await GraphHelpers.plain(fixture), {
       english: '{"a":"Hello, a."}',
       french: '{"a":"Bonjour, a."}',
     });
@@ -57,7 +57,7 @@ describe("map", () => {
       (value) => value.toUpperCase(),
       { deep: true }
     );
-    assert.deepEqual(await ExplorableGraph.plain(fixture), {
+    assert.deepEqual(await GraphHelpers.plain(fixture), {
       english: {
         a: "HELLO, A.",
       },
@@ -79,7 +79,7 @@ describe("map", () => {
       },
       { addValueToScope: true }
     );
-    assert.deepEqual(await ExplorableGraph.plain(results), [
+    assert.deepEqual(await GraphHelpers.plain(results), [
       "Alice",
       "Bob",
       "Carol",
@@ -98,7 +98,7 @@ describe("map", () => {
         return `${key}: ${value}`;
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(results), {
+    assert.deepEqual(await GraphHelpers.plain(results), {
       a: "a: 1",
       b: "b: 2",
       c: "c: 3",
@@ -116,7 +116,7 @@ describe("map", () => {
       },
       { keyName: "thing" }
     );
-    assert.deepEqual(await ExplorableGraph.plain(results), {
+    assert.deepEqual(await GraphHelpers.plain(results), {
       a: "a",
       b: "b",
       c: "c",
@@ -126,7 +126,7 @@ describe("map", () => {
   test("can map to a constant value", async () => {
     /** @type {any} */
     const results = map.call(null, { a: 1, b: 2, c: 3 }, () => "constant");
-    assert.deepEqual(await ExplorableGraph.plain(results), {
+    assert.deepEqual(await GraphHelpers.plain(results), {
       a: "constant",
       b: "constant",
       c: "constant",

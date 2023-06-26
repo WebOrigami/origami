@@ -1,8 +1,7 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
@@ -77,7 +76,7 @@ describe("ops", () => {
     ];
     const result = await execute.call({}, code);
     assert(result instanceof OrigamiGraph);
-    assert.deepEqual(await ExplorableGraph.plain(result), {
+    assert.deepEqual(await GraphHelpers.plain(result), {
       name: "world",
       message: "Hello, world!",
     });

@@ -1,7 +1,6 @@
 /// <reference path="explorable.ts"/>
 
 export default class ExplorableGraph {
-  static plain(graph: GraphVariant): Promise<PlainObject>;
   static toFunction(graph: GraphVariant): Function;
   static toTextForExtension(graph: GraphVariant | object, key: string): Promise<string>;
   static traverse(graph: GraphVariant, ...keys: any[]): Promise<any>;

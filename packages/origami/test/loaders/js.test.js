@@ -1,9 +1,8 @@
-import { FilesGraph } from "@graphorigami/core";
+import { FilesGraph, GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import ImportModulesMixin from "../../src/framework/ImportModulesMixin.js";
 import loadJs from "../../src/loaders/js.js";
 
@@ -23,6 +22,6 @@ describe(".js loader", () => {
     const buffer = await fixturesGraph.get("obj.js");
     const greetFile = await loadJs.call(fixturesGraph, buffer, "obj.js");
     const graph = greetFile.toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(graph), { a: 1 });
+    assert.deepEqual(await GraphHelpers.plain(graph), { a: 1 });
   });
 });

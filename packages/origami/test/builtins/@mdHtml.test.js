@@ -1,7 +1,7 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/builtins/@mdHtml.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import md from "../../src/loaders/md.js";
 
 describe("mdHtml", () => {
@@ -35,7 +35,7 @@ title: Hello
 # Hello, world.`;
     const html = await mdHtml(md.call(null, markdown));
     const graph = /** @type {any} */ (html).toGraph();
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       title: "Hello",
     });
   });

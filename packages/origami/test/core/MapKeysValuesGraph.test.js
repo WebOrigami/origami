@@ -1,8 +1,7 @@
-import { FunctionGraph } from "@graphorigami/core";
+import { FunctionGraph, GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapKeysValuesGraph from "../../src/common/MapKeysValuesGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 // Test graph changes a lowercase inner key and its value to uppercase, but
 // leaves uppercase inner keys and their values alone.
@@ -36,7 +35,7 @@ describe("MapKeysValuesTest", () => {
         preferExistingValue: true,
       }
     );
-    assert.deepEqual(await ExplorableGraph.plain(outer), {
+    assert.deepEqual(await GraphHelpers.plain(outer), {
       A: "HELLO, A.",
       B: "Goodbye, B.",
       C: "GOODNIGHT, C.",
@@ -56,7 +55,7 @@ describe("MapKeysValuesTest", () => {
     const mapped = new UppercaseKeysGraph(inner, () => true, {
       getValue: false,
     });
-    assert.deepEqual(await ExplorableGraph.plain(mapped), {
+    assert.deepEqual(await GraphHelpers.plain(mapped), {
       A: true,
       B: true,
       C: true,

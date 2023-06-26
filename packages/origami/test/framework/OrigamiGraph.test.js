@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
@@ -10,7 +11,7 @@ describe("OrigamiGraph", () => {
       message = \`Hello, {{ name }}!\`
     `);
     const graph = await fn.call(null);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       name: "world",
       message: "Hello, world!",
     });
@@ -24,7 +25,7 @@ describe("OrigamiGraph", () => {
       }
     `);
     const graph = await fn.call(null);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
+    assert.deepEqual(await GraphHelpers.plain(graph), {
       public: {
         name: "world",
         "index.html": "Hello, world!",

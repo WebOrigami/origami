@@ -25,14 +25,14 @@ describe("ExplorableGraph", () => {
       },
     };
     const graph = new ObjectGraph(original);
-    const plain = await ExplorableGraph.plain(graph);
+    const plain = await GraphHelpers.plain(graph);
     assert.deepEqual(plain, original);
   });
 
   test("plain() produces an array for an array-like graph", async () => {
     const original = ["a", "b", "c"];
     const graph = new ObjectGraph(original);
-    const plain = await ExplorableGraph.plain(graph);
+    const plain = await GraphHelpers.plain(graph);
     assert.deepEqual(plain, original);
   });
 
@@ -44,7 +44,7 @@ describe("ExplorableGraph", () => {
       3: "c",
     };
     const graph = new ObjectGraph(original);
-    const plain = await ExplorableGraph.plain(graph);
+    const plain = await GraphHelpers.plain(graph);
     assert.deepEqual(plain, original);
   });
 

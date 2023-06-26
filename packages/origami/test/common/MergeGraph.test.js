@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MergeGraph from "../../src/common/MergeGraph.js";
@@ -40,7 +41,7 @@ describe("MergeGraph", () => {
       }
     );
     const b = await fixture.get("b");
-    assert.deepEqual(await ExplorableGraph.plain(b), {
+    assert.deepEqual(await GraphHelpers.plain(b), {
       c: 2,
     });
     const d = await ExplorableGraph.traverse(fixture, "b", "d");
