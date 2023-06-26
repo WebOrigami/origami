@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
@@ -120,7 +120,7 @@ This is the content.`
       return class Uppercase extends Base {
         async get(key) {
           const value = await super.get(key);
-          return ExplorableGraph.isExplorable(value)
+          return GraphHelpers.isAsyncDictionary(value)
             ? value
             : value.toUpperCase();
         }

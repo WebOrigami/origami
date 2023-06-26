@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import {
   extname,
   isPlainObject,
@@ -86,7 +85,7 @@ async function statements(graph, nodePath, nodeLabel, options) {
     const expandable =
       value instanceof Array ||
       isPlainObject(value) ||
-      ExplorableGraph.isExplorable(value);
+      GraphHelpers.isAsyncDictionary(value);
     if (expand && expandable) {
       const subgraph = GraphHelpers.from(value);
       const subStatements = await statements(subgraph, destPath, null, options);

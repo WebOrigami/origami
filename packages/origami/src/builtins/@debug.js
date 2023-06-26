@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   isPlainObject,
   isTransformApplied,
@@ -61,7 +60,7 @@ function DebugTransform(Base) {
       const parent = this;
 
       // Ensure debug transforms are applied to explorable results.
-      if (ExplorableGraph.isExplorable(value)) {
+      if (GraphHelpers.isAsyncDictionary(value)) {
         if (!isTransformApplied(ExplorableSiteTransform, value)) {
           value = transformObject(ExplorableSiteTransform, value);
         }

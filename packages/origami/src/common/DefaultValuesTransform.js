@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import {
   getScope,
   isTransformApplied,
@@ -37,7 +37,7 @@ export default function DefaultValuesTransform(Base) {
 
       // Ensure this transform is applied to any explorable result.
       if (
-        ExplorableGraph.isExplorable(value) &&
+        GraphHelpers.isAsyncDictionary(value) &&
         !isTransformApplied(DefaultValuesTransform, value)
       ) {
         value = transformObject(DefaultValuesTransform, value);

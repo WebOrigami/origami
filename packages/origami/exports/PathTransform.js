@@ -1,4 +1,4 @@
-import ExplorableGraph from "../src/core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 
 const pathKey = Symbol("path");
 
@@ -12,7 +12,7 @@ export default function PathTransform(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (ExplorableGraph.isExplorable(value)) {
+      if (GraphHelpers.isAsyncDictionary(value)) {
         const path = this[pathKey] ? `${this[pathKey]}/${key}` : key;
         value[pathKey] = path;
       } else if (value === undefined && key === "@path") {

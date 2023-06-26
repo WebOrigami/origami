@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -29,7 +28,7 @@ function KeysJsonTransform(Base) {
       if (value === undefined && key === ".keys.json") {
         const scope = getScope(this);
         value = defaultKeysJson.call(scope, this);
-      } else if (ExplorableGraph.isExplorable(value)) {
+      } else if (GraphHelpers.isAsyncDictionary(value)) {
         value = transformObject(KeysJsonTransform, value);
       }
       return value;

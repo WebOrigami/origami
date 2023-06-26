@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 export default async function ifCommand(value, trueResult, falseResult) {
   assertScopeIsDefined(this);
   let condition = await value;
-  if (ExplorableGraph.isExplorable(condition)) {
+  if (GraphHelpers.isAsyncDictionary(condition)) {
     const keys = Array.from(await condition.keys());
     condition = keys.length > 0;
   }

@@ -1,5 +1,4 @@
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class FilterGraph {
   constructor(graph, filter) {
@@ -11,13 +10,13 @@ export default class FilterGraph {
     let value = await this.graph.get(key);
 
     let filterValue = await this.filter.get(key);
-    if (!ExplorableGraph.isExplorable(value)) {
+    if (!GraphHelpers.isAsyncDictionary(value)) {
       if (filterValue === undefined) {
         value = undefined;
-      } else if (ExplorableGraph.isExplorable(filterValue)) {
+      } else if (GraphHelpers.isAsyncDictionary(filterValue)) {
         value = undefined;
       }
-    } else if (ExplorableGraph.isExplorable(filterValue)) {
+    } else if (GraphHelpers.isAsyncDictionary(filterValue)) {
       // Wrap value with corresponding filter.
       value = Reflect.construct(this.constructor, [value, filterValue]);
     }
@@ -31,7 +30,7 @@ export default class FilterGraph {
     // Enumerate all keys in the graph that can be found in the filter graph.
     for (const key of await this.graph.keys()) {
       const filterValue = await this.filter.get(key);
-      const filterValueExplorable = ExplorableGraph.isExplorable(filterValue);
+      const filterValueExplorable = GraphHelpers.isAsyncDictionary(filterValue);
       // If the filter value is explorable, the corresponding value in the graph
       // must be explorable too.
       const match =

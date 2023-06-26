@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import defineds from "./defineds.js";
 
@@ -23,7 +22,7 @@ class ExceptionsGraph {
   async get(key) {
     try {
       const value = await this.graph.get(key);
-      return ExplorableGraph.isExplorable(value)
+      return GraphHelpers.isAsyncDictionary(value)
         ? Reflect.construct(this.constructor, [value])
         : undefined;
     } catch (/** @type {any} */ error) {

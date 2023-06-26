@@ -394,7 +394,7 @@ async function processPath(graph, path, baseUrl) {
 
   // Traverse graph to get value.
   let value = await ExplorableGraph.traverse(graph, ...keys);
-  if (ExplorableGraph.isExplorable(value)) {
+  if (GraphHelpers.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
     if (keys.at(-1) === undefined) {
       keys.pop();

@@ -28,7 +28,7 @@ export default async function dataflow(variant) {
   const graph = GraphHelpers.from(variant);
 
   const flowFile = await graph.get(".dataflow.yaml");
-  const flow = ExplorableGraph.isExplorable(flowFile)
+  const flow = GraphHelpers.isAsyncDictionary(flowFile)
     ? await ExplorableGraph.plain(flowFile)
     : flowFile
     ? YAML.parse(String(flowFile))

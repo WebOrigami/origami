@@ -90,7 +90,7 @@ export async function handleRequest(request, response, graph) {
   if (
     mediaType === undefined &&
     !request.url.endsWith("/") &&
-    (ExplorableGraph.isExplorable(resource) ||
+    (GraphHelpers.isAsyncDictionary(resource) ||
       isPlainObject(resource) ||
       resource instanceof Array)
   ) {

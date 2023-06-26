@@ -49,80 +49,6 @@ export default class ExplorableGraph {
   }
 
   /**
-   * Return true if the given object implements the necessary explorable graph
-   * members: a function named `keys` and a function named `get`.
-   *
-   * @param {any} obj
-   */
-  static isExplorable(obj) {
-    return (
-      obj != null &&
-      typeof obj.get === "function" &&
-      typeof obj.keys === "function"
-    );
-  }
-
-  /**
-   * Return true if the indicated key produces or is expected to produce an
-   * explorable value.
-   *
-   * This defers to the graph's own isKeyExplorable method. If not found, this
-   * gets the value of that key and returns true if the value is in fact
-   * explorable.
-   */
-  // REVIEW: The name of this suggests that it examines whether the key itself
-  // is explorable, but really it's the value that matters. Calling this
-  // `isValueExplorable`, on the other hand, makes it sound like it takes a
-  // value argument instead of a key.
-  static async isKeyExplorable(graph, key) {
-    if (graph.isKeyExplorable) {
-      return graph.isKeyExplorable(key);
-    }
-    const value = await graph.get(key);
-    return this.isExplorable(value);
-  }
-
-  /**
-   * Map and reduce a graph.
-   *
-   * This is done in as parallel fashion as possible. Each of the graph's values
-   * will be requested in an async call, then those results will be awaited
-   * collectively. If a mapFn is provided, it will be invoked to convert each
-   * value to a mapped value; otherwise, values will be used as is. When the
-   * values have been obtained, all the values and keys will be passed to the
-   * reduceFn, which should consolidate those into a single result.
-   *
-   * @param {GraphVariant} variant
-   * @param {Function|null} mapFn
-   * @param {Function} reduceFn
-   */
-  static async mapReduce(variant, mapFn, reduceFn) {
-    const graph = GraphHelpers.from(variant);
-
-    // We're going to fire off all the get requests in parallel, as quickly as
-    // the keys come in. We call the graph's `get` method for each key, but
-    // *don't* wait for it yet.
-    const keys = Array.from(await graph.keys());
-    const promises = keys.map((key) =>
-      graph.get(key).then((value) =>
-        // If the value is itself a graph, recurse.
-        this.isExplorable(value)
-          ? this.mapReduce(value, mapFn, reduceFn)
-          : mapFn
-          ? mapFn(value, key)
-          : value
-      )
-    );
-
-    // Wait for all the promises to resolve. Because the promises were captured
-    // in the same order as the keys, the values will also be in the same order.
-    const values = await Promise.all(promises);
-
-    // Reduce the values to a single result.
-    return reduceFn(values, keys);
-  }
-
-  /**
    * Converts an asynchronous explorable graph into a synchronous plain
    * JavaScript object.
    *
@@ -133,7 +59,7 @@ export default class ExplorableGraph {
    * @returns {Promise<PlainObject|Array>}
    */
   static async plain(variant) {
-    return this.mapReduce(variant, null, (values, keys) => {
+    return GraphHelpers.mapReduce(variant, null, (values, keys) => {
       const obj = {};
       for (let i = 0; i < keys.length; i++) {
         obj[keys[i]] = values[i];

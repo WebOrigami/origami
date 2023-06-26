@@ -1,5 +1,4 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import MergeGraph from "./MergeGraph.js";
 
 const globstar = "**";
@@ -14,7 +13,7 @@ export default class GlobGraph {
       return undefined;
     }
     let value = await matchGlobs(this.globs, key);
-    if (ExplorableGraph.isExplorable(value)) {
+    if (GraphHelpers.isAsyncDictionary(value)) {
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;
@@ -56,7 +55,7 @@ async function matchGlobs(globs, text) {
     if (value === undefined) {
       const globstarValue = await matchGlobs(globstarGlobs, text);
       value = globstarValue !== undefined ? globstarValue : globstarGraph;
-    } else if (ExplorableGraph.isExplorable(value)) {
+    } else if (GraphHelpers.isAsyncDictionary(value)) {
       value = new MergeGraph(value, globstarGraph);
     }
   }

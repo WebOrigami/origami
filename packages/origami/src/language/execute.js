@@ -1,7 +1,6 @@
 /// <reference path="./code.d.ts" />
 
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { isPlainObject } from "../core/utilities.js";
+import { GraphHelpers } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -63,7 +62,7 @@ export default async function execute(code) {
         ? // Invoke the function
           await fn.call(scope, ...args)
         : // Traverse the graph.
-          await ExplorableGraph.traverseOrThrow(fn, ...args);
+          await GraphHelpers.traverseOrThrow(fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });
@@ -74,7 +73,7 @@ export default async function execute(code) {
     result &&
     typeof result === "object" &&
     Object.isExtensible(result) &&
-    !isPlainObject(result)
+    !GraphHelpers.isPlainObject(result)
   ) {
     try {
       result[expressionSymbol] = format(code);

@@ -1,5 +1,4 @@
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 export default async function setDeep(target, source) {
   const targetGraph = GraphHelpers.from(target);
@@ -29,9 +28,9 @@ async function applyUpdates(source, target) {
 // Copy the value for the given key from the source to the target.
 async function applyUpdateForKey(source, target, key) {
   const sourceValue = await source.get(key);
-  if (ExplorableGraph.isExplorable(sourceValue)) {
+  if (GraphHelpers.isAsyncDictionary(sourceValue)) {
     const targetValue = await target.get(key);
-    if (ExplorableGraph.isExplorable(targetValue)) {
+    if (GraphHelpers.isAsyncDictionary(targetValue)) {
       // Both source and target are explorable; recurse.
       await applyUpdates(sourceValue, targetValue);
       return;

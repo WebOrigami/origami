@@ -1,5 +1,4 @@
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * This is a variation of MergeGraph that performs a deep merge.
@@ -19,7 +18,7 @@ export default class MergeDeepGraph {
 
     for (const graph of this.graphs) {
       const value = await graph.get(key);
-      if (ExplorableGraph.isExplorable(value)) {
+      if (GraphHelpers.isAsyncDictionary(value)) {
         explorableSubvalues.push(value);
       } else if (value !== undefined) {
         return value;

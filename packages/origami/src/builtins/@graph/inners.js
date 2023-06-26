@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -19,7 +18,7 @@ export default async function inners(variant) {
   const inner = {
     async get(key) {
       const value = await graph.get(key);
-      return ExplorableGraph.isExplorable(value)
+      return GraphHelpers.isAsyncDictionary(value)
         ? inners.call(this, value)
         : undefined;
     },

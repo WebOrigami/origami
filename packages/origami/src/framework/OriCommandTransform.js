@@ -1,8 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   getScope,
   isTransformApplied,
@@ -42,7 +41,7 @@ export default function OriCommandTransform(Base) {
 
         // Ensure this transform is applied to any explorable result.
         if (
-          ExplorableGraph.isExplorable(value) &&
+          GraphHelpers.isAsyncDictionary(value) &&
           !isTransformApplied(OriCommandTransform, value)
         ) {
           value = transformObject(OriCommandTransform, value);

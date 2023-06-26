@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import index from "../builtins/@index.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   getScope,
   isTransformApplied,
@@ -53,7 +53,7 @@ export default function ExplorableSiteTransform(Base) {
       // the user browse into data and explorable graphs of types other than the
       // current class.
       if (
-        ExplorableGraph.isExplorable(value) &&
+        GraphHelpers.isAsyncDictionary(value) &&
         !isTransformApplied(ExplorableSiteTransform, value)
       ) {
         value = transformObject(ExplorableSiteTransform, value);

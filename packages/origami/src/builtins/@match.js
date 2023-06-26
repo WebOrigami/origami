@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -50,7 +50,7 @@ export default function match(pattern, resultFn, keys = []) {
 
       if (
         typeof resultFn !== "function" &&
-        !(ExplorableGraph.isExplorable(resultFn) && "parent" in resultFn)
+        !(GraphHelpers.isAsyncDictionary(resultFn) && "parent" in resultFn)
       ) {
         // Simple return value; return as is
         return resultFn;

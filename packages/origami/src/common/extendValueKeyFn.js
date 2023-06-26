@@ -44,7 +44,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
 
     // See if the value is a graph or can be cast to a graph.
     let valueGraph;
-    if (ExplorableGraph.isExplorable(value)) {
+    if (GraphHelpers.isAsyncDictionary(value)) {
       valueGraph = value;
     } else if (GraphHelpers.isGraphable(value)) {
       valueGraph = GraphHelpers.from(value);

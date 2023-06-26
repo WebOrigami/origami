@@ -3,26 +3,6 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 describe("ExplorableGraph", () => {
-  test("isExplorable() tests for explorable graph interface", async () => {
-    assert(!ExplorableGraph.isExplorable({}));
-
-    const missingIterator = {
-      async get() {},
-    };
-    assert(!ExplorableGraph.isExplorable(missingIterator));
-
-    const missingGet = {
-      async keys() {},
-    };
-    assert(!ExplorableGraph.isExplorable(missingGet));
-
-    const graph = {
-      async get() {},
-      async keys() {},
-    };
-    assert(ExplorableGraph.isExplorable(graph));
-  });
-
   test("isKeyExplorable() indicates whether a key is expected to produce an explorable value", async () => {
     const graph = new ObjectGraph({
       a: 1,

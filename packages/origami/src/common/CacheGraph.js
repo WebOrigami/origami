@@ -1,5 +1,4 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Caches non-explorable values from the first (source) graph in a second
@@ -31,7 +30,10 @@ export default class CacheGraph {
   async get(key) {
     // Check cache graph first.
     let cacheValue = await this.cache.get(key);
-    if (cacheValue !== undefined && !ExplorableGraph.isExplorable(cacheValue)) {
+    if (
+      cacheValue !== undefined &&
+      !GraphHelpers.isAsyncDictionary(cacheValue)
+    ) {
       // Non-explorable cache hit
       return cacheValue;
     }
@@ -49,7 +51,7 @@ export default class CacheGraph {
         match = filterValue !== undefined;
       }
       if (match) {
-        if (ExplorableGraph.isExplorable(value)) {
+        if (GraphHelpers.isAsyncDictionary(value)) {
           // Construct merged graph for an explorable result.
           if (cacheValue === undefined) {
             // Construct new container in cache

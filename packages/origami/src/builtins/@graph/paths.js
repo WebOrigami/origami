@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -21,7 +20,7 @@ export default async function paths(variant, prefix = "") {
   for (const key of await graph.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
     const value = await graph.get(key);
-    if (await ExplorableGraph.isExplorable(value)) {
+    if (await GraphHelpers.isAsyncDictionary(value)) {
       const subPaths = await paths.call(this, value, valuePath);
       result.push(...subPaths);
     } else {

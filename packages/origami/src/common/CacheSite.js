@@ -49,7 +49,10 @@ export default class CacheSite {
     }
 
     let cacheValue = await ExplorableGraph.traverse(this.cache, ...keys);
-    if (cacheValue !== undefined && !ExplorableGraph.isExplorable(cacheValue)) {
+    if (
+      cacheValue !== undefined &&
+      !GraphHelpers.isAsyncDictionary(cacheValue)
+    ) {
       // Non-explorable cache hit
       return cacheValue;
     }
@@ -79,7 +82,7 @@ export default class CacheSite {
         }
         // If we have an explorable value, we don't cache the entire thing, just
         // an empty graph.
-        current[lastKey] = ExplorableGraph.isExplorable(value) ? {} : value;
+        current[lastKey] = GraphHelpers.isAsyncDictionary(value) ? {} : value;
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
@@ -90,7 +93,7 @@ export default class CacheSite {
         );
       }
 
-      if (ExplorableGraph.isExplorable(value)) {
+      if (GraphHelpers.isAsyncDictionary(value)) {
         // Construct merged graph for an explorable result.
         value = Reflect.construct(this.constructor, [
           value,

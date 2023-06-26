@@ -2,7 +2,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import MergeGraph from "../../common/MergeGraph.js";
 import Scope from "../../common/Scope.js";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -24,7 +23,7 @@ export default async function merge(...graphs) {
   // If a graph can take a scope, give it one that includes the other graphs and
   // the current scope.
   const scopedGraphs = filtered.map((graph) => {
-    let scopedGraph = ExplorableGraph.isExplorable(graph)
+    let scopedGraph = GraphHelpers.isAsyncDictionary(graph)
       ? Object.create(/** @type {any} */ (graph))
       : GraphHelpers.from(graph);
     if ("parent" in scopedGraph) {
