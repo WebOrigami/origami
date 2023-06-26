@@ -2,7 +2,6 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { parseYaml } from "../core/serialize.js";
 import {
   getScope,
@@ -78,7 +77,7 @@ export default function loadYaml(input, key) {
         value = graphInContext(graph, ambientsGraph);
       }
       if (rest.length > 0) {
-        value = await ExplorableGraph.traverse(value, ...rest);
+        value = await GraphHelpers.traverse(value, ...rest);
       }
       return value;
     };

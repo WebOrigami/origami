@@ -2,7 +2,6 @@ import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapExtensionsGraph from "../../src/common/MapExtensionsGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("MapExtensionsGraph", () => {
   test("applies a mapping function to keys that end in a given extension", async () => {
@@ -109,7 +108,7 @@ describe("MapExtensionsGraph", () => {
       file2: "won't be mapped",
     });
     assert.equal(
-      await ExplorableGraph.traverse(fixture, "file1.json", "data"),
+      await GraphHelpers.traverse(fixture, "file1.json", "data"),
       "Hello, a."
     );
   });

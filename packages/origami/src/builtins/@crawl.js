@@ -2,7 +2,6 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { isPlainObject, keysFromPath } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -393,14 +392,14 @@ async function processPath(graph, path, baseUrl) {
   }
 
   // Traverse graph to get value.
-  let value = await ExplorableGraph.traverse(graph, ...keys);
+  let value = await GraphHelpers.traverse(graph, ...keys);
   if (GraphHelpers.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
     if (keys.at(-1) === undefined) {
       keys.pop();
     }
     keys.push("index.html");
-    value = await ExplorableGraph.traverse(value, "index.html");
+    value = await GraphHelpers.traverse(value, "index.html");
   }
 
   if (value === undefined) {

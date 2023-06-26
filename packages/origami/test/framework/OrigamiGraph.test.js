@@ -1,7 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 import * as compile from "../../src/language/compile.js";
 
 describe("OrigamiGraph", () => {
@@ -31,7 +30,7 @@ describe("OrigamiGraph", () => {
         "index.html": "Hello, world!",
       },
     });
-    const indexHtml = await ExplorableGraph.traverse(
+    const indexHtml = await GraphHelpers.traverse(
       graph,
       "public",
       "index.html"

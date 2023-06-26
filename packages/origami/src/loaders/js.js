@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
 
 /**
@@ -39,7 +38,7 @@ export default function loadJs(buffer, key) {
         ? // Invoke the function
           await fn.call(scope, ...args)
         : // Traverse the graph.
-          await ExplorableGraph.traverseOrThrow(fn, ...args);
+          await GraphHelpers.traverseOrThrow(fn, ...args);
     };
   };
 

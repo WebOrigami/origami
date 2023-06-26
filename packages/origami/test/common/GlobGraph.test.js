@@ -1,7 +1,7 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import GlobGraph from "../../src/common/GlobGraph.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("GlobGraph", () => {
   test("matches globs", async () => {
@@ -27,12 +27,9 @@ describe("GlobGraph", () => {
       },
     });
     assert.equal(
-      await ExplorableGraph.traverse(globGraph, "sub", "file"),
+      await GraphHelpers.traverse(globGraph, "sub", "file"),
       "default"
     );
-    assert.equal(
-      await ExplorableGraph.traverse(globGraph, "sub", "foo"),
-      "bar"
-    );
+    assert.equal(await GraphHelpers.traverse(globGraph, "sub", "foo"), "bar");
   });
 });

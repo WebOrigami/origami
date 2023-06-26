@@ -1,8 +1,7 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import DefaultValuesTransform from "../../src/common/DefaultValuesTransform.js";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 describe("DefaultValuesTransform", () => {
   test("provides default values for missing keys at any point in graph", async () => {
     const graph = new (DefaultValuesTransform(ObjectGraph))({
@@ -23,9 +22,9 @@ describe("DefaultValuesTransform", () => {
     assert.equal(await graph.get("a"), 1);
     assert.equal(await graph.get("b"), 2); // Respects main graph
     assert.equal(await graph.get("d"), 5); // Default
-    assert.equal(await ExplorableGraph.traverse(graph, "more", "b"), 4); // Default
-    assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
-    assert.equal(await ExplorableGraph.traverse(graph, "more", "d"), 5); // Default
+    assert.equal(await GraphHelpers.traverse(graph, "more", "b"), 4); // Default
+    assert.equal(await GraphHelpers.traverse(graph, "more", "c"), 3);
+    assert.equal(await GraphHelpers.traverse(graph, "more", "d"), 5); // Default
   });
 
   test("invokes a default value function", async () => {
@@ -39,6 +38,6 @@ describe("DefaultValuesTransform", () => {
       c: () => 3,
     };
     assert.equal(await graph.get("c"), 3);
-    assert.equal(await ExplorableGraph.traverse(graph, "more", "c"), 3);
+    assert.equal(await GraphHelpers.traverse(graph, "more", "c"), 3);
   });
 });

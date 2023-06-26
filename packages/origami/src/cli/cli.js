@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol } from "../core/utilities.js";
 import showUsage from "./showUsage.js";
 
@@ -20,7 +19,7 @@ async function main(...args) {
   const currentDirectory = process.cwd();
   const relative = path.relative(projectGraph.path, currentDirectory);
   const keys = relative.split(path.sep);
-  const graph = await ExplorableGraph.traverse(projectGraph, ...keys);
+  const graph = await GraphHelpers.traverse(projectGraph, ...keys);
 
   const baseScope = getScope(graph);
 

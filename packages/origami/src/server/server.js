@@ -1,6 +1,5 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import * as serialize from "../core/serialize.js";
 import {
   extname,
@@ -67,7 +66,7 @@ export async function handleRequest(request, response, graph) {
   // Ask the graph for the resource with those keys.
   let resource;
   try {
-    resource = await ExplorableGraph.traverse(extendedGraph, ...keys);
+    resource = await GraphHelpers.traverse(extendedGraph, ...keys);
     // If resource is a function, invoke to get the object we want to return.
     if (typeof resource === "function") {
       resource = await resource();

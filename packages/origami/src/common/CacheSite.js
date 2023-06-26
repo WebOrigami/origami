@@ -1,6 +1,5 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import setDeep from "../builtins/@graph/setDeep.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Caches the results retrieved from one source graph in a second cache graph.
@@ -48,7 +47,7 @@ export default class CacheSite {
       return this;
     }
 
-    let cacheValue = await ExplorableGraph.traverse(this.cache, ...keys);
+    let cacheValue = await GraphHelpers.traverse(this.cache, ...keys);
     if (
       cacheValue !== undefined &&
       !GraphHelpers.isAsyncDictionary(cacheValue)
@@ -58,7 +57,7 @@ export default class CacheSite {
     }
 
     // Cache miss
-    let value = await ExplorableGraph.traverse(this.graph, ...keys);
+    let value = await GraphHelpers.traverse(this.graph, ...keys);
     if (value !== undefined) {
       // Does this key match the filter?
       let match;
@@ -66,7 +65,7 @@ export default class CacheSite {
       if (this.filter === undefined) {
         match = true;
       } else {
-        filterValue = await ExplorableGraph.traverse(this.filter, ...keys);
+        filterValue = await GraphHelpers.traverse(this.filter, ...keys);
         match = filterValue !== undefined;
       }
       if (match) {
@@ -86,11 +85,7 @@ export default class CacheSite {
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
-        cacheValue = await ExplorableGraph.traverse(
-          this.cache,
-          ...keys,
-          lastKey
-        );
+        cacheValue = await GraphHelpers.traverse(this.cache, ...keys, lastKey);
       }
 
       if (GraphHelpers.isAsyncDictionary(value)) {
