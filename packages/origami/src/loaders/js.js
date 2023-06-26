@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import DeferredGraph from "../common/DeferredGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
@@ -10,7 +11,7 @@ import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
  * @param {Buffer|string} buffer
  * @param {any} [key]
  * @returns {HasFunction & HasGraph}
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function loadJs(buffer, key) {
   const text = String(buffer);

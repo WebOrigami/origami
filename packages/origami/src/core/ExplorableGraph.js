@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import FunctionGraph from "./FunctionGraph.js";
@@ -48,7 +49,7 @@ export default class ExplorableGraph {
    * Attempts to cast the indicated graph variant to an explorable graph.
    *
    * @param {GraphVariant} variant
-   * @returns {Explorable}
+   * @returns {AsyncDictionary}
    */
   static from(variant) {
     if (this.isExplorable(variant)) {
@@ -152,9 +153,6 @@ export default class ExplorableGraph {
   // `isValueExplorable`, on the other hand, makes it sound like it takes a
   // value argument instead of a key.
   static async isKeyExplorable(graph, key) {
-    if (graph.isKeyForSubgraph) {
-      return graph.isKeyForSubgraph(key);
-    }
     if (graph.isKeyExplorable) {
       return graph.isKeyExplorable(key);
     }

@@ -1,10 +1,11 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return an array of paths to the values in the graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  * @param {string} [prefix]
  */

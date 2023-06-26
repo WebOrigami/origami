@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,7 +17,7 @@ const frameworkDir = path.resolve(dirname, "../framework");
 const frameworkFiles = new FilesGraph(frameworkDir);
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function explore() {
   const scope = /** @type {any} */ (this).scope ?? this;

@@ -1,10 +1,11 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 /**
  * Invokes the given function in the context of the current scope.
  *
- * @this {Explorable|null}
- * @param {Explorable} scope
+ * @this {AsyncDictionary|null}
+ * @param {AsyncDictionary} scope
  * @param {Invocable} invocable
  */
 export default async function invoke(scope, invocable, ...args) {

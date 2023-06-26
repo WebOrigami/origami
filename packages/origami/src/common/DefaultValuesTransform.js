@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   getScope,
@@ -11,7 +12,7 @@ import {
  * requested key is missing from the main graph, but exists in the default
  * values graph, the value will be returned from that graph.
  *
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 export default function DefaultValuesTransform(Base) {
   return class DefaultValues extends Base {

@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import YAML from "yaml";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { toSerializable } from "../core/utilities.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the object as text in YAML format.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function toYaml(variant) {

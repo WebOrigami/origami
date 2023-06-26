@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
@@ -15,7 +16,7 @@ import {
  * E.g., asking this graph for `!yaml` will invoke the yaml() builtin function
  * in the context of this graph.
  *
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 export default function OriCommandTransform(Base) {
   return class OriCommand extends Base {

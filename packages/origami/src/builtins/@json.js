@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { toSerializable } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the given object in JSON format.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any} [obj]
  */
 export default async function json(obj) {

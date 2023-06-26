@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getRealmObjectPrototype } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Concatenate the text content of objects or graphs.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any[]} args
  */
 export default async function concat(...args) {

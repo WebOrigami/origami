@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { graphInContext } from "../core/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -20,7 +21,7 @@ const configFileName = "ori.config.js";
  * If no Origami configuration file is found, the current folder will be
  * returned as a graph, with the builtins as its parent.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any} [key]
  */
 export default async function project(key) {

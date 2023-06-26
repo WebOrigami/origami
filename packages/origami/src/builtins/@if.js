@@ -1,8 +1,9 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any} value
  * @param {any} trueResult
  * @param {any} [falseResult]

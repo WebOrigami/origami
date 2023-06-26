@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
@@ -14,10 +15,10 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param {string} [baseHref]
- * @returns {Promise<Explorable>}
+ * @returns {Promise<AsyncDictionary>}
  */
 export default async function crawl(variant, baseHref) {
   assertScopeIsDefined(this);

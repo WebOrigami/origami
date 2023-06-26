@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ShuffleTransform from "../../common/ShuffleTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { transformObject } from "../../core/utilities.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new graph with the original's keys shuffled
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function shuffle(variant) {

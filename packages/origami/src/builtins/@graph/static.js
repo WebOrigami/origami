@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
@@ -7,7 +8,7 @@ import index from "../@index.js";
 /**
  * Expose common static keys (index.html, .keys.json) for a graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  */
 export default async function staticGraph(variant) {

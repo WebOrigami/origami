@@ -1,9 +1,10 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
  * Return a default .keys.json file for the current graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function defaultKeysJson(variant) {
   const graph = ExplorableGraph.from(variant);

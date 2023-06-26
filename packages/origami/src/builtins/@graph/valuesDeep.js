@@ -1,10 +1,11 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return the in-order exterior values of a graph as a flat array.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function valuesDeep(variant) {

@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import FunctionGraph from "../../core/FunctionGraph.js";
 import { graphInContext, toFunction } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a graph from a function and a set of keys.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {Invocable} [invocable]
  */
 export default async function fn(invocable, keys = []) {
@@ -16,7 +17,7 @@ export default async function fn(invocable, keys = []) {
   }
   const invocableFn = toFunction(invocable);
 
-  /** @this {Explorable|null} */
+  /** @this {AsyncDictionary|null} */
   async function extendedFn(key) {
     const scope = this;
     const ambientsGraph = graphInContext(

@@ -1,10 +1,11 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import path from "node:path";
 import process from "node:process";
 import FilesGraph from "../core/FilesGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {string} dirname
  */
 export default async function files(dirname) {

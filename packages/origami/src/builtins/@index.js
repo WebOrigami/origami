@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { keySymbol } from "../core/utilities.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Return a default index.html page for the current graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function index(variant) {

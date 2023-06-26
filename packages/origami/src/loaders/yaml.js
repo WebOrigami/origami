@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
@@ -21,7 +22,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function loadYaml(input, key) {
   // If the input is a graph variant, return it as is. This situation can arise

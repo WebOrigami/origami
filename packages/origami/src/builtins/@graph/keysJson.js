@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expose .keys.json for a graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  */
 export default async function keysJson(variant) {

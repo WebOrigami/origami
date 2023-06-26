@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import match from "../../src/builtins/@match.js";
@@ -5,7 +6,7 @@ import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     async function fn() {
       const name = await this?.get("name");
       return `Hello, ${name}!`;
@@ -25,7 +26,7 @@ describe("match", () => {
   });
 
   test("matches keys against a regular expression", async () => {
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     async function fn() {
       const name = await this?.get("name");
       return `Hello, ${name}!`;

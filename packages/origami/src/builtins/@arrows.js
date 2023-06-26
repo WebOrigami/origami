@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { keySymbol } from "../core/utilities.js";
 import ArrowGraph from "../framework/ArrowGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Interpret arrow keys in the graph as function calls.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function arrows(variant) {

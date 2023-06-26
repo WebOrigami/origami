@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @param {GraphVariant} variant
  * @param {any} key
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function nextKey(variant, key) {
   assertScopeIsDefined(this);

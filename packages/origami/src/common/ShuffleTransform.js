@@ -1,5 +1,7 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+
 /**
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 export default function ShuffleTransform(Base) {
   return class Shuffle extends Base {

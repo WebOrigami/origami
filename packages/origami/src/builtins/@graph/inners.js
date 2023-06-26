@@ -1,10 +1,12 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return the inner nodes of the graph: the nodes with children.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function inners(variant) {
@@ -25,7 +27,7 @@ export default async function inners(variant) {
     async keys() {
       const explorableKeys = [];
       for (const key of await graph.keys()) {
-        if (await ExplorableGraph.isKeyExplorable(graph, key)) {
+        if (await GraphHelpers.isKeyForSubgraph(graph, key)) {
           explorableKeys.push(key);
         }
       }

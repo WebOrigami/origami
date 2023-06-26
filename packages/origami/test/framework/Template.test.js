@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
@@ -39,7 +40,7 @@ text`;
     const template = new Template("");
     const scope = new ObjectGraph({});
     const input = { a: 1 };
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       assert.equal(await this?.get("a"), 1);
       return "";
@@ -61,7 +62,7 @@ template`
       a: 1,
     });
     const input = { c: 3 };
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       // Scope includes input + template + container
       assert.equal(await this?.get("a"), 1);
@@ -84,7 +85,7 @@ template`;
     const input = {
       b: 2,
     };
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       const templateInfo = await this?.get("@template");
       const info = await ExplorableGraph.plain(templateInfo);
@@ -114,7 +115,7 @@ template`
     const input = new ExpressionGraph({
       b: createExpressionFunction([ops.scope, "a"]),
     });
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       assert.equal(await this?.get("b"), 1);
       return "";
@@ -136,7 +137,7 @@ a: !ori ./b
     const input = {
       b: 2,
     };
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
       assert.equal(await this?.get("a"), 2);
       return "";

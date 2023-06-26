@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
@@ -64,8 +64,8 @@ describe("ExplorableGraph", () => {
         c: 2,
       },
     });
-    assert(!(await ExplorableGraph.isKeyExplorable(graph, "a")));
-    assert(await ExplorableGraph.isKeyExplorable(graph, "b"));
+    assert(!(await GraphHelpers.isKeyForSubgraph(graph, "a")));
+    assert(await GraphHelpers.isKeyForSubgraph(graph, "b"));
   });
 
   test("mapReduce() can map values and reduce them", async () => {

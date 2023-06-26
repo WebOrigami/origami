@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import setScope from "./set.js";
 
@@ -7,7 +8,7 @@ import setScope from "./set.js";
  *
  * @param {GraphVariant} variant
  * @param  {...GraphVariant} scopeGraphs
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function extendScope(variant, ...scopeGraphs) {
   assertScopeIsDefined(this);

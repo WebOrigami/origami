@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import process, { stdout } from "node:process";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./@graph/setDeep.js";
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} source
  * @param {GraphVariant} target
  */

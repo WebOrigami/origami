@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import project from "./@project.js";
 
 /**
@@ -7,7 +8,7 @@ import project from "./@project.js";
  * the default export of that file. Otherwise, the configuration is the set of
  * built-in functions.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any} [key]
  */
 export default async function config(key) {

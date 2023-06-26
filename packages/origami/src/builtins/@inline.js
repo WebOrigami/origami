@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { outputWithGraph } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/ori.js";
@@ -5,7 +6,7 @@ import loadOrigamiTemplate from "../loaders/ori.js";
 /**
  * Concatenate the text content of objects or graphs.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {StringLike} input
  * @param {boolean} [emitFrontMatter]
  */

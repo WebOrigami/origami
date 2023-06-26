@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import {
   extractFrontMatter,
@@ -18,7 +19,7 @@ import StringWithGraph from "./StringWithGraph.js";
  *
  * @param {StringLike} input
  * @param {any} [key]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function loadTextWithFrontMatter(input, key) {
   /** @type {any} */

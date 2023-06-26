@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import OrigamiTemplate from "../../framework/OrigamiTemplate.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -14,7 +15,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 `;
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  * @param {string} [baseHref ]
  */

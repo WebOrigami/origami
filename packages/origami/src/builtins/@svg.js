@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import graphviz from "graphviz-wasm";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -9,7 +10,7 @@ let graphvizLoaded = false;
 /**
  * Render a graph visually in SVG format.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  * @param {PlainObject} [options]
  */

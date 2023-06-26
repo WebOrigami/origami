@@ -1,9 +1,10 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 /**
  * Return true if the value is explorable
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {any} value
  */
 export default function isExplorable(value) {

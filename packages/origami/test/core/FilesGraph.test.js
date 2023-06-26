@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import assert from "node:assert";
 import * as fs from "node:fs/promises";
 import path from "node:path";
@@ -146,9 +147,9 @@ describe("FilesGraph", () => {
 
   test("can indicate which values are explorable", async () => {
     const graph = new FilesGraph(fixturesDirectory);
-    assert(await ExplorableGraph.isKeyExplorable(graph, "folder1"));
+    assert(await GraphHelpers.isKeyForSubgraph(graph, "folder1"));
     const folder1 = await graph.get("folder1");
-    assert(!(await ExplorableGraph.isKeyExplorable(folder1, "a.txt")));
+    assert(!(await GraphHelpers.isKeyForSubgraph(folder1, "a.txt")));
   });
 });
 

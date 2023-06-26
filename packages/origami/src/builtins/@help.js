@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import child_process from "node:child_process";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -11,7 +12,7 @@ const groupUrls = {
 };
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {string} [name]
  */
 export default async function help(name) {

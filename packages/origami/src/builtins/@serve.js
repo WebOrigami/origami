@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
@@ -14,7 +15,7 @@ const defaultPort = 5000;
  *
  * @param {GraphVariant} variant
  * @param {number} [port]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function serve(variant, port) {
   assertScopeIsDefined(this);

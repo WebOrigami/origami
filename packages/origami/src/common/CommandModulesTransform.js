@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import path from "node:path";
 
 /**
@@ -13,7 +14,7 @@ import path from "node:path";
  * used by the Origami CLI. This mixin takes care of that: if a folder contains
  * "foo.js", then this will expose "foo" as a key.
  *
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 export default function CommandsModulesTransform(Base) {
   return class CommandModules extends Base {

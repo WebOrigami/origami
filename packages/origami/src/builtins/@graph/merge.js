@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import MergeGraph from "../../common/MergeGraph.js";
 import Scope from "../../common/Scope.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a graph that's the result of merging the given graphs.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant[]} graphs
  */
 export default async function merge(...graphs) {

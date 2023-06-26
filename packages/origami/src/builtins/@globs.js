@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import GlobGraph from "../common/GlobGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -5,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Define a graph whose keys are globs.
  *
  * @param {GraphVariant} graph
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function globs(graph) {
   assertScopeIsDefined(this);

@@ -1,4 +1,4 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import MapKeysValuesGraph from "../core/MapKeysValuesGraph.js";
 
 /**
@@ -24,7 +24,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.innerExtension)}`
       : !this.extensionMatchesOnly ||
-        (await ExplorableGraph.isKeyExplorable(this.graph, outerKey))
+        (await GraphHelpers.isKeyForSubgraph(this.graph, outerKey))
       ? outerKey
       : undefined;
   }
@@ -40,7 +40,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
       ? `${basename}${dotPrefix(this.outerExtension)}`
       : !this.extensionMatchesOnly ||
         (this.deep &&
-          (await ExplorableGraph.isKeyExplorable(this.graph, innerKey)))
+          (await GraphHelpers.isKeyForSubgraph(this.graph, innerKey)))
       ? innerKey
       : undefined;
   }

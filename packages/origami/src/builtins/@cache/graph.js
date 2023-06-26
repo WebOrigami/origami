@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import CacheGraph from "../../common/CacheGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -7,7 +8,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @param {GraphVariant} graph
  * @param {GraphVariant} [cache]
  * @param {GraphVariant} [filter]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default async function cacheGraph(graph, cache, filter) {
   assertScopeIsDefined(this);

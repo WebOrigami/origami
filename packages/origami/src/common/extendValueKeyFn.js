@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
@@ -26,7 +27,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
       : valueKeyFn;
 
   /**
-   * @this {Explorable|null}
+   * @this {AsyncDictionary|null}
    * @param {any} value
    * @param {any} key
    */

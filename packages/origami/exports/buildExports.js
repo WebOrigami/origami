@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import MapExtensionGraph from "../src/common/MapExtensionsGraph.js";
 import { transformObject } from "../src/core/utilities.js";
 import OrigamiTemplate from "../src/framework/OrigamiTemplate.js";
@@ -22,8 +23,12 @@ export async function exportFile(src) {
   return result;
 }
 
-// Given a buffer containing the code for a JavaScript file, generate an
-// appropriate export statement for that file.
+/**
+ * Given a buffer containing the code for a JavaScript file, generate an
+ * appropriate export statement for that file.
+ *
+ * @this {AsyncDictionary}
+ */
 async function exportStatementForCode(codeBuffer, key) {
   const code = String(codeBuffer);
 

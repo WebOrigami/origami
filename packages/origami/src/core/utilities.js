@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import * as YAMLModule from "yaml";
 import StringWithGraph from "../common/StringWithGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -86,8 +87,8 @@ export function getRealmObjectPrototype(obj) {
  * If the given graph has a `scope` property, return that. Otherwise, return the
  * graph itself.
  *
- * @param {Explorable|null} graph
- * @returns {Explorable}
+ * @param {AsyncDictionary|null} graph
+ * @returns {AsyncDictionary}
  */
 export function getScope(graph) {
   return /** @type {any} */ (graph)?.scope ?? graph;
@@ -200,8 +201,8 @@ function parseYamlWithExpressions(text) {
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
  * @param {GraphVariant} variant
- * @param {Explorable|null} context
- * @returns {Explorable & { parent: Explorable }}
+ * @param {AsyncDictionary|null} context
+ * @returns {AsyncDictionary & { parent: AsyncDictionary }}
  */
 export function graphInContext(variant, context) {
   // Either method of constructing the target produces a new graph.

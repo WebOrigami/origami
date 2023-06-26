@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -7,7 +8,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function loadJson(input, key) {
   // See notes at yaml.js

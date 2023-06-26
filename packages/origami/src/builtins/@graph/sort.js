@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import SortTransform from "../../common/SortTransform.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
@@ -7,7 +8,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new graph with the original's keys sorted
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  * @param {Invocable} [keyFn]
  */

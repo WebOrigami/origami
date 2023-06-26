@@ -1,9 +1,11 @@
 /// <reference path="../core/explorable.ts"/>
 
+import type { AsyncDictionary } from "@graphorigami/types";
+
 declare const InheritScopeTransform: Mixin<{
   inheritsScope: boolean;
-  parent: Explorable|null;
-  scope: Explorable|null;
+  parent: AsyncDictionary|null;
+  scope: AsyncDictionary|null;
 }>;
 
 export default InheritScopeTransform;

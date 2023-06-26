@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import YAML from "yaml";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import {
@@ -11,7 +12,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Render a graph in DOT format.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  * @param {PlainObject} [options]
  */

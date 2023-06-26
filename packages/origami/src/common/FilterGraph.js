@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class FilterGraph {
@@ -36,7 +37,7 @@ export default class FilterGraph {
       const match =
         (!filterValueExplorable && filterValue) ||
         (filterValueExplorable &&
-          (await ExplorableGraph.isKeyExplorable(this.graph, key)));
+          (await GraphHelpers.isKeyForSubgraph(this.graph, key)));
       if (match) {
         keys.add(key);
       }

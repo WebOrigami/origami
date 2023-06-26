@@ -1,8 +1,9 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtinLoaders from "../builtins/@loaders.js";
 import { extname, getScope } from "../core/utilities.js";
 
 /**
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {

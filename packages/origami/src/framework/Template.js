@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import builtins from "../builtins/@builtins.js";
@@ -36,7 +37,7 @@ export default class Template {
    * Apply the template to the given input data in the context of a graph.
    *
    * @param {any} [input]
-   * @param {Explorable|null} [baseScope]
+   * @param {AsyncDictionary|null} [baseScope]
    */
   async apply(input, baseScope = builtins) {
     // Compile the template if we haven't already done so.
@@ -110,7 +111,7 @@ export default class Template {
   toFunction() {
     const templateFunction = this.apply.bind(this);
     const templateScope = this.scope;
-    /** @this {Explorable|null} */
+    /** @this {AsyncDictionary|null} */
     return async function (data) {
       const scope = this ?? templateScope;
       return data !== undefined

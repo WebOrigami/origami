@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import CommandsModulesTransform from "../../common/CommandModulesTransform.js";
@@ -18,7 +19,7 @@ ignoreKeys.push(".");
 ignoreKeys.push("..");
 
 /**
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant
  */
 export default async function dataflow(variant) {

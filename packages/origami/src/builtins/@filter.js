@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import FilterGraph from "../common/FilterGraph.js";
 import { getScope } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -6,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Apply a filter to a graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} graphVariant
  * @param {GraphVariant} filterVariant
  */

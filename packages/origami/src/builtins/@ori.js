@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -10,7 +11,7 @@ import toYaml from "./@yaml.js";
 /**
  * Parse an Origami expression, evaluate it in the context of a graph (provided
  * by `this`), and return the result as text.
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  *
  * @param {string} expression
  */

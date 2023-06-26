@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import execute from "./execute.js";
 import format from "./format.js";
 
@@ -8,7 +9,7 @@ import format from "./format.js";
  * @param {string} [name] - optional name of the function
  */
 export function createExpressionFunction(code, name) {
-  /** @this {Explorable|null} */
+  /** @this {AsyncDictionary|null} */
   async function fn() {
     return execute.call(this, code);
   }

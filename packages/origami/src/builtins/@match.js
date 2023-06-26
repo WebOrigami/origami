@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -19,7 +20,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
  * @param {GraphVariant} [keys]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function match(pattern, resultFn, keys = []) {
   assertScopeIsDefined(this);

@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
@@ -12,7 +13,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated graph.
  *
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  * @param {GraphVariant} [variant]
  */
 export default async function debug(variant) {
@@ -43,7 +44,7 @@ export default async function debug(variant) {
 }
 
 /**
- * @param {Constructor<Explorable>} Base
+ * @param {Constructor<AsyncDictionary>} Base
  */
 function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {

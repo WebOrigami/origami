@@ -1,3 +1,4 @@
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
 import { getScope, keySymbol } from "../core/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
@@ -7,7 +8,7 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @this {Explorable|null}
+ * @this {AsyncDictionary|null}
  */
 export default function loadOri(buffer, key) {
   const scope = this ? getScope(this) : null;
