@@ -1,7 +1,6 @@
 /// <reference path="explorable.ts"/>
 
 export default class ExplorableGraph {
-  static entries(graph: GraphVariant): Promise<[any, any][]>;
   static fromJson(obj: any): Explorable;
   static fromYaml(obj: any): Explorable;
   static isExplorable(obj: any): boolean;

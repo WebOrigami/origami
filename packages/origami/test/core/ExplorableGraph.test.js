@@ -3,40 +3,6 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableGraph from "../../src/core/ExplorableGraph.js";
 describe("ExplorableGraph", () => {
-  test("entries() returns [key, value] pairs for the graph", async () => {
-    const graph = new ObjectGraph({
-      a: 1,
-      b: 2,
-    });
-    const entries = await ExplorableGraph.entries(graph);
-    assert.deepEqual(entries, [
-      ["a", 1],
-      ["b", 2],
-    ]);
-  });
-
-  test("from() returns an explorable graph as is", async () => {
-    const graph1 = new ObjectGraph({
-      a: "Hello, a.",
-    });
-    const graph2 = GraphHelpers.from(graph1);
-    assert.equal(graph2, graph1);
-  });
-
-  test("from() uses an object's toGraph() method if defined", async () => {
-    const obj = {
-      toGraph() {
-        return {
-          a: "Hello, a.",
-        };
-      },
-    };
-    const graph = GraphHelpers.from(obj);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: "Hello, a.",
-    });
-  });
-
   test("isExplorable() tests for explorable graph interface", async () => {
     assert(!ExplorableGraph.isExplorable({}));
 

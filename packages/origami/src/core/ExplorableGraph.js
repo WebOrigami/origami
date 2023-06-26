@@ -15,18 +15,6 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export default class ExplorableGraph {
   /**
-   * Returns [key, value] pairs for the graph.
-   *
-   * @param {GraphVariant} variant
-   */
-  static async entries(variant) {
-    const graph = GraphHelpers.from(variant);
-    const keys = [...(await graph.keys())];
-    const promises = keys.map(async (key) => [key, await graph.get(key)]);
-    return Promise.all(promises);
-  }
-
-  /**
    * Parse the given object as JSON text and return the corresponding explorable
    * graph.
    *
