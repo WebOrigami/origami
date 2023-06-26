@@ -22,7 +22,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
         typeof valueKeyFn === "object" &&
         "toFunction" in valueKeyFn
       ? valueKeyFn.toFunction()
-      : ExplorableGraph.canCastToExplorable(valueKeyFn)
+      : GraphHelpers.isGraphable(valueKeyFn)
       ? ExplorableGraph.toFunction(valueKeyFn)
       : valueKeyFn;
 
@@ -46,7 +46,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     let valueGraph;
     if (ExplorableGraph.isExplorable(value)) {
       valueGraph = value;
-    } else if (ExplorableGraph.canCastToExplorable(value)) {
+    } else if (GraphHelpers.isGraphable(value)) {
       valueGraph = GraphHelpers.from(value);
     }
     if (valueGraph && !("parent" in valueGraph && "scope" in valueGraph)) {

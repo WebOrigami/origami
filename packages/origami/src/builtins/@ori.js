@@ -2,7 +2,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getRealmObjectPrototype } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
@@ -71,7 +70,7 @@ async function formatResult(scope, result) {
   }
 
   // If the result is a graph, attach the graph to the text output.
-  if (ExplorableGraph.canCastToExplorable(result)) {
+  if (GraphHelpers.isGraphable(result)) {
     const graph = GraphHelpers.from(result);
     if (text instanceof Buffer) {
       /** @type {any} */ (text).toGraph = () => graph;

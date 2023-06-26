@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -30,7 +30,7 @@ export default function loadYaml(input, key) {
   // graph and whose left-hand side a name ending in `.yaml`. In that situation,
   // we return the input as is, and rely on the ori CLI or the server to
   // eventually render the graph to YAML.
-  if (ExplorableGraph.canCastToExplorable(input)) {
+  if (GraphHelpers.isGraphable(input)) {
     return input;
   }
 

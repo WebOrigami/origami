@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -14,7 +14,7 @@ export default async function defineds(variant) {
   if (variant === undefined) {
     throw new TypeError("A graph variant is required");
   }
-  return ExplorableGraph.mapReduce(variant, null, (values, keys) => {
+  return GraphHelpers.mapReduce(variant, null, (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {

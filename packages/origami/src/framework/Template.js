@@ -5,7 +5,6 @@ import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
   extractFrontMatter,
   getScope,
@@ -158,7 +157,7 @@ async function processInput(input, baseScope) {
     input = await input.call(baseScope);
   }
 
-  let inputGraph = ExplorableGraph.canCastToExplorable(input)
+  let inputGraph = GraphHelpers.isGraphable(input)
     ? GraphHelpers.from(input)
     : null;
 

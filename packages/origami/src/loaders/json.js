@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
@@ -13,7 +12,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  */
 export default function loadJson(input, key) {
   // See notes at yaml.js
-  if (ExplorableGraph.canCastToExplorable(input)) {
+  if (GraphHelpers.isGraphable(input)) {
     return input;
   }
 

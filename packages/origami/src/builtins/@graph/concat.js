@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getRealmObjectPrototype } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -27,7 +26,7 @@ export default async function concat(...args) {
   const scope = this;
   const mapFn = async (value) => getText(value, scope);
   const reduceFn = (values) => values.join("");
-  return ExplorableGraph.mapReduce(graph, mapFn, reduceFn);
+  return GraphHelpers.mapReduce(graph, mapFn, reduceFn);
 }
 
 async function getText(value, scope) {

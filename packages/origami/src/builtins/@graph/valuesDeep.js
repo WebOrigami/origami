@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -14,7 +14,7 @@ export default async function valuesDeep(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return ExplorableGraph.mapReduce(variant, null, (values) => values.flat());
+  return GraphHelpers.mapReduce(variant, null, (values) => values.flat());
 }
 
 valuesDeep.usage = `valuesDeep <graph>\tThe in-order graph values as a flat array`;

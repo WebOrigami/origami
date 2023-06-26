@@ -15,23 +15,6 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export default class ExplorableGraph {
   /**
-   * Returns true if the indicated object can be cast to an explorable graph.
-   *
-   * @param {any} obj
-   */
-  static canCastToExplorable(obj) {
-    return (
-      this.isExplorable(obj) ||
-      obj instanceof Function ||
-      obj instanceof Array ||
-      obj instanceof Set ||
-      obj?.toFunction instanceof Function ||
-      obj?.toGraph instanceof Function ||
-      utilities.isPlainObject(obj)
-    );
-  }
-
-  /**
    * Returns [key, value] pairs for the graph.
    *
    * @param {GraphVariant} variant

@@ -68,23 +68,6 @@ describe("ExplorableGraph", () => {
     assert(await GraphHelpers.isKeyForSubgraph(graph, "b"));
   });
 
-  test("mapReduce() can map values and reduce them", async () => {
-    const graph = {
-      a: 1,
-      b: 2,
-      more: {
-        c: 3,
-      },
-      d: 4,
-    };
-    const reduced = await ExplorableGraph.mapReduce(
-      graph,
-      (value) => value,
-      (values) => String.prototype.concat(...values)
-    );
-    assert.deepEqual(reduced, "1234");
-  });
-
   test("plain() produces a plain object version of a graph", async () => {
     const original = {
       a: 1,

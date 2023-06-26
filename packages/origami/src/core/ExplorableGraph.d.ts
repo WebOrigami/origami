@@ -1,13 +1,11 @@
 /// <reference path="explorable.ts"/>
 
 export default class ExplorableGraph {
-  static canCastToExplorable(obj: any): boolean;
   static entries(graph: GraphVariant): Promise<[any, any][]>;
   static fromJson(obj: any): Explorable;
   static fromYaml(obj: any): Explorable;
   static isExplorable(obj: any): boolean;
   static isKeyExplorable(graph: Explorable, obj: any): Promise<boolean>;
-  static mapReduce(graph: GraphVariant, mapFn: null|((any) => any|null), reduceFn: (any) => any): Explorable;
   static plain(graph: GraphVariant): Promise<PlainObject>;
   static toFunction(graph: GraphVariant): Function;
   static toJson(graph: GraphVariant | object): Promise<string>;
