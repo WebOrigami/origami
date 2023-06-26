@@ -8,9 +8,10 @@ import graphHttpsBuiltin from "../builtins/@graphHttps.js";
 import httpBuiltin from "../builtins/@http.js";
 import httpsBuiltin from "../builtins/@https.js";
 import Scope from "../common/Scope.js";
-import OrigamiGraph from "../framework/OrigamiGraph.js";
 import execute from "./execute.js";
 import { createExpressionFunction } from "./expressionFunction.js";
+
+let OrigamiGraph;
 
 /**
  * Construct an array.
@@ -54,13 +55,19 @@ export function filesRoot() {
  * @this {AsyncDictionary|null}
  * @param {PlainObject} formulas
  */
-export function graph(formulas) {
+export async function graph(formulas) {
   const fns = {};
   for (const key in formulas) {
     const code = formulas[key];
     const fn = code instanceof Array ? createExpressionFunction(code) : code;
     fns[key] = fn;
   }
+
+  // Lazily load OrigamiGraph to avoid circular dependencies.
+  if (!OrigamiGraph) {
+    OrigamiGraph = (await import("../framework/OrigamiGraph.js")).default;
+  }
+
   const result = new OrigamiGraph(fns);
   result.parent = this;
   return result;
