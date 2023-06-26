@@ -1,7 +1,7 @@
-import * as utilities from "../../core/utilities.js";
+import * as serialize from "../../core/serialize.js";
 
 export default async function parseYaml(text) {
-  return text ? utilities.parseYaml(String(text)) : undefined;
+  return text ? serialize.parseYaml(String(text)) : undefined;
 }
 
 parseYaml.usage = `parseYaml <text>\tParse text as YAML (including JSON)`;

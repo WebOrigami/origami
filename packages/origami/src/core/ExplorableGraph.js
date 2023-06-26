@@ -1,53 +1,12 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import * as YAMLModule from "yaml";
-import MapValuesGraph from "../common/MapValuesGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import * as utilities from "./utilities.js";
-
-// The "yaml" package doesn't seem to provide a default export that the browser can
-// recognize, so we have to handle two ways to accommodate Node and the browser.
-// @ts-ignore
-const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * A collection of static methods providing helpers for working with explorable
  * graphs.
  */
 export default class ExplorableGraph {
-  /**
-   * Parse the given object as JSON text and return the corresponding explorable
-   * graph.
-   *
-   * Empty text will be treated as an empty object.
-   *
-   * @param {any} obj
-   */
-  static fromJson(obj) {
-    let parsed = JSON.parse(obj);
-    if (parsed === null) {
-      // String was empty or just YAML comments.
-      parsed = {};
-    }
-    return new ObjectGraph(parsed);
-  }
-
-  /**
-   * Parse the given object as YAML text and return the corresponding explorable
-   * graph.
-   *
-   * Empty text (or text with just comments) will be treated as an empty object.
-   *
-   * @param {any} obj
-   */
-  static fromYaml(obj) {
-    let parsed = utilities.parseYaml(String(obj));
-    if (parsed === null) {
-      // String was empty or just YAML comments.
-      parsed = {};
-    }
-    return new ObjectGraph(parsed);
-  }
-
   /**
    * Converts an asynchronous explorable graph into a synchronous plain
    * JavaScript object.
@@ -64,7 +23,7 @@ export default class ExplorableGraph {
       for (let i = 0; i < keys.length; i++) {
         obj[keys[i]] = values[i];
       }
-      const result = castArrayLike(obj);
+      const result = utilities.castArrayLike(obj);
       return result;
     });
   }
@@ -78,44 +37,6 @@ export default class ExplorableGraph {
   static toFunction(variant) {
     const graph = GraphHelpers.from(variant);
     return graph.get.bind(graph);
-  }
-
-  /**
-   * Returns the graph as a JSON string.
-   *
-   * @param {GraphVariant} variant
-   */
-  static async toJson(variant) {
-    const serializable = await this.toSerializable(variant);
-    const cast = castArrayLike(serializable);
-    return JSON.stringify(cast, null, 2);
-  }
-
-  /**
-   * Converts the graph into a plain JavaScript object with the same structure
-   * as the graph, but which can be serialized to text. All keys will be cast to
-   * strings, and all values reduced to native JavaScript types as best as
-   * possible.
-   *
-   * @param {GraphVariant} variant
-   */
-  static async toSerializable(variant) {
-    const serializable = new MapValuesGraph(variant, utilities.toSerializable, {
-      deep: true,
-    });
-    return this.plain(serializable);
-  }
-
-  /**
-   * Returns the graph as a YAML string.
-   *
-   * @param {GraphVariant} variant
-   * @returns {Promise<string>}
-   */
-  static async toYaml(variant) {
-    const serializable = await this.toSerializable(variant);
-    const cast = castArrayLike(serializable);
-    return YAML.stringify(cast);
   }
 
   /**
@@ -203,23 +124,6 @@ export default class ExplorableGraph {
     const promises = Array.from(keys, (key) => graph.get(key));
     return Promise.all(promises);
   }
-}
-
-// If the given plain object has only integer keys, return it as an array.
-// Otherwise return it as is.
-function castArrayLike(obj) {
-  let hasKeys = false;
-  let expectedIndex = 0;
-  for (const key in obj) {
-    hasKeys = true;
-    const index = Number(key);
-    if (isNaN(index) || index !== expectedIndex) {
-      // Not an array-like object.
-      return obj;
-    }
-    expectedIndex++;
-  }
-  return hasKeys ? Object.values(obj) : obj;
 }
 
 class TraverseError extends ReferenceError {

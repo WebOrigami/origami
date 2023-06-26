@@ -3,12 +3,12 @@ import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import { parseYaml } from "../core/serialize.js";
 import {
   getScope,
   graphInContext,
   isPlainObject,
   keySymbol,
-  parseYaml,
   transformObject,
 } from "../core/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";

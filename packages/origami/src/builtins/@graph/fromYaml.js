@@ -1,7 +1,7 @@
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import serialize from "../../core/serialize.js";
 
 export default async function fromYaml(text) {
-  return text ? ExplorableGraph.fromYaml(text) : undefined;
+  return text ? serialize.fromYaml(text) : undefined;
 }
 
 fromYaml.usage = `fromYaml <text>\tParse text as YAML`;

@@ -1,6 +1,7 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
+import * as serialize from "../core/serialize.js";
 import {
   extname,
   graphInContext,
@@ -8,7 +9,6 @@ import {
   keysFromPath,
   stringLike,
 } from "../core/utilities.js";
-// import { addAncestor } from "../framework/scopeUtilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Extend the graph's scope with the URL's search parameters.
@@ -116,15 +116,15 @@ export async function handleRequest(request, response, graph) {
     const graph = GraphHelpers.from(resource);
     resource =
       mediaType === "text/yaml"
-        ? await ExplorableGraph.toYaml(graph)
-        : await ExplorableGraph.toJson(graph);
+        ? await serialize.toYaml(graph)
+        : await serialize.toJson(graph);
   } else if (
     mediaType === undefined &&
     (isPlainObject(resource) || resource instanceof Array)
   ) {
     // The resource is data, try showing it as YAML.
     const graph = GraphHelpers.from(resource);
-    resource = await ExplorableGraph.toYaml(graph);
+    resource = await serialize.toYaml(graph);
     mediaType = "text/yaml";
   }
 

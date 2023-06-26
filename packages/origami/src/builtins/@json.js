@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { toSerializable } from "../core/utilities.js";
+import * as serialize from "../core/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -17,9 +16,9 @@ export default async function json(obj) {
     return undefined;
   }
   if (GraphHelpers.isGraphable(obj)) {
-    return ExplorableGraph.toJson(obj);
+    return serialize.toJson(obj);
   } else {
-    const serializable = toSerializable(obj);
+    const serializable = serialize.serializableObject(obj);
     return JSON.stringify(serializable, null, 2);
   }
 }

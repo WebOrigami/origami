@@ -1,14 +1,24 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import * as YAMLModule from "yaml";
-import StringWithGraph from "../common/StringWithGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
-import expressionTag from "../language/expressionTag.js";
 import ExplorableGraph from "./ExplorableGraph.js";
 
-// See notes at ExplorableGraph.js
-// @ts-ignore
-const YAML = YAMLModule.default ?? YAMLModule.YAML;
+// If the given plain object has only integer keys, return it as an array.
+// Otherwise return it as is.
+export function castArrayLike(obj) {
+  let hasKeys = false;
+  let expectedIndex = 0;
+  for (const key in obj) {
+    hasKeys = true;
+    const index = Number(key);
+    if (isNaN(index) || index !== expectedIndex) {
+      // Not an array-like object.
+      return obj;
+    }
+    expectedIndex++;
+  }
+  return hasKeys ? Object.values(obj) : obj;
+}
 
 /**
  * If the given path ends in an extension, return it. Otherwise, return the
@@ -29,43 +39,6 @@ export function extname(path) {
   const match = path.match(extnameRegex);
   const extension = match?.groups?.ext.toLowerCase() ?? "";
   return extension;
-}
-
-/**
- * Extract front matter from the given text. The first line of the text must be
- * "---", followed by a block of JSON or YAML, followed by another line of
- * "---". Any lines following will be returned added to the data under a
- * `content` key.
- *
- * If the text does not contain front matter, the front matter properties will
- * be null.
- *
- * @param {StringLike} input
- * @returns {{ bodyText: string, frontBlock: string|null, frontData: PlainObject|null,
- * frontText: string|null }}
- */
-export function extractFrontMatter(input) {
-  const text = String(input);
-  const regex =
-    /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
-  const match = regex.exec(text);
-  let frontBlock;
-  let frontData;
-  let frontText;
-  let bodyText;
-  if (match?.groups) {
-    bodyText = match.groups.bodyText;
-    frontBlock = match.groups.frontBlock;
-    frontText = match.groups.frontText;
-
-    frontData = parseYamlWithExpressions(frontText);
-  } else {
-    frontBlock = null;
-    frontData = null;
-    frontText = null;
-    bodyText = text;
-  }
-  return { bodyText, frontBlock, frontData, frontText };
 }
 
 /**
@@ -158,42 +131,6 @@ export function keysFromPath(pathname) {
 
 export const keySymbol = Symbol("key");
 
-export async function outputWithGraph(obj, graph, emitFrontMatter = false) {
-  const objText = String(obj);
-  if (!graph) {
-    return objText;
-  }
-  let outputText;
-  if (emitFrontMatter) {
-    const frontData = await ExplorableGraph.toYaml(graph);
-    outputText = `---
-${frontData.trimEnd()}
----
-${objText}`;
-  } else {
-    outputText = objText;
-  }
-  return new StringWithGraph(outputText, graph);
-}
-
-export function parseYaml(text) {
-  const { frontData, bodyText } = extractFrontMatter(text);
-  if (frontData) {
-    const data = Object.assign(frontData, {
-      "@text": bodyText,
-    });
-    return data;
-  } else {
-    return parseYamlWithExpressions(text);
-  }
-}
-
-function parseYamlWithExpressions(text) {
-  return YAML.parse(text, {
-    customTags: [expressionTag],
-  });
-}
-
 /**
  * Return a new graph equivalent to the given graph, but with the given context.
  *
@@ -250,43 +187,6 @@ export function toFunction(obj) {
       ? /** @type {any} */ (obj).toFunction()
       : ExplorableGraph.toFunction(obj);
   return fn;
-}
-
-/**
- * Attempt to convert the given object to something which can be serialized to
- * text (e.g., as JSON): a plain object, an array, or a string.
- *
- * @param {any} obj
- */
-export function toSerializable(obj) {
-  if (isPlainObject(obj)) {
-    const result = {};
-    for (const key in obj) {
-      result[key] = toSerializable(obj[key]);
-    }
-    return result;
-  } else if (obj instanceof Array) {
-    return obj.map((value) => toSerializable(value));
-  } else if (obj instanceof Set) {
-    const array = Array.from(obj);
-    return array.map((value) => toSerializable(value));
-  } else {
-    // Leave primitive and built-in types alone
-    const t = typeof obj;
-    if (
-      t === "boolean" ||
-      t === "number" ||
-      t === "bigint" ||
-      t === "string" ||
-      obj instanceof Date ||
-      obj === null
-    ) {
-      return obj;
-    } else {
-      // Unknown type; try to cast to string.
-      return obj?.toString?.();
-    }
-  }
 }
 
 /**

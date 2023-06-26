@@ -5,12 +5,8 @@ import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import {
-  extractFrontMatter,
-  getScope,
-  graphInContext,
-  keySymbol,
-} from "../core/utilities.js";
+import { extractFrontMatter } from "../core/serialize.js";
+import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 // See notes at ExplorableGraph.js

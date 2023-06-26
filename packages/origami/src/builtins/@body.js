@@ -1,4 +1,4 @@
-import { extractFrontMatter } from "../core/utilities.js";
+import { extractFrontMatter } from "../core/serialize.js";
 
 export default function body(input) {
   const { bodyText } = extractFrontMatter(input);

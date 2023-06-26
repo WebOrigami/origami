@@ -1,12 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
-import {
-  extname,
-  isPlainObject,
-  keySymbol,
-  toSerializable,
-} from "../../core/utilities.js";
+import * as serialize from "../../core/serialize.js";
+import { extname, isPlainObject, keySymbol } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -91,7 +87,7 @@ async function statements(graph, nodePath, nodeLabel, options) {
       const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {
-      const serializable = value ? toSerializable(value) : undefined;
+      const serializable = value ? serialize.toSerializable(value) : undefined;
       let label =
         typeof serializable === "object"
           ? YAML.stringify(serializable)

@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { outputWithGraph } from "../core/utilities.js";
+import { outputWithGraph } from "../core/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/ori.js";
 

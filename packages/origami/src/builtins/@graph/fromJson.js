@@ -1,7 +1,7 @@
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import * as serialize from "../../core/serialize.js";
 
 export default async function fromJson(text) {
-  return text ? ExplorableGraph.fromJson(text) : undefined;
+  return text ? serialize.fromJson(text) : undefined;
 }
 
 fromJson.usage = `fromJson <text>\tParse text as JSON`;

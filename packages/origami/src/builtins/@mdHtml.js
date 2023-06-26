@@ -3,7 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import { outputWithGraph } from "../core/utilities.js";
+import { outputWithGraph } from "../core/serialize.js";
 
 marked.use(
   markedGfmHeadingId(),

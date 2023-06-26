@@ -48,50 +48,6 @@ describe("ExplorableGraph", () => {
     assert.deepEqual(plain, original);
   });
 
-  test("fromJson() can parse JSON text", async () => {
-    const yaml = `{"a": 1, "b": 2, "c": 3}`;
-    const graph = ExplorableGraph.fromJson(yaml);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: 1,
-      b: 2,
-      c: 3,
-    });
-  });
-
-  test("fromYaml() can parse YAML text", async () => {
-    const yaml = `a: Hello, a.
-b: Hello, b.
-c: Hello, c.`;
-    const graph = ExplorableGraph.fromYaml(yaml);
-    assert.deepEqual(await ExplorableGraph.plain(graph), {
-      a: "Hello, a.",
-      b: "Hello, b.",
-      c: "Hello, c.",
-    });
-  });
-
-  test("toFunction() returns the graph in function form", async () => {
-    const graph = new ObjectGraph({
-      a: 1,
-      b: 2,
-      c: 3,
-    });
-    const fn = ExplorableGraph.toFunction(graph);
-    assert.equal(await fn("a"), 1);
-  });
-
-  test("toJson() renders a graph as JSON", async () => {
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const json = await ExplorableGraph.toJson(graph);
-    assert.equal(json, `{\n  "a": "Hello, a."\n}`);
-  });
-
-  test("toYaml() renders a graph as YAML", async () => {
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const yaml = await ExplorableGraph.toYaml(graph);
-    assert.equal(yaml, `a: Hello, a.\n`);
-  });
-
   test("traverse() a path of keys", async () => {
     const obj = new ObjectGraph({
       a1: 1,

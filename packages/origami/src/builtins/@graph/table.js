@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import { toSerializable } from "../../core/utilities.js";
+import * as serialize from "../../core/serialize.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -57,7 +57,7 @@ async function simpleTable(graph) {
   const rows = [header];
   for (const key of await graph.keys()) {
     const value = await graph.get(key);
-    const valueText = toSerializable(value);
+    const valueText = serialize.toSerializable(value);
     rows.push(`${key}\t${valueText}`);
   }
   const text = rows.join("\n");

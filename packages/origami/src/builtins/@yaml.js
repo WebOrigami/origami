@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import YAML from "yaml";
-import ExplorableGraph from "../core/ExplorableGraph.js";
-import { toSerializable } from "../core/utilities.js";
+import * as serialize from "../core/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -16,9 +15,9 @@ export default async function toYaml(variant) {
   if (variant === undefined) {
     return undefined;
   } else if (typeof variant === "object") {
-    return ExplorableGraph.toYaml(variant);
+    return serialize.toYaml(variant);
   } else {
-    const serializable = toSerializable(variant);
+    const serializable = serialize.serializableObject(variant);
     return YAML.stringify(serializable);
   }
 }
