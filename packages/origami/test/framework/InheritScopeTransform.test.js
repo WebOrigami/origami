@@ -1,11 +1,7 @@
 import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
-
-// @ts-ignore
-const triggerCircularDependency = ExplorableGraph;
 
 describe("InheritScopeTransform", () => {
   test("creates a scope that includes a graph and its parent", async () => {

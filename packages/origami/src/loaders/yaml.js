@@ -12,7 +12,7 @@ import {
 } from "../core/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 
-// See notes at ExplorableGraph.js
+// See notes at serialize.js
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 

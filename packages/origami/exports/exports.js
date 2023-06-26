@@ -114,7 +114,7 @@ export { default as Scope } from "../src/common/Scope.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
 export { default as SortTransform } from "../src/common/SortTransform.js";
 export { default as StringWithGraph } from "../src/common/StringWithGraph.js";
-export { default as ExplorableGraph } from "../src/core/ExplorableGraph.js";
+export * from "../src/core/serialize.js";
 export * from "../src/core/utilities.js";
 export * from "../src//coreExports.js";
 export { default as ArrowGraph } from "../src/framework/ArrowGraph.js";

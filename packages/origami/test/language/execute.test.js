@@ -1,13 +1,8 @@
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ExplorableGraph from "../../src/core/ExplorableGraph.js"; // Entry point to circular dependencies
-
-import { ObjectGraph } from "@graphorigami/core";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
-
-// @ts-ignore
-const triggerCircularDependency = ExplorableGraph;
 
 describe("execute", () => {
   test("can retrieve values from scope", async () => {

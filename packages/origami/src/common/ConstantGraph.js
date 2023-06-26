@@ -1,8 +1,5 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
-
-export default class ConstantGraph extends ExplorableGraph {
+export default class ConstantGraph {
   constructor(value) {
-    super();
     this.value = value;
   }
 

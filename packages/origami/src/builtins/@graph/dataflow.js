@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import * as ops from "../../language/ops.js";
 import builtins from "../@builtins.js";
 
-// See notes at ExplorableGraph.js
+// See notes at serialize.js
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 

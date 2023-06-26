@@ -1,6 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import * as YAMLModule from "yaml";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
@@ -8,10 +7,6 @@ import StringWithGraph from "../common/StringWithGraph.js";
 import { extractFrontMatter } from "../core/serialize.js";
 import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
-
-// See notes at ExplorableGraph.js
-// @ts-ignore
-const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 export default class Template {
   constructor(document, scope) {
