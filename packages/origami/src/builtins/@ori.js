@@ -3,7 +3,6 @@ import { GraphHelpers } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
-import { incrementCount } from "../core/measure.js";
 import { getRealmObjectPrototype } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
@@ -25,7 +24,6 @@ export default async function ori(expression) {
   let scope = this ?? builtins;
 
   // Parse
-  incrementCount("ori parse");
   const fn = compile.expression(expression);
 
   // Execute
