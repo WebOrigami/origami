@@ -1,6 +1,6 @@
 import { AsyncGraph } from "@graphorigami/types";
+import { GraphVariant, PlainObject } from "..";
 import DictionaryHelpers from "./DictionaryHelpers";
-import { GraphVariant, PlainObject } from "./coreTypes";
 
 export default class GraphHelpers extends DictionaryHelpers {
   static assign(target: GraphVariant, source: GraphVariant): Promise<AsyncGraph>;

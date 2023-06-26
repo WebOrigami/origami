@@ -1,4 +1,5 @@
 import type { AsyncDictionary } from "@graphorigami/types";
+export * from "./main.js";
 
 export type PlainObject = {
   [key: string]: any;

@@ -7,8 +7,8 @@ import SetGraph from "./SetGraph.js";
 /**
  * Helper functions for working with async graphs
  *
- * @typedef {import("./coreTypes").GraphVariant} GraphVariant
- * @typedef {import("./coreTypes").PlainObject} PlainObject
+ * @typedef {import("../index").GraphVariant} GraphVariant
+ * @typedef {import("../index").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncGraph} AsyncGraph
  * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
  */
