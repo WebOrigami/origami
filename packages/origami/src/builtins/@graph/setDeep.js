@@ -1,8 +1,9 @@
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 
 export default async function setDeep(target, source) {
-  const targetGraph = ExplorableGraph.from(target);
-  const sourceGraph = ExplorableGraph.from(source);
+  const targetGraph = GraphHelpers.from(target);
+  const sourceGraph = GraphHelpers.from(source);
   await applyUpdates(sourceGraph, targetGraph);
 }
 

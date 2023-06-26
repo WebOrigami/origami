@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 import OrigamiTemplate from "../../framework/OrigamiTemplate.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import paths from "./paths.js";
@@ -22,7 +22,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 export default async function sitemap(variant, baseHref = "") {
   assertScopeIsDefined(this);
   variant = variant ?? (await this?.get("@current"));
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

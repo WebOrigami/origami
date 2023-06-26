@@ -1,5 +1,4 @@
 import { GraphHelpers } from "@graphorigami/core";
-import ExplorableGraph from "./ExplorableGraph.js";
 import * as utilities from "./utilities.js";
 
 /**
@@ -13,7 +12,7 @@ export default class MapValuesGraph {
    * @param {PlainObject} options
    */
   constructor(variant, mapFn, options = {}) {
-    this.graph = ExplorableGraph.from(variant);
+    this.graph = GraphHelpers.from(variant);
     this.mapFn = utilities.toFunction(mapFn);
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;

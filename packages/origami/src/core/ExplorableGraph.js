@@ -1,9 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
-import FunctionGraph from "./FunctionGraph.js";
 import MapValuesGraph from "./MapValuesGraph.js";
-import SetGraph from "./SetGraph.js";
 import * as utilities from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -39,57 +37,10 @@ export default class ExplorableGraph {
    * @param {GraphVariant} variant
    */
   static async entries(variant) {
-    const graph = this.from(variant);
+    const graph = GraphHelpers.from(variant);
     const keys = [...(await graph.keys())];
     const promises = keys.map(async (key) => [key, await graph.get(key)]);
     return Promise.all(promises);
-  }
-
-  /**
-   * Attempts to cast the indicated graph variant to an explorable graph.
-   *
-   * @param {GraphVariant} variant
-   * @returns {AsyncDictionary}
-   */
-  static from(variant) {
-    if (this.isExplorable(variant)) {
-      // Argument already supports the ExplorableGraph interface.
-      // @ts-ignore
-      return variant;
-    }
-
-    // Use toGraph() if defined.
-    if (typeof variant === "object" && "toGraph" in variant) {
-      return variant.toGraph();
-    }
-
-    // Use toFunction() if defined.
-    if (typeof variant === "object" && "toFunction" in variant) {
-      const fn = variant.toFunction();
-      return new FunctionGraph(fn);
-    }
-
-    // Handle known types.
-    if (variant instanceof Function) {
-      return new FunctionGraph(variant);
-    } else if (variant instanceof Array || utilities.isPlainObject(variant)) {
-      return new ObjectGraph(variant);
-    } else if (variant instanceof Set) {
-      return new SetGraph(variant);
-    } else if (
-      typeof variant === "string" ||
-      variant instanceof String ||
-      variant instanceof Buffer
-    ) {
-      // Attempt to parse the string as JSON or YAML.
-      return this.fromYaml(variant);
-    } else if (variant !== null && typeof variant === "object") {
-      // An instance of some class. This is our last choice because it's the
-      // least specific.
-      return new ObjectGraph(variant);
-    }
-
-    throw new TypeError("Couldn't convert argument to an explorable graph");
   }
 
   /**
@@ -175,7 +126,7 @@ export default class ExplorableGraph {
    * @param {Function} reduceFn
    */
   static async mapReduce(variant, mapFn, reduceFn) {
-    const graph = this.from(variant);
+    const graph = GraphHelpers.from(variant);
 
     // We're going to fire off all the get requests in parallel, as quickly as
     // the keys come in. We call the graph's `get` method for each key, but
@@ -228,7 +179,7 @@ export default class ExplorableGraph {
    * @returns {Function}
    */
   static toFunction(variant) {
-    const graph = this.from(variant);
+    const graph = GraphHelpers.from(variant);
     return graph.get.bind(graph);
   }
 
@@ -316,7 +267,7 @@ export default class ExplorableGraph {
       // If the value isn't already explorable, cast it to an explorable graph.
       // If someone is trying to call `get` on this thing, they mean to treat it
       // as an explorable graph.
-      const graph = ExplorableGraph.from(value);
+      const graph = GraphHelpers.from(value);
 
       // If the graph supports the traverse() method, pass the remaining keys
       // all at once.
@@ -350,7 +301,7 @@ export default class ExplorableGraph {
    * @param {GraphVariant} variant
    */
   static async values(variant) {
-    const graph = this.from(variant);
+    const graph = GraphHelpers.from(variant);
     const keys = await graph.keys();
     const promises = Array.from(keys, (key) => graph.get(key));
     return Promise.all(promises);

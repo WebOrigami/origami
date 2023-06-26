@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import CommandsModulesTransform from "../../common/CommandModulesTransform.js";
@@ -24,7 +25,7 @@ ignoreKeys.push("..");
  */
 export default async function dataflow(variant) {
   assertScopeIsDefined(this);
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
 
   const flowFile = await graph.get(".dataflow.yaml");
   const flow = ExplorableGraph.isExplorable(flowFile)

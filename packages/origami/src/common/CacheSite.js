@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import setDeep from "../builtins/@graph/setDeep.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
@@ -13,12 +13,12 @@ export default class CacheSite {
    * @param {Explorable|object} [filter]
    */
   constructor(graph, cache, filter) {
-    this.graph = ExplorableGraph.from(graph);
+    this.graph = GraphHelpers.from(graph);
 
     if (cache === undefined) {
       this.cache = new ObjectGraph({});
     } else {
-      /** @type {any} */ this.cache = ExplorableGraph.from(cache);
+      /** @type {any} */ this.cache = GraphHelpers.from(cache);
       if (typeof this.cache.set !== "function") {
         throw new TypeError(
           `The first parameter to the Cache constructor must be a graph with a "set" method.`
@@ -26,7 +26,7 @@ export default class CacheSite {
       }
     }
 
-    this.filter = filter ? ExplorableGraph.from(filter) : undefined;
+    this.filter = filter ? GraphHelpers.from(filter) : undefined;
   }
 
   async get(key) {

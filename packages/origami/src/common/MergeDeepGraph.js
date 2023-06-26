@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 /**
@@ -10,7 +11,7 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
  */
 export default class MergeDeepGraph {
   constructor(...graphs) {
-    this.graphs = graphs.map((graph) => ExplorableGraph.from(graph));
+    this.graphs = graphs.map((graph) => GraphHelpers.from(graph));
   }
 
   async get(key) {

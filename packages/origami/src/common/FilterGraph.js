@@ -3,8 +3,8 @@ import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class FilterGraph {
   constructor(graph, filter) {
-    this.graph = ExplorableGraph.from(graph);
-    this.filter = ExplorableGraph.from(filter);
+    this.graph = GraphHelpers.from(graph);
+    this.filter = GraphHelpers.from(filter);
   }
 
   async get(key) {

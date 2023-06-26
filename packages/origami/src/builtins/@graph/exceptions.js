@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import defineds from "./defineds.js";
@@ -16,7 +17,7 @@ export default async function exceptions(variant) {
 
 class ExceptionsGraph {
   constructor(variant) {
-    this.graph = ExplorableGraph.from(variant);
+    this.graph = GraphHelpers.from(variant);
   }
 
   async get(key) {

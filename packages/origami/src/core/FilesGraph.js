@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -185,7 +186,7 @@ async function prepareData(key, value) {
   // Explorable graphs are written out as JSON or, if the key ends in ".yaml",
   // as YAML.
   if (ExplorableGraph.canCastToExplorable(value)) {
-    const graph = ExplorableGraph.from(value);
+    const graph = GraphHelpers.from(value);
     return key.endsWith(".yaml")
       ? await ExplorableGraph.toYaml(graph)
       : await ExplorableGraph.toJson(graph);

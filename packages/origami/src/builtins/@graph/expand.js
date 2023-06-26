@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import MapValuesGraph from "../../core/MapValuesGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -25,7 +26,7 @@ function expandValue(value) {
   let result;
   if (ExplorableGraph.canCastToExplorable(value)) {
     try {
-      result = ExplorableGraph.from(value);
+      result = GraphHelpers.from(value);
     } catch (error) {
       result = value;
     }

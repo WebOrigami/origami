@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getRealmObjectPrototype } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -18,7 +19,7 @@ export default async function concat(...args) {
       return undefined;
     }
   } else {
-    graph = ExplorableGraph.from(args);
+    graph = GraphHelpers.from(args);
   }
 
   // The core concat operation is a map-reduce: convert everything to strings,

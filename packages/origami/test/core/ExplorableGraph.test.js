@@ -19,7 +19,7 @@ describe("ExplorableGraph", () => {
     const graph1 = new ObjectGraph({
       a: "Hello, a.",
     });
-    const graph2 = ExplorableGraph.from(graph1);
+    const graph2 = GraphHelpers.from(graph1);
     assert.equal(graph2, graph1);
   });
 
@@ -31,7 +31,7 @@ describe("ExplorableGraph", () => {
         };
       },
     };
-    const graph = ExplorableGraph.from(obj);
+    const graph = GraphHelpers.from(obj);
     assert.deepEqual(await ExplorableGraph.plain(graph), {
       a: "Hello, a.",
     });

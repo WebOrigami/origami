@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { transformObject } from "../../core/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
@@ -18,7 +19,7 @@ export default async function reverse(variant, options = {}) {
     return undefined;
   }
   const scope = this;
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const deep = options.deep ?? false;
 
   const reversed = {

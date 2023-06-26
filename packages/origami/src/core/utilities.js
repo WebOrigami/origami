@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import StringWithGraph from "../common/StringWithGraph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -206,7 +207,7 @@ function parseYamlWithExpressions(text) {
  */
 export function graphInContext(variant, context) {
   // Either method of constructing the target produces a new graph.
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const target =
     "parent" in graph
       ? Object.create(graph)

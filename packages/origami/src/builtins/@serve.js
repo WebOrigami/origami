@@ -1,8 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./@debug.js";
@@ -21,7 +21,7 @@ export default async function serve(variant, port) {
   assertScopeIsDefined(this);
   let graph;
   if (variant) {
-    graph = ExplorableGraph.from(variant);
+    graph = GraphHelpers.from(variant);
   } else {
     // By default, watch the default graph and add default pages.
     const withDefaults = await debug.call(this);

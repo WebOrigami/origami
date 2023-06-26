@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import {
@@ -113,7 +113,7 @@ export async function handleRequest(request, response, graph) {
     (mediaType === "application/json" || mediaType === "text/yaml") &&
     !stringLike(resource)
   ) {
-    const graph = ExplorableGraph.from(resource);
+    const graph = GraphHelpers.from(resource);
     resource =
       mediaType === "text/yaml"
         ? await ExplorableGraph.toYaml(graph)
@@ -123,7 +123,7 @@ export async function handleRequest(request, response, graph) {
     (isPlainObject(resource) || resource instanceof Array)
   ) {
     // The resource is data, try showing it as YAML.
-    const graph = ExplorableGraph.from(resource);
+    const graph = GraphHelpers.from(resource);
     resource = await ExplorableGraph.toYaml(graph);
     mediaType = "text/yaml";
   }
@@ -182,7 +182,7 @@ export async function handleRequest(request, response, graph) {
  * @param {GraphVariant} variant
  */
 export function requestListener(variant) {
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);

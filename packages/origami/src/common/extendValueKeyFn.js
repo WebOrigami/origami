@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -47,7 +47,7 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     if (ExplorableGraph.isExplorable(value)) {
       valueGraph = value;
     } else if (ExplorableGraph.canCastToExplorable(value)) {
-      valueGraph = ExplorableGraph.from(value);
+      valueGraph = GraphHelpers.from(value);
     }
     if (valueGraph && !("parent" in valueGraph && "scope" in valueGraph)) {
       valueGraph = transformObject(InheritScopeTransform, valueGraph);

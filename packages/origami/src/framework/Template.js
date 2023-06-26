@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
@@ -159,7 +159,7 @@ async function processInput(input, baseScope) {
   }
 
   let inputGraph = ExplorableGraph.canCastToExplorable(input)
-    ? ExplorableGraph.from(input)
+    ? GraphHelpers.from(input)
     : null;
 
   let text = input?.toString?.();

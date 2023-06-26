@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { getScope, transformObject } from "../../core/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
@@ -17,7 +18,7 @@ export default async function staticGraph(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const result = transformObject(StaticTransform, graph);
   return result;
 }

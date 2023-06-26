@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import MergeDeepGraph from "../../common/MergeDeepGraph.js";
 import Scope from "../../common/Scope.js";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
@@ -25,7 +26,7 @@ export default async function mergeDeep(...graphs) {
   const scopedGraphs = filtered.map((graph) => {
     let scopedGraph = ExplorableGraph.isExplorable(graph)
       ? Object.create(/** @type {any} */ (graph))
-      : ExplorableGraph.from(graph);
+      : GraphHelpers.from(graph);
     if ("parent" in scopedGraph) {
       const otherGraphs = graphs.filter((g) => g !== graph);
       const scope = new Scope(...otherGraphs, this);

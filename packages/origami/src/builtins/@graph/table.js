@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { toSerializable } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -13,7 +14,7 @@ export default async function table(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const firstValue = await valueForFirstKey(graph);
   if (ExplorableGraph.isExplorable(firstValue)) {
     return fullTable(graph, firstValue);

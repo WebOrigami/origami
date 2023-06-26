@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import extendValueKeyFn from "../../common/extendValueKeyFn.js";
+import { GraphHelpers } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
+import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import { transformObject } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -18,7 +18,7 @@ export default async function sort(variant, keyFn) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
 
   if (keyFn === undefined) {
     // Simple case: sort by graph's existing keys.

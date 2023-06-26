@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import MergeGraph from "./MergeGraph.js";
 
@@ -6,7 +6,7 @@ const globstar = "**";
 
 export default class GlobGraph {
   constructor(globs) {
-    this.globs = ExplorableGraph.from(globs);
+    this.globs = GraphHelpers.from(globs);
   }
 
   async get(key) {

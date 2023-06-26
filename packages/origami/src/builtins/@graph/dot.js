@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
 import ExplorableGraph from "../../core/ExplorableGraph.js";
 import {
@@ -22,7 +23,7 @@ export default async function dot(variant, options = {}) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const rootLabel = graph[keySymbol] ?? "";
   const graphArcs = await statements(graph, "", rootLabel, options);
   return `digraph g {
@@ -87,7 +88,7 @@ async function statements(graph, nodePath, nodeLabel, options) {
       isPlainObject(value) ||
       ExplorableGraph.isExplorable(value);
     if (expand && expandable) {
-      const subgraph = ExplorableGraph.from(value);
+      const subgraph = GraphHelpers.from(value);
       const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {

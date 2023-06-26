@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { keySymbol } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -16,7 +16,7 @@ export default async function index(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const keys = Array.from(await graph.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

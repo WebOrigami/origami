@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 import { getScope, keySymbol, transformObject } from "../core/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
@@ -25,7 +26,7 @@ export default function loadJson(input, key) {
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = ExplorableGraph.from(data);
+      graph = GraphHelpers.from(data);
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }

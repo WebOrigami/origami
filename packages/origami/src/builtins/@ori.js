@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -73,7 +74,7 @@ async function formatResult(scope, result) {
 
   // If the result is a graph, attach the graph to the text output.
   if (ExplorableGraph.canCastToExplorable(result)) {
-    const graph = ExplorableGraph.from(result);
+    const graph = GraphHelpers.from(result);
     if (text instanceof Buffer) {
       /** @type {any} */ (text).toGraph = () => graph;
     } else {

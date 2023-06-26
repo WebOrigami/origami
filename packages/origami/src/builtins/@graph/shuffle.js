@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ShuffleTransform from "../../common/ShuffleTransform.js";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { transformObject } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -16,7 +16,7 @@ export default async function shuffle(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const shuffled = transformObject(ShuffleTransform, graph);
   return shuffled;
 }

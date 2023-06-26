@@ -1,8 +1,9 @@
+import { GraphHelpers } from "@graphorigami/core";
 import ExplorableGraph from "../core/ExplorableGraph.js";
 
 export default class MapInnerKeysGraph {
   constructor(variant, keyFn, options = {}) {
-    this.graph = ExplorableGraph.from(variant);
+    this.graph = GraphHelpers.from(variant);
     this.keyFn = keyFn;
     this.deep = options.deep ?? false;
     this.mapInnerKeyToOuterKey = new Map();

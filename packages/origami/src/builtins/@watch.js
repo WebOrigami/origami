@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import ConstantGraph from "../common/ConstantGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -19,7 +19,7 @@ export default async function watch(variant, fn) {
 
   // Watch the indicated graph.
   /** @type {any} */
-  const container = ExplorableGraph.from(variant);
+  const container = GraphHelpers.from(variant);
   await /** @type {any} */ (container).watch?.();
 
   // // Watch graphs in scope.
@@ -57,7 +57,7 @@ async function evaluateGraph(scope, fn) {
   } catch (error) {
     message = messageForError(error);
   }
-  graph = result ? ExplorableGraph.from(result) : undefined;
+  graph = result ? GraphHelpers.from(result) : undefined;
   if (graph) {
     return graph;
   }

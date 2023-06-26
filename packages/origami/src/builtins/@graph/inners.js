@@ -15,7 +15,7 @@ export default async function inners(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const inner = {
     async get(key) {
       const value = await graph.get(key);

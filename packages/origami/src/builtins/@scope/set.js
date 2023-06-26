@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../../common/Scope.js";
-import ExplorableGraph from "../../core/ExplorableGraph.js";
 import { graphInContext, keySymbol } from "../../core/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -13,7 +13,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default function setScope(variant, ...scopeGraphs) {
   assertScopeIsDefined(this);
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const scope = scopeGraphs.length === 0 ? this : new Scope(...scopeGraphs);
   const result = graphInContext(graph, scope);
   result[keySymbol] = graph[keySymbol];

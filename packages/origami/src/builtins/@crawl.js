@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import ExplorableGraph from "../core/ExplorableGraph.js";
@@ -22,7 +22,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function crawl(variant, baseHref) {
   assertScopeIsDefined(this);
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
 
   if (baseHref === undefined) {
     // Ask graph or original variant if it has an `href` property we can use as

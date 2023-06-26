@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import process, { stdout } from "node:process";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import { transformObject } from "../core/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./@graph/setDeep.js";
@@ -13,8 +13,8 @@ import setDeep from "./@graph/setDeep.js";
 export default async function copy(source, target) {
   assertScopeIsDefined(this);
   // const start = performance.now();
-  const sourceGraph = ExplorableGraph.from(source);
-  /** @type {any} */ let targetGraph = ExplorableGraph.from(target);
+  const sourceGraph = GraphHelpers.from(source);
+  /** @type {any} */ let targetGraph = GraphHelpers.from(target);
 
   if (stdout.isTTY) {
     targetGraph = transformObject(ProgressTransform, targetGraph);

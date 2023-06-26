@@ -1,9 +1,9 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 
 export default class StringWithGraph extends String {
   constructor(string, variant) {
     super(string);
-    this.graph = ExplorableGraph.from(variant);
+    this.graph = GraphHelpers.from(variant);
   }
 
   toGraph() {

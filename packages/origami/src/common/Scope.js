@@ -1,9 +1,9 @@
-import ExplorableGraph from "../core/ExplorableGraph.js";
+import { GraphHelpers } from "@graphorigami/core";
 
 export default class Scope {
   constructor(...variants) {
     const filtered = variants.filter((variant) => variant != undefined);
-    const graphs = filtered.map((variant) => ExplorableGraph.from(variant));
+    const graphs = filtered.map((variant) => GraphHelpers.from(variant));
 
     // If a graph argument has a `graphs` property, use that instead.
     const scopes = graphs.flatMap(

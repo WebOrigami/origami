@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { GraphHelpers } from "@graphorigami/core";
 import graphviz from "graphviz-wasm";
 import StringWithGraph from "../common/StringWithGraph.js";
-import ExplorableGraph from "../core/ExplorableGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import dot from "./@graph/dot.js";
 
@@ -24,7 +24,7 @@ export default async function svg(variant, options = {}) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = ExplorableGraph.from(variant);
+  const graph = GraphHelpers.from(variant);
   const dotText = await dot.call(this, graph, options);
   const svgText =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");
