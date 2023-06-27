@@ -1,3 +1,5 @@
+import DictionaryHelpers from "./DictionaryHelpers.js";
+
 /**
  * A dictionary defined by a plain object or array.
  *
@@ -40,10 +42,12 @@ export default class ObjectDictionary {
    * Enumerate the object's keys.
    */
   async keys() {
-    // Walk up the prototype chain to Object.prototype.
+    // Walk up the prototype chain to realm's Object.prototype.
     let obj = this.object;
+    const objectPrototype = DictionaryHelpers.getRealmObjectPrototype(obj);
+
     const result = new Set();
-    while (obj && obj !== Object.prototype) {
+    while (obj && obj !== objectPrototype) {
       // Get the enumerable instance properties and the get/set properties.
       const descriptors = Object.getOwnPropertyDescriptors(obj);
       const propertyNames = Object.entries(descriptors)
