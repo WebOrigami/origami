@@ -1,4 +1,4 @@
-import { Mixin } from "../core/explorable";
+import { Mixin } from "../core/types";
 
 import type { AsyncDictionary } from "@graphorigami/types";
 

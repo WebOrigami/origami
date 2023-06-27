@@ -4,7 +4,7 @@ import { GraphHelpers } from "@graphorigami/core";
  * Invokes the given function in the context of the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../../core/explorable").Invocable} Invocable
+ * @typedef {import("../../core/types").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
  * @param {AsyncDictionary} scope

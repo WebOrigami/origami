@@ -1,6 +1,6 @@
 import type { GraphVariant } from "@graphorigami/core";
 import type { AsyncDictionary } from "@graphorigami/types";
-import type { Invocable } from "./explorable";
+import type { Invocable } from "./types";
 
 export function castArrayLike(obj: any): any;
 export function extname(path: string): string;

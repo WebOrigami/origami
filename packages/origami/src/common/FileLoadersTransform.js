@@ -3,7 +3,7 @@ import { extname, getScope } from "../core/utilities.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../core/types").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function FileLoadersTransform(Base) {

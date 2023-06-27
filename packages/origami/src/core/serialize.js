@@ -1,7 +1,7 @@
 /**
  * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
- * @typedef {import("../core/explorable").StringLike} StringLike
+ * @typedef {import("../core/types").StringLike} StringLike
  */
 
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";

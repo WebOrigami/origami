@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/explorable").Constructor<AsyncDictionary & { dirname: string }>} BaseConstructor
+ * @typedef {import("../core/types").Constructor<AsyncDictionary & { dirname: string }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {

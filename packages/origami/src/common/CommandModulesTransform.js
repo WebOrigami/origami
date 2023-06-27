@@ -14,7 +14,7 @@ import path from "node:path";
  * "foo.js", then this will expose "foo" as a key.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../core/types").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function CommandsModulesTransform(Base) {

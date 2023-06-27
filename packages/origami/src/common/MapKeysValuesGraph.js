@@ -10,7 +10,7 @@ export default class MapKeysValuesGraph {
   /**
    * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
-   * @typedef {import("../core/explorable").Invocable} Invocable
+   * @typedef {import("../core/types").Invocable} Invocable
    *
    * @param {GraphVariant} variant
    * @param {Invocable | null} mapFn

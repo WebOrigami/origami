@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
- * @typedef {import("../../core/explorable").Invocable} Invocable
+ * @typedef {import("../../core/types").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
  * @param {GraphVariant} variant

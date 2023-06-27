@@ -48,7 +48,7 @@ export default async function debug(variant) {
 }
 
 /**
- * @typedef {import("../core/explorable").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../core/types").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
 function DebugTransform(Base) {

@@ -1,4 +1,4 @@
-import { Mixin } from "../core/explorable";
+import { Mixin } from "../core/types";
 
 declare const ExplorableSiteTransform: Mixin<{}>;
 
