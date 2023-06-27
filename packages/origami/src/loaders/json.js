@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { GraphHelpers } from "@graphorigami/core";
-import { getScope, keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, keySymbol, transformObject } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**

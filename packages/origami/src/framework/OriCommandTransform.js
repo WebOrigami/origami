@@ -7,7 +7,7 @@ import {
   isTransformApplied,
   keySymbol,
   transformObject,
-} from "../core/utilities.js";
+} from "../common/utilities.js";
 
 /**
  * Add support for commands prefixed with `!`.

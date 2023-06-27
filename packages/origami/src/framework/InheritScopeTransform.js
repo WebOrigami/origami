@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import { getScope, keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 
 const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");

@@ -1,4 +1,4 @@
-import { outputWithGraph } from "../core/serialize.js";
+import { outputWithGraph } from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/ori.js";
 

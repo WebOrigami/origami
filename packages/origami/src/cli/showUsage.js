@@ -1,5 +1,5 @@
 import CommandsModulesTransform from "../common/CommandModulesTransform.js";
-import { transformObject } from "../core/utilities.js";
+import { transformObject } from "../common/utilities.js";
 
 const groupDescriptions = {
   "@cache": "Functions for caching data",

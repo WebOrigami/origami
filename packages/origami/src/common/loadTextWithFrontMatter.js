@@ -1,10 +1,10 @@
 import { ObjectGraph } from "@graphorigami/core";
-import { extractFrontMatter } from "../core/serialize.js";
-import { isPlainObject, keySymbol } from "../core/utilities.js";
+import { isPlainObject, keySymbol } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
 import StringWithGraph from "./StringWithGraph.js";
+import { extractFrontMatter } from "./serialize.js";
 
 /**
  * Load a file as text with possible front matter.

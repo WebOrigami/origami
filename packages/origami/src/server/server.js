@@ -1,13 +1,13 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import * as serialize from "../core/serialize.js";
+import * as serialize from "../common/serialize.js";
 import {
   extname,
   graphInContext,
   isPlainObject,
   keysFromPath,
   stringLike,
-} from "../core/utilities.js";
+} from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Extend the graph's scope with the URL's search parameters.

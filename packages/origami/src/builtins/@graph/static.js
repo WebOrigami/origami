@@ -1,5 +1,5 @@
 import { GraphHelpers } from "@graphorigami/core";
-import { getScope, transformObject } from "../../core/utilities.js";
+import { getScope, transformObject } from "../../common/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import index from "../@index.js";

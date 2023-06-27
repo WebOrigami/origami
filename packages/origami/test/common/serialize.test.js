@@ -1,7 +1,7 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as serialize from "../../src/core/serialize.js";
+import * as serialize from "../../src/common/serialize.js";
 
 describe("serialize", () => {
   test("extractFrontMatter() returns front matter if found", () => {

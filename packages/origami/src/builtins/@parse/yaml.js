@@ -1,4 +1,4 @@
-import * as serialize from "../../core/serialize.js";
+import * as serialize from "../../common/serialize.js";
 
 export default async function parseYaml(text) {
   return text ? serialize.parseYaml(String(text)) : undefined;

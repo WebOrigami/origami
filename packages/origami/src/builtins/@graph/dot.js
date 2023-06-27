@@ -1,7 +1,7 @@
 import { GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
-import * as serialize from "../../core/serialize.js";
-import { extname, isPlainObject, keySymbol } from "../../core/utilities.js";
+import * as serialize from "../../common/serialize.js";
+import { extname, isPlainObject, keySymbol } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

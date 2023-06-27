@@ -1,5 +1,5 @@
 import { FunctionGraph } from "@graphorigami/core";
-import { graphInContext, toFunction } from "../../core/utilities.js";
+import { graphInContext, toFunction } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

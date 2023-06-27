@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
-import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
+import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
 
 /**
  * Load a .js file as a String with a toFunction() method that returns a

@@ -1,5 +1,5 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
-import { getScope, keySymbol, transformObject } from "../core/utilities.js";
+import { getScope, keySymbol, transformObject } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
 

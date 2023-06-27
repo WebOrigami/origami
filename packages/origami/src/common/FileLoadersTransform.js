@@ -1,5 +1,5 @@
 import builtinLoaders from "../builtins/@loaders.js";
-import { extname, getScope } from "../core/utilities.js";
+import { extname, getScope } from "../common/utilities.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary

@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { getScope, keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
 /**

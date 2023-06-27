@@ -4,8 +4,8 @@ import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { extractFrontMatter } from "../core/serialize.js";
-import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
+import { extractFrontMatter } from "../common/serialize.js";
+import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 export default class Template {

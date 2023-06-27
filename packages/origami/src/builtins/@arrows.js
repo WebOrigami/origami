@@ -1,4 +1,4 @@
-import { keySymbol } from "../core/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 import ArrowGraph from "../framework/ArrowGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 

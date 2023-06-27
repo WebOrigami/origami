@@ -1,4 +1,4 @@
-import { getScope, keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 import Scope from "./Scope.js";
 
 /**

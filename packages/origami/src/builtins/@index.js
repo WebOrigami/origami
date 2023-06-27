@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { keySymbol } from "../core/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import YAML from "yaml";
-import * as serialize from "../core/serialize.js";
+import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

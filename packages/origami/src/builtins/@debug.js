@@ -8,7 +8,7 @@ import {
   isPlainObject,
   isTransformApplied,
   transformObject,
-} from "../core/utilities.js";
+} from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";

@@ -2,7 +2,7 @@ import { GraphHelpers } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import CommandsModulesTransform from "../../common/CommandModulesTransform.js";
-import { extname, transformObject } from "../../core/utilities.js";
+import { extname, transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import * as ops from "../../language/ops.js";
 import builtins from "../@builtins.js";

@@ -6,7 +6,7 @@ import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import Scope from "../common/Scope.js";
-import { getScope, keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {

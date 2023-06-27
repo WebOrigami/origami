@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import ShuffleTransform from "../../common/ShuffleTransform.js";
-import { transformObject } from "../../core/utilities.js";
+import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

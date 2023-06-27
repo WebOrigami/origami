@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
-import { getScope, keySymbol } from "../core/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
 /**

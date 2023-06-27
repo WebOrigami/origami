@@ -1,4 +1,4 @@
-import { outputWithGraph } from "../../core/serialize.js";
+import { outputWithGraph } from "../../common/serialize.js";
 import get from "./get.js";
 
 export default async function render(value, data) {

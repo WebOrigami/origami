@@ -1,7 +1,7 @@
 import { GraphHelpers } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
-import { transformObject } from "../../core/utilities.js";
+import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

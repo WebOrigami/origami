@@ -1,5 +1,5 @@
 import { GraphHelpers } from "@graphorigami/core";
-import { transformObject } from "../../core/utilities.js";
+import { transformObject } from "../../common/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 

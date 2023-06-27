@@ -1,14 +1,14 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
-import { parseYaml } from "../core/serialize.js";
+import { parseYaml } from "../common/serialize.js";
 import {
   getScope,
   graphInContext,
   isPlainObject,
   keySymbol,
   transformObject,
-} from "../core/utilities.js";
+} from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 
 // See notes at serialize.js

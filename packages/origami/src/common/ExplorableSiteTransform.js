@@ -4,7 +4,7 @@ import {
   getScope,
   isTransformApplied,
   transformObject,
-} from "../core/utilities.js";
+} from "../common/utilities.js";
 import defaultKeysJson from "../framework/defaultKeysJson.js";
 
 /**

@@ -1,5 +1,5 @@
 import { GraphHelpers } from "@graphorigami/core";
-import * as utilities from "../core/utilities.js";
+import * as utilities from "../common/utilities.js";
 
 /**
  * Given a graph and a function, return a new explorable graph that applies the

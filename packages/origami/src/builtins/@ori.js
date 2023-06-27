@@ -2,7 +2,7 @@
 import { GraphHelpers } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { getRealmObjectPrototype } from "../core/utilities.js";
+import { getRealmObjectPrototype } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
 import toYaml from "./@yaml.js";

@@ -1,6 +1,6 @@
 import { GraphHelpers } from "@graphorigami/core";
 import Scope from "../../common/Scope.js";
-import { graphInContext, keySymbol } from "../../core/utilities.js";
+import { graphInContext, keySymbol } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

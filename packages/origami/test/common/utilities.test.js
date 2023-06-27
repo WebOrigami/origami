@@ -1,7 +1,7 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as utilities from "../../src/core/utilities.js";
+import * as utilities from "../../src/common/utilities.js";
 
 describe("utilities", () => {
   test("sortNatural can sort values by natural sort order", () => {

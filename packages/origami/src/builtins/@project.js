@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { graphInContext } from "../core/utilities.js";
+import { graphInContext } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";

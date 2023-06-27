@@ -1,5 +1,5 @@
 import FilterGraph from "../common/FilterGraph.js";
-import { getScope } from "../core/utilities.js";
+import { getScope } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 

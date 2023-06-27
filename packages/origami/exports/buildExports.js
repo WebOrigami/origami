@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import MapExtensionGraph from "../src/common/MapExtensionsGraph.js";
-import { transformObject } from "../src/core/utilities.js";
+import { transformObject } from "../src/common/utilities.js";
 import OrigamiTemplate from "../src/framework/OrigamiTemplate.js";
 import PathTransform from "./PathTransform.js";
 
