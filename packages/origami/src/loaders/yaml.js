@@ -20,7 +20,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  *
  * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").HasString} HasString
+ * @typedef {import("../..").HasString} HasString
  *
  * @param {string|HasString|GraphVariant} input
  * @param {any} [key]

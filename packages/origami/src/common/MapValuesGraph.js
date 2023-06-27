@@ -9,7 +9,7 @@ export default class MapValuesGraph {
   /**
    * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
-   * @typedef {import("../core/types").Invocable} Invocable
+   * @typedef {import("../..").Invocable} Invocable
    *
    * @param {GraphVariant} variant
    * @param {Invocable} mapFn

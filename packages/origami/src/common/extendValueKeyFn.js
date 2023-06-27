@@ -9,7 +9,7 @@ import Scope from "./Scope.js";
  * and key. This helper does that.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").Invocable} Invocable
+ * @typedef {import("../..").Invocable} Invocable
  * @param {Invocable} valueKeyFn
  */
 export default function extendValueKeyFn(valueKeyFn, options = {}) {

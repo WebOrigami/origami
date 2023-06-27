@@ -6,7 +6,7 @@ import loadOrigamiTemplate from "../loaders/ori.js";
  * Concatenate the text content of objects or graphs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").StringLike} StringLike
+ * @typedef {import("../..").StringLike} StringLike
  *
  * @this {AsyncDictionary|null}
  * @param {StringLike} input

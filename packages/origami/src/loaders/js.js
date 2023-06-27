@@ -9,7 +9,7 @@ import { getScope, graphInContext, keySymbol } from "../core/utilities.js";
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").HasGraph} HasGraph
- * @typedef {import("../core/types").HasFunction} HasFunction
+ * @typedef {import("../..").HasFunction} HasFunction
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]

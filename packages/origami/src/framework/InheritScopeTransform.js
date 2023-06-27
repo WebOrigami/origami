@@ -7,7 +7,7 @@ const scopeKey = Symbol("scope");
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function InheritScopeTransform(Base) {

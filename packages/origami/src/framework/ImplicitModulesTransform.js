@@ -1,6 +1,6 @@
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").Constructor<AsyncDictionary & { import: function }>} BaseConstructor
+ * @typedef {import("../..").Constructor<AsyncDictionary & { import: function }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImplicitModulesTransform(Base) {

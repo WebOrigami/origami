@@ -1,6 +1,6 @@
 import type { GraphVariant, HasGraph, PlainObject } from "@graphorigami/core";
 import type { AsyncGraph } from "@graphorigami/types";
-import type { HasString, StringLike } from "./types";
+import type { HasString, StringLike } from "../..";
 
 export function extractFrontMatter(s: StringLike): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function fromJson(obj: any): AsyncGraph;

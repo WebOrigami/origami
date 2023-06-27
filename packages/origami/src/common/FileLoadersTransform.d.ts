@@ -1,4 +1,4 @@
-import { Mixin } from "../core/types";
+import { Mixin } from "../..";
 
 declare const FileLoadersTransform: Mixin<{}>;
 

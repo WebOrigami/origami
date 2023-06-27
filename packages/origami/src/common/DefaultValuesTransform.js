@@ -12,7 +12,7 @@ import {
  * values graph, the value will be returned from that graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function DefaultValuesTransform(Base) {

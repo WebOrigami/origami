@@ -10,6 +10,7 @@
     "ori": "src/cli/cli.js"
   },
   "main": "./exports/exports.js",
+  "types": "./index.ts",
   "devDependencies": {
     "@types/chai": "4.3.5",
     "@types/mocha": "10.0.1",

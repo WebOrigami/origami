@@ -1,4 +1,4 @@
-import type { Mixin } from "../src/core/types";
+import type { Mixin } from "..";
 
 declare const PathTransform: Mixin<{}>;
 

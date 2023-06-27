@@ -14,7 +14,7 @@ import StringWithGraph from "./StringWithGraph.js";
  * graph with the front matter and document content as data.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../core/types").StringLike} StringLike
+ * @typedef {import("../..").StringLike} StringLike
  *
  * @param {StringLike} input
  * @param {any} [key]
