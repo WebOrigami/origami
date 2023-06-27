@@ -4,12 +4,6 @@ import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
 
 describe("utilities", () => {
-  test("sortNatural can sort values by natural sort order", () => {
-    const keys = ["b", 10, 2, "c", 1, "a"];
-    const sorted = utilities.sortNatural(keys);
-    assert.deepEqual(sorted, [1, 2, 10, "a", "b", "c"]);
-  });
-
   test("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {

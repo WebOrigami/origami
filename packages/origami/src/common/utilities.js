@@ -153,19 +153,6 @@ export function graphInContext(variant, context) {
   return target;
 }
 
-/**
- * Sort an array of values using natural sort order:
- * https://en.wikipedia.org/wiki/Natural_sort_order
- *
- * @param {any[]} values
- */
-export function sortNatural(values) {
-  const collator = new Intl.Collator(undefined, {
-    numeric: true,
-  });
-  return values.slice().sort(collator.compare);
-}
-
 export function stringLike(value) {
   return (
     typeof value === "string" ||

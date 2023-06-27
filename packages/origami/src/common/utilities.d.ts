@@ -11,7 +11,6 @@ export function isPlainObject(obj: any): boolean;
 export function isTransformApplied(Transform: Function, obj: any): boolean;
 export function keysFromPath(pathname: string): string[];
 export const keySymbol: unique symbol;
-export function sortNatural(values: any[]): any[]
 export function stringLike(value: any): boolean;
 export function toFunction(obj: Invocable): Function;
 export function transformObject(Transform: Function, obj: any): any;
