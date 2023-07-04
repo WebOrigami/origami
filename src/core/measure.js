@@ -1,3 +1,5 @@
+import { performance } from "node:perf_hooks";
+
 const startMark = "start";
 performance.mark(startMark);
 
