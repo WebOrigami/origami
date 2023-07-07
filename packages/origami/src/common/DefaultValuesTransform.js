@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers } from "@graphorigami/core";
 import {
   getScope,
   isTransformApplied,
@@ -38,7 +38,7 @@ export default function DefaultValuesTransform(Base) {
 
       // Ensure this transform is applied to any explorable result.
       if (
-        GraphHelpers.isAsyncDictionary(value) &&
+        DictionaryHelpers.isAsyncDictionary(value) &&
         !isTransformApplied(DefaultValuesTransform, value)
       ) {
         value = transformObject(DefaultValuesTransform, value);

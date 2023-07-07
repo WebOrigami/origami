@@ -1,4 +1,8 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import {
+  DictionaryHelpers,
+  GraphHelpers,
+  ObjectGraph,
+} from "@graphorigami/core";
 import setDeep from "../builtins/@graph/setDeep.js";
 
 /**
@@ -51,7 +55,7 @@ export default class CacheSite {
     let cacheValue = await GraphHelpers.traverse(this.cache, ...keys);
     if (
       cacheValue !== undefined &&
-      !GraphHelpers.isAsyncDictionary(cacheValue)
+      !DictionaryHelpers.isAsyncDictionary(cacheValue)
     ) {
       // Non-explorable cache hit
       return cacheValue;
@@ -82,14 +86,16 @@ export default class CacheSite {
         }
         // If we have an explorable value, we don't cache the entire thing, just
         // an empty graph.
-        current[lastKey] = GraphHelpers.isAsyncDictionary(value) ? {} : value;
+        current[lastKey] = DictionaryHelpers.isAsyncDictionary(value)
+          ? {}
+          : value;
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
         cacheValue = await GraphHelpers.traverse(this.cache, ...keys, lastKey);
       }
 
-      if (GraphHelpers.isAsyncDictionary(value)) {
+      if (DictionaryHelpers.isAsyncDictionary(value)) {
         // Construct merged graph for an explorable result.
         value = Reflect.construct(this.constructor, [
           value,

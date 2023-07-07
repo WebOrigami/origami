@@ -1,4 +1,8 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import {
+  DictionaryHelpers,
+  GraphHelpers,
+  ObjectGraph,
+} from "@graphorigami/core";
 import MergeGraph from "./MergeGraph.js";
 
 const globstar = "**";
@@ -13,7 +17,7 @@ export default class GlobGraph {
       return undefined;
     }
     let value = await matchGlobs(this.globs, key);
-    if (GraphHelpers.isAsyncDictionary(value)) {
+    if (DictionaryHelpers.isAsyncDictionary(value)) {
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;
@@ -55,7 +59,7 @@ async function matchGlobs(globs, text) {
     if (value === undefined) {
       const globstarValue = await matchGlobs(globstarGlobs, text);
       value = globstarValue !== undefined ? globstarValue : globstarGraph;
-    } else if (GraphHelpers.isAsyncDictionary(value)) {
+    } else if (DictionaryHelpers.isAsyncDictionary(value)) {
       value = new MergeGraph(value, globstarGraph);
     }
   }

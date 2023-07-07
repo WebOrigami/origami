@@ -4,7 +4,11 @@
  * @typedef {import("../..").StringLike} StringLike
  */
 
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import {
+  DictionaryHelpers,
+  GraphHelpers,
+  ObjectGraph,
+} from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
@@ -156,7 +160,7 @@ export async function toJson(variant) {
  * @param {any} obj
  */
 export function toSerializable(obj) {
-  if (GraphHelpers.isPlainObject(obj)) {
+  if (DictionaryHelpers.isPlainObject(obj)) {
     const result = {};
     for (const key in obj) {
       result[key] = toSerializable(obj[key]);

@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { DictionaryHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
@@ -44,7 +44,7 @@ describe("utilities", () => {
       return class Uppercase extends Base {
         async get(key) {
           const value = await super.get(key);
-          return GraphHelpers.isAsyncDictionary(value)
+          return DictionaryHelpers.isAsyncDictionary(value)
             ? value
             : value.toUpperCase();
         }

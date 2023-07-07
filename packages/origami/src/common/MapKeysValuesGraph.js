@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
 
 /**
@@ -52,7 +52,7 @@ export default class MapKeysValuesGraph {
     }
 
     // If the value to return is an explorable graph, wrap it with a map.
-    if (this.deep && GraphHelpers.isAsyncDictionary(outerValue)) {
+    if (this.deep && DictionaryHelpers.isAsyncDictionary(outerValue)) {
       outerValue = Reflect.construct(this.constructor, [
         outerValue,
         this.mapFn,

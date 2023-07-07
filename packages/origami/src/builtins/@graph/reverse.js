@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import { transformObject } from "../../common/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -28,7 +28,7 @@ export default async function reverse(variant, options = {}) {
     async get(key) {
       let value = await graph.get(key);
 
-      if (deep && GraphHelpers.isAsyncDictionary(value)) {
+      if (deep && DictionaryHelpers.isAsyncDictionary(value)) {
         value = reverse.call(scope, value, options);
       }
 

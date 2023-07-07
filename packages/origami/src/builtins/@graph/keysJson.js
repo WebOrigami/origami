@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import { getScope, transformObject } from "../../common/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -29,7 +29,7 @@ function KeysJsonTransform(Base) {
       if (value === undefined && key === ".keys.json") {
         const scope = getScope(this);
         value = defaultKeysJson.call(scope, this);
-      } else if (GraphHelpers.isAsyncDictionary(value)) {
+      } else if (DictionaryHelpers.isAsyncDictionary(value)) {
         value = transformObject(KeysJsonTransform, value);
       }
       return value;

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import YAML from "yaml";
 import * as serialize from "../../common/serialize.js";
 import { extname, isPlainObject, keySymbol } from "../../common/utilities.js";
@@ -84,7 +84,7 @@ async function statements(graph, nodePath, nodeLabel, options) {
     const expandable =
       value instanceof Array ||
       isPlainObject(value) ||
-      GraphHelpers.isAsyncDictionary(value);
+      DictionaryHelpers.isAsyncDictionary(value);
     if (expand && expandable) {
       const subgraph = GraphHelpers.from(value);
       const subStatements = await statements(subgraph, destPath, null, options);

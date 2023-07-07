@@ -1,5 +1,5 @@
 import FunctionDictionary from "./FunctionDictionary.js";
-import GraphHelpers from "./GraphHelpers.js";
+import * as GraphHelpers from "./GraphHelpers.js";
 
 /**
  * A graph defined by a function and an optional domain.

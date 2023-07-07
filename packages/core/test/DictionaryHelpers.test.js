@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DictionaryHelpers from "../src/DictionaryHelpers.js";
+import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
 import ObjectGraph from "../src/ObjectGraph.js";
 
 describe("DictionaryHelpers", () => {
@@ -97,9 +97,9 @@ describe("DictionaryHelpers", () => {
     assert.deepEqual([...(await DictionaryHelpers.entries(fixture))], []);
   });
 
-  test("delete removes a value", async () => {
+  test("remove method removes a value", async () => {
     const fixture = createFixture();
-    await DictionaryHelpers.delete(fixture, "Alice.md");
+    await DictionaryHelpers.remove(fixture, "Alice.md");
     assert.deepEqual(
       [...(await DictionaryHelpers.entries(fixture))],
       [

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 
 export default class MapInnerKeysGraph {
   constructor(variant, keyFn, options = {}) {
@@ -15,7 +15,7 @@ export default class MapInnerKeysGraph {
       innerKey === undefined ? undefined : await this.graph.get(innerKey);
 
     // If the value to return is an explorable graph, wrap it with a map.
-    if (this.deep && GraphHelpers.isAsyncDictionary(value)) {
+    if (this.deep && DictionaryHelpers.isAsyncDictionary(value)) {
       value = Reflect.construct(this.constructor, [
         value,
         this.keyFn,

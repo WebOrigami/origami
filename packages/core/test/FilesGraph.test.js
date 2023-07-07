@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FilesGraph from "../src/FilesGraph.js";
-import GraphHelpers from "../src/GraphHelpers.js";
+import * as GraphHelpers from "../src/GraphHelpers.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");

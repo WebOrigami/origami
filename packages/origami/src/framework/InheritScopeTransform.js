@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import { getScope, keySymbol } from "../common/utilities.js";
 
@@ -20,7 +20,7 @@ export default function InheritScopeTransform(Base) {
 
     async get(key) {
       const value = await super.get(key);
-      if (GraphHelpers.isAsyncDictionary(value) && value.parent === null) {
+      if (DictionaryHelpers.isAsyncDictionary(value) && value.parent === null) {
         // This graph becomes the parent for all subgraphs.
         value.parent = this;
       }

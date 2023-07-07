@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import GraphHelpers from "../src/GraphHelpers.js";
+import * as GraphHelpers from "../src/GraphHelpers.js";
 import MapGraph from "../src/MapGraph.js";
 import ObjectGraph from "../src/ObjectGraph.js";
 

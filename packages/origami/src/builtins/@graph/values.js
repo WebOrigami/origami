@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -16,7 +16,7 @@ export default async function values(variant) {
     return undefined;
   }
   const graph = GraphHelpers.from(variant);
-  return GraphHelpers.values(graph);
+  return DictionaryHelpers.values(graph);
 }
 
 values.usage = `values <graph>\tThe top-level values in the graph`;

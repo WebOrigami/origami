@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { isTypedArray } from "node:util/types";
-import GraphHelpers from "./GraphHelpers.js";
+import * as GraphHelpers from "./GraphHelpers.js";
 
 // Names of OS-generated files that should not be enumerated
 const hiddenFileNames = {

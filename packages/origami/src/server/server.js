@@ -1,4 +1,8 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import {
+  DictionaryHelpers,
+  GraphHelpers,
+  ObjectGraph,
+} from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
 import {
@@ -89,7 +93,7 @@ export async function handleRequest(request, response, graph) {
   if (
     mediaType === undefined &&
     !request.url.endsWith("/") &&
-    (GraphHelpers.isAsyncDictionary(resource) ||
+    (DictionaryHelpers.isAsyncDictionary(resource) ||
       isPlainObject(resource) ||
       resource instanceof Array)
   ) {

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 
 /**
  * This is a variation of MergeGraph that performs a deep merge.
@@ -18,7 +18,7 @@ export default class MergeDeepGraph {
 
     for (const graph of this.graphs) {
       const value = await graph.get(key);
-      if (GraphHelpers.isAsyncDictionary(value)) {
+      if (DictionaryHelpers.isAsyncDictionary(value)) {
         explorableSubvalues.push(value);
       } else if (value !== undefined) {
         return value;

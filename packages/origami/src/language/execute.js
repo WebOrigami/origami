@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -74,7 +74,7 @@ export default async function execute(code) {
     result &&
     typeof result === "object" &&
     Object.isExtensible(result) &&
-    !GraphHelpers.isPlainObject(result)
+    !DictionaryHelpers.isPlainObject(result)
   ) {
     try {
       result[expressionSymbol] = format(code);

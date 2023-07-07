@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DictionaryHelpers from "../src/DictionaryHelpers.js";
+import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
 import ObjectDictionary from "../src/ObjectDictionary.js";
 
 describe("ObjectDictionary", () => {

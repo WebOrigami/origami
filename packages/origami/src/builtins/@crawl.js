@@ -1,4 +1,8 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import {
+  DictionaryHelpers,
+  GraphHelpers,
+  ObjectGraph,
+} from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { isPlainObject, keysFromPath } from "../common/utilities.js";
@@ -394,7 +398,7 @@ async function processPath(graph, path, baseUrl) {
 
   // Traverse graph to get value.
   let value = await GraphHelpers.traverse(graph, ...keys);
-  if (GraphHelpers.isAsyncDictionary(value)) {
+  if (DictionaryHelpers.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
     if (keys.at(-1) === undefined) {
       keys.pop();

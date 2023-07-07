@@ -1,4 +1,4 @@
-import DictionaryHelpers from "./DictionaryHelpers.js";
+import * as DictionaryHelpers from "./DictionaryHelpers.js";
 
 /**
  * A dictionary defined by a plain object or array.
