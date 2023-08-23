@@ -1,5 +1,5 @@
 import { ObjectGraph } from "@graphorigami/core";
-import { isPlainObject, keySymbol } from "../common/utilities.js";
+import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
@@ -13,6 +13,8 @@ import { extractFrontMatter } from "./serialize.js";
  * If successful, the document will be returned as a String with an attached
  * graph with the front matter and document content as data.
  *
+ * If the input is not a string or Buffer, it is returned as is.
+ *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").StringLike} StringLike
  *
@@ -21,6 +23,10 @@ import { extractFrontMatter } from "./serialize.js";
  * @this {AsyncDictionary|null}
  */
 export default function loadTextWithFrontMatter(input, key) {
+  if (!stringLike(input)) {
+    return input;
+  }
+
   /** @type {any} */
   let text;
 
