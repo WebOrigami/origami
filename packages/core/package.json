@@ -9,7 +9,7 @@
     "typescript": "5.0.4"
   },
   "dependencies": {
-    "@graphorigami/types": "0.0.1"
+    "@graphorigami/types": "*"
   },
   "scripts": {
     "test": "node --test",
