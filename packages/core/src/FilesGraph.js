@@ -103,6 +103,11 @@ export default class FilesGraph {
       value = "";
     }
 
+    // Write an ArrayBuffer value as a Buffer.
+    if (value instanceof ArrayBuffer) {
+      value = Buffer.from(value);
+    }
+
     // True if fs.writeFile can directly write the value to a file.
     const writeable =
       typeof value === "string" ||
