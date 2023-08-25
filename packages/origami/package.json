@@ -1,6 +1,7 @@
 {
   "name": "@graphorigami/origami",
-  "version": "0.0.25",
+  "version": "0.0.26",
+  "description": "Graph Origami language, CLI, server, framework, and more",
   "type": "module",
   "repository": {
     "type": "git",
