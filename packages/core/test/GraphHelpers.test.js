@@ -75,7 +75,7 @@ describe("GraphHelpers", () => {
 
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(GraphHelpers.keysFromPath("a/b/c"), ["a", "b", "c"]);
-    assert.deepEqual(GraphHelpers.keysFromPath("foo/"), ["foo", undefined]);
+    assert.deepEqual(GraphHelpers.keysFromPath("foo/"), ["foo", ""]);
   });
 
   test("isGraphable() returns true if the argument can be cast to an async graph", () => {

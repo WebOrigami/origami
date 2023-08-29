@@ -30,10 +30,10 @@ import defaultKeysJson from "../framework/defaultKeysJson.js";
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
-      // An `undefined` key occurs, e.g., when a user tries to browse to a path
+      // An empty string key occurs, e.g., when a user tries to browse to a path
       // with a trailing slash, like foo/. This is equivalent to requesting
       // foo/index.html.
-      if (key === undefined) {
+      if (key === "") {
         key = "index.html";
       }
 

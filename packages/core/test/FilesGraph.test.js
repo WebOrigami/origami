@@ -36,9 +36,9 @@ describe("FilesGraph", async () => {
     assert(!(await markdown.isKeyForSubgraph("a.txt")));
   });
 
-  test("getting undefined returns the graph itself", async () => {
+  test("getting the empty string returns the graph itself", async () => {
     const fixture = createFixture("fixtures");
-    const result = await fixture.get(undefined);
+    const result = await fixture.get("");
     assert.equal(result, fixture);
   });
 

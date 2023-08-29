@@ -13,9 +13,15 @@ export default class MapDictionary {
   }
 
   async get(key) {
-    return key === undefined
-      ? this // Getting undefined returns the dictionary itself.
-      : this.map.get(key);
+    let value = this.map.get(key);
+
+    if (value === undefined && key === "") {
+      // If the empty string isn't a key for a defined value, return the
+      // dictionary itself.
+      value = this;
+    }
+
+    return value;
   }
 
   async keys() {

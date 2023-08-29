@@ -361,7 +361,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "graph" },
           { type: tokenType.SLASH, lexeme: "/" },
         ]),
-        [[ops.scope, "graph"], undefined]
+        [[ops.scope, "graph"], ""]
       );
     });
 
@@ -894,7 +894,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        [ops.https, "example.com", "foo", undefined]
+        [ops.https, "example.com", "foo", ""]
       );
     });
 
@@ -955,7 +955,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        ["foo", undefined]
+        ["foo", ""]
       );
     });
     test("month/12", () => {

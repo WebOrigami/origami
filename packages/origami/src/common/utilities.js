@@ -106,28 +106,6 @@ export function isTransformApplied(Transform, obj) {
   return false;
 }
 
-/**
- * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
- * "baz"].
- *
- * If the path ends with a slash, the last key will be `undefined`.
- *
- * @param {string} pathname
- */
-export function keysFromPath(pathname) {
-  const keys = pathname.split("/");
-  if (keys[0] === "") {
-    // The path begins with a slash; drop that part.
-    keys.shift();
-  }
-  if (keys[keys.length - 1] === "") {
-    // The path ends with a slash; replace that with `undefined`
-    // @ts-ignore
-    keys[keys.length - 1] = undefined;
-  }
-  return keys;
-}
-
 export const keySymbol = Symbol("key");
 
 /**

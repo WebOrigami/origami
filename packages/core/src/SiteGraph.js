@@ -59,17 +59,14 @@ export default class SiteGraph {
       return this;
     }
 
-    // The route is a slash-separated concatenation of the keys. One case we may
-    // see is the last key being `undefined`, which indicates a trailing slash.
-    // As it happens, join() will correctly handle that case, treating undefined
-    // as an empty string.
+    // The route is a slash-separated concatenation of the keys.
     let route = keys.join("/");
 
-    // If there is only one key and it's undefined, and the site is explorable,
-    // we take the route as "index.html". With this and subsequent checks, we
-    // try to avoid sniffing the site to see if it's explorable, as that
-    // necessitates an extra network request per SiteGraph instance. In many
-    // cases, that can be avoided.
+    // If there is only one key and it's the empty string, and the site is
+    // explorable, we take the route as "index.html". With this and subsequent
+    // checks, we try to avoid sniffing the site to see if it's explorable, as
+    // that necessitates an extra network request per SiteGraph instance. In
+    // many cases, that can be avoided.
     if (route === "" && (await this.hasKeysJson())) {
       route = "index.html";
     }

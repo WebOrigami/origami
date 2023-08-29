@@ -343,7 +343,7 @@ export function leadingSlashPath(tokens) {
   let { 1: value } = parsed.value;
   if (!value) {
     // Input is just a slash with no following path: /
-    value = [undefined];
+    value = [""];
   }
   return {
     value,
@@ -566,6 +566,10 @@ export function slashPath(tokens) {
   if (parsed.value.length === 0) {
     // No keys
     return null;
+  }
+  if (parsed.value.at(-1) === undefined) {
+    // Trailing slash is represented as an empty string key
+    parsed.value[parsed.value.length - 1] = "";
   }
   return parsed;
 }

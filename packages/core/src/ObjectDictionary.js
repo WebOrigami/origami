@@ -22,19 +22,25 @@ export default class ObjectDictionary {
    * @param {any} key
    */
   async get(key) {
-    if (key === undefined) {
-      // Getting undefined returns the dictionary itself.
-      return this;
-    }
-
     // If the value is an array, we require that the key be one of its own
     // properties: we don't want to return Array prototype methods like `map`
     // and `find`.
-    if (this.object instanceof Array && !this.object.hasOwnProperty(key)) {
+    if (
+      this.object instanceof Array &&
+      key &&
+      !this.object.hasOwnProperty(key)
+    ) {
       return undefined;
     }
 
-    const value = this.object[key];
+    let value = this.object[key];
+
+    if (value === undefined && key === "") {
+      // If the empty string isn't a key for a defined value, return the
+      // dictionary itself.
+      value = this;
+    }
+
     return value;
   }
 

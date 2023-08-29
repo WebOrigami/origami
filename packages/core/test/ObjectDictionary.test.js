@@ -4,7 +4,7 @@ import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
 import ObjectDictionary from "../src/ObjectDictionary.js";
 
 describe("ObjectDictionary", () => {
-  test("can get the keys of the graph", async () => {
+  test("can get the keys of the dictionary", async () => {
     const fixture = createFixture();
     assert.deepEqual(
       [...(await fixture.keys())],
@@ -16,6 +16,11 @@ describe("ObjectDictionary", () => {
     const fixture = createFixture();
     const alice = await fixture.get("Alice.md");
     assert.equal(alice, "Hello, **Alice**.");
+  });
+
+  test("getting empty string returns the dictionary", async () => {
+    const fixture = createFixture();
+    assert.equal(await fixture.get(""), fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {

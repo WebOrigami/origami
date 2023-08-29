@@ -9,7 +9,6 @@ export function getScope(graph: AsyncDictionary|null): AsyncDictionary;
 export function graphInContext(graph: GraphVariant, context: AsyncDictionary|null): AsyncDictionary & { parent: AsyncDictionary };
 export function isPlainObject(obj: any): boolean;
 export function isTransformApplied(Transform: Function, obj: any): boolean;
-export function keysFromPath(pathname: string): string[];
 export const keySymbol: unique symbol;
 export function stringLike(value: any): boolean;
 export function toFunction(obj: Invocable): Function;

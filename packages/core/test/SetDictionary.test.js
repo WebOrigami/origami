@@ -16,6 +16,12 @@ describe("SetDictionary", () => {
     assert.equal(a, "a");
   });
 
+  test("getting empty string returns the dictionary", async () => {
+    const set = new Set(["a", "b", "c"]);
+    const fixture = new SetDictionary(set);
+    assert.equal(await fixture.get(""), fixture);
+  });
+
   test("getting an unsupported key returns undefined", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetDictionary(set);

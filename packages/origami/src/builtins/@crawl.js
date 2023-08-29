@@ -5,7 +5,7 @@ import {
 } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
-import { isPlainObject, keysFromPath } from "../common/utilities.js";
+import { isPlainObject } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -59,7 +59,7 @@ export default async function crawl(variant, baseHref) {
       const fn = () => {
         return GraphHelpers.traversePath(graph, resourcePath);
       };
-      const resourceKeys = keysFromPath(resourcePath);
+      const resourceKeys = GraphHelpers.keysFromPath(resourcePath);
       addValueToObject(cache, resourceKeys, fn);
     }
   }
@@ -390,17 +390,17 @@ async function processPath(graph, path, baseUrl) {
 
   // Convert path to keys
   /** @type {any[]} */
-  let keys = keysFromPath(path);
+  let keys = GraphHelpers.keysFromPath(path);
   if (keys.length === 0) {
     // Root path
-    keys = [undefined];
+    keys = [""];
   }
 
   // Traverse graph to get value.
   let value = await GraphHelpers.traverse(graph, ...keys);
   if (DictionaryHelpers.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === undefined) {
+    if (keys.at(-1) === "") {
       keys.pop();
     }
     keys.push("index.html");
@@ -411,7 +411,7 @@ async function processPath(graph, path, baseUrl) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === undefined) {
+  if (keys.at(-1) === "") {
     // For indexing and storage purposes, treat a path that ends in a trailing
     // slash (or the dot we use to seed the queue) as if it ends in
     // index.html.

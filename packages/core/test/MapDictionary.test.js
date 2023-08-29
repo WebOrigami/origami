@@ -14,6 +14,11 @@ describe("MapDictionary", () => {
     assert.equal(a, 1);
   });
 
+  test("getting empty string returns the dictionary", async () => {
+    const fixture = createFixture();
+    assert.equal(await fixture.get(""), fixture);
+  });
+
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("d"), undefined);

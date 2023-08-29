@@ -28,16 +28,12 @@ export default class FilesGraph {
   }
 
   async get(key) {
-    if (key === undefined) {
-      // Getting undefined returns the graph itself.
+    // We define get("") to be the graph itself. This lets an ori command like
+    // "ori folder/" with a trailing slash be equivalent to "ori folder".
+    if (key === "") {
       return this;
     }
 
-    // We define get(undefined) to be the graph itself. This lets an ori command
-    // like "ori folder/" with a trailing slash be equivalent to "ori folder".
-    if (key === undefined) {
-      return this;
-    }
     const filePath = path.resolve(this.dirname, key);
 
     let stats;
