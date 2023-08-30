@@ -37,11 +37,7 @@ export default function loadJs(buffer, key) {
       if (!fn) {
         fn = await importModule();
       }
-      return fn instanceof Function
-        ? // Invoke the function
-          await fn.call(scope, ...args)
-        : // Traverse the graph.
-          await GraphHelpers.traverseOrThrow(fn, ...args);
+      return GraphHelpers.traverseOrThrow(fn.bind(scope), ...args);
     };
   };
 
