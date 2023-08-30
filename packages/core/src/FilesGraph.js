@@ -1,5 +1,6 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { isTypedArray } from "node:util/types";
 import * as GraphHelpers from "./GraphHelpers.js";
 
@@ -21,10 +22,12 @@ const collator = new Intl.Collator(undefined, {
  */
 export default class FilesGraph {
   /**
-   * @param {string} dirname
+   * @param {string} location
    */
-  constructor(dirname) {
-    this.dirname = path.resolve(process.cwd(), dirname);
+  constructor(location) {
+    this.dirname = location.startsWith("file://")
+      ? path.dirname(fileURLToPath(location))
+      : path.resolve(process.cwd(), location);
   }
 
   async get(key) {
