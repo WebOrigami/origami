@@ -40,7 +40,7 @@ export default class FunctionGraph extends FunctionDictionary {
       value = Reflect.construct(this.constructor, [fn]);
     } else {
       // Call the function with the given keys.
-      value = this.fn.call(undefined, ...keys);
+      value = await this.fn.call(undefined, ...keys);
       if (this.fn.length > 0 && keys.length > this.fn.length) {
         // Traverse the result with the remaining keys.
         const rest = keys.slice(this.fn.length);
