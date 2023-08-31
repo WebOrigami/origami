@@ -1,5 +1,7 @@
-import { AsyncGraph } from "@graphorigami/types";
+import type { AsyncGraph } from "@graphorigami/types";
 import { GraphVariant, PlainObject } from "..";
+
+export * from "./DictionaryHelpers";
 
 export function assign(target: GraphVariant, source: GraphVariant): Promise<AsyncGraph>;
 export function from(graph: GraphVariant): AsyncGraph;

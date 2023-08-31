@@ -4,6 +4,9 @@ import MapGraph from "./MapGraph.js";
 import ObjectGraph from "./ObjectGraph.js";
 import SetGraph from "./SetGraph.js";
 
+// GraphHelpers exports all DictionaryHelpers too.
+export * from "./DictionaryHelpers.js";
+
 /**
  * Helper functions for working with async graphs
  *
