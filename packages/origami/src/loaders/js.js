@@ -37,7 +37,8 @@ export default function loadJs(buffer, key) {
       if (!fn) {
         fn = await importModule();
       }
-      return GraphHelpers.traverseOrThrow(fn.bind(scope), ...args);
+      const target = typeof fn === "function" ? fn.bind(scope) : fn;
+      return GraphHelpers.traverseOrThrow(target, ...args);
     };
   };
 
