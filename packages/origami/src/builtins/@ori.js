@@ -57,8 +57,8 @@ async function formatResult(scope, result) {
     text = result;
   } else if (
     !(result instanceof Array) &&
-    "toString" in result &&
-    result.toString !== getRealmObjectPrototype(result).toString
+    (typeof result !== "object" ||
+      result.toString !== getRealmObjectPrototype(result).toString)
   ) {
     text = result.toString();
   } else if (typeof result === "object") {
