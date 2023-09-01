@@ -320,7 +320,7 @@ function castArrayLike(obj) {
   for (const key in obj) {
     hasKeys = true;
     const index = Number(key);
-    if (isNaN(index) || index !== expectedIndex) {
+    if (key === "" || isNaN(index) || index !== expectedIndex) {
       // Not an array-like object.
       return obj;
     }
