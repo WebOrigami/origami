@@ -391,16 +391,12 @@ async function processPath(graph, path, baseUrl) {
   // Convert path to keys
   /** @type {any[]} */
   let keys = GraphHelpers.keysFromPath(path);
-  if (keys.length === 0) {
-    // Root path
-    keys = [""];
-  }
 
   // Traverse graph to get value.
   let value = await GraphHelpers.traverse(graph, ...keys);
   if (DictionaryHelpers.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === "") {
+    if (keys.at(-1) === GraphHelpers.defaultValueKey) {
       keys.pop();
     }
     keys.push("index.html");
@@ -411,7 +407,7 @@ async function processPath(graph, path, baseUrl) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === "") {
+  if (keys.at(-1) === GraphHelpers.defaultValueKey) {
     // For indexing and storage purposes, treat a path that ends in a trailing
     // slash (or the dot we use to seed the queue) as if it ends in
     // index.html.

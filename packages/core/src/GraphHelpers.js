@@ -151,8 +151,9 @@ export async function isKeyForSubgraph(graph, key) {
  * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
  * "baz"].
  *
- * Leading slashes are ignored. If the path ends with a slash, the last key will
- * be the empty string.
+ * Leading slashes are ignored. Consecutive slashes or a trailing slash will
+ * be represented by the `defaultValueKey` symbol. Example: the keys for the path
+ * "/foo//bar/" will be ["foo", defaultValueKey, "bar", defaultValueKey].
  *
  * @param {string} pathname
  */
@@ -162,8 +163,11 @@ export function keysFromPath(pathname) {
     // The path begins with a slash; drop that part.
     keys.shift();
   }
-  // Map empty strings to the default key.
-  const mapped = keys.map((key) => (key === "" ? defaultValueKey : key));
+  // Map empty strings to the default value key.
+  const mapped =
+    keys.length === 0
+      ? [defaultValueKey]
+      : keys.map((key) => (key === "" ? defaultValueKey : key));
   return mapped;
 }
 
