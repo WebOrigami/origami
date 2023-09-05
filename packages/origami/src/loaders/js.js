@@ -1,6 +1,6 @@
-import { GraphHelpers } from "@graphorigami/core";
-import DeferredGraph from "../common/DeferredGraph.js";
-import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
+import DeferredGraph from "../common/DeferredGraph2.js";
+import StringWithGraph from "../common/StringWithGraph.js";
+import { getScope } from "../common/utilities.js";
 
 /**
  * Load a .js file as a String with a toFunction() method that returns a
@@ -9,53 +9,26 @@ import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").HasGraph} HasGraph
- * @typedef {import("../..").HasFunction} HasFunction
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @returns {HasFunction & HasGraph}
+ * @returns {HasGraph}
  * @this {AsyncDictionary|null}
  */
 export default function loadJs(buffer, key) {
-  const text = String(buffer);
-  /** @type {any} */
-  const textWithFunction = new String(text);
-  const graph = this;
-  const scope = getScope(graph);
+  const containerGraph = this;
+  const scope = getScope(containerGraph);
 
   let moduleExport;
   async function importModule() {
-    if (!moduleExport && graph && "import" in graph) {
-      moduleExport = await /** @type {any} */ (graph).import?.(key);
+    if (!moduleExport && containerGraph && "import" in containerGraph) {
+      moduleExport = await /** @type {any} */ (containerGraph).import?.(key);
     }
     return moduleExport;
   }
 
-  textWithFunction.toFunction = function loadAndInvoke() {
-    let fn;
-    /** @this {AsyncDictionary} */
-    return async function (...args) {
-      if (!fn) {
-        fn = await importModule();
-      }
-      const target = typeof fn === "function" ? fn.bind(this) : fn;
-      return GraphHelpers.traverseOrThrow(target, ...args);
-    };
-  };
-
-  const exportedGraph = new DeferredGraph(async () => {
-    const variant = await importModule();
-    if (!variant) {
-      return null;
-    }
-
-    const loadedGraph = graphInContext(GraphHelpers.from(variant), scope);
-    loadedGraph[keySymbol] = key;
-
-    return loadedGraph;
-  });
-
-  textWithFunction.toGraph = () => exportedGraph;
-
-  return textWithFunction;
+  return new StringWithGraph(
+    buffer,
+    new DeferredGraph(async () => importModule())
+  );
 }
