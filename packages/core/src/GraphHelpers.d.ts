@@ -4,6 +4,7 @@ import { GraphVariant, PlainObject } from "..";
 export * from "./DictionaryHelpers";
 
 export function assign(target: GraphVariant, source: GraphVariant): Promise<AsyncGraph>;
+export const defaultValueKey: Symbol;
 export function from(graph: GraphVariant): AsyncGraph;
 export function isGraphable(obj: any): boolean;
 export function isKeyForSubgraph(graph: AsyncGraph, obj: any): Promise<boolean>;

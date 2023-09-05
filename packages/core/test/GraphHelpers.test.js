@@ -75,7 +75,10 @@ describe("GraphHelpers", () => {
 
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(GraphHelpers.keysFromPath("a/b/c"), ["a", "b", "c"]);
-    assert.deepEqual(GraphHelpers.keysFromPath("foo/"), ["foo", ""]);
+    assert.deepEqual(GraphHelpers.keysFromPath("foo/"), [
+      "foo",
+      GraphHelpers.defaultValueKey,
+    ]);
   });
 
   test("isGraphable() returns true if the argument can be cast to an async graph", () => {
@@ -177,7 +180,7 @@ describe("GraphHelpers", () => {
   });
 
   test("traverse() a path of keys", async () => {
-    const obj = new ObjectGraph({
+    const graph = new ObjectGraph({
       a1: 1,
       a2: {
         b1: 2,
@@ -187,17 +190,17 @@ describe("GraphHelpers", () => {
         },
       },
     });
-    assert.equal(await GraphHelpers.traverse(obj), obj);
-    assert.equal(await GraphHelpers.traverse(obj, "a1"), 1);
-    assert.equal(await GraphHelpers.traverse(obj, "a2", "b2", "c2"), 4);
+    assert.equal(await GraphHelpers.traverse(graph), graph);
+    assert.equal(await GraphHelpers.traverse(graph, "a1"), 1);
+    assert.equal(await GraphHelpers.traverse(graph, "a2", "b2", "c2"), 4);
     assert.equal(
-      await GraphHelpers.traverse(obj, "a2", "doesntexist", "c2"),
+      await GraphHelpers.traverse(graph, "a2", "doesntexist", "c2"),
       undefined
     );
   });
 
   test("traverse() from one graph into another", async () => {
-    const obj = new ObjectGraph({
+    const graph = new ObjectGraph({
       a: {
         b: new MapGraph([
           ["c", "Hello"],
@@ -205,17 +208,29 @@ describe("GraphHelpers", () => {
         ]),
       },
     });
-    assert.equal(await GraphHelpers.traverse(obj, "a", "b", "c"), "Hello");
+    assert.equal(await GraphHelpers.traverse(graph, "a", "b", "c"), "Hello");
+  });
+
+  test("traversing the default key returns the graph itself", async () => {
+    const graph = {
+      async get() {},
+      async keys() {},
+    };
+    const result = await GraphHelpers.traverse(
+      graph,
+      GraphHelpers.defaultValueKey
+    );
+    assert.equal(result, graph);
   });
 
   test("traversePath() traverses a slash-separated path", async () => {
-    const obj = new ObjectGraph({
+    const graph = new ObjectGraph({
       a: {
         b: {
           c: "Hello",
         },
       },
     });
-    assert.equal(await GraphHelpers.traversePath(obj, "a/b/c"), "Hello");
+    assert.equal(await GraphHelpers.traversePath(graph, "a/b/c"), "Hello");
   });
 });

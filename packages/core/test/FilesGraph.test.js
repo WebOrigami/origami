@@ -36,10 +36,9 @@ describe("FilesGraph", async () => {
     assert(!(await markdown.isKeyForSubgraph("a.txt")));
   });
 
-  test("getting the empty string returns the graph itself", async () => {
+  test("default value is the graph itself", async () => {
     const fixture = createFixture("fixtures");
-    const result = await fixture.get("");
-    assert.equal(result, fixture);
+    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), fixture);
   });
 
   test("can write out a file via set()", async () => {

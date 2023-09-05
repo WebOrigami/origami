@@ -1,3 +1,5 @@
+import defaultValueKey from "./defaultValueKey.js";
+
 /**
  * A dictionary defined by a function and an optional domain.
  *
@@ -20,7 +22,8 @@ export default class FunctionDictionary {
    * @param {any} key
    */
   async get(key) {
-    return this.fn(key);
+    // The dictionary's default value is the dictionary itself.
+    return key === defaultValueKey ? this : this.fn(key);
   }
 
   /**

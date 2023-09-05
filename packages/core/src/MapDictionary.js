@@ -1,3 +1,5 @@
+import defaultValueKey from "./defaultValueKey.js";
+
 /**
  * A dictionary backed by a Map.
  *
@@ -15,9 +17,8 @@ export default class MapDictionary {
   async get(key) {
     let value = this.map.get(key);
 
-    if (value === undefined && key === "") {
-      // If the empty string isn't a key for a defined value, return the
-      // dictionary itself.
+    if (value === undefined && key === defaultValueKey) {
+      // The default value is the dictionary itself.
       value = this;
     }
 

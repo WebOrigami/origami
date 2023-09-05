@@ -58,7 +58,7 @@ export async function handleRequest(request, response, graph) {
   // We allow the use of %2F in paths as a way to insert a slash into a key, so
   // we parse the path into keys first, then decode them.
   const keys = GraphHelpers.keysFromPath(url.pathname).map((key) =>
-    key ? decodeURIComponent(key) : key
+    typeof key === "string" ? decodeURIComponent(key) : key
   );
 
   const extendedGraph =

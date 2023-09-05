@@ -1,4 +1,4 @@
-import { DictionaryHelpers } from "@graphorigami/core";
+import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
   getScope,
@@ -30,10 +30,8 @@ import defaultKeysJson from "../framework/defaultKeysJson.js";
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
-      // An empty string key occurs, e.g., when a user tries to browse to a path
-      // with a trailing slash, like foo/. This is equivalent to requesting
-      // foo/index.html.
-      if (key === "") {
+      // The default value of an explorable site is index.html.
+      if (key === GraphHelpers.defaultValueKey) {
         key = "index.html";
       }
 

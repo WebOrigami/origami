@@ -1,3 +1,5 @@
+import defaultValueKey from "./defaultValueKey.js";
+
 /**
  * Wraps a Set as an AsyncDictionary.
  *
@@ -15,9 +17,8 @@ export default class SetDictionary {
   }
 
   async get(key) {
-    return key === ""
-      ? this // Getting the empty string returns the dictionary itself.
-      : this.values[key];
+    // The dictionary's default value is the dictionary itself.
+    return key === defaultValueKey ? this : this.values[key];
   }
 
   async keys() {

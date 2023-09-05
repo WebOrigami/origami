@@ -5,6 +5,8 @@ export default function format(code, implicitFunctionCall = false) {
     return "";
   } else if (typeof code === "string") {
     return `'${code}'`;
+  } else if (typeof code === "symbol") {
+    return `«${code.description}»`;
   } else if (!(code instanceof Array)) {
     return code;
   } else {

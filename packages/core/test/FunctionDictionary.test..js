@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionDictionary from "../src/FunctionDictionary.js";
+import * as GraphHelpers from "../src/GraphHelpers.js";
 
 describe("FunctionDictionary", async () => {
   test("can get the keys of the graph", async () => {
@@ -17,6 +18,11 @@ describe("FunctionDictionary", async () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
+  test("default value is the graph itself", async () => {
+    const fixture = createFixture();
+    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), fixture);
+  });
+
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("xyz"), undefined);
@@ -26,7 +32,7 @@ describe("FunctionDictionary", async () => {
 function createFixture() {
   return new FunctionDictionary(
     (key) => {
-      if (key.endsWith(".md")) {
+      if (key?.endsWith?.(".md")) {
         const name = key.slice(0, -3);
         return `Hello, **${name}**.`;
       }

@@ -1,3 +1,4 @@
+import { defaultValueKey } from "@graphorigami/core/src/GraphHelpers.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { tokenType } from "../../src/language/lex.js";
@@ -361,7 +362,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "graph" },
           { type: tokenType.SLASH, lexeme: "/" },
         ]),
-        [[ops.scope, "graph"], ""]
+        [[ops.scope, "graph"], defaultValueKey]
       );
     });
 
@@ -894,7 +895,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        [ops.https, "example.com", "foo", ""]
+        [ops.https, "example.com", "foo", defaultValueKey]
       );
     });
 
@@ -955,7 +956,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        ["foo", ""]
+        ["foo", defaultValueKey]
       );
     });
     test("month/12", () => {

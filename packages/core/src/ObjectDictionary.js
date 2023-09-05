@@ -1,4 +1,5 @@
 import * as DictionaryHelpers from "./DictionaryHelpers.js";
+import * as GraphHelpers from "./GraphHelpers.js";
 
 /**
  * A dictionary defined by a plain object or array.
@@ -35,9 +36,8 @@ export default class ObjectDictionary {
 
     let value = this.object[key];
 
-    if (value === undefined && key === "") {
-      // If the empty string isn't a key for a defined value, return the
-      // dictionary itself.
+    // The dictionary's default value is the dictionary itself.
+    if (value === undefined && key === GraphHelpers.defaultValueKey) {
       value = this;
     }
 

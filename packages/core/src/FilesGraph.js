@@ -31,9 +31,8 @@ export default class FilesGraph {
   }
 
   async get(key) {
-    // We define get("") to be the graph itself. This lets an ori command like
-    // "ori folder/" with a trailing slash be equivalent to "ori folder".
-    if (key === "") {
+    // The graph's default value is the graph itself.
+    if (key === GraphHelpers.defaultValueKey) {
       return this;
     }
 

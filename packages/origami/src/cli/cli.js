@@ -18,8 +18,15 @@ async function main(...args) {
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();
   const relative = path.relative(projectGraph.path, currentDirectory);
-  const keys = relative.split(path.sep);
-  const graph = await GraphHelpers.traverse(projectGraph, ...keys);
+  let graph;
+  if (relative === "") {
+    graph = projectGraph;
+  } else {
+    const keys = relative
+      .split(path.sep)
+      .map((key) => (key === "" ? GraphHelpers.defaultValueKey : key));
+    graph = await GraphHelpers.traverse(projectGraph, ...keys);
+  }
 
   const baseScope = getScope(graph);
 

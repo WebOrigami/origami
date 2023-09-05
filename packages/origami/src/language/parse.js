@@ -16,6 +16,7 @@
  * between possible terms.
  */
 
+import { defaultValueKey } from "@graphorigami/core/src/GraphHelpers.js";
 import {
   any,
   forcedSequence,
@@ -342,8 +343,8 @@ export function leadingSlashPath(tokens) {
   }
   let { 1: value } = parsed.value;
   if (!value) {
-    // Input is just a slash with no following path: /
-    value = [""];
+    // Input is just a slash with no following path: `/`
+    value = [defaultValueKey];
   }
   return {
     value,
@@ -492,7 +493,8 @@ export function pathKey(tokens) {
   if (!parsed) {
     return null;
   }
-  let value = parsed.value;
+  // An empty key represents the default value key.
+  let value = parsed.value === "" ? defaultValueKey : parsed.value;
   return {
     value,
     rest: parsed.rest,
@@ -568,8 +570,8 @@ export function slashPath(tokens) {
     return null;
   }
   if (parsed.value.at(-1) === undefined) {
-    // Trailing slash is represented as an empty string key
-    parsed.value[parsed.value.length - 1] = "";
+    // Trailing slash represents the default value key
+    parsed.value[parsed.value.length - 1] = defaultValueKey;
   }
   return parsed;
 }

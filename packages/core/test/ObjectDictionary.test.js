@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
+import * as GraphHelpers from "../src/GraphHelpers.js";
 import ObjectDictionary from "../src/ObjectDictionary.js";
 
 describe("ObjectDictionary", () => {
@@ -18,9 +19,9 @@ describe("ObjectDictionary", () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test("getting empty string returns the dictionary", async () => {
+  test("default value is the graph itself", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(""), fixture);
+    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {

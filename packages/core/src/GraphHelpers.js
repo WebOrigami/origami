@@ -3,6 +3,7 @@ import FunctionGraph from "./FunctionGraph.js";
 import MapGraph from "./MapGraph.js";
 import ObjectGraph from "./ObjectGraph.js";
 import SetGraph from "./SetGraph.js";
+import defaultValueKey from "./defaultValueKey.js";
 
 // GraphHelpers exports all DictionaryHelpers too.
 export * from "./DictionaryHelpers.js";
@@ -52,6 +53,25 @@ export async function assign(target, source) {
   await Promise.all(promises);
   return targetGraph;
 }
+
+// If the given plain object has only sequential integer keys, return it as an
+// array. Otherwise return it as is.
+function castArrayLike(obj) {
+  let hasKeys = false;
+  let expectedIndex = 0;
+  for (const key in obj) {
+    hasKeys = true;
+    const index = Number(key);
+    if (key === "" || isNaN(index) || index !== expectedIndex) {
+      // Not an array-like object.
+      return obj;
+    }
+    expectedIndex++;
+  }
+  return hasKeys ? Object.values(obj) : obj;
+}
+
+export { defaultValueKey };
 
 /**
  * Attempts to cast the indicated graph variant to an explorable graph.
@@ -142,7 +162,9 @@ export function keysFromPath(pathname) {
     // The path begins with a slash; drop that part.
     keys.shift();
   }
-  return keys;
+  // Map empty strings to the default key.
+  const mapped = keys.map((key) => (key === "" ? defaultValueKey : key));
+  return mapped;
 }
 
 /**
@@ -275,8 +297,9 @@ export async function traverseOrThrow(variant, ...keys) {
   const remainingKeys = keys.slice();
   while (remainingKeys.length > 0) {
     if (value === undefined) {
+      const keyStrings = keys.map((key) => String(key));
       throw new TraverseError(
-        `Couldn't traverse the path: ${keys.join("/")}`,
+        `Couldn't traverse the path: ${keyStrings.join("/")}`,
         value,
         keys
       );
@@ -296,6 +319,11 @@ export async function traverseOrThrow(variant, ...keys) {
     // Otherwise, process the next key.
     const key = remainingKeys.shift();
     value = await graph.get(key);
+
+    // The default value is the graph itself.
+    if (value === undefined && key === defaultValueKey) {
+      value = graph;
+    }
   }
   return value;
 }
@@ -310,23 +338,6 @@ export async function traverseOrThrow(variant, ...keys) {
 export async function traversePath(graph, path) {
   const keys = keysFromPath(path);
   return traverse(graph, ...keys);
-}
-
-// If the given plain object has only sequential integer keys, return it as an
-// array. Otherwise return it as is.
-function castArrayLike(obj) {
-  let hasKeys = false;
-  let expectedIndex = 0;
-  for (const key in obj) {
-    hasKeys = true;
-    const index = Number(key);
-    if (key === "" || isNaN(index) || index !== expectedIndex) {
-      // Not an array-like object.
-      return obj;
-    }
-    expectedIndex++;
-  }
-  return hasKeys ? Object.values(obj) : obj;
 }
 
 // Error class thrown by traverseOrThrow()
