@@ -33,6 +33,7 @@ export default function loadJs(buffer, key) {
 
   textWithFunction.toFunction = function loadAndInvoke() {
     let fn;
+    /** @this {AsyncDictionary} */
     return async function (...args) {
       if (!fn) {
         fn = await importModule();
