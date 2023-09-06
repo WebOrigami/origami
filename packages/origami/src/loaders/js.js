@@ -1,6 +1,5 @@
 import DeferredGraph from "../common/DeferredGraph2.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { getScope } from "../common/utilities.js";
 
 /**
  * Load a .js file as a String with a toFunction() method that returns a
@@ -17,7 +16,6 @@ import { getScope } from "../common/utilities.js";
  */
 export default function loadJs(buffer, key) {
   const containerGraph = this;
-  const scope = getScope(containerGraph);
 
   let moduleExport;
   async function importModule() {
