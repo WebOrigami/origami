@@ -55,15 +55,19 @@ export default async function execute(code) {
     fn = fn.toFunction();
   }
 
+  const isFunction = fn instanceof Function;
+  if (!isFunction && args.length === 0) {
+    args.push(undefined);
+  }
+
   // Execute the function or traverse the graph.
   let result;
   try {
-    result =
-      fn instanceof Function
-        ? // Invoke the function
-          await fn.call(scope, ...args)
-        : // Traverse the graph.
-          await GraphHelpers.traverseOrThrow(fn, ...args);
+    result = isFunction
+      ? // Invoke the function
+        await fn.call(scope, ...args)
+      : // Traverse the graph.
+        await GraphHelpers.traverseOrThrow(fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });
