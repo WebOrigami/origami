@@ -20,17 +20,34 @@ export default function InheritScopeTransform(Base) {
 
     async get(key) {
       const value = await super.get(key);
-      if (DictionaryHelpers.isAsyncDictionary(value) && value.parent === null) {
-        // This graph becomes the parent for all subgraphs.
-        value.parent = this;
-      }
-      if (
-        value &&
-        typeof value === "object" &&
-        Object.isExtensible(value) &&
-        !value[keySymbol]
-      ) {
-        value[keySymbol] = key;
+      if (value) {
+        if (
+          DictionaryHelpers.isAsyncDictionary(value) &&
+          value.parent == null
+        ) {
+          // This graph becomes the parent for all subgraphs.
+          value.parent = this;
+        } else if (
+          typeof value.toGraph === "function" &&
+          value.parent == null
+        ) {
+          // This graph becomes the parent for an attached graph.
+          const parent = this;
+          value.parent = parent;
+          const original = value.toGraph.bind(value);
+          value.toGraph = function () {
+            const graph = original();
+            graph.parent = parent;
+            return graph;
+          };
+        }
+        if (
+          typeof value === "object" &&
+          Object.isExtensible(value) &&
+          !value[keySymbol]
+        ) {
+          value[keySymbol] = key;
+        }
       }
       return value;
     }

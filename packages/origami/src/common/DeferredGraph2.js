@@ -1,6 +1,12 @@
 import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
-import { getScope, keySymbol } from "./utilities.js";
+import {
+  getScope,
+  isTransformApplied,
+  keySymbol,
+  transformObject,
+} from "./utilities.js";
 
 /**
  * A graph that is loaded lazily.
@@ -44,13 +50,15 @@ export default class DeferredGraph {
     this.loadPromise = Promise.resolve(this.loadFn()).then((result) => {
       this.loadResult = result;
 
-      const graph = GraphHelpers.isGraphable(result)
+      let graph = GraphHelpers.isGraphable(result)
         ? GraphHelpers.from(result)
         : new ObjectGraph({});
+
       if (this.deferredParent) {
-        if ("parent" in graph) {
-          graph.parent = this.deferredParent;
+        if (!isTransformApplied(InheritScopeTransform, graph)) {
+          graph = transformObject(InheritScopeTransform, graph);
         }
+        graph.parent = this.deferredParent;
         this.deferredParent = null;
       }
 
