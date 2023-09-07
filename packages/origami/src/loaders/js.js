@@ -1,3 +1,4 @@
+import { GraphHelpers } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph2.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 
@@ -25,8 +26,20 @@ export default function loadJs(buffer, key) {
     return moduleExport;
   }
 
-  return new StringWithGraph(
+  /** @type {any} */
+  const moduleWithGraph = new StringWithGraph(
     buffer,
     new DeferredGraph(async () => importModule())
   );
+
+  moduleWithGraph.toFunction = () => {
+    /** @this {AsyncDictionary} */
+    return async function (...args) {
+      const fn = await importModule();
+      const target = typeof fn === "function" ? fn.bind(this) : fn;
+      return GraphHelpers.traverseOrThrow(target, ...args);
+    };
+  };
+
+  return moduleWithGraph;
 }
