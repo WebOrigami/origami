@@ -28,6 +28,11 @@ export default class DeferredGraph {
 
   async get(key) {
     await this.load();
+
+    // The default value of a deferred graph is the result of the load function,
+    // which may or may not be a graph. (E.g., for a JavaScript module, the
+    // result of the load function is the module's default export, which may
+    // happen to be some other type of JavaScript object.)
     return key === GraphHelpers.defaultValueKey
       ? this.loadResult
       : this.graph.get(key);
