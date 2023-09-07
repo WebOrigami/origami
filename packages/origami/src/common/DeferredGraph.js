@@ -65,7 +65,7 @@ export default class DeferredGraph {
         if (!isTransformApplied(InheritScopeTransform, graph)) {
           graph = transformObject(InheritScopeTransform, graph);
         }
-        graph.parent = this.deferredParent;
+        /** @type {any} */ (graph).parent = this.deferredParent;
         this.deferredParent = null;
       }
 
