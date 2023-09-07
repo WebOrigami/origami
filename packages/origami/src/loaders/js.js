@@ -1,5 +1,5 @@
 import { GraphHelpers } from "@graphorigami/core";
-import DeferredGraph from "../common/DeferredGraph2.js";
+import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 
 /**

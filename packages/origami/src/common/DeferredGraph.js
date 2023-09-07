@@ -1,5 +1,12 @@
-import { getScope, keySymbol } from "../common/utilities.js";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
+import {
+  getScope,
+  isTransformApplied,
+  keySymbol,
+  transformObject,
+} from "./utilities.js";
 
 /**
  * A graph that is loaded lazily.
@@ -13,19 +20,27 @@ import Scope from "./Scope.js";
 export default class DeferredGraph {
   constructor(loadFn) {
     this.deferredParent = null;
-    this._graph = null;
+    this.graph = null;
     this.loadFn = loadFn;
     this.loadPromise = null;
+    this.loadResult = null;
   }
 
   async get(key) {
-    const loaded = await this.load();
-    return loaded?.get(key);
+    await this.load();
+
+    // The default value of a deferred graph is the result of the load function,
+    // which may or may not be a graph. (E.g., for a JavaScript module, the
+    // result of the load function is the module's default export, which may
+    // happen to be some other type of JavaScript object.)
+    return key === GraphHelpers.defaultValueKey
+      ? this.loadResult
+      : this.graph.get(key);
   }
 
   async keys() {
-    const loaded = await this.load();
-    return loaded.keys();
+    await this.load();
+    return this.graph.keys();
   }
 
   async load() {
@@ -34,43 +49,46 @@ export default class DeferredGraph {
       return this.loadPromise;
     }
 
-    // Invoke the load function.
-    let loadResult = this.loadFn();
+    // Invoke the load function, casting the result to a promise if it isn't
+    // one. Arrange to process and save the result once it's loaded.
+    this.loadPromise = Promise.resolve(this.loadFn()).then((result) => {
+      this.loadResult = result;
 
-    // Cast the result to a promise if it isn't one.
-    if (!("then" in loadResult)) {
-      loadResult = Promise.resolve(loadResult);
-    }
+      // If the load result is a graph, use it as is. Otherwise, construct an
+      // empty graph. In both cases, the graph's default value is the load
+      // result.
+      let graph = GraphHelpers.isGraphable(result)
+        ? GraphHelpers.from(result)
+        : new ObjectGraph({});
 
-    // Arrange to set the parent of the graph once it's loaded.
-    this.loadPromise = loadResult.then((graph) => {
       if (this.deferredParent) {
-        if ("parent" in graph) {
-          graph.parent = this.deferredParent;
+        if (!isTransformApplied(InheritScopeTransform, graph)) {
+          graph = transformObject(InheritScopeTransform, graph);
         }
+        graph.parent = this.deferredParent;
         this.deferredParent = null;
       }
-      this._graph = graph;
+
+      this.graph = graph;
       if (!this[keySymbol]) {
         this[keySymbol] = graph[keySymbol];
       }
-      return graph;
     });
 
     return this.loadPromise;
   }
 
   get parent() {
-    return this.deferredParent ?? /** @type {any} */ (this._graph)?.parent;
+    return this.deferredParent ?? /** @type {any} */ (this.graph)?.parent;
   }
   set parent(parent) {
-    if (!this._graph) {
+    if (!this.graph) {
       // Not ready to set the parent yet.
       this.deferredParent = parent;
     } else {
       // Avoid destructive modification of the underlying graph.
-      this._graph = Object.create(this._graph);
-      /** @type {any} */ (this._graph).parent = parent;
+      this.graph = Object.create(this.graph);
+      /** @type {any} */ (this.graph).parent = parent;
     }
   }
 

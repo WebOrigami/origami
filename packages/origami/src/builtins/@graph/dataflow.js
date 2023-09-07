@@ -185,7 +185,8 @@ async function graphDependencies(graphFile, keysInScope) {
   if (attachedGraph) {
     // HACK: Special case for a DeferredGraph returned by the .graph loader.
     if (attachedGraph.load) {
-      attachedGraph = await attachedGraph.load();
+      await attachedGraph.load();
+      attachedGraph = attachedGraph.graph;
     }
     const expressions = await attachedGraph.expressions?.();
     if (expressions) {
