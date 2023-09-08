@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
@@ -31,11 +31,12 @@ Hello, {{ name }}!`;
     const textWithGraph = loadTextWithFrontMatter.call(null, text);
     const inlined = await inline.call(null, textWithGraph, true);
     assert.equal(
-      inlined,
+      String(inlined),
       `---
 name: Bob
 ---
 Hello, Bob!`
     );
+    assert.deepEqual(await GraphHelpers.plain(inlined), { name: "Bob" });
   });
 });

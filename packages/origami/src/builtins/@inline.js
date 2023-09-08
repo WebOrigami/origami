@@ -25,7 +25,6 @@ export default async function inline(input, emitFrontMatter) {
         true
       )
     : templateResult;
-  result = String(result);
   return result;
 }
 
