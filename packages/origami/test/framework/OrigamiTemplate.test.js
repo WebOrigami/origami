@@ -61,7 +61,7 @@ Hello, Carol.
 
   test("can recurse via @template/apply", async () => {
     const template = new OrigamiTemplate(
-      `{{ @if @graph/isExplorable(@input)
+      `{{ @if @graph/isAsyncDictionary(@input)
         =\`({{ @map/values(@input, @template/recurse) }})\`
         =\`{{ @input }} \`
       }}`

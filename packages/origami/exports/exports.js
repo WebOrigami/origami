@@ -30,7 +30,7 @@ export { default as graphFrom } from "../src/builtins/@graph/from.js";
 export { default as graphFromJson } from "../src/builtins/@graph/fromJson.js";
 export { default as graphFromYaml } from "../src/builtins/@graph/fromYaml.js";
 export { default as graphInners } from "../src/builtins/@graph/inners.js";
-export { default as graphIsExplorable } from "../src/builtins/@graph/isExplorable.js";
+export { default as graphIsAsyncDictionary } from "../src/builtins/@graph/isAsyncDictionary.js";
 export { default as graphKeys } from "../src/builtins/@graph/keys.js";
 export { default as graphKeysJson } from "../src/builtins/@graph/keysJson.js";
 export { default as graphMerge } from "../src/builtins/@graph/merge.js";
