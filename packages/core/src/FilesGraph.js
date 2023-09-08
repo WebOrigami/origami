@@ -140,6 +140,18 @@ export default class FilesGraph {
     } else {
       // Ensure this directory exists.
       await fs.mkdir(this.dirname, { recursive: true });
+
+      if (!writeable) {
+        if (typeof value.toString === "function") {
+          value = value.toString();
+        } else {
+          const typeName = value?.constructor?.name ?? "unknown";
+          throw new TypeError(
+            `Cannot write a value of type ${typeName} as ${stringKey}`
+          );
+        }
+      }
+
       // Write out the value as the contents of a file.
       await fs.writeFile(destPath, value);
     }
