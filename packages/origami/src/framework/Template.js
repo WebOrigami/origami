@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { FunctionGraph, GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
@@ -33,6 +33,11 @@ export default class Template {
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
+    }
+
+    // HACK, refactor
+    if (input === GraphHelpers.defaultValueKey) {
+      input = undefined;
     }
 
     // Create the execution context for the compiled template.
@@ -96,6 +101,11 @@ export default class Template {
       inputGraph?.scope ?? templateGraph?.scope ?? ambientsGraph.scope;
 
     return { inputGraph, templateGraph, extendedScope };
+  }
+
+  // REVIEW: Needs refactor, share with .js loader, .yaml loader
+  toGraph() {
+    return new FunctionGraph(this.toFunction());
   }
 
   toFunction() {
