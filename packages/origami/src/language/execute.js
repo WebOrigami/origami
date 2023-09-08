@@ -51,7 +51,7 @@ export default async function execute(code) {
 
   // If the "function" is currently an object with a .toFunction() method, get
   // the real function from that.
-  if (typeof fn !== "function" && fn.toFunction) {
+  if (typeof fn !== "function" && fn?.toFunction) {
     fn = fn.toFunction();
   }
 

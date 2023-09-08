@@ -84,7 +84,7 @@ export function from(variant) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
     return variant;
-  } else if (typeof variant === "object" && "toGraph" in variant) {
+  } else if (variant && typeof variant === "object" && "toGraph" in variant) {
     // Variant exposes toGraph() method; invoke it.
     return variant.toGraph();
   } else if (variant instanceof Function) {
@@ -93,7 +93,7 @@ export function from(variant) {
     return new MapGraph(variant);
   } else if (variant instanceof Set) {
     return new SetGraph(variant);
-  } else if (variant !== null && typeof variant === "object") {
+  } else if (variant && typeof variant === "object") {
     // An instance of some class. This is our last choice because it's the
     // least specific.
     return new ObjectGraph(variant);
