@@ -3,7 +3,8 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/ori.js";
 
 /**
- * Concatenate the text content of objects or graphs.
+ * Inline any Origami expressions found inside {{...}} placeholders in the input
+ * text.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").StringLike} StringLike
@@ -16,14 +17,15 @@ export default async function inline(input, emitFrontMatter) {
   assertScopeIsDefined(this);
   const inputText = String(input);
   const template = await loadOrigamiTemplate.call(this, inputText);
-  const templateResult = await template.apply(input, this);
-  const result = emitFrontMatter
+  let templateResult = await template.apply(input, this);
+  let result = emitFrontMatter
     ? await outputWithGraph(
         templateResult,
-        /** @type {any} */ (template).toGraph?.(),
-        emitFrontMatter
+        await templateResult.toGraph(),
+        true
       )
     : templateResult;
+  result = String(result);
   return result;
 }
 

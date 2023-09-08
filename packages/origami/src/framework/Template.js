@@ -2,7 +2,6 @@
 import { FunctionGraph, GraphHelpers, ObjectGraph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
-import MergeGraph from "../common/MergeGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import { extractFrontMatter } from "../common/serialize.js";
 import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
@@ -130,18 +129,7 @@ async function createResult(text, inputGraph, templateGraph) {
     return text;
   }
 
-  let dataGraph;
-  if (inputGraph && !templateGraph) {
-    dataGraph = inputGraph;
-  } else if (!inputGraph && templateGraph) {
-    dataGraph = templateGraph;
-  } else {
-    // Merge the template graph as "@template" into the input graph.
-    dataGraph = new MergeGraph(inputGraph, {
-      "@template": templateGraph,
-    });
-  }
-
+  const dataGraph = inputGraph ?? templateGraph;
   const scope = getScope(dataGraph);
   const attachedGraph = await debug.call(scope, dataGraph);
 

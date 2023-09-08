@@ -160,9 +160,6 @@ template`
     const resultGraph = result.toGraph();
     assert.deepEqual(await GraphHelpers.plain(resultGraph), {
       b: 2,
-      "@template": {
-        a: 1,
-      },
     });
   });
 });
