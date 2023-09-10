@@ -1,3 +1,5 @@
+import { GraphHelpers } from "@graphorigami/core";
+
 /**
  * An HTTP/HTTPS site as a graph of ArrayBuffers.
  *
@@ -60,7 +62,10 @@ export default class SiteGraph {
     }
 
     // The route is a slash-separated concatenation of the keys.
-    let route = keys.join("/");
+    const mapped = keys.map((key) =>
+      key === GraphHelpers.defaultValueKey ? "" : key
+    );
+    let route = mapped.join("/");
 
     // If there is only one key and it's the empty string, and the site is
     // explorable, we take the route as "index.html". With this and subsequent
