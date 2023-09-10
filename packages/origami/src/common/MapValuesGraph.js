@@ -2,8 +2,8 @@ import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
 
 /**
- * Given a graph and a function, return a new explorable graph that applies
- * the function to the original graph's values.
+ * Given a graph and a function, return a new graph that applies the function to
+ * the original graph's values.
  */
 export default class MapValuesGraph {
   /**

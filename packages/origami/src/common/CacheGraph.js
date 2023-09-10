@@ -5,8 +5,8 @@ import {
 } from "@graphorigami/core";
 
 /**
- * Caches non-explorable values from the first (source) graph in a second
- * (cache) graph. If no second graph is supplied, an in-memory cache is used.
+ * Caches non-graph values from the first (source) graph in a second (cache)
+ * graph. If no second graph is supplied, an in-memory cache is used.
  */
 export default class CacheGraph {
   /**
@@ -39,11 +39,11 @@ export default class CacheGraph {
       cacheValue !== undefined &&
       !DictionaryHelpers.isAsyncDictionary(cacheValue)
     ) {
-      // Non-explorable cache hit
+      // Non-graph cache hit
       return cacheValue;
     }
 
-    // Cache miss or explorable cache hit.
+    // Cache miss or graph cache hit.
     let value = await this.graph.get(key);
     if (value !== undefined) {
       // Does this key match the filter?
@@ -57,7 +57,7 @@ export default class CacheGraph {
       }
       if (match) {
         if (DictionaryHelpers.isAsyncDictionary(value)) {
-          // Construct merged graph for an explorable result.
+          // Construct merged graph for a graph result.
           if (cacheValue === undefined) {
             // Construct new container in cache
             // TODO: .set() should return the value it set.

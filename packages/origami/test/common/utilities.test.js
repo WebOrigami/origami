@@ -39,7 +39,7 @@ describe("utilities", () => {
     assert("extra" in fixture);
   });
 
-  test("transformObject applies the same mixin to explorable results", async () => {
+  test("transformObject applies the same mixin to graph values", async () => {
     function UppercaseTransform(Base) {
       return class Uppercase extends Base {
         async get(key) {

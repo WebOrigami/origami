@@ -57,8 +57,7 @@ export function extractFrontMatter(input) {
   return { bodyText, frontBlock, frontData, frontText };
 }
 /**
- * Parse the given object as JSON text and return the corresponding explorable
- * graph.
+ * Parse the given object as JSON text and return the corresponding graph.
  *
  * Empty text will be treated as an empty object.
  *
@@ -74,8 +73,7 @@ export function fromJson(obj) {
 }
 
 /**
- * Parse the given object as YAML text and return the corresponding explorable
- * graph.
+ * Parse the given object as YAML text and return the corresponding graph.
  *
  * Empty text (or text with just comments) will be treated as an empty object.
  *

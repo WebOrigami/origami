@@ -44,7 +44,7 @@ describe("MapExtensionsGraph", () => {
     });
   });
 
-  test("can exclude non-explorable keys that don't match extension", async () => {
+  test("can exclude non-graph keys that don't match extension", async () => {
     const fixture = new MapExtensionsGraph(
       {
         "file1.txt": "will be mapped",

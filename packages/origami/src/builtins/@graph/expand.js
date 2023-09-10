@@ -3,7 +3,7 @@ import MapValuesGraph from "../../common/MapValuesGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * Expand values that can be treated as explorable graphs into graphs.
+ * Expand values that can be treated as graphs into graphs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
@@ -36,5 +36,5 @@ function expandValue(value) {
   return result;
 }
 
-expand.usage = `@graph/expand <graph>\tExpand values that can be treated as explorable graphs`;
+expand.usage = `@graph/expand <graph>\tExpand values that can be treated as graphs`;
 expand.documentation = "https://graphorigami.org/cli/builtins.html#@graph";

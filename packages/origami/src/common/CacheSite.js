@@ -57,7 +57,7 @@ export default class CacheSite {
       cacheValue !== undefined &&
       !DictionaryHelpers.isAsyncDictionary(cacheValue)
     ) {
-      // Non-explorable cache hit
+      // Non-graph cache hit
       return cacheValue;
     }
 
@@ -84,8 +84,8 @@ export default class CacheSite {
           current[key] = {};
           current = current[key];
         }
-        // If we have an explorable value, we don't cache the entire thing, just
-        // an empty graph.
+        // If we have a graph value, we don't cache the entire thing, just an
+        // empty graph.
         current[lastKey] = DictionaryHelpers.isAsyncDictionary(value)
           ? {}
           : value;
@@ -96,7 +96,7 @@ export default class CacheSite {
       }
 
       if (DictionaryHelpers.isAsyncDictionary(value)) {
-        // Construct merged graph for an explorable result.
+        // Construct merged graph for a graph result.
         value = Reflect.construct(this.constructor, [
           value,
           cacheValue,

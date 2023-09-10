@@ -23,7 +23,7 @@ export default async function table(variant) {
   }
 }
 
-// Graph's values are explorable.
+// Graph's values are subgraphs.
 //
 // Return an R x C table, where R is the number of top-level keys in the graph
 // (plus a header row), and C is the number of 2nd-level keys (plus a labeling
@@ -51,7 +51,7 @@ async function fullTable(graph, model) {
   return rows.join("\n");
 }
 
-// Graph's values are not explorable.
+// Graph's values are not subgraphs.
 // Return the (key, value) pairs as a simple two-column table.
 async function simpleTable(graph) {
   const header = `Key\tValue`;

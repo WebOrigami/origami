@@ -36,7 +36,7 @@ export default function DefaultValuesTransform(Base) {
             : defaultValue;
       }
 
-      // Ensure this transform is applied to any explorable result.
+      // Ensure this transform is applied to any subgraph.
       if (
         DictionaryHelpers.isAsyncDictionary(value) &&
         !isTransformApplied(DefaultValuesTransform, value)

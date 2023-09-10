@@ -16,5 +16,5 @@ export default async function files(dirname) {
   return new FilesGraph(resolved);
 }
 
-files.usage = `@files [path]\tThe explorable files at the given path`;
+files.usage = `@files [path]\tGraph of files at the given path`;
 files.documentation = "https://graphorigami.org/language/@files.html";

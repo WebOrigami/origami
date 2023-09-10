@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import PathTransform from "../../exports/PathTransform.js";
 describe("PathTransform", () => {
-  test("defines an ambient @path value for explorable results", async () => {
+  test("defines an ambient @path value for subgraphs", async () => {
     const graph = new (PathTransform(ObjectGraph))({
       a: {
         b: {

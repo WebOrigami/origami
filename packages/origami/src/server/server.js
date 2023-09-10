@@ -97,7 +97,7 @@ export async function handleRequest(request, response, graph) {
       resource instanceof Array)
   ) {
     // Redirect to an index page for the result.
-    // Redirect to the root of the explorable graph.
+    // Redirect to the root of the graph.
     const Location = `${request.url}/`;
     response.writeHead(307, { Location });
     response.end("ok");
@@ -178,8 +178,7 @@ export async function handleRequest(request, response, graph) {
 
 /**
  * A request listener for use with the node http.createServer and
- * https.createServer calls, letting you serve an explorable function as a set
- * of pages.
+ * https.createServer calls, letting you serve an async graph as a set of pages.
  *
  * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
  * @param {GraphVariant} variant

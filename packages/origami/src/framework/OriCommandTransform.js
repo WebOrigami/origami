@@ -40,7 +40,7 @@ export default function OriCommandTransform(Base) {
         const source = key.slice(1).trim();
         value = await ori.call(extendedScope, source);
 
-        // Ensure this transform is applied to any explorable result.
+        // Ensure this transform is applied to any subgraph.
         if (
           DictionaryHelpers.isAsyncDictionary(value) &&
           !isTransformApplied(OriCommandTransform, value)

@@ -30,13 +30,13 @@ export default class FilterGraph {
     // Enumerate all keys in the graph that can be found in the filter graph.
     for (const key of await this.graph.keys()) {
       const filterValue = await this.filter.get(key);
-      const filterValueExplorable =
+      const isFilterValueGraph =
         DictionaryHelpers.isAsyncDictionary(filterValue);
-      // If the filter value is explorable, the corresponding value in the graph
-      // must be explorable too.
+      // If the filter value is a graph, the corresponding value in the graph
+      // must be a graph too.
       const match =
-        (!filterValueExplorable && filterValue) ||
-        (filterValueExplorable &&
+        (!isFilterValueGraph && filterValue) ||
+        (isFilterValueGraph &&
           (await GraphHelpers.isKeyForSubgraph(this.graph, key)));
       if (match) {
         keys.add(key);

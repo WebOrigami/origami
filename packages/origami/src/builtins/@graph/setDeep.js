@@ -31,7 +31,7 @@ async function applyUpdateForKey(source, target, key) {
   if (DictionaryHelpers.isAsyncDictionary(sourceValue)) {
     const targetValue = await target.get(key);
     if (DictionaryHelpers.isAsyncDictionary(targetValue)) {
-      // Both source and target are explorable; recurse.
+      // Both source and target are async dictionaries; recurse.
       await applyUpdates(sourceValue, targetValue);
       return;
     }

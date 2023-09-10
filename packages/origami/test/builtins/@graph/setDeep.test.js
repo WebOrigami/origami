@@ -21,7 +21,7 @@ describe("@graph/setDeep", () => {
         // Should leave existing `more` keys alone.
         e: 6, // Add
       },
-      // Add new explorable value
+      // Add new subgraph
       extra: {
         f: 7,
       },

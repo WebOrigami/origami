@@ -2,11 +2,11 @@ import { GraphHelpers } from "@graphorigami/core";
 import MapKeysValuesGraph from "./MapKeysValuesGraph.js";
 
 /**
- * Given a graph and a function, return a new explorable graph that applies the
- * function to the inner graph's values. If an inner extension is specified,
- * only apply the transformation to keys in the inner graph that end with that
- * extension. If an outer extension is specified, change the extension on the
- * exposed outer keys to that extension.
+ * Given a graph and a function, return a new graph that applies the function to
+ * the inner graph's values. If an inner extension is specified, only apply the
+ * transformation to keys in the inner graph that end with that extension. If an
+ * outer extension is specified, change the extension on the exposed outer keys
+ * to that extension.
  */
 export default class MapExtensionsGraph extends MapKeysValuesGraph {
   constructor(variant, mapFn, options = {}) {

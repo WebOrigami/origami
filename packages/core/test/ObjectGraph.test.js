@@ -30,10 +30,10 @@ describe("ObjectGraph", () => {
       },
     });
     const keys = Array.from(await graph.keys());
-    const valuesExplorable = await Promise.all(
+    const subgraphs = await Promise.all(
       keys.map(async (key) => await graph.isKeyForSubgraph(key))
     );
-    assert.deepEqual(valuesExplorable, [false, true, false, true]);
+    assert.deepEqual(subgraphs, [false, true, false, true]);
   });
 
   test("returns an ObjectGraph for value that's a plain sub-object or sub-array", async () => {
@@ -82,9 +82,9 @@ describe("ObjectGraph", () => {
       },
     });
     const keys = Array.from(await graph.keys());
-    const valuesExplorable = await Promise.all(
+    const subgraphs = await Promise.all(
       keys.map(async (key) => await graph.isKeyForSubgraph(key))
     );
-    assert.deepEqual(valuesExplorable, [false, true, false, true]);
+    assert.deepEqual(subgraphs, [false, true, false, true]);
   });
 });

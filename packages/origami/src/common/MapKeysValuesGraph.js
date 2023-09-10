@@ -2,9 +2,8 @@ import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
 
 /**
- * Given a graph and a function, return a new explorable graph that applies the
- * function to the original graph's values. Optionally transform the original
- * graph's keys.
+ * Given a graph and a function, return a new graph that applies the function to
+ * the original graph's values. Optionally transform the original graph's keys.
  */
 export default class MapKeysValuesGraph {
   /**
@@ -51,7 +50,7 @@ export default class MapKeysValuesGraph {
         : innerValue;
     }
 
-    // If the value to return is an explorable graph, wrap it with a map.
+    // If the value to return is a subgraph, wrap it with a map.
     if (this.deep && DictionaryHelpers.isAsyncDictionary(outerValue)) {
       outerValue = Reflect.construct(this.constructor, [
         outerValue,

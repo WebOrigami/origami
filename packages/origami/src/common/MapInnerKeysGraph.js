@@ -14,7 +14,7 @@ export default class MapInnerKeysGraph {
     let value =
       innerKey === undefined ? undefined : await this.graph.get(innerKey);
 
-    // If the value to return is an explorable graph, wrap it with a map.
+    // If the value to return is a graph, wrap it with a map.
     if (this.deep && DictionaryHelpers.isAsyncDictionary(value)) {
       value = Reflect.construct(this.constructor, [
         value,

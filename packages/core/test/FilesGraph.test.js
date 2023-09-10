@@ -29,7 +29,7 @@ describe("FilesGraph", async () => {
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
-  test("can indicate which values are explorable", async () => {
+  test("can indicate which values are subgraphs", async () => {
     const fixture = createFixture("fixtures");
     assert(await fixture.isKeyForSubgraph("markdown"));
     const markdown = await fixture.get("markdown");

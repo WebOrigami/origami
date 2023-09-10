@@ -74,7 +74,7 @@ function castArrayLike(obj) {
 export { defaultValueKey };
 
 /**
- * Attempts to cast the indicated graph variant to an explorable graph.
+ * Attempts to cast the indicated graph variant to an async graph.
  *
  * @param {GraphVariant | Object} variant
  * @returns {AsyncGraph}
@@ -99,7 +99,7 @@ export function from(variant) {
     return new ObjectGraph(variant);
   }
 
-  throw new TypeError("Couldn't convert argument to an explorable graph");
+  throw new TypeError("Couldn't convert argument to an async graph");
 }
 
 /**
@@ -133,7 +133,7 @@ export function isGraphable(obj) {
 
 /**
  * Return true if the indicated key produces or is expected to produce an
- * explorable value.
+ * async graph.
  *
  * This defers to the graph's own isKeyForSubgraph method. If not found, this
  * gets the value of that key and returns true if the value is an async

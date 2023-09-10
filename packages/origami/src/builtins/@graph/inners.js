@@ -25,13 +25,13 @@ export default async function inners(variant) {
     },
 
     async keys() {
-      const explorableKeys = [];
+      const subgraphKeys = [];
       for (const key of await graph.keys()) {
         if (await GraphHelpers.isKeyForSubgraph(graph, key)) {
-          explorableKeys.push(key);
+          subgraphKeys.push(key);
         }
       }
-      return explorableKeys;
+      return subgraphKeys;
     },
   };
   return inner;
