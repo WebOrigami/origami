@@ -33,6 +33,11 @@ export default class FunctionGraph extends FunctionDictionary {
    * traverse it with the remaining keys.
    */
   async traverse(...keys) {
+    // In a function graph, the default value is the same as calling `get` with
+    // an `undefined` key.
+    keys = keys.map((key) =>
+      key === GraphHelpers.defaultValueKey ? undefined : key
+    );
     let value;
     if (this.fn.length > 0 && keys.length < this.fn.length) {
       // Partial function application.
