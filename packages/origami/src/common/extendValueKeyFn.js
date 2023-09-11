@@ -74,6 +74,10 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
       }
     }
 
-    return fn.call(scope, value, key);
+    // REVIEW: passing the key as an optional second argument creates issues
+    // with FunctionGraph. For now we're just passing the value. If this sticks,
+    // rename the function to extendValueFn.
+    // return fn.call(scope, value, key);
+    return fn.call(scope, value);
   };
 }
