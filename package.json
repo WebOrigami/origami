@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/monorepo",
-  "version": "0.0.1",
+  "version": "0.0.27",
   "workspaces": [
     "packages/core",
     "packages/origami",

@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/origami",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "Graph Origami language, CLI, server, framework, and more",
   "type": "module",
   "repository": {
@@ -19,7 +19,7 @@
     "typescript": "5.1.3"
   },
   "dependencies": {
-    "@graphorigami/core": "https://gitpkg.now.sh/GraphOrigami/origami/packages/core?47fade2e",
+    "@graphorigami/core": "0.0.27",
     "@graphorigami/types": "*",
     "graphviz-wasm": "3.0.0",
     "highlight.js": "11.8.0",
