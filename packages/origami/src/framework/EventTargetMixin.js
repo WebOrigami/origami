@@ -47,12 +47,13 @@ export default function EventTargetMixin(Base) {
           enumerable: true,
         });
       }
-      if (!event.isTrusted) {
-        Object.defineProperty(event, "isTrusted", {
-          value: false,
-          enumerable: true,
-        });
-      }
+      // 2023-09-11: Setting isTrusted causes exception on Glitch
+      // if (!event.isTrusted) {
+      //   Object.defineProperty(event, "isTrusted", {
+      //     value: false,
+      //     enumerable: true,
+      //   });
+      // }
       if (!event.target) {
         Object.defineProperty(event, "target", {
           value: this,
