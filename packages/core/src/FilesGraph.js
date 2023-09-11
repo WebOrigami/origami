@@ -112,7 +112,7 @@ export default class FilesGraph {
       value instanceof String ||
       value instanceof Buffer ||
       value instanceof DataView ||
-      value instanceof ReadableStream ||
+      (globalThis.ReadableStream && value instanceof ReadableStream) ||
       isTypedArray(value);
 
     if (value === undefined) {
