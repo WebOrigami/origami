@@ -35,13 +35,36 @@ export default function EventTargetMixin(Base) {
       let stopImmediatePropagation = false;
       let defaultPrevented = false;
 
-      Object.defineProperties(event, {
-        cancelable: { value: true, enumerable: true },
-        defaultPrevented: { enumerable: true, get: () => defaultPrevented },
-        isTrusted: { value: false, enumerable: true },
-        target: { value: this, enumerable: true },
-        timeStamp: { value: new Date().getTime(), enumerable: true },
-      });
+      if (!event.cancelable) {
+        Object.defineProperty(event, "cancelable", {
+          value: true,
+          enumerable: true,
+        });
+      }
+      if (!event.defaultPrevented) {
+        Object.defineProperty(event, "defaultPrevented", {
+          get: () => defaultPrevented,
+          enumerable: true,
+        });
+      }
+      if (!event.isTrusted) {
+        Object.defineProperty(event, "isTrusted", {
+          value: false,
+          enumerable: true,
+        });
+      }
+      if (!event.target) {
+        Object.defineProperty(event, "target", {
+          value: this,
+          enumerable: true,
+        });
+      }
+      if (!event.timeStamp) {
+        Object.defineProperty(event, "timeStamp", {
+          value: new Date().getTime(),
+          enumerable: true,
+        });
+      }
 
       event.preventDefault = function () {
         if (this.cancelable) {
