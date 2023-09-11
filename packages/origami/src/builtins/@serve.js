@@ -2,6 +2,8 @@ import { GraphHelpers } from "@graphorigami/core";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
+import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
+import { isTransformApplied, transformObject } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./@debug.js";
@@ -24,6 +26,12 @@ export default async function serve(variant, port) {
   let graph;
   if (variant) {
     graph = GraphHelpers.from(variant);
+
+    // TODO: Instead of applying ExplorableSiteTransform, apply a transform
+    // that just maps the defaultValueKey to index.html.
+    if (!isTransformApplied(ExplorableSiteTransform, graph)) {
+      graph = transformObject(ExplorableSiteTransform, graph);
+    }
   } else {
     // By default, watch the default graph and add default pages.
     const withDefaults = await debug.call(this);
