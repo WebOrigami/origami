@@ -83,6 +83,19 @@ describe("lex", () => {
     ]);
   });
 
+  test("function call with absolute path argument", () => {
+    const text = "fn /usr/alice";
+    const tokens = lex(text);
+    assert.deepEqual(tokens, [
+      { type: tokenType.REFERENCE, lexeme: "fn" },
+      { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
+      { type: tokenType.SLASH, lexeme: "/" },
+      { type: tokenType.REFERENCE, lexeme: "usr" },
+      { type: tokenType.SLASH, lexeme: "/" },
+      { type: tokenType.REFERENCE, lexeme: "alice" },
+    ]);
+  });
+
   test("number", () => {
     const text = "123";
     const tokens = lex(text);

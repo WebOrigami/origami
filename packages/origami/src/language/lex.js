@@ -41,6 +41,7 @@ const tokenCanBeginTerm = {
   [tokenType.LEFT_PAREN]: true,
   [tokenType.NUMBER]: true,
   [tokenType.REFERENCE]: true,
+  [tokenType.SLASH]: true,
   [tokenType.STRING]: true,
 };
 
