@@ -2,6 +2,7 @@
 import { FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import process from "node:process";
+import FileTreeTransform from "../framework/FileTreeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -13,7 +14,7 @@ export default async function files(dirname) {
   const resolved = dirname
     ? path.resolve(process.cwd(), dirname)
     : process.cwd();
-  return new FilesGraph(resolved);
+  return new (FileTreeTransform(FilesGraph))(resolved);
 }
 
 files.usage = `@files [path]\tGraph of files at the given path`;
