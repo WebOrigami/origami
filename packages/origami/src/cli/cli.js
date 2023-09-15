@@ -32,7 +32,8 @@ async function main(...args) {
 
   // If no arguments were passed, show usage.
   if (!expression) {
-    await showUsage(baseScope);
+    const config = projectGraph.parent;
+    await showUsage(config);
     return;
   }
 
