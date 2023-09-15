@@ -19,7 +19,7 @@
     "typescript": "5.1.3"
   },
   "dependencies": {
-    "@graphorigami/core": "0.0.27",
+    "@graphorigami/core": "https://gitpkg.now.sh/GraphOrigami/origami/packages/core?98ee0914",
     "@graphorigami/types": "*",
     "graphviz-wasm": "3.0.0",
     "highlight.js": "11.8.0",
