@@ -3,7 +3,7 @@ import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import ImportModulesMixin from "../../src/framework/ImportModulesMixin.js";
+import ImportModulesMixin from "../../src/common/ImportModulesMixin.js";
 import loadJs from "../../src/loaders/js.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

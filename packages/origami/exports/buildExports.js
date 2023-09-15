@@ -4,11 +4,12 @@ import { transformObject } from "../src/common/utilities.js";
 import OrigamiTemplate from "../src/framework/OrigamiTemplate.js";
 import PathTransform from "./PathTransform.js";
 
-// For builtins that should not be exported
-const ignoredBuiltins = {
-  "@false": true,
-  "@new": true,
-  "@true": true,
+// For builtins that should be renamed or not exported
+const specialBuiltinNames = {
+  "~": "homeFiles",
+  "@false": null,
+  "@new": null,
+  "@true": null,
 };
 
 // Generate a top-level export file for the entire project. For each .js file in
@@ -69,8 +70,12 @@ async function exportStatementForCode(codeBuffer, key) {
 
   // Ignore certain builtins like `@true` and `@false` that would conflict with
   // JavaScript keywords. Developers can use those JavaScript keywords directly.
-  if (ignoredBuiltins[name]) {
+  const specialName = specialBuiltinNames[name];
+  if (specialName === null) {
     return "";
+  }
+  if (specialName) {
+    name = specialName;
   }
 
   // Add the name to the parts.

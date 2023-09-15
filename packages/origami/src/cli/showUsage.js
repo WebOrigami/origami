@@ -1,6 +1,3 @@
-import CommandsModulesTransform from "../common/CommandModulesTransform.js";
-import { transformObject } from "../common/utilities.js";
-
 const groupDescriptions = {
   "@cache": "Functions for caching data",
   "@graph": "Functions for working with graphs",
@@ -19,16 +16,14 @@ export default async function showUsage(scope) {
 - the name of a function below:
 `);
 
-  const commands = transformObject(CommandsModulesTransform, scope);
-
   // Gather usages.
   const usages = [];
-  for (const key of await commands.keys()) {
+  for (const key of await scope.keys()) {
     let command;
     // We get the command associated with the key in a try/catch because
     // we want to ignore any syntax errors.
     try {
-      command = await commands.get(key);
+      command = await scope.get(key);
     } catch (error) {
       if (error instanceof SyntaxError) {
         continue;

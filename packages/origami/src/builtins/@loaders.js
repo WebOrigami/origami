@@ -1,9 +1,9 @@
 import { FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import CommandModulesTransform from "../common/CommandModulesTransform.js";
 import DeferredGraph from "../common/DeferredGraph.js";
-import ImplicitModulesTransform from "../framework/ImplicitModulesTransform.js";
-import ImportModulesMixin from "../framework/ImportModulesMixin.js";
+import ImportModulesMixin from "../common/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const loadersFolder = path.resolve(dirname, "../loaders");
@@ -17,14 +17,12 @@ const loadersFolder = path.resolve(dirname, "../loaders");
 // We don't apply FileTreeTransform here because that imports
 // FileLoadersTransform which eventually imports this file. For the loaders, we
 // don't need the InheritScopeTransform, so we can just apply
-// ImplicitModulesTransform and ImportModulesMixin directly.
+// CommandModulesTransform and ImportModulesMixin directly.
 
 /** @type {any} */
 const loaders = new DeferredGraph(
   () =>
-    new (ImplicitModulesTransform(ImportModulesMixin(FilesGraph)))(
-      loadersFolder
-    )
+    new (CommandModulesTransform(ImportModulesMixin(FilesGraph)))(loadersFolder)
 );
 
 export default loaders;

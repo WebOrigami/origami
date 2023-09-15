@@ -1,14 +1,14 @@
 import { FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import ImplicitModulesTransform from "../framework/ImplicitModulesTransform.js";
-import ImportModulesMixin from "../framework/ImportModulesMixin.js";
+import CommandModulesTransform from "../common/CommandModulesTransform.js";
+import ImportModulesMixin from "../common/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsFolder = path.resolve(dirname, "../builtins");
 
 /** @type {any} */
-const builtins = new (ImplicitModulesTransform(ImportModulesMixin(FilesGraph)))(
+const builtins = new (CommandModulesTransform(ImportModulesMixin(FilesGraph)))(
   commandsFolder
 );
 

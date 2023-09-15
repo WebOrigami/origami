@@ -1,8 +1,7 @@
 import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
-import CommandsModulesTransform from "../../common/CommandModulesTransform.js";
-import { extname, transformObject } from "../../common/utilities.js";
+import { extname } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import * as ops from "../../language/ops.js";
 import builtins from "../@builtins.js";
@@ -11,9 +10,7 @@ import builtins from "../@builtins.js";
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
-const commands = transformObject(CommandsModulesTransform, builtins);
-
-const ignoreKeys = Array.from(await commands.keys());
+const ignoreKeys = Array.from(await builtins.keys());
 ignoreKeys.push(".");
 ignoreKeys.push("..");
 
