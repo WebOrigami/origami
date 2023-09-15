@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import YAML from "yaml";
 import * as serialize from "../../common/serialize.js";
 import { extname, isPlainObject, keySymbol } from "../../common/utilities.js";
@@ -21,7 +21,7 @@ export default async function dot(variant, options = {}) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const rootLabel = graph[keySymbol] ?? "";
   const graphArcs = await statements(graph, "", rootLabel, options);
   return `digraph g {
@@ -84,9 +84,9 @@ async function statements(graph, nodePath, nodeLabel, options) {
     const expandable =
       value instanceof Array ||
       isPlainObject(value) ||
-      DictionaryHelpers.isAsyncDictionary(value);
+      Dictionary.isAsyncDictionary(value);
     if (expand && expandable) {
-      const subgraph = GraphHelpers.from(value);
+      const subgraph = Graph.from(value);
       const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {

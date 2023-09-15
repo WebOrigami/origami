@@ -1,5 +1,5 @@
-import * as DictionaryHelpers from "./DictionaryHelpers.js";
-import * as GraphHelpers from "./GraphHelpers.js";
+import * as Dictionary from "./Dictionary.js";
+import * as Graph from "./Graph.js";
 
 /**
  * A dictionary defined by a plain object or array.
@@ -37,7 +37,7 @@ export default class ObjectDictionary {
     let value = this.object[key];
 
     // The dictionary's default value is the dictionary itself.
-    if (value === undefined && key === GraphHelpers.defaultValueKey) {
+    if (value === undefined && key === Graph.defaultValueKey) {
       value = this;
     }
 
@@ -50,7 +50,7 @@ export default class ObjectDictionary {
   async keys() {
     // Walk up the prototype chain to realm's Object.prototype.
     let obj = this.object;
-    const objectPrototype = DictionaryHelpers.getRealmObjectPrototype(obj);
+    const objectPrototype = Dictionary.getRealmObjectPrototype(obj);
 
     const result = new Set();
     while (obj && obj !== objectPrototype) {

@@ -1,10 +1,10 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as GraphHelpers from "../src/GraphHelpers.js";
+import * as Graph from "../src/Graph.js";
 import MapGraph from "../src/MapGraph.js";
 import ObjectGraph from "../src/ObjectGraph.js";
 
-describe("GraphHelpers", () => {
+describe("Graph", () => {
   test("assign applies one graph to another", async () => {
     const target = new ObjectGraph({
       a: 1,
@@ -29,10 +29,10 @@ describe("GraphHelpers", () => {
     };
 
     // Apply changes.
-    const result = await GraphHelpers.assign(target, source);
+    const result = await Graph.assign(target, source);
 
     assert.equal(result, target);
-    assert.deepEqual(await GraphHelpers.plain(target), {
+    assert.deepEqual(await Graph.plain(target), {
       a: 4,
       c: 5,
       more: {
@@ -47,15 +47,15 @@ describe("GraphHelpers", () => {
 
   test("assign can apply updates to an array", async () => {
     const target = new ObjectGraph(["a", "b", "c"]);
-    await GraphHelpers.assign(target, ["d", "e"]);
-    assert.deepEqual(await GraphHelpers.plain(target), ["d", "e", "c"]);
+    await Graph.assign(target, ["d", "e"]);
+    assert.deepEqual(await Graph.plain(target), ["d", "e", "c"]);
   });
 
   test("from() returns an async graph as is", async () => {
     const graph1 = new ObjectGraph({
       a: "Hello, a.",
     });
-    const graph2 = GraphHelpers.from(graph1);
+    const graph2 = Graph.from(graph1);
     assert.equal(graph2, graph1);
   });
 
@@ -67,26 +67,26 @@ describe("GraphHelpers", () => {
         };
       },
     };
-    const graph = GraphHelpers.from(obj);
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    const graph = Graph.from(obj);
+    assert.deepEqual(await Graph.plain(graph), {
       a: "Hello, a.",
     });
   });
 
   test("keysFromPath() returns the keys from a slash-separated path", () => {
-    assert.deepEqual(GraphHelpers.keysFromPath("a/b/c"), ["a", "b", "c"]);
-    assert.deepEqual(GraphHelpers.keysFromPath("foo/"), [
+    assert.deepEqual(Graph.keysFromPath("a/b/c"), ["a", "b", "c"]);
+    assert.deepEqual(Graph.keysFromPath("foo/"), [
       "foo",
-      GraphHelpers.defaultValueKey,
+      Graph.defaultValueKey,
     ]);
   });
 
   test("isGraphable() returns true if the argument can be cast to an async graph", () => {
-    assert(!GraphHelpers.isGraphable(null));
-    assert(GraphHelpers.isGraphable({}));
-    assert(GraphHelpers.isGraphable([]));
-    assert(GraphHelpers.isGraphable(new Map()));
-    assert(GraphHelpers.isGraphable(new Set()));
+    assert(!Graph.isGraphable(null));
+    assert(Graph.isGraphable({}));
+    assert(Graph.isGraphable([]));
+    assert(Graph.isGraphable(new Map()));
+    assert(Graph.isGraphable(new Set()));
   });
 
   test("isKeyForSubgraph() returns true if the key is for a subgraph", async () => {
@@ -96,8 +96,8 @@ describe("GraphHelpers", () => {
         b: 2,
       },
     });
-    assert(!(await GraphHelpers.isKeyForSubgraph(graph, "a")));
-    assert(await GraphHelpers.isKeyForSubgraph(graph, "more"));
+    assert(!(await Graph.isKeyForSubgraph(graph, "a")));
+    assert(await Graph.isKeyForSubgraph(graph, "more"));
   });
 
   test("map() maps values", async () => {
@@ -107,10 +107,8 @@ describe("GraphHelpers", () => {
         b: "Bob",
       },
     };
-    const mapped = await GraphHelpers.map(graph, (value) =>
-      value.toUpperCase()
-    );
-    assert.deepEqual(await GraphHelpers.plain(mapped), {
+    const mapped = await Graph.map(graph, (value) => value.toUpperCase());
+    assert.deepEqual(await Graph.plain(mapped), {
       a: "ALICE",
       more: {
         b: "BOB",
@@ -127,7 +125,7 @@ describe("GraphHelpers", () => {
       },
       d: 4,
     };
-    const reduced = await GraphHelpers.mapReduce(
+    const reduced = await Graph.mapReduce(
       graph,
       (value) => value,
       (values) => String.prototype.concat(...values)
@@ -146,14 +144,14 @@ describe("GraphHelpers", () => {
       },
     };
     const graph = new ObjectGraph(original);
-    const plain = await GraphHelpers.plain(graph);
+    const plain = await Graph.plain(graph);
     assert.deepEqual(plain, original);
   });
 
   test("plain() produces an array for an array-like graph", async () => {
     const original = ["a", "b", "c"];
     const graph = new ObjectGraph(original);
-    const plain = await GraphHelpers.plain(graph);
+    const plain = await Graph.plain(graph);
     assert.deepEqual(plain, original);
   });
 
@@ -165,7 +163,7 @@ describe("GraphHelpers", () => {
       3: "c",
     };
     const graph = new ObjectGraph(original);
-    const plain = await GraphHelpers.plain(graph);
+    const plain = await Graph.plain(graph);
     assert.deepEqual(plain, original);
   });
 
@@ -174,7 +172,7 @@ describe("GraphHelpers", () => {
       a: 1,
       b: 2,
     });
-    const fn = GraphHelpers.toFunction(graph);
+    const fn = Graph.toFunction(graph);
     assert.equal(await fn("a"), 1);
     assert.equal(await fn("b"), 2);
   });
@@ -190,11 +188,11 @@ describe("GraphHelpers", () => {
         },
       },
     });
-    assert.equal(await GraphHelpers.traverse(graph), graph);
-    assert.equal(await GraphHelpers.traverse(graph, "a1"), 1);
-    assert.equal(await GraphHelpers.traverse(graph, "a2", "b2", "c2"), 4);
+    assert.equal(await Graph.traverse(graph), graph);
+    assert.equal(await Graph.traverse(graph, "a1"), 1);
+    assert.equal(await Graph.traverse(graph, "a2", "b2", "c2"), 4);
     assert.equal(
-      await GraphHelpers.traverse(graph, "a2", "doesntexist", "c2"),
+      await Graph.traverse(graph, "a2", "doesntexist", "c2"),
       undefined
     );
   });
@@ -208,7 +206,7 @@ describe("GraphHelpers", () => {
         ]),
       },
     });
-    assert.equal(await GraphHelpers.traverse(graph, "a", "b", "c"), "Hello");
+    assert.equal(await Graph.traverse(graph, "a", "b", "c"), "Hello");
   });
 
   test("traversing the default key returns the graph itself", async () => {
@@ -216,10 +214,7 @@ describe("GraphHelpers", () => {
       async get() {},
       async keys() {},
     };
-    const result = await GraphHelpers.traverse(
-      graph,
-      GraphHelpers.defaultValueKey
-    );
+    const result = await Graph.traverse(graph, Graph.defaultValueKey);
     assert.equal(result, graph);
   });
 
@@ -231,6 +226,6 @@ describe("GraphHelpers", () => {
         },
       },
     });
-    assert.equal(await GraphHelpers.traversePath(graph, "a/b/c"), "Hello");
+    assert.equal(await Graph.traversePath(graph, "a/b/c"), "Hello");
   });
 });

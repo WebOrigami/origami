@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,7 +15,7 @@ export default async function first(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   for (const key of await graph.keys()) {
     // Just return first value immediately.
     const value = await graph.get(key);

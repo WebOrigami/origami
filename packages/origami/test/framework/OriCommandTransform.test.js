@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
@@ -20,6 +20,6 @@ describe("OriCommandTransform", () => {
     });
     /** @type {any} */ (graph).scope = builtins;
     const value = await graph.get("!@graph/keys");
-    assert.deepEqual(await GraphHelpers.plain(value), ["a", "b"]);
+    assert.deepEqual(await Graph.plain(value), ["a", "b"]);
   });
 });

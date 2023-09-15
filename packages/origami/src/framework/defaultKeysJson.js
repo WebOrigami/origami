@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 /**
  * Return a default .keys.json file for the current graph.
@@ -8,7 +8,7 @@ import { GraphHelpers } from "@graphorigami/core";
  * @this {AsyncDictionary|null}
  */
 export default async function defaultKeysJson(variant) {
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const keys = Array.from(await graph.keys());
   // Skip the key .keys.json if present.
   const filtered = keys.filter((key) => key !== ".keys.json");

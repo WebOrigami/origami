@@ -1,8 +1,8 @@
-export * as DictionaryHelpers from "./src/DictionaryHelpers.js";
+export * as Dictionary from "./src/Dictionary.js";
 export { default as FilesGraph } from "./src/FilesGraph.js";
 export { default as FunctionDictionary } from "./src/FunctionDictionary.js";
 export { default as FunctionGraph } from "./src/FunctionGraph.js";
-export * as GraphHelpers from "./src/GraphHelpers.js";
+export * as Graph from "./src/Graph.js";
 export { default as MapDictionary } from "./src/MapDictionary.js";
 export { default as MapGraph } from "./src/MapGraph.js";
 export { default as ObjectDictionary } from "./src/ObjectDictionary.js";

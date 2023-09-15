@@ -1,10 +1,8 @@
-import { GraphHelpers, SiteGraph } from "@graphorigami/core";
+import { Graph, SiteGraph } from "@graphorigami/core";
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
 
 export default async function graphHttp(host, ...keys) {
-  const mapped = keys.map((key) =>
-    key === GraphHelpers.defaultValueKey ? "" : key
-  );
+  const mapped = keys.map((key) => (key === Graph.defaultValueKey ? "" : key));
   let href = [host, ...mapped].join("/");
   if (!href.startsWith("https") || !href.startsWith("http")) {
     if (!href.startsWith("//")) {

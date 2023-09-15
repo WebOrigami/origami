@@ -1,4 +1,4 @@
-import { DictionaryHelpers } from "@graphorigami/core";
+import { Dictionary } from "@graphorigami/core";
 
 const pathKey = Symbol("path");
 
@@ -12,7 +12,7 @@ export default function PathTransform(Base) {
 
     async get(key) {
       let value = await super.get(key);
-      if (DictionaryHelpers.isAsyncDictionary(value)) {
+      if (Dictionary.isAsyncDictionary(value)) {
         const path = this[pathKey] ? `${this[pathKey]}/${key}` : key;
         value[pathKey] = path;
       } else if (value === undefined && key === "@path") {

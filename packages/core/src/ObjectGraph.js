@@ -1,5 +1,5 @@
-import * as DictionaryHelpers from "./DictionaryHelpers.js";
-import * as GraphHelpers from "./GraphHelpers.js";
+import * as Dictionary from "./Dictionary.js";
+import * as Graph from "./Graph.js";
 import ObjectDictionary from "./ObjectDictionary.js";
 
 /**
@@ -13,8 +13,7 @@ export default class ObjectGraph extends ObjectDictionary {
     let value = await super.get(key);
     const isPlain =
       value instanceof Array ||
-      (DictionaryHelpers.isPlainObject(value) &&
-        !DictionaryHelpers.isAsyncDictionary(value));
+      (Dictionary.isPlainObject(value) && !Dictionary.isAsyncDictionary(value));
     if (isPlain) {
       value = Reflect.construct(this.constructor, [value]);
     }
@@ -23,6 +22,6 @@ export default class ObjectGraph extends ObjectDictionary {
 
   async isKeyForSubgraph(key) {
     const value = this.object[key];
-    return GraphHelpers.isGraphable(value);
+    return Graph.isGraphable(value);
   }
 }

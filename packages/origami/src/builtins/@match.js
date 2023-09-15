@@ -1,4 +1,4 @@
-import { DictionaryHelpers } from "@graphorigami/core";
+import { Dictionary } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -53,7 +53,7 @@ export default function match(pattern, resultFn, keys = []) {
 
       if (
         typeof resultFn !== "function" &&
-        !(DictionaryHelpers.isAsyncDictionary(resultFn) && "parent" in resultFn)
+        !(Dictionary.isAsyncDictionary(resultFn) && "parent" in resultFn)
       ) {
         // Simple return value; return as is
         return resultFn;

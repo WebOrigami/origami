@@ -1,8 +1,4 @@
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import { getScope, keySymbol, transformObject } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
@@ -26,8 +22,8 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
         typeof valueKeyFn === "object" &&
         "toFunction" in valueKeyFn
       ? valueKeyFn.toFunction()
-      : GraphHelpers.isGraphable(valueKeyFn)
-      ? GraphHelpers.toFunction(valueKeyFn)
+      : Graph.isGraphable(valueKeyFn)
+      ? Graph.toFunction(valueKeyFn)
       : valueKeyFn;
 
   /**
@@ -48,10 +44,10 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
 
     // See if the value is a graph or can be cast to a graph.
     let valueGraph;
-    if (DictionaryHelpers.isAsyncDictionary(value)) {
+    if (Dictionary.isAsyncDictionary(value)) {
       valueGraph = value;
-    } else if (GraphHelpers.isGraphable(value)) {
-      valueGraph = GraphHelpers.from(value);
+    } else if (Graph.isGraphable(value)) {
+      valueGraph = Graph.from(value);
     }
     if (valueGraph && !("parent" in valueGraph && "scope" in valueGraph)) {
       valueGraph = transformObject(InheritScopeTransform, valueGraph);

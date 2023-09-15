@@ -1,8 +1,4 @@
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import setDeep from "../builtins/@graph/setDeep.js";
 
 /**
@@ -17,12 +13,12 @@ export default class CacheSite {
    * @param {GraphVariant} [filter]
    */
   constructor(graph, cache, filter) {
-    this.graph = GraphHelpers.from(graph);
+    this.graph = Graph.from(graph);
 
     if (cache === undefined) {
       this.cache = new ObjectGraph({});
     } else {
-      /** @type {any} */ this.cache = GraphHelpers.from(cache);
+      /** @type {any} */ this.cache = Graph.from(cache);
       if (typeof this.cache.set !== "function") {
         throw new TypeError(
           `The first parameter to the Cache constructor must be a graph with a "set" method.`
@@ -30,7 +26,7 @@ export default class CacheSite {
       }
     }
 
-    this.filter = filter ? GraphHelpers.from(filter) : undefined;
+    this.filter = filter ? Graph.from(filter) : undefined;
   }
 
   async get(key) {
@@ -52,17 +48,14 @@ export default class CacheSite {
       return this;
     }
 
-    let cacheValue = await GraphHelpers.traverse(this.cache, ...keys);
-    if (
-      cacheValue !== undefined &&
-      !DictionaryHelpers.isAsyncDictionary(cacheValue)
-    ) {
+    let cacheValue = await Graph.traverse(this.cache, ...keys);
+    if (cacheValue !== undefined && !Dictionary.isAsyncDictionary(cacheValue)) {
       // Non-graph cache hit
       return cacheValue;
     }
 
     // Cache miss
-    let value = await GraphHelpers.traverse(this.graph, ...keys);
+    let value = await Graph.traverse(this.graph, ...keys);
     if (value !== undefined) {
       // Does this key match the filter?
       let match;
@@ -70,7 +63,7 @@ export default class CacheSite {
       if (this.filter === undefined) {
         match = true;
       } else {
-        filterValue = await GraphHelpers.traverse(this.filter, ...keys);
+        filterValue = await Graph.traverse(this.filter, ...keys);
         match = filterValue !== undefined;
       }
       if (match) {
@@ -86,16 +79,14 @@ export default class CacheSite {
         }
         // If we have a graph value, we don't cache the entire thing, just an
         // empty graph.
-        current[lastKey] = DictionaryHelpers.isAsyncDictionary(value)
-          ? {}
-          : value;
+        current[lastKey] = Dictionary.isAsyncDictionary(value) ? {} : value;
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
-        cacheValue = await GraphHelpers.traverse(this.cache, ...keys, lastKey);
+        cacheValue = await Graph.traverse(this.cache, ...keys, lastKey);
       }
 
-      if (DictionaryHelpers.isAsyncDictionary(value)) {
+      if (Dictionary.isAsyncDictionary(value)) {
         // Construct merged graph for a graph result.
         value = Reflect.construct(this.constructor, [
           value,

@@ -4,11 +4,7 @@
  * @typedef {import("../..").StringLike} StringLike
  */
 
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
@@ -136,7 +132,7 @@ export async function serializableObject(variant) {
   const serializable = new MapValuesGraph(variant, toSerializable, {
     deep: true,
   });
-  const plain = await GraphHelpers.plain(serializable);
+  const plain = await Graph.plain(serializable);
   const cast = castArrayLike(plain);
   return cast;
 }
@@ -158,7 +154,7 @@ export async function toJson(variant) {
  * @param {any} obj
  */
 export function toSerializable(obj) {
-  if (DictionaryHelpers.isPlainObject(obj)) {
+  if (Dictionary.isPlainObject(obj)) {
     const result = {};
     for (const key in obj) {
       result[key] = toSerializable(obj[key]);

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 /**
  * Invokes the given function in the context of the current scope.
@@ -16,7 +16,7 @@ export default async function invoke(scope, invocable, ...args) {
       ? invocable
       : "toFunction" in invocable
       ? invocable.toFunction()
-      : GraphHelpers.toFunction(invocable);
+      : Graph.toFunction(invocable);
   const result = await invocableFn.call(scope, ...args);
   return result;
 }

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapExtensionsGraph from "../../src/common/MapExtensionsGraph.js";
@@ -17,7 +17,7 @@ describe("MapExtensionsGraph", () => {
         extension: "txt",
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       "file1.txt": "WILL BE MAPPED",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -37,7 +37,7 @@ describe("MapExtensionsGraph", () => {
         extension: "txt→upper",
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -62,7 +62,7 @@ describe("MapExtensionsGraph", () => {
         extensionMatchesOnly: true,
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
       more: {
         "file4.upper": "WILL BE MAPPED",
@@ -82,7 +82,7 @@ describe("MapExtensionsGraph", () => {
         extensionMatchesOnly: true,
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
     });
   });
@@ -101,14 +101,14 @@ describe("MapExtensionsGraph", () => {
         extension: "txt→json",
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       "file1.json": {
         data: "Hello, a.",
       },
       file2: "won't be mapped",
     });
     assert.equal(
-      await GraphHelpers.traverse(fixture, "file1.json", "data"),
+      await Graph.traverse(fixture, "file1.json", "data"),
       "Hello, a."
     );
   });

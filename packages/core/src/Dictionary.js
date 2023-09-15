@@ -7,6 +7,7 @@
  * A collection of utility methods like `entries()` that can be defined in terms
  * of other methods like `keys()` and `get()`.
  */
+
 /**
  * @param {AsyncMutableDictionary} dictionary
  */

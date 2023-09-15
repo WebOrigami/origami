@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import ShuffleTransform from "../../common/ShuffleTransform.js";
 import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -18,7 +18,7 @@ export default async function shuffle(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const shuffled = transformObject(ShuffleTransform, graph);
   return shuffled;
 }

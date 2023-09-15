@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import exceptions from "../../../src/builtins/@graph/exceptions.js";
@@ -18,7 +18,7 @@ describe("exceptions", () => {
       },
     });
     const fixture = await exceptions.call(null, graph);
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       b: "b throws",
       more: {
         d: "TypeError: d throws",

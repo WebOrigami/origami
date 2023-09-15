@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
-import * as GraphHelpers from "../src/GraphHelpers.js";
+import * as Dictionary from "../src/Dictionary.js";
+import * as Graph from "../src/Graph.js";
 import ObjectDictionary from "../src/ObjectDictionary.js";
 
 describe("ObjectDictionary", () => {
@@ -21,7 +21,7 @@ describe("ObjectDictionary", () => {
 
   test("default value is the graph itself", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), fixture);
+    assert.equal(await fixture.get(Graph.defaultValueKey), fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {
@@ -45,7 +45,7 @@ describe("ObjectDictionary", () => {
     // Delete key.
     await graph.set("b", undefined);
 
-    assert.deepEqual(await DictionaryHelpers.entries(graph), [
+    assert.deepEqual(await Dictionary.entries(graph), [
       ["a", 4],
       ["c", 3],
       ["d", 5],
@@ -71,7 +71,7 @@ describe("ObjectDictionary", () => {
     const bar = new Bar();
     /** @type {any} */ (bar).extra = "Hello";
     const fixture = new ObjectDictionary(bar);
-    assert.deepEqual(await DictionaryHelpers.entries(fixture), [
+    assert.deepEqual(await Dictionary.entries(fixture), [
       ["a", 1],
       ["extra", "Hello"],
       ["prop", undefined],

@@ -1,22 +1,22 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 
 export default class FilterGraph {
   constructor(graph, filter) {
-    this.graph = GraphHelpers.from(graph);
-    this.filter = GraphHelpers.from(filter);
+    this.graph = Graph.from(graph);
+    this.filter = Graph.from(filter);
   }
 
   async get(key) {
     let value = await this.graph.get(key);
 
     let filterValue = await this.filter.get(key);
-    if (!DictionaryHelpers.isAsyncDictionary(value)) {
+    if (!Dictionary.isAsyncDictionary(value)) {
       if (filterValue === undefined) {
         value = undefined;
-      } else if (DictionaryHelpers.isAsyncDictionary(filterValue)) {
+      } else if (Dictionary.isAsyncDictionary(filterValue)) {
         value = undefined;
       }
-    } else if (DictionaryHelpers.isAsyncDictionary(filterValue)) {
+    } else if (Dictionary.isAsyncDictionary(filterValue)) {
       // Wrap value with corresponding filter.
       value = Reflect.construct(this.constructor, [value, filterValue]);
     }
@@ -30,14 +30,12 @@ export default class FilterGraph {
     // Enumerate all keys in the graph that can be found in the filter graph.
     for (const key of await this.graph.keys()) {
       const filterValue = await this.filter.get(key);
-      const isFilterValueGraph =
-        DictionaryHelpers.isAsyncDictionary(filterValue);
+      const isFilterValueGraph = Dictionary.isAsyncDictionary(filterValue);
       // If the filter value is a graph, the corresponding value in the graph
       // must be a graph too.
       const match =
         (!isFilterValueGraph && filterValue) ||
-        (isFilterValueGraph &&
-          (await GraphHelpers.isKeyForSubgraph(this.graph, key)));
+        (isFilterValueGraph && (await Graph.isKeyForSubgraph(this.graph, key)));
       if (match) {
         keys.add(key);
       }

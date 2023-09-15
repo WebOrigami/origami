@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import { getRealmObjectPrototype } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -18,7 +18,7 @@ export default async function concat(...args) {
       return undefined;
     }
   } else {
-    graph = GraphHelpers.from(args);
+    graph = Graph.from(args);
   }
 
   // The core concat operation is a map-reduce: convert everything to strings,
@@ -26,7 +26,7 @@ export default async function concat(...args) {
   const scope = this;
   const mapFn = async (value) => getText(value, scope);
   const reduceFn = (values) => values.join("");
-  return GraphHelpers.mapReduce(graph, mapFn, reduceFn);
+  return Graph.mapReduce(graph, mapFn, reduceFn);
 }
 
 async function getText(value, scope) {

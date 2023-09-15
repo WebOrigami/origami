@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -14,9 +14,9 @@ export default async function table(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const firstValue = await valueForFirstKey(graph);
-  if (DictionaryHelpers.isAsyncDictionary(firstValue)) {
+  if (Dictionary.isAsyncDictionary(firstValue)) {
     return fullTable(graph, firstValue);
   } else {
     return simpleTable(graph);

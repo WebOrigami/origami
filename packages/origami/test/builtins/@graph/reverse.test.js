@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import reverse from "../../../src/builtins/@graph/reverse.js";
@@ -14,7 +14,7 @@ describe("@graph/reverse", () => {
     // @ts-ignore
     assert.deepEqual(Array.from(await reversed.keys()), ["c", "b", "a"]);
     // @ts-ignore
-    assert.deepEqual(await GraphHelpers.plain(reversed), {
+    assert.deepEqual(await Graph.plain(reversed), {
       c: "C",
       b: "B",
       a: "A",

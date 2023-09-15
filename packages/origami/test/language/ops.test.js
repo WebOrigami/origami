@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
@@ -76,7 +76,7 @@ describe("ops", () => {
     ];
     const result = await execute.call({}, code);
     assert(result instanceof OrigamiGraph);
-    assert.deepEqual(await GraphHelpers.plain(result), {
+    assert.deepEqual(await Graph.plain(result), {
       name: "world",
       message: "Hello, world!",
     });

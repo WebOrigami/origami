@@ -1,8 +1,4 @@
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
 import {
@@ -57,7 +53,7 @@ export async function handleRequest(request, response, graph) {
 
   // We allow the use of %2F in paths as a way to insert a slash into a key, so
   // we parse the path into keys first, then decode them.
-  const keys = GraphHelpers.keysFromPath(url.pathname).map((key) =>
+  const keys = Graph.keysFromPath(url.pathname).map((key) =>
     typeof key === "string" ? decodeURIComponent(key) : key
   );
 
@@ -69,7 +65,7 @@ export async function handleRequest(request, response, graph) {
   // Ask the graph for the resource with those keys.
   let resource;
   try {
-    resource = await GraphHelpers.traverse(extendedGraph, ...keys);
+    resource = await Graph.traverse(extendedGraph, ...keys);
     // If resource is a function, invoke to get the object we want to return.
     if (typeof resource === "function") {
       resource = await resource();
@@ -81,7 +77,7 @@ export async function handleRequest(request, response, graph) {
 
   let mediaType;
 
-  if (resource === undefined) {
+  if (!resource) {
     return false;
   }
 
@@ -92,7 +88,7 @@ export async function handleRequest(request, response, graph) {
   if (
     mediaType === undefined &&
     !request.url.endsWith("/") &&
-    (DictionaryHelpers.isAsyncDictionary(resource) ||
+    (Dictionary.isAsyncDictionary(resource) ||
       isPlainObject(resource) ||
       resource instanceof Array)
   ) {
@@ -115,7 +111,7 @@ export async function handleRequest(request, response, graph) {
     (mediaType === "application/json" || mediaType === "text/yaml") &&
     !stringLike(resource)
   ) {
-    const graph = GraphHelpers.from(resource);
+    const graph = Graph.from(resource);
     resource =
       mediaType === "text/yaml"
         ? await serialize.toYaml(graph)
@@ -125,7 +121,7 @@ export async function handleRequest(request, response, graph) {
     (isPlainObject(resource) || resource instanceof Array)
   ) {
     // The resource is data, try showing it as YAML.
-    const graph = GraphHelpers.from(resource);
+    const graph = Graph.from(resource);
     resource = await serialize.toYaml(graph);
     mediaType = "text/yaml";
   }
@@ -184,7 +180,7 @@ export async function handleRequest(request, response, graph) {
  * @param {GraphVariant} variant
  */
 export function requestListener(variant) {
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);

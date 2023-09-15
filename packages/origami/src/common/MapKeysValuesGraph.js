@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
 
 /**
@@ -16,7 +16,7 @@ export default class MapKeysValuesGraph {
    * @param {PlainObject} options
    */
   constructor(variant, mapFn, options = {}) {
-    this.graph = GraphHelpers.from(variant);
+    this.graph = Graph.from(variant);
     this.mapFn = mapFn ? utilities.toFunction(mapFn) : null;
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
@@ -51,7 +51,7 @@ export default class MapKeysValuesGraph {
     }
 
     // If the value to return is a subgraph, wrap it with a map.
-    if (this.deep && DictionaryHelpers.isAsyncDictionary(outerValue)) {
+    if (this.deep && Dictionary.isAsyncDictionary(outerValue)) {
       outerValue = Reflect.construct(this.constructor, [
         outerValue,
         this.mapFn,

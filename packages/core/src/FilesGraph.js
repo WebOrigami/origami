@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isTypedArray } from "node:util/types";
-import * as GraphHelpers from "./GraphHelpers.js";
+import * as Graph from "./Graph.js";
 
 // Names of OS-generated files that should not be enumerated
 const hiddenFileNames = {
@@ -32,7 +32,7 @@ export default class FilesGraph {
 
   async get(key) {
     // The graph's default value is the graph itself.
-    if (key === GraphHelpers.defaultValueKey) {
+    if (key === Graph.defaultValueKey) {
       return this;
     }
 
@@ -133,10 +133,10 @@ export default class FilesGraph {
         // Delete file.
         await fs.unlink(destPath);
       }
-    } else if (!writeable && GraphHelpers.isGraphable(value)) {
+    } else if (!writeable && Graph.isGraphable(value)) {
       // Treat value as a graph and write it out as a subdirectory.
       const destGraph = Reflect.construct(this.constructor, [destPath]);
-      await GraphHelpers.assign(destGraph, value);
+      await Graph.assign(destGraph, value);
     } else {
       // Ensure this directory exists.
       await fs.mkdir(this.dirname, { recursive: true });

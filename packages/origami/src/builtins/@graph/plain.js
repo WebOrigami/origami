@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,7 +15,7 @@ export default async function plain(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return GraphHelpers.plain(variant);
+  return Graph.plain(variant);
 }
 
 plain.usage = `plain <graph>\tA plain JavaScript object representation of the graph`;

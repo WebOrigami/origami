@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapInnerKeysGraph from "../../src/common/MapInnerKeysGraph.js";
@@ -13,7 +13,7 @@ describe("MapInnerKeysGraph", () => {
       },
       (value, key) => key.toUpperCase()
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       A: 1,
       B: 2,
       C: 3,

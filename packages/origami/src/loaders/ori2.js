@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { FunctionGraph, GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { FunctionGraph, Graph, ObjectGraph } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
@@ -25,7 +25,7 @@ export default function loadGraph(buffer, key) {
     if (fn.code[0] === ops.lambda && fn.code[1][0] === ops.concat) {
       // HACK: Create cheap version of what Template does
       const func = async (input) => {
-        const extendedScope = GraphHelpers.isGraphable(input)
+        const extendedScope = Graph.isGraphable(input)
           ? graphInContext(input, scope)
           : scope;
         const template = fn.code[1];
@@ -34,7 +34,7 @@ export default function loadGraph(buffer, key) {
       value = new FunctionGraph(func);
     } else if (typeof value === "function") {
       value = new FunctionGraph(fn.bind(scope));
-    } else if (!GraphHelpers.isAsyncDictionary(value)) {
+    } else if (!Graph.isAsyncDictionary(value)) {
       value = new ObjectGraph({ "": value });
     }
     value[keySymbol] = key;

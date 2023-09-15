@@ -1,7 +1,7 @@
 import type { AsyncGraph } from "@graphorigami/types";
 import { GraphVariant, PlainObject } from "..";
 
-export * from "./DictionaryHelpers";
+export * from "./Dictionary";
 
 export function assign(target: GraphVariant, source: GraphVariant): Promise<AsyncGraph>;
 export const defaultValueKey: Symbol;

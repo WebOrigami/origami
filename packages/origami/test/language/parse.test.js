@@ -1,4 +1,4 @@
-import { defaultValueKey } from "@graphorigami/core/src/GraphHelpers.js";
+import { defaultValueKey } from "@graphorigami/core/src/Graph.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { tokenType } from "../../src/language/lex.js";

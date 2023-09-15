@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import MapValuesGraph from "../../common/MapValuesGraph.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -24,9 +24,9 @@ export default async function expand(variant) {
 
 function expandValue(value) {
   let result;
-  if (GraphHelpers.isGraphable(value)) {
+  if (Graph.isGraphable(value)) {
     try {
-      result = GraphHelpers.from(value);
+      result = Graph.from(value);
     } catch (error) {
       result = value;
     }

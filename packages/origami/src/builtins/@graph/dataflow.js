@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import { extname } from "../../common/utilities.js";
@@ -22,11 +22,11 @@ ignoreKeys.push("..");
  */
 export default async function dataflow(variant) {
   assertScopeIsDefined(this);
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
 
   const flowFile = await graph.get(".dataflow.yaml");
-  const flow = DictionaryHelpers.isAsyncDictionary(flowFile)
-    ? await GraphHelpers.plain(flowFile)
+  const flow = Dictionary.isAsyncDictionary(flowFile)
+    ? await Graph.plain(flowFile)
     : flowFile
     ? YAML.parse(String(flowFile))
     : {};

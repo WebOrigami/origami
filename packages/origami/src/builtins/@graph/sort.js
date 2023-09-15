@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
 import extendValueKeyFn from "../../common/extendValueKeyFn.js";
 import { transformObject } from "../../common/utilities.js";
@@ -21,7 +21,7 @@ export default async function sort(variant, keyFn) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
 
   if (keyFn === undefined) {
     // Simple case: sort by graph's existing keys.

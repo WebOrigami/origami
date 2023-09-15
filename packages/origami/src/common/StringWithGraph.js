@@ -1,9 +1,9 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 export default class StringWithGraph extends String {
   constructor(string, variant) {
     super(string);
-    this.graph = GraphHelpers.from(variant);
+    this.graph = Graph.from(variant);
   }
 
   toGraph() {

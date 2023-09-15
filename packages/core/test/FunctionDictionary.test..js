@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionDictionary from "../src/FunctionDictionary.js";
-import * as GraphHelpers from "../src/GraphHelpers.js";
+import * as Graph from "../src/Graph.js";
 
 describe("FunctionDictionary", async () => {
   test("can get the keys of the graph", async () => {
@@ -20,7 +20,7 @@ describe("FunctionDictionary", async () => {
 
   test("default value calls `get` with an `undefined` key", async () => {
     const fixture = new FunctionDictionary((key) => key);
-    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), undefined);
+    assert.equal(await fixture.get(Graph.defaultValueKey), undefined);
   });
 
   test("getting an unsupported key returns undefined", async () => {

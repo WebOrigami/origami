@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
   getScope,
@@ -31,7 +31,7 @@ export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
       // The default value of an explorable site is index.html.
-      if (key === GraphHelpers.defaultValueKey) {
+      if (key === Graph.defaultValueKey) {
         key = "index.html";
       }
 
@@ -52,7 +52,7 @@ export default function ExplorableSiteTransform(Base) {
       // the user browse into data and explorable graphs of types other than the
       // current class.
       if (
-        DictionaryHelpers.isAsyncDictionary(value) &&
+        Dictionary.isAsyncDictionary(value) &&
         !isTransformApplied(ExplorableSiteTransform, value)
       ) {
         value = transformObject(ExplorableSiteTransform, value);

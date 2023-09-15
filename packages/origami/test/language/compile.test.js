@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/language/compile.js";
@@ -24,7 +24,7 @@ describe("compile", () => {
   test("graph", async () => {
     const fn = compile.expression("{ message = greet(name) }");
     const graph = await fn.call(scope);
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       message: "Hello, Alice!",
     });
   });

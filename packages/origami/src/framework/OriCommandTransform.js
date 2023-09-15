@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { DictionaryHelpers, ObjectGraph } from "@graphorigami/core";
+import { Dictionary, ObjectGraph } from "@graphorigami/core";
 import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
 import {
@@ -42,7 +42,7 @@ export default function OriCommandTransform(Base) {
 
         // Ensure this transform is applied to any subgraph.
         if (
-          DictionaryHelpers.isAsyncDictionary(value) &&
+          Dictionary.isAsyncDictionary(value) &&
           !isTransformApplied(OriCommandTransform, value)
         ) {
           value = transformObject(OriCommandTransform, value);

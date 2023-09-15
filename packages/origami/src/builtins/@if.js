@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { DictionaryHelpers } from "@graphorigami/core";
+import { Dictionary } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 export default async function ifCommand(value, trueResult, falseResult) {
   assertScopeIsDefined(this);
   let condition = await value;
-  if (DictionaryHelpers.isAsyncDictionary(condition)) {
+  if (Dictionary.isAsyncDictionary(condition)) {
     const keys = Array.from(await condition.keys());
     condition = keys.length > 0;
   }

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import CacheGraph from "../../src/common/CacheGraph.js";
@@ -26,12 +26,9 @@ describe("CacheGraph", () => {
     assert.equal(await fixture.get("b"), 2);
     assert.equal(await cache.get("b"), 2);
 
-    assert.equal(
-      await GraphHelpers.traverse(fixture.cache, "more", "d"),
-      undefined
-    );
-    assert.equal(await GraphHelpers.traverse(fixture, "more", "d"), 4);
-    assert.equal(await GraphHelpers.traverse(fixture.cache, "more", "d"), 4);
+    assert.equal(await Graph.traverse(fixture.cache, "more", "d"), undefined);
+    assert.equal(await Graph.traverse(fixture, "more", "d"), 4);
+    assert.equal(await Graph.traverse(fixture.cache, "more", "d"), 4);
   });
 
   test("if a cache filter is supplied, it only caches files that match the filter", async () => {

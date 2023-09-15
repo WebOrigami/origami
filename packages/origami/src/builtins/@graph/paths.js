@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -18,11 +18,11 @@ export default async function paths(variant, prefix = "") {
     return undefined;
   }
   const result = [];
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   for (const key of await graph.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
     const value = await graph.get(key);
-    if (await DictionaryHelpers.isAsyncDictionary(value)) {
+    if (await Dictionary.isAsyncDictionary(value)) {
       const subPaths = await paths.call(this, value, valuePath);
       result.push(...subPaths);
     } else {

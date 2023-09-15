@@ -1,4 +1,4 @@
-import { FunctionGraph, GraphHelpers } from "@graphorigami/core";
+import { FunctionGraph, Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapKeysValuesGraph from "../../src/common/MapKeysValuesGraph.js";
@@ -35,7 +35,7 @@ describe("MapKeysValuesTest", () => {
         preferExistingValue: true,
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(outer), {
+    assert.deepEqual(await Graph.plain(outer), {
       A: "HELLO, A.",
       B: "Goodbye, B.",
       C: "GOODNIGHT, C.",
@@ -55,7 +55,7 @@ describe("MapKeysValuesTest", () => {
     const mapped = new UppercaseKeysGraph(inner, () => true, {
       getValue: false,
     });
-    assert.deepEqual(await GraphHelpers.plain(mapped), {
+    assert.deepEqual(await Graph.plain(mapped), {
       A: true,
       B: true,
       C: true,

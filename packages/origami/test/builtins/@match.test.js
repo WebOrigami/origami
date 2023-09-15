@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import match from "../../src/builtins/@match.js";
@@ -16,7 +16,7 @@ describe("match", () => {
       "Bob.html",
       "Carol.html",
     ]);
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       "Alice.html": "Hello, Alice!",
       "Bob.html": "Hello, Bob!",
       "Carol.html": "Hello, Carol!",

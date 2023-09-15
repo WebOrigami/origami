@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -67,7 +67,7 @@ export default async function execute(code) {
       ? // Invoke the function
         await fn.call(scope, ...args)
       : // Traverse the graph.
-        await GraphHelpers.traverseOrThrow(fn, ...args);
+        await Graph.traverseOrThrow(fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });
@@ -78,7 +78,7 @@ export default async function execute(code) {
     result &&
     typeof result === "object" &&
     Object.isExtensible(result) &&
-    !DictionaryHelpers.isPlainObject(result)
+    !Dictionary.isPlainObject(result)
   ) {
     try {
       result[expressionSymbol] = format(code);

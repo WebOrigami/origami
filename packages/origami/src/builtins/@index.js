@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import StringWithGraph from "../common/StringWithGraph.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -17,7 +17,7 @@ export default async function index(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const keys = Array.from(await graph.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

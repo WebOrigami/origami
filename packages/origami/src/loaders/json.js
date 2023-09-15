@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import { getScope, keySymbol, transformObject } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
@@ -14,7 +14,7 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
  */
 export default function loadJson(input, key) {
   // See notes at yaml.js
-  if (GraphHelpers.isGraphable(input)) {
+  if (Graph.isGraphable(input)) {
     return input;
   }
 
@@ -27,7 +27,7 @@ export default function loadJson(input, key) {
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = GraphHelpers.from(data);
+      graph = Graph.from(data);
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }

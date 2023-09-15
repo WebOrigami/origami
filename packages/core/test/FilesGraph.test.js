@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FilesGraph from "../src/FilesGraph.js";
-import * as GraphHelpers from "../src/GraphHelpers.js";
+import * as Graph from "../src/Graph.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
@@ -38,7 +38,7 @@ describe("FilesGraph", async () => {
 
   test("default value is the graph itself", async () => {
     const fixture = createFixture("fixtures");
-    assert.equal(await fixture.get(GraphHelpers.defaultValueKey), fixture);
+    assert.equal(await fixture.get(Graph.defaultValueKey), fixture);
   });
 
   test("can write out a file via set()", async () => {
@@ -76,10 +76,8 @@ describe("FilesGraph", async () => {
 
     // Read them back in.
     const actualFiles = await tempFiles.get("folder");
-    const strings = await GraphHelpers.map(actualFiles, (buffer) =>
-      String(buffer)
-    );
-    const plain = await GraphHelpers.plain(strings);
+    const strings = await Graph.map(actualFiles, (buffer) => String(buffer));
+    const plain = await Graph.plain(strings);
     assert.deepEqual(plain, obj);
 
     await removeTempDirectory();

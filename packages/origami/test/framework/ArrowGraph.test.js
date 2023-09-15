@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ArrowGraph from "../../src/framework/ArrowGraph.js";
@@ -11,7 +11,7 @@ describe.only("ArrowGraph", () => {
       title: "Our Site",
     });
     const arrows = new ArrowGraph(graph);
-    assert.deepEqual(await GraphHelpers.plain(arrows), {
+    assert.deepEqual(await Graph.plain(arrows), {
       "index.html": "<h1>Our Site</h1>",
       title: "Our Site",
     });

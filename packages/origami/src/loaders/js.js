@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 
@@ -41,7 +41,7 @@ export default function loadJs(buffer, key) {
       if (args.length === 0) {
         args.push(undefined);
       }
-      return GraphHelpers.traverseOrThrow(target, ...args);
+      return Graph.traverseOrThrow(target, ...args);
     };
   };
 

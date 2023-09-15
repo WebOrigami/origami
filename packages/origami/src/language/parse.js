@@ -16,7 +16,7 @@
  * between possible terms.
  */
 
-import { defaultValueKey } from "@graphorigami/core/src/GraphHelpers.js";
+import { defaultValueKey } from "@graphorigami/core/src/Graph.js";
 import {
   any,
   forcedSequence,

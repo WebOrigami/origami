@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import StringWithGraph from "../../src/common/StringWithGraph.js";
@@ -17,7 +17,7 @@ text`;
     const result = await loadTextWithFrontMatter.call(null, text);
     assert.equal(String(result), text);
     const graph = /** @type {any} */ (result).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), { a: 1 });
+    assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 
   test("passes along an attached graph if no front matter", async () => {
@@ -25,6 +25,6 @@ text`;
     const result = await loadTextWithFrontMatter.call(null, input);
     assert.equal(String(result), "text");
     const graph = /** @type {any} */ (result).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), { a: 1 });
+    assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 });

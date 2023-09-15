@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import { getScope, transformObject } from "../../common/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -18,7 +18,7 @@ export default async function staticGraph(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const result = transformObject(StaticTransform, graph);
   return result;
 }
@@ -32,7 +32,7 @@ function StaticTransform(Base) {
       } else if (value === undefined && key === ".keys.json") {
         const scope = getScope(this);
         value = defaultKeysJson.call(scope, this);
-      } else if (DictionaryHelpers.isAsyncDictionary(value)) {
+      } else if (Dictionary.isAsyncDictionary(value)) {
         value = transformObject(StaticTransform, value);
       }
       return value;

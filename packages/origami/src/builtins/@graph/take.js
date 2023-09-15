@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import { transformObject } from "../../common/utilities.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -18,7 +18,7 @@ export default async function take(variant, n) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const takeGraph = {
     async keys() {
       const keys = Array.from(await graph.keys());

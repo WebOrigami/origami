@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -15,8 +15,8 @@ import setDeep from "./@graph/setDeep.js";
 export default async function copy(source, target) {
   assertScopeIsDefined(this);
   // const start = performance.now();
-  const sourceGraph = GraphHelpers.from(source);
-  /** @type {any} */ let targetGraph = GraphHelpers.from(target);
+  const sourceGraph = Graph.from(source);
+  /** @type {any} */ let targetGraph = Graph.from(target);
 
   if (stdout.isTTY) {
     targetGraph = transformObject(ProgressTransform, targetGraph);

@@ -1,17 +1,17 @@
-import * as DictionaryHelpers from "./DictionaryHelpers.js";
+import * as Dictionary from "./Dictionary.js";
 import FunctionGraph from "./FunctionGraph.js";
 import MapGraph from "./MapGraph.js";
 import ObjectGraph from "./ObjectGraph.js";
 import SetGraph from "./SetGraph.js";
 import defaultValueKey from "./defaultValueKey.js";
 
-// GraphHelpers exports all DictionaryHelpers too.
-export * from "./DictionaryHelpers.js";
+// Graph exports all dictionary helpers too.
+export * from "./Dictionary.js";
 
 /**
  * Helper functions for working with async graphs
  *
- * These add to the set of helper functions defined in DictionaryHelpers.
+ * These add to the set of helper functions defined in Dictionary.
  *
  * @typedef {import("../index").GraphVariant} GraphVariant
  * @typedef {import("../index").PlainObject} PlainObject
@@ -32,16 +32,16 @@ export * from "./DictionaryHelpers.js";
 export async function assign(target, source) {
   const targetGraph = from(target);
   const sourceGraph = from(source);
-  if (!DictionaryHelpers.isAsyncMutableDictionary(targetGraph)) {
+  if (!Dictionary.isAsyncMutableDictionary(targetGraph)) {
     throw new TypeError("Target must be a mutable asynchronous graph");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.
   const keys = Array.from(await sourceGraph.keys());
   const promises = keys.map(async (key) => {
     const sourceValue = await sourceGraph.get(key);
-    if (DictionaryHelpers.isAsyncDictionary(sourceValue)) {
+    if (Dictionary.isAsyncDictionary(sourceValue)) {
       const targetValue = await targetGraph.get(key);
-      if (DictionaryHelpers.isAsyncMutableDictionary(targetValue)) {
+      if (Dictionary.isAsyncMutableDictionary(targetValue)) {
         // Both source and target are graphs; recurse.
         await assign(targetValue, sourceValue);
         return;
@@ -80,7 +80,7 @@ export { defaultValueKey };
  * @returns {AsyncGraph}
  */
 export function from(variant) {
-  if (DictionaryHelpers.isAsyncDictionary(variant)) {
+  if (Dictionary.isAsyncDictionary(variant)) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
     return variant;
@@ -122,12 +122,12 @@ export function from(variant) {
  */
 export function isGraphable(obj) {
   return (
-    DictionaryHelpers.isAsyncDictionary(obj) ||
+    Dictionary.isAsyncDictionary(obj) ||
     obj instanceof Function ||
     obj instanceof Array ||
     obj instanceof Set ||
     obj?.toGraph instanceof Function ||
-    DictionaryHelpers.isPlainObject(obj)
+    Dictionary.isPlainObject(obj)
   );
 }
 
@@ -184,7 +184,7 @@ export async function map(variant, mapFn) {
   const promises = keys.map((key) =>
     graph.get(key).then(async (value) => {
       // If the value is a subgraph, recurse.
-      const fn = DictionaryHelpers.isAsyncDictionary(value)
+      const fn = Dictionary.isAsyncDictionary(value)
         ? map(value, mapFn)
         : mapFn(value, key);
       const mappedValue = await fn;
@@ -219,7 +219,7 @@ export async function mapReduce(variant, mapFn, reduceFn) {
   const promises = keys.map((key) =>
     graph.get(key).then((value) =>
       // If the value is a subgraph, recurse.
-      DictionaryHelpers.isAsyncDictionary(value)
+      Dictionary.isAsyncDictionary(value)
         ? mapReduce(value, mapFn, reduceFn)
         : mapFn
         ? mapFn(value, key)

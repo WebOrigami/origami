@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -16,7 +16,7 @@ export default async function defineds(variant) {
   if (variant === undefined) {
     throw new TypeError("A graph variant is required");
   }
-  return GraphHelpers.mapReduce(variant, null, (values, keys) => {
+  return Graph.mapReduce(variant, null, (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {

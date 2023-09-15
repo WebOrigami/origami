@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import get from "../../../src/builtins/@frontMatter/get.js";
@@ -10,6 +10,6 @@ describe("@frontMatter/get", () => {
       a: 1,
     });
     const graph = await get(text);
-    assert.deepEqual(await GraphHelpers.plain(graph), { a: 1 });
+    assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 });

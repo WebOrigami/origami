@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { FunctionGraph, GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { FunctionGraph, Graph, ObjectGraph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import StringWithGraph from "../common/StringWithGraph.js";
@@ -35,7 +35,7 @@ export default class Template {
     }
 
     // HACK, refactor
-    if (input === GraphHelpers.defaultValueKey) {
+    if (input === Graph.defaultValueKey) {
       input = undefined;
     }
 
@@ -146,9 +146,7 @@ async function processInput(input, baseScope) {
     input = await input.call(baseScope);
   }
 
-  let inputGraph = GraphHelpers.isGraphable(input)
-    ? GraphHelpers.from(input)
-    : null;
+  let inputGraph = Graph.isGraphable(input) ? Graph.from(input) : null;
 
   let text = input?.toString?.();
 

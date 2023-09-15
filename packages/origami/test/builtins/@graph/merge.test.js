@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import merge from "../../../src/builtins/@graph/merge.js";
@@ -20,7 +20,7 @@ describe("@graph/merge", () => {
         d: 4,
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
       c: 3,
@@ -40,7 +40,7 @@ describe("@graph/merge", () => {
         d: createExpressionFunction([ops.scope, "a"]),
       })
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
       c: 2,

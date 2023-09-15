@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,7 +15,7 @@ export default async function valuesDeep(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  return GraphHelpers.mapReduce(variant, null, (values) => values.flat());
+  return Graph.mapReduce(variant, null, (values) => values.flat());
 }
 
 valuesDeep.usage = `valuesDeep <graph>\tThe in-order graph values as a flat array`;

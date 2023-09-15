@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadJson from "../../src/loaders/json.js";
@@ -8,7 +8,7 @@ describe(".json loader", () => {
     const text = `{ "a": 1, "b": 2 }`;
     const textWithGraph = await loadJson.call(null, text);
     const graph = /** @type {any} */ (textWithGraph).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
     });

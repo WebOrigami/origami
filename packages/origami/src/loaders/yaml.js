@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import { parseYaml } from "../common/serialize.js";
@@ -32,7 +32,7 @@ export default function loadYaml(input, key) {
   // graph and whose left-hand side a name ending in `.yaml`. In that situation,
   // we return the input as is, and rely on the ori CLI or the server to
   // eventually render the graph to YAML.
-  if (GraphHelpers.isGraphable(input)) {
+  if (Graph.isGraphable(input)) {
     return input;
   }
 
@@ -80,7 +80,7 @@ export default function loadYaml(input, key) {
         value = graphInContext(graph, ambientsGraph);
       }
       if (rest.length > 0) {
-        value = await GraphHelpers.traverse(value, ...rest);
+        value = await Graph.traverse(value, ...rest);
       }
       return value;
     };

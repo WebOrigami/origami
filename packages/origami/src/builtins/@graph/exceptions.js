@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import defineds from "./defineds.js";
 
@@ -17,13 +17,13 @@ export default async function exceptions(variant) {
 
 class ExceptionsGraph {
   constructor(variant) {
-    this.graph = GraphHelpers.from(variant);
+    this.graph = Graph.from(variant);
   }
 
   async get(key) {
     try {
       const value = await this.graph.get(key);
-      return DictionaryHelpers.isAsyncDictionary(value)
+      return Dictionary.isAsyncDictionary(value)
         ? Reflect.construct(this.constructor, [value])
         : undefined;
     } catch (/** @type {any} */ error) {

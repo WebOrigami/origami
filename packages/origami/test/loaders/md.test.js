@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadMarkdown from "../../src/loaders/md.js";
@@ -18,7 +18,7 @@ a: !ori 1
     const loaded = await loadMarkdown.call(null, text);
     assert.equal(loaded.bodyText, `# Title`);
     const graph = /** @type {any} */ (loaded).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
     });
   });

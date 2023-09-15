@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import StringWithGraph from "../common/StringWithGraph.js";
 import { getRealmObjectPrototype } from "../common/utilities.js";
@@ -70,8 +70,8 @@ async function formatResult(scope, result) {
   }
 
   // If the result is a graph, attach the graph to the text output.
-  if (GraphHelpers.isGraphable(result)) {
-    const graph = GraphHelpers.from(result);
+  if (Graph.isGraphable(result)) {
+    const graph = Graph.from(result);
     if (text instanceof Buffer) {
       /** @type {any} */ (text).toGraph = () => graph;
     } else {

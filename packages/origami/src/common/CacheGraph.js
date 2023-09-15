@@ -1,8 +1,4 @@
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 
 /**
  * Caches non-graph values from the first (source) graph in a second (cache)
@@ -16,12 +12,12 @@ export default class CacheGraph {
    * @param {GraphVariant} [filter]
    */
   constructor(graph, cache, filter) {
-    this.graph = GraphHelpers.from(graph);
+    this.graph = Graph.from(graph);
 
     if (cache === undefined) {
       this.cache = new ObjectGraph({});
     } else {
-      /** @type {any} */ this.cache = GraphHelpers.from(cache);
+      /** @type {any} */ this.cache = Graph.from(cache);
       if (typeof this.cache.set !== "function") {
         throw new TypeError(
           `The first parameter to the Cache constructor must be a graph with a "set" method.`
@@ -29,16 +25,13 @@ export default class CacheGraph {
       }
     }
 
-    this.filter = filter ? GraphHelpers.from(filter) : undefined;
+    this.filter = filter ? Graph.from(filter) : undefined;
   }
 
   async get(key) {
     // Check cache graph first.
     let cacheValue = await this.cache.get(key);
-    if (
-      cacheValue !== undefined &&
-      !DictionaryHelpers.isAsyncDictionary(cacheValue)
-    ) {
+    if (cacheValue !== undefined && !Dictionary.isAsyncDictionary(cacheValue)) {
       // Non-graph cache hit
       return cacheValue;
     }
@@ -56,7 +49,7 @@ export default class CacheGraph {
         match = filterValue !== undefined;
       }
       if (match) {
-        if (DictionaryHelpers.isAsyncDictionary(value)) {
+        if (Dictionary.isAsyncDictionary(value)) {
           // Construct merged graph for a graph result.
           if (cacheValue === undefined) {
             // Construct new container in cache

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadYaml from "../../src/loaders/yaml.js";
@@ -11,7 +11,7 @@ b: 2
 `;
     const textWithGraph = await loadYaml.call(null, text);
     const graph = /** @type {any} */ (textWithGraph).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
     });
@@ -33,7 +33,7 @@ b: !ori a
 `;
     const textWithGraph = await loadYaml.call(null, text);
     const graph = /** @type {any} */ (textWithGraph).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 1,
     });

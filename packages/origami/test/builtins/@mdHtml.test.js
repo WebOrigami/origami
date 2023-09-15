@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/builtins/@mdHtml.js";
@@ -35,7 +35,7 @@ title: Hello
 # Hello, world.`;
     const html = await mdHtml(md.call(null, markdown));
     const graph = /** @type {any} */ (html).toGraph();
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       title: "Hello",
     });
   });

@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 /**
  * Return a graph that performs a shallow merge of the given graphs.
@@ -11,7 +11,7 @@ import { GraphHelpers } from "@graphorigami/core";
  */
 export default class MergeGraph {
   constructor(...graphs) {
-    this.graphs = graphs.map((graph) => GraphHelpers.from(graph));
+    this.graphs = graphs.map((graph) => Graph.from(graph));
   }
 
   async get(key) {

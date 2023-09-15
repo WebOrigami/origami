@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 // If the given plain object has only integer keys, return it as an array.
@@ -122,7 +122,7 @@ export const keySymbol = Symbol("key");
  */
 export function graphInContext(variant, context) {
   // Either method of constructing the target produces a new graph.
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const target =
     "parent" in graph
       ? Object.create(graph)
@@ -151,7 +151,7 @@ export function toFunction(obj) {
       ? obj
       : typeof (/** @type {any} */ (obj).toFunction) === "function"
       ? /** @type {any} */ (obj).toFunction()
-      : GraphHelpers.toFunction(obj);
+      : Graph.toFunction(obj);
   return fn;
 }
 

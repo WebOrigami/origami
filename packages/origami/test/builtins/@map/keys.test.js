@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapKeys from "../../../src/builtins/@map/keys.js";
@@ -25,7 +25,7 @@ describe("@map/keys", () => {
       ],
       (value) => value.get("id")
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       alice: {
         id: "alice",
         name: "Alice",
@@ -48,7 +48,7 @@ describe("@map/keys", () => {
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       ops.lambda.call(null, [ops.scope, ".", "name"])
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       Alice: { name: "Alice" },
       Bob: { name: "Bob" },
       Carol: { name: "Carol" },

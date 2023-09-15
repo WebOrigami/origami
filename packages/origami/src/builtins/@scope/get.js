@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -13,7 +13,7 @@ export default async function getScope(variant) {
   assertScopeIsDefined(this);
   let scope;
   if (variant) {
-    const graph = GraphHelpers.from(variant);
+    const graph = Graph.from(variant);
     scope = /** @type {any} */ (graph).scope;
   } else {
     scope = this;

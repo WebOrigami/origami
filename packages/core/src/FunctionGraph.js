@@ -1,5 +1,5 @@
 import FunctionDictionary from "./FunctionDictionary.js";
-import * as GraphHelpers from "./GraphHelpers.js";
+import * as Graph from "./Graph.js";
 
 /**
  * A graph defined by a function and an optional domain.
@@ -35,9 +35,7 @@ export default class FunctionGraph extends FunctionDictionary {
   async traverse(...keys) {
     // In a function graph, the default value is the same as calling `get` with
     // an `undefined` key.
-    keys = keys.map((key) =>
-      key === GraphHelpers.defaultValueKey ? undefined : key
-    );
+    keys = keys.map((key) => (key === Graph.defaultValueKey ? undefined : key));
     let value;
     if (this.fn.length > 0 && keys.length < this.fn.length) {
       // Partial function application.
@@ -49,7 +47,7 @@ export default class FunctionGraph extends FunctionDictionary {
       if (this.fn.length > 0 && keys.length > this.fn.length) {
         // Traverse the result with the remaining keys.
         const rest = keys.slice(this.fn.length);
-        value = await GraphHelpers.traverse(value, ...rest);
+        value = await Graph.traverse(value, ...rest);
       }
     }
     return value;

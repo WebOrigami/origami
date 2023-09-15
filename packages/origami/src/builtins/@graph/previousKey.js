@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -13,7 +13,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default async function previousKey(variant, key) {
   assertScopeIsDefined(this);
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   let previousKey = undefined;
   for (const graphKey of await graph.keys()) {
     if (graphKey === key) {

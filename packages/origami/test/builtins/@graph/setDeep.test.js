@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import setDeep from "../../../src/builtins/@graph/setDeep.js";
@@ -27,7 +27,7 @@ describe("@graph/setDeep", () => {
       },
     });
 
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 4,
       c: 5,
       more: {
@@ -43,6 +43,6 @@ describe("@graph/setDeep", () => {
   test("can apply updates to an array", async () => {
     const graph = new ObjectGraph(["a", "b", "c"]);
     await setDeep(graph, ["d", "e"]);
-    assert.deepEqual(await GraphHelpers.plain(graph), ["d", "e", "c"]);
+    assert.deepEqual(await Graph.plain(graph), ["d", "e", "c"]);
   });
 });

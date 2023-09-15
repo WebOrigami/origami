@@ -1,9 +1,9 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 export default class Scope {
   constructor(...variants) {
     const filtered = variants.filter((variant) => variant != undefined);
-    const graphs = filtered.map((variant) => GraphHelpers.from(variant));
+    const graphs = filtered.map((variant) => Graph.from(variant));
 
     // If a graph argument has a `graphs` property, use that instead.
     const scopes = graphs.flatMap(

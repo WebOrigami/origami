@@ -1,4 +1,4 @@
-import { FunctionGraph, GraphHelpers } from "@graphorigami/core";
+import { FunctionGraph, Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterGraph from "../../src/common/FilterGraph.js";
@@ -29,7 +29,7 @@ describe("FilterGraph", () => {
         extra: true, // Ask for entire extra subtree.
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       more: {
         d: 4,
@@ -49,7 +49,7 @@ describe("FilterGraph", () => {
         Carol: true,
       }
     );
-    assert.deepEqual(await GraphHelpers.plain(graph), {
+    assert.deepEqual(await Graph.plain(graph), {
       Alice: "Hello, Alice!",
       Bob: "Hello, Bob!",
       Carol: "Hello, Carol!",
@@ -85,7 +85,7 @@ describe("FilterGraph", () => {
         },
       })
     );
-    assert.deepEqual(await GraphHelpers.plain(fixture), {
+    assert.deepEqual(await Graph.plain(fixture), {
       a: 1,
       "hello.txt": "Hello",
       "goodbye.txt": "Goodbye",

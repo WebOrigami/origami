@@ -1,8 +1,4 @@
-import {
-  DictionaryHelpers,
-  GraphHelpers,
-  ObjectGraph,
-} from "@graphorigami/core";
+import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { isPlainObject } from "../common/utilities.js";
@@ -26,7 +22,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function crawl(variant, baseHref) {
   assertScopeIsDefined(this);
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
 
   if (baseHref === undefined) {
     // Ask graph or original variant if it has an `href` property we can use as
@@ -57,9 +53,9 @@ export default async function crawl(variant, baseHref) {
     // Add indirect resource references to the cache.
     for (const resourcePath of resourcePaths) {
       const fn = () => {
-        return GraphHelpers.traversePath(graph, resourcePath);
+        return Graph.traversePath(graph, resourcePath);
       };
-      const resourceKeys = GraphHelpers.keysFromPath(resourcePath);
+      const resourceKeys = Graph.keysFromPath(resourcePath);
       addValueToObject(cache, resourceKeys, fn);
     }
   }
@@ -390,24 +386,24 @@ async function processPath(graph, path, baseUrl) {
 
   // Convert path to keys
   /** @type {any[]} */
-  let keys = GraphHelpers.keysFromPath(path);
+  let keys = Graph.keysFromPath(path);
 
   // Traverse graph to get value.
-  let value = await GraphHelpers.traverse(graph, ...keys);
-  if (DictionaryHelpers.isAsyncDictionary(value)) {
+  let value = await Graph.traverse(graph, ...keys);
+  if (Dictionary.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === GraphHelpers.defaultValueKey) {
+    if (keys.at(-1) === Graph.defaultValueKey) {
       keys.pop();
     }
     keys.push("index.html");
-    value = await GraphHelpers.traverse(value, "index.html");
+    value = await Graph.traverse(value, "index.html");
   }
 
   if (value === undefined) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === GraphHelpers.defaultValueKey) {
+  if (keys.at(-1) === Graph.defaultValueKey) {
     // For indexing and storage purposes, treat a path that ends in a trailing
     // slash (or the dot we use to seed the queue) as if it ends in
     // index.html.

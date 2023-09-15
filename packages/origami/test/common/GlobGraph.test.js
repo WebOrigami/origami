@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import GlobGraph from "../../src/common/GlobGraph.js";
@@ -26,10 +26,7 @@ describe("GlobGraph", () => {
         "*": "default",
       },
     });
-    assert.equal(
-      await GraphHelpers.traverse(globGraph, "sub", "file"),
-      "default"
-    );
-    assert.equal(await GraphHelpers.traverse(globGraph, "sub", "foo"), "bar");
+    assert.equal(await Graph.traverse(globGraph, "sub", "file"), "default");
+    assert.equal(await Graph.traverse(globGraph, "sub", "foo"), "bar");
   });
 });

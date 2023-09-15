@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadOrigami from "../../src/loaders/ori2.js";
@@ -7,7 +7,7 @@ describe.only(".ori2 loader", () => {
   test("loads a string expression", async () => {
     const text = `"Hello"`;
     const textWithGraph = await loadOrigami.call(null, text);
-    assert.deepEqual(await GraphHelpers.plain(textWithGraph), {
+    assert.deepEqual(await Graph.plain(textWithGraph), {
       "": "Hello",
     });
   });
@@ -18,7 +18,7 @@ describe.only(".ori2 loader", () => {
       message = \`Hello, {{ name }}!\`
     }`;
     const textWithGraph = await loadOrigami.call(null, text);
-    assert.deepEqual(await GraphHelpers.plain(textWithGraph), {
+    assert.deepEqual(await Graph.plain(textWithGraph), {
       name: "world",
       message: "Hello, world!",
     });
@@ -30,7 +30,7 @@ describe.only(".ori2 loader", () => {
     });
     const text = `\`Hello, {{ name }}!\``;
     const textWithGraph = await loadOrigami.call(scope, text);
-    const graph = GraphHelpers.from(textWithGraph);
+    const graph = Graph.from(textWithGraph);
     const value = await graph.get("");
     assert.deepEqual(value, "Hello, Alice!");
   });
@@ -41,7 +41,7 @@ describe.only(".ori2 loader", () => {
     });
     const text = `=\`Hello, {{ name }}!\``;
     const textWithGraph = await loadOrigami.call(scope, text);
-    const graph = GraphHelpers.from(textWithGraph);
+    const graph = Graph.from(textWithGraph);
     const value = await graph.get("");
     assert.deepEqual(value, "Hello, Alice!");
   });
@@ -49,7 +49,7 @@ describe.only(".ori2 loader", () => {
   test("loads a template lambda that accepts input", async () => {
     const text = `=\`Hello, {{ name }}!\``;
     const textWithGraph = await loadOrigami.call(null, text);
-    const graph = GraphHelpers.from(textWithGraph);
+    const graph = Graph.from(textWithGraph);
     const value = await graph.get({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");
   });

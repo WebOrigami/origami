@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function rss(jsonFeedGraph) {
   assertScopeIsDefined(this);
-  const jsonFeed = await GraphHelpers.plain(jsonFeedGraph);
+  const jsonFeed = await Graph.plain(jsonFeedGraph);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 
   // Presume that the RSS feed lives in same location as feed_url.

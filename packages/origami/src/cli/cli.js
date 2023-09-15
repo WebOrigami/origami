@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
@@ -24,8 +24,8 @@ async function main(...args) {
   } else {
     const keys = relative
       .split(path.sep)
-      .map((key) => (key === "" ? GraphHelpers.defaultValueKey : key));
-    graph = await GraphHelpers.traverse(projectGraph, ...keys);
+      .map((key) => (key === "" ? Graph.defaultValueKey : key));
+    graph = await Graph.traverse(projectGraph, ...keys);
   }
 
   const baseScope = getScope(graph);

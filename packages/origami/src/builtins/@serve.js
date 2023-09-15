@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
@@ -25,7 +25,7 @@ export default async function serve(variant, port) {
   assertScopeIsDefined(this);
   let graph;
   if (variant) {
-    graph = GraphHelpers.from(variant);
+    graph = Graph.from(variant);
 
     // TODO: Instead of applying ExplorableSiteTransform, apply a transform
     // that just maps the defaultValueKey to index.html.

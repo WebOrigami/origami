@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as GraphHelpers from "../src/GraphHelpers.js";
+import * as Graph from "../src/Graph.js";
 import ObjectGraph from "../src/ObjectGraph.js";
 
 describe("ObjectGraph", () => {
@@ -47,11 +47,11 @@ describe("ObjectGraph", () => {
 
     const object = await graph.get("object");
     assert.equal(object instanceof ObjectGraph, true);
-    assert.deepEqual(await GraphHelpers.plain(object), { b: 2 });
+    assert.deepEqual(await Graph.plain(object), { b: 2 });
 
     const array = await graph.get("array");
     assert.equal(array instanceof ObjectGraph, true);
-    assert.deepEqual(await GraphHelpers.plain(array), [3]);
+    assert.deepEqual(await Graph.plain(array), [3]);
   });
 
   test("returns an async dictionary value as is", async () => {

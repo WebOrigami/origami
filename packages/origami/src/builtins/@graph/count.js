@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,7 +15,7 @@ export default async function count(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = await GraphHelpers.from(variant);
+  const graph = await Graph.from(variant);
   const keys = [...(await graph.keys())];
   return keys.length;
 }

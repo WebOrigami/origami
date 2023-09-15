@@ -1,4 +1,4 @@
-import { FilesGraph, GraphHelpers } from "@graphorigami/core";
+import { FilesGraph, Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -15,7 +15,7 @@ describe(".js loader", () => {
     const buffer = await fixturesGraph.get("string.js");
     const stringFile = await loadJs.call(fixturesGraph, buffer, "string.js");
     const stringGraph = stringFile.toGraph();
-    const string = await stringGraph.get(GraphHelpers.defaultValueKey);
+    const string = await stringGraph.get(Graph.defaultValueKey);
     assert.equal(string, "This is a string.");
   });
 
@@ -23,7 +23,7 @@ describe(".js loader", () => {
     const buffer = await fixturesGraph.get("greet.js");
     const greetFile = await loadJs.call(fixturesGraph, buffer, "greet.js");
     const greetGraph = greetFile.toGraph();
-    const greet = await greetGraph.get(GraphHelpers.defaultValueKey);
+    const greet = await greetGraph.get(Graph.defaultValueKey);
     assert.equal(await greet("world"), "Hello, world!");
   });
 
@@ -31,7 +31,7 @@ describe(".js loader", () => {
     const buffer = await fixturesGraph.get("obj.js");
     const greetFile = await loadJs.call(fixturesGraph, buffer, "obj.js");
     const graph = greetFile.toGraph();
-    assert.deepEqual(await graph.get(GraphHelpers.defaultValueKey), { a: 1 });
-    assert.deepEqual(await GraphHelpers.plain(graph), { a: 1 });
+    assert.deepEqual(await graph.get(Graph.defaultValueKey), { a: 1 });
+    assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 });

@@ -2,7 +2,7 @@
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
 
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import {
   isPlainObject,
@@ -28,7 +28,7 @@ export default async function debug(variant) {
   }
 
   /** @type {any} */
-  let graph = GraphHelpers.from(variant);
+  let graph = Graph.from(variant);
 
   if (!isTransformApplied(ExplorableSiteTransform, graph)) {
     graph = transformObject(ExplorableSiteTransform, graph);
@@ -59,13 +59,13 @@ function DebugTransform(Base) {
       // Since this transform is for diagnostic purposes, cast arrays
       // or plain objects to graphs so we can debug them too.
       if (value instanceof Array || isPlainObject(value)) {
-        value = GraphHelpers.from(value);
+        value = Graph.from(value);
       }
 
       const parent = this;
 
       // Ensure debug transforms are applied to explorable results.
-      if (DictionaryHelpers.isAsyncDictionary(value)) {
+      if (Dictionary.isAsyncDictionary(value)) {
         if (!isTransformApplied(ExplorableSiteTransform, value)) {
           value = transformObject(ExplorableSiteTransform, value);
         }

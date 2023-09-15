@@ -1,13 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as DictionaryHelpers from "../src/DictionaryHelpers.js";
+import * as Dictionary from "../src/Dictionary.js";
 import ObjectGraph from "../src/ObjectGraph.js";
 
-describe("DictionaryHelpers", () => {
+describe("Dictionary", () => {
   test("entries returns the [key, value] pairs", async () => {
     const fixture = createFixture();
     assert.deepEqual(
-      [...(await DictionaryHelpers.entries(fixture))],
+      [...(await Dictionary.entries(fixture))],
       [
         ["Alice.md", "Hello, **Alice**."],
         ["Bob.md", "Hello, **Bob**."],
@@ -19,7 +19,7 @@ describe("DictionaryHelpers", () => {
   test("forEach invokes a callback for each entry", async () => {
     const fixture = createFixture();
     const results = {};
-    await DictionaryHelpers.forEach(fixture, async (value, key) => {
+    await Dictionary.forEach(fixture, async (value, key) => {
       results[key] = value;
     });
     assert.deepEqual(results, {
@@ -31,77 +31,74 @@ describe("DictionaryHelpers", () => {
 
   test("getRealmObjectPrototype returns the object's root prototype", () => {
     const obj = new ObjectGraph({});
-    const proto = DictionaryHelpers.getRealmObjectPrototype(obj);
+    const proto = Dictionary.getRealmObjectPrototype(obj);
     assert.equal(proto, Object.prototype);
   });
 
   test("has returns true if the key exists", async () => {
     const fixture = createFixture();
-    assert.equal(await DictionaryHelpers.has(fixture, "Alice.md"), true);
-    assert.equal(await DictionaryHelpers.has(fixture, "David.md"), false);
+    assert.equal(await Dictionary.has(fixture, "Alice.md"), true);
+    assert.equal(await Dictionary.has(fixture, "David.md"), false);
   });
 
   test("isAsyncDictionary returns true if the object is a dictionary", () => {
     const missingGetAndKeys = {};
-    assert(!DictionaryHelpers.isAsyncDictionary(missingGetAndKeys));
+    assert(!Dictionary.isAsyncDictionary(missingGetAndKeys));
 
     const missingIterator = {
       async get() {},
     };
-    assert(!DictionaryHelpers.isAsyncDictionary(missingIterator));
+    assert(!Dictionary.isAsyncDictionary(missingIterator));
 
     const missingGet = {
       async keys() {},
     };
-    assert(!DictionaryHelpers.isAsyncDictionary(missingGet));
+    assert(!Dictionary.isAsyncDictionary(missingGet));
 
     const hasGetAndKeys = {
       async get() {},
       async keys() {},
     };
-    assert(DictionaryHelpers.isAsyncDictionary(hasGetAndKeys));
+    assert(Dictionary.isAsyncDictionary(hasGetAndKeys));
   });
 
   test("isAsyncMutableDictionary returns true if the object is a mutable dictionary", () => {
     assert.equal(
-      DictionaryHelpers.isAsyncMutableDictionary({
+      Dictionary.isAsyncMutableDictionary({
         get() {},
         keys() {},
       }),
       false
     );
-    assert.equal(
-      DictionaryHelpers.isAsyncMutableDictionary(createFixture()),
-      true
-    );
+    assert.equal(Dictionary.isAsyncMutableDictionary(createFixture()), true);
   });
 
   test("isPlainObject returns true if the object is a plain object", () => {
-    assert.equal(DictionaryHelpers.isPlainObject({}), true);
-    assert.equal(DictionaryHelpers.isPlainObject(new Object()), true);
-    assert.equal(DictionaryHelpers.isPlainObject(Object.create(null)), true);
-    assert.equal(DictionaryHelpers.isPlainObject(new ObjectGraph({})), false);
+    assert.equal(Dictionary.isPlainObject({}), true);
+    assert.equal(Dictionary.isPlainObject(new Object()), true);
+    assert.equal(Dictionary.isPlainObject(Object.create(null)), true);
+    assert.equal(Dictionary.isPlainObject(new ObjectGraph({})), false);
   });
 
   test("values returns the store's values", async () => {
     const fixture = createFixture();
     assert.deepEqual(
-      [...(await DictionaryHelpers.values(fixture))],
+      [...(await Dictionary.values(fixture))],
       ["Hello, **Alice**.", "Hello, **Bob**.", "Hello, **Carol**."]
     );
   });
 
   test("clear removes all values", async () => {
     const fixture = createFixture();
-    await DictionaryHelpers.clear(fixture);
-    assert.deepEqual([...(await DictionaryHelpers.entries(fixture))], []);
+    await Dictionary.clear(fixture);
+    assert.deepEqual([...(await Dictionary.entries(fixture))], []);
   });
 
   test("remove method removes a value", async () => {
     const fixture = createFixture();
-    await DictionaryHelpers.remove(fixture, "Alice.md");
+    await Dictionary.remove(fixture, "Alice.md");
     assert.deepEqual(
-      [...(await DictionaryHelpers.entries(fixture))],
+      [...(await Dictionary.entries(fixture))],
       [
         ["Bob.md", "Hello, **Bob**."],
         ["Carol.md", "Hello, **Carol**."],

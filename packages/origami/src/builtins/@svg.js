@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import graphviz from "graphviz-wasm";
 import StringWithGraph from "../common/StringWithGraph.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -27,7 +27,7 @@ export default async function svg(variant, options = {}) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const dotText = await dot.call(this, graph, options);
   const svgText =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");

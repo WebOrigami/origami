@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 
 /**
  * An HTTP/HTTPS site as a graph of ArrayBuffers.
@@ -63,7 +63,7 @@ export default class SiteGraph {
 
     // The route is a slash-separated concatenation of the keys.
     const mapped = keys.map((key) =>
-      key === GraphHelpers.defaultValueKey ? "" : key
+      key === Graph.defaultValueKey ? "" : key
     );
     let route = mapped.join("/");
 

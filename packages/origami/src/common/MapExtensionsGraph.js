@@ -1,4 +1,4 @@
-import { GraphHelpers } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import MapKeysValuesGraph from "./MapKeysValuesGraph.js";
 
 /**
@@ -24,7 +24,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.innerExtension)}`
       : !this.extensionMatchesOnly ||
-        (await GraphHelpers.isKeyForSubgraph(this.graph, outerKey))
+        (await Graph.isKeyForSubgraph(this.graph, outerKey))
       ? outerKey
       : undefined;
   }
@@ -39,8 +39,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.outerExtension)}`
       : !this.extensionMatchesOnly ||
-        (this.deep &&
-          (await GraphHelpers.isKeyForSubgraph(this.graph, innerKey)))
+        (this.deep && (await Graph.isKeyForSubgraph(this.graph, innerKey)))
       ? innerKey
       : undefined;
   }

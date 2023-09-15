@@ -1,4 +1,4 @@
-import { DictionaryHelpers, GraphHelpers } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,11 +15,11 @@ export default async function inners(variant) {
   if (variant === undefined) {
     return undefined;
   }
-  const graph = GraphHelpers.from(variant);
+  const graph = Graph.from(variant);
   const inner = {
     async get(key) {
       const value = await graph.get(key);
-      return DictionaryHelpers.isAsyncDictionary(value)
+      return Dictionary.isAsyncDictionary(value)
         ? inners.call(this, value)
         : undefined;
     },
@@ -27,7 +27,7 @@ export default async function inners(variant) {
     async keys() {
       const subgraphKeys = [];
       for (const key of await graph.keys()) {
-        if (await GraphHelpers.isKeyForSubgraph(graph, key)) {
+        if (await Graph.isKeyForSubgraph(graph, key)) {
           subgraphKeys.push(key);
         }
       }

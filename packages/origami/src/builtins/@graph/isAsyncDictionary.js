@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 
-import { DictionaryHelpers } from "@graphorigami/core";
+import { Dictionary } from "@graphorigami/core";
 
 /**
  * Return true if the value is an async dictionary
@@ -9,7 +9,7 @@ import { DictionaryHelpers } from "@graphorigami/core";
  * @param {any} value
  */
 export default function isAsyncDictionary(value) {
-  return DictionaryHelpers.isAsyncDictionary(value);
+  return Dictionary.isAsyncDictionary(value);
 }
 
 isAsyncDictionary.usage = `@graph/isAsyncDictionary <value>\tReturn true for an async dictionary`;

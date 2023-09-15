@@ -1,4 +1,4 @@
-import { GraphHelpers, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableSiteTransform from "../../src/common/ExplorableSiteTransform.js";
@@ -11,7 +11,7 @@ describe("ExplorableSiteTransform", () => {
         },
       },
     });
-    const value = await GraphHelpers.traverse(graph, ["foo", "bar", undefined]);
+    const value = await Graph.traverse(graph, ["foo", "bar", undefined]);
     assert.equal(value, "Index");
   });
 });
