@@ -7,10 +7,10 @@ import setDeep from "../builtins/@graph/setDeep.js";
  */
 export default class CacheSite {
   /**
-   * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
-   * @param {GraphVariant} graph
-   * @param {GraphVariant} [cache]
-   * @param {GraphVariant} [filter]
+   * @typedef {import("@graphorigami/core").Graphable} Graphable
+   * @param {Graphable} graph
+   * @param {Graphable} [cache]
+   * @param {Graphable} [filter]
    */
   constructor(graph, cache, filter) {
     this.graph = Graph.from(graph);

@@ -5,10 +5,10 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return only the defined (not `undefined`) values in the graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  */
 export default async function defineds(variant) {
   assertScopeIsDefined(this);

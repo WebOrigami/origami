@@ -3,9 +3,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} jsonFeedGraph
+ * @param {Graphable} jsonFeedGraph
  */
 export default async function rss(jsonFeedGraph) {
   assertScopeIsDefined(this);

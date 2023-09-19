@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Create a graph from a function and a set of keys.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}

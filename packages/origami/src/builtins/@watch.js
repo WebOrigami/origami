@@ -6,11 +6,11 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Let a graph (e.g., of files) respond to changes.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} [variant]
+ * @param {Graphable} [variant]
  * @param {Invocable} [fn]
  */
 export default async function watch(variant, fn) {

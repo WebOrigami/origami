@@ -6,11 +6,11 @@ import setDeep from "./@graph/setDeep.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} source
- * @param {GraphVariant} target
+ * @param {Graphable} source
+ * @param {Graphable} target
  */
 export default async function copy(source, target) {
   assertScopeIsDefined(this);

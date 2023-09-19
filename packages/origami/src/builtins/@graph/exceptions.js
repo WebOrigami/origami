@@ -4,9 +4,9 @@ import defineds from "./defineds.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  */
 export default async function exceptions(variant) {
   assertScopeIsDefined(this);

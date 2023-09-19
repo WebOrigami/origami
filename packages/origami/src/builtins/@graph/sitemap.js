@@ -15,9 +15,9 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param {string} [baseHref ]
  */
 export default async function sitemap(variant, baseHref = "") {

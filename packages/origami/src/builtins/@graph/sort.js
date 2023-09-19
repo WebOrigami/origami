@@ -8,11 +8,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return a new graph with the original's keys sorted
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} [variant]
+ * @param {Graphable} [variant]
  * @param {Invocable} [keyFn]
  */
 export default async function sort(variant, keyFn) {

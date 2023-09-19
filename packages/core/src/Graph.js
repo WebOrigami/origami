@@ -13,7 +13,7 @@ export * from "./Dictionary.js";
  *
  * These add to the set of helper functions defined in Dictionary.
  *
- * @typedef {import("../index").GraphVariant} GraphVariant
+ * @typedef {import("../index").Graphable} Graphable
  * @typedef {import("../index").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncGraph} AsyncGraph
  * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
@@ -76,7 +76,7 @@ export { defaultValueKey };
 /**
  * Attempts to cast the indicated graph variant to an async graph.
  *
- * @param {GraphVariant | Object} variant
+ * @param {Graphable | Object} variant
  * @returns {AsyncGraph}
  */
 export function from(variant) {
@@ -174,7 +174,7 @@ export function keysFromPath(pathname) {
 /**
  * Map the values of a graph.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param {Function} mapFn
  */
 export async function map(variant, mapFn) {
@@ -205,7 +205,7 @@ export async function map(variant, mapFn) {
  * values have been obtained, all the values and keys will be passed to the
  * reduceFn, which should consolidate those into a single result.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param {Function|null} mapFn
  * @param {Function} reduceFn
  */
@@ -241,7 +241,7 @@ export async function mapReduce(variant, mapFn, reduceFn) {
  * The result's keys will be the graph's keys cast to strings. Any graph value
  * that is itself a graph will be similarly converted to a plain object.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @returns {Promise<PlainObject|Array>}
  */
 export async function plain(variant) {
@@ -257,7 +257,7 @@ export async function plain(variant) {
 /**
  * Returns a function that invokes the graph's `get` method.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @returns {Function}
  */
 export function toFunction(variant) {
@@ -268,7 +268,7 @@ export function toFunction(variant) {
 /**
  * Return the value at the corresponding path of keys.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param {...any} keys
  */
 export async function traverse(variant, ...keys) {
@@ -289,7 +289,7 @@ export async function traverse(variant, ...keys) {
  * Return the value at the corresponding path of keys. Throw if any interior
  * step of the path doesn't lead to a result.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param  {...any} keys
  */
 export async function traverseOrThrow(variant, ...keys) {
@@ -336,7 +336,7 @@ export async function traverseOrThrow(variant, ...keys) {
  * Given a slash-separated path like "foo/bar", traverse the keys "foo" and
  * "bar" and return the resulting value.
  *
- * @param {GraphVariant} graph
+ * @param {Graphable} graph
  * @param {string} path
  */
 export async function traversePath(graph, path) {

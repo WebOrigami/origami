@@ -5,10 +5,10 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return an array of paths to the values in the graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} [variant]
+ * @param {Graphable} [variant]
  * @param {string} [prefix]
  */
 export default async function paths(variant, prefix = "") {

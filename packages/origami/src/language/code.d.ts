@@ -1,3 +1,3 @@
-import type { GraphVariant } from "@graphorigami/core";
+import type { Graphable } from "@graphorigami/core";
 
-type Code = [GraphVariant, ...any[]] | any;
+type Code = [Graphable, ...any[]] | any;

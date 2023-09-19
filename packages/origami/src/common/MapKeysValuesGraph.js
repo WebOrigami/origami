@@ -7,11 +7,11 @@ import * as utilities from "../common/utilities.js";
  */
 export default class MapKeysValuesGraph {
   /**
-   * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+   * @typedef {import("@graphorigami/core").Graphable} Graphable
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
    * @typedef {import("../..").Invocable} Invocable
    *
-   * @param {GraphVariant} variant
+   * @param {Graphable} variant
    * @param {Invocable | null} mapFn
    * @param {PlainObject} options
    */

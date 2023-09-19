@@ -8,11 +8,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Render a graph in DOT format.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} [variant]
+ * @param {Graphable} [variant]
  * @param {PlainObject} [options]
  */
 export default async function dot(variant, options = {}) {

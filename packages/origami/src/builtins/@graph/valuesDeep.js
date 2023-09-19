@@ -5,9 +5,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return the in-order exterior values of a graph as a flat array.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} [variant]
+ * @param {Graphable} [variant]
  */
 export default async function valuesDeep(variant) {
   assertScopeIsDefined(this);

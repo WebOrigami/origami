@@ -9,7 +9,7 @@ export interface HasGraph {
   toGraph(): AsyncDictionary;
 }
 
-export type GraphVariant =
+export type Graphable =
   Array<any> | 
   AsyncDictionary |
   Function | 

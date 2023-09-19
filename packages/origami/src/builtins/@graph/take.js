@@ -7,9 +7,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Given a graph, take the first n items from it.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @param {number} n
  */
 export default async function take(variant, n) {

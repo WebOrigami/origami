@@ -1,5 +1,5 @@
 /**
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("../..").StringLike} StringLike
  */
@@ -126,7 +126,7 @@ export function parseYamlWithExpressions(text) {
  * strings, and all values reduced to native JavaScript types as best as
  * possible.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  */
 export async function serializableObject(variant) {
   const serializable = new MapValuesGraph(variant, toSerializable, {
@@ -140,7 +140,7 @@ export async function serializableObject(variant) {
 /**
  * Returns the graph as a JSON string.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  */
 export async function toJson(variant) {
   const serializable = await serializableObject(variant);
@@ -187,7 +187,7 @@ export function toSerializable(obj) {
 /**
  * Returns the graph as a YAML string.
  *
- * @param {GraphVariant} variant
+ * @param {Graphable} variant
  * @returns {Promise<string>}
  */
 export async function toYaml(variant) {

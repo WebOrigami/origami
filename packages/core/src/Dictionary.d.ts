@@ -9,5 +9,5 @@ export function isAsyncDictionary(object: any): boolean;
 export function isAsyncMutableDictionary(object: any): boolean;
 export function isPlainObject(object: any): boolean;
 export function remove(AsyncDictionary: AsyncMutableDictionary, key: any): Promise<boolean>;
-// export function toFunction(graph: GraphVariant): Function;
+// export function toFunction(graph: Graphable): Function;
 export function values(AsyncDictionary: AsyncDictionary): Promise<IterableIterator<any>>;

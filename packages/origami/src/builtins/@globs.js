@@ -5,8 +5,8 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Define a graph whose keys are globs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
- * @param {GraphVariant} graph
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @param {Graphable} graph
  * @this {AsyncDictionary|null}
  */
 export default async function globs(graph) {

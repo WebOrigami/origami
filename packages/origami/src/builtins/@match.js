@@ -17,12 +17,12 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * the indicated function to produce a result.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("../..").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
- * @param {GraphVariant} [keys]
+ * @param {Graphable} [keys]
  * @this {AsyncDictionary|null}
  */
 export default function match(pattern, resultFn, keys = []) {

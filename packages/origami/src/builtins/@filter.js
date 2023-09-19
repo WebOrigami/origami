@@ -7,15 +7,15 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Apply a filter to a graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} graphVariant
- * @param {GraphVariant} filterVariant
+ * @param {Graphable} Graphable
+ * @param {Graphable} filterVariant
  */
-export default async function filter(graphVariant, filterVariant) {
+export default async function filter(Graphable, filterVariant) {
   assertScopeIsDefined(this);
   const filtered = new (InheritScopeTransform(FilterGraph))(
-    graphVariant,
+    Graphable,
     filterVariant
   );
   const parent = /** @type {any} */ (this).parent;

@@ -6,10 +6,10 @@ import setScope from "./set.js";
  * the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant} variant
- * @param  {...GraphVariant} scopeGraphs
+ * @param {Graphable} variant
+ * @param  {...Graphable} scopeGraphs
  * @this {AsyncDictionary|null}
  */
 export default function extendScope(variant, ...scopeGraphs) {

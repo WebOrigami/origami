@@ -7,9 +7,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Create a graph that's the result of deep merging the given graphs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").GraphVariant} GraphVariant
+ * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {GraphVariant[]} graphs
+ * @param {Graphable[]} graphs
  */
 export default async function mergeDeep(...graphs) {
   assertScopeIsDefined(this);
