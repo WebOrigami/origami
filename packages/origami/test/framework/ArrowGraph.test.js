@@ -4,8 +4,8 @@ import { describe, test } from "node:test";
 import ArrowGraph from "../../src/framework/ArrowGraph.js";
 import FileTreeTransform from "../../src/framework/FileTreeTransform.js";
 
-describe.only("ArrowGraph", () => {
-  test.only("interprets ← in a key as a function call", async () => {
+describe("ArrowGraph", () => {
+  test("interprets ← in a key as a function call", async () => {
     const graph = new (FileTreeTransform(ObjectGraph))({
       "index.html ← .ori": "<h1>{{ title }}</h1>",
       title: "Our Site",
