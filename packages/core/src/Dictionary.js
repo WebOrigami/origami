@@ -1,3 +1,5 @@
+import defaultValueKey from "./defaultValueKey.js";
+
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
@@ -17,6 +19,8 @@ export async function clear(dictionary) {
     await dictionary.set(key, undefined);
   }
 }
+
+export { defaultValueKey };
 
 /**
  * @param {AsyncDictionary} dictionary

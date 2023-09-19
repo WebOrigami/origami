@@ -71,8 +71,6 @@ function castArrayLike(obj) {
   return hasKeys ? Object.values(obj) : obj;
 }
 
-export { defaultValueKey };
-
 /**
  * Attempts to cast the indicated graph variant to an async graph.
  *
@@ -169,6 +167,14 @@ export function keysFromPath(pathname) {
       ? [defaultValueKey]
       : keys.map((key) => (key === "" ? defaultValueKey : key));
   return mapped;
+}
+
+export function makeGraphable(obj) {
+  return isGraphable(obj)
+    ? obj
+    : new ObjectGraph({
+        [defaultValueKey]: obj,
+      });
 }
 
 /**

@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import * as Dictionary from "../src/Dictionary.js";
 import MapDictionary from "../src/MapDictionary.js";
 
 describe("MapDictionary", () => {
@@ -14,9 +15,9 @@ describe("MapDictionary", () => {
     assert.equal(a, 1);
   });
 
-  test("getting empty string returns the dictionary", async () => {
+  test("getting default value returns the dictionary", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(""), fixture);
+    assert.equal(await fixture.get(Dictionary.defaultValueKey), fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {

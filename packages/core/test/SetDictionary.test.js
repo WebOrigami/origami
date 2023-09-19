@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import * as Dictionary from "../src/Dictionary.js";
 import SetDictionary from "../src/SetDictionary.js";
 
 describe("SetDictionary", () => {
@@ -16,10 +17,10 @@ describe("SetDictionary", () => {
     assert.equal(a, "a");
   });
 
-  test("getting empty string returns the dictionary", async () => {
+  test("getting default value returns the dictionary", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetDictionary(set);
-    assert.equal(await fixture.get(""), fixture);
+    assert.equal(await fixture.get(Dictionary.defaultValueKey), fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {

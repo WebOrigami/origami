@@ -1,5 +1,7 @@
 import type { AsyncDictionary, AsyncMutableDictionary } from "@graphorigami/types";
 
+export const defaultValueKey: Symbol;
+
 export function clear(AsyncDictionary: AsyncMutableDictionary): Promise<void>;
 export function entries(AsyncDictionary: AsyncDictionary): Promise<IterableIterator<any>>;
 export function forEach(AsyncDictionary: AsyncDictionary, callbackfn: (value: any, key: any) => Promise<void>): Promise<void>;

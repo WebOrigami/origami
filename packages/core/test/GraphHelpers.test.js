@@ -100,6 +100,11 @@ describe("Graph", () => {
     assert(await Graph.isKeyForSubgraph(graph, "more"));
   });
 
+  test("makeGraphable() returns a graphable object as is", () => {
+    const obj = new ObjectGraph({});
+    assert.equal(Graph.makeGraphable(obj), obj);
+  });
+
   test("map() maps values", async () => {
     const graph = {
       a: "Alice",
