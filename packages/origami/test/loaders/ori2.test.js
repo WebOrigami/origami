@@ -3,13 +3,13 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadOrigami from "../../src/loaders/ori2.js";
 
-describe.only(".ori2 loader", () => {
+describe(".ori2 loader", () => {
   test("loads a string expression", async () => {
     const text = `"Hello"`;
     const textWithGraph = await loadOrigami.call(null, text);
-    assert.deepEqual(await Graph.plain(textWithGraph), {
-      "": "Hello",
-    });
+    const graph = Graph.from(textWithGraph);
+    const defaultValue = await graph.get(Graph.defaultValueKey);
+    assert.equal(defaultValue, "Hello");
   });
 
   test("loads a graph expression", async () => {
@@ -31,7 +31,7 @@ describe.only(".ori2 loader", () => {
     const text = `\`Hello, {{ name }}!\``;
     const textWithGraph = await loadOrigami.call(scope, text);
     const graph = Graph.from(textWithGraph);
-    const value = await graph.get("");
+    const value = await graph.get(Graph.defaultValueKey);
     assert.deepEqual(value, "Hello, Alice!");
   });
 
@@ -42,8 +42,9 @@ describe.only(".ori2 loader", () => {
     const text = `=\`Hello, {{ name }}!\``;
     const textWithGraph = await loadOrigami.call(scope, text);
     const graph = Graph.from(textWithGraph);
-    const value = await graph.get("");
-    assert.deepEqual(value, "Hello, Alice!");
+    const templateFn = await graph.get(Graph.defaultValueKey);
+    const value = await templateFn();
+    assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {

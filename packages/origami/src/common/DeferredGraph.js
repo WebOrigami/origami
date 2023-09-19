@@ -1,4 +1,4 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
 import {
@@ -28,11 +28,6 @@ export default class DeferredGraph {
 
   async get(key) {
     await this.load();
-
-    // The default value of a deferred graph is the result of the load function,
-    // which may or may not be a graph. (E.g., for a JavaScript module, the
-    // result of the load function is the module's default export, which may
-    // happen to be some other type of JavaScript object.)
     return key === Graph.defaultValueKey
       ? this.loadResult
       : this.graph.get(key);
@@ -54,12 +49,9 @@ export default class DeferredGraph {
     this.loadPromise = Promise.resolve(this.loadFn()).then((result) => {
       this.loadResult = result;
 
-      // If the load result is a graph, use it as is. Otherwise, construct an
-      // empty graph. In both cases, the graph's default value is the load
-      // result.
-      let graph = Graph.isGraphable(result)
-        ? Graph.from(result)
-        : new ObjectGraph({});
+      // If the load result is graphable, convert it to a graph. Otherwise,
+      // construct an empty graph whose default value is the load result.
+      let graph = Graph.from(Graph.makeGraphable(result));
 
       if (this.deferredParent) {
         if (!isTransformApplied(InheritScopeTransform, graph)) {

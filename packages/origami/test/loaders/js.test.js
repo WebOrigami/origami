@@ -30,8 +30,6 @@ describe(".js loader", () => {
   test("loads .js file that exports an object", async () => {
     const buffer = await fixturesGraph.get("obj.js");
     const greetFile = await loadJs.call(fixturesGraph, buffer, "obj.js");
-    const graph = greetFile.toGraph();
-    assert.deepEqual(await graph.get(Graph.defaultValueKey), { a: 1 });
-    assert.deepEqual(await Graph.plain(graph), { a: 1 });
+    assert.deepEqual(await Graph.plain(greetFile), { a: 1 });
   });
 });

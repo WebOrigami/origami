@@ -25,7 +25,7 @@ export default function loadOrigamiExpression(buffer, key) {
       if (fn.code[0] === ops.lambda && fn.code[1][0] === ops.concat) {
         // Yes: create cheap version of what Template does.
         const templateFn = value;
-        value = async (input) => {
+        value = async function (input) {
           const extendedScope = Graph.isGraphable(input)
             ? graphInContext(input, this)
             : this;
@@ -34,7 +34,9 @@ export default function loadOrigamiExpression(buffer, key) {
       }
       value = value.bind(scope);
     }
-    value[keySymbol] = key;
+    if (value && typeof value === "object") {
+      value[keySymbol] = key;
+    }
     return value;
   });
   return new StringWithGraph(text, deferredGraph);
