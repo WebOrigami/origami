@@ -22,15 +22,14 @@ export default function loadOrigamiExpression(buffer, key) {
     let value = await fn.call(scope);
     // If value is a function, bind it to the file container's scope.
     if (typeof value === "function") {
-      // HACK: Is the function for a template literal?
+      // HACK: Patch template literal until we can do this in parser.
       if (fn.code[0] === ops.lambda && fn.code[1][0] === ops.concat) {
-        // Yes
+        /** @this {AsyncDictionary|null} */
         function templateFn() {
           return execute.call(this, fn.code[1]);
         }
         value = extendTemplateFn(templateFn, text);
       }
-      value = value.bind(scope);
     }
     if (value && typeof value === "object") {
       value[keySymbol] = key;

@@ -1,8 +1,13 @@
 import { Graph } from "@graphorigami/core";
-import merge from "../builtins/@graph/merge.js";
+import Scope from "../common/Scope.js";
+
+/**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ */
 
 export default function extendTemplateFn(templateFn, template) {
   // TODO: Can this be sync?
+  /** @this {AsyncDictionary|null} */
   return async function extendedTemplateFn(input) {
     const ambients = {
       "@input": input,
@@ -11,16 +16,7 @@ export default function extendTemplateFn(templateFn, template) {
     };
     // TODO: refactor core of merge out of built-in
     const inputGraph = Graph.isGraphable(input) ? Graph.from(input) : null;
-    const templateGraph = Graph.isGraphable(template)
-      ? Graph.from(template)
-      : null;
-    const merged = await merge.call(
-      null,
-      ambients,
-      inputGraph,
-      templateGraph,
-      this
-    );
-    return templateFn.call(merged, input);
+    const scope = new Scope(ambients, inputGraph, this);
+    return templateFn.call(scope, input);
   };
 }
