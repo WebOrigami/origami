@@ -38,4 +38,20 @@ describe("extendTemplateFn", () => {
     extendedTemplateFn = extendTemplateFn(fn, template);
     await extendedTemplateFn.call(null, input);
   });
+
+  test("a template can call itself recursively with @recurse", async () => {
+    // A template function that computes the factorial of its input number.
+    const fn = async function () {
+      const n = await this.get("@input");
+      if (n === 0) {
+        return 1;
+      }
+      const self = await this.get("@recurse");
+      const subResult = await self(n - 1);
+      return n * subResult;
+    };
+    const extendedTemplateFn = extendTemplateFn(fn);
+    const result = await extendedTemplateFn.call(null, 3);
+    assert.equal(result, 6);
+  });
 });

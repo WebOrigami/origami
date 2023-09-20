@@ -11,7 +11,7 @@ export default function extendTemplateFn(templateFn, template) {
   return async function extendedTemplateFn(input) {
     const ambients = {
       "@input": input,
-      "@recurse": templateFn,
+      "@recurse": extendedTemplateFn,
       "@template": template,
     };
     // TODO: refactor core of merge out of built-in
