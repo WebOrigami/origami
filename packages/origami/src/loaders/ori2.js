@@ -1,9 +1,10 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
+import extendTemplateFn from "../framework/extendTemplateFn.js";
 import * as compile from "../language/compile.js";
+import execute from "../language/execute.js";
 import * as ops from "../language/ops.js";
 
 /**
@@ -23,14 +24,11 @@ export default function loadOrigamiExpression(buffer, key) {
     if (typeof value === "function") {
       // HACK: Is the function for a template literal?
       if (fn.code[0] === ops.lambda && fn.code[1][0] === ops.concat) {
-        // Yes: create cheap version of what Template does.
-        const templateFn = value;
-        value = async function (input) {
-          const extendedScope = Graph.isGraphable(input)
-            ? graphInContext(input, this)
-            : this;
-          return templateFn.call(extendedScope);
-        };
+        // Yes
+        function templateFn() {
+          return execute.call(this, fn.code[1]);
+        }
+        value = extendTemplateFn(templateFn, text);
       }
       value = value.bind(scope);
     }

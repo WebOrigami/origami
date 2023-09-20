@@ -1,3 +1,4 @@
+import { Graph } from "@graphorigami/core";
 import merge from "../builtins/@graph/merge.js";
 
 export default function extendTemplateFn(templateFn, template) {
@@ -9,7 +10,17 @@ export default function extendTemplateFn(templateFn, template) {
       "@template": template,
     };
     // TODO: refactor core of merge out of built-in
-    const merged = await merge.call(null, ambients, input, template);
+    const inputGraph = Graph.isGraphable(input) ? Graph.from(input) : null;
+    const templateGraph = Graph.isGraphable(template)
+      ? Graph.from(template)
+      : null;
+    const merged = await merge.call(
+      null,
+      ambients,
+      inputGraph,
+      templateGraph,
+      this
+    );
     return templateFn.call(merged, input);
   };
 }

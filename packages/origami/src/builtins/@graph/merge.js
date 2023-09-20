@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable[]} graphs
+ * @param {(Graphable|null)[]} graphs
  */
 export default async function merge(...graphs) {
   assertScopeIsDefined(this);
