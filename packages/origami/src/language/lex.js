@@ -52,6 +52,7 @@ const tokenCanEndTerm = {
   [tokenType.RIGHT_BRACE]: true,
   [tokenType.RIGHT_BRACKET]: true,
   [tokenType.RIGHT_PAREN]: true,
+  [tokenType.SLASH]: true,
   [tokenType.STRING]: true,
 };
 
