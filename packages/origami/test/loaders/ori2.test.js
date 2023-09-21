@@ -43,7 +43,7 @@ describe(".ori2 loader", () => {
     const textWithGraph = await loadOrigami.call(scope, text);
     const graph = Graph.from(textWithGraph);
     const templateFn = await graph.get(Graph.defaultValueKey);
-    const value = await templateFn();
+    const value = await templateFn.call(scope);
     assert.equal(value, "Hello, Alice!");
   });
 

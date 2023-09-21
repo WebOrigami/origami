@@ -3,6 +3,7 @@
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  */
 
+import { Graph } from "@graphorigami/core";
 import filesBuiltin from "../builtins/@files.js";
 import concatBuiltin from "../builtins/@graph/concat.js";
 import graphHttpBuiltin from "../builtins/@graphHttp.js";
@@ -148,8 +149,22 @@ inherited.toString = () => "«ops.inherited»";
  */
 export function lambda(code) {
   /** @this {AsyncDictionary|null} */
-  return async function () {
-    const result = await execute.call(this, code);
+  return async function invoke(input) {
+    // Add ambients to scope.
+    const ambients = {
+      "@input": input,
+      "@recurse": invoke,
+    };
+    const graphs = [ambients];
+    // Add input to scope.
+    if (Graph.isGraphable(input)) {
+      graphs.push(input);
+    }
+    if (this) {
+      graphs.push(this);
+    }
+    const scope = graphs.length > 1 ? new Scope(...graphs) : graphs[0];
+    const result = await execute.call(scope, code);
     return result;
   };
 }

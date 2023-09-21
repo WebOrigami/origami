@@ -34,6 +34,23 @@ describe("ops", () => {
     assert.equal(result, "Hello, world.");
   });
 
+  test("lambda adds input to scope", async () => {
+    const code = [
+      ops.lambda,
+      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
+    ];
+    const fn = await execute.call(null, code);
+    const result = await fn({ name: "world" });
+    assert.equal(result, "Hello, world.");
+  });
+
+  test("a lambda can reference itself with @recurse", async () => {
+    const code = [ops.lambda, [ops.scope, "@recurse"]];
+    const fn = await execute.call(null, code);
+    const result = await fn();
+    assert.equal(result, fn);
+  });
+
   test("can instantiate an object", async () => {
     const scope = new ObjectGraph({
       upper: (s) => s.toUpperCase(),
