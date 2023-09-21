@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import DeferredGraph from "../common/DeferredGraph.js";
 import StringWithGraph from "../common/StringWithGraph.js";
-import { getScope, keySymbol } from "../common/utilities.js";
+import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
 /**
@@ -18,8 +18,8 @@ export default function loadOrigamiExpression(buffer, key) {
     // Compile the file's text as an Origami expression and evaluate it.
     const fn = compile.expression(text);
     const value = await fn.call(scope);
-    // Add diagnostic information to any object result.
-    if (value && typeof value === "object") {
+    // Add diagnostic information to any (non-plain) object result.
+    if (value && typeof value === "object" && !isPlainObject(value)) {
       value[keySymbol] = key;
     }
     return value;

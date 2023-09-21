@@ -1,6 +1,11 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
-import { getScope, keySymbol, transformObject } from "../common/utilities.js";
+import {
+  getScope,
+  isPlainObject,
+  keySymbol,
+  transformObject,
+} from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 /**
@@ -27,15 +32,26 @@ export default function loadJson(input, key) {
 
   /** @type {any} */ (textWithGraph).toGraph = () => {
     if (!graph) {
-      graph = Graph.from(data);
+      graph = addDefault(Graph.from(data), data);
       if (!("parent" in graph)) {
         graph = transformObject(InheritScopeTransform, graph);
       }
       graph.parent = scope;
-      graph[keySymbol] = key;
+      // Add diagnostic information to any (non-plain) object result.
+      if (graph && typeof graph === "object" && !isPlainObject(graph)) {
+        graph[keySymbol] = key;
+      }
     }
     return graph;
   };
 
   return textWithGraph;
+}
+
+function addDefault(graph, defaultValue) {
+  return Object.assign(Object.create(graph), {
+    async get(key) {
+      return key === Graph.defaultValueKey ? defaultValue : graph.get(key);
+    },
+  });
 }

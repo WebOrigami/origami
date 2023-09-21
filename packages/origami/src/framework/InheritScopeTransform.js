@@ -1,6 +1,6 @@
 import { Dictionary } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import { getScope, keySymbol } from "../common/utilities.js";
+import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
 
 const parentKey = Symbol("parent");
 const scopeKey = Symbol("scope");
@@ -38,8 +38,11 @@ export default function InheritScopeTransform(Base) {
             return graph;
           };
         }
+        // Add diagnostic information to any (non-plain) object result.
         if (
+          value &&
           typeof value === "object" &&
+          !isPlainObject(value) &&
           Object.isExtensible(value) &&
           !value[keySymbol]
         ) {
