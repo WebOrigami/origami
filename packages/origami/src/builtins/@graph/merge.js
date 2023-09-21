@@ -26,7 +26,8 @@ export default async function merge(...graphs) {
   const scopedGraphs = filtered.map((graph) => {
     let scopedGraph = Dictionary.isAsyncDictionary(graph)
       ? Object.create(/** @type {any} */ (graph))
-      : Graph.from(graph);
+      : // @ts-ignore
+        Graph.from(graph);
     if ("parent" in scopedGraph) {
       const otherGraphs = graphs.filter((g) => g !== graph);
       const scope = new Scope(...otherGraphs, this);

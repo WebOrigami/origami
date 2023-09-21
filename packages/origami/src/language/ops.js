@@ -155,6 +155,7 @@ export function lambda(code) {
       "@input": input,
       "@recurse": invoke,
     };
+    /** @type {import("@graphorigami/core").Graphable[]} */
     const graphs = [ambients];
     // Add input to scope.
     if (Graph.isGraphable(input)) {

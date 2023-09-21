@@ -20,6 +20,7 @@ describe("@graph/merge", () => {
         d: 4,
       }
     );
+    // @ts-ignore
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
@@ -40,6 +41,7 @@ describe("@graph/merge", () => {
         d: createExpressionFunction([ops.scope, "a"]),
       })
     );
+    // @ts-ignore
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
