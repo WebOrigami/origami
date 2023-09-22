@@ -20,9 +20,9 @@ export default function loadJson(input, key) {
   }
 
   const text = String(input);
-  const data = JSON.parse(text);
 
   const deferredGraph = new DeferredGraph(async () => {
+    const data = JSON.parse(text);
     const graph = Graph.from(data);
     // Add diagnostic information.
     if (graph && typeof graph === "object" && !isPlainObject(graph)) {
