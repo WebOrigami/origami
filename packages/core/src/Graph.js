@@ -274,6 +274,7 @@ export function toFunction(variant) {
 /**
  * Return the value at the corresponding path of keys.
  *
+ * @this {any}
  * @param {Graphable} variant
  * @param {...any} keys
  */
@@ -281,7 +282,7 @@ export async function traverse(variant, ...keys) {
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.
-    return await traverseOrThrow(variant, ...keys);
+    return await traverseOrThrow.call(this, variant, ...keys);
   } catch (/** @type {any} */ error) {
     if (error instanceof TraverseError) {
       return undefined;
@@ -295,6 +296,7 @@ export async function traverse(variant, ...keys) {
  * Return the value at the corresponding path of keys. Throw if any interior
  * step of the path doesn't lead to a result.
  *
+ * @this {any}
  * @param {Graphable} variant
  * @param  {...any} keys
  */
@@ -313,6 +315,12 @@ export async function traverseOrThrow(variant, ...keys) {
         value,
         keys
       );
+    }
+
+    // If the traversal operation was given a context, and the value we need to
+    // traverse is a function, bind the function to the context.
+    if (this && typeof value === "function") {
+      value = value.bind(this);
     }
 
     // If someone is trying to traverse this thing, they mean to treat it as a

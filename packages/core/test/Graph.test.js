@@ -214,6 +214,18 @@ describe("Graph", () => {
     assert.equal(await Graph.traverse(graph, "a", "b", "c"), "Hello");
   });
 
+  test("traverse() binds traversed functions to `this`", async () => {
+    const context = {};
+    const graph = new ObjectGraph({
+      bold: function (key) {
+        assert.equal(this, context);
+        return `**${key}**`;
+      },
+    });
+    const result = await Graph.traverse.call(context, graph, "bold", "Hello");
+    assert.equal(result, "**Hello**");
+  });
+
   test("traversing the default key returns the graph itself", async () => {
     const graph = {
       async get() {},
