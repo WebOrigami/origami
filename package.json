@@ -7,7 +7,7 @@
     "packages/types"
   ],
   "scripts": {
-    "test": "node --test --test-reporter=spec packages/*/test/*/*.test.js packages/*/test/*/*/*.test.js",
+    "test": "node --test --test-reporter=spec packages/*/test/*.test.js packages/*/test/*/*.test.js packages/*/test/*/*/*.test.js",
     "typecheck": "tsc"
   }
 }
