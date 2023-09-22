@@ -42,7 +42,7 @@ export default function ImportModulesMixin(Base) {
 
       // If the module loaded and defines a default export, return that, otherwise
       // return the overall module.
-      return obj?.default ?? obj;
+      return typeof obj === "object" && "default" in obj ? obj.default : obj;
     }
   };
 }
