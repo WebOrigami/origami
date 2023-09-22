@@ -79,6 +79,11 @@ export default class DeferredGraph {
     // Invoke the load function, casting the result to a promise if it isn't
     // one. Arrange to process and save the result once it's loaded.
     this.loadPromise = Promise.resolve(this.loadFn()).then((result) => {
+      if (result === undefined) {
+        throw TypeError(
+          "The deferred graph's load function didn't return a graph."
+        );
+      }
       this.loadResult = result;
       if (result[keySymbol] && !this[keySymbol]) {
         this[keySymbol] = result[keySymbol];

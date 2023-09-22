@@ -1,12 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
-import {
-  getScope,
-  isPlainObject,
-  keySymbol,
-  transformObject,
-} from "../common/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import DeferredGraph from "../common/DeferredGraph.js";
+import StringWithGraph from "../common/StringWithGraph.js";
+import { isPlainObject, keySymbol } from "../common/utilities.js";
 
 /**
  * Load a file as JSON.
@@ -26,32 +22,14 @@ export default function loadJson(input, key) {
   const text = String(input);
   const data = JSON.parse(text);
 
-  const textWithGraph = new String(text);
-  const scope = getScope(this);
-  let graph;
-
-  /** @type {any} */ (textWithGraph).toGraph = () => {
-    if (!graph) {
-      graph = addDefault(Graph.from(data), data);
-      if (!("parent" in graph)) {
-        graph = transformObject(InheritScopeTransform, graph);
-      }
-      graph.parent = scope;
-      // Add diagnostic information to any (non-plain) object result.
-      if (graph && typeof graph === "object" && !isPlainObject(graph)) {
-        graph[keySymbol] = key;
-      }
+  const deferredGraph = new DeferredGraph(async () => {
+    const graph = Graph.from(data);
+    // Add diagnostic information.
+    if (graph && typeof graph === "object" && !isPlainObject(graph)) {
+      graph[keySymbol] = key;
     }
     return graph;
-  };
-
-  return textWithGraph;
-}
-
-function addDefault(graph, defaultValue) {
-  return Object.assign(Object.create(graph), {
-    async get(key) {
-      return key === Graph.defaultValueKey ? defaultValue : graph.get(key);
-    },
   });
+
+  return new StringWithGraph(text, deferredGraph);
 }
