@@ -317,6 +317,10 @@ export async function traverseOrThrow(variant, ...keys) {
       );
     }
 
+    if (typeof value.toGraphable === "function") {
+      value = await value.toGraphable();
+    }
+
     // If the traversal operation was given a context, and the value we need to
     // traverse is a function, bind the function to the context.
     if (this && typeof value === "function") {
