@@ -1,14 +1,10 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
+import DeferredGraph from "../common/DeferredGraph.js";
 import ExpressionGraph from "../common/ExpressionGraph.js";
+import StringWithGraph from "../common/StringWithGraph.js";
 import { parseYaml } from "../common/serialize.js";
-import {
-  getScope,
-  graphInContext,
-  isPlainObject,
-  keySymbol,
-  transformObject,
-} from "../common/utilities.js";
+import { getScope, isPlainObject } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 
 // See notes at serialize.js
@@ -37,55 +33,18 @@ export default function loadYaml(input, key) {
   }
 
   const text = String(input);
-  const data = parseYaml(text);
-
-  /** @type {any} */
-  const textWithGraph = new String(text);
   const scope = getScope(this);
-  let graph;
 
-  textWithGraph.toGraph = () => {
-    if (!graph) {
-      if (isPlainObject(data) || data instanceof Array) {
-        graph = new (FileTreeTransform(ExpressionGraph))(data);
-      } else if (!("parent" in graph)) {
-        graph = transformObject(FileTreeTransform, graph);
-      }
+  const deferredGraph = new DeferredGraph(async () => {
+    const data = parseYaml(text);
+    if (isPlainObject(data) || data instanceof Array) {
+      const graph = new (FileTreeTransform(ExpressionGraph))(data);
       graph.parent = scope;
-      graph[keySymbol] = key;
+      return graph;
+    } else {
+      return data;
     }
-    return graph;
-  };
+  });
 
-  textWithGraph.toFunction = () => {
-    const graph = textWithGraph.toGraph();
-    const fn = async function fn(key, ...rest) {
-      if (key === undefined) {
-        return graph;
-      }
-      let value;
-      if (
-        typeof key === "string" ||
-        key instanceof String ||
-        typeof key === "number"
-      ) {
-        value = await graph.get(key);
-      } else {
-        // Construct new graph with key in scope as @input.
-        const ambients = new ObjectGraph({
-          "@input": key,
-        });
-        const ambientsGraph = graphInContext(ambients, graph.parent);
-        ambientsGraph[keySymbol] = graph[keySymbol];
-        value = graphInContext(graph, ambientsGraph);
-      }
-      if (rest.length > 0) {
-        value = await Graph.traverse(value, ...rest);
-      }
-      return value;
-    };
-    return fn;
-  };
-
-  return textWithGraph;
+  return new StringWithGraph(text, deferredGraph);
 }
