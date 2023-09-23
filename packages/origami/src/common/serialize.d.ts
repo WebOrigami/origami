@@ -1,11 +1,11 @@
-import type { Graphable, HasGraph, PlainObject } from "@graphorigami/core";
+import type { Graphable, HasContents, PlainObject } from "@graphorigami/core";
 import type { AsyncGraph } from "@graphorigami/types";
 import type { HasString, StringLike } from "../..";
 
 export function extractFrontMatter(s: StringLike): { frontBlock: string, bodyText: string, frontData: PlainObject };
 export function fromJson(obj: any): AsyncGraph;
 export function fromYaml(obj: any): AsyncGraph;
-export function outputWithGraph(obj: HasString, graph?: Graphable, emitFrontMatter?: boolean): string|(String & HasGraph);
+export function outputWithGraph(obj: HasString, graph?: Graphable, emitFrontMatter?: boolean): string|(String & HasContents);
 export function parseYaml(text: string): PlainObject;
 export function parseYamlWithExpressions(text: string): PlainObject;
 export function serializableObject(graph: Graphable): Promise<any>;

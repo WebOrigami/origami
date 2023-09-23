@@ -8,11 +8,11 @@ import StringWithGraph from "../common/StringWithGraph.js";
  * that returns a graph for the module's default export.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").HasGraph} HasGraph
+ * @typedef {import("@graphorigami/core").HasContents} HasContents
  *
  * @param {Buffer|string} buffer
  * @param {any} [key]
- * @returns {HasGraph}
+ * @returns {HasContents}
  * @this {AsyncDictionary|null}
  */
 export default function loadJs(buffer, key) {

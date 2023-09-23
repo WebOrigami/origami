@@ -308,12 +308,13 @@ export async function traverse(variant, ...keys) {
  * step of the path doesn't lead to a result.
  *
  * @this {any}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param  {...any} keys
  */
-export async function traverseOrThrow(variant, ...keys) {
+export async function traverseOrThrow(graphable, ...keys) {
   // Start our traversal at the root of the graph.
-  let value = variant;
+  /** @type {any} */
+  let value = graphable;
 
   // Process each key in turn.
   // If the value is ever undefined, short-circuit the traversal.
