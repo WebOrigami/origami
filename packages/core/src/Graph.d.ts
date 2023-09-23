@@ -4,7 +4,7 @@ import { Graphable, PlainObject } from "..";
 export * from "./Dictionary";
 
 export function assign(target: Graphable, source: Graphable): Promise<AsyncGraph>;
-export function from(graph: Graphable): AsyncGraph;
+export function from(obj: any): AsyncGraph;
 export function isGraphable(obj: any): boolean;
 export function isKeyForSubgraph(graph: AsyncGraph, obj: any): Promise<boolean>;
 export function keysFromPath(path: string): string[];

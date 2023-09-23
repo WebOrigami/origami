@@ -73,46 +73,42 @@ function castArrayLike(obj) {
 }
 
 /**
- * Attempts to cast the indicated graph variant to an async graph.
+ * Attempts to cast the indicated object to an async graph.
  *
- * @param {Graphable | Object} graphable
+ * @param {Graphable | Object} obj
  * @returns {AsyncGraph}
  */
-export function from(graphable) {
-  if (Dictionary.isAsyncDictionary(graphable)) {
+export function from(obj) {
+  if (Dictionary.isAsyncDictionary(obj)) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
-    return graphable;
-  } else if (
-    graphable &&
-    typeof graphable === "object" &&
-    "toGraph" in graphable
-  ) {
+    return obj;
+  } else if (obj && typeof obj === "object" && "toGraph" in obj) {
     // Variant exposes toGraph() method; invoke it.
-    return graphable.toGraph();
-  } else if (graphable instanceof Function) {
-    return new FunctionGraph(graphable);
-  } else if (graphable instanceof Map) {
-    return new MapGraph(graphable);
-  } else if (graphable instanceof Set) {
-    return new SetGraph(graphable);
-  } else if (
-    graphable &&
-    typeof graphable === "object" &&
-    "toGraphable" in graphable
-  ) {
-    // Invoke toGraphable and convert the result to a graph.
-    let result = graphable.toGraphable();
+    return obj.toGraph();
+  } else if (obj instanceof Function) {
+    return new FunctionGraph(obj);
+  } else if (obj instanceof Map) {
+    return new MapGraph(obj);
+  } else if (obj instanceof Set) {
+    return new SetGraph(obj);
+  } else if (obj && typeof obj === "object" && "contents" in obj) {
+    // Invoke contents and convert the result to a graph.
+    let result = obj.contents();
     return result instanceof Promise
       ? new DeferredGraph2(result)
       : from(result);
-  } else if (graphable && typeof graphable === "object") {
-    // An instance of some class. This is our last choice because it's the
-    // least specific.
-    return new ObjectGraph(graphable);
+  } else if (obj && typeof obj === "object") {
+    // An instance of some class.
+    return new ObjectGraph(obj);
+  } else {
+    // A primitive value like a number or string.
+    return new ObjectGraph({
+      [defaultValueKey]: obj,
+    });
   }
 
-  throw new TypeError("Couldn't convert argument to an async graph");
+  // throw new TypeError("Couldn't convert argument to an async graph");
 }
 
 /**
@@ -332,8 +328,8 @@ export async function traverseOrThrow(variant, ...keys) {
       );
     }
 
-    if (typeof value.toGraphable === "function") {
-      value = await value.toGraphable();
+    if (typeof value.contents === "function") {
+      value = await value.contents();
     }
 
     // If the traversal operation was given a context, and the value we need to

@@ -73,9 +73,9 @@ describe("Graph", () => {
     });
   });
 
-  test("from() uses an object's toGraphable() method if defined", async () => {
+  test("from() uses an object's contents() method if defined", async () => {
     const obj = {
-      toGraphable() {
+      contents() {
         return {
           a: "Hello, a.",
         };
@@ -87,9 +87,9 @@ describe("Graph", () => {
     });
   });
 
-  test("from() creates a deferred graph if toGraphable() returns a promise", async () => {
+  test("from() creates a deferred graph if contents() returns a promise", async () => {
     const obj = {
-      async toGraphable() {
+      async contents() {
         return {
           a: "Hello, a.",
         };

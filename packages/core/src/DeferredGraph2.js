@@ -14,14 +14,13 @@ export default class DeferredGraph2 {
    * @param {Function|Promise<any>} loader
    */
   constructor(loader) {
-    this.graphable = null;
     this.loader = loader;
-    this.loadPromise = null;
+    this.graphPromise = null;
   }
 
   async get(key) {
     return key === Graph.defaultValueKey
-      ? this.graphable
+      ? this.graphable()
       : (await this.graph()).get(key);
   }
 
@@ -30,17 +29,20 @@ export default class DeferredGraph2 {
   }
 
   async graph() {
-    // We use a promise to ensure that the load function is only invoked once.
-    if (!this.loadPromise) {
-      // Invoke the load function, casting the result to a promise if it isn't
-      // one. Arrange to process and save the result once it's loaded.
-      const result =
-        this.loader instanceof Promise ? this.loader : this.loader();
-      this.loadPromise = Promise.resolve(result).then((graphable) => {
-        this.graphable = graphable;
-        return Graph.from(graphable);
-      });
+    // Use a promise to ensure that the graphable is only converted to a graph
+    // once.
+    if (!this.graphPromise) {
+      this.graphPromise = this.graphable().then((graphable) =>
+        Graph.from(graphable)
+      );
     }
-    return this.loadPromise;
+    return this.graphPromise;
+  }
+
+  async graphable() {
+    if (!(this.loader instanceof Promise)) {
+      this.loader = this.loader();
+    }
+    return this.loader;
   }
 }
