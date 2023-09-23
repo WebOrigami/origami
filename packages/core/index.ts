@@ -5,15 +5,15 @@ export type PlainObject = {
   [key: string]: any;
 };
 
-export interface HasGraph {
-  toGraph(): AsyncDictionary;
+export interface HasGraphable {
+  toGraphable(): Promise<Graphable>;
 }
 
 export type Graphable =
   Array<any> | 
   AsyncDictionary |
   Function | 
-  HasGraph | 
+  HasGraphable | 
   Map<any, any> | 
   PlainObject | 
   Set<any> | 

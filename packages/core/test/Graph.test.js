@@ -73,6 +73,34 @@ describe("Graph", () => {
     });
   });
 
+  test("from() uses an object's toGraphable() method if defined", async () => {
+    const obj = {
+      toGraphable() {
+        return {
+          a: "Hello, a.",
+        };
+      },
+    };
+    const graph = Graph.from(obj);
+    assert.deepEqual(await Graph.plain(graph), {
+      a: "Hello, a.",
+    });
+  });
+
+  test("from() creates a deferred graph if toGraphable() returns a promise", async () => {
+    const obj = {
+      async toGraphable() {
+        return {
+          a: "Hello, a.",
+        };
+      },
+    };
+    const graph = Graph.from(obj);
+    assert.deepEqual(await Graph.plain(graph), {
+      a: "Hello, a.",
+    });
+  });
+
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(Graph.keysFromPath("a/b/c"), ["a", "b", "c"]);
     assert.deepEqual(Graph.keysFromPath("foo/"), [

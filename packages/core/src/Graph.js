@@ -1,3 +1,4 @@
+import DeferredGraph2 from "./DeferredGraph2.js";
 import * as Dictionary from "./Dictionary.js";
 import FunctionGraph from "./FunctionGraph.js";
 import MapGraph from "./MapGraph.js";
@@ -74,27 +75,41 @@ function castArrayLike(obj) {
 /**
  * Attempts to cast the indicated graph variant to an async graph.
  *
- * @param {Graphable | Object} variant
+ * @param {Graphable | Object} graphable
  * @returns {AsyncGraph}
  */
-export function from(variant) {
-  if (Dictionary.isAsyncDictionary(variant)) {
+export function from(graphable) {
+  if (Dictionary.isAsyncDictionary(graphable)) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
-    return variant;
-  } else if (variant && typeof variant === "object" && "toGraph" in variant) {
+    return graphable;
+  } else if (
+    graphable &&
+    typeof graphable === "object" &&
+    "toGraph" in graphable
+  ) {
     // Variant exposes toGraph() method; invoke it.
-    return variant.toGraph();
-  } else if (variant instanceof Function) {
-    return new FunctionGraph(variant);
-  } else if (variant instanceof Map) {
-    return new MapGraph(variant);
-  } else if (variant instanceof Set) {
-    return new SetGraph(variant);
-  } else if (variant && typeof variant === "object") {
+    return graphable.toGraph();
+  } else if (graphable instanceof Function) {
+    return new FunctionGraph(graphable);
+  } else if (graphable instanceof Map) {
+    return new MapGraph(graphable);
+  } else if (graphable instanceof Set) {
+    return new SetGraph(graphable);
+  } else if (
+    graphable &&
+    typeof graphable === "object" &&
+    "toGraphable" in graphable
+  ) {
+    // Invoke toGraphable and convert the result to a graph.
+    let result = graphable.toGraphable();
+    return result instanceof Promise
+      ? new DeferredGraph2(result)
+      : from(result);
+  } else if (graphable && typeof graphable === "object") {
     // An instance of some class. This is our last choice because it's the
     // least specific.
-    return new ObjectGraph(variant);
+    return new ObjectGraph(graphable);
   }
 
   throw new TypeError("Couldn't convert argument to an async graph");
