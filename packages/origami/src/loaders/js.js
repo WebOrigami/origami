@@ -1,7 +1,3 @@
-import { Graph } from "@graphorigami/core";
-import DeferredGraph from "../common/DeferredGraph.js";
-import StringWithGraph from "../common/StringWithGraph.js";
-
 /**
  * Load a .js file as a String with a toFunction() method that returns a
  * function that invokes the module's default export, and a toGraph() method
@@ -16,34 +12,18 @@ import StringWithGraph from "../common/StringWithGraph.js";
  * @this {AsyncDictionary|null}
  */
 export default function loadJs(buffer, key) {
-  const containerGraph = this;
-
-  let moduleExport;
-  async function importModule() {
-    if (!moduleExport && containerGraph && "import" in containerGraph) {
-      moduleExport = await /** @type {any} */ (containerGraph).import?.(key);
-    }
-    return moduleExport;
-  }
+  const container = this;
 
   /** @type {any} */
-  const moduleWithGraph = new StringWithGraph(
-    buffer,
-    new DeferredGraph(async () => importModule())
-  );
+  const moduleFile = new String(buffer);
 
-  moduleWithGraph.toFunction = () => {
-    /** @this {AsyncDictionary} */
-    return async function (...args) {
-      const fn = await importModule();
-      const target = typeof fn === "function" ? fn.bind(this) : fn;
-      // HACK
-      if (args.length === 0) {
-        args.push(undefined);
-      }
-      return Graph.traverseOrThrow(target, ...args);
-    };
+  let contents;
+  moduleFile.contents = async function importModule() {
+    if (!contents && container && "import" in container) {
+      contents = await /** @type {any} */ (container).import?.(key);
+    }
+    return contents;
   };
 
-  return moduleWithGraph;
+  return moduleFile;
 }

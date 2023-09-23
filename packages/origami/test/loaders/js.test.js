@@ -14,9 +14,8 @@ describe(".js loader", () => {
   test("loads .js file that exports a string", async () => {
     const buffer = await fixturesGraph.get("string.js");
     const moduleFile = await loadJs.call(fixturesGraph, buffer, "string.js");
-    const stringGraph = await moduleFile.contents();
-    const string = await stringGraph.get(Graph.defaultValueKey);
-    assert.equal(string, "This is a string.");
+    const contents = await moduleFile.contents();
+    assert.equal(contents, "This is a string.");
   });
 
   test("loads .js file that exports a function", async () => {
@@ -29,6 +28,7 @@ describe(".js loader", () => {
   test("loads .js file that exports an object", async () => {
     const buffer = await fixturesGraph.get("obj.js");
     const moduleFile = await loadJs.call(fixturesGraph, buffer, "obj.js");
-    assert.deepEqual(await Graph.plain(moduleFile), { a: 1 });
+    const graph = await moduleFile.contents();
+    assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 });

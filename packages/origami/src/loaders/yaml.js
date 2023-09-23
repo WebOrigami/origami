@@ -1,8 +1,6 @@
 import { Graph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
-import DeferredGraph from "../common/DeferredGraph.js";
 import ExpressionGraph from "../common/ExpressionGraph.js";
-import StringWithGraph from "../common/StringWithGraph.js";
 import { parseYaml } from "../common/serialize.js";
 import { getScope, isPlainObject } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
@@ -32,10 +30,11 @@ export default function loadYaml(input, key) {
     return input;
   }
 
-  const text = String(input);
   const scope = getScope(this);
 
-  const deferredGraph = new DeferredGraph(async () => {
+  /** @type {any} */
+  const text = new String(input);
+  text.contents = async () => {
     const data = parseYaml(text);
     if (isPlainObject(data) || data instanceof Array) {
       const graph = new (FileTreeTransform(ExpressionGraph))(data);
@@ -44,7 +43,7 @@ export default function loadYaml(input, key) {
     } else {
       return data;
     }
-  });
+  };
 
-  return new StringWithGraph(text, deferredGraph);
+  return text;
 }

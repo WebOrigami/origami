@@ -20,7 +20,7 @@ describe("@graph/dataflow", () => {
       c: Hello
     `
     );
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
@@ -43,7 +43,7 @@ describe("@graph/dataflow", () => {
       foo: !ori (@bar)
     `
     );
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
@@ -59,7 +59,7 @@ describe("@graph/dataflow", () => {
       foo: !ori (@mdHtml())
     `
     );
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {

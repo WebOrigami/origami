@@ -10,7 +10,7 @@ a: 1
 b: 2
 `;
     const textWithGraph = await loadYaml.call(null, text);
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graph = await /** @type {any} */ (textWithGraph).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 2,
@@ -32,7 +32,7 @@ a: 1
 b: !ori a
 `;
     const textWithGraph = await loadYaml.call(null, text);
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graph = await /** @type {any} */ (textWithGraph).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 1,
