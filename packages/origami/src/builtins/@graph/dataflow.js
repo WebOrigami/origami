@@ -178,13 +178,8 @@ async function getKeysInScope(graph) {
 // Add dependencies found in a graph file.
 async function graphDependencies(graphFile, keysInScope) {
   const dependencies = [];
-  let attachedGraph = graphFile.toGraph?.();
+  let attachedGraph = await graphFile.contents?.();
   if (attachedGraph) {
-    // HACK: Special case for a DeferredGraph returned by the .graph loader.
-    if (attachedGraph.load) {
-      await attachedGraph.load();
-      attachedGraph = attachedGraph.graph;
-    }
     const expressions = await attachedGraph.expressions?.();
     if (expressions) {
       for (const code of Object.values(expressions)) {

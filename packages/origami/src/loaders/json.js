@@ -1,7 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
-import DeferredGraph from "../common/DeferredGraph.js";
-import StringWithGraph from "../common/StringWithGraph.js";
 import { isPlainObject, keySymbol } from "../common/utilities.js";
 
 /**
@@ -19,17 +17,17 @@ export default function loadJson(input, key) {
     return input;
   }
 
-  const text = String(input);
-
-  const deferredGraph = new DeferredGraph(async () => {
-    const data = JSON.parse(text);
+  /** @type {any} */
+  const jsonFile = new String(input);
+  jsonFile.contents = async () => {
+    const data = JSON.parse(String(input));
     const graph = Graph.from(data);
     // Add diagnostic information.
     if (graph && typeof graph === "object" && !isPlainObject(graph)) {
       graph[keySymbol] = key;
     }
     return graph;
-  });
+  };
 
-  return new StringWithGraph(text, deferredGraph);
+  return jsonFile;
 }

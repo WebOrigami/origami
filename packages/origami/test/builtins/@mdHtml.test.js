@@ -33,8 +33,9 @@ title: Hello
 title: Hello
 ---
 # Hello, world.`;
+    /** @type {any} */
     const html = await mdHtml(md.call(null, markdown));
-    const graph = /** @type {any} */ (html).toGraph();
+    const graph = await html.contents();
     assert.deepEqual(await Graph.plain(graph), {
       title: "Hello",
     });

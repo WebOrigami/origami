@@ -1,7 +1,6 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import StringWithGraph from "../../src/common/StringWithGraph.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 describe("loadTextWithFrontMatter", () => {
   test("returns plain text input as is", () => {
@@ -14,17 +13,19 @@ describe("loadTextWithFrontMatter", () => {
 a: 1
 ---
 text`;
-    const result = await loadTextWithFrontMatter.call(null, text);
-    assert.equal(String(result), text);
-    const graph = /** @type {any} */ (result).toGraph();
+    const textFile = await loadTextWithFrontMatter.call(null, text);
+    assert.equal(String(textFile), text);
+    const graph = /** @type {any} */ (textFile).contents();
     assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 
   test("passes along an attached graph if no front matter", async () => {
-    const input = new StringWithGraph("text", new ObjectGraph({ a: 1 }));
-    const result = await loadTextWithFrontMatter.call(null, input);
-    assert.equal(String(result), "text");
-    const graph = /** @type {any} */ (result).toGraph();
+    /** @type {any} */
+    const input = new String("text");
+    input.contents = () => new ObjectGraph({ a: 1 });
+    const textFile = await loadTextWithFrontMatter.call(null, input);
+    assert.equal(String(textFile), "text");
+    const graph = /** @type {any} */ (textFile).contents();
     assert.deepEqual(await Graph.plain(graph), { a: 1 });
   });
 });

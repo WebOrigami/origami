@@ -15,9 +15,9 @@ describe(".md loader", () => {
 a: !ori 1
 ---
 # Title`;
-    const loaded = await loadMarkdown.call(null, text);
-    assert.equal(loaded.bodyText, `# Title`);
-    const graph = /** @type {any} */ (loaded).toGraph();
+    const markdownFile = await loadMarkdown.call(null, text);
+    assert.equal(markdownFile.bodyText, `# Title`);
+    const graph = await /** @type {any} */ (markdownFile).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
     });

@@ -33,9 +33,9 @@ export default function loadYaml(input, key) {
   const scope = getScope(this);
 
   /** @type {any} */
-  const text = new String(input);
-  text.contents = async () => {
-    const data = parseYaml(text);
+  const yamlFile = new String(input);
+  yamlFile.contents = async () => {
+    const data = parseYaml(yamlFile);
     if (isPlainObject(data) || data instanceof Array) {
       const graph = new (FileTreeTransform(ExpressionGraph))(data);
       graph.parent = scope;
@@ -45,5 +45,5 @@ export default function loadYaml(input, key) {
     }
   };
 
-  return text;
+  return yamlFile;
 }

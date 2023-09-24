@@ -9,8 +9,8 @@ describe(".graph loader", () => {
       name = 'world'
       message = \`Hello, {{ name }}!\`
     `;
-    const textWithGraph = await loadGraph.call(null, text);
-    const graph = /** @type {any} */ (textWithGraph).toGraph();
+    const graphFile = await loadGraph.call(null, text);
+    const graph = await /** @type {any} */ (graphFile).contents();
     assert.deepEqual(await Graph.plain(graph), {
       name: "world",
       message: "Hello, world!",

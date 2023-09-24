@@ -1,9 +1,7 @@
 import { ObjectGraph } from "@graphorigami/core";
 import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
-import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
-import StringWithGraph from "./StringWithGraph.js";
 import { extractFrontMatter } from "./serialize.js";
 
 /**
@@ -28,16 +26,16 @@ export default function loadTextWithFrontMatter(input, key) {
   }
 
   /** @type {any} */
-  let text;
+  let textFile;
 
-  const attachedGraph =
-    typeof input === "object" && /** @type {any} */ (input).toGraph?.();
+  const inputContents =
+    typeof input === "object" && /** @type {any} */ (input).contents?.();
 
   const { bodyText, frontData } = extractFrontMatter(input);
   if (frontData) {
     const scope = this;
-
-    const deferredGraph = new DeferredGraph(() => {
+    textFile = new String(input);
+    textFile.contents = () => {
       const graphClass = containsExpression(frontData)
         ? ExpressionGraph
         : ObjectGraph;
@@ -48,20 +46,19 @@ export default function loadTextWithFrontMatter(input, key) {
       // @ts-ignore
       graph[keySymbol] = key;
       return graph;
-    });
-
-    text = new StringWithGraph(input, deferredGraph);
-    text.frontData = frontData;
-    text.bodyText = bodyText;
-  } else if (attachedGraph) {
+    };
+    textFile.frontData = frontData;
+    textFile.bodyText = bodyText;
+  } else if (inputContents) {
     // Input has graph; attach that to the text.
-    text = new StringWithGraph(input, attachedGraph);
-    text.bodyText = text;
+    textFile = new String(input);
+    textFile.contents = () => inputContents;
+    textFile.bodyText = textFile;
   } else {
-    text = String(input);
+    textFile = String(input);
   }
 
-  return text;
+  return textFile;
 }
 
 // Return true if the given graph contains an expression
