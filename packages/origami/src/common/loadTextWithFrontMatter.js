@@ -1,6 +1,7 @@
 import { ObjectGraph } from "@graphorigami/core";
 import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
+import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
 import { extractFrontMatter } from "./serialize.js";
 
@@ -29,7 +30,7 @@ export default function loadTextWithFrontMatter(input, key) {
   let textFile;
 
   const inputContents =
-    typeof input === "object" && /** @type {any} */ (input).contents?.();
+    typeof input === "object" ? /** @type {any} */ (input).contents?.() : null;
 
   const { bodyText, frontData } = extractFrontMatter(input);
   if (frontData) {
@@ -49,6 +50,14 @@ export default function loadTextWithFrontMatter(input, key) {
     };
     textFile.frontData = frontData;
     textFile.bodyText = bodyText;
+
+    // TODO: Remove once we're no longer using toGraph.
+    textFile.toGraph = () => {
+      const contents = textFile.contents();
+      return contents instanceof Promise
+        ? new DeferredGraph(contents)
+        : contents;
+    };
   } else if (inputContents) {
     // Input has graph; attach that to the text.
     textFile = new String(input);

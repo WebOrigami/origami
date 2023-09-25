@@ -138,7 +138,8 @@ a: !ori ./b
     };
     /** @this {AsyncDictionary|null} */
     template.compiled = async function () {
-      assert.equal(await this?.get("a"), 2);
+      const a = await this?.get("a");
+      assert.equal(a, 2);
       return "";
     };
     await template.apply(input, graph);

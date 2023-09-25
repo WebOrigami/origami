@@ -82,7 +82,7 @@ This is the content.
     const graph = new ObjectGraph({ a: "Hello, a." });
     const output = await serialize.outputWithGraph(text, graph);
     assert.equal(String(output), text);
-    const outputGraph = /** @type {any} */ (output).toGraph();
+    const outputGraph = await /** @type {any} */ (output).contents();
     assert.deepEqual(await Graph.plain(outputGraph), {
       a: "Hello, a.",
     });
@@ -99,7 +99,7 @@ a: Hello, a.
 ---
 This is the content.`
     );
-    const outputGraph = /** @type {any} */ (output).toGraph();
+    const outputGraph = await /** @type {any} */ (output).contents();
     assert.deepEqual(await Graph.plain(outputGraph), {
       a: "Hello, a.",
     });

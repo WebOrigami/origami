@@ -7,7 +7,6 @@
 import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";
-import StringWithGraph from "../common/StringWithGraph.js";
 import expressionTag from "../language/expressionTag.js";
 import { castArrayLike } from "./utilities.js";
 
@@ -99,7 +98,10 @@ ${objText}`;
   } else {
     outputText = objText;
   }
-  return new StringWithGraph(outputText, graph);
+  /** @type {any} */
+  const output = new String(outputText);
+  output.contents = () => graph;
+  return output;
 }
 
 export function parseYaml(text) {

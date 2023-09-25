@@ -31,7 +31,7 @@ export default async function mdHtml(input, emitFrontMatter = false) {
   const html = marked(markdown);
   const result = await outputWithGraph(
     html,
-    input.toGraph?.(),
+    input.contents?.(),
     emitFrontMatter
   );
   return result;
