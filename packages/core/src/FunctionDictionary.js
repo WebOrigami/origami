@@ -28,7 +28,7 @@ export default class FunctionDictionary {
       key = undefined;
     }
 
-    return this.fn(key);
+    return this.fn.call(null, key);
   }
 
   /**
