@@ -275,11 +275,11 @@ export async function plain(variant) {
 /**
  * Returns a function that invokes the graph's `get` method.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @returns {Function}
  */
-export function toFunction(variant) {
-  const graph = from(variant);
+export function toFunction(graphable) {
+  const graph = from(graphable);
   return graph.get.bind(graph);
 }
 
