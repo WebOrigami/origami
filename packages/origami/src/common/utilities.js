@@ -1,5 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
+import { isGraphable } from "@graphorigami/core/src/Graph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 
 // If the given plain object has only integer keys, return it as an array.
@@ -143,16 +144,33 @@ export function stringLike(value) {
  * Convert the given object to a function.
  *
  * @typedef {import("../..").Invocable} Invocable
- * @param {Invocable} obj
+ * @param {Invocable|any} obj
  */
 export function toFunction(obj) {
-  const fn =
-    typeof obj === "function"
-      ? obj
-      : typeof (/** @type {any} */ (obj).toFunction) === "function"
-      ? /** @type {any} */ (obj).toFunction()
-      : Graph.toFunction(obj);
-  return fn;
+  if (typeof obj === "function") {
+    // Return a function as is.
+    return obj;
+  } else if (
+    typeof obj === "object" &&
+    typeof (/** @type {any} */ (obj)?.contents) === "function"
+  ) {
+    // Extract the contents of the object and convert that to a function.
+    let fn;
+    /** @this {any} */
+    return async function (...args) {
+      if (!fn) {
+        const contents = await /** @type {any} */ (obj).contents();
+        fn = toFunction(contents);
+      }
+      return fn.call(this, ...args);
+    };
+  } else if (isGraphable(obj)) {
+    // Return a function that invokes the graph's getter.
+    return Graph.toFunction(obj);
+  } else {
+    // Return a constant function.
+    return () => obj;
+  }
 }
 
 /**

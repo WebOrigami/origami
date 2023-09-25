@@ -3,7 +3,7 @@
  * tool to confirm our code is type safe.
  */
 
-import type { AsyncDictionary } from "@graphorigami/types";
+import { Graphable, HasContents } from "@graphorigami/core";
 
 /*
  * A class constructor is an object with a `new` method that returns an
@@ -34,4 +34,4 @@ export interface HasFunction {
   toFunction(): Function;
 }
 
-export type Invocable = AsyncDictionary | Function | HasFunction;
+export type Invocable = Function | HasFunction | HasContents | Graphable;

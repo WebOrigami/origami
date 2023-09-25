@@ -1,5 +1,10 @@
 import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
-import { getScope, keySymbol, transformObject } from "../common/utilities.js";
+import {
+  getScope,
+  keySymbol,
+  toFunction,
+  transformObject,
+} from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
 
@@ -10,21 +15,10 @@ import Scope from "./Scope.js";
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Invocable} Invocable
- * @param {Invocable} valueKeyFn
+ * @param {Invocable|any} valueKeyFn
  */
 export default function extendValueKeyFn(valueKeyFn, options = {}) {
-  // Convert from an Invocable to a real function.
-  /** @type {any} */
-  const fn =
-    typeof valueKeyFn === "function"
-      ? valueKeyFn
-      : valueKeyFn &&
-        typeof valueKeyFn === "object" &&
-        "toFunction" in valueKeyFn
-      ? valueKeyFn.toFunction()
-      : Graph.isGraphable(valueKeyFn)
-      ? Graph.toFunction(valueKeyFn)
-      : valueKeyFn;
+  const fn = toFunction(valueKeyFn);
 
   /**
    * @this {AsyncDictionary|null}
@@ -32,11 +26,6 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
    * @param {any} key
    */
   return async function extendedValueKeyFn(value, key) {
-    if (typeof fn !== "function") {
-      // Constant value, return as is.
-      return fn;
-    }
-
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";

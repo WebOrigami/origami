@@ -4,6 +4,32 @@ import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
 
 describe("utilities", () => {
+  test("toFunction returns a plain function as is", () => {
+    const fn = () => {};
+    assert.equal(utilities.toFunction(fn), fn);
+  });
+
+  test("toFunction returns a graph's getter as a function", async () => {
+    const graph = new ObjectGraph({
+      a: 1,
+    });
+    const fn = utilities.toFunction(graph);
+    assert.equal(await fn("a"), 1);
+  });
+
+  test("toFunction can use an object's `contents` as a function", async () => {
+    const obj = {
+      contents: () => () => "result",
+    };
+    const fn = utilities.toFunction(obj);
+    assert.equal(await fn(), "result");
+  });
+
+  test("toFunction returns a constant function for a constant", () => {
+    const fn = utilities.toFunction("constant");
+    assert.equal(fn(), "constant");
+  });
+
   test("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {
