@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import loadOrigami from "../../src/loaders/ori2.js";
 
-describe.only(".ori2 loader", () => {
+describe(".ori2 loader", () => {
   test("loads a string expression", async () => {
     const text = `"Hello"`;
     const origamiFile = await loadOrigami.call(null, text);
@@ -25,7 +25,7 @@ describe.only(".ori2 loader", () => {
     });
   });
 
-  test.only("loads a template literal", async () => {
+  test("loads a template literal", async () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
