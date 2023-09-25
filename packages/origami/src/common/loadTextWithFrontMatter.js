@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import DeferredGraph from "./DeferredGraph.js";
@@ -52,17 +52,15 @@ export default function loadTextWithFrontMatter(input, key) {
     textFile.bodyText = bodyText;
 
     // TODO: Remove once we're no longer using toGraph.
-    textFile.toGraph = () => {
-      const contents = textFile.contents();
-      return contents instanceof Promise
-        ? new DeferredGraph(contents)
-        : contents;
-    };
+    textFile.toGraph = () => new DeferredGraph(() => textFile.contents());
   } else if (inputContents) {
     // Input has graph; attach that to the text.
     textFile = new String(input);
     textFile.contents = () => inputContents;
     textFile.bodyText = textFile;
+
+    // TODO: Remove
+    textFile.toGraph = () => Graph.from(inputContents);
   } else {
     textFile = String(input);
   }
