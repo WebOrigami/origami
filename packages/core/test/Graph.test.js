@@ -101,6 +101,14 @@ describe("Graph", () => {
     });
   });
 
+  test("from() turns primitive value into graph with a default value", async () => {
+    const graph = Graph.from("Hello");
+    assert.deepEqual(await Graph.plain(graph), {
+      // @ts-ignore
+      [Graph.defaultValueKey]: "Hello",
+    });
+  });
+
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(Graph.keysFromPath("a/b/c"), ["a", "b", "c"]);
     assert.deepEqual(Graph.keysFromPath("foo/"), [

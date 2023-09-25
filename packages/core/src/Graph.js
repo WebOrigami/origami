@@ -136,6 +136,7 @@ export function isGraphable(obj) {
     obj instanceof Array ||
     obj instanceof Set ||
     obj?.toGraph instanceof Function ||
+    obj?.contents instanceof Function ||
     Dictionary.isPlainObject(obj)
   );
 }
