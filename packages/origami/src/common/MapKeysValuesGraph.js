@@ -1,5 +1,6 @@
 import { Dictionary, Graph } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
+import { getScope } from "../common/utilities.js";
 
 /**
  * Given a graph and a function, return a new graph that applies the function to
@@ -45,8 +46,9 @@ export default class MapKeysValuesGraph {
       const applyMap =
         this.mapFn && (await this.mapApplies(innerValue, outerKey, innerKey));
       // Apply map if desired, otherwise use inner value as is.
+      const scope = getScope(this);
       outerValue = applyMap
-        ? await this.mapFn?.call(this, innerValue, outerKey, innerKey)
+        ? await this.mapFn?.call(scope, innerValue, outerKey, innerKey)
         : innerValue;
     }
 
