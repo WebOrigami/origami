@@ -2,7 +2,7 @@ import { Graph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import { parseYaml } from "../common/serialize.js";
-import { getScope, isPlainObject } from "../common/utilities.js";
+import { isPlainObject } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 
 // See notes at serialize.js
@@ -30,15 +30,12 @@ export default function loadYaml(input, key) {
     return input;
   }
 
-  const scope = getScope(this);
-
   /** @type {any} */
   const yamlFile = new String(input);
   yamlFile.contents = async () => {
     const data = parseYaml(yamlFile);
     if (isPlainObject(data) || data instanceof Array) {
       const graph = new (FileTreeTransform(ExpressionGraph))(data);
-      graph.parent = scope;
       return graph;
     } else {
       return data;

@@ -16,6 +16,9 @@ export default class DeferredGraph2 {
   constructor(loader) {
     this.loader = loader;
     this.graphPromise = null;
+    /** @type {any} */
+    this._graph = null;
+    this._parent = null;
   }
 
   async get(key) {
@@ -29,13 +32,23 @@ export default class DeferredGraph2 {
   }
 
   async graph() {
+    if (this._graph) {
+      return this._graph;
+    }
+
     // Use a promise to ensure that the graphable is only converted to a graph
     // once.
     if (!this.graphPromise) {
-      this.graphPromise = this.graphable().then((graphable) =>
-        Graph.from(graphable)
-      );
+      this.graphPromise = this.graphable().then((graphable) => {
+        this._graph = Graph.from(graphable);
+        if (this._parent) {
+          this._graph.parent = this._parent;
+          this._parent = null;
+        }
+        return this._graph;
+      });
     }
+
     return this.graphPromise;
   }
 
@@ -44,5 +57,16 @@ export default class DeferredGraph2 {
       this.loader = this.loader();
     }
     return this.loader;
+  }
+
+  get parent() {
+    return this._graph?.parent ?? this._parent;
+  }
+  set parent(parent) {
+    if (this._graph) {
+      this._graph.parent = parent;
+    } else {
+      this._parent = parent;
+    }
   }
 }
