@@ -144,7 +144,8 @@ export function stringLike(value) {
  * Convert the given object to a function.
  *
  * @typedef {import("../..").Invocable} Invocable
- * @param {Invocable|any} obj
+ * @param {any} obj
+ * @returns {Function}
  */
 export function toFunction(obj) {
   if (typeof obj === "function") {
