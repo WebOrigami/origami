@@ -1,9 +1,10 @@
+import { Graph } from "@graphorigami/core";
 import highlight from "highlight.js";
 import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import { outputWithGraph } from "../common/serialize.js";
+import MergeGraph from "../common/MergeGraph.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -22,19 +23,28 @@ marked.use(
   }
 );
 
-export default async function mdHtml(input, emitFrontMatter = false) {
+export default async function mdHtml(input) {
   if (!input) {
     return undefined;
   }
 
-  const markdown = input.bodyText ?? String(input);
+  const markdown = String(input);
   const html = marked(markdown);
-  const result = await outputWithGraph(
-    html,
-    input.contents?.(),
-    emitFrontMatter
-  );
-  return result;
+  if (!input.contents) {
+    return html;
+  }
+
+  /** @type {any} */
+  const htmlFile = new String(html);
+  htmlFile.contents = async () =>
+    new MergeGraph(
+      {
+        // @ts-ignore
+        [Graph.defaultValueKey]: html,
+      },
+      await input.contents()
+    );
+  return htmlFile;
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;

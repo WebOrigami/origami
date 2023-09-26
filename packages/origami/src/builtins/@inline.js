@@ -1,4 +1,3 @@
-import { outputWithGraph } from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/ori.js";
 
@@ -11,21 +10,11 @@ import loadOrigamiTemplate from "../loaders/ori.js";
  *
  * @this {AsyncDictionary|null}
  * @param {StringLike} input
- * @param {boolean} [emitFrontMatter]
  */
-export default async function inline(input, emitFrontMatter) {
+export default async function inline(input) {
   assertScopeIsDefined(this);
-  const inputText = String(input);
-  const template = await loadOrigamiTemplate.call(this, inputText);
-  let templateResult = await template.apply(input, this);
-  let result = emitFrontMatter
-    ? await outputWithGraph(
-        templateResult,
-        await templateResult.toGraph(),
-        true
-      )
-    : templateResult;
-  return result;
+  const template = await loadOrigamiTemplate.call(this, input);
+  return template.apply(input, this);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

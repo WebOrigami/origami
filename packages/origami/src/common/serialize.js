@@ -83,24 +83,19 @@ export function fromYaml(obj) {
   return new ObjectGraph(parsed);
 }
 
-export async function outputWithGraph(obj, graph, emitFrontMatter = false) {
-  const objText = String(obj);
-  if (!graph) {
-    return objText;
+export async function renderFrontMatter(obj) {
+  const text = String(obj);
+
+  const contents = await obj.contents?.();
+  if (!contents) {
+    return text;
   }
-  let outputText;
-  if (emitFrontMatter) {
-    const frontData = await toYaml(graph);
-    outputText = `---
-${frontData.trimEnd()}
----
-${objText}`;
-  } else {
-    outputText = objText;
-  }
+
+  const frontMatter = (await toYaml(contents)).trimEnd();
   /** @type {any} */
-  const output = new String(outputText);
-  output.contents = () => graph;
+  const output = new String(`---\n${frontMatter}\n---\n${text}`);
+  output.contents = obj.contents;
+
   return output;
 }
 

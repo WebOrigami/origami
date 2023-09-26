@@ -10,61 +10,52 @@ import { extractFrontMatter } from "./serialize.js";
  *
  * If the text starts with `---`, the loader attempts to parse the front matter.
  * If successful, the document will be returned as a String with an attached
- * graph with the front matter and document content as data.
+ * graph with the front matter and document text as `contents`.
  *
- * If the input is not a string or Buffer, it is returned as is.
+ * If the input is not a string or Buffer, or already has `contents`, it is
+ * returned as is.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").StringLike} StringLike
  *
- * @param {StringLike} input
+ * @param {any} input
  * @param {any} [key]
  * @this {AsyncDictionary|null}
  */
 export default function loadTextWithFrontMatter(input, key) {
-  if (!stringLike(input)) {
+  if (!stringLike(input) || input.contents) {
+    // Has already been processed; return as is.
     return input;
   }
 
-  /** @type {any} */
-  let textFile;
-
-  const inputContents =
-    typeof input === "object" ? /** @type {any} */ (input).contents?.() : null;
-
   const { bodyText, frontData } = extractFrontMatter(input);
-  if (frontData) {
-    const scope = this;
-    textFile = new String(input);
-    textFile.contents = () => {
-      const graphClass = containsExpression(frontData)
-        ? ExpressionGraph
-        : ObjectGraph;
-      const graph = new (FileTreeTransform(graphClass))(frontData);
-      if (scope) {
-        graph.parent = scope;
-      }
-      // @ts-ignore
-      graph[keySymbol] = key;
-      return graph;
-    };
-    textFile.frontData = frontData;
-    textFile.bodyText = bodyText;
-
-    // TODO: Remove once we're no longer using toGraph.
-    textFile.toGraph = () => new DeferredGraph(() => textFile.contents());
-  } else if (inputContents) {
-    // Input has graph; attach that to the text.
-    textFile = new String(input);
-    textFile.contents = () => inputContents;
-    textFile.bodyText = textFile;
-
-    // TODO: Remove
-    textFile.toGraph = () => Graph.from(inputContents);
-  } else {
-    textFile = String(input);
+  if (!frontData) {
+    // No front matter; return plain string.
+    return String(input);
   }
 
+  // Return plain text as default value of contents graph.
+  // @ts-ignore
+  frontData[Graph.defaultValueKey] = bodyText;
+
+  const scope = this;
+  /** @type {any} */
+  const textFile = new String(bodyText);
+  textFile.contents = () => {
+    const graphClass = containsExpression(frontData)
+      ? ExpressionGraph
+      : ObjectGraph;
+    const graph = new (FileTreeTransform(graphClass))(frontData);
+    if (scope) {
+      graph.parent = scope;
+    }
+    // @ts-ignore
+    graph[keySymbol] = key;
+    return graph;
+  };
+
+  // TODO: Remove once we're no longer using toGraph.
+  textFile.toGraph = () => new DeferredGraph(() => textFile.contents());
   return textFile;
 }
 

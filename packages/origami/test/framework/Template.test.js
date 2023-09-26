@@ -10,31 +10,6 @@ import { createExpressionFunction } from "../../src/language/expressionFunction.
 import * as ops from "../../src/language/ops.js";
 
 describe("Template", () => {
-  test("accepts template that has no front matter", () => {
-    const container = {};
-    const template = new Template("text", container);
-    assert.equal(template.graph, null);
-    assert.equal(template.bodyText, "text");
-    assert.equal(template.scope, container);
-    assert.equal(template.text, "text");
-  });
-
-  test("accepts template with front matter graph", async () => {
-    const scope = {};
-    const text = `---
-a: 1
----
-text`;
-    const document = loadTextWithFrontMatter.call(null, text);
-    const template = new Template(document, scope);
-    assert.deepEqual(await Graph.plain(template.graph), {
-      a: 1,
-    });
-    assert.equal(template.bodyText, "text");
-    assert.equal(template.scope, scope);
-    assert.equal(template.text, text);
-  });
-
   test("extends scope with input data", async () => {
     const template = new Template("");
     const scope = new ObjectGraph({});
@@ -48,15 +23,14 @@ text`;
   });
 
   test("extends container scope with template and input data", async () => {
-    const template = new Template(
-      loadTextWithFrontMatter.call(
-        null,
-        `---
+    const templateFile = loadTextWithFrontMatter.call(
+      null,
+      `---
 b: 2
 ---
 template`
-      )
     );
+    const template = new Template(templateFile);
     const scope = new ObjectGraph({
       a: 1,
     });
@@ -158,8 +132,8 @@ template`
     const graph = new ObjectGraph({});
     const input = { b: 2 };
     const result = await template.apply(input, graph);
-    const resultGraph = result.toGraph();
-    assert.deepEqual(await Graph.plain(resultGraph), {
+    const contents = await result.contents();
+    assert.deepEqual(await Graph.plain(contents), {
       b: 2,
     });
   });

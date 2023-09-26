@@ -71,27 +71,14 @@ This is the content.
     });
   });
 
-  test("outputFrontMatter writes output as text if there's no graph", async () => {
-    const text = "This is the content.";
-    const output = await serialize.outputWithGraph(text);
-    assert.equal(output, text);
-  });
-
-  test("outputFrontMatter adds graph to output", async () => {
-    const text = "This is the content.";
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const output = await serialize.outputWithGraph(text, graph);
-    assert.equal(String(output), text);
-    const outputGraph = await /** @type {any} */ (output).contents();
-    assert.deepEqual(await Graph.plain(outputGraph), {
+  test("renderFrontMatter renders object contents as YAML", async () => {
+    /** @type {any} */
+    const obj = new String("This is the content.");
+    obj.contents = () => ({
       a: "Hello, a.",
     });
-  });
-
-  test("outputFrontMatter can include front matter", async () => {
-    const text = "This is the content.";
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const output = await serialize.outputWithGraph(text, graph, true);
+    /** @type {any} */
+    const output = await serialize.renderFrontMatter(obj);
     assert.equal(
       output,
       `---
@@ -99,10 +86,13 @@ a: Hello, a.
 ---
 This is the content.`
     );
-    const outputGraph = await /** @type {any} */ (output).contents();
-    assert.deepEqual(await Graph.plain(outputGraph), {
-      a: "Hello, a.",
-    });
+    assert.equal(output.contents, obj.contents);
+  });
+
+  test("renderFrontMatter writes output as text if there's no graph", async () => {
+    const text = "This is the content.";
+    const output = await serialize.renderFrontMatter(text);
+    assert.equal(output, text);
   });
 
   test("toJson() renders a graph as JSON", async () => {

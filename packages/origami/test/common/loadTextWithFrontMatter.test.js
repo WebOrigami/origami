@@ -8,24 +8,23 @@ describe("loadTextWithFrontMatter", () => {
     assert.equal(result, "text");
   });
 
-  test("attaches YAML/JSON front matter as a graph", async () => {
+  test("attaches YAML/JSON front matter as contents", async () => {
     const text = `---
 a: 1
 ---
 text`;
     const textFile = await loadTextWithFrontMatter.call(null, text);
-    assert.equal(String(textFile), text);
+    assert.equal(String(textFile), "text");
     const graph = /** @type {any} */ (textFile).contents();
     assert.deepEqual(await Graph.plain(graph), { a: 1 });
+    assert.deepEqual(await graph.get(Graph.defaultValueKey), "text");
   });
 
-  test("passes along an attached graph if no front matter", async () => {
+  test("passes along input if it already has contents", async () => {
     /** @type {any} */
     const input = new String("text");
     input.contents = () => new ObjectGraph({ a: 1 });
     const textFile = await loadTextWithFrontMatter.call(null, input);
-    assert.equal(String(textFile), "text");
-    const graph = /** @type {any} */ (textFile).contents();
-    assert.deepEqual(await Graph.plain(graph), { a: 1 });
+    assert.equal(textFile, input);
   });
 });

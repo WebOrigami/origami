@@ -1,25 +1,17 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { FunctionGraph, Graph, ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
-import StringWithGraph from "../common/StringWithGraph.js";
-import { extractFrontMatter } from "../common/serialize.js";
+import MergeGraph from "../common/MergeGraph.js";
 import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
 export default class Template {
-  constructor(document, scope) {
-    this.compiled = null;
-    const text = String(document);
-    this.bodyText = document.bodyText ?? text;
-    if (document.toGraph) {
-      this.graph = document.toGraph();
-    } else {
-      const { frontData } = extractFrontMatter(text);
-      this.graph = frontData;
-    }
+  constructor(templateFile, scope) {
+    this.text = String(templateFile);
+    this.contents = templateFile.contents;
     this.scope = scope;
-    this.text = text;
+    this.compiled = null;
   }
 
   /**
@@ -65,8 +57,10 @@ export default class Template {
     const inputGraph = processedInput.inputGraph
       ? graphInContext(processedInput.inputGraph, baseScope)
       : null;
-    const templateGraph = this.graph
-      ? graphInContext(this.graph, baseScope)
+
+    const templateContents = await this.contents?.();
+    const templateGraph = templateContents
+      ? graphInContext(templateContents, baseScope)
       : null;
 
     // Ambient properties let the template reference specific input/template data.
@@ -75,7 +69,7 @@ export default class Template {
         graph: templateGraph,
         recurse: this.toFunction(),
         scope: this.scope,
-        text: this.bodyText,
+        text: this.text,
       },
       "@input": processedInput.input,
       "@text": processedInput.text,
@@ -102,11 +96,6 @@ export default class Template {
     return { inputGraph, templateGraph, extendedScope };
   }
 
-  // REVIEW: Needs refactor, share with .js loader, .yaml loader
-  toGraph() {
-    return new FunctionGraph(this.toFunction());
-  }
-
   toFunction() {
     const templateFunction = this.apply.bind(this);
     const templateScope = this.scope;
@@ -129,11 +118,18 @@ async function createResult(text, inputGraph, templateGraph) {
     return text;
   }
 
-  const dataGraph = inputGraph ?? templateGraph;
+  const dataGraph = new MergeGraph(
+    {
+      // @ts-ignore
+      [Graph.defaultValueKey]: text,
+    },
+    inputGraph ?? templateGraph
+  );
   const scope = getScope(dataGraph);
-  const attachedGraph = await debug.call(scope, dataGraph);
 
-  const result = new StringWithGraph(text, attachedGraph);
+  /** @type {any} */
+  const result = new String(text);
+  result.contents = async () => await debug.call(scope, dataGraph);
   return result;
 }
 

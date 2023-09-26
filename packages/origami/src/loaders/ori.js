@@ -6,14 +6,16 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 /**
  * Load a file as an Origami template.
  *
- * @param {Buffer|string} buffer
+ * @typedef {import("../..").StringLike} StringLike
+ *
+ * @param {StringLike} buffer
  * @param {any} [key]
- * @this {AsyncDictionary|null}
+ * @this {AsyncDictionary|null|void}
  */
-export default function loadOri(buffer, key) {
+export default function loadOrigamiTemplate(buffer, key) {
   const scope = this ? getScope(this) : null;
-  const textWithGraph = loadTextWithFrontMatter.call(scope, buffer, key);
-  const template = new OrigamiTemplate(textWithGraph, scope);
+  const templateFile = loadTextWithFrontMatter.call(scope, buffer, key);
+  const template = new OrigamiTemplate(templateFile, scope);
   template[keySymbol] = key;
   return template;
 }

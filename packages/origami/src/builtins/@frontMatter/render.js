@@ -1,8 +1,8 @@
-import { outputWithGraph } from "../../common/serialize.js";
-import get from "./get.js";
+import { renderFrontMatter } from "../../common/serialize.js";
 
 export default async function render(value, data) {
-  const graph = data ?? get(value);
-  const text = await outputWithGraph(value, graph, true);
-  return text;
+  /** @type {any} */
+  const textFile = new String(value);
+  textFile.contents = () => data;
+  return renderFrontMatter(textFile);
 }

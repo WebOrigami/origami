@@ -1,7 +1,6 @@
 /**
- * Load a .js file as a String with a toFunction() method that returns a
- * function that invokes the module's default export, and a toGraph() method
- * that returns a graph for the module's default export.
+ * Load a .js file as a String with a contents() method that returns the
+ * module's default export.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").HasContents} HasContents

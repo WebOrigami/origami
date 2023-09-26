@@ -1,4 +1,4 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
@@ -18,25 +18,8 @@ describe("inline", () => {
 name: Bob
 ---
 Hello, {{ name }}!`;
-    const textWithGraph = loadTextWithFrontMatter.call(null, text);
-    const inlined = await inline.call(null, textWithGraph);
-    assert.equal(inlined, `Hello, Bob!`);
-  });
-
-  test("can preserve front matter", async () => {
-    const text = `---
-name: Bob
----
-Hello, {{ name }}!`;
-    const textWithGraph = loadTextWithFrontMatter.call(null, text);
-    const inlined = await inline.call(null, textWithGraph, true);
-    assert.equal(
-      String(inlined),
-      `---
-name: Bob
----
-Hello, Bob!`
-    );
-    assert.deepEqual(await Graph.plain(inlined), { name: "Bob" });
+    const textFile = loadTextWithFrontMatter.call(null, text);
+    const inlined = await inline.call(null, textFile);
+    assert.equal(String(inlined), `Hello, Bob!`);
   });
 });
