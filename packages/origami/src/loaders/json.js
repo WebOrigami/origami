@@ -1,5 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
+import TextWithContents from "../common/TextWithContents.js";
 import { isPlainObject, keySymbol } from "../common/utilities.js";
 
 /**
@@ -17,9 +18,7 @@ export default function loadJson(input, key) {
     return input;
   }
 
-  /** @type {any} */
-  const jsonFile = new String(input);
-  jsonFile.contents = async () => {
+  return new TextWithContents(input, async () => {
     const data = JSON.parse(String(input));
     const graph = Graph.from(data);
     // Add diagnostic information.
@@ -27,7 +26,5 @@ export default function loadJson(input, key) {
       graph[keySymbol] = key;
     }
     return graph;
-  };
-
-  return jsonFile;
+  });
 }

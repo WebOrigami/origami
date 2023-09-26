@@ -1,3 +1,5 @@
+import TextWithContents from "../common/TextWithContents.js";
+
 /**
  * Load a .js file as a String with a contents() method that returns the
  * module's default export.
@@ -12,17 +14,11 @@
  */
 export default function loadJs(buffer, key) {
   const container = this;
-
-  /** @type {any} */
-  const moduleFile = new String(buffer);
-
   let contents;
-  moduleFile.contents = async function importModule() {
+  return new TextWithContents(buffer, async () => {
     if (!contents && container && "import" in container) {
       contents = await /** @type {any} */ (container).import?.(key);
     }
     return contents;
-  };
-
-  return moduleFile;
+  });
 }

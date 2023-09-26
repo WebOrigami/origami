@@ -11,11 +11,11 @@ import {
 /**
  * A graph that is loaded lazily.
  *
- * This is useful in situations like a toGraph() function, which is expected to
- * return a graph synchronously. If constructing the graph requires an
- * asynchronous operation, this class can be used as a wrapper that can be
- * returned immediately. When the graph's keys or get functions are called, the
- * graph will be loaded as necessary.
+ * This is useful in situations where a graph must be returned synchronously but
+ * constructing the graph requires an asynchronous operation. In such cases,
+ * this class can be used as a wrapper that can be returned immediately. When
+ * the graph's keys or get functions are called, the graph will be loaded as
+ * necessary.
  */
 export default class DeferredGraph {
   constructor(loadFn) {

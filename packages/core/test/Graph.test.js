@@ -59,20 +59,6 @@ describe("Graph", () => {
     assert.equal(graph2, graph1);
   });
 
-  test("from() uses an object's toGraph() method if defined", async () => {
-    const obj = {
-      toGraph() {
-        return {
-          a: "Hello, a.",
-        };
-      },
-    };
-    const graph = Graph.from(obj);
-    assert.deepEqual(await Graph.plain(graph), {
-      a: "Hello, a.",
-    });
-  });
-
   test("from() uses an object's contents() method if defined", async () => {
     const obj = {
       contents() {

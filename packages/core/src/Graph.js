@@ -83,9 +83,6 @@ export function from(obj) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
     return obj;
-  } else if (obj && typeof obj === "object" && "toGraph" in obj) {
-    // Variant exposes toGraph() method; invoke it.
-    return obj.toGraph();
   } else if (obj instanceof Function) {
     return new FunctionGraph(obj);
   } else if (obj instanceof Map) {
@@ -117,7 +114,7 @@ export function from(obj) {
  *
  * - An object that implements the AsyncDictionary interface (including
  *   AsyncGraph instances)
- * - An object that implements the `toGraph()` method
+ * - An object that implements the `contents()` method
  * - A function
  * - An `Array` instance
  * - A `Map` instance
@@ -135,7 +132,6 @@ export function isGraphable(obj) {
     obj instanceof Function ||
     obj instanceof Array ||
     obj instanceof Set ||
-    obj?.toGraph instanceof Function ||
     obj?.contents instanceof Function ||
     Dictionary.isPlainObject(obj)
   );

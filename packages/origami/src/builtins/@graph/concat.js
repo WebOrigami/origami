@@ -35,9 +35,8 @@ async function getText(value, scope) {
     value = await value.call(scope);
   }
 
-  // Convert to text, preferring .toString over .toGraph, but avoid dumb
-  // Object.toString. Exception: if the result is an array, we'll concatenate
-  // the values.
+  // Convert to text, preferring .toString but avoiding dumb Object.toString.
+  // Exception: if the result is an array, we'll concatenate the values.
   let text;
   if (!value) {
     // Treat falsy values as the empty string.

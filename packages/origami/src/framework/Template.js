@@ -3,6 +3,7 @@ import { Graph, ObjectGraph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import debug from "../builtins/@debug.js";
 import MergeGraph from "../common/MergeGraph.js";
+import TextWithContents from "../common/TextWithContents.js";
 import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
 import InheritScopeTransform from "./InheritScopeTransform.js";
 
@@ -127,10 +128,7 @@ async function createResult(text, inputGraph, templateGraph) {
   );
   const scope = getScope(dataGraph);
 
-  /** @type {any} */
-  const result = new String(text);
-  result.contents = async () => await debug.call(scope, dataGraph);
-  return result;
+  return new TextWithContents(text, () => debug.call(scope, dataGraph));
 }
 
 async function processInput(input, baseScope) {

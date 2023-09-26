@@ -1,4 +1,4 @@
-import { Dictionary } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
 
@@ -25,17 +25,23 @@ export default function InheritScopeTransform(Base) {
           // This graph becomes the parent for all subgraphs.
           value.parent = this;
         } else if (
-          typeof value.toGraph === "function" &&
+          typeof value.contents === "function" &&
           value.parent == null
         ) {
           // This graph becomes the parent for an attached graph.
           const parent = this;
           value.parent = parent;
-          const original = value.toGraph.bind(value);
-          value.toGraph = function () {
-            const graph = original();
-            graph.parent = parent;
-            return graph;
+          const original = value.contents.bind(value);
+          value.contents = async function () {
+            const contents = await original();
+            if (Graph.isGraphable(contents)) {
+              /** @type {any} */
+              const graph = Graph.from(contents);
+              graph.parent = parent;
+              return graph;
+            } else {
+              return contents;
+            }
           };
         }
         // Add diagnostic information to any (non-plain) object result.

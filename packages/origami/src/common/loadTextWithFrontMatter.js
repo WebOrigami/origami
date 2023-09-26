@@ -1,8 +1,8 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
-import DeferredGraph from "./DeferredGraph.js";
 import ExpressionGraph from "./ExpressionGraph.js";
+import TextWithContents from "./TextWithContents.js";
 import { extractFrontMatter } from "./serialize.js";
 
 /**
@@ -40,8 +40,7 @@ export default function loadTextWithFrontMatter(input, key) {
 
   const scope = this;
   /** @type {any} */
-  const textFile = new String(bodyText);
-  textFile.contents = () => {
+  return new TextWithContents(bodyText, () => {
     const graphClass = containsExpression(frontData)
       ? ExpressionGraph
       : ObjectGraph;
@@ -52,11 +51,7 @@ export default function loadTextWithFrontMatter(input, key) {
     // @ts-ignore
     graph[keySymbol] = key;
     return graph;
-  };
-
-  // TODO: Remove once we're no longer using toGraph.
-  textFile.toGraph = () => new DeferredGraph(() => textFile.contents());
-  return textFile;
+  });
 }
 
 // Return true if the given graph contains an expression

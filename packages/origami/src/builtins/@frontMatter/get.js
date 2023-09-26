@@ -1,3 +1,3 @@
-export default function get(obj) {
-  return obj?.toFrontMatter?.() ?? obj?.toGraph?.() ?? undefined;
+export default async function get(obj) {
+  return await obj?.contents?.();
 }

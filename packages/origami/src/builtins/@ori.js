@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
-import StringWithGraph from "../common/StringWithGraph.js";
 import { getRealmObjectPrototype } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
@@ -46,7 +45,7 @@ async function formatResult(scope, result) {
     return result;
   }
 
-  /** @type {string|Buffer|StringWithGraph|undefined} */
+  /** @type {string|Buffer|String|undefined} */
   let text;
 
   // Does the result have a meaningful toString() method (and not the dumb
@@ -71,12 +70,11 @@ async function formatResult(scope, result) {
 
   // If the result is a graph, attach the graph to the text output.
   if (Graph.isGraphable(result)) {
-    const graph = Graph.from(result);
-    if (text instanceof Buffer) {
-      /** @type {any} */ (text).toGraph = () => graph;
-    } else {
-      text = new StringWithGraph(text, graph);
+    if (typeof text === "string") {
+      // @ts-ignore
+      text = new String(text);
     }
+    /** @type {any} */ (text).contents = () => Graph.from(result);
   }
 
   return text;

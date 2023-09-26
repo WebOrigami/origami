@@ -80,12 +80,17 @@ function DebugTransform(Base) {
         }
       }
 
-      if (value?.toGraph) {
-        // If the value isn't a graph, but has a graph attached via a `toGraph`
-        // method, wrap the toGraph method to provide debug support for it.
-        const original = value.toGraph.bind(value);
-        value.toGraph = () => {
-          let graph = original();
+      if (value?.contents) {
+        // If the value isn't a graph, but has a graph attached via a `contents`
+        // method, wrap the contents method to provide debug support for it.
+        const original = value.contents.bind(value);
+        value.contents = async () => {
+          let contents = await original();
+          if (!Graph.isAsyncDictionary(contents)) {
+            return contents;
+          }
+          /** @type {any} */
+          let graph = Graph.from(contents);
           if (!isTransformApplied(ExplorableSiteTransform, graph)) {
             graph = transformObject(ExplorableSiteTransform, graph);
           }

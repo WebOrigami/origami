@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import TextWithContents from "../common/TextWithContents.js";
 import { getScope, keySymbol } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -11,14 +12,10 @@ import * as compile from "../language/compile.js";
  */
 export default function loadGraph(buffer, key) {
   const scope = getScope(this);
-
-  /** @type {any} */
-  const graphFile = new String(buffer);
-  graphFile.contents = async () => {
-    const fn = compile.graphDocument(graphFile);
+  return new TextWithContents(buffer, async () => {
+    const fn = compile.graphDocument(String(buffer));
     const graph = await fn.call(scope);
     graph[keySymbol] = key;
     return graph;
-  };
-  return graphFile;
+  });
 }

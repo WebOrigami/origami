@@ -1,5 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import Scope from "../common/Scope.js";
+import TextWithContents from "../common/TextWithContents.js";
 import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -11,14 +12,10 @@ import * as compile from "../language/compile.js";
  * @this {AsyncDictionary|null}
  */
 export default function loadOrigamiExpression(buffer, key) {
-  const container = this;
-  const scope = getScope(container);
-
-  /** @type {any} */
-  const text = new String(buffer);
-  text.contents = async () => {
+  const scope = getScope(this);
+  return new TextWithContents(buffer, async () => {
     // Compile the file's text as an Origami expression and evaluate it.
-    const fn = compile.expression(text);
+    const fn = compile.expression(String(buffer));
     let value = await fn.call(scope);
 
     // If the value is a function, wrap it such that it will use the file's
@@ -39,7 +36,5 @@ export default function loadOrigamiExpression(buffer, key) {
     }
 
     return value;
-  };
-
-  return text;
+  });
 }
