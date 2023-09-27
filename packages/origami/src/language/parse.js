@@ -599,7 +599,7 @@ export function substitution(tokens) {
 }
 
 // Parse the text and substitutions in a template.
-export function templateDocument(tokens) {
+export function templateContents(tokens) {
   // We use the separated list parser: the plain text strings are the list
   // items, and the substitutions are the separators.
   const parsed = separatedList(string, substitution, true)(tokens);
@@ -622,13 +622,25 @@ export function templateDocument(tokens) {
   };
 }
 
+export function templateDocument(tokens) {
+  const parsed = templateContents(tokens);
+  if (!parsed) {
+    return null;
+  }
+  const value = [ops.lambda, parsed.value];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
 // Parse a backtick-quoted template literal.
 export function templateLiteral(tokens) {
   // The lexer generates an error for an unterminated template literal, so we
   // don't need to check for that here.
   const parsed = sequence(
     matchTokenType(tokenType.BACKTICK),
-    templateDocument,
+    templateContents,
     matchTokenType(tokenType.BACKTICK)
   )(tokens);
   if (!parsed) {

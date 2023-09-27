@@ -57,7 +57,9 @@ export default async function execute(code) {
 
   const isFunction = fn instanceof Function;
   if (!isFunction && args.length === 0) {
-    args.push(undefined);
+    // The thing in the function position is a graph, but there are no args.
+    // Force traversal of the graph by adding the default value key.
+    args.push(Graph.defaultValueKey);
   }
 
   // Execute the function or traverse the graph.

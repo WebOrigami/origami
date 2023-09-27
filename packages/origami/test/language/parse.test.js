@@ -26,7 +26,7 @@ import {
   slashPath,
   string,
   substitution,
-  templateDocument,
+  templateContents,
   templateLiteral,
 } from "../../src/language/parse.js";
 
@@ -996,7 +996,7 @@ describe("parse", () => {
   describe("templateDocument", () => {
     test("hello{{foo}}world", () => {
       assertParse(
-        templateDocument([
+        templateContents([
           { type: tokenType.STRING, lexeme: "hello" },
           { type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" },
           { type: tokenType.REFERENCE, lexeme: "foo" },
