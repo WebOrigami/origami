@@ -2,10 +2,8 @@ import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/builtins/@mdHtml.js";
-import {
-  default as loadTextWithFrontMatter,
-  default as md,
-} from "../../src/loaders/md.js";
+import TextWithContents from "../../src/common/TextWithContents.js";
+import { default as md } from "../../src/loaders/md.js";
 
 describe("mdHtml", () => {
   test("transforms markdown to HTML", async () => {
@@ -15,13 +13,9 @@ describe("mdHtml", () => {
   });
 
   test("HTML contents include the source contents and the HTML", async () => {
-    const textFile = loadTextWithFrontMatter.call(
-      null,
-      `---
-title: Hello
----
-# Hello, world.`
-    );
+    const textFile = new TextWithContents(`# Hello, world.`, {
+      title: "Hello",
+    });
     const markdownFile = md.call(null, textFile);
     const htmlFile = await mdHtml.call(null, markdownFile);
     const html = String(htmlFile);

@@ -21,7 +21,11 @@ export default class Template {
    * @param {any} [input]
    * @param {AsyncDictionary|null} [baseScope]
    */
-  async apply(input, baseScope = builtins) {
+  async apply(input, baseScope) {
+    if (!baseScope) {
+      baseScope = builtins;
+    }
+
     // Compile the template if we haven't already done so.
     if (!this.compiled) {
       this.compiled = await this.compile();
@@ -68,7 +72,7 @@ export default class Template {
     const ambients = {
       "@template": {
         graph: templateGraph,
-        recurse: this.toFunction(),
+        // recurse: this.toFunction(),
         scope: this.scope,
         text: this.text,
       },
@@ -95,22 +99,6 @@ export default class Template {
       inputGraph?.scope ?? templateGraph?.scope ?? ambientsGraph.scope;
 
     return { inputGraph, templateGraph, extendedScope };
-  }
-
-  toFunction() {
-    const templateFunction = this.apply.bind(this);
-    const templateScope = this.scope;
-    /** @this {AsyncDictionary|null} */
-    return async function (data) {
-      const scope = this ?? templateScope;
-      return data !== undefined
-        ? await templateFunction(data, scope)
-        : await templateFunction(undefined, scope);
-    };
-  }
-
-  toString() {
-    return this.text;
   }
 }
 

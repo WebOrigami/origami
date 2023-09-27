@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import ExpressionGraph from "../../src/common/ExpressionGraph.js";
+import TextWithContents from "../../src/common/TextWithContents.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 import Template from "../../src/framework/Template.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
@@ -23,13 +24,9 @@ describe("Template", () => {
   });
 
   test("extends container scope with template and input data", async () => {
-    const templateFile = loadTextWithFrontMatter.call(
-      null,
-      `---
-b: 2
----
-template`
-    );
+    const templateFile = new TextWithContents("template", {
+      b: 2,
+    });
     const template = new Template(templateFile);
     const scope = new ObjectGraph({
       a: 1,
@@ -47,10 +44,7 @@ template`
   });
 
   test("defines ambient properties for input and template data", async () => {
-    const text = `---
-a: 1
----
-template`;
+    const text = new TextWithContents("template", { a: 1 });
     const templateScope = {};
     const templateDocument = loadTextWithFrontMatter.call(null, text);
     const template = new Template(templateDocument, templateScope);

@@ -15,7 +15,7 @@ a: 1
 ---
 text`;
     const textFile = await loadTextWithFrontMatter.call(null, text);
-    assert.equal(String(textFile), "text");
+    assert.equal(String(textFile), text);
     const graph = /** @type {any} */ (textFile).contents();
     assert.deepEqual(await Graph.plain(graph), { a: 1 });
     assert.deepEqual(await graph.get(Graph.defaultValueKey), "text");

@@ -1,5 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import loadTextWithFrontMatter from "../common/loadTextWithFrontMatter.js";
+import TextWithContents from "../common/TextWithContents.js";
+import { extractFrontMatter } from "../common/serialize.js";
 import { getScope, keySymbol } from "../common/utilities.js";
 import OrigamiTemplate from "../framework/OrigamiTemplate.js";
 
@@ -11,11 +12,21 @@ import OrigamiTemplate from "../framework/OrigamiTemplate.js";
  * @param {StringLike} buffer
  * @param {any} [key]
  * @this {AsyncDictionary|null|void}
+ * @returns {Function}
  */
 export default function loadOrigamiTemplate(buffer, key) {
   const scope = this ? getScope(this) : null;
-  const templateFile = loadTextWithFrontMatter.call(scope, buffer, key);
+
+  const { bodyText, frontData } = extractFrontMatter(buffer);
+  const templateFile = frontData
+    ? new TextWithContents(bodyText, frontData)
+    : bodyText;
   const template = new OrigamiTemplate(templateFile, scope);
   template[keySymbol] = key;
-  return template;
+  /** @this {AsyncDictionary|null} */
+  function fn(input) {
+    return template.apply.call(template, input, this);
+  }
+  fn[keySymbol] = key;
+  return fn;
 }

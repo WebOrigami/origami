@@ -40,7 +40,7 @@ export default function loadTextWithFrontMatter(input, key) {
 
   const scope = this;
   /** @type {any} */
-  return new TextWithContents(bodyText, () => {
+  return new TextWithContents(input, () => {
     const graphClass = containsExpression(frontData)
       ? ExpressionGraph
       : ObjectGraph;

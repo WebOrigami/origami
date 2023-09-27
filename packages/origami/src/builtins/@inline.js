@@ -14,7 +14,7 @@ import loadOrigamiTemplate from "../loaders/ori.js";
 export default async function inline(input) {
   assertScopeIsDefined(this);
   const template = await loadOrigamiTemplate.call(this, input);
-  return template.apply(input, this);
+  return template.call(this, input);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;
