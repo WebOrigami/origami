@@ -94,9 +94,11 @@ export default class Template {
       inputGraph.parent = templateGraph ?? ambientsGraph;
     }
 
-    const extendedScope =
-      // @ts-ignore
-      inputGraph?.scope ?? templateGraph?.scope ?? ambientsGraph.scope;
+    const extendedScope = inputGraph
+      ? getScope(inputGraph)
+      : templateGraph
+      ? getScope(templateGraph)
+      : getScope(ambientsGraph);
 
     return { inputGraph, templateGraph, extendedScope };
   }

@@ -2,6 +2,7 @@
 import { Graph } from "@graphorigami/core";
 import { isGraphable } from "@graphorigami/core/src/Graph.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import Scope from "./Scope.js";
 
 // If the given plain object has only integer keys, return it as an array.
 // Otherwise return it as is.
@@ -58,14 +59,23 @@ export function getRealmObjectPrototype(obj) {
 }
 
 /**
- * If the given graph has a `scope` property, return that. Otherwise, return the
- * graph itself.
+ * If the given graph has a `scope` property, return that. If the graph has a
+ * `parent` property, construct a scope for the graph and its parent. Otherwise,
+ * return the graph itself.
  *
  * @param {AsyncDictionary|null} graph
- * @returns {AsyncDictionary}
+ * @returns {AsyncDictionary|null}
  */
 export function getScope(graph) {
-  return /** @type {any} */ (graph)?.scope ?? graph;
+  if (!graph) {
+    return null;
+  } else if ("scope" in graph) {
+    return /** @type {any} */ (graph).scope;
+  } else if ("parent" in graph) {
+    return new Scope(graph, getScope(/** @type {any} */ (graph).parent));
+  } else {
+    return graph;
+  }
 }
 
 /**
