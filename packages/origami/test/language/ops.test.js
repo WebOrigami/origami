@@ -21,27 +21,28 @@ describe("ops", () => {
 
   test("can invoke a lambda", async () => {
     const scope = new ObjectGraph({
-      name: "world",
+      message: "Hello",
     });
 
-    const code = [
-      ops.lambda,
-      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
-    ];
+    const code = [ops.lambda, [ops.scope, "message"]];
 
     const fn = await execute.call(scope, code);
     const result = await fn.call(scope);
-    assert.equal(result, "Hello, world.");
+    assert.equal(result, "Hello");
   });
 
-  test("lambda adds input to scope", async () => {
-    const code = [
-      ops.lambda,
-      [ops.concat, "Hello, ", [ops.scope, "name"], "."],
-    ];
+  test("lambda adds input to scope as `.`", async () => {
+    const code = [ops.lambda, [ops.scope, "."]];
     const fn = await execute.call(null, code);
-    const result = await fn({ name: "world" });
-    assert.equal(result, "Hello, world.");
+    const result = await fn("Hello");
+    assert.equal(result, "Hello");
+  });
+
+  test("lambda adds input to scope as `@input`", async () => {
+    const code = [ops.lambda, [ops.scope, "@input"]];
+    const fn = await execute.call(null, code);
+    const result = await fn("Hello");
+    assert.equal(result, "Hello");
   });
 
   test("a lambda can reference itself with @recurse", async () => {

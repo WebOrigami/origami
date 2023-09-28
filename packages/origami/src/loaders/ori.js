@@ -25,10 +25,12 @@ export default function loadOrigamiExpression(buffer, key) {
     if (typeof value === "function") {
       const fn = value;
       /** @this {AsyncDictionary|null} */
-      value = function useFileScope(input) {
+      function useFileScope(input) {
         const extendedScope = new Scope({ "@context": this }, scope);
         return fn.call(extendedScope, input);
-      };
+      }
+
+      value = useFileScope;
       value.code = fn.code;
     }
 

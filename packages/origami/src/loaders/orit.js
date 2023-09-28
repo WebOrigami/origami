@@ -30,16 +30,17 @@ export default function loadOrigamiTemplate(buffer, key) {
       frontGraph.parent = scope;
     }
 
-    const templateFn = async (input) => {
+    /** @this {AsyncDictionary|null} */
+    async function templateFn(input) {
       const extendedScope = new Scope(
         {
-          "@context": this,
+          "@context": getScope(input?.parent),
           "@template": frontGraph,
         },
-        scope
+        this
       );
       return lambda.call(extendedScope, input);
-    };
+    }
 
     // Add diagnostic information to any (non-plain) object result.
     templateFn.code = lambda.code;

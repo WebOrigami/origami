@@ -33,13 +33,13 @@ describe(".orit loader", () => {
     const fileName = "greetName.orit";
     const templateText = await fixtures.get(fileName);
     const templateFile = await loadOrigamiTemplate.call(
-      scope,
+      null,
       templateText,
       fileName
     );
     assert.equal(String(templateFile), String(templateText));
     const fn = await templateFile.contents();
-    const value = await fn.call(null);
+    const value = await fn.call(scope);
     assert.deepEqual(value, "Hello, Alice!");
   });
 
@@ -62,13 +62,13 @@ describe(".orit loader", () => {
     const outerFileName = "includeGreet.orit";
     const outerTemplateText = await fixtures.get(outerFileName);
     const outerTemplateFile = await loadOrigamiTemplate.call(
-      scope,
+      null,
       outerTemplateText,
       outerFileName
     );
     assert.equal(String(outerTemplateFile), String(outerTemplateText));
     const fn = await outerTemplateFile.contents();
-    const value = await fn.call(null, "Bob");
+    const value = await fn.call(scope, "Bob");
     assert.deepEqual(value, "<h1>Hello, Bob!</h1>");
   });
 });
