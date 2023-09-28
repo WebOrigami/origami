@@ -15,11 +15,7 @@ describe(".orit loader", () => {
   test("loads a template", async () => {
     const fileName = "greet.orit";
     const templateText = await fixtures.get(fileName);
-    const templateFile = await loadOrigamiTemplate.call(
-      null,
-      templateText,
-      fileName
-    );
+    const templateFile = await loadOrigamiTemplate(templateText, fileName);
     assert.equal(String(templateFile), String(templateText));
     const fn = await templateFile.contents();
     const value = await fn.call(null, "world");
@@ -32,11 +28,7 @@ describe(".orit loader", () => {
     });
     const fileName = "greetName.orit";
     const templateText = await fixtures.get(fileName);
-    const templateFile = await loadOrigamiTemplate.call(
-      null,
-      templateText,
-      fileName
-    );
+    const templateFile = await loadOrigamiTemplate(templateText, fileName);
     assert.equal(String(templateFile), String(templateText));
     const fn = await templateFile.contents();
     const value = await fn.call(scope);
@@ -50,8 +42,7 @@ describe(".orit loader", () => {
     // that includes the inner template.
     const innerFileName = "greet.orit";
     const innerTemplateText = await fixtures.get(innerFileName);
-    const innerTemplateFile = await loadOrigamiTemplate.call(
-      fixtures,
+    const innerTemplateFile = await loadOrigamiTemplate(
       innerTemplateText,
       innerFileName
     );
@@ -61,8 +52,7 @@ describe(".orit loader", () => {
 
     const outerFileName = "includeGreet.orit";
     const outerTemplateText = await fixtures.get(outerFileName);
-    const outerTemplateFile = await loadOrigamiTemplate.call(
-      null,
+    const outerTemplateFile = await loadOrigamiTemplate(
       outerTemplateText,
       outerFileName
     );
@@ -70,5 +60,18 @@ describe(".orit loader", () => {
     const fn = await outerTemplateFile.contents();
     const value = await fn.call(scope, "Bob");
     assert.deepEqual(value, "<h1>Hello, Bob!</h1>");
+  });
+
+  test("template has access to its container via @container", async () => {
+    const container = new ObjectGraph({
+      a: 1,
+    });
+    const templateFile = await loadOrigamiTemplate.call(
+      container,
+      "{{ @container/a }}"
+    );
+    const fn = await templateFile.contents();
+    const value = await fn();
+    assert.deepEqual(value, "1");
   });
 });

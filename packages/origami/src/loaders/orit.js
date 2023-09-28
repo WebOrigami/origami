@@ -13,10 +13,11 @@ import * as compile from "../language/compile.js";
  *
  * @param {import("../../index.js").StringLike} buffer
  * @param {any} [key]
- * @this {AsyncDictionary|null}
+ * @this {AsyncDictionary|null|void}
  */
 export default function loadOrigamiTemplate(buffer, key) {
-  const scope = this ? getScope(this) : builtins;
+  const container = this;
+  const scope = container ? getScope(container) : builtins;
   return new TextWithContents(buffer, async () => {
     const { bodyText, frontData } = extractFrontMatter(buffer);
 
@@ -34,6 +35,7 @@ export default function loadOrigamiTemplate(buffer, key) {
     async function templateFn(input) {
       const extendedScope = new Scope(
         {
+          "@container": container,
           "@context": getScope(input?.parent),
           "@template": frontGraph,
         },
