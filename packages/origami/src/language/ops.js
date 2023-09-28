@@ -47,8 +47,15 @@ concat.toString = () => "«ops.concat»";
  *
  * @this {AsyncDictionary|null}
  */
-export function filesRoot() {
-  return filesBuiltin.call(this, "/");
+export async function filesRoot() {
+  const root = await filesBuiltin.call(this, "/");
+
+  // The root itself needs a parent so that expressions evaluated within it
+  // (e.g., Origami expressions loaded from .ori files) will have access to
+  // things like the built-in functions.
+  /** @type {any} */ (root).parent = this;
+
+  return root;
 }
 
 /**
