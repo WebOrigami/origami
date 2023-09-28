@@ -1,20 +1,23 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import { keySymbol, toFunction } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
 import { graphInContext } from "./utilities.js";
 
 /**
- * Builtins like map() want to call a function that takes a value and a key.
- * They want to extend the scope passed to such a function to include the value
- * and key. This helper does that.
+ * A number of transforms accept functions that can accept a single value.
+ * This helper turns such a function into a function that accepts both a value
+ * and a key.
+ *
+ * Moreover, the scope passed to the new function will include ambient
+ * properties `@key` and `@value` holding the key and value, respectively.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Invocable} Invocable
- * @param {Invocable|any} valueKeyFn
+ * @param {Invocable|any} valueFn
  */
-export default function extendValueKeyFn(valueKeyFn, options = {}) {
-  const fn = toFunction(valueKeyFn);
+export default function extendValueKeyFn(valueFn, options = {}) {
+  const fn = toFunction(valueFn);
 
   /**
    * @this {AsyncDictionary|null}
@@ -27,8 +30,8 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     const keyName = options.keyName ?? "@key";
     const valueName = options.valueName ?? "@value";
 
-    if (value && "parent" in value) {
-      value = graphInContext(value, this);
+    if (Graph.isGraphable(value)) {
+      value = graphInContext(Graph.from(value), this);
     }
 
     const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({
@@ -38,12 +41,12 @@ export default function extendValueKeyFn(valueKeyFn, options = {}) {
     });
     ambientsGraph[keySymbol] = key;
 
-    let scope = new Scope(ambientsGraph, this);
+    let scope = new Scope(
+      ambientsGraph,
+      Graph.isAsyncDictionary(value) ? value : null,
+      this
+    );
 
-    // REVIEW: passing the key as an optional second argument creates issues
-    // with FunctionGraph. For now we're just passing the value. If this sticks,
-    // rename the function to extendValueFn.
-    // return fn.call(scope, value, key);
     return fn.call(scope, value);
   };
 }
