@@ -1,5 +1,5 @@
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import loadOrigamiTemplate from "../loaders/ori.js";
+import loadOrigamiTemplate from "../loaders/orit.js";
 
 /**
  * Inline any Origami expressions found inside {{...}} placeholders in the input
@@ -14,7 +14,8 @@ import loadOrigamiTemplate from "../loaders/ori.js";
 export default async function inline(input) {
   assertScopeIsDefined(this);
   const template = await loadOrigamiTemplate.call(this, input);
-  return template.call(this, input);
+  const fn = await template.contents();
+  return fn.call(this, input);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

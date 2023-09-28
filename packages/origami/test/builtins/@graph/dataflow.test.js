@@ -3,10 +3,10 @@ import { describe, test } from "node:test";
 import dataflow from "../../../src/builtins/@graph/dataflow.js";
 import ExpressionGraph from "../../../src/common/ExpressionGraph.js";
 import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
-import OrigamiTemplate from "../../../src/framework/OrigamiTemplate.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
-import loadGraph from "../../../src/loaders/graph.js";
+import loadOrigamiExpression from "../../../src/loaders/ori.js";
+import loadOrigamiTemplate from "../../../src/loaders/orit.js";
 import loadYaml from "../../../src/loaders/yaml.js";
 
 describe("@graph/dataflow", () => {
@@ -82,17 +82,17 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  test("identifies referenced dependencies in Origami templates", async () => {
+  test("identifies referenced dependencies in .orit template files", async () => {
     const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
       // graph's dataflow.
-      "index.ori": new OrigamiTemplate(`{{ map(foo, bar) }}`),
+      "index.orit": loadOrigamiTemplate.call(null, `{{ map(foo, bar) }}`),
       foo: {},
     };
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
-      "index.ori": {
+      "index.orit": {
         dependencies: ["foo"],
       },
       foo: {},
@@ -119,13 +119,13 @@ describe("@graph/dataflow", () => {
     });
   });
 
-  test("identifies dependencies in .graph files", async () => {
+  test("identifies dependencies in .ori expression files", async () => {
     const graph = {
-      "foo.graph": loadGraph.call(null, `a = b`),
+      "foo.ori": loadOrigamiExpression.call(null, `{ a = b }`),
     };
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
-      "foo.graph": {
+      "foo.ori": {
         dependencies: ["b"],
       },
       b: {

@@ -6,7 +6,7 @@ import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import TextWithContents from "../common/TextWithContents.js";
 import { keySymbol } from "../common/utilities.js";
-import OrigamiTemplate from "../framework/OrigamiTemplate.js";
+import loadOrigamiTemplate from "../loaders/orit.js";
 import debug from "./@debug.js";
 import ifBuiltin from "./@if.js";
 import mapBuiltin from "./@map/values.js";
@@ -29,12 +29,13 @@ export default async function explore() {
     },
     scope
   );
-  const template = new OrigamiTemplate(templateText, templateScope);
+  const templateFile = loadOrigamiTemplate.call(templateScope, templateText);
+  const template = await templateFile.contents();
 
   // const scopeGraphs = scope.graphs ?? [scope];
   // const withoutBuiltins = scopeGraphs.filter((graph) => !isBuiltins(graph));
   const data = await getScopeData(scope);
-  const text = await template.apply(data, templateScope);
+  const text = await template(data);
 
   const ambientsGraph = new ObjectGraph({
     "@current": this,

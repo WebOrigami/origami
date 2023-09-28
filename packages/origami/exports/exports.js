@@ -63,6 +63,7 @@ export { default as imageResize } from "../src/builtins/@image/resize.js";
 export { default as index } from "../src/builtins/@index.js";
 export { default as inherited } from "../src/builtins/@inherited.js";
 export { default as inline } from "../src/builtins/@inline.js";
+export { default as invoke } from "../src/builtins/@invoke.js";
 export { default as js } from "../src/builtins/@js.js";
 export { default as json } from "../src/builtins/@json.js";
 export { default as loaders } from "../src/builtins/@loaders.js";
@@ -131,8 +132,6 @@ export { default as InheritScopeTransform } from "../src/framework/InheritScopeT
 export { default as OriCommandTransform } from "../src/framework/OriCommandTransform.js";
 export { default as OrigamiFiles } from "../src/framework/OrigamiFiles.js";
 export { default as OrigamiGraph } from "../src/framework/OrigamiGraph.js";
-export { default as OrigamiTemplate } from "../src/framework/OrigamiTemplate.js";
-export { default as Template } from "../src/framework/Template.js";
 export { default as WatchFilesMixin } from "../src/framework/WatchFilesMixin.js";
 export { default as assertScopeIsDefined } from "../src/language/assertScopeIsDefined.js";
 export * from "../src/language/combinators.js";

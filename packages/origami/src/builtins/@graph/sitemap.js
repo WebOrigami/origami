@@ -1,6 +1,6 @@
 import { Graph } from "@graphorigami/core";
-import OrigamiTemplate from "../../framework/OrigamiTemplate.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import loadOrigamiTemplate from "../../loaders/orit.js";
 import paths from "./paths.js";
 
 const templateText = `<?xml version="1.0" encoding="UTF-8"?>
@@ -49,8 +49,9 @@ export default async function sitemap(variant, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const template = new OrigamiTemplate(templateText);
-  const resultWithGraph = await template.apply(htmlPaths);
+  const templateFile = loadOrigamiTemplate.call(null, templateText);
+  const template = await templateFile.contents();
+  const resultWithGraph = await template(htmlPaths);
   const resultText = resultWithGraph.toString();
   return resultText;
 }

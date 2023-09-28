@@ -11,7 +11,7 @@ const dirname = path.join(
 );
 const fixtures = new FilesGraph(dirname);
 
-describe.only(".orit loader", () => {
+describe(".orit loader", () => {
   test("loads a template", async () => {
     const fileName = "greet.orit";
     const templateText = await fixtures.get(fileName);
@@ -43,7 +43,7 @@ describe.only(".orit loader", () => {
     assert.deepEqual(value, "Hello, Alice!");
   });
 
-  test.only("loads a template that can include another template", async () => {
+  test("loads a template that can include another template", async () => {
     // Normally a .orit file would be loaded via FileLoadersTransform, but for
     // testing purposes we will use FilesGraph directly. We do the loading of
     // the inner template by hand, then construct a scope for the outer template

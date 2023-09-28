@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import builtins from "../builtins/@builtins.js";
 import ExpressionGraph from "../common/ExpressionGraph.js";
 import Scope from "../common/Scope.js";
 import TextWithContents from "../common/TextWithContents.js";
@@ -10,12 +11,12 @@ import * as compile from "../language/compile.js";
 /**
  * Load and evaluate an Origami template from a file.
  *
- * @param {Buffer|string} buffer
+ * @param {import("../../index.js").StringLike} buffer
  * @param {any} [key]
  * @this {AsyncDictionary|null}
  */
 export default function loadOrigamiTemplate(buffer, key) {
-  const scope = getScope(this);
+  const scope = this ? getScope(this) : builtins;
   return new TextWithContents(buffer, async () => {
     const { bodyText, frontData } = extractFrontMatter(buffer);
 
@@ -41,6 +42,7 @@ export default function loadOrigamiTemplate(buffer, key) {
     };
 
     // Add diagnostic information to any (non-plain) object result.
+    templateFn.code = lambda.code;
     templateFn[keySymbol] = key;
 
     return templateFn;

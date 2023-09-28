@@ -14,7 +14,10 @@ import Scope from "../common/Scope.js";
 import execute from "./execute.js";
 import { createExpressionFunction } from "./expressionFunction.js";
 
-let OrigamiGraph;
+// Lazily load OrigamiGraph to avoid circular dependencies.
+const origamiGraphPromise = import("../framework/OrigamiGraph.js").then(
+  (exports) => exports.default
+);
 
 /**
  * Construct an array.
@@ -73,11 +76,7 @@ export async function graph(formulas) {
     fns[key] = fn;
   }
 
-  // Lazily load OrigamiGraph to avoid circular dependencies.
-  if (!OrigamiGraph) {
-    OrigamiGraph = (await import("../framework/OrigamiGraph.js")).default;
-  }
-
+  const OrigamiGraph = await origamiGraphPromise;
   const result = new OrigamiGraph(fns);
   result.parent = this;
   return result;
@@ -156,7 +155,7 @@ inherited.toString = () => "«ops.inherited»";
  */
 export function lambda(code) {
   /** @this {AsyncDictionary|null} */
-  return async function invoke(input) {
+  async function invoke(input) {
     // Add ambients to scope.
     const ambients = {
       "@input": input,
@@ -174,7 +173,9 @@ export function lambda(code) {
     const scope = graphs.length > 1 ? new Scope(...graphs) : graphs[0];
     const result = await execute.call(scope, code);
     return result;
-  };
+  }
+  invoke.code = code;
+  return invoke;
 }
 lambda.toString = () => "«ops.lambda»";
 
@@ -187,12 +188,15 @@ lambda.toString = () => "«ops.lambda»";
  * @param {PlainObject} obj
  */
 export async function object(obj) {
-  const result = {};
+  const evaluated = {};
   for (const key in obj) {
     const code = obj[key];
-    result[key] = await execute.call(this, code);
+    evaluated[key] = await execute.call(this, code);
   }
-  return result;
+  // const result = new (FileTreeTransform(ObjectGraph))(evaluated);
+  // result.parent = this;
+  // return result;
+  return evaluated;
 }
 object.toString = () => "«ops.object»";
 

@@ -2,6 +2,7 @@ import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
+import TextWithContents from "../../src/common/TextWithContents.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
@@ -14,10 +15,7 @@ describe("inline", () => {
   });
 
   test("can reference keys in an attached graph", async () => {
-    const text = `---
-name: Bob
----
-Hello, {{ name }}!`;
+    const text = new TextWithContents(`Hello, {{ name }}!`, { name: "Bob" });
     const textFile = loadTextWithFrontMatter.call(null, text);
     const inlined = await inline.call(null, textFile);
     assert.equal(String(inlined), `Hello, Bob!`);

@@ -1,7 +1,0 @@
-names = [
-  'Alice',
-  'Bob',
-  'Carol'
-]
-
-greetings = map(names, =`Hello, {{ @value }}!`)

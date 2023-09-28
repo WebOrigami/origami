@@ -1,0 +1,9 @@
+{
+  names = [
+    'Alice',
+    'Bob',
+    'Carol'
+  ]
+
+  greetings = @map/values(names, =`Hello, {{ @value }}!`)
+}

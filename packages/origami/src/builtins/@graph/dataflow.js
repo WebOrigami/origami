@@ -58,9 +58,9 @@ async function addContentDependencies(flow, graph, keysInScope) {
     const extension = extname(key);
 
     const dependencyParsers = {
-      ".graph": graphDependencies,
+      ".ori": origamiExpressionDependencies,
       ".html": htmlDependencies,
-      ".ori": origamiTemplateDependencies,
+      ".orit": origamiTemplateDependencies,
     };
     const parser = dependencyParsers[extension];
     if (parser) {
@@ -176,7 +176,7 @@ async function getKeysInScope(graph) {
 }
 
 // Add dependencies found in a graph file.
-async function graphDependencies(graphFile, keysInScope) {
+async function origamiExpressionDependencies(graphFile, keysInScope) {
   const dependencies = [];
   let attachedGraph = await graphFile.contents?.();
   if (attachedGraph) {
@@ -242,18 +242,19 @@ function markUndefinedDependencies(flow, keysInScope) {
   }
 }
 
-async function origamiTemplateDependencies(template, keysInScope) {
+async function origamiTemplateDependencies(templateFile, keysInScope) {
   let dependencies = [];
-  if (!template.code) {
-    const fn = await template.compile();
+  if (!templateFile.code) {
+    const fn = await templateFile.contents();
     dependencies = codeDependencies(fn.code, keysInScope);
   }
 
   // If the template appears to contain HTML, add the HTML dependencies.
   // HACK: Crude heuristic just sees if the first non-space is a "<".
-  if (template.text.trim().startsWith("<")) {
+  const templateText = String(templateFile).trim();
+  if (templateText.startsWith("<")) {
     dependencies = dependencies.concat(
-      await htmlDependencies(template.templateText, keysInScope)
+      await htmlDependencies(templateFile.templateText, keysInScope)
     );
   }
 

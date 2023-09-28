@@ -26,7 +26,7 @@ export default class ArrowGraph extends InvokeFunctionsTransform(
 // If the value has an attached function, return it.
 function getAttachedFunction(value, outerKey, innerKey) {
   if (outerKey !== innerKey && parseArrowKey(innerKey)) {
-    return value?.toFunction?.() ?? value;
+    return value?.contents?.() ?? value;
   } else {
     return value;
   }
