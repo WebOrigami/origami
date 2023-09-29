@@ -82,6 +82,7 @@ export function getScope(graph) {
  * Return true if the object is a plain JavaScript object.
  *
  * @param {any} obj
+ * @returns {obj is import("@graphorigami/core").PlainObject}
  */
 export function isPlainObject(obj) {
   // From https://stackoverflow.com/q/51722354/76472
@@ -97,6 +98,21 @@ export function isPlainObject(obj) {
 
   // Do we inherit directly from Object in this realm?
   return Object.getPrototypeOf(obj) === getRealmObjectPrototype(obj);
+}
+
+/**
+ * Return true if the object is a string or object with a non-trival `toString`
+ * method.
+ *
+ * @param {any} obj
+ * @returns {obj is import("@graphorigami/core").StringLike}
+ */
+export function isStringLike(obj) {
+  return (
+    typeof obj === "string" ||
+    obj instanceof String ||
+    (globalThis.Buffer && obj instanceof Buffer)
+  );
 }
 
 export function isTransformApplied(Transform, obj) {
@@ -140,14 +156,6 @@ export function graphInContext(variant, context) {
       : transformObject(InheritScopeTransform, graph);
   target.parent = context;
   return target;
-}
-
-export function stringLike(value) {
-  return (
-    typeof value === "string" ||
-    value instanceof String ||
-    (globalThis.Buffer && value instanceof Buffer)
-  );
 }
 
 /**

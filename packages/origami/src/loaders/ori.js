@@ -2,48 +2,45 @@
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import TextWithContents from "../common/TextWithContents.js";
-import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
+import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
 /**
  * Load and evaluate an Origami expression from a file.
  *
- * @param {AsyncDictionary|null} container
- * @param {import("../../index.js").StringLike} buffer
- * @param {any} [key]
+ * @type {import("../../index.js").FileLoaderFunction}
  */
-export default function loadOrigamiExpression(container, buffer, key) {
-  const scope = getScope(container) ?? builtins;
-  return new TextWithContents(buffer, async () => {
-    // Compile the file's text as an Origami expression and evaluate it.
-    const fn = compile.expression(String(buffer));
-    let value = await fn.call(scope);
+export default function loadOrigamiExpression(container, input, key) {
+  const containerScope = getScope(container) ?? builtins;
+  let contents;
+  return new TextWithContents(input, async () => {
+    if (contents === undefined) {
+      // Compile the file's text as an Origami expression and evaluate it.
+      const fn = compile.expression(String(input));
+      contents = await fn.call(containerScope);
 
-    // If the value is a function, wrap it such that it will use the file's
-    // container as its scope. Make the calling `this` context available via a
-    // `@caller` ambient.
-    if (typeof value === "function") {
-      const fn = value;
-      /** @this {AsyncDictionary|null} */
-      function useContainerScope(input) {
-        const extendedScope = new Scope({ "@caller": this }, scope);
-        return fn.call(extendedScope, input);
+      // If the value is a function, wrap it such that it will use the file's
+      // container as its scope. Make the calling `this` context available via a
+      // `@caller` ambient.
+      if (typeof contents === "function") {
+        const fn = contents;
+        /** @this {AsyncDictionary|null} */
+        function useContainerScope(input) {
+          const extendedScope = new Scope({ "@caller": this }, containerScope);
+          return fn.call(extendedScope, input);
+        }
+
+        contents = useContainerScope;
+        // @ts-ignore
+        contents.code = fn.code;
       }
 
-      value = useContainerScope;
-      value.code = fn.code;
+      if (contents && typeof contents === "object") {
+        if ("parent" in contents) {
+          contents.parent = containerScope;
+        }
+      }
     }
-
-    if (value && typeof value === "object") {
-      if ("parent" in value) {
-        value.parent = scope;
-      }
-      if (!isPlainObject(value)) {
-        // Add diagnostic information to any (non-plain) object result.
-        value[keySymbol] = key;
-      }
-    }
-
-    return value;
+    return contents;
   });
 }

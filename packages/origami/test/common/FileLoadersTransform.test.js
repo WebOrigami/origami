@@ -1,20 +1,30 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FileLoadersTransform from "../../src/common/FileLoadersTransform.js";
 describe("FileLoadersTransform", () => {
-  test("returns the contents of text keys/files as text", async () => {
+  test("invokes an appropriate loader for a .json file extension", async () => {
     const json = `{ "bar": 2 }`;
     const graph = new (FileLoadersTransform(ObjectGraph))({
       foo: 1, // Should be left alone
       "bar.json": json, // Should return file with `contents` method
     });
-    const foo = await graph.get("foo");
-    assert(typeof foo === "number");
-    assert.equal(foo, 1);
-    const bar = await graph.get("bar.json");
-    assert.equal(String(bar), json);
-    const contents = await bar.contents();
+    const numberValue = await graph.get("foo");
+    assert(typeof numberValue === "number");
+    assert.equal(numberValue, 1);
+    const jsonFile = await graph.get("bar.json");
+    assert.equal(String(jsonFile), json);
+    const contents = await jsonFile.contents();
     assert.deepEqual(contents, { bar: 2 });
+  });
+
+  test("input that isn't string-like is returned as is", async () => {
+    const obj = { bar: 2 };
+    const graph = new (FileLoadersTransform(ObjectGraph))({
+      foo: 1,
+      "bar.json": obj,
+    });
+    const jsonFile = await graph.get("bar.json");
+    assert.deepEqual(await Graph.plain(jsonFile), obj);
   });
 });

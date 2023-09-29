@@ -1,37 +1,63 @@
 import builtinLoaders from "../builtins/@loaders.js";
-import { extname, getScope } from "../common/utilities.js";
+import {
+  extname,
+  getScope,
+  isPlainObject,
+  isStringLike,
+  keySymbol,
+} from "../common/utilities.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../../index.js").FileLoaderFunction} FileLoaderFunction
+ *
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {
     constructor(...args) {
       super(...args);
-      this.loaders = null;
+      this._loadersPromise = null;
     }
 
     async get(key) {
       let value = await super.get(key);
-      if (value && typeof key === "string") {
-        const extension = extname(key).toLowerCase().slice(1);
+
+      // If the value is string-like and the key has an extension, look for a
+      // loader that handles that extension and call it. The value will
+      // typically be a Buffer loaded from the file system, but could also be a
+      // string defined by a user function.
+      if (isStringLike(value) && isStringLike(key)) {
+        const extension = extname(String(key)).toLowerCase().slice(1);
         if (extension) {
-          if (!this.loaders) {
-            // Give the scope a chance to contribute loaders, otherwise fall
-            // back to the built-in loaders.
-            const scope = getScope(this);
-            const customLoaders = await scope.get("@loaders");
-            this.loaders = customLoaders ?? builtinLoaders;
-          }
-          const loader = await this.loaders.get(extension);
+          const loaders = await this.loaders();
+          /** @type {FileLoaderFunction} */
+          const loader = await loaders.get(extension);
           if (loader) {
             value = await loader(this, value, key);
           }
+
+          // Add diagnostic information.
+          if (value && typeof value === "object" && !isPlainObject(value)) {
+            value[keySymbol] = key;
+          }
         }
       }
+
       return value;
+    }
+
+    async loaders() {
+      if (!this._loadersPromise) {
+        // Give the scope a chance to contribute loaders, otherwise fall back to
+        // the built-in loaders.
+        const scope = getScope(this);
+        this._loadersPromise = scope
+          .get("@loaders")
+          .then((customLoaders) => customLoaders ?? builtinLoaders);
+      }
+      return this._loadersPromise;
     }
   };
 }

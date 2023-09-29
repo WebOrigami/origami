@@ -17,15 +17,6 @@ b: 2
     });
   });
 
-  test("input that is already a graph variant is returned as is", async () => {
-    const input = {
-      a: 1,
-      b: 2,
-    };
-    const result = await loadYaml(null, input);
-    assert.deepEqual(result, input);
-  });
-
   test("can parse tagged Origami expressions", async () => {
     const text = `
 a: 1

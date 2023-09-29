@@ -5,7 +5,7 @@ import {
   extname,
   graphInContext,
   isPlainObject,
-  stringLike,
+  isStringLike,
 } from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -109,7 +109,7 @@ export async function handleRequest(request, response, graph) {
   // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
   if (
     (mediaType === "application/json" || mediaType === "text/yaml") &&
-    !stringLike(resource)
+    !isStringLike(resource)
   ) {
     const graph = Graph.from(resource);
     resource =

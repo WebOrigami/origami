@@ -1,8 +1,8 @@
 import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import body from "../../src/builtins/@body.js";
 import mdHtml from "../../src/builtins/@mdHtml.js";
-import TextWithContents from "../../src/common/TextWithContents.js";
 import { default as md } from "../../src/loaders/md.js";
 
 describe("mdHtml", () => {
@@ -13,11 +13,9 @@ describe("mdHtml", () => {
   });
 
   test("HTML contents include the source contents and the HTML", async () => {
-    const textFile = new TextWithContents(`# Hello, world.`, {
-      title: "Hello",
-    });
-    const markdownFile = md(null, textFile);
-    const htmlFile = await mdHtml.call(null, markdownFile);
+    const markdownFile = md(null, `---\ntitle: Hello\n---\n# Hello, world.`);
+    const markdownText = await body(markdownFile);
+    const htmlFile = await mdHtml.call(null, markdownText);
     const html = String(htmlFile);
     assert.equal(html, `<h1 id="hello-world">Hello, world.</h1>\n`);
     const graph = await htmlFile.contents();

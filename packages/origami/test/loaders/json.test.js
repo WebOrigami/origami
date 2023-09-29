@@ -7,19 +7,10 @@ describe(".json loader", () => {
   test("loads input as a JSON file", async () => {
     const text = `{ "a": 1, "b": 2 }`;
     const jsonFile = await loadJson(null, text);
-    const graph = await /** @type {any} */ (jsonFile).contents();
-    assert.deepEqual(await Graph.plain(graph), {
+    const contents = await jsonFile.contents();
+    assert.deepEqual(await Graph.plain(contents), {
       a: 1,
       b: 2,
     });
-  });
-
-  test("input that is already a graph variant is returned as is", async () => {
-    const input = {
-      a: 1,
-      b: 2,
-    };
-    const result = await loadJson(null, input);
-    assert.equal(result, input);
   });
 });

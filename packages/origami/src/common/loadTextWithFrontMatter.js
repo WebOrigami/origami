@@ -1,10 +1,5 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
-import {
-  getScope,
-  isPlainObject,
-  keySymbol,
-  stringLike,
-} from "../common/utilities.js";
+import { getScope, isPlainObject } from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import ExpressionGraph from "./ExpressionGraph.js";
 import TextWithContents from "./TextWithContents.js";
@@ -20,42 +15,31 @@ import { extractFrontMatter } from "./serialize.js";
  * If the input is not a string or Buffer, or already has `contents`, it is
  * returned as is.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").StringLike} StringLike
- *
- * @param {AsyncDictionary|null} container
- * @param {any} input
- * @param {any} [key]
+ * @type {import("../../index.js").FileLoaderFunction}
  */
 export default function loadTextWithFrontMatter(container, input, key) {
-  if (!stringLike(input) || input.contents) {
-    // Has already been processed; return as is.
-    return input;
-  }
-
-  const { bodyText, frontData } = extractFrontMatter(input);
-  if (!frontData) {
-    // No front matter; return plain string.
-    return String(input);
-  }
-
-  // Return plain text as default value of contents graph.
-  // @ts-ignore
-  frontData[Graph.defaultValueKey] = bodyText;
-
   const scope = getScope(container);
-  /** @type {any} */
+  let contents;
   return new TextWithContents(input, () => {
-    const graphClass = containsExpression(frontData)
-      ? ExpressionGraph
-      : ObjectGraph;
-    const graph = new (FileTreeTransform(graphClass))(frontData);
-    if (scope) {
-      graph.parent = scope;
+    if (contents === undefined) {
+      let { bodyText, frontData } = extractFrontMatter(input);
+      if (!frontData) {
+        frontData = {};
+      }
+
+      // Return plain text as default value of contents graph.
+      // @ts-ignore
+      frontData[Graph.defaultValueKey] = bodyText;
+
+      const graphClass = containsExpression(frontData)
+        ? ExpressionGraph
+        : ObjectGraph;
+      contents = new (FileTreeTransform(graphClass))(frontData);
+      if (scope) {
+        contents.parent = scope;
+      }
     }
-    // @ts-ignore
-    graph[keySymbol] = key;
-    return graph;
+    return contents;
   });
 }
 

@@ -5,6 +5,7 @@ import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
 import MergeGraph from "../common/MergeGraph.js";
+import TextWithContents from "../common/TextWithContents.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -35,16 +36,17 @@ export default async function mdHtml(input) {
   }
 
   /** @type {any} */
-  const htmlFile = new String(html);
-  htmlFile.contents = async () =>
-    new MergeGraph(
-      {
-        // @ts-ignore
-        [Graph.defaultValueKey]: html,
-      },
-      await input.contents()
-    );
-  return htmlFile;
+  return new TextWithContents(
+    html,
+    async () =>
+      new MergeGraph(
+        {
+          // @ts-ignore
+          [Graph.defaultValueKey]: html,
+        },
+        await input.contents()
+      )
+  );
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
