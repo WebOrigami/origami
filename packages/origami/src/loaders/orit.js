@@ -11,13 +11,12 @@ import * as compile from "../language/compile.js";
 /**
  * Load and evaluate an Origami template from a file.
  *
+ * @param {AsyncDictionary|null} container
  * @param {import("../../index.js").StringLike} buffer
  * @param {any} [key]
- * @this {AsyncDictionary|null|void}
  */
-export default function loadOrigamiTemplate(buffer, key) {
-  const container = this;
-  const scope = container ? getScope(container) : builtins;
+export default function loadOrigamiTemplate(container, buffer, key) {
+  const scope = getScope(container) ?? builtins;
   return new TextWithContents(buffer, async () => {
     const { bodyText, frontData } = extractFrontMatter(buffer);
 

@@ -1,5 +1,10 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
-import { isPlainObject, keySymbol, stringLike } from "../common/utilities.js";
+import {
+  getScope,
+  isPlainObject,
+  keySymbol,
+  stringLike,
+} from "../common/utilities.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import ExpressionGraph from "./ExpressionGraph.js";
 import TextWithContents from "./TextWithContents.js";
@@ -18,11 +23,11 @@ import { extractFrontMatter } from "./serialize.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").StringLike} StringLike
  *
+ * @param {AsyncDictionary|null} container
  * @param {any} input
  * @param {any} [key]
- * @this {AsyncDictionary|null}
  */
-export default function loadTextWithFrontMatter(input, key) {
+export default function loadTextWithFrontMatter(container, input, key) {
   if (!stringLike(input) || input.contents) {
     // Has already been processed; return as is.
     return input;
@@ -38,7 +43,7 @@ export default function loadTextWithFrontMatter(input, key) {
   // @ts-ignore
   frontData[Graph.defaultValueKey] = bodyText;
 
-  const scope = this;
+  const scope = getScope(container);
   /** @type {any} */
   return new TextWithContents(input, () => {
     const graphClass = containsExpression(frontData)

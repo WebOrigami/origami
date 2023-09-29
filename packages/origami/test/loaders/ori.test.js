@@ -6,7 +6,7 @@ import loadOrigamiExpression from "../../src/loaders/ori.js";
 describe(".ori loader", () => {
   test("loads a string expression", async () => {
     const text = `"Hello"`;
-    const origamiFile = await loadOrigamiExpression.call(null, text);
+    const origamiFile = await loadOrigamiExpression(null, text);
     const graph = await Graph.from(origamiFile);
     const defaultValue = await graph.get(Graph.defaultValueKey);
     assert.equal(defaultValue, "Hello");
@@ -19,7 +19,7 @@ describe(".ori loader", () => {
     const text = `{
       message = \`Hello, {{ name }}!\`
     }`;
-    const origamiFile = await loadOrigamiExpression.call(scope, text);
+    const origamiFile = await loadOrigamiExpression(scope, text);
     assert.deepEqual(await Graph.plain(origamiFile), {
       message: "Hello, world!",
     });
@@ -32,7 +32,7 @@ describe(".ori loader", () => {
         message = \`Hello, {{ name }}!\`
       }
     }`;
-    const origamiFile = await loadOrigamiExpression.call(null, text);
+    const origamiFile = await loadOrigamiExpression(null, text);
     assert.deepEqual(
       await Graph.traverse(origamiFile, "public", "message"),
       "Hello, world!"
@@ -44,7 +44,7 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const text = `\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression.call(scope, text);
+    const origamiFile = await loadOrigamiExpression(scope, text);
     const graph = Graph.from(origamiFile);
     const value = await graph.get(Graph.defaultValueKey);
     assert.deepEqual(value, "Hello, Alice!");
@@ -55,15 +55,15 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const text = `=\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression.call(scope, text);
+    const origamiFile = await loadOrigamiExpression(scope, text);
     const templateFn = await origamiFile.contents();
-    const value = await templateFn.call(scope);
+    const value = await templateFn(scope);
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
     const text = `=\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression.call(null, text);
+    const origamiFile = await loadOrigamiExpression(null, text);
     const templateFn = await origamiFile.contents();
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");

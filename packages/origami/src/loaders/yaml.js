@@ -17,11 +17,11 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").HasString} HasString
  *
+ * @param {AsyncDictionary|null} container
  * @param {string|HasString|Graphable} input
  * @param {any} [key]
- * @this {AsyncDictionary|null}
  */
-export default function loadYaml(input, key) {
+export default function loadYaml(container, input, key) {
   // If the input is a graph variant, return it as is. This situation can arise
   // when an Origami graph contains an assigment whose right-hand side is a
   // graph and whose left-hand side a name ending in `.yaml`. In that situation,

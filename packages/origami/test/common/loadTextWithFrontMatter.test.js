@@ -5,7 +5,7 @@ import TextWithContents from "../../src/common/TextWithContents.js";
 import loadTextWithFrontMatter from "../../src/common/loadTextWithFrontMatter.js";
 describe("loadTextWithFrontMatter", () => {
   test("returns plain text input as is", () => {
-    const result = loadTextWithFrontMatter.call(null, "text");
+    const result = loadTextWithFrontMatter(null, "text");
     assert.equal(result, "text");
   });
 
@@ -14,7 +14,7 @@ describe("loadTextWithFrontMatter", () => {
 a: 1
 ---
 text`;
-    const textFile = await loadTextWithFrontMatter.call(null, text);
+    const textFile = await loadTextWithFrontMatter(null, text);
     assert.equal(String(textFile), text);
     const graph = /** @type {any} */ (textFile).contents();
     assert.deepEqual(await Graph.plain(graph), { a: 1 });
@@ -24,7 +24,7 @@ text`;
   test("passes along input if it already has contents", async () => {
     /** @type {any} */
     const input = new TextWithContents("text", { a: 1 });
-    const textFile = await loadTextWithFrontMatter.call(null, input);
+    const textFile = await loadTextWithFrontMatter(null, input);
     assert.equal(textFile, input);
   });
 });

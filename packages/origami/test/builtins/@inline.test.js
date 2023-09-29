@@ -16,7 +16,7 @@ describe("inline", () => {
 
   test("can reference keys in an attached graph", async () => {
     const text = new TextWithContents(`Hello, {{ name }}!`, { name: "Bob" });
-    const textFile = loadTextWithFrontMatter.call(null, text);
+    const textFile = loadTextWithFrontMatter(null, text);
     const inlined = await inline.call(null, textFile);
     assert.equal(String(inlined), `Hello, Bob!`);
   });

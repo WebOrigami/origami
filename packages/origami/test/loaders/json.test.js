@@ -6,7 +6,7 @@ import loadJson from "../../src/loaders/json.js";
 describe(".json loader", () => {
   test("loads input as a JSON file", async () => {
     const text = `{ "a": 1, "b": 2 }`;
-    const jsonFile = await loadJson.call(null, text);
+    const jsonFile = await loadJson(null, text);
     const graph = await /** @type {any} */ (jsonFile).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
@@ -19,7 +19,7 @@ describe(".json loader", () => {
       a: 1,
       b: 2,
     };
-    const result = await loadJson.call(null, input);
+    const result = await loadJson(null, input);
     assert.equal(result, input);
   });
 });

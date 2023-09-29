@@ -16,7 +16,7 @@ describe("mdHtml", () => {
     const textFile = new TextWithContents(`# Hello, world.`, {
       title: "Hello",
     });
-    const markdownFile = md.call(null, textFile);
+    const markdownFile = md(null, textFile);
     const htmlFile = await mdHtml.call(null, markdownFile);
     const html = String(htmlFile);
     assert.equal(html, `<h1 id="hello-world">Hello, world.</h1>\n`);

@@ -13,7 +13,7 @@ import loadOrigamiTemplate from "../loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  const template = await loadOrigamiTemplate.call(this, input);
+  const template = await loadOrigamiTemplate(this, input);
   const fn = await template.contents();
   return fn.call(this, input);
 }

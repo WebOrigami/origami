@@ -7,13 +7,12 @@ import TextWithContents from "../common/TextWithContents.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").HasContents} HasContents
  *
+ * @param {AsyncDictionary|null} container
  * @param {Buffer|string} buffer
  * @param {any} [key]
  * @returns {HasContents}
- * @this {AsyncDictionary|null}
  */
-export default function loadJs(buffer, key) {
-  const container = this;
+export default function loadJs(container, buffer, key) {
   let contents;
   return new TextWithContents(buffer, async () => {
     if (!contents && container && "import" in container) {

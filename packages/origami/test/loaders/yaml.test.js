@@ -9,7 +9,7 @@ describe(".yaml loader", () => {
 a: 1
 b: 2
 `;
-    const textWithGraph = await loadYaml.call(null, text);
+    const textWithGraph = await loadYaml(null, text);
     const graph = await /** @type {any} */ (textWithGraph).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
@@ -22,7 +22,7 @@ b: 2
       a: 1,
       b: 2,
     };
-    const result = await loadYaml.call(null, input);
+    const result = await loadYaml(null, input);
     assert.deepEqual(result, input);
   });
 
@@ -31,7 +31,7 @@ b: 2
 a: 1
 b: !ori a
 `;
-    const textWithGraph = await loadYaml.call(null, text);
+    const textWithGraph = await loadYaml(null, text);
     const graph = await /** @type {any} */ (textWithGraph).contents();
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,

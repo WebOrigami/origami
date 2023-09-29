@@ -27,7 +27,7 @@ export default function FileLoadersTransform(Base) {
           }
           const loader = await this.loaders.get(extension);
           if (loader) {
-            value = await loader.call(this, value, key);
+            value = await loader(this, value, key);
           }
         }
       }

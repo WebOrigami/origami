@@ -8,12 +8,12 @@ import * as compile from "../language/compile.js";
 /**
  * Load and evaluate an Origami expression from a file.
  *
+ * @param {AsyncDictionary|null} container
  * @param {import("../../index.js").StringLike} buffer
  * @param {any} [key]
- * @this {AsyncDictionary|null}
  */
-export default function loadOrigamiExpression(buffer, key) {
-  const scope = this ? getScope(this) : builtins;
+export default function loadOrigamiExpression(container, buffer, key) {
+  const scope = getScope(container) ?? builtins;
   return new TextWithContents(buffer, async () => {
     // Compile the file's text as an Origami expression and evaluate it.
     const fn = compile.expression(String(buffer));

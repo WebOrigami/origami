@@ -50,7 +50,7 @@ export default async function sitemap(variant, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFile = loadOrigamiTemplate.call(null, templateText);
+  const templateFile = loadOrigamiTemplate(null, templateText);
   const template = await templateFile.contents();
   const resultWithGraph = await template.call(builtins, htmlPaths);
   const resultText = resultWithGraph.toString();

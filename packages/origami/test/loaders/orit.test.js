@@ -15,7 +15,11 @@ describe(".orit loader", () => {
   test("loads a template", async () => {
     const fileName = "greet.orit";
     const templateText = await fixtures.get(fileName);
-    const templateFile = await loadOrigamiTemplate(templateText, fileName);
+    const templateFile = await loadOrigamiTemplate(
+      null,
+      templateText,
+      fileName
+    );
     assert.equal(String(templateFile), String(templateText));
     const fn = await templateFile.contents();
     const value = await fn.call(null, "world");
@@ -28,7 +32,11 @@ describe(".orit loader", () => {
     });
     const fileName = "greetName.orit";
     const templateText = await fixtures.get(fileName);
-    const templateFile = await loadOrigamiTemplate(templateText, fileName);
+    const templateFile = await loadOrigamiTemplate(
+      null,
+      templateText,
+      fileName
+    );
     assert.equal(String(templateFile), String(templateText));
     const fn = await templateFile.contents();
     const value = await fn.call(scope);
@@ -43,6 +51,7 @@ describe(".orit loader", () => {
     const innerFileName = "greet.orit";
     const innerTemplateText = await fixtures.get(innerFileName);
     const innerTemplateFile = await loadOrigamiTemplate(
+      fixtures,
       innerTemplateText,
       innerFileName
     );
@@ -53,6 +62,7 @@ describe(".orit loader", () => {
     const outerFileName = "includeGreet.orit";
     const outerTemplateText = await fixtures.get(outerFileName);
     const outerTemplateFile = await loadOrigamiTemplate(
+      fixtures,
       outerTemplateText,
       outerFileName
     );
@@ -66,7 +76,7 @@ describe(".orit loader", () => {
     const container = new ObjectGraph({
       a: 1,
     });
-    const templateFile = await loadOrigamiTemplate.call(
+    const templateFile = await loadOrigamiTemplate(
       container,
       "{{ @container/a }}"
     );
@@ -77,7 +87,7 @@ describe(".orit loader", () => {
 
   test("template can reference template front matter via @template", async () => {
     const templateText = await fixtures.get("frontMatter.orit");
-    const templateFile = await loadOrigamiTemplate(templateText);
+    const templateFile = await loadOrigamiTemplate(null, templateText);
     const fn = await templateFile.contents();
     const value = await fn();
     assert.deepEqual(value, "Hello, Carol!");
@@ -85,7 +95,7 @@ describe(".orit loader", () => {
 
   test("template can invoke a @map", async () => {
     const templateText = await fixtures.get("map.orit");
-    const templateFile = await loadOrigamiTemplate(templateText);
+    const templateFile = await loadOrigamiTemplate(null, templateText);
     const fn = await templateFile.contents();
     const value = await fn();
     assert.deepEqual(value, "Hello, Alice! Hello, Bob! Hello, Carol! ");

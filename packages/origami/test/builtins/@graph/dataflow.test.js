@@ -11,7 +11,7 @@ import loadYaml from "../../../src/loaders/yaml.js";
 
 describe("@graph/dataflow", () => {
   test("identifies dependencies in expressions", async () => {
-    const textWithGraph = loadYaml.call(
+    const textWithGraph = loadYaml(
       null,
       `
       a: !ori fn(b)
@@ -37,7 +37,7 @@ describe("@graph/dataflow", () => {
   });
 
   test("ignore @ ambients", async () => {
-    const textWithGraph = loadYaml.call(
+    const textWithGraph = loadYaml(
       null,
       `
       foo: !ori (@bar)
@@ -53,7 +53,7 @@ describe("@graph/dataflow", () => {
   });
 
   test("if all dependencies are builtins, uses source expression as dependency", async () => {
-    const textWithGraph = loadYaml.call(
+    const textWithGraph = loadYaml(
       null,
       `
       foo: !ori (@mdHtml())
@@ -87,7 +87,7 @@ describe("@graph/dataflow", () => {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
       // graph's dataflow.
-      "index.orit": loadOrigamiTemplate.call(null, `{{ map(foo, bar) }}`),
+      "index.orit": loadOrigamiTemplate(null, `{{ map(foo, bar) }}`),
       foo: {},
     };
     const flow = await dataflow.call(null, graph);
@@ -121,7 +121,7 @@ describe("@graph/dataflow", () => {
 
   test("identifies dependencies in .ori expression files", async () => {
     const graph = {
-      "foo.ori": loadOrigamiExpression.call(null, `{ a = b }`),
+      "foo.ori": loadOrigamiExpression(null, `{ a = b }`),
     };
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
