@@ -31,7 +31,7 @@ export default function extendValueKeyFn(valueFn, options = {}) {
     const valueName = options.valueName ?? "@value";
 
     if (Graph.isGraphable(value)) {
-      value = graphInContext(Graph.from(value), this);
+      value = graphInContext(value, this);
     }
 
     const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({

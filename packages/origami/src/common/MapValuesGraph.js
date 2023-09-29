@@ -45,11 +45,12 @@ export default class MapValuesGraph {
         : // Don't need value
           undefined;
     }
+    const scope = utilities.getScope(this);
     return this.deep && isSubgraph
       ? // Return mapped subgraph
         Reflect.construct(this.constructor, [value, this.mapFn, this.options])
       : invokeMapFn
-      ? await this.mapFn.call(this, value, key) // Return mapped value
+      ? await this.mapFn.call(scope, value, key) // Return mapped value
       : undefined;
   }
 

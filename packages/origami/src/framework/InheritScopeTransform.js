@@ -21,7 +21,7 @@ export default function InheritScopeTransform(Base) {
     async get(key) {
       const value = await super.get(key);
       if (value) {
-        if (Dictionary.isAsyncDictionary(value) && "parent" in value) {
+        if (Dictionary.isAsyncDictionary(value) /* && "parent" in value */) {
           // This graph becomes the parent for all subgraphs.
           value.parent = this;
         } else if (
