@@ -1,4 +1,4 @@
-export { default as DeferredGraph2 } from "./src/DeferredGraph2.js";
+export { default as DeferredGraph } from "./src/DeferredGraph.js";
 export * as Dictionary from "./src/Dictionary.js";
 export { default as FilesGraph } from "./src/FilesGraph.js";
 export { default as FunctionDictionary } from "./src/FunctionDictionary.js";

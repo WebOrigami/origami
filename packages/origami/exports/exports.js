@@ -98,7 +98,6 @@ export { default as CacheSite } from "../src/common/CacheSite.js";
 export { default as CommandModulesTransform } from "../src/common/CommandModulesTransform.js";
 export { default as ConstantGraph } from "../src/common/ConstantGraph.js";
 export { default as DefaultValuesTransform } from "../src/common/DefaultValuesTransform.js";
-export { default as DeferredGraph } from "../src/common/DeferredGraph.js";
 export { default as ExplorableSiteTransform } from "../src/common/ExplorableSiteTransform.js";
 export { default as ExpressionGraph } from "../src/common/ExpressionGraph.js";
 export { default as extendValueKeyFn } from "../src/common/extendValueKeyFn.js";

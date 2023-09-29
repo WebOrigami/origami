@@ -1,4 +1,4 @@
-import DeferredGraph2 from "./DeferredGraph2.js";
+import DeferredGraph2 from "./DeferredGraph.js";
 import * as Dictionary from "./Dictionary.js";
 import FunctionGraph from "./FunctionGraph.js";
 import MapGraph from "./MapGraph.js";

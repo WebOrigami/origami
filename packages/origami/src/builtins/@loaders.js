@@ -1,8 +1,7 @@
-import { FilesGraph } from "@graphorigami/core";
+import { DeferredGraph, FilesGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import CommandModulesTransform from "../common/CommandModulesTransform.js";
-import DeferredGraph from "../common/DeferredGraph.js";
 import ImportModulesMixin from "../common/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
