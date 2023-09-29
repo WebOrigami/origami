@@ -30,8 +30,4 @@ export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
 
-export interface HasFunction {
-  toFunction(): Function;
-}
-
-export type Invocable = Function | HasFunction | HasContents | Graphable;
+export type Invocable = Function | HasContents | Graphable;

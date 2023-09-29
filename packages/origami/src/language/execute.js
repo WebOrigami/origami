@@ -49,12 +49,6 @@ export default async function execute(code) {
     );
   }
 
-  // If the "function" is currently an object with a .toFunction() method, get
-  // the real function from that.
-  if (typeof fn !== "function" && fn?.toFunction) {
-    fn = fn.toFunction();
-  }
-
   const isFunction = fn instanceof Function;
   if (!isFunction && args.length === 0) {
     // The thing in the function position is a graph, but there are no args.
