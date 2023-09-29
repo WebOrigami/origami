@@ -1,35 +1,24 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { FilesGraph, ObjectGraph } from "@graphorigami/core";
+import { ObjectGraph } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import TextWithContents from "../common/TextWithContents.js";
 import { keySymbol } from "../common/utilities.js";
-import loadOrigamiTemplate from "../loaders/orit.js";
+import OrigamiFiles from "../framework/OrigamiFiles.js";
 import debug from "./@debug.js";
-import ifBuiltin from "./@if.js";
-import mapBuiltin from "./@map/values.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkDir = path.resolve(dirname, "../framework");
-const frameworkFiles = new FilesGraph(frameworkDir);
+const frameworkFiles = new OrigamiFiles(frameworkDir);
 
 /**
  * @this {AsyncDictionary|null}
  */
 export default async function explore() {
   const scope = /** @type {any} */ (this).scope ?? this;
-  const templateText = await frameworkFiles.get("explore.ori");
-  const templateScope = new Scope(
-    {
-      map: mapBuiltin,
-      // getKeySymbol: (obj) => obj?.[keySymbol],
-      if: ifBuiltin,
-    },
-    scope
-  );
-  const templateFile = loadOrigamiTemplate.call(templateScope, templateText);
+  const templateFile = await frameworkFiles.get("explore.orit");
   const template = await templateFile.contents();
 
   // const scopeGraphs = scope.graphs ?? [scope];

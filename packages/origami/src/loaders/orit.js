@@ -33,13 +33,14 @@ export default function loadOrigamiTemplate(buffer, key) {
 
     /** @this {AsyncDictionary|null} */
     async function templateFn(input) {
+      const baseScope = this ?? builtins;
       const extendedScope = new Scope(
         {
           "@container": container,
           "@context": getScope(input?.parent),
           "@template": frontGraph,
         },
-        this
+        baseScope
       );
       return lambda.call(extendedScope, input);
     }

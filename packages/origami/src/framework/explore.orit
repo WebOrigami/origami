@@ -225,16 +225,16 @@
       <button id="buttonSVG">SVG</button>
       <button id="buttonYAML">YAML</button>
     </div>
-    {{map @input, =`
+    {{ @map/values(@input, =`
       <ul>
         <h2>{{ ./name }}</h2>
-        {{map ./keys, =`
+        {{ @map/values(./keys, =`
         <li>
           <a href="./!@explore/{{ @value }}" target="frame">{{ @value }}</a>
         </li>
-        `}}
+        `) }}
       </ul>
-    ` }}
+    `) }}
     </nav>
     <iframe id="frame" name="frame"></iframe>
   </body>
