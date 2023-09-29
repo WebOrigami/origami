@@ -1,15 +1,16 @@
 import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../../loaders/orit.js";
+import builtins from "../@builtins.js";
 import paths from "./paths.js";
 
 const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-{{ @map/values @input, =\`
+{{ @map/values(@input, =\`
   <url>
     <loc>{{ @value }}</loc>
   </url>
-\`}}
+\`) }}
 </urlset>
 `;
 
@@ -51,7 +52,7 @@ export default async function sitemap(variant, baseHref = "") {
 
   const templateFile = loadOrigamiTemplate.call(null, templateText);
   const template = await templateFile.contents();
-  const resultWithGraph = await template(htmlPaths);
+  const resultWithGraph = await template.call(builtins, htmlPaths);
   const resultText = resultWithGraph.toString();
   return resultText;
 }
