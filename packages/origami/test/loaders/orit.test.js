@@ -74,4 +74,20 @@ describe(".orit loader", () => {
     const value = await fn();
     assert.deepEqual(value, "1");
   });
+
+  test("template can reference template front matter via @template", async () => {
+    const templateText = await fixtures.get("frontMatter.orit");
+    const templateFile = await loadOrigamiTemplate(templateText);
+    const fn = await templateFile.contents();
+    const value = await fn();
+    assert.deepEqual(value, "Hello, Carol!");
+  });
+
+  test("template can invoke a @map", async () => {
+    const templateText = await fixtures.get("map.orit");
+    const templateFile = await loadOrigamiTemplate(templateText);
+    const fn = await templateFile.contents();
+    const value = await fn();
+    assert.deepEqual(value, "Hello, Alice! Hello, Bob! Hello, Carol! ");
+  });
 });

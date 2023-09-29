@@ -1,0 +1,4 @@
+---
+name: Carol
+---
+Hello, {{ @template/name }}!

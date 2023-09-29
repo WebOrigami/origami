@@ -1,0 +1,7 @@
+---
+names:
+  - Alice
+  - Bob
+  - Carol
+---
+{{ @map/values(@template/names, =`Hello, {{ @value }}! `) }}
