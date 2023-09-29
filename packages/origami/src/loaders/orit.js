@@ -37,7 +37,7 @@ export default function loadOrigamiTemplate(buffer, key) {
       const extendedScope = new Scope(
         {
           "@container": container,
-          "@context": getScope(input?.parent),
+          "@caller": getScope(input?.parent),
           "@template": frontGraph,
         },
         baseScope

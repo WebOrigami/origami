@@ -25,5 +25,6 @@ export default async function invoke(fn) {
   if (typeof fn !== "function" && fn.contents) {
     fn = await fn.contents();
   }
-  return typeof fn === "function" ? fn.call(builtins) : fn;
+  const scope = (await this?.get("@current")) ?? builtins;
+  return typeof fn === "function" ? fn.call(scope) : fn;
 }

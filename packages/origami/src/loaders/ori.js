@@ -21,16 +21,16 @@ export default function loadOrigamiExpression(buffer, key) {
 
     // If the value is a function, wrap it such that it will use the file's
     // container as its scope. Make the calling `this` context available via a
-    // `@context` ambient.
+    // `@caller` ambient.
     if (typeof value === "function") {
       const fn = value;
       /** @this {AsyncDictionary|null} */
-      function useFileScope(input) {
-        const extendedScope = new Scope({ "@context": this }, scope);
+      function useContainerScope(input) {
+        const extendedScope = new Scope({ "@caller": this }, scope);
         return fn.call(extendedScope, input);
       }
 
-      value = useFileScope;
+      value = useContainerScope;
       value.code = fn.code;
     }
 
