@@ -4,4 +4,4 @@ names:
   - Bob
   - Carol
 ---
-{{ @map/values(@template/names, =`Hello, {{ @value }}! `) }}
+{{ @map/values(@attached/names, =`Hello, {{ @value }}! `) }}

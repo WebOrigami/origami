@@ -1,9 +1,8 @@
-import TextFile from "../common/TextFile.js";
-import { extractFrontMatter } from "../common/serialize.js";
+import { createTextDocument } from "../common/createTextDocument.js";
 
 export default function body(input) {
-  const { bodyText } = extractFrontMatter(input);
-  return input.contents ? new TextFile(bodyText, input.contents) : bodyText;
+  const document = createTextDocument(input);
+  return document.bodyText;
 }
 
 body.usage = `@body <text>\tThe body of the text without any front matter`;

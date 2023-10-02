@@ -15,9 +15,9 @@ describe("MapDictionary", () => {
     assert.equal(a, 1);
   });
 
-  test("getting default value returns the dictionary", async () => {
+  test("getting default value returns the map itself", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(Dictionary.defaultValueKey), fixture);
+    assert.equal(await fixture.get(Dictionary.defaultValueKey), fixture.map);
   });
 
   test("getting an unsupported key returns undefined", async () => {

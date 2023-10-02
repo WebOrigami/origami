@@ -10,8 +10,8 @@ a: 1
 b: 2
 `;
     const textWithGraph = await loadYaml(null, text);
-    const graph = await /** @type {any} */ (textWithGraph).contents();
-    assert.deepEqual(await Graph.plain(graph), {
+    const data = await /** @type {any} */ (textWithGraph).contents();
+    assert.deepEqual(await Graph.plain(data), {
       a: 1,
       b: 2,
     });

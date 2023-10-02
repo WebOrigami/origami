@@ -22,10 +22,9 @@ export default class FunctionDictionary {
    * @param {any} key
    */
   async get(key) {
-    // The dictionary's default value is the same as calling the function
-    // with the `undefined` key.
+    // The dictionary's default value is the underlying function itself.
     if (key === defaultValueKey) {
-      key = undefined;
+      return this.fn;
     }
 
     return this.fn.call(null, key);

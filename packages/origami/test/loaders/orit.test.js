@@ -85,7 +85,7 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "1");
   });
 
-  test("template can reference template front matter via @template", async () => {
+  test("template can reference template front matter via @attached", async () => {
     const templateText = await fixtures.get("frontMatter.orit");
     const templateFile = await loadOrigamiTemplate(null, templateText);
     const fn = await templateFile.contents();

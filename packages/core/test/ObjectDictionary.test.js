@@ -19,9 +19,9 @@ describe("ObjectDictionary", () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test("default value is the graph itself", async () => {
+  test("default value is the object itself", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(Graph.defaultValueKey), fixture);
+    assert.equal(await fixture.get(Graph.defaultValueKey), fixture.object);
   });
 
   test("getting an unsupported key returns undefined", async () => {

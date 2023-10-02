@@ -1,4 +1,4 @@
 ---
 name: Carol
 ---
-Hello, {{ @template/name }}!
+Hello, {{ @attached/name }}!

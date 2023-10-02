@@ -1,7 +1,6 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import TextFile from "../../src/common/TextFile.js";
 import * as serialize from "../../src/common/serialize.js";
 
 describe("serialize", () => {
@@ -70,29 +69,6 @@ This is the content.
       a: "Hello, a.",
       "@text": "This is the content.\n",
     });
-  });
-
-  test("renderFrontMatter renders object contents as YAML", async () => {
-    /** @type {any} */
-    const textFile = new TextFile("This is the content.", {
-      a: "Hello, a.",
-    });
-    /** @type {any} */
-    const output = await serialize.renderFrontMatter(textFile);
-    assert.equal(
-      output,
-      `---
-a: Hello, a.
----
-This is the content.`
-    );
-    assert.equal(output.contents, textFile.contents);
-  });
-
-  test("renderFrontMatter writes output as text if there's no graph", async () => {
-    const text = "This is the content.";
-    const output = await serialize.renderFrontMatter(text);
-    assert.equal(output, text);
   });
 
   test("toJson() renders a graph as JSON", async () => {

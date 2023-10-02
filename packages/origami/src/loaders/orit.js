@@ -1,7 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import TextFile from "../common/TextFile.js";
+import TextDocument from "../common/TextDocument.js";
+import { createTextDocument } from "../common/createTextDocument.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -11,17 +12,23 @@ import * as compile from "../language/compile.js";
  * @type {import("../../index.js").FileLoaderFunction}
  */
 export default function loadOrigamiTemplate(container, input, key) {
-  const containerScope = getScope(container) ?? builtins;
   let templateContents;
-  return new TextFile(input, {
+  return new TextDocument(input, {
+    parent: container,
+
     async contents() {
       if (!templateContents) {
-        // Compile the file's text as an Origami expression and evaluate it.
-        const bodyText = TextFile.bodyText(input);
+        // Get the input body text.
+        const inputDocument = createTextDocument(input, { parent: container });
+        const bodyText = inputDocument.bodyText;
+
+        // Compile the body text as an Origami expression and evaluate it.
         const expression = compile.templateDocument(bodyText);
+        const containerScope = getScope(container) ?? builtins;
         const lambda = await expression.call(containerScope);
 
-        const attachedData = await TextFile.contents(input);
+        const attachedData = await inputDocument?.contents?.();
+
         /** @this {AsyncDictionary|null} */
         templateContents = async function templateFn(input) {
           const baseScope = this ?? builtins;

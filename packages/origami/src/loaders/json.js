@@ -1,5 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import TextFile from "../common/TextFile.js";
+import TextDocument from "../common/TextDocument.js";
 
 /**
  * Load a file as JSON.
@@ -7,11 +6,9 @@ import TextFile from "../common/TextFile.js";
  * @type {import("../../index.js").FileLoaderFunction}
  */
 export default function loadJson(container, input, key) {
-  let contents;
-  return new TextFile(input, async () => {
-    if (contents === undefined) {
-      contents = JSON.parse(String(input));
-    }
-    return contents;
+  return new TextDocument(input, {
+    async contents() {
+      return JSON.parse(String(input));
+    },
   });
 }

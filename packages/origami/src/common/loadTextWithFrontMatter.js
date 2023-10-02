@@ -1,4 +1,4 @@
-import TextFile from "./TextFile.js";
+import { createTextDocument } from "./createTextDocument.js";
 
 /**
  * Load a file as text with possible front matter.
@@ -13,5 +13,5 @@ import TextFile from "./TextFile.js";
  * @type {import("../../index.js").FileLoaderFunction}
  */
 export default function loadTextWithFrontMatter(container, input) {
-  return new TextFile(input, { container });
+  return createTextDocument(input, { parent: container });
 }

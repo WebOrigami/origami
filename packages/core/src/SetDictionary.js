@@ -17,8 +17,8 @@ export default class SetDictionary {
   }
 
   async get(key) {
-    // The dictionary's default value is the dictionary itself.
-    return key === defaultValueKey ? this : this.values[key];
+    // The dictionary's default value is the underlying array of values.
+    return key === defaultValueKey ? this.values : this.values[key];
   }
 
   async keys() {

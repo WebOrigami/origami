@@ -1,7 +1,9 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { Graph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import TextFile from "../common/TextFile.js";
+import TextDocument from "../common/TextDocument.js";
+import { createTextDocument } from "../common/createTextDocument.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -12,18 +14,21 @@ import * as compile from "../language/compile.js";
  */
 export default function loadOrigamiExpression(container, input, key) {
   const containerScope = getScope(container) ?? builtins;
-  let contents;
-  return new TextFile(input, async () => {
-    if (contents === undefined) {
-      // Compile the file's text as an Origami expression and evaluate it.
-      const fn = compile.expression(String(input));
-      contents = await fn.call(containerScope);
+  return new TextDocument(input, {
+    async contents() {
+      // Get the input body text.
+      const inputDocument = createTextDocument(input, { parent: container });
+      const bodyText = inputDocument.bodyText;
+
+      // Compile the body text as an Origami expression and evaluate it.
+      const fn = compile.expression(bodyText);
+      let result = await fn.call(containerScope);
 
       // If the value is a function, wrap it such that it will use the file's
       // container as its scope. Make the calling `this` context available via a
       // `@callScope` ambient.
-      if (typeof contents === "function") {
-        const fn = contents;
+      if (typeof result === "function") {
+        const fn = result;
         /** @this {AsyncDictionary|null} */
         function useContainerScope(input) {
           const extendedScope = new Scope(
@@ -33,17 +38,14 @@ export default function loadOrigamiExpression(container, input, key) {
           return fn.call(extendedScope, input);
         }
 
-        contents = useContainerScope;
+        result = useContainerScope;
         // @ts-ignore
-        contents.code = fn.code;
+        result.code = fn.code;
+      } else if (Graph.isAsyncDictionary(result) && "parent" in result) {
+        result.parent = containerScope;
       }
 
-      if (contents && typeof contents === "object") {
-        if ("parent" in contents) {
-          contents.parent = containerScope;
-        }
-      }
-    }
-    return contents;
+      return result;
+    },
   });
 }

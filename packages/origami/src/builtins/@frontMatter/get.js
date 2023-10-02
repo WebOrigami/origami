@@ -1,3 +1,6 @@
+import { createTextDocument } from "../../common/createTextDocument.js";
+
 export default async function get(obj) {
-  return await obj?.contents?.();
+  const document = createTextDocument(obj);
+  return await document?.contents?.();
 }

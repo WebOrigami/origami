@@ -1,4 +1,4 @@
-import TextFile from "../common/TextFile.js";
+import TextDocument from "../common/TextDocument.js";
 
 /**
  * Load a .js file as a String with a contents() method that returns the
@@ -7,11 +7,11 @@ import TextFile from "../common/TextFile.js";
  * @type {import("../../index.js").FileLoaderFunction}
  */
 export default function loadJs(container, input, key) {
-  let contents;
-  return new TextFile(input, async () => {
-    if (!contents && container && "import" in container) {
-      contents = await /** @type {any} */ (container).import?.(key);
-    }
-    return contents;
+  return new TextDocument(input, {
+    async contents() {
+      if (container && "import" in container) {
+        return /** @type {any} */ (container).import?.(key);
+      }
+    },
   });
 }

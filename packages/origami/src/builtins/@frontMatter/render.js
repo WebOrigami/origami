@@ -1,8 +1,6 @@
-import TextFile from "../../common/TextFile.js";
-import { renderFrontMatter } from "../../common/serialize.js";
+import FrontMatterDocument from "../../common/FrontMatterDocument.js";
 
-export default async function render(value, data) {
-  /** @type {any} */
-  const textFile = new TextFile(value, () => data);
-  return renderFrontMatter(textFile);
+export default async function render(text, frontData) {
+  const document = new FrontMatterDocument(text, { frontData });
+  return String(document);
 }

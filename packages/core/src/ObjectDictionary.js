@@ -36,9 +36,9 @@ export default class ObjectDictionary {
 
     let value = this.object[key];
 
-    // The dictionary's default value is the dictionary itself.
+    // The dictionary's default value is the underlying object itself.
     if (value === undefined && key === Graph.defaultValueKey) {
-      value = this;
+      value = this.object;
     }
 
     return value;

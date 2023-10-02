@@ -7,6 +7,7 @@
     "packages/types"
   ],
   "scripts": {
+    "prepublishOnly": "pushd packages/origami; npm run prepublishOnly; popd",
     "test": "node --test --test-reporter=spec packages/*/test/*.test.js packages/*/test/*/*.test.js packages/*/test/*/*/*.test.js",
     "typecheck": "tsc"
   }

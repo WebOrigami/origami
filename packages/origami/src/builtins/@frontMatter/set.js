@@ -1,5 +1,5 @@
-import TextFile from "../../common/TextFile.js";
+import FrontMatterDocument from "../../common/FrontMatterDocument.js";
 
-export default function set(value, data) {
-  return new TextFile(value, data);
+export default function set(value, frontData) {
+  return new FrontMatterDocument(value, { frontData });
 }

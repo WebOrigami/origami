@@ -18,8 +18,8 @@ export default class MapDictionary {
     let value = this.map.get(key);
 
     if (value === undefined && key === defaultValueKey) {
-      // The default value is the dictionary itself.
-      value = this;
+      // The default value is the underlying dictionary itself.
+      value = this.map;
     }
 
     return value;

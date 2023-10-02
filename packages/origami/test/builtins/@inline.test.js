@@ -1,35 +1,29 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import TextFile from "../../src/common/TextFile.js";
+import FrontMatterDocument from "../../src/common/FrontMatterDocument.js";
 
-describe.only("inline", () => {
+describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
     const text = `Hello, {{name}}!`;
-    const inlined = await inline.call(scope, text);
-    assert.equal(inlined, "Hello, Alice!");
+    const inlinedDocument = await inline.call(scope, text);
+    assert.equal(String(inlinedDocument), "Hello, Alice!");
+    assert.equal(inlinedDocument.bodyText, "Hello, Alice!");
   });
 
-  test.only("can reference keys in an attached graph", async () => {
-    const textFile = new TextFile(`---
+  test("can reference keys in an attached graph", async () => {
+    const document = new FrontMatterDocument(`---
 name: Bob
 ---
 Hello, {{ @attached/name }}!`);
-    const inlinedFile = await inline.call(null, textFile);
-    assert.equal(
-      String(inlinedFile),
-      `---
-name: Bob
----
-Hello, Bob!`
-    );
-    assert.equal(inlinedFile.bodyText, `Hello, Bob!`);
-    const graph = await inlinedFile.contents();
-    assert.deepEqual(await Graph.plain(graph), {
+    const inlinedDocument = await inline.call(null, document);
+    assert.equal(inlinedDocument.bodyText, `Hello, Bob!`);
+    const data = await inlinedDocument.contents();
+    assert.deepEqual(data, {
       name: "Bob",
     });
   });

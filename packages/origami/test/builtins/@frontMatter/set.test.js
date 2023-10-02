@@ -7,7 +7,7 @@ describe("@frontMatter/set", () => {
   test("attaches data to text", async () => {
     /** @type {any} */
     const fixture = set("Hello, world!", { foo: "bar" });
-    assert.equal(String(fixture), "Hello, world!");
+    assert.equal(String(fixture), `---\nfoo: bar\n---\nHello, world!`);
     const graph = await fixture.contents();
     assert.deepEqual(await Graph.plain(graph), { foo: "bar" });
   });

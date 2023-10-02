@@ -17,10 +17,14 @@ describe("SetDictionary", () => {
     assert.equal(a, "a");
   });
 
-  test("getting default value returns the dictionary", async () => {
+  test("getting default value returns the values", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetDictionary(set);
-    assert.equal(await fixture.get(Dictionary.defaultValueKey), fixture);
+    assert.deepEqual(await fixture.get(Dictionary.defaultValueKey), [
+      "a",
+      "b",
+      "c",
+    ]);
   });
 
   test("getting an unsupported key returns undefined", async () => {

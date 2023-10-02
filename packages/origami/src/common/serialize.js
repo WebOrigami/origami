@@ -8,7 +8,6 @@ import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";
 import expressionTag from "../language/expressionTag.js";
-import TextFile from "./TextFile.js";
 import { castArrayLike } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -82,18 +81,6 @@ export function fromYaml(obj) {
     parsed = {};
   }
   return new ObjectGraph(parsed);
-}
-
-export async function renderFrontMatter(obj) {
-  const text = String(obj);
-
-  const contents = await obj.contents?.();
-  if (!contents) {
-    return text;
-  }
-
-  const frontMatter = (await toYaml(contents)).trimEnd();
-  return new TextFile(`---\n${frontMatter}\n---\n${text}`, obj.contents);
 }
 
 export function parseYaml(text) {
