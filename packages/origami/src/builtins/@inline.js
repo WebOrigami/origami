@@ -1,3 +1,4 @@
+import TextFile from "../common/TextFile.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/orit.js";
 
@@ -15,7 +16,12 @@ export default async function inline(input) {
   assertScopeIsDefined(this);
   const template = await loadOrigamiTemplate(this, input);
   const fn = await template.contents();
-  return fn.call(this, input);
+  const bodyText = await fn.call(this);
+  const frontMatter = await TextFile.frontMatter(input);
+  const result = frontMatter
+    ? `---\n${frontMatter}\n---\n${bodyText}`
+    : bodyText;
+  return new TextFile(result, { bodyText, contents: input.contents });
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

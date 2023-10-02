@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import TextWithContents from "../common/TextWithContents.js";
+import TextFile from "../common/TextFile.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -13,7 +13,7 @@ import * as compile from "../language/compile.js";
 export default function loadOrigamiExpression(container, input, key) {
   const containerScope = getScope(container) ?? builtins;
   let contents;
-  return new TextWithContents(input, async () => {
+  return new TextFile(input, async () => {
     if (contents === undefined) {
       // Compile the file's text as an Origami expression and evaluate it.
       const fn = compile.expression(String(input));
@@ -21,12 +21,15 @@ export default function loadOrigamiExpression(container, input, key) {
 
       // If the value is a function, wrap it such that it will use the file's
       // container as its scope. Make the calling `this` context available via a
-      // `@caller` ambient.
+      // `@callScope` ambient.
       if (typeof contents === "function") {
         const fn = contents;
         /** @this {AsyncDictionary|null} */
         function useContainerScope(input) {
-          const extendedScope = new Scope({ "@caller": this }, containerScope);
+          const extendedScope = new Scope(
+            { "@callScope": this },
+            containerScope
+          );
           return fn.call(extendedScope, input);
         }
 

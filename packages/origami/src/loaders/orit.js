@@ -1,12 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
-import ExpressionGraph from "../common/ExpressionGraph.js";
 import Scope from "../common/Scope.js";
-import TextWithContents from "../common/TextWithContents.js";
-import { extractFrontMatter } from "../common/serialize.js";
+import TextFile from "../common/TextFile.js";
 import { getScope } from "../common/utilities.js";
-import FileTreeTransform from "../framework/FileTreeTransform.js";
 import * as compile from "../language/compile.js";
 
 /**
@@ -16,49 +12,35 @@ import * as compile from "../language/compile.js";
  */
 export default function loadOrigamiTemplate(container, input, key) {
   const containerScope = getScope(container) ?? builtins;
-  let contents;
-  return new TextWithContents(input, async () => {
-    if (!contents) {
-      let bodyText;
-      let frontGraph;
+  let templateContents;
+  return new TextFile(input, {
+    async contents() {
+      if (!templateContents) {
+        // Compile the file's text as an Origami expression and evaluate it.
+        const bodyText = TextFile.bodyText(input);
+        const expression = compile.templateDocument(bodyText);
+        const lambda = await expression.call(containerScope);
 
-      if (input.contents) {
-        bodyText = String(input);
-        frontGraph = Graph.from(await input.contents());
-      } else {
-        const extracted = extractFrontMatter(input);
-        bodyText = extracted.bodyText;
-        const frontData = extracted.frontData;
-        if (frontData) {
-          frontGraph = new (FileTreeTransform(ExpressionGraph))(frontData);
-        }
+        const attachedData = await TextFile.contents(input);
+        /** @this {AsyncDictionary|null} */
+        templateContents = async function templateFn(input) {
+          const baseScope = this ?? builtins;
+          const extendedScope = new Scope(
+            {
+              "@container": container,
+              "@callScope": containerScope,
+              "@attached": attachedData,
+            },
+            baseScope
+          );
+          return lambda.call(extendedScope, input);
+        };
+
+        // Add diagnostic information.
+        // @ts-ignore
+        templateContents.code = lambda.code;
       }
-      if (frontGraph) {
-        frontGraph.parent = containerScope;
-      }
-
-      // Compile the file's text as an Origami expression and evaluate it.
-      const expression = compile.templateDocument(bodyText);
-      const lambda = await expression.call(containerScope);
-
-      /** @this {AsyncDictionary|null} */
-      contents = async function templateFn(input) {
-        const baseScope = this ?? builtins;
-        const extendedScope = new Scope(
-          {
-            "@container": container,
-            "@caller": getScope(input?.parent),
-            "@template": frontGraph,
-          },
-          baseScope
-        );
-        return lambda.call(extendedScope, input);
-      };
-
-      // Add diagnostic information.
-      // @ts-ignore
-      contents.code = lambda.code;
-    }
-    return contents;
+      return templateContents;
+    },
   });
 }

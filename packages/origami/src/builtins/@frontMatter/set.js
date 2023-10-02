@@ -1,5 +1,5 @@
-import TextWithContents from "../../common/TextWithContents.js";
+import TextFile from "../../common/TextFile.js";
 
 export default function set(value, data) {
-  return new TextWithContents(value, data);
+  return new TextFile(value, data);
 }

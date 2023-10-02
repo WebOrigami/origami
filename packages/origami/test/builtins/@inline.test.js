@@ -1,8 +1,8 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import TextWithContents from "../../src/common/TextWithContents.js";
+import TextFile from "../../src/common/TextFile.js";
 
 describe.only("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
@@ -15,10 +15,22 @@ describe.only("inline", () => {
   });
 
   test.only("can reference keys in an attached graph", async () => {
-    const textFile = new TextWithContents(`Hello, {{ @template/name }}!`, {
+    const textFile = new TextFile(`---
+name: Bob
+---
+Hello, {{ @attached/name }}!`);
+    const inlinedFile = await inline.call(null, textFile);
+    assert.equal(
+      String(inlinedFile),
+      `---
+name: Bob
+---
+Hello, Bob!`
+    );
+    assert.equal(inlinedFile.bodyText, `Hello, Bob!`);
+    const graph = await inlinedFile.contents();
+    assert.deepEqual(await Graph.plain(graph), {
       name: "Bob",
     });
-    const inlined = await inline.call(null, textFile);
-    assert.equal(String(inlined), `Hello, Bob!`);
   });
 });

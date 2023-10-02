@@ -1,4 +1,4 @@
-import TextWithContents from "../common/TextWithContents.js";
+import TextFile from "../common/TextFile.js";
 
 /**
  * Load a .js file as a String with a contents() method that returns the
@@ -8,7 +8,7 @@ import TextWithContents from "../common/TextWithContents.js";
  */
 export default function loadJs(container, input, key) {
   let contents;
-  return new TextWithContents(input, async () => {
+  return new TextFile(input, async () => {
     if (!contents && container && "import" in container) {
       contents = await /** @type {any} */ (container).import?.(key);
     }

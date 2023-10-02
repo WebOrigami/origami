@@ -18,7 +18,7 @@ export type Constructor<T> = new (...args: any[]) => T;
 export type FileLoaderFunction = (
   container: AsyncDictionary | null,
   input: StringLike,
-  key?: any) => String & HasContents;
+  key?: any) => StringLike & HasContents;
 
 /**
  * An object with a non-trivial `toString` method.

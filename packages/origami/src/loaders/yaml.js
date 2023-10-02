@@ -1,7 +1,7 @@
 import { isGraphable } from "@graphorigami/core/src/Graph.js";
 import * as YAMLModule from "yaml";
 import ExpressionGraph from "../common/ExpressionGraph.js";
-import TextWithContents from "../common/TextWithContents.js";
+import TextFile from "../common/TextFile.js";
 import { parseYaml } from "../common/serialize.js";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 
@@ -16,7 +16,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export default function loadYaml(container, input, key) {
   let contents;
-  return new TextWithContents(input, async () => {
+  return new TextFile(input, async () => {
     if (contents === undefined) {
       contents = parseYaml(String(input));
       if (isGraphable(contents)) {

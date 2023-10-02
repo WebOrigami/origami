@@ -1,7 +1,7 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import TextWithContents from "../../src/common/TextWithContents.js";
+import TextFile from "../../src/common/TextFile.js";
 import * as serialize from "../../src/common/serialize.js";
 
 describe("serialize", () => {
@@ -74,7 +74,7 @@ This is the content.
 
   test("renderFrontMatter renders object contents as YAML", async () => {
     /** @type {any} */
-    const textFile = new TextWithContents("This is the content.", {
+    const textFile = new TextFile("This is the content.", {
       a: "Hello, a.",
     });
     /** @type {any} */

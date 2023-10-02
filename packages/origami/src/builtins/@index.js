@@ -1,5 +1,5 @@
 import { Graph } from "@graphorigami/core";
-import TextWithContents from "../common/TextWithContents.js";
+import TextFile from "../common/TextFile.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -62,7 +62,7 @@ export default async function index(variant) {
         ${list.trim()}
       </body>
     </html>`;
-  return new TextWithContents(html.trim(), graph);
+  return new TextFile(html.trim(), graph);
 }
 
 index.usage = `@index\tReturn a default index.html page for the current graph`;

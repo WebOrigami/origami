@@ -2,11 +2,11 @@ import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import get from "../../../src/builtins/@frontMatter/get.js";
-import TextWithContents from "../../../src/common/TextWithContents.js";
+import TextFile from "../../../src/common/TextFile.js";
 
 describe("@frontMatter/get", () => {
   test("returns associated front matter", async () => {
-    const textFile = new TextWithContents("text", {
+    const textFile = new TextFile("text", {
       a: 1,
     });
     const graph = await get(textFile);
