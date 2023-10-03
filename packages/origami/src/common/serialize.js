@@ -168,10 +168,10 @@ export function toSerializable(obj) {
 /**
  * Returns the graph as a YAML string.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @returns {Promise<string>}
  */
-export async function toYaml(variant) {
-  const serializable = await serializableObject(variant);
+export async function toYaml(graphable) {
+  const serializable = await serializableObject(graphable);
   return YAML.stringify(serializable);
 }

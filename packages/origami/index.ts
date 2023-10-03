@@ -13,7 +13,15 @@ import { AsyncDictionary } from "@graphorigami/types";
 export type Constructor<T> = new (...args: any[]) => T;
 
 /**
- * Declaration for a file loader function.
+ * A function that can convert a string-like input value into some live object.
+ */
+export type Deserializer = (
+  container: AsyncDictionary | null,
+  input: StringLike,
+  key?: any) => any;
+
+/**
+ * A file loader function
  */
 export type FileLoaderFunction = (
   container: AsyncDictionary | null,

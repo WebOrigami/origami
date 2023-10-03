@@ -33,9 +33,10 @@ export default function FileLoadersTransform(Base) {
         if (extension) {
           const loaders = await this.loaders();
           /** @type {FileLoaderFunction} */
-          const loader = await loaders.get(extension);
-          if (loader) {
-            value = await loader(this, value, key);
+          const deserialize = await loaders.get(extension);
+          if (deserialize) {
+            value = new String(value);
+            value.contents = () => deserialize(this, value, key);
           }
 
           // Add diagnostic information.

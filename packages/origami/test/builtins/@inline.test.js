@@ -2,7 +2,7 @@ import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import FrontMatterDocument from "../../src/common/FrontMatterDocument.js";
+import TextDocument2 from "../../src/common/TextDocument2.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
@@ -12,22 +12,17 @@ describe("inline", () => {
     const text = `Hello, {{name}}!`;
     const inlinedDocument = await inline.call(scope, text);
     assert.equal(String(inlinedDocument), "Hello, Alice!");
-    assert.equal(inlinedDocument.bodyText, "Hello, Alice!");
+    assert.equal(inlinedDocument.text, "Hello, Alice!");
   });
 
   test("can reference keys in an attached graph", async () => {
-    const document = new FrontMatterDocument(`---
+    const document = TextDocument2.deserialize(`---
 name: Bob
 ---
 Hello, {{ @attached/name }}!`);
     /** @type {any} */
     const inlinedDocument = await inline.call(null, document);
-    assert.equal(String(inlinedDocument), `---\nname: Bob\n---\nHello, Bob!`);
-    assert.equal(inlinedDocument.bodyText, `Hello, Bob!`);
-    assert.deepEqual(inlinedDocument.frontData, { name: "Bob" });
-    const data = await inlinedDocument.contents();
-    assert.deepEqual(data, {
-      name: "Bob",
-    });
+    assert.equal(inlinedDocument.text, `Hello, Bob!`);
+    assert.deepEqual(inlinedDocument.data, { name: "Bob" });
   });
 });

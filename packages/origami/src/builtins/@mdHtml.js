@@ -3,8 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import TextDocument from "../common/TextDocument.js";
-import { createTextDocument } from "../common/createTextDocument.js";
+import TextDocument2 from "../common/TextDocument2.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -30,13 +29,14 @@ marked.use(
  * @param {StringLike} input
  */
 export default async function mdHtml(input) {
-  const markdownDocument = createTextDocument(input);
-  const markdown = markdownDocument.bodyText;
+  const markdownDocument = TextDocument2.from(input);
+  const markdown = markdownDocument.text;
   const html = marked(markdown);
-  return new TextDocument(html, {
-    contents: markdownDocument.contents?.bind(markdownDocument),
-    parent: this ?? undefined,
-  });
+  return new TextDocument2(
+    html,
+    markdownDocument.data,
+    markdownDocument.parent
+  );
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;

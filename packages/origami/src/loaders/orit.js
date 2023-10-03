@@ -1,49 +1,43 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import { createTextDocument } from "../common/createTextDocument.js";
+import TextDocument2 from "../common/TextDocument2.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
 /**
  * Load and evaluate an Origami template from a file.
  *
- * @type {import("../../index.js").FileLoaderFunction}
+ * @type {import("../../index.js").Deserializer}
  */
-export default function loadOrigamiTemplate(container, input, key) {
-  return createTextDocument(input, {
-    parent: container,
+export default async function deserializeOrigamiTemplate(container, input) {
+  // Get the input body text and attached content.
+  const inputDocument = TextDocument2.from(input);
+  const text = inputDocument.text;
+  const attachedData = await inputDocument.data;
 
-    async contents() {
-      // Get the input body text and attached content.
-      const inputDocument = createTextDocument(input, { parent: container });
-      const bodyText = inputDocument.bodyText;
-      const attachedData = await inputDocument.contents();
+  // Compile the body text as an Origami expression and evaluate it.
+  const expression = compile.templateDocument(text);
+  const containerScope = getScope(container) ?? builtins;
+  const lambda = await expression.call(containerScope);
 
-      // Compile the body text as an Origami expression and evaluate it.
-      const expression = compile.templateDocument(bodyText);
-      const containerScope = getScope(container) ?? builtins;
-      const lambda = await expression.call(containerScope);
+  /** @this {AsyncDictionary|null} */
+  let result = async function templateFn(input) {
+    const baseScope = this ?? builtins;
+    const extendedScope = new Scope(
+      {
+        "@container": container,
+        "@callScope": containerScope,
+        "@attached": attachedData,
+      },
+      baseScope
+    );
+    return lambda.call(extendedScope, input);
+  };
 
-      /** @this {AsyncDictionary|null} */
-      let templateContents = async function templateFn(input) {
-        const baseScope = this ?? builtins;
-        const extendedScope = new Scope(
-          {
-            "@container": container,
-            "@callScope": containerScope,
-            "@attached": attachedData,
-          },
-          baseScope
-        );
-        return lambda.call(extendedScope, input);
-      };
+  // Add diagnostic information.
+  // @ts-ignore
+  result.code = lambda.code;
 
-      // Add diagnostic information.
-      // @ts-ignore
-      templateContents.code = lambda.code;
-
-      return templateContents;
-    },
-  });
+  return result;
 }
