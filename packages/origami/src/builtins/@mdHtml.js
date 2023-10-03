@@ -34,7 +34,7 @@ export default async function mdHtml(input) {
   const markdown = markdownDocument.bodyText;
   const html = marked(markdown);
   return new TextDocument(html, {
-    contents: () => markdownDocument.contents?.(),
+    contents: markdownDocument.contents?.bind(markdownDocument),
     parent: this ?? undefined,
   });
 }

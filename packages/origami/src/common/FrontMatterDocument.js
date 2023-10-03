@@ -25,7 +25,7 @@ export default class FrontMatterDocument extends TextDocument {
    * @typedef {import("../../index.js").StringLike} StringLike
    *
    * @param {StringLike} input
-   * @param {{ frontData?: PlainObject, parent?: AsyncDictionary|null }} [options]
+   * @param {{ contents?: any, frontData?: PlainObject, parent?: AsyncDictionary|null }} [options]
    */
   constructor(input, options = {}) {
     let bodyText;
@@ -39,7 +39,7 @@ export default class FrontMatterDocument extends TextDocument {
       frontData = extracted.frontData;
       bodyText = extracted.bodyText;
     }
-    super(bodyText, { parent: options.parent });
+    super(bodyText, options);
     this.frontData = frontData;
   }
 
@@ -47,6 +47,11 @@ export default class FrontMatterDocument extends TextDocument {
    * @returns {Promise<any>}
    */
   async contents() {
+    if (this._contents) {
+      // Defer to base class.
+      return super.contents();
+    }
+
     const frontData = this.frontData;
     if (!frontData) {
       return this.bodyText;

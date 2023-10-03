@@ -20,8 +20,11 @@ describe("inline", () => {
 name: Bob
 ---
 Hello, {{ @attached/name }}!`);
+    /** @type {any} */
     const inlinedDocument = await inline.call(null, document);
+    assert.equal(String(inlinedDocument), `---\nname: Bob\n---\nHello, Bob!`);
     assert.equal(inlinedDocument.bodyText, `Hello, Bob!`);
+    assert.deepEqual(inlinedDocument.frontData, { name: "Bob" });
     const data = await inlinedDocument.contents();
     assert.deepEqual(data, {
       name: "Bob",

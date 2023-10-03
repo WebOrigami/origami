@@ -1,4 +1,3 @@
-import TextDocument from "../common/TextDocument.js";
 import { createTextDocument } from "../common/createTextDocument.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import loadOrigamiTemplate from "../loaders/orit.js";
@@ -15,12 +14,10 @@ import loadOrigamiTemplate from "../loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  const templateDocument = createTextDocument(input);
-  const template = await loadOrigamiTemplate(this, templateDocument);
+  const template = await loadOrigamiTemplate(this, input);
   const fn = await template.contents();
   const bodyText = await fn.call(this);
-  return new TextDocument(bodyText, {
-    contents: () => templateDocument.contents?.(),
+  return createTextDocument(bodyText, {
     parent: this ?? null,
   });
 }
