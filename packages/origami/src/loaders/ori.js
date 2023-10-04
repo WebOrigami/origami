@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import { createTextDocument } from "../common/createTextDocument.js";
+import TextDocument2 from "../common/TextDocument2.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -14,8 +14,8 @@ export default async function loadOrigamiExpression(container, input, key) {
   const containerScope = getScope(container);
 
   // Get the input body text.
-  const inputDocument = createTextDocument(input, { parent: container });
-  const bodyText = inputDocument.bodyText;
+  const inputDocument = new TextDocument2(input);
+  const bodyText = inputDocument.text;
 
   // Compile the body text as an Origami expression and evaluate it.
   const fn = compile.expression(bodyText);

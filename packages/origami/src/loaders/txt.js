@@ -1,4 +1,4 @@
-import loadTextWithFrontMatter2 from "../common/loadTextWithFrontMatter2.js";
+import loadTextWithFrontMatter2 from "./txt.js";
 
-// .txt files use the loader for text with front matter
+// Load this file type as text with possible front matter.
 export default loadTextWithFrontMatter2;
