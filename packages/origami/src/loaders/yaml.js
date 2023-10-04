@@ -1,5 +1,5 @@
-import { Graph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
+import { processUnpackedContent } from "../common/processUnpackedContent.js";
 import { parseYaml } from "../common/serialize.js";
 
 // See notes at serialize.js
@@ -9,13 +9,10 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /**
  * Load a file as YAML.
  *
- * @type {import("../../index.js").FileUnpackFunction}
+ * @type {import("../..").FileUnpackFunction}
  */
 export default function unpackYaml(input, options = {}) {
-  const { parent } = options;
-  const result = parseYaml(String(input));
-  if (Graph.isAsyncDictionary(result)) {
-    /** @type {any} */ (result).parent = parent;
-  }
-  return result;
+  const parent = options.parent ?? null;
+  const content = parseYaml(String(input));
+  return processUnpackedContent(content, parent);
 }
