@@ -3,6 +3,6 @@
  *
  * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function unpackJson(container, input, key) {
+export default function unpackJson(input) {
   return JSON.parse(String(input));
 }

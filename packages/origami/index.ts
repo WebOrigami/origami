@@ -16,9 +16,9 @@ export type Constructor<T> = new (...args: any[]) => T;
  * A function that can convert a string-like input value into some live object.
  */
 export type FileUnpackFunction = (
-  container: AsyncDictionary | null,
   input: StringLike,
-  key?: any) => any;
+  options?: { key?: any, parent?: AsyncDictionary | null }
+) => any;
 
 /**
  * An object with a non-trivial `toString` method.

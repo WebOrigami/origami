@@ -13,19 +13,28 @@ const fixturesGraph = new (ImportModulesMixin(FilesGraph))(fixturesDirectory);
 describe(".js loader", () => {
   test("loads .js file that exports a string", async () => {
     const buffer = await fixturesGraph.get("string.js");
-    const text = await unpackModule(fixturesGraph, buffer, "string.js");
+    const text = await unpackModule(buffer, {
+      key: "string.js",
+      parent: fixturesGraph,
+    });
     assert.equal(text, "This is a string.");
   });
 
   test("loads .js file that exports a function", async () => {
     const buffer = await fixturesGraph.get("greet.js");
-    const greet = await unpackModule(fixturesGraph, buffer, "greet.js");
+    const greet = await unpackModule(buffer, {
+      key: "greet.js",
+      parent: fixturesGraph,
+    });
     assert.equal(await greet("world"), "Hello, world!");
   });
 
   test("loads .js file that exports an object", async () => {
     const buffer = await fixturesGraph.get("obj.js");
-    const obj = await unpackModule(fixturesGraph, buffer, "obj.js");
+    const obj = await unpackModule(buffer, {
+      key: "obj.js",
+      parent: fixturesGraph,
+    });
     assert.deepEqual(obj, { a: 1 });
   });
 });

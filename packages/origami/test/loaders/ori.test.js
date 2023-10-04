@@ -6,7 +6,7 @@ import unpackOrigamiExpression from "../../src/loaders/ori.js";
 describe(".ori loader", () => {
   test("loads a string expression", async () => {
     const source = `"Hello"`;
-    const text = await unpackOrigamiExpression(null, source);
+    const text = await unpackOrigamiExpression(source);
     assert.equal(text, "Hello");
   });
 
@@ -17,7 +17,7 @@ describe(".ori loader", () => {
     const source = `{
       message = \`Hello, {{ name }}!\`
     }`;
-    const graph = await unpackOrigamiExpression(scope, source);
+    const graph = await unpackOrigamiExpression(source, { parent: scope });
     assert.deepEqual(await Graph.plain(graph), {
       message: "Hello, world!",
     });
@@ -30,7 +30,7 @@ describe(".ori loader", () => {
         message = \`Hello, {{ name }}!\`
       }
     }`;
-    const graph = await unpackOrigamiExpression(null, source);
+    const graph = await unpackOrigamiExpression(source);
     assert.deepEqual(
       await Graph.traverse(graph, "public", "message"),
       "Hello, world!"
@@ -42,7 +42,9 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const source = `\`Hello, {{ name }}!\``;
-    const unpackedText = await unpackOrigamiExpression(scope, source);
+    const unpackedText = await unpackOrigamiExpression(source, {
+      parent: scope,
+    });
     assert.deepEqual(unpackedText, "Hello, Alice!");
   });
 
@@ -51,14 +53,14 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const source = `=\`Hello, {{ name }}!\``;
-    const templateFn = await unpackOrigamiExpression(scope, source);
+    const templateFn = await unpackOrigamiExpression(source, { parent: scope });
     const value = await templateFn(scope);
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
     const source = `=\`Hello, {{ name }}!\``;
-    const templateFn = await unpackOrigamiExpression(null, source);
+    const templateFn = await unpackOrigamiExpression(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");
   });

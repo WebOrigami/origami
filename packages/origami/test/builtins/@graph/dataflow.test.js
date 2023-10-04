@@ -12,15 +12,12 @@ import unpackYaml from "../../../src/loaders/yaml.js";
 
 describe("@graph/dataflow", () => {
   test("identifies dependencies in expressions", async () => {
-    const graph = unpackYaml(
-      null,
-      `
-      a: !ori fn(b)
-      # builtin map will be ignored, as will ./foo
-      b: !ori (@graph/map(c, =./foo))
-      c: Hello
-    `
-    );
+    const graph = unpackYaml(`
+a: !ori fn(b)
+# builtin map will be ignored, as will ./foo
+b: !ori (@graph/map(c, =./foo))
+c: Hello
+    `);
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
@@ -37,12 +34,7 @@ describe("@graph/dataflow", () => {
   });
 
   test("ignore @ ambients", async () => {
-    const graph = unpackYaml(
-      null,
-      `
-      foo: !ori (@bar)
-    `
-    );
+    const graph = unpackYaml(`foo: !ori (@bar)`);
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
@@ -52,12 +44,7 @@ describe("@graph/dataflow", () => {
   });
 
   test("if all dependencies are builtins, uses source expression as dependency", async () => {
-    const graph = unpackYaml(
-      null,
-      `
-      foo: !ori (@mdHtml())
-    `
-    );
+    const graph = unpackYaml(`foo: !ori (@mdHtml())`);
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
@@ -82,8 +69,7 @@ describe("@graph/dataflow", () => {
 
   test("identifies referenced dependencies in .orit template files", async () => {
     const templateDocument = new TextDocument(`{{ map(foo, bar) }}`);
-    templateDocument.unpack = () =>
-      unpackOrigamiTemplate(null, templateDocument);
+    templateDocument.unpack = () => unpackOrigamiTemplate(templateDocument);
     const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
@@ -122,8 +108,7 @@ describe("@graph/dataflow", () => {
 
   test("identifies dependencies in .ori expression files", async () => {
     const origamiDocument = new TextDocument(`{ a = b }`);
-    origamiDocument.unpack = () =>
-      unpackOrigamiExpression(null, origamiDocument);
+    origamiDocument.unpack = () => unpackOrigamiExpression(origamiDocument);
     const graph = {
       "foo.ori": origamiDocument,
     };

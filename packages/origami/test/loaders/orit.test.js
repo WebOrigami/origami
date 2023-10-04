@@ -16,7 +16,7 @@ describe(".orit loader", () => {
   test("loads a template", async () => {
     const fileName = "greet.orit";
     const text = await fixtures.get(fileName);
-    const fn = await unpackOrigamiTemplate(null, text, fileName);
+    const fn = await unpackOrigamiTemplate(text);
     const value = await fn.call(null, "world");
     assert.deepEqual(value, "Hello, world!");
   });
@@ -27,7 +27,7 @@ describe(".orit loader", () => {
     });
     const fileName = "greetName.orit";
     const text = await fixtures.get(fileName);
-    const fn = await unpackOrigamiTemplate(null, text, fileName);
+    const fn = await unpackOrigamiTemplate(text);
     const value = await fn.call(scope);
     assert.deepEqual(value, "Hello, Alice!");
   });
@@ -39,22 +39,14 @@ describe(".orit loader", () => {
     // that includes the inner template.
     const innerFileName = "greet.orit";
     const innerTemplateText = await fixtures.get(innerFileName);
-    const innertemplateFn = await unpackOrigamiTemplate(
-      fixtures,
-      innerTemplateText,
-      innerFileName
-    );
+    const innertemplateFn = await unpackOrigamiTemplate(innerTemplateText);
     const scope = new ObjectGraph({
       "greet.orit": innertemplateFn,
     });
 
     const outerFileName = "includeGreet.orit";
     const outerTemplateText = await fixtures.get(outerFileName);
-    const outertemplateFn = await unpackOrigamiTemplate(
-      fixtures,
-      outerTemplateText,
-      outerFileName
-    );
+    const outertemplateFn = await unpackOrigamiTemplate(outerTemplateText);
     const value = await outertemplateFn.call(scope, "Bob");
     assert.deepEqual(value, "<h1>Hello, Bob!</h1>");
   });
@@ -63,21 +55,23 @@ describe(".orit loader", () => {
     const container = new ObjectGraph({
       a: 1,
     });
-    const fn = await unpackOrigamiTemplate(container, "{{ @container/a }}");
+    const fn = await unpackOrigamiTemplate("{{ @container/a }}", {
+      parent: container,
+    });
     const value = await fn();
     assert.deepEqual(value, "1");
   });
 
   test("template can reference template front matter via @attached", async () => {
     const text = await fixtures.get("frontMatter.orit");
-    const fn = await unpackOrigamiTemplate(null, text);
+    const fn = await unpackOrigamiTemplate(text);
     const value = await fn();
     assert.deepEqual(value, "Hello, Carol!");
   });
 
   test("template can invoke a @map", async () => {
     const text = await fixtures.get("map.orit");
-    const fn = await unpackOrigamiTemplate(null, text);
+    const fn = await unpackOrigamiTemplate(text);
     const value = await fn();
     assert.deepEqual(value, "Hello, Alice! Hello, Bob! Hello, Carol! ");
   });
@@ -88,7 +82,7 @@ name: Bob
 ---
 Hello, {{ @attached/name }}!`;
     const document = TextDocument.from(text);
-    const fn = await unpackOrigamiTemplate(null, document);
+    const fn = await unpackOrigamiTemplate(document);
     const value = await fn();
     assert.deepEqual(value, "Hello, Bob!");
   });

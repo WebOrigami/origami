@@ -3,8 +3,9 @@
  *
  * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function unpackModule(container, input, key) {
-  if (container && "import" in container) {
-    return /** @type {any} */ (container).import?.(key);
+export default function unpackModule(input, options = {}) {
+  const { key, parent } = options;
+  if (parent && "import" in parent) {
+    return /** @type {any} */ (parent).import?.(key);
   }
 }

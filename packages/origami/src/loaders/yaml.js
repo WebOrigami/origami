@@ -11,10 +11,11 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  *
  * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function unpackYaml(container, input, key) {
+export default function unpackYaml(input, options = {}) {
+  const { parent } = options;
   const result = parseYaml(String(input));
   if (Graph.isAsyncDictionary(result)) {
-    /** @type {any} */ (result).parent = container;
+    /** @type {any} */ (result).parent = parent;
   }
   return result;
 }

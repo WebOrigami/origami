@@ -10,7 +10,8 @@ import * as compile from "../language/compile.js";
  *
  * @type {import("../../index.js").FileUnpackFunction}
  */
-export default async function unpackOrigamiTemplate(container, input) {
+export default async function unpackOrigamiTemplate(input, options = {}) {
+  const { parent } = options;
   // Get the input body text and attached content.
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
@@ -18,16 +19,16 @@ export default async function unpackOrigamiTemplate(container, input) {
 
   // Compile the body text as an Origami expression and evaluate it.
   const expression = compile.templateDocument(text);
-  const containerScope = getScope(container) ?? builtins;
-  const lambda = await expression.call(containerScope);
+  const parentScope = parent ? getScope(parent) : builtins;
+  const lambda = await expression.call(parentScope);
 
   /** @this {AsyncDictionary|null} */
   let result = async function templateFn(input) {
     const baseScope = this ?? builtins;
     const extendedScope = new Scope(
       {
-        "@container": container,
-        "@callScope": containerScope,
+        "@container": parent,
+        "@callScope": parentScope,
         "@attached": attachedData,
       },
       baseScope

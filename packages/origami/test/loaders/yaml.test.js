@@ -9,7 +9,7 @@ describe(".yaml loader", () => {
 a: 1
 b: 2
 `;
-    const data = await unpackYaml(null, text);
+    const data = await unpackYaml(text);
     assert.deepEqual(await Graph.plain(data), {
       a: 1,
       b: 2,
@@ -21,7 +21,7 @@ b: 2
 a: 1
 b: !ori a
 `;
-    const graph = await unpackYaml(null, text);
+    const graph = await unpackYaml(text);
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 1,

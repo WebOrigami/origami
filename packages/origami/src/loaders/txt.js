@@ -5,8 +5,8 @@ import TextDocument from "../common/TextDocument.js";
  *
  * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function unpackText(container, input) {
+export default function unpackText(input, options = {}) {
   const document = TextDocument.from(input);
-  document.parent = container;
+  document.parent = options.parent;
   return document;
 }
