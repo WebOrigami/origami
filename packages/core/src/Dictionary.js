@@ -73,7 +73,7 @@ export async function has(dictionary, key) {
  * Return true if the object is an AsyncDictionary.
  *
  * @param {any} object
- * @returns {boolean}
+ * @returns {obj is AsyncDictionary}
  */
 export function isAsyncDictionary(object) {
   return (

@@ -1,17 +1,10 @@
-import TextDocument from "../common/TextDocument.js";
-
 /**
- * Load a .js file as a String with a contents() method that returns the
- * module's default export.
+ * Load a .js file as module's default export or exports.
  *
- * @type {import("../../index.js").FileLoaderFunction}
+ * @type {import("../../index.js").Deserializer}
  */
 export default function loadJs(container, input, key) {
-  return new TextDocument(input, {
-    async contents() {
-      if (container && "import" in container) {
-        return /** @type {any} */ (container).import?.(key);
-      }
-    },
-  });
+  if (container && "import" in container) {
+    return /** @type {any} */ (container).import?.(key);
+  }
 }

@@ -1,6 +1,6 @@
 import { Graph } from "@graphorigami/core";
 import graphviz from "graphviz-wasm";
-import TextDocument from "../common/TextDocument.js";
+import TextDocument2 from "../common/TextDocument2.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import dot from "./@graph/dot.js";
 
@@ -31,9 +31,7 @@ export default async function svg(variant, options = {}) {
   const dotText = await dot.call(this, graph, options);
   const svgText =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");
-  const result = svgText
-    ? new TextDocument(svgText, { contents: graph })
-    : undefined;
+  const result = svgText ? new TextDocument2(svgText, graph) : undefined;
   return result;
 }
 

@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import TextDocument from "../common/TextDocument.js";
+import TextDocument2 from "../common/TextDocument2.js";
 import { keySymbol } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import debug from "./@debug.js";
@@ -33,7 +33,7 @@ export default async function explore() {
   const extendedScope = new Scope(ambientsGraph, scope);
 
   const graph = await debug.call(this, extendedScope);
-  const result = new TextDocument(text, { contents: graph });
+  const result = new TextDocument2(text, graph);
 
   return result;
 }

@@ -1,7 +1,5 @@
-import { createTextDocument } from "../common/createTextDocument.js";
-
 export default function body(input) {
-  const document = createTextDocument(input);
+  const document = new TextDocument2(input);
   return document.bodyText;
 }
 

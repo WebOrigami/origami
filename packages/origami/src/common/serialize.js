@@ -1,19 +1,37 @@
 /**
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
- * @typedef {import("../..").StringLike} StringLike
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
 
-import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
+import { Dictionary, Graph } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import MapValuesGraph from "../common/MapValuesGraph.js";
+import FileTreeTransform from "../framework/FileTreeTransform.js";
 import expressionTag from "../language/expressionTag.js";
-import { castArrayLike } from "./utilities.js";
+import ExpressionGraph from "./ExpressionGraph.js";
+import { castArrayLike, isPlainObject } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
+
+// Return true if the given object has any functions in it.
+function objectContainsFunctions(obj) {
+  for (const key in obj) {
+    const value = obj[key];
+    if (typeof value === "function") {
+      return true;
+    } else if (isPlainObject(value)) {
+      const valueContainsExpression = objectContainsFunctions(value);
+      if (valueContainsExpression) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 /**
  * Extract front matter from the given text. The first line of the text must be
@@ -21,84 +39,49 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  * "---". Any lines following will be returned added to the data under a
  * `content` key.
  *
- * If the text does not contain front matter, the front matter properties will
- * be null.
+ * @typedef {import("../..").JsonValue} JsonValue
  *
- * @param {StringLike} input
- * @returns {{ bodyText: string, frontBlock: string|null, frontData: PlainObject|null,
- * frontText: string|null }}
+ * @param {string} text
+ * @returns {{ data: JsonValue|AsyncDictionary|null, text: string }}
  */
-export function extractFrontMatter(input) {
-  const text = String(input);
+export function parseDocumentWithFrontMatter(text) {
   const regex =
     /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
   const match = regex.exec(text);
-  let frontBlock;
-  let frontData;
-  let frontText;
-  let bodyText;
   if (match?.groups) {
-    bodyText = match.groups.bodyText;
-    frontBlock = match.groups.frontBlock;
-    frontText = match.groups.frontText;
-
-    frontData = parseYamlWithExpressions(frontText);
+    const data = parseYaml(match.groups.frontText);
+    return { data, text: match.groups.bodyText };
   } else {
-    frontBlock = null;
-    frontData = null;
-    frontText = null;
-    bodyText = text;
+    return { data: null, text };
   }
-  return { bodyText, frontBlock, frontData, frontText };
-}
-/**
- * Parse the given object as JSON text and return the corresponding graph.
- *
- * Empty text will be treated as an empty object.
- *
- * @param {any} obj
- */
-export function fromJson(obj) {
-  let parsed = JSON.parse(obj);
-  if (parsed === null) {
-    // String was empty or just YAML comments.
-    parsed = {};
-  }
-  return new ObjectGraph(parsed);
 }
 
 /**
- * Parse the given object as YAML text and return the corresponding graph.
- *
- * Empty text (or text with just comments) will be treated as an empty object.
- *
- * @param {any} obj
+ * @param {string} text
+ * @returns {JsonValue|AsyncDictionary}
  */
-export function fromYaml(obj) {
-  let parsed = parseYaml(String(obj));
-  if (parsed === null) {
-    // String was empty or just YAML comments.
-    parsed = {};
-  }
-  return new ObjectGraph(parsed);
-}
-
 export function parseYaml(text) {
-  const { frontData, bodyText } = extractFrontMatter(text);
-  if (frontData) {
-    const data = Object.assign(frontData, {
-      "@text": bodyText,
-    });
-    return data;
-  } else {
-    return parseYamlWithExpressions(text);
-  }
-}
-
-export function parseYamlWithExpressions(text) {
-  return YAML.parse(text, {
+  const data = YAML.parse(text, {
     customTags: [expressionTag],
   });
+  if (objectContainsFunctions(data)) {
+    return new (FileTreeTransform(ExpressionGraph))(data);
+  } else {
+    return data;
+  }
+}
+
+/**
+ * @param {string} text
+ * @param {JsonValue|AsyncDictionary|null} data
+ */
+export async function renderDocumentWithFrontMatter(text, data) {
+  if (data) {
+    const frontMatter = (await toYaml(data)).trimEnd();
+    return `---\n${frontMatter}\n---\n${text}`;
+  } else {
+    return text;
+  }
 }
 
 /**
@@ -107,10 +90,10 @@ export function parseYamlWithExpressions(text) {
  * strings, and all values reduced to native JavaScript types as best as
  * possible.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  */
-export async function serializableObject(variant) {
-  const serializable = new MapValuesGraph(variant, toSerializable, {
+export async function serializableObject(graphable) {
+  const serializable = new MapValuesGraph(graphable, toSerializable, {
     deep: true,
   });
   const plain = await Graph.plain(serializable);
@@ -121,10 +104,10 @@ export async function serializableObject(variant) {
 /**
  * Returns the graph as a JSON string.
  *
- * @param {Graphable} variant
+ * @param {JsonValue|AsyncDictionary|null} obj
  */
-export async function toJson(variant) {
-  const serializable = await serializableObject(variant);
+export async function toJson(obj) {
+  const serializable = await serializableObject(obj);
   return JSON.stringify(serializable, null, 2);
 }
 
@@ -168,10 +151,10 @@ export function toSerializable(obj) {
 /**
  * Returns the graph as a YAML string.
  *
- * @param {Graphable} graphable
+ * @param {JsonValue|AsyncDictionary} obj
  * @returns {Promise<string>}
  */
-export async function toYaml(graphable) {
-  const serializable = await serializableObject(graphable);
+export async function toYaml(obj) {
+  const serializable = await serializableObject(obj);
   return YAML.stringify(serializable);
 }

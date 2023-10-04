@@ -1,13 +1,18 @@
-import { extractFrontMatter, toYaml } from "./serialize.js";
+import {
+  parseDocumentWithFrontMatter,
+  renderDocumentWithFrontMatter,
+} from "./serialize.js";
 
 /**
  * A text document with optional associated data.
  *
  * A text document can be serialized into a text with front matter.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("../..").JsonValue} JsonValue
+ * @typedef {import("../..").StringLike} StringLike
  * @typedef {import("@graphorigami/core").HasContents} HasContents
- * @typedef {import("../../index.js").StringLike} StringLike
+ * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
 export default class TextDocument2 {
   /**
@@ -39,19 +44,13 @@ export default class TextDocument2 {
     if (input instanceof this) {
       return new this(input.text, input.data, input.parent);
     } else {
-      // See if the input has front matter, make graph from it.
-      const { bodyText, frontData } = extractFrontMatter(input);
-      return new this(bodyText, frontData);
+      const { data, text } = parseDocumentWithFrontMatter(String(input));
+      return new this(text, data);
     }
   }
 
   async serialize() {
-    if (this.data) {
-      const frontMatter = (await toYaml(this.data)).trimEnd();
-      return `---\n${frontMatter}\n---\n${this.text}`;
-    } else {
-      return this.text;
-    }
+    return renderDocumentWithFrontMatter(this.text, this.data);
   }
 
   toString() {
