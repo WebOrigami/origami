@@ -1,6 +1,6 @@
 import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
-import loadOrigamiTemplate from "../../loaders/orit.js";
+import unpackOrigamiTemplate from "../../loaders/orit.js";
 import builtins from "../@builtins.js";
 import paths from "./paths.js";
 
@@ -50,11 +50,9 @@ export default async function sitemap(variant, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFile = loadOrigamiTemplate(null, templateText);
-  const template = await templateFile.contents();
-  const resultWithGraph = await template.call(builtins, htmlPaths);
-  const resultText = resultWithGraph.toString();
-  return resultText;
+  const templateFn = await unpackOrigamiTemplate(null, templateText);
+  const result = await templateFn.call(builtins, htmlPaths);
+  return result;
 }
 
 sitemap.usage = `@sitemap <graph>\tGenerate a sitemap for a graph`;

@@ -17,9 +17,9 @@ describe("utilities", () => {
     assert.equal(await fn("a"), 1);
   });
 
-  test("toFunction can use an object's `contents` as a function", async () => {
+  test("toFunction can use an object's `unpack` as a function", async () => {
     const obj = {
-      contents: () => () => "result",
+      unpack: () => () => "result",
     };
     const fn = utilities.toFunction(obj);
     assert.equal(await fn(), "result");

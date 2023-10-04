@@ -79,8 +79,8 @@ export async function toJson(obj) {
  *
  * If the object is already a JSON value, it is returned as is.
  *
- * If the object implements the `serialize()` method, that will be invoked and
- * its return value will be processed.
+ * If the object implements the `pack()` method, that will be invoked and its
+ * return value will be processed.
  *
  * If the object is graphable, it will be converted to a plain JavaScript
  * object, recursively traversing the graph and converting all values to native
@@ -92,8 +92,8 @@ export async function toJson(obj) {
 export async function toJsonValue(obj) {
   if (isJsonValue(obj)) {
     return obj;
-  } else if (obj && typeof obj.serialize === "function") {
-    return obj.serialize();
+  } else if (obj && typeof obj.pack === "function") {
+    return obj.pack();
   } else if (Graph.isGraphable(obj)) {
     const mapped = await Graph.map(obj, (value) => toJsonValue(value));
     return Graph.plain(mapped);

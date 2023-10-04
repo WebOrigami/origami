@@ -6,7 +6,7 @@ export type PlainObject = {
 };
 
 export interface HasContents {
-  contents(): Promise<any>;
+  unpack(): Promise<any>;
 }
 
 export type Graphable =

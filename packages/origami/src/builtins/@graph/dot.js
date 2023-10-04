@@ -1,5 +1,4 @@
 import { Dictionary, Graph } from "@graphorigami/core";
-import YAML from "yaml";
 import * as serialize from "../../common/serialize.js";
 import { extname, isPlainObject, keySymbol } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -90,13 +89,8 @@ async function statements(graph, nodePath, nodeLabel, options) {
       const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {
-      const serializable = value ? serialize.toSerializable(value) : undefined;
-      let label =
-        typeof serializable === "object"
-          ? YAML.stringify(serializable)
-          : typeof serializable === "string"
-          ? serializable.trim()
-          : serializable?.toString?.() ?? "";
+      const yaml = value ? await serialize.toYaml(value) : undefined;
+      const label = yaml?.toString?.() ?? "";
       nodes[key] = { label };
       if (isError) {
         nodes[key].isError = true;

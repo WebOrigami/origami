@@ -8,9 +8,9 @@ import * as compile from "../language/compile.js";
 /**
  * Load and evaluate an Origami template from a file.
  *
- * @type {import("../../index.js").Deserializer}
+ * @type {import("../../index.js").FileUnpackFunction}
  */
-export default async function deserializeOrigamiTemplate(container, input) {
+export default async function unpackOrigamiTemplate(container, input) {
   // Get the input body text and attached content.
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;

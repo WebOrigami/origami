@@ -9,9 +9,9 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /**
  * Load a file as YAML.
  *
- * @type {import("../../index.js").Deserializer}
+ * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function loadYaml(container, input, key) {
+export default function unpackYaml(container, input, key) {
   const result = parseYaml(String(input));
   if (Graph.isAsyncDictionary(result)) {
     /** @type {any} */ (result).parent = container;

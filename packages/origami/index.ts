@@ -15,18 +15,10 @@ export type Constructor<T> = new (...args: any[]) => T;
 /**
  * A function that can convert a string-like input value into some live object.
  */
-export type Deserializer = (
+export type FileUnpackFunction = (
   container: AsyncDictionary | null,
   input: StringLike,
   key?: any) => any;
-
-/**
- * A file loader function
- */
-export type FileLoaderFunction = (
-  container: AsyncDictionary | null,
-  input: StringLike,
-  key?: any) => StringLike & HasContents;
 
 /**
  * An object with a non-trivial `toString` method.
@@ -59,10 +51,7 @@ export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
 
-/**
- * TODO
- */
-export type Serializable = Buffer | TypedArray;
+export type Packed = StringLike;
 
 export type StringLike = string | HasString;
 

@@ -175,26 +175,6 @@ async function getKeysInScope(graph) {
   return unique(keysInScope);
 }
 
-// Add dependencies found in a graph file.
-async function origamiExpressionDependencies(graphFile, keysInScope) {
-  const dependencies = [];
-  let attachedGraph = await graphFile.contents?.();
-  if (attachedGraph) {
-    const expressions = await attachedGraph.expressions?.();
-    if (expressions) {
-      for (const code of Object.values(expressions)) {
-        const expressionDependencies = code
-          ? codeDependencies(code, keysInScope)
-          : null;
-        if (expressionDependencies) {
-          dependencies.push(...expressionDependencies);
-        }
-      }
-    }
-  }
-  return dependencies;
-}
-
 async function htmlDependencies(html, keysInScope) {
   // HACK: Use a regex to find img src attributes.
   // TODO: Use a real HTML parser.
@@ -242,19 +222,40 @@ function markUndefinedDependencies(flow, keysInScope) {
   }
 }
 
-async function origamiTemplateDependencies(templateFile, keysInScope) {
+// Add dependencies found in a graph file.
+async function origamiExpressionDependencies(input, keysInScope) {
+  const dependencies = [];
+  const value = (await input.unpack?.()) || input;
+  if (value && value.expressions) {
+    const expressions = await value.expressions?.();
+    if (expressions) {
+      for (const code of Object.values(expressions)) {
+        const expressionDependencies = code
+          ? codeDependencies(code, keysInScope)
+          : null;
+        if (expressionDependencies) {
+          dependencies.push(...expressionDependencies);
+        }
+      }
+    }
+  }
+  return dependencies;
+}
+
+async function origamiTemplateDependencies(input, keysInScope) {
   let dependencies = [];
-  if (!templateFile.code) {
-    const fn = await templateFile.contents();
+  const fn = (await input.unpack?.()) || input;
+
+  if (fn.code) {
     dependencies = codeDependencies(fn.code, keysInScope);
   }
 
   // If the template appears to contain HTML, add the HTML dependencies.
   // HACK: Crude heuristic just sees if the first non-space is a "<".
-  const templateText = String(templateFile).trim();
+  const templateText = String(input).trim();
   if (templateText.startsWith("<")) {
     dependencies = dependencies.concat(
-      await htmlDependencies(templateFile.templateText, keysInScope)
+      await htmlDependencies(input.templateText, keysInScope)
     );
   }
 

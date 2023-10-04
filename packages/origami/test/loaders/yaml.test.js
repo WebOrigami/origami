@@ -1,7 +1,7 @@
 import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import loadYaml from "../../src/loaders/yaml.js";
+import unpackYaml from "../../src/loaders/yaml.js";
 
 describe(".yaml loader", () => {
   test("loads input as a YAML file", async () => {
@@ -9,8 +9,7 @@ describe(".yaml loader", () => {
 a: 1
 b: 2
 `;
-    const textWithGraph = await loadYaml(null, text);
-    const data = await /** @type {any} */ (textWithGraph).contents();
+    const data = await unpackYaml(null, text);
     assert.deepEqual(await Graph.plain(data), {
       a: 1,
       b: 2,
@@ -22,8 +21,7 @@ b: 2
 a: 1
 b: !ori a
 `;
-    const textWithGraph = await loadYaml(null, text);
-    const graph = await /** @type {any} */ (textWithGraph).contents();
+    const graph = await unpackYaml(null, text);
     assert.deepEqual(await Graph.plain(graph), {
       a: 1,
       b: 1,

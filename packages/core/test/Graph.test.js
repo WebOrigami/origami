@@ -59,9 +59,9 @@ describe("Graph", () => {
     assert.equal(graph2, graph1);
   });
 
-  test("from() uses an object's contents() method if defined", async () => {
+  test("from() uses an object's unpack() method if defined", async () => {
     const obj = {
-      contents() {
+      unpack() {
         return {
           a: "Hello, a.",
         };
@@ -73,9 +73,9 @@ describe("Graph", () => {
     });
   });
 
-  test("from() creates a deferred graph if contents() returns a promise", async () => {
+  test("from() creates a deferred graph if unpack() returns a promise", async () => {
     const obj = {
-      async contents() {
+      async unpack() {
         return {
           a: "Hello, a.",
         };

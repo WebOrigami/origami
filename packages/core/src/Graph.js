@@ -89,9 +89,9 @@ export function from(obj) {
     return new MapGraph(obj);
   } else if (obj instanceof Set) {
     return new SetGraph(obj);
-  } else if (obj && typeof obj === "object" && "contents" in obj) {
-    // Invoke contents and convert the result to a graph.
-    let result = obj.contents();
+  } else if (obj && typeof obj === "object" && "unpack" in obj) {
+    // Invoke unpack and convert the result to a graph.
+    let result = obj.unpack();
     return result instanceof Promise
       ? new DeferredGraph2(result)
       : from(result);
@@ -114,7 +114,7 @@ export function from(obj) {
  *
  * - An object that implements the AsyncDictionary interface (including
  *   AsyncGraph instances)
- * - An object that implements the `contents()` method
+ * - An object that implements the `unpack()` method
  * - A function
  * - An `Array` instance
  * - A `Map` instance
@@ -132,7 +132,7 @@ export function isGraphable(obj) {
     obj instanceof Function ||
     obj instanceof Array ||
     obj instanceof Set ||
-    obj?.contents instanceof Function ||
+    obj?.unpack instanceof Function ||
     Dictionary.isPlainObject(obj)
   );
 }
@@ -326,8 +326,8 @@ export async function traverseOrThrow(graphable, ...keys) {
       );
     }
 
-    if (typeof value.contents === "function") {
-      value = await value.contents();
+    if (typeof value.unpack === "function") {
+      value = await value.unpack();
     }
 
     // If the traversal operation was given a context, and the value we need to

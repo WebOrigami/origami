@@ -1,40 +1,38 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import loadOrigamiExpression from "../../src/loaders/ori.js";
+import unpackOrigamiExpression from "../../src/loaders/ori.js";
 
 describe(".ori loader", () => {
   test("loads a string expression", async () => {
-    const text = `"Hello"`;
-    const origamiFile = await loadOrigamiExpression(null, text);
-    const graph = await Graph.from(origamiFile);
-    const defaultValue = await graph.get(Graph.defaultValueKey);
-    assert.equal(defaultValue, "Hello");
+    const source = `"Hello"`;
+    const text = await unpackOrigamiExpression(null, source);
+    assert.equal(text, "Hello");
   });
 
   test("loads a graph expression", async () => {
     const scope = new ObjectGraph({
       name: "world",
     });
-    const text = `{
+    const source = `{
       message = \`Hello, {{ name }}!\`
     }`;
-    const origamiFile = await loadOrigamiExpression(scope, text);
-    assert.deepEqual(await Graph.plain(origamiFile), {
+    const graph = await unpackOrigamiExpression(scope, source);
+    assert.deepEqual(await Graph.plain(graph), {
       message: "Hello, world!",
     });
   });
 
   test("loads a graph with a nested graph", async () => {
-    const text = `{
+    const source = `{
       name = "world",
       public = {
         message = \`Hello, {{ name }}!\`
       }
     }`;
-    const origamiFile = await loadOrigamiExpression(null, text);
+    const graph = await unpackOrigamiExpression(null, source);
     assert.deepEqual(
-      await Graph.traverse(origamiFile, "public", "message"),
+      await Graph.traverse(graph, "public", "message"),
       "Hello, world!"
     );
   });
@@ -43,28 +41,24 @@ describe(".ori loader", () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
-    const text = `\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression(scope, text);
-    const graph = Graph.from(origamiFile);
-    const value = await graph.get(Graph.defaultValueKey);
-    assert.deepEqual(value, "Hello, Alice!");
+    const source = `\`Hello, {{ name }}!\``;
+    const unpackedText = await unpackOrigamiExpression(scope, source);
+    assert.deepEqual(unpackedText, "Hello, Alice!");
   });
 
   test("loads a template lambda that reads from scope", async () => {
     const scope = new ObjectGraph({
       name: "Alice",
     });
-    const text = `=\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression(scope, text);
-    const templateFn = await origamiFile.contents();
+    const source = `=\`Hello, {{ name }}!\``;
+    const templateFn = await unpackOrigamiExpression(scope, source);
     const value = await templateFn(scope);
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
-    const text = `=\`Hello, {{ name }}!\``;
-    const origamiFile = await loadOrigamiExpression(null, text);
-    const templateFn = await origamiFile.contents();
+    const source = `=\`Hello, {{ name }}!\``;
+    const templateFn = await unpackOrigamiExpression(null, source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");
   });

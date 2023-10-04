@@ -8,9 +8,9 @@ import * as compile from "../language/compile.js";
 /**
  * Load and evaluate an Origami expression from a file.
  *
- * @type {import("../../index.js").Deserializer}
+ * @type {import("../../index.js").FileUnpackFunction}
  */
-export default async function loadOrigamiExpression(container, input, key) {
+export default async function unpackOrigamiExpression(container, input, key) {
   // Get the input body text.
   const inputDocument = new TextDocument(input);
   const bodyText = inputDocument.text;

@@ -74,7 +74,7 @@ async function formatResult(scope, result) {
       // @ts-ignore
       text = new String(text);
     }
-    /** @type {any} */ (text).contents = () => Graph.from(result);
+    /** @type {any} */ (text).unpack = () => Graph.from(result);
   }
 
   return text;

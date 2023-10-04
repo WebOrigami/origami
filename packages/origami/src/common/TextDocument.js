@@ -24,10 +24,6 @@ export default class TextDocument {
     }
   }
 
-  async contents() {
-    return this.data;
-  }
-
   /**
    * Return a new TextDocument for the given input.
    *
@@ -58,6 +54,18 @@ export default class TextDocument {
     }
   }
 
+  /**
+   * Render the text and data as a document with YAML front matter.
+   */
+  async pack() {
+    if (this.data) {
+      const frontMatter = (await toYaml(this.data)).trimEnd();
+      return `---\n${frontMatter}\n---\n${this.text}`;
+    } else {
+      return this.text;
+    }
+  }
+
   get parent() {
     return this._parent;
   }
@@ -68,19 +76,11 @@ export default class TextDocument {
     }
   }
 
-  /**
-   * Render the text and data as a document with YAML front matter.
-   */
-  async serialize() {
-    if (this.data) {
-      const frontMatter = (await toYaml(this.data)).trimEnd();
-      return `---\n${frontMatter}\n---\n${this.text}`;
-    } else {
-      return this.text;
-    }
-  }
-
   toString() {
     return this.text;
+  }
+
+  async unpack() {
+    return this.data;
   }
 }

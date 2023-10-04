@@ -33,9 +33,9 @@ b: !ori a`;
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
-  test("toJsonValue() invokes an object's serialize() method", async () => {
+  test("toJsonValue() invokes an object's pack() method", async () => {
     const obj = {
-      async serialize() {
+      async pack() {
         return 1;
       },
     };

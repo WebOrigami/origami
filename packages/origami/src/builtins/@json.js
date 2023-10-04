@@ -1,5 +1,4 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
 import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -15,12 +14,8 @@ export default async function json(obj) {
   if (obj === undefined) {
     return undefined;
   }
-  if (Graph.isGraphable(obj)) {
-    return serialize.toJson(obj);
-  } else {
-    const serializable = serialize.serializableObject(obj);
-    return JSON.stringify(serializable, null, 2);
-  }
+  const value = await serialize.toJsonValue(obj);
+  return JSON.stringify(value, null, 2);
 }
 
 json.usage = "@json <obj>\tRender the object as text in JSON format";

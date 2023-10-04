@@ -1,5 +1,4 @@
 import { Dictionary, Graph } from "@graphorigami/core";
-import * as serialize from "../../common/serialize.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -58,8 +57,7 @@ async function simpleTable(graph) {
   const rows = [header];
   for (const key of await graph.keys()) {
     const value = await graph.get(key);
-    const valueText = serialize.toSerializable(value);
-    rows.push(`${key}\t${valueText}`);
+    rows.push(`${key}\t${value}`);
   }
   const text = rows.join("\n");
   return text;

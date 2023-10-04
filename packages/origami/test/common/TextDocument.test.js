@@ -10,7 +10,7 @@ describe("TextDocument", () => {
     assert.equal(String(document), text);
     assert.equal(document.text, text);
     assert.equal(document.data, undefined);
-    assert.equal(await document.contents(), text);
+    assert.equal(await document.unpack(), undefined);
   });
 
   test("holds text and data", async () => {
@@ -20,20 +20,14 @@ describe("TextDocument", () => {
     assert.equal(String(document), text);
     assert.equal(document.text, text);
     assert.equal(document.data, data);
-    assert.equal(await document.contents(), data);
+    assert.equal(await document.unpack(), data);
   });
 
-  test("can be serialized to text", async () => {
+  test("can be packed to text", async () => {
     const text = "Body text";
     const data = { a: 1 };
     const document = new TextDocument(text, data);
-    assert.equal(await document.serialize(), `---\na: 1\n---\n${text}`);
-  });
-
-  test("serializes and deserializes in same format", async () => {
-    const text = "---\na: 1\n---\nBody text";
-    const document = TextDocument.from(text);
-    assert.equal(await document.serialize(), text);
+    assert.equal(await document.pack(), `---\na: 1\n---\n${text}`);
   });
 
   test("from() returns a new copy of a TextDocument input", async () => {
@@ -53,5 +47,11 @@ message: !ori greeting
     const document = TextDocument.from(text);
     document.parent = new ObjectGraph({ greeting: "Hello" });
     assert.deepEqual(await Graph.plain(document.data), { message: "Hello" });
+  });
+
+  test("from() and pack() use the same format", async () => {
+    const text = "---\na: 1\n---\nBody text";
+    const document = TextDocument.from(text);
+    assert.equal(await document.pack(), text);
   });
 });

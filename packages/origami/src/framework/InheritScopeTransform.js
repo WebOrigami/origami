@@ -23,27 +23,27 @@ export default function InheritScopeTransform(Base) {
       if (value) {
         if (Dictionary.isAsyncDictionary(value)) {
           // This graph becomes the parent for all subgraphs.
-          value.parent = this;
+          /** @type {any} */ (value).parent = this;
         } else if (
-          typeof value.contents === "function" &&
+          typeof value.unpack === "function" &&
           !(value instanceof Buffer) && // HACK: Buffer has weird `parent` property
           value.parent == null
         ) {
           // This graph becomes the parent for an attached graph.
           const parent = this;
           value.parent = parent;
-          const original = value.contents.bind(value);
-          value.contents = async function () {
-            const contents = await original();
+          const original = value.unpack.bind(value);
+          value.unpack = async function () {
+            const content = await original();
             // HACK: Don't turn functions into graphs here because then they
             // can't be bound later to a different scope.
-            if (Graph.isGraphable(contents) && typeof contents !== "function") {
+            if (Graph.isGraphable(content) && typeof content !== "function") {
               /** @type {any} */
-              const graph = Graph.from(contents);
+              const graph = Graph.from(content);
               graph.parent = parent;
               return graph;
             } else {
-              return contents;
+              return content;
             }
           };
         }

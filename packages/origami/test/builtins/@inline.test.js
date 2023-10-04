@@ -16,7 +16,7 @@ describe("inline", () => {
   });
 
   test("can reference keys in an attached graph", async () => {
-    const document = TextDocument.deserialize(`---
+    const document = TextDocument.from(`---
 name: Bob
 ---
 Hello, {{ @attached/name }}!`);

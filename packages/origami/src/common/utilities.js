@@ -171,15 +171,15 @@ export function toFunction(obj) {
     return obj;
   } else if (
     typeof obj === "object" &&
-    typeof (/** @type {any} */ (obj)?.contents) === "function"
+    typeof (/** @type {any} */ (obj)?.unpack) === "function"
   ) {
     // Extract the contents of the object and convert that to a function.
     let fn;
     /** @this {any} */
     return async function (...args) {
       if (!fn) {
-        const contents = await /** @type {any} */ (obj).contents();
-        fn = toFunction(contents);
+        const content = await /** @type {any} */ (obj).unpack();
+        fn = toFunction(content);
       }
       return fn.call(this, ...args);
     };

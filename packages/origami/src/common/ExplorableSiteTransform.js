@@ -58,11 +58,11 @@ export default function ExplorableSiteTransform(Base) {
         value = transformObject(ExplorableSiteTransform, value);
       }
 
-      if (value?.contents) {
-        // If the value isn't a graph, but has a graph attached via a `contents`
-        // method, wrap the contents method to add this transform.
-        const original = value.contents.bind(value);
-        value.contents = async () => {
+      if (value?.unpack) {
+        // If the value isn't a graph, but has a graph attached via a `unpack`
+        // method, wrap the unpack method to add this transform.
+        const original = value.unpack.bind(value);
+        value.unpack = async () => {
           let graph = await original();
           if (!isTransformApplied(ExplorableSiteTransform, graph)) {
             graph = transformObject(ExplorableSiteTransform, graph);

@@ -2,16 +2,17 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import dataflow from "../../../src/builtins/@graph/dataflow.js";
 import ExpressionGraph from "../../../src/common/ExpressionGraph.js";
+import TextDocument from "../../../src/common/TextDocument.js";
 import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
-import loadOrigamiExpression from "../../../src/loaders/ori.js";
-import loadOrigamiTemplate from "../../../src/loaders/orit.js";
-import loadYaml from "../../../src/loaders/yaml.js";
+import unpackOrigamiExpression from "../../../src/loaders/ori.js";
+import unpackOrigamiTemplate from "../../../src/loaders/orit.js";
+import unpackYaml from "../../../src/loaders/yaml.js";
 
 describe("@graph/dataflow", () => {
   test("identifies dependencies in expressions", async () => {
-    const textWithGraph = loadYaml(
+    const graph = unpackYaml(
       null,
       `
       a: !ori fn(b)
@@ -20,7 +21,6 @@ describe("@graph/dataflow", () => {
       c: Hello
     `
     );
-    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       a: {
@@ -37,13 +37,12 @@ describe("@graph/dataflow", () => {
   });
 
   test("ignore @ ambients", async () => {
-    const textWithGraph = loadYaml(
+    const graph = unpackYaml(
       null,
       `
       foo: !ori (@bar)
     `
     );
-    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
@@ -53,13 +52,12 @@ describe("@graph/dataflow", () => {
   });
 
   test("if all dependencies are builtins, uses source expression as dependency", async () => {
-    const textWithGraph = loadYaml(
+    const graph = unpackYaml(
       null,
       `
       foo: !ori (@mdHtml())
     `
     );
-    const graph = await /** @type {any} */ (textWithGraph).contents();
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {
       foo: {
@@ -83,11 +81,14 @@ describe("@graph/dataflow", () => {
   });
 
   test("identifies referenced dependencies in .orit template files", async () => {
+    const templateDocument = new TextDocument(`{{ map(foo, bar) }}`);
+    templateDocument.unpack = () =>
+      unpackOrigamiTemplate(null, templateDocument);
     const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value
       // supplied to the template, and so will not be returned as part of the
       // graph's dataflow.
-      "index.orit": loadOrigamiTemplate(null, `{{ map(foo, bar) }}`),
+      "index.orit": templateDocument,
       foo: {},
     };
     const flow = await dataflow.call(null, graph);
@@ -120,8 +121,11 @@ describe("@graph/dataflow", () => {
   });
 
   test("identifies dependencies in .ori expression files", async () => {
+    const origamiDocument = new TextDocument(`{ a = b }`);
+    origamiDocument.unpack = () =>
+      unpackOrigamiExpression(null, origamiDocument);
     const graph = {
-      "foo.ori": loadOrigamiExpression(null, `{ a = b }`),
+      "foo.ori": origamiDocument,
     };
     const flow = await dataflow.call(null, graph);
     assert.deepEqual(flow, {

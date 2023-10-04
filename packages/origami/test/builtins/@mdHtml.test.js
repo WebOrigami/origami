@@ -13,8 +13,8 @@ describe("mdHtml", () => {
     );
   });
 
-  test("HTML contents include the source contents and the HTML", async () => {
-    const markdownDocument = TextDocument.deserialize(
+  test("transformed result includes the source data", async () => {
+    const markdownDocument = TextDocument.from(
       `---\ntitle: Hello\n---\n# Hello, world.`
     );
     const htmlDocument = await mdHtml.call(null, markdownDocument);

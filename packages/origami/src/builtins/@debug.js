@@ -80,17 +80,17 @@ function DebugTransform(Base) {
         }
       }
 
-      if (value?.contents) {
-        // If the value isn't a graph, but has a graph attached via a `contents`
-        // method, wrap the contents method to provide debug support for it.
-        const original = value.contents.bind(value);
-        value.contents = async () => {
-          let contents = await original();
-          if (!Graph.isAsyncDictionary(contents)) {
-            return contents;
+      if (value?.unpack) {
+        // If the value isn't a graph, but has a graph attached via an `unpack`
+        // method, wrap the unpack method to provide debug support for it.
+        const original = value.unpack.bind(value);
+        value.unpack = async () => {
+          let content = await original();
+          if (!Graph.isAsyncDictionary(content)) {
+            return content;
           }
           /** @type {any} */
-          let graph = Graph.from(contents);
+          let graph = Graph.from(content);
           if (!isTransformApplied(ExplorableSiteTransform, graph)) {
             graph = transformObject(ExplorableSiteTransform, graph);
           }

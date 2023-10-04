@@ -6,21 +6,17 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the object as text in YAML format.
  *
- * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {any} [obj]
  */
-export default async function toYaml(variant) {
+export default async function toYaml(obj) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  obj = obj ?? (await this?.get("@current"));
+  if (obj === undefined) {
     return undefined;
-  } else if (typeof variant === "object") {
-    return serialize.toYaml(variant);
-  } else {
-    const serializable = serialize.serializableObject(variant);
-    return YAML.stringify(serializable);
   }
+  const value = await serialize.toJsonValue(obj);
+  return YAML.stringify(value);
 }
 
 toYaml.usage = `@yaml <obj>\tRender the object as text in YAML format`;

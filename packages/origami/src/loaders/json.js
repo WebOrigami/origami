@@ -1,8 +1,8 @@
 /**
  * Load a file as JSON.
  *
- * @type {import("../../index.js").Deserializer}
+ * @type {import("../../index.js").FileUnpackFunction}
  */
-export default function loadJson(container, input, key) {
+export default function unpackJson(container, input, key) {
   return JSON.parse(String(input));
 }

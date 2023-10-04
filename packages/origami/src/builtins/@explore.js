@@ -19,7 +19,7 @@ const frameworkFiles = new OrigamiFiles(frameworkDir);
 export default async function explore() {
   const scope = /** @type {any} */ (this).scope ?? this;
   const templateFile = await frameworkFiles.get("explore.orit");
-  const template = await templateFile.contents();
+  const template = await templateFile.unpack();
 
   // const scopeGraphs = scope.graphs ?? [scope];
   // const withoutBuiltins = scopeGraphs.filter((graph) => !isBuiltins(graph));

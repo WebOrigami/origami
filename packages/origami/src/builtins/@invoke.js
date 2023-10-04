@@ -22,8 +22,8 @@ import builtins from "./@builtins.js";
  * @this {import("@graphorigami/types").AsyncDictionary|null}
  */
 export default async function invoke(fn) {
-  if (typeof fn !== "function" && fn.contents) {
-    fn = await fn.contents();
+  if (typeof fn !== "function" && fn.unpack) {
+    fn = await fn.unpack();
   }
   const scope = (await this?.get("@current")) ?? builtins;
   return typeof fn === "function" ? fn.call(scope) : fn;

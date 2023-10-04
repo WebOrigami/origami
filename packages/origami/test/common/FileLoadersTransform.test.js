@@ -7,15 +7,15 @@ describe("FileLoadersTransform", () => {
     const json = `{ "bar": 2 }`;
     const graph = new (FileLoadersTransform(ObjectGraph))({
       foo: 1, // Should be left alone
-      "bar.json": json, // Should return file with `contents` method
+      "bar.json": json, // Should return file with `unpack` method
     });
     const numberValue = await graph.get("foo");
     assert(typeof numberValue === "number");
     assert.equal(numberValue, 1);
     const jsonFile = await graph.get("bar.json");
     assert.equal(String(jsonFile), json);
-    const contents = await jsonFile.contents();
-    assert.deepEqual(contents, { bar: 2 });
+    const data = await jsonFile.unpack();
+    assert.deepEqual(data, { bar: 2 });
   });
 
   test("input that isn't string-like is returned as is", async () => {

@@ -10,7 +10,7 @@ import {
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @typedef {import("../../index.js").FileLoaderFunction} FileLoaderFunction
+ * @typedef {import("../../index.js").FileUnpackFunction} FileLoaderFunction
  *
  * @param {AsyncDictionaryConstructor} Base
  */
@@ -33,10 +33,10 @@ export default function FileLoadersTransform(Base) {
         if (extension) {
           const loaders = await this.loaders();
           /** @type {FileLoaderFunction} */
-          const deserialize = await loaders.get(extension);
-          if (deserialize) {
+          const unpackFn = await loaders.get(extension);
+          if (unpackFn) {
             value = new String(value);
-            value.contents = () => deserialize(this, value, key);
+            value.unpack = () => unpackFn(this, value, key);
           }
 
           // Add diagnostic information.
