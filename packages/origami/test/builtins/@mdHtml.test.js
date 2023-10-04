@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/builtins/@mdHtml.js";
-import TextDocument2 from "../../src/common/TextDocument2.js";
+import TextDocument from "../../src/common/TextDocument.js";
 
 describe("mdHtml", () => {
   test("transforms markdown to HTML", async () => {
@@ -14,7 +14,7 @@ describe("mdHtml", () => {
   });
 
   test("HTML contents include the source contents and the HTML", async () => {
-    const markdownDocument = TextDocument2.deserialize(
+    const markdownDocument = TextDocument.deserialize(
       `---\ntitle: Hello\n---\n# Hello, world.`
     );
     const htmlDocument = await mdHtml.call(null, markdownDocument);

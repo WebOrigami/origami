@@ -1,4 +1,4 @@
-import TextDocument2 from "./TextDocument2.js";
+import TextDocument from "./TextDocument.js";
 
 /**
  * Load a file as text with possible front matter.
@@ -13,7 +13,7 @@ import TextDocument2 from "./TextDocument2.js";
  * @type {import("../../index.js").Deserializer}
  */
 export default function loadTextWithFrontMatter(container, input) {
-  const document = TextDocument2.from(input);
+  const document = TextDocument.from(input);
   document.parent = container;
   return document;
 }

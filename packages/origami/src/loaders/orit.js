@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
-import TextDocument2 from "../common/TextDocument2.js";
+import TextDocument from "../common/TextDocument.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -12,7 +12,7 @@ import * as compile from "../language/compile.js";
  */
 export default async function deserializeOrigamiTemplate(container, input) {
   // Get the input body text and attached content.
-  const inputDocument = TextDocument2.from(input);
+  const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
   const attachedData = await inputDocument.data;
 

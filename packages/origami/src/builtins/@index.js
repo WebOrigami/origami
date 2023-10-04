@@ -1,5 +1,5 @@
 import { Graph } from "@graphorigami/core";
-import TextDocument2 from "../common/TextDocument2.js";
+import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -63,7 +63,7 @@ export default async function index(variant) {
       </body>
     </html>`;
 
-  return new TextDocument2(html.trim(), graph);
+  return new TextDocument(html.trim(), graph);
 }
 
 index.usage = `@index\tReturn a default index.html page for the current graph`;

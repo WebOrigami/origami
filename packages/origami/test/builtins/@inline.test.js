@@ -2,7 +2,7 @@ import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import TextDocument2 from "../../src/common/TextDocument2.js";
+import TextDocument from "../../src/common/TextDocument.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
@@ -16,7 +16,7 @@ describe("inline", () => {
   });
 
   test("can reference keys in an attached graph", async () => {
-    const document = TextDocument2.deserialize(`---
+    const document = TextDocument.deserialize(`---
 name: Bob
 ---
 Hello, {{ @attached/name }}!`);

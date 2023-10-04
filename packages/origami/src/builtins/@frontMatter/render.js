@@ -1,6 +1,6 @@
-import FrontMatterDocument from "../../common/FrontMatterDocument.js";
+import TextDocument from "../../common/TextDocument.js";
 
-export default async function render(text, frontData) {
-  const document = new FrontMatterDocument(text, { frontData });
-  return String(document);
+export default async function render(text, data) {
+  const document = new TextDocument(text, data);
+  return document.serialize();
 }

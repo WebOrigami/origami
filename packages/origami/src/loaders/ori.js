@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import { Graph } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
-import TextDocument2 from "../common/TextDocument2.js";
+import TextDocument from "../common/TextDocument.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 
@@ -11,14 +11,13 @@ import * as compile from "../language/compile.js";
  * @type {import("../../index.js").Deserializer}
  */
 export default async function loadOrigamiExpression(container, input, key) {
-  const containerScope = getScope(container);
-
   // Get the input body text.
-  const inputDocument = new TextDocument2(input);
+  const inputDocument = new TextDocument(input);
   const bodyText = inputDocument.text;
 
   // Compile the body text as an Origami expression and evaluate it.
   const fn = compile.expression(bodyText);
+  const containerScope = getScope(container);
   let result = await fn.call(containerScope);
 
   // If the value is a function, wrap it such that it will use the file's
