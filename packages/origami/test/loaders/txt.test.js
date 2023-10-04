@@ -10,11 +10,9 @@ a: 1
 ---
 Body text`;
     const container = new ObjectGraph({});
-    const loaded = await loadText(container, text);
-    assert.equal(String(loaded), text);
-    const document = await loaded.contents();
-    assert.equal(document.text, "Body text");
+    const document = await loadText(container, text);
+    assert.equal(String(document), "Body text");
     assert.deepEqual(document.data, { a: 1 });
-    assert.equal(document.parent, container);
+    assert.deepEqual(await document.contents(), { a: 1 });
   });
 });

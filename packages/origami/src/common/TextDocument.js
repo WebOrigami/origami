@@ -17,12 +17,15 @@ export default class TextDocument {
    */
   constructor(text, data, parent) {
     this.text = String(text);
-    this.parent = parent;
     this.data = data;
+    this._parent = parent;
+    if (data && parent && "parent" in data) {
+      data.parent = parent;
+    }
   }
 
   async contents() {
-    return this.data ?? this.text;
+    return this.data;
   }
 
   /**
@@ -48,10 +51,20 @@ export default class TextDocument {
       /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
     const match = regex.exec(text);
     if (match?.groups) {
-      const parsed = parseYaml(match.groups.frontText);
-      return new this(parsed.text, parsed.data);
+      const data = parseYaml(match.groups.frontText);
+      return new this(match.groups.bodyText, data);
     } else {
       return new this(text);
+    }
+  }
+
+  get parent() {
+    return this._parent;
+  }
+  set parent(parent) {
+    this._parent = parent;
+    if (this.data && "parent" in this.data) {
+      this.data.parent = parent;
     }
   }
 

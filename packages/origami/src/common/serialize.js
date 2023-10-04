@@ -93,9 +93,9 @@ export async function toJsonValue(obj) {
   if (isJsonValue(obj)) {
     return obj;
   } else if (obj && typeof obj.serialize === "function") {
-    obj = await obj.serialize();
+    return obj.serialize();
   } else if (Graph.isGraphable(obj)) {
-    const mapped = Graph.map(obj, (value) => toJsonValue(value));
+    const mapped = await Graph.map(obj, (value) => toJsonValue(value));
     return Graph.plain(mapped);
   }
 
