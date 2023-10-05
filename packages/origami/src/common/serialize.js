@@ -86,7 +86,8 @@ export async function toJson(obj) {
  * object, recursively traversing the graph and converting all values to native
  * types.
  *
- * If the object has a `toString()` method, it will be converted to a string.
+ * If the object has a `valueOf()` or `toString()` method, that method's result
+ * will be returned.
  *
  * @param {any} obj
  * @returns {Promise<JsonValue>}
@@ -99,6 +100,8 @@ export async function toJsonValue(obj) {
   } else if (Graph.isGraphable(obj)) {
     const mapped = await Graph.map(obj, (value) => toJsonValue(value));
     return Graph.plain(mapped);
+  } else if (obj && typeof obj.valueOf === "function") {
+    return obj.valueOf();
   } else if (obj && typeof obj.toString === "function") {
     return obj.toString();
   }
