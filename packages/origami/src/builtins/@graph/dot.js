@@ -1,6 +1,11 @@
 import { Dictionary, Graph } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
-import { extname, isPlainObject, keySymbol } from "../../common/utilities.js";
+import {
+  extname,
+  isPlainObject,
+  isStringLike,
+  keySymbol,
+} from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -89,8 +94,9 @@ async function statements(graph, nodePath, nodeLabel, options) {
       const subStatements = await statements(subgraph, destPath, null, options);
       result = result.concat(subStatements);
     } else {
-      const yaml = value ? await serialize.toYaml(value) : undefined;
-      const label = yaml?.toString?.() ?? "";
+      const label = isStringLike(value)
+        ? String(value)
+        : await serialize.toYaml(value);
       nodes[key] = { label };
       if (isError) {
         nodes[key].isError = true;
@@ -124,6 +130,8 @@ async function statements(graph, nodePath, nodeLabel, options) {
           clippedStart = true;
         }
       }
+
+      label = label.trim();
 
       if (label.length > 40) {
         // Long text, just use the beginning
