@@ -35,9 +35,7 @@ export default function InheritScopeTransform(Base) {
           const original = value.unpack.bind(value);
           value.unpack = async function () {
             const content = await original();
-            // HACK: Don't turn functions into graphs here because then they
-            // can't be bound later to a different scope.
-            if (Graph.isGraphable(content) && typeof content !== "function") {
+            if (Dictionary.isAsyncDictionary(content)) {
               /** @type {any} */
               const graph = Graph.from(content);
               graph.parent = parent;
