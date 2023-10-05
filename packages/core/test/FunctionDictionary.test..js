@@ -18,9 +18,10 @@ describe("FunctionDictionary", async () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test("default value calls `get` with an `undefined` key", async () => {
-    const fixture = new FunctionDictionary((key) => key);
-    assert.equal(await fixture.get(Graph.defaultValueKey), undefined);
+  test("getting default value returns the function itself", async () => {
+    const fn = () => true;
+    const fixture = new FunctionDictionary(fn);
+    assert.equal(await fixture.get(Graph.defaultValueKey), fn);
   });
 
   test("getting an unsupported key returns undefined", async () => {

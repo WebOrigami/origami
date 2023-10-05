@@ -41,29 +41,22 @@ export default async function execute(code) {
   let [fn, ...args] = evaluated;
 
   if (fn === undefined) {
-    // The most common cause of an undefined function at this point is that the
-    // code tried to get a member that doesn't exist in the local graph.
+    // The code wants to invoke something that's not in scope.
     const unknownFunction = format(code[0]);
     throw ReferenceError(
       `Couldn't find function or graph key: ${unknownFunction}`
     );
   }
 
-  const isFunction = fn instanceof Function;
-  if (!isFunction && args.length === 0) {
-    // The thing in the function position is a graph, but there are no args.
-    // Force traversal of the graph by adding the default value key.
-    args.push(Graph.defaultValueKey);
-  }
-
   // Execute the function or traverse the graph.
   let result;
   try {
-    result = isFunction
-      ? // Invoke the function
-        await fn.call(scope, ...args)
-      : // Traverse the graph.
-        await Graph.traverseOrThrow.call(scope, fn, ...args);
+    result =
+      fn instanceof Function
+        ? // Invoke the function
+          await fn.call(scope, ...args)
+        : // Traverse the graph.
+          await Graph.traverseOrThrow.call(scope, fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });
