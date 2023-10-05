@@ -476,7 +476,11 @@ export function parensArgs(tokens) {
   if (!parsed) {
     return null;
   }
-  const value = parsed.value[1];
+  let value = parsed.value[1];
+  // Special case: no arguments is equivalent to a single `undefined` argument.
+  if (value.length === 0) {
+    value = [undefined];
+  }
   return {
     value,
     rest: parsed.rest,

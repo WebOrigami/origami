@@ -296,7 +296,7 @@ describe("parse", () => {
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.RIGHT_PAREN },
         ]),
-        [[ops.scope, "fn"]]
+        [[ops.scope, "fn"], undefined]
       );
     });
 
@@ -339,7 +339,10 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "arg" },
           { type: tokenType.RIGHT_PAREN, lexeme: ")" },
         ]),
-        [[[ops.scope, "fn"]], [ops.scope, "arg"]]
+        [
+          [[ops.scope, "fn"], undefined],
+          [ops.scope, "arg"],
+        ]
       );
     });
 
@@ -352,7 +355,7 @@ describe("parse", () => {
           { type: tokenType.SLASH, lexeme: "/" },
           { type: tokenType.REFERENCE, lexeme: "key" },
         ]),
-        [[[ops.scope, "fn"]], "key"]
+        [[[ops.scope, "fn"], undefined], "key"]
       );
     });
 
@@ -399,7 +402,7 @@ describe("parse", () => {
           { type: tokenType.LEFT_PAREN, lexeme: "(" },
           { type: tokenType.RIGHT_PAREN, lexeme: ")" },
         ]),
-        [[[ops.scope, "graph"], "key"]]
+        [[[ops.scope, "graph"], "key"], undefined]
       );
     });
 
@@ -414,7 +417,7 @@ describe("parse", () => {
           { type: tokenType.LEFT_PAREN, lexeme: "(" },
           { type: tokenType.RIGHT_PAREN, lexeme: ")" },
         ]),
-        [[[[ops.scope, "fn"]], "key"]]
+        [[[[ops.scope, "fn"], undefined], "key"], undefined]
       );
     });
 
@@ -430,7 +433,7 @@ describe("parse", () => {
           { type: tokenType.STRING, lexeme: "arg" },
           { type: tokenType.RIGHT_PAREN },
         ]),
-        [[[ops.scope, "fn"]], "arg"]
+        [[[ops.scope, "fn"], undefined], "arg"]
       );
     });
 
@@ -463,7 +466,11 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "b" },
           { type: tokenType.RIGHT_PAREN },
         ]),
-        [[[ops.scope, "fn"]], [ops.scope, "a"], [ops.scope, "b"]]
+        [
+          [[ops.scope, "fn"], undefined],
+          [ops.scope, "a"],
+          [ops.scope, "b"],
+        ]
       );
     });
 
@@ -575,7 +582,7 @@ describe("parse", () => {
           { type: tokenType.RIGHT_PAREN },
           { type: tokenType.RIGHT_PAREN },
         ]),
-        [[ops.scope, "fn"]]
+        [[ops.scope, "fn"], undefined]
       );
     });
 
@@ -663,7 +670,7 @@ describe("parse", () => {
           { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "arg" },
         ]),
-        [[[ops.scope, "fn"]], "arg"]
+        [[[ops.scope, "fn"], undefined], "arg"]
       );
     });
 
@@ -839,7 +846,7 @@ describe("parse", () => {
           { type: tokenType.LEFT_PAREN },
           { type: tokenType.RIGHT_PAREN },
         ]),
-        []
+        [undefined]
       );
     });
     test("(a, b, c)", () => {
