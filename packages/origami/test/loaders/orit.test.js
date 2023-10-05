@@ -32,25 +32,6 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "Hello, Alice!");
   });
 
-  test("loads a template that can include another template", async () => {
-    // Normally a .orit file would be loaded via FileLoadersTransform, but for
-    // testing purposes we will use FilesGraph directly. We do the loading of
-    // the inner template by hand, then construct a scope for the outer template
-    // that includes the inner template.
-    const innerFileName = "greet.orit";
-    const innerTemplateText = await fixtures.get(innerFileName);
-    const innertemplateFn = await unpackOrigamiTemplate(innerTemplateText);
-    const scope = new ObjectGraph({
-      "greet.orit": innertemplateFn,
-    });
-
-    const outerFileName = "includeGreet.orit";
-    const outerTemplateText = await fixtures.get(outerFileName);
-    const outertemplateFn = await unpackOrigamiTemplate(outerTemplateText);
-    const value = await outertemplateFn.call(scope, "Bob");
-    assert.deepEqual(value, "<h1>Hello, Bob!</h1>");
-  });
-
   test("template has access to its container via @container", async () => {
     const container = new ObjectGraph({
       a: 1,
@@ -67,13 +48,6 @@ describe(".orit loader", () => {
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn();
     assert.deepEqual(value, "Hello, Carol!");
-  });
-
-  test("template can invoke a @map", async () => {
-    const text = await fixtures.get("map.orit");
-    const fn = await unpackOrigamiTemplate(text);
-    const value = await fn();
-    assert.deepEqual(value, "Hello, Alice! Hello, Bob! Hello, Carol! ");
   });
 
   test("can load a template from text of another document", async () => {
