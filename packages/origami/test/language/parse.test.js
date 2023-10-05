@@ -261,7 +261,7 @@ describe("parse", () => {
       );
     });
 
-    test("@map/values _, =`<li>{{@value}}</li>`", () => {
+    test("@map/values _, =`<li>{{_}}</li>`", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "@map" },
@@ -274,7 +274,7 @@ describe("parse", () => {
           { type: tokenType.BACKTICK, lexeme: "`" },
           { type: tokenType.STRING, lexeme: "<li>" },
           { type: tokenType.DOUBLE_LEFT_BRACE, lexeme: "{{" },
-          { type: tokenType.REFERENCE, lexeme: "@value" },
+          { type: tokenType.REFERENCE, lexeme: "_" },
           { type: tokenType.DOUBLE_RIGHT_BRACE, lexeme: "}}" },
           { type: tokenType.STRING, lexeme: "</li>" },
           { type: tokenType.BACKTICK, lexeme: "`" },
@@ -282,7 +282,7 @@ describe("parse", () => {
         [
           [[ops.scope, "@map"], "values"],
           [ops.scope, "_"],
-          [ops.lambda, [ops.concat, "<li>", [ops.scope, "@value"], "</li>"]],
+          [ops.lambda, [ops.concat, "<li>", [ops.scope, "_"], "</li>"]],
         ]
       );
     });

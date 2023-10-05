@@ -46,7 +46,7 @@ describe("@map/keys", () => {
     const graph = await mapKeys.call(
       null,
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
-      ops.lambda.call(null, [ops.scope, ".", "name"])
+      ops.lambda.call(null, [ops.scope, "_", "name"])
     );
     assert.deepEqual(await Graph.plain(graph), {
       Alice: { name: "Alice" },

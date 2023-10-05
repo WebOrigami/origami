@@ -5,5 +5,5 @@
     'Carol'
   ]
 
-  greetings = @map/values(names, =`Hello, {{ @value }}!`)
+  greetings = @map/values(names, =`Hello, {{ _ }}!`)
 }

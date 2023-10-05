@@ -2,4 +2,4 @@ names:
   - Alice
   - Bob
   - Carol
-greetings: !ori map(names, =`Hello, {{ @value }}!`)
+greetings: !ori map(names, =`Hello, {{ _ }}!`)

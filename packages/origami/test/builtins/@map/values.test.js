@@ -82,7 +82,7 @@ describe("map", () => {
     assert.deepEqual(await Graph.plain(results), ["Alice", "Bob", "Carol"]);
   });
 
-  test("extended map function includes @key and @value", async () => {
+  test("extended map function includes @key and _", async () => {
     /** @type {any} */
     const results = map.call(
       null,
@@ -90,7 +90,7 @@ describe("map", () => {
       /** @this {any} */
       async function () {
         const key = await this.get("@key");
-        const value = await this.get("@value");
+        const value = await this.get("_");
         return `${key}: ${value}`;
       }
     );

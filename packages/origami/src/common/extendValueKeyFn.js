@@ -10,7 +10,7 @@ import { graphInContext } from "./utilities.js";
  * and a key.
  *
  * Moreover, the scope passed to the new function will include ambient
- * properties `@key` and `@value` holding the key and value, respectively.
+ * properties `@key` and `_` holding the key and value, respectively.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Invocable} Invocable
@@ -28,14 +28,13 @@ export default function extendValueKeyFn(valueFn, options = {}) {
     // Create a scope graph by extending the context graph with the @key and
     // @dot ambient properties.
     const keyName = options.keyName ?? "@key";
-    const valueName = options.valueName ?? "@value";
+    const valueName = options.valueName ?? "_";
 
     if (Graph.isGraphable(value)) {
       value = graphInContext(value, this);
     }
 
     const ambientsGraph = new (InheritScopeTransform(ObjectGraph))({
-      ".": value,
       [keyName]: key,
       [valueName]: value,
     });
