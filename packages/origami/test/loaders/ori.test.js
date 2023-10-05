@@ -1,9 +1,18 @@
 import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
+import path from "node:path";
 import { describe, test } from "node:test";
+import { fileURLToPath } from "node:url";
+import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
 import unpackOrigamiExpression from "../../src/loaders/ori.js";
 
-describe(".ori loader", () => {
+const dirname = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "fixtures"
+);
+const fixtures = new OrigamiFiles(dirname);
+
+describe.only(".ori loader", () => {
   test("loads a string expression", async () => {
     const source = `"Hello"`;
     const text = await unpackOrigamiExpression(source);
@@ -63,5 +72,12 @@ describe(".ori loader", () => {
     const templateFn = await unpackOrigamiExpression(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");
+  });
+
+  test.only("loads a graph that includes a template", async () => {
+    const graphDocument = await fixtures.get("site.ori");
+    const graph = await graphDocument.unpack();
+    const indexHtml = await graph.get("index.html");
+    assert.equal(indexHtml, "Hello, world!");
   });
 });
