@@ -1,0 +1,38 @@
+#
+# This folder contains integration tests that confirm the expected interaction
+# of multiple parts of the Origami system. These tests are defined in YAML files
+#
+# This file itself is a sample YAML-based test used to test the testing
+# infrastructure itself. It demonstrates the expected format of the YAML test
+# files.
+#
+# * Each file defines a single suite of tests.
+# * Each suite defines a `tests` array of tests.
+# * Each test has a title, an `actual.ori` value, and an expected value.
+# * The `actual.ori` value is a string that will be evaluated as an Origami
+#   expression.
+# * The result of the `actual.ori` will be compared via `deepEquals` to the
+#   `expected` value. If the two values are not equal, the test will fail by
+#   throwing an exception.
+# * A test can define a `fixture` object, which will be turned into an Origami
+#   graph. The `actual.ori` value will be evaluated with that graph in scope,
+#   so the expression can reference values in that fixture graph.
+#
+
+name: Sample test suite for YAML-based integration tests
+
+tests:
+  - title: Passing test
+    actual.ori: "'This evaluates to a plain string.'"
+    expected: "This evaluates to a plain string."
+
+  - title: Test with fixture
+    fixture:
+      message: "Hello"
+    actual.ori: =message
+    expected: "Hello"
+
+  # Uncomment to see a failing test.
+  # - title: Failing test
+  #   actual.ori: "'foo'"
+  #   expected: "bar"

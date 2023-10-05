@@ -1,0 +1,8 @@
+name: Template integration tests
+tests:
+  - title: One template can reference another
+    fixture:
+      includeGreet.orit: <h1>{{ greet.orit(_) }}</h1>
+      greet.orit: Hello, {{ _ }}!
+    actual.ori: =includeGreet.orit("Bob")
+    expected: <h1>Hello, Bob!</h1>
