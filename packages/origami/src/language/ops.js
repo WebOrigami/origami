@@ -158,8 +158,7 @@ export function lambda(code) {
   async function invoke(input) {
     // Add ambients to scope.
     const ambients = {
-      ".": input,
-      "@input": input,
+      _: input,
       "@recurse": invoke,
     };
     /** @type {import("@graphorigami/core").Graphable[]} */

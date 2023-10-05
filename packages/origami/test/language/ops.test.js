@@ -31,15 +31,8 @@ describe("ops", () => {
     assert.equal(result, "Hello");
   });
 
-  test("lambda adds input to scope as `.`", async () => {
-    const code = [ops.lambda, [ops.scope, "."]];
-    const fn = await execute.call(null, code);
-    const result = await fn("Hello");
-    assert.equal(result, "Hello");
-  });
-
-  test("lambda adds input to scope as `@input`", async () => {
-    const code = [ops.lambda, [ops.scope, "@input"]];
+  test("lambda adds input to scope as `_`", async () => {
+    const code = [ops.lambda, [ops.scope, "_"]];
     const fn = await execute.call(null, code);
     const result = await fn("Hello");
     assert.equal(result, "Hello");

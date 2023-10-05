@@ -261,14 +261,14 @@ describe("parse", () => {
       );
     });
 
-    test("@map/values @input, =`<li>{{@value}}</li>`", () => {
+    test("@map/values _, =`<li>{{@value}}</li>`", () => {
       assertParse(
         expression([
           { type: tokenType.REFERENCE, lexeme: "@map" },
           { type: tokenType.SLASH },
           { type: tokenType.REFERENCE, lexeme: "values" },
           { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
-          { type: tokenType.REFERENCE, lexeme: "@input" },
+          { type: tokenType.REFERENCE, lexeme: "_" },
           { type: tokenType.SEPARATOR, lexeme: "," },
           { type: tokenType.EQUALS, lexeme: "=" },
           { type: tokenType.BACKTICK, lexeme: "`" },
@@ -281,7 +281,7 @@ describe("parse", () => {
         ]),
         [
           [[ops.scope, "@map"], "values"],
-          [ops.scope, "@input"],
+          [ops.scope, "_"],
           [ops.lambda, [ops.concat, "<li>", [ops.scope, "@value"], "</li>"]],
         ]
       );

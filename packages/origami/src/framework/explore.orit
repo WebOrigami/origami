@@ -225,7 +225,7 @@
       <button id="buttonSVG">SVG</button>
       <button id="buttonYAML">YAML</button>
     </div>
-    {{ @map/values(@input, =`
+    {{ @map/values(_, =`
       <ul>
         <h2>{{ ./name }}</h2>
         {{ @map/values(./keys, =`

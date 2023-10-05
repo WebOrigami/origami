@@ -1,1 +1,1 @@
-<h1>{{ greet.orit(@input) }}</h1>
+<h1>{{ greet.orit(_) }}</h1>
