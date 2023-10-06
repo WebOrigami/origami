@@ -23,16 +23,12 @@ name: Sample test suite for YAML-based integration tests
 tests:
   - title: Passing test
     fixture:
-      actual.ori: "'This evaluates to a plain string.'"
-    expected: "This evaluates to a plain string."
-
-  - title: Test with fixture
-    fixture:
       message: "Hello"
       actual.ori: message
     expected: "Hello"
 
   # Uncomment to see a failing test.
   # - title: Failing test
-  #   actual.ori: "'foo'"
+  #   fixture:
+  #     actual.ori: "'foo'"
   #   expected: "bar"
