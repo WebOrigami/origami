@@ -24,6 +24,14 @@ describe("FunctionDictionary", async () => {
     assert.equal(await fixture.get(Graph.defaultValueKey), fn);
   });
 
+  test("getting a value from function with multiple arguments curries the function", async () => {
+    const fixture = new FunctionDictionary((a, b, c) => a + b + c);
+    const fnA = await fixture.get(1);
+    const fnAB = await fnA.get(2);
+    const result = await fnAB.get(3);
+    assert.equal(result, 6);
+  });
+
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("xyz"), undefined);
