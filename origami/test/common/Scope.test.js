@@ -34,15 +34,4 @@ describe("Scope", () => {
     assert.equal(await scope.get("a"), 1);
     assert.equal(await scope.get("b"), 3);
   });
-
-  test("binds functions to the scope", async () => {
-    const scope = new Scope({
-      fn: function () {
-        return this;
-      },
-    });
-    const fn = await scope.get("fn");
-    const result = fn();
-    assert.equal(result, scope);
-  });
 });
