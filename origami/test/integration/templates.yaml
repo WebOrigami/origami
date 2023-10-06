@@ -2,13 +2,31 @@ name: Template integration tests
 tests:
   - title: One template can reference another
     fixture:
+      actual.ori: includeGreet.orit("Bob")
       greet.orit: Hello, {{ _ }}!
       includeGreet.orit: <h1>{{ greet.orit(_) }}</h1>
-      actual.ori: includeGreet.orit("Bob")
     expected: <h1>Hello, Bob!</h1>
 
-  - title: A template can invoke a @map
+  - title: Result of one template can be passed to another
     fixture:
+      actual.ori: index.orit("Hello, world!")
+      page.orit: |
+        <html>
+          <body>
+            {{ _ }}
+          </body>
+        </html>
+      index.orit: "{{ page.orit(_) }}"
+    expected: |
+      <html>
+        <body>
+          Hello, world!
+        </body>
+      </html>
+
+  - title: Template can invoke a @map
+    fixture:
+      actual.ori: template.orit()
       names:
         - Alice
         - Bob
@@ -16,8 +34,17 @@ tests:
       template.orit: |
         {{ @map/values(names, =`Hello, {{ _ }}!
         `) }}
-      actual.ori: template.orit()
     expected: |
       Hello, Alice!
       Hello, Bob!
       Hello, Carol!
+
+  - title: Template can reference input front matter
+    fixture:
+      actual.ori: template.orit(person)
+      template.orit: |
+        <h1>{{ _/name }}</h1>
+      person:
+        name: Carol
+    expected: |
+      <h1>Carol</h1>
