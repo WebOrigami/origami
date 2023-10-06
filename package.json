@@ -2,13 +2,13 @@
   "name": "@graphorigami/monorepo",
   "version": "0.0.27",
   "workspaces": [
-    "packages/core",
-    "packages/origami",
-    "packages/types"
+    "core",
+    "origami",
+    "types"
   ],
   "scripts": {
-    "prepublishOnly": "pushd packages/origami; npm run prepublishOnly; popd",
-    "test": "node --test --test-reporter=spec packages/*/test/*.test.js packages/*/test/*/*.test.js packages/*/test/*/*/*.test.js",
+    "prepublishOnly": "pushd origami; npm run prepublishOnly; popd",
+    "test": "node --test --test-reporter=spec */test/*.test.js */test/*/*.test.js */test/*/*/*.test.js",
     "typecheck": "tsc"
   }
 }
