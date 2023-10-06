@@ -32,13 +32,14 @@ export function processUnpackedContent(content, parent, attachedData) {
         attachedGraph.parent = new Scope(attachedAmbients, parentScope);
       }
 
+      const baseScope = this ?? builtins;
       const extendedScope = new Scope(
         {
           "@container": parent,
           "@local": parentScope,
         },
         attachedGraph,
-        this
+        baseScope
       );
       return fn.call(extendedScope, input);
     }
