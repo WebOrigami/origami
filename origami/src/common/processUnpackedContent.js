@@ -21,7 +21,7 @@ export function processUnpackedContent(content, parent, attachedData) {
     const fn = content;
     const parentScope = parent ? getScope(parent) : builtins;
     /** @this {AsyncDictionary|null} */
-    function useContainerScope(input) {
+    function extendScope(input) {
       let attachedGraph;
       if (attachedData) {
         attachedGraph = Graph.from(attachedData);
@@ -42,8 +42,8 @@ export function processUnpackedContent(content, parent, attachedData) {
       );
       return fn.call(extendedScope, input);
     }
-    useContainerScope.code = fn.code;
-    return useContainerScope;
+    extendScope.code = fn.code;
+    return extendScope;
   } else if (Graph.isAsyncDictionary(content) && "parent" in content) {
     const result = Object.create(content);
     result.parent = getScope(parent);
