@@ -32,13 +32,23 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "1");
   });
 
-  test("template can reference template front matter via @attached", async () => {
+  test("template can reference template front matter", async () => {
     const text = `---
 name: Carol
 ---
-Hello, {{ @attached/name }}!`;
+Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn();
     assert.deepEqual(value, "Hello, Carol!");
   });
+
+  //   test("@attached graph has input in scope via `_`", async () => {
+  //     const text = `---
+  // name: _/fullName
+  // ---
+  // Hello, {{ @attached/name }}!`;
+  //     const fn = await unpackOrigamiTemplate(text);
+  //     const value = await fn({ fullName: "Alice Andrews" });
+  //     assert.deepEqual(value, "Hello, Alice Andrews!");
+  //   });
 });

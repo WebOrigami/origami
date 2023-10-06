@@ -25,8 +25,8 @@ export function processUnpackedContent(content, parent, attachedData) {
         {
           "@container": parent,
           "@callScope": this,
-          "@attached": attachedData,
         },
+        attachedData,
         parentScope
       );
       return fn.call(extendedScope, input);

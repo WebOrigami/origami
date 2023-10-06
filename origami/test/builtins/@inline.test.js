@@ -19,7 +19,7 @@ describe("inline", () => {
     const document = TextDocument.from(`---
 name: Bob
 ---
-Hello, {{ @attached/name }}!`);
+Hello, {{ name }}!`);
     /** @type {any} */
     const inlinedDocument = await inline.call(null, document);
     assert.equal(inlinedDocument.text, `Hello, Bob!`);
