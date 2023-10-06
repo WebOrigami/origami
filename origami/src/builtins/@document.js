@@ -13,5 +13,11 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default function document(text, data, parent) {
   assertScopeIsDefined(this);
-  return new TextDocument(text, data, parent ?? this);
+  if (data) {
+    return new TextDocument(text, data, parent ?? this);
+  } else {
+    const document = TextDocument.from(text);
+    document.parent = parent;
+    return document;
+  }
 }
