@@ -6,10 +6,11 @@ import PathTransform from "./PathTransform.js";
 
 // For builtins that should be renamed or not exported
 const specialBuiltinNames = {
-  "~": "homeFiles",
+  "!": null,
   "@false": null,
   "@new": null,
   "@true": null,
+  "~": "homeFiles",
 };
 
 // Top-level template for the export file
