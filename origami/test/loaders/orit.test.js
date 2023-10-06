@@ -32,7 +32,7 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "1");
   });
 
-  test("template can reference template front matter", async () => {
+  test("template expressions have front matter in scope", async () => {
     const text = `---
 name: Carol
 ---
@@ -42,13 +42,21 @@ Hello, {{ name }}!`;
     assert.deepEqual(value, "Hello, Carol!");
   });
 
-  //   test("@attached graph has input in scope via `_`", async () => {
-  //     const text = `---
-  // name: _/fullName
-  // ---
-  // Hello, {{ @attached/name }}!`;
-  //     const fn = await unpackOrigamiTemplate(text);
-  //     const value = await fn({ fullName: "Alice Andrews" });
-  //     assert.deepEqual(value, "Hello, Alice Andrews!");
-  //   });
+  test("front matter expressions have input in scope via `_`", async () => {
+    const text = `---
+name: !ori _/fullName
+---
+Hello, {{ name }}!`;
+    const fn = await unpackOrigamiTemplate(text);
+    const value = await fn({ fullName: "Alice Andrews" });
+    assert.deepEqual(value, "Hello, Alice Andrews!");
+  });
+
+  test("template expressions can access caller's scope via @callScope", async () => {
+    const scope = new ObjectGraph({ name: "Bob" });
+    const text = `Hello, {{ @callScope/name }}!`;
+    const fn = await unpackOrigamiTemplate(text);
+    const value = await fn.call(scope);
+    assert.deepEqual(value, "Hello, Bob!");
+  });
 });
