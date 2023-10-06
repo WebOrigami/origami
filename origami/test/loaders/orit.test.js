@@ -39,8 +39,11 @@ name: Carol
 ---
 Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
-    const value = await fn();
-    assert.deepEqual(value, "Hello, Carol!");
+    const document = await fn();
+    assert.deepEqual(String(document), "Hello, Carol!");
+    assert.deepEqual(document.data, {
+      name: "Carol",
+    });
   });
 
   test("front matter expressions have input in scope via `_`", async () => {
@@ -50,7 +53,7 @@ name: !ori _/fullName
 Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn({ fullName: "Alice Andrews" });
-    assert.deepEqual(value, "Hello, Alice Andrews!");
+    assert.deepEqual(String(value), "Hello, Alice Andrews!");
   });
 
   test("template expressions can access their defining scope via @local", async () => {
