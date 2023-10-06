@@ -67,21 +67,6 @@ describe("map", () => {
     });
   });
 
-  test("mapping function context includes the value's graph", async () => {
-    /** @type {any} */
-    const results = map.call(
-      null,
-      [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
-      /** @this {any} */
-      async function () {
-        const name = await this.get("name");
-        return name;
-      },
-      { addValueToScope: true }
-    );
-    assert.deepEqual(await Graph.plain(results), ["Alice", "Bob", "Carol"]);
-  });
-
   test("extended map function includes @key and _", async () => {
     /** @type {any} */
     const results = map.call(

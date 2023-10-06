@@ -1,6 +1,6 @@
 import { Graph } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
-import extendValueKeyFn from "../../common/extendValueKeyFn.js";
+import extendValueFn from "../../common/extendValueFn.js";
 import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -30,7 +30,7 @@ export default async function sort(variant, keyFn) {
 
   // Complex case: sort by a function that returns a key for each value.
   const result = Object.create(graph);
-  const extendedSortFn = extendValueKeyFn(keyFn);
+  const extendedSortFn = extendValueFn(keyFn);
 
   result.keys = async function () {
     const sorted = [];

@@ -1,4 +1,4 @@
-import extendValueKeyFn from "../../common/extendValueKeyFn.js";
+import extendValueFn from "../../common/extendValueFn.js";
 import MapInnerKeysGraph from "../../common/MapInnerKeysGraph.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -20,7 +20,7 @@ export default async function mapKeys(variant, keyFn, options = {}) {
   if (!variant) {
     return undefined;
   }
-  const extendedKeyFn = keyFn ? extendValueKeyFn(keyFn) : null;
+  const extendedKeyFn = keyFn ? extendValueFn(keyFn) : null;
   const mappedGraph = new (InheritScopeTransform(MapInnerKeysGraph))(
     variant,
     extendedKeyFn,
