@@ -1,21 +1,11 @@
-import { FilesGraph, ObjectGraph } from "@graphorigami/core";
+import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
-import path from "node:path";
 import { describe, test } from "node:test";
-import { fileURLToPath } from "node:url";
-import TextDocument from "../../src/common/TextDocument.js";
 import unpackOrigamiTemplate from "../../src/loaders/orit.js";
-
-const dirname = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "fixtures"
-);
-const fixtures = new FilesGraph(dirname);
 
 describe(".orit loader", () => {
   test("loads a template", async () => {
-    const fileName = "greet.orit";
-    const text = await fixtures.get(fileName);
+    const text = `Hello, {{ _ }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn.call(null, "world");
     assert.deepEqual(value, "Hello, world!");
@@ -25,8 +15,7 @@ describe(".orit loader", () => {
     const parent = new ObjectGraph({
       name: "Alice",
     });
-    const fileName = "greetName.orit";
-    const text = await fixtures.get(fileName);
+    const text = `Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text, { parent });
     const value = await fn();
     assert.deepEqual(value, "Hello, Alice!");
@@ -44,20 +33,12 @@ describe(".orit loader", () => {
   });
 
   test("template can reference template front matter via @attached", async () => {
-    const text = await fixtures.get("frontMatter.orit");
+    const text = `---
+name: Carol
+---
+Hello, {{ @attached/name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn();
     assert.deepEqual(value, "Hello, Carol!");
-  });
-
-  test("can load a template from text of another document", async () => {
-    const text = `---
-name: Bob
----
-Hello, {{ @attached/name }}!`;
-    const document = TextDocument.from(text);
-    const fn = await unpackOrigamiTemplate(document);
-    const value = await fn();
-    assert.deepEqual(value, "Hello, Bob!");
   });
 });
