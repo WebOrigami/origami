@@ -83,7 +83,7 @@ export function from(obj) {
     // Argument already supports the dictionary interface.
     // @ts-ignore
     return obj;
-  } else if (obj instanceof Function) {
+  } else if (typeof obj === "function") {
     return new FunctionGraph(obj);
   } else if (obj instanceof Map) {
     return new MapGraph(obj);
