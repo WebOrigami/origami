@@ -21,14 +21,13 @@ export function processUnpackedContent(content, parent, attachedData) {
     const parentScope = parent ? getScope(parent) : builtins;
     /** @this {AsyncDictionary|null} */
     function useContainerScope(input) {
-      const baseScope = this ?? builtins;
       const extendedScope = new Scope(
         {
           "@container": parent,
-          "@callScope": parentScope,
+          "@callScope": this,
           "@attached": attachedData,
         },
-        baseScope
+        parentScope
       );
       return fn.call(extendedScope, input);
     }

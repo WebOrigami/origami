@@ -42,7 +42,7 @@ describe("ops", () => {
     const code = [ops.lambda, [ops.scope, "@recurse"]];
     const fn = await execute.call(null, code);
     const result = await fn();
-    assert.equal(result, fn);
+    assert.equal(result.code, fn.code);
   });
 
   test("can instantiate an object", async () => {

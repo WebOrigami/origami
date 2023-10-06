@@ -63,12 +63,12 @@ describe.only(".ori loader", () => {
     });
     const source = `=\`Hello, {{ name }}!\``;
     const templateFn = await unpackOrigamiExpression(source, { parent: scope });
-    const value = await templateFn(scope);
+    const value = await templateFn();
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
-    const source = `=\`Hello, {{ name }}!\``;
+    const source = `=\`Hello, {{ _/name }}!\``;
     const templateFn = await unpackOrigamiExpression(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");

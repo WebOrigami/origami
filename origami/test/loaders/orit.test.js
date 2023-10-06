@@ -21,14 +21,14 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "Hello, world!");
   });
 
-  test("loads a template that reads from scope", async () => {
-    const scope = new ObjectGraph({
+  test("loads a template that reads from its container's scope", async () => {
+    const parent = new ObjectGraph({
       name: "Alice",
     });
     const fileName = "greetName.orit";
     const text = await fixtures.get(fileName);
-    const fn = await unpackOrigamiTemplate(text);
-    const value = await fn.call(scope);
+    const fn = await unpackOrigamiTemplate(text, { parent });
+    const value = await fn();
     assert.deepEqual(value, "Hello, Alice!");
   });
 

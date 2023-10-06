@@ -11,7 +11,7 @@ import * as compile from "../language/compile.js";
  * @type {import("../..").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
-  const parent = options.parent ?? null;
+  const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;
 
   // Get the input body text and attached content.
   const inputDocument = TextDocument.from(input);
