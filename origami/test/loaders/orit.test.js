@@ -1,6 +1,7 @@
 import { ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import TextDocument from "../../src/common/TextDocument.js";
 import unpackOrigamiTemplate from "../../src/loaders/orit.js";
 
 describe(".orit loader", () => {
@@ -11,13 +12,13 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "Hello, world!");
   });
 
-  test("loads a template that reads from its container's scope", async () => {
-    const parent = new ObjectGraph({
+  test("loads a template that reads from the calling scope", async () => {
+    const scope = new ObjectGraph({
       name: "Alice",
     });
     const text = `Hello, {{ name }}!`;
-    const fn = await unpackOrigamiTemplate(text, { parent });
-    const value = await fn();
+    const fn = await unpackOrigamiTemplate(text);
+    const value = await fn.call(scope);
     assert.deepEqual(value, "Hello, Alice!");
   });
 
@@ -52,11 +53,11 @@ Hello, {{ name }}!`;
     assert.deepEqual(value, "Hello, Alice Andrews!");
   });
 
-  test("template expressions can access caller's scope via @context", async () => {
-    const scope = new ObjectGraph({ name: "Bob" });
-    const text = `Hello, {{ @context/name }}!`;
+  test("template expressions can access their defining scope via @local", async () => {
+    const parent = new ObjectGraph({ name: "Bob" });
+    const text = new TextDocument(`Hello, {{ @local/name }}!`, null, parent);
     const fn = await unpackOrigamiTemplate(text);
-    const value = await fn.call(scope);
+    const value = await fn();
     assert.deepEqual(value, "Hello, Bob!");
   });
 });

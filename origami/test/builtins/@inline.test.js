@@ -6,11 +6,11 @@ import TextDocument from "../../src/common/TextDocument.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
-    const parent = new ObjectGraph({
+    const scope = new ObjectGraph({
       name: "Alice",
     });
-    const document = new TextDocument(`Hello, {{ name }}!`, null, parent);
-    const inlinedDocument = await inline.call(null, document);
+    const document = new TextDocument(`Hello, {{ name }}!`);
+    const inlinedDocument = await inline.call(scope, document);
     assert.equal(String(inlinedDocument), "Hello, Alice!");
     assert.equal(inlinedDocument.text, "Hello, Alice!");
   });

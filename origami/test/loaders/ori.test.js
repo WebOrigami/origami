@@ -62,8 +62,8 @@ describe.only(".ori loader", () => {
       name: "Alice",
     });
     const source = `=\`Hello, {{ name }}!\``;
-    const templateFn = await unpackOrigamiExpression(source, { parent: scope });
-    const value = await templateFn();
+    const templateFn = await unpackOrigamiExpression(source);
+    const value = await templateFn.call(scope);
     assert.equal(value, "Hello, Alice!");
   });
 
