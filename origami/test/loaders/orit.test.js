@@ -52,9 +52,9 @@ Hello, {{ name }}!`;
     assert.deepEqual(value, "Hello, Alice Andrews!");
   });
 
-  test("template expressions can access caller's scope via @callScope", async () => {
+  test("template expressions can access caller's scope via @context", async () => {
     const scope = new ObjectGraph({ name: "Bob" });
-    const text = `Hello, {{ @callScope/name }}!`;
+    const text = `Hello, {{ @context/name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn.call(scope);
     assert.deepEqual(value, "Hello, Bob!");
