@@ -8,17 +8,21 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function expand(variant) {
+export default async function expand(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  const expanded = new MapValuesGraph(variant, (value) => expandValue(value), {
-    deep: true,
-  });
+  const expanded = new MapValuesGraph(
+    graphable,
+    (value) => expandValue(value),
+    {
+      deep: true,
+    }
+  );
   return expanded;
 }
 

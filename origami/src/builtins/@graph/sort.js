@@ -12,16 +12,16 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {Invocable} [keyFn]
  */
-export default async function sort(variant, keyFn) {
+export default async function sort(graphable, keyFn) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
 
   if (keyFn === undefined) {
     // Simple case: sort by graph's existing keys.

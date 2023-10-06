@@ -188,12 +188,12 @@ export function makeGraphable(obj) {
 /**
  * Map the values of a graph.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {Function} mapFn
  */
-export async function map(variant, mapFn) {
+export async function map(graphable, mapFn) {
   const result = new Map();
-  const graph = from(variant);
+  const graph = from(graphable);
   const keys = Array.from(await graph.keys());
   const promises = keys.map((key) =>
     graph.get(key).then(async (value) => {
@@ -219,12 +219,12 @@ export async function map(variant, mapFn) {
  * values have been obtained, all the values and keys will be passed to the
  * reduceFn, which should consolidate those into a single result.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {Function|null} mapFn
  * @param {Function} reduceFn
  */
-export async function mapReduce(variant, mapFn, reduceFn) {
-  const graph = from(variant);
+export async function mapReduce(graphable, mapFn, reduceFn) {
+  const graph = from(graphable);
 
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the graph's `get` method for each key, but
@@ -255,11 +255,11 @@ export async function mapReduce(variant, mapFn, reduceFn) {
  * The result's keys will be the graph's keys cast to strings. Any graph value
  * that is itself a graph will be similarly converted to a plain object.
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @returns {Promise<PlainObject|Array>}
  */
-export async function plain(variant) {
-  return mapReduce(variant, null, (values, keys) => {
+export async function plain(graphable) {
+  return mapReduce(graphable, null, (values, keys) => {
     const obj = {};
     for (let i = 0; i < keys.length; i++) {
       obj[keys[i]] = values[i];
@@ -283,14 +283,14 @@ export function toFunction(graphable) {
  * Return the value at the corresponding path of keys.
  *
  * @this {any}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {...any} keys
  */
-export async function traverse(variant, ...keys) {
+export async function traverse(graphable, ...keys) {
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.
-    return await traverseOrThrow.call(this, variant, ...keys);
+    return await traverseOrThrow.call(this, graphable, ...keys);
   } catch (/** @type {any} */ error) {
     if (error instanceof TraverseError) {
       return undefined;

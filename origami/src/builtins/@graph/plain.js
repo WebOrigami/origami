@@ -7,15 +7,15 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function plain(variant) {
+export default async function plain(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  return Graph.plain(variant);
+  return Graph.plain(graphable);
 }
 
 plain.usage = `plain <graph>\tA plain JavaScript object representation of the graph`;

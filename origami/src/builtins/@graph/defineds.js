@@ -8,15 +8,15 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  */
-export default async function defineds(variant) {
+export default async function defineds(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
-    throw new TypeError("A graph variant is required");
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
+    throw new TypeError("A graph graphable is required");
   }
-  return Graph.mapReduce(variant, null, (values, keys) => {
+  return Graph.mapReduce(graphable, null, (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {

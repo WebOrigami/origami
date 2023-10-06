@@ -5,8 +5,8 @@ import InheritScopeTransform from "./InheritScopeTransform.js";
 export default class ArrowGraph extends InvokeFunctionsTransform(
   InheritScopeTransform(MapKeysValuesGraph)
 ) {
-  constructor(variant, options = {}) {
-    super(variant, getAttachedFunction, options);
+  constructor(graphable, options = {}) {
+    super(graphable, getAttachedFunction, options);
   }
 
   async innerKeyForOuterKey(outerKey) {

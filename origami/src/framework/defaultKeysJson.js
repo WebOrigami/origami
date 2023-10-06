@@ -7,8 +7,8 @@ import { Graph } from "@graphorigami/core";
  *
  * @this {AsyncDictionary|null}
  */
-export default async function defaultKeysJson(variant) {
-  const graph = Graph.from(variant);
+export default async function defaultKeysJson(graphable) {
+  const graph = Graph.from(graphable);
   const keys = Array.from(await graph.keys());
   // Skip the key .keys.json if present.
   const filtered = keys.filter((key) => key !== ".keys.json");

@@ -7,15 +7,15 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function nulls(variant) {
+export default async function nulls(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  return new MapValuesGraph(variant, () => null, { deep: true });
+  return new MapValuesGraph(graphable, () => null, { deep: true });
 }
 
 nulls.usage = `nulls <graph>\tReturn a new graph with all values equal to null`;

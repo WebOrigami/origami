@@ -8,14 +8,14 @@ import setScope from "./set.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param  {...Graphable} scopeGraphs
  * @this {AsyncDictionary|null}
  */
-export default function extendScope(variant, ...scopeGraphs) {
+export default function extendScope(graphable, ...scopeGraphs) {
   assertScopeIsDefined(this);
   const scope = this;
-  return setScope.call(scope, variant, ...scopeGraphs, scope);
+  return setScope.call(scope, graphable, ...scopeGraphs, scope);
 }
 
 extendScope.usage = `@scope/extend <graph>, <...graphs>\tExtends graph's scope with the given graphs`;

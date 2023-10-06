@@ -17,15 +17,15 @@ const defaultPort = 5000;
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {number} [port]
  * @this {AsyncDictionary|null}
  */
-export default async function serve(variant, port) {
+export default async function serve(graphable, port) {
   assertScopeIsDefined(this);
   let graph;
-  if (variant) {
-    graph = Graph.from(variant);
+  if (graphable) {
+    graph = Graph.from(graphable);
 
     // TODO: Instead of applying ExplorableSiteTransform, apply a transform
     // that just maps the defaultValueKey to index.html.

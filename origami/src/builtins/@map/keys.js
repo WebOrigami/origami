@@ -11,18 +11,18 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {function} keyFn
  * @param {PlainObject} [options]
  */
-export default async function mapKeys(variant, keyFn, options = {}) {
+export default async function mapKeys(graphable, keyFn, options = {}) {
   assertScopeIsDefined(this);
-  if (!variant) {
+  if (!graphable) {
     return undefined;
   }
   const extendedKeyFn = keyFn ? extendValueFn(keyFn) : null;
   const mappedGraph = new (InheritScopeTransform(MapInnerKeysGraph))(
-    variant,
+    graphable,
     extendedKeyFn,
     options
   );

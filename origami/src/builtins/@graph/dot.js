@@ -16,16 +16,16 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {PlainObject} [options]
  */
-export default async function dot(variant, options = {}) {
+export default async function dot(graphable, options = {}) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
   const rootLabel = graph[keySymbol] ?? "";
   const graphArcs = await statements(graph, "", rootLabel, options);
   return `digraph g {

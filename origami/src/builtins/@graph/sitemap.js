@@ -18,13 +18,13 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {string} [baseHref ]
  */
-export default async function sitemap(variant, baseHref = "") {
+export default async function sitemap(graphable, baseHref = "") {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  const graph = Graph.from(variant);
+  graphable = graphable ?? (await this?.get("@current"));
+  const graph = Graph.from(graphable);
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

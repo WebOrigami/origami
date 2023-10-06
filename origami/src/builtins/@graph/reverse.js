@@ -11,17 +11,17 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {PlainObject} [options]
  */
-export default async function reverse(variant, options = {}) {
+export default async function reverse(graphable, options = {}) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
   const scope = this;
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
   const deep = options.deep ?? false;
 
   const reversed = {

@@ -10,19 +10,19 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @typedef {import("../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {Invocable} [fn]
  */
-export default async function watch(variant, fn) {
+export default async function watch(graphable, fn) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
 
   // Watch the indicated graph.
   /** @type {any} */
-  const container = Graph.from(variant);
+  const container = Graph.from(graphable);
   await /** @type {any} */ (container).watch?.();
 
   // // Watch graphs in scope.

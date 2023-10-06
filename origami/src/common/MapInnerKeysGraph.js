@@ -1,8 +1,8 @@
 import { Dictionary, Graph } from "@graphorigami/core";
 
 export default class MapInnerKeysGraph {
-  constructor(variant, keyFn, options = {}) {
-    this.graph = Graph.from(variant);
+  constructor(graphable, keyFn, options = {}) {
+    this.graph = Graph.from(graphable);
     this.keyFn = keyFn;
     this.deep = options.deep ?? false;
     this.mapInnerKeyToOuterKey = new Map();

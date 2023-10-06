@@ -177,10 +177,10 @@ export async function handleRequest(request, response, graph) {
  * https.createServer calls, letting you serve an async graph as a set of pages.
  *
  * @typedef {import("@graphorigami/core").Graphable} Graphable
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  */
-export function requestListener(variant) {
-  const graph = Graph.from(variant);
+export function requestListener(graphable) {
+  const graph = Graph.from(graphable);
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, graph);

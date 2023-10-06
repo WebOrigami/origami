@@ -8,17 +8,17 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {string} [prefix]
  */
-export default async function paths(variant, prefix = "") {
+export default async function paths(graphable, prefix = "") {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
   const result = [];
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
   for (const key of await graph.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
     const value = await graph.get(key);

@@ -7,15 +7,15 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function valuesDeep(variant) {
+export default async function valuesDeep(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  return Graph.mapReduce(variant, null, (values) => values.flat());
+  return Graph.mapReduce(graphable, null, (values) => values.flat());
 }
 
 valuesDeep.usage = `valuesDeep <graph>\tThe in-order graph values as a flat array`;

@@ -12,12 +12,12 @@ export default class MapKeysValuesGraph {
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
    * @typedef {import("../..").Invocable} Invocable
    *
-   * @param {Graphable} variant
+   * @param {Graphable} graphable
    * @param {Invocable | null} mapFn
    * @param {PlainObject} options
    */
-  constructor(variant, mapFn, options = {}) {
-    this.graph = Graph.from(variant);
+  constructor(graphable, mapFn, options = {}) {
+    this.graph = Graph.from(graphable);
     this.mapFn = mapFn ? utilities.toFunction(mapFn) : null;
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;

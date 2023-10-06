@@ -14,20 +14,20 @@ let graphvizLoaded = false;
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  * @param {PlainObject} [options]
  */
-export default async function svg(variant, options = {}) {
+export default async function svg(graphable, options = {}) {
   assertScopeIsDefined(this);
   if (!graphvizLoaded) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
   const dotText = await dot.call(this, graph, options);
   const svgText =
     dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");

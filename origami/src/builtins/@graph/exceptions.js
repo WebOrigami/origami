@@ -6,18 +6,18 @@ import defineds from "./defineds.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  */
-export default async function exceptions(variant) {
+export default async function exceptions(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  const exceptionsGraph = new ExceptionsGraph(variant);
+  graphable = graphable ?? (await this?.get("@current"));
+  const exceptionsGraph = new ExceptionsGraph(graphable);
   return defineds.call(this, exceptionsGraph);
 }
 
 class ExceptionsGraph {
-  constructor(variant) {
-    this.graph = Graph.from(variant);
+  constructor(graphable) {
+    this.graph = Graph.from(graphable);
   }
 
   async get(key) {

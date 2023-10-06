@@ -143,13 +143,13 @@ export const keySymbol = Symbol("key");
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
  * @typedef {import("@graphorigami/core").Graphable} Graphable
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {AsyncDictionary|null} context
  * @returns {AsyncDictionary & { parent: AsyncDictionary }}
  */
-export function graphInContext(variant, context) {
+export function graphInContext(graphable, context) {
   // Either method of constructing the target produces a new graph.
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
   const target =
     "parent" in graph
       ? Object.create(graph)

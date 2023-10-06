@@ -7,18 +7,18 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function count(variant) {
+export default async function count(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return undefined;
   }
-  const graph = await Graph.from(variant);
+  const graph = await Graph.from(graphable);
   const keys = [...(await graph.keys())];
   return keys.length;
 }
 
-count.usage = `count <variant>\tReturn the number of keys in the graph`;
+count.usage = `count <graphable>\tReturn the number of keys in the graph`;
 count.documentation = "https://graphorigami.org/cli/@graph.html#count";

@@ -9,8 +9,8 @@ import MapKeysValuesGraph from "./MapKeysValuesGraph.js";
  * to that extension.
  */
 export default class MapExtensionsGraph extends MapKeysValuesGraph {
-  constructor(variant, mapFn, options = {}) {
-    super(variant, mapFn, options);
+  constructor(graphable, mapFn, options = {}) {
+    super(graphable, mapFn, options);
     const { innerExtension, outerExtension } = parseExtension(
       options.extension
     );

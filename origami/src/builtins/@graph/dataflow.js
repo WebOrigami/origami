@@ -18,11 +18,11 @@ ignoreKeys.push("..");
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  */
-export default async function dataflow(variant) {
+export default async function dataflow(graphable) {
   assertScopeIsDefined(this);
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
 
   const flowFile = await graph.get(".dataflow.yaml");
   const flow = Dictionary.isAsyncDictionary(flowFile)

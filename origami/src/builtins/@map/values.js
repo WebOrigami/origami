@@ -13,13 +13,13 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {Invocable} mapFn
  * @param {PlainObject} options
  */
-export default function map(variant, mapFn, options = {}) {
+export default function map(graphable, mapFn, options = {}) {
   assertScopeIsDefined(this);
-  if (!variant) {
+  if (!graphable) {
     return undefined;
   }
 
@@ -29,7 +29,7 @@ export default function map(variant, mapFn, options = {}) {
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   const mappedGraph = new (InheritScopeTransform(GraphClass))(
-    variant,
+    graphable,
     extendedMapFn,
     options
   );

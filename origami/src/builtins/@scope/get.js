@@ -7,13 +7,13 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function getScope(variant) {
+export default async function getScope(graphable) {
   assertScopeIsDefined(this);
   let scope;
-  if (variant) {
-    const graph = Graph.from(variant);
+  if (graphable) {
+    const graph = Graph.from(graphable);
     scope = /** @type {any} */ (graph).scope;
   } else {
     scope = this;

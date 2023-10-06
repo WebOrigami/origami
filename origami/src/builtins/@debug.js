@@ -18,17 +18,17 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  *
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [variant]
+ * @param {Graphable} [graphable]
  */
-export default async function debug(variant) {
+export default async function debug(graphable) {
   assertScopeIsDefined(this);
-  variant = variant ?? (await this?.get("@current"));
-  if (variant === undefined) {
+  graphable = graphable ?? (await this?.get("@current"));
+  if (graphable === undefined) {
     return;
   }
 
   /** @type {any} */
-  let graph = Graph.from(variant);
+  let graph = Graph.from(graphable);
 
   if (!isTransformApplied(ExplorableSiteTransform, graph)) {
     graph = transformObject(ExplorableSiteTransform, graph);

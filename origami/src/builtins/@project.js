@@ -10,13 +10,10 @@ const configFileName = "ori.config.js";
  * Return the graph for the current project's root folder.
  *
  * This searches the current directory and its ancestors for an Origami
- * configuration file. If a variant is provided, the ancestor search will begin
- * at that point; otherwise, the search begins at the current directory.
- *
- * If an Origami configuration file is found, the containing folder is
- * considered to be the project root. This returns a graph for that folder, with
- * the exported configuration as the context for that folder — that is, the
- * graph exported by the configuration will be the scope.
+ * configuration file. If an Origami configuration file is found, the containing
+ * folder is considered to be the project root. This returns a graph for that
+ * folder, with the exported configuration as the context for that folder — that
+ * is, the graph exported by the configuration will be the scope.
  *
  * If no Origami configuration file is found, the current folder will be
  * returned as a graph, with the builtins as its parent.

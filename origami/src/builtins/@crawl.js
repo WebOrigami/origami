@@ -16,21 +16,21 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} variant
+ * @param {Graphable} graphable
  * @param {string} [baseHref]
  * @returns {Promise<AsyncDictionary>}
  */
-export default async function crawl(variant, baseHref) {
+export default async function crawl(graphable, baseHref) {
   assertScopeIsDefined(this);
-  const graph = Graph.from(variant);
+  const graph = Graph.from(graphable);
 
   if (baseHref === undefined) {
-    // Ask graph or original variant if it has an `href` property we can use as
+    // Ask graph or original graphable if it has an `href` property we can use as
     // the base href to determine whether a link is local within the graph or
     // not. If not, use a fake `local:/` href.
     baseHref =
       /** @type {any} */ (graph).href ??
-      /** @type {any} */ (variant).href ??
+      /** @type {any} */ (graphable).href ??
       "local:/";
     if (!baseHref?.endsWith("/")) {
       baseHref += "/";
