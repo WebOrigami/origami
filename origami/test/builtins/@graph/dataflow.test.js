@@ -68,7 +68,7 @@ c: Hello
   });
 
   test("identifies referenced dependencies in .orit template files", async () => {
-    const templateDocument = new TextDocument(`{{ map(foo, bar) }}`);
+    const templateDocument = new TextDocument(`{{ @builtin(foo, bar) }}`);
     templateDocument.unpack = () => unpackOrigamiTemplate(templateDocument);
     const graph = {
       // Since bar isn't defined in graph, it will be assumed to be a value

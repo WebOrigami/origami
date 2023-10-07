@@ -41,9 +41,17 @@ Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const document = await fn();
     assert.deepEqual(String(document), "Hello, Carol!");
-    assert.deepEqual(document.data, {
-      name: "Carol",
-    });
+  });
+
+  test("template result includes input data", async () => {
+    const text = "Hello, {{ _/name }}!";
+    const fn = await unpackOrigamiTemplate(text);
+    const data = { name: "Alice" };
+    const document = new TextDocument("Some text", data);
+    const result = await fn(document);
+    assert.deepEqual(String(result), "Hello, Alice!");
+    const resultData = await result.unpack();
+    assert.deepEqual(resultData, { name: "Alice" });
   });
 
   test("front matter expressions have input in scope via `_`", async () => {

@@ -42,6 +42,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
       return text;
     }
   };
+  fn.code = lambda.code;
 
   return processUnpackedContent(fn, parent, attachedData);
 }
