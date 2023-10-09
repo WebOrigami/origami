@@ -1,4 +1,5 @@
 import { Dictionary, Graph } from "@graphorigami/core";
+import { getScope } from "./utilities.js";
 
 export default class MapInnerKeysGraph {
   constructor(graphable, keyFn, options = {}) {
@@ -64,9 +65,10 @@ export default class MapInnerKeysGraph {
   async outerKeyForInnerKey(innerKey) {
     if (!this.mapInnerKeyToOuterKey.has(innerKey)) {
       const value = await this.graph.get(innerKey);
+      const scope = getScope(this);
       const outerKey =
         value !== undefined && this.keyFn
-          ? await this.keyFn.call(this, value, innerKey)
+          ? await this.keyFn.call(scope, value, innerKey)
           : value;
       this.mapOuterKeyToInnerKey.set(outerKey, innerKey);
       this.mapInnerKeyToOuterKey.set(innerKey, outerKey);
