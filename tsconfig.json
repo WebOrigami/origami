@@ -12,5 +12,5 @@
     "target": "ESNext"
   },
   "include": ["**/*.js"],
-  "exclude": ["packages/origami/exports/exports.js"]
+  "exclude": ["origami/exports/exports.js"]
 }
