@@ -1,4 +1,4 @@
-import { FunctionGraph, Graph } from "@graphorigami/core";
+import { FunctionGraph, Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapKeysValuesGraph from "../../src/common/MapKeysValuesGraph.js";
@@ -61,5 +61,37 @@ describe("MapKeysValuesTest", () => {
       C: true,
     });
     assert(!calledGet);
+  });
+
+  test("can define a custom name for the key in scope", async () => {
+    const graph = new ObjectGraph({
+      a: {
+        b: "b",
+      },
+      c: {
+        d: "d",
+      },
+    });
+    async function innerFn(value) {
+      const custom = await this.get("custom");
+      return `${custom}${value}`;
+    }
+    /** @this {import("@graphorigami/types").AsyncDictionary} */
+    async function outerFn(value) {
+      const map = new MapKeysValuesGraph(value, innerFn);
+      /** @type {any} */ (map).parent = this;
+      return map;
+    }
+    const outerMap = new MapKeysValuesGraph(graph, outerFn, {
+      keyName: "custom",
+    });
+    assert.deepEqual(await Graph.plain(outerMap), {
+      a: {
+        b: "ab",
+      },
+      c: {
+        d: "cd",
+      },
+    });
   });
 });

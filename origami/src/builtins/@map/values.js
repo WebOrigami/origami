@@ -1,4 +1,3 @@
-import extendValueFn from "../../common/extendValueFn.js";
 import MapExtensionsGraph from "../../common/MapExtensionsGraph.js";
 import MapValuesGraph from "../../common/MapValuesGraph.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
@@ -23,14 +22,12 @@ export default function map(graphable, mapFn, options = {}) {
     return undefined;
   }
 
-  const extendedMapFn = extendValueFn(mapFn, options);
-
   /** @type {any} */
   const GraphClass =
     options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
   const mappedGraph = new (InheritScopeTransform(GraphClass))(
     graphable,
-    extendedMapFn,
+    mapFn,
     options
   );
   if (this) {

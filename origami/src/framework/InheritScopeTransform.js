@@ -20,14 +20,13 @@ export default function InheritScopeTransform(Base) {
 
     async get(key) {
       const value = await super.get(key);
-      if (value) {
+      if (value && typeof value === "object" && value.parent == null) {
         if (Dictionary.isAsyncDictionary(value)) {
           // This graph becomes the parent for all subgraphs.
           /** @type {any} */ (value).parent = this;
         } else if (
           typeof value.unpack === "function" &&
-          !(value instanceof Buffer) && // HACK: Buffer has weird `parent` property
-          value.parent == null
+          !(value instanceof Buffer) // HACK: Buffer has weird `parent` property
         ) {
           // This graph becomes the parent for an attached graph.
           const parent = this;

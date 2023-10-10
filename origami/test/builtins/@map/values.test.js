@@ -1,12 +1,12 @@
-import { Graph } from "@graphorigami/core";
+import { Graph, ObjectGraph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import map from "../../../src/builtins/@map/values.js";
+import mapValues from "../../../src/builtins/@map/values.js";
 
 describe("map", () => {
   test("maps all the values in a graph", async () => {
     /** @type {any} */
-    const fixture = map.call(
+    const fixture = mapValues.call(
       null,
       {
         a: "Hello, a.",
@@ -24,7 +24,7 @@ describe("map", () => {
 
   test("maps subobjects as values by default", async () => {
     /** @type {any} */
-    const fixture = map.call(
+    const fixture = mapValues.call(
       null,
       {
         english: {
@@ -44,7 +44,7 @@ describe("map", () => {
 
   test("setting deep option maps subobjects deeply", async () => {
     /** @type {any} */
-    const fixture = map.call(
+    const fixture = mapValues.call(
       null,
       {
         english: {
@@ -69,7 +69,7 @@ describe("map", () => {
 
   test("extended map function includes @key and _", async () => {
     /** @type {any} */
-    const results = map.call(
+    const results = mapValues.call(
       null,
       { a: 1, b: 2, c: 3 },
       /** @this {any} */
@@ -88,7 +88,7 @@ describe("map", () => {
 
   test("can specify how @key should be added to scope", async () => {
     /** @type {any} */
-    const results = map.call(
+    const results = mapValues.call(
       null,
       { a: 1, b: 2, c: 3 },
       /** @this {any} */
@@ -106,7 +106,11 @@ describe("map", () => {
 
   test("can map to a constant value", async () => {
     /** @type {any} */
-    const results = map.call(null, { a: 1, b: 2, c: 3 }, () => "constant");
+    const results = mapValues.call(
+      null,
+      { a: 1, b: 2, c: 3 },
+      () => "constant"
+    );
     assert.deepEqual(await Graph.plain(results), {
       a: "constant",
       b: "constant",

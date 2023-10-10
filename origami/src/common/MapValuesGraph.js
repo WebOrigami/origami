@@ -1,5 +1,6 @@
 import { Dictionary, Graph } from "@graphorigami/core";
-import * as utilities from "../common/utilities.js";
+import addValueKeyToScope from "./addValueKeyToScope.js";
+import { getScope, toFunction } from "./utilities.js";
 
 /**
  * Given a graph and a function, return a new graph that applies the function to
@@ -17,7 +18,7 @@ export default class MapValuesGraph {
    */
   constructor(graphable, mapFn, options = {}) {
     this.graph = Graph.from(graphable);
-    this.mapFn = utilities.toFunction(mapFn);
+    this.mapFn = toFunction(mapFn);
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
     this.options = options;
@@ -45,13 +46,24 @@ export default class MapValuesGraph {
         : // Don't need value
           undefined;
     }
-    const scope = utilities.getScope(this);
+
+    if (!invokeMapFn) {
+      return undefined;
+    }
+
+    const mapFn = addValueKeyToScope(
+      getScope(this),
+      this.mapFn,
+      value,
+      key,
+      this.options.valueName,
+      this.options.keyName
+    );
+
     return this.deep && isSubgraph
       ? // Return mapped subgraph
-        Reflect.construct(this.constructor, [value, this.mapFn, this.options])
-      : invokeMapFn
-      ? await this.mapFn.call(scope, value, key) // Return mapped value
-      : undefined;
+        Reflect.construct(this.constructor, [value, mapFn, this.options])
+      : await mapFn(value); // Return mapped value
   }
 
   /**

@@ -1,7 +1,11 @@
 import { Graph } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
-import extendValueFn from "../../common/extendValueFn.js";
-import { transformObject } from "../../common/utilities.js";
+import addValueKeyToScope from "../../common/addValueKeyToScope.js";
+import {
+  getScope,
+  toFunction,
+  transformObject,
+} from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -27,17 +31,23 @@ export default async function sort(graphable, keyFn) {
     // Simple case: sort by graph's existing keys.
     return transformObject(SortTransform, graph);
   }
+  keyFn = toFunction(keyFn);
 
   // Complex case: sort by a function that returns a key for each value.
   const result = Object.create(graph);
-  const extendedSortFn = extendValueFn(keyFn);
 
   result.keys = async function () {
     const sorted = [];
     // Get all the keys and map them to their sort keys.
     for (const key of await graph.keys()) {
       const value = await graph.get(key);
-      const sortKey = await extendedSortFn.call(this, value, key);
+      const extendedKeyFn = addValueKeyToScope(
+        getScope(this),
+        keyFn,
+        value,
+        key
+      );
+      const sortKey = await extendedKeyFn(value, key);
       sorted.push({ key, sortKey });
     }
     // Sort the key/sortKey pairs by sortKey.

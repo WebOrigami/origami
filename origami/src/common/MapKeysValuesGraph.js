@@ -1,6 +1,7 @@
 import { Dictionary, Graph } from "@graphorigami/core";
 import * as utilities from "../common/utilities.js";
 import { getScope } from "../common/utilities.js";
+import addValueKeyToScope from "./addValueKeyToScope.js";
 
 /**
  * Given a graph and a function, return a new graph that applies the function to
@@ -35,32 +36,58 @@ export default class MapKeysValuesGraph {
       // If it does, we assume it's already been explicitly mapped, so we'll use
       // that value instead of mapping it ourselves.
       outerValue = await this.graph.get(outerKey);
-    }
-    if (outerValue === undefined && innerKey !== undefined) {
-      // Ask inner graph for value.
-      const innerValue = this.getValue
-        ? await this.graph.get(innerKey)
-        : undefined;
 
-      // Determine whether we want to apply the map to this value.
-      const applyMap =
-        this.mapFn && (await this.mapApplies(innerValue, outerKey, innerKey));
-      // Apply map if desired, otherwise use inner value as is.
-      const scope = getScope(this);
-      outerValue = applyMap
-        ? await this.mapFn?.call(scope, innerValue, outerKey, innerKey)
-        : innerValue;
+      // If the value to return is a subgraph, wrap it with a map.
+      if (this.deep && Dictionary.isAsyncDictionary(outerValue)) {
+        outerValue = Reflect.construct(this.constructor, [
+          outerValue,
+          this.mapFn,
+          this.options,
+        ]);
+      }
+
+      if (outerValue !== undefined) {
+        return outerValue;
+      }
+    }
+
+    if (innerKey === undefined) {
+      return undefined;
+    }
+
+    // Ask inner graph for value.
+    const innerValue = this.getValue
+      ? await this.graph.get(innerKey)
+      : undefined;
+
+    // Determine whether we want to apply the map to this value.
+    const applyMap =
+      this.mapFn && (await this.mapApplies(innerValue, outerKey, innerKey));
+
+    let mapFn;
+    if (applyMap) {
+      mapFn = addValueKeyToScope(
+        getScope(this),
+        this.mapFn,
+        innerValue,
+        innerKey,
+        this.options.valueName,
+        this.options.keyName
+      );
+      outerValue = await mapFn(innerValue, outerKey, innerKey);
+    } else {
+      mapFn = this.mapFn;
+      outerValue = innerValue;
     }
 
     // If the value to return is a subgraph, wrap it with a map.
     if (this.deep && Dictionary.isAsyncDictionary(outerValue)) {
       outerValue = Reflect.construct(this.constructor, [
         outerValue,
-        this.mapFn,
+        mapFn,
         this.options,
       ]);
     }
-
     return outerValue;
   }
 
