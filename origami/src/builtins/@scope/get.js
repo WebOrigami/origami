@@ -1,5 +1,6 @@
 import { Graph } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import * as utilities from "../../common/utilities.js";
 
 /**
  * Returns the scope of the indicated graph or the current scope.
@@ -7,18 +8,20 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/core").Graphable} Graphable
  * @this {AsyncDictionary|null}
- * @param {Graphable} [graphable]
+ * @param {any} [obj]
  */
-export default async function getScope(graphable) {
+export default async function getScope(obj) {
   assertScopeIsDefined(this);
-  let scope;
-  if (graphable) {
-    const graph = Graph.from(graphable);
-    scope = /** @type {any} */ (graph).scope;
+  if (obj) {
+    /** @type {any}  */
+    const graph = Graph.from(obj);
+    if (obj.parent) {
+      graph.parent = obj.parent;
+    }
+    return utilities.getScope(graph);
   } else {
-    scope = this;
+    return this;
   }
-  return scope;
 }
 
 getScope.usage = `@scope/get [<graph>]\tReturns the scope of the graph or the current scope`;
