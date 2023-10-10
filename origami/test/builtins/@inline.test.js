@@ -25,4 +25,15 @@ Hello, {{ name }}!`);
     assert.equal(inlinedDocument.text, `Hello, Bob!`);
     assert.deepEqual(inlinedDocument.data, { name: "Bob" });
   });
+
+  test("can reference itself via `_` ambient", async () => {
+    const document = TextDocument.from(`---
+name: Bob
+---
+Hello, {{ _/name }}!`);
+    /** @type {any} */
+    const inlinedDocument = await inline.call(null, document);
+    assert.equal(inlinedDocument.text, `Hello, Bob!`);
+    assert.deepEqual(inlinedDocument.data, { name: "Bob" });
+  });
 });

@@ -16,7 +16,7 @@ export default async function inline(input) {
   assertScopeIsDefined(this);
   const inputDocument = TextDocument.from(input);
   const templateFn = await unpackOrigamiTemplate(input);
-  const text = await templateFn.call(this);
+  const text = await templateFn.call(this, inputDocument);
   return new TextDocument(text, inputDocument.data, inputDocument.parent);
 }
 
