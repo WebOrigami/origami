@@ -1,4 +1,4 @@
-import { processUnpackedContent } from "../common/processUnpackedContent.js";
+import processUnpackedContent from "../common/processUnpackedContent.js";
 
 /**
  * Load a .js file as module's default export or exports.

@@ -110,7 +110,7 @@ export { default as MapKeysValuesGraph } from "../src/common/MapKeysValuesGraph.
 export { default as MapValuesGraph } from "../src/common/MapValuesGraph.js";
 export { default as MergeDeepGraph } from "../src/common/MergeDeepGraph.js";
 export { default as MergeGraph } from "../src/common/MergeGraph.js";
-export * from "../src/common/processUnpackedContent.js";
+export { default as processUnpackedContent } from "../src/common/processUnpackedContent.js";
 export { default as Scope } from "../src/common/Scope.js";
 export * from "../src/common/serialize.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
@@ -137,8 +137,5 @@ export { default as execute } from "../src/language/execute.js";
 export * from "../src/language/expressionFunction.js";
 export { default as expressionTag } from "../src/language/expressionTag.js";
 export { default as format } from "../src/language/format.js";
-export * from "../src/language/lex.js";
-export * from "../src/language/ops.js";
-export * from "../src/language/parse.js";
 export * from "../src/server/mediaTypes.js";
 export * from "../src/server/server.js";

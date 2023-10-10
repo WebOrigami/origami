@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
-import { processUnpackedContent } from "../common/processUnpackedContent.js";
+import processUnpackedContent from "../common/processUnpackedContent.js";
 import { getScope } from "../common/utilities.js";
 import * as compile from "../language/compile.js";
 

@@ -15,7 +15,7 @@ import { getScope, isTransformApplied, transformObject } from "./utilities.js";
  * @param {any} [attachedData]
  * @returns
  */
-export function processUnpackedContent(content, parent, attachedData) {
+export default function processUnpackedContent(content, parent, attachedData) {
   if (typeof content === "function") {
     // Wrap the function such to add ambients to the scope.
     const fn = content;

@@ -235,7 +235,7 @@ ${message}
  *
  * @param {any} obj
  */
-export function textOrObject(obj) {
+function textOrObject(obj) {
   if (typeof obj === "string") {
     // Return string as is.
     return obj;

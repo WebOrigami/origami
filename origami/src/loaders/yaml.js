@@ -1,5 +1,5 @@
 import * as YAMLModule from "yaml";
-import { processUnpackedContent } from "../common/processUnpackedContent.js";
+import processUnpackedContent from "../common/processUnpackedContent.js";
 import { parseYaml } from "../common/serialize.js";
 
 // See notes at serialize.js
