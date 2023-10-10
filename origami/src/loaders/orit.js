@@ -1,4 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+import { Graph } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
 import processUnpackedContent from "../common/processUnpackedContent.js";
@@ -16,7 +17,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   // Get the input body text and attached content.
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
-  const attachedData = await inputDocument.data;
+  const attachedData = inputDocument.data;
 
   // Compile the body text as an Origami expression and evaluate it.
   const expression = compile.templateDocument(text);
@@ -28,19 +29,10 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   /** @this {AsyncDictionary|null} */
   const fn = async function attachDataToResult(templateInput) {
     const text = await lambda.call(this, templateInput);
-    if (templateInput?.unpack) {
-      /** @type {any} */
-      const result = new String(text);
-      result.unpack = async () => {
-        const unpacked = await templateInput.unpack();
-        const data =
-          unpacked instanceof TextDocument ? unpacked.data : unpacked;
-        return data;
-      };
-      return result;
-    } else {
-      return text;
-    }
+    const data = Graph.isAsyncDictionary(templateInput)
+      ? await Graph.plain(templateInput)
+      : await templateInput?.unpack?.();
+    return data ? new TextDocument(text, data) : text;
   };
   fn.code = lambda.code;
 

@@ -8,6 +8,7 @@ import builtins from "../../src/builtins/@builtins.js";
 import MapExtensionsGraph from "../../src/common/MapExtensionsGraph.js";
 import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
 import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
+import TextDocument from "../../src/common/TextDocument.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = new OrigamiFiles(dirname);
@@ -38,7 +39,9 @@ async function registerYamlSuite(yamlFile) {
       test(title, async () => {
         const expression = await fixture.get("actual.ori");
         const actual = await expression.unpack();
-        assert.deepEqual(actual, expected);
+        const actualNormalized =
+          actual instanceof TextDocument ? String(actual) : actual;
+        assert.deepEqual(actualNormalized, expected);
       });
     }
   });
