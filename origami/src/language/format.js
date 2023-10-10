@@ -34,7 +34,7 @@ export default function format(code, implicitFunctionCall = false) {
 
       default:
         return code[0] instanceof Array
-          ? formatIndirectFunctionCall(code)
+          ? formatFunctionCall(code)
           : "** Unknown Origami code **";
     }
   }
@@ -45,13 +45,32 @@ function formatArgument(arg) {
 }
 
 function formatArguments(args) {
+  const allStrings = args.every((arg) => typeof arg === "string");
+  return allStrings
+    ? // Use graph traversal syntax.
+      formatSlashPath(args)
+    : // Use function invocation syntax.
+      formatArgumentsList(args);
+}
+
+function formatArgumentsList(args) {
   const formatted = args.map((arg) => formatArgument(arg));
-  return formatted.join(", ");
+  const list = formatted.join(", ");
+  return `(${list})`;
 }
 
 function formatAssignment(code) {
   const [_, declaration, expression] = code;
   return `${declaration} = ${format(expression)}`;
+}
+
+function formatFunctionCall(code) {
+  const [fn, ...args] = code;
+  let formattedFn = format(fn);
+  if (formattedFn.includes("/") || formattedFn.includes("(")) {
+    formattedFn = `(${formattedFn})`;
+  }
+  return `${formattedFn}${formatArguments(args)}`;
 }
 
 function formatGraph(code) {
@@ -64,10 +83,6 @@ function formatGraph(code) {
     return `${key} = ${format(rhs)}`;
   });
   return formatted ? `{ ${formatted.join(", ")} }` : "{}";
-}
-
-function formatIndirectFunctionCall(code) {
-  return `${format(code[0])}(${formatArguments(code.slice(1))})`;
 }
 
 function formatObject(code) {
@@ -97,14 +112,12 @@ function formatScopeTraversal(code, implicitFunctionCall = false) {
     return implicitFunctionCall ? `${name}()` : name;
   }
 
-  const allStrings = operands.every((operand) => typeof operand === "string");
-  if (allStrings) {
-    // Use graph traversal syntax.
-    return operands.join("/");
-  }
-  // Use function invocation syntax.
   const args = formatArguments(operands.slice(1));
-  return `${name}(${args})`;
+  return `${name}${args}`;
+}
+
+function formatSlashPath(args) {
+  return "/" + args.join("/");
 }
 
 function formatTemplate(code) {

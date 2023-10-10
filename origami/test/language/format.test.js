@@ -14,14 +14,18 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code), "foo");
   });
 
-  // TODO: Implicit funtion invocation only applies to rightmost arg.
   test("implicit function call", () => {
     const code = [ops.scope, "foo"];
     assert.equal(format(code, true), "foo()");
   });
 
+  test("function call", () => {
+    const code = [[ops.scope, "foo"], undefined];
+    assert.equal(format(code, true), "foo()");
+  });
+
   test("graph traversal with string args", () => {
-    const code = [ops.scope, "a", "b", "c"];
+    const code = [[ops.scope, "a"], "b", "c"];
     assert.equal(format(code), "a/b/c");
   });
 
@@ -37,11 +41,11 @@ describe("Origami language code formatter", () => {
 
   test("function composition", () => {
     const code = [[[ops.scope, "fn"], "a"], "b"];
-    assert.equal(format(code), "fn('a')('b')");
+    assert.equal(format(code), "(fn/a)/b");
   });
 
   test("graph", () => {
-    const code = [ops.graph, { x: [[ops.scope, "fn"]] }];
+    const code = [ops.graph, { x: [[ops.scope, "fn"], undefined] }];
     assert.equal(format(code), "{ x = fn() }");
   });
 
