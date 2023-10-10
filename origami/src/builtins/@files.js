@@ -7,13 +7,11 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @this {AsyncDictionary|null}
- * @param {string} dirname
+ * @param {string[]} keys
  */
-export default async function files(dirname) {
+export default async function files(...keys) {
   assertScopeIsDefined(this);
-  const resolved = dirname
-    ? path.resolve(process.cwd(), dirname)
-    : process.cwd();
+  const resolved = path.resolve(process.cwd(), ...keys);
   return new (FileTreeTransform(FilesGraph))(resolved);
 }
 
