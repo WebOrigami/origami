@@ -100,8 +100,6 @@ export async function toJsonValue(obj) {
   } else if (Graph.isGraphable(obj)) {
     const mapped = await Graph.map(obj, (value) => toJsonValue(value));
     return Graph.plain(mapped);
-  } else if (obj && typeof obj.valueOf === "function") {
-    return obj.valueOf();
   } else if (obj && typeof obj.toString === "function") {
     return obj.toString();
   }
