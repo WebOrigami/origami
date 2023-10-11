@@ -184,9 +184,15 @@ export function keysFromPath(pathname) {
  * @param {Function} mapFn
  */
 export async function map(graphable, mapFn) {
-  const result = new Map();
   const graph = from(graphable);
   const keys = Array.from(await graph.keys());
+
+  // Prepopulate the result map with the keys so that the order of the results
+  // will match the order of the keys.
+  const result = new Map();
+  keys.forEach((key) => result.set(key, undefined));
+
+  // Get all the values in parallel, then wait for them all to resolve.
   const promises = keys.map((key) =>
     graph.get(key).then(async (value) => {
       // If the value is a subgraph, recurse.
