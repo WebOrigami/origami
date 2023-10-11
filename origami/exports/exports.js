@@ -86,6 +86,7 @@ export { default as serve } from "../src/builtins/@serve.js";
 export { default as shell } from "../src/builtins/@shell.js";
 export { default as stdin } from "../src/builtins/@stdin.js";
 export { default as svg } from "../src/builtins/@svg.js";
+export { default as unpack } from "../src/builtins/@unpack.js";
 export { default as watch } from "../src/builtins/@watch.js";
 export { default as yaml } from "../src/builtins/@yaml.js";
 export { default as homeFiles } from "../src/builtins/~.js";
