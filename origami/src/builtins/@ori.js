@@ -4,7 +4,7 @@ import builtins from "../builtins/@builtins.js";
 import { getRealmObjectPrototype } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
-import toYaml from "./@yaml.js";
+import { toYaml } from "../common/serialize.js";
 
 /**
  * Parse an Origami expression, evaluate it in the context of a graph (provided
@@ -62,7 +62,7 @@ async function formatResult(scope, result) {
     text = result.toString();
   } else if (typeof result === "object") {
     // Render YAML
-    text = await toYaml.call(scope, result);
+    text = await toYaml(result);
   } else {
     // Use result itself.
     text = result;
