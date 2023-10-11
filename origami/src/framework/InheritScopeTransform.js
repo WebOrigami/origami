@@ -34,7 +34,10 @@ export default function InheritScopeTransform(Base) {
           const original = value.unpack.bind(value);
           value.unpack = async function () {
             const content = await original();
-            if (Dictionary.isAsyncDictionary(content)) {
+            if (
+              Dictionary.isAsyncDictionary(content) &&
+              /** @type {any} */ (content).parent == null
+            ) {
               /** @type {any} */
               const graph = Graph.from(content);
               graph.parent = parent;
