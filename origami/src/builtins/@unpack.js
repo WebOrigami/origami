@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @param {any} obj
  * @returns
  */
-export default function pack(obj) {
+export default function unpack(obj) {
   assertScopeIsDefined(this);
-  return obj?.pack?.();
+  return obj?.unpack?.();
 }
