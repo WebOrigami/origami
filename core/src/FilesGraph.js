@@ -96,25 +96,6 @@ export default class FilesGraph {
     const stringKey = key ? String(key) : "";
     const destPath = path.resolve(this.dirname, stringKey);
 
-    // Treat null value as empty string; will create an empty file.
-    if (value === null) {
-      value = "";
-    }
-
-    // Write an ArrayBuffer value as a Buffer.
-    if (value instanceof ArrayBuffer) {
-      value = Buffer.from(value);
-    }
-
-    // True if fs.writeFile can directly write the value to a file.
-    const writeable =
-      typeof value === "string" ||
-      value instanceof String ||
-      value instanceof Buffer ||
-      value instanceof DataView ||
-      (globalThis.ReadableStream && value instanceof ReadableStream) ||
-      isTypedArray(value);
-
     if (value === undefined) {
       // Delete the file or directory.
       let stats;
@@ -126,6 +107,7 @@ export default class FilesGraph {
         }
         throw error;
       }
+
       if (stats?.isDirectory()) {
         // Delete directory.
         await fs.rm(destPath, { recursive: true });
@@ -133,30 +115,87 @@ export default class FilesGraph {
         // Delete file.
         await fs.unlink(destPath);
       }
-    } else if (!writeable && Graph.isGraphable(value)) {
+
+      return this;
+    }
+
+    // Treat null value as empty string; will create an empty file.
+    if (value === null) {
+      value = "";
+    }
+
+    // Write an ArrayBuffer value as a Buffer.
+    if (value instanceof ArrayBuffer) {
+      value = Buffer.from(value);
+    }
+
+    // True if fs.writeFile can directly write the value to a file.
+    let isWriteable =
+      value instanceof Buffer ||
+      value instanceof DataView ||
+      (globalThis.ReadableStream && value instanceof ReadableStream) ||
+      isTypedArray(value);
+
+    if (!isWriteable && isStringLike(value)) {
+      // Value has a meaningful `toString` method, use that.
+      value = String(value);
+      isWriteable = true;
+    }
+
+    if (isWriteable) {
+      // Ensure this directory exists.
+      await fs.mkdir(this.dirname, { recursive: true });
+      // Write out the value as the contents of a file.
+      await fs.writeFile(destPath, value);
+    } else if (Graph.isGraphable(value)) {
       // Treat value as a graph and write it out as a subdirectory.
       const destGraph = Reflect.construct(this.constructor, [destPath]);
       await Graph.assign(destGraph, value);
     } else {
-      // Ensure this directory exists.
-      await fs.mkdir(this.dirname, { recursive: true });
-
-      if (!writeable) {
-        if (typeof value.toString === "function") {
-          value = value.toString();
-        } else {
-          const typeName = value?.constructor?.name ?? "unknown";
-          throw new TypeError(
-            `Cannot write a value of type ${typeName} as ${stringKey}`
-          );
-        }
-      }
-
-      // Write out the value as the contents of a file.
-      await fs.writeFile(destPath, value);
+      const typeName = value?.constructor?.name ?? "unknown";
+      throw new TypeError(
+        `Cannot write a value of type ${typeName} as ${stringKey}`
+      );
     }
 
     return this;
+  }
+}
+
+/**
+ * Return the Object prototype at the root of the object's prototype chain.
+ *
+ * This is used by functions like isPlainObject() to handle cases where the
+ * `Object` at the root prototype chain is in a different realm.
+ *
+ * @param {any} obj
+ */
+function getRealmObjectPrototype(obj) {
+  let proto = obj;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+  return proto;
+}
+
+/**
+ * Return true if the object is a string or object with a non-trival `toString`
+ * method.
+ *
+ * @param {any} obj
+ */
+function isStringLike(obj) {
+  if (typeof obj === "string") {
+    return true;
+  } else if (obj?.toString === undefined) {
+    return false;
+  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
+    // The stupid Object.prototype.toString implementation always returns
+    // "[object Object]", so if that's the only toString method the object has,
+    // we return false.
+    return false;
+  } else {
+    return true;
   }
 }
 
