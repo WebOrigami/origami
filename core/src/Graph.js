@@ -177,14 +177,6 @@ export function keysFromPath(pathname) {
   return mapped;
 }
 
-export function makeGraphable(obj) {
-  return isGraphable(obj)
-    ? obj
-    : new ObjectGraph({
-        [defaultValueKey]: obj,
-      });
-}
-
 /**
  * Map the values of a graph.
  *
