@@ -86,7 +86,7 @@ function DebugTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           let content = await original();
-          if (!Graph.isAsyncDictionary(content)) {
+          if (!Graph.isGraphable(content)) {
             return content;
           }
           /** @type {any} */

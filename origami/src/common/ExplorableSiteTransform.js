@@ -63,7 +63,12 @@ export default function ExplorableSiteTransform(Base) {
         // method, wrap the unpack method to add this transform.
         const original = value.unpack.bind(value);
         value.unpack = async () => {
-          let graph = await original();
+          const content = await original();
+          if (!Graph.isGraphable(content)) {
+            return content;
+          }
+          /** @type {any} */
+          let graph = Graph.from(content);
           if (!isTransformApplied(ExplorableSiteTransform, graph)) {
             graph = transformObject(ExplorableSiteTransform, graph);
           }
