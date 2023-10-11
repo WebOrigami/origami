@@ -4,6 +4,14 @@ import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
 
 describe("utilities", () => {
+  test("isStringLike returns true for things that can act like strings", () => {
+    assert(utilities.isStringLike("string"));
+    assert(utilities.isStringLike(new String("string")));
+    assert(utilities.isStringLike(Buffer.from("buffer")));
+    assert(!utilities.isStringLike({}));
+    assert(utilities.isStringLike({ toString: () => "string" }));
+  });
+
   test("toFunction returns a plain function as is", () => {
     const fn = () => {};
     assert.equal(utilities.toFunction(fn), fn);

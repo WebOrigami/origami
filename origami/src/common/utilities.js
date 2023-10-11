@@ -108,11 +108,18 @@ export function isPlainObject(obj) {
  * @returns {obj is import("@graphorigami/core").StringLike}
  */
 export function isStringLike(obj) {
-  return (
-    typeof obj === "string" ||
-    obj instanceof String ||
-    (globalThis.Buffer && obj instanceof Buffer)
-  );
+  if (typeof obj === "string") {
+    return true;
+  } else if (obj?.toString === undefined) {
+    return false;
+  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
+    // The stupid Object.prototype.toString implementation always returns
+    // "[object Object]", so if that's the only toString method the object has,
+    // we return false.
+    return false;
+  } else {
+    return true;
+  }
 }
 
 export function isTransformApplied(Transform, obj) {
