@@ -21,12 +21,12 @@ describe(".js loader", () => {
   });
 
   test("loads .js file that exports a function", async () => {
-    const buffer = await fixturesGraph.get("greet.js");
-    const greet = await unpackModule(buffer, {
-      key: "greet.js",
+    const buffer = await fixturesGraph.get("list.js");
+    const list = await unpackModule(buffer, {
+      key: "list.js",
       parent: fixturesGraph,
     });
-    assert.equal(await greet("world"), "Hello, world!");
+    assert.equal(await list("a", "b", "c"), "a,b,c");
   });
 
   test("loads .js file that exports an object", async () => {

@@ -21,7 +21,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
     const fn = content;
     const parentScope = parent ? getScope(parent) : builtins;
     /** @this {AsyncDictionary|null} */
-    function extendScope(input) {
+    function extendScope(input, ...rest) {
       let attachedGraph;
       if (attachedData) {
         attachedGraph = Graph.from(attachedData);
@@ -41,7 +41,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
         attachedGraph,
         baseScope
       );
-      return fn.call(extendedScope, input);
+      return fn.call(extendedScope, input, ...rest);
     }
     extendScope.code = fn.code;
     return extendScope;
