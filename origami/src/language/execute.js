@@ -40,12 +40,19 @@ export default async function execute(code) {
   // The head of the array is a graph or function, the rest are args or keys.
   let [fn, ...args] = evaluated;
 
-  if (fn === undefined) {
+  if (!fn) {
     // The code wants to invoke something that's not in scope.
-    const unknownFunction = format(code[0]);
     throw ReferenceError(
-      `Couldn't find function or graph key: ${unknownFunction}`
+      `Couldn't find function or graph key: ${format(code[0])}`
     );
+  } else if (!(fn instanceof Object)) {
+    throw TypeError(`Can't invoke primitive value: ${format(code[0])}`);
+  } else if (!(fn instanceof Function) && typeof fn.unpack === "function") {
+    // The object has a unpack function; see if it returns a function.
+    const unpacked = await fn.unpack();
+    if (unpacked instanceof Function) {
+      fn = unpacked;
+    }
   }
 
   // Execute the function or traverse the graph.

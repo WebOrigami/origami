@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 
-describe("execute", () => {
+describe.only("execute", () => {
   test("can retrieve values from scope", async () => {
     const code = [ops.scope, "message"];
     const scope = {
@@ -40,5 +40,15 @@ describe("execute", () => {
       },
     };
     await execute.call(scope, code);
+  });
+
+  test.only("if object in function position isn't a function, can unpack it", async () => {
+    const fn = (...args) => args.join(",");
+    const packed = {
+      unpack: async () => fn,
+    };
+    const code = [packed, "a", "b", "c"];
+    const result = await execute.call(null, code);
+    assert.equal(result, "a,b,c");
   });
 });
