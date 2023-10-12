@@ -68,7 +68,7 @@ export default class MapKeysValuesGraph {
     if (applyMap) {
       mapFn = addValueKeyToScope(
         getScope(this),
-        this.mapFn,
+        /** @type {any} */ (this.mapFn),
         innerValue,
         innerKey,
         this.options.valueName,

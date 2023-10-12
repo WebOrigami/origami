@@ -1,4 +1,4 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { Graph } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapValues from "../../../src/builtins/@map/values.js";

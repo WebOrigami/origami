@@ -17,7 +17,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @this {AsyncDictionary|null}
  * @param {Graphable} [graphable]
- * @param {Invocable} [keyFn]
+ * @param {Invocable|null} [keyFn]
  */
 export default async function sort(graphable, keyFn) {
   assertScopeIsDefined(this);
@@ -27,11 +27,10 @@ export default async function sort(graphable, keyFn) {
   }
   const graph = Graph.from(graphable);
 
-  if (keyFn === undefined) {
+  if (!keyFn) {
     // Simple case: sort by graph's existing keys.
     return transformObject(SortTransform, graph);
   }
-  keyFn = toFunction(keyFn);
 
   // Complex case: sort by a function that returns a key for each value.
   const result = Object.create(graph);
@@ -43,7 +42,7 @@ export default async function sort(graphable, keyFn) {
       const value = await graph.get(key);
       const extendedKeyFn = addValueKeyToScope(
         getScope(this),
-        keyFn,
+        toFunction(keyFn),
         value,
         key
       );
