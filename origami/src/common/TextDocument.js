@@ -80,7 +80,7 @@ export default class TextDocument {
     return this.text;
   }
 
-  async unpack() {
+  unpack() {
     return this.data;
   }
 }
