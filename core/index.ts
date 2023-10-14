@@ -5,16 +5,11 @@ export type PlainObject = {
   [key: string]: any;
 };
 
-export interface HasContents {
-  unpack(): Promise<any>;
-}
-
-export type Graphable =
-  Array<any> | 
+export type Treelike =
+  any[] |
   AsyncDictionary |
   Function | 
-  HasContents | 
   Map<any, any> | 
   PlainObject | 
   Set<any> | 
-  any[];
+  { unpack(): Promise<Treelike> };

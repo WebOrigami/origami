@@ -1,12 +1,12 @@
 import MapDictionary from "./MapDictionary.js";
 
 /**
- * A graph of Map objects.
+ * A tree of Map objects.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableGraph} AsyncMutableGraph
- * @implements {AsyncMutableGraph}
+ * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @implements {AsyncMutableTree}
  */
-export default class MapGraph extends MapDictionary {
+export default class MapTree extends MapDictionary {
   async get(key) {
     let value = await super.get(key);
     if (value instanceof Map) {

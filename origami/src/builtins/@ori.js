@@ -69,7 +69,7 @@ async function formatResult(scope, result) {
   }
 
   // If the result is a graph, attach the graph to the text output.
-  if (Graph.isGraphable(result)) {
+  if (Graph.isTreelike(result)) {
     if (typeof text === "string") {
       // @ts-ignore
       text = new String(text);

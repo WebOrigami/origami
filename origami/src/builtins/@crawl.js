@@ -14,7 +14,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * that obtain the requested value from the original site.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} graphable
  * @param {string} [baseHref]

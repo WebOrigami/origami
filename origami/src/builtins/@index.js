@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Return a default index.html page for the current graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} [graphable]
  */

@@ -1,58 +1,58 @@
-import DeferredGraph2 from "./DeferredGraph.js";
+import DeferredTree from "./DeferredTree.js";
 import * as Dictionary from "./Dictionary.js";
-import FunctionGraph from "./FunctionGraph.js";
-import MapGraph from "./MapGraph.js";
-import ObjectGraph from "./ObjectGraph.js";
-import SetGraph from "./SetGraph.js";
+import FunctionTree from "./FunctionTree.js";
+import MapTree from "./MapTree.js";
+import ObjectTree from "./ObjectTree.js";
+import SetTree from "./SetTree.js";
 import defaultValueKey from "./defaultValueKey.js";
 
-// Graph exports all dictionary helpers too.
+// Tree exports all dictionary helpers too.
 export * from "./Dictionary.js";
 
 /**
- * Helper functions for working with async graphs
+ * Helper functions for working with async trees
  *
  * These add to the set of helper functions defined in Dictionary.
  *
- * @typedef {import("../index").Graphable} Graphable
+ * @typedef {import("../index").Treelike} Treelike
  * @typedef {import("../index").PlainObject} PlainObject
- * @typedef {import("@graphorigami/types").AsyncGraph} AsyncGraph
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
  */
 
 /**
- * Apply the key/values pairs from the source graph to the target graph.
+ * Apply the key/values pairs from the source tree to the target tree.
  *
- * If a key exists in both graphs, and the values in both graphs are
- * subgraphs, then the subgraphs will be merged recursively. Otherwise, the
- * value from the source graph will overwrite the value in the target graph.
+ * If a key exists in both trees, and the values in both trees are
+ * subtrees, then the subtrees will be merged recursively. Otherwise, the
+ * value from the source tree will overwrite the value in the target tree.
  *
  * @param {AsyncMutableDictionary} target
- * @param {AsyncGraph} source
+ * @param {AsyncTree} source
  */
 export async function assign(target, source) {
-  const targetGraph = from(target);
-  const sourceGraph = from(source);
-  if (!Dictionary.isAsyncMutableDictionary(targetGraph)) {
-    throw new TypeError("Target must be a mutable asynchronous graph");
+  const targetTree = from(target);
+  const sourceTree = from(source);
+  if (!Dictionary.isAsyncMutableDictionary(targetTree)) {
+    throw new TypeError("Target must be a mutable asynchronous dictionary");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.
-  const keys = Array.from(await sourceGraph.keys());
+  const keys = Array.from(await sourceTree.keys());
   const promises = keys.map(async (key) => {
-    const sourceValue = await sourceGraph.get(key);
+    const sourceValue = await sourceTree.get(key);
     if (Dictionary.isAsyncDictionary(sourceValue)) {
-      const targetValue = await targetGraph.get(key);
+      const targetValue = await targetTree.get(key);
       if (Dictionary.isAsyncMutableDictionary(targetValue)) {
-        // Both source and target are graphs; recurse.
+        // Both source and target are trees; recurse.
         await assign(targetValue, sourceValue);
         return;
       }
     }
     // Copy the value from the source to the target.
-    await /** @type {any} */ (targetGraph).set(key, sourceValue);
+    await /** @type {any} */ (targetTree).set(key, sourceValue);
   });
   await Promise.all(promises);
-  return targetGraph;
+  return targetTree;
 }
 
 // If the given plain object has only sequential integer keys, return it as an
@@ -73,10 +73,10 @@ function castArrayLike(obj) {
 }
 
 /**
- * Attempts to cast the indicated object to an async graph.
+ * Attempts to cast the indicated object to an async tree.
  *
- * @param {Graphable | Object} obj
- * @returns {AsyncGraph}
+ * @param {Treelike | Object} obj
+ * @returns {AsyncTree}
  */
 export function from(obj) {
   if (Dictionary.isAsyncDictionary(obj)) {
@@ -84,36 +84,34 @@ export function from(obj) {
     // @ts-ignore
     return obj;
   } else if (typeof obj === "function") {
-    return new FunctionGraph(obj);
+    return new FunctionTree(obj);
   } else if (obj instanceof Map) {
-    return new MapGraph(obj);
+    return new MapTree(obj);
   } else if (obj instanceof Set) {
-    return new SetGraph(obj);
+    return new SetTree(obj);
   } else if (obj && typeof obj === "object" && "unpack" in obj) {
-    // Invoke unpack and convert the result to a graph.
+    // Invoke unpack and convert the result to a tree.
     let result = obj.unpack();
-    return result instanceof Promise
-      ? new DeferredGraph2(result)
-      : from(result);
+    return result instanceof Promise ? new DeferredTree(result) : from(result);
   } else if (obj && typeof obj === "object") {
     // An instance of some class.
-    return new ObjectGraph(obj);
+    return new ObjectTree(obj);
   } else {
     // A primitive value like a number or string.
-    return new ObjectGraph({
+    return new ObjectTree({
       [defaultValueKey]: obj,
     });
   }
 
-  // throw new TypeError("Couldn't convert argument to an async graph");
+  // throw new TypeError("Couldn't convert argument to an async tree");
 }
 
 /**
  * Returns true if the indicated object can be directly treated as an
- * asynchronous graph. This includes:
+ * asynchronous tree. This includes:
  *
  * - An object that implements the AsyncDictionary interface (including
- *   AsyncGraph instances)
+ *   AsyncTree instances)
  * - An object that implements the `unpack()` method
  * - A function
  * - An `Array` instance
@@ -121,12 +119,12 @@ export function from(obj) {
  * - A `Set` instance
  * - A plain object
  *
- * Note: the `from()` method accepts any JavaScript object, but `isGraphable`
+ * Note: the `from()` method accepts any JavaScript object, but `isTreeable`
  * returns `false` for an object that isn't one of the above types.
  *
  * @param {any} obj
  */
-export function isGraphable(obj) {
+export function isTreelike(obj) {
   return (
     Dictionary.isAsyncDictionary(obj) ||
     obj instanceof Function ||
@@ -139,18 +137,18 @@ export function isGraphable(obj) {
 
 /**
  * Return true if the indicated key produces or is expected to produce an
- * async graph.
+ * async tree.
  *
- * This defers to the graph's own isKeyForSubgraph method. If not found, this
+ * This defers to the tree's own isKeyForSubtree method. If not found, this
  * gets the value of that key and returns true if the value is an async
  * dictionary.
  */
-export async function isKeyForSubgraph(graph, key) {
-  if (graph.isKeyForSubgraph) {
-    return graph.isKeyForSubgraph(key);
+export async function isKeyForSubtree(tree, key) {
+  if (tree.isKeyForSubtree) {
+    return tree.isKeyForSubtree(key);
   }
-  const value = await graph.get(key);
-  return isGraphable(value);
+  const value = await tree.get(key);
+  return isTreelike(value);
 }
 
 /**
@@ -178,14 +176,14 @@ export function keysFromPath(pathname) {
 }
 
 /**
- * Map the values of a graph.
+ * Map the values of a tree.
  *
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {Function} mapFn
  */
-export async function map(graphable, mapFn) {
-  const graph = from(graphable);
-  const keys = Array.from(await graph.keys());
+export async function map(treelike, mapFn) {
+  const tree = from(treelike);
+  const keys = Array.from(await tree.keys());
 
   // Prepopulate the result map with the keys so that the order of the results
   // will match the order of the keys.
@@ -194,8 +192,8 @@ export async function map(graphable, mapFn) {
 
   // Get all the values in parallel, then wait for them all to resolve.
   const promises = keys.map((key) =>
-    graph.get(key).then(async (value) => {
-      // If the value is a subgraph, recurse.
+    tree.get(key).then(async (value) => {
+      // If the value is a subtree, recurse.
       const fn = Dictionary.isAsyncDictionary(value)
         ? map(value, mapFn)
         : mapFn(value, key);
@@ -204,33 +202,33 @@ export async function map(graphable, mapFn) {
     })
   );
   await Promise.all(promises);
-  return new MapGraph(result);
+  return new MapTree(result);
 }
 
 /**
- * Map and reduce a graph.
+ * Map and reduce a tree.
  *
- * This is done in as parallel fashion as possible. Each of the graph's values
+ * This is done in as parallel fashion as possible. Each of the tree's values
  * will be requested in an async call, then those results will be awaited
  * collectively. If a mapFn is provided, it will be invoked to convert each
  * value to a mapped value; otherwise, values will be used as is. When the
  * values have been obtained, all the values and keys will be passed to the
  * reduceFn, which should consolidate those into a single result.
  *
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {Function|null} mapFn
  * @param {Function} reduceFn
  */
-export async function mapReduce(graphable, mapFn, reduceFn) {
-  const graph = from(graphable);
+export async function mapReduce(treelike, mapFn, reduceFn) {
+  const tree = from(treelike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
-  // the keys come in. We call the graph's `get` method for each key, but
+  // the keys come in. We call the tree's `get` method for each key, but
   // *don't* wait for it yet.
-  const keys = Array.from(await graph.keys());
+  const keys = Array.from(await tree.keys());
   const promises = keys.map((key) =>
-    graph.get(key).then((value) =>
-      // If the value is a subgraph, recurse.
+    tree.get(key).then((value) =>
+      // If the value is a subtree, recurse.
       Dictionary.isAsyncDictionary(value)
         ? mapReduce(value, mapFn, reduceFn)
         : mapFn
@@ -248,16 +246,16 @@ export async function mapReduce(graphable, mapFn, reduceFn) {
 }
 
 /**
- * Converts an asynchronous graph into a synchronous plain JavaScript object.
+ * Converts an asynchronous tree into a synchronous plain JavaScript object.
  *
- * The result's keys will be the graph's keys cast to strings. Any graph value
- * that is itself a graph will be similarly converted to a plain object.
+ * The result's keys will be the tree's keys cast to strings. Any tree value
+ * that is itself a tree will be similarly converted to a plain object.
  *
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @returns {Promise<PlainObject|Array>}
  */
-export async function plain(graphable) {
-  return mapReduce(graphable, null, (values, keys) => {
+export async function plain(treelike) {
+  return mapReduce(treelike, null, (values, keys) => {
     const obj = {};
     for (let i = 0; i < keys.length; i++) {
       obj[keys[i]] = values[i];
@@ -267,28 +265,28 @@ export async function plain(graphable) {
 }
 
 /**
- * Returns a function that invokes the graph's `get` method.
+ * Returns a function that invokes the tree's `get` method.
  *
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @returns {Function}
  */
-export function toFunction(graphable) {
-  const graph = from(graphable);
-  return graph.get.bind(graph);
+export function toFunction(treelike) {
+  const tree = from(treelike);
+  return tree.get.bind(tree);
 }
 
 /**
  * Return the value at the corresponding path of keys.
  *
  * @this {any}
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {...any} keys
  */
-export async function traverse(graphable, ...keys) {
+export async function traverse(treelike, ...keys) {
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.
-    return await traverseOrThrow.call(this, graphable, ...keys);
+    return await traverseOrThrow.call(this, treelike, ...keys);
   } catch (/** @type {any} */ error) {
     if (error instanceof TraverseError) {
       return undefined;
@@ -303,13 +301,13 @@ export async function traverse(graphable, ...keys) {
  * step of the path doesn't lead to a result.
  *
  * @this {any}
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param  {...any} keys
  */
-export async function traverseOrThrow(graphable, ...keys) {
-  // Start our traversal at the root of the graph.
+export async function traverseOrThrow(treelike, ...keys) {
+  // Start our traversal at the root of the tree.
   /** @type {any} */
-  let value = graphable;
+  let value = treelike;
 
   // Process each key in turn.
   // If the value is ever undefined, short-circuit the traversal.
@@ -335,23 +333,23 @@ export async function traverseOrThrow(graphable, ...keys) {
     }
 
     // If someone is trying to traverse this thing, they mean to treat it as a
-    // graph. If it's not already a graph, cast it to one.
-    const graph = from(value);
+    // tree. If it's not already a tree, cast it to one.
+    const tree = from(value);
 
-    // If the graph supports the traverse() method, pass the remaining keys
+    // If the tree supports the traverse() method, pass the remaining keys
     // all at once.
-    if (graph.traverse) {
-      value = await graph.traverse(...remainingKeys);
+    if (tree.traverse) {
+      value = await tree.traverse(...remainingKeys);
       break;
     }
 
     // Otherwise, process the next key.
     const key = remainingKeys.shift();
-    value = await graph.get(key);
+    value = await tree.get(key);
 
-    // The default value is the graph itself.
+    // The default value is the tree itself.
     if (value === undefined && key === defaultValueKey) {
-      value = graph;
+      value = tree;
     }
   }
   return value;
@@ -361,19 +359,19 @@ export async function traverseOrThrow(graphable, ...keys) {
  * Given a slash-separated path like "foo/bar", traverse the keys "foo" and
  * "bar" and return the resulting value.
  *
- * @param {Graphable} graph
+ * @param {Treelike} tree
  * @param {string} path
  */
-export async function traversePath(graph, path) {
+export async function traversePath(tree, path) {
   const keys = keysFromPath(path);
-  return traverse(graph, ...keys);
+  return traverse(tree, ...keys);
 }
 
 // Error class thrown by traverseOrThrow()
 class TraverseError extends ReferenceError {
-  constructor(message, graph, keys) {
+  constructor(message, tree, keys) {
     super(message);
-    this.graph = graph;
+    this.tree = tree;
     this.name = "TraverseError";
     this.keys = keys;
   }

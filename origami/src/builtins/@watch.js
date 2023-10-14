@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Let a graph (e.g., of files) respond to changes.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}

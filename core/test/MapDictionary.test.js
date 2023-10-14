@@ -4,7 +4,7 @@ import * as Dictionary from "../src/Dictionary.js";
 import MapDictionary from "../src/MapDictionary.js";
 
 describe("MapDictionary", () => {
-  test("can get the keys of the graph", async () => {
+  test("can get the keys of the tree", async () => {
     const fixture = createFixture();
     assert.deepEqual([...(await fixture.keys())], ["a", "b", "c"]);
   });

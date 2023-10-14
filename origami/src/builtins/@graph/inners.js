@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return the inner nodes of the graph: the nodes with children.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} [graphable]
  */
@@ -27,7 +27,7 @@ export default async function inners(graphable) {
     async keys() {
       const subgraphKeys = [];
       for (const key of await graph.keys()) {
-        if (await Graph.isKeyForSubgraph(graph, key)) {
+        if (await Graph.isKeyForSubtree(graph, key)) {
           subgraphKeys.push(key);
         }
       }

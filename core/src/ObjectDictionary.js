@@ -1,5 +1,5 @@
 import * as Dictionary from "./Dictionary.js";
-import * as Graph from "./Graph.js";
+import * as Tree from "./Tree.js";
 
 /**
  * A dictionary defined by a plain object or array.
@@ -9,7 +9,7 @@ import * as Graph from "./Graph.js";
  */
 export default class ObjectDictionary {
   /**
-   * Create a graph wrapping a given plain object or array.
+   * Create a tree wrapping a given plain object or array.
    *
    * @param {any} object The object/array to wrap.
    */
@@ -37,7 +37,7 @@ export default class ObjectDictionary {
     let value = this.object[key];
 
     // The dictionary's default value is the underlying object itself.
-    if (value === undefined && key === Graph.defaultValueKey) {
+    if (value === undefined && key === Tree.defaultValueKey) {
       value = this.object;
     }
 

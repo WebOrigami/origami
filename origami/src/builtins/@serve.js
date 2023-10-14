@@ -15,7 +15,7 @@ const defaultPort = 5000;
  * Start a local web server for the indicated graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  *
  * @param {Graphable} graphable
  * @param {number} [port]

@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Expand values that can be treated as graphs into graphs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} [graphable]
  */
@@ -28,7 +28,7 @@ export default async function expand(graphable) {
 
 function expandValue(value) {
   let result;
-  if (Graph.isGraphable(value)) {
+  if (Graph.isTreelike(value)) {
     try {
       result = Graph.from(value);
     } catch (error) {

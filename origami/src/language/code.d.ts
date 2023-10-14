@@ -1,3 +1,3 @@
-import type { Graphable } from "@graphorigami/core";
+import type { Treelike } from "@graphorigami/core";
 
-type Code = [Graphable, ...any[]] | any;
+type Code = [Treelike, ...any[]] | any;

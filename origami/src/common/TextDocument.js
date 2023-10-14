@@ -5,7 +5,7 @@ import { parseYaml, toYaml } from "./serialize.js";
  *
  * @typedef {import("../../index.js").JsonValue} JsonValue
  * @typedef {import("../../index.js").StringLike} StringLike
- * @typedef {import("@graphorigami/core").HasContents} HasContents
+ * @typedef {import("@graphorigami/core").Unpackable} HasContents
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */

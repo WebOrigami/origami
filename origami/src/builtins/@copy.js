@@ -6,7 +6,7 @@ import setDeep from "./@graph/setDeep.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  *
  * @this {AsyncDictionary|null}
  * @param {Graphable} source

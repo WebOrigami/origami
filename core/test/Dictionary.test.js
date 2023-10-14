@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as Dictionary from "../src/Dictionary.js";
-import ObjectGraph from "../src/ObjectGraph.js";
+import ObjectDictionary from "../src/ObjectTree.js";
 
 describe("Dictionary", () => {
   test("entries returns the [key, value] pairs", async () => {
@@ -30,7 +30,7 @@ describe("Dictionary", () => {
   });
 
   test("getRealmObjectPrototype returns the object's root prototype", () => {
-    const obj = new ObjectGraph({});
+    const obj = new ObjectDictionary({});
     const proto = Dictionary.getRealmObjectPrototype(obj);
     assert.equal(proto, Object.prototype);
   });
@@ -77,7 +77,7 @@ describe("Dictionary", () => {
     assert.equal(Dictionary.isPlainObject({}), true);
     assert.equal(Dictionary.isPlainObject(new Object()), true);
     assert.equal(Dictionary.isPlainObject(Object.create(null)), true);
-    assert.equal(Dictionary.isPlainObject(new ObjectGraph({})), false);
+    assert.equal(Dictionary.isPlainObject(new ObjectDictionary({})), false);
   });
 
   test("values returns the store's values", async () => {
@@ -108,7 +108,7 @@ describe("Dictionary", () => {
 });
 
 function createFixture() {
-  return new ObjectGraph({
+  return new ObjectDictionary({
     "Alice.md": "Hello, **Alice**.",
     "Bob.md": "Hello, **Bob**.",
     "Carol.md": "Hello, **Carol**.",

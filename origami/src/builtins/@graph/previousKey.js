@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Returns the key before the indicated key.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  *
  * @param {Graphable} graphable
  * @param {any} key

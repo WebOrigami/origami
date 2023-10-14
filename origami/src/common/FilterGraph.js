@@ -35,7 +35,7 @@ export default class FilterGraph {
       // must be a graph too.
       const match =
         (!isFilterValueGraph && filterValue) ||
-        (isFilterValueGraph && (await Graph.isKeyForSubgraph(this.graph, key)));
+        (isFilterValueGraph && (await Graph.isKeyForSubtree(this.graph, key)));
       if (match) {
         keys.add(key);
       }

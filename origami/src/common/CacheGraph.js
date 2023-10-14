@@ -6,7 +6,7 @@ import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
  */
 export default class CacheGraph {
   /**
-   * @typedef {import("@graphorigami/core").Graphable} Graphable
+   * @typedef {import("@graphorigami/core").Treelike} Graphable
    * @param {Graphable} graph
    * @param {Graphable} [cache]
    * @param {Graphable} [filter]

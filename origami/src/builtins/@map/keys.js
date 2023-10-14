@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Wrap a graph and redefine the key used to access nodes in it.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}

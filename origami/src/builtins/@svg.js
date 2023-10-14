@@ -10,7 +10,7 @@ let graphvizLoaded = false;
  * Render a graph visually in SVG format.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}

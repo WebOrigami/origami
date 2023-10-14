@@ -1,6 +1,6 @@
 /**
  * @typedef {import("../..").JsonValue} JsonValue
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
@@ -97,7 +97,7 @@ export async function toJsonValue(obj) {
     return obj;
   } else if (obj && typeof obj.pack === "function") {
     return obj.pack();
-  } else if (Graph.isGraphable(obj)) {
+  } else if (Graph.isTreelike(obj)) {
     const mapped = await Graph.map(obj, (value) => toJsonValue(value));
     return Graph.plain(mapped);
   } else if (obj && typeof obj.toString === "function") {

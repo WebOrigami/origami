@@ -1,7 +1,8 @@
 import AsyncDictionary from "./AsyncDictionary";
-import AsyncMutable from "./AsyncMutable";
 
 /**
- * A read-write asynchronous key-value dictionary.
+ * A read-write asynchronous key-value dictionary
  */
-export default interface AsyncMutableDictionary extends AsyncDictionary, AsyncMutable {}
+export default interface AsyncMutableDictionary extends AsyncDictionary {
+  set(key: any, value: any): Promise<this>;
+}

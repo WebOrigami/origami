@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isTypedArray } from "node:util/types";
-import * as Graph from "./Graph.js";
+import * as Tree from "./Tree.js";
 
 // Names of OS-generated files that should not be enumerated
 const hiddenFileNames = {
@@ -15,12 +15,12 @@ const collator = new Intl.Collator(undefined, {
 });
 
 /**
- * A file system tree as a graph of Buffers.
+ * A file system tree as a tree of Buffers.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableGraph} AsyncMutableGraph
- * @implements {AsyncMutableGraph}
+ * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @implements {AsyncMutableTree}
  */
-export default class FilesGraph {
+export default class FileTree {
   /**
    * @param {string} location
    */
@@ -31,8 +31,8 @@ export default class FilesGraph {
   }
 
   async get(key) {
-    // The graph's default value is the graph itself.
-    if (key === Graph.defaultValueKey) {
+    // The tree's default value is the tree itself.
+    if (key === Tree.defaultValueKey) {
       return this;
     }
 
@@ -49,11 +49,11 @@ export default class FilesGraph {
     }
 
     return stats.isDirectory()
-      ? Reflect.construct(this.constructor, [filePath]) // Return subdirectory as a graph
+      ? Reflect.construct(this.constructor, [filePath]) // Return subdirectory as a tree
       : fs.readFile(filePath); // Return file contents
   }
 
-  async isKeyForSubgraph(key) {
+  async isKeyForSubtree(key) {
     const filePath = path.join(this.dirname, key);
     const stats = await stat(filePath);
     return stats ? stats.isDirectory() : false;
@@ -147,10 +147,10 @@ export default class FilesGraph {
       await fs.mkdir(this.dirname, { recursive: true });
       // Write out the value as the contents of a file.
       await fs.writeFile(destPath, value);
-    } else if (Graph.isGraphable(value)) {
-      // Treat value as a graph and write it out as a subdirectory.
-      const destGraph = Reflect.construct(this.constructor, [destPath]);
-      await Graph.assign(destGraph, value);
+    } else if (Tree.isTreelike(value)) {
+      // Treat value as a tree and write it out as a subdirectory.
+      const destTree = Reflect.construct(this.constructor, [destPath]);
+      await Tree.assign(destTree, value);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(

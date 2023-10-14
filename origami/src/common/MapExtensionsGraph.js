@@ -24,7 +24,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.innerExtension)}`
       : !this.extensionMatchesOnly ||
-        (await Graph.isKeyForSubgraph(this.graph, outerKey))
+        (await Graph.isKeyForSubtree(this.graph, outerKey))
       ? outerKey
       : undefined;
   }
@@ -39,7 +39,7 @@ export default class MapExtensionsGraph extends MapKeysValuesGraph {
     return basename
       ? `${basename}${dotPrefix(this.outerExtension)}`
       : !this.extensionMatchesOnly ||
-        (this.deep && (await Graph.isKeyForSubgraph(this.graph, innerKey)))
+        (this.deep && (await Graph.isKeyForSubtree(this.graph, innerKey)))
       ? innerKey
       : undefined;
   }

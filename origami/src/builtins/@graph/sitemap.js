@@ -16,7 +16,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} graphable
  * @param {string} [baseHref ]

@@ -6,7 +6,7 @@ import setScope from "./set.js";
  * the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} graphable
  * @param  {...Graphable} scopeGraphs

@@ -1,14 +1,14 @@
 import * as Dictionary from "./Dictionary.js";
-import * as Graph from "./Graph.js";
 import ObjectDictionary from "./ObjectDictionary.js";
+import * as Tree from "./Tree.js";
 
 /**
- * A graph defined by a plain object or array.
+ * A tree defined by a plain object or array.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableGraph} AsyncMutableGraph
- * @implements {AsyncMutableGraph}
+ * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @implements {AsyncMutableTree}
  */
-export default class ObjectGraph extends ObjectDictionary {
+export default class ObjectTree extends ObjectDictionary {
   async get(key) {
     let value = await super.get(key);
     const isPlain =
@@ -20,8 +20,8 @@ export default class ObjectGraph extends ObjectDictionary {
     return value;
   }
 
-  async isKeyForSubgraph(key) {
+  async isKeyForSubtree(key) {
     const value = this.object[key];
-    return Graph.isGraphable(value);
+    return Tree.isTreelike(value);
   }
 }

@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * Return a copy of the given graph that has the indicated graphs as its scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @param {Graphable} graphable
  * @param  {...(Graphable|null)} scopeGraphs
  * @this {AsyncDictionary|null}

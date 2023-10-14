@@ -6,7 +6,7 @@ import * as utilities from "../../common/utilities.js";
  * Returns the scope of the indicated graph or the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {any} [obj]
  */

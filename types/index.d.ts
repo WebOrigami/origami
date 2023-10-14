@@ -1,14 +1,11 @@
 import type AsyncDictionary from './src/AsyncDictionary';
-import type AsyncGraph from './src/AsyncGraph';
-import type AsyncMutable from './src/AsyncMutable';
+import type AsyncTree from './src/AsyncTree';
 import type AsyncMutableDictionary from './src/AsyncMutableDictionary';
-import type AsyncMutableGraph from './src/AsyncMutableGraph';
+import type AsyncMutableTree from './src/AsyncMutableTree';
 
 export {
   AsyncDictionary,
-  AsyncGraph,
-  AsyncMutable,
   AsyncMutableDictionary,
-  AsyncMutableGraph,
+  AsyncMutableTree,
+  AsyncTree,
 };
-

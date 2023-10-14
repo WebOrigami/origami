@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
-import SiteGraph from "../src/SiteGraph.js";
+import SiteTree from "../src/SiteTree.js";
 
 const mockHost = "https://mock";
 
@@ -18,30 +18,30 @@ const mockResponses = {
   },
 };
 
-describe("SiteGraph", () => {
+describe("SiteTree", () => {
   beforeEach(() => {
     mock.method(global, "fetch", mockFetch);
   });
 
-  test("can get the keys of the graph", async () => {
-    const fixture = new SiteGraph(mockHost);
+  test("can get the keys of the tree", async () => {
+    const fixture = new SiteTree(mockHost);
     const keys = await fixture.keys();
     assert.deepEqual([...keys], ["Alice.html", "Bob.html", "Carol.html"]);
   });
 
   test("can get the value for a key", async () => {
-    const fixture = new SiteGraph(mockHost);
+    const fixture = new SiteTree(mockHost);
     const alice = await fixture.get("Alice.html");
     assert.equal(alice, "Hello, Alice!");
   });
 
   test("getting an unsupported key returns undefined", async () => {
-    const fixture = new SiteGraph(mockHost);
+    const fixture = new SiteTree(mockHost);
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
-  test("a redirect on a site with keys returns a SiteGraph for the new URL", async () => {
-    const fixture = new SiteGraph(mockHost);
+  test("a redirect on a site with keys returns a SiteTree for the new URL", async () => {
+    const fixture = new SiteTree(mockHost);
     const about = await fixture.get("about");
     assert.equal(about.href, "https://mock/about/");
   });

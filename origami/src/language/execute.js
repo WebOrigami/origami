@@ -9,7 +9,7 @@ const expressionSymbol = Symbol("expression");
  *
  * `this` should be the scope used to look up references found in the code.
  *
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("./code").Code} Code
  *
  * @this {Graphable|null}

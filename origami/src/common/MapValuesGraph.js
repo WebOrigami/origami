@@ -8,7 +8,7 @@ import { getScope, toFunction } from "./utilities.js";
  */
 export default class MapValuesGraph {
   /**
-   * @typedef {import("@graphorigami/core").Graphable} Graphable
+   * @typedef {import("@graphorigami/core").Treelike} Graphable
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
    * @typedef {import("../..").Invocable} Invocable
    *
@@ -33,12 +33,12 @@ export default class MapValuesGraph {
     let value;
     let isSubgraph;
     let invokeMapFn;
-    if (this.getValue || this.graph.isKeyForSubgraph === undefined) {
+    if (this.getValue || this.graph.isKeyForSubtree === undefined) {
       value = await this.graph.get(key);
       isSubgraph = Dictionary.isAsyncDictionary(value);
       invokeMapFn = value !== undefined;
     } else {
-      isSubgraph = await this.graph.isKeyForSubgraph(key);
+      isSubgraph = await this.graph.isKeyForSubtree(key);
       invokeMapFn = true;
       value = isSubgraph
         ? // Will need to get value to create subgraph.

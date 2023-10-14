@@ -4,7 +4,7 @@ import * as Dictionary from "../src/Dictionary.js";
 import SetDictionary from "../src/SetDictionary.js";
 
 describe("SetDictionary", () => {
-  test("can get the keys of the graph", async () => {
+  test("can get the keys of the tree", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetDictionary(set);
     assert.deepEqual([...(await fixture.keys())], [0, 1, 2]);

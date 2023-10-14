@@ -1,10 +1,10 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionDictionary from "../src/FunctionDictionary.js";
-import * as Graph from "../src/Graph.js";
+import * as Tree from "../src/Tree.js";
 
 describe("FunctionDictionary", async () => {
-  test("can get the keys of the graph", async () => {
+  test("can get the keys of the tree", async () => {
     const fixture = createFixture();
     assert.deepEqual(
       [...(await fixture.keys())],
@@ -21,7 +21,7 @@ describe("FunctionDictionary", async () => {
   test("getting default value returns the function itself", async () => {
     const fn = () => true;
     const fixture = new FunctionDictionary(fn);
-    assert.equal(await fixture.get(Graph.defaultValueKey), fn);
+    assert.equal(await fixture.get(Tree.defaultValueKey), fn);
   });
 
   test("getting a value from function with multiple arguments curries the function", async () => {

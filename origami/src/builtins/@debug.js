@@ -16,7 +16,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated graph.
  *
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} [graphable]
  */
@@ -86,7 +86,7 @@ function DebugTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           let content = await original();
-          if (!Graph.isGraphable(content)) {
+          if (!Graph.isTreelike(content)) {
             return content;
           }
           /** @type {any} */

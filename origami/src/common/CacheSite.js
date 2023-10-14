@@ -7,7 +7,7 @@ import setDeep from "../builtins/@graph/setDeep.js";
  */
 export default class CacheSite {
   /**
-   * @typedef {import("@graphorigami/core").Graphable} Graphable
+   * @typedef {import("@graphorigami/core").Treelike} Graphable
    * @param {Graphable} graph
    * @param {Graphable} [cache]
    * @param {Graphable} [filter]

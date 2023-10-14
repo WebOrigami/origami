@@ -3,7 +3,7 @@
  * tool to confirm our code is type safe.
  */
 
-import { Graphable, HasContents } from "@graphorigami/core";
+import { Treelike, Unpackable } from "@graphorigami/core";
 import { AsyncDictionary } from "@graphorigami/types";
 
 /**
@@ -31,7 +31,7 @@ export type HasString = {
   toString(): string;
 };
 
-export type Invocable = Function | HasContents | Graphable;
+export type Invocable = Function | Unpackable | Treelike;
 
 export interface JsonObject {
   [key: string]: JsonValue;

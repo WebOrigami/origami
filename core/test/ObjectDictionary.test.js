@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as Dictionary from "../src/Dictionary.js";
-import * as Graph from "../src/Graph.js";
+import * as Tree from "../src/Tree.js";
 import ObjectDictionary from "../src/ObjectDictionary.js";
 
 describe("ObjectDictionary", () => {
@@ -21,7 +21,7 @@ describe("ObjectDictionary", () => {
 
   test("default value is the object itself", async () => {
     const fixture = createFixture();
-    assert.equal(await fixture.get(Graph.defaultValueKey), fixture.object);
+    assert.equal(await fixture.get(Tree.defaultValueKey), fixture.object);
   });
 
   test("getting an unsupported key returns undefined", async () => {
@@ -30,22 +30,22 @@ describe("ObjectDictionary", () => {
   });
 
   test("can set a value", async () => {
-    const graph = new ObjectDictionary({
+    const tree = new ObjectDictionary({
       a: 1,
       b: 2,
       c: 3,
     });
 
     // Update existing key.
-    await graph.set("a", 4);
+    await tree.set("a", 4);
 
     // New key.
-    await graph.set("d", 5);
+    await tree.set("d", 5);
 
     // Delete key.
-    await graph.set("b", undefined);
+    await tree.set("b", undefined);
 
-    assert.deepEqual(await Dictionary.entries(graph), [
+    assert.deepEqual(await Dictionary.entries(tree), [
       ["a", 4],
       ["c", 3],
       ["d", 5],

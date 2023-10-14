@@ -176,7 +176,7 @@ export async function handleRequest(request, response, graph) {
  * A request listener for use with the node http.createServer and
  * https.createServer calls, letting you serve an async graph as a set of pages.
  *
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @param {Graphable} graphable
  */
 export function requestListener(graphable) {

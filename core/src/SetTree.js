@@ -1,12 +1,12 @@
 import SetDictionary from "./SetDictionary.js";
 
 /**
- * A graph of Set objects.
+ * A tree of Set objects.
  *
- * @typedef {import("@graphorigami/types").AsyncGraph} AsyncGraph
- * @implements {AsyncGraph}
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
  */
-export default class SetGraph extends SetDictionary {
+export default class SetTree extends SetDictionary {
   async get(key) {
     let value = await super.get(key);
     if (value instanceof Set) {

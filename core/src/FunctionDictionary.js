@@ -40,7 +40,7 @@ export default class FunctionDictionary {
   }
 
   /**
-   * Enumerates the function's domain (if defined) as the graph's keys. If no domain
+   * Enumerates the function's domain (if defined) as the tree's keys. If no domain
    * was defined, this returns an empty iterator.
    */
   async keys() {

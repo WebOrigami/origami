@@ -149,7 +149,7 @@ export const keySymbol = Symbol("key");
  * prototype for the result -- the original graph is not modified. If the graph
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @param {Graphable} graphable
  * @param {AsyncDictionary|null} context
  * @returns {AsyncDictionary & { parent: AsyncDictionary }}

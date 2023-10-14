@@ -3,14 +3,14 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import FilesGraph from "../src/FilesGraph.js";
-import * as Graph from "../src/Graph.js";
+import FileTree from "../src/FileTree.js";
+import * as Tree from "../src/Tree.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("FilesGraph", async () => {
-  test("can get the keys of the graph", async () => {
+describe("FileTree", async () => {
+  test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert.deepEqual(
       [...(await fixture.keys())],
@@ -29,16 +29,16 @@ describe("FilesGraph", async () => {
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
-  test("can indicate which values are subgraphs", async () => {
+  test("can indicate which values are subtrees", async () => {
     const fixture = createFixture("fixtures");
-    assert(await fixture.isKeyForSubgraph("markdown"));
+    assert(await fixture.isKeyForSubtree("markdown"));
     const markdown = await fixture.get("markdown");
-    assert(!(await markdown.isKeyForSubgraph("a.txt")));
+    assert(!(await markdown.isKeyForSubtree("a.txt")));
   });
 
-  test("default value is the graph itself", async () => {
+  test("default value is the tree itself", async () => {
     const fixture = createFixture("fixtures");
-    assert.equal(await fixture.get(Graph.defaultValueKey), fixture);
+    assert.equal(await fixture.get(Tree.defaultValueKey), fixture);
   });
 
   test("can write out a file via set()", async () => {
@@ -47,7 +47,7 @@ describe("FilesGraph", async () => {
     // Write out a file.
     const fileName = "file1";
     const fileText = "This is the first file.";
-    const tempFiles = new FilesGraph(tempDirectory);
+    const tempFiles = new FileTree(tempDirectory);
     await tempFiles.set(fileName, fileText);
 
     // Read it back in.
@@ -71,13 +71,13 @@ describe("FilesGraph", async () => {
     };
 
     // Write out files as a new folder called "folder".
-    const tempFiles = new FilesGraph(tempDirectory);
+    const tempFiles = new FileTree(tempDirectory);
     await tempFiles.set("folder", obj);
 
     // Read them back in.
     const actualFiles = await tempFiles.get("folder");
-    const strings = await Graph.map(actualFiles, (buffer) => String(buffer));
-    const plain = await Graph.plain(strings);
+    const strings = await Tree.map(actualFiles, (buffer) => String(buffer));
+    const plain = await Tree.plain(strings);
     assert.deepEqual(plain, obj);
 
     await removeTempDirectory();
@@ -87,7 +87,7 @@ describe("FilesGraph", async () => {
     await createTempDirectory();
     const tempFile = path.join(tempDirectory, "file");
     await fs.writeFile(tempFile, "");
-    const tempFiles = new FilesGraph(tempDirectory);
+    const tempFiles = new FileTree(tempDirectory);
     await tempFiles.set("file", undefined);
     let stats;
     try {
@@ -105,7 +105,7 @@ describe("FilesGraph", async () => {
     await createTempDirectory();
     const folder = path.join(tempDirectory, "folder");
     await fs.mkdir(folder);
-    const tempFiles = new FilesGraph(tempDirectory);
+    const tempFiles = new FileTree(tempDirectory);
     await tempFiles.set("folder", undefined);
     let stats;
     try {
@@ -121,7 +121,7 @@ describe("FilesGraph", async () => {
 });
 
 function createFixture(fixturePath) {
-  return new FilesGraph(path.join(dirname, fixturePath));
+  return new FileTree(path.join(dirname, fixturePath));
 }
 
 async function createTempDirectory() {

@@ -17,7 +17,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * the indicated function to produce a result.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @typedef {import("../..").Invocable} Invocable
  *
  * @param {string|RegExp} pattern

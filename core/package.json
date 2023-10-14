@@ -1,7 +1,7 @@
 {
   "name": "@graphorigami/core",
   "version": "0.0.28",
-  "description": "Asynchronous dictionaries and graphs based on standard JavaScript classes",
+  "description": "Asynchronous dictionaries and trees based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
   "types": "./index.ts",

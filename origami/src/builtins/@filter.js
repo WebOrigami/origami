@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Apply a filter to a graph.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Graphable} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Graphable
  * @this {AsyncDictionary|null}
  * @param {Graphable} Graphable
  * @param {Graphable} filterVariant

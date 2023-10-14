@@ -64,7 +64,7 @@ export default function ExplorableSiteTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           const content = await original();
-          if (!Graph.isGraphable(content)) {
+          if (!Graph.isTreelike(content)) {
             return content;
           }
           /** @type {any} */

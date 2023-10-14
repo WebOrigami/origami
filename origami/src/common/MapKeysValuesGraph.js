@@ -9,7 +9,7 @@ import addValueKeyToScope from "./addValueKeyToScope.js";
  */
 export default class MapKeysValuesGraph {
   /**
-   * @typedef {import("@graphorigami/core").Graphable} Graphable
+   * @typedef {import("@graphorigami/core").Treelike} Graphable
    * @typedef {import("@graphorigami/core").PlainObject} PlainObject
    * @typedef {import("../..").Invocable} Invocable
    *
