@@ -1,4 +1,4 @@
-import { FilesTree } from "@graphorigami/core";
+import { FileTree } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -8,7 +8,7 @@ import ImportModulesMixin from "../../src/common/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const commands = new (CommandModulesTransform(ImportModulesMixin(FilesTree)))(
+const commands = new (CommandModulesTransform(ImportModulesMixin(FileTree)))(
   fixturesDirectory
 );
 

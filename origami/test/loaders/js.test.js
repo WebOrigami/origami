@@ -1,4 +1,4 @@
-import { FilesTree } from "@graphorigami/core";
+import { FileTree } from "@graphorigami/core";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -8,7 +8,7 @@ import unpackModule from "../../src/loaders/js.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");
-const fixturesTree = new (ImportModulesMixin(FilesTree))(fixturesDirectory);
+const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesDirectory);
 
 describe(".js loader", () => {
   test("loads .js file that exports a string", async () => {

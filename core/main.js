@@ -1,6 +1,6 @@
 export { default as DeferredTree } from "./src/DeferredTree.js";
 export * as Dictionary from "./src/Dictionary.js";
-export { default as FilesTree } from "./src/FileTree.js";
+export { default as FileTree } from "./src/FileTree.js";
 export { default as FunctionDictionary } from "./src/FunctionDictionary.js";
 export { default as FunctionTree } from "./src/FunctionTree.js";
 export { default as MapDictionary } from "./src/MapDictionary.js";

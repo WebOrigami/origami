@@ -49,7 +49,7 @@ export default function WatchFilesMixin(Base) {
         this.onChange(key);
       });
 
-      // Add to the list of FilesTree instances watching this directory.
+      // Add to the list of FileTree instances watching this directory.
       const treeRefs = pathTreeMap.get(this.dirname) ?? [];
       treeRefs.push(new WeakRef(this));
       pathTreeMap.set(this.dirname, treeRefs);
