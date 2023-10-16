@@ -1,8 +1,8 @@
 import { Tree } from "@graphorigami/core";
 
 export default class Scope {
-  constructor(...variants) {
-    const filtered = variants.filter((treelike) => treelike != undefined);
+  constructor(...treelikes) {
+    const filtered = treelikes.filter((treelike) => treelike != undefined);
     const trees = filtered.map((treelike) => Tree.from(treelike));
 
     // If a tree argument has a `trees` property, use that instead.
