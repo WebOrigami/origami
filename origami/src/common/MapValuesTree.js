@@ -62,7 +62,7 @@ export default class MapValuesTree {
 
     return this.deep && isSubtree
       ? // Return mapped subtree
-        Reflect.construct(this.constructor, [value, mapFn, this.options])
+        Reflect.construct(this.constructor, [value, this.mapFn, this.options])
       : await mapFn(value); // Return mapped value
   }
 
