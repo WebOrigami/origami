@@ -1,8 +1,8 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import path from "node:path";
 import process from "node:process";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
+import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @this {AsyncDictionary|null}
@@ -14,5 +14,5 @@ export default async function files(...keys) {
   return new OrigamiFiles(resolved);
 }
 
-files.usage = `@files [path]\tGraph of files at the given path`;
+files.usage = `@files [path]\tTree of files at the given path`;
 files.documentation = "https://graphorigami.org/language/@files.html";

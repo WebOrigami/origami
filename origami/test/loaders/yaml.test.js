@@ -1,4 +1,4 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackYaml from "../../src/loaders/yaml.js";
@@ -10,7 +10,7 @@ a: 1
 b: 2
 `;
     const data = await unpackYaml(text);
-    assert.deepEqual(await Graph.plain(data), {
+    assert.deepEqual(await Tree.plain(data), {
       a: 1,
       b: 2,
     });
@@ -21,8 +21,8 @@ b: 2
 a: 1
 b: !ori a
 `;
-    const graph = await unpackYaml(text);
-    assert.deepEqual(await Graph.plain(graph), {
+    const tree = await unpackYaml(text);
+    assert.deepEqual(await Tree.plain(tree), {
       a: 1,
       b: 1,
     });

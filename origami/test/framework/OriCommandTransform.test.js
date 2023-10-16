@@ -1,25 +1,25 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
 import OriCommandTransform from "../../src/framework/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {
-  test("prefers value defined by base graph even if it starts with '!'", async () => {
-    const graph = new (OriCommandTransform(ObjectGraph))({
+  test("prefers value defined by base tree even if it starts with '!'", async () => {
+    const tree = new (OriCommandTransform(ObjectTree))({
       "!yaml": "foo",
     });
-    const value = await graph.get("!yaml");
+    const value = await tree.get("!yaml");
     assert.equal(value, "foo");
   });
 
-  test("evaluates an Origami expression in the graph's scope", async () => {
-    const graph = new (OriCommandTransform(ObjectGraph))({
+  test("evaluates an Origami expression in the tree's scope", async () => {
+    const tree = new (OriCommandTransform(ObjectTree))({
       a: 1,
       b: 2,
     });
-    /** @type {any} */ (graph).scope = builtins;
-    const value = await graph.get("!@graph/keys");
-    assert.deepEqual(await Graph.plain(value), ["a", "b"]);
+    /** @type {any} */ (tree).scope = builtins;
+    const value = await tree.get("!@tree/keys");
+    assert.deepEqual(await Tree.plain(value), ["a", "b"]);
   });
 });

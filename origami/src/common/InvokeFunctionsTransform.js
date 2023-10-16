@@ -1,5 +1,5 @@
 /**
- * When using `get` to retrieve a value from a graph, if the value is a
+ * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary

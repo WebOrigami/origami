@@ -16,7 +16,7 @@
  * between possible terms.
  */
 
-import { defaultValueKey } from "@graphorigami/core/src/Graph.js";
+import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
 import {
   any,
   forcedSequence,
@@ -101,7 +101,7 @@ export function assignment(tokens) {
   };
 }
 
-// Parse something that results in a function/graph that can be called. This is
+// Parse something that results in a function/tree that can be called. This is
 // more restrictive than the `expression` parser -- it doesn't accept function
 // calls -- to avoid infinite recursion.
 export function callTarget(tokens) {
@@ -109,7 +109,7 @@ export function callTarget(tokens) {
     absoluteFilePath,
     array,
     object,
-    graph,
+    tree,
     lambda,
     protocolCall,
     group,
@@ -133,7 +133,7 @@ export function expression(tokens) {
     absoluteFilePath,
     array,
     object,
-    graph,
+    tree,
     lambda,
     templateLiteral,
     group,
@@ -177,57 +177,6 @@ export function functionComposition(tokens) {
   for (const args of chain) {
     value = [value, ...args];
   }
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-export function graph(tokens) {
-  // Expressions try to parse graphs after objects, so if we see a left brace
-  // here, but the rest doesn't parse, it's a syntax error.
-  let parsed;
-  try {
-    parsed = forcedSequence(
-      matchTokenType(tokenType.LEFT_BRACE),
-      graphDocument,
-      matchTokenType(tokenType.RIGHT_BRACE)
-    )(tokens);
-  } catch (error) {
-    if (error instanceof SyntaxError && !error.message) {
-      throw new SyntaxError(
-        'An opening "{" brace was not followed by a valid object or graph definition.'
-      );
-    } else {
-      throw error;
-    }
-  }
-  if (!parsed) {
-    return null;
-  }
-  const value = parsed.value[1];
-  return {
-    value,
-    rest: parsed.rest,
-  };
-}
-
-// Parse a set of graph formulas.
-export function graphDocument(tokens) {
-  const parsed = separatedList(
-    formulaOrShorthand,
-    matchTokenType(tokenType.SEPARATOR)
-  )(tokens);
-  // Collect formulas
-  const formulas = {};
-  for (const assignment of parsed.value) {
-    // Skip any undefined assignment, which would be a trailing separator
-    if (assignment) {
-      const [_, key, value] = assignment;
-      formulas[key] = value;
-    }
-  }
-  const value = [ops.graph, formulas];
   return {
     value,
     rest: parsed.rest,
@@ -526,9 +475,9 @@ export function protocolCall(tokens) {
   const builtInProtocols = {
     http: ops.http,
     https: ops.https,
-    graph: ops.graphHttps, // Shorthand for graphHttps:
-    graphhttp: ops.graphHttp,
-    graphhttps: ops.graphHttps,
+    tree: ops.treeHttps, // Shorthand for treeHttps:
+    treehttp: ops.treeHttp,
+    treehttps: ops.treeHttps,
   };
   // Prefer built-in protocol, otherwise treat the protocol as a normal function.
   if (fn[0] === ops.scope) {
@@ -651,6 +600,57 @@ export function templateLiteral(tokens) {
     return null;
   }
   const { 1: value } = parsed.value;
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+export function tree(tokens) {
+  // Expressions try to parse trees after objects, so if we see a left brace
+  // here, but the rest doesn't parse, it's a syntax error.
+  let parsed;
+  try {
+    parsed = forcedSequence(
+      matchTokenType(tokenType.LEFT_BRACE),
+      treeDocument,
+      matchTokenType(tokenType.RIGHT_BRACE)
+    )(tokens);
+  } catch (error) {
+    if (error instanceof SyntaxError && !error.message) {
+      throw new SyntaxError(
+        'An opening "{" brace was not followed by a valid object or tree definition.'
+      );
+    } else {
+      throw error;
+    }
+  }
+  if (!parsed) {
+    return null;
+  }
+  const value = parsed.value[1];
+  return {
+    value,
+    rest: parsed.rest,
+  };
+}
+
+// Parse a set of tree formulas.
+export function treeDocument(tokens) {
+  const parsed = separatedList(
+    formulaOrShorthand,
+    matchTokenType(tokenType.SEPARATOR)
+  )(tokens);
+  // Collect formulas
+  const formulas = {};
+  for (const assignment of parsed.value) {
+    // Skip any undefined assignment, which would be a trailing separator
+    if (assignment) {
+      const [_, key, value] = assignment;
+      formulas[key] = value;
+    }
+  }
+  const value = [ops.tree, formulas];
   return {
     value,
     rest: parsed.rest,

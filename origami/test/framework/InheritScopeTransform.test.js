@@ -1,29 +1,29 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
 
 describe("InheritScopeTransform", () => {
-  test("creates a scope that includes a graph and its parent", async () => {
-    const fixture = new (InheritScopeTransform(ObjectGraph))({
+  test("creates a scope that includes a tree and its parent", async () => {
+    const fixture = new (InheritScopeTransform(ObjectTree))({
       b: 2,
     });
-    fixture.parent = new ObjectGraph({
+    fixture.parent = new ObjectTree({
       a: 1,
     });
     assert.deepEqual(await fixture.scope?.get("b"), 2);
     assert.deepEqual(await fixture.scope?.get("a"), 1);
   });
 
-  test("adds a subgraph's parent to the subgraphs's scope", async () => {
-    const fixture = new (InheritScopeTransform(ObjectGraph))({
+  test("adds a subtree's parent to the subtrees's scope", async () => {
+    const fixture = new (InheritScopeTransform(ObjectTree))({
       a: 1,
-      subgraph: {
+      subtree: {
         b: 2,
       },
     });
-    const subgraph = await fixture.get("subgraph");
-    assert.deepEqual(await subgraph.scope.get("b"), 2);
-    assert.deepEqual(await subgraph.scope.get("a"), 1);
+    const subtree = await fixture.get("subtree");
+    assert.deepEqual(await subtree.scope.get("b"), 2);
+    assert.deepEqual(await subtree.scope.get("a"), 1);
   });
 });

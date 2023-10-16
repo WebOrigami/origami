@@ -1,4 +1,4 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as serialize from "../../src/common/serialize.js";
@@ -19,17 +19,17 @@ c: Hello, c.`;
   test("parseYaml() can parse YAML text with expressions", async () => {
     const yaml = `a: 1
 b: !ori a`;
-    const graph = serialize.parseYaml(yaml);
+    const tree = serialize.parseYaml(yaml);
     // @ts-ignore
-    assert.deepEqual(await Graph.plain(graph), {
+    assert.deepEqual(await Tree.plain(tree), {
       a: 1,
       b: 1,
     });
   });
 
-  test("toJson() renders a graph as JSON", async () => {
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const json = await serialize.toJson(graph);
+  test("toJson() renders a tree as JSON", async () => {
+    const tree = new ObjectTree({ a: "Hello, a." });
+    const json = await serialize.toJson(tree);
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
@@ -43,15 +43,15 @@ b: !ori a`;
     assert.deepEqual(value, 1);
   });
 
-  test("toJsonValue() can map a graph to a plain object", async () => {
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const value = await serialize.toJsonValue(graph);
+  test("toJsonValue() can map a tree to a plain object", async () => {
+    const tree = new ObjectTree({ a: "Hello, a." });
+    const value = await serialize.toJsonValue(tree);
     assert.deepEqual(value, { a: "Hello, a." });
   });
 
-  test("toYaml() renders a graph as YAML", async () => {
-    const graph = new ObjectGraph({ a: "Hello, a." });
-    const yaml = await serialize.toYaml(graph);
+  test("toYaml() renders a tree as YAML", async () => {
+    const tree = new ObjectTree({ a: "Hello, a." });
+    const yaml = await serialize.toYaml(tree);
     assert.equal(yaml, `a: Hello, a.\n`);
   });
 });

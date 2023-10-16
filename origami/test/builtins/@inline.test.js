@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
@@ -6,7 +6,7 @@ import TextDocument from "../../src/common/TextDocument.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       name: "Alice",
     });
     const document = new TextDocument(`Hello, {{ name }}!`);
@@ -15,7 +15,7 @@ describe("inline", () => {
     assert.equal(inlinedDocument.text, "Hello, Alice!");
   });
 
-  test("can reference keys in an attached graph", async () => {
+  test("can reference keys in an attached tree", async () => {
     const document = TextDocument.from(`---
 name: Bob
 ---

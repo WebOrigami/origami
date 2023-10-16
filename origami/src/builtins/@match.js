@@ -3,7 +3,7 @@ import Scope from "../common/Scope.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Return a graph with the indicated keys (if provided).
+ * Return a tree with the indicated keys (if provided).
  *
  * The pattern can a string with a simplified pattern syntax that tries to match
  * against the entire key and uses brackets to identify named wildcard values.
@@ -17,12 +17,12 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * the indicated function to produce a result.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
- * @param {Graphable} [keys]
+ * @param {Treelike} [keys]
  * @this {AsyncDictionary|null}
  */
 export default function match(pattern, resultFn, keys = []) {

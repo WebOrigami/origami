@@ -1,15 +1,15 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/common/Scope.js";
-import OrigamiGraph from "../../src/framework/OrigamiGraph.js";
+import OrigamiTree from "../../src/framework/OrigamiTree.js";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import * as ops from "../../src/language/ops.js";
 
 describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       name: "world",
     });
 
@@ -20,7 +20,7 @@ describe("ops", () => {
   });
 
   test("can invoke a lambda", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       message: "Hello",
     });
 
@@ -46,7 +46,7 @@ describe("ops", () => {
   });
 
   test("can instantiate an object", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
 
@@ -64,7 +64,7 @@ describe("ops", () => {
   });
 
   test("can instantiate an array", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
     const code = [ops.array, "Hello", 1, [[ops.scope, "upper"], "world"]];
@@ -72,9 +72,9 @@ describe("ops", () => {
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
-  test("can instantiate an Origami graph", async () => {
+  test("can instantiate an Origami tree", async () => {
     const code = [
-      ops.graph,
+      ops.tree,
       {
         name: "world",
         message: createExpressionFunction([
@@ -86,19 +86,19 @@ describe("ops", () => {
       },
     ];
     const result = await execute.call({}, code);
-    assert(result instanceof OrigamiGraph);
-    assert.deepEqual(await Graph.plain(result), {
+    assert(result instanceof OrigamiTree);
+    assert.deepEqual(await Tree.plain(result), {
       name: "world",
       message: "Hello, world!",
     });
   });
 
   test("can search inherited scope", async () => {
-    const a = new ObjectGraph({
+    const a = new ObjectTree({
       a: 1, // This is the inherited value we want
     });
     /** @type {any} */
-    const b = new ObjectGraph({
+    const b = new ObjectTree({
       a: 2, // Should be ignored
     });
     b.scope = new Scope(b, a);

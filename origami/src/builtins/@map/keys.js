@@ -1,34 +1,34 @@
-import MapInnerKeysGraph from "../../common/MapInnerKeysGraph.js";
+import MapInnerKeysTree from "../../common/MapInnerKeysTree.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * Wrap a graph and redefine the key used to access nodes in it.
+ * Wrap a tree and redefine the key used to access nodes in it.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {function} keyFn
  * @param {PlainObject} [options]
  */
-export default async function mapKeys(graphable, keyFn, options = {}) {
+export default async function mapKeys(treelike, keyFn, options = {}) {
   assertScopeIsDefined(this);
-  if (!graphable) {
+  if (!treelike) {
     return undefined;
   }
-  const mappedGraph = new (InheritScopeTransform(MapInnerKeysGraph))(
-    graphable,
+  const mappedTree = new (InheritScopeTransform(MapInnerKeysTree))(
+    treelike,
     keyFn,
     options
   );
   if (this) {
-    mappedGraph.parent = this;
+    mappedTree.parent = this;
   }
-  return mappedGraph;
+  return mappedTree;
 }
 
-mapKeys.usage = `mapKeys <graph>\tDefine the key used to get nodes from the graph`;
+mapKeys.usage = `mapKeys <tree>\tDefine the key used to get nodes from the tree`;
 mapKeys.documentation = "https://graphorigami.org/cli/builtins.html#mapKeys";

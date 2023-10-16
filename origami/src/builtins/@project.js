@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { graphInContext } from "../common/utilities.js";
+import { treeInContext } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
@@ -7,16 +7,16 @@ import builtins from "./@builtins.js";
 const configFileName = "ori.config.js";
 
 /**
- * Return the graph for the current project's root folder.
+ * Return the tree for the current project's root folder.
  *
  * This searches the current directory and its ancestors for an Origami
  * configuration file. If an Origami configuration file is found, the containing
- * folder is considered to be the project root. This returns a graph for that
+ * folder is considered to be the project root. This returns a tree for that
  * folder, with the exported configuration as the context for that folder — that
- * is, the graph exported by the configuration will be the scope.
+ * is, the tree exported by the configuration will be the scope.
  *
  * If no Origami configuration file is found, the current folder will be
- * returned as a graph, with the builtins as its parent.
+ * returned as a tree, with the builtins as its parent.
  *
  * @this {AsyncDictionary|null}
  * @param {any} [key]
@@ -25,25 +25,25 @@ export default async function project(key) {
   assertScopeIsDefined(this);
 
   const dirname = process.cwd();
-  const currentGraph = new OrigamiFiles(dirname);
-  let projectGraph = await findConfigContainer(currentGraph);
+  const currentTree = new OrigamiFiles(dirname);
+  let projectTree = await findConfigContainer(currentTree);
 
   let config;
-  if (projectGraph) {
+  if (projectTree) {
     // Load the configuration.
-    config = await projectGraph.import(configFileName);
+    config = await projectTree.import(configFileName);
     if (!config) {
       throw new Error(
-        `Couldn't load the Origami configuration in ${projectGraph.path}`
+        `Couldn't load the Origami configuration in ${projectTree.path}`
       );
     }
   } else {
-    projectGraph = currentGraph;
+    projectTree = currentTree;
     config = builtins;
   }
 
   // Add the configuration as the context for the project root.
-  const result = graphInContext(projectGraph, config);
+  const result = treeInContext(projectTree, config);
   return key === undefined ? result : result.get(key);
 }
 
@@ -68,5 +68,5 @@ async function findConfigContainer(start) {
   return undefined;
 }
 
-project.usage = `@project\tThe root of the current Graph Origami project`;
+project.usage = `@project\tThe root of the current Tree Origami project`;
 project.documentation = "https://graphorigami.org/language/@project.html";

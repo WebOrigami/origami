@@ -1,7 +1,7 @@
 import builtins from "../../../src/builtins/@builtins.js";
-import MergeGraph from "../../../src/common/MergeGraph.js";
+import MergeTree from "../../../src/common/MergeTree.js";
 
-export default new MergeGraph(
+export default new MergeTree(
   {
     fn() {
       return "Hello, world.";

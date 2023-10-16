@@ -6,10 +6,10 @@ import {
 } from "../common/utilities.js";
 
 /**
- * Given a main graph of arbitrary depth, and a shallow secondary graph of
- * default values, this returns values as usual from the main graph. If a
- * requested key is missing from the main graph, but exists in the default
- * values graph, the value will be returned from that graph.
+ * Given a main tree of arbitrary depth, and a shallow secondary tree of
+ * default values, this returns values as usual from the main tree. If a
+ * requested key is missing from the main tree, but exists in the default
+ * values tree, the value will be returned from that tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
@@ -23,11 +23,11 @@ export default function DefaultValuesTransform(Base) {
     }
 
     async get(key) {
-      // Ask the graph if it has the key.
+      // Ask the tree if it has the key.
       let value = await super.get(key);
 
       if (value === undefined) {
-        // The graph doesn't have the key; try the defaults.
+        // The tree doesn't have the key; try the defaults.
         const defaultValue = await this.defaults[key];
         const scope = getScope(this);
         value =
@@ -36,7 +36,7 @@ export default function DefaultValuesTransform(Base) {
             : defaultValue;
       }
 
-      // Ensure this transform is applied to any subgraph.
+      // Ensure this transform is applied to any subtree.
       if (
         Dictionary.isAsyncDictionary(value) &&
         !isTransformApplied(DefaultValuesTransform, value)

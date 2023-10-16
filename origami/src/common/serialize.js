@@ -1,15 +1,15 @@
 /**
  * @typedef {import("../..").JsonValue} JsonValue
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
 
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import expressionTag from "../language/expressionTag.js";
-import ExpressionGraph from "./ExpressionGraph.js";
+import ExpressionTree from "./ExpressionTree.js";
 import { isPlainObject } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -57,7 +57,7 @@ export function parseYaml(text) {
     customTags: [expressionTag],
   });
   if (objectContainsFunctions(data)) {
-    return new (FileTreeTransform(ExpressionGraph))(data);
+    return new (FileTreeTransform(ExpressionTree))(data);
   } else {
     return data;
   }
@@ -82,8 +82,8 @@ export async function toJson(obj) {
  * If the object implements the `pack()` method, that method's result will be
  * returned.
  *
- * If the object is graphable, it will be converted to a plain JavaScript
- * object, recursively traversing the graph and converting all values to native
+ * If the object is treelike, it will be converted to a plain JavaScript
+ * object, recursively traversing the tree and converting all values to native
  * types.
  *
  * If the object has a `valueOf()` or `toString()` method, that method's result
@@ -97,9 +97,9 @@ export async function toJsonValue(obj) {
     return obj;
   } else if (obj && typeof obj.pack === "function") {
     return obj.pack();
-  } else if (Graph.isTreelike(obj)) {
-    const mapped = await Graph.map(obj, (value) => toJsonValue(value));
-    return Graph.plain(mapped);
+  } else if (Tree.isTreelike(obj)) {
+    const mapped = await Tree.map(obj, (value) => toJsonValue(value));
+    return Tree.plain(mapped);
   } else if (obj && typeof obj.toString === "function") {
     return obj.toString();
   }

@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import MapExtensionGraph from "../src/common/MapExtensionsGraph.js";
+import MapExtensionTree from "../src/common/MapExtensionsTree.js";
 import { transformObject } from "../src/common/utilities.js";
 import unpackOrigamiTemplate from "../src/loaders/orit.js";
 import PathTransform from "./PathTransform.js";
@@ -70,7 +70,7 @@ async function exportStatementForCode(codeBuffer, key) {
   // a folder that's a direct child of the `src` folder. The remaining parts are
   // joined in camelCase to form the export name. We remove the `@` prefix from
   // any parts that start with it. As an example, the file inside the src folder
-  // at `builtins/@graph/concat.js` will be identified as `graphConcat`.
+  // at `builtins/@tree/concat.js` will be identified as `treeConcat`.
 
   // Drop the first part of the path.
   let parts = container.split("/");
@@ -110,7 +110,7 @@ function exportStatements(src) {
   const withPaths = transformObject(PathTransform, src);
 
   // Map each source file to an export statement.
-  const mapped = new MapExtensionGraph(withPaths, exportStatementForCode, {
+  const mapped = new MapExtensionTree(withPaths, exportStatementForCode, {
     deep: true,
     extension: "js",
     extensionMatchesOnly: true,

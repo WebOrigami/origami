@@ -1,24 +1,24 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Return a default index.html page for the current graph.
+ * Return a default index.html page for the current tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} [graphable]
+ * @param {Treelike} [treelike]
  */
-export default async function index(graphable) {
+export default async function index(treelike) {
   assertScopeIsDefined(this);
-  graphable = graphable ?? (await this?.get("@current"));
-  if (graphable === undefined) {
+  treelike = treelike ?? (await this?.get("@current"));
+  if (treelike === undefined) {
     return undefined;
   }
-  const graph = Graph.from(graphable);
-  const keys = Array.from(await graph.keys());
+  const tree = Tree.from(treelike);
+  const keys = Array.from(await tree.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.
   const filtered = keys.filter(
@@ -33,7 +33,7 @@ export default async function index(graphable) {
     links.push(link);
   }
 
-  const heading = graph[keySymbol] ?? "Index";
+  const heading = tree[keySymbol] ?? "Index";
   const list = `
     <h1>${heading.trim()}</h1>
     <ul>\n${links.join("\n").trim()}\n</ul>
@@ -63,8 +63,8 @@ export default async function index(graphable) {
       </body>
     </html>`;
 
-  return new TextDocument(html.trim(), graph);
+  return new TextDocument(html.trim(), tree);
 }
 
-index.usage = `@index\tReturn a default index.html page for the current graph`;
+index.usage = `@index\tReturn a default index.html page for the current tree`;
 index.documentation = "https://graphorigami.org/language/@index.html";

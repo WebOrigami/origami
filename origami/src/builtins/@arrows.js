@@ -1,26 +1,26 @@
 import { keySymbol } from "../common/utilities.js";
-import ArrowGraph from "../framework/ArrowGraph.js";
+import ArrowTree from "../framework/ArrowTree.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Interpret arrow keys in the graph as function calls.
+ * Interpret arrow keys in the tree as function calls.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} [graphable]
+ * @param {Treelike} [treelike]
  */
-export default async function arrows(graphable) {
+export default async function arrows(treelike) {
   assertScopeIsDefined(this);
-  graphable = graphable ?? (await this?.get("@current"));
-  if (graphable === undefined) {
+  treelike = treelike ?? (await this?.get("@current"));
+  if (treelike === undefined) {
     return undefined;
   }
-  const graph = new ArrowGraph(graphable, { deep: true });
-  graph[keySymbol] = "@arrows";
-  graph.parent = this;
-  return graph;
+  const tree = new ArrowTree(treelike, { deep: true });
+  tree[keySymbol] = "@arrows";
+  tree.parent = this;
+  return tree;
 }
 
-arrows.usage = `@arrows <obj>\tInterpret arrow keys in the graph as function calls`;
+arrows.usage = `@arrows <obj>\tInterpret arrow keys in the tree as function calls`;
 arrows.documentation = "https://graphorigami.org/language/@arrows.html";

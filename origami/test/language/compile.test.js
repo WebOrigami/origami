@@ -1,9 +1,9 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/language/compile.js";
 
-const scope = new ObjectGraph({
+const scope = new ObjectTree({
   greet: (name) => `Hello, ${name}!`,
   name: "Alice",
 });
@@ -21,10 +21,10 @@ describe("compile", () => {
     await assertCompile("greet 'world'", "Hello, world!");
   });
 
-  test("graph", async () => {
+  test("tree", async () => {
     const fn = compile.expression("{ message = greet(name) }");
-    const graph = await fn.call(scope);
-    assert.deepEqual(await Graph.plain(graph), {
+    const tree = await fn.call(scope);
+    assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, Alice!",
     });
   });

@@ -1,10 +1,10 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapValues from "../../../src/builtins/@map/values.js";
 
 describe("map", () => {
-  test("maps all the values in a graph", async () => {
+  test("maps all the values in a tree", async () => {
     /** @type {any} */
     const fixture = mapValues.call(
       null,
@@ -15,7 +15,7 @@ describe("map", () => {
       },
       (value) => value.toUpperCase()
     );
-    assert.deepEqual(await Graph.plain(fixture), {
+    assert.deepEqual(await Tree.plain(fixture), {
       a: "HELLO, A.",
       b: "HELLO, B.",
       c: "HELLO, C.",
@@ -34,9 +34,9 @@ describe("map", () => {
           a: "Bonjour, a.",
         },
       },
-      async (value) => JSON.stringify(await Graph.plain(value))
+      async (value) => JSON.stringify(await Tree.plain(value))
     );
-    assert.deepEqual(await Graph.plain(fixture), {
+    assert.deepEqual(await Tree.plain(fixture), {
       english: '{"a":"Hello, a."}',
       french: '{"a":"Bonjour, a."}',
     });
@@ -57,7 +57,7 @@ describe("map", () => {
       (value) => value.toUpperCase(),
       { deep: true }
     );
-    assert.deepEqual(await Graph.plain(fixture), {
+    assert.deepEqual(await Tree.plain(fixture), {
       english: {
         a: "HELLO, A.",
       },
@@ -79,7 +79,7 @@ describe("map", () => {
         return `${key}: ${value}`;
       }
     );
-    assert.deepEqual(await Graph.plain(results), {
+    assert.deepEqual(await Tree.plain(results), {
       a: "a: 1",
       b: "b: 2",
       c: "c: 3",
@@ -97,7 +97,7 @@ describe("map", () => {
       },
       { keyName: "thing" }
     );
-    assert.deepEqual(await Graph.plain(results), {
+    assert.deepEqual(await Tree.plain(results), {
       a: "a",
       b: "b",
       c: "c",
@@ -111,7 +111,7 @@ describe("map", () => {
       { a: 1, b: 2, c: 3 },
       () => "constant"
     );
-    assert.deepEqual(await Graph.plain(results), {
+    assert.deepEqual(await Tree.plain(results), {
       a: "constant",
       b: "constant",
       c: "constant",

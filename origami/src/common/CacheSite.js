@@ -1,32 +1,32 @@
-import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
-import setDeep from "../builtins/@graph/setDeep.js";
+import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import setDeep from "../builtins/@tree/setDeep.js";
 
 /**
- * Caches the results retrieved from one source graph in a second cache graph.
- * The second cache graph is consulted first.
+ * Caches the results retrieved from one source tree in a second cache tree.
+ * The second cache tree is consulted first.
  */
 export default class CacheSite {
   /**
-   * @typedef {import("@graphorigami/core").Treelike} Graphable
-   * @param {Graphable} graph
-   * @param {Graphable} [cache]
-   * @param {Graphable} [filter]
+   * @typedef {import("@graphorigami/core").Treelike} Treelike
+   * @param {Treelike} tree
+   * @param {Treelike} [cache]
+   * @param {Treelike} [filter]
    */
-  constructor(graph, cache, filter) {
-    this.graph = Graph.from(graph);
+  constructor(tree, cache, filter) {
+    this.tree = Tree.from(tree);
 
     if (cache === undefined) {
-      this.cache = new ObjectGraph({});
+      this.cache = new ObjectTree({});
     } else {
-      /** @type {any} */ this.cache = Graph.from(cache);
+      /** @type {any} */ this.cache = Tree.from(cache);
       if (typeof this.cache.set !== "function") {
         throw new TypeError(
-          `The first parameter to the Cache constructor must be a graph with a "set" method.`
+          `The first parameter to the Cache constructor must be a tree with a "set" method.`
         );
       }
     }
 
-    this.filter = filter ? Graph.from(filter) : undefined;
+    this.filter = filter ? Tree.from(filter) : undefined;
   }
 
   async get(key) {
@@ -34,10 +34,10 @@ export default class CacheSite {
   }
 
   async keys() {
-    // We also check the cache in case the keys provided by the other graphs
+    // We also check the cache in case the keys provided by the other trees
     // have changed since the cache was updated.
     const keys = new Set(await this.cache.keys());
-    for (const key of await this.graph.keys()) {
+    for (const key of await this.tree.keys()) {
       keys.add(key);
     }
     return keys;
@@ -48,14 +48,14 @@ export default class CacheSite {
       return this;
     }
 
-    let cacheValue = await Graph.traverse(this.cache, ...keys);
+    let cacheValue = await Tree.traverse(this.cache, ...keys);
     if (cacheValue !== undefined && !Dictionary.isAsyncDictionary(cacheValue)) {
-      // Non-graph cache hit
+      // Non-tree cache hit
       return cacheValue;
     }
 
     // Cache miss
-    let value = await Graph.traverse(this.graph, ...keys);
+    let value = await Tree.traverse(this.tree, ...keys);
     if (value !== undefined) {
       // Does this key match the filter?
       let match;
@@ -63,7 +63,7 @@ export default class CacheSite {
       if (this.filter === undefined) {
         match = true;
       } else {
-        filterValue = await Graph.traverse(this.filter, ...keys);
+        filterValue = await Tree.traverse(this.filter, ...keys);
         match = filterValue !== undefined;
       }
       if (match) {
@@ -77,17 +77,17 @@ export default class CacheSite {
           current[key] = {};
           current = current[key];
         }
-        // If we have a graph value, we don't cache the entire thing, just an
-        // empty graph.
+        // If we have a tree value, we don't cache the entire thing, just an
+        // empty tree.
         current[lastKey] = Dictionary.isAsyncDictionary(value) ? {} : value;
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
-        cacheValue = await Graph.traverse(this.cache, ...keys, lastKey);
+        cacheValue = await Tree.traverse(this.cache, ...keys, lastKey);
       }
 
       if (Dictionary.isAsyncDictionary(value)) {
-        // Construct merged graph for a graph result.
+        // Construct merged tree for a tree result.
         value = Reflect.construct(this.constructor, [
           value,
           cacheValue,

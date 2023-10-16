@@ -1,15 +1,15 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} jsonFeedGraph
+ * @param {Treelike} jsonFeedTree
  */
-export default async function rss(jsonFeedGraph) {
+export default async function rss(jsonFeedTree) {
   assertScopeIsDefined(this);
-  const jsonFeed = await Graph.plain(jsonFeedGraph);
+  const jsonFeed = await Tree.plain(jsonFeedTree);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 
   // Presume that the RSS feed lives in same location as feed_url.
@@ -45,5 +45,5 @@ function itemRss(jsonFeedItem) {
 `;
 }
 
-rss.usage = `@rss <feed>\tTransforms a JSON Feed graph to RSS XML`;
+rss.usage = `@rss <feed>\tTransforms a JSON Feed tree to RSS XML`;
 rss.documentation = "https://graphorigami.org/language/@rss.html";

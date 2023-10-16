@@ -1,10 +1,10 @@
 const groupDescriptions = {
   "@cache": "Functions for caching data",
-  "@graph": "Functions for working with graphs",
+  "@tree": "Functions for working with trees",
   "@image": "Functions for working with images",
-  "@map": "Functions for mapping graphs",
+  "@map": "Functions for mapping trees",
   "@parse": "Parsing functions",
-  "@scope": "Functions for working with graph scopes",
+  "@scope": "Functions for working with tree scopes",
 };
 
 export default async function showUsage(scope) {

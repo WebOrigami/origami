@@ -17,8 +17,8 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.concat:
         return formatTemplate(code);
 
-      case ops.graph:
-        return formatGraph(code);
+      case ops.tree:
+        return formatTree(code);
 
       case ops.lambda:
         return formatLambda(code);
@@ -47,7 +47,7 @@ function formatArgument(arg) {
 function formatArguments(args) {
   const allStrings = args.every((arg) => typeof arg === "string");
   return allStrings
-    ? // Use graph traversal syntax.
+    ? // Use tree traversal syntax.
       formatSlashPath(args)
     : // Use function invocation syntax.
       formatArgumentsList(args);
@@ -73,7 +73,7 @@ function formatFunctionCall(code) {
   return `${formattedFn}${formatArguments(args)}`;
 }
 
-function formatGraph(code) {
+function formatTree(code) {
   const [_, properties] = code;
   const formatted = Object.entries(properties).map(([key, value]) => {
     const rhs =

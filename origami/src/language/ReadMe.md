@@ -17,7 +17,7 @@ assignment: identifier "=" expression
 callTarget: absoluteFilePath
             array
             object
-            graph
+            tree
             lambda
             protocolCall
             group
@@ -30,7 +30,7 @@ expression: string
             absoluteFilePath
             array
             object
-            graph
+            tree
             lambda
             templateLiteral
             group
@@ -42,9 +42,9 @@ formula: assignment
 
 functionComposition: callTarget argsChain
 
-graph: "{" graphDocument "}"
+tree: "{" treeDocument "}"
 
-graphDocument: formula [separator graphDocument]
+treeDocument: formula [separator treeDocument]
 
 group: "(" expression ")"
 

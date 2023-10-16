@@ -4,14 +4,14 @@ import crawl from "../../src/builtins/@crawl.js";
 
 describe("crawl", () => {
   test("finds linked pages", async () => {
-    const graph = {
+    const tree = {
       "index.html": `
         <a href="about.html">About</a>
         <a href="https://example.com">External</a>
       `,
       "about.html": "About page",
     };
-    const crawled = await crawl.call(null, graph);
+    const crawled = await crawl.call(null, tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "about.html",
@@ -19,11 +19,11 @@ describe("crawl", () => {
   });
 
   test("finds linked images", async () => {
-    const graph = {
+    const tree = {
       "index.html": `<img src="logo.png">`,
       "logo.png": "PNG data",
     };
-    const crawled = await crawl.call(null, graph);
+    const crawled = await crawl.call(null, tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "logo.png",
@@ -31,14 +31,14 @@ describe("crawl", () => {
   });
 
   test("finds linked JavaScript files", async () => {
-    const graph = {
+    const tree = {
       "index.html": `
         <script src="a.js" type="module"></script>
       `,
       "a.js": "import b from './b.js';",
       "b.js": "export default true;",
     };
-    const crawled = await crawl.call(null, graph);
+    const crawled = await crawl.call(null, tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "a.js",
@@ -51,7 +51,7 @@ describe("crawl", () => {
     // the (fake) site is defined as `https:`. This tests a situation we've hit
     // in practice, where a site's robots.txt file is out of date. We test that
     // the crawler ignores the protocol when deciding whether to crawl a path.
-    const graph = {
+    const tree = {
       "foo.html": "Foo",
       "sitemap.xml": `
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,7 +62,7 @@ describe("crawl", () => {
 </urlset>`,
       "robots.txt": "Sitemap: http://example.com/sitemap.xml",
     };
-    const crawled = await crawl.call(null, graph, "https://example.com");
+    const crawled = await crawl.call(null, tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
       "sitemap.xml",

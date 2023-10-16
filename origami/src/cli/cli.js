@@ -1,50 +1,50 @@
 #!/usr/bin/env node
 
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import Scope from "../common/Scope.js";
-import { getScope, graphInContext, keySymbol } from "../common/utilities.js";
+import { getScope, keySymbol, treeInContext } from "../common/utilities.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
   const expression = args.join(" ");
 
   // Find the project root.
-  const projectGraph = await project.call(null);
+  const projectTree = await project.call(null);
 
   // If no arguments were passed, show usage.
   if (!expression) {
-    const config = projectGraph.parent;
+    const config = projectTree.parent;
     await showUsage(config);
     return;
   }
 
-  // Splice ambients graph into project graph scope.
-  const ambients = new ObjectGraph({
+  // Splice ambients tree into project tree scope.
+  const ambients = new ObjectTree({
     [keySymbol]: "Origami CLI",
   });
-  let graph = graphInContext(
-    projectGraph,
-    new Scope(ambients, projectGraph.parent)
+  let tree = treeInContext(
+    projectTree,
+    new Scope(ambients, projectTree.parent)
   );
 
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();
-  const relative = path.relative(projectGraph.path, currentDirectory);
+  const relative = path.relative(projectTree.path, currentDirectory);
   if (relative !== "") {
     const keys = relative
       .split(path.sep)
-      .map((key) => (key === "" ? Graph.defaultValueKey : key));
-    graph = await Graph.traverse(graph, ...keys);
+      .map((key) => (key === "" ? Tree.defaultValueKey : key));
+    tree = await Tree.traverse(tree, ...keys);
   }
 
-  // Add ambient property for the current graph.
-  await ambients.set("@current", graph);
+  // Add ambient property for the current tree.
+  await ambients.set("@current", tree);
 
-  const scope = getScope(graph);
+  const scope = getScope(tree);
   const result = await ori.call(scope, expression);
   if (result !== undefined) {
     const output = result instanceof Buffer ? result : String(result);

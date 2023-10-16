@@ -1,21 +1,21 @@
-import FilterGraph from "../common/FilterGraph.js";
+import FilterTree from "../common/FilterTree.js";
 import { getScope } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Apply a filter to a graph.
+ * Apply a filter to a tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} Graphable
- * @param {Graphable} filterVariant
+ * @param {Treelike} treelike
+ * @param {Treelike} filterVariant
  */
-export default async function filter(Graphable, filterVariant) {
+export default async function filter(treelike, filterVariant) {
   assertScopeIsDefined(this);
-  const filtered = new (InheritScopeTransform(FilterGraph))(
-    Graphable,
+  const filtered = new (InheritScopeTransform(FilterTree))(
+    treelike,
     filterVariant
   );
   const parent = /** @type {any} */ (this).parent;
@@ -23,5 +23,5 @@ export default async function filter(Graphable, filterVariant) {
   return filtered;
 }
 
-filter.usage = `@filter <graph>, <filter>\tOnly returns values whose keys match the filter`;
+filter.usage = `@filter <tree>, <filter>\tOnly returns values whose keys match the filter`;
 filter.documentation = "https://graphorigami.org/language/@filter.html";

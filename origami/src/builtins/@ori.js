@@ -1,13 +1,13 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
+import { toYaml } from "../common/serialize.js";
 import { getRealmObjectPrototype } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
-import { toYaml } from "../common/serialize.js";
 
 /**
- * Parse an Origami expression, evaluate it in the context of a graph (provided
+ * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
  * @this {AsyncDictionary|null}
  *
@@ -68,13 +68,13 @@ async function formatResult(scope, result) {
     text = result;
   }
 
-  // If the result is a graph, attach the graph to the text output.
-  if (Graph.isTreelike(result)) {
+  // If the result is a tree, attach the tree to the text output.
+  if (Tree.isTreelike(result)) {
     if (typeof text === "string") {
       // @ts-ignore
       text = new String(text);
     }
-    /** @type {any} */ (text).unpack = () => Graph.from(result);
+    /** @type {any} */ (text).unpack = () => Tree.from(result);
   }
 
   return text;

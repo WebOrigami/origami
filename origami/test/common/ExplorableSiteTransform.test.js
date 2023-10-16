@@ -1,17 +1,17 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ExplorableSiteTransform from "../../src/common/ExplorableSiteTransform.js";
 describe("ExplorableSiteTransform", () => {
   test.skip("treats an undefined key at the end of a traversal as index.html", async () => {
-    const graph = new (ExplorableSiteTransform(ObjectGraph))({
+    const tree = new (ExplorableSiteTransform(ObjectTree))({
       foo: {
         bar: {
           "index.html": "Index",
         },
       },
     });
-    const value = await Graph.traverse(graph, ["foo", "bar", undefined]);
+    const value = await Tree.traverse(tree, ["foo", "bar", undefined]);
     assert.equal(value, "Index");
   });
 });

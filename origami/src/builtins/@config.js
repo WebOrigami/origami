@@ -12,13 +12,13 @@ import project from "./@project.js";
  * @param {any} [key]
  */
 export default async function config(key) {
-  const projectGraph = await project.call(this);
-  const scope = projectGraph?.parent;
+  const projectTree = await project.call(this);
+  const scope = projectTree?.parent;
   if (!scope) {
     return undefined;
   }
   return key === undefined ? scope : scope.get(key);
 }
 
-config.usage = `@config\tThe current project's configuration graph`;
+config.usage = `@config\tThe current project's configuration tree`;
 config.documentation = "https://graphorigami.org/language/@config.html";

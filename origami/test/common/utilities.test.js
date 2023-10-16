@@ -1,4 +1,4 @@
-import { Dictionary, ObjectGraph } from "@graphorigami/core";
+import { Dictionary, ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
@@ -17,11 +17,11 @@ describe("utilities", () => {
     assert.equal(utilities.toFunction(fn), fn);
   });
 
-  test("toFunction returns a graph's getter as a function", async () => {
-    const graph = new ObjectGraph({
+  test("toFunction returns a tree's getter as a function", async () => {
+    const tree = new ObjectTree({
       a: 1,
     });
-    const fn = utilities.toFunction(graph);
+    const fn = utilities.toFunction(tree);
     assert.equal(await fn("a"), 1);
   });
 
@@ -73,7 +73,7 @@ describe("utilities", () => {
     assert("extra" in fixture);
   });
 
-  test("transformObject applies the same mixin to graph values", async () => {
+  test("transformObject applies the same mixin to tree values", async () => {
     function UppercaseTransform(Base) {
       return class Uppercase extends Base {
         async get(key) {
@@ -84,7 +84,7 @@ describe("utilities", () => {
         }
       };
     }
-    const graph = new ObjectGraph({
+    const tree = new ObjectTree({
       a: "a",
       more: {
         b: "b",
@@ -93,7 +93,7 @@ describe("utilities", () => {
         },
       },
     });
-    const mixed = utilities.transformObject(UppercaseTransform, graph);
+    const mixed = utilities.transformObject(UppercaseTransform, tree);
     assert.equal(await mixed.get("a"), "A");
     const mixedMore = await mixed.get("more");
     assert.equal(await mixedMore.get("b"), "B");

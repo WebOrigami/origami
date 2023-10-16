@@ -1,21 +1,21 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 
 export default class Scope {
   constructor(...variants) {
-    const filtered = variants.filter((graphable) => graphable != undefined);
-    const graphs = filtered.map((graphable) => Graph.from(graphable));
+    const filtered = variants.filter((treelike) => treelike != undefined);
+    const trees = filtered.map((treelike) => Tree.from(treelike));
 
-    // If a graph argument has a `graphs` property, use that instead.
-    const scopes = graphs.flatMap(
-      (graph) => /** @type {any} */ (graph).graphs ?? graph
+    // If a tree argument has a `trees` property, use that instead.
+    const scopes = trees.flatMap(
+      (tree) => /** @type {any} */ (tree).trees ?? tree
     );
 
-    this.graphs = scopes;
+    this.trees = scopes;
   }
 
   async get(key) {
-    for (const graph of this.graphs) {
-      const value = await graph.get(key);
+    for (const tree of this.trees) {
+      const value = await tree.get(key);
       if (value !== undefined) {
         return value;
       }
@@ -25,8 +25,8 @@ export default class Scope {
 
   async keys() {
     const keys = new Set();
-    for (const graph of this.graphs) {
-      for (const key of await graph.keys()) {
+    for (const tree of this.trees) {
+      for (const key of await tree.keys()) {
         keys.add(key);
       }
     }
@@ -34,13 +34,13 @@ export default class Scope {
   }
 
   async unwatch() {
-    for (const graph of this.graphs) {
-      await /** @type {any} */ (graph).unwatch?.();
+    for (const tree of this.trees) {
+      await /** @type {any} */ (tree).unwatch?.();
     }
   }
   async watch() {
-    for (const graph of this.graphs) {
-      await /** @type {any} */ (graph).watch?.();
+    for (const tree of this.trees) {
+      await /** @type {any} */ (tree).watch?.();
     }
   }
 }

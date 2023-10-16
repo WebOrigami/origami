@@ -1,4 +1,4 @@
-import { Dictionary, Graph } from "@graphorigami/core";
+import { Dictionary, Tree } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import { getScope, isPlainObject, keySymbol } from "../common/utilities.js";
 
@@ -22,13 +22,13 @@ export default function InheritScopeTransform(Base) {
       const value = await super.get(key);
       if (value && typeof value === "object" && value.parent == null) {
         if (Dictionary.isAsyncDictionary(value)) {
-          // This graph becomes the parent for all subgraphs.
+          // This tree becomes the parent for all subtrees.
           /** @type {any} */ (value).parent = this;
         } else if (
           typeof value.unpack === "function" &&
           !(value instanceof Buffer) // HACK: Buffer has weird `parent` property
         ) {
-          // This graph becomes the parent for an attached graph.
+          // This tree becomes the parent for an attached tree.
           const parent = this;
           value.parent = parent;
           const original = value.unpack.bind(value);
@@ -39,9 +39,9 @@ export default function InheritScopeTransform(Base) {
               /** @type {any} */ (content).parent == null
             ) {
               /** @type {any} */
-              const graph = Graph.from(content);
-              graph.parent = parent;
-              return graph;
+              const tree = Tree.from(content);
+              tree.parent = parent;
+              return tree;
             } else {
               return content;
             }
@@ -73,10 +73,10 @@ export default function InheritScopeTransform(Base) {
       if (this[scopeKey] === null) {
         const parent = this.parent;
         if (parent) {
-          // Add parent to this graph's scope.
+          // Add parent to this tree's scope.
           this[scopeKey] = new Scope(this, getScope(parent));
         } else {
-          // Scope is just the graph itself.
+          // Scope is just the tree itself.
           this[scopeKey] = this;
         }
       }

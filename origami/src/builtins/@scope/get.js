@@ -1,12 +1,12 @@
-import { Graph } from "@graphorigami/core";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import { Tree } from "@graphorigami/core";
 import * as utilities from "../../common/utilities.js";
+import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * Returns the scope of the indicated graph or the current scope.
+ * Returns the scope of the indicated tree or the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {any} [obj]
  */
@@ -14,15 +14,15 @@ export default async function getScope(obj) {
   assertScopeIsDefined(this);
   if (obj) {
     /** @type {any}  */
-    const graph = Graph.from(obj);
+    const tree = Tree.from(obj);
     if (obj.parent) {
-      graph.parent = obj.parent;
+      tree.parent = obj.parent;
     }
-    return utilities.getScope(graph);
+    return utilities.getScope(tree);
   } else {
     return this;
   }
 }
 
-getScope.usage = `@scope/get [<graph>]\tReturns the scope of the graph or the current scope`;
+getScope.usage = `@scope/get [<tree>]\tReturns the scope of the tree or the current scope`;
 getScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";

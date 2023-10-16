@@ -2,7 +2,7 @@ import path from "node:path";
 
 /**
  * This mixin can be used to turn a collection of .js modules in a folder into a collection
- * of commands. For every module `foo.js`, the graph will expose a key `foo` with the value
+ * of commands. For every module `foo.js`, the tree will expose a key `foo` with the value
  * of the module's export(s).
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary

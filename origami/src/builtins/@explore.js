@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { ObjectGraph } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
@@ -21,47 +21,47 @@ export default async function explore() {
   const templateFile = await frameworkFiles.get("explore.orit");
   const template = await templateFile.unpack();
 
-  // const scopeGraphs = scope.graphs ?? [scope];
-  // const withoutBuiltins = scopeGraphs.filter((graph) => !isBuiltins(graph));
+  // const scopeTrees = scope.trees ?? [scope];
+  // const withoutBuiltins = scopeTrees.filter((tree) => !isBuiltins(tree));
   const data = await getScopeData(scope);
   const text = await template(data);
 
-  const ambientsGraph = new ObjectGraph({
+  const ambientsTree = new ObjectTree({
     "@current": this,
   });
-  ambientsGraph[keySymbol] = "explore command";
-  const extendedScope = new Scope(ambientsGraph, scope);
+  ambientsTree[keySymbol] = "explore command";
+  const extendedScope = new Scope(ambientsTree, scope);
 
-  const graph = await debug.call(this, extendedScope);
-  const result = new TextDocument(text, graph);
+  const tree = await debug.call(this, extendedScope);
+  const result = new TextDocument(text, tree);
 
   return result;
 }
 
-// To test if a given graph represents the builtins, we walk up the chain to see
-// if any of its prototypes are the builtins graph.
-function isBuiltins(graph) {
-  while (graph) {
-    if (graph === builtins) {
+// To test if a given tree represents the builtins, we walk up the chain to see
+// if any of its prototypes are the builtins tree.
+function isBuiltins(tree) {
+  while (tree) {
+    if (tree === builtins) {
       return true;
     }
-    graph = Object.getPrototypeOf(graph);
+    tree = Object.getPrototypeOf(tree);
   }
   return false;
 }
 
 async function getScopeData(scope) {
-  const graphs = scope.graphs ?? [scope];
+  const trees = scope.trees ?? [scope];
   const data = [];
-  for (const graph of graphs) {
-    if (isBuiltins(graph)) {
+  for (const tree of trees) {
+    if (isBuiltins(tree)) {
       // Skip builtins.
       continue;
     }
-    const name = graph[keySymbol];
-    const graphKeys = Array.from(await graph.keys());
+    const name = tree[keySymbol];
+    const treeKeys = Array.from(await tree.keys());
     // Skip system-ish files that start with a period.
-    const keys = graphKeys.filter((key) => !key.startsWith?.("."));
+    const keys = treeKeys.filter((key) => !key.startsWith?.("."));
     data.push({ name, keys });
   }
   return data;

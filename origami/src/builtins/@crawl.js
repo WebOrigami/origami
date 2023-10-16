@@ -1,4 +1,4 @@
-import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
+import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { isPlainObject } from "../common/utilities.js";
@@ -6,31 +6,31 @@ import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Crawl a graph, starting its root index.html page, and following links to
+ * Crawl a tree, starting its root index.html page, and following links to
  * crawlable pages, scripts, and stylesheets.
  *
- * Returns a new graph of the crawled content. The crawled content will be
+ * Returns a new tree of the crawled content. The crawled content will be
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {string} [baseHref]
  * @returns {Promise<AsyncDictionary>}
  */
-export default async function crawl(graphable, baseHref) {
+export default async function crawl(treelike, baseHref) {
   assertScopeIsDefined(this);
-  const graph = Graph.from(graphable);
+  const tree = Tree.from(treelike);
 
   if (baseHref === undefined) {
-    // Ask graph or original graphable if it has an `href` property we can use as
-    // the base href to determine whether a link is local within the graph or
+    // Ask tree or original treelike if it has an `href` property we can use as
+    // the base href to determine whether a link is local within the tree or
     // not. If not, use a fake `local:/` href.
     baseHref =
-      /** @type {any} */ (graph).href ??
-      /** @type {any} */ (graphable).href ??
+      /** @type {any} */ (tree).href ??
+      /** @type {any} */ (treelike).href ??
       "local:/";
     if (!baseHref?.endsWith("/")) {
       baseHref += "/";
@@ -42,7 +42,7 @@ export default async function crawl(graphable, baseHref) {
   const cache = {};
 
   // We iterate until there are no more promises to wait for.
-  for await (const result of crawlPaths(graph, baseUrl)) {
+  for await (const result of crawlPaths(tree, baseUrl)) {
     const { keys, resourcePaths, value } = result;
 
     // Cache the value
@@ -53,15 +53,15 @@ export default async function crawl(graphable, baseHref) {
     // Add indirect resource references to the cache.
     for (const resourcePath of resourcePaths) {
       const fn = () => {
-        return Graph.traversePath(graph, resourcePath);
+        return Tree.traversePath(tree, resourcePath);
       };
-      const resourceKeys = Graph.keysFromPath(resourcePath);
+      const resourceKeys = Tree.keysFromPath(resourcePath);
       addValueToObject(cache, resourceKeys, fn);
     }
   }
 
   const result = new (InheritScopeTransform(
-    InvokeFunctionsTransform(ObjectGraph)
+    InvokeFunctionsTransform(ObjectTree)
   ))(cache);
   result.parent = this;
   return result;
@@ -94,11 +94,11 @@ function addValueToObject(object, keys, value) {
   }
 }
 
-// Crawl the paths for the given graph, starting at the given base URL, and
+// Crawl the paths for the given tree, starting at the given base URL, and
 // yield the results. The results will include the HTML/script/stylesheet value
 // retrieved at a path, along with the paths to other resources found in that
 // text.
-async function* crawlPaths(graph, baseUrl) {
+async function* crawlPaths(tree, baseUrl) {
   // We want to kick off requests for new paths as quickly as we find them, then
   // yield whichever result finishes first. Unfortunately, Promise.any() only
   // tells us the result of the first promise to resolve, not which promise that
@@ -111,7 +111,7 @@ async function* crawlPaths(graph, baseUrl) {
   // equivalent to the base URL.
   const initialPaths = ["/robots.txt", ""];
   initialPaths.forEach((path) => {
-    promisesForPaths[path] = processPath(graph, path, baseUrl);
+    promisesForPaths[path] = processPath(tree, path, baseUrl);
   });
 
   while (true) {
@@ -135,7 +135,7 @@ async function* crawlPaths(graph, baseUrl) {
     result.crawlablePaths.forEach((path) => {
       // Only add a promise for this path if we don't already have one.
       if (promisesForPaths[path] === undefined) {
-        promisesForPaths[path] = processPath(graph, path, baseUrl);
+        promisesForPaths[path] = processPath(tree, path, baseUrl);
       }
     });
 
@@ -373,7 +373,7 @@ function isCrawlableHref(href) {
   return crawlableExtensions.includes(ext);
 }
 
-async function processPath(graph, path, baseUrl) {
+async function processPath(tree, path, baseUrl) {
   if (path === undefined) {
     return {
       crawlablePaths: [],
@@ -386,24 +386,24 @@ async function processPath(graph, path, baseUrl) {
 
   // Convert path to keys
   /** @type {any[]} */
-  let keys = Graph.keysFromPath(path);
+  let keys = Tree.keysFromPath(path);
 
-  // Traverse graph to get value.
-  let value = await Graph.traverse(graph, ...keys);
+  // Traverse tree to get value.
+  let value = await Tree.traverse(tree, ...keys);
   if (Dictionary.isAsyncDictionary(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === Graph.defaultValueKey) {
+    if (keys.at(-1) === Tree.defaultValueKey) {
       keys.pop();
     }
     keys.push("index.html");
-    value = await Graph.traverse(value, "index.html");
+    value = await Tree.traverse(value, "index.html");
   }
 
   if (value === undefined) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === Graph.defaultValueKey) {
+  if (keys.at(-1) === Tree.defaultValueKey) {
     // For indexing and storage purposes, treat a path that ends in a trailing
     // slash (or the dot we use to seed the queue) as if it ends in
     // index.html.
@@ -422,5 +422,5 @@ async function processPath(graph, path, baseUrl) {
   return { crawlablePaths, keys, path, resourcePaths, value };
 }
 
-crawl.usage = `@crawl <graph>\tCrawl a graph`;
+crawl.usage = `@crawl <tree>\tCrawl a tree`;
 crawl.documentation = "https://graphorigami.org/language/@crawl.html";

@@ -1,11 +1,11 @@
 {
   "name": "@graphorigami/origami",
   "version": "0.0.28",
-  "description": "Graph Origami language, CLI, server, framework, and more",
+  "description": "Tree Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git://github.com/GraphOrigami/origami.git"
+    "url": "git://github.com/graphorigami/origami.git"
   },
   "bin": {
     "ori": "src/cli/cli.js"

@@ -1,45 +1,45 @@
-import { Dictionary, Graph, ObjectGraph } from "@graphorigami/core";
+import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
 import {
   extname,
-  graphInContext,
   isPlainObject,
   isStringLike,
+  treeInContext,
 } from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
-// Extend the graph's scope with the URL's search parameters.
-function extendGraphScopeWithParams(graph, url) {
-  // Create a graph that includes the URL's search parameters.
+// Extend the tree's scope with the URL's search parameters.
+function extendTreeScopeWithParams(tree, url) {
+  // Create a tree that includes the URL's search parameters.
   const params = {};
   for (const [key, value] of url.searchParams) {
     params[key] = value;
   }
 
   if (Object.keys(params).length === 0) {
-    // No search parameters, so return the graph as is.
-    return graph;
+    // No search parameters, so return the tree as is.
+    return tree;
   }
 
-  const paramGraph = new ObjectGraph({
+  const paramTree = new ObjectTree({
     "@params": params,
   });
 
-  // Create a new scope that includes search parameter graph.
-  const newScope = new Scope(paramGraph, graph.parent);
+  // Create a new scope that includes search parameter tree.
+  const newScope = new Scope(paramTree, tree.parent);
 
-  // Create a new graph that extends the prototype chain of the supplied graph.
-  const extendedGraph = graphInContext(graph, newScope);
+  // Create a new tree that extends the prototype chain of the supplied tree.
+  const extendedTree = treeInContext(tree, newScope);
 
-  return extendedGraph;
+  return extendedTree;
 }
 
-// Asynchronous graph router as Express middleware.
-export function graphRouter(graph) {
-  // Return a router for the graph source.
+// Asynchronous tree router as Express middleware.
+export function treeRouter(tree) {
+  // Return a router for the tree source.
   return async function (request, response, next) {
-    const handled = await handleRequest(request, response, graph);
+    const handled = await handleRequest(request, response, tree);
     if (!handled) {
       // Module not found, let next middleware function try.
       next();
@@ -47,25 +47,25 @@ export function graphRouter(graph) {
   };
 }
 
-export async function handleRequest(request, response, graph) {
+export async function handleRequest(request, response, tree) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url, `https://${request.headers.host}`);
 
   // We allow the use of %2F in paths as a way to insert a slash into a key, so
   // we parse the path into keys first, then decode them.
-  const keys = Graph.keysFromPath(url.pathname).map((key) =>
+  const keys = Tree.keysFromPath(url.pathname).map((key) =>
     typeof key === "string" ? decodeURIComponent(key) : key
   );
 
-  const extendedGraph =
-    url.searchParams && "parent" in graph
-      ? extendGraphScopeWithParams(graph, url)
-      : graph;
+  const extendedTree =
+    url.searchParams && "parent" in tree
+      ? extendTreeScopeWithParams(tree, url)
+      : tree;
 
-  // Ask the graph for the resource with those keys.
+  // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Graph.traverse(extendedGraph, ...keys);
+    resource = await Tree.traverse(extendedTree, ...keys);
     // If resource is a function, invoke to get the object we want to return.
     if (typeof resource === "function") {
       resource = await resource();
@@ -93,7 +93,7 @@ export async function handleRequest(request, response, graph) {
       resource instanceof Array)
   ) {
     // Redirect to an index page for the result.
-    // Redirect to the root of the graph.
+    // Redirect to the root of the tree.
     const Location = `${request.url}/`;
     response.writeHead(307, { Location });
     response.end("ok");
@@ -111,18 +111,18 @@ export async function handleRequest(request, response, graph) {
     (mediaType === "application/json" || mediaType === "text/yaml") &&
     !isStringLike(resource)
   ) {
-    const graph = Graph.from(resource);
+    const tree = Tree.from(resource);
     resource =
       mediaType === "text/yaml"
-        ? await serialize.toYaml(graph)
-        : await serialize.toJson(graph);
+        ? await serialize.toYaml(tree)
+        : await serialize.toJson(tree);
   } else if (
     mediaType === undefined &&
     (isPlainObject(resource) || resource instanceof Array)
   ) {
     // The resource is data, try showing it as YAML.
-    const graph = Graph.from(resource);
-    resource = await serialize.toYaml(graph);
+    const tree = Tree.from(resource);
+    resource = await serialize.toYaml(tree);
     mediaType = "text/yaml";
   }
 
@@ -154,7 +154,7 @@ export async function handleRequest(request, response, graph) {
   if (!validResponse) {
     const typeName = data.constructor?.name ?? typeof data;
     console.error(
-      `A served graph must return a string, Buffer, or Uint8Array, but returned an instance of ${typeName}.`
+      `A served tree must return a string, Buffer, or Uint8Array, but returned an instance of ${typeName}.`
     );
     return false;
   }
@@ -174,16 +174,16 @@ export async function handleRequest(request, response, graph) {
 
 /**
  * A request listener for use with the node http.createServer and
- * https.createServer calls, letting you serve an async graph as a set of pages.
+ * https.createServer calls, letting you serve an async tree as a set of pages.
  *
- * @typedef {import("@graphorigami/core").Treelike} Graphable
- * @param {Graphable} graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @param {Treelike} treelike
  */
-export function requestListener(graphable) {
-  const graph = Graph.from(graphable);
+export function requestListener(treelike) {
+  const tree = Tree.from(treelike);
   return async function (request, response) {
     console.log(decodeURI(request.url));
-    const handled = await handleRequest(request, response, graph);
+    const handled = await handleRequest(request, response, tree);
     if (!handled) {
       // Ignore exceptions that come up with sending a Not Found response.
       try {

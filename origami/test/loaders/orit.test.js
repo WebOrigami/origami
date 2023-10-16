@@ -1,4 +1,4 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import TextDocument from "../../src/common/TextDocument.js";
@@ -13,7 +13,7 @@ describe(".orit loader", () => {
   });
 
   test("loads a template that reads from the calling scope", async () => {
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       name: "Alice",
     });
     const text = `Hello, {{ name }}!`;
@@ -23,7 +23,7 @@ describe(".orit loader", () => {
   });
 
   test("template has access to its container via @container", async () => {
-    const container = new ObjectGraph({
+    const container = new ObjectTree({
       a: 1,
     });
     const fn = await unpackOrigamiTemplate("{{ @container/a }}", {
@@ -65,7 +65,7 @@ Hello, {{ name }}!`;
   });
 
   test("template expressions can access their defining scope via @local", async () => {
-    const parent = new ObjectGraph({ name: "Bob" });
+    const parent = new ObjectTree({ name: "Bob" });
     const text = new TextDocument(`Hello, {{ @local/name }}!`, null, parent);
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn();

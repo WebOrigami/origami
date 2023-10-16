@@ -1,40 +1,40 @@
-import MapExtensionsGraph from "../../common/MapExtensionsGraph.js";
-import MapValuesGraph from "../../common/MapValuesGraph.js";
+import MapExtensionsTree from "../../common/MapExtensionsTree.js";
+import MapValuesTree from "../../common/MapValuesTree.js";
 import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * Map the top-level values of a graph with a map function.
+ * Map the top-level values of a tree with a map function.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {Invocable} mapFn
  * @param {PlainObject} options
  */
-export default function map(graphable, mapFn, options = {}) {
+export default function map(treelike, mapFn, options = {}) {
   assertScopeIsDefined(this);
-  if (!graphable) {
+  if (!treelike) {
     return undefined;
   }
 
   /** @type {any} */
-  const GraphClass =
-    options.extension === undefined ? MapValuesGraph : MapExtensionsGraph;
-  const mappedGraph = new (InheritScopeTransform(GraphClass))(
-    graphable,
+  const TreeClass =
+    options.extension === undefined ? MapValuesTree : MapExtensionsTree;
+  const mappedTree = new (InheritScopeTransform(TreeClass))(
+    treelike,
     mapFn,
     options
   );
   if (this) {
-    mappedGraph.parent = this;
+    mappedTree.parent = this;
   }
-  return mappedGraph;
+  return mappedTree;
 }
 
-map.usage = `map <graph, fn>\tMap the top-level values in a graph`;
+map.usage = `map <tree, fn>\tMap the top-level values in a tree`;
 map.documentation = "https://graphorigami.org/cli/builtins.html#map";

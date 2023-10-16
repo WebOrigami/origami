@@ -1,10 +1,10 @@
-import { ObjectGraph } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import execute from "../../src/language/execute.js";
 import * as ops from "../../src/language/ops.js";
 
-describe.only("execute", () => {
+describe("execute", () => {
   test("can retrieve values from scope", async () => {
     const code = [ops.scope, "message"];
     const scope = {
@@ -21,7 +21,7 @@ describe.only("execute", () => {
       [ops.scope, "name"],
     ];
 
-    const scope = new ObjectGraph({
+    const scope = new ObjectTree({
       async greet(name) {
         return `Hello ${name}`;
       },
@@ -42,7 +42,7 @@ describe.only("execute", () => {
     await execute.call(scope, code);
   });
 
-  test.only("if object in function position isn't a function, can unpack it", async () => {
+  test("if object in function position isn't a function, can unpack it", async () => {
     const fn = (...args) => args.join(",");
     const packed = {
       unpack: async () => fn,

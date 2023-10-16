@@ -1,9 +1,9 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import dataflow from "../builtins/@graph/dataflow.js";
-import flowSvg from "../builtins/@graph/flowSvg.js";
+import dataflow from "../builtins/@tree/dataflow.js";
+import flowSvg from "../builtins/@tree/flowSvg.js";
 
 /**
- * Return an SVG representing the data flow for the current graph.
+ * Return an SVG representing the data flow for the current tree.
  *
  * @this {AsyncDictionary|null}
  */

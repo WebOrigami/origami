@@ -1,31 +1,31 @@
-import { Graph } from "@graphorigami/core";
-import ConstantGraph from "../common/ConstantGraph.js";
+import { Tree } from "@graphorigami/core";
+import ConstantTree from "../common/ConstantTree.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Let a graph (e.g., of files) respond to changes.
+ * Let a tree (e.g., of files) respond to changes.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} [graphable]
+ * @param {Treelike} [treelike]
  * @param {Invocable} [fn]
  */
-export default async function watch(graphable, fn) {
+export default async function watch(treelike, fn) {
   assertScopeIsDefined(this);
-  graphable = graphable ?? (await this?.get("@current"));
-  if (graphable === undefined) {
+  treelike = treelike ?? (await this?.get("@current"));
+  if (treelike === undefined) {
     return undefined;
   }
 
-  // Watch the indicated graph.
+  // Watch the indicated tree.
   /** @type {any} */
-  const container = Graph.from(graphable);
+  const container = Tree.from(treelike);
   await /** @type {any} */ (container).watch?.();
 
-  // // Watch graphs in scope.
+  // // Watch trees in scope.
   // const scope = /** @type {any} */ (container).scope;
   // await scope?.watch?.();
 
@@ -33,26 +33,26 @@ export default async function watch(graphable, fn) {
     return container;
   }
 
-  // The caller supplied a function to reevaluate whenever the graph changes.
-  let graph = await evaluateGraph(container.scope, fn);
+  // The caller supplied a function to reevaluate whenever the tree changes.
+  let tree = await evaluateTree(container.scope, fn);
 
-  // We want to return a stable reference to the graph, so we'll use a prototype
-  // chain that will always point to the latest graph. We'll extend the graph's
+  // We want to return a stable reference to the tree, so we'll use a prototype
+  // chain that will always point to the latest tree. We'll extend the tree's
   // prototype chain with an empty object, and use that as a handle (pointer to
-  // a pointer) to the graph. This is what we'll return to the caller.
-  const handle = Object.create(graph);
+  // a pointer) to the tree. This is what we'll return to the caller.
+  const handle = Object.create(tree);
 
-  // Reevaluate the function whenever the graph changes.
+  // Reevaluate the function whenever the tree changes.
   container.addEventListener?.("change", async () => {
-    const graph = await evaluateGraph(container.scope, fn);
-    updateIndirectPointer(handle, graph);
+    const tree = await evaluateTree(container.scope, fn);
+    updateIndirectPointer(handle, tree);
   });
 
   return handle;
 }
 
-async function evaluateGraph(scope, fn) {
-  let graph;
+async function evaluateTree(scope, fn) {
+  let tree;
   let message;
   let result;
   try {
@@ -60,16 +60,16 @@ async function evaluateGraph(scope, fn) {
   } catch (error) {
     message = messageForError(error);
   }
-  graph = result ? Graph.from(result) : undefined;
-  if (graph) {
-    return graph;
+  tree = result ? Tree.from(result) : undefined;
+  if (tree) {
+    return tree;
   }
   if (!message) {
-    message = `warning: watch expression did not return a graph`;
+    message = `warning: watch expression did not return a tree`;
   }
   console.warn(message);
-  graph = new ConstantGraph(message);
-  return graph;
+  tree = new ConstantTree(message);
+  return tree;
 }
 
 function messageForError(error) {
@@ -100,5 +100,5 @@ function updateIndirectPointer(indirect, target) {
   Object.setPrototypeOf(indirect, target);
 }
 
-watch.usage = `@watch <folder>, [expr]\tLet a folder graph respond to changes`;
+watch.usage = `@watch <folder>, [expr]\tLet a folder tree respond to changes`;
 watch.documentation = "https://graphorigami.org/language/@watch.html";

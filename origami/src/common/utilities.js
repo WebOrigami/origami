@@ -1,8 +1,8 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
-import { isGraphable } from "@graphorigami/core/src/Graph.js";
+import { Tree } from "@graphorigami/core";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
+
+/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 
 // If the given plain object has only integer keys, return it as an array.
 // Otherwise return it as is.
@@ -59,22 +59,22 @@ export function getRealmObjectPrototype(obj) {
 }
 
 /**
- * If the given graph has a `scope` property, return that. If the graph has a
- * `parent` property, construct a scope for the graph and its parent. Otherwise,
- * return the graph itself.
+ * If the given tree has a `scope` property, return that. If the tree has a
+ * `parent` property, construct a scope for the tree and its parent. Otherwise,
+ * return the tree itself.
  *
- * @param {AsyncDictionary|null} graph
+ * @param {AsyncDictionary|null} tree
  * @returns {AsyncDictionary|null}
  */
-export function getScope(graph) {
-  if (!graph) {
+export function getScope(tree) {
+  if (!tree) {
     return null;
-  } else if ("scope" in graph) {
-    return /** @type {any} */ (graph).scope;
-  } else if ("parent" in graph) {
-    return new Scope(graph, getScope(/** @type {any} */ (graph).parent));
+  } else if ("scope" in tree) {
+    return /** @type {any} */ (tree).scope;
+  } else if ("parent" in tree) {
+    return new Scope(tree, getScope(/** @type {any} */ (tree).parent));
   } else {
-    return graph;
+    return tree;
   }
 }
 
@@ -143,24 +143,24 @@ export function isTransformApplied(Transform, obj) {
 export const keySymbol = Symbol("key");
 
 /**
- * Return a new graph equivalent to the given graph, but with the given context.
+ * Return a new tree equivalent to the given tree, but with the given context.
  *
- * If the graph already has a `parent` property, this uses the graph as a
- * prototype for the result -- the original graph is not modified. If the graph
+ * If the tree already has a `parent` property, this uses the tree as a
+ * prototype for the result -- the original tree is not modified. If the tree
  * doesn't have a `parent` property, this applies InheritScopeTransform.
  *
- * @typedef {import("@graphorigami/core").Treelike} Graphable
- * @param {Graphable} graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @param {Treelike} treelike
  * @param {AsyncDictionary|null} context
  * @returns {AsyncDictionary & { parent: AsyncDictionary }}
  */
-export function graphInContext(graphable, context) {
-  // Either method of constructing the target produces a new graph.
-  const graph = Graph.from(graphable);
+export function treeInContext(treelike, context) {
+  // Either method of constructing the target produces a new tree.
+  const tree = Tree.from(treelike);
   const target =
-    "parent" in graph
-      ? Object.create(graph)
-      : transformObject(InheritScopeTransform, graph);
+    "parent" in tree
+      ? Object.create(tree)
+      : transformObject(InheritScopeTransform, tree);
   target.parent = context;
   return target;
 }
@@ -190,9 +190,9 @@ export function toFunction(obj) {
       }
       return fn.call(this, ...args);
     };
-  } else if (isGraphable(obj)) {
-    // Return a function that invokes the graph's getter.
-    return Graph.toFunction(obj);
+  } else if (Tree.isTreelike(obj)) {
+    // Return a function that invokes the tree's getter.
+    return Tree.toFunction(obj);
   } else {
     // Return a constant function.
     return () => obj;

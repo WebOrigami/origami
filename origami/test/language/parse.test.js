@@ -1,4 +1,4 @@
-import { defaultValueKey } from "@graphorigami/core/src/Graph.js";
+import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { tokenType } from "../../src/language/lex.js";
@@ -9,8 +9,6 @@ import {
   assignment,
   expression,
   functionComposition,
-  graph,
-  graphDocument,
   group,
   implicitParensCall,
   lambda,
@@ -28,6 +26,8 @@ import {
   substitution,
   templateContents,
   templateLiteral,
+  tree,
+  treeDocument,
 } from "../../src/language/parse.js";
 
 describe("parse", () => {
@@ -359,50 +359,50 @@ describe("parse", () => {
       );
     });
 
-    test("graph/", () => {
+    test("tree/", () => {
       assertParse(
         functionComposition([
-          { type: tokenType.REFERENCE, lexeme: "graph" },
+          { type: tokenType.REFERENCE, lexeme: "tree" },
           { type: tokenType.SLASH, lexeme: "/" },
         ]),
-        [[ops.scope, "graph"], defaultValueKey]
+        [[ops.scope, "tree"], defaultValueKey]
       );
     });
 
-    test("graph/key", () => {
+    test("tree/key", () => {
       assertParse(
         functionComposition([
-          { type: tokenType.REFERENCE, lexeme: "graph" },
+          { type: tokenType.REFERENCE, lexeme: "tree" },
           { type: tokenType.SLASH, lexeme: "/" },
           { type: tokenType.REFERENCE, lexeme: "key" },
         ]),
-        [[ops.scope, "graph"], "key"]
+        [[ops.scope, "tree"], "key"]
       );
     });
 
-    test("graph/foo/bar", () => {
+    test("tree/foo/bar", () => {
       assertParse(
         functionComposition([
-          { type: tokenType.REFERENCE, lexeme: "graph" },
+          { type: tokenType.REFERENCE, lexeme: "tree" },
           { type: tokenType.SLASH, lexeme: "/" },
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH, lexeme: "/" },
           { type: tokenType.REFERENCE, lexeme: "bar" },
         ]),
-        [[ops.scope, "graph"], "foo", "bar"]
+        [[ops.scope, "tree"], "foo", "bar"]
       );
     });
 
-    test("graph/key()", () => {
+    test("tree/key()", () => {
       assertParse(
         functionComposition([
-          { type: tokenType.REFERENCE, lexeme: "graph" },
+          { type: tokenType.REFERENCE, lexeme: "tree" },
           { type: tokenType.SLASH, lexeme: "/" },
           { type: tokenType.REFERENCE, lexeme: "key" },
           { type: tokenType.LEFT_PAREN, lexeme: "(" },
           { type: tokenType.RIGHT_PAREN, lexeme: ")" },
         ]),
-        [[[ops.scope, "graph"], "key"], undefined]
+        [[[ops.scope, "tree"], "key"], undefined]
       );
     });
 
@@ -494,20 +494,17 @@ describe("parse", () => {
     });
   });
 
-  describe("graph", () => {
+  describe("tree", () => {
     test("{}", () => {
       assertParse(
-        graph([
-          { type: tokenType.LEFT_BRACE },
-          { type: tokenType.RIGHT_BRACE },
-        ]),
-        [ops.graph, {}]
+        tree([{ type: tokenType.LEFT_BRACE }, { type: tokenType.RIGHT_BRACE }]),
+        [ops.tree, {}]
       );
     });
 
     test("{ x = fn('a') }", () => {
       assertParse(
-        graph([
+        tree([
           { type: tokenType.LEFT_BRACE },
           { type: tokenType.REFERENCE, lexeme: "x" },
           { type: tokenType.EQUALS },
@@ -518,7 +515,7 @@ describe("parse", () => {
           { type: tokenType.RIGHT_BRACE },
         ]),
         [
-          ops.graph,
+          ops.tree,
           {
             x: [[ops.scope, "fn"], "a"],
           },
@@ -527,21 +524,21 @@ describe("parse", () => {
     });
   });
 
-  describe("graphDocument", () => {
+  describe("treeDocument", () => {
     test("{}", () => {
-      assertParse(graphDocument([]), [ops.graph, {}]);
+      assertParse(treeDocument([]), [ops.tree, {}]);
     });
 
     test("{ a = 1, b }", () => {
       assertParse(
-        graphDocument([
+        treeDocument([
           { type: tokenType.REFERENCE, lexeme: "a" },
           { type: tokenType.EQUALS },
           { type: tokenType.NUMBER, lexeme: "1" },
           { type: tokenType.SEPARATOR },
           { type: tokenType.REFERENCE, lexeme: "b" },
         ]),
-        [ops.graph, { a: 1, b: [ops.inherited, "b"] }]
+        [ops.tree, { a: 1, b: [ops.inherited, "b"] }]
       );
     });
   });
@@ -674,7 +671,7 @@ describe("parse", () => {
       );
     });
 
-    test("https://example.com/graph.yaml 'key'", () => {
+    test("https://example.com/tree.yaml 'key'", () => {
       assertParse(
         implicitParensCall([
           { type: tokenType.REFERENCE, lexeme: "https" },
@@ -683,11 +680,11 @@ describe("parse", () => {
           { type: tokenType.SLASH },
           { type: tokenType.REFERENCE, lexeme: "example.com" },
           { type: tokenType.SLASH },
-          { type: tokenType.REFERENCE, lexeme: "graph.yaml" },
+          { type: tokenType.REFERENCE, lexeme: "tree.yaml" },
           { type: tokenType.SIGNIFICANT_SPACE, lexeme: " " },
           { type: tokenType.STRING, lexeme: "key" },
         ]),
-        [[ops.https, "example.com", "graph.yaml"], "key"]
+        [[ops.https, "example.com", "tree.yaml"], "key"]
       );
     });
   });

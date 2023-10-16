@@ -1,4 +1,4 @@
 title: Reference the special context key
 
-# This will pull in the value of "obj.yaml" from the outer graph.
+# This will pull in the value of "obj.yaml" from the outer tree.
 obj = context 'obj.yaml':

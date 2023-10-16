@@ -1,4 +1,4 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
@@ -12,30 +12,30 @@ import watch from "./@watch.js";
 const defaultPort = 5000;
 
 /**
- * Start a local web server for the indicated graph.
+ * Start a local web server for the indicated tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
- * @param {Graphable} graphable
+ * @param {Treelike} treelike
  * @param {number} [port]
  * @this {AsyncDictionary|null}
  */
-export default async function serve(graphable, port) {
+export default async function serve(treelike, port) {
   assertScopeIsDefined(this);
-  let graph;
-  if (graphable) {
-    graph = Graph.from(graphable);
+  let tree;
+  if (treelike) {
+    tree = Tree.from(treelike);
 
     // TODO: Instead of applying ExplorableSiteTransform, apply a transform
     // that just maps the defaultValueKey to index.html.
-    if (!isTransformApplied(ExplorableSiteTransform, graph)) {
-      graph = transformObject(ExplorableSiteTransform, graph);
+    if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+      tree = transformObject(ExplorableSiteTransform, tree);
     }
   } else {
-    // By default, watch the default graph and add default pages.
+    // By default, watch the default tree and add default pages.
     const withDefaults = await debug.call(this);
-    graph = await watch.call(this, withDefaults);
+    tree = await watch.call(this, withDefaults);
   }
 
   if (port === undefined) {
@@ -49,7 +49,7 @@ export default async function serve(graphable, port) {
   }
 
   // @ts-ignore
-  http.createServer(requestListener(graph)).listen(port, undefined, () => {
+  http.createServer(requestListener(tree)).listen(port, undefined, () => {
     console.log(
       `Server running at http://localhost:${port}. Press Ctrl+C to stop.`
     );
@@ -70,5 +70,5 @@ function findOpenPort(port) {
   );
 }
 
-serve.usage = `@serve <graph>, [port]\tStart a web server for the graph`;
+serve.usage = `@serve <tree>, [port]\tStart a web server for the tree`;
 serve.documentation = "https://graphorigami.org/language/@serve.html";

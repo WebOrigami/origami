@@ -1,31 +1,31 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import setDeep from "./@graph/setDeep.js";
+import setDeep from "./@tree/setDeep.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
  * @this {AsyncDictionary|null}
- * @param {Graphable} source
- * @param {Graphable} target
+ * @param {Treelike} source
+ * @param {Treelike} target
  */
 export default async function copy(source, target) {
   assertScopeIsDefined(this);
   // const start = performance.now();
-  const sourceGraph = Graph.from(source);
-  /** @type {any} */ let targetGraph = Graph.from(target);
+  const sourceTree = Tree.from(source);
+  /** @type {any} */ let targetTree = Tree.from(target);
 
   if (stdout.isTTY) {
-    targetGraph = transformObject(ProgressTransform, targetGraph);
-    copyRoot = targetGraph;
+    targetTree = transformObject(ProgressTransform, targetTree);
+    copyRoot = targetTree;
     countFiles = 0;
     countCopied = 0;
   }
 
-  await setDeep(targetGraph, sourceGraph);
+  await setDeep(targetTree, sourceTree);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
@@ -62,5 +62,5 @@ function ProgressTransform(Base) {
   };
 }
 
-copy.usage = `@copy <source>, <target>\tCopies the source graph to the target`;
+copy.usage = `@copy <source>, <target>\tCopies the source tree to the target`;
 copy.documentation = "https://graphorigami.org/language/@copy.html";

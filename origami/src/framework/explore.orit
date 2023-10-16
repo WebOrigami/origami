@@ -218,7 +218,7 @@
   </head>
   <body>
     <nav>
-    <div id="label">Graph Origami Explorer</div>
+    <div id="label">Tree Origami Explorer</div>
     <div id="scopeToolbar">
       <button id="buttonContent">Content</button>
       <button id="buttonIndex">Index</button>

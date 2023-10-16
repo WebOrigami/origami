@@ -24,17 +24,17 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code, true), "foo()");
   });
 
-  test("graph traversal with string args", () => {
+  test("tree traversal with string args", () => {
     const code = [[ops.scope, "a"], "b", "c"];
     assert.equal(format(code), "a/b/c");
   });
 
-  test("graph traversal with numeric and string args", () => {
+  test("tree traversal with numeric and string args", () => {
     const code = [ops.scope, "fn", "x", 1, 2];
     assert.equal(format(code), "fn('x', 1, 2)");
   });
 
-  test("graph traversal with function arg and string arg", () => {
+  test("tree traversal with function arg and string arg", () => {
     const code = [ops.scope, "fn", [ops.scope, "foo"], "bar"];
     assert.equal(format(code), "fn(foo, 'bar')");
   });
@@ -44,8 +44,8 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code), "(fn/a)/b");
   });
 
-  test("graph", () => {
-    const code = [ops.graph, { x: [[ops.scope, "fn"], undefined] }];
+  test("tree", () => {
+    const code = [ops.tree, { x: [[ops.scope, "fn"], undefined] }];
     assert.equal(format(code), "{ x = fn() }");
   });
 

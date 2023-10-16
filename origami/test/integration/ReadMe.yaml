@@ -10,7 +10,7 @@
 # * Each file defines a single suite of tests.
 # * Each suite defines a `tests` array of tests.
 # * Each test has a `title`, a `fixture`, and an `expected` value.
-# * The `fixture` object defines an Origami graph. This graph contains at least
+# * The `fixture` object defines an Origami tree. This tree contains at least
 #   one value named `actual.ori`.
 # * The `actual.ori` value is an Origami expression that will be evaluated in
 #   the context of the `fixture`. The expression can reference other values in

@@ -1,13 +1,7 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
-import {
-  getScope,
-  graphInContext,
-  isTransformApplied,
-  transformObject,
-} from "./utilities.js";
+import { getScope, treeInContext } from "./utilities.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This
@@ -27,10 +21,10 @@ export default function processUnpackedContent(content, parent, attachedData) {
     const parentScope = parent ? getScope(parent) : builtins;
     /** @this {AsyncDictionary|null} */
     function extendScope(input, ...rest) {
-      let attachedGraph;
+      let attachedTree;
       if (attachedData) {
-        const ambientGraph = graphInContext({ _: input }, parent);
-        attachedGraph = graphInContext(attachedData, ambientGraph);
+        const ambientTree = treeInContext({ _: input }, parent);
+        attachedTree = treeInContext(attachedData, ambientTree);
       }
 
       const baseScope = this ?? builtins;
@@ -39,14 +33,14 @@ export default function processUnpackedContent(content, parent, attachedData) {
           "@container": parent,
           "@local": parentScope,
         },
-        attachedGraph,
+        attachedTree,
         baseScope
       );
       return fn.call(extendedScope, input, ...rest);
     }
     extendScope.code = fn.code;
     return extendScope;
-  } else if (Graph.isAsyncDictionary(content) && "parent" in content) {
+  } else if (Tree.isAsyncDictionary(content) && "parent" in content) {
     const result = Object.create(content);
     result.parent = getScope(parent);
     return result;

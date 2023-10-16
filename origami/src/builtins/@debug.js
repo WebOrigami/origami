@@ -2,7 +2,7 @@
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  */
 
-import { Dictionary, Graph } from "@graphorigami/core";
+import { Dictionary, Tree } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import {
   isPlainObject,
@@ -14,37 +14,37 @@ import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Add debugging features to the indicated graph.
+ * Add debugging features to the indicated tree.
  *
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
- * @param {Graphable} [graphable]
+ * @param {Treelike} [treelike]
  */
-export default async function debug(graphable) {
+export default async function debug(treelike) {
   assertScopeIsDefined(this);
-  graphable = graphable ?? (await this?.get("@current"));
-  if (graphable === undefined) {
+  treelike = treelike ?? (await this?.get("@current"));
+  if (treelike === undefined) {
     return;
   }
 
   /** @type {any} */
-  let graph = Graph.from(graphable);
+  let tree = Tree.from(treelike);
 
-  if (!isTransformApplied(ExplorableSiteTransform, graph)) {
-    graph = transformObject(ExplorableSiteTransform, graph);
+  if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+    tree = transformObject(ExplorableSiteTransform, tree);
   }
 
-  // Apply InheritScopeTransform to the graph if it doesn't have a scope yet so
+  // Apply InheritScopeTransform to the tree if it doesn't have a scope yet so
   // that we can view scope when debugging values inside it.
-  if (!graph.scope) {
-    if (!isTransformApplied(InheritScopeTransform, graph)) {
-      graph = transformObject(InheritScopeTransform, graph);
+  if (!tree.scope) {
+    if (!isTransformApplied(InheritScopeTransform, tree)) {
+      tree = transformObject(InheritScopeTransform, tree);
     }
-    graph.parent = this;
+    tree.parent = this;
   }
 
-  graph = transformObject(DebugTransform, graph);
-  return graph;
+  tree = transformObject(DebugTransform, tree);
+  return tree;
 }
 
 /**
@@ -57,9 +57,9 @@ function DebugTransform(Base) {
       let value = await super.get(key);
 
       // Since this transform is for diagnostic purposes, cast arrays
-      // or plain objects to graphs so we can debug them too.
+      // or plain objects to trees so we can debug them too.
       if (value instanceof Array || isPlainObject(value)) {
-        value = Graph.from(value);
+        value = Tree.from(value);
       }
 
       const parent = this;
@@ -81,27 +81,27 @@ function DebugTransform(Base) {
       }
 
       if (value?.unpack) {
-        // If the value isn't a graph, but has a graph attached via an `unpack`
+        // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to provide debug support for it.
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           let content = await original();
-          if (!Graph.isTreelike(content)) {
+          if (!Tree.isTreelike(content)) {
             return content;
           }
           /** @type {any} */
-          let graph = Graph.from(content);
-          if (!isTransformApplied(ExplorableSiteTransform, graph)) {
-            graph = transformObject(ExplorableSiteTransform, graph);
+          let tree = Tree.from(content);
+          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+            tree = transformObject(ExplorableSiteTransform, tree);
           }
-          if (!isTransformApplied(InheritScopeTransform, graph)) {
-            graph = transformObject(InheritScopeTransform, graph);
+          if (!isTransformApplied(InheritScopeTransform, tree)) {
+            tree = transformObject(InheritScopeTransform, tree);
           }
-          if (!isTransformApplied(DebugTransform, graph)) {
-            graph = transformObject(DebugTransform, graph);
+          if (!isTransformApplied(DebugTransform, tree)) {
+            tree = transformObject(DebugTransform, tree);
           }
-          graph.parent = parent;
-          return graph;
+          tree.parent = parent;
+          return tree;
         };
       }
 
@@ -110,5 +110,5 @@ function DebugTransform(Base) {
   };
 }
 
-debug.usage = `@debug <graph>\tAdd debug features to a graph`;
+debug.usage = `@debug <tree>\tAdd debug features to a tree`;
 debug.documentation = "https://graphorigami.org/language/@debug.html";

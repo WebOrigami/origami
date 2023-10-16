@@ -4,17 +4,17 @@
  */
 
 import filesBuiltin from "../builtins/@files.js";
-import concatBuiltin from "../builtins/@graph/concat.js";
-import graphHttpBuiltin from "../builtins/@graphHttp.js";
-import graphHttpsBuiltin from "../builtins/@graphHttps.js";
 import httpBuiltin from "../builtins/@http.js";
 import httpsBuiltin from "../builtins/@https.js";
+import concatBuiltin from "../builtins/@tree/concat.js";
+import treeHttpBuiltin from "../builtins/@treeHttp.js";
+import treeHttpsBuiltin from "../builtins/@treeHttps.js";
 import Scope from "../common/Scope.js";
 import execute from "./execute.js";
 import { createExpressionFunction } from "./expressionFunction.js";
 
-// Lazily load OrigamiGraph to avoid circular dependencies.
-const origamiGraphPromise = import("../framework/OrigamiGraph.js").then(
+// Lazily load OrigamiTree to avoid circular dependencies.
+const origamiTreePromise = import("../framework/OrigamiTree.js").then(
   (exports) => exports.default
 );
 
@@ -45,7 +45,7 @@ export async function concat(...args) {
 concat.toString = () => "«ops.concat»";
 
 /**
- * Construct a files graph for the filesystem root.
+ * Construct a files tree for the filesystem root.
  *
  * @this {AsyncDictionary|null}
  */
@@ -59,52 +59,6 @@ export async function filesRoot() {
 
   return root;
 }
-
-/**
- * Construct an graph. This is similar to ops.object but the result is an
- * OrigamiGraph instance.
- *
- * @this {AsyncDictionary|null}
- * @param {PlainObject} formulas
- */
-export async function graph(formulas) {
-  const fns = {};
-  for (const key in formulas) {
-    const code = formulas[key];
-    const fn = code instanceof Array ? createExpressionFunction(code) : code;
-    fns[key] = fn;
-  }
-
-  const OrigamiGraph = await origamiGraphPromise;
-  const result = new OrigamiGraph(fns);
-  result.parent = this;
-  return result;
-}
-graph.toString = () => "«ops.graph»";
-
-/**
- * A website graph via HTTP.
- *
- * @this {AsyncDictionary|null}
- * @param {string} domain
- * @param  {...string} keys
- */
-export function graphHttp(domain, ...keys) {
-  return graphHttpBuiltin.call(this, domain, ...keys);
-}
-graphHttp.toString = () => "«ops.graphHttp»";
-
-/**
- * A website graph via HTTPS.
- *
- * @this {AsyncDictionary|null}
- * @param {string} domain
- * @param  {...string} keys
- */
-export function graphHttps(domain, ...keys) {
-  return graphHttpsBuiltin.call(this, domain, ...keys);
-}
-graphHttps.toString = () => "«ops.graphHttps»";
 
 /**
  * Retrieve a web resource via HTTP.
@@ -131,7 +85,7 @@ export function https(domain, ...keys) {
 https.toString = () => "«ops.https»";
 
 /**
- * Search the inherited scope -- i.e., exclude the current graph -- for the
+ * Search the inherited scope -- i.e., exclude the current tree -- for the
  * given key.
  *
  * @this {AsyncDictionary|null}
@@ -139,8 +93,8 @@ https.toString = () => "«ops.https»";
  */
 export async function inherited(key) {
   const scope = this;
-  const scopeGraphs = /** @type {any} */ (scope).graphs ?? scope;
-  const inheritedScope = new Scope(...scopeGraphs.slice(1));
+  const scopeTrees = /** @type {any} */ (scope).trees ?? scope;
+  const inheritedScope = new Scope(...scopeTrees.slice(1));
   return inheritedScope.get(key);
 }
 inherited.toString = () => "«ops.inherited»";
@@ -183,14 +137,60 @@ export async function object(obj) {
     const code = obj[key];
     evaluated[key] = await execute.call(this, code);
   }
-  // const result = new (FileTreeTransform(ObjectGraph))(evaluated);
+  // const result = new (FileTreeTransform(ObjectTree))(evaluated);
   // result.parent = this;
   // return result;
   return evaluated;
 }
 object.toString = () => "«ops.object»";
 
-// The scope op is a placeholder for the graph's scope.
+/**
+ * Construct an tree. This is similar to ops.object but the result is an
+ * OrigamiTree instance.
+ *
+ * @this {AsyncDictionary|null}
+ * @param {PlainObject} formulas
+ */
+export async function tree(formulas) {
+  const fns = {};
+  for (const key in formulas) {
+    const code = formulas[key];
+    const fn = code instanceof Array ? createExpressionFunction(code) : code;
+    fns[key] = fn;
+  }
+
+  const OrigamiTree = await origamiTreePromise;
+  const result = new OrigamiTree(fns);
+  result.parent = this;
+  return result;
+}
+tree.toString = () => "«ops.tree»";
+
+/**
+ * A website tree via HTTP.
+ *
+ * @this {AsyncDictionary|null}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function treeHttp(domain, ...keys) {
+  return treeHttpBuiltin.call(this, domain, ...keys);
+}
+treeHttp.toString = () => "«ops.treeHttp»";
+
+/**
+ * A website tree via HTTPS.
+ *
+ * @this {AsyncDictionary|null}
+ * @param {string} domain
+ * @param  {...string} keys
+ */
+export function treeHttps(domain, ...keys) {
+  return treeHttpsBuiltin.call(this, domain, ...keys);
+}
+treeHttps.toString = () => "«ops.treeHttps»";
+
+// The scope op is a placeholder for the tree's scope.
 export const scope = "«ops.scope»";
 
 // The `thisKey` op is a placeholder that represents the key of the object that

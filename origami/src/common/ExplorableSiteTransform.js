@@ -1,4 +1,4 @@
-import { Dictionary, Graph } from "@graphorigami/core";
+import { Dictionary, Tree } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
   getScope,
@@ -8,7 +8,7 @@ import {
 import defaultKeysJson from "../framework/defaultKeysJson.js";
 
 /**
- * Wraps a graph (typically a SiteGraph) to turn a standard site into an
+ * Wraps a tree (typically a SiteTree) to turn a standard site into an
  * explorable site.
  *
  * An explorable site follows three conventions:
@@ -17,11 +17,11 @@ import defaultKeysJson from "../framework/defaultKeysJson.js";
  * 2. /foo/ is a synonym for foo/index.html
  * 3. /foo/.keys.json returns the public keys below foo/
  *
- * The first convention is handled by the Graph Origami server. This transform
+ * The first convention is handled by the Tree Origami server. This transform
  * handles the second and third conventions.
  *
  * As a convenience, this transform also provides a default index.html page if
- * the graph doesn't define one.
+ * the tree doesn't define one.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
@@ -31,15 +31,15 @@ export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
       // The default value of an explorable site is index.html.
-      if (key === Graph.defaultValueKey) {
+      if (key === Tree.defaultValueKey) {
         key = "index.html";
       }
 
-      // Ask the graph if it has the key.
+      // Ask the tree if it has the key.
       let value = await super.get(key);
 
       if (value === undefined) {
-        // The graph doesn't have the key; try the defaults.
+        // The tree doesn't have the key; try the defaults.
         const scope = getScope(this);
         if (key === "index.html") {
           value = await index.call(scope, this);
@@ -49,7 +49,7 @@ export default function ExplorableSiteTransform(Base) {
       }
 
       // Ensure this transform is applied to any explorable result. This lets
-      // the user browse into data and explorable graphs of types other than the
+      // the user browse into data and explorable trees of types other than the
       // current class.
       if (
         Dictionary.isAsyncDictionary(value) &&
@@ -59,20 +59,20 @@ export default function ExplorableSiteTransform(Base) {
       }
 
       if (value?.unpack) {
-        // If the value isn't a graph, but has a graph attached via a `unpack`
+        // If the value isn't a tree, but has a tree attached via a `unpack`
         // method, wrap the unpack method to add this transform.
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           const content = await original();
-          if (!Graph.isTreelike(content)) {
+          if (!Tree.isTreelike(content)) {
             return content;
           }
           /** @type {any} */
-          let graph = Graph.from(content);
-          if (!isTransformApplied(ExplorableSiteTransform, graph)) {
-            graph = transformObject(ExplorableSiteTransform, graph);
+          let tree = Tree.from(content);
+          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+            tree = transformObject(ExplorableSiteTransform, tree);
           }
-          return graph;
+          return tree;
         };
       }
       return value;

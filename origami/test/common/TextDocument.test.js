@@ -1,4 +1,4 @@
-import { Graph, ObjectGraph } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import TextDocument from "../../src/common/TextDocument.js";
@@ -45,8 +45,8 @@ message: !ori greeting
 ---
 `;
     const document = TextDocument.from(text);
-    document.parent = new ObjectGraph({ greeting: "Hello" });
-    assert.deepEqual(await Graph.plain(document.data), { message: "Hello" });
+    document.parent = new ObjectTree({ greeting: "Hello" });
+    assert.deepEqual(await Tree.plain(document.data), { message: "Hello" });
   });
 
   test("from() and pack() use the same format", async () => {

@@ -1,4 +1,4 @@
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapKeys from "../../../src/builtins/@map/keys.js";
@@ -7,7 +7,7 @@ import * as ops from "../../../src/language/ops.js";
 describe("@map/keys", () => {
   test("can define a key from a value property", async () => {
     /** @type {any} */
-    const graph = await mapKeys.call(
+    const tree = await mapKeys.call(
       null,
       [
         {
@@ -25,7 +25,7 @@ describe("@map/keys", () => {
       ],
       (value) => value.get("id")
     );
-    assert.deepEqual(await Graph.plain(graph), {
+    assert.deepEqual(await Tree.plain(tree), {
       alice: {
         id: "alice",
         name: "Alice",
@@ -43,12 +43,12 @@ describe("@map/keys", () => {
 
   test("can define a key with a lambda", async () => {
     /** @type {any} */
-    const graph = await mapKeys.call(
+    const tree = await mapKeys.call(
       null,
       [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }],
       ops.lambda.call(null, [ops.scope, "_", "name"])
     );
-    assert.deepEqual(await Graph.plain(graph), {
+    assert.deepEqual(await Tree.plain(tree), {
       Alice: { name: "Alice" },
       Bob: { name: "Bob" },
       Carol: { name: "Carol" },

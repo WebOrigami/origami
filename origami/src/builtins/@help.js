@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 const groupUrls = {
   "@cache": "https://graphorigami.org/language/@cache.html",
-  "@graph": "https://graphorigami.org/language/@graph.html",
+  "@tree": "https://graphorigami.org/language/@tree.html",
   "@image": "https://graphorigami.org/language/@image.html",
   "@map": "https://graphorigami.org/language/@map.html",
   "@parse": "https://graphorigami.org/language/@parse.html",

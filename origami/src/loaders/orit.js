@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Graph } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
 import processUnpackedContent from "../common/processUnpackedContent.js";
@@ -29,8 +29,8 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   /** @this {AsyncDictionary|null} */
   const fn = async function attachDataToResult(templateInput) {
     const text = await lambda.call(this, templateInput);
-    const data = Graph.isAsyncDictionary(templateInput)
-      ? await Graph.plain(templateInput)
+    const data = Tree.isAsyncDictionary(templateInput)
+      ? await Tree.plain(templateInput)
       : await templateInput?.unpack?.();
     return data ? new TextDocument(text, data) : text;
   };

@@ -1,20 +1,20 @@
-import GlobGraph from "../common/GlobGraph.js";
+import GlobTree from "../common/GlobTree.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * Define a graph whose keys are globs.
+ * Define a tree whose keys are globs.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/core").Treelike} Graphable
- * @param {Graphable} graph
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @param {Treelike} tree
  * @this {AsyncDictionary|null}
  */
-export default async function globs(graph) {
+export default async function globs(tree) {
   assertScopeIsDefined(this);
-  const result = new GlobGraph(graph);
+  const result = new GlobTree(tree);
   /** @type {any} */ (result).scope = this;
   return result;
 }
 
-globs.usage = `@globs <patterns>\tDefine a graph whose keys can include wildcard globs`;
+globs.usage = `@globs <patterns>\tDefine a tree whose keys can include wildcard globs`;
 globs.documentation = "https://graphorigami.org/language/@globs.html";

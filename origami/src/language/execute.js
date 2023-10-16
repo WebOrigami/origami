@@ -1,4 +1,4 @@
-import { Dictionary, Graph } from "@graphorigami/core";
+import { Dictionary, Tree } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -9,10 +9,10 @@ const expressionSymbol = Symbol("expression");
  *
  * `this` should be the scope used to look up references found in the code.
  *
- * @typedef {import("@graphorigami/core").Treelike} Graphable
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("./code").Code} Code
  *
- * @this {Graphable|null}
+ * @this {Treelike|null}
  * @param {Code} code
  */
 export default async function execute(code) {
@@ -37,13 +37,13 @@ export default async function execute(code) {
     );
   }
 
-  // The head of the array is a graph or function, the rest are args or keys.
+  // The head of the array is a tree or function, the rest are args or keys.
   let [fn, ...args] = evaluated;
 
   if (!fn) {
     // The code wants to invoke something that's not in scope.
     throw ReferenceError(
-      `Couldn't find function or graph key: ${format(code[0])}`
+      `Couldn't find function or tree key: ${format(code[0])}`
     );
   } else if (!(fn instanceof Object)) {
     throw TypeError(`Can't invoke primitive value: ${format(code[0])}`);
@@ -55,15 +55,15 @@ export default async function execute(code) {
     }
   }
 
-  // Execute the function or traverse the graph.
+  // Execute the function or traverse the tree.
   let result;
   try {
     result =
       fn instanceof Function
         ? // Invoke the function
           await fn.call(scope, ...args)
-        : // Traverse the graph.
-          await Graph.traverseOrThrow.call(scope, fn, ...args);
+        : // Traverse the tree.
+          await Tree.traverseOrThrow.call(scope, fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });
