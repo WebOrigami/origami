@@ -12,6 +12,7 @@ import debug from "./@debug.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkDir = path.resolve(dirname, "../framework");
 const frameworkFiles = new OrigamiFiles(frameworkDir);
+frameworkFiles.parent = builtins;
 
 /**
  * @this {AsyncDictionary|null}
@@ -21,8 +22,6 @@ export default async function explore() {
   const templateFile = await frameworkFiles.get("explore.orit");
   const template = await templateFile.unpack();
 
-  // const scopeTrees = scope.trees ?? [scope];
-  // const withoutBuiltins = scopeTrees.filter((tree) => !isBuiltins(tree));
   const data = await getScopeData(scope);
   const text = await template(data);
 

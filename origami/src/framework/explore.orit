@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>{{ @path }}</title>
+    <title>Graph Origami Explorer</title>
     <style>
       * {
         box-sizing: border-box;
@@ -218,7 +218,7 @@
   </head>
   <body>
     <nav>
-    <div id="label">Tree Origami Explorer</div>
+    <div id="label">Graph Origami Explorer</div>
     <div id="scopeToolbar">
       <button id="buttonContent">Content</button>
       <button id="buttonIndex">Index</button>
