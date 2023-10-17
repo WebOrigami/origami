@@ -18,6 +18,13 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
   const attachedData = inputDocument.data;
+  if (
+    parent &&
+    Tree.isAsyncDictionary(attachedData) &&
+    "parent" in attachedData
+  ) {
+    attachedData.parent = parent;
+  }
 
   // Compile the body text as an Origami expression and evaluate it.
   const expression = compile.templateDocument(text);

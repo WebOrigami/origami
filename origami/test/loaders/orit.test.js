@@ -56,6 +56,21 @@ Hello, {{ name }}!`;
     assert.deepEqual(result.parent, parent);
   });
 
+  test("front matter expressions can reference template's scope", async () => {
+    const scope = new ObjectTree({
+      greet: function (name) {
+        return `Hello, ${name}!`;
+      },
+    });
+    const text = `---
+message: !ori greet("Bob")
+---
+{{ message }}`;
+    const fn = await unpackOrigamiTemplate(text, { parent: scope });
+    const value = await fn.call();
+    assert.deepEqual(String(value), "Hello, Bob!");
+  });
+
   test("front matter expressions have input in scope via `_`", async () => {
     const text = `---
 name: !ori _/fullName
