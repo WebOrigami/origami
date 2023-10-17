@@ -32,7 +32,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
     const data = Tree.isAsyncDictionary(templateInput)
       ? await Tree.plain(templateInput)
       : await templateInput?.unpack?.();
-    return data ? new TextDocument(text, data) : text;
+    return data ? new TextDocument(text, data, parent) : text;
   };
   fn.code = lambda.code;
 

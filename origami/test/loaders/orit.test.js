@@ -45,13 +45,15 @@ Hello, {{ name }}!`;
 
   test("template result includes input data", async () => {
     const text = "Hello, {{ _/name }}!";
-    const fn = await unpackOrigamiTemplate(text);
+    const parent = new ObjectTree({});
+    const fn = await unpackOrigamiTemplate(text, { parent });
     const data = { name: "Alice" };
     const document = new TextDocument("Some text", data);
     const result = await fn(document);
     assert.deepEqual(String(result), "Hello, Alice!");
     const resultData = await result.unpack();
     assert.deepEqual(resultData, { name: "Alice" });
+    assert.deepEqual(result.parent, parent);
   });
 
   test("front matter expressions have input in scope via `_`", async () => {
