@@ -20,7 +20,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
     const fn = content;
     const parentScope = parent ? getScope(parent) : builtins;
     /** @this {AsyncDictionary|null} */
-    async function extendScope(input, ...rest) {
+    function extendScope(input, ...rest) {
       let attachedTree;
       if (attachedData) {
         const ambientTree = treeInContext({ _: input }, parent);
@@ -36,39 +36,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
         attachedTree,
         baseScope
       );
-
-      // return fn.call(extendedScope, input, ...rest);
-
-      // const result1 = await fn.call(extendedScope, input, ...rest);
-
-      let result2;
-      // try {
-      const extendedScope2 = new Scope(
-        {
-          "@container": parent,
-          "@local": parentScope,
-        },
-        attachedTree,
-        parentScope
-      );
-      result2 = await fn.call(extendedScope2, input, ...rest);
-      return result2;
-      //       } catch (e) {
-      //         console.warn(e);
-      //       }
-
-      //       if (
-      //         isStringLike(result1) &&
-      //         isStringLike(result2) &&
-      //         String(result1) !== String(result2)
-      //       ) {
-      //         const message = `Function ${format(fn.code)} returned different results
-      // #1: ${String(result1)}
-      // #2: ${String(result2)}`;
-      //         throw new Error(message);
-      //       }
-
-      //       return result1;
+      return fn.call(extendedScope, input, ...rest);
     }
     extendScope.code = fn.code;
     return extendScope;
