@@ -10,7 +10,7 @@ import * as YAMLModule from "yaml";
 import FileTreeTransform from "../framework/FileTreeTransform.js";
 import expressionTag from "../language/expressionTag.js";
 import ExpressionTree from "./ExpressionTree.js";
-import { isPlainObject } from "./utilities.js";
+import { isPlainObject, isStringLike } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
@@ -97,11 +97,11 @@ export async function toJsonValue(obj) {
     return obj;
   } else if (obj && typeof obj.pack === "function") {
     return obj.pack();
+  } else if (isStringLike(obj) && !(obj instanceof Array)) {
+    return String(obj);
   } else if (Tree.isTreelike(obj)) {
     const mapped = await Tree.map(obj, (value) => toJsonValue(value));
     return Tree.plain(mapped);
-  } else if (obj && typeof obj.toString === "function") {
-    return obj.toString();
   }
 
   throw new TypeError("Couldn't serialize object");
