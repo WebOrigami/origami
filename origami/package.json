@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/origami",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "Tree Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
