@@ -88,6 +88,7 @@ export { default as treeHttp } from "../src/builtins/@treeHttp.js";
 export { default as treeHttps } from "../src/builtins/@treeHttps.js";
 export { default as unpack } from "../src/builtins/@unpack.js";
 export { default as watch } from "../src/builtins/@watch.js";
+export { default as with } from "../src/builtins/@with.js";
 export { default as yaml } from "../src/builtins/@yaml.js";
 export { default as homeFiles } from "../src/builtins/~.js";
 export { default as defaultModuleExport } from "../src/cli/defaultModuleExport.js";
