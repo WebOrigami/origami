@@ -1,9 +1,9 @@
 name: Template integration tests
 tests:
-  - title: One template can reference another in local scope via @local
+  - title: One template can reference another in local scope
     fixture:
       actual.ori: includeGreet.orit("Bob")
-      includeGreet.orit: <h1>{{ @local/greet.orit(_) }}</h1>
+      includeGreet.orit: <h1>{{ greet.orit(_) }}</h1>
       greet.orit: Hello, {{ _ }}!
     expected: <h1>Hello, Bob!</h1>
 

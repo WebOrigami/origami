@@ -12,22 +12,12 @@ describe(".orit loader", () => {
     assert.deepEqual(value, "Hello, world!");
   });
 
-  test("loads a template that reads from the calling scope", async () => {
-    const scope = new ObjectTree({
-      name: "Alice",
-    });
-    const text = `Hello, {{ name }}!`;
-    const fn = await unpackOrigamiTemplate(text);
-    const value = await fn.call(scope);
-    assert.deepEqual(value, "Hello, Alice!");
-  });
-
-  test("template has access to its container via @container", async () => {
-    const container = new ObjectTree({
+  test("template has access to its parent via scope", async () => {
+    const parent = new ObjectTree({
       a: 1,
     });
-    const fn = await unpackOrigamiTemplate("{{ @container/a }}", {
-      parent: container,
+    const fn = await unpackOrigamiTemplate("{{ a }}", {
+      parent,
     });
     const value = await fn();
     assert.deepEqual(value, "1");
@@ -79,13 +69,5 @@ Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const value = await fn({ fullName: "Alice Andrews" });
     assert.deepEqual(String(value), "Hello, Alice Andrews!");
-  });
-
-  test("template expressions can access their defining scope via @local", async () => {
-    const parent = new ObjectTree({ name: "Bob" });
-    const text = new TextDocument(`Hello, {{ @local/name }}!`, null, parent);
-    const fn = await unpackOrigamiTemplate(text);
-    const value = await fn();
-    assert.deepEqual(value, "Hello, Bob!");
   });
 });

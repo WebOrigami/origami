@@ -57,13 +57,13 @@ describe(".ori loader", () => {
     assert.deepEqual(unpackedText, "Hello, Alice!");
   });
 
-  test("loads a template lambda that reads from scope", async () => {
-    const scope = new ObjectTree({
+  test("loads a template lambda that reads from parent scope", async () => {
+    const parent = new ObjectTree({
       name: "Alice",
     });
     const source = `=\`Hello, {{ name }}!\``;
-    const templateFn = await unpackOrigamiExpression(source);
-    const value = await templateFn.call(scope);
+    const templateFn = await unpackOrigamiExpression(source, { parent });
+    const value = await templateFn();
     assert.equal(value, "Hello, Alice!");
   });
 

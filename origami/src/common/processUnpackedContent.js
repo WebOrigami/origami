@@ -19,25 +19,19 @@ export default function processUnpackedContent(content, parent, attachedData) {
     // Wrap the function such to add ambients to the scope.
     const fn = content;
     const parentScope = parent ? getScope(parent) : builtins;
+
     /** @this {AsyncDictionary|null} */
-    function extendScope(input, ...rest) {
+    async function extendScope(input, ...rest) {
       let attachedTree;
       if (attachedData) {
+        // Give the attached tree access to the input.
         const ambientTree = treeInContext({ _: input }, parent);
         attachedTree = treeInContext(attachedData, ambientTree);
       }
-
-      const baseScope = this ?? builtins;
-      const extendedScope = new Scope(
-        {
-          "@container": parent,
-          "@local": parentScope,
-        },
-        attachedTree,
-        baseScope
-      );
+      const extendedScope = new Scope(attachedTree, parentScope);
       return fn.call(extendedScope, input, ...rest);
     }
+
     extendScope.code = fn.code;
     return extendScope;
   } else if (Tree.isAsyncDictionary(content) && "parent" in content) {
