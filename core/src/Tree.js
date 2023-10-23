@@ -18,6 +18,7 @@ export * from "./Dictionary.js";
  * @typedef {import("../index").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
+ * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  */
 
 /**
@@ -40,9 +41,9 @@ export async function assign(target, source) {
   const keys = Array.from(await sourceTree.keys());
   const promises = keys.map(async (key) => {
     const sourceValue = await sourceTree.get(key);
-    if (Dictionary.isAsyncDictionary(sourceValue)) {
+    if (isAsyncTree(sourceValue)) {
       const targetValue = await targetTree.get(key);
-      if (Dictionary.isAsyncMutableDictionary(targetValue)) {
+      if (isAsyncMutableTree(targetValue)) {
         // Both source and target are trees; recurse.
         await assign(targetValue, sourceValue);
         return;
@@ -104,6 +105,26 @@ export function from(obj) {
   }
 
   // throw new TypeError("Couldn't convert argument to an async tree");
+}
+
+/**
+ * Return true if the indicated object is an async tree.
+ *
+ * @param {any} obj
+ * @returns {obj is AsyncTree}
+ */
+export function isAsyncTree(obj) {
+  return Dictionary.isAsyncDictionary(obj) && obj && "parent2" in obj;
+}
+
+/**
+ * Return true if the indicated object is an async mutable tree.
+ *
+ * @param {any} obj
+ * @returns {obj is AsyncMutableTree}
+ */
+export function isAsyncMutableTree(obj) {
+  return isAsyncTree(obj) && Dictionary.isAsyncMutableDictionary(obj);
 }
 
 /**

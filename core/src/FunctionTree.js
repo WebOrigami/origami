@@ -7,4 +7,9 @@ import FunctionDictionary from "./FunctionDictionary.js";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
-export default class FunctionTree extends FunctionDictionary {}
+export default class FunctionTree extends FunctionDictionary {
+  constructor(fn, domain) {
+    super(fn, domain);
+    this.parent2 = null;
+  }
+}

@@ -12,6 +12,8 @@ export default interface AsyncTree extends AsyncDictionary {
   // TODO: Make this required
   parent?: AsyncDictionary|null;
 
+  parent2: AsyncDictionary|null;
+
   // TODO: Deprecate
   traverse?(...keys: any[]): Promise<any>;
 }

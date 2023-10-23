@@ -50,9 +50,17 @@ export default class DeferredTree {
   set parent(parent) {
     if (this._tree) {
       this._tree.parent = parent;
+      this._tree.parent2 = parent;
     } else {
       this._parent = parent;
     }
+  }
+
+  get parent2() {
+    return this.parent;
+  }
+  set parent2(parent) {
+    this.parent = parent;
   }
 
   async tree() {
@@ -67,6 +75,7 @@ export default class DeferredTree {
         this._tree = Tree.from(treelike);
         if (this._parent) {
           this._tree.parent = this._parent;
+          this._tree.parent2 = this._parent;
           this._parent = null;
         }
         return this._tree;

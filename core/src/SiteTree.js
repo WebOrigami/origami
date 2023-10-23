@@ -18,6 +18,7 @@ export default class SiteTree {
       this.href = href;
     }
     this.keysPromise = undefined;
+    this.parent2 = null;
   }
 
   async get(key) {

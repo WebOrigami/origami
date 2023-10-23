@@ -9,6 +9,11 @@ import * as Tree from "./Tree.js";
  * @implements {AsyncMutableTree}
  */
 export default class ObjectTree extends ObjectDictionary {
+  constructor(object) {
+    super(object);
+    this.parent2 = null;
+  }
+
   async get(key) {
     let value = await super.get(key);
     const isPlain =
@@ -17,6 +22,11 @@ export default class ObjectTree extends ObjectDictionary {
     if (isPlain) {
       value = Reflect.construct(this.constructor, [value]);
     }
+
+    if (Tree.isAsyncTree(value)) {
+      value.parent2 = this;
+    }
+
     return value;
   }
 

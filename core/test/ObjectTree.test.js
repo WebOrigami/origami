@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as Tree from "../src/Tree.js";
 import ObjectTree from "../src/ObjectTree.js";
+import * as Tree from "../src/Tree.js";
 
 describe("ObjectTree", () => {
   test("creates an ObjectTree for subtrees", async () => {
@@ -16,6 +16,18 @@ describe("ObjectTree", () => {
     assert.equal(more.constructor, ObjectTree);
     const b = await more.get("b");
     assert.equal(b, 2);
+  });
+
+  test("sets parent on subtrees", async () => {
+    const object = {
+      a: 1,
+      more: {
+        b: 2,
+      },
+    };
+    const fixture = new ObjectTree(object);
+    const more = await fixture.get("more");
+    assert.equal(more.parent2, fixture);
   });
 
   test("isKeyForSubtree() indicates which values are subtrees", async () => {
