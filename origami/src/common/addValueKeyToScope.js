@@ -9,16 +9,13 @@ import Scope from "./Scope.js";
  * @typedef {import("../../index.js").Invocable} Invocable
  *
  * @param {AsyncDictionary|null} scope
- * @param {function} valueFn
  * @param {any} value
  * @param {any} key
  * @param {string} [valueName]
  * @param {string} [keyName]
- * @returns {function}
  */
 export default function addValueKeyToScope(
   scope,
-  valueFn,
   value,
   key,
   valueName = "_",
@@ -30,5 +27,6 @@ export default function addValueKeyToScope(
     [valueName]: value,
   };
   const extendedScope = new Scope(ambients, scope);
-  return valueFn.bind(extendedScope);
+  // return valueFn.bind(extendedScope);
+  return extendedScope;
 }

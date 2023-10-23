@@ -16,6 +16,7 @@ export default class ObjectTree extends ObjectDictionary {
 
   async get(key) {
     let value = await super.get(key);
+
     const isPlain =
       value instanceof Array ||
       (Dictionary.isPlainObject(value) && !Dictionary.isAsyncDictionary(value));

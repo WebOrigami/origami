@@ -18,7 +18,6 @@ export default async function arrows(treelike) {
   }
   const tree = new ArrowTree(treelike, { deep: true });
   tree[keySymbol] = "@arrows";
-  tree.parent = this;
   return tree;
 }
 

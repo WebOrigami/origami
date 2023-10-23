@@ -10,7 +10,9 @@ export default class MapInnerKeysTree {
     this.mapInnerKeyToOuterKey = new Map();
     this.mapOuterKeyToInnerKey = new Map();
     this.options = options;
+    this.parent2 = null;
   }
+
   async get(outerKey) {
     const innerKey = await this.innerKeyForOuterKey(outerKey);
     let value =
@@ -23,6 +25,10 @@ export default class MapInnerKeysTree {
         this.keyFn,
         this.options,
       ]);
+    }
+
+    if (Tree.isAsyncTree(value)) {
+      value.parent2 = this;
     }
 
     return value;
@@ -71,14 +77,13 @@ export default class MapInnerKeysTree {
         return undefined;
       }
 
-      const keyFn = addValueKeyToScope(
-        getScope(this),
-        this.keyFn,
+      const scope = addValueKeyToScope(
+        this.scope ?? getScope(this.parent2),
         value,
         innerKey
       );
 
-      const outerKey = await keyFn(value, innerKey);
+      const outerKey = await this.keyFn.call(scope, value, innerKey);
 
       this.mapOuterKeyToInnerKey.set(outerKey, innerKey);
       this.mapInnerKeyToOuterKey.set(innerKey, outerKey);

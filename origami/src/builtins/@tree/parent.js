@@ -17,7 +17,7 @@ export default async function parent(treelike) {
     return undefined;
   }
   const tree = Tree.from(treelike);
-  return /** @type {any} */ (tree).parent;
+  return tree.parent2;
 }
 
 parent.usage = `parent\tThe parent of the current tree`;

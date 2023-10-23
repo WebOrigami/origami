@@ -1,3 +1,6 @@
+import { Tree } from "@graphorigami/core";
+import { getScope } from "./utilities.js";
+
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
@@ -11,8 +14,12 @@ export default function InvokeFunctionsTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (typeof value === "function") {
-        const scope = this.scope ?? this;
+        const scope = getScope(this);
         value = await value.call(scope);
+
+        if (Tree.isAsyncTree(value)) {
+          value.parent2 = this;
+        }
       }
       return value;
     }

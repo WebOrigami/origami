@@ -15,9 +15,6 @@ export default async function getScope(obj) {
   if (obj) {
     /** @type {any}  */
     const tree = Tree.from(obj);
-    if (obj.parent) {
-      tree.parent = obj.parent;
-    }
     return utilities.getScope(tree);
   } else {
     return this;

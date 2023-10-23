@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import { getScope, toFunction } from "./utilities.js";
 
@@ -22,6 +22,7 @@ export default class MapValuesTree {
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
     this.options = options;
+    this.parent2 = null;
   }
 
   /**
@@ -30,17 +31,17 @@ export default class MapValuesTree {
    * @param {any} key
    */
   async get(key) {
-    let value;
+    let innerValue;
     let isSubtree;
     let invokeMapFn;
     if (this.getValue || this.tree.isKeyForSubtree === undefined) {
-      value = await this.tree.get(key);
-      isSubtree = Dictionary.isAsyncDictionary(value);
-      invokeMapFn = value !== undefined;
+      innerValue = await this.tree.get(key);
+      isSubtree = Tree.isAsyncTree(innerValue);
+      invokeMapFn = innerValue !== undefined;
     } else {
       isSubtree = await this.tree.isKeyForSubtree(key);
       invokeMapFn = true;
-      value = isSubtree
+      innerValue = isSubtree
         ? // Will need to get value to create subtree.
           await this.tree.get(key)
         : // Don't need value
@@ -51,19 +52,33 @@ export default class MapValuesTree {
       return undefined;
     }
 
-    const mapFn = addValueKeyToScope(
-      getScope(this),
-      this.mapFn,
-      value,
+    const scope = addValueKeyToScope(
+      this.scope ?? getScope(this.parent2),
+      innerValue,
       key,
       this.options.valueName,
       this.options.keyName
     );
 
-    return this.deep && isSubtree
-      ? // Return mapped subtree
-        Reflect.construct(this.constructor, [value, this.mapFn, this.options])
-      : await mapFn(value); // Return mapped value
+    let outerValue;
+    if (this.deep && isSubtree) {
+      // Get mapped subtree
+      outerValue = Reflect.construct(this.constructor, [
+        innerValue,
+        this.mapFn,
+        this.options,
+      ]);
+    } else {
+      // Get mapped value
+      outerValue = await this.mapFn.call(scope, innerValue);
+    }
+
+    if (Tree.isAsyncTree(outerValue)) {
+      outerValue.parent2 = this;
+      outerValue.scope = scope;
+    }
+
+    return outerValue;
   }
 
   /**

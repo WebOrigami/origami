@@ -1,4 +1,5 @@
 import MapDictionary from "./MapDictionary.js";
+import * as Tree from "./Tree.js";
 
 /**
  * A tree of Map objects.
@@ -14,10 +15,15 @@ export default class MapTree extends MapDictionary {
 
   async get(key) {
     let value = await super.get(key);
+
     if (value instanceof Map) {
       value = Reflect.construct(this.constructor, [value]);
+    }
+
+    if (Tree.isAsyncTree(value)) {
       value.parent2 = this;
     }
+
     return value;
   }
 }

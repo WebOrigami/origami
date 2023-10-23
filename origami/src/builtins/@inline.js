@@ -17,7 +17,7 @@ export default async function inline(input) {
   const inputDocument = TextDocument.from(input);
   const templateFn = await unpackOrigamiTemplate(input);
   const text = await templateFn(inputDocument);
-  return new TextDocument(text, inputDocument.data, inputDocument.parent);
+  return new TextDocument(text, inputDocument.data, inputDocument.parent2);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

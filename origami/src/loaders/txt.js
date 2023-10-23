@@ -7,6 +7,6 @@ import TextDocument from "../common/TextDocument.js";
  */
 export default function unpackText(input, options = {}) {
   const document = TextDocument.from(input);
-  document.parent = options.parent;
+  document.parent2 = options.parent;
   return document;
 }

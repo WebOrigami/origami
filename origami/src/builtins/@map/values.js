@@ -30,9 +30,6 @@ export default function map(treelike, mapFn, options = {}) {
     mapFn,
     options
   );
-  if (this) {
-    mappedTree.parent = this;
-  }
   return mappedTree;
 }
 

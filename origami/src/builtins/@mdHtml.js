@@ -32,7 +32,11 @@ export default async function mdHtml(input) {
   const markdownDocument = TextDocument.from(input);
   const markdown = markdownDocument.text;
   const html = marked(markdown);
-  return new TextDocument(html, markdownDocument.data, markdownDocument.parent);
+  return new TextDocument(
+    html,
+    markdownDocument.data,
+    markdownDocument.parent2
+  );
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;

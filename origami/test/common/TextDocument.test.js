@@ -45,7 +45,7 @@ message: !ori greeting
 ---
 `;
     const document = TextDocument.from(text);
-    document.parent = new ObjectTree({ greeting: "Hello" });
+    document.parent2 = new ObjectTree({ greeting: "Hello" });
     assert.deepEqual(await Tree.plain(document.data), { message: "Hello" });
   });
 

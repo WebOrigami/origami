@@ -7,9 +7,8 @@
 
 import { Tree } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
-import FileTreeTransform from "../framework/FileTreeTransform.js";
+import OrigamiTree from "../framework/OrigamiTree.js";
 import expressionTag from "../language/expressionTag.js";
-import ExpressionTree from "./ExpressionTree.js";
 import { isPlainObject, isStringLike } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -57,7 +56,7 @@ export function parseYaml(text) {
     customTags: [expressionTag],
   });
   if (objectContainsFunctions(data)) {
-    return new (FileTreeTransform(ExpressionTree))(data);
+    return new OrigamiTree(data);
   } else {
     return data;
   }

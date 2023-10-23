@@ -24,9 +24,6 @@ export default async function mapKeys(treelike, keyFn, options = {}) {
     keyFn,
     options
   );
-  if (this) {
-    mappedTree.parent = this;
-  }
   return mappedTree;
 }
 

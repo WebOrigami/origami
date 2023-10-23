@@ -76,7 +76,6 @@ describe("MapKeysValuesTest", () => {
     /** @this {import("@graphorigami/types").AsyncDictionary} */
     async function outerFn(value) {
       const map = new MapKeysValuesTree(value, innerFn);
-      /** @type {any} */ (map).parent = this;
       return map;
     }
     const outerMap = new MapKeysValuesTree(tree, outerFn, {

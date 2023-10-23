@@ -23,7 +23,8 @@ describe("compile", () => {
 
   test("tree", async () => {
     const fn = compile.expression("{ message = greet(name) }");
-    const tree = await fn.call(scope);
+    const tree = await fn.call(null);
+    tree.scope = scope;
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, Alice!",
     });

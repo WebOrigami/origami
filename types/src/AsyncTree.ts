@@ -9,9 +9,7 @@ import AsyncDictionary from './AsyncDictionary';
 export default interface AsyncTree extends AsyncDictionary {
   isKeyForSubtree?(key: any): Promise<boolean>;
 
-  // TODO: Make this required
-  parent?: AsyncDictionary|null;
-
+  // TODO: Rename
   parent2: AsyncDictionary|null;
 
   // TODO: Deprecate

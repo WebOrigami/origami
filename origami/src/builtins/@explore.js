@@ -5,20 +5,19 @@ import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../common/Scope.js";
 import TextDocument from "../common/TextDocument.js";
-import { keySymbol } from "../common/utilities.js";
+import { getScope, keySymbol } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import debug from "./@debug.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkDir = path.resolve(dirname, "../framework");
 const frameworkFiles = new OrigamiFiles(frameworkDir);
-frameworkFiles.parent = builtins;
 
 /**
  * @this {AsyncDictionary|null}
  */
 export default async function explore() {
-  const scope = /** @type {any} */ (this).scope ?? this;
+  const scope = getScope(this);
   const templateFile = await frameworkFiles.get("explore.orit");
   const template = await templateFile.unpack();
 

@@ -4,7 +4,6 @@ import { describe, test } from "node:test";
 import { Tree } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import builtins from "../../src/builtins/@builtins.js";
 import MapExtensionsTree from "../../src/common/MapExtensionsTree.js";
 import TextDocument from "../../src/common/TextDocument.js";
 import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
@@ -32,9 +31,6 @@ async function registerYamlSuite(yamlFile) {
       const { title, expected } = suiteTest;
 
       const fixture = new OrigamiTree(suiteTest.fixture);
-      if (fixture) {
-        fixture.parent = builtins;
-      }
 
       test(title, async () => {
         const expression = await fixture.get("actual.ori");

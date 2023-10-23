@@ -40,7 +40,6 @@ export default async function debug(treelike) {
     if (!isTransformApplied(InheritScopeTransform, tree)) {
       tree = transformObject(InheritScopeTransform, tree);
     }
-    tree.parent = this;
   }
 
   tree = transformObject(DebugTransform, tree);
@@ -62,8 +61,6 @@ function DebugTransform(Base) {
         value = Tree.from(value);
       }
 
-      const parent = this;
-
       // Ensure debug transforms are applied to explorable results.
       if (Dictionary.isAsyncDictionary(value)) {
         if (!isTransformApplied(ExplorableSiteTransform, value)) {
@@ -73,7 +70,6 @@ function DebugTransform(Base) {
         if (!isTransformApplied(InheritScopeTransform, value)) {
           value = transformObject(InheritScopeTransform, value);
         }
-        value.parent = parent;
 
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
@@ -100,7 +96,6 @@ function DebugTransform(Base) {
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);
           }
-          tree.parent = parent;
           return tree;
         };
       }

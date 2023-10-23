@@ -1,5 +1,9 @@
 import { Tree } from "@graphorigami/core";
 
+/**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @implements {AsyncDictionary}
+ */
 export default class Scope {
   constructor(...treelikes) {
     const filtered = treelikes.filter((treelike) => treelike != undefined);

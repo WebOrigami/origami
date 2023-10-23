@@ -34,9 +34,9 @@ export default function processUnpackedContent(content, parent, attachedData) {
 
     extendScope.code = fn.code;
     return extendScope;
-  } else if (Tree.isAsyncDictionary(content) && "parent" in content) {
+  } else if (Tree.isAsyncTree(content)) {
     const result = Object.create(content);
-    result.parent = getScope(parent);
+    result.parent2 = getScope(parent);
     return result;
   } else {
     return content;

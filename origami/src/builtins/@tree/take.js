@@ -30,7 +30,6 @@ export default async function take(treelike, n) {
     },
   };
   const result = transformObject(InheritScopeTransform, takeTree);
-  result.parent = this;
   return result;
 }
 

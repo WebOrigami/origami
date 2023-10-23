@@ -17,9 +17,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  *
  * @this {AsyncDictionary|null}
  * @param {Treelike} [treelike]
- * @param {Invocable|null} [keyFn]
+ * @param {Invocable|null} [invocable]
  */
-export default async function sort(treelike, keyFn) {
+export default async function sort(treelike, invocable) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
   if (treelike === undefined) {
@@ -27,10 +27,12 @@ export default async function sort(treelike, keyFn) {
   }
   const tree = Tree.from(treelike);
 
-  if (!keyFn) {
+  if (!invocable) {
     // Simple case: sort by tree's existing keys.
     return transformObject(SortTransform, tree);
   }
+
+  const keyFn = toFunction(invocable);
 
   // Complex case: sort by a function that returns a key for each value.
   const result = Object.create(tree);
@@ -40,13 +42,8 @@ export default async function sort(treelike, keyFn) {
     // Get all the keys and map them to their sort keys.
     for (const key of await tree.keys()) {
       const value = await tree.get(key);
-      const extendedKeyFn = addValueKeyToScope(
-        getScope(this),
-        toFunction(keyFn),
-        value,
-        key
-      );
-      const sortKey = await extendedKeyFn(value, key);
+      const scope = addValueKeyToScope(getScope(this), value, key);
+      const sortKey = await keyFn.call(scope, value, key);
       sorted.push({ key, sortKey });
     }
     // Sort the key/sortKey pairs by sortKey.

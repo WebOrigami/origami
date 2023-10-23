@@ -43,8 +43,6 @@ export default async function reverse(treelike, options = {}) {
   };
 
   const result = transformObject(InheritScopeTransform, reversed);
-  result.parent = scope;
-
   return result;
 }
 

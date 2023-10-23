@@ -1,5 +1,4 @@
 import FilterTree from "../common/FilterTree.js";
-import { getScope } from "../common/utilities.js";
 import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -18,8 +17,6 @@ export default async function filter(treelike, filterVariant) {
     treelike,
     filterVariant
   );
-  const parent = /** @type {any} */ (this).parent;
-  filtered.parent = getScope(parent);
   return filtered;
 }
 

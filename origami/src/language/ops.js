@@ -55,7 +55,7 @@ export async function filesRoot() {
   // The root itself needs a parent so that expressions evaluated within it
   // (e.g., Origami expressions loaded from .ori files) will have access to
   // things like the built-in functions.
-  /** @type {any} */ (root).parent = this;
+  root.parent2 = this;
 
   return root;
 }
@@ -137,9 +137,6 @@ export async function object(obj) {
     const code = obj[key];
     evaluated[key] = await execute.call(this, code);
   }
-  // const result = new (FileTreeTransform(ObjectTree))(evaluated);
-  // result.parent = this;
-  // return result;
   return evaluated;
 }
 object.toString = () => "«ops.object»";
@@ -160,9 +157,7 @@ export async function tree(formulas) {
   }
 
   const OrigamiTree = await origamiTreePromise;
-  const result = new OrigamiTree(fns);
-  result.parent = this;
-  return result;
+  return new OrigamiTree(fns);
 }
 tree.toString = () => "«ops.tree»";
 

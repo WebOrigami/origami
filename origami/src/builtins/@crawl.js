@@ -63,7 +63,6 @@ export default async function crawl(treelike, baseHref) {
   const result = new (InheritScopeTransform(
     InvokeFunctionsTransform(ObjectTree)
   ))(cache);
-  result.parent = this;
   return result;
 }
 

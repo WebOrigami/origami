@@ -73,7 +73,6 @@ export default function match(pattern, resultFn, keys = []) {
         value = await resultFn.call(fnScope);
       } else {
         value = Object.create(resultFn);
-        value.parent = fnScope;
       }
 
       return value;
