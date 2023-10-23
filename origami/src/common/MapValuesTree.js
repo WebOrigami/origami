@@ -53,6 +53,7 @@ export default class MapValuesTree {
     }
 
     const scope = addValueKeyToScope(
+      // @ts-ignore
       this.scope ?? getScope(this.parent),
       innerValue,
       key,
@@ -75,7 +76,7 @@ export default class MapValuesTree {
 
     if (Tree.isAsyncTree(outerValue)) {
       outerValue.parent = this;
-      outerValue.scope = scope;
+      /** @type {any} */ (outerValue).scope = scope;
     }
 
     return outerValue;

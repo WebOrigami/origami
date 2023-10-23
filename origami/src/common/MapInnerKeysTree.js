@@ -78,6 +78,7 @@ export default class MapInnerKeysTree {
       }
 
       const scope = addValueKeyToScope(
+        // @ts-ignore
         this.scope ?? getScope(this.parent),
         value,
         innerKey
