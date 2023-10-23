@@ -8,8 +8,6 @@ import AsyncDictionary from './AsyncDictionary';
  */
 export default interface AsyncTree extends AsyncDictionary {
   isKeyForSubtree?(key: any): Promise<boolean>;
-
-  // TODO: Rename
   parent: AsyncDictionary|null;
 
   // TODO: Deprecate
