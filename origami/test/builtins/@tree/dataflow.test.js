@@ -90,7 +90,7 @@ c: Hello
     const tree = new (InheritScopeTransform(ExpressionTree))({
       a: createExpressionFunction([ops.scope, "b"]),
     });
-    tree.parent2 = new ExpressionTree({
+    tree.parent = new ExpressionTree({
       b: createExpressionFunction([ops.scope, "c"]),
       c: null,
     });

@@ -24,7 +24,7 @@ export default class DeferredTree {
     /** @type {AsyncTree|null} */
     this._tree = null;
     /** @type {AsyncDictionary|null} */
-    this._parent2 = null;
+    this._parent = null;
   }
 
   async get(key) {
@@ -44,14 +44,14 @@ export default class DeferredTree {
     return (await this.tree()).keys();
   }
 
-  get parent2() {
-    return this._tree?.parent2 ?? this._parent2;
+  get parent() {
+    return this._tree?.parent ?? this._parent;
   }
-  set parent2(parent) {
+  set parent(parent) {
     if (this._tree) {
-      this._tree.parent2 = parent;
+      this._tree.parent = parent;
     } else {
-      this._parent2 = parent;
+      this._parent = parent;
     }
   }
 
@@ -65,9 +65,9 @@ export default class DeferredTree {
     if (!this.treePromise) {
       this.treePromise = this.loadResult().then((treelike) => {
         this._tree = Tree.from(treelike);
-        if (this._parent2) {
-          this._tree.parent2 = this._parent2;
-          this._parent2 = null;
+        if (this._parent) {
+          this._tree.parent = this._parent;
+          this._parent = null;
         }
         return this._tree;
       });

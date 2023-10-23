@@ -22,7 +22,7 @@ export default class MapValuesTree {
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
     this.options = options;
-    this.parent2 = null;
+    this.parent = null;
   }
 
   /**
@@ -53,7 +53,7 @@ export default class MapValuesTree {
     }
 
     const scope = addValueKeyToScope(
-      this.scope ?? getScope(this.parent2),
+      this.scope ?? getScope(this.parent),
       innerValue,
       key,
       this.options.valueName,
@@ -74,7 +74,7 @@ export default class MapValuesTree {
     }
 
     if (Tree.isAsyncTree(outerValue)) {
-      outerValue.parent2 = this;
+      outerValue.parent = this;
       outerValue.scope = scope;
     }
 

@@ -55,7 +55,7 @@ export async function filesRoot() {
   // The root itself needs a parent so that expressions evaluated within it
   // (e.g., Origami expressions loaded from .ori files) will have access to
   // things like the built-in functions.
-  root.parent2 = this;
+  root.parent = this;
 
   return root;
 }

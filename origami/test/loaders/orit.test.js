@@ -43,7 +43,7 @@ Hello, {{ name }}!`;
     assert.deepEqual(String(result), "Hello, Alice!");
     const resultData = await result.unpack();
     assert.deepEqual(resultData, { name: "Alice" });
-    assert.deepEqual(result.parent2, parent);
+    assert.deepEqual(result.parent, parent);
   });
 
   test("front matter expressions can reference template's scope", async () => {

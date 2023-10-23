@@ -114,7 +114,7 @@ export function from(obj) {
  * @returns {obj is AsyncTree}
  */
 export function isAsyncTree(obj) {
-  return Dictionary.isAsyncDictionary(obj) && obj && "parent2" in obj;
+  return Dictionary.isAsyncDictionary(obj) && obj && "parent" in obj;
 }
 
 /**

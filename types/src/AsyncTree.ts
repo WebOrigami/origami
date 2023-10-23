@@ -10,7 +10,7 @@ export default interface AsyncTree extends AsyncDictionary {
   isKeyForSubtree?(key: any): Promise<boolean>;
 
   // TODO: Rename
-  parent2: AsyncDictionary|null;
+  parent: AsyncDictionary|null;
 
   // TODO: Deprecate
   traverse?(...keys: any[]): Promise<any>;

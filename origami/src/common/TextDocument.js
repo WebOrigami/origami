@@ -19,8 +19,8 @@ export default class TextDocument {
     this.text = String(text);
     this.data = data;
     this._parent = parent;
-    if (data && parent && "parent2" in data) {
-      data.parent2 = parent;
+    if (data && parent && "parent" in data) {
+      data.parent = parent;
     }
   }
 
@@ -39,7 +39,7 @@ export default class TextDocument {
    */
   static from(input) {
     if (input instanceof this) {
-      return new this(input.text, input.data, input.parent2);
+      return new this(input.text, input.data, input.parent);
     }
 
     const text = String(input);
@@ -66,13 +66,13 @@ export default class TextDocument {
     }
   }
 
-  get parent2() {
+  get parent() {
     return this._parent;
   }
-  set parent2(parent) {
+  set parent(parent) {
     this._parent = parent;
-    if (this.data && "parent2" in this.data) {
-      this.data.parent2 = parent;
+    if (this.data && "parent" in this.data) {
+      this.data.parent = parent;
     }
   }
 

@@ -17,7 +17,7 @@ export default function document(text, data, parent) {
     return new TextDocument(text, data, parent ?? this);
   } else {
     const document = TextDocument.from(text);
-    document.parent2 = parent;
+    document.parent = parent;
     return document;
   }
 }

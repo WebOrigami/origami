@@ -36,7 +36,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
     return extendScope;
   } else if (Tree.isAsyncTree(content)) {
     const result = Object.create(content);
-    result.parent2 = getScope(parent);
+    result.parent = getScope(parent);
     return result;
   } else {
     return content;

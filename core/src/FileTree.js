@@ -28,7 +28,7 @@ export default class FileTree {
     this.dirname = location.startsWith("file://")
       ? path.dirname(fileURLToPath(location))
       : path.resolve(process.cwd(), location);
-    this.parent2 = null;
+    this.parent = null;
   }
 
   async get(key) {
@@ -52,7 +52,7 @@ export default class FileTree {
     if (stats.isDirectory()) {
       // Return subdirectory as a tree
       const subtree = Reflect.construct(this.constructor, [filePath]);
-      subtree.parent2 = this;
+      subtree.parent = this;
       return subtree;
     } else {
       // Return file contents

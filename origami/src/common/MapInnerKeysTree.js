@@ -10,7 +10,7 @@ export default class MapInnerKeysTree {
     this.mapInnerKeyToOuterKey = new Map();
     this.mapOuterKeyToInnerKey = new Map();
     this.options = options;
-    this.parent2 = null;
+    this.parent = null;
   }
 
   async get(outerKey) {
@@ -28,7 +28,7 @@ export default class MapInnerKeysTree {
     }
 
     if (Tree.isAsyncTree(value)) {
-      value.parent2 = this;
+      value.parent = this;
     }
 
     return value;
@@ -78,7 +78,7 @@ export default class MapInnerKeysTree {
       }
 
       const scope = addValueKeyToScope(
-        this.scope ?? getScope(this.parent2),
+        this.scope ?? getScope(this.parent),
         value,
         innerKey
       );

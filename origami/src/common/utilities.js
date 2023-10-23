@@ -72,7 +72,7 @@ export function getScope(tree) {
   } else if ("scope" in tree) {
     return /** @type {any} */ (tree).scope;
   } else if (Tree.isAsyncTree(tree)) {
-    return new Scope(tree, getScope(tree.parent2));
+    return new Scope(tree, getScope(tree.parent));
   } else {
     return tree;
   }
@@ -161,7 +161,7 @@ export function treeInContext(treelike, context) {
     "parent" in tree
       ? Object.create(tree)
       : transformObject(InheritScopeTransform, tree);
-  target.parent2 = context;
+  target.parent = context;
   return target;
 }
 

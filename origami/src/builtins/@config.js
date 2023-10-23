@@ -13,7 +13,7 @@ import project from "./@project.js";
  */
 export default async function config(key) {
   const projectTree = await project.call(this);
-  const scope = projectTree?.parent2;
+  const scope = projectTree?.parent;
   if (!scope) {
     return undefined;
   }

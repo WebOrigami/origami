@@ -16,8 +16,8 @@ describe("DeferredTree", () => {
     };
     const parent = new ObjectTree({});
     const fixture = new DeferredTree(() => object);
-    fixture.parent2 = parent;
+    fixture.parent = parent;
     const tree = await fixture.tree();
-    assert.equal(tree.parent2, parent);
+    assert.equal(tree.parent, parent);
   });
 });

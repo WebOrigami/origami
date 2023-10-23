@@ -17,7 +17,7 @@ async function main(...args) {
 
   // If no arguments were passed, show usage.
   if (!expression) {
-    const config = projectTree.parent2;
+    const config = projectTree.parent;
     await showUsage(config);
     return;
   }
@@ -28,7 +28,7 @@ async function main(...args) {
   });
   let tree = treeInContext(
     projectTree,
-    new Scope(ambients, projectTree.parent2)
+    new Scope(ambients, projectTree.parent)
   );
 
   // Traverse from the project root to the current directory.

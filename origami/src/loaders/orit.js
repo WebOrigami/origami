@@ -12,14 +12,14 @@ import * as compile from "../language/compile.js";
  * @type {import("../..").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
-  const parent = options.parent ?? /** @type {any} */ (input)?.parent2 ?? null;
+  const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;
 
   // Get the input body text and attached content.
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
   const attachedData = inputDocument.data;
   if (parent && Tree.isAsyncTree(attachedData)) {
-    attachedData.parent2 = parent;
+    attachedData.parent = parent;
   }
 
   // Compile the body text as an Origami expression and evaluate it.

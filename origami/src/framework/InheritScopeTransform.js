@@ -18,9 +18,9 @@ export default function InheritScopeTransform(Base) {
     /** @type {import("@graphorigami/types").AsyncDictionary} */
     get scope() {
       if (this[scopeKey] === null) {
-        if (this.parent2) {
+        if (this.parent) {
           // Add parent to this tree's scope.
-          this[scopeKey] = new Scope(this, getScope(this.parent2));
+          this[scopeKey] = new Scope(this, getScope(this.parent));
         } else {
           // Scope is just the tree itself.
           this[scopeKey] = this;

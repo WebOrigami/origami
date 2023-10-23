@@ -8,7 +8,7 @@ describe("InheritScopeTransform", () => {
     const fixture = new (InheritScopeTransform(ObjectTree))({
       b: 2,
     });
-    fixture.parent2 = new ObjectTree({
+    fixture.parent = new ObjectTree({
       a: 1,
     });
     assert.deepEqual(await fixture.scope?.get("b"), 2);

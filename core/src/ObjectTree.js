@@ -11,7 +11,7 @@ import * as Tree from "./Tree.js";
 export default class ObjectTree extends ObjectDictionary {
   constructor(object) {
     super(object);
-    this.parent2 = null;
+    this.parent = null;
   }
 
   async get(key) {
@@ -25,7 +25,7 @@ export default class ObjectTree extends ObjectDictionary {
     }
 
     if (Tree.isAsyncTree(value)) {
-      value.parent2 = this;
+      value.parent = this;
     }
 
     return value;

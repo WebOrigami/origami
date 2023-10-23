@@ -8,6 +8,6 @@ describe("SetTree", () => {
     set.add(new Set("a"));
     const fixture = new SetTree(set);
     const subtree = await fixture.get(0);
-    assert.equal(subtree.parent2, fixture);
+    assert.equal(subtree.parent, fixture);
   });
 });

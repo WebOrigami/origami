@@ -7,6 +7,6 @@ describe("MapTree", () => {
     const map = new Map([["more", new Map([["a", 1]])]]);
     const fixture = new MapTree(map);
     const more = await fixture.get("more");
-    assert.equal(more.parent2, fixture);
+    assert.equal(more.parent, fixture);
   });
 });

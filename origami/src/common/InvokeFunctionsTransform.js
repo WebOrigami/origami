@@ -18,7 +18,7 @@ export default function InvokeFunctionsTransform(Base) {
         value = await value.call(scope);
 
         if (Tree.isAsyncTree(value)) {
-          value.parent2 = this;
+          value.parent = this;
         }
       }
       return value;

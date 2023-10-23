@@ -7,6 +7,6 @@ export default class OrigamiTree extends FileTreeTransform(ExpressionTree) {
     super(...args);
 
     // By default, expressions in the tree have access to built-in functions.
-    this.parent2 = builtins;
+    this.parent = builtins;
   }
 }

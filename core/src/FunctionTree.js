@@ -10,6 +10,6 @@ import FunctionDictionary from "./FunctionDictionary.js";
 export default class FunctionTree extends FunctionDictionary {
   constructor(fn, domain) {
     super(fn, domain);
-    this.parent2 = null;
+    this.parent = null;
   }
 }

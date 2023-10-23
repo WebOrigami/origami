@@ -27,7 +27,7 @@ describe("ObjectTree", () => {
     };
     const fixture = new ObjectTree(object);
     const more = await fixture.get("more");
-    assert.equal(more.parent2, fixture);
+    assert.equal(more.parent, fixture);
   });
 
   test("isKeyForSubtree() indicates which values are subtrees", async () => {

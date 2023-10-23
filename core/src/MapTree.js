@@ -10,7 +10,7 @@ import * as Tree from "./Tree.js";
 export default class MapTree extends MapDictionary {
   constructor(map) {
     super(map);
-    this.parent2 = null;
+    this.parent = null;
   }
 
   async get(key) {
@@ -21,7 +21,7 @@ export default class MapTree extends MapDictionary {
     }
 
     if (Tree.isAsyncTree(value)) {
-      value.parent2 = this;
+      value.parent = this;
     }
 
     return value;

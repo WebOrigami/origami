@@ -27,7 +27,7 @@ export default class MapKeysValuesTree {
     this.getValue = options.getValue ?? true;
     this.preferExistingValue = options.preferExistingValue ?? false;
     this.options = options;
-    this.parent2 = null;
+    this.parent = null;
   }
 
   // Apply the mapping function to the original tree's values.
@@ -65,7 +65,7 @@ export default class MapKeysValuesTree {
       : undefined;
 
     const mapFn = this.mapFn;
-    let scope = this.scope ?? getScope(this.parent2);
+    let scope = this.scope ?? getScope(this.parent);
 
     // Determine whether we want to apply the map to this value.
     const applyMap =
@@ -92,7 +92,7 @@ export default class MapKeysValuesTree {
           this.options,
         ]);
       }
-      outerValue.parent2 = this;
+      outerValue.parent = this;
       outerValue.scope = scope;
     }
 

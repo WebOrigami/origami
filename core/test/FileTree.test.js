@@ -32,7 +32,7 @@ describe("FileTree", async () => {
   test("sets parent on subtrees", async () => {
     const fixture = createFixture("fixtures");
     const markdown = await fixture.get("markdown");
-    assert.equal(markdown.parent2, fixture);
+    assert.equal(markdown.parent, fixture);
   });
 
   test("can indicate which values are subtrees", async () => {

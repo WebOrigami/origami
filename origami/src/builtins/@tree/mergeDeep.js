@@ -30,7 +30,7 @@ export default async function mergeDeep(...trees) {
     if ("parent" in scopedTree) {
       const otherTrees = trees.filter((g) => g !== tree);
       const scope = new Scope(...otherTrees, this);
-      scopedTree.parent2 = scope;
+      scopedTree.parent = scope;
     }
     return scopedTree;
   });

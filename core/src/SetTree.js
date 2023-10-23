@@ -10,7 +10,7 @@ import * as Tree from "./Tree.js";
 export default class SetTree extends SetDictionary {
   constructor(set) {
     super(set);
-    this.parent2 = null;
+    this.parent = null;
   }
 
   async get(key) {
@@ -20,7 +20,7 @@ export default class SetTree extends SetDictionary {
     }
 
     if (Tree.isAsyncTree(value)) {
-      value.parent2 = this;
+      value.parent = this;
     }
 
     return value;
