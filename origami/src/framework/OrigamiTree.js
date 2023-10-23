@@ -1,8 +1,8 @@
 import builtins from "../builtins/@builtins.js";
 import ExpressionTree from "../common/ExpressionTree.js";
-import FileTreeTransform from "./FileTreeTransform.js";
+import OrigamiTransform from "./OrigamiTransform.js";
 
-export default class OrigamiTree extends FileTreeTransform(ExpressionTree) {
+export default class OrigamiTree extends OrigamiTransform(ExpressionTree) {
   constructor(...args) {
     super(...args);
 

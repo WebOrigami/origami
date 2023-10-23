@@ -2,11 +2,11 @@ import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ArrowTree from "../../src/framework/ArrowTree.js";
-import FileTreeTransform from "../../src/framework/FileTreeTransform.js";
+import OrigamiTransform from "../../src/framework/OrigamiTransform.js";
 
 describe("ArrowTree", () => {
   test("interprets ← in a key as a function call", async () => {
-    const tree = new (FileTreeTransform(ObjectTree))({
+    const tree = new (OrigamiTransform(ObjectTree))({
       "index.html ← .orit": "<h1>{{ title }}</h1>",
       title: "Our Site",
     });

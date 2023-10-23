@@ -1,5 +1,4 @@
-import { FileTree } from "@graphorigami/core";
 import os from "node:os";
-import FileTreeTransform from "../framework/FileTreeTransform.js";
+import OrigamiFiles from "../framework/OrigamiFiles.js";
 
-export default new (FileTreeTransform(FileTree))(os.homedir());
+export default new OrigamiFiles(os.homedir());

@@ -3,11 +3,11 @@ import InheritScopeTransform from "./InheritScopeTransform.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("../../index.js").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
  * @param {AsyncDictionaryConstructor} Base
  */
-export default function FileTreeTransform(Base) {
-  return class FileTree extends InheritScopeTransform(
+export default function OrigamiTransform(Base) {
+  return class Origami extends InheritScopeTransform(
     FileLoadersTransform(Base)
   ) {};
 }
