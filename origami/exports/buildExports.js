@@ -50,12 +50,16 @@ async function exportStatementForCode(codeBuffer, key) {
     return "";
   }
 
-  const container = (await this.get("@path")) ?? "";
+  // @ts-ignore
+  const path = codeBuffer[PathTransform.pathKey] ?? "";
+  const pathParts = path.split("/");
+  pathParts.pop(); // Drop key
+
+  const container = pathParts.join("/");
   // Skip loaders
   if (container === "loaders") {
     return "";
   }
-  const path = `${container}/${key}`;
 
   const exportsDefault = code.match(/^export default /m);
   if (!exportsDefault) {
@@ -71,10 +75,7 @@ async function exportStatementForCode(codeBuffer, key) {
   // joined in camelCase to form the export name. We remove the `@` prefix from
   // any parts that start with it. As an example, the file inside the src folder
   // at `builtins/@tree/concat.js` will be identified as `treeConcat`.
-
-  // Drop the first part of the path.
-  let parts = container.split("/");
-  parts.shift();
+  let exportIdentifierParts = pathParts.slice(1);
 
   // The file name is the last part of the path; remove the .js extension.
   let name = key.slice(0, -3);
@@ -90,13 +91,15 @@ async function exportStatementForCode(codeBuffer, key) {
   }
 
   // Add the name to the parts.
-  parts.push(name);
+  exportIdentifierParts.push(name);
 
   // Remove the @ prefix from any parts, if present.
-  parts = parts.map((part) => (part.startsWith("@") ? part.slice(1) : part));
+  exportIdentifierParts = exportIdentifierParts.map((part) =>
+    part.startsWith("@") ? part.slice(1) : part
+  );
 
   // Join the parts in camelCase to form the identifier.
-  const identifier = parts
+  const identifier = exportIdentifierParts
     .map((part, index) =>
       index === 0 ? part : part[0].toUpperCase() + part.slice(1)
     )

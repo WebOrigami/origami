@@ -12,7 +12,8 @@ describe("PathTransform", () => {
       },
     });
     const result = await Tree.traverse(tree, "a", "b", "c");
-    const path = await result.get("@path");
+    // @ts-ignore
+    const path = result[PathTransform.pathKey];
     assert.equal(path, "a/b/c");
   });
 });

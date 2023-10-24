@@ -1,24 +1,18 @@
-import { Dictionary } from "@graphorigami/core";
-
-const pathKey = Symbol("path");
-
 export default function PathTransform(Base) {
   return class Path extends Base {
-    constructor(...args) {
-      super(...args);
-      // Initialize this[pathKey] to shut up TypeScript.
-      this[pathKey] = undefined;
-    }
-
     async get(key) {
       let value = await super.get(key);
-      if (Dictionary.isAsyncDictionary(value)) {
-        const path = this[pathKey] ? `${this[pathKey]}/${key}` : key;
-        value[pathKey] = path;
-      } else if (value === undefined && key === "@path") {
-        value = this[pathKey];
+      if (typeof value === "object" && value !== null) {
+        // @ts-ignore
+        const path = this[PathTransform.pathKey]
+          ? // @ts-ignore
+            `${this[PathTransform.pathKey]}/${key}`
+          : key;
+        value[PathTransform.pathKey] = path;
       }
       return value;
     }
   };
 }
+
+PathTransform.pathKey = Symbol("path");
