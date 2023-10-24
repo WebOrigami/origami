@@ -39,7 +39,8 @@ export default function FileLoadersTransform(Base) {
             // If the input is a plain string, convert it to a String so we can
             // attach an `unpack` method to it.
             value = new String(input);
-            value.unpack = () => unpackFn(input, { key, parent: this });
+            const parent = this;
+            value.unpack = () => unpackFn(input, { key, parent });
           }
 
           // Add diagnostic information.

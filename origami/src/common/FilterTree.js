@@ -1,9 +1,17 @@
 import { Dictionary, Tree } from "@graphorigami/core";
 
+/**
+ * Caches the results retrieved from one source tree in a second cache tree.
+ * The second cache tree is consulted first.
+ *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
+ */
 export default class FilterTree {
   constructor(tree, filter) {
     this.tree = Tree.from(tree);
     this.filter = Tree.from(filter);
+    this.parent = null;
   }
 
   async get(key) {

@@ -1,17 +1,25 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import path from "node:path";
 import process from "node:process";
+import { treeWithScope } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ *
  * @this {AsyncDictionary|null}
  * @param {string[]} keys
  */
 export default async function files(...keys) {
   assertScopeIsDefined(this);
   const resolved = path.resolve(process.cwd(), ...keys);
-  return new OrigamiFiles(resolved);
+  /** @type {AsyncTree} */
+  let result = new OrigamiFiles(resolved);
+  if (this) {
+    result = treeWithScope(result, this);
+  }
+  return result;
 }
 
 files.usage = `@files [path]\tTree of files at the given path`;

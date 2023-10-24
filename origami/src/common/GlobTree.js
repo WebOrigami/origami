@@ -3,9 +3,14 @@ import MergeTree from "./MergeTree.js";
 
 const globstar = "**";
 
+/**
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
+ */
 export default class GlobTree {
   constructor(globs) {
     this.globs = Tree.from(globs);
+    this.parent = null;
   }
 
   async get(key) {

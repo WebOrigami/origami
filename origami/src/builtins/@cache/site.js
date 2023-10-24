@@ -1,10 +1,12 @@
 import CacheSite from "../../common/CacheSite.js";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Caches fetch requests for a standard site.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @param {Treelike} tree
  * @param {Treelike} [cache]
@@ -13,8 +15,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  */
 export default async function cacheSite(tree, cache, filter) {
   assertScopeIsDefined(this);
-  const result = new CacheSite(tree, cache, filter);
-  /** @type {any} */ (result).scope = this;
+  /** @type {AsyncTree} */
+  let result = new CacheSite(tree, cache, filter);
+  if (this) {
+    result = treeWithScope(result, this);
+  }
   return result;
 }
 

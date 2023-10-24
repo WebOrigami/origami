@@ -4,6 +4,9 @@ import setDeep from "../builtins/@tree/setDeep.js";
 /**
  * Caches the results retrieved from one source tree in a second cache tree.
  * The second cache tree is consulted first.
+ *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
  */
 export default class CacheSite {
   /**
@@ -27,6 +30,7 @@ export default class CacheSite {
     }
 
     this.filter = filter ? Tree.from(filter) : undefined;
+    this.parent = null;
   }
 
   async get(key) {

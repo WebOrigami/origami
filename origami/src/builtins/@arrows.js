@@ -1,4 +1,4 @@
-import { keySymbol } from "../common/utilities.js";
+import { keySymbol, treeWithScope } from "../common/utilities.js";
 import ArrowTree from "../framework/ArrowTree.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -6,6 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * Interpret arrow keys in the tree as function calls.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} [treelike]
@@ -16,7 +17,11 @@ export default async function arrows(treelike) {
   if (treelike === undefined) {
     return undefined;
   }
-  const tree = new ArrowTree(treelike, { deep: true });
+  /** @type {AsyncTree} */
+  let tree = new ArrowTree(treelike, { deep: true });
+  if (this) {
+    tree = treeWithScope(tree, this);
+  }
   tree[keySymbol] = "@arrows";
   return tree;
 }

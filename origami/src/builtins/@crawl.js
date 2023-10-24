@@ -1,7 +1,7 @@
 import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
-import { isPlainObject } from "../common/utilities.js";
+import { isPlainObject, treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -13,6 +13,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * that obtain the requested value from the original site.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} treelike
@@ -59,7 +60,11 @@ export default async function crawl(treelike, baseHref) {
     }
   }
 
-  const result = new (InvokeFunctionsTransform(ObjectTree))(cache);
+  /** @type {AsyncTree} */
+  let result = new (InvokeFunctionsTransform(ObjectTree))(cache);
+  if (this) {
+    result = treeWithScope(result, this);
+  }
   return result;
 }
 

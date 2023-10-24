@@ -1,10 +1,12 @@
 import MapValuesTree from "../../common/MapValuesTree.js";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return a new tree with all values equal to null.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} [treelike]
@@ -15,7 +17,12 @@ export default async function nulls(treelike) {
   if (treelike === undefined) {
     return undefined;
   }
-  return new MapValuesTree(treelike, () => null, { deep: true });
+  /** @type {AsyncTree} */
+  let mappedTree = new MapValuesTree(treelike, () => null, { deep: true });
+  if (this) {
+    mappedTree = treeWithScope(mappedTree, this);
+  }
+  return mappedTree;
 }
 
 nulls.usage = `nulls <tree>\tReturn a new tree with all values equal to null`;

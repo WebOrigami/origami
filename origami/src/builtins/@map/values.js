@@ -1,11 +1,13 @@
 import MapExtensionsTree from "../../common/MapExtensionsTree.js";
 import MapValuesTree from "../../common/MapValuesTree.js";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Map the top-level values of a tree with a map function.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("../../..").Invocable} Invocable
@@ -21,10 +23,13 @@ export default function map(treelike, mapFn, options = {}) {
     return undefined;
   }
 
-  /** @type {any} */
   const TreeClass =
     options.extension === undefined ? MapValuesTree : MapExtensionsTree;
-  const mappedTree = new TreeClass(treelike, mapFn, options);
+  /** @type {AsyncTree} */
+  let mappedTree = new TreeClass(treelike, mapFn, options);
+  if (this) {
+    mappedTree = treeWithScope(mappedTree, this);
+  }
   return mappedTree;
 }
 

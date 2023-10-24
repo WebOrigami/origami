@@ -1,10 +1,12 @@
 import { Tree } from "@graphorigami/core";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return only the defined (not `undefined`) values in the tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
  * @this {AsyncDictionary|null}
@@ -16,7 +18,9 @@ export default async function defineds(treelike) {
   if (treelike === undefined) {
     throw new TypeError("A tree treelike is required");
   }
-  return Tree.mapReduce(treelike, null, (values, keys) => {
+
+  /** @type {AsyncTree} */
+  let result = await Tree.mapReduce(treelike, null, (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {
@@ -28,4 +32,9 @@ export default async function defineds(treelike) {
     }
     return someValuesExist ? result : null;
   });
+
+  if (this) {
+    result = treeWithScope(result, this);
+  }
+  return result;
 }

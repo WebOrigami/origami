@@ -1,5 +1,6 @@
 import { Dictionary } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
+import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -17,6 +18,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * the indicated function to produce a result.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
@@ -44,7 +46,8 @@ export default function match(pattern, resultFn, keys = []) {
   // Remember the scope used to invoke this function so we can extend it below.
   const scope = this;
 
-  return {
+  /** @type {AsyncTree} */
+  let result = {
     async get(key) {
       const keyMatch = regex.exec(key);
       if (!keyMatch) {
@@ -81,7 +84,14 @@ export default function match(pattern, resultFn, keys = []) {
     async keys() {
       return typeof keys === "function" ? await keys.call(scope) : keys;
     },
+
+    parent: null,
   };
+
+  if (this) {
+    result = treeWithScope(result, this);
+  }
+  return result;
 }
 
 match.usage = `@match <pattern>, <fn>, [<keys>]\tMatches simple patterns or regular expressions`;

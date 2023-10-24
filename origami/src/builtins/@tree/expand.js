@@ -1,11 +1,13 @@
 import { Tree } from "@graphorigami/core";
 import MapValuesTree from "../../common/MapValuesTree.js";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Expand values that can be treated as trees into trees.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} [treelike]
@@ -16,10 +18,18 @@ export default async function expand(treelike) {
   if (treelike === undefined) {
     return undefined;
   }
-  const expanded = new MapValuesTree(treelike, (value) => expandValue(value), {
-    deep: true,
-  });
-  return expanded;
+  /** @type {AsyncTree} */
+  let expandedTree = new MapValuesTree(
+    treelike,
+    (value) => expandValue(value),
+    {
+      deep: true,
+    }
+  );
+  if (this) {
+    expandedTree = treeWithScope(expandedTree, this);
+  }
+  return expandedTree;
 }
 
 function expandValue(value) {

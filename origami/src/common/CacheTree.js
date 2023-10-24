@@ -3,6 +3,9 @@ import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
 /**
  * Caches non-tree values from the first (source) tree in a second (cache)
  * tree. If no second tree is supplied, an in-memory cache is used.
+ *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
  */
 export default class CacheTree {
   /**
@@ -26,6 +29,7 @@ export default class CacheTree {
     }
 
     this.filter = filter ? Tree.from(filter) : undefined;
+    this.parent = null;
   }
 
   async get(key) {
