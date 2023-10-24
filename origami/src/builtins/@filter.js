@@ -1,5 +1,5 @@
 import FilterTree from "../common/FilterTree.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -13,10 +13,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  */
 export default async function filter(treelike, filterVariant) {
   assertScopeIsDefined(this);
-  const filtered = new (InheritScopeTransform(FilterTree))(
-    treelike,
-    filterVariant
-  );
+  const filtered = new (InheritScopeMixin(FilterTree))(treelike, filterVariant);
   return filtered;
 }
 

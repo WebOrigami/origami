@@ -1,5 +1,5 @@
 import MapInnerKeysTree from "../../common/MapInnerKeysTree.js";
-import InheritScopeTransform from "../../framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -19,7 +19,7 @@ export default async function mapKeys(treelike, keyFn, options = {}) {
   if (!treelike) {
     return undefined;
   }
-  const mappedTree = new (InheritScopeTransform(MapInnerKeysTree))(
+  const mappedTree = new (InheritScopeMixin(MapInnerKeysTree))(
     treelike,
     keyFn,
     options

@@ -125,7 +125,7 @@ export { default as defaultDataflow } from "../src//defaultDataflow.js";
 export { default as defaultKeysJson } from "../src//defaultKeysJson.js";
 export { default as DefaultPagesTransform } from "../src//DefaultPagesTransform.js";
 export { default as EventTargetMixin } from "../src//EventTargetMixin.js";
-export { default as InheritScopeTransform } from "../src//InheritScopeTransform.js";
+export { default as InheritScopeMixin } from "../src//InheritScopeMixin.js";
 export { default as OriCommandTransform } from "../src//OriCommandTransform.js";
 export { default as OrigamiFiles } from "../src//OrigamiFiles.js";
 export { default as OrigamiTransform } from "../src//OrigamiTransform.js";

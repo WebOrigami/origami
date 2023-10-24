@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import dataflow from "../../../src/builtins/@tree/dataflow.js";
 import ExpressionTree from "../../../src/common/ExpressionTree.js";
 import TextDocument from "../../../src/common/TextDocument.js";
-import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../../../src/framework/InheritScopeMixin.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
 import unpackOrigamiExpression from "../../../src/loaders/ori.js";
@@ -87,7 +87,7 @@ c: Hello
   });
 
   test("identified dependencies in scope", async () => {
-    const tree = new (InheritScopeTransform(ExpressionTree))({
+    const tree = new (InheritScopeMixin(ExpressionTree))({
       a: createExpressionFunction([ops.scope, "b"]),
     });
     tree.parent = new ExpressionTree({

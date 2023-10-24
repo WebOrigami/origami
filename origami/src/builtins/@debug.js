@@ -9,7 +9,7 @@ import {
   isTransformApplied,
   transformObject,
 } from "../common/utilities.js";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../framework/InheritScopeMixin.js";
 import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -34,11 +34,11 @@ export default async function debug(treelike) {
     tree = transformObject(ExplorableSiteTransform, tree);
   }
 
-  // Apply InheritScopeTransform to the tree if it doesn't have a scope yet so
+  // Apply InheritScopeMixin to the tree if it doesn't have a scope yet so
   // that we can view scope when debugging values inside it.
   if (!tree.scope) {
-    if (!isTransformApplied(InheritScopeTransform, tree)) {
-      tree = transformObject(InheritScopeTransform, tree);
+    if (!isTransformApplied(InheritScopeMixin, tree)) {
+      tree = transformObject(InheritScopeMixin, tree);
     }
   }
 
@@ -67,8 +67,8 @@ function DebugTransform(Base) {
           value = transformObject(ExplorableSiteTransform, value);
         }
 
-        if (!isTransformApplied(InheritScopeTransform, value)) {
-          value = transformObject(InheritScopeTransform, value);
+        if (!isTransformApplied(InheritScopeMixin, value)) {
+          value = transformObject(InheritScopeMixin, value);
         }
 
         if (!isTransformApplied(DebugTransform, value)) {
@@ -90,8 +90,8 @@ function DebugTransform(Base) {
           if (!isTransformApplied(ExplorableSiteTransform, tree)) {
             tree = transformObject(ExplorableSiteTransform, tree);
           }
-          if (!isTransformApplied(InheritScopeTransform, tree)) {
-            tree = transformObject(InheritScopeTransform, tree);
+          if (!isTransformApplied(InheritScopeMixin, tree)) {
+            tree = transformObject(InheritScopeMixin, tree);
           }
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);

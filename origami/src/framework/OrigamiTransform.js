@@ -1,5 +1,5 @@
 import FileLoadersTransform from "../common/FileLoadersTransform.js";
-import InheritScopeTransform from "./InheritScopeTransform.js";
+import InheritScopeMixin from "./InheritScopeMixin.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
@@ -7,7 +7,5 @@ import InheritScopeTransform from "./InheritScopeTransform.js";
  * @param {AsyncDictionaryConstructor} Base
  */
 export default function OrigamiTransform(Base) {
-  return class Origami extends InheritScopeTransform(
-    FileLoadersTransform(Base)
-  ) {};
+  return class Origami extends InheritScopeMixin(FileLoadersTransform(Base)) {};
 }

@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import merge from "../../../src/builtins/@tree/merge.js";
 import ExpressionTree from "../../../src/common/ExpressionTree.js";
-import InheritScopeTransform from "../../../src/framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../../../src/framework/InheritScopeMixin.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
 
@@ -32,11 +32,11 @@ describe("@tree/merge", () => {
   test("puts all trees in scope", async () => {
     const tree = await merge.call(
       null,
-      new (InheritScopeTransform(ExpressionTree))({
+      new (InheritScopeMixin(ExpressionTree))({
         a: 1,
         b: createExpressionFunction([ops.scope, "c"]),
       }),
-      new (InheritScopeTransform(ExpressionTree))({
+      new (InheritScopeMixin(ExpressionTree))({
         c: 2,
         d: createExpressionFunction([ops.scope, "a"]),
       })

@@ -1,11 +1,11 @@
 import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import InheritScopeTransform from "../../src/framework/InheritScopeTransform.js";
+import InheritScopeMixin from "../../src/framework/InheritScopeMixin.js";
 
-describe("InheritScopeTransform", () => {
+describe("InheritScopeMixin", () => {
   test("creates a scope that includes a tree and its parent", async () => {
-    const fixture = new (InheritScopeTransform(ObjectTree))({
+    const fixture = new (InheritScopeMixin(ObjectTree))({
       b: 2,
     });
     fixture.parent = new ObjectTree({
@@ -16,7 +16,7 @@ describe("InheritScopeTransform", () => {
   });
 
   test("adds a subtree's parent to the subtrees's scope", async () => {
-    const fixture = new (InheritScopeTransform(ObjectTree))({
+    const fixture = new (InheritScopeMixin(ObjectTree))({
       a: 1,
       subtree: {
         b: 2,

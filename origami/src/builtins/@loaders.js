@@ -15,7 +15,7 @@ const loadersFolder = path.resolve(dirname, "../loaders");
 //
 // We don't apply OrigamiTransform here because that imports
 // FileLoadersTransform which eventually imports this file. For the loaders, we
-// don't need the InheritScopeTransform, so we can just apply
+// don't need the InheritScopeMixin, so we can just apply
 // CommandModulesTransform and ImportModulesMixin directly.
 
 /** @type {any} */

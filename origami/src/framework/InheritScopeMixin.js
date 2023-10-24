@@ -5,10 +5,10 @@ const scopeKey = Symbol("scope");
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
-export default function InheritScopeTransform(Base) {
+export default function InheritScopeMixin(Base) {
   return class InheritScope extends Base {
     constructor(...args) {
       super(...args);

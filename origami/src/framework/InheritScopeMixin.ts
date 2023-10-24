@@ -2,8 +2,8 @@ import { Mixin } from "../..";
 
 import type { AsyncDictionary } from "@graphorigami/types";
 
-declare const InheritScopeTransform: Mixin<{
+declare const InheritScopeMixin: Mixin<{
   scope: AsyncDictionary|null;
 }>;
 
-export default InheritScopeTransform;
+export default InheritScopeMixin;
