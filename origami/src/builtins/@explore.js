@@ -12,6 +12,7 @@ import debug from "./@debug.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const frameworkDir = path.resolve(dirname, "../framework");
 const frameworkFiles = new OrigamiFiles(frameworkDir);
+frameworkFiles.scope = builtins;
 
 /**
  * @this {AsyncDictionary|null}

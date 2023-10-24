@@ -1,6 +1,5 @@
 import MapExtensionsTree from "../../common/MapExtensionsTree.js";
 import MapValuesTree from "../../common/MapValuesTree.js";
-import InheritScopeMixin from "../../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -25,11 +24,7 @@ export default function map(treelike, mapFn, options = {}) {
   /** @type {any} */
   const TreeClass =
     options.extension === undefined ? MapValuesTree : MapExtensionsTree;
-  const mappedTree = new (InheritScopeMixin(TreeClass))(
-    treelike,
-    mapFn,
-    options
-  );
+  const mappedTree = new TreeClass(treelike, mapFn, options);
   return mappedTree;
 }
 

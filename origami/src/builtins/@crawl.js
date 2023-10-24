@@ -2,7 +2,6 @@ import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { isPlainObject } from "../common/utilities.js";
-import InheritScopeMixin from "../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
@@ -60,9 +59,7 @@ export default async function crawl(treelike, baseHref) {
     }
   }
 
-  const result = new (InheritScopeMixin(InvokeFunctionsTransform(ObjectTree)))(
-    cache
-  );
+  const result = new (InvokeFunctionsTransform(ObjectTree))(cache);
   return result;
 }
 

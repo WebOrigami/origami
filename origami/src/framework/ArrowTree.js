@@ -1,9 +1,8 @@
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import MapKeysValuesTree from "../common/MapKeysValuesTree.js";
-import InheritScopeMixin from "./InheritScopeMixin.js";
 
 export default class ArrowTree extends InvokeFunctionsTransform(
-  InheritScopeMixin(MapKeysValuesTree)
+  MapKeysValuesTree
 ) {
   constructor(treelike, options = {}) {
     super(treelike, getAttachedFunction, options);

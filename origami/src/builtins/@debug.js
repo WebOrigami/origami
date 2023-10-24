@@ -9,7 +9,6 @@ import {
   isTransformApplied,
   transformObject,
 } from "../common/utilities.js";
-import InheritScopeMixin from "../framework/InheritScopeMixin.js";
 import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
@@ -32,14 +31,6 @@ export default async function debug(treelike) {
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);
-  }
-
-  // Apply InheritScopeMixin to the tree if it doesn't have a scope yet so
-  // that we can view scope when debugging values inside it.
-  if (!tree.scope) {
-    if (!isTransformApplied(InheritScopeMixin, tree)) {
-      tree = transformObject(InheritScopeMixin, tree);
-    }
   }
 
   tree = transformObject(DebugTransform, tree);
@@ -67,10 +58,6 @@ function DebugTransform(Base) {
           value = transformObject(ExplorableSiteTransform, value);
         }
 
-        if (!isTransformApplied(InheritScopeMixin, value)) {
-          value = transformObject(InheritScopeMixin, value);
-        }
-
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
         }
@@ -89,9 +76,6 @@ function DebugTransform(Base) {
           let tree = Tree.from(content);
           if (!isTransformApplied(ExplorableSiteTransform, tree)) {
             tree = transformObject(ExplorableSiteTransform, tree);
-          }
-          if (!isTransformApplied(InheritScopeMixin, tree)) {
-            tree = transformObject(InheritScopeMixin, tree);
           }
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);

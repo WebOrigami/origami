@@ -1,6 +1,4 @@
 import { Dictionary, Tree } from "@graphorigami/core";
-import { transformObject } from "../../common/utilities.js";
-import InheritScopeMixin from "../../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -42,8 +40,7 @@ export default async function reverse(treelike, options = {}) {
     },
   };
 
-  const result = transformObject(InheritScopeMixin, reversed);
-  return result;
+  return reversed;
 }
 
 reverse.usage = `reverse <tree>\tReverses the order of the tree's top-level keys`;

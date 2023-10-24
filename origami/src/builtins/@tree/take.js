@@ -1,6 +1,4 @@
 import { Tree } from "@graphorigami/core";
-import { transformObject } from "../../common/utilities.js";
-import InheritScopeMixin from "../../framework/InheritScopeMixin.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -29,8 +27,8 @@ export default async function take(treelike, n) {
       return tree.get(key);
     },
   };
-  const result = transformObject(InheritScopeMixin, takeTree);
-  return result;
+
+  return takeTree;
 }
 
 take.usage = `take tree, n\tReturn the first n items from tree`;
