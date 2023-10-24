@@ -5,7 +5,7 @@ import {
   extname,
   isPlainObject,
   isStringLike,
-  treeInContext,
+  treeWithScope,
 } from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -30,7 +30,7 @@ function extendTreeScopeWithParams(tree, url) {
   const newScope = new Scope(paramTree, tree.parent);
 
   // Create a new tree that extends the prototype chain of the supplied tree.
-  const extendedTree = treeInContext(tree, newScope);
+  const extendedTree = treeWithScope(tree, newScope);
 
   return extendedTree;
 }

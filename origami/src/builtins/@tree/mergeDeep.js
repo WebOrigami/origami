@@ -1,6 +1,6 @@
-import { Dictionary, Tree } from "@graphorigami/core";
 import MergeDeepTree from "../../common/MergeDeepTree.js";
 import Scope from "../../common/Scope.js";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -24,15 +24,10 @@ export default async function mergeDeep(...trees) {
   // If a tree can take a scope, give it one that includes the other trees and
   // the current scope.
   const scopedTrees = filtered.map((tree) => {
-    let scopedTree = Dictionary.isAsyncDictionary(tree)
-      ? Object.create(/** @type {any} */ (tree))
-      : Tree.from(tree);
-    if ("parent" in scopedTree) {
-      const otherTrees = trees.filter((g) => g !== tree);
-      const scope = new Scope(...otherTrees, this);
-      scopedTree.parent = scope;
-    }
-    return scopedTree;
+    const otherTrees = filtered.filter((g) => g !== tree);
+    const scope = new Scope(...otherTrees, this);
+    // Each tree will be included first in its own scope.
+    return treeWithScope(tree, scope);
   });
 
   // Merge the trees.

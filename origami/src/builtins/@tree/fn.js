@@ -1,5 +1,5 @@
 import { FunctionTree } from "@graphorigami/core";
-import { toFunction, treeInContext } from "../../common/utilities.js";
+import { toFunction, treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -22,13 +22,7 @@ export default async function fn(invocable, keys = []) {
 
   /** @this {AsyncDictionary|null} */
   async function extendedFn(key) {
-    const scope = this;
-    const ambientsTree = treeInContext(
-      {
-        "@key": key,
-      },
-      scope
-    );
+    const ambientsTree = treeWithScope({ "@key": key }, this);
     return invocableFn.call(ambientsTree, key);
   }
 

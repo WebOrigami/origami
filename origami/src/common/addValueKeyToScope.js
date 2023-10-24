@@ -26,7 +26,5 @@ export default function addValueKeyToScope(
     [keyName]: key,
     [valueName]: value,
   };
-  const extendedScope = new Scope(ambients, scope);
-  // return valueFn.bind(extendedScope);
-  return extendedScope;
+  return new Scope(ambients, scope);
 }

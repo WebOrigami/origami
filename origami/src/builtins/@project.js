@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { treeInContext } from "../common/utilities.js";
+import { treeWithScope } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
@@ -43,7 +43,7 @@ export default async function project(key) {
   }
 
   // Add the configuration as the context for the project root.
-  const result = treeInContext(projectTree, config);
+  const result = treeWithScope(projectTree, config);
   return key === undefined ? result : result.get(key);
 }
 

@@ -28,8 +28,8 @@ export default async function merge(...trees) {
   // the current scope.
   const scopedTrees = filtered.map((tree) => {
     const otherTrees = filtered.filter((g) => g !== tree);
-    // Each tree comes first in its own scope.
-    const scope = new Scope(tree, ...otherTrees, this);
+    const scope = new Scope(...otherTrees, this);
+    // Each tree will be included first in its own scope.
     return treeWithScope(tree, scope);
   });
 

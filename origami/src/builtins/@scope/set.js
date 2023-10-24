@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
 import Scope from "../../common/Scope.js";
-import { keySymbol, treeInContext } from "../../common/utilities.js";
+import { keySymbol, treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -16,7 +16,7 @@ export default function setScope(treelike, ...scopeTrees) {
   assertScopeIsDefined(this);
   const tree = Tree.from(treelike);
   const scope = scopeTrees.length === 0 ? this : new Scope(...scopeTrees);
-  const result = treeInContext(tree, scope);
+  const result = treeWithScope(tree, scope);
   result[keySymbol] = tree[keySymbol];
   return result;
 }

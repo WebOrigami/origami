@@ -6,7 +6,7 @@ import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import Scope from "../common/Scope.js";
-import { getScope, keySymbol, treeInContext } from "../common/utilities.js";
+import { getScope, keySymbol, treeWithScope } from "../common/utilities.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {
@@ -15,21 +15,19 @@ async function main(...args) {
   // Find the project root.
   const projectTree = await project.call(null);
 
+  // This is hacky way to get the configuration via the project.
+  const config = projectTree.scope.trees[1];
+
   // If no arguments were passed, show usage.
   if (!expression) {
-    const config = projectTree.parent;
     await showUsage(config);
     return;
   }
 
   // Splice ambients tree into project tree scope.
-  const ambients = new ObjectTree({
-    [keySymbol]: "Origami CLI",
-  });
-  let tree = treeInContext(
-    projectTree,
-    new Scope(ambients, projectTree.parent)
-  );
+  const ambients = new ObjectTree({});
+  ambients[keySymbol] = "Origami CLI";
+  let tree = treeWithScope(projectTree, new Scope(ambients, config));
 
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();

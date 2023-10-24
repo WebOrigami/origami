@@ -1,5 +1,4 @@
 import { Tree } from "@graphorigami/core";
-import InheritScopeTransform from "../framework/InheritScopeTransform.js";
 import Scope from "./Scope.js";
 
 /** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
@@ -143,34 +142,21 @@ export function isTransformApplied(Transform, obj) {
 export const keySymbol = Symbol("key");
 
 /**
- * Return a new tree equivalent to the given tree, but with the given context.
+ * Return a new tree equivalent to the given tree, but with the given scope.
  *
- * If the tree already has a `parent` property, this uses the tree as a
- * prototype for the result -- the original tree is not modified. If the tree
- * doesn't have a `parent` property, this applies InheritScopeTransform.
+ * The tree itself will be automatically included at the front of the scope.
  *
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @param {Treelike} treelike
- * @param {AsyncDictionary|null} context
- * @returns {AsyncDictionary & { parent: AsyncDictionary }}
+ * @param {AsyncDictionary|null} scope
+ * @returns {AsyncDictionary & { scope: AsyncDictionary }}
  */
-export function treeInContext(treelike, context) {
-  // Either method of constructing the target produces a new tree.
-  const tree = Tree.from(treelike);
-  const target =
-    "parent" in tree
-      ? Object.create(tree)
-      : transformObject(InheritScopeTransform, tree);
-  target.parent = context;
-  return target;
-}
-
-export function treeWithScope(treelike, ...scopes) {
+export function treeWithScope(treelike, scope) {
   // If the treelike was already a tree, create a copy of it.
   const tree = Tree.isAsyncTree(treelike)
     ? Object.create(treelike)
     : Tree.from(treelike);
-  tree.scope = new Scope(...scopes);
+  tree.scope = new Scope(tree, scope);
   return tree;
 }
 
