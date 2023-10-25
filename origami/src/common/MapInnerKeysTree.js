@@ -2,6 +2,10 @@ import { Dictionary, Tree } from "@graphorigami/core";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import { getScope, toFunction } from "./utilities.js";
 
+/**
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
+ */
 export default class MapInnerKeysTree {
   constructor(treelike, keyFn, options = {}) {
     this.tree = Tree.from(treelike);

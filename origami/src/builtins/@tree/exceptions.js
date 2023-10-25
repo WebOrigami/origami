@@ -22,6 +22,9 @@ export default async function exceptions(treelike) {
   return defineds.call(this, exceptionsTree);
 }
 
+/**
+ * @implements {AsyncTree}
+ */
 class ExceptionsTree {
   constructor(treelike) {
     this.tree = Tree.from(treelike);

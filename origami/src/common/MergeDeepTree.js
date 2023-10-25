@@ -7,10 +7,14 @@ import { Dictionary, Tree } from "@graphorigami/core";
  * first tree is asked for object with the key. If an tree returns a defined
  * value (i.e., not undefined), that value is returned. If the first tree
  * returns undefined, the second tree will be asked, and so on.
+ *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
  */
 export default class MergeDeepTree {
   constructor(...trees) {
     this.trees = trees.map((tree) => Tree.from(tree));
+    this.parent = null;
   }
 
   async get(key) {
