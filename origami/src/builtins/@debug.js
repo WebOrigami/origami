@@ -4,7 +4,6 @@ import {
   isPlainObject,
   isTransformApplied,
   transformObject,
-  treeWithScope,
 } from "../common/utilities.js";
 import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -26,7 +25,8 @@ export default async function debug(treelike) {
     return;
   }
 
-  /** @type {AsyncTree} */
+  // The debug command leaves the tree's existing scope intact; it does not
+  // apply its own scope to the tree.
   let tree = Tree.from(treelike);
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
@@ -34,10 +34,6 @@ export default async function debug(treelike) {
   }
 
   tree = transformObject(DebugTransform, tree);
-
-  if (this) {
-    tree = treeWithScope(tree, this);
-  }
 
   return tree;
 }
