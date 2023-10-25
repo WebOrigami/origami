@@ -9,6 +9,11 @@ import * as Tree from "./Tree.js";
  * @implements {AsyncMutableTree}
  */
 export default class ObjectTree extends ObjectDictionary {
+  /**
+   * Create a tree wrapping a given plain object or array.
+   *
+   * @param {any} object The object/array to wrap.
+   */
   constructor(object) {
     super(object);
     this.parent = null;
