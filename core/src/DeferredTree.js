@@ -7,7 +7,7 @@ import * as Tree from "./Tree.js";
  * constructing the tree requires an asynchronous operation, this class can be
  * used as a wrapper that can be returned immediately. The tree will be loaded
  * the first time the keys() or get() functions are called.
- * 
+ *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
@@ -48,7 +48,7 @@ export default class DeferredTree {
     return this._tree?.parent ?? this._parent;
   }
   set parent(parent) {
-    if (this._tree) {
+    if (this._tree && !this._tree.parent) {
       this._tree.parent = parent;
     } else {
       this._parent = parent;
@@ -66,7 +66,9 @@ export default class DeferredTree {
       this.treePromise = this.loadResult().then((treelike) => {
         this._tree = Tree.from(treelike);
         if (this._parent) {
-          this._tree.parent = this._parent;
+          if (!this._tree.parent) {
+            this._tree.parent = this._parent;
+          }
           this._parent = null;
         }
         return this._tree;

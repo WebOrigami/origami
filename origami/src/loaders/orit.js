@@ -18,7 +18,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   const inputDocument = TextDocument.from(input);
   const text = inputDocument.text;
   const attachedData = inputDocument.data;
-  if (parent && Tree.isAsyncTree(attachedData)) {
+  if (parent && Tree.isAsyncTree(attachedData) && !attachedData.parent) {
     attachedData.parent = parent;
   }
 

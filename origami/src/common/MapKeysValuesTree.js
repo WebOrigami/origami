@@ -92,7 +92,9 @@ export default class MapKeysValuesTree {
           this.options,
         ]);
       }
-      outerValue.parent = this;
+      if (!outerValue.parent) {
+        outerValue.parent = innerValue.parent;
+      }
       outerValue.scope = scope;
     }
 

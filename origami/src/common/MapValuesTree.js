@@ -75,7 +75,9 @@ export default class MapValuesTree {
     }
 
     if (Tree.isAsyncTree(outerValue)) {
-      outerValue.parent = this;
+      if (!outerValue.parent) {
+        outerValue.parent = innerValue.parent;
+      }
       /** @type {any} */ (outerValue).scope = scope;
     }
 

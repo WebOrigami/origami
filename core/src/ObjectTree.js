@@ -24,7 +24,7 @@ export default class ObjectTree extends ObjectDictionary {
       value = Reflect.construct(this.constructor, [value]);
     }
 
-    if (Tree.isAsyncTree(value)) {
+    if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
 

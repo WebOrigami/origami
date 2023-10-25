@@ -31,7 +31,7 @@ export default class MapInnerKeysTree {
       ]);
     }
 
-    if (Tree.isAsyncTree(value)) {
+    if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
 

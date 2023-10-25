@@ -17,11 +17,10 @@ export default class TextDocument {
    */
   constructor(text, data, parent) {
     this.text = String(text);
+    // Make a copy of the data so we don't modify the original when setting
+    // parent.
     this.data = data;
-    this._parent = parent;
-    if (data && parent && "parent" in data) {
-      data.parent = parent;
-    }
+    this.parent = parent;
   }
 
   /**

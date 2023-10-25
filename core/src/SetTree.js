@@ -19,7 +19,7 @@ export default class SetTree extends SetDictionary {
       value = Reflect.construct(this.constructor, [value]);
     }
 
-    if (Tree.isAsyncTree(value)) {
+    if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
 

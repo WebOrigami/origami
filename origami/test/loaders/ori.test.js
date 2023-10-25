@@ -20,13 +20,13 @@ describe(".ori loader", () => {
   });
 
   test("loads a tree expression", async () => {
-    const scope = new ObjectTree({
+    const parent = new ObjectTree({
       name: "world",
     });
     const source = `{
       message = \`Hello, {{ name }}!\`
     }`;
-    const tree = await unpackOrigamiExpression(source, { parent: scope });
+    const tree = await unpackOrigamiExpression(source, { parent });
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, world!",
     });

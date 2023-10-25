@@ -52,10 +52,10 @@ concat.toString = () => "«ops.concat»";
 export async function filesRoot() {
   const root = await filesBuiltin.call(this, "/");
 
-  // The root itself needs a parent so that expressions evaluated within it
+  // The root itself needs a scope so that expressions evaluated within it
   // (e.g., Origami expressions loaded from .ori files) will have access to
   // things like the built-in functions.
-  root.parent = this;
+  /** @type {any} */ (root).scope = this;
 
   return root;
 }
