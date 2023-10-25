@@ -42,15 +42,15 @@ export default class TextDocument {
     }
 
     const text = String(input);
+    const parent = /** @type {any} */ (input).parent;
+
     const regex =
       /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
     const match = regex.exec(text);
-    if (match?.groups) {
-      const data = parseYaml(match.groups.frontText);
-      return new this(match.groups.bodyText, data);
-    } else {
-      return new this(text);
-    }
+    const data = match?.groups ? parseYaml(match.groups.frontText) : null;
+    const bodyText = match?.groups ? match.groups.bodyText : text;
+
+    return new this(bodyText, data, parent);
   }
 
   /**
