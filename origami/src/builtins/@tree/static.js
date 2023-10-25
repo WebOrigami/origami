@@ -1,5 +1,9 @@
 import { Dictionary, Tree } from "@graphorigami/core";
-import { getScope, transformObject } from "../../common/utilities.js";
+import {
+  getScope,
+  transformObject,
+  treeWithScope,
+} from "../../common/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import index from "../@index.js";
@@ -8,6 +12,7 @@ import index from "../@index.js";
  * Expose common static keys (index.html, .keys.json) for a tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} treelike
@@ -19,7 +24,10 @@ export default async function staticTree(treelike) {
     return undefined;
   }
   const tree = Tree.from(treelike);
-  const result = transformObject(StaticTransform, tree);
+  let result = transformObject(StaticTransform, tree);
+  if (this) {
+    result = treeWithScope(result, this);
+  }
   return result;
 }
 

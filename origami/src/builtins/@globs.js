@@ -8,6 +8,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
+ *
  * @param {Treelike} tree
  * @this {AsyncDictionary|null}
  */
@@ -16,7 +17,7 @@ export default async function globs(tree) {
   /** @type {AsyncTree} */
   let result = new GlobTree(tree);
   if (this) {
-    tree = treeWithScope(tree, this);
+    result = treeWithScope(result, this);
   }
   return result;
 }

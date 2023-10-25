@@ -1,13 +1,10 @@
-/**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- */
-
 import { Dictionary, Tree } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import {
   isPlainObject,
   isTransformApplied,
   transformObject,
+  treeWithScope,
 } from "../common/utilities.js";
 import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -15,7 +12,10 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated tree.
  *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
+ *
  * @this {AsyncDictionary|null}
  * @param {Treelike} [treelike]
  */
@@ -26,7 +26,7 @@ export default async function debug(treelike) {
     return;
   }
 
-  /** @type {any} */
+  /** @type {AsyncTree} */
   let tree = Tree.from(treelike);
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
@@ -34,6 +34,11 @@ export default async function debug(treelike) {
   }
 
   tree = transformObject(DebugTransform, tree);
+
+  if (this) {
+    tree = treeWithScope(tree, this);
+  }
+
   return tree;
 }
 

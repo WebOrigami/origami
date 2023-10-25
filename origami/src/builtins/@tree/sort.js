@@ -5,6 +5,7 @@ import {
   getScope,
   toFunction,
   transformObject,
+  treeWithScope,
 } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -27,40 +28,44 @@ export default async function sort(treelike, invocable) {
   }
   const tree = Tree.from(treelike);
 
+  let result;
   if (!invocable) {
     // Simple case: sort by tree's existing keys.
-    return transformObject(SortTransform, tree);
+    result = transformObject(SortTransform, tree);
+  } else {
+    const keyFn = toFunction(invocable);
+
+    // Complex case: sort by a function that returns a key for each value.
+    result = Object.create(tree);
+
+    result.keys = async function () {
+      const sorted = [];
+      // Get all the keys and map them to their sort keys.
+      for (const key of await tree.keys()) {
+        const value = await tree.get(key);
+        const scope = addValueKeyToScope(getScope(this), value, key);
+        const sortKey = await keyFn.call(scope, value, key);
+        sorted.push({ key, sortKey });
+      }
+      // Sort the key/sortKey pairs by sortKey.
+      sorted.sort((a, b) => {
+        if (a.sortKey < b.sortKey) {
+          return -1;
+        }
+        if (a.sortKey > b.sortKey) {
+          return 1;
+        }
+        return 0;
+      });
+      // Get the sorted keys
+      const keys = sorted.map(({ key }) => key);
+      return keys;
+    };
   }
 
-  const keyFn = toFunction(invocable);
-
-  // Complex case: sort by a function that returns a key for each value.
-  const result = Object.create(tree);
-
-  result.keys = async function () {
-    const sorted = [];
-    // Get all the keys and map them to their sort keys.
-    for (const key of await tree.keys()) {
-      const value = await tree.get(key);
-      const scope = addValueKeyToScope(getScope(this), value, key);
-      const sortKey = await keyFn.call(scope, value, key);
-      sorted.push({ key, sortKey });
-    }
-    // Sort the key/sortKey pairs by sortKey.
-    sorted.sort((a, b) => {
-      if (a.sortKey < b.sortKey) {
-        return -1;
-      }
-      if (a.sortKey > b.sortKey) {
-        return 1;
-      }
-      return 0;
-    });
-    // Get the sorted keys
-    const keys = sorted.map(({ key }) => key);
-    return keys;
-  };
-
+  if (this) {
+    result = treeWithScope(result, this);
+  }
   return result;
 }
 

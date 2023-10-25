@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
 import project from "./@project.js";
 
 /**
@@ -7,6 +6,8 @@ import project from "./@project.js";
  * If the project's root defines an ori.config.js file, the configuration is
  * the default export of that file. Otherwise, the configuration is the set of
  * built-in functions.
+ *
+ * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
  *
  * @this {AsyncDictionary|null}
  * @param {any} [key]

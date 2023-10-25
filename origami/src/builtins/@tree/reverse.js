@@ -1,10 +1,12 @@
 import { Dictionary, Tree } from "@graphorigami/core";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
@@ -22,7 +24,8 @@ export default async function reverse(treelike, options = {}) {
   const tree = Tree.from(treelike);
   const deep = options.deep ?? false;
 
-  const reversed = {
+  /** @type {AsyncTree} */
+  let reversed = {
     async get(key) {
       let value = await tree.get(key);
 
@@ -38,7 +41,13 @@ export default async function reverse(treelike, options = {}) {
       keys.reverse();
       return keys;
     },
+
+    parent: null,
   };
+
+  if (this) {
+    reversed = treeWithScope(reversed, this);
+  }
 
   return reversed;
 }

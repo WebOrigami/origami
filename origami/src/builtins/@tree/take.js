@@ -1,10 +1,12 @@
 import { Tree } from "@graphorigami/core";
+import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Given a tree, take the first n items from it.
  *
  * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @this {AsyncDictionary|null}
  * @param {Treelike} treelike
@@ -17,7 +19,9 @@ export default async function take(treelike, n) {
     return undefined;
   }
   const tree = Tree.from(treelike);
-  const takeTree = {
+
+  /** @type {AsyncTree} */
+  let takeTree = {
     async keys() {
       const keys = Array.from(await tree.keys());
       return keys.slice(0, n);
@@ -26,7 +30,13 @@ export default async function take(treelike, n) {
     async get(key) {
       return tree.get(key);
     },
+
+    parent: null,
   };
+
+  if (this) {
+    takeTree = treeWithScope(takeTree, this);
+  }
 
   return takeTree;
 }
