@@ -45,6 +45,12 @@ describe("SiteTree", () => {
     const about = await fixture.get("about");
     assert.equal(about.href, "https://mock/about/");
   });
+
+  test("resolve() returns a new SiteTree for the given relative route", () => {
+    const fixture = new SiteTree(mockHost);
+    const about = fixture.resolve("about");
+    assert.equal(about.href, "https://mock/about/");
+  });
 });
 
 async function mockFetch(href) {

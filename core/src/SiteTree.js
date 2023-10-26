@@ -13,10 +13,15 @@ export default class SiteTree {
   constructor(href = window?.location.href) {
     if (href?.startsWith(".") && window?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.
-      this.href = new URL(href, window.location.href).href;
-    } else {
-      this.href = href;
+      href = new URL(href, window.location.href).href;
     }
+
+    if (!href.endsWith("/")) {
+      // Add trailing slash; the URL is expected to represent a directory.
+      href += "/";
+    }
+
+    this.href = href;
     this.keysPromise = undefined;
     this.parent = null;
   }
@@ -55,6 +60,17 @@ export default class SiteTree {
 
   async keys() {
     return (await this.getKeys()) ?? [];
+  }
+
+  /**
+   * Returns a new `SiteTree` for the given relative route.
+   *
+   * @param {string} path
+   * @returns {SiteTree}
+   */
+  resolve(path) {
+    const href = new URL(path, this.href).href;
+    return Reflect.construct(this.constructor, [href]);
   }
 
   async traverse(...keys) {

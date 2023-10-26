@@ -23,9 +23,6 @@ export default async function treeHttps(host, ...keys) {
       href = `https:${href}`;
     }
   }
-  if (!href.endsWith("/")) {
-    href += "/";
-  }
 
   /** @type {AsyncTree} */
   let result = new (FileLoadersTransform(SiteTree))(href);
