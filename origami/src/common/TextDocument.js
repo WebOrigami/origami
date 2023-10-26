@@ -4,7 +4,7 @@ import { parseYaml, toYaml } from "./serialize.js";
  * A text document with optional associated data.
  *
  * @typedef {import("../../index.js").JsonValue} JsonValue
- * @typedef {import("../../index.js").StringLike} StringLike
+ * @typedef {import("@graphorigami/core").StringLike} StringLike
  * @typedef {import("@graphorigami/core").Unpackable} HasContents
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree

@@ -63,6 +63,28 @@ export function isPlainObject(object) {
 }
 
 /**
+ * Return true if the object is a string or object with a non-trival `toString`
+ * method.
+ *
+ * @param {any} obj
+ * @returns {obj is import("@graphorigami/core").StringLike}
+ */
+export function isStringLike(obj) {
+  if (typeof obj === "string") {
+    return true;
+  } else if (obj?.toString === undefined) {
+    return false;
+  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
+    // The stupid Object.prototype.toString implementation always returns
+    // "[object Object]", so if that's the only toString method the object has,
+    // we return false.
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/**
  * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
  * "baz"].
  *

@@ -3,7 +3,7 @@
  * tool to confirm our code is type safe.
  */
 
-import { Treelike, Unpackable } from "@graphorigami/core";
+import { StringLike, Treelike, Unpackable } from "@graphorigami/core";
 import { AsyncTree } from "@graphorigami/types";
 
 /**
@@ -19,17 +19,6 @@ export type FileUnpackFunction = (
   input: StringLike,
   options?: { key?: any, parent?: AsyncTree | null }
 ) => any;
-
-/**
- * An object with a non-trivial `toString` method.
- *
- * TODO: We want to deliberately exclude the base `Object` class because its
- * `toString` method return non-useful strings like `[object Object]`. How can
- * we declare that in TypeScript?
- */
-export type HasString = {
-  toString(): string;
-};
 
 export type Invocable = Function | Unpackable | Treelike;
 
@@ -50,9 +39,5 @@ export type JsonValue = boolean | number | string | Date | JsonObject | JsonValu
 export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
-
-export type Packed = StringLike;
-
-export type StringLike = string | HasString;
 
 export type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array;

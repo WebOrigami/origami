@@ -5,9 +5,18 @@ export type PlainObject = {
   [key: string]: any;
 };
 
-export type Unpackable = {
-  unpack(): Promise<any>
+/**
+ * An object with a non-trivial `toString` method.
+ *
+ * TODO: We want to deliberately exclude the base `Object` class because its
+ * `toString` method return non-useful strings like `[object Object]`. How can
+ * we declare that in TypeScript?
+ */
+export type HasString = {
+  toString(): string;
 };
+
+export type StringLike = string | HasString;
 
 export type Treelike =
   any[] |
@@ -17,3 +26,7 @@ export type Treelike =
   PlainObject | 
   Set<any> | 
   Unpackable;
+
+export type Unpackable = {
+  unpack(): Promise<any>
+};

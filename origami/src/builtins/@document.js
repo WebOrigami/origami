@@ -3,7 +3,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").StringLike} StringLike
+ * @typedef {import("@graphorigami/core").StringLike} StringLike
  *
  * @this {AsyncTree|null}
  * @param {StringLike} text

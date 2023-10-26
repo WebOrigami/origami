@@ -1,4 +1,4 @@
-import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import Scope from "./Scope.js";
 
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
@@ -44,28 +44,6 @@ export function getScope(tree) {
   }
 }
 
-/**
- * Return true if the object is a string or object with a non-trival `toString`
- * method.
- *
- * @param {any} obj
- * @returns {obj is import("@graphorigami/core").StringLike}
- */
-export function isStringLike(obj) {
-  if (typeof obj === "string") {
-    return true;
-  } else if (obj?.toString === undefined) {
-    return false;
-  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
-    // The stupid Object.prototype.toString implementation always returns
-    // "[object Object]", so if that's the only toString method the object has,
-    // we return false.
-    return false;
-  } else {
-    return true;
-  }
-}
-
 export function isTransformApplied(Transform, obj) {
   let transformName = Transform.name;
   if (!transformName) {
@@ -85,25 +63,6 @@ export function isTransformApplied(Transform, obj) {
 }
 
 export const keySymbol = Symbol("key");
-
-/**
- * Return a new tree equivalent to the given tree, but with the given scope.
- *
- * The tree itself will be automatically included at the front of the scope.
- *
- * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @param {Treelike} treelike
- * @param {AsyncTree|null} scope
- * @returns {AsyncTree & { scope: AsyncTree }}
- */
-export function treeWithScope(treelike, scope) {
-  // If the treelike was already a tree, create a copy of it.
-  const tree = Tree.isAsyncTree(treelike)
-    ? Object.create(treelike)
-    : Tree.from(treelike);
-  tree.scope = new Scope(tree, scope);
-  return tree;
-}
 
 /**
  * Convert the given object to a function.
@@ -180,4 +139,23 @@ export function transformObject(Transform, obj) {
 
   // Return the mixed object.
   return mixed;
+}
+
+/**
+ * Return a new tree equivalent to the given tree, but with the given scope.
+ *
+ * The tree itself will be automatically included at the front of the scope.
+ *
+ * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @param {Treelike} treelike
+ * @param {AsyncTree|null} scope
+ * @returns {AsyncTree & { scope: AsyncTree }}
+ */
+export function treeWithScope(treelike, scope) {
+  // If the treelike was already a tree, create a copy of it.
+  const tree = Tree.isAsyncTree(treelike)
+    ? Object.create(treelike)
+    : Tree.from(treelike);
+  tree.scope = new Scope(tree, scope);
+  return tree;
 }

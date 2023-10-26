@@ -2,11 +2,12 @@ import {
   ObjectTree,
   Tree,
   isPlainObject,
+  isStringLike,
   keysFromPath,
 } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
-import { extname, isStringLike, treeWithScope } from "../common/utilities.js";
+import { extname, treeWithScope } from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Extend the tree's scope with the URL's search parameters.

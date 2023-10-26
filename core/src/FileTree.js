@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isTypedArray } from "node:util/types";
 import * as Tree from "./Tree.js";
+import { getRealmObjectPrototype } from "./utilities.js";
 
 // Names of OS-generated files that should not be enumerated
 const hiddenFileNames = {
@@ -167,22 +168,6 @@ export default class FileTree {
 
     return this;
   }
-}
-
-/**
- * Return the Object prototype at the root of the object's prototype chain.
- *
- * This is used by functions like isPlainObject() to handle cases where the
- * `Object` at the root prototype chain is in a different realm.
- *
- * @param {any} obj
- */
-function getRealmObjectPrototype(obj) {
-  let proto = obj;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return proto;
 }
 
 /**

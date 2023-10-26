@@ -5,11 +5,10 @@
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 
-import { Tree, isPlainObject } from "@graphorigami/core";
+import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
 import OrigamiTree from "../framework/OrigamiTree.js";
 import expressionTag from "../language/expressionTag.js";
-import { isStringLike } from "./utilities.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.

@@ -1,11 +1,6 @@
-import { isPlainObject } from "@graphorigami/core";
+import { isPlainObject, isStringLike } from "@graphorigami/core";
 import builtinLoaders from "../builtins/@loaders.js";
-import {
-  extname,
-  getScope,
-  isStringLike,
-  keySymbol,
-} from "../common/utilities.js";
+import { extname, getScope, keySymbol } from "../common/utilities.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
