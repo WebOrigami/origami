@@ -37,9 +37,11 @@ export default class ObjectTree {
 
     let value = this.object[key];
 
+    // TODO: Deprecate
     // The tree's default value is the underlying object itself.
     if (value === undefined && key === Tree.defaultValueKey) {
-      return this.object;
+      // return this.object;
+      return this;
     }
 
     const isPlain =
