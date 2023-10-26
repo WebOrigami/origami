@@ -1,6 +1,8 @@
 import { isPlainObject, isStringLike } from "@graphorigami/core";
-import builtinLoaders from "../builtins/@loaders.js";
-import { extname, getScope, keySymbol } from "../common/utilities.js";
+import builtins from "../builtins/@builtins.js";
+import { extname, keySymbol } from "../common/utilities.js";
+
+let loadersPromise;
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -26,7 +28,7 @@ export default function FileLoadersTransform(Base) {
       if (isStringLike(value) && isStringLike(key)) {
         const extension = extname(String(key)).toLowerCase().slice(1);
         if (extension) {
-          const loaders = await this.loaders();
+          const loaders = await getLoaders();
           /** @type {FileUnpackFunction} */
           const unpackFn = await loaders.get(extension);
           if (unpackFn) {
@@ -48,17 +50,12 @@ export default function FileLoadersTransform(Base) {
 
       return value;
     }
-
-    async loaders() {
-      if (!this._loadersPromise) {
-        // Give the scope a chance to contribute loaders, otherwise fall back to
-        // the built-in loaders.
-        const scope = getScope(this);
-        this._loadersPromise = scope
-          .get("@loaders")
-          .then((customLoaders) => customLoaders ?? builtinLoaders);
-      }
-      return this._loadersPromise;
-    }
   };
+}
+
+function getLoaders() {
+  if (!loadersPromise) {
+    loadersPromise = builtins.get("@loaders");
+  }
+  return loadersPromise;
 }

@@ -1,8 +1,8 @@
 import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import unpackOrigamiTemplate from "../../src/builtins/@loaders/orit.js";
 import TextDocument from "../../src/common/TextDocument.js";
-import unpackOrigamiTemplate from "../../src/loaders/orit.js";
 
 describe(".orit loader", () => {
   test("loads a template", async () => {

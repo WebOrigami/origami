@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import unpackOrigamiTemplate from "../src/builtins/@loaders/orit.js";
 import MapExtensionTree from "../src/common/MapExtensionsTree.js";
 import { transformObject } from "../src/common/utilities.js";
-import unpackOrigamiTemplate from "../src/loaders/orit.js";
 import PathTransform from "./PathTransform.js";
 
 // Modules that should not get exported
@@ -54,12 +54,6 @@ async function exportStatementForCode(codeBuffer, key) {
   const path = codeBuffer[PathTransform.pathKey] ?? "";
   const pathParts = path.split("/");
   pathParts.pop(); // Drop key
-
-  const container = pathParts.join("/");
-  // Skip loaders
-  if (container === "loaders") {
-    return "";
-  }
 
   const exportsDefault = code.match(/^export default /m);
   if (!exportsDefault) {

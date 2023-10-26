@@ -1,6 +1,6 @@
 import * as YAMLModule from "yaml";
-import processUnpackedContent from "../common/processUnpackedContent.js";
-import { parseYaml } from "../common/serialize.js";
+import processUnpackedContent from "../../common/processUnpackedContent.js";
+import { parseYaml } from "../../common/serialize.js";
 
 // See notes at serialize.js
 // @ts-ignore
@@ -9,7 +9,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /**
  * Load a file as YAML.
  *
- * @type {import("../..").FileUnpackFunction}
+ * @type {import("../../../index.js").FileUnpackFunction}
  */
 export default function unpackYaml(input, options = {}) {
   const parent = options.parent ?? null;

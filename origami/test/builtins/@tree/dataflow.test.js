@@ -1,14 +1,14 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import unpackOrigamiExpression from "../../../src/builtins/@loaders/ori.js";
+import unpackOrigamiTemplate from "../../../src/builtins/@loaders/orit.js";
+import unpackYaml from "../../../src/builtins/@loaders/yaml.js";
 import dataflow from "../../../src/builtins/@tree/dataflow.js";
 import ExpressionTree from "../../../src/common/ExpressionTree.js";
 import TextDocument from "../../../src/common/TextDocument.js";
 import InheritScopeMixin from "../../../src/framework/InheritScopeMixin.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import * as ops from "../../../src/language/ops.js";
-import unpackOrigamiExpression from "../../../src/loaders/ori.js";
-import unpackOrigamiTemplate from "../../../src/loaders/orit.js";
-import unpackYaml from "../../../src/loaders/yaml.js";
 
 describe("@tree/dataflow", () => {
   test("identifies dependencies in expressions", async () => {

@@ -1,6 +1,6 @@
 import TextDocument from "../common/TextDocument.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
-import unpackOrigamiTemplate from "../loaders/orit.js";
+import unpackOrigamiTemplate from "./@loaders/orit.js";
 
 /**
  * Inline any Origami expressions found inside {{...}} placeholders in the input

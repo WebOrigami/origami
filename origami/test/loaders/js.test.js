@@ -3,8 +3,8 @@ import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
+import unpackModule from "../../src/builtins/@loaders/js.js";
 import ImportModulesMixin from "../../src/common/ImportModulesMixin.js";
-import unpackModule from "../../src/loaders/js.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixturesDirectory = path.join(dirname, "fixtures");

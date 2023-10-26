@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
-import unpackOrigamiTemplate from "../../loaders/orit.js";
 import builtins from "../@builtins.js";
+import unpackOrigamiTemplate from "../@loaders/orit.js";
 import paths from "./paths.js";
 
 const templateText = `<?xml version="1.0" encoding="UTF-8"?>
