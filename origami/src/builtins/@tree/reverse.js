@@ -40,8 +40,6 @@ export default async function reverse(treelike, options = {}) {
       keys.reverse();
       return keys;
     },
-
-    parent: null,
   };
 
   if (this) {

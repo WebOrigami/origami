@@ -22,7 +22,6 @@ export default class MapValuesTree {
     this.deep = options.deep ?? false;
     this.getValue = options.getValue ?? true;
     this.options = options;
-    this.parent = null;
   }
 
   /**

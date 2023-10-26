@@ -30,7 +30,6 @@ export default class CacheSite {
     }
 
     this.filter = filter ? Tree.from(filter) : undefined;
-    this.parent = null;
   }
 
   async get(key) {

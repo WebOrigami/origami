@@ -10,7 +10,6 @@ const globstar = "**";
 export default class GlobTree {
   constructor(globs) {
     this.globs = Tree.from(globs);
-    this.parent = null;
   }
 
   async get(key) {

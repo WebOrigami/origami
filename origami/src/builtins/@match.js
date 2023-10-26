@@ -83,8 +83,6 @@ export default function match(pattern, resultFn, keys = []) {
     async keys() {
       return typeof keys === "function" ? await keys.call(scope) : keys;
     },
-
-    parent: null,
   };
 
   if (this) {

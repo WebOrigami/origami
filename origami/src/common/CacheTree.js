@@ -29,7 +29,6 @@ export default class CacheTree {
     }
 
     this.filter = filter ? Tree.from(filter) : undefined;
-    this.parent = null;
   }
 
   async get(key) {

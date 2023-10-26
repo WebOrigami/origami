@@ -27,7 +27,6 @@ export default async function exceptions(treelike) {
 class ExceptionsTree {
   constructor(treelike) {
     this.tree = Tree.from(treelike);
-    this.parent = null;
   }
 
   async get(key) {

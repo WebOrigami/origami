@@ -11,7 +11,6 @@ export default class FilterTree {
   constructor(tree, filter) {
     this.tree = Tree.from(tree);
     this.filter = Tree.from(filter);
-    this.parent = null;
   }
 
   async get(key) {

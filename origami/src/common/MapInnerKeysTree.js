@@ -14,7 +14,6 @@ export default class MapInnerKeysTree {
     this.mapInnerKeyToOuterKey = new Map();
     this.mapOuterKeyToInnerKey = new Map();
     this.options = options;
-    this.parent = null;
   }
 
   async get(outerKey) {

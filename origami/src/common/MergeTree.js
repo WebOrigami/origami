@@ -15,7 +15,6 @@ import { Tree } from "@graphorigami/core";
 export default class MergeTree {
   constructor(...trees) {
     this.trees = trees.map((tree) => Tree.from(tree));
-    this.parent = null;
   }
 
   async get(key) {

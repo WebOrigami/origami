@@ -34,8 +34,6 @@ export default async function inners(treelike) {
       }
       return subtreeKeys;
     },
-
-    parent: null,
   };
 
   if (this) {

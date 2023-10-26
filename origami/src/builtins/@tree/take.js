@@ -29,8 +29,6 @@ export default async function take(treelike, n) {
     async get(key) {
       return tree.get(key);
     },
-
-    parent: null,
   };
 
   if (this) {
