@@ -1,16 +1,16 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@graphorigami/core";
+import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
-import { getRealmObjectPrototype } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
 
 /**
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
- * @this {AsyncTree|null}
  *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ *
+ * @this {AsyncTree|null}
  * @param {string} expression
  */
 export default async function ori(expression) {

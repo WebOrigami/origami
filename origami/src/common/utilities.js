@@ -1,24 +1,7 @@
-import { Tree } from "@graphorigami/core";
+import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
 import Scope from "./Scope.js";
 
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-
-// If the given plain object has only integer keys, return it as an array.
-// Otherwise return it as is.
-export function castArrayLike(obj) {
-  let hasKeys = false;
-  let expectedIndex = 0;
-  for (const key in obj) {
-    hasKeys = true;
-    const index = Number(key);
-    if (isNaN(index) || index !== expectedIndex) {
-      // Not an array-like object.
-      return obj;
-    }
-    expectedIndex++;
-  }
-  return hasKeys ? Object.values(obj) : obj;
-}
 
 /**
  * If the given path ends in an extension, return it. Otherwise, return the
@@ -42,22 +25,6 @@ export function extname(path) {
 }
 
 /**
- * Return the Object prototype at the root of the object's prototype chain.
- *
- * This is used by functions like isPlainObject() to handle cases where the
- * `Object` at the root prototype chain is in a different realm.
- *
- * @param {any} obj
- */
-export function getRealmObjectPrototype(obj) {
-  let proto = obj;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return proto;
-}
-
-/**
  * If the given tree has a `scope` property, return that. If the tree has a
  * `parent` property, construct a scope for the tree and its parent. Otherwise,
  * return the tree itself.
@@ -75,28 +42,6 @@ export function getScope(tree) {
   } else {
     return tree;
   }
-}
-
-/**
- * Return true if the object is a plain JavaScript object.
- *
- * @param {any} obj
- * @returns {obj is import("@graphorigami/core").PlainObject}
- */
-export function isPlainObject(obj) {
-  // From https://stackoverflow.com/q/51722354/76472
-  if (typeof obj !== "object" || obj === null) {
-    return false;
-  }
-
-  // We treat object-like things with no prototype (like a Module) as plain
-  // objects.
-  if (Object.getPrototypeOf(obj) === null) {
-    return true;
-  }
-
-  // Do we inherit directly from Object in this realm?
-  return Object.getPrototypeOf(obj) === getRealmObjectPrototype(obj);
 }
 
 /**

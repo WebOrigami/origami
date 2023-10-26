@@ -1,11 +1,6 @@
-import { Tree } from "@graphorigami/core";
+import { Tree, isPlainObject } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
-import {
-  extname,
-  isPlainObject,
-  isStringLike,
-  keySymbol,
-} from "../../common/utilities.js";
+import { extname, isStringLike, keySymbol } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**

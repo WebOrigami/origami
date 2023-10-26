@@ -1,7 +1,12 @@
-import { ObjectTree, Tree, keysFromPath } from "@graphorigami/core";
+import {
+  ObjectTree,
+  Tree,
+  isPlainObject,
+  keysFromPath,
+} from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
-import { isPlainObject, treeWithScope } from "../common/utilities.js";
+import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**

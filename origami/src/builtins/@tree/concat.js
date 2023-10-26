@@ -1,10 +1,10 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@graphorigami/core";
-import { getRealmObjectPrototype } from "../../common/utilities.js";
+import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Concatenate the text content of objects or trees.
+ *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {any[]} args

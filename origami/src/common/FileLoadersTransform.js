@@ -1,8 +1,8 @@
+import { isPlainObject } from "@graphorigami/core";
 import builtinLoaders from "../builtins/@loaders.js";
 import {
   extname,
   getScope,
-  isPlainObject,
   isStringLike,
   keySymbol,
 } from "../common/utilities.js";
