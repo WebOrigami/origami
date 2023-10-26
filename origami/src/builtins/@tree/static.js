@@ -24,9 +24,7 @@ export default async function staticTree(treelike) {
   }
   const tree = Tree.from(treelike);
   let result = transformObject(StaticTransform, tree);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

@@ -17,9 +17,7 @@ export default async function cacheTree(tree, cache, filter) {
 
   /** @type {AsyncTree} */
   let result = new CacheTree(tree, cache, filter);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

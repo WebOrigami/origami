@@ -23,9 +23,6 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 export default async function sort(treelike, invocable) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
   const tree = Tree.from(treelike);
 
   let result;
@@ -63,9 +60,7 @@ export default async function sort(treelike, invocable) {
     };
   }
 
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

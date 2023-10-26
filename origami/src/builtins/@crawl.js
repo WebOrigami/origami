@@ -66,9 +66,7 @@ export default async function crawl(treelike, baseHref) {
 
   /** @type {AsyncTree} */
   let result = new (InvokeFunctionsTransform(ObjectTree))(cache);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

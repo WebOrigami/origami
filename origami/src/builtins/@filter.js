@@ -15,9 +15,7 @@ export default async function filter(treelike, filterVariant) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new FilterTree(treelike, filterVariant);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

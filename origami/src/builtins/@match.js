@@ -85,9 +85,7 @@ export default function match(pattern, resultFn, keys = []) {
     },
   };
 
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

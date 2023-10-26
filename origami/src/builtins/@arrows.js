@@ -18,9 +18,7 @@ export default async function arrows(treelike) {
   }
   /** @type {AsyncTree} */
   let tree = new ArrowTree(treelike, { deep: true });
-  if (this) {
-    tree = treeWithScope(tree, this);
-  }
+  tree = treeWithScope(tree, this);
   tree[keySymbol] = "@arrows";
   return tree;
 }

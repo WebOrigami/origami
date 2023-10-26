@@ -31,9 +31,7 @@ export default async function take(treelike, n) {
     },
   };
 
-  if (this) {
-    takeTree = treeWithScope(takeTree, this);
-  }
+  takeTree = treeWithScope(takeTree, this);
 
   return takeTree;
 }

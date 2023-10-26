@@ -32,8 +32,6 @@ export default async function defineds(treelike) {
     return someValuesExist ? result : null;
   });
 
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }

@@ -15,9 +15,7 @@ export default async function files(...keys) {
   const resolved = path.resolve(process.cwd(), ...keys);
   /** @type {AsyncTree} */
   let result = new OrigamiFiles(resolved);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

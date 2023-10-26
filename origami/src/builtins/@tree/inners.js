@@ -36,10 +36,7 @@ export default async function inners(treelike) {
     },
   };
 
-  if (this) {
-    result = treeWithScope(result, this);
-  }
-
+  result = treeWithScope(result, this);
   return result;
 }
 

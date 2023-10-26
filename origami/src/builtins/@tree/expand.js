@@ -25,9 +25,7 @@ export default async function expand(treelike) {
       deep: true,
     }
   );
-  if (this) {
-    expandedTree = treeWithScope(expandedTree, this);
-  }
+  expandedTree = treeWithScope(expandedTree, this);
   return expandedTree;
 }
 

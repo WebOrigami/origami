@@ -26,9 +26,7 @@ export default function map(treelike, mapFn, options = {}) {
     options.extension === undefined ? MapValuesTree : MapExtensionsTree;
   /** @type {AsyncTree} */
   let mappedTree = new TreeClass(treelike, mapFn, options);
-  if (this) {
-    mappedTree = treeWithScope(mappedTree, this);
-  }
+  mappedTree = treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

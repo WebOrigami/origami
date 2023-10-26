@@ -15,9 +15,7 @@ export default async function globs(tree) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new GlobTree(tree);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

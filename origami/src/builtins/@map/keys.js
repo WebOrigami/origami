@@ -21,9 +21,7 @@ export default async function mapKeys(treelike, keyFn, options = {}) {
   }
   /** @type {AsyncTree} */
   let mappedTree = new MapInnerKeysTree(treelike, keyFn, options);
-  if (this) {
-    mappedTree = treeWithScope(mappedTree, this);
-  }
+  mappedTree = treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

@@ -23,9 +23,7 @@ export default async function keysJson(treelike) {
   }
   const tree = Tree.from(treelike);
   let result = transformObject(KeysJsonTransform, tree);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

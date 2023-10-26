@@ -25,9 +25,7 @@ export default async function treeHttps(host, ...keys) {
 
   /** @type {AsyncTree} */
   let result = new (FileLoadersTransform(SiteTree))(href);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

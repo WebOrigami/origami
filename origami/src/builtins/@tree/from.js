@@ -19,9 +19,7 @@ export default async function tree(treelike) {
 
   /** @type {AsyncTree} */
   let result = Tree.from(treelike);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

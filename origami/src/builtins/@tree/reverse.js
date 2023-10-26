@@ -42,9 +42,7 @@ export default async function reverse(treelike, options = {}) {
     },
   };
 
-  if (this) {
-    reversed = treeWithScope(reversed, this);
-  }
+  reversed = treeWithScope(reversed, this);
 
   return reversed;
 }

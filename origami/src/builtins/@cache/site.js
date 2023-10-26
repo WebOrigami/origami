@@ -16,9 +16,7 @@ export default async function cacheSite(tree, cache, filter) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new CacheSite(tree, cache, filter);
-  if (this) {
-    result = treeWithScope(result, this);
-  }
+  result = treeWithScope(result, this);
   return result;
 }
 

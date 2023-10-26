@@ -22,9 +22,7 @@ export default async function shuffle(treelike) {
 
   /** @type {AsyncTree} */
   let shuffled = transformObject(ShuffleTransform, tree);
-  if (this) {
-    shuffled = treeWithScope(shuffled, this);
-  }
+  shuffled = treeWithScope(shuffled, this);
   return shuffled;
 }
 

@@ -18,9 +18,7 @@ export default async function nulls(treelike) {
   }
   /** @type {AsyncTree} */
   let mappedTree = new MapValuesTree(treelike, () => null, { deep: true });
-  if (this) {
-    mappedTree = treeWithScope(mappedTree, this);
-  }
+  mappedTree = treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

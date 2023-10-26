@@ -15,9 +15,7 @@ export default async function exceptions(treelike) {
 
   /** @type {AsyncTree} */
   let exceptionsTree = new ExceptionsTree(treelike);
-  if (this) {
-    exceptionsTree = treeWithScope(exceptionsTree, this);
-  }
+  exceptionsTree = treeWithScope(exceptionsTree, this);
   return defineds.call(this, exceptionsTree);
 }
 
