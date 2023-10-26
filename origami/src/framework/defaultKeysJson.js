@@ -9,9 +9,16 @@ import { Tree } from "@graphorigami/core";
  */
 export default async function defaultKeysJson(treelike) {
   const tree = Tree.from(treelike);
-  const keys = Array.from(await tree.keys());
-  // Skip the key .keys.json if present.
-  const filtered = keys.filter((key) => key !== ".keys.json");
-  const json = JSON.stringify(filtered);
+  const keyDescriptors = [];
+  for (const key of await tree.keys()) {
+    // Skip the key .keys.json if present.
+    if (key === ".keys.json") {
+      continue;
+    }
+    const isKeyForSubtree = await Tree.isKeyForSubtree(tree, key);
+    const keyDescriptor = isKeyForSubtree ? `${key}/` : key;
+    keyDescriptors.push(keyDescriptor);
+  }
+  const json = JSON.stringify(keyDescriptors);
   return json;
 }

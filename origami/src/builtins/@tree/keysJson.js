@@ -1,5 +1,9 @@
 import { Dictionary, Tree } from "@graphorigami/core";
-import { getScope, transformObject } from "../../common/utilities.js";
+import {
+  getScope,
+  transformObject,
+  treeWithScope,
+} from "../../common/utilities.js";
 import defaultKeysJson from "../../framework/defaultKeysJson.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
@@ -18,7 +22,10 @@ export default async function keysJson(treelike) {
     return undefined;
   }
   const tree = Tree.from(treelike);
-  const result = transformObject(KeysJsonTransform, tree);
+  let result = transformObject(KeysJsonTransform, tree);
+  if (this) {
+    result = treeWithScope(result, this);
+  }
   return result;
 }
 

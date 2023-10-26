@@ -1,20 +1,30 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
 import SiteTree from "../src/SiteTree.js";
+import * as Tree from "../src/Tree.js";
 
 const mockHost = "https://mock";
 
 const mockResponses = {
   "/.keys.json": {
-    data: JSON.stringify(["Alice.html", "Bob.html", "Carol.html"]),
-  },
-  "/Alice.html": {
-    data: "Hello, Alice!",
+    data: JSON.stringify(["about/"]),
   },
   "/about": {
     redirected: true,
     status: 301,
     url: "https://mock/about/",
+  },
+  "/about/.keys.json": {
+    data: JSON.stringify(["Alice.html", "Bob.html", "Carol.html"]),
+  },
+  "/about/Alice.html": {
+    data: "Hello, Alice!",
+  },
+  "/about/Bob.html": {
+    data: "Hello, Bob!",
+  },
+  "/about/Carol.html": {
+    data: "Hello, Carol!",
   },
 };
 
@@ -23,15 +33,23 @@ describe("SiteTree", () => {
     mock.method(global, "fetch", mockFetch);
   });
 
+  test("resolve() returns a new SiteTree for the given relative route", () => {
+    const fixture = new SiteTree(mockHost);
+    const about = fixture.resolve("about");
+    assert.equal(about.href, "https://mock/about/");
+  });
+
   test("can get the keys of the tree", async () => {
     const fixture = new SiteTree(mockHost);
-    const keys = await fixture.keys();
+    const about = fixture.resolve("about");
+    const keys = await about.keys();
     assert.deepEqual([...keys], ["Alice.html", "Bob.html", "Carol.html"]);
   });
 
   test("can get the value for a key", async () => {
     const fixture = new SiteTree(mockHost);
-    const alice = await fixture.get("Alice.html");
+    const about = fixture.resolve("about");
+    const alice = await about.get("Alice.html");
     assert.equal(alice, "Hello, Alice!");
   });
 
@@ -46,10 +64,24 @@ describe("SiteTree", () => {
     assert.equal(about.href, "https://mock/about/");
   });
 
-  test("resolve() returns a new SiteTree for the given relative route", () => {
+  test("can determine whether a key is for a subtree", async () => {
     const fixture = new SiteTree(mockHost);
+    assert.equal(await fixture.isKeyForSubtree("about"), true);
     const about = fixture.resolve("about");
-    assert.equal(about.href, "https://mock/about/");
+    assert.equal(await about.isKeyForSubtree("Alice.html"), false);
+  });
+
+  test("can convert a SiteGraph to a plain object", async () => {
+    const fixture = new SiteTree(mockHost);
+    // Convert buffers to strings.
+    const strings = await Tree.map(fixture, (value) => value.toString());
+    assert.deepEqual(await Tree.plain(strings), {
+      about: {
+        "Alice.html": "Hello, Alice!",
+        "Bob.html": "Hello, Bob!",
+        "Carol.html": "Hello, Carol!",
+      },
+    });
   });
 });
 
