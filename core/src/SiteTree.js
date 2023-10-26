@@ -27,7 +27,47 @@ export default class SiteTree {
   }
 
   async get(key) {
-    return this.traverse(key);
+    // If there is only one key and it's the empty string, and the site is
+    // explorable, we take the route as "index.html". With this and subsequent
+    // checks, we try to avoid sniffing the site to see if it's explorable, as
+    // that necessitates an extra network request per SiteTree instance. In
+    // many cases, that can be avoided.
+    if (key === Tree.defaultValueKey && (await this.hasKeysJson())) {
+      key = "index.html";
+    }
+
+    const href = new URL(key, this.href).href;
+
+    // If the (possibly adjusted) route ends with a slash and the site is an
+    // explorable site, we return a tree for the indicated route.
+    if (href.endsWith("/") && (await this.hasKeysJson())) {
+      return Reflect.construct(this.constructor, [href]);
+    }
+
+    // Fetch the data at the given route.
+    const response = await fetch(href);
+    if (!response.ok) {
+      return undefined;
+    }
+
+    if (response.redirected && response.url.endsWith("/")) {
+      // If the response is redirected to a route that ends with a slash, and
+      // the site is an explorable site, we return a tree for the new route.
+      if (await this.hasKeysJson()) {
+        return Reflect.construct(this.constructor, [response.url]);
+      }
+    }
+
+    const buffer = await response.arrayBuffer();
+    if (buffer instanceof ArrayBuffer) {
+      // Patch the ArrayBuffer to give it a more useful toString that decodes
+      // the buffer as UTF-8, like Node's Buffer class does.
+      buffer.toString = function () {
+        return new TextDecoder().decode(this);
+      };
+    }
+
+    return buffer;
   }
 
   async getKeys() {
@@ -71,57 +111,5 @@ export default class SiteTree {
   resolve(path) {
     const href = new URL(path, this.href).href;
     return Reflect.construct(this.constructor, [href]);
-  }
-
-  async traverse(...keys) {
-    if (keys.length === 0) {
-      return this;
-    }
-
-    // The route is a slash-separated concatenation of the keys.
-    const mapped = keys.map((key) => (key === Tree.defaultValueKey ? "" : key));
-    let route = mapped.join("/");
-
-    // If there is only one key and it's the empty string, and the site is
-    // explorable, we take the route as "index.html". With this and subsequent
-    // checks, we try to avoid sniffing the site to see if it's explorable, as
-    // that necessitates an extra network request per SiteTree instance. In
-    // many cases, that can be avoided.
-    if (route === "" && (await this.hasKeysJson())) {
-      route = "index.html";
-    }
-
-    const href = new URL(route, this.href).href;
-
-    // If the (possibly adjusted) route ends with a slash and the site is an
-    // explorable site, we return a tree for the indicated route.
-    if (href.endsWith("/") && (await this.hasKeysJson())) {
-      return Reflect.construct(this.constructor, [href]);
-    }
-
-    // Fetch the data at the given route.
-    const response = await fetch(href);
-    if (!response.ok) {
-      return undefined;
-    }
-
-    if (response.redirected && response.url.endsWith("/")) {
-      // If the response is redirected to a route that ends with a slash, and
-      // the site is an explorable site, we return a tree for the new route.
-      if (await this.hasKeysJson()) {
-        return Reflect.construct(this.constructor, [response.url]);
-      }
-    }
-
-    const buffer = await response.arrayBuffer();
-    if (buffer instanceof ArrayBuffer) {
-      // Patch the ArrayBuffer to give it a more useful toString that decodes
-      // the buffer as UTF-8, like Node's Buffer class does.
-      buffer.toString = function () {
-        return new TextDecoder().decode(this);
-      };
-    }
-
-    return buffer;
   }
 }

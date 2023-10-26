@@ -357,14 +357,7 @@ export async function traverseOrThrow(treelike, ...keys) {
     // tree. If it's not already a tree, cast it to one.
     const tree = from(value);
 
-    // If the tree supports the traverse() method, pass the remaining keys
-    // all at once.
-    if (tree.traverse) {
-      value = await tree.traverse(...remainingKeys);
-      break;
-    }
-
-    // Otherwise, process the next key.
+    // Process the next key.
     const key = remainingKeys.shift();
     value = await tree.get(key);
 
