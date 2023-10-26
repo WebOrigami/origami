@@ -5,10 +5,10 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import setDeep from "./@tree/setDeep.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} source
  * @param {Treelike} target
  */

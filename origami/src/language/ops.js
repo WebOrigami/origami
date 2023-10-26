@@ -1,5 +1,5 @@
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  */
 
@@ -21,7 +21,7 @@ const origamiTreePromise = import("../framework/OrigamiTree.js").then(
 /**
  * Construct an array.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any[]} items
  */
 export async function array(...items) {
@@ -36,7 +36,7 @@ export const assign = "«ops.assign»";
 /**
  * Concatenate the given arguments.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any[]} args
  */
 export async function concat(...args) {
@@ -47,7 +47,7 @@ concat.toString = () => "«ops.concat»";
 /**
  * Construct a files tree for the filesystem root.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export async function filesRoot() {
   const root = await filesBuiltin.call(this, "/");
@@ -63,7 +63,7 @@ export async function filesRoot() {
 /**
  * Retrieve a web resource via HTTP.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -75,7 +75,7 @@ http.toString = () => "«ops.http»";
 /**
  * Retrieve a web resource via HTTPS.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -88,7 +88,7 @@ https.toString = () => "«ops.https»";
  * Search the inherited scope -- i.e., exclude the current tree -- for the
  * given key.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {*} key
  */
 export async function inherited(key) {
@@ -103,11 +103,11 @@ inherited.toString = () => "«ops.inherited»";
  * Return a function that will invoke the given code.
  *
  * @typedef {import("./code").Code} Code
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Code} code
  */
 export function lambda(code) {
-  /** @this {AsyncDictionary|null} */
+  /** @this {AsyncTree|null} */
   async function invoke(input) {
     // Add ambients to scope.
     const ambients = {
@@ -128,7 +128,7 @@ lambda.toString = () => "«ops.lambda»";
  * parameter's, and the values will be the results of evaluating the
  * corresponding code values in `obj`.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {PlainObject} obj
  */
 export async function object(obj) {
@@ -145,7 +145,7 @@ object.toString = () => "«ops.object»";
  * Construct an tree. This is similar to ops.object but the result is an
  * OrigamiTree instance.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {PlainObject} formulas
  */
 export async function tree(formulas) {
@@ -164,7 +164,7 @@ tree.toString = () => "«ops.tree»";
 /**
  * A website tree via HTTP.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} domain
  * @param  {...string} keys
  */
@@ -176,7 +176,7 @@ treeHttp.toString = () => "«ops.treeHttp»";
 /**
  * A website tree via HTTPS.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} domain
  * @param  {...string} keys
  */

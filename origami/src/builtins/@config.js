@@ -7,9 +7,9 @@ import project from "./@project.js";
  * the default export of that file. Otherwise, the configuration is the set of
  * built-in functions.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any} [key]
  */
 export default async function config(key) {

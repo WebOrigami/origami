@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 
 export default async function setDeep(target, source) {
   const targetTree = Tree.from(target);
@@ -28,9 +28,9 @@ async function applyUpdates(source, target) {
 // Copy the value for the given key from the source to the target.
 async function applyUpdateForKey(source, target, key) {
   const sourceValue = await source.get(key);
-  if (Dictionary.isAsyncDictionary(sourceValue)) {
+  if (Tree.isAsyncTree(sourceValue)) {
     const targetValue = await target.get(key);
-    if (Dictionary.isAsyncDictionary(targetValue)) {
+    if (Tree.isAsyncTree(targetValue)) {
       // Both source and target are async dictionaries; recurse.
       await applyUpdates(sourceValue, targetValue);
       return;

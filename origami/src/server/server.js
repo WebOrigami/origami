@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree, keysFromPath } from "@graphorigami/core";
 import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
 import {
@@ -53,7 +53,7 @@ export async function handleRequest(request, response, tree) {
 
   // We allow the use of %2F in paths as a way to insert a slash into a key, so
   // we parse the path into keys first, then decode them.
-  const keys = Tree.keysFromPath(url.pathname).map((key) =>
+  const keys = keysFromPath(url.pathname).map((key) =>
     typeof key === "string" ? decodeURIComponent(key) : key
   );
 
@@ -88,7 +88,7 @@ export async function handleRequest(request, response, tree) {
   if (
     mediaType === undefined &&
     !request.url.endsWith("/") &&
-    (Dictionary.isAsyncDictionary(resource) ||
+    (Tree.isAsyncTree(resource) ||
       isPlainObject(resource) ||
       resource instanceof Array)
   ) {

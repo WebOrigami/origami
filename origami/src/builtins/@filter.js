@@ -5,10 +5,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Apply a filter to a tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {Treelike} filterVariant
  */

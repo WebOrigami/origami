@@ -1,4 +1,4 @@
-import type { AsyncDictionary } from "@graphorigami/types";
+import type { AsyncTree } from "@graphorigami/types";
 export * from "./main.js";
 
 export type PlainObject = {
@@ -11,7 +11,7 @@ export type Unpackable = {
 
 export type Treelike =
   any[] |
-  AsyncDictionary |
+  AsyncTree |
   Function | 
   Map<any, any> | 
   PlainObject | 

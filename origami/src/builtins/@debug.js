@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import {
   isPlainObject,
@@ -11,11 +11,10 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
 export default async function debug(treelike) {
@@ -39,8 +38,8 @@ export default async function debug(treelike) {
 }
 
 /**
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {
@@ -54,7 +53,7 @@ function DebugTransform(Base) {
       }
 
       // Ensure debug transforms are applied to explorable results.
-      if (Dictionary.isAsyncDictionary(value)) {
+      if (Tree.isAsyncTree(value)) {
         if (!isTransformApplied(ExplorableSiteTransform, value)) {
           value = transformObject(ExplorableSiteTransform, value);
         }

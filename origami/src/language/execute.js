@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree, isPlainObject } from "@graphorigami/core";
 import format from "./format.js";
 import * as ops from "./ops.js";
 
@@ -74,7 +74,7 @@ export default async function execute(code) {
     result &&
     typeof result === "object" &&
     Object.isExtensible(result) &&
-    !Dictionary.isPlainObject(result)
+    !isPlainObject(result)
   ) {
     try {
       result[expressionSymbol] = format(code);

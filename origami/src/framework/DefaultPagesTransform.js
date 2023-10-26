@@ -3,9 +3,9 @@ import DefaultValues from "../common/DefaultValuesTransform.js";
 import defaultKeysJson from "./defaultKeysJson.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 export default function DefaultPagesTransform(Base) {
   return class DefaultPages extends DefaultValues(Base) {

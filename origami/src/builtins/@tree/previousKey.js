@@ -4,12 +4,12 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Returns the key before the indicated key.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
  * @param {Treelike} treelike
  * @param {any} key
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function previousKey(treelike, key) {
   assertScopeIsDefined(this);

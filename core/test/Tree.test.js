@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as Tree from "../src/Tree.js";
 import MapTree from "../src/MapTree.js";
 import ObjectTree from "../src/ObjectTree.js";
+import * as Tree from "../src/Tree.js";
 
 describe("Tree", () => {
   test("assign applies one tree to another", async () => {
@@ -45,10 +45,41 @@ describe("Tree", () => {
     });
   });
 
-  test("assign can apply updates to an array", async () => {
+  test("assign() can apply updates to an array", async () => {
     const target = new ObjectTree(["a", "b", "c"]);
     await Tree.assign(target, ["d", "e"]);
     assert.deepEqual(await Tree.plain(target), ["d", "e", "c"]);
+  });
+
+  test("clear() removes all values", async () => {
+    const fixture = createFixture();
+    await Tree.clear(fixture);
+    assert.deepEqual([...(await Tree.entries(fixture))], []);
+  });
+
+  test("entries() returns the [key, value] pairs", async () => {
+    const fixture = createFixture();
+    assert.deepEqual(
+      [...(await Tree.entries(fixture))],
+      [
+        ["Alice.md", "Hello, **Alice**."],
+        ["Bob.md", "Hello, **Bob**."],
+        ["Carol.md", "Hello, **Carol**."],
+      ]
+    );
+  });
+
+  test("forEach() invokes a callback for each entry", async () => {
+    const fixture = createFixture();
+    const results = {};
+    await Tree.forEach(fixture, async (value, key) => {
+      results[key] = value;
+    });
+    assert.deepEqual(results, {
+      "Alice.md": "Hello, **Alice**.",
+      "Bob.md": "Hello, **Bob**.",
+      "Carol.md": "Hello, **Carol**.",
+    });
   });
 
   test("from() returns an async tree as is", async () => {
@@ -95,9 +126,42 @@ describe("Tree", () => {
     });
   });
 
-  test("keysFromPath() returns the keys from a slash-separated path", () => {
-    assert.deepEqual(Tree.keysFromPath("a/b/c"), ["a", "b", "c"]);
-    assert.deepEqual(Tree.keysFromPath("foo/"), ["foo", Tree.defaultValueKey]);
+  test("has returns true if the key exists", async () => {
+    const fixture = createFixture();
+    assert.equal(await Tree.has(fixture, "Alice.md"), true);
+    assert.equal(await Tree.has(fixture, "David.md"), false);
+  });
+
+  test("isAsyncTree returns true if the object is a tree", () => {
+    const missingGetAndKeys = {};
+    assert(!Tree.isAsyncTree(missingGetAndKeys));
+
+    const missingIterator = {
+      async get() {},
+    };
+    assert(!Tree.isAsyncTree(missingIterator));
+
+    const missingGet = {
+      async keys() {},
+    };
+    assert(!Tree.isAsyncTree(missingGet));
+
+    const hasGetAndKeys = {
+      async get() {},
+      async keys() {},
+    };
+    assert(Tree.isAsyncTree(hasGetAndKeys));
+  });
+
+  test("isAsyncMutableTree returns true if the object is a mutable tree", () => {
+    assert.equal(
+      Tree.isAsyncMutableTree({
+        get() {},
+        keys() {},
+      }),
+      false
+    );
+    assert.equal(Tree.isAsyncMutableTree(createFixture()), true);
   });
 
   test("isTreelike() returns true if the argument can be cast to an async tree", () => {
@@ -186,6 +250,18 @@ describe("Tree", () => {
     assert.deepEqual(plain, original);
   });
 
+  test("remove method removes a value", async () => {
+    const fixture = createFixture();
+    await Tree.remove(fixture, "Alice.md");
+    assert.deepEqual(
+      [...(await Tree.entries(fixture))],
+      [
+        ["Bob.md", "Hello, **Bob**."],
+        ["Carol.md", "Hello, **Carol**."],
+      ]
+    );
+  });
+
   test("toFunction returns a function that invokes a tree's get() method", async () => {
     const tree = new ObjectTree({
       a: 1,
@@ -259,4 +335,20 @@ describe("Tree", () => {
     });
     assert.equal(await Tree.traversePath(tree, "a/b/c"), "Hello");
   });
+
+  test("values() returns the store's values", async () => {
+    const fixture = createFixture();
+    assert.deepEqual(
+      [...(await Tree.values(fixture))],
+      ["Hello, **Alice**.", "Hello, **Bob**.", "Hello, **Carol**."]
+    );
+  });
 });
+
+function createFixture() {
+  return new ObjectTree({
+    "Alice.md": "Hello, **Alice**.",
+    "Bob.md": "Hello, **Bob**.",
+    "Carol.md": "Hello, **Carol**.",
+  });
+}

@@ -1,4 +1,4 @@
-import SetDictionary from "./SetDictionary.js";
+import defaultValueKey from "./defaultValueKey.js";
 import * as Tree from "./Tree.js";
 
 /**
@@ -7,14 +7,23 @@ import * as Tree from "./Tree.js";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
-export default class SetTree extends SetDictionary {
+export default class SetTree {
+  /**
+   * @param {Set} set
+   */
   constructor(set) {
-    super(set);
+    this.values = [...set];
     this.parent = null;
   }
 
   async get(key) {
-    let value = await super.get(key);
+    // The tree's default value is the underlying array of values.
+    if (key === defaultValueKey) {
+      return this.values;
+    }
+
+    let value = this.values[key];
+
     if (value instanceof Set) {
       value = Reflect.construct(this.constructor, [value]);
     }
@@ -24,5 +33,9 @@ export default class SetTree extends SetDictionary {
     }
 
     return value;
+  }
+
+  async keys() {
+    return this.values.keys();
   }
 }

@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
 import processUnpackedContent from "../common/processUnpackedContent.js";

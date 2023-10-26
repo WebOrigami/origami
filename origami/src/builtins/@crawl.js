@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree, keysFromPath } from "@graphorigami/core";
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { isPlainObject, treeWithScope } from "../common/utilities.js";
@@ -12,13 +12,12 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
- * @returns {Promise<AsyncDictionary>}
+ * @returns {Promise<AsyncTree>}
  */
 export default async function crawl(treelike, baseHref) {
   assertScopeIsDefined(this);
@@ -55,7 +54,7 @@ export default async function crawl(treelike, baseHref) {
       const fn = () => {
         return Tree.traversePath(tree, resourcePath);
       };
-      const resourceKeys = Tree.keysFromPath(resourcePath);
+      const resourceKeys = keysFromPath(resourcePath);
       addValueToObject(cache, resourceKeys, fn);
     }
   }
@@ -387,11 +386,11 @@ async function processPath(tree, path, baseUrl) {
 
   // Convert path to keys
   /** @type {any[]} */
-  let keys = Tree.keysFromPath(path);
+  let keys = keysFromPath(path);
 
   // Traverse tree to get value.
   let value = await Tree.traverse(tree, ...keys);
-  if (Dictionary.isAsyncDictionary(value)) {
+  if (Tree.isTreelike(value)) {
     // Path is actually a directory; see if it has an index.html
     if (keys.at(-1) === Tree.defaultValueKey) {
       keys.pop();

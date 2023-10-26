@@ -1,20 +1,32 @@
-import MapDictionary from "./MapDictionary.js";
 import * as Tree from "./Tree.js";
+import defaultValueKey from "./defaultValueKey.js";
 
 /**
- * A tree of Map objects.
+ * A tree backed by a JavaScript `Map` object.
+ *
+ * Note: By design, the standard `Map` class already complies with the
+ * `AsyncTree` interface. This class adds some additional tree behavior, such as
+ * constructing subtree instances and setting their `parent` property.
  *
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
-export default class MapTree extends MapDictionary {
-  constructor(map) {
-    super(map);
+export default class MapTree {
+  /**
+   * @param {Iterable} [iterable]
+   */
+  constructor(iterable = []) {
+    this.map = new Map(iterable);
     this.parent = null;
   }
 
   async get(key) {
-    let value = await super.get(key);
+    let value = this.map.get(key);
+
+    if (value === undefined && key === defaultValueKey) {
+      // The default value is the underlying tree itself.
+      return this.map;
+    }
 
     if (value instanceof Map) {
       value = Reflect.construct(this.constructor, [value]);
@@ -25,5 +37,14 @@ export default class MapTree extends MapDictionary {
     }
 
     return value;
+  }
+
+  async keys() {
+    return this.map.keys();
+  }
+
+  async set(key, value) {
+    this.map.set(key, value);
+    return this;
   }
 }

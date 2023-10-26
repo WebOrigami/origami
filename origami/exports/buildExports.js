@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import MapExtensionTree from "../src/common/MapExtensionsTree.js";
 import { transformObject } from "../src/common/utilities.js";
 import unpackOrigamiTemplate from "../src/loaders/orit.js";
@@ -34,7 +34,7 @@ export default async function exportFile(src) {
  * Given a buffer containing the code for a JavaScript file, generate an
  * appropriate export statement for that file.
  *
- * @this {AsyncDictionary}
+ * @this {AsyncTree}
  */
 async function exportStatementForCode(codeBuffer, key) {
   // Skip modules that should not be exported

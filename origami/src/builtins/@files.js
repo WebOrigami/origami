@@ -5,10 +5,9 @@ import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string[]} keys
  */
 export default async function files(...keys) {

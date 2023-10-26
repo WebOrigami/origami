@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 
 /**
  * Caches non-tree values from the first (source) tree in a second (cache)
@@ -35,7 +35,7 @@ export default class CacheTree {
   async get(key) {
     // Check cache tree first.
     let cacheValue = await this.cache.get(key);
-    if (cacheValue !== undefined && !Dictionary.isAsyncDictionary(cacheValue)) {
+    if (cacheValue !== undefined && !Tree.isAsyncTree(cacheValue)) {
       // Non-tree cache hit
       return cacheValue;
     }
@@ -53,7 +53,7 @@ export default class CacheTree {
         match = filterValue !== undefined;
       }
       if (match) {
-        if (Dictionary.isAsyncDictionary(value)) {
+        if (Tree.isAsyncTree(value)) {
           // Construct merged tree for a tree result.
           if (cacheValue === undefined) {
             // Construct new container in cache

@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 
 /**
  * Caches the results retrieved from one source tree in a second cache tree.
@@ -18,13 +18,13 @@ export default class FilterTree {
     let value = await this.tree.get(key);
 
     let filterValue = await this.filter.get(key);
-    if (!Dictionary.isAsyncDictionary(value)) {
+    if (!Tree.isAsyncTree(value)) {
       if (filterValue === undefined) {
         value = undefined;
-      } else if (Dictionary.isAsyncDictionary(filterValue)) {
+      } else if (Tree.isAsyncTree(filterValue)) {
         value = undefined;
       }
-    } else if (Dictionary.isAsyncDictionary(filterValue)) {
+    } else if (Tree.isAsyncTree(filterValue)) {
       // Wrap value with corresponding filter.
       value = Reflect.construct(this.constructor, [value, filterValue]);
     }
@@ -38,7 +38,7 @@ export default class FilterTree {
     // Enumerate all keys in the tree that can be found in the filter tree.
     for (const key of await this.tree.keys()) {
       const filterValue = await this.filter.get(key);
-      const isFilterValueTree = Dictionary.isAsyncDictionary(filterValue);
+      const isFilterValueTree = Tree.isAsyncTree(filterValue);
       // If the filter value is a tree, the corresponding value in the tree
       // must be a tree too.
       const match =

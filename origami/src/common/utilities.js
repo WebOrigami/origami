@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import Scope from "./Scope.js";
 
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 
 // If the given plain object has only integer keys, return it as an array.
 // Otherwise return it as is.
@@ -62,8 +62,8 @@ export function getRealmObjectPrototype(obj) {
  * `parent` property, construct a scope for the tree and its parent. Otherwise,
  * return the tree itself.
  *
- * @param {AsyncDictionary|null} tree
- * @returns {AsyncDictionary|null}
+ * @param {AsyncTree|null|undefined} tree
+ * @returns {AsyncTree|null}
  */
 export function getScope(tree) {
   if (!tree) {
@@ -148,8 +148,8 @@ export const keySymbol = Symbol("key");
  *
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @param {Treelike} treelike
- * @param {AsyncDictionary|null} scope
- * @returns {AsyncDictionary & { scope: AsyncDictionary }}
+ * @param {AsyncTree|null} scope
+ * @returns {AsyncTree & { scope: AsyncTree }}
  */
 export function treeWithScope(treelike, scope) {
   // If the treelike was already a tree, create a copy of it.

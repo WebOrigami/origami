@@ -3,8 +3,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary & { dirname: string }>} BaseConstructor
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree & { dirname: string }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {

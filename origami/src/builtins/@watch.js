@@ -6,11 +6,11 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Let a tree (e.g., of files) respond to changes.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {Invocable} [fn]
  */

@@ -7,13 +7,13 @@ import { parseYaml, toYaml } from "./serialize.js";
  * @typedef {import("../../index.js").StringLike} StringLike
  * @typedef {import("@graphorigami/core").Unpackable} HasContents
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 export default class TextDocument {
   /**
    * @param {StringLike} text
    * @param {any} [data]
-   * @param {AsyncDictionary|null} [parent]
+   * @param {AsyncTree|null} [parent]
    */
   constructor(text, data, parent) {
     this.text = String(text);

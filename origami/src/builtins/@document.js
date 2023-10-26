@@ -2,13 +2,13 @@ import TextDocument from "../common/TextDocument.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("../..").StringLike} StringLike
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {StringLike} text
  * @param {any} [data]
- * @param {AsyncDictionary|null} [parent]
+ * @param {AsyncTree|null} [parent]
  * @returns
  */
 export default function document(text, data, parent) {

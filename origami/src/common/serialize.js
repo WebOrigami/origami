@@ -2,7 +2,7 @@
  * @typedef {import("../..").JsonValue} JsonValue
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 
 import { Tree } from "@graphorigami/core";
@@ -49,7 +49,7 @@ function isJsonValue(obj) {
 
 /**
  * @param {string} text
- * @returns {JsonValue|AsyncDictionary}
+ * @returns {JsonValue|AsyncTree}
  */
 export function parseYaml(text) {
   const data = YAML.parse(text, {

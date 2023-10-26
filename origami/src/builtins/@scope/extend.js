@@ -5,12 +5,12 @@ import setScope from "./set.js";
  * Return a copy of the given tree whose scope includes the given trees *and*
  * the current scope.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param  {...Treelike} scopeTrees
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default function extendScope(treelike, ...scopeTrees) {
   assertScopeIsDefined(this);

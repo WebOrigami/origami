@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import YAML from "yaml";
 import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Render the object as text in YAML format.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any} [obj]
  */
 export default async function toYaml(obj) {

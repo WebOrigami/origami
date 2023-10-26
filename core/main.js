@@ -1,13 +1,9 @@
 export { default as DeferredTree } from "./src/DeferredTree.js";
-export * as Dictionary from "./src/Dictionary.js";
 export { default as FileTree } from "./src/FileTree.js";
-export { default as FunctionDictionary } from "./src/FunctionDictionary.js";
 export { default as FunctionTree } from "./src/FunctionTree.js";
-export { default as MapDictionary } from "./src/MapDictionary.js";
 export { default as MapTree } from "./src/MapTree.js";
-export { default as ObjectDictionary } from "./src/ObjectDictionary.js";
 export { default as ObjectTree } from "./src/ObjectTree.js";
-export { default as SetDictionary } from "./src/SetDictionary.js";
 export { default as SetTree } from "./src/SetTree.js";
 export { default as SiteTree } from "./src/SiteTree.js";
 export * as Tree from "./src/Tree.js";
+export * from "./src/utilities.js";

@@ -5,10 +5,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Cast the indicated treelike to a tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
 export default async function tree(treelike) {

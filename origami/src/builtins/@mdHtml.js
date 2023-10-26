@@ -25,7 +25,7 @@ marked.use(
 /**
  * @typedef {import("../..").StringLike} StringLike
  *
- * @this {import("@graphorigami/types").AsyncDictionary|null|void}
+ * @this {import("@graphorigami/types").AsyncTree|null|void}
  * @param {StringLike} input
  */
 export default async function mdHtml(input) {

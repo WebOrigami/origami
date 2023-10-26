@@ -1,11 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
  * Render the given object in JSON format.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any} [obj]
  */
 export default async function json(obj) {

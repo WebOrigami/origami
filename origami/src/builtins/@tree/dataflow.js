@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import path from "node:path";
 import * as YAMLModule from "yaml";
 import { extname } from "../../common/utilities.js";
@@ -15,9 +15,9 @@ ignoreKeys.push(".");
 ignoreKeys.push("..");
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
 export default async function dataflow(treelike) {
@@ -25,7 +25,7 @@ export default async function dataflow(treelike) {
   const tree = Tree.from(treelike);
 
   const flowFile = await tree.get(".dataflow.yaml");
-  const flow = Dictionary.isAsyncDictionary(flowFile)
+  const flow = Tree.isAsyncTree(flowFile)
     ? await Tree.plain(flowFile)
     : flowFile
     ? YAML.parse(String(flowFile))

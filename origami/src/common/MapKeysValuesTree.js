@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import * as utilities from "./utilities.js";
 import { getScope } from "./utilities.js";
@@ -42,7 +42,7 @@ export default class MapKeysValuesTree {
       outerValue = await this.tree.get(outerKey);
 
       // If the value to return is a subtree, wrap it with a map.
-      if (this.deep && Dictionary.isAsyncDictionary(outerValue)) {
+      if (this.deep && Tree.isAsyncTree(outerValue)) {
         outerValue = Reflect.construct(this.constructor, [
           outerValue,
           this.mapFn,

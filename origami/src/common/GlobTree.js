@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import MergeTree from "./MergeTree.js";
 
 const globstar = "**";
@@ -18,7 +18,7 @@ export default class GlobTree {
       return undefined;
     }
     let value = await matchGlobs(this.globs, key);
-    if (Dictionary.isAsyncDictionary(value)) {
+    if (Tree.isAsyncTree(value)) {
       value = Reflect.construct(this.constructor, [value]);
     }
     return value;
@@ -60,7 +60,7 @@ async function matchGlobs(globs, text) {
     if (value === undefined) {
       const globstarValue = await matchGlobs(globstarGlobs, text);
       value = globstarValue !== undefined ? globstarValue : globstarTree;
-    } else if (Dictionary.isAsyncDictionary(value)) {
+    } else if (Tree.isAsyncTree(value)) {
       value = new MergeTree(value, globstarTree);
     }
   }

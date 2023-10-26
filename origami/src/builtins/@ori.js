@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
@@ -9,7 +9,7 @@ import * as compile from "../language/compile.js";
 /**
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  *
  * @param {string} expression
  */

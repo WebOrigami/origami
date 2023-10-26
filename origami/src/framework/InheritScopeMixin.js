@@ -15,7 +15,7 @@ export default function InheritScopeMixin(Base) {
       this[scopeKey] = null;
     }
 
-    /** @type {import("@graphorigami/types").AsyncDictionary} */
+    /** @type {import("@graphorigami/types").AsyncTree} */
     get scope() {
       if (this[scopeKey] === null) {
         if (this.parent) {

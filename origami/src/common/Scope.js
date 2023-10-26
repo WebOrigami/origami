@@ -1,8 +1,8 @@
 import { Tree } from "@graphorigami/core";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @implements {AsyncDictionary}
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @implements {AsyncTree}
  */
 export default class Scope {
   constructor(...treelikes) {

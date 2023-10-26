@@ -13,7 +13,7 @@ describe("@with", () => {
       {
         inWith: "bar",
       },
-      /** @this {import("@graphorigami/types").AsyncDictionary} */
+      /** @this {import("@graphorigami/types").AsyncTree} */
       async function () {
         return `${await this.get("inScope")}-${await this.get("inWith")}`;
       }

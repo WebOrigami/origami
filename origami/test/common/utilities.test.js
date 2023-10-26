@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
@@ -78,9 +78,7 @@ describe("utilities", () => {
       return class Uppercase extends Base {
         async get(key) {
           const value = await super.get(key);
-          return Dictionary.isAsyncDictionary(value)
-            ? value
-            : value.toUpperCase();
+          return Tree.isAsyncTree(value) ? value : value.toUpperCase();
         }
       };
     }

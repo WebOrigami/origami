@@ -1,0 +1,25 @@
+import assert from "node:assert";
+import { describe, test } from "node:test";
+import defaultValueKey from "../src/defaultValueKey.js";
+import * as utilities from "../src/utilities.js";
+
+describe("utilities", () => {
+  test("getRealmObjectPrototype returns the object's root prototype", () => {
+    const object = {};
+    const proto = utilities.getRealmObjectPrototype(object);
+    assert.equal(proto, Object.prototype);
+  });
+
+  test("isPlainObject returns true if the object is a plain object", () => {
+    assert.equal(utilities.isPlainObject({}), true);
+    assert.equal(utilities.isPlainObject(new Object()), true);
+    assert.equal(utilities.isPlainObject(Object.create(null)), true);
+    class Foo {}
+    assert.equal(utilities.isPlainObject(new Foo()), false);
+  });
+
+  test("keysFromPath() returns the keys from a slash-separated path", () => {
+    assert.deepEqual(utilities.keysFromPath("a/b/c"), ["a", "b", "c"]);
+    assert.deepEqual(utilities.keysFromPath("foo/"), ["foo", defaultValueKey]);
+  });
+});

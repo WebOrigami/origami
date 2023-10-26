@@ -4,13 +4,12 @@ import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../../..").StringLike} StringLike
  *
  * @param {StringLike} text
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function fromYaml(text) {
   assertScopeIsDefined(this);

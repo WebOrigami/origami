@@ -12,11 +12,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return a new tree with the original's keys sorted
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../../..").Invocable} Invocable
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {Invocable|null} [invocable]
  */

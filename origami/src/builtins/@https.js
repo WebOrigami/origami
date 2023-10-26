@@ -1,9 +1,9 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 
 /**
  * Retrieve the indicated web resource via HTTPS.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} host
  * @param  {...string} keys
  */

@@ -4,9 +4,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Return the in-order exterior values of a tree as a flat array.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
 export default async function valuesDeep(treelike) {

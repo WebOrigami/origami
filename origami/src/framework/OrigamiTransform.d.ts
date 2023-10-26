@@ -1,11 +1,11 @@
 import { Mixin } from "../..";
 
-import type { AsyncDictionary } from "@graphorigami/types";
+import type { AsyncTree } from "@graphorigami/types";
 
 // TODO: Figure out how to import declarations from InheritScopeMixin and
 // FileLoadersTransform and apply them here.
 declare const OrigamiTransform: Mixin<{
-  scope: AsyncDictionary|null;
+  scope: AsyncTree|null;
 }>;
 
 export default OrigamiTransform;

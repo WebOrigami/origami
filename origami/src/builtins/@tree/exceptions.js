@@ -1,13 +1,12 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import defineds from "./defineds.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
 export default async function exceptions(treelike) {
@@ -34,7 +33,7 @@ class ExceptionsTree {
   async get(key) {
     try {
       const value = await this.tree.get(key);
-      return Dictionary.isAsyncDictionary(value)
+      return Tree.isAsyncTree(value)
         ? Reflect.construct(this.constructor, [value])
         : undefined;
     } catch (/** @type {any} */ error) {

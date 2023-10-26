@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import * as Tree from "./Tree.js";
 
 /**
  * An HTTP/HTTPS site as a tree of ArrayBuffers.
@@ -129,7 +129,7 @@ export default class SiteTree {
 //
 // Process an array of key descriptors, which are strings that are either a key
 // for a regular value like "foo", or a key with a trailing slash like "bar/"
-// that indicate a subtree. Return a dictionary of keys to flags where the flag
+// that indicate a subtree. Return a tree of keys to flags where the flag
 // is true for subtrees and false otherwise.
 //
 // Example: given ["foo", "bar/"], returns

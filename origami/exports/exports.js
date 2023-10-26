@@ -63,7 +63,7 @@ export { default as treeFrom } from "../src/builtins/@tree/from.js";
 export { default as treeFromJson } from "../src/builtins/@tree/fromJson.js";
 export { default as treeFromYaml } from "../src/builtins/@tree/fromYaml.js";
 export { default as treeInners } from "../src/builtins/@tree/inners.js";
-export { default as treeIsAsyncDictionary } from "../src/builtins/@tree/isAsyncDictionary.js";
+export { default as treeIsAsyncTree } from "../src/builtins/@tree/isAsyncTree.js";
 export { default as treeKeys } from "../src/builtins/@tree/keys.js";
 export { default as treeKeysJson } from "../src/builtins/@tree/keysJson.js";
 export { default as treeMerge } from "../src/builtins/@tree/merge.js";

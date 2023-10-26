@@ -6,9 +6,9 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 /**
  * Return a default index.html page for the current tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
 export default async function index(treelike) {

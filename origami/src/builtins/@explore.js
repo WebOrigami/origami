@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { ObjectTree } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,7 +15,7 @@ const files = new OrigamiFiles(frameworkDir);
 const frameworkFiles = treeWithScope(files, builtins);
 
 /**
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function explore() {
   const scope = getScope(this);

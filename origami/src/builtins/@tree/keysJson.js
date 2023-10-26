@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import {
   getScope,
   transformObject,
@@ -10,9 +10,9 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Expose .keys.json for a tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
 export default async function keysJson(treelike) {
@@ -36,7 +36,7 @@ function KeysJsonTransform(Base) {
       if (value === undefined && key === ".keys.json") {
         const scope = getScope(this);
         value = defaultKeysJson.call(scope, this);
-      } else if (Dictionary.isAsyncDictionary(value)) {
+      } else if (Tree.isAsyncTree(value)) {
         value = transformObject(KeysJsonTransform, value);
       }
       return value;

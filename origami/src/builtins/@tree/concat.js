@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@graphorigami/core";
 import { getRealmObjectPrototype } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Concatenate the text content of objects or trees.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any[]} args
  */
 export default async function concat(...args) {

@@ -1,4 +1,4 @@
-import { Dictionary, ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/core";
 import setDeep from "../builtins/@tree/setDeep.js";
 
 /**
@@ -53,7 +53,7 @@ export default class CacheSite {
     }
 
     let cacheValue = await Tree.traverse(this.cache, ...keys);
-    if (cacheValue !== undefined && !Dictionary.isAsyncDictionary(cacheValue)) {
+    if (cacheValue !== undefined && !Tree.isAsyncTree(cacheValue)) {
       // Non-tree cache hit
       return cacheValue;
     }
@@ -83,14 +83,14 @@ export default class CacheSite {
         }
         // If we have a tree value, we don't cache the entire thing, just an
         // empty tree.
-        current[lastKey] = Dictionary.isAsyncDictionary(value) ? {} : value;
+        current[lastKey] = Tree.isAsyncTree(value) ? {} : value;
 
         // TODO: setDeep() should return the value it set.
         await setDeep(this.cache, updates);
         cacheValue = await Tree.traverse(this.cache, ...keys, lastKey);
       }
 
-      if (Dictionary.isAsyncDictionary(value)) {
+      if (Tree.isAsyncTree(value)) {
         // Construct merged tree for a tree result.
         value = Reflect.construct(this.constructor, [
           value,

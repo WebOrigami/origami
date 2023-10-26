@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { treeWithScope } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
@@ -18,7 +18,7 @@ const configFileName = "ori.config.js";
  * If no Origami configuration file is found, the current folder will be
  * returned as a tree, with the builtins as its parent.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any} [key]
  */
 export default async function project(key) {

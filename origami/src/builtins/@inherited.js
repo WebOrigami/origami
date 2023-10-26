@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as ops from "../language/ops.js";
 
@@ -6,7 +6,7 @@ import * as ops from "../language/ops.js";
  * Return the inherited value (if any) for the indicated key.
  *
  * @param {any} key
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function inherited(key) {
   assertScopeIsDefined(this);

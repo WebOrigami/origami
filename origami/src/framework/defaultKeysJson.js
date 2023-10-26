@@ -1,11 +1,11 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 
 import { Tree } from "@graphorigami/core";
 
 /**
  * Return a default .keys.json file for the current tree.
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function defaultKeysJson(treelike) {
   const tree = Tree.from(treelike);

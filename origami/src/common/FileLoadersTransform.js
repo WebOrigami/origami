@@ -8,11 +8,11 @@ import {
 } from "../common/utilities.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
  * @typedef {import("../../index.js").FileUnpackFunction} FileUnpackFunction
  *
- * @param {AsyncDictionaryConstructor} Base
+ * @param {AsyncTreeConstructor} Base
  */
 export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {

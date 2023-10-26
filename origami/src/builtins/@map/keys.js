@@ -5,12 +5,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Wrap a tree and redefine the key used to access nodes in it.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {function} keyFn
  * @param {PlainObject} [options]

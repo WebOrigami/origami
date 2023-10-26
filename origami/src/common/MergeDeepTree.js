@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 
 /**
  * This is a variation of MergeTree that performs a deep merge.
@@ -22,7 +22,7 @@ export default class MergeDeepTree {
 
     for (const tree of this.trees) {
       const value = await tree.get(key);
-      if (Dictionary.isAsyncDictionary(value)) {
+      if (Tree.isAsyncTree(value)) {
         subtrees.push(value);
       } else if (value !== undefined) {
         return value;

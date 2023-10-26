@@ -2,9 +2,9 @@ import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} jsonFeedTree
  */
 export default async function rss(jsonFeedTree) {

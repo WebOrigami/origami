@@ -3,12 +3,11 @@ import FileLoadersTransform from "../common/FileLoadersTransform.js";
 import { treeWithScope } from "../common/utilities.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {string} host
  * @param  {...(string|Symbol)} keys
  */

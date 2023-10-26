@@ -1,4 +1,4 @@
-import { Dictionary } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import {
   getScope,
   isTransformApplied,
@@ -11,9 +11,9 @@ import {
  * requested key is missing from the main tree, but exists in the default
  * values tree, the value will be returned from that tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 export default function DefaultValuesTransform(Base) {
   return class DefaultValues extends Base {
@@ -38,7 +38,7 @@ export default function DefaultValuesTransform(Base) {
 
       // Ensure this transform is applied to any subtree.
       if (
-        Dictionary.isAsyncDictionary(value) &&
+        Tree.isAsyncTree(value) &&
         !isTransformApplied(DefaultValuesTransform, value)
       ) {
         value = transformObject(DefaultValuesTransform, value);

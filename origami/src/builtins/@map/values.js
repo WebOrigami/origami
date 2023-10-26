@@ -6,13 +6,12 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Map the top-level values of a tree with a map function.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  * @typedef {import("../../..").Invocable} Invocable
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {Invocable} mapFn
  * @param {PlainObject} options

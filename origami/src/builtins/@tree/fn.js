@@ -5,11 +5,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Create a tree from a function and a set of keys.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("../../..").Invocable} Invocable
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Invocable} [invocable]
  */
 export default async function fn(invocable, keys = []) {
@@ -20,7 +20,7 @@ export default async function fn(invocable, keys = []) {
   }
   const invocableFn = toFunction(invocable);
 
-  /** @this {AsyncDictionary|null} */
+  /** @this {AsyncTree|null} */
   async function extendedFn(key) {
     const ambientsTree = treeWithScope({ "@key": key }, this);
     return invocableFn.call(ambientsTree, key);

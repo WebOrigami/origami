@@ -1,10 +1,10 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
 export default async function table(treelike) {
@@ -15,7 +15,7 @@ export default async function table(treelike) {
   }
   const tree = Tree.from(treelike);
   const firstValue = await valueForFirstKey(tree);
-  if (Dictionary.isAsyncDictionary(firstValue)) {
+  if (Tree.isAsyncTree(firstValue)) {
     return fullTable(tree, firstValue);
   } else {
     return simpleTable(tree);

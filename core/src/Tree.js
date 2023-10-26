@@ -1,23 +1,18 @@
 import DeferredTree from "./DeferredTree.js";
-import * as Dictionary from "./Dictionary.js";
 import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
 import defaultValueKey from "./defaultValueKey.js";
-
-// Tree exports all dictionary helpers too.
-export * from "./Dictionary.js";
+import * as utilities from "./utilities.js";
+import { castArrayLike, isPlainObject } from "./utilities.js";
 
 /**
  * Helper functions for working with async trees
  *
- * These add to the set of helper functions defined in Dictionary.
- *
  * @typedef {import("../index").Treelike} Treelike
  * @typedef {import("../index").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/types").AsyncMutableDictionary} AsyncMutableDictionary
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  */
 
@@ -28,14 +23,14 @@ export * from "./Dictionary.js";
  * subtrees, then the subtrees will be merged recursively. Otherwise, the
  * value from the source tree will overwrite the value in the target tree.
  *
- * @param {AsyncMutableDictionary} target
+ * @param {AsyncMutableTree} target
  * @param {AsyncTree} source
  */
 export async function assign(target, source) {
   const targetTree = from(target);
   const sourceTree = from(source);
-  if (!Dictionary.isAsyncMutableDictionary(targetTree)) {
-    throw new TypeError("Target must be a mutable asynchronous dictionary");
+  if (!isAsyncMutableTree(targetTree)) {
+    throw new TypeError("Target must be a mutable asynchronous tree");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.
   const keys = Array.from(await sourceTree.keys());
@@ -56,21 +51,46 @@ export async function assign(target, source) {
   return targetTree;
 }
 
-// If the given plain object has only sequential integer keys, return it as an
-// array. Otherwise return it as is.
-function castArrayLike(obj) {
-  let hasKeys = false;
-  let expectedIndex = 0;
-  for (const key in obj) {
-    hasKeys = true;
-    const index = Number(key);
-    if (key === "" || isNaN(index) || index !== expectedIndex) {
-      // Not an array-like object.
-      return obj;
-    }
-    expectedIndex++;
+/**
+ * Removes all entries from the tree.
+ *
+ * @param {AsyncMutableTree} tree
+ */
+export async function clear(tree) {
+  // @ts-ignore
+  for (const key of await tree.keys()) {
+    await tree.set(key, undefined);
   }
-  return hasKeys ? Object.values(obj) : obj;
+}
+
+export { defaultValueKey };
+
+/**
+ * Returns a new `Iterator` object that contains a two-member array of `[key,
+ * value]` for each element in the specific node of the tree.
+ *
+ * @param {AsyncTree} tree
+ */
+export async function entries(tree) {
+  const keys = [...(await tree.keys())];
+  const promises = keys.map(async (key) => [key, await tree.get(key)]);
+  return Promise.all(promises);
+}
+
+/**
+ * Calls callbackFn once for each key-value pair present in the specific node of
+ * the tree.
+ *
+ * @param {AsyncTree} tree
+ * @param {Function} callbackFn
+ */
+export async function forEach(tree, callbackFn) {
+  const keys = [...(await tree.keys())];
+  const promises = keys.map(async (key) => {
+    const value = await tree.get(key);
+    return callbackFn(value, key);
+  });
+  await Promise.all(promises);
 }
 
 /**
@@ -80,8 +100,8 @@ function castArrayLike(obj) {
  * @returns {AsyncTree}
  */
 export function from(obj) {
-  if (Dictionary.isAsyncDictionary(obj)) {
-    // Argument already supports the dictionary interface.
+  if (isAsyncTree(obj)) {
+    // Argument already supports the tree interface.
     // @ts-ignore
     return obj;
   } else if (typeof obj === "function") {
@@ -108,30 +128,46 @@ export function from(obj) {
 }
 
 /**
+ * Returns a boolean indicating whether the specific node of the tree has a
+ * value for the given `key`.
+ *
+ * @param {AsyncTree} tree
+ * @param {any} key
+ */
+export async function has(tree, key) {
+  const value = await tree.get(key);
+  return value !== undefined;
+}
+
+/**
  * Return true if the indicated object is an async tree.
  *
- * @param {any} obj
+ * @param {any} object
  * @returns {obj is AsyncTree}
  */
-export function isAsyncTree(obj) {
-  return Dictionary.isAsyncDictionary(obj) && obj && "parent" in obj;
+export function isAsyncTree(object) {
+  return (
+    object &&
+    typeof object.get === "function" &&
+    typeof object.keys === "function"
+  );
 }
 
 /**
  * Return true if the indicated object is an async mutable tree.
  *
- * @param {any} obj
+ * @param {any} object
  * @returns {obj is AsyncMutableTree}
  */
-export function isAsyncMutableTree(obj) {
-  return isAsyncTree(obj) && Dictionary.isAsyncMutableDictionary(obj);
+export function isAsyncMutableTree(object) {
+  return isAsyncTree(object) && typeof object.set === "function";
 }
 
 /**
  * Returns true if the indicated object can be directly treated as an
  * asynchronous tree. This includes:
  *
- * - An object that implements the AsyncDictionary interface (including
+ * - An object that implements the AsyncTree interface (including
  *   AsyncTree instances)
  * - An object that implements the `unpack()` method
  * - A function
@@ -143,16 +179,16 @@ export function isAsyncMutableTree(obj) {
  * Note: the `from()` method accepts any JavaScript object, but `isTreeable`
  * returns `false` for an object that isn't one of the above types.
  *
- * @param {any} obj
+ * @param {any} object
  */
-export function isTreelike(obj) {
+export function isTreelike(object) {
   return (
-    Dictionary.isAsyncDictionary(obj) ||
-    obj instanceof Function ||
-    obj instanceof Array ||
-    obj instanceof Set ||
-    obj?.unpack instanceof Function ||
-    Dictionary.isPlainObject(obj)
+    isAsyncTree(object) ||
+    object instanceof Function ||
+    object instanceof Array ||
+    object instanceof Set ||
+    object?.unpack instanceof Function ||
+    isPlainObject(object)
   );
 }
 
@@ -162,7 +198,7 @@ export function isTreelike(obj) {
  *
  * This defers to the tree's own isKeyForSubtree method. If not found, this
  * gets the value of that key and returns true if the value is an async
- * dictionary.
+ * tree.
  */
 export async function isKeyForSubtree(tree, key) {
   if (tree.isKeyForSubtree) {
@@ -170,30 +206,6 @@ export async function isKeyForSubtree(tree, key) {
   }
   const value = await tree.get(key);
   return isTreelike(value);
-}
-
-/**
- * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
- * "baz"].
- *
- * Leading slashes are ignored. Consecutive slashes or a trailing slash will
- * be represented by the `defaultValueKey` symbol. Example: the keys for the path
- * "/foo//bar/" will be ["foo", defaultValueKey, "bar", defaultValueKey].
- *
- * @param {string} pathname
- */
-export function keysFromPath(pathname) {
-  const keys = pathname.split("/");
-  if (keys[0] === "") {
-    // The path begins with a slash; drop that part.
-    keys.shift();
-  }
-  // Map empty strings to the default value key.
-  const mapped =
-    keys.length === 0
-      ? [defaultValueKey]
-      : keys.map((key) => (key === "" ? defaultValueKey : key));
-  return mapped;
 }
 
 /**
@@ -215,9 +227,7 @@ export async function map(treelike, mapFn) {
   const promises = keys.map((key) =>
     tree.get(key).then(async (value) => {
       // If the value is a subtree, recurse.
-      const fn = Dictionary.isAsyncDictionary(value)
-        ? map(value, mapFn)
-        : mapFn(value, key);
+      const fn = isAsyncTree(value) ? map(value, mapFn) : mapFn(value, key);
       const mappedValue = await fn;
       result.set(key, mappedValue);
     })
@@ -250,7 +260,7 @@ export async function mapReduce(treelike, mapFn, reduceFn) {
   const promises = keys.map((key) =>
     tree.get(key).then((value) =>
       // If the value is a subtree, recurse.
-      Dictionary.isAsyncDictionary(value)
+      isAsyncTree(value)
         ? mapReduce(value, mapFn, reduceFn)
         : mapFn
         ? mapFn(value, key)
@@ -277,12 +287,31 @@ export async function mapReduce(treelike, mapFn, reduceFn) {
  */
 export async function plain(treelike) {
   return mapReduce(treelike, null, (values, keys) => {
-    const obj = {};
+    const object = {};
     for (let i = 0; i < keys.length; i++) {
-      obj[keys[i]] = values[i];
+      object[keys[i]] = values[i];
     }
-    return castArrayLike(obj);
+    return castArrayLike(object);
   });
+}
+
+/**
+ * Removes the value for the given key from the specific node of the tree.
+ *
+ * Note: The corresponding `Map` method is `delete`, not `remove`. However,
+ * `delete` is a reserved word in JavaScript, so this uses `remove` instead.
+ *
+ * @param {AsyncMutableTree} tree
+ * @param {any} key
+ */
+export async function remove(tree, key) {
+  const exists = await has(tree, key);
+  if (exists) {
+    await tree.set(key, undefined);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -377,7 +406,7 @@ export async function traverseOrThrow(treelike, ...keys) {
  * @param {string} path
  */
 export async function traversePath(tree, path) {
-  const keys = keysFromPath(path);
+  const keys = utilities.keysFromPath(path);
   return traverse(tree, ...keys);
 }
 
@@ -389,4 +418,15 @@ class TraverseError extends ReferenceError {
     this.name = "TraverseError";
     this.keys = keys;
   }
+}
+
+/**
+ * Return the values in the specific node of the tree.
+ *
+ * @param {AsyncTree} tree
+ */
+export async function values(tree) {
+  const keys = [...(await tree.keys())];
+  const promises = keys.map(async (key) => tree.get(key));
+  return Promise.all(promises);
 }

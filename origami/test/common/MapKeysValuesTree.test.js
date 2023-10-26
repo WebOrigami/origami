@@ -68,12 +68,12 @@ describe("MapKeysValuesTest", () => {
         d: "d",
       },
     });
-    /** @this {import("@graphorigami/types").AsyncDictionary} */
+    /** @this {import("@graphorigami/types").AsyncTree} */
     async function innerFn(value) {
       const custom = await this.get("custom");
       return `${custom}${value}`;
     }
-    /** @this {import("@graphorigami/types").AsyncDictionary} */
+    /** @this {import("@graphorigami/types").AsyncTree} */
     async function outerFn(value) {
       const map = new MapKeysValuesTree(value, innerFn);
       return map;

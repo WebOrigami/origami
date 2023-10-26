@@ -5,8 +5,8 @@ import path from "node:path";
  * of commands. For every module `foo.js`, the tree will expose a key `foo` with the value
  * of the module's export(s).
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary & { import: function }>} BaseConstructor
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree & { import: function }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function CommandsModulesTransform(Base) {

@@ -14,12 +14,12 @@ const defaultPort = 5000;
 /**
  * Start a local web server for the indicated tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
  * @param {Treelike} treelike
  * @param {number} [port]
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  */
 export default async function serve(treelike, port) {
   assertScopeIsDefined(this);

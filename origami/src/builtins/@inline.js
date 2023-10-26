@@ -6,10 +6,10 @@ import unpackOrigamiTemplate from "../loaders/orit.js";
  * Inline any Origami expressions found inside {{...}} placeholders in the input
  * text.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("../..").StringLike} StringLike
  *
- * @this {import("@graphorigami/types").AsyncDictionary|null}
+ * @this {import("@graphorigami/types").AsyncTree|null}
  * @param {StringLike} input
  */
 export default async function inline(input) {

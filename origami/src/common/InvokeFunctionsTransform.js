@@ -5,9 +5,9 @@ import { getScope } from "./utilities.js";
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 export default function InvokeFunctionsTransform(Base) {
   return class InvokeFunctions extends Base {

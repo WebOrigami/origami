@@ -1,13 +1,13 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return an array of paths to the values in the tree.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {string} [prefix]
  */
@@ -22,7 +22,7 @@ export default async function paths(treelike, prefix = "") {
   for (const key of await tree.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;
     const value = await tree.get(key);
-    if (await Dictionary.isAsyncDictionary(value)) {
+    if (await Tree.isAsyncTree(value)) {
       const subPaths = await paths.call(this, value, valuePath);
       result.push(...subPaths);
     } else {

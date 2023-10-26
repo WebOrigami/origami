@@ -1,5 +1,5 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Dictionary, ObjectTree } from "@graphorigami/core";
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import { ObjectTree, Tree } from "@graphorigami/core";
 import ori from "../builtins/@ori.js";
 import Scope from "../common/Scope.js";
 import {
@@ -15,8 +15,8 @@ import {
  * E.g., asking this tree for `!yaml` will invoke the yaml() builtin function
  * in the context of this tree.
  *
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 export default function OriCommandTransform(Base) {
   return class OriCommand extends Base {
@@ -42,7 +42,7 @@ export default function OriCommandTransform(Base) {
 
         // Ensure this transform is applied to any subtree.
         if (
-          Dictionary.isAsyncDictionary(value) &&
+          Tree.isAsyncTree(value) &&
           !isTransformApplied(OriCommandTransform, value)
         ) {
           value = transformObject(OriCommandTransform, value);

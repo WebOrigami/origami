@@ -1,9 +1,9 @@
-/** @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary */
-import { Dictionary } from "@graphorigami/core";
+/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import { Tree } from "@graphorigami/core";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 
 /**
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {any} value
  * @param {any} trueResult
  * @param {any} [falseResult]
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 export default async function ifCommand(value, trueResult, falseResult) {
   assertScopeIsDefined(this);
   let condition = await value;
-  if (Dictionary.isAsyncDictionary(condition)) {
+  if (Tree.isAsyncTree(condition)) {
     const keys = Array.from(await condition.keys());
     condition = keys.length > 0;
   }

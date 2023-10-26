@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
 import {
   extname,
@@ -11,11 +11,11 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 /**
  * Render a tree in DOT format.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  *
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {PlainObject} [options]
  */
@@ -86,9 +86,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
       }[extension] ?? extension === "";
 
     const expandable =
-      value instanceof Array ||
-      isPlainObject(value) ||
-      Dictionary.isAsyncDictionary(value);
+      value instanceof Array || isPlainObject(value) || Tree.isAsyncTree(value);
     if (expand && expandable) {
       const subtree = Tree.from(value);
       const subStatements = await statements(subtree, destPath, null, options);

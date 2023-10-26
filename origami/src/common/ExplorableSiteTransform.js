@@ -1,4 +1,4 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
   getScope,
@@ -23,9 +23,9 @@ import defaultKeysJson from "../framework/defaultKeysJson.js";
  * As a convenience, this transform also provides a default index.html page if
  * the tree doesn't define one.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("../..").Constructor<AsyncDictionary>} AsyncDictionaryConstructor
- * @param {AsyncDictionaryConstructor} Base
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @param {AsyncTreeConstructor} Base
  */
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
@@ -52,7 +52,7 @@ export default function ExplorableSiteTransform(Base) {
       // the user browse into data and explorable trees of types other than the
       // current class.
       if (
-        Dictionary.isAsyncDictionary(value) &&
+        Tree.isAsyncTree(value) &&
         !isTransformApplied(ExplorableSiteTransform, value)
       ) {
         value = transformObject(ExplorableSiteTransform, value);

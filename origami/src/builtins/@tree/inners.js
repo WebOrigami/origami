@@ -1,14 +1,13 @@
-import { Dictionary, Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/core";
 import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
  * Return the inner nodes of the tree: the nodes with children.
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @this {AsyncDictionary|null}
+ * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
 export default async function inners(treelike) {
@@ -23,9 +22,7 @@ export default async function inners(treelike) {
   let result = {
     async get(key) {
       const value = await tree.get(key);
-      return Dictionary.isAsyncDictionary(value)
-        ? inners.call(this, value)
-        : undefined;
+      return Tree.isAsyncTree(value) ? inners.call(this, value) : undefined;
     },
 
     async keys() {

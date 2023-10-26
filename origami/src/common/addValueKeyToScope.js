@@ -5,10 +5,10 @@ import Scope from "./Scope.js";
  * helper adds the value and key to the scope as ambients.
  *
  *
- * @typedef {import("@graphorigami/types").AsyncDictionary} AsyncDictionary
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.js").Invocable} Invocable
  *
- * @param {AsyncDictionary|null} scope
+ * @param {AsyncTree|null} scope
  * @param {any} value
  * @param {any} key
  * @param {string} [valueName]
