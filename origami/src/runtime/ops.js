@@ -3,20 +3,14 @@
  * @typedef {import("@graphorigami/core").PlainObject} PlainObject
  */
 
-import filesBuiltin from "../builtins/@files.js";
-import httpBuiltin from "../builtins/@http.js";
-import httpsBuiltin from "../builtins/@https.js";
-import concatBuiltin from "../builtins/@tree/concat.js";
-import treeHttpBuiltin from "../builtins/@treeHttp.js";
-import treeHttpsBuiltin from "../builtins/@treeHttps.js";
+import { SiteTree, Tree } from "@graphorigami/core";
 import execute from "../language/execute.js";
 import { createExpressionFunction } from "../language/expressionFunction.js";
+import FileLoadersTransform from "./FileLoadersTransform.js";
+import OrigamiFiles from "./OrigamiFiles.js";
+import OrigamiTree from "./OrigamiTree.js";
 import Scope from "./Scope.js";
-
-// Lazily load OrigamiTree to avoid circular dependencies.
-const origamiTreePromise = import("./OrigamiTree.js").then(
-  (exports) => exports.default
-);
+import concatTreeValues from "./concatTreeValues.js";
 
 /**
  * Construct an array.
@@ -40,9 +34,50 @@ export const assign = "«ops.assign»";
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return concatBuiltin.call(this, ...args);
+  const tree = Tree.from(args);
+  return concatTreeValues.call(this, tree);
 }
 concat.toString = () => "«ops.concat»";
+
+/**
+ * Given a protocol, a host, and a list of keys, construct an href.
+ *
+ * @param {string} protocol
+ * @param {string} host
+ * @param  {...string|Symbol} keys
+ */
+function constructHref(protocol, host, ...keys) {
+  const mapped = keys.map((key) => (key === Tree.defaultValueKey ? "" : key));
+  let href = [host, ...mapped].join("/");
+  if (!href.startsWith(protocol)) {
+    if (!href.startsWith("//")) {
+      href = `//${href}`;
+    }
+    href = `${protocol}${href}`;
+  }
+  return href;
+}
+
+/**
+ * Fetch the resource at the given href. If the result is a standard
+ * ArrayBuffer, patch it to give it a more useful toString method like Node's
+ * Buffer class has.
+ *
+ * @param {string} href
+ */
+async function fetchAndPatch(href) {
+  const response = await fetch(href);
+  if (response.ok) {
+    const buffer = await response.arrayBuffer();
+    if (buffer instanceof ArrayBuffer) {
+      buffer.toString = function () {
+        return new TextDecoder().decode(this);
+      };
+    }
+  } else {
+    return undefined;
+  }
+}
 
 /**
  * Construct a files tree for the filesystem root.
@@ -50,12 +85,13 @@ concat.toString = () => "«ops.concat»";
  * @this {AsyncTree|null}
  */
 export async function filesRoot() {
-  const root = await filesBuiltin.call(this, "/");
+  /** @type {AsyncTree} */
+  let root = new OrigamiFiles("/");
 
   // The root itself needs a scope so that expressions evaluated within it
   // (e.g., Origami expressions loaded from .ori files) will have access to
   // things like the built-in functions.
-  /** @type {any} */ (root).scope = this;
+  root = Scope.treeWithScope(root, this);
 
   return root;
 }
@@ -64,11 +100,12 @@ export async function filesRoot() {
  * Retrieve a web resource via HTTP.
  *
  * @this {AsyncTree|null}
- * @param {string} domain
- * @param  {...string} keys
+ * @param {string} host
+ * @param  {...string|Symbol} keys
  */
-export function http(domain, ...keys) {
-  return httpBuiltin.call(this, domain, ...keys);
+export async function http(host, ...keys) {
+  const href = constructHref("http:", host, ...keys);
+  return fetchAndPatch(href);
 }
 http.toString = () => "«ops.http»";
 
@@ -76,11 +113,12 @@ http.toString = () => "«ops.http»";
  * Retrieve a web resource via HTTPS.
  *
  * @this {AsyncTree|null}
- * @param {string} domain
- * @param  {...string} keys
+ * @param {string} host
+ * @param  {...string|Symbol} keys
  */
-export function https(domain, ...keys) {
-  return httpsBuiltin.call(this, domain, ...keys);
+export function https(host, ...keys) {
+  const href = constructHref("https:", host, ...keys);
+  return fetchAndPatch(href);
 }
 https.toString = () => "«ops.https»";
 
@@ -155,8 +193,6 @@ export async function tree(formulas) {
     const fn = code instanceof Array ? createExpressionFunction(code) : code;
     fns[key] = fn;
   }
-
-  const OrigamiTree = await origamiTreePromise;
   return new OrigamiTree(fns);
 }
 tree.toString = () => "«ops.tree»";
@@ -165,11 +201,15 @@ tree.toString = () => "«ops.tree»";
  * A website tree via HTTP.
  *
  * @this {AsyncTree|null}
- * @param {string} domain
- * @param  {...string} keys
+ * @param {string} host
+ * @param  {...string|Symbol} keys
  */
-export function treeHttp(domain, ...keys) {
-  return treeHttpBuiltin.call(this, domain, ...keys);
+export function treeHttp(host, ...keys) {
+  const href = constructHref("http:", host, ...keys);
+  /** @type {AsyncTree} */
+  let result = new (FileLoadersTransform(SiteTree))(href);
+  result = Scope.treeWithScope(result, this);
+  return result;
 }
 treeHttp.toString = () => "«ops.treeHttp»";
 
@@ -177,17 +217,17 @@ treeHttp.toString = () => "«ops.treeHttp»";
  * A website tree via HTTPS.
  *
  * @this {AsyncTree|null}
- * @param {string} domain
- * @param  {...string} keys
+ * @param {string} host
+ * @param  {...string|Symbol} keys
  */
-export function treeHttps(domain, ...keys) {
-  return treeHttpsBuiltin.call(this, domain, ...keys);
+export function treeHttps(host, ...keys) {
+  const href = constructHref("https:", host, ...keys);
+  /** @type {AsyncTree} */
+  let result = new (FileLoadersTransform(SiteTree))(href);
+  result = Scope.treeWithScope(result, this);
+  return result;
 }
 treeHttps.toString = () => "«ops.treeHttps»";
 
 // The scope op is a placeholder for the tree's scope.
 export const scope = "«ops.scope»";
-
-// The `thisKey` op is a placeholder that represents the key of the object that
-// resulted in the current code.
-export const thisKey = "«ops.thisKey»";

@@ -63,9 +63,4 @@ describe("Origami language code formatter", () => {
     const code = [ops.concat, "Hello, ", [ops.scope, "name"], "."];
     assert.equal(format(code), "`Hello, {{name}}.`");
   });
-
-  test("this", () => {
-    const code = [ops.thisKey];
-    assert.equal(format(code), "this");
-  });
 });

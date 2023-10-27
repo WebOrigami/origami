@@ -29,9 +29,6 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.scope:
         return formatScopeTraversal(code, implicitFunctionCall);
 
-      case ops.thisKey:
-        return formatThisKey(code);
-
       default:
         return code[0] instanceof Array
           ? formatFunctionCall(code)
@@ -126,8 +123,4 @@ function formatTemplate(code) {
     typeof arg === "string" ? arg : `{{${format(arg)}}}`
   );
   return `\`${formatted.join("")}\``;
-}
-
-function formatThisKey(code) {
-  return "this";
 }
