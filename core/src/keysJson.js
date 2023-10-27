@@ -1,25 +1,25 @@
 import * as Tree from "./Tree.js";
 
 /**
- * The .keys.json file format lets a site expose the keys of nodes in the site
- * tree so that they can be read by SiteTree.
+ * The .keys.json file format lets a site expose the keys of a node in the site
+ * so that they can be read by SiteTree.
  *
- * This file format is a JSON array of key descriptors, which are strings that
- * are either a key for a regular value like "foo", or a key with a trailing
- * slash like "bar/" that indicate a subtree.
+ * This file format is a JSON array of key descriptors: a string like
+ * "index.html" for a specific resource available at the node, or a string with
+ * a trailing slash like "about/" for a subtree of that node.
  */
 export default {
   /**
-   * Process the JSON in a .keys.json file.
+   * Parse the JSON in a .keys.json file.
    *
    * This returns a flat dictionary of flags which are true for subtrees and
    * false otherwise.
    *
-   * Example: the JSON `["foo","bar/"]` parses as:
+   * Example: the JSON `["index.html","about/"]` parses as:
    *
    *   {
-   *     foo: false,
-   *     bar: true,
+   *     "index.html": false,
+   *     about: true,
    *   }
    */
   parse(json) {
@@ -43,7 +43,7 @@ export default {
     const tree = Tree.from(treelike);
     const keyDescriptors = [];
     for (const key of await tree.keys()) {
-      // Skip the key .keys.json if present.
+      // Skip the key `.keys.json` if present.
       if (key === ".keys.json") {
         continue;
       }
