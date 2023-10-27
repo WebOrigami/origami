@@ -1,6 +1,5 @@
 import { Tree, isPlainObject } from "@graphorigami/core";
-import format from "./format.js";
-import * as ops from "./ops.js";
+import { format, ops } from "./internal.js";
 
 const expressionSymbol = Symbol("expression");
 
@@ -10,7 +9,7 @@ const expressionSymbol = Symbol("expression");
  * `this` should be the scope used to look up references found in the code.
  *
  * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @typedef {import("../compiler/code.js").Code} Code
+ * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  *
  * @this {Treelike|null}
  * @param {Code} code

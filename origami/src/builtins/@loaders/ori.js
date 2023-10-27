@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import * as compile from "../../../../language/src/compiler/compile.js";
 import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
-import * as compile from "../../compiler/compile.js";
 import Scope from "../../runtime/Scope.js";
 import builtins from "../@builtins.js";
 

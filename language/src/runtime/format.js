@@ -1,4 +1,4 @@
-import * as ops from "./ops.js";
+import { ops } from "./internal.js";
 
 export default function format(code, implicitFunctionCall = false) {
   if (code === null) {

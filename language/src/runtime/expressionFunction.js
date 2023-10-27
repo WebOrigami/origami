@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import evaluate from "./evaluate.js";
-import format from "./format.js";
+
+import { evaluate, format } from "./internal.js";
 
 /**
  * Given parsed Origami code, return a function that executes that code.

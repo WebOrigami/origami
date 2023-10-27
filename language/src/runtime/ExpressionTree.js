@@ -1,6 +1,6 @@
 import { ObjectTree } from "@graphorigami/core";
 import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
-import { isExpressionFunction } from "./expressionFunction.js";
+import { expressionFunction } from "./internal.js";
 
 export default class ExpressionTree extends InvokeFunctionsTransform(
   ObjectTree
@@ -11,7 +11,7 @@ export default class ExpressionTree extends InvokeFunctionsTransform(
     const result = {};
     for (const key in obj) {
       const value = obj[key];
-      if (isExpressionFunction(value)) {
+      if (expressionFunction.isExpressionFunction(value)) {
         result[key] = value.code;
       }
     }

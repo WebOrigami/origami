@@ -9,13 +9,13 @@ import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {AsyncTree} tree
+ * @param {import("@graphorigami/core").Treelike} treelike
  */
-export default async function concatTreeValues(tree) {
+export default async function concatTreeValues(treelike) {
   const scope = this;
   const mapFn = async (value) => getText(value, scope);
   const reduceFn = (values) => values.join("");
-  return Tree.mapReduce(tree, mapFn, reduceFn);
+  return Tree.mapReduce(treelike, mapFn, reduceFn);
 }
 
 async function getText(value, scope) {

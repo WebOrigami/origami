@@ -1,0 +1,20 @@
+{
+  "name": "@graphorigami/language",
+  "version": "0.0.30",
+  "description": "Graph Origami expression language compiler and runtime",
+  "type": "module",
+  "main": "./main.js",
+  "types": "./index.ts",
+  "devDependencies": {
+    "@types/node": "20.2.4",
+    "typescript": "5.0.4"
+  },
+  "dependencies": {
+    "@graphorigami/types": "*",
+    "@graphorigami/core": "*"
+  },
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc"
+  }
+}

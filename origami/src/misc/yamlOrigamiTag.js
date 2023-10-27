@@ -1,4 +1,4 @@
-import * as compile from "../compiler/compile.js";
+import * as compile from "../../../language/src/compiler/compile.js";
 import {
   createExpressionFunction,
   isExpressionFunction,

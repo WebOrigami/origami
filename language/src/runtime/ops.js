@@ -6,11 +6,9 @@
 import { SiteTree, Tree } from "@graphorigami/core";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
-import OrigamiTree from "./OrigamiTree.js";
 import Scope from "./Scope.js";
 import concatTreeValues from "./concatTreeValues.js";
-import evaluate from "./evaluate.js";
-import { createExpressionFunction } from "./expressionFunction.js";
+import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 
 /**
  * Construct an array.
@@ -34,8 +32,7 @@ export const assign = "«ops.assign»";
  * @param {any[]} args
  */
 export async function concat(...args) {
-  const tree = Tree.from(args);
-  return concatTreeValues.call(this, tree);
+  return concatTreeValues.call(this, args);
 }
 concat.toString = () => "«ops.concat»";
 
@@ -140,7 +137,7 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
- * @typedef {import("../compiler/code.js").Code} Code
+ * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  * @this {AsyncTree|null}
  * @param {Code} code
  */
@@ -190,7 +187,10 @@ export async function tree(formulas) {
   const fns = {};
   for (const key in formulas) {
     const code = formulas[key];
-    const fn = code instanceof Array ? createExpressionFunction(code) : code;
+    const fn =
+      code instanceof Array
+        ? expressionFunction.createExpressionFunction(code)
+        : code;
     fns[key] = fn;
   }
   return new OrigamiTree(fns);

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@graphorigami/core": "https://gitpkg.now.sh/GraphOrigami/origami/core?3a8eb641",
+    "@graphorigami/language": "*",
     "@graphorigami/types": "*",
     "graphviz-wasm": "3.0.0",
     "highlight.js": "11.8.0",
