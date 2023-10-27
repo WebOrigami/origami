@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import CacheSite from "../../common/CacheSite.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Caches fetch requests for a standard site.

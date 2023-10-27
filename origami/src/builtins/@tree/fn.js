@@ -1,7 +1,7 @@
 import { FunctionTree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import { toFunction } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Create a tree from a function and a set of keys.

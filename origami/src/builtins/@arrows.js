@@ -1,7 +1,7 @@
+import { Scope } from "@graphorigami/language";
 import ArrowTree from "../common/ArrowTree.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Interpret arrow keys in the tree as function calls.

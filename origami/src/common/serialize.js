@@ -6,9 +6,9 @@
  */
 
 import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
+import { OrigamiTree } from "@graphorigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
-import OrigamiTree from "../runtime/OrigamiTree.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.

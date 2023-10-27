@@ -1,9 +1,9 @@
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import SortTransform from "../../common/SortTransform.js";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction, transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a new tree with the original's keys sorted

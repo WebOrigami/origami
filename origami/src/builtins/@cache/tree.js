@@ -1,7 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import CacheTree from "../../common/CacheTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
-
 /**
  * Caches tree values in a storable cache.
  *

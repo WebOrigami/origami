@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import MapValuesTree from "../../common/MapValuesTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a new tree with all values equal to null.

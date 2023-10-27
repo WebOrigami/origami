@@ -1,4 +1,5 @@
 import type { AsyncTree } from "@graphorigami/types";
+
 export * from "./main.js";
 
 export type PlainObject = {

@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import builtins from "../builtins/@builtins.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This

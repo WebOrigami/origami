@@ -4,10 +4,12 @@ import {
   isPlainObject,
   keysFromPath,
 } from "@graphorigami/core";
+import {
+  InvokeFunctionsTransform,
+  Scope,
+  extname,
+} from "@graphorigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import InvokeFunctionsTransform from "../runtime/InvokeFunctionsTransform.js";
-import Scope from "../runtime/Scope.js";
-import extname from "../runtime/extname.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to

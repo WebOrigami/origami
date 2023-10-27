@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import { ops } from "@graphorigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import * as ops from "../runtime/ops.js";
 
 /**
  * Return the inherited value (if any) for the indicated key.

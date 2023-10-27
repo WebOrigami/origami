@@ -1,7 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+import { OrigamiFiles, Scope } from "@graphorigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import OrigamiFiles from "../runtime/OrigamiFiles.js";
-import Scope from "../runtime/Scope.js";
 import builtins from "./@builtins.js";
 
 const configFileName = "ori.config.js";

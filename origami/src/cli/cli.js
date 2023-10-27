@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 import { ObjectTree, Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import { keySymbol } from "../common/utilities.js";
-import Scope from "../runtime/Scope.js";
 import showUsage from "./showUsage.js";
 
 async function main(...args) {

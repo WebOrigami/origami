@@ -1,7 +1,7 @@
+import { Scope } from "@graphorigami/language";
 import MapExtensionsTree from "../../common/MapExtensionsTree.js";
 import MapValuesTree from "../../common/MapValuesTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Map the top-level values of a tree with a map function.

@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
+import { ops } from "@graphorigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import * as ops from "../../runtime/ops.js";
 
 /**
  * Concatenate the text content of objects or trees.

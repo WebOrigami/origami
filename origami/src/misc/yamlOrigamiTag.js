@@ -1,18 +1,16 @@
+import { expressionFunction } from "@graphorigami/language";
 import * as compile from "../../../language/src/compiler/compile.js";
-import {
-  createExpressionFunction,
-  isExpressionFunction,
-} from "../runtime/expressionFunction.js";
-
 /**
  * A YAML tag for an Origami expression.
  */
 export default {
-  identify: isExpressionFunction,
+  identify: expressionFunction.isExpressionFunction,
 
   resolve(str) {
     const code = compile.expression(str);
-    return code instanceof Array ? createExpressionFunction(code) : code;
+    return code instanceof Array
+      ? expressionFunction.createExpressionFunction(code)
+      : code;
   },
 
   tag: "!ori",

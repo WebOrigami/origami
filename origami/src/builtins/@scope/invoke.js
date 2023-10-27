@@ -1,5 +1,5 @@
+import { Scope } from "@graphorigami/language";
 import { toFunction } from "../../common/utilities.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Invokes the given function in the context of the current scope.

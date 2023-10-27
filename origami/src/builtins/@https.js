@@ -1,5 +1,5 @@
+import { ops } from "@graphorigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import * as ops from "../runtime/ops.js";
 
 /**
  * Retrieve the indicated web resource via HTTPS.

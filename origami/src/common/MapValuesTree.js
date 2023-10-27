@@ -1,5 +1,5 @@
 import { Tree } from "@graphorigami/core";
-import Scope from "../runtime/Scope.js";
+import { Scope } from "@graphorigami/language";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import { toFunction } from "./utilities.js";
 

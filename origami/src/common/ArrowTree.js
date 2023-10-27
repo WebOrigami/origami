@@ -1,4 +1,4 @@
-import InvokeFunctionsTransform from "../runtime/InvokeFunctionsTransform.js";
+import { InvokeFunctionsTransform } from "@graphorigami/language";
 import MapKeysValuesTree from "./MapKeysValuesTree.js";
 
 export default class ArrowTree extends InvokeFunctionsTransform(

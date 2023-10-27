@@ -4,9 +4,6 @@ import MapExtensionTree from "../src/common/MapExtensionsTree.js";
 import { transformObject } from "../src/common/utilities.js";
 import PathTransform from "./PathTransform.js";
 
-// Modules that should not get exported
-const skipModules = ["lex.js", "ops.js", "parse.js"];
-
 // For builtins that should be renamed or not exported
 const specialBuiltinNames = {
   "!": null,
@@ -37,11 +34,6 @@ export default async function exportFile(src) {
  * @this {AsyncTree}
  */
 async function exportStatementForCode(codeBuffer, key) {
-  // Skip modules that should not be exported
-  if (skipModules.includes(key)) {
-    return "";
-  }
-
   const code = String(codeBuffer);
 
   const exportsAnything = code.match(/^export /m);

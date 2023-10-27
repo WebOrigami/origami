@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/language",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "description": "Graph Origami expression language compiler and runtime",
   "type": "module",
   "main": "./main.js",

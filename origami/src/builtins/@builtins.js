@@ -1,8 +1,8 @@
 import { FileTree } from "@graphorigami/core";
+import { ImportModulesMixin } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import CommandModulesTransform from "../common/CommandModulesTransform.js";
-import ImportModulesMixin from "../common/ImportModulesMixin.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsFolder = path.resolve(dirname, "../builtins");

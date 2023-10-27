@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import GlobTree from "../common/GlobTree.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Define a tree whose keys are globs.

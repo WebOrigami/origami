@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import FilterTree from "../common/FilterTree.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Apply a filter to a tree.

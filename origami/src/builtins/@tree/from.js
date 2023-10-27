@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Cast the indicated treelike to a tree.

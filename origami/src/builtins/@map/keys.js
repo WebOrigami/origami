@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import MapInnerKeysTree from "../../common/MapInnerKeysTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Wrap a tree and redefine the key used to access nodes in it.

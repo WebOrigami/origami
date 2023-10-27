@@ -1,8 +1,8 @@
 import { Tree } from "@graphorigami/core";
+import { ops } from "@graphorigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapKeys from "../../../src/builtins/@map/keys.js";
-import * as ops from "../../../src/runtime/ops.js";
 
 describe("@map/keys", () => {
   test("can define a key from a value property", async () => {

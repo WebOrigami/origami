@@ -9,7 +9,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /**
  * Load a file as YAML.
  *
- * @type {import("../../../index.js").FileUnpackFunction}
+ * @type {import("@graphorigami/language").FileUnpackFunction}
  */
 export default function unpackYaml(input, options = {}) {
   const parent = options.parent ?? null;

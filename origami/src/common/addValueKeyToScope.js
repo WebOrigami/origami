@@ -1,4 +1,4 @@
-import Scope from "../runtime/Scope.js";
+import { Scope } from "@graphorigami/language";
 
 /**
  * A number of transforms accept functions that can accept a single value. This

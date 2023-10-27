@@ -2,17 +2,15 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 import { Tree } from "@graphorigami/core";
+import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
 import MapExtensionsTree from "../../src/common/MapExtensionsTree.js";
 import TextDocument from "../../src/common/TextDocument.js";
-import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
-import OrigamiTree from "../../src/runtime/OrigamiTree.js";
-import Scope from "../../src/runtime/Scope.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
-const fixtures = new OrigamiFiles(dirname);
+const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 // Map the YAML files to test suites.
 const mapped = new MapExtensionsTree(fixtures, registerYamlSuite, {

@@ -1,6 +1,8 @@
 import { StringLike } from "@graphorigami/core";
 import { AsyncTree } from "@graphorigami/types";
 
+export * from "./main.js";
+
 /**
  * A class constructor is an object with a `new` method that returns an
  * instance of the indicated type.

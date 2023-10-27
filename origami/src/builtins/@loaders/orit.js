@@ -1,15 +1,15 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
 import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
-import Scope from "../../runtime/Scope.js";
 import builtins from "../@builtins.js";
 
 /**
  * Load and evaluate an Origami template from a file.
  *
- * @type {import("../../../index.js").FileUnpackFunction}
+ * @type {import("@graphorigami/language").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
   const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;

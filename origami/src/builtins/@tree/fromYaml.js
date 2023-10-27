@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import * as serialize from "../../common/serialize.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree

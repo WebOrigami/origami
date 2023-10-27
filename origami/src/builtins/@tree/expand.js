@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import MapValuesTree from "../../common/MapValuesTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Expand values that can be treated as trees into trees.

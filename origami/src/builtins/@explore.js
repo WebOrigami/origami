@@ -1,12 +1,11 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { ObjectTree } from "@graphorigami/core";
+import { OrigamiFiles, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
-import OrigamiFiles from "../runtime/OrigamiFiles.js";
-import Scope from "../runtime/Scope.js";
 import debug from "./@debug.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,12 +1,12 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { ObjectTree, Tree } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import ori from "../builtins/@ori.js";
 import {
   isTransformApplied,
   keySymbol,
   transformObject,
 } from "../common/utilities.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Add support for commands prefixed with `!`.

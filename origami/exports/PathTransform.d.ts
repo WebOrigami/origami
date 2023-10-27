@@ -1,4 +1,4 @@
-import type { Mixin } from "..";
+import type { Mixin } from "@graphorigami/language";
 
 declare const PathTransform: Mixin<{}>;
 

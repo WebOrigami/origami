@@ -1,7 +1,7 @@
 import { Tree, keysJson } from "@graphorigami/core";
+import { Scope } from "@graphorigami/language";
 import index from "../builtins/@index.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import Scope from "../runtime/Scope.js";
 
 /**
  * Wraps a tree (typically a SiteTree) to turn a standard site into an

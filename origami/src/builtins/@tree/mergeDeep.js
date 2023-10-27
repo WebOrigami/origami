@@ -1,6 +1,6 @@
+import { Scope } from "@graphorigami/language";
 import MergeDeepTree from "../../common/MergeDeepTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import Scope from "../../runtime/Scope.js";
 
 /**
  * Create a tree that's the result of deep merging the given trees.
