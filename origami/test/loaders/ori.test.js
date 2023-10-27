@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import unpackOrigamiExpression from "../../src/builtins/@loaders/ori.js";
-import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
+import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
 
 const dirname = path.join(
   path.dirname(fileURLToPath(import.meta.url)),

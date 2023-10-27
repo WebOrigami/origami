@@ -1,8 +1,8 @@
 import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ArrowTree from "../../src/framework/ArrowTree.js";
-import OrigamiTransform from "../../src/framework/OrigamiTransform.js";
+import ArrowTree from "../../src/common/ArrowTree.js";
+import OrigamiTransform from "../../src/runtime/OrigamiTransform.js";
 
 describe("ArrowTree", () => {
   test("interprets ← in a key as a function call", async () => {

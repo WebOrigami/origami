@@ -1,11 +1,11 @@
 import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import Scope from "../../src/common/Scope.js";
-import OrigamiTree from "../../src/framework/OrigamiTree.js";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import * as ops from "../../src/language/ops.js";
+import OrigamiTree from "../../src/runtime/OrigamiTree.js";
+import Scope from "../../src/runtime/Scope.js";
 
 describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {

@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
-import Scope from "./Scope.js";
+import Scope from "../runtime/Scope.js";
 import { getScope, treeWithScope } from "./utilities.js";
 
 /**

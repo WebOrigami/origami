@@ -1,5 +1,5 @@
-import Scope from "../common/Scope.js";
 import { getScope } from "../common/utilities.js";
+import Scope from "./Scope.js";
 
 const scopeKey = Symbol("scope");
 

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import EventTargetMixin from "../../src/framework/EventTargetMixin.js";
+import EventTargetMixin from "../../src/runtime/EventTargetMixin.js";
 
 class EventTargetTest extends EventTargetMixin(Object) {}
 

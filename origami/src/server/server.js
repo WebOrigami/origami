@@ -5,9 +5,9 @@ import {
   isStringLike,
   keysFromPath,
 } from "@graphorigami/core";
-import Scope from "../common/Scope.js";
 import * as serialize from "../common/serialize.js";
 import { extname, treeWithScope } from "../common/utilities.js";
+import Scope from "../runtime/Scope.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 // Extend the tree's scope with the URL's search parameters.

@@ -1,4 +1,4 @@
-import Scope from "./Scope.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * A number of transforms accept functions that can accept a single value. This

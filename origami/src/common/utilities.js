@@ -1,5 +1,5 @@
 import { Tree } from "@graphorigami/core";
-import Scope from "./Scope.js";
+import Scope from "../runtime/Scope.js";
 
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 

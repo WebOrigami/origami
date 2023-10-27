@@ -1,8 +1,8 @@
 import path from "node:path";
 import process from "node:process";
 import { treeWithScope } from "../common/utilities.js";
-import OrigamiFiles from "../framework/OrigamiFiles.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import OrigamiFiles from "../runtime/OrigamiFiles.js";
 
 /**
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree

@@ -3,23 +3,22 @@ import { ObjectTree } from "@graphorigami/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
-import Scope from "../common/Scope.js";
 import TextDocument from "../common/TextDocument.js";
 import { getScope, keySymbol, treeWithScope } from "../common/utilities.js";
-import OrigamiFiles from "../framework/OrigamiFiles.js";
+import OrigamiFiles from "../runtime/OrigamiFiles.js";
+import Scope from "../runtime/Scope.js";
 import debug from "./@debug.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const frameworkDir = path.resolve(dirname, "../framework");
-const files = new OrigamiFiles(frameworkDir);
-const frameworkFiles = treeWithScope(files, builtins);
+const miscDir = path.resolve(dirname, "../misc");
+const miscFiles = treeWithScope(new OrigamiFiles(miscDir), builtins);
 
 /**
  * @this {AsyncTree|null}
  */
 export default async function explore() {
   const scope = getScope(this);
-  const templateFile = await frameworkFiles.get("explore.orit");
+  const templateFile = await miscFiles.get("explore.orit");
   const template = await templateFile.unpack();
 
   const data = await getScopeData(scope);

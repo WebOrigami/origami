@@ -4,7 +4,7 @@ import DefaultValues from "../common/DefaultValuesTransform.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
 export default function DefaultPagesTransform(Base) {

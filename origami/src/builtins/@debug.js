@@ -1,8 +1,8 @@
 import { Tree, isPlainObject } from "@graphorigami/core";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import OriCommandTransform from "../framework/OriCommandTransform.js";
 import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import OriCommandTransform from "../runtime/OriCommandTransform.js";
 
 /**
  * Add debugging features to the indicated tree.

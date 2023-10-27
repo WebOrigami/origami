@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
-import Scope from "../../common/Scope.js";
 import { keySymbol, treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a copy of the given tree that has the indicated trees as its scope.

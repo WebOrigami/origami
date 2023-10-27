@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import Scope from "../../src/common/Scope.js";
+import Scope from "../../src/runtime/Scope.js";
 
 describe("Scope", () => {
   test("composes and flattens scopes and trees passed to it", async () => {

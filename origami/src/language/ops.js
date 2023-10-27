@@ -9,12 +9,12 @@ import httpsBuiltin from "../builtins/@https.js";
 import concatBuiltin from "../builtins/@tree/concat.js";
 import treeHttpBuiltin from "../builtins/@treeHttp.js";
 import treeHttpsBuiltin from "../builtins/@treeHttps.js";
-import Scope from "../common/Scope.js";
+import Scope from "../runtime/Scope.js";
 import execute from "./execute.js";
 import { createExpressionFunction } from "./expressionFunction.js";
 
 // Lazily load OrigamiTree to avoid circular dependencies.
-const origamiTreePromise = import("../framework/OrigamiTree.js").then(
+const origamiTreePromise = import("../runtime/OrigamiTree.js").then(
   (exports) => exports.default
 );
 

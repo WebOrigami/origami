@@ -8,8 +8,8 @@ import builtins from "../../src/builtins/@builtins.js";
 import MapExtensionsTree from "../../src/common/MapExtensionsTree.js";
 import TextDocument from "../../src/common/TextDocument.js";
 import { treeWithScope } from "../../src/common/utilities.js";
-import OrigamiFiles from "../../src/framework/OrigamiFiles.js";
-import OrigamiTree from "../../src/framework/OrigamiTree.js";
+import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
+import OrigamiTree from "../../src/runtime/OrigamiTree.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = new OrigamiFiles(dirname);
