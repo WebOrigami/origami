@@ -3,14 +3,16 @@ import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
+import builtins from "../../src/builtins/@builtins.js";
 import unpackOrigamiExpression from "../../src/builtins/@loaders/ori.js";
 import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
+import Scope from "../../src/runtime/Scope.js";
 
 const dirname = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   "fixtures"
 );
-const fixtures = new OrigamiFiles(dirname);
+const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 describe(".ori loader", () => {
   test("loads a string expression", async () => {

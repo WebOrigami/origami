@@ -1,9 +1,7 @@
-import { isPlainObject, isStringLike } from "@graphorigami/core";
-import builtins from "../builtins/@builtins.js";
+import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
 import { keySymbol } from "../common/utilities.js";
+import Scope from "./Scope.js";
 import extname from "./extname.js";
-
-let loadersPromise;
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -14,24 +12,20 @@ let loadersPromise;
  */
 export default function FileLoadersTransform(Base) {
   return class FileLoaders extends Base {
-    constructor(...args) {
-      super(...args);
-      this._loadersPromise = null;
-    }
-
     async get(key) {
       let value = await super.get(key);
 
       // If the value is string-like and the key has an extension, look for a
       // loader that handles that extension and call it. The value will
       // typically be a Buffer loaded from the file system, but could also be a
-      // string defined by a user function.
+      // string-like object defined by a user function.
       if (isStringLike(value) && isStringLike(key)) {
         const extension = extname(String(key)).toLowerCase().slice(1);
         if (extension) {
-          const loaders = await getLoaders();
+          /** @type {any} */
+          const scope = Scope.getScope(this);
           /** @type {FileUnpackFunction} */
-          const unpackFn = await loaders.get(extension);
+          const unpackFn = await Tree.traverse(scope, "@loaders", extension);
           if (unpackFn) {
             const input = value;
             // If the input is a plain string, convert it to a String so we can
@@ -52,11 +46,4 @@ export default function FileLoadersTransform(Base) {
       return value;
     }
   };
-}
-
-function getLoaders() {
-  if (!loadersPromise) {
-    loadersPromise = builtins.get("@loaders");
-  }
-  return loadersPromise;
 }
