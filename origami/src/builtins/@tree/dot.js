@@ -1,7 +1,8 @@
 import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
-import { extname, keySymbol } from "../../common/utilities.js";
+import { keySymbol } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import extname from "../../runtime/extname.js";
 
 /**
  * Render a tree in DOT format.
@@ -73,7 +74,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
     }
 
     // We expand certain types of files known to contain trees.
-    const extension = extname(key.toString?.() ?? "");
+    const extension = key ? extname(key).toLowerCase() : "";
     const expand =
       {
         ".json": true,

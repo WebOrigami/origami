@@ -4,10 +4,10 @@ import {
   isPlainObject,
   keysFromPath,
 } from "@graphorigami/core";
-import { extname } from "node:path";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import InvokeFunctionsTransform from "../runtime/InvokeFunctionsTransform.js";
 import Scope from "../runtime/Scope.js";
+import extname from "../runtime/extname.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to
@@ -176,7 +176,7 @@ function filterPaths(paths, baseUrl, localPath) {
 function findPaths(value, key, baseUrl, localPath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
-  const ext = key ? extname(key) : "";
+  const ext = key ? extname(key).toLowerCase() : "";
   const maybeHtml = ext === "" || value.trim?.().startsWith("<");
   let foundPaths;
   if (ext === ".html" || ext === ".htm") {

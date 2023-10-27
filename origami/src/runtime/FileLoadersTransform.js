@@ -1,6 +1,7 @@
 import { isPlainObject, isStringLike } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
-import { extname, keySymbol } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
+import extname from "./extname.js";
 
 let loadersPromise;
 
