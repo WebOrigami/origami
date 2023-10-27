@@ -4,7 +4,7 @@
  */
 
 import { SiteTree, Tree } from "@graphorigami/core";
-import execute from "../language/execute.js";
+import evaluate from "../language/evaluate.js";
 import { createExpressionFunction } from "../language/expressionFunction.js";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
@@ -153,7 +153,7 @@ export function lambda(code) {
       "@recurse": invoke,
     };
     const scope = new Scope(ambients, this);
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     return result;
   }
   invoke.code = code;
@@ -173,7 +173,7 @@ export async function object(obj) {
   const evaluated = {};
   for (const key in obj) {
     const code = obj[key];
-    evaluated[key] = await execute.call(this, code);
+    evaluated[key] = await evaluate.call(this, code);
   }
   return evaluated;
 }

@@ -1,16 +1,16 @@
 import { ObjectTree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import execute from "../../src/language/execute.js";
+import evaluate from "../../src/language/evaluate.js";
 import * as ops from "../../src/runtime/ops.js";
 
-describe("execute", () => {
+describe("evaluate", () => {
   test("can retrieve values from scope", async () => {
     const code = [ops.scope, "message"];
     const scope = {
       message: "Hello",
     };
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     assert.equal(result, "Hello");
   });
 
@@ -28,7 +28,7 @@ describe("execute", () => {
       name: "world",
     });
 
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     assert.equal(result, "Hello world");
   });
 
@@ -39,7 +39,7 @@ describe("execute", () => {
         assert.equal(this, context);
       },
     };
-    await execute.call(scope, code);
+    await evaluate.call(scope, code);
   });
 
   test("if object in function position isn't a function, can unpack it", async () => {
@@ -48,7 +48,7 @@ describe("execute", () => {
       unpack: async () => fn,
     };
     const code = [packed, "a", "b", "c"];
-    const result = await execute.call(null, code);
+    const result = await evaluate.call(null, code);
     assert.equal(result, "a,b,c");
   });
 });

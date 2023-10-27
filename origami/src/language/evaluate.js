@@ -15,7 +15,7 @@ const expressionSymbol = Symbol("expression");
  * @this {Treelike|null}
  * @param {Code} code
  */
-export default async function execute(code) {
+export default async function evaluate(code) {
   const scope = this;
 
   if (code === ops.scope) {
@@ -33,7 +33,7 @@ export default async function execute(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => execute.call(scope, instruction))
+      code.map((instruction) => evaluate.call(scope, instruction))
     );
   }
 

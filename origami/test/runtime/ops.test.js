@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import execute from "../../src/language/execute.js";
+import evaluate from "../../src/language/evaluate.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
 import OrigamiTree from "../../src/runtime/OrigamiTree.js";
 import Scope from "../../src/runtime/Scope.js";
@@ -15,7 +15,7 @@ describe("ops", () => {
 
     const code = [ops.concat, "Hello, ", [ops.scope, "name"], "."];
 
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     assert.equal(result, "Hello, world.");
   });
 
@@ -26,21 +26,21 @@ describe("ops", () => {
 
     const code = [ops.lambda, [ops.scope, "message"]];
 
-    const fn = await execute.call(scope, code);
+    const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
     assert.equal(result, "Hello");
   });
 
   test("lambda adds input to scope as `_`", async () => {
     const code = [ops.lambda, [ops.scope, "_"]];
-    const fn = await execute.call(null, code);
+    const fn = await evaluate.call(null, code);
     const result = await fn("Hello");
     assert.equal(result, "Hello");
   });
 
   test("a lambda can reference itself with @recurse", async () => {
     const code = [ops.lambda, [ops.scope, "@recurse"]];
-    const fn = await execute.call(null, code);
+    const fn = await evaluate.call(null, code);
     const result = await fn();
     assert.equal(result, fn);
   });
@@ -58,7 +58,7 @@ describe("ops", () => {
       },
     ];
 
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     assert.equal(result.hello, "HELLO");
     assert.equal(result.world, "WORLD");
   });
@@ -68,7 +68,7 @@ describe("ops", () => {
       upper: (s) => s.toUpperCase(),
     });
     const code = [ops.array, "Hello", 1, [[ops.scope, "upper"], "world"]];
-    const result = await execute.call(scope, code);
+    const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
@@ -85,7 +85,7 @@ describe("ops", () => {
         ]),
       },
     ];
-    const result = await execute.call({}, code);
+    const result = await evaluate.call({}, code);
     assert(result instanceof OrigamiTree);
     assert.deepEqual(await Tree.plain(result), {
       name: "world",
@@ -103,7 +103,7 @@ describe("ops", () => {
     });
     b.scope = new Scope(b, a);
     const code = [ops.inherited, "a"];
-    const result = await execute.call(b.scope, code);
+    const result = await evaluate.call(b.scope, code);
     assert.equal(result, 1);
   });
 });

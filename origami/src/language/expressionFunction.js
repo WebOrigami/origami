@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import execute from "./execute.js";
+import evaluate from "./evaluate.js";
 import format from "./format.js";
 
 /**
@@ -11,7 +11,7 @@ import format from "./format.js";
 export function createExpressionFunction(code, name) {
   /** @this {AsyncTree|null} */
   async function fn() {
-    return execute.call(this, code);
+    return evaluate.call(this, code);
   }
   if (name) {
     Object.defineProperty(fn, "name", { value: name });
