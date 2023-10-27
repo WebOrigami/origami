@@ -1,8 +1,8 @@
-import * as compile from "./compile.js";
+import * as compile from "../language/compile.js";
 import {
   createExpressionFunction,
   isExpressionFunction,
-} from "./expressionFunction.js";
+} from "../language/expressionFunction.js";
 
 /**
  * A YAML tag for an Origami expression.

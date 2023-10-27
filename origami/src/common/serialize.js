@@ -7,7 +7,7 @@
 
 import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
 import * as YAMLModule from "yaml";
-import expressionTag from "../language/expressionTag.js";
+import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
 import OrigamiTree from "../runtime/OrigamiTree.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -52,7 +52,7 @@ function isJsonValue(obj) {
  */
 export function parseYaml(text) {
   const data = YAML.parse(text, {
-    customTags: [expressionTag],
+    customTags: [yamlOrigamiTag],
   });
   if (objectContainsFunctions(data)) {
     return new OrigamiTree(data);
