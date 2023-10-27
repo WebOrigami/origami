@@ -2,8 +2,8 @@ import { Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import merge from "../../../src/builtins/@tree/merge.js";
-import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
 import ExpressionTree from "../../../src/runtime/ExpressionTree.js";
+import { createExpressionFunction } from "../../../src/runtime/expressionFunction.js";
 import * as ops from "../../../src/runtime/ops.js";
 
 describe("@tree/merge", () => {

@@ -4,13 +4,13 @@
  */
 
 import { SiteTree, Tree } from "@graphorigami/core";
-import evaluate from "../language/evaluate.js";
-import { createExpressionFunction } from "../language/expressionFunction.js";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import OrigamiTree from "./OrigamiTree.js";
 import Scope from "./Scope.js";
 import concatTreeValues from "./concatTreeValues.js";
+import evaluate from "./evaluate.js";
+import { createExpressionFunction } from "./expressionFunction.js";
 
 /**
  * Construct an array.

@@ -1,4 +1,4 @@
-import { createExpressionFunction } from "./expressionFunction.js";
+import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { lex, state } from "./lex.js";
 import * as parse from "./parse.js";
 

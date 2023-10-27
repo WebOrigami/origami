@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import format from "../../src/language/format.js";
+import format from "../../src/runtime/format.js";
 import * as ops from "../../src/runtime/ops.js";
 
 describe("Origami language code formatter", () => {

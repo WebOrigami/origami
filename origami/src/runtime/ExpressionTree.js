@@ -1,6 +1,6 @@
 import { ObjectTree } from "@graphorigami/core";
-import { isExpressionFunction } from "../language/expressionFunction.js";
 import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
+import { isExpressionFunction } from "./expressionFunction.js";
 
 export default class ExpressionTree extends InvokeFunctionsTransform(
   ObjectTree
