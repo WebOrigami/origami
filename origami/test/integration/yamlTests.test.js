@@ -7,9 +7,9 @@ import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
 import MapExtensionsTree from "../../src/common/MapExtensionsTree.js";
 import TextDocument from "../../src/common/TextDocument.js";
-import { treeWithScope } from "../../src/common/utilities.js";
 import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
 import OrigamiTree from "../../src/runtime/OrigamiTree.js";
+import Scope from "../../src/runtime/Scope.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = new OrigamiFiles(dirname);
@@ -32,7 +32,7 @@ async function registerYamlSuite(yamlFile) {
     for (const suiteTest of tests) {
       const { title, expected } = suiteTest;
 
-      const fixture = treeWithScope(
+      const fixture = Scope.treeWithScope(
         new OrigamiTree(suiteTest.fixture),
         builtins
       );

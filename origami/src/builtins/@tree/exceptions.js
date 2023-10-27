@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 import defineds from "./defineds.js";
 
 /**
@@ -15,7 +15,7 @@ export default async function exceptions(treelike) {
 
   /** @type {AsyncTree} */
   let exceptionsTree = new ExceptionsTree(treelike);
-  exceptionsTree = treeWithScope(exceptionsTree, this);
+  exceptionsTree = Scope.treeWithScope(exceptionsTree, this);
   return defineds.call(this, exceptionsTree);
 }
 

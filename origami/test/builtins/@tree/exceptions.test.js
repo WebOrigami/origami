@@ -2,7 +2,7 @@ import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import exceptions from "../../../src/builtins/@tree/exceptions.js";
-import InvokeFunctionsTransform from "../../../src/common/InvokeFunctionsTransform.js";
+import InvokeFunctionsTransform from "../../../src/runtime/InvokeFunctionsTransform.js";
 describe("exceptions", () => {
   test("returns the exceptions thrown in a tree", async () => {
     const tree = new (InvokeFunctionsTransform(ObjectTree))({

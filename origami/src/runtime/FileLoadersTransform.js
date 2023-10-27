@@ -6,7 +6,7 @@ let loadersPromise;
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @typedef {import("../../index.js").FileUnpackFunction} FileUnpackFunction
  *
  * @param {AsyncTreeConstructor} Base

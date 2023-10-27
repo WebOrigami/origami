@@ -1,11 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
-import {
-  toFunction,
-  transformObject,
-  treeWithScope,
-} from "../../common/utilities.js";
+import { toFunction, transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 import Scope from "../../runtime/Scope.js";
 
@@ -60,7 +56,7 @@ export default async function sort(treelike, invocable) {
     };
   }
 
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

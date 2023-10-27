@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FileLoadersTransform from "../../src/common/FileLoadersTransform.js";
+import FileLoadersTransform from "../../src/runtime/FileLoadersTransform.js";
 describe("FileLoadersTransform", () => {
   test("invokes an appropriate loader for a .json file extension", async () => {
     const json = `{ "bar": 2 }`;

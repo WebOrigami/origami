@@ -1,5 +1,4 @@
 import MergeDeepTree from "../../common/MergeDeepTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 import Scope from "../../runtime/Scope.js";
 
@@ -27,7 +26,7 @@ export default async function mergeDeep(...trees) {
     const otherTrees = filtered.filter((g) => g !== tree);
     const scope = new Scope(...otherTrees, this);
     // Each tree will be included first in its own scope.
-    return treeWithScope(tree, scope);
+    return Scope.treeWithScope(tree, scope);
   });
 
   // Merge the trees.

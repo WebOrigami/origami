@@ -57,6 +57,25 @@ export default class Scope {
     return keys;
   }
 
+  /**
+   * Return a new tree equivalent to the given tree, but with the given scope.
+   *
+   * The tree itself will be automatically included at the front of the scope.
+   *
+   * @typedef {import("@graphorigami/core").Treelike} Treelike
+   * @param {Treelike} treelike
+   * @param {AsyncTree|null} scope
+   * @returns {AsyncTree & { scope: AsyncTree }}
+   */
+  static treeWithScope(treelike, scope) {
+    // If the treelike was already a tree, create a copy of it.
+    const tree = Tree.isAsyncTree(treelike)
+      ? Object.create(treelike)
+      : Tree.from(treelike);
+    tree.scope = new Scope(tree, scope);
+    return tree;
+  }
+
   async unwatch() {
     for (const tree of this.trees) {
       await /** @type {any} */ (tree).unwatch?.();

@@ -1,6 +1,6 @@
 import MapInnerKeysTree from "../../common/MapInnerKeysTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Wrap a tree and redefine the key used to access nodes in it.
@@ -21,7 +21,7 @@ export default async function mapKeys(treelike, keyFn, options = {}) {
   }
   /** @type {AsyncTree} */
   let mappedTree = new MapInnerKeysTree(treelike, keyFn, options);
-  mappedTree = treeWithScope(mappedTree, this);
+  mappedTree = Scope.treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

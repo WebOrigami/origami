@@ -2,7 +2,7 @@ import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
-import OriCommandTransform from "../../src/runtime/OriCommandTransform.js";
+import OriCommandTransform from "../../src/misc/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {
   test("prefers value defined by base tree even if it starts with '!'", async () => {

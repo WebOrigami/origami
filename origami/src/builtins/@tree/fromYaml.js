@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -15,7 +15,7 @@ export default async function fromYaml(text) {
   assertScopeIsDefined(this);
   let result = text ? serialize.parseYaml(String(text)) : undefined;
   if (this && Tree.isAsyncTree(result)) {
-    result = treeWithScope(result, this);
+    result = Scope.treeWithScope(result, this);
   }
   return result;
 }

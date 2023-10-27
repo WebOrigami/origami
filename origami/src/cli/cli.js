@@ -5,7 +5,7 @@ import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
-import { keySymbol, treeWithScope } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 import Scope from "../runtime/Scope.js";
 import showUsage from "./showUsage.js";
 
@@ -27,7 +27,7 @@ async function main(...args) {
   // Splice ambients tree into project tree scope.
   const ambients = new ObjectTree({});
   ambients[keySymbol] = "Origami CLI";
-  let tree = treeWithScope(projectTree, new Scope(ambients, config));
+  let tree = Scope.treeWithScope(projectTree, new Scope(ambients, config));
 
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();

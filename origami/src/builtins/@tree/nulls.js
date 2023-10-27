@@ -1,6 +1,6 @@
 import MapValuesTree from "../../common/MapValuesTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a new tree with all values equal to null.
@@ -18,7 +18,7 @@ export default async function nulls(treelike) {
   }
   /** @type {AsyncTree} */
   let mappedTree = new MapValuesTree(treelike, () => null, { deep: true });
-  mappedTree = treeWithScope(mappedTree, this);
+  mappedTree = Scope.treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import ConstantTree from "../common/ConstantTree.js";
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * Let a tree (e.g., of files) respond to changes.
@@ -71,7 +71,7 @@ async function evaluateTree(scope, fn) {
   console.warn(message);
   tree = new ConstantTree(message);
   if (scope) {
-    tree = treeWithScope(tree, scope);
+    tree = Scope.treeWithScope(tree, scope);
   }
   return tree;
 }

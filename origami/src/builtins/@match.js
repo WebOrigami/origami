@@ -1,5 +1,4 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import Scope from "../runtime/Scope.js";
 
@@ -85,7 +84,7 @@ export default function match(pattern, resultFn, keys = []) {
     },
   };
 
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

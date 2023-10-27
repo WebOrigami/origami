@@ -1,4 +1,4 @@
-import ExpressionTree from "../common/ExpressionTree.js";
+import ExpressionTree from "./ExpressionTree.js";
 import OrigamiTransform from "./OrigamiTransform.js";
 
 export default class OrigamiTree extends OrigamiTransform(ExpressionTree) {}

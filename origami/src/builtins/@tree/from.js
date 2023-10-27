@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Cast the indicated treelike to a tree.
@@ -19,7 +19,7 @@ export default async function tree(treelike) {
 
   /** @type {AsyncTree} */
   let result = Tree.from(treelike);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

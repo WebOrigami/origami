@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Return the inner nodes of the tree: the nodes with children.
@@ -36,7 +36,7 @@ export default async function inners(treelike) {
     },
   };
 
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

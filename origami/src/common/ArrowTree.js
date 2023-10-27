@@ -1,4 +1,4 @@
-import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
+import InvokeFunctionsTransform from "../runtime/InvokeFunctionsTransform.js";
 import MapKeysValuesTree from "./MapKeysValuesTree.js";
 
 export default class ArrowTree extends InvokeFunctionsTransform(

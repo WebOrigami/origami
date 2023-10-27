@@ -1,6 +1,6 @@
 import GlobTree from "../common/GlobTree.js";
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * Define a tree whose keys are globs.
@@ -15,7 +15,7 @@ export default async function globs(tree) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new GlobTree(tree);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

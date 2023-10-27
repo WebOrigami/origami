@@ -1,6 +1,6 @@
 import CacheSite from "../../common/CacheSite.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Caches fetch requests for a standard site.
@@ -16,7 +16,7 @@ export default async function cacheSite(tree, cache, filter) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new CacheSite(tree, cache, filter);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

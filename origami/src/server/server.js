@@ -6,7 +6,7 @@ import {
   keysFromPath,
 } from "@graphorigami/core";
 import * as serialize from "../common/serialize.js";
-import { extname, treeWithScope } from "../common/utilities.js";
+import { extname } from "../common/utilities.js";
 import Scope from "../runtime/Scope.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -31,7 +31,7 @@ function extendTreeScopeWithParams(tree, url) {
   const newScope = new Scope(paramTree, tree.parent);
 
   // Create a new tree that extends the prototype chain of the supplied tree.
-  const extendedTree = treeWithScope(tree, newScope);
+  const extendedTree = Scope.treeWithScope(tree, newScope);
 
   return extendedTree;
 }

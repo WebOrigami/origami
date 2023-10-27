@@ -6,7 +6,7 @@ import {
   keySymbol,
   transformObject,
 } from "../common/utilities.js";
-import Scope from "./Scope.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * Add support for commands prefixed with `!`.

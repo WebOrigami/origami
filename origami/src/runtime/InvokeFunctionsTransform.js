@@ -1,12 +1,12 @@
 import { Tree } from "@graphorigami/core";
-import Scope from "../runtime/Scope.js";
+import Scope from "./Scope.js";
 
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
 export default function InvokeFunctionsTransform(Base) {

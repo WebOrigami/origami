@@ -1,6 +1,6 @@
 import FilterTree from "../common/FilterTree.js";
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * Apply a filter to a tree.
@@ -15,7 +15,7 @@ export default async function filter(treelike, filterVariant) {
   assertScopeIsDefined(this);
   /** @type {AsyncTree} */
   let result = new FilterTree(treelike, filterVariant);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

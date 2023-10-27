@@ -1,7 +1,7 @@
 import MapExtensionsTree from "../../common/MapExtensionsTree.js";
 import MapValuesTree from "../../common/MapValuesTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Map the top-level values of a tree with a map function.
@@ -26,7 +26,7 @@ export default function map(treelike, mapFn, options = {}) {
     options.extension === undefined ? MapValuesTree : MapExtensionsTree;
   /** @type {AsyncTree} */
   let mappedTree = new TreeClass(treelike, mapFn, options);
-  mappedTree = treeWithScope(mappedTree, this);
+  mappedTree = Scope.treeWithScope(mappedTree, this);
   return mappedTree;
 }
 

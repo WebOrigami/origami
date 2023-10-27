@@ -1,7 +1,8 @@
 import { Tree } from "@graphorigami/core";
 import ShuffleTransform from "../../common/ShuffleTransform.js";
-import { transformObject, treeWithScope } from "../../common/utilities.js";
+import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a new tree with the original's keys shuffled
@@ -22,7 +23,7 @@ export default async function shuffle(treelike) {
 
   /** @type {AsyncTree} */
   let shuffled = transformObject(ShuffleTransform, tree);
-  shuffled = treeWithScope(shuffled, this);
+  shuffled = Scope.treeWithScope(shuffled, this);
   return shuffled;
 }
 

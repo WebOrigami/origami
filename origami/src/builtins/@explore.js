@@ -4,14 +4,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
-import { keySymbol, treeWithScope } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 import Scope from "../runtime/Scope.js";
 import debug from "./@debug.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const miscDir = path.resolve(dirname, "../misc");
-const miscFiles = treeWithScope(new OrigamiFiles(miscDir), builtins);
+const miscFiles = Scope.treeWithScope(new OrigamiFiles(miscDir), builtins);
 
 /**
  * @this {AsyncTree|null}

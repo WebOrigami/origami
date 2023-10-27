@@ -1,4 +1,4 @@
-import FileLoadersTransform from "../common/FileLoadersTransform.js";
+import FileLoadersTransform from "./FileLoadersTransform.js";
 import InheritScopeMixin from "./InheritScopeMixin.js";
 
 /**

@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Given a tree, take the first n items from it.
@@ -31,7 +31,7 @@ export default async function take(treelike, n) {
     },
   };
 
-  takeTree = treeWithScope(takeTree, this);
+  takeTree = Scope.treeWithScope(takeTree, this);
 
   return takeTree;
 }

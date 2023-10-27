@@ -1,6 +1,6 @@
 import { SiteTree, Tree } from "@graphorigami/core";
-import FileLoadersTransform from "../common/FileLoadersTransform.js";
-import { treeWithScope } from "../common/utilities.js";
+import FileLoadersTransform from "../runtime/FileLoadersTransform.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -25,7 +25,7 @@ export default async function treeHttp(host, ...keys) {
 
   /** @type {AsyncTree} */
   let result = new (FileLoadersTransform(SiteTree))(href);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

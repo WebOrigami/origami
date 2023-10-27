@@ -1,3 +1,6 @@
+This folder contains the modules necessary to compile Origami expressions into a
+form that can be evaluated.
+
 # Origami grammar
 
 A loose definition of the Origami expression language grammar:

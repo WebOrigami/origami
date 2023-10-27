@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
@@ -42,7 +42,7 @@ export default async function reverse(treelike, options = {}) {
     },
   };
 
-  reversed = treeWithScope(reversed, this);
+  reversed = Scope.treeWithScope(reversed, this);
 
   return reversed;
 }

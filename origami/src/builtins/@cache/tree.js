@@ -1,6 +1,6 @@
 import CacheTree from "../../common/CacheTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Caches tree values in a storable cache.
@@ -17,7 +17,7 @@ export default async function cacheTree(tree, cache, filter) {
 
   /** @type {AsyncTree} */
   let result = new CacheTree(tree, cache, filter);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

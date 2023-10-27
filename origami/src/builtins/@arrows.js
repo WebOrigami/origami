@@ -1,6 +1,7 @@
 import ArrowTree from "../common/ArrowTree.js";
-import { keySymbol, treeWithScope } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * Interpret arrow keys in the tree as function calls.
@@ -18,7 +19,7 @@ export default async function arrows(treelike) {
   }
   /** @type {AsyncTree} */
   let tree = new ArrowTree(treelike, { deep: true });
-  tree = treeWithScope(tree, this);
+  tree = Scope.treeWithScope(tree, this);
   tree[keySymbol] = "@arrows";
   return tree;
 }

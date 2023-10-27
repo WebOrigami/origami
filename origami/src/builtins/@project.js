@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
+import Scope from "../runtime/Scope.js";
 import builtins from "./@builtins.js";
 
 const configFileName = "ori.config.js";
@@ -43,7 +43,7 @@ export default async function project(key) {
   }
 
   // Add the configuration as the context for the project root.
-  const result = treeWithScope(projectTree, config);
+  const result = Scope.treeWithScope(projectTree, config);
   return key === undefined ? result : result.get(key);
 }
 

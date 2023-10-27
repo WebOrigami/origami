@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import MapValuesTree from "../../common/MapValuesTree.js";
-import { treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Expand values that can be treated as trees into trees.
@@ -25,7 +25,7 @@ export default async function expand(treelike) {
       deep: true,
     }
   );
-  expandedTree = treeWithScope(expandedTree, this);
+  expandedTree = Scope.treeWithScope(expandedTree, this);
   return expandedTree;
 }
 

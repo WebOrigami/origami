@@ -1,8 +1,8 @@
 import path from "node:path";
 import process from "node:process";
-import { treeWithScope } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -15,7 +15,7 @@ export default async function files(...keys) {
   const resolved = path.resolve(process.cwd(), ...keys);
   /** @type {AsyncTree} */
   let result = new OrigamiFiles(resolved);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

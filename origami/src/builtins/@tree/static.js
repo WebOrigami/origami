@@ -1,6 +1,7 @@
 import { Tree, keysJson } from "@graphorigami/core";
-import { transformObject, treeWithScope } from "../../common/utilities.js";
+import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 import index from "../@index.js";
 
 /**
@@ -19,7 +20,7 @@ export default async function staticTree(treelike) {
   }
   const tree = Tree.from(treelike);
   let result = transformObject(StaticTransform, tree);
-  result = treeWithScope(result, this);
+  result = Scope.treeWithScope(result, this);
   return result;
 }
 

@@ -1,7 +1,6 @@
 import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../runtime/Scope.js";
-import { treeWithScope } from "./utilities.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This
@@ -25,8 +24,8 @@ export default function processUnpackedContent(content, parent, attachedData) {
       let attachedTree;
       if (attachedData) {
         // Give the attached tree access to the input.
-        const ambientTree = treeWithScope({ _: input }, parentScope);
-        attachedTree = treeWithScope(attachedData, ambientTree.scope);
+        const ambientTree = Scope.treeWithScope({ _: input }, parentScope);
+        attachedTree = Scope.treeWithScope(attachedData, ambientTree.scope);
       }
       const extendedScope = new Scope(attachedTree, parentScope);
       return fn.call(extendedScope, input, ...rest);
