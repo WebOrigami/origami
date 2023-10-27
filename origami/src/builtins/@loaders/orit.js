@@ -2,7 +2,7 @@
 import { Tree } from "@graphorigami/core";
 import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
-import * as compile from "../../language/compile.js";
+import * as compile from "../../compiler/compile.js";
 import Scope from "../../runtime/Scope.js";
 import builtins from "../@builtins.js";
 

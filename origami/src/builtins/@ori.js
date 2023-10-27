@@ -1,7 +1,7 @@
 import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
-import * as compile from "../language/compile.js";
+import * as compile from "../compiler/compile.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**

@@ -140,7 +140,7 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
- * @typedef {import("../language/code.js").Code} Code
+ * @typedef {import("../compiler/code.js").Code} Code
  * @this {AsyncTree|null}
  * @param {Code} code
  */

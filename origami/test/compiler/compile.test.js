@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@graphorigami/core";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as compile from "../../src/language/compile.js";
+import * as compile from "../../src/compiler/compile.js";
 
 const scope = new ObjectTree({
   greet: (name) => `Hello, ${name}!`,

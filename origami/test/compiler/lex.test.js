@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { lex, state, tokenType } from "../../src/language/lex.js";
+import { lex, state, tokenType } from "../../src/compiler/lex.js";
 
 describe("lex", () => {
   test("array with comma separator", () => {
