@@ -1,4 +1,3 @@
-import { getScope } from "../common/utilities.js";
 import Scope from "./Scope.js";
 
 const scopeKey = Symbol("scope");
@@ -20,7 +19,7 @@ export default function InheritScopeMixin(Base) {
       if (this[scopeKey] === null) {
         if (this.parent) {
           // Add parent to this tree's scope.
-          this[scopeKey] = new Scope(this, getScope(this.parent));
+          this[scopeKey] = new Scope(this, Scope.getScope(this.parent));
         } else {
           // Scope is just the tree itself.
           this[scopeKey] = this;

@@ -2,12 +2,12 @@ import { Tree } from "@graphorigami/core";
 import SortTransform from "../../common/SortTransform.js";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import {
-  getScope,
   toFunction,
   transformObject,
   treeWithScope,
 } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Return a new tree with the original's keys sorted
@@ -40,7 +40,7 @@ export default async function sort(treelike, invocable) {
       // Get all the keys and map them to their sort keys.
       for (const key of await tree.keys()) {
         const value = await tree.get(key);
-        const scope = addValueKeyToScope(getScope(this), value, key);
+        const scope = addValueKeyToScope(Scope.getScope(this), value, key);
         const sortKey = await keyFn.call(scope, value, key);
         sorted.push({ key, sortKey });
       }

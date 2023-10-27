@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import TextDocument from "../common/TextDocument.js";
-import { getScope, keySymbol, treeWithScope } from "../common/utilities.js";
+import { keySymbol, treeWithScope } from "../common/utilities.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 import Scope from "../runtime/Scope.js";
 import debug from "./@debug.js";
@@ -17,7 +17,7 @@ const miscFiles = treeWithScope(new OrigamiFiles(miscDir), builtins);
  * @this {AsyncTree|null}
  */
 export default async function explore() {
-  const scope = getScope(this);
+  const scope = Scope.getScope(this);
   const templateFile = await miscFiles.get("explore.orit");
   const template = await templateFile.unpack();
 

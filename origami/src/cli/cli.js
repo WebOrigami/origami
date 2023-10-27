@@ -5,7 +5,7 @@ import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
-import { getScope, keySymbol, treeWithScope } from "../common/utilities.js";
+import { keySymbol, treeWithScope } from "../common/utilities.js";
 import Scope from "../runtime/Scope.js";
 import showUsage from "./showUsage.js";
 
@@ -42,7 +42,7 @@ async function main(...args) {
   // Add ambient property for the current tree.
   await ambients.set("@current", tree);
 
-  const scope = getScope(tree);
+  const scope = Scope.getScope(tree);
   const result = await ori.call(scope, expression);
   if (result !== undefined) {
     const output = result instanceof Buffer ? result : String(result);

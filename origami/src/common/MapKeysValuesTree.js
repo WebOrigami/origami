@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
+import Scope from "../runtime/Scope.js";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import * as utilities from "./utilities.js";
-import { getScope } from "./utilities.js";
 
 /**
  * Given a tree and a function, return a new tree that applies the function to
@@ -65,7 +65,8 @@ export default class MapKeysValuesTree {
       : undefined;
 
     const mapFn = this.mapFn;
-    let scope = this.scope ?? getScope(this.parent);
+    // @ts-ignore
+    let scope = this.scope ?? Scope.getScope(this.parent);
 
     // Determine whether we want to apply the map to this value.
     const applyMap =

@@ -2,8 +2,8 @@
 import { Tree } from "@graphorigami/core";
 import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
-import { getScope } from "../../common/utilities.js";
 import * as compile from "../../language/compile.js";
+import Scope from "../../runtime/Scope.js";
 import builtins from "../@builtins.js";
 
 /**
@@ -24,7 +24,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
 
   // Compile the body text as an Origami expression and evaluate it.
   const expression = compile.templateDocument(text);
-  const parentScope = parent ? getScope(parent) : builtins;
+  const parentScope = parent ? Scope.getScope(parent) : builtins;
   const lambda = await expression.call(parentScope);
 
   // Wrap the lambda with a function that will attach the input data to the

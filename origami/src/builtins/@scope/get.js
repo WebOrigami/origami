@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
-import * as utilities from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Returns the scope of the indicated tree or the current scope.
@@ -15,7 +15,7 @@ export default async function getScope(obj) {
   if (obj) {
     /** @type {any}  */
     const tree = Tree.from(obj);
-    return utilities.getScope(tree);
+    return Scope.getScope(tree);
   } else {
     return this;
   }

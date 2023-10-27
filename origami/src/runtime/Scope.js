@@ -27,6 +27,26 @@ export default class Scope {
     return undefined;
   }
 
+  /**
+   * If the given tree has a `scope` property, return that. If the tree has a
+   * `parent` property, construct a scope for the tree and its parent.
+   * Otherwise, return the tree itself.
+   *
+   * @param {AsyncTree|null|undefined} tree
+   * @returns {AsyncTree|null}
+   */
+  static getScope(tree) {
+    if (!tree) {
+      return null;
+    } else if ("scope" in tree) {
+      return /** @type {any} */ (tree).scope;
+    } else if (Tree.isAsyncTree(tree)) {
+      return new Scope(tree, this.getScope(tree.parent));
+    } else {
+      return tree;
+    }
+  }
+
   async keys() {
     const keys = new Set();
     for (const tree of this.trees) {

@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import Scope from "../runtime/Scope.js";
-import { getScope, treeWithScope } from "./utilities.js";
+import { treeWithScope } from "./utilities.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This
@@ -18,7 +18,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
   if (typeof content === "function") {
     // Wrap the function such to add ambients to the scope.
     const fn = content;
-    const parentScope = parent ? getScope(parent) : builtins;
+    const parentScope = parent ? Scope.getScope(parent) : builtins;
 
     /** @this {AsyncTree|null} */
     async function extendScope(input, ...rest) {

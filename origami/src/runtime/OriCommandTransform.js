@@ -2,7 +2,6 @@
 import { ObjectTree, Tree } from "@graphorigami/core";
 import ori from "../builtins/@ori.js";
 import {
-  getScope,
   isTransformApplied,
   keySymbol,
   transformObject,
@@ -36,7 +35,7 @@ export default function OriCommandTransform(Base) {
           "@current": this,
         });
         ambientsTree[keySymbol] = "ori command";
-        const extendedScope = new Scope(ambientsTree, getScope(this));
+        const extendedScope = new Scope(ambientsTree, Scope.getScope(this));
         const source = key.slice(1).trim();
         value = await ori.call(extendedScope, source);
 

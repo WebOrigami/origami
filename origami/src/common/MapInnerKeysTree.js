@@ -1,6 +1,7 @@
 import { Tree } from "@graphorigami/core";
+import Scope from "../runtime/Scope.js";
 import addValueKeyToScope from "./addValueKeyToScope.js";
-import { getScope, toFunction } from "./utilities.js";
+import { toFunction } from "./utilities.js";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
@@ -82,7 +83,7 @@ export default class MapInnerKeysTree {
 
       const scope = addValueKeyToScope(
         // @ts-ignore
-        this.scope ?? getScope(this.parent),
+        this.scope ?? Scope.getScope(this.parent),
         value,
         innerKey
       );

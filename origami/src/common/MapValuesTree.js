@@ -1,6 +1,7 @@
 import { Tree } from "@graphorigami/core";
+import Scope from "../runtime/Scope.js";
 import addValueKeyToScope from "./addValueKeyToScope.js";
-import { getScope, toFunction } from "./utilities.js";
+import { toFunction } from "./utilities.js";
 
 /**
  * Given a tree and a function, return a new tree that applies the function to
@@ -53,7 +54,7 @@ export default class MapValuesTree {
 
     const scope = addValueKeyToScope(
       // @ts-ignore
-      this.scope ?? getScope(this.parent),
+      this.scope ?? Scope.getScope(this.parent),
       innerValue,
       key,
       this.options.valueName,

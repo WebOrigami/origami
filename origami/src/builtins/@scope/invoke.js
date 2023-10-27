@@ -1,4 +1,5 @@
-import { getScope, toFunction } from "../../common/utilities.js";
+import { toFunction } from "../../common/utilities.js";
+import Scope from "../../runtime/Scope.js";
 
 /**
  * Invokes the given function in the context of the current scope.
@@ -11,7 +12,7 @@ import { getScope, toFunction } from "../../common/utilities.js";
  * @param {Invocable} invocable
  */
 export default async function invoke(context, invocable, ...args) {
-  const scope = getScope(context);
+  const scope = Scope.getScope(context);
   const fn = toFunction(invocable);
   const result = await fn.call(scope, ...args);
   return result;

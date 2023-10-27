@@ -1,5 +1,5 @@
 import { Tree } from "@graphorigami/core";
-import { getScope } from "./utilities.js";
+import Scope from "../runtime/Scope.js";
 
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
@@ -14,7 +14,7 @@ export default function InvokeFunctionsTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (typeof value === "function") {
-        const scope = getScope(this);
+        const scope = Scope.getScope(this);
         value = await value.call(scope);
 
         if (Tree.isAsyncTree(value)) {
