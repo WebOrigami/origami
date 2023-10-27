@@ -1,5 +1,4 @@
-import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
-import { keySymbol } from "../common/utilities.js";
+import { Tree, isStringLike } from "@graphorigami/core";
 import Scope from "./Scope.js";
 import extname from "./extname.js";
 
@@ -34,11 +33,6 @@ export default function FileLoadersTransform(Base) {
             const parent = this;
             value.parent = parent;
             value.unpack = () => unpackFn(input, { key, parent });
-          }
-
-          // Add diagnostic information.
-          if (value && typeof value === "object" && !isPlainObject(value)) {
-            value[keySymbol] = key;
           }
         }
       }
