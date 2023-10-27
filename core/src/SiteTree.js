@@ -1,4 +1,5 @@
 import * as Tree from "./Tree.js";
+import keysJson from "./keysJson.js";
 
 /**
  * An HTTP/HTTPS site as a tree of ArrayBuffers.
@@ -81,7 +82,7 @@ export default class SiteTree {
       .then((response) => (response.ok ? response.text() : null))
       .then((text) => {
         try {
-          return text ? parseKeyDescriptors(JSON.parse(text)) : null;
+          return text ? keysJson.parse(text) : null;
         } catch (error) {
           // Got a response, but it's not JSON. Most likely the site doesn't
           // actually have a .keys.json file, and is returning a Not Found page,
@@ -124,29 +125,4 @@ export default class SiteTree {
     const href = new URL(path, this.href).href;
     return Reflect.construct(this.constructor, [href]);
   }
-}
-
-//
-// Process an array of key descriptors, which are strings that are either a key
-// for a regular value like "foo", or a key with a trailing slash like "bar/"
-// that indicate a subtree. Return a tree of keys to flags where the flag
-// is true for subtrees and false otherwise.
-//
-// Example: given ["foo", "bar/"], returns
-//
-//   {
-//     foo: false,
-//     bar: true,
-//   }
-//
-function parseKeyDescriptors(descriptors) {
-  const result = {};
-  for (const descriptor of descriptors) {
-    if (descriptor.endsWith("/")) {
-      result[descriptor.slice(0, -1)] = true;
-    } else {
-      result[descriptor] = false;
-    }
-  }
-  return result;
 }

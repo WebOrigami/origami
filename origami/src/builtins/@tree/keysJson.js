@@ -1,10 +1,5 @@
-import { Tree } from "@graphorigami/core";
-import {
-  getScope,
-  transformObject,
-  treeWithScope,
-} from "../../common/utilities.js";
-import defaultKeysJson from "../../framework/defaultKeysJson.js";
+import { Tree, keysJson } from "@graphorigami/core";
+import { transformObject, treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 
 /**
@@ -15,7 +10,7 @@ import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
-export default async function keysJson(treelike) {
+export default async function treeKeysJson(treelike) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
   if (treelike === undefined) {
@@ -32,8 +27,7 @@ function KeysJsonTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (value === undefined && key === ".keys.json") {
-        const scope = getScope(this);
-        value = defaultKeysJson.call(scope, this);
+        value = await keysJson.stringify(this);
       } else if (Tree.isAsyncTree(value)) {
         value = transformObject(KeysJsonTransform, value);
       }

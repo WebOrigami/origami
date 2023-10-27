@@ -1,10 +1,5 @@
-import { Tree } from "@graphorigami/core";
-import {
-  getScope,
-  transformObject,
-  treeWithScope,
-} from "../../common/utilities.js";
-import defaultKeysJson from "../../framework/defaultKeysJson.js";
+import { Tree, keysJson } from "@graphorigami/core";
+import { transformObject, treeWithScope } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
 import index from "../@index.js";
 
@@ -35,8 +30,7 @@ function StaticTransform(Base) {
       if (value === undefined && key === "index.html") {
         value = index.call(this, this);
       } else if (value === undefined && key === ".keys.json") {
-        const scope = getScope(this);
-        value = defaultKeysJson.call(scope, this);
+        value = keysJson.stringify(this);
       } else if (Tree.isAsyncTree(value)) {
         value = transformObject(StaticTransform, value);
       }

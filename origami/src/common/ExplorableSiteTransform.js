@@ -1,11 +1,10 @@
-import { Tree } from "@graphorigami/core";
+import { Tree, keysJson } from "@graphorigami/core";
 import index from "../builtins/@index.js";
 import {
   getScope,
   isTransformApplied,
   transformObject,
 } from "../common/utilities.js";
-import defaultKeysJson from "../framework/defaultKeysJson.js";
 
 /**
  * Wraps a tree (typically a SiteTree) to turn a standard site into an
@@ -44,7 +43,7 @@ export default function ExplorableSiteTransform(Base) {
         if (key === "index.html") {
           value = await index.call(scope, this);
         } else if (key === ".keys.json") {
-          value = await defaultKeysJson.call(scope, this);
+          value = await keysJson.stringify(this);
         }
       }
 

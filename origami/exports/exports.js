@@ -134,7 +134,6 @@ export * from "../src/common/utilities.js";
 export * from "../src/coreExports.js";
 export { default as ArrowTree } from "../src/framework/ArrowTree.js";
 export { default as defaultDataflow } from "../src/framework/defaultDataflow.js";
-export { default as defaultKeysJson } from "../src/framework/defaultKeysJson.js";
 export { default as DefaultPagesTransform } from "../src/framework/DefaultPagesTransform.js";
 export { default as EventTargetMixin } from "../src/framework/EventTargetMixin.js";
 export { default as InheritScopeMixin } from "../src/framework/InheritScopeMixin.js";
