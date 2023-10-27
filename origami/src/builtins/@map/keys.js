@@ -1,6 +1,6 @@
 import MapInnerKeysTree from "../../common/MapInnerKeysTree.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Wrap a tree and redefine the key used to access nodes in it.

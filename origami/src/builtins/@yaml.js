@@ -1,7 +1,7 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import YAML from "yaml";
 import * as serialize from "../common/serialize.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Render the object as text in YAML format.

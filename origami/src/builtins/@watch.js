@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import ConstantTree from "../common/ConstantTree.js";
 import { treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Let a tree (e.g., of files) respond to changes.

@@ -7,7 +7,7 @@ import {
   transformObject,
   treeWithScope,
 } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return a new tree with the original's keys sorted

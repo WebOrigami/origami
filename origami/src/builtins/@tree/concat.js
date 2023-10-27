@@ -1,5 +1,5 @@
 import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Concatenate the text content of objects or trees.

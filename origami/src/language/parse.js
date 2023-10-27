@@ -17,6 +17,7 @@
  */
 
 import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
+import * as ops from "../runtime/ops.js";
 import {
   any,
   forcedSequence,
@@ -26,7 +27,6 @@ import {
   series,
 } from "./combinators.js";
 import { tokenType } from "./lex.js";
-import * as ops from "./ops.js";
 
 // Parse an absolute file path like `/foo/bar`.
 export function absoluteFilePath(tokens) {

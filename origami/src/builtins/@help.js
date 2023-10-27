@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import child_process from "node:child_process";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 const groupUrls = {
   "@cache": "https://graphorigami.org/language/@cache.html",

@@ -1,6 +1,6 @@
 import MapValuesTree from "../../common/MapValuesTree.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return a new tree with all values equal to null.

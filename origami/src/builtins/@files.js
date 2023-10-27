@@ -1,7 +1,7 @@
 import path from "node:path";
 import process from "node:process";
 import { treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 
 /**

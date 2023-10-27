@@ -1,6 +1,6 @@
 import { Tree, isPlainObject } from "@graphorigami/core";
+import * as ops from "../runtime/ops.js";
 import format from "./format.js";
-import * as ops from "./ops.js";
 
 const expressionSymbol = Symbol("expression");
 

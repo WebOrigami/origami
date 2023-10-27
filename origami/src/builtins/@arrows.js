@@ -1,6 +1,6 @@
 import ArrowTree from "../common/ArrowTree.js";
 import { keySymbol, treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Interpret arrow keys in the tree as function calls.

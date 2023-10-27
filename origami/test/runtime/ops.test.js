@@ -3,9 +3,9 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import execute from "../../src/language/execute.js";
 import { createExpressionFunction } from "../../src/language/expressionFunction.js";
-import * as ops from "../../src/language/ops.js";
 import OrigamiTree from "../../src/runtime/OrigamiTree.js";
 import Scope from "../../src/runtime/Scope.js";
+import * as ops from "../../src/runtime/ops.js";
 
 describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {

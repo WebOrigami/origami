@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import * as serialize from "../common/serialize.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Render the given object in JSON format.

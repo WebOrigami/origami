@@ -1,7 +1,7 @@
 import MapExtensionsTree from "../../common/MapExtensionsTree.js";
 import MapValuesTree from "../../common/MapValuesTree.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Map the top-level values of a tree with a map function.

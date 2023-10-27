@@ -1,8 +1,8 @@
 import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
 import * as compile from "../language/compile.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Parse an Origami expression, evaluate it in the context of a tree (provided

@@ -1,6 +1,6 @@
 import CacheSite from "../../common/CacheSite.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Caches fetch requests for a standard site.

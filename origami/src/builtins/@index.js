@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Return a default index.html page for the current tree.

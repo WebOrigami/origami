@@ -7,7 +7,7 @@ import {
 import { extname } from "node:path";
 import InvokeFunctionsTransform from "../common/InvokeFunctionsTransform.js";
 import { treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to

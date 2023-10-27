@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
 import * as utilities from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Returns the scope of the indicated tree or the current scope.

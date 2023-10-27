@@ -2,7 +2,6 @@ import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { tokenType } from "../../src/language/lex.js";
-import * as ops from "../../src/language/ops.js";
 import {
   absoluteFilePath,
   array,
@@ -29,6 +28,7 @@ import {
   tree,
   treeDocument,
 } from "../../src/language/parse.js";
+import * as ops from "../../src/runtime/ops.js";
 
 describe("parse", () => {
   describe("absoluteFilePath", () => {

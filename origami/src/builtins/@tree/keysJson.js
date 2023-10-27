@@ -1,6 +1,6 @@
 import { Tree, keysJson } from "@graphorigami/core";
 import { transformObject, treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Expose .keys.json for a tree.

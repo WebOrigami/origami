@@ -4,7 +4,7 @@ import { createServer } from "node:net";
 import process from "node:process";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./@debug.js";
 import watch from "./@watch.js";

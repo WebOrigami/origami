@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import merge from "../../../src/builtins/@tree/merge.js";
 import ExpressionTree from "../../../src/common/ExpressionTree.js";
 import { createExpressionFunction } from "../../../src/language/expressionFunction.js";
-import * as ops from "../../../src/language/ops.js";
+import * as ops from "../../../src/runtime/ops.js";
 
 describe("@tree/merge", () => {
   test("merges trees", async () => {

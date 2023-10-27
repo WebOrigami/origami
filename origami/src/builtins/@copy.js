@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import setDeep from "./@tree/setDeep.js";
 
 /**

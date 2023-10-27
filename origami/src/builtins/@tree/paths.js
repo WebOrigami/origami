@@ -1,5 +1,5 @@
 import { Tree } from "@graphorigami/core";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return an array of paths to the values in the tree.

@@ -9,12 +9,12 @@ import httpsBuiltin from "../builtins/@https.js";
 import concatBuiltin from "../builtins/@tree/concat.js";
 import treeHttpBuiltin from "../builtins/@treeHttp.js";
 import treeHttpsBuiltin from "../builtins/@treeHttps.js";
-import Scope from "../runtime/Scope.js";
-import execute from "./execute.js";
-import { createExpressionFunction } from "./expressionFunction.js";
+import execute from "../language/execute.js";
+import { createExpressionFunction } from "../language/expressionFunction.js";
+import Scope from "./Scope.js";
 
 // Lazily load OrigamiTree to avoid circular dependencies.
-const origamiTreePromise = import("../runtime/OrigamiTree.js").then(
+const origamiTreePromise = import("./OrigamiTree.js").then(
   (exports) => exports.default
 );
 
@@ -102,7 +102,7 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
- * @typedef {import("./code").Code} Code
+ * @typedef {import("../language/code.js").Code} Code
  * @this {AsyncTree|null}
  * @param {Code} code
  */

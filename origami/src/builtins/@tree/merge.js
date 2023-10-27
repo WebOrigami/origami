@@ -1,6 +1,6 @@
 import MergeTree from "../../common/MergeTree.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 import Scope from "../../runtime/Scope.js";
 
 /**

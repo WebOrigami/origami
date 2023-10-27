@@ -1,7 +1,7 @@
 import { Tree } from "@graphorigami/core";
 import graphviz from "graphviz-wasm";
 import TextDocument from "../common/TextDocument.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import dot from "./@tree/dot.js";
 
 let graphvizLoaded = false;

@@ -1,6 +1,6 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 import builtins from "./@builtins.js";
 

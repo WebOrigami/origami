@@ -1,6 +1,6 @@
 import { Tree } from "@graphorigami/core";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Given a tree, take the first n items from it.

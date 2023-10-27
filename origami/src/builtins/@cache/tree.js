@@ -1,6 +1,6 @@
 import CacheTree from "../../common/CacheTree.js";
 import { treeWithScope } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Caches tree values in a storable cache.

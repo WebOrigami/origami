@@ -1,6 +1,6 @@
 import FilterTree from "../common/FilterTree.js";
 import { treeWithScope } from "../common/utilities.js";
-import assertScopeIsDefined from "../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Apply a filter to a tree.

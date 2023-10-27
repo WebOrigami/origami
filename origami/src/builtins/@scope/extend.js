@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 import setScope from "./set.js";
 
 /**

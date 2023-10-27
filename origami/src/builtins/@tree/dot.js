@@ -1,7 +1,7 @@
 import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
 import * as serialize from "../../common/serialize.js";
 import { extname, keySymbol } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../language/assertScopeIsDefined.js";
+import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Render a tree in DOT format.

@@ -1,4 +1,4 @@
-import * as ops from "../../src/language/ops.js";
+import * as ops from "../runtime/ops.js";
 
 export default function format(code, implicitFunctionCall = false) {
   if (code === null) {
