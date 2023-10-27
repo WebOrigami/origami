@@ -1,4 +1,10 @@
 import os from "node:os";
+import { treeWithScope } from "../common/utilities.js";
 import OrigamiFiles from "../framework/OrigamiFiles.js";
+import builtins from "./@builtins.js";
 
-export default new OrigamiFiles(os.homedir());
+/** @type {import("@graphorigami/types").AsyncTree} */
+let tree = new OrigamiFiles(os.homedir());
+tree = treeWithScope(tree, builtins);
+
+export default tree;
