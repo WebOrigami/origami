@@ -1,5 +1,5 @@
 import * as Tree from "./Tree.js";
-import keysJson from "./keysJson.js";
+import * as keysJson from "./keysJson.js";
 
 /**
  * An HTTP/HTTPS site as a tree of ArrayBuffers.

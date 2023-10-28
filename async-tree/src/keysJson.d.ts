@@ -1,8 +1,4 @@
 import { Treelike } from "../index";
 
-declare const keysJson: {
-  parse(json: string): any,
-  stringify(treelike: Treelike): Promise<string>
-};
-
-export default keysJson;
+export function parse(json: string): any;
+export function stringify(treelike: Treelike): Promise<string>;
