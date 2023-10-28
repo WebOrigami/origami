@@ -23,7 +23,7 @@ marked.use(
 );
 
 /**
- * @typedef {import("@graphorigami/core").StringLike} StringLike
+ * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
  *
  * @this {import("@graphorigami/types").AsyncTree|null|void}
  * @param {StringLike} input

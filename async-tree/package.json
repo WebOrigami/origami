@@ -1,7 +1,7 @@
 {
-  "name": "@graphorigami/core",
+  "name": "@graphorigami/async-tree",
   "version": "0.0.31",
-  "description": "Asynchronous dictionaries and trees based on standard JavaScript classes",
+  "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
   "types": "./index.ts",

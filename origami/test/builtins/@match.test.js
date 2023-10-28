@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import match from "../../src/builtins/@match.js";

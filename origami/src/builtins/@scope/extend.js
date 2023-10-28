@@ -6,7 +6,7 @@ import setScope from "./set.js";
  * the current scope.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param  {...Treelike} scopeTrees

@@ -1,4 +1,4 @@
-import { Tree, isPlainObject } from "@graphorigami/core";
+import { Tree, isPlainObject } from "@graphorigami/async-tree";
 import { format, ops } from "./internal.js";
 
 const expressionSymbol = Symbol("expression");
@@ -8,7 +8,7 @@ const expressionSymbol = Symbol("expression");
  *
  * `this` should be the scope used to look up references found in the code.
  *
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  *
  * @this {Treelike|null}

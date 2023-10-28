@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { ObjectTree } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/async-tree";
 import { OrigamiFiles, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

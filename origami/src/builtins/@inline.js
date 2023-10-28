@@ -7,7 +7,7 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  * text.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").StringLike} StringLike
+ * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
  * @param {StringLike} input

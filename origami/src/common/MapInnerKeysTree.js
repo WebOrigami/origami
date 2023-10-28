@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import { toFunction } from "./utilities.js";

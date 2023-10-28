@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Return a new tree with all values equal to null.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */

@@ -16,7 +16,7 @@
  * between possible terms.
  */
 
-import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
+import { defaultValueKey } from "../../../async-tree/src/Tree.js";
 import * as ops from "../runtime/ops.js";
 import {
   any,

@@ -1,6 +1,6 @@
-import { defaultValueKey } from "@graphorigami/core/src/Tree.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { defaultValueKey } from "../../../async-tree/src/Tree.js";
 import { tokenType } from "../../src/compiler/lex.js";
 import {
   absoluteFilePath,

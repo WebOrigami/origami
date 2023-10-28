@@ -6,8 +6,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Wrap a tree and redefine the key used to access nodes in it.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  *
  * @this {AsyncTree|null}
  * @param {Treelike} treelike

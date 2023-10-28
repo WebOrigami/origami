@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import SortTransform from "../../common/SortTransform.js";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Return a new tree with the original's keys sorted
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncTree|null}

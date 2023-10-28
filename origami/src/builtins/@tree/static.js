@@ -1,4 +1,4 @@
-import { Tree, keysJson } from "@graphorigami/core";
+import { Tree, keysJson } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import { transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
@@ -8,7 +8,7 @@ import index from "../@index.js";
  * Expose common static keys (index.html, .keys.json) for a tree.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */

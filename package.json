@@ -2,7 +2,7 @@
   "name": "@graphorigami/monorepo",
   "version": "0.0.31",
   "workspaces": [
-    "core",
+    "async-tree",
     "language",
     "origami",
     "types"

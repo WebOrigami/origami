@@ -1,11 +1,11 @@
 /**
  * @typedef {import("../..").JsonValue} JsonValue
- * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 
-import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
+import { Tree, isPlainObject, isStringLike } from "@graphorigami/async-tree";
 import { OrigamiTree } from "@graphorigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";

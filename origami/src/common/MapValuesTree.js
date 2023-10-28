@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import addValueKeyToScope from "./addValueKeyToScope.js";
 import { toFunction } from "./utilities.js";
@@ -9,8 +9,8 @@ import { toFunction } from "./utilities.js";
  */
 export default class MapValuesTree {
   /**
-   * @typedef {import("@graphorigami/core").Treelike} Treelike
-   * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+   * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+   * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
    * @typedef {import("../../index.js").Invocable} Invocable
    *
    * @param {Treelike} treelike

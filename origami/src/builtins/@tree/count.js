@@ -1,11 +1,11 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return the number of keys in the tree.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */

@@ -1,4 +1,4 @@
-import { FileTree } from "@graphorigami/core";
+import { FileTree } from "@graphorigami/async-tree";
 import { ImportModulesMixin } from "@graphorigami/language";
 import assert from "node:assert";
 import path from "node:path";

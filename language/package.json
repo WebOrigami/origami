@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@graphorigami/types": "*",
-    "@graphorigami/core": "*"
+    "@graphorigami/async-tree": "*"
   },
   "scripts": {
     "test": "node --test",

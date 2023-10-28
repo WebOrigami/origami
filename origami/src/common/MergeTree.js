@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 
 /**
  * Return a tree that performs a shallow merge of the given trees.

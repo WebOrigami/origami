@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * Define a tree whose keys are globs.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  *
  * @param {Treelike} tree
  * @this {AsyncTree|null}

@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -17,7 +17,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * the indicated function to produce a result.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("../..").Invocable} Invocable
  *
  * @param {string|RegExp} pattern

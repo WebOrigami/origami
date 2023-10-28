@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { ops } from "@graphorigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 

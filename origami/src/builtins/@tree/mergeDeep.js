@@ -6,7 +6,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Create a tree that's the result of deep merging the given trees.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike[]} trees
  */

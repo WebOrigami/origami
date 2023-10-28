@@ -19,7 +19,7 @@
     "typescript": "5.1.3"
   },
   "dependencies": {
-    "@graphorigami/core": "https://gitpkg.now.sh/GraphOrigami/origami/core?3a8eb641",
+    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/core?3a8eb641",
     "@graphorigami/language": "*",
     "@graphorigami/types": "*",
     "graphviz-wasm": "3.0.0",

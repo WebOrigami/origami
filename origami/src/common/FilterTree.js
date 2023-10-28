@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 
 /**
  * Caches the results retrieved from one source tree in a second cache tree.

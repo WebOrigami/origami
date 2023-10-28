@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import setDeep from "../builtins/@tree/setDeep.js";
 
 /**
@@ -10,7 +10,7 @@ import setDeep from "../builtins/@tree/setDeep.js";
  */
 export default class CacheSite {
   /**
-   * @typedef {import("@graphorigami/core").Treelike} Treelike
+   * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
    * @param {Treelike} tree
    * @param {Treelike} [cache]
    * @param {Treelike} [filter]

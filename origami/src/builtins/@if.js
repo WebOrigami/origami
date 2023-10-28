@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**

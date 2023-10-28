@@ -3,7 +3,7 @@
  * tool to confirm our code is type safe.
  */
 
-import { Treelike, Unpackable } from "@graphorigami/core";
+import { Treelike, Unpackable } from "../async-tree";
 
 /**
  * A class constructor is an object with a `new` method that returns an

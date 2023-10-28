@@ -1,4 +1,4 @@
-import { Tree, keysJson } from "@graphorigami/core";
+import { Tree, keysJson } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import index from "../builtins/@index.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";

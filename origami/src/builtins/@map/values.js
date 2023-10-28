@@ -7,8 +7,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Map the top-level values of a tree with a map function.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncTree|null}

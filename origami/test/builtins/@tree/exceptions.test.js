@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import { InvokeFunctionsTransform } from "@graphorigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";

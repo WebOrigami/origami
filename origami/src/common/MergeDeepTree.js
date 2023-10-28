@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 
 /**
  * This is a variation of MergeTree that performs a deep merge.

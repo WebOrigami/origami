@@ -1,4 +1,4 @@
-import { Tree, isPlainObject, isStringLike } from "@graphorigami/core";
+import { Tree, isPlainObject, isStringLike } from "@graphorigami/async-tree";
 import { extname } from "@graphorigami/language";
 import * as serialize from "../../common/serialize.js";
 import { keySymbol } from "../../common/utilities.js";
@@ -8,8 +8,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Render a tree in DOT format.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
- * @typedef {import("@graphorigami/core").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]

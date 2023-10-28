@@ -1,5 +1,5 @@
-import { StringLike } from "@graphorigami/core";
 import { AsyncTree } from "@graphorigami/types";
+import { StringLike } from "../async-tree/index.js";
 
 export * from "./main.js";
 

@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 
 export default async function setDeep(target, source) {
   const targetTree = Tree.from(target);

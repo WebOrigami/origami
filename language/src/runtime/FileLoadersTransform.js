@@ -1,4 +1,4 @@
-import { Tree, isStringLike } from "@graphorigami/core";
+import { Tree, isStringLike } from "@graphorigami/async-tree";
 import Scope from "./Scope.js";
 import extname from "./extname.js";
 

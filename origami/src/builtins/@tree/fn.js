@@ -1,4 +1,4 @@
-import { FunctionTree } from "@graphorigami/core";
+import { FunctionTree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import { toFunction } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Create a tree from a function and a set of keys.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("../../..").Invocable} Invocable
  *
  * @this {AsyncTree|null}

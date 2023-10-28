@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import MergeTree from "./MergeTree.js";
 
 const globstar = "**";

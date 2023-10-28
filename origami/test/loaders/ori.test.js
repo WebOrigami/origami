@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import { OrigamiFiles, Scope } from "@graphorigami/language";
 import assert from "node:assert";
 import path from "node:path";

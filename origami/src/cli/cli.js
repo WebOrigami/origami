@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";

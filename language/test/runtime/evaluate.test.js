@@ -1,4 +1,4 @@
-import { ObjectTree } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as ops from "../../src/runtime/ops.js";

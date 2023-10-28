@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/core";
+import { ObjectTree, Tree } from "@graphorigami/async-tree";
 
 /**
  * Caches non-tree values from the first (source) tree in a second (cache)
@@ -9,7 +9,7 @@ import { ObjectTree, Tree } from "@graphorigami/core";
  */
 export default class CacheTree {
   /**
-   * @typedef {import("@graphorigami/core").Treelike} Treelike
+   * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
    * @param {Treelike} tree
    * @param {Treelike} [cache]
    * @param {Treelike} [filter]

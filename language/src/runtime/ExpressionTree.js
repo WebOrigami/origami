@@ -1,4 +1,4 @@
-import { ObjectTree } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/async-tree";
 import InvokeFunctionsTransform from "./InvokeFunctionsTransform.js";
 import { expressionFunction } from "./internal.js";
 

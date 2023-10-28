@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * Interpret arrow keys in the tree as function calls.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */

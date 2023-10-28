@@ -67,7 +67,7 @@ export function isPlainObject(object) {
  * method.
  *
  * @param {any} obj
- * @returns {obj is import("@graphorigami/core").StringLike}
+ * @returns {obj is import("@graphorigami/async-tree").StringLike}
  */
 export function isStringLike(obj) {
   if (typeof obj === "string") {

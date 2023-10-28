@@ -1,4 +1,4 @@
-import { FunctionTree, ObjectTree, Tree } from "@graphorigami/core";
+import { FunctionTree, ObjectTree, Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapKeysValuesTree from "../../src/common/MapKeysValuesTree.js";

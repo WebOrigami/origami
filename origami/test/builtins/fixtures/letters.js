@@ -1,4 +1,4 @@
-import { ObjectTree } from "@graphorigami/core";
+import { ObjectTree } from "@graphorigami/async-tree";
 export default new ObjectTree({
   a: "The letter A",
   b: "The letter B",

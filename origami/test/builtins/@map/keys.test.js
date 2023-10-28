@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 import { ops } from "@graphorigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";

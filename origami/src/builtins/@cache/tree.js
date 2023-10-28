@@ -5,7 +5,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Caches tree values in a storable cache.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @param {Treelike} tree
  * @param {Treelike} [cache]
  * @param {Treelike} [filter]

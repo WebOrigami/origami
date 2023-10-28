@@ -1,4 +1,4 @@
-import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
+import { Tree, getRealmObjectPrototype } from "@graphorigami/async-tree";
 
 /**
  * Concatenate the text values in a tree.
@@ -9,7 +9,7 @@ import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {import("@graphorigami/core").Treelike} treelike
+ * @param {import("@graphorigami/async-tree").Treelike} treelike
  */
 export default async function concatTreeValues(treelike) {
   const scope = this;

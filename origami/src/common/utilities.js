@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/core";
+import { Tree } from "@graphorigami/async-tree";
 
 export function isTransformApplied(Transform, obj) {
   let transformName = Transform.name;

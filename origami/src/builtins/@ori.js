@@ -1,4 +1,4 @@
-import { Tree, getRealmObjectPrototype } from "@graphorigami/core";
+import { Tree, getRealmObjectPrototype } from "@graphorigami/async-tree";
 import * as compile from "../../../language/src/compiler/compile.js";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";

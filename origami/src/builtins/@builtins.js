@@ -1,4 +1,4 @@
-import { FileTree } from "@graphorigami/core";
+import { FileTree } from "@graphorigami/async-tree";
 import { ImportModulesMixin } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

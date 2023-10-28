@@ -3,7 +3,7 @@ import {
   Tree,
   isPlainObject,
   keysFromPath,
-} from "@graphorigami/core";
+} from "@graphorigami/async-tree";
 import {
   InvokeFunctionsTransform,
   Scope,
@@ -20,7 +20,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * that obtain the requested value from the original site.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/core").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
