@@ -55,20 +55,17 @@ export default class DeferredTree {
       return this._tree;
     }
 
-    // Use a promise to ensure that the treelike is only converted to a tree
-    // once.
-    if (!this.treePromise) {
-      this.treePromise = this.loadResult().then((treelike) => {
-        this._tree = Tree.from(treelike);
-        if (this._parent) {
-          if (!this._tree.parent) {
-            this._tree.parent = this._parent;
-          }
-          this._parent = null;
+    // Use a promise to ensure the treelike is only converted to a tree once.
+    this.treePromise ??= this.loadResult().then((treelike) => {
+      this._tree = Tree.from(treelike);
+      if (this._parent) {
+        if (!this._tree.parent) {
+          this._tree.parent = this._parent;
         }
-        return this._tree;
-      });
-    }
+        this._parent = null;
+      }
+      return this._tree;
+    });
 
     return this.treePromise;
   }

@@ -73,12 +73,8 @@ export default class SiteTree {
 
   async getKeyDictionary() {
     // We use a promise to ensure we only check for keys once.
-    if (this.keysPromise) {
-      return this.keysPromise;
-    }
-
     const href = new URL(".keys.json", this.href).href;
-    this.keysPromise = fetch(href)
+    this.keysPromise ??= fetch(href)
       .then((response) => (response.ok ? response.text() : null))
       .then((text) => {
         try {
@@ -90,7 +86,6 @@ export default class SiteTree {
           return null;
         }
       });
-
     return this.keysPromise;
   }
 
