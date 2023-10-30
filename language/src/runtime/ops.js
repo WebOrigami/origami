@@ -71,6 +71,7 @@ async function fetchAndPatch(href) {
         return new TextDecoder().decode(this);
       };
     }
+    return buffer;
   } else {
     return undefined;
   }

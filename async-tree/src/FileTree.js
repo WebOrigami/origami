@@ -1,22 +1,17 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isTypedArray } from "node:util/types";
 import * as Tree from "./Tree.js";
-import { getRealmObjectPrototype } from "./utilities.js";
+import {
+  getRealmObjectPrototype,
+  hiddenFileNames,
+  sortNatural,
+} from "./utilities.js";
 
-// Names of OS-generated files that should not be enumerated
-const hiddenFileNames = {
-  ".DS_Store": true,
-};
-
-// Used for natural sort order
-const collator = new Intl.Collator(undefined, {
-  numeric: true,
-});
+const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
- * A file system tree as a tree of Buffers.
+ * A file system tree via the Node file system API.
  *
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
@@ -84,14 +79,11 @@ export default class FileTree {
     let names = entries.map((entry) => entry.name);
 
     // Filter out unhelpful file names.
-    names = names.filter((name) => !hiddenFileNames[name]);
+    names = names.filter((name) => !hiddenFileNames.includes(name));
 
     // Node fs.readdir sort order appears to be unreliable; see, e.g.,
-    // https://github.com/nodejs/node/issues/3232. That seems unhelpful for many
-    // applications. Since it's quite common for file names to include numbers,
-    // we use natural sort order: ["file1", "file9", "file10"] instead of
-    // ["file1", "file10", "file9"].
-    names.sort(collator.compare);
+    // https://github.com/nodejs/node/issues/3232.
+    sortNatural(names);
     return names;
   }
 
@@ -132,17 +124,11 @@ export default class FileTree {
       value = "";
     }
 
-    // Write an ArrayBuffer value as a Buffer.
-    if (value instanceof ArrayBuffer) {
-      value = Buffer.from(value);
-    }
-
     // True if fs.writeFile can directly write the value to a file.
     let isWriteable =
-      value instanceof Buffer ||
+      value instanceof TypedArray ||
       value instanceof DataView ||
-      (globalThis.ReadableStream && value instanceof ReadableStream) ||
-      isTypedArray(value);
+      (globalThis.ReadableStream && value instanceof ReadableStream);
 
     if (!isWriteable && isStringLike(value)) {
       // Value has a meaningful `toString` method, use that.

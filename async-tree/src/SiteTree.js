@@ -59,16 +59,7 @@ export default class SiteTree {
       }
     }
 
-    const buffer = await response.arrayBuffer();
-    if (buffer instanceof ArrayBuffer) {
-      // Patch the ArrayBuffer to give it a more useful toString that decodes
-      // the buffer as UTF-8, like Node's Buffer class does.
-      buffer.toString = function () {
-        return new TextDecoder().decode(this);
-      };
-    }
-
-    return buffer;
+    return response.arrayBuffer();
   }
 
   async getKeyDictionary() {

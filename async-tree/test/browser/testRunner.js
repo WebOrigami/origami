@@ -15,7 +15,7 @@ const markers = {
 export async function describe(name, fn) {
   promises[name] = [];
   currentSuite = name;
-  fn();
+  await fn();
   const results = await Promise.all(promises[name]);
   const someFailed = results.some((result) => result.result === "fail");
   const header = `${someFailed ? markers.fail : markers.success} ${name}`;

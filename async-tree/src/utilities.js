@@ -1,5 +1,10 @@
 import defaultValueKey from "./defaultValueKey.js";
 
+// Used for natural sort order
+const collator = new Intl.Collator(undefined, {
+  numeric: true,
+});
+
 /**
  * If the given plain object has only sequential integer keys, return it as an
  * array. Otherwise return it as is.
@@ -20,6 +25,9 @@ export function castArrayLike(object) {
   }
   return hasKeys ? Object.values(object) : object;
 }
+
+// Names of OS-generated files that should not be enumerated
+export const hiddenFileNames = [".DS_Store"];
 
 /**
  * Return the Object prototype at the root of the object's prototype chain.
@@ -106,4 +114,19 @@ export function keysFromPath(pathname) {
       ? [defaultValueKey]
       : keys.map((key) => (key === "" ? defaultValueKey : key));
   return mapped;
+}
+
+/**
+ * Sort the given array using [natural sort
+ * order](https://en.wikipedia.org/wiki/Natural_sort_order). Like the native
+ * `Array` `sort` function, this operation destructively modifies the array in
+ * place.
+ *
+ * The default sort order for some sources like operating system files can be
+ * unpredictable. Since it's quite common for file names to include numbers, it
+ * can helpful to use natural sort order instead: ["file1", "file9", "file10"]
+ * instead of ["file1", "file10", "file9"].
+ */
+export function sortNatural(array) {
+  array.sort(collator.compare);
 }

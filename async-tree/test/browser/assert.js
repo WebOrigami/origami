@@ -10,7 +10,7 @@ export default function assert(condition) {
 }
 
 assert.equal = (actual, expected) => {
-  if (isNaN(actual) && isNaN(expected)) {
+  if (Number.isNaN(actual) && Number.isNaN(expected)) {
     return;
   } else if (actual == expected) {
     return;

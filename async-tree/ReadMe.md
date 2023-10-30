@@ -1,1 +1,1 @@
-This repository contains definitions for asynchronous trees backed by standard JavaScript classes like `Object` and `Map`. It also includes collections of helpers for common tree operations.
+This library contains definitions for asynchronous trees backed by standard JavaScript classes like `Object` and `Map` and standard browser APIs such as the [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system). The library also includes collections of helpers for common tree operations.
