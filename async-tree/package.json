@@ -4,6 +4,7 @@
   "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
+  "browser": "./browser.js",
   "types": "./index.ts",
   "devDependencies": {
     "@types/node": "20.2.4",

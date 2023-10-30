@@ -1,7 +1,7 @@
-// Exports for Node.js
+// Exports for browser
 
 export { default as DeferredTree } from "./src/DeferredTree.js";
-export { default as FileTree } from "./src/FileTree.js";
+// Skip FileTree.js, which is Node.js only
 export { default as FunctionTree } from "./src/FunctionTree.js";
 export { default as MapTree } from "./src/MapTree.js";
 export { default as ObjectTree } from "./src/ObjectTree.js";
