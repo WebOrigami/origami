@@ -1,5 +1,4 @@
 import * as Tree from "./Tree.js";
-import defaultValueKey from "./defaultValueKey.js";
 
 /**
  * A tree backed by a JavaScript `Map` object.
@@ -22,11 +21,6 @@ export default class MapTree {
 
   async get(key) {
     let value = this.map.get(key);
-
-    if (value === undefined && key === defaultValueKey) {
-      // The default value is the underlying tree itself.
-      return this.map;
-    }
 
     if (value instanceof Map) {
       value = Reflect.construct(this.constructor, [value]);

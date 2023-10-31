@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import defaultValueKey from "../src/defaultValueKey.js";
 import * as utilities from "../src/utilities.js";
 
 describe("utilities", () => {
@@ -20,6 +19,6 @@ describe("utilities", () => {
 
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(utilities.keysFromPath("a/b/c"), ["a", "b", "c"]);
-    assert.deepEqual(utilities.keysFromPath("foo/"), ["foo", defaultValueKey]);
+    assert.deepEqual(utilities.keysFromPath("foo/"), ["foo", ""]);
   });
 });

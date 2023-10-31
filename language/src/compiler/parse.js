@@ -16,7 +16,6 @@
  * between possible terms.
  */
 
-import { defaultValueKey } from "../../../async-tree/src/Tree.js";
 import * as ops from "../runtime/ops.js";
 import {
   any,
@@ -293,7 +292,7 @@ export function leadingSlashPath(tokens) {
   let { 1: value } = parsed.value;
   if (!value) {
     // Input is just a slash with no following path: `/`
-    value = [defaultValueKey];
+    value = [""];
   }
   return {
     value,
@@ -438,20 +437,11 @@ export function parensArgs(tokens) {
 
 // Parse a key in a path.
 export function pathKey(tokens) {
-  const parsed = any(
+  return any(
     // We treat number in paths as strings, so don't use the number() parser.
     matchTokenType(tokenType.NUMBER),
     identifier
   )(tokens);
-  if (!parsed) {
-    return null;
-  }
-  // An empty key represents the default value key.
-  let value = parsed.value === "" ? defaultValueKey : parsed.value;
-  return {
-    value,
-    rest: parsed.rest,
-  };
 }
 
 // Parse a protocol call like `fn://foo/bar`.
@@ -523,8 +513,8 @@ export function slashPath(tokens) {
     return null;
   }
   if (parsed.value.at(-1) === undefined) {
-    // Trailing slash represents the default value key
-    parsed.value[parsed.value.length - 1] = defaultValueKey;
+    // Trailing slash represents the empty string key.
+    parsed.value[parsed.value.length - 1] = "";
   }
   return parsed;
 }

@@ -18,11 +18,6 @@ describe("ObjectTree", () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test.skip("default value is the object itself", async () => {
-    const fixture = createFixture();
-    assert.equal(await fixture.get(Tree.defaultValueKey), fixture.object);
-  });
-
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("xyz"), undefined);

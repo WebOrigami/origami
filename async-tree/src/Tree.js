@@ -3,7 +3,6 @@ import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
-import defaultValueKey from "./defaultValueKey.js";
 import * as utilities from "./utilities.js";
 import { castArrayLike, isPlainObject } from "./utilities.js";
 
@@ -63,8 +62,6 @@ export async function clear(tree) {
   }
 }
 
-export { defaultValueKey };
-
 /**
  * Returns a new `Iterator` object that contains a two-member array of `[key,
  * value]` for each element in the specific node of the tree.
@@ -119,12 +116,10 @@ export function from(obj) {
     return new ObjectTree(obj);
   } else {
     // A primitive value like a number or string.
-    return new ObjectTree({
-      [defaultValueKey]: obj,
-    });
+    const tree = new ObjectTree({});
+    /** @type {any} */ (tree).unpack = () => obj;
+    return tree;
   }
-
-  // throw new TypeError("Couldn't convert argument to an async tree");
 }
 
 /**
@@ -388,11 +383,14 @@ export async function traverseOrThrow(treelike, ...keys) {
 
     // Process the next key.
     const key = remainingKeys.shift();
-    value = await tree.get(key);
 
-    // The default value is the tree itself.
-    if (value === undefined && key === defaultValueKey) {
-      value = tree;
+    // An empty string as the last key is a special case.
+    if (key === "" && remainingKeys.length === 0) {
+      // Unpack the value if it defines an `unpack` function, otherwise return
+      // the value itself.
+      value = typeof value.unpack === "function" ? await value.unpack() : value;
+    } else {
+      value = await tree.get(key);
     }
   }
   return value;

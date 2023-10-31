@@ -397,7 +397,7 @@ async function processPath(tree, path, baseUrl) {
   let value = await Tree.traverse(tree, ...keys);
   if (Tree.isTreelike(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === Tree.defaultValueKey) {
+    if (keys.at(-1) === "") {
       keys.pop();
     }
     keys.push("index.html");
@@ -408,10 +408,9 @@ async function processPath(tree, path, baseUrl) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === Tree.defaultValueKey) {
+  if (keys.at(-1) === "") {
     // For indexing and storage purposes, treat a path that ends in a trailing
-    // slash (or the dot we use to seed the queue) as if it ends in
-    // index.html.
+    // slash (or the dot we use to seed the queue) as if it ends in index.html.
     keys[keys.length - 1] = "index.html";
   }
 

@@ -23,9 +23,8 @@ export default class DeferredTree {
   }
 
   async get(key) {
-    return key === Tree.defaultValueKey
-      ? this.loadResult()
-      : (await this.tree()).get(key);
+    const tree = await this.tree();
+    return tree.get(key);
   }
 
   async loadResult() {
@@ -36,7 +35,8 @@ export default class DeferredTree {
   }
 
   async keys() {
-    return (await this.tree()).keys();
+    const tree = await this.tree();
+    return tree.keys();
   }
 
   get parent() {

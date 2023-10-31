@@ -3,7 +3,7 @@
  * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  */
 
-import { SiteTree, Tree } from "@graphorigami/async-tree";
+import { SiteTree } from "@graphorigami/async-tree";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
@@ -44,8 +44,7 @@ concat.toString = () => "«ops.concat»";
  * @param  {...string|Symbol} keys
  */
 function constructHref(protocol, host, ...keys) {
-  const mapped = keys.map((key) => (key === Tree.defaultValueKey ? "" : key));
-  let href = [host, ...mapped].join("/");
+  let href = [host, ...keys].join("/");
   if (!href.startsWith(protocol)) {
     if (!href.startsWith("//")) {
       href = `//${href}`;

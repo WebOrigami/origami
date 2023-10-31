@@ -1,5 +1,3 @@
-import defaultValueKey from "./defaultValueKey.js";
-
 // Used for natural sort order
 const collator = new Intl.Collator(undefined, {
   numeric: true,
@@ -96,9 +94,8 @@ export function isStringLike(obj) {
  * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
  * "baz"].
  *
- * Leading slashes are ignored. Consecutive slashes or a trailing slash will
- * be represented by the `defaultValueKey` symbol. Example: the keys for the path
- * "/foo//bar/" will be ["foo", defaultValueKey, "bar", defaultValueKey].
+ * Leading slashes are ignored. Consecutive slashes or a trailing slash will be
+ * represented by the empty string.
  *
  * @param {string} pathname
  */
@@ -108,12 +105,7 @@ export function keysFromPath(pathname) {
     // The path begins with a slash; drop that part.
     keys.shift();
   }
-  // Map empty strings to the default value key.
-  const mapped =
-    keys.length === 0
-      ? [defaultValueKey]
-      : keys.map((key) => (key === "" ? defaultValueKey : key));
-  return mapped;
+  return keys;
 }
 
 /**

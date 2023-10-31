@@ -1,4 +1,3 @@
-import defaultValueKey from "./defaultValueKey.js";
 import * as Tree from "./Tree.js";
 
 /**
@@ -17,11 +16,6 @@ export default class SetTree {
   }
 
   async get(key) {
-    // The tree's default value is the underlying array of values.
-    if (key === defaultValueKey) {
-      return this.values;
-    }
-
     let value = this.values[key];
 
     if (value instanceof Set) {

@@ -28,11 +28,6 @@ export default class FileTree {
   }
 
   async get(key) {
-    // The tree's default value is the tree itself.
-    if (key === Tree.defaultValueKey) {
-      return this;
-    }
-
     const filePath = path.resolve(this.dirname, key);
 
     let stats;

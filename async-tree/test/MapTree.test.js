@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapTree from "../src/MapTree.js";
-import * as Tree from "../src/Tree.js";
 
 describe("MapTree", () => {
   test("can get the keys of the tree", async () => {
@@ -20,11 +19,6 @@ describe("MapTree", () => {
     const fixture = new MapTree(map);
     const more = await fixture.get("more");
     assert.equal(more.parent, fixture);
-  });
-
-  test("getting default value returns the map itself", async () => {
-    const fixture = createFixture();
-    assert.equal(await fixture.get(Tree.defaultValueKey), fixture.map);
   });
 
   test("getting an unsupported key returns undefined", async () => {

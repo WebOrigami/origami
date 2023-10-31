@@ -28,7 +28,7 @@ export default async function serve(treelike, port) {
     tree = Tree.from(treelike);
 
     // TODO: Instead of applying ExplorableSiteTransform, apply a transform
-    // that just maps the defaultValueKey to index.html.
+    // that just maps the empty string to index.html.
     if (!isTransformApplied(ExplorableSiteTransform, tree)) {
       tree = transformObject(ExplorableSiteTransform, tree);
     }

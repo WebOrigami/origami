@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { defaultValueKey } from "../../../async-tree/src/Tree.js";
 import { tokenType } from "../../src/compiler/lex.js";
 import {
   absoluteFilePath,
@@ -365,7 +364,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "tree" },
           { type: tokenType.SLASH, lexeme: "/" },
         ]),
-        [[ops.scope, "tree"], defaultValueKey]
+        [[ops.scope, "tree"], ""]
       );
     });
 
@@ -899,7 +898,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        [ops.https, "example.com", "foo", defaultValueKey]
+        [ops.https, "example.com", "foo", ""]
       );
     });
 
@@ -960,7 +959,7 @@ describe("parse", () => {
           { type: tokenType.REFERENCE, lexeme: "foo" },
           { type: tokenType.SLASH },
         ]),
-        ["foo", defaultValueKey]
+        ["foo", ""]
       );
     });
     test("month/12", () => {

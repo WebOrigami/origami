@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionTree from "../src/FunctionTree.js";
-import * as Tree from "../src/Tree.js";
 
 describe("FunctionTree", async () => {
   test("can get the keys of the tree", async () => {
@@ -18,10 +17,10 @@ describe("FunctionTree", async () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test("getting default value returns the function itself", async () => {
+  test("unpacking the tree returns the function itself", async () => {
     const fn = () => true;
     const fixture = new FunctionTree(fn);
-    assert.equal(await fixture.get(Tree.defaultValueKey), fn);
+    assert.equal(await fixture.unpack(), fn);
   });
 
   test("getting a value from function with multiple arguments curries the function", async () => {

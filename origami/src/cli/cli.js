@@ -33,10 +33,7 @@ async function main(...args) {
   const currentDirectory = process.cwd();
   const relative = path.relative(projectTree.path, currentDirectory);
   if (relative !== "") {
-    const keys = relative
-      .split(path.sep)
-      .map((key) => (key === "" ? Tree.defaultValueKey : key));
-    tree = await Tree.traverse(tree, ...keys);
+    tree = await Tree.traversePath(tree, relative);
   }
 
   // Add ambient property for the current tree.

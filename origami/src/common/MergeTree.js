@@ -18,17 +18,12 @@ export default class MergeTree {
   }
 
   async get(key) {
-    if (key === Tree.defaultValueKey) {
-      return this;
-    }
-
     for (const tree of this.trees) {
       const value = await tree.get(key);
       if (value !== undefined) {
         return value;
       }
     }
-
     return undefined;
   }
 

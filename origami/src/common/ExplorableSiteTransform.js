@@ -26,8 +26,8 @@ import { isTransformApplied, transformObject } from "../common/utilities.js";
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
-      // The default value of an explorable site is index.html.
-      if (key === Tree.defaultValueKey) {
+      // The empty string key represents "index.html".
+      if (key === "") {
         key = "index.html";
       }
 

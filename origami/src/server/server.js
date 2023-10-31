@@ -59,6 +59,12 @@ export async function handleRequest(request, response, tree) {
     typeof key === "string" ? decodeURIComponent(key) : key
   );
 
+  // If the path ends with a trailing slash, the final key will be an empty
+  // string. Change that to "index.html".
+  if (keys[keys.length - 1] === "") {
+    keys[keys.length - 1] = "index.html";
+  }
+
   const extendedTree =
     url.searchParams && "parent" in tree
       ? extendTreeScopeWithParams(tree, url)

@@ -42,11 +42,6 @@ describe("FileTree", async () => {
     assert(!(await markdown.isKeyForSubtree("a.txt")));
   });
 
-  test("default value is the tree itself", async () => {
-    const fixture = createFixture("fixtures");
-    assert.equal(await fixture.get(Tree.defaultValueKey), fixture);
-  });
-
   test("can write out a file via set()", async () => {
     await createTempDirectory();
 

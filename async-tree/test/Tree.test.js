@@ -118,14 +118,6 @@ describe("Tree", () => {
     });
   });
 
-  test("from() turns primitive value into tree with a default value", async () => {
-    const tree = Tree.from("Hello");
-    assert.deepEqual(await Tree.plain(tree), {
-      // @ts-ignore
-      [Tree.defaultValueKey]: "Hello",
-    });
-  });
-
   test("has returns true if the key exists", async () => {
     const fixture = createFixture();
     assert.equal(await Tree.has(fixture, "Alice.md"), true);
@@ -316,13 +308,26 @@ describe("Tree", () => {
     assert.equal(result, "**Hello**");
   });
 
-  test("traversing the default key returns the tree itself", async () => {
-    const tree = {
-      async get() {},
-      async keys() {},
-    };
-    const result = await Tree.traverse(tree, Tree.defaultValueKey);
-    assert.equal(result, tree);
+  test("traversing a final empty string can unpack the last value", async () => {
+    class Unpackable {
+      unpack() {
+        return "Content";
+      }
+    }
+    const unpackable = new Unpackable();
+    const tree = new ObjectTree({
+      unpackable,
+    });
+    const result = await Tree.traverse(tree, "unpackable", "");
+    assert.equal(result, "Content");
+  });
+
+  test("traversing a final empty string returns a value as is if it's not unpackable", async () => {
+    const tree = new ObjectTree({
+      a: "Hello",
+    });
+    const result = await Tree.traverse(tree, "a", "");
+    assert.equal(result, "Hello");
   });
 
   test("traversePath() traverses a slash-separated path", async () => {

@@ -31,9 +31,9 @@ export default class SiteTree {
     // If there is only one key and it's the empty string, and the site is
     // explorable, we take the route as "index.html". With this and subsequent
     // checks, we try to avoid sniffing the site to see if it's explorable, as
-    // that necessitates an extra network request per SiteTree instance. In
-    // many cases, that can be avoided.
-    if (key === Tree.defaultValueKey && (await this.hasKeysJson())) {
+    // that necessitates an extra network request per SiteTree instance. In many
+    // cases, that can be avoided.
+    if (key === "" && (await this.hasKeysJson())) {
       key = "index.html";
     }
 

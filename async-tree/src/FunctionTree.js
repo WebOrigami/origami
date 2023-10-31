@@ -1,5 +1,3 @@
-import defaultValueKey from "./defaultValueKey.js";
-
 /**
  * A tree defined by a function and an optional domain.
  *
@@ -23,11 +21,6 @@ export default class FunctionTree {
    * @param {any} key
    */
   async get(key) {
-    // The tree's default value is the function itself.
-    if (key === defaultValueKey) {
-      return this.fn;
-    }
-
     const value =
       this.fn.length <= 1
         ? // Function takes no arguments or only one argument: invoke
@@ -46,5 +39,9 @@ export default class FunctionTree {
    */
   async keys() {
     return this.domain;
+  }
+
+  async unpack() {
+    return this.fn;
   }
 }
