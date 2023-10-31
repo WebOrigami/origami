@@ -56,28 +56,6 @@ function constructHref(protocol, host, ...keys) {
 }
 
 /**
- * Fetch the resource at the given href. If the result is a standard
- * ArrayBuffer, patch it to give it a more useful toString method like Node's
- * Buffer class has.
- *
- * @param {string} href
- */
-async function fetchAndPatch(href) {
-  const response = await fetch(href);
-  if (response.ok) {
-    const buffer = await response.arrayBuffer();
-    if (buffer instanceof ArrayBuffer) {
-      buffer.toString = function () {
-        return new TextDecoder().decode(this);
-      };
-    }
-    return buffer;
-  } else {
-    return undefined;
-  }
-}
-
-/**
  * Construct a files tree for the filesystem root.
  *
  * @this {AsyncTree|null}
@@ -103,7 +81,7 @@ export async function filesRoot() {
  */
 export async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
-  return fetchAndPatch(href);
+  return fetch(href);
 }
 http.toString = () => "«ops.http»";
 
@@ -116,7 +94,7 @@ http.toString = () => "«ops.http»";
  */
 export function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
-  return fetchAndPatch(href);
+  return fetch(href);
 }
 https.toString = () => "«ops.https»";
 

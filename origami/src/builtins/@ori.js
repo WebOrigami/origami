@@ -4,6 +4,8 @@ import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 /**
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
@@ -32,20 +34,17 @@ export default async function ori(expression) {
     result = await result.call(scope);
   }
 
-  const formatted = await formatResult(scope, result);
+  const formatted = await formatResult(result);
   return formatted;
 }
 
-async function formatResult(scope, result) {
-  if (
-    typeof result === "string" ||
-    (globalThis.Buffer && result instanceof Buffer)
-  ) {
+async function formatResult(result) {
+  if (typeof result === "string" || result instanceof TypedArray) {
     // Use as is
     return result;
   }
 
-  /** @type {string|Buffer|String|undefined} */
+  /** @type {string|String|undefined} */
   let text;
 
   // Does the result have a meaningful toString() method (and not the dumb

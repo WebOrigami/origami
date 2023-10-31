@@ -9,6 +9,8 @@ import { Scope, extname } from "@graphorigami/language";
 import * as serialize from "../common/serialize.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 // Extend the tree's scope with the URL's search parameters.
 function extendTreeScopeWithParams(tree, url) {
   // Create a tree that includes the URL's search parameters.
@@ -100,11 +102,6 @@ export async function handleRequest(request, response, tree) {
     return true;
   }
 
-  if (resource instanceof ArrayBuffer) {
-    // Convert JavaScript ArrayBuffer to Node Buffer.
-    resource = Buffer.from(resource);
-  }
-
   // If the request is for a JSON or YAML result, and the resource we got
   // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
   if (
@@ -146,15 +143,12 @@ export async function handleRequest(request, response, tree) {
 
   // If we didn't get back some kind of data that response.write() accepts,
   // assume it was an error.
-  const validResponse =
-    typeof data === "string" ||
-    data instanceof Buffer ||
-    data instanceof Uint8Array;
+  const validResponse = typeof data === "string" || data instanceof TypedArray;
 
   if (!validResponse) {
     const typeName = data.constructor?.name ?? typeof data;
     console.error(
-      `A served tree must return a string, Buffer, or Uint8Array, but returned an instance of ${typeName}.`
+      `A served tree must return a string or a TypedArray (such as a Buffer) but returned an instance of ${typeName}.`
     );
     return false;
   }

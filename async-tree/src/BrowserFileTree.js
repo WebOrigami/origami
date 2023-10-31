@@ -104,6 +104,7 @@ export default class BrowserFileTree {
 
     // True if fs.writeFile can directly write the value to a file.
     let isWriteable =
+      value instanceof ArrayBuffer ||
       value instanceof TypedArray ||
       value instanceof DataView ||
       value instanceof Blob;
