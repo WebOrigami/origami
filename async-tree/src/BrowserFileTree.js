@@ -15,16 +15,15 @@ export default class BrowserFileTree {
   /**
    * Construct a tree of files backed by a browser-hosted file system.
    *
+   * The directory handle can be obtained via any of the [methods that return a
+   * FileSystemDirectoryHandle](https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryHandle).
+   * If no directory is supplied, the tree is rooted at the Origin Private File
+   * System for the current site.
    *
    * @param {FileSystemDirectoryHandle} [directoryHandle]
    */
   constructor(directoryHandle) {
-    /**
-     * Construct a tree rooted at the given directory. If no directory is
-     * supplied, the tree is rooted at the Origin Private File System for the
-     * current site.
-     *
-     * @type {FileSystemDirectoryHandle}
+    /** @type {FileSystemDirectoryHandle}
      * @ts-ignore */
     this.directory = directoryHandle;
   }
