@@ -15,7 +15,7 @@ export default class TextDocument {
    * @param {any} [data]
    * @param {AsyncTree|null} [parent]
    */
-  constructor(text, data, parent) {
+  constructor(text, data = {}, parent) {
     this.text = String(text);
     // Make a copy of the data so we don't modify the original when setting
     // parent.
@@ -47,7 +47,7 @@ export default class TextDocument {
     const regex =
       /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
     const match = regex.exec(text);
-    const data = match?.groups ? parseYaml(match.groups.frontText) : null;
+    const data = match?.groups ? parseYaml(match.groups.frontText) : {};
     const bodyText = match?.groups ? match.groups.bodyText : text;
 
     return new this(bodyText, data, parent);

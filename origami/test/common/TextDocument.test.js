@@ -9,8 +9,8 @@ describe("TextDocument", () => {
     const document = new TextDocument(text);
     assert.equal(String(document), text);
     assert.equal(document.text, text);
-    assert.equal(document.data, undefined);
-    assert.equal(await document.unpack(), undefined);
+    assert.deepEqual(document.data, {});
+    assert.deepEqual(await document.unpack(), {});
   });
 
   test("holds text and data", async () => {
@@ -47,6 +47,13 @@ message: !ori greeting
     const document = TextDocument.from(text);
     document.parent = new ObjectTree({ greeting: "Hello" });
     assert.deepEqual(await Tree.plain(document.data), { message: "Hello" });
+  });
+
+  test("from() treats missing front matter as an empty data object", async () => {
+    const text = "Body text";
+    const document = TextDocument.from(text);
+    assert.equal(document.text, text);
+    assert.deepEqual(document.data, {});
   });
 
   test("from() and pack() use the same format", async () => {
