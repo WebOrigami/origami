@@ -114,12 +114,9 @@ export function from(obj) {
   } else if (obj && typeof obj === "object") {
     // An instance of some class.
     return new ObjectTree(obj);
-  } else {
-    // A primitive value like a number or string.
-    const tree = new ObjectTree({});
-    /** @type {any} */ (tree).unpack = () => obj;
-    return tree;
   }
+
+  throw new TypeError("Couldn't convert argument to an async tree");
 }
 
 /**
@@ -377,11 +374,7 @@ export async function traverseOrThrow(treelike, ...keys) {
       value = value.bind(this);
     }
 
-    // If someone is trying to traverse this thing, they mean to treat it as a
-    // tree. If it's not already a tree, cast it to one.
-    const tree = from(value);
-
-    // Process the next key.
+    // Get the next key.
     const key = remainingKeys.shift();
 
     // An empty string as the last key is a special case.
@@ -389,9 +382,15 @@ export async function traverseOrThrow(treelike, ...keys) {
       // Unpack the value if it defines an `unpack` function, otherwise return
       // the value itself.
       value = typeof value.unpack === "function" ? await value.unpack() : value;
-    } else {
-      value = await tree.get(key);
+      continue;
     }
+
+    // Someone is trying to traverse the value, so they mean to treat it as a
+    // tree. If it's not already a tree, cast it to one.
+    const tree = from(value);
+
+    // Get the value for the key.
+    value = await tree.get(key);
   }
   return value;
 }
