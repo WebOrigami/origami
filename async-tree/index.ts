@@ -19,7 +19,7 @@ export type HasString = {
 
 export type StringLike = string | HasString;
 
-export type TreeMap = (tree: AsyncTree) => AsyncTree;
+export type TreeTransform = (tree: AsyncTree) => AsyncTree;
 
 export type Treelike =
   any[] |
