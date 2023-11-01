@@ -10,6 +10,8 @@ import { OrigamiTree } from "@graphorigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
 // @ts-ignore
@@ -87,19 +89,22 @@ export async function toJson(obj) {
  * If the object has a `valueOf()` or `toString()` method, that method's result
  * will be returned.
  *
- * @param {any} obj
+ * @param {any} object
  * @returns {Promise<JsonValue>}
  */
-export async function toJsonValue(obj) {
-  if (isJsonValue(obj)) {
-    return obj;
-  } else if (obj && typeof obj.pack === "function") {
-    return obj.pack();
-  } else if (isStringLike(obj) && !(obj instanceof Array)) {
-    return String(obj);
-  } else if (Tree.isTreelike(obj)) {
-    const mapped = await Tree.map(obj, (value) => toJsonValue(value));
+export async function toJsonValue(object) {
+  if (isJsonValue(object)) {
+    return object;
+  } else if (object && typeof object.pack === "function") {
+    return object.pack();
+  } else if (isStringLike(object) && !(object instanceof Array)) {
+    return String(object);
+  } else if (Tree.isTreelike(object)) {
+    const mapped = await Tree.map(object, (value) => toJsonValue(value));
     return Tree.plain(mapped);
+  } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+    // Serialize data as UTF-8.
+    return new TextDecoder().decode(object);
   }
 
   throw new TypeError("Couldn't serialize object");

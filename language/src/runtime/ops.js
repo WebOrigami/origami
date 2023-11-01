@@ -55,6 +55,16 @@ function constructHref(protocol, host, ...keys) {
 }
 
 /**
+ * Fetch the resource at the given href.
+ *
+ * @param {string} href
+ */
+async function fetchResponse(href) {
+  const response = await fetch(href);
+  return response.ok ? await response.arrayBuffer() : undefined;
+}
+
+/**
  * Construct a files tree for the filesystem root.
  *
  * @this {AsyncTree|null}
@@ -80,7 +90,7 @@ export async function filesRoot() {
  */
 export async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
-  return fetch(href);
+  return fetchResponse(href);
 }
 http.toString = () => "«ops.http»";
 
@@ -93,7 +103,7 @@ http.toString = () => "«ops.http»";
  */
 export function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
-  return fetch(href);
+  return fetchResponse(href);
 }
 https.toString = () => "«ops.https»";
 
