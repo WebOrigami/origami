@@ -5,6 +5,27 @@ import * as Tree from "../../src/Tree.js";
 import keyValueMap from "../../src/maps/keyValueMap.js";
 
 describe("keyValueMap", () => {
+  test("maps values", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      b: "letter b",
+      more: {
+        c: "letter c",
+      },
+    });
+    const uppercaseValues = keyValueMap({
+      valueFn: (value) => value.toUpperCase(),
+    });
+    const mapped = uppercaseValues(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      a: "LETTER A",
+      b: "LETTER B",
+      more: {
+        c: "LETTER C",
+      },
+    });
+  });
+
   test("maps keys and values", async () => {
     const tree = new ObjectTree({
       a: "letter a",
@@ -13,11 +34,11 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const uppercaseMap = keyValueMap({
+    const uppercaseKeysValues = keyValueMap({
       keyFn: (key) => key.toUpperCase(),
       valueFn: (value) => value.toUpperCase(),
     });
-    const mapped = uppercaseMap(tree);
+    const mapped = uppercaseKeysValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       A: "LETTER A",
       B: "LETTER B",

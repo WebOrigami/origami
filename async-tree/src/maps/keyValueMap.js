@@ -15,39 +15,43 @@ export default function keyValueMap({
    * @type {import("../..").TreeTransform}
    */
   return function applyKeyValueMap(tree) {
-    return Object.assign({}, tree, {
-      description,
+    const mapped = Object.create(tree);
+    return Object.assign(
+      mapped,
+      (innerKeyFn || keyFn) &&
+        valueFn && {
+          description,
 
-      async get(outerKey) {
-        const innerKey =
-          innerKeyFn?.(outerKey) ??
-          (await defaultInnerKeyFn(tree, keyFn, outerKey));
-        if (!innerKey) {
-          return undefined;
-        }
-        const innerValue = await tree.get(innerKey);
-        const outerValue = Tree.isAsyncTree(innerValue)
-          ? // Apply map to tree value
-            keyValueMap({
-              description,
-              innerKeyFn,
-              keyFn,
-              valueFn,
-            })(innerValue)
-          : valueFn?.(innerValue) ?? innerValue;
-        return outerValue;
-      },
+          async get(outerKey) {
+            const innerKey =
+              innerKeyFn?.(outerKey) ?? keyFn
+                ? await defaultInnerKeyFn(tree, keyFn, outerKey)
+                : outerKey;
+            if (!innerKey) {
+              return undefined;
+            }
+            const innerValue = await tree.get(innerKey);
+            const outerValue = Tree.isAsyncTree(innerValue)
+              ? // Apply map to tree value
+                keyValueMap({
+                  description,
+                  innerKeyFn,
+                  keyFn,
+                  valueFn,
+                })(innerValue)
+              : valueFn?.(innerValue) ?? innerValue;
+            return outerValue;
+          },
+        },
 
-      async keys() {
-        if (!keyFn) {
-          return tree.keys();
-        }
-
-        const innerKeys = [...(await tree.keys())];
-        const outerKeys = innerKeys.map(keyFn);
-        return outerKeys;
-      },
-    });
+      keyFn && {
+        async keys() {
+          const innerKeys = [...(await tree.keys())];
+          const outerKeys = innerKeys.map(keyFn);
+          return outerKeys;
+        },
+      }
+    );
   };
 }
 
