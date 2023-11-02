@@ -64,7 +64,7 @@ export default class Scope {
    *
    * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
    * @param {Treelike} treelike
-   * @param {AsyncTree|null} scope
+   * @param {Treelike|null} scope
    * @returns {AsyncTree & { scope: AsyncTree }}
    */
   static treeWithScope(treelike, scope) {
