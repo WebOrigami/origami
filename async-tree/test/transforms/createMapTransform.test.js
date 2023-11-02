@@ -2,9 +2,9 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
-import keyValueMap from "../../src/transforms/keyValueMap.js";
+import createMapTransform from "../../src/transforms/createMapTransform.js";
 
-describe("keyValueMap", () => {
+describe("createMapTransform", () => {
   test("returns identity graph if no keyFn or valueFn", async () => {
     const tree = new ObjectTree({
       a: "letter a",
@@ -13,7 +13,7 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const mapped = keyValueMap({})(tree);
+    const mapped = createMapTransform({})(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "letter a",
       b: "letter b",
@@ -31,7 +31,7 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const uppercaseValues = keyValueMap({
+    const uppercaseValues = createMapTransform({
       valueFn: (value) => value.toUpperCase(),
     });
     const mapped = uppercaseValues(tree);
@@ -52,7 +52,7 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const uppercaseKeys = keyValueMap({
+    const uppercaseKeys = createMapTransform({
       keyFn: async (key) => key.toUpperCase(),
     });
     const mapped = uppercaseKeys(tree);
@@ -73,7 +73,7 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const uppercaseKeys = keyValueMap({
+    const uppercaseKeys = createMapTransform({
       keyFn: async (key) => key.toUpperCase(),
       innerKeyFn: async (key) => key.toLowerCase(),
     });
@@ -95,7 +95,7 @@ describe("keyValueMap", () => {
         c: "letter c",
       },
     });
-    const uppercaseKeysValues = keyValueMap({
+    const uppercaseKeysValues = createMapTransform({
       keyFn: (key) => key.toUpperCase(),
       valueFn: async (value) => value.toUpperCase(),
     });

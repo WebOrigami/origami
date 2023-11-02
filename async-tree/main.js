@@ -10,4 +10,5 @@ export { default as SetTree } from "./src/SetTree.js";
 export { default as SiteTree } from "./src/SiteTree.js";
 export * as Tree from "./src/Tree.js";
 export * as keysJson from "./src/keysJson.js";
+export { default as createMapTransform } from "./src/transforms/createMapTransform.js";
 export * from "./src/utilities.js";

@@ -1,26 +1,26 @@
 import * as Tree from "../Tree.js";
 
 /**
- * Return a function that maps the keys and/or values of a tree.
+ * Return a transform function that maps the keys and/or values of a tree.
  *
  * @param {{ description?: string, innerKeyFn?: (any) => any, keyFn?: (any) => any, valueFn?: (any) => any }} options
  * @returns
  */
-export default function keyValueMap({
+export default function createMapTransform({
   description = "key/value map",
   innerKeyFn,
   keyFn,
   valueFn,
 }) {
   /**
-   * @type {import("../../index.js").TreeTransform}
+   * @type {import("../../index.ts").TreeTransform}
    */
-  return function applyKeyValueMap(tree) {
-    const mapped = Object.create(tree);
-    mapped.description = description;
+  return function mapTransform(tree) {
+    const transform = Object.create(tree);
+    transform.description = description;
 
     if (keyFn || innerKeyFn || valueFn) {
-      mapped.get = async (outerKey) => {
+      transform.get = async (outerKey) => {
         // Step 1: Map the outer key to the inner key.
         let innerKey;
         if (innerKeyFn) {
@@ -41,7 +41,7 @@ export default function keyValueMap({
 
         // Step 3: Map the inner value to the outer value.
         const mapFn = Tree.isAsyncTree(innerValue)
-          ? applyKeyValueMap // Map a subtree.
+          ? mapTransform // Map a subtree.
           : valueFn; // Map a single value.
         const outerValue = mapFn ? await mapFn(innerValue) : innerValue;
 
@@ -50,14 +50,14 @@ export default function keyValueMap({
     }
 
     if (keyFn) {
-      mapped.keys = async () => {
+      transform.keys = async () => {
         const innerKeys = [...(await tree.keys())];
         const outerKeys = await Promise.all(innerKeys.map(keyFn));
         return outerKeys;
       };
     }
 
-    return mapped;
+    return transform;
   };
 }
 
