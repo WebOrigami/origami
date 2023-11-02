@@ -1,6 +1,7 @@
 import * as Tree from "../Tree.js";
 
 /**
+ * Return a function that maps the keys and/or values of a tree.
  *
  * @param {{ description?: string, innerKeyFn?: (any) => any, keyFn?: (any) => any, valueFn?: (any) => any }} options
  * @returns
@@ -12,7 +13,7 @@ export default function keyValueMap({
   valueFn,
 }) {
   /**
-   * @type {import("../..").TreeTransform}
+   * @type {import("../../index.js").TreeTransform}
    */
   return function applyKeyValueMap(tree) {
     const mapped = Object.create(tree);
@@ -51,7 +52,7 @@ export default function keyValueMap({
     if (keyFn) {
       mapped.keys = async () => {
         const innerKeys = [...(await tree.keys())];
-        const outerKeys = innerKeys.map(keyFn);
+        const outerKeys = await Promise.all(innerKeys.map(keyFn));
         return outerKeys;
       };
     }
@@ -62,7 +63,9 @@ export default function keyValueMap({
 
 // Enumerate all the inner keys and return the one that maps to the outer key.
 async function slowInverseKeyFn(tree, keyFn, outerKey) {
-  const innerKeys = [...(await tree.keys())];
-  const innerKey = innerKeys.find((key) => keyFn(key) === outerKey);
-  return innerKey;
+  for (const innerKey of await tree.keys()) {
+    if ((await keyFn(innerKey)) === outerKey) {
+      return innerKey;
+    }
+  }
 }
