@@ -6,7 +6,7 @@ import path from "node:path";
  * of the module's export(s).
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree & { import: function }>} BaseConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncTree & { import: function }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function CommandsModulesTransform(Base) {

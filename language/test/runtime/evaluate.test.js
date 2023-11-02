@@ -37,7 +37,7 @@ describe("evaluate", () => {
     const code = [ops.scope, "fn"];
     const scope = {
       async fn() {
-        assert.equal(this, context);
+        assert.equal(this, scope);
       },
     };
     await evaluate.call(scope, code);

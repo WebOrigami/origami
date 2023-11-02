@@ -7,7 +7,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- * @typedef {import("../..").Invocable} Invocable
+ * @typedef {import("../../index.ts").Invocable} Invocable
  *
  * @this {AsyncTree|null}
  * @param {Treelike} treelike

@@ -1,6 +1,6 @@
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
 export default function ShuffleTransform(Base) {

@@ -34,7 +34,7 @@ export default async function debug(treelike) {
 }
 
 /**
- * @typedef {import("../..").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
 function DebugTransform(Base) {

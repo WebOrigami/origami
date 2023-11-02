@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 
 /**
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("../..").Constructor<AsyncTree & { dirname: string }>} BaseConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncTree & { dirname: string }>} BaseConstructor
  * @param {BaseConstructor} Base
  */
 export default function ImportModulesMixin(Base) {

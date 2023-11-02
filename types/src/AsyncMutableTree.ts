@@ -1,4 +1,4 @@
-import AsyncTree from "./AsyncTree";
+import AsyncTree from "./AsyncTree.js";
 
 /**
  * A read-write asynchronous key-value tree.

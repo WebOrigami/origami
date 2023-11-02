@@ -1,5 +1,5 @@
 import type { AsyncTree } from "@graphorigami/types";
-import type { JsonValue } from "../..";
+import type { JsonValue } from "../../index.ts";
 
 export function parseYaml(text: string): JsonValue|AsyncTree;
 export function toJson(obj: JsonValue | AsyncTree): Promise<string>;

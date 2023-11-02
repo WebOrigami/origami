@@ -18,7 +18,6 @@ marked.use(
   markedSmartypants(),
   {
     gfm: true, // Use GitHub-flavored markdown.
-    mangle: false,
   }
 );
 

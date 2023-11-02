@@ -1,5 +1,5 @@
-import type AsyncMutableTree from './src/AsyncMutableTree';
-import type AsyncTree from './src/AsyncTree';
+import type AsyncMutableTree from './src/AsyncMutableTree.js';
+import type AsyncTree from './src/AsyncTree.js';
 
 export {
   AsyncMutableTree,

@@ -1,5 +1,5 @@
 import type { AsyncMutableTree, AsyncTree } from "@graphorigami/types";
-import { PlainObject, Treelike } from "..";
+import { PlainObject, Treelike } from "../index.ts";
 
 export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;
 export function clear(AsyncTree: AsyncMutableTree): Promise<void>;

@@ -1,4 +1,4 @@
-import { Mixin } from "../..";
+import { Mixin } from "../../index.ts";
 
 import type { AsyncTree } from "@graphorigami/types";
 

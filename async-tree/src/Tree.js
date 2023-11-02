@@ -9,8 +9,8 @@ import { castArrayLike, isPlainObject } from "./utilities.js";
 /**
  * Helper functions for working with async trees
  *
- * @typedef {import("../index").Treelike} Treelike
- * @typedef {import("../index").PlainObject} PlainObject
+ * @typedef {import("../index.ts").Treelike} Treelike
+ * @typedef {import("../index.ts").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  */

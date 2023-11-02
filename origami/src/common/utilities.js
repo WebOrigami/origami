@@ -23,7 +23,7 @@ export const keySymbol = Symbol("key");
 /**
  * Convert the given object to a function.
  *
- * @typedef {import("../..").Invocable} Invocable
+ * @typedef {import("../../index.ts").Invocable} Invocable
  * @param {any} obj
  * @returns {Function}
  */

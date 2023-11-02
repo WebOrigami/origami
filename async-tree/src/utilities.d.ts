@@ -1,4 +1,4 @@
-import { PlainObject, StringLike } from "..";
+import { PlainObject, StringLike } from "../index.ts";
 
 export function castArrayLike(object: any): any;
 export function getRealmObjectPrototype(object: any): any;

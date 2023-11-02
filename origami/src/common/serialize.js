@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../..").JsonValue} JsonValue
+ * @typedef {import("../../index.ts").JsonValue} JsonValue
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
