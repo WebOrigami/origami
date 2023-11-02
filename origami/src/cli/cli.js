@@ -15,8 +15,8 @@ async function main(...args) {
   // Find the project root.
   const projectTree = await project.call(null);
 
-  // This is hacky way to get the configuration via the project.
-  const config = projectTree.scope.trees[1];
+  // HACK: get the configuration via the project.
+  const config = new Scope(...projectTree.scope.trees.slice(1));
 
   // If no arguments were passed, show usage.
   if (!expression) {
