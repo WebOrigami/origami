@@ -18,7 +18,7 @@ export default function keyValueMap({
     const mapped = Object.create(tree);
     mapped.description = description;
 
-    if (valueFn) {
+    if (keyFn || innerKeyFn || valueFn) {
       mapped.get = async (outerKey) => {
         // Step 1: Map the outer key to the inner key.
         let innerKey;
@@ -42,7 +42,7 @@ export default function keyValueMap({
         const mapFn = Tree.isAsyncTree(innerValue)
           ? applyKeyValueMap // Map a subtree.
           : valueFn; // Map a single value.
-        const outerValue = await mapFn(innerValue);
+        const outerValue = mapFn ? await mapFn(innerValue) : innerValue;
 
         return outerValue;
       };
