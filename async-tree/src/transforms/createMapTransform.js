@@ -3,7 +3,7 @@ import * as Tree from "../Tree.js";
 /**
  * Return a transform function that maps the keys and/or values of a tree.
  *
- * @typedef {(innerValue: any, outerKey?: any, innerKey?: any) => any} MapFn
+ * @typedef {(innerValue: any, innerKey?: any) => any} MapFn
  * @param {{ deep?: boolean, description?: string, innerKeyFn?: (any) => any, keyFn?: (any) => any, valueFn?: MapFn }} options
  * @returns
  */
@@ -48,7 +48,7 @@ export default function createMapTransform({
           outerValue = mapTransform(innerValue);
         } else if (valueFn) {
           // Map a single value.
-          outerValue = await valueFn(innerValue, outerKey, innerKey);
+          outerValue = await valueFn(innerValue, innerKey);
         } else {
           // Return inner value as is.
           outerValue = innerValue;
