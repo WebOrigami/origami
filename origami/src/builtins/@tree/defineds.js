@@ -15,7 +15,7 @@ export default async function defineds(treelike) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
   if (treelike === undefined) {
-    throw new TypeError("A tree treelike is required");
+    throw new TypeError("A treelike argument is required");
   }
 
   /** @type {AsyncTree} */
