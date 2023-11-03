@@ -1,5 +1,9 @@
 import * as Tree from "../Tree.js";
 
+/**
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @param {{ deep?: boolean, extension?: string, innerExtension: string, tree?: AsyncTree }} options
+ */
 export default function createExtensionKeyFns({
   deep,
   extension,
@@ -14,7 +18,7 @@ export default function createExtensionKeyFns({
     const basename = matchExtension(outerKey, extension);
     return basename
       ? `${basename}${dotPrefix(innerExtension)}`
-      : deep && (await Tree.isKeyForSubtree(tree, outerKey))
+      : deep && tree && (await Tree.isKeyForSubtree(tree, outerKey))
       ? outerKey
       : undefined;
   };
@@ -23,7 +27,7 @@ export default function createExtensionKeyFns({
     const basename = matchExtension(innerKey, innerExtension);
     return basename
       ? `${basename}${dotPrefix(extension)}`
-      : deep && (await Tree.isKeyForSubtree(tree, innerKey))
+      : deep && tree && (await Tree.isKeyForSubtree(tree, innerKey))
       ? innerKey
       : undefined;
   };

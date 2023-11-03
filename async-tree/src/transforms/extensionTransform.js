@@ -6,7 +6,6 @@ import mapTransform from "./mapTransform.js";
  *
  * @typedef {(innerValue: any, innerKey?: any) => any} MapFn
  * @param {{ deep?: boolean, description?: string, extension?: string, innerExtension: string, valueFn?: MapFn }} options
- * @returns
  */
 export default function createExtensionTransform({
   deep = false,
