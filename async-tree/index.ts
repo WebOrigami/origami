@@ -33,3 +33,5 @@ export type Treelike =
 export type Unpackable = {
   unpack(): Promise<any>
 };
+
+export type ValueKeyFn = (innerValue: any, innerKey?: any) => any;

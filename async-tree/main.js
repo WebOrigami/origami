@@ -11,5 +11,7 @@ export { default as SiteTree } from "./src/SiteTree.js";
 export * as Tree from "./src/Tree.js";
 export * as keysJson from "./src/keysJson.js";
 export { default as cachedKeysTransform } from "./src/transforms/cachedKeysTransform.js";
-export { default as createMapTransform } from "./src/transforms/mapTransform.js";
+export { default as createExtensionKeyFns } from "./src/transforms/createExtensionKeyFns.js";
+export { default as extensionTransform } from "./src/transforms/extensionTransform.js";
+export { default as mapTransform } from "./src/transforms/mapTransform.js";
 export * from "./src/utilities.js";
