@@ -25,4 +25,44 @@ describe("@tree/map", () => {
       Carol: 3,
     });
   });
+
+  test("can change a key's extension", async () => {
+    const treelike = {
+      "file1.txt": "will be mapped",
+      file2: "won't be mapped",
+      "file3.foo": "won't be mapped",
+    };
+    const transform = map.call(null, {
+      extensions: "txt->upper",
+      valueFn: (value) => value.toUpperCase(),
+    });
+    const fixture = transform(treelike);
+    assert.deepEqual(await Tree.plain(fixture), {
+      "file1.upper": "WILL BE MAPPED",
+    });
+  });
+
+  test("can map deeply", async () => {
+    const files = {
+      "file1.txt": "will be mapped",
+      file2: "won't be mapped",
+      "file3.foo": "won't be mapped",
+      more: {
+        "file4.txt": "will be mapped",
+        "file5.bar": "won't be mapped",
+      },
+    };
+    const transform = map.call(null, {
+      deep: true,
+      extensions: "txt->upper",
+      valueFn: (value) => value.toUpperCase(),
+    });
+    const fixture = transform(files);
+    assert.deepEqual(await Tree.plain(fixture), {
+      "file1.upper": "WILL BE MAPPED",
+      more: {
+        "file4.upper": "WILL BE MAPPED",
+      },
+    });
+  });
 });

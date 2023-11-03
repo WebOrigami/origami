@@ -2,9 +2,7 @@ import type { AsyncTree } from "@graphorigami/types";
 
 export * from "./main.js";
 
-export type PlainObject = {
-  [key: string]: any;
-};
+export type KeyMapFn = (key?: any, innerTree?: AsyncTree) => any;
 
 /**
  * An object with a non-trivial `toString` method.
@@ -17,9 +15,11 @@ export type HasString = {
   toString(): string;
 };
 
-export type StringLike = string | HasString;
+export type PlainObject = {
+  [key: string]: any;
+};
 
-export type TreeTransform = (tree: AsyncTree) => AsyncTree;
+export type StringLike = string | HasString;
 
 export type Treelike =
   any[] |
@@ -30,8 +30,10 @@ export type Treelike =
   Set<any> | 
   Unpackable;
 
+export type TreeTransform = (tree: AsyncTree) => AsyncTree;
+
 export type Unpackable = {
   unpack(): Promise<any>
 };
 
-export type ValueKeyFn = (innerValue: any, innerKey?: any) => any;
+export type ValueMapFn = (innerValue: any, innerKey?: any, innerTree?: AsyncTree) => any;

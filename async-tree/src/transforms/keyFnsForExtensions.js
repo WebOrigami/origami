@@ -1,38 +1,44 @@
 import * as Tree from "../Tree.js";
 
 /**
+ * Given an outer extension and an inner extension, return a pair of key
+ * functions that map between them.
+ *
+ * The resulting `innerKeyFn` and `keyFn` functions are compatible with those
+ * expected by mapTransform and other transforms.
+ *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @param {{ deep?: boolean, extension?: string, innerExtension: string, tree?: AsyncTree }} options
+ * @param {{ deep?: boolean, extension?: string, innerExtension: string }}
+ * options
  */
-export default function createExtensionKeyFns({
+export default function keyFnsForExtensions({
   deep,
   extension,
   innerExtension,
-  tree,
 }) {
   if (!extension) {
     extension = innerExtension;
   }
 
-  const innerKeyFn = async function (outerKey) {
-    const basename = matchExtension(outerKey, extension);
-    return basename
-      ? `${basename}${dotPrefix(innerExtension)}`
-      : deep && tree && (await Tree.isKeyForSubtree(tree, outerKey))
-      ? outerKey
-      : undefined;
-  };
+  return {
+    async innerKeyFn(outerKey, tree) {
+      const basename = matchExtension(outerKey, extension);
+      return basename
+        ? `${basename}${dotPrefix(innerExtension)}`
+        : deep && tree && (await Tree.isKeyForSubtree(tree, outerKey))
+        ? outerKey
+        : undefined;
+    },
 
-  const keyFn = async function (innerKey) {
-    const basename = matchExtension(innerKey, innerExtension);
-    return basename
-      ? `${basename}${dotPrefix(extension)}`
-      : deep && tree && (await Tree.isKeyForSubtree(tree, innerKey))
-      ? innerKey
-      : undefined;
+    async keyFn(innerKey, tree) {
+      const basename = matchExtension(innerKey, innerExtension);
+      return basename
+        ? `${basename}${dotPrefix(extension)}`
+        : deep && tree && (await Tree.isKeyForSubtree(tree, innerKey))
+        ? innerKey
+        : undefined;
+    },
   };
-
-  return { innerKeyFn, keyFn };
 }
 
 function dotPrefix(extension) {

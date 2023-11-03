@@ -5,7 +5,7 @@ import * as Tree from "../../src/Tree.js";
 import createCachedKeysTransform from "../../src/transforms/cachedKeysTransform.js";
 
 describe("createCachedKeysTransform", () => {
-  test("maps values", async () => {
+  test("passes through with no keyFn", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
