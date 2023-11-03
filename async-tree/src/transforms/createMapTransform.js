@@ -3,10 +3,12 @@ import * as Tree from "../Tree.js";
 /**
  * Return a transform function that maps the keys and/or values of a tree.
  *
- * @param {{ description?: string, innerKeyFn?: (any) => any, keyFn?: (any) => any, valueFn?: (any) => any }} options
+ * @typedef {(innerValue: any, outerKey?: any, innerKey?: any) => any} MapFn
+ * @param {{ deep?: boolean, description?: string, innerKeyFn?: (any) => any, keyFn?: (any) => any, valueFn?: MapFn }} options
  * @returns
  */
 export default function createMapTransform({
+  deep = false,
   description = "key/value map",
   innerKeyFn,
   keyFn,
@@ -40,10 +42,17 @@ export default function createMapTransform({
         const innerValue = await tree.get(innerKey);
 
         // Step 3: Map the inner value to the outer value.
-        const mapFn = Tree.isAsyncTree(innerValue)
-          ? mapTransform // Map a subtree.
-          : valueFn; // Map a single value.
-        const outerValue = mapFn ? await mapFn(innerValue) : innerValue;
+        let outerValue;
+        if (deep && Tree.isAsyncTree(innerValue)) {
+          // Map a subtree.
+          outerValue = mapTransform(innerValue);
+        } else if (valueFn) {
+          // Map a single value.
+          outerValue = await valueFn(innerValue, outerKey, innerKey);
+        } else {
+          // Return inner value as is.
+          outerValue = innerValue;
+        }
 
         return outerValue;
       };

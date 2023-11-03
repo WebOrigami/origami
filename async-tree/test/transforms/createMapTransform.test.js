@@ -9,17 +9,11 @@ describe("createMapTransform", () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
     const mapped = createMapTransform({})(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
   });
 
@@ -27,9 +21,6 @@ describe("createMapTransform", () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
     const uppercaseValues = createMapTransform({
       valueFn: (value) => value.toUpperCase(),
@@ -38,9 +29,6 @@ describe("createMapTransform", () => {
     assert.deepEqual(await Tree.plain(mapped), {
       a: "LETTER A",
       b: "LETTER B",
-      more: {
-        c: "LETTER C",
-      },
     });
   });
 
@@ -48,9 +36,6 @@ describe("createMapTransform", () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
     const uppercaseKeys = createMapTransform({
       keyFn: async (key) => key.toUpperCase(),
@@ -59,9 +44,6 @@ describe("createMapTransform", () => {
     assert.deepEqual(await Tree.plain(mapped), {
       A: "letter a",
       B: "letter b",
-      MORE: {
-        C: "letter c",
-      },
     });
   });
 
@@ -69,9 +51,6 @@ describe("createMapTransform", () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
     const uppercaseKeys = createMapTransform({
       keyFn: async (key) => key.toUpperCase(),
@@ -81,9 +60,6 @@ describe("createMapTransform", () => {
     assert.deepEqual(await Tree.plain(mapped), {
       A: "letter a",
       B: "letter b",
-      MORE: {
-        C: "letter c",
-      },
     });
   });
 
@@ -91,9 +67,6 @@ describe("createMapTransform", () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
-      more: {
-        c: "letter c",
-      },
     });
     const uppercaseKeysValues = createMapTransform({
       keyFn: (key) => key.toUpperCase(),
@@ -103,8 +76,66 @@ describe("createMapTransform", () => {
     assert.deepEqual(await Tree.plain(mapped), {
       A: "LETTER A",
       B: "LETTER B",
+    });
+  });
+
+  test("deep maps values", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      more: {
+        b: "letter b",
+      },
+    });
+    const uppercaseValues = createMapTransform({
+      deep: true,
+      valueFn: (value) => value.toUpperCase(),
+    });
+    const mapped = uppercaseValues(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      a: "LETTER A",
+      more: {
+        b: "LETTER B",
+      },
+    });
+  });
+
+  test("deep maps keys", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      more: {
+        b: "letter b",
+      },
+    });
+    const uppercaseKeys = createMapTransform({
+      deep: true,
+      keyFn: async (key) => key.toUpperCase(),
+    });
+    const mapped = uppercaseKeys(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      A: "letter a",
       MORE: {
-        C: "LETTER C",
+        B: "letter b",
+      },
+    });
+  });
+
+  test("deep maps keys and values", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      more: {
+        b: "letter b",
+      },
+    });
+    const uppercaseKeysValues = createMapTransform({
+      deep: true,
+      keyFn: (key) => key.toUpperCase(),
+      valueFn: async (value) => value.toUpperCase(),
+    });
+    const mapped = uppercaseKeysValues(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      A: "LETTER A",
+      MORE: {
+        B: "LETTER B",
       },
     });
   });
