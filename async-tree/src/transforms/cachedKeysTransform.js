@@ -1,22 +1,22 @@
-import createMapTransform from "./createMapTransform.js";
+import mapTransform from "./mapTransform.js";
 
 /**
- * Return a transform function that maps the keys and/or values of a tree.
+ * Return a map transform that caches the transform's inner and outer keys.
  *
  * @typedef {(innerValue: any, innerKey?: any) => any} MapFn
- * @param {{ deep?: boolean, description?: string, keyFn?: MapFn, valueFn?: MapFn }} options
+ * @param {{ deep?: boolean, description?: string, keyFn?: (any) => any, valueFn?: MapFn }} options
  * @returns
  */
-export default function createCachedMapTransform({
+export default function createCachedKeysTransform({
   deep = false,
-  description = "cached key/value map",
+  description = "cached keys transform",
   keyFn,
   valueFn,
 }) {
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function cachedMapTransform(tree) {
+  return function cachedKeysTransform(tree) {
     let keyMapsPromise;
     let cachedKeyFn;
     let cachedInnerKeyFn;
@@ -31,7 +31,7 @@ export default function createCachedMapTransform({
       };
     }
 
-    const transform = createMapTransform({
+    const transform = mapTransform({
       deep,
       description,
       innerKeyFn: cachedInnerKeyFn,
@@ -49,8 +49,7 @@ async function buildKeyMaps(tree, keyFn) {
     outerKeyToInnerKey: new Map(),
   };
   for (const innerKey of await tree.keys()) {
-    const innerValue = await tree.get(innerKey);
-    const outerKey = await keyFn(innerValue, innerKey);
+    const outerKey = await keyFn(innerKey);
     maps.innerKeyToOuterKey.set(innerKey, outerKey);
     maps.outerKeyToInnerKey.set(outerKey, innerKey);
   }

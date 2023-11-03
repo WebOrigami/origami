@@ -11,8 +11,11 @@ describe("@tree/map", () => {
       { name: "Carol", age: 3 },
     ];
     const fixture = map.call(null, {
-      keyFn: async (value, key) => value.get("name"),
-      valueFn: async (value, key) => value.get("age"),
+      /** @this {import("@graphorigami/types").AsyncTree} */
+      keyFn: function (key) {
+        return Tree.traverse(this, "_", "name");
+      },
+      valueFn: (value) => value.get("age"),
     })(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       Alice: 1,

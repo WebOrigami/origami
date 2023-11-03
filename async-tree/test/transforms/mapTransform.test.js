@@ -2,15 +2,15 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
-import createMapTransform from "../../src/transforms/createMapTransform.js";
+import mapTransform from "../../src/transforms/mapTransform.js";
 
-describe("createMapTransform", () => {
+describe("mapTransform", () => {
   test("returns identity graph if no keyFn or valueFn", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
     });
-    const mapped = createMapTransform({})(tree);
+    const mapped = mapTransform({})(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "letter a",
       b: "letter b",
@@ -22,7 +22,7 @@ describe("createMapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseValues = createMapTransform({
+    const uppercaseValues = mapTransform({
       valueFn: (value) => value.toUpperCase(),
     });
     const mapped = uppercaseValues(tree);
@@ -37,7 +37,7 @@ describe("createMapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeys = createMapTransform({
+    const uppercaseKeys = mapTransform({
       keyFn: async (key) => key.toUpperCase(),
     });
     const mapped = uppercaseKeys(tree);
@@ -52,7 +52,7 @@ describe("createMapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeys = createMapTransform({
+    const uppercaseKeys = mapTransform({
       keyFn: async (key) => key.toUpperCase(),
       innerKeyFn: async (key) => key.toLowerCase(),
     });
@@ -68,7 +68,7 @@ describe("createMapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeysValues = createMapTransform({
+    const uppercaseKeysValues = mapTransform({
       keyFn: (key) => key.toUpperCase(),
       valueFn: async (value) => value.toUpperCase(),
     });
@@ -86,7 +86,7 @@ describe("createMapTransform", () => {
         b: "letter b",
       },
     });
-    const uppercaseValues = createMapTransform({
+    const uppercaseValues = mapTransform({
       deep: true,
       valueFn: (value) => value.toUpperCase(),
     });
@@ -106,7 +106,7 @@ describe("createMapTransform", () => {
         b: "letter b",
       },
     });
-    const uppercaseKeys = createMapTransform({
+    const uppercaseKeys = mapTransform({
       deep: true,
       keyFn: async (key) => key.toUpperCase(),
     });
@@ -126,7 +126,7 @@ describe("createMapTransform", () => {
         b: "letter b",
       },
     });
-    const uppercaseKeysValues = createMapTransform({
+    const uppercaseKeysValues = mapTransform({
       deep: true,
       keyFn: (key) => key.toUpperCase(),
       valueFn: async (value) => value.toUpperCase(),

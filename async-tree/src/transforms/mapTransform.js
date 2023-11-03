@@ -61,7 +61,8 @@ export default function createMapTransform({
     if (keyFn) {
       transform.keys = async () => {
         const innerKeys = [...(await tree.keys())];
-        const outerKeys = await Promise.all(innerKeys.map(keyFn));
+        const mapped = await Promise.all(innerKeys.map(keyFn));
+        const outerKeys = mapped.filter((key) => key !== undefined);
         return outerKeys;
       };
     }

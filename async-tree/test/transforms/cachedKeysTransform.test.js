@@ -2,15 +2,15 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
-import createCachedMapTransform from "../../src/transforms/createCachedMapTransform.js";
+import createCachedKeysTransform from "../../src/transforms/cachedKeysTransform.js";
 
-describe("createCachedMapTransform", () => {
+describe("createCachedKeysTransform", () => {
   test("maps values", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseValues = createCachedMapTransform({
+    const uppercaseValues = createCachedKeysTransform({
       valueFn: (value) => value.toUpperCase(),
     });
     const mapped = uppercaseValues(tree);
@@ -26,8 +26,8 @@ describe("createCachedMapTransform", () => {
       b: "letter b",
     });
     let callCount = 0;
-    const uppercaseKeys = createCachedMapTransform({
-      keyFn: async (value, key) => {
+    const uppercaseKeys = createCachedKeysTransform({
+      keyFn: async (key) => {
         callCount++;
         return key.toUpperCase();
       },

@@ -1,4 +1,4 @@
-import { Tree, createCachedMapTransform } from "@graphorigami/async-tree";
+import { Tree, cachedKeysTransform } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction } from "../../common/utilities.js";
@@ -11,6 +11,7 @@ export default function map(options) {
   return function (treelike) {
     const tree = Tree.from(treelike);
 
+    // Extend the value function to include the value and key in scope.
     let extendedValueFn;
     if (options.valueFn) {
       const valueFn = toFunction(options.valueFn);
@@ -20,17 +21,19 @@ export default function map(options) {
       };
     }
 
+    // Extend the key function to include the value and key in scope.
     let extendedKeyFn;
     if (options.keyFn) {
       const keyFn = toFunction(options.keyFn);
-      extendedKeyFn = async function (innerValue, innerKey) {
+      extendedKeyFn = async function (innerKey) {
+        const innerValue = await tree.get(innerKey);
         const scope = addValueKeyToScope(baseScope, innerValue, innerKey);
         const outerKey = await keyFn.call(scope, innerValue, innerKey);
         return outerKey;
       };
     }
 
-    return createCachedMapTransform({
+    return cachedKeysTransform({
       description: "@map",
       keyFn: extendedKeyFn,
       valueFn: extendedValueFn,
