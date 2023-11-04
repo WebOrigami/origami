@@ -12,10 +12,12 @@ describe("@tree/map", () => {
     ];
     const fixture = map.call(null, {
       /** @this {import("@graphorigami/types").AsyncTree} */
-      keyFn: async function (key) {
+      keyFn: async function (value, key) {
         const keyInScope = await this.get("@key");
         assert.equal(keyInScope, key);
-        return Tree.traverse(this, "_", "name");
+        const valueInScope = await this.get("_");
+        assert.equal(valueInScope, value);
+        return valueInScope.get("name");
       },
       valueFn: (value) => value.get("age"),
     })(treelike);

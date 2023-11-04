@@ -16,6 +16,18 @@ export default function createMapTransform({
   keyFn,
   valueFn,
 }) {
+  if (!innerKeyFn && keyFn) {
+    // Enumerate all the inner keys and return the one that maps to the outer key.
+    innerKeyFn = async function slowInverseKeyFn(outerKey, tree) {
+      // @ts-ignore
+      for (const innerKey of await tree.keys()) {
+        if ((await keyFn(innerKey, tree)) === outerKey) {
+          return innerKey;
+        }
+      }
+    };
+  }
+
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
@@ -23,17 +35,10 @@ export default function createMapTransform({
     const transform = Object.create(tree);
     transform.description = description;
 
-    if (keyFn || innerKeyFn || valueFn) {
+    if (keyFn || valueFn) {
       transform.get = async (outerKey) => {
         // Step 1: Map the outer key to the inner key.
-        let innerKey;
-        if (innerKeyFn) {
-          innerKey = await innerKeyFn(outerKey, tree);
-        } else if (keyFn) {
-          innerKey = await slowInverseKeyFn(keyFn, outerKey, tree);
-        } else {
-          innerKey = outerKey;
-        }
+        const innerKey = (await innerKeyFn?.(outerKey, tree)) ?? outerKey;
 
         if (!innerKey) {
           // No inner key means no value.
@@ -73,13 +78,4 @@ export default function createMapTransform({
 
     return transform;
   };
-}
-
-// Enumerate all the inner keys and return the one that maps to the outer key.
-async function slowInverseKeyFn(keyFn, outerKey, tree) {
-  for (const innerKey of await tree.keys()) {
-    if ((await keyFn(innerKey, tree)) === outerKey) {
-      return innerKey;
-    }
-  }
 }
