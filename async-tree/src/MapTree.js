@@ -5,7 +5,9 @@ import * as Tree from "./Tree.js";
  *
  * Note: By design, the standard `Map` class already complies with the
  * `AsyncTree` interface. This class adds some additional tree behavior, such as
- * constructing subtree instances and setting their `parent` property.
+ * constructing subtree instances and setting their `parent` property. While
+ * we'd like to construct this by subclassing `Map`, that class appears
+ * puzzingly and deliberately implemented to break subclasses.
  *
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
