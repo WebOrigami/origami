@@ -50,7 +50,10 @@ export default function createMapTransform({
 
         // Step 3: Map the inner value to the outer value.
         let outerValue;
-        if (deep && Tree.isAsyncTree(innerValue)) {
+        if (innerValue === undefined) {
+          // No inner value means no outer value.
+          outerValue = undefined;
+        } else if (deep && Tree.isAsyncTree(innerValue)) {
           // Map a subtree.
           outerValue = mapTransform(innerValue);
         } else if (valueFn) {
