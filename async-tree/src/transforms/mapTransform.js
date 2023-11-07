@@ -6,26 +6,41 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").KeyMapFn} KeyMapFn
  * @typedef {import("../../index.ts").ValueMapFn} ValueMapFn
  *
- * @param {{ deep?: boolean, description?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
+ * @param {ValueMapFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
  * @returns
  */
-export default function createMapTransform({
-  deep = false,
-  description = "key/value map",
-  innerKeyFn,
-  keyFn,
-  valueFn,
-}) {
-  if (!innerKeyFn && keyFn) {
-    // Enumerate all the inner keys and return the one that maps to the outer key.
-    innerKeyFn = async function slowInverseKeyFn(outerKey, tree) {
-      // @ts-ignore
-      for (const innerKey of await tree.keys()) {
-        if ((await keyFn(innerKey, tree)) === outerKey) {
-          return innerKey;
+export default function createMapTransform(options) {
+  let deep;
+  let description;
+  let innerKeyFn;
+  let keyFn;
+  let valueFn;
+  if (typeof options === "function") {
+    // Take the single function argument as the valueFn
+    valueFn = options;
+  } else {
+    deep = options.deep ?? false;
+    description = options.description ?? "key/value map";
+    innerKeyFn = options.innerKeyFn;
+    keyFn = options.keyFn;
+    valueFn = options.valueFn;
+  }
+
+  if (!innerKeyFn) {
+    if (keyFn) {
+      // Enumerate all the inner keys and return the one that maps to the outer key.
+      innerKeyFn = async function slowInverseKeyFn(outerKey, tree) {
+        // @ts-ignore
+        for (const innerKey of await tree.keys()) {
+          if ((await keyFn(innerKey, tree)) === outerKey) {
+            return innerKey;
+          }
         }
-      }
-    };
+      };
+    } else {
+      // Inner key is the same as the outer key.
+      innerKeyFn = (outerKey, tree) => outerKey;
+    }
   }
 
   /**
@@ -38,7 +53,7 @@ export default function createMapTransform({
     if (keyFn || valueFn) {
       transform.get = async (outerKey) => {
         // Step 1: Map the outer key to the inner key.
-        const innerKey = (await innerKeyFn?.(outerKey, tree)) ?? outerKey;
+        const innerKey = await innerKeyFn(outerKey, tree);
 
         if (!innerKey) {
           // No inner key means no value.

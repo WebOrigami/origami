@@ -13,16 +13,26 @@ import { toFunction } from "../../common/utilities.js";
  * @typedef {import("@graphorigami/async-tree").ValueMapFn} ValueMapFn
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
- * @param {{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
+ * @param {ValueMapFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
  */
-export default function treeMap({
-  deep,
-  description = "@tree/map",
-  extensions,
-  innerKeyFn,
-  keyFn,
-  valueFn,
-}) {
+export default function treeMap(options) {
+  let deep;
+  let description;
+  let extensions;
+  let innerKeyFn;
+  let keyFn;
+  let valueFn;
+  if (
+    typeof options === "function" ||
+    typeof (/** @type {any} */ (options)?.unpack) === "function"
+  ) {
+    // Take the single function argument as the valueFn
+    valueFn = options;
+  } else {
+    ({ deep, description, extensions, innerKeyFn, keyFn, valueFn } = options);
+    description ??= "@tree/map";
+  }
+
   if (extensions) {
     if (keyFn || innerKeyFn) {
       throw new TypeError(

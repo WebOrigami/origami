@@ -38,6 +38,23 @@ describe("mapTransform", () => {
     });
   });
 
+  test("interprets a single function argument as the value function", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      b: "letter b",
+    });
+    const uppercaseValues = mapTransform((innerValue, innerKey, innerTree) => {
+      assert(innerKey === "a" || innerKey === "b");
+      assert.equal(innerTree, tree);
+      return innerValue.toUpperCase();
+    });
+    const mapped = uppercaseValues(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      a: "LETTER A",
+      b: "LETTER B",
+    });
+  });
+
   test("maps keys", async () => {
     const tree = new ObjectTree({
       a: "letter a",
