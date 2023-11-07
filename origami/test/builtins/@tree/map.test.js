@@ -44,8 +44,29 @@ describe("@tree/map", () => {
     });
   });
 
+  test("can bind the @key and value (_) to different names", async () => {
+    const treelike = {
+      a: 1,
+      b: 2,
+    };
+    const transform = map.call(null, {
+      keyFn: async function () {
+        const letter = await this.get("letter");
+        const value = await this.get("number");
+        return `${letter}${value}`;
+      },
+      keyName: "letter",
+      valueName: "number",
+    });
+    const fixture = transform(treelike);
+    assert.deepEqual(await Tree.plain(fixture), {
+      a1: 1,
+      b2: 2,
+    });
+  });
+
   test("can map deeply", async () => {
-    const files = {
+    const treelike = {
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -59,7 +80,7 @@ describe("@tree/map", () => {
       extensions: "txt->upper",
       valueFn: (value) => value.toUpperCase(),
     });
-    const fixture = transform(files);
+    const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
       more: {

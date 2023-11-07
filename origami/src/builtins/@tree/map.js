@@ -13,7 +13,7 @@ import { toFunction } from "../../common/utilities.js";
  * @typedef {import("@graphorigami/async-tree").ValueMapFn} ValueMapFn
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
- * @param {ValueMapFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
+ * @param {ValueMapFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, keyName?: string, valueFn?: ValueMapFn, valueName?: string }} options
  */
 export default function treeMap(options) {
   let deep;
@@ -21,7 +21,9 @@ export default function treeMap(options) {
   let extensions;
   let innerKeyFn;
   let keyFn;
+  let keyName;
   let valueFn;
+  let valueName;
   if (
     typeof options === "function" ||
     typeof (/** @type {any} */ (options)?.unpack) === "function"
@@ -29,7 +31,16 @@ export default function treeMap(options) {
     // Take the single function argument as the valueFn
     valueFn = options;
   } else {
-    ({ deep, description, extensions, innerKeyFn, keyFn, valueFn } = options);
+    ({
+      deep,
+      description,
+      extensions,
+      innerKeyFn,
+      keyFn,
+      keyName,
+      valueFn,
+      valueName,
+    } = options);
     description ??= "@tree/map";
   }
 
@@ -48,7 +59,13 @@ export default function treeMap(options) {
   if (valueFn) {
     const resolvedValueFn = toFunction(valueFn);
     extendedValueFn = function (innerValue, innerKey, tree) {
-      const scope = addValueKeyToScope(baseScope, innerValue, innerKey);
+      const scope = addValueKeyToScope(
+        baseScope,
+        innerValue,
+        innerKey,
+        valueName,
+        keyName
+      );
       return resolvedValueFn.call(scope, innerValue, innerKey, tree);
     };
   }
@@ -67,7 +84,13 @@ export default function treeMap(options) {
     const resolvedKeyFn = toFunction(keyFn);
     extendedKeyFn = async function (innerKey, tree) {
       const innerValue = await tree.get(innerKey);
-      const scope = addValueKeyToScope(baseScope, innerValue, innerKey);
+      const scope = addValueKeyToScope(
+        baseScope,
+        innerValue,
+        innerKey,
+        valueName,
+        keyName
+      );
       // Note that treeMap includes the *value* in the arguments to the key
       // function. This allows a key function to be defined with an Origami
       // lambda.
