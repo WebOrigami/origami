@@ -2,7 +2,7 @@ import type { AsyncTree } from "@graphorigami/types";
 
 export * from "./main.js";
 
-export type KeyMapFn = (key?: any, innerTree?: AsyncTree) => any;
+export type KeyFn = (key?: any, innerTree?: AsyncTree) => any;
 
 /**
  * An object with a non-trivial `toString` method.
@@ -37,3 +37,4 @@ export type Unpackable = {
 };
 
 export type ValueMapFn = (innerValue: any, innerKey?: any, innerTree?: AsyncTree) => any;
+export type ValueKeyFn = (value: any, key?: any, innerTree?: AsyncTree) => any;

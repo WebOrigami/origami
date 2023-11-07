@@ -60,13 +60,13 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeys = mapTransform({
-      keyFn: async (key) => key.toUpperCase(),
+    const doubleKeys = mapTransform({
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
     });
-    const mapped = uppercaseKeys(tree);
+    const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "letter a",
-      B: "letter b",
+      aa: "letter a",
+      bb: "letter b",
     });
   });
 
@@ -75,14 +75,14 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeys = mapTransform({
-      keyFn: async (key) => key.toUpperCase(),
-      innerKeyFn: async (key) => key.toLowerCase(),
+    const doubleKeys = mapTransform({
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      innerKeyFn: async (outerKey) => outerKey.slice(0, 1),
     });
-    const mapped = uppercaseKeys(tree);
+    const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "letter a",
-      B: "letter b",
+      aa: "letter a",
+      bb: "letter b",
     });
   });
 
@@ -91,14 +91,32 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseKeysValues = mapTransform({
-      keyFn: (key) => key.toUpperCase(),
-      valueFn: async (value) => value.toUpperCase(),
+    const doubleKeysUppercaseValues = mapTransform({
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      valueFn: async (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
-    const mapped = uppercaseKeysValues(tree);
+    const mapped = doubleKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "LETTER A",
-      B: "LETTER B",
+      aa: "LETTER A",
+      bb: "LETTER B",
+    });
+  });
+
+  test("a shallow map is applied to async subtrees too", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+      more: {
+        b: "letter b",
+      },
+    });
+    const doubleKeys = mapTransform({
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      valueFn: async (innerValue, innerKey, tree) => innerKey,
+    });
+    const mapped = doubleKeys(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      aa: "a",
+      moremore: "more",
     });
   });
 
@@ -111,7 +129,7 @@ describe("mapTransform", () => {
     });
     const uppercaseValues = mapTransform({
       deep: true,
-      valueFn: (value) => value.toUpperCase(),
+      valueFn: (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const mapped = uppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
@@ -122,43 +140,43 @@ describe("mapTransform", () => {
     });
   });
 
-  test("deep maps keys", async () => {
+  test("deep maps leaf keys", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       more: {
         b: "letter b",
       },
     });
-    const uppercaseKeys = mapTransform({
+    const doubleKeys = mapTransform({
       deep: true,
-      keyFn: async (key) => key.toUpperCase(),
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
     });
-    const mapped = uppercaseKeys(tree);
+    const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "letter a",
-      MORE: {
-        B: "letter b",
+      aa: "letter a",
+      more: {
+        bb: "letter b",
       },
     });
   });
 
-  test("deep maps keys and values", async () => {
+  test("deep maps leaf keys and values", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       more: {
         b: "letter b",
       },
     });
-    const uppercaseKeysValues = mapTransform({
+    const doubleKeysUppercaseValues = mapTransform({
       deep: true,
-      keyFn: (key) => key.toUpperCase(),
-      valueFn: async (value) => value.toUpperCase(),
+      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      valueFn: async (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
-    const mapped = uppercaseKeysValues(tree);
+    const mapped = doubleKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "LETTER A",
-      MORE: {
-        B: "LETTER B",
+      aa: "LETTER A",
+      more: {
+        bb: "LETTER B",
       },
     });
   });

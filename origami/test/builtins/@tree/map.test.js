@@ -12,14 +12,14 @@ describe("@tree/map", () => {
     ];
     const fixture = map.call(null, {
       /** @this {import("@graphorigami/types").AsyncTree} */
-      keyFn: async function (value, key) {
+      keyFn: async function (innerValue, innerKey, tree) {
         const keyInScope = await this.get("@key");
-        assert.equal(keyInScope, key);
+        assert.equal(keyInScope, innerKey);
         const valueInScope = await this.get("_");
-        assert.equal(valueInScope, value);
+        assert.equal(valueInScope, innerValue);
         return valueInScope.get("name");
       },
-      valueFn: (value) => value.get("age"),
+      valueFn: (innerValue, innerKey, tree) => innerValue.get("age"),
     })(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       Alice: 1,
@@ -36,7 +36,7 @@ describe("@tree/map", () => {
     };
     const transform = map.call(null, {
       extensions: "txt->upper",
-      valueFn: (value) => value.toUpperCase(),
+      valueFn: (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
@@ -50,7 +50,7 @@ describe("@tree/map", () => {
       b: 2,
     };
     const transform = map.call(null, {
-      keyFn: async function () {
+      keyFn: async function (innerValue, innerKey, tree) {
         const letter = await this.get("letter");
         const value = await this.get("number");
         return `${letter}${value}`;
@@ -65,7 +65,28 @@ describe("@tree/map", () => {
     });
   });
 
-  test("can map deeply", async () => {
+  test("can map keys and values deeply", async () => {
+    const treelike = {
+      a: 1,
+      more: {
+        b: 2,
+      },
+    };
+    const transform = map.call(null, {
+      deep: true,
+      keyFn: (innerValue, innerKey, tree) => `${innerKey}${innerValue}`,
+      valueFn: (innerValue, innerKey, tree) => 2 * innerValue,
+    });
+    const mapped = transform(treelike);
+    assert.deepEqual(await Tree.plain(mapped), {
+      a1: 2,
+      more: {
+        b2: 4,
+      },
+    });
+  });
+
+  test("can map extensions deeply", async () => {
     const treelike = {
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
@@ -78,7 +99,7 @@ describe("@tree/map", () => {
     const transform = map.call(null, {
       deep: true,
       extensions: "txt->upper",
-      valueFn: (value) => value.toUpperCase(),
+      valueFn: (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {

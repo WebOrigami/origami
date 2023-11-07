@@ -3,10 +3,10 @@ import * as Tree from "../Tree.js";
 /**
  * Return a transform function that maps the keys and/or values of a tree.
  *
- * @typedef {import("../../index.ts").KeyMapFn} KeyMapFn
- * @typedef {import("../../index.ts").ValueMapFn} ValueMapFn
+ * @typedef {import("../../index.ts").KeyFn} KeyFn
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {ValueMapFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, valueFn?: ValueMapFn }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyFn, keyFn?: ValueKeyFn, valueFn?: ValueKeyFn }} options
  * @returns
  */
 export default function createMapTransform(options) {
@@ -32,7 +32,10 @@ export default function createMapTransform(options) {
       innerKeyFn = async function slowInverseKeyFn(outerKey, tree) {
         // @ts-ignore
         for (const innerKey of await tree.keys()) {
-          if ((await keyFn(innerKey, tree)) === outerKey) {
+          const innerValue = await tree.get(innerKey);
+          if (Tree.isAsyncTree(innerValue) && innerKey === outerKey) {
+            return innerKey;
+          } else if ((await keyFn(innerValue, innerKey, tree)) === outerKey) {
             return innerKey;
           }
         }
@@ -85,10 +88,17 @@ export default function createMapTransform(options) {
 
     if (keyFn) {
       transform.keys = async () => {
+        // Apply the keyFn to inner keys for leaf values (not subtrees).
         const innerKeys = [...(await tree.keys())];
         const mapped = await Promise.all(
-          innerKeys.map((innerKey) => keyFn(innerKey, tree))
+          innerKeys.map(async (innerKey) => {
+            const innerValue = await tree.get(innerKey);
+            return deep && Tree.isAsyncTree(innerValue)
+              ? innerKey
+              : keyFn(innerValue, innerKey, tree);
+          })
         );
+        // Filter out any cases where the keyFn returned undefined.
         const outerKeys = mapped.filter((key) => key !== undefined);
         return outerKeys;
       };

@@ -1,5 +1,3 @@
-import * as Tree from "../Tree.js";
-
 /**
  * Given an outer extension and an inner extension, return a pair of key
  * functions that map between them.
@@ -23,20 +21,12 @@ export default function keyFnsForExtensions({
   return {
     async innerKeyFn(outerKey, tree) {
       const basename = matchExtension(outerKey, extension);
-      return basename
-        ? `${basename}${dotPrefix(innerExtension)}`
-        : deep && tree && (await Tree.isKeyForSubtree(tree, outerKey))
-        ? outerKey
-        : undefined;
+      return basename ? `${basename}${dotPrefix(innerExtension)}` : undefined;
     },
 
-    async keyFn(innerKey, tree) {
+    async keyFn(innerValue, innerKey, tree) {
       const basename = matchExtension(innerKey, innerExtension);
-      return basename
-        ? `${basename}${dotPrefix(extension)}`
-        : deep && tree && (await Tree.isKeyForSubtree(tree, innerKey))
-        ? innerKey
-        : undefined;
+      return basename ? `${basename}${dotPrefix(extension)}` : undefined;
     },
   };
 }

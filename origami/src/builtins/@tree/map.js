@@ -9,11 +9,11 @@ import { toFunction } from "../../common/utilities.js";
 
 /**
  *
- * @typedef {import("@graphorigami/async-tree").KeyMapFn} KeyMapFn
- * @typedef {import("@graphorigami/async-tree").ValueMapFn} ValueMapFn
+ * @typedef {import("@graphorigami/async-tree").KeyFn} KeyMapFn
+ * @typedef {import("@graphorigami/async-tree").ValueKeyFn} ValueKeyFn
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
- * @param {ValueMapFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: KeyMapFn, keyName?: string, valueFn?: ValueMapFn, valueName?: string }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: ValueKeyFn, keyName?: string, valueFn?: ValueKeyFn, valueName?: string }} options
  */
 export default function treeMap(options) {
   let deep;
@@ -82,8 +82,7 @@ export default function treeMap(options) {
     extendedKeyFn = keyFns.keyFn;
   } else if (keyFn) {
     const resolvedKeyFn = toFunction(keyFn);
-    extendedKeyFn = async function (innerKey, tree) {
-      const innerValue = await tree.get(innerKey);
+    extendedKeyFn = async function (innerValue, innerKey, tree) {
       const scope = addValueKeyToScope(
         baseScope,
         innerValue,
@@ -91,9 +90,6 @@ export default function treeMap(options) {
         valueName,
         keyName
       );
-      // Note that treeMap includes the *value* in the arguments to the key
-      // function. This allows a key function to be defined with an Origami
-      // lambda.
       const outerKey = await resolvedKeyFn.call(
         scope,
         innerValue,

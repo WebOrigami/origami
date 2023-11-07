@@ -11,7 +11,7 @@ describe("createCachedKeysTransform", () => {
       b: "letter b",
     });
     const uppercaseValues = createCachedKeysTransform({
-      valueFn: (value) => value.toUpperCase(),
+      valueFn: (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const mapped = uppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
@@ -27,15 +27,15 @@ describe("createCachedKeysTransform", () => {
     });
     let callCount = 0;
     const uppercaseKeys = createCachedKeysTransform({
-      keyFn: async (key) => {
+      keyFn: async (innerValue, innerKey, tree) => {
         callCount++;
-        return key.toUpperCase();
+        return `${innerKey}${innerKey}`;
       },
     });
     const mapped = uppercaseKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      A: "letter a",
-      B: "letter b",
+      aa: "letter a",
+      bb: "letter b",
     });
     assert.equal(callCount, 2);
   });
