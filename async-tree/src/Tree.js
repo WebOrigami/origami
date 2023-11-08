@@ -197,7 +197,7 @@ export async function isKeyForSubtree(tree, key) {
     return tree.isKeyForSubtree(key);
   }
   const value = await tree.get(key);
-  return isTreelike(value);
+  return isAsyncTree(value);
 }
 
 /**

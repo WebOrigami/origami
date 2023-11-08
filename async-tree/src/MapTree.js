@@ -35,6 +35,11 @@ export default class MapTree {
     return value;
   }
 
+  async isKeyForSubtree(key) {
+    const value = this.map.get(key);
+    return value instanceof Map || Tree.isAsyncTree(value);
+  }
+
   async keys() {
     return this.map.keys();
   }

@@ -29,6 +29,11 @@ export default class SetTree {
     return value;
   }
 
+  async isKeyForSubtree(key) {
+    const value = this.values[key];
+    return value instanceof Set || Tree.isAsyncTree(value);
+  }
+
   async keys() {
     return this.values.keys();
   }

@@ -1,13 +1,11 @@
+import * as Tree from "../Tree.js";
 import mapTransform from "./mapTransform.js";
-
-/** @type {WeakMap<AsyncTree, Promise<{ innerKeyToOuterKey: Map<any, any>, outerKeyToInnerKey: Map<any, any> }>>} */
-const treeToKeyMapPromises = new WeakMap();
 
 /**
  * Return a map transform that caches the transform's inner and outer keys.
  *
- * @typedef {(innerValue: any, innerKey?: any) => any} MapFn
- * @param {{ deep?: boolean, description?: string, keyFn?: (any) => any, valueFn?: MapFn }} options
+ * @typedef {import("../../index.ts").ValueMapFn} ValueMapFn
+ * @param {{ deep?: boolean, description?: string, keyFn?: ValueMapFn, valueFn?: ValueMapFn }} options
  * @returns
  */
 export default function createCachedKeysTransform({
@@ -16,61 +14,75 @@ export default function createCachedKeysTransform({
   keyFn,
   valueFn,
 }) {
-  let cachedKeyFn;
-  let cachedInnerKeyFn;
-  if (keyFn) {
-    cachedKeyFn = async function (innerValue, innerKey, tree) {
-      const keyMap = await treeToKeyMap(keyFn, tree, deep);
-      return keyMap.innerKeyToOuterKey.get(innerKey);
-    };
-    cachedInnerKeyFn = async function (outerKey, tree) {
-      const keyMap = await treeToKeyMap(keyFn, tree, deep);
-      return keyMap.outerKeyToInnerKey.get(outerKey);
-    };
-  }
+  return function (tree) {
+    let cachedKeyFn;
+    let cachedInnerKeyFn;
+    if (keyFn) {
+      const innerKeyToOuterKey = new Map();
+      const outerKeyToInnerKey = new Map();
 
-  return mapTransform({
-    deep,
-    description,
-    innerKeyFn: cachedInnerKeyFn,
-    keyFn: cachedKeyFn,
-    valueFn,
-  });
-}
+      cachedKeyFn = async function (innerValue, innerKey, tree) {
+        // First check to see if we've already computed an outer key for this
+        // inner key. The cached outer key may be undefined, so we have to use
+        // `has()` instead of calling `get()` and checking for undefined.
+        if (innerKeyToOuterKey.has(innerKey)) {
+          return innerKeyToOuterKey.get(innerKey);
+        }
 
-/**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- *
- * @param {import("./mapTransform.js").KeyFn} keyFn
- * @param {AsyncTree} tree
- * @returns {Promise<{ innerKeyToOuterKey: Map<any, any>, outerKeyToInnerKey: Map<any, any> }>}
- */
-async function treeToKeyMap(keyFn, tree, deep) {
-  let keyMapPromise = treeToKeyMapPromises.get(tree);
+        const outerKey = await keyFn(innerValue, innerKey, tree);
 
-  if (!keyMapPromise) {
-    keyMapPromise = buildKeyMap(keyFn, tree, deep);
-    treeToKeyMapPromises.set(tree, keyMapPromise);
-  }
+        // Cache the mappings from inner key <-> outer key for next time.
+        innerKeyToOuterKey.set(innerKey, outerKey);
+        outerKeyToInnerKey.set(outerKey, innerKey);
 
-  return keyMapPromise;
-}
+        return outerKey;
+      };
 
-async function buildKeyMap(keyFn, tree, deep) {
-  const maps = {
-    innerKeyToOuterKey: new Map(),
-    outerKeyToInnerKey: new Map(),
-  };
-  for (const innerKey of await tree.keys()) {
-    let outerKey;
-    if (deep && (await tree.isKeyForSubtree(innerKey))) {
-      outerKey = innerKey;
-    } else {
-      const innerValue = await tree.get(innerKey);
-      outerKey = await keyFn(innerValue, innerKey, tree);
+      cachedInnerKeyFn = async function (outerKey, tree) {
+        // First check to see if we've already computed an inner key for this
+        // outer key. Again, we have to use `has()` for this check.
+        if (outerKeyToInnerKey.has(outerKey)) {
+          return outerKeyToInnerKey.get(outerKey);
+        }
+
+        // Iterate through the tree's keys, calculating inner keys as we go,
+        // until we find a match. Cache all the intermediate results and the
+        // final match. This is O(n), but we stop as soon as we find a match,
+        // and subsequent calls will benefit from the intermediate results.
+        for (const innerKey of await tree.keys()) {
+          // Skip any inner keys we already know about.
+          if (innerKeyToOuterKey.has(innerKey)) {
+            continue;
+          }
+
+          const innerValue = await tree.get(innerKey);
+
+          let computedOuterKey;
+          if (Tree.isAsyncTree(innerValue)) {
+            computedOuterKey = innerKey;
+          } else {
+            computedOuterKey = await keyFn(innerValue, innerKey, tree);
+          }
+
+          innerKeyToOuterKey.set(innerKey, computedOuterKey);
+          outerKeyToInnerKey.set(computedOuterKey, innerKey);
+
+          if (computedOuterKey === outerKey) {
+            // Match found.
+            return innerKey;
+          }
+        }
+
+        return undefined;
+      };
     }
-    maps.innerKeyToOuterKey.set(innerKey, outerKey);
-    maps.outerKeyToInnerKey.set(outerKey, innerKey);
-  }
-  return maps;
+
+    return mapTransform({
+      deep,
+      description,
+      innerKeyFn: cachedInnerKeyFn,
+      keyFn: cachedKeyFn,
+      valueFn,
+    })(tree);
+  };
 }

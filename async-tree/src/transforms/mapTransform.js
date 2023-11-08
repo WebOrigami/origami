@@ -92,10 +92,14 @@ export default function createMapTransform(options) {
         const innerKeys = [...(await tree.keys())];
         const mapped = await Promise.all(
           innerKeys.map(async (innerKey) => {
-            const innerValue = await tree.get(innerKey);
-            return deep && Tree.isAsyncTree(innerValue)
-              ? innerKey
-              : keyFn(innerValue, innerKey, tree);
+            let outerKey;
+            if (deep && (await Tree.isKeyForSubtree(tree, innerKey))) {
+              outerKey = innerKey;
+            } else {
+              const innerValue = await tree.get(innerKey);
+              outerKey = await keyFn(innerValue, innerKey, tree);
+            }
+            return outerKey;
           })
         );
         // Filter out any cases where the keyFn returned undefined.
@@ -103,6 +107,13 @@ export default function createMapTransform(options) {
         return outerKeys;
       };
     }
+
+    transform.isKeyForSubtree = async (outerKey) => {
+      const innerKey = innerKeyFn ? await innerKeyFn(outerKey, tree) : outerKey;
+      return innerKey === undefined
+        ? false
+        : Tree.isKeyForSubtree(tree, innerKey);
+    };
 
     return transform;
   };

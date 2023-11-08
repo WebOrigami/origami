@@ -41,7 +41,7 @@ export default function treeMap(options) {
       valueFn,
       valueName,
     } = options);
-    description ??= "@tree/map";
+    description ??= `@tree/map ${extensions ?? ""}`;
   }
 
   if (extensions) {

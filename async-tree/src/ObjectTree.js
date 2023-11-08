@@ -53,7 +53,7 @@ export default class ObjectTree {
 
   async isKeyForSubtree(key) {
     const value = this.object[key];
-    return Tree.isTreelike(value);
+    return isPlainObject(value) || Tree.isAsyncTree(value);
   }
 
   /**

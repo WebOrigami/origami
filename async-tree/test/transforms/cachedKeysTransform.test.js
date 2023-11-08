@@ -20,7 +20,7 @@ describe("createCachedKeysTransform", () => {
     });
   });
 
-  test("maps keys", async () => {
+  test("maps keys with caching", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
@@ -32,7 +32,21 @@ describe("createCachedKeysTransform", () => {
         return `${innerKey}${innerKey}`;
       },
     });
+
     const mapped = uppercaseKeys(tree);
+
+    const aa = await mapped.get("aa");
+    assert.equal(aa, "letter a");
+    assert.equal(callCount, 1);
+
+    const bb = await mapped.get("bb");
+    assert.equal(bb, "letter b");
+    assert.equal(callCount, 2);
+
+    const cc = await mapped.get("cc");
+    assert.equal(cc, undefined);
+    assert.equal(callCount, 2);
+
     assert.deepEqual(await Tree.plain(mapped), {
       aa: "letter a",
       bb: "letter b",
