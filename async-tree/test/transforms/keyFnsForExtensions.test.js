@@ -11,9 +11,9 @@ describe("keyFnsForExtensions", () => {
       innerExtension: "txt",
     });
     assert.equal(await innerKeyFn("file.txt"), "file.txt");
-    assert.equal(await keyFn(null, "file.txt"), "file.txt");
+    assert.equal(await keyFn("file.txt"), "file.txt");
     assert.equal(await innerKeyFn("file.foo"), undefined);
-    assert.equal(await keyFn(null, "file.foo"), undefined);
+    assert.equal(await keyFn("file.foo"), undefined);
   });
 
   test("returns key functions that can map extensions", async () => {
@@ -22,9 +22,9 @@ describe("keyFnsForExtensions", () => {
       innerExtension: "md",
     });
     assert.equal(await innerKeyFn("file.html"), "file.md");
-    assert.equal(await keyFn(null, "file.md"), "file.html");
+    assert.equal(await keyFn("file.md"), "file.html");
     assert.equal(await innerKeyFn("file.foo"), undefined);
-    assert.equal(await keyFn(null, "file.foo"), undefined);
+    assert.equal(await keyFn("file.foo"), undefined);
   });
 
   test("works with mapTransform to handle keys that end in a given extension", async () => {

@@ -24,7 +24,7 @@ export default function keyFnsForExtensions({
       return basename ? `${basename}${dotPrefix(innerExtension)}` : undefined;
     },
 
-    async keyFn(innerValue, innerKey, tree) {
+    async keyFn(innerKey, tree) {
       const basename = matchExtension(innerKey, innerExtension);
       return basename ? `${basename}${dotPrefix(extension)}` : undefined;
     },

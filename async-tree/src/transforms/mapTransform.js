@@ -6,7 +6,7 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {ValueKeyFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyFn, keyFn?: ValueKeyFn, valueFn?: ValueKeyFn }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyFn, keyFn?: KeyFn, valueFn?: ValueKeyFn }} options
  * @returns
  */
 export default function createMapTransform(options) {
@@ -26,24 +26,10 @@ export default function createMapTransform(options) {
     valueFn = options.valueFn;
   }
 
-  if (!innerKeyFn) {
-    if (keyFn) {
-      // Enumerate all the inner keys and return the one that maps to the outer key.
-      innerKeyFn = async function slowInverseKeyFn(outerKey, tree) {
-        // @ts-ignore
-        for (const innerKey of await tree.keys()) {
-          const innerValue = await tree.get(innerKey);
-          if (Tree.isAsyncTree(innerValue) && innerKey === outerKey) {
-            return innerKey;
-          } else if ((await keyFn(innerValue, innerKey, tree)) === outerKey) {
-            return innerKey;
-          }
-        }
-      };
-    } else {
-      // Inner key is the same as the outer key.
-      innerKeyFn = (outerKey, tree) => outerKey;
-    }
+  if ((keyFn && !innerKeyFn) || (!keyFn && innerKeyFn)) {
+    throw new TypeError(
+      `mapTransform: You must specify both keyFn and innerKeyFn, or neither.`
+    );
   }
 
   /**
@@ -56,7 +42,11 @@ export default function createMapTransform(options) {
     if (keyFn || valueFn) {
       transform.get = async (outerKey) => {
         // Step 1: Map the outer key to the inner key.
-        const innerKey = await innerKeyFn(outerKey, tree);
+        const isSubtree = deep && (await Tree.isKeyForSubtree(tree, outerKey));
+        const innerKey =
+          !isSubtree && innerKeyFn
+            ? await innerKeyFn(outerKey, tree)
+            : outerKey;
 
         if (!innerKey) {
           // No inner key means no value.
@@ -96,8 +86,7 @@ export default function createMapTransform(options) {
             if (deep && (await Tree.isKeyForSubtree(tree, innerKey))) {
               outerKey = innerKey;
             } else {
-              const innerValue = await tree.get(innerKey);
-              outerKey = await keyFn(innerValue, innerKey, tree);
+              outerKey = await keyFn(innerKey, tree);
             }
             return outerKey;
           })
@@ -107,13 +96,6 @@ export default function createMapTransform(options) {
         return outerKeys;
       };
     }
-
-    transform.isKeyForSubtree = async (outerKey) => {
-      const innerKey = innerKeyFn ? await innerKeyFn(outerKey, tree) : outerKey;
-      return innerKey === undefined
-        ? false
-        : Tree.isKeyForSubtree(tree, innerKey);
-    };
 
     return transform;
   };

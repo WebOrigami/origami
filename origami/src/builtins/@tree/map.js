@@ -82,7 +82,8 @@ export default function treeMap(options) {
     extendedKeyFn = keyFns.keyFn;
   } else if (keyFn) {
     const resolvedKeyFn = toFunction(keyFn);
-    extendedKeyFn = async function (innerValue, innerKey, tree) {
+    extendedKeyFn = async function (innerKey, tree) {
+      const innerValue = await tree.get(innerKey);
       const scope = addValueKeyToScope(
         baseScope,
         innerValue,

@@ -27,29 +27,29 @@ describe("createCachedKeysTransform", () => {
     });
     let callCount = 0;
     const uppercaseKeys = createCachedKeysTransform({
-      keyFn: async (innerValue, innerKey, tree) => {
+      keyFn: async (innerKey, tree) => {
         callCount++;
-        return `${innerKey}${innerKey}`;
+        return `_${innerKey}`;
       },
     });
 
     const mapped = uppercaseKeys(tree);
 
-    const aa = await mapped.get("aa");
-    assert.equal(aa, "letter a");
+    const _a = await mapped.get("_a");
+    assert.equal(_a, "letter a");
     assert.equal(callCount, 1);
 
-    const bb = await mapped.get("bb");
-    assert.equal(bb, "letter b");
+    const _b = await mapped.get("_b");
+    assert.equal(_b, "letter b");
     assert.equal(callCount, 2);
 
-    const cc = await mapped.get("cc");
-    assert.equal(cc, undefined);
+    const _c = await mapped.get("_c");
+    assert.equal(_c, undefined);
     assert.equal(callCount, 2);
 
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "letter a",
-      bb: "letter b",
+      _a: "letter a",
+      _b: "letter b",
     });
     assert.equal(callCount, 2);
   });

@@ -4,8 +4,10 @@ import mapTransform from "./mapTransform.js";
 /**
  * Return a map transform that caches the transform's inner and outer keys.
  *
- * @typedef {import("../../index.ts").ValueMapFn} ValueMapFn
- * @param {{ deep?: boolean, description?: string, keyFn?: ValueMapFn, valueFn?: ValueMapFn }} options
+ * @typedef {import("../../index.ts").KeyFn} KeyFn
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
+ *
+ * @param {{ deep?: boolean, description?: string, keyFn?: KeyFn, valueFn?: ValueKeyFn }} options
  * @returns
  */
 export default function createCachedKeysTransform({
@@ -21,7 +23,7 @@ export default function createCachedKeysTransform({
       const innerKeyToOuterKey = new Map();
       const outerKeyToInnerKey = new Map();
 
-      cachedKeyFn = async function (innerValue, innerKey, tree) {
+      cachedKeyFn = async function (innerKey, tree) {
         // First check to see if we've already computed an outer key for this
         // inner key. The cached outer key may be undefined, so we have to use
         // `has()` instead of calling `get()` and checking for undefined.
@@ -29,7 +31,7 @@ export default function createCachedKeysTransform({
           return innerKeyToOuterKey.get(innerKey);
         }
 
-        const outerKey = await keyFn(innerValue, innerKey, tree);
+        const outerKey = await keyFn(innerKey, tree);
 
         // Cache the mappings from inner key <-> outer key for next time.
         innerKeyToOuterKey.set(innerKey, outerKey);
@@ -58,10 +60,10 @@ export default function createCachedKeysTransform({
           const innerValue = await tree.get(innerKey);
 
           let computedOuterKey;
-          if (Tree.isAsyncTree(innerValue)) {
+          if (deep && Tree.isAsyncTree(innerValue)) {
             computedOuterKey = innerKey;
           } else {
-            computedOuterKey = await keyFn(innerValue, innerKey, tree);
+            computedOuterKey = await keyFn(innerKey, tree);
           }
 
           innerKeyToOuterKey.set(innerKey, computedOuterKey);

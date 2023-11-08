@@ -55,34 +55,19 @@ describe("mapTransform", () => {
     });
   });
 
-  test("maps keys", async () => {
-    const tree = new ObjectTree({
-      a: "letter a",
-      b: "letter b",
-    });
-    const doubleKeys = mapTransform({
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
-    });
-    const mapped = doubleKeys(tree);
-    assert.deepEqual(await Tree.plain(mapped), {
-      aa: "letter a",
-      bb: "letter b",
-    });
-  });
-
   test("maps keys using keyFn and innerKeyFn", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
     });
     const doubleKeys = mapTransform({
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
-      innerKeyFn: async (outerKey) => outerKey.slice(0, 1),
+      keyFn: async (innerKey, tree) => `_${innerKey}`,
+      innerKeyFn: async (outerKey, tree) => outerKey.slice(1),
     });
     const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "letter a",
-      bb: "letter b",
+      _a: "letter a",
+      _b: "letter b",
     });
   });
 
@@ -92,13 +77,14 @@ describe("mapTransform", () => {
       b: "letter b",
     });
     const doubleKeysUppercaseValues = mapTransform({
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      keyFn: async (innerKey, tree) => `_${innerKey}`,
+      innerKeyFn: async (outerKey, tree) => outerKey.slice(1),
       valueFn: async (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const mapped = doubleKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "LETTER A",
-      bb: "LETTER B",
+      _a: "LETTER A",
+      _b: "LETTER B",
     });
   });
 
@@ -110,13 +96,14 @@ describe("mapTransform", () => {
       },
     });
     const doubleKeys = mapTransform({
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      keyFn: async (innerKey, tree) => `_${innerKey}`,
+      innerKeyFn: async (outerKey, tree) => outerKey.slice(1),
       valueFn: async (innerValue, innerKey, tree) => innerKey,
     });
     const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "a",
-      moremore: "more",
+      _a: "a",
+      _more: "more",
     });
   });
 
@@ -149,13 +136,14 @@ describe("mapTransform", () => {
     });
     const doubleKeys = mapTransform({
       deep: true,
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      keyFn: async (innerKey, tree) => `_${innerKey}`,
+      innerKeyFn: async (outerKey, tree) => outerKey.slice(1),
     });
     const mapped = doubleKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "letter a",
+      _a: "letter a",
       more: {
-        bb: "letter b",
+        _b: "letter b",
       },
     });
   });
@@ -169,14 +157,15 @@ describe("mapTransform", () => {
     });
     const doubleKeysUppercaseValues = mapTransform({
       deep: true,
-      keyFn: async (innerValue, innerKey, tree) => `${innerKey}${innerKey}`,
+      keyFn: async (innerKey, tree) => `_${innerKey}`,
+      innerKeyFn: async (outerKey, tree) => outerKey.slice(1),
       valueFn: async (innerValue, innerKey, tree) => innerValue.toUpperCase(),
     });
     const mapped = doubleKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
-      aa: "LETTER A",
+      _a: "LETTER A",
       more: {
-        bb: "LETTER B",
+        _b: "LETTER B",
       },
     });
   });
