@@ -103,7 +103,6 @@ export { default as defaultModuleExport } from "../src/cli/defaultModuleExport.j
 export { default as showUsage } from "../src/cli/showUsage.js";
 export { default as addValueKeyToScope } from "../src/common/addValueKeyToScope.js";
 export { default as arrowFunctionsMap } from "../src/common/arrowFunctionsMap.js";
-export { default as CacheTree } from "../src/common/CacheTree.js";
 export { default as CommandModulesTransform } from "../src/common/CommandModulesTransform.js";
 export { default as ConstantTree } from "../src/common/ConstantTree.js";
 export { default as ExplorableSiteTransform } from "../src/common/ExplorableSiteTransform.js";

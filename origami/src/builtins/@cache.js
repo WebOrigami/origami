@@ -1,5 +1,5 @@
+import { cache, Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
-import CacheTree from "../common/CacheTree.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -7,16 +7,24 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- * @param {Treelike} tree
- * @param {Treelike} [cache]
- * @param {Treelike} [filter]
+ * @param {Treelike} sourceTreelike
+ * @param {Treelike} [cacheTreelike]
+ * @param {Treelike} [filterTreelike]
  * @this {AsyncTree|null}
  */
-export default async function cacheBuiltin(tree, cache, filter) {
+export default async function cacheBuiltin(
+  sourceTreelike,
+  cacheTreelike,
+  filterTreelike
+) {
   assertScopeIsDefined(this);
 
+  const sourceTree = Tree.from(sourceTreelike);
+  const cacheTree = Tree.from(cacheTreelike);
+  const filterTree = Tree.from(filterTreelike);
+
   /** @type {AsyncTree} */
-  let result = new CacheTree(tree, cache, filter);
+  let result = cache(sourceTree, cacheTree, filterTree);
   result = Scope.treeWithScope(result, this);
   return result;
 }
