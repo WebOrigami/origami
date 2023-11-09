@@ -1,3 +1,4 @@
+import { mapTransform } from "../main.js";
 import DeferredTree from "./DeferredTree.js";
 import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
@@ -201,31 +202,14 @@ export async function isKeyForSubtree(tree, key) {
 }
 
 /**
- * Map the values of a tree.
+ * Return a new tree with deeply-mapped values of the original tree.
  *
  * @param {Treelike} treelike
- * @param {Function} mapFn
+ * @param {import("../index.ts").ValueKeyFn} valueFn
  */
-export async function map(treelike, mapFn) {
+export function map(treelike, valueFn) {
   const tree = from(treelike);
-  const keys = Array.from(await tree.keys());
-
-  // Prepopulate the result map with the keys so that the order of the results
-  // will match the order of the keys.
-  const result = new Map();
-  keys.forEach((key) => result.set(key, undefined));
-
-  // Get all the values in parallel, then wait for them all to resolve.
-  const promises = keys.map((key) =>
-    tree.get(key).then(async (value) => {
-      // If the value is a subtree, recurse.
-      const fn = isAsyncTree(value) ? map(value, mapFn) : mapFn(value, key);
-      const mappedValue = await fn;
-      result.set(key, mappedValue);
-    })
-  );
-  await Promise.all(promises);
-  return new MapTree(result);
+  return mapTransform({ deep: true, valueFn })(tree);
 }
 
 /**

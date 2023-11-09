@@ -74,7 +74,7 @@ describe("SiteTree", () => {
   test("can convert a SiteGraph to a plain object", async () => {
     const fixture = new SiteTree(mockHost);
     // Convert buffers to strings.
-    const strings = await Tree.map(fixture, (value) => value.toString());
+    const strings = Tree.map(fixture, (value) => value.toString());
     assert.deepEqual(await Tree.plain(strings), {
       about: {
         "Alice.html": "Hello, Alice!",

@@ -77,7 +77,6 @@ export default function treeMap(options) {
   if (extensions) {
     let { extension, innerExtension } = parseExtensions(extensions);
     const keyFns = keyFnsForExtensions({
-      deep,
       extension,
       innerExtension,
     });

@@ -111,7 +111,7 @@ async function createFixture() {
 }
 
 async function strings(tree) {
-  return Tree.plain(await Tree.map(tree, (value) => text(value)));
+  return Tree.plain(Tree.map(tree, (value) => text(value)));
 }
 
 function text(arrayBuffer) {
