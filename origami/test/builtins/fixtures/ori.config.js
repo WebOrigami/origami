@@ -1,7 +1,7 @@
+import { merge } from "@graphorigami/async-tree";
 import builtins from "../../../src/builtins/@builtins.js";
-import MergeTree from "../../../src/common/MergeTree.js";
 
-export default new MergeTree(
+export default merge(
   {
     fn() {
       return "Hello, world.";

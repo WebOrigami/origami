@@ -1,5 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
-import MergeTree from "./MergeTree.js";
+import { ObjectTree, Tree, merge } from "@graphorigami/async-tree";
 
 const globstar = "**";
 
@@ -60,7 +59,7 @@ async function matchGlobs(globs, text) {
       const globstarValue = await matchGlobs(globstarGlobs, text);
       value = globstarValue !== undefined ? globstarValue : globstarTree;
     } else if (Tree.isAsyncTree(value)) {
-      value = new MergeTree(value, globstarTree);
+      value = merge(value, globstarTree);
     }
   }
 
