@@ -6,7 +6,6 @@ const groupUrls = {
   "@cache": "https://graphorigami.org/language/@cache.html",
   "@tree": "https://graphorigami.org/language/@tree.html",
   "@image": "https://graphorigami.org/language/@image.html",
-  "@map": "https://graphorigami.org/language/@map.html",
   "@parse": "https://graphorigami.org/language/@parse.html",
   "@scope": "https://graphorigami.org/language/@scope.html",
 };

@@ -24,7 +24,7 @@ tests:
         </body>
       </html>
 
-  - title: Template can invoke a @map
+  - title: Template can invoke a map
     fixture:
       actual.ori: template.orit()
       names:
@@ -32,8 +32,8 @@ tests:
         - Bob
         - Carol
       template.orit: |
-        {{ @map/values(names, =`Hello, {{ _ }}!
-        `) }}
+        {{ @tree/map(=`Hello, {{ _ }}!
+        `)(names) }}
     expected: |
       Hello, Alice!
       Hello, Bob!

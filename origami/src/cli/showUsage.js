@@ -2,7 +2,6 @@ const groupDescriptions = {
   "@cache": "Functions for caching data",
   "@tree": "Functions for working with trees",
   "@image": "Functions for working with images",
-  "@map": "Functions for mapping trees",
   "@parse": "Parsing functions",
   "@scope": "Functions for working with tree scopes",
 };

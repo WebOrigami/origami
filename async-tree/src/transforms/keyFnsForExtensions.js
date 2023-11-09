@@ -6,14 +6,10 @@
  * expected by mapTransform and other transforms.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @param {{ deep?: boolean, extension?: string, innerExtension: string }}
+ * @param {{ extension?: string, innerExtension: string }}
  * options
  */
-export default function keyFnsForExtensions({
-  deep,
-  extension,
-  innerExtension,
-}) {
+export default function keyFnsForExtensions({ extension, innerExtension }) {
   if (!extension) {
     extension = innerExtension;
   }

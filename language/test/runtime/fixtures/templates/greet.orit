@@ -1,4 +1,4 @@
 Greetings:
 
-{{ @map/values(names.yaml, =`Hello, {{ _ }}.
-`) }}
+{{ @tree/map(=`Hello, {{ _ }}.
+`)(names.yaml) }}

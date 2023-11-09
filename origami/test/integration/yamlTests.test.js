@@ -1,21 +1,27 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import { Tree } from "@graphorigami/async-tree";
+import {
+  Tree,
+  keyFnsForExtensions,
+  mapTransform,
+} from "@graphorigami/async-tree";
 import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
-import MapExtensionsTree from "../../src/common/MapExtensionsTree.js";
 import TextDocument from "../../src/common/TextDocument.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 // Map the YAML files to test suites.
-const mapped = new MapExtensionsTree(fixtures, registerYamlSuite, {
-  extension: "yaml",
-});
+const mapped = mapTransform({
+  deep: true,
+  description: "yamlTests",
+  valueFn: registerYamlSuite,
+  ...keyFnsForExtensions({ innerExtension: "yaml" }),
+})(fixtures);
 
 // Force a traversal of the tree, triggering registration of all the tests.
 await Tree.plain(mapped);
