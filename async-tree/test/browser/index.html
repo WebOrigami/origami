@@ -11,15 +11,21 @@
         }
       }
     </script>
+    <!-- Omit FileTree.test.js, which is Node.js only -->
+    <!-- Omit SiteTree.test.js, which requires mocks -->
     <script type="module" src="../BrowserFileTree.test.js"></script>
     <script type="module" src="../DeferredTree.test.js"></script>
-    <!-- Omit FileTree.test.js, which is Node.js only -->
-    <script type="module" src="../ObjectTree.test.js"></script>
     <script type="module" src="../FunctionTree.test.js"></script>
     <script type="module" src="../MapTree.test.js"></script>
+    <script type="module" src="../ObjectTree.test.js"></script>
     <script type="module" src="../SetTree.test.js"></script>
-    <!-- Omit SiteTree.test.js, which requires mocks -->
     <script type="module" src="../Tree.test.js"></script>
+    <script type="module" src="../transforms/cachedKeyFns.test.js"></script>
+    <script
+      type="module"
+      src="../transforms/keyFnsForExtensions.test.js"
+    ></script>
+    <script type="module" src="../transforms/mapTransform.test.js"></script>
     <script type="module" src="../utilities.test.js"></script>
   </head>
   <body></body>
