@@ -57,10 +57,8 @@ export default function createCachedKeysTransform({
             continue;
           }
 
-          const innerValue = await tree.get(innerKey);
-
           let computedOuterKey;
-          if (deep && Tree.isAsyncTree(innerValue)) {
+          if (deep && (await Tree.isKeyForSubtree(tree, innerKey))) {
             computedOuterKey = innerKey;
           } else {
             computedOuterKey = await keyFn(innerKey, tree);
