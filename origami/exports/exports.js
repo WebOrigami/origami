@@ -3,8 +3,7 @@ export { default as apply } from "../src/builtins/@apply.js";
 export { default as arrows } from "../src/builtins/@arrows.js";
 export { default as body } from "../src/builtins/@body.js";
 export { default as builtins } from "../src/builtins/@builtins.js";
-export { default as cacheSite } from "../src/builtins/@cache/site.js";
-export { default as cacheTree } from "../src/builtins/@cache/tree.js";
+export { default as cache } from "../src/builtins/@cache.js";
 export { default as config } from "../src/builtins/@config.js";
 export { default as copy } from "../src/builtins/@copy.js";
 export { default as crawl } from "../src/builtins/@crawl.js";
@@ -104,7 +103,6 @@ export { default as defaultModuleExport } from "../src/cli/defaultModuleExport.j
 export { default as showUsage } from "../src/cli/showUsage.js";
 export { default as addValueKeyToScope } from "../src/common/addValueKeyToScope.js";
 export { default as arrowFunctionsMap } from "../src/common/arrowFunctionsMap.js";
-export { default as CacheSite } from "../src/common/CacheSite.js";
 export { default as CacheTree } from "../src/common/CacheTree.js";
 export { default as CommandModulesTransform } from "../src/common/CommandModulesTransform.js";
 export { default as ConstantTree } from "../src/common/ConstantTree.js";

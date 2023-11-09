@@ -1,6 +1,7 @@
 import { Scope } from "@graphorigami/language";
-import CacheTree from "../../common/CacheTree.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import CacheTree from "../common/CacheTree.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+
 /**
  * Caches tree values in a storable cache.
  *
@@ -11,7 +12,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [filter]
  * @this {AsyncTree|null}
  */
-export default async function cacheTree(tree, cache, filter) {
+export default async function cacheBuiltin(tree, cache, filter) {
   assertScopeIsDefined(this);
 
   /** @type {AsyncTree} */
@@ -20,5 +21,6 @@ export default async function cacheTree(tree, cache, filter) {
   return result;
 }
 
-cacheTree.usage = `@cache/tree tree, [cache], [filter]\tCaches tree values`;
-cacheTree.documentation = "https://graphorigami.org/cli/builtins.html#@cache";
+cacheBuiltin.usage = `@cache/tree tree, [cache], [filter]\tCaches tree values`;
+cacheBuiltin.documentation =
+  "https://graphorigami.org/cli/builtins.html#@cache";
