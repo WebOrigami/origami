@@ -1,5 +1,8 @@
+import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
-import ArrowTree from "../common/ArrowTree.js";
+import functionResultsMap from "@graphorigami/language/src/runtime/functionResultsMap.js";
+import builtins from "../../src/builtins/@builtins.js";
+import arrowFunctionsMap from "../common/arrowFunctionsMap.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -15,13 +18,17 @@ export default async function arrows(treelike) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
   if (treelike === undefined) {
-    return undefined;
+    throw TypeError(
+      "@arrows requires a treelike argument, but received undefined"
+    );
   }
   /** @type {AsyncTree} */
-  let tree = new ArrowTree(treelike, { deep: true });
-  tree = Scope.treeWithScope(tree, this);
-  tree[keySymbol] = "@arrows";
-  return tree;
+  const tree = Tree.from(treelike);
+  const mapped = functionResultsMap(arrowFunctionsMap()(tree));
+  const scope = this ?? builtins;
+  const scoped = Scope.treeWithScope(mapped, scope);
+  scoped[keySymbol] = "@arrows";
+  return scoped;
 }
 
 arrows.usage = `@arrows <obj>\tInterpret arrow keys in the tree as function calls`;

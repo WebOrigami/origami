@@ -8,11 +8,11 @@ import Scope from "./Scope.js";
  *
  * @type {import("@graphorigami/async-tree").TreeTransform}
  */
-export default function invokeFunctionsTransform(tree) {
+export default function functionResultsMap(tree) {
   return mapTransform({
-    description: "invoke functions transform",
+    description: "functionResultsMap",
 
-    valueFn: async (innerValue) => {
+    valueFn: async (innerValue, innerKey, tree) => {
       let outerValue;
       if (typeof innerValue === "function") {
         const scope = Scope.getScope(tree);
