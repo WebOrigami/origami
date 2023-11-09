@@ -10,10 +10,12 @@ import { castArrayLike, isPlainObject } from "./utilities.js";
 /**
  * Helper functions for working with async trees
  *
- * @typedef {import("../index.ts").Treelike} Treelike
  * @typedef {import("../index.ts").PlainObject} PlainObject
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../index.ts").ReduceFn} ReduceFn
+ * @typedef {import("../index.ts").Treelike} Treelike
+ * @typedef {import("../index.ts").ValueKeyFn} ValueKeyFn
  * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 
 /**
@@ -205,7 +207,7 @@ export async function isKeyForSubtree(tree, key) {
  * Return a new tree with deeply-mapped values of the original tree.
  *
  * @param {Treelike} treelike
- * @param {import("../index.ts").ValueKeyFn} valueFn
+ * @param {ValueKeyFn} valueFn
  */
 export function map(treelike, valueFn) {
   const tree = from(treelike);
@@ -223,10 +225,10 @@ export function map(treelike, valueFn) {
  * reduceFn, which should consolidate those into a single result.
  *
  * @param {Treelike} treelike
- * @param {Function|null} mapFn
- * @param {Function} reduceFn
+ * @param {ValueKeyFn|null} valueFn
+ * @param {ReduceFn} reduceFn
  */
-export async function mapReduce(treelike, mapFn, reduceFn) {
+export async function mapReduce(treelike, valueFn, reduceFn) {
   const tree = from(treelike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
@@ -237,9 +239,9 @@ export async function mapReduce(treelike, mapFn, reduceFn) {
     tree.get(key).then((value) =>
       // If the value is a subtree, recurse.
       isAsyncTree(value)
-        ? mapReduce(value, mapFn, reduceFn)
-        : mapFn
-        ? mapFn(value, key)
+        ? mapReduce(value, valueFn, reduceFn)
+        : valueFn
+        ? valueFn(value, key, tree)
         : value
     )
   );

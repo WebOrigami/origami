@@ -19,6 +19,8 @@ export type PlainObject = {
   [key: string]: any;
 };
 
+export type ReduceFn = (values: any[], keys: any[]) => Promise<any>;
+
 export type StringLike = string | HasString;
 
 export type Treelike =
