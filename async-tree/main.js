@@ -11,6 +11,7 @@ export { default as SiteTree } from "./src/SiteTree.js";
 export * as Tree from "./src/Tree.js";
 export * as keysJson from "./src/keysJson.js";
 export { default as merge } from "./src/operations/merge.js";
+export { default as mergeDeep } from "./src/operations/mergeDeep.js";
 export { default as cachedKeyFns } from "./src/transforms/cachedKeyFns.js";
 export { default as keyFnsForExtensions } from "./src/transforms/keyFnsForExtensions.js";
 export { default as mapTransform } from "./src/transforms/mapTransform.js";

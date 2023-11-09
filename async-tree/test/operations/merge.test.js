@@ -1,18 +1,18 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import * as Tree from "../../src/Tree.js";
 import merge from "../../src/operations/merge.js";
 
 describe("merge", () => {
   test("performs a shallow merge", async () => {
     const fixture = merge(
-      new ObjectTree({
+      Tree.from({
         a: 1,
         b: {
           c: 2,
         },
       }),
-      new ObjectTree({
+      Tree.from({
         // Will be obscured by `b` above
         b: {
           d: 3,

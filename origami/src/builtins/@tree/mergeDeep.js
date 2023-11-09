@@ -1,5 +1,5 @@
+import { mergeDeep } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
-import MergeDeepTree from "../../common/MergeDeepTree.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {Treelike[]} trees
  */
-export default async function mergeDeep(...trees) {
+export default async function treeMergeDeep(...trees) {
   assertScopeIsDefined(this);
   // Filter out null or undefined trees.
   const filtered = trees.filter((tree) => tree);
@@ -30,7 +30,7 @@ export default async function mergeDeep(...trees) {
   });
 
   // Merge the trees.
-  const result = new MergeDeepTree(...scopedTrees);
+  const result = mergeDeep(...scopedTrees);
 
   // Give the overall mixed tree a scope that includes the component trees and
   // the current scope.
@@ -39,6 +39,6 @@ export default async function mergeDeep(...trees) {
   return result;
 }
 
-mergeDeep.usage = `mergeDeep <...trees>\tMerge the given trees deeply`;
-mergeDeep.documentation =
+treeMergeDeep.usage = `mergeDeep <...trees>\tMerge the given trees deeply`;
+treeMergeDeep.documentation =
   "https://graphorigami.org/cli/builtins.html#mergeDeep";

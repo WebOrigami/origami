@@ -1,20 +1,20 @@
-import { Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import MergeDeepTree from "../../src/common/MergeDeepTree.js";
+import * as Tree from "../../src/Tree.js";
+import mergeDeep from "../../src/operations/mergeDeep.js";
 
-describe("MergeDeepTree", () => {
+describe("mergeDeep", () => {
   test("can merge deep", async () => {
-    const fixture = new MergeDeepTree(
-      {
+    const fixture = mergeDeep(
+      Tree.from({
         a: {
           b: 1,
           c: {
             d: 2,
           },
         },
-      },
-      {
+      }),
+      Tree.from({
         a: {
           b: 0, // Will be obscured by `b` above
           c: {
@@ -22,7 +22,7 @@ describe("MergeDeepTree", () => {
           },
           f: 4,
         },
-      }
+      })
     );
     assert.deepEqual(await Tree.plain(fixture), {
       a: {

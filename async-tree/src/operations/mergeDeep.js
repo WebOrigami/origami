@@ -1,27 +1,28 @@
+import * as Tree from "../Tree.js";
+
 /**
- * Return a tree that performs a shallow merge of the given trees.
- *
- * Given a set of trees, the `get` method looks at each tree in turn. The first
- * tree is asked for the value with the key. If an tree returns a defined value
- * (i.e., not undefined), that value is returned. If the first tree returns
- * undefined, the second tree will be asked, and so on. If none of the trees
- * return a defined value, the `get` method returns undefined.
+ * Return a tree that performs a deep merge of the given trees.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @returns {AsyncTree & { description: string }}
  */
-export default function merge(...trees) {
+export default function mergeDeep(...trees) {
   return {
-    description: "merge",
+    description: "mergeDeep",
 
     async get(key) {
+      const subtrees = [];
+
       for (const tree of trees) {
         const value = await tree.get(key);
-        if (value !== undefined) {
+        if (Tree.isAsyncTree(value)) {
+          subtrees.push(value);
+        } else if (value !== undefined) {
           return value;
         }
       }
-      return undefined;
+
+      return subtrees.length > 0 ? mergeDeep(...subtrees) : undefined;
     },
 
     async isKeyForSubtree(key) {
