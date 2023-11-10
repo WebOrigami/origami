@@ -9,12 +9,32 @@ import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction } from "../../common/utilities.js";
 
 /**
+ * Map a hierarchical tree of keys and values to a new tree of keys and values.
  *
  * @typedef {import("@graphorigami/async-tree").KeyFn} KeyMapFn
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("@graphorigami/async-tree").ValueKeyFn} ValueKeyFn
+ * @typedef {import("@graphorigami/async-tree").TreeTransform} TreeTransform
+ * @typedef {import("../../../index.ts").TreelikeTransform} TreelikeTransform
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ *
+ * @typedef {{ deep?: boolean, description?: string, extensions?: string,
+ * innerKeyFn?: KeyMapFn, keyFn?: ValueKeyFn, keyName?: string, valueFn?:
+ * ValueKeyFn, valueName?: string }} Options
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
- * @param {ValueKeyFn|{ deep?: boolean, description?: string, extensions?: string, innerKeyFn?: KeyMapFn, keyFn?: ValueKeyFn, keyName?: string, valueFn?: ValueKeyFn, valueName?: string }} options
+ *
+ * @overload
+ * @param {ValueKeyFn} options
+ * @returns {TreeTransform}
+ *
+ * @overload
+ * @param {Options & { source: Treelike }} options
+ * @returns {AsyncTree}
+ *
+ * @overload
+ * @param {Options} options
+ * @returns {TreelikeTransform}
  */
 export default function treeMap(options) {
   let deep;
@@ -23,6 +43,7 @@ export default function treeMap(options) {
   let innerKeyFn;
   let keyFn;
   let keyName;
+  let source;
   let valueFn;
   let valueName;
   if (
@@ -41,6 +62,7 @@ export default function treeMap(options) {
       keyName,
       valueFn,
       valueName,
+      source,
     } = options);
     description ??= `@tree/map ${extensions ?? ""}`;
   }
@@ -106,7 +128,7 @@ export default function treeMap(options) {
     extendedInnerKeyFn = keyFns.innerKeyFn;
   }
 
-  return function map(treelike) {
+  const transform = function map(treelike) {
     const tree = Tree.from(treelike);
     return mapTransform({
       deep,
@@ -116,6 +138,8 @@ export default function treeMap(options) {
       valueFn: extendedValueFn,
     })(tree);
   };
+
+  return source ? transform(source) : transform;
 }
 
 /**

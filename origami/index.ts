@@ -4,6 +4,7 @@
  */
 
 import { Treelike, Unpackable } from "@graphorigami/async-tree";
+import { AsyncTree } from "@graphorigami/types";
 
 /**
  * A class constructor is an object with a `new` method that returns an
@@ -20,3 +21,5 @@ export interface JsonObject {
 export type JsonValue = boolean | number | string | Date | JsonObject | JsonValue[] | null;
 
 export type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array;
+
+export type TreelikeTransform = (value: Treelike) => AsyncTree;

@@ -86,6 +86,27 @@ describe("@tree/map", () => {
     });
   });
 
+  test("can take a treelike source and return the transformed tree", async () => {
+    const treelike = {
+      a: 1,
+      more: {
+        b: 2,
+      },
+    };
+    const mapped = map.call(null, {
+      deep: true,
+      keyFn: (innerValue, innerKey, tree) => `${innerKey}${innerValue}`,
+      source: treelike,
+      valueFn: (innerValue, innerKey, tree) => 2 * innerValue,
+    });
+    assert.deepEqual(await Tree.plain(mapped), {
+      a1: 2,
+      more: {
+        b2: 4,
+      },
+    });
+  });
+
   test("can map extensions deeply", async () => {
     const treelike = {
       "file1.txt": "will be mapped",
