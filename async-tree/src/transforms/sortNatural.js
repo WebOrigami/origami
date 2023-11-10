@@ -5,6 +5,6 @@ import sort from "./sort.js";
  * Return a transform function that sorts a tree's keys using [natural sort
  * order](https://en.wikipedia.org/wiki/Natural_sort_order).
  */
-export default function createSortNaturalTransform() {
+export default function sortNaturalTransform() {
   return sort(naturalSortCompareFn);
 }

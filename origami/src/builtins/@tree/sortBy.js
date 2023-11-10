@@ -35,5 +35,6 @@ export default async function sortByBuiltin(treelike, sortKeyFn) {
   return scoped;
 }
 
-sort.usage = `@sort <tree>, [keyFn]\tReturn a new tree with the original's keys sorted`;
-sort.documentation = "https://graphorigami.org/cli/builtins.html#@sort";
+sortByBuiltin.usage = `@sort <tree>, [keyFn]\tReturn a new tree with the original's keys sorted`;
+sortByBuiltin.documentation =
+  "https://graphorigami.org/cli/builtins.html#@sort";
