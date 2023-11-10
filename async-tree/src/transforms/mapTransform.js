@@ -6,28 +6,28 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {ValueKeyFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyFn, keyFn?: KeyFn, valueFn?: ValueKeyFn }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, inverseKeyMap?: KeyFn, keyMap?: KeyFn, valueMap?: ValueKeyFn }} options
  */
 export default function createMapTransform(options) {
   let deep;
   let description;
-  let innerKeyFn;
-  let keyFn;
-  let valueFn;
+  let inverseKeyMap;
+  let keyMap;
+  let valueMap;
   if (typeof options === "function") {
-    // Take the single function argument as the valueFn
-    valueFn = options;
+    // Take the single function argument as the valueMap
+    valueMap = options;
   } else {
     deep = options.deep ?? false;
     description = options.description ?? "key/value map";
-    innerKeyFn = options.innerKeyFn;
-    keyFn = options.keyFn;
-    valueFn = options.valueFn;
+    inverseKeyMap = options.inverseKeyMap;
+    keyMap = options.keyMap;
+    valueMap = options.valueMap;
   }
 
-  if ((keyFn && !innerKeyFn) || (!keyFn && innerKeyFn)) {
+  if ((keyMap && !inverseKeyMap) || (!keyMap && inverseKeyMap)) {
     throw new TypeError(
-      `mapTransform: You must specify both keyFn and innerKeyFn, or neither.`
+      `mapTransform: You must specify both keyMap and inverseKeyMap, or neither.`
     );
   }
 
@@ -38,59 +38,59 @@ export default function createMapTransform(options) {
     const transform = Object.create(tree);
     transform.description = description;
 
-    if (keyFn || valueFn) {
-      transform.get = async (outerKey) => {
-        // Step 1: Map the outer key to the inner key.
-        const isSubtree = deep && (await Tree.isKeyForSubtree(tree, outerKey));
-        const innerKey =
-          !isSubtree && innerKeyFn
-            ? await innerKeyFn(outerKey, tree)
-            : outerKey;
+    if (keyMap || valueMap) {
+      transform.get = async (resultKey) => {
+        // Step 1: Map the result key to the source key.
+        const isSubtree = deep && (await Tree.isKeyForSubtree(tree, resultKey));
+        const sourceKey =
+          !isSubtree && inverseKeyMap
+            ? await inverseKeyMap(resultKey, tree)
+            : resultKey;
 
-        if (!innerKey) {
-          // No inner key means no value.
+        if (!sourceKey) {
+          // No source key means no value.
           return undefined;
         }
 
-        // Step 2: Get the inner value.
-        const innerValue = await tree.get(innerKey);
+        // Step 2: Get the source value.
+        const sourceValue = await tree.get(sourceKey);
 
-        // Step 3: Map the inner value to the outer value.
-        let outerValue;
-        if (innerValue === undefined) {
-          // No inner value means no outer value.
-          outerValue = undefined;
-        } else if (deep && Tree.isAsyncTree(innerValue)) {
+        // Step 3: Map the source value to the result value.
+        let resultValue;
+        if (sourceValue === undefined) {
+          // No source value means no result value.
+          resultValue = undefined;
+        } else if (deep && Tree.isAsyncTree(sourceValue)) {
           // Map a subtree.
-          outerValue = mapTransform(innerValue);
-        } else if (valueFn) {
+          resultValue = mapTransform(sourceValue);
+        } else if (valueMap) {
           // Map a single value.
-          outerValue = await valueFn(innerValue, innerKey, tree);
+          resultValue = await valueMap(sourceValue, sourceKey, tree);
         } else {
-          // Return inner value as is.
-          outerValue = innerValue;
+          // Return source value as is.
+          resultValue = sourceValue;
         }
 
-        return outerValue;
+        return resultValue;
       };
     }
 
-    if (keyFn) {
+    if (keyMap) {
       transform.keys = async () => {
-        // Apply the keyFn to inner keys for leaf values (not subtrees).
+        // Apply the keyMap to source keys for leaf values (not subtrees).
         const innerKeys = [...(await tree.keys())];
         const mapped = await Promise.all(
-          innerKeys.map(async (innerKey) => {
-            let outerKey;
-            if (deep && (await Tree.isKeyForSubtree(tree, innerKey))) {
-              outerKey = innerKey;
+          innerKeys.map(async (sourceKey) => {
+            let resultKey;
+            if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
+              resultKey = sourceKey;
             } else {
-              outerKey = await keyFn(innerKey, tree);
+              resultKey = await keyMap(sourceKey, tree);
             }
-            return outerKey;
+            return resultKey;
           })
         );
-        // Filter out any cases where the keyFn returned undefined.
+        // Filter out any cases where the keyMap returned undefined.
         const outerKeys = mapped.filter((key) => key !== undefined);
         return outerKeys;
       };

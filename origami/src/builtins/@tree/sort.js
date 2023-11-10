@@ -21,5 +21,5 @@ export default async function sort(treelike) {
   return scoped;
 }
 
-sort.usage = `@sort <tree>, [keyFn]\tReturn a new tree with the original's keys sorted`;
+sort.usage = `@sort <tree>, [keyMap]\tReturn a new tree with the original's keys sorted`;
 sort.documentation = "https://graphorigami.org/cli/builtins.html#@sort";

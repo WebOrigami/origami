@@ -3,7 +3,7 @@ import { Scope } from "@graphorigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
- * Return the inner nodes of the tree: the nodes with children.
+ * Return the source nodes of the tree: the nodes with children.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
@@ -40,5 +40,5 @@ export default async function inners(treelike) {
   return result;
 }
 
-inners.usage = `inners <tree>\tThe inner nodes of the tree`;
+inners.usage = `inners <tree>\tThe source nodes of the tree`;
 inners.documentation = "https://graphorigami.org/cli/builtins.html#inners";

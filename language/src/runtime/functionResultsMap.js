@@ -12,18 +12,18 @@ export default function functionResultsMap(tree) {
   return mapTransform({
     description: "functionResultsMap",
 
-    valueFn: async (innerValue, innerKey, tree) => {
-      let outerValue;
-      if (typeof innerValue === "function") {
+    valueMap: async (sourceValue, sourceKey, tree) => {
+      let resultValue;
+      if (typeof sourceValue === "function") {
         const scope = Scope.getScope(tree);
-        outerValue = await innerValue.call(scope);
-        if (Tree.isAsyncTree(outerValue)) {
-          outerValue.parent = tree;
+        resultValue = await sourceValue.call(scope);
+        if (Tree.isAsyncTree(resultValue)) {
+          resultValue.parent = tree;
         }
       } else {
-        outerValue = innerValue;
+        resultValue = sourceValue;
       }
-      return outerValue;
+      return resultValue;
     },
   })(tree);
 }

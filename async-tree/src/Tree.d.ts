@@ -11,7 +11,7 @@ export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;
 export function isKeyForSubtree(tree: AsyncTree, obj: any): Promise<boolean>;
 export function isTreelike(obj: any): obj is Treelike;
-export function map(tree: Treelike, valueFn: ValueKeyFn): AsyncTree;
+export function map(tree: Treelike, valueMap: ValueKeyFn): AsyncTree;
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn|null, reduceFn: ReduceFn): Promise<any>;
 export function plain(tree: Treelike): Promise<PlainObject>;
 export function remove(AsyncTree: AsyncMutableTree, key: any): Promise<boolean>;

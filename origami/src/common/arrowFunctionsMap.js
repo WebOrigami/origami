@@ -1,4 +1,4 @@
-import { cachedKeyFns, mapTransform } from "@graphorigami/async-tree";
+import { cachedKeyMaps, mapTransform } from "@graphorigami/async-tree";
 import { toFunction } from "./utilities.js";
 
 export default function arrowFunctionsMap() {
@@ -6,30 +6,30 @@ export default function arrowFunctionsMap() {
   return mapTransform({
     deep,
     description: "arrowFunctions",
-    valueFn,
-    ...cachedKeyFns(keyFn, deep),
+    valueMap,
+    ...cachedKeyMaps(keyMap, deep),
   });
 }
 
-function keyFn(innerKey, tree) {
-  return parseArrowKey(innerKey) ?? innerKey;
+function keyMap(sourceKey, tree) {
+  return parseArrowKey(sourceKey) ?? sourceKey;
 }
 
 // If the key is of the form "lhs←rhs", return "lhs".
 // Whitespace between the lhs and the arrow is ignored.
-function parseArrowKey(innerKey) {
+function parseArrowKey(sourceKey) {
   const regex = /^(?<lhs>.+?)\s*←.+$/;
-  const match = innerKey.match(regex);
+  const match = sourceKey.match(regex);
   return match?.groups.lhs;
 }
 
-function valueFn(innerValue, innerKey, tree) {
-  let outerValue;
-  if (parseArrowKey(innerKey)) {
+function valueMap(sourceValue, sourceKey, tree) {
+  let resultValue;
+  if (parseArrowKey(sourceKey)) {
     // Treat the value as a function to be invoked.
-    outerValue = toFunction(innerValue);
+    resultValue = toFunction(sourceValue);
   } else {
-    outerValue = innerValue;
+    resultValue = sourceValue;
   }
-  return outerValue;
+  return resultValue;
 }

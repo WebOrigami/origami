@@ -1,5 +1,5 @@
 /** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { keyFnsForExtensions, mapTransform } from "@graphorigami/async-tree";
+import { keyMapsForExtensions, mapTransform } from "@graphorigami/async-tree";
 import unpackOrigamiTemplate from "../src/builtins/@loaders/orit.js";
 import { transformObject } from "../src/common/utilities.js";
 import PathTransform from "./PathTransform.js";
@@ -101,8 +101,8 @@ function exportStatements(src) {
   // Map each source file to an export statement.
   const mapped = mapTransform({
     deep: true,
-    valueFn: exportStatementForCode,
-    ...keyFnsForExtensions({ innerExtension: "js" }),
+    valueMap: exportStatementForCode,
+    ...keyMapsForExtensions({ sourceExtension: "js" }),
   })(withPaths);
 
   return mapped;

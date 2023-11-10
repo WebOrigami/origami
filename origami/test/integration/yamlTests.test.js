@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 
 import {
   Tree,
-  keyFnsForExtensions,
+  keyMapsForExtensions,
   mapTransform,
 } from "@graphorigami/async-tree";
 import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
@@ -19,8 +19,8 @@ const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 const mapped = mapTransform({
   deep: true,
   description: "yamlTests",
-  valueFn: registerYamlSuite,
-  ...keyFnsForExtensions({ innerExtension: "yaml" }),
+  valueMap: registerYamlSuite,
+  ...keyMapsForExtensions({ sourceExtension: "yaml" }),
 })(fixtures);
 
 // Force a traversal of the tree, triggering registration of all the tests.

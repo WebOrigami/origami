@@ -1,6 +1,6 @@
 import {
-  cachedKeyFns,
-  keyFnsForExtensions,
+  cachedKeyMaps,
+  keyMapsForExtensions,
   mapTransform,
   Tree,
 } from "@graphorigami/async-tree";
@@ -19,7 +19,7 @@ import { toFunction } from "../../common/utilities.js";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
  * @typedef {{ deep?: boolean, description?: string, extensions?: string,
- * innerKeyFn?: KeyMapFn, keyFn?: ValueKeyFn, keyName?: string, valueFn?:
+ * inverseKeyMap?: KeyMapFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
  * ValueKeyFn, valueName?: string }} Options
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
@@ -40,27 +40,27 @@ export default function treeMap(options) {
   let deep;
   let description;
   let extensions;
-  let innerKeyFn;
-  let keyFn;
+  let inverseKeyMap;
+  let keyMap;
   let keyName;
   let source;
-  let valueFn;
+  let valueMap;
   let valueName;
   if (
     typeof options === "function" ||
     typeof (/** @type {any} */ (options)?.unpack) === "function"
   ) {
-    // Take the single function argument as the valueFn
-    valueFn = options;
+    // Take the single function argument as the valueMap
+    valueMap = options;
   } else {
     ({
       deep,
       description,
       extensions,
-      innerKeyFn,
-      keyFn,
+      inverseKeyMap,
+      keyMap,
       keyName,
-      valueFn,
+      valueMap,
       valueName,
       source,
     } = options);
@@ -68,9 +68,9 @@ export default function treeMap(options) {
   }
 
   if (extensions) {
-    if (keyFn || innerKeyFn) {
+    if (keyMap || inverseKeyMap) {
       throw new TypeError(
-        `@tree/map: You can't specify both extensions and a keyFn or innerKeyFn`
+        `@tree/map: You can't specify both extensions and a keyMap or inverseKeyMap`
       );
     }
   }
@@ -79,17 +79,17 @@ export default function treeMap(options) {
 
   // Extend the value function to include the value and key in scope.
   let extendedValueFn;
-  if (valueFn) {
-    const resolvedValueFn = toFunction(valueFn);
-    extendedValueFn = function (innerValue, innerKey, tree) {
+  if (valueMap) {
+    const resolvedValueFn = toFunction(valueMap);
+    extendedValueFn = function (sourceValue, sourceKey, tree) {
       const scope = addValueKeyToScope(
         baseScope,
-        innerValue,
-        innerKey,
+        sourceValue,
+        sourceKey,
         valueName,
         keyName
       );
-      return resolvedValueFn.call(scope, innerValue, innerKey, tree);
+      return resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
     };
   }
 
@@ -97,35 +97,35 @@ export default function treeMap(options) {
   let extendedKeyFn;
   let extendedInnerKeyFn;
   if (extensions) {
-    let { extension, innerExtension } = parseExtensions(extensions);
-    const keyFns = keyFnsForExtensions({
-      extension,
-      innerExtension,
+    let { resultExtension, sourceExtension } = parseExtensions(extensions);
+    const keyFns = keyMapsForExtensions({
+      resultExtension,
+      sourceExtension,
     });
-    extendedKeyFn = keyFns.keyFn;
-    extendedInnerKeyFn = keyFns.innerKeyFn;
-  } else if (keyFn) {
-    const resolvedKeyFn = toFunction(keyFn);
-    async function scopedKeyFn(innerKey, tree) {
-      const innerValue = await tree.get(innerKey);
+    extendedKeyFn = keyFns.keyMap;
+    extendedInnerKeyFn = keyFns.inverseKeyMap;
+  } else if (keyMap) {
+    const resolvedKeyFn = toFunction(keyMap);
+    async function scopedKeyFn(sourceKey, tree) {
+      const sourceValue = await tree.get(sourceKey);
       const scope = addValueKeyToScope(
         baseScope,
-        innerValue,
-        innerKey,
+        sourceValue,
+        sourceKey,
         valueName,
         keyName
       );
-      const outerKey = await resolvedKeyFn.call(
+      const resultKey = await resolvedKeyFn.call(
         scope,
-        innerValue,
-        innerKey,
+        sourceValue,
+        sourceKey,
         tree
       );
-      return outerKey;
+      return resultKey;
     }
-    const keyFns = cachedKeyFns(scopedKeyFn);
-    extendedKeyFn = keyFns.keyFn;
-    extendedInnerKeyFn = keyFns.innerKeyFn;
+    const keyFns = cachedKeyMaps(scopedKeyFn);
+    extendedKeyFn = keyFns.keyMap;
+    extendedInnerKeyFn = keyFns.inverseKeyMap;
   }
 
   const transform = function map(treelike) {
@@ -133,9 +133,9 @@ export default function treeMap(options) {
     return mapTransform({
       deep,
       description,
-      innerKeyFn: extendedInnerKeyFn,
-      keyFn: extendedKeyFn,
-      valueFn: extendedValueFn,
+      inverseKeyMap: extendedInnerKeyFn,
+      keyMap: extendedKeyFn,
+      valueMap: extendedValueFn,
     })(tree);
   };
 
@@ -144,7 +144,7 @@ export default function treeMap(options) {
 
 /**
  * Given a string specifying an extension or a mapping of one extension to another,
- * return the inner and outer extensions.
+ * return the source and result extensions.
  *
  * Syntax:
  *   foo
@@ -156,17 +156,17 @@ export default function treeMap(options) {
 function parseExtensions(specifier) {
   const lowercase = specifier?.toLowerCase() ?? "";
   const extensionRegex =
-    /^\.?(?<innerExtension>\S*)(?:\s*(→|->)\s*)\.?(?<extension>\S+)$/;
-  let extension;
-  let innerExtension;
+    /^\.?(?<sourceExtension>\S*)(?:\s*(→|->)\s*)\.?(?<extension>\S+)$/;
+  let resultExtension;
+  let sourceExtension;
   const match = lowercase.match(extensionRegex);
   if (match?.groups) {
     // foo→bar
-    ({ extension, innerExtension } = match.groups);
+    ({ extension: resultExtension, sourceExtension } = match.groups);
   } else {
     // foo
-    extension = lowercase;
-    innerExtension = lowercase;
+    resultExtension = lowercase;
+    sourceExtension = lowercase;
   }
-  return { extension, innerExtension };
+  return { resultExtension, sourceExtension };
 }
