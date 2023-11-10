@@ -1,9 +1,6 @@
 import { Tree } from "@graphorigami/async-tree";
 
 /**
- * Caches the results retrieved from one source tree in a second cache tree.
- * The second cache tree is consulted first.
- *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */

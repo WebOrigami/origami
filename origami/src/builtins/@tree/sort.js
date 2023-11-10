@@ -1,12 +1,9 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree, sortNatural } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
-import SortTransform from "../../common/SortTransform.js";
-import addValueKeyToScope from "../../common/addValueKeyToScope.js";
-import { toFunction, transformObject } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
- * Return a new tree with the original's keys sorted
+ * Return a new tree with the original's keys sorted in natural sort order.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
@@ -14,50 +11,14 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
- * @param {Invocable|null} [invocable]
  */
-export default async function sort(treelike, invocable) {
+export default async function sort(treelike) {
   assertScopeIsDefined(this);
   treelike = treelike ?? (await this?.get("@current"));
   const tree = Tree.from(treelike);
-
-  let result;
-  if (!invocable) {
-    // Simple case: sort by tree's existing keys.
-    result = transformObject(SortTransform, tree);
-  } else {
-    const keyFn = toFunction(invocable);
-
-    // Complex case: sort by a function that returns a key for each value.
-    result = Object.create(tree);
-
-    result.keys = async function () {
-      const sorted = [];
-      // Get all the keys and map them to their sort keys.
-      for (const key of await tree.keys()) {
-        const value = await tree.get(key);
-        const scope = addValueKeyToScope(Scope.getScope(this), value, key);
-        const sortKey = await keyFn.call(scope, value, key);
-        sorted.push({ key, sortKey });
-      }
-      // Sort the key/sortKey pairs by sortKey.
-      sorted.sort((a, b) => {
-        if (a.sortKey < b.sortKey) {
-          return -1;
-        }
-        if (a.sortKey > b.sortKey) {
-          return 1;
-        }
-        return 0;
-      });
-      // Get the sorted keys
-      const keys = sorted.map(({ key }) => key);
-      return keys;
-    };
-  }
-
-  result = Scope.treeWithScope(result, this);
-  return result;
+  const sorted = sortNatural()(tree);
+  const scoped = Scope.treeWithScope(sorted, this);
+  return scoped;
 }
 
 sort.usage = `@sort <tree>, [keyFn]\tReturn a new tree with the original's keys sorted`;

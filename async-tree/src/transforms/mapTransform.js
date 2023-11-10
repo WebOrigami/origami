@@ -7,7 +7,6 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
  * @param {ValueKeyFn|{ deep?: boolean, description?: string, innerKeyFn?: KeyFn, keyFn?: KeyFn, valueFn?: ValueKeyFn }} options
- * @returns
  */
 export default function createMapTransform(options) {
   let deep;

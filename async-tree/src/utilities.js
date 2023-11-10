@@ -1,8 +1,3 @@
-// Used for natural sort order
-const collator = new Intl.Collator(undefined, {
-  numeric: true,
-});
-
 /**
  * If the given plain object has only sequential integer keys, return it as an
  * array. Otherwise return it as is.
@@ -108,6 +103,11 @@ export function keysFromPath(pathname) {
   return keys;
 }
 
+// Used for natural sort order
+export const naturalSortCompareFn = new Intl.Collator(undefined, {
+  numeric: true,
+}).compare;
+
 /**
  * Sort the given array using [natural sort
  * order](https://en.wikipedia.org/wiki/Natural_sort_order). Like the native
@@ -120,5 +120,5 @@ export function keysFromPath(pathname) {
  * instead of ["file1", "file10", "file9"].
  */
 export function sortNatural(array) {
-  array.sort(collator.compare);
+  array.sort(naturalSortCompareFn);
 }

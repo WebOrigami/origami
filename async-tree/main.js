@@ -16,4 +16,7 @@ export { default as mergeDeep } from "./src/operations/mergeDeep.js";
 export { default as cachedKeyFns } from "./src/transforms/cachedKeyFns.js";
 export { default as keyFnsForExtensions } from "./src/transforms/keyFnsForExtensions.js";
 export { default as mapTransform } from "./src/transforms/mapTransform.js";
+export { default as sort } from "./src/transforms/sort.js";
+export { default as sortBy } from "./src/transforms/sortBy.js";
+export { default as sortNatural } from "./src/transforms/sortNatural.js";
 export * from "./src/utilities.js";
