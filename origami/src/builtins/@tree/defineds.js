@@ -19,7 +19,7 @@ export default async function defineds(treelike) {
   }
 
   /** @type {AsyncTree} */
-  let result = await Tree.mapReduce(treelike, null, (values, keys) => {
+  let result = await Tree.mapReduce(treelike, null, async (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {

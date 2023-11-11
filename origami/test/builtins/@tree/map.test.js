@@ -93,12 +93,16 @@ describe("@tree/map", () => {
         b: 2,
       },
     };
-    const mapped = map.call(null, {
-      deep: true,
-      keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
-      source: treelike,
-      valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
-    });
+    const mapped = map.call(
+      null,
+      /** @satisfies {import("../../../src/builtins/@tree/map.js").OptionsWithSource} */ ({
+        deep: true,
+        keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
+        // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
+        source: treelike,
+        valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
+      })
+    );
     assert.deepEqual(await Tree.plain(mapped), {
       a1: 2,
       more: {

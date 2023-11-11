@@ -203,7 +203,7 @@ describe("Tree", () => {
     const reduced = await Tree.mapReduce(
       tree,
       (value) => value,
-      (values) => String.prototype.concat(...values)
+      async (values) => String.prototype.concat(...values)
     );
     assert.deepEqual(reduced, "1234");
   });

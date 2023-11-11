@@ -21,6 +21,7 @@ import { toFunction } from "../../common/utilities.js";
  * @typedef {{ deep?: boolean, description?: string, extensions?: string,
  * inverseKeyMap?: KeyMapFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
  * ValueKeyFn, valueName?: string }} Options
+ * @typedef {Options & { source: Treelike }} OptionsWithSource
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
  *
@@ -29,7 +30,7 @@ import { toFunction } from "../../common/utilities.js";
  * @returns {TreeTransform}
  *
  * @overload
- * @param {Options & { source: Treelike }} options
+ * @param {OptionsWithSource} options
  * @returns {AsyncTree}
  *
  * @overload

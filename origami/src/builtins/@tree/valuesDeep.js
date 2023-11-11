@@ -15,7 +15,7 @@ export default async function valuesDeep(treelike) {
   if (treelike === undefined) {
     return undefined;
   }
-  return Tree.mapReduce(treelike, null, (values) => values.flat());
+  return Tree.mapReduce(treelike, null, async (values) => values.flat());
 }
 
 valuesDeep.usage = `valuesDeep <tree>\tThe in-order tree values as a flat array`;
