@@ -35,11 +35,16 @@ export default function createMapTransform(options) {
    * @type {import("../../index.ts").TreeTransform}
    */
   return function mapTransform(tree) {
-    const transform = Object.create(tree);
-    transform.description = description;
+    // The transformed tree is actually an extension of the original tree's
+    // prototype chain. This allows the transformed tree to inherit any
+    // properties/methods that do not need to be specified. For example, the
+    // `parent` of the transformed tree is the original tree's parent.
+    const transformed = Object.create(tree);
+
+    transformed.description = description;
 
     if (keyMap || valueMap) {
-      transform.get = async (resultKey) => {
+      transformed.get = async (resultKey) => {
         // Step 1: Map the result key to the source key.
         const isSubtree = deep && (await Tree.isKeyForSubtree(tree, resultKey));
         const sourceKey =
@@ -76,11 +81,11 @@ export default function createMapTransform(options) {
     }
 
     if (keyMap) {
-      transform.keys = async () => {
+      transformed.keys = async () => {
         // Apply the keyMap to source keys for leaf values (not subtrees).
-        const innerKeys = [...(await tree.keys())];
+        const sourceKeys = [...(await tree.keys())];
         const mapped = await Promise.all(
-          innerKeys.map(async (sourceKey) => {
+          sourceKeys.map(async (sourceKey) => {
             let resultKey;
             if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
               resultKey = sourceKey;
@@ -91,11 +96,11 @@ export default function createMapTransform(options) {
           })
         );
         // Filter out any cases where the keyMap returned undefined.
-        const outerKeys = mapped.filter((key) => key !== undefined);
-        return outerKeys;
+        const resultKeys = mapped.filter((key) => key !== undefined);
+        return resultKeys;
       };
     }
 
-    return transform;
+    return transformed;
   };
 }

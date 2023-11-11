@@ -95,16 +95,16 @@ export default function treeMap(options) {
   }
 
   // Extend the key function to include the value and key in scope.
-  let extendedKeyFn;
-  let extendedInnerKeyFn;
+  let extendedKeyMap;
+  let extendedInnerKeyMap;
   if (extensions) {
     let { resultExtension, sourceExtension } = parseExtensions(extensions);
     const keyFns = keyMapsForExtensions({
       resultExtension,
       sourceExtension,
     });
-    extendedKeyFn = keyFns.keyMap;
-    extendedInnerKeyFn = keyFns.inverseKeyMap;
+    extendedKeyMap = keyFns.keyMap;
+    extendedInnerKeyMap = keyFns.inverseKeyMap;
   } else if (keyMap) {
     const resolvedKeyFn = toFunction(keyMap);
     async function scopedKeyFn(sourceKey, tree) {
@@ -125,8 +125,8 @@ export default function treeMap(options) {
       return resultKey;
     }
     const keyFns = cachedKeyMaps(scopedKeyFn);
-    extendedKeyFn = keyFns.keyMap;
-    extendedInnerKeyFn = keyFns.inverseKeyMap;
+    extendedKeyMap = keyFns.keyMap;
+    extendedInnerKeyMap = keyFns.inverseKeyMap;
   }
 
   const transform = function map(treelike) {
@@ -134,8 +134,8 @@ export default function treeMap(options) {
     return mapTransform({
       deep,
       description,
-      inverseKeyMap: extendedInnerKeyFn,
-      keyMap: extendedKeyFn,
+      inverseKeyMap: extendedInnerKeyMap,
+      keyMap: extendedKeyMap,
       valueMap: extendedValueFn,
     })(tree);
   };
