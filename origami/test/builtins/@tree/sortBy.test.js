@@ -1,3 +1,4 @@
+import { Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import sortBy from "../../../src/builtins/@tree/sortBy.js";
@@ -14,7 +15,7 @@ describe("@tree/sortBy", () => {
       tree,
       /** @this {import("@graphorigami/types").AsyncTree} */
       function (value, key, tree) {
-        return this.get("age");
+        return Tree.traverse(this, "_", "age");
       }
     );
     assert.deepEqual(Array.from(await sorted.keys()), [
