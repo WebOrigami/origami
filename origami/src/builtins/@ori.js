@@ -18,7 +18,7 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 export default async function ori(expression) {
   assertScopeIsDefined(this);
   // In case expression is a Buffer, cast it to a string.
-  expression = String(expression).trim();
+  expression = String(expression);
 
   // Obtain the scope from `this` or builtins.
   let scope = this ?? builtins;

@@ -12,9 +12,12 @@
   "dependencies": {
     "@graphorigami/types": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f4058a89",
     "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f4058a89",
+    "peggy": "3.0.2",
     "watcher": "2.3.0"
   },
   "scripts": {
+    "build": "peggy --allowed-start-rules=\"*\" --format es src/peggy/origami.pegjs --output src/peggy/parse.js",
+    "prepublishOnly": "npm run build",
     "test": "node --test",
     "typecheck": "tsc"
   }

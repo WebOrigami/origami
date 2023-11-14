@@ -1,15 +1,42 @@
+import assert from "node:assert";
+import { parse as parseNew } from "../peggy/parse.js";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { lex, state } from "./lex.js";
 import * as parse from "./parse.js";
 
 function compile(text, compiler, initialLexState = state.EXPRESSION) {
+  const old0 = performance.now();
+
   const tokens = lex(text, initialLexState);
   const parsed = compiler(tokens);
   if (!parsed || parsed.rest.length > 0) {
     throw new SyntaxError(`Invalid expression: ${text}`);
   }
   const code = parsed.value;
-  const fn = createExpressionFunction(code);
+
+  const old1 = performance.now();
+  console.log(`old parser: ${old1 - old0} milliseconds`);
+
+  const startRule =
+    initialLexState === state.EXPRESSION ? "expression" : "templateDocument";
+
+  // Trim whitespace from template blocks before we begin lexing, as our
+  // heuristics are non-local and hard to implement in our parser.
+  const new0 = performance.now();
+  const preprocessed = trimTemplateWhitespace(text);
+  const codeNew = parseNew(preprocessed, { startRule });
+
+  const new1 = performance.now();
+  console.log(`new parser: ${new1 - new0} milliseconds`);
+
+  try {
+    assert.deepEqual(codeNew, code);
+  } catch (e) {
+    debugger;
+  }
+
+  // const fn = createExpressionFunction(code);
+  const fn = createExpressionFunction(codeNew);
   return fn;
 }
 
@@ -19,4 +46,40 @@ export function expression(text) {
 
 export function templateDocument(text) {
   return compile(text, parse.templateDocument, state.TEMPLATE_DOCUMENT);
+}
+
+// Trim the whitespace around and in substitution blocks in a template. There's
+// no explicit syntax for blocks, but we infer them as any place where a
+// substitution itself contains a multi-line template literal.
+//
+// Example:
+//
+//     {{ if `
+//       true text
+//     `, `
+//       false text
+//     ` }}
+//
+// Case 1: a substitution that starts the text or starts a line (there's only
+// whitespace before the `{{`), and has the line end with the start of a
+// template literal (there's only whitespace after the backtick) marks the start
+// of a block.
+//
+// Case 2: a line in the middle that ends one template literal and starts
+// another is an internal break in the block. Edge case: three backticks in a
+// row, like ```, are common in markdown and are not treated as a break.
+//
+// Case 3: a line that ends a template literal and ends with `}}` or ends the
+// text marks the end of the block.
+//
+// In all three cases, we trim spaces and tabs from the start and end of the
+// line. In case 1, we also remove the preceding newline.
+function trimTemplateWhitespace(text) {
+  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
+  const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
+  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
+  const trimBlockStarts = text.replace(regex1, "$1$2");
+  const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
+  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
+  return trimBlockEnds;
 }
