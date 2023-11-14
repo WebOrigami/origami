@@ -1,15 +1,10 @@
-/*
-
-Origami expression language grammar
-
-Regarding whitespace: Grammar rules generally assume there is no leading
-whitespace. This means that rules like `expression` with many possible
-productions don't have to have each production waste time looking for
-whitespace. The `__` rule is used to match optional whitespace within a rule.
-
-*/
-
 {{
+//
+// Origami language parser
+//
+// Generate the parser via `npm build`.
+//
+
 import * as ops from "../runtime/ops.js";
 import { makeFunctionCall, makeObject, makeTemplate } from "./parserHelpers.js";
 }}
@@ -38,7 +33,7 @@ array
   = "[" __ list:list? "]" { return [ops.array, ...(list ?? [])]; }
 
 // Something that can be called. This is more restrictive than the `expr`
-// parser -- it doesn't accept function calls -- to avoid infinite recursion.
+// parser; it doesn't accept regular function calls.
 callTarget
   = absoluteFilePath
   / array
@@ -51,7 +46,7 @@ callTarget
 
 // A single line comment
 comment
-  = "#" [^\n\r]* { return ""; }
+  = "#" [^\n\r]*
 
 digits
   = @[0-9]+

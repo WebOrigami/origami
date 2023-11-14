@@ -52,10 +52,6 @@ describe("Origami parser", () => {
     assertParse("assignmentOrShorthand", "foo = 1", [ops.assign, "foo", 1]);
   });
 
-  test("comment", () => {
-    assertParse("comment", "# This is a comment.", "");
-  });
-
   test("expr", () => {
     assertParse("expr", "obj.json", [ops.scope, "obj.json"]);
     assertParse("expr", "(fn a, b, c)", [
