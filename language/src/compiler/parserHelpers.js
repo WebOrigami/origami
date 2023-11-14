@@ -13,14 +13,6 @@ export function makeFunctionCall(target, chain) {
   return value;
 }
 
-export function makeObject(entries) {
-  const object = {};
-  for (const entry of entries) {
-    Object.assign(object, entry);
-  }
-  return object;
-}
-
 export function makeTemplate(parts) {
   // Drop empty/null strings.
   const filtered = parts.filter((part) => part);

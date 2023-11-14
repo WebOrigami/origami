@@ -32,12 +32,10 @@ describe("Origami parser", () => {
 
   test("assignment", () => {
     assertParse("assignment", "data = obj.json", [
-      ops.assign,
       "data",
       [ops.scope, "obj.json"],
     ]);
     assertParse("assignment", "foo = fn 'bar'", [
-      ops.assign,
       "foo",
       [[ops.scope, "fn"], "bar"],
     ]);
@@ -45,11 +43,10 @@ describe("Origami parser", () => {
 
   test("assignmentOrShorthand", () => {
     assertParse("assignmentOrShorthand", "foo", [
-      ops.assign,
       "foo",
       [ops.inherited, "foo"],
     ]);
-    assertParse("assignmentOrShorthand", "foo = 1", [ops.assign, "foo", 1]);
+    assertParse("assignmentOrShorthand", "foo = 1", ["foo", 1]);
   });
 
   test("expr", () => {
@@ -67,10 +64,10 @@ describe("Origami parser", () => {
     ]);
     assertParse("expr", "(fn)('a')", [[ops.scope, "fn"], "a"]);
     assertParse("expr", "1", 1);
-    assertParse("expr", "{ a: 1, b: 2 }", [ops.object, { a: 1, b: 2 }]);
+    assertParse("expr", "{ a: 1, b: 2 }", [ops.object, ["a", 1], ["b", 2]]);
     assertParse("expr", "serve { index.html: 'hello' }", [
       [ops.scope, "serve"],
-      [ops.object, { "index.html": "hello" }],
+      [ops.object, ["index.html", "hello"]],
     ]);
     assertParse("expr", "fn =`x`", [
       [ops.scope, "fn"],
@@ -102,22 +99,24 @@ describe("Origami parser", () => {
       `,
       [
         ops.tree,
-        {
-          "index.html": [
+        [
+          "index.html",
+          [
             [ops.scope, "index.orit"],
             [ops.scope, "teamData.yaml"],
           ],
-          thumbnails: [
+        ],
+        [
+          "thumbnails",
+          [
             [[ops.scope, "@tree"], "map"],
             [
               ops.object,
-              {
-                source: [ops.scope, "images"],
-                valueMap: [ops.scope, "thumbnail.js"],
-              },
+              ["source", [ops.scope, "images"]],
+              ["valueMap", [ops.scope, "thumbnail.js"]],
             ],
           ],
-        },
+        ],
       ]
     );
   });
@@ -173,7 +172,7 @@ describe("Origami parser", () => {
       [ops.scope, "b"],
     ]);
     assertParse("functionComposition", "{ a: 1, b: 2}/b", [
-      [ops.object, { a: 1, b: 2 }],
+      [ops.object, ["a", 1], ["b", 2]],
       "b",
     ]);
   });
@@ -259,29 +258,29 @@ describe("Origami parser", () => {
   });
 
   test("object", () => {
-    assertParse("object", "{}", [ops.object, {}]);
+    assertParse("object", "{}", [ops.object]);
     assertParse("object", "{ a: 1, b }", [
       ops.object,
-      {
-        a: 1,
-        b: [ops.inherited, "b"],
-      },
+      ["a", 1],
+      ["b", [ops.inherited, "b"]],
     ]);
   });
 
   test("objectProperty", () => {
-    assertParse("objectProperty", "a: 1", { a: 1 });
-    assertParse("objectProperty", "name: 'Alice'", { name: "Alice" });
-    assertParse("objectProperty", "x: fn('a')", {
-      x: [[ops.scope, "fn"], "a"],
-    });
+    assertParse("objectProperty", "a: 1", ["a", 1]);
+    assertParse("objectProperty", "name: 'Alice'", ["name", "Alice"]);
+    assertParse("objectProperty", "x: fn('a')", [
+      "x",
+      [[ops.scope, "fn"], "a"],
+    ]);
   });
 
   test("objectPropertyOrShorthand", () => {
-    assertParse("objectPropertyOrShorthand", "foo", {
-      foo: [ops.inherited, "foo"],
-    });
-    assertParse("objectPropertyOrShorthand", "x: y", { x: [ops.scope, "y"] });
+    assertParse("objectPropertyOrShorthand", "foo", [
+      "foo",
+      [ops.inherited, "foo"],
+    ]);
+    assertParse("objectPropertyOrShorthand", "x: y", ["x", [ops.scope, "y"]]);
   });
 
   test("parensArgs", () => {
@@ -363,16 +362,15 @@ describe("Origami parser", () => {
   });
 
   test("tree", () => {
-    assertParse("tree", "{}", [ops.tree, {}]);
+    assertParse("tree", "{}", [ops.tree]);
     assertParse("tree", "{ a = 1, b }", [
       ops.tree,
-      { a: 1, b: [ops.inherited, "b"] },
+      ["a", 1],
+      ["b", [ops.inherited, "b"]],
     ]);
     assertParse("tree", "{ x = fn('a') }", [
       ops.tree,
-      {
-        x: [[ops.scope, "fn"], "a"],
-      },
+      ["x", [[ops.scope, "fn"], "a"]],
     ]);
   });
 

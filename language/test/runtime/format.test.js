@@ -44,23 +44,23 @@ describe("Origami language code formatter", () => {
     assert.equal(format(code), "(fn/a)/b");
   });
 
-  test("tree", () => {
-    const code = [ops.tree, { x: [[ops.scope, "fn"], undefined] }];
-    assert.equal(format(code), "{ x = fn() }");
-  });
-
   test("lambda", () => {
     const code = [ops.lambda, [ops.scope, "message"]];
     assert.equal(format(code), "=message");
   });
 
   test("object", () => {
-    const code = [ops.object, { a: "Hello", b: "Goodbye" }];
+    const code = [ops.object, ["a", "Hello"], ["b", "Goodbye"]];
     assert.equal(format(code), "{ a: 'Hello', b: 'Goodbye' }");
   });
 
   test("template", () => {
     const code = [ops.concat, "Hello, ", [ops.scope, "name"], "."];
     assert.equal(format(code), "`Hello, {{name}}.`");
+  });
+
+  test("tree", () => {
+    const code = [ops.tree, ["x", [[ops.scope, "fn"], undefined]]];
+    assert.equal(format(code), "{ x = fn() }");
   });
 });

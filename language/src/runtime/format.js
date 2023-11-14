@@ -17,9 +17,6 @@ export default function format(code, implicitFunctionCall = false) {
       case ops.concat:
         return formatTemplate(code);
 
-      case ops.tree:
-        return formatTree(code);
-
       case ops.lambda:
         return formatLambda(code);
 
@@ -28,6 +25,9 @@ export default function format(code, implicitFunctionCall = false) {
 
       case ops.scope:
         return formatScopeTraversal(code, implicitFunctionCall);
+
+      case ops.tree:
+        return formatTree(code);
 
       default:
         return code[0] instanceof Array
@@ -70,21 +70,9 @@ function formatFunctionCall(code) {
   return `${formattedFn}${formatArguments(args)}`;
 }
 
-function formatTree(code) {
-  const [_, properties] = code;
-  const formatted = Object.entries(properties).map(([key, value]) => {
-    const rhs =
-      typeof value === "function" && value.code !== undefined
-        ? value.code
-        : value;
-    return `${key} = ${format(rhs)}`;
-  });
-  return formatted ? `{ ${formatted.join(", ")} }` : "{}";
-}
-
 function formatObject(code) {
-  const [_, properties] = code;
-  const formatted = Object.entries(properties).map(([key, value]) => {
+  const [_, ...entries] = code;
+  const formatted = entries.map(([key, value]) => {
     return value === null ? key : `${key}: ${format(value)}`;
   });
   return formatted ? `{ ${formatted.join(", ")} }` : "{}";
@@ -123,4 +111,16 @@ function formatTemplate(code) {
     typeof arg === "string" ? arg : `{{${format(arg)}}}`
   );
   return `\`${formatted.join("")}\``;
+}
+
+function formatTree(code) {
+  const [_, ...entries] = code;
+  const formatted = entries.map(([key, value]) => {
+    const rhs =
+      typeof value === "function" && value.code !== undefined
+        ? value.code
+        : value;
+    return `${key} = ${format(rhs)}`;
+  });
+  return formatted ? `{ ${formatted.join(", ")} }` : "{}";
 }

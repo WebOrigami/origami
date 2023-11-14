@@ -152,36 +152,37 @@ lambda.toString = () => "«ops.lambda»";
  * corresponding code values in `obj`.
  *
  * @this {AsyncTree|null}
- * @param {PlainObject} obj
+ * @param {any[]} entries
  */
-export async function object(obj) {
-  const evaluated = {};
-  for (const key in obj) {
-    const code = obj[key];
-    evaluated[key] = await evaluate.call(this, code);
-  }
-  return evaluated;
+export async function object(...entries) {
+  const scope = this;
+  const promises = entries.map(async ([key, value]) => [
+    key,
+    await evaluate.call(scope, value),
+  ]);
+  const evaluated = await Promise.all(promises);
+  return Object.fromEntries(evaluated);
 }
 object.toString = () => "«ops.object»";
 
 /**
- * Construct an tree. This is similar to ops.object but the result is an
- * OrigamiTree instance.
+ * Construct an tree. This is similar to ops.object but the values are turned
+ * into functions rather than being immediately evaluated, and the result is an
+ * OrigamiTree.
  *
  * @this {AsyncTree|null}
- * @param {PlainObject} formulas
+ * @param {any[]} entries
  */
-export async function tree(formulas) {
-  const fns = {};
-  for (const key in formulas) {
-    const code = formulas[key];
-    const fn =
+export async function tree(...entries) {
+  const fns = entries.map(([key, code]) => {
+    const value =
       code instanceof Array
         ? expressionFunction.createExpressionFunction(code)
         : code;
-    fns[key] = fn;
-  }
-  return new OrigamiTree(fns);
+    return [key, value];
+  });
+  const object = Object.fromEntries(fns);
+  return new OrigamiTree(object);
 }
 tree.toString = () => "«ops.tree»";
 

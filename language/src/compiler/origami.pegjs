@@ -6,7 +6,7 @@
 //
 
 import * as ops from "../runtime/ops.js";
-import { makeFunctionCall, makeObject, makeTemplate } from "./parserHelpers.js";
+import { makeFunctionCall, makeTemplate } from "./parserHelpers.js";
 }}
 
 // A block of optional whitespace
@@ -23,11 +23,11 @@ argsChain
 
 // An assignment statement: `foo = 1`
 assignment
-  = left:identifier __ "=" __ right:expr { return [ops.assign, left, right]; }
+  = @identifier __ "=" __ @expr
 
 assignmentOrShorthand
   = assignment
-  / key:identifier { return [ops.assign, key, [ops.inherited, key]]; }
+  / key:identifier { return [key, [ops.inherited, key]]; }
 
 array
   = "[" __ list:list? "]" { return [ops.array, ...(list ?? [])]; }
@@ -83,7 +83,7 @@ expr
   / scopeReference
 
 // Top-level Origami expression, possible leading/trailing whitepsace.
-expression
+expression "Origami expression"
   = __ @expr __
 
 float
@@ -154,21 +154,21 @@ number
 // TODO: Use Object.fromEntries with array of key/value pairs
 //
 object
-  = "{" __ properties:objectProperties? "}" { return [ops.object, properties ?? {}]; }
+  = "{" __ properties:objectProperties? "}" { return [ops.object, ...(properties ?? [])]; }
 
 // A separated list of object properties or shorthands
 objectProperties
   = head:objectPropertyOrShorthand tail:(separator @objectPropertyOrShorthand)* separator? __ {
-      return makeObject([head].concat(tail));
+      return [head].concat(tail);
     }
 
 // A single object property with key and value: `x: 1`
 objectProperty
-  = key:identifier __ ":" __ value:expr { return { [key]: value }; }
+  = @identifier __ ":" __ @expr
 
 objectPropertyOrShorthand
   = objectProperty
-  / key:identifier { return { [key]: [ops.inherited, key] }; }
+  / key:identifier { return [key, [ops.inherited, key]]; }
 
 // Function arguments in parentheses
 parensArgs
@@ -226,7 +226,7 @@ string
 
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
-templateDocument
+templateDocument "Origami template"
   = contents:templateDocumentContents { return [ops.lambda, contents]; }
 
 // Template documents can contain backticks at the top level.
@@ -264,19 +264,12 @@ textChar
 
 // A tree literal: `{ index.html = "Hello" }`
 tree
-  = "{" __ assignments:treeAssignments? "}" { return [ops.tree, assignments ?? {}]; }
+  = "{" __ assignments:treeAssignments? "}" { return [ops.tree, ...(assignments ?? [])]; }
 
 // A separated list of assignments or shorthands
 treeAssignments
   = head:assignmentOrShorthand tail:(separator @assignmentOrShorthand)* separator? __ {
-      let entries = [head].concat(tail);
-      //
-      // TODO: Drop ops.assign
-      //
-      entries = entries.map(([_, key, value]) => {
-        return { [key]: value };
-      });
-      return makeObject(entries);
+      return [head].concat(tail);
     }
 
 whitespaceWithNewLine

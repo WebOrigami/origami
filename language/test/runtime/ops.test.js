@@ -55,10 +55,8 @@ describe("ops", () => {
 
     const code = [
       ops.object,
-      {
-        hello: [[ops.scope, "upper"], "hello"],
-        world: [[ops.scope, "upper"], "world"],
-      },
+      ["hello", [[ops.scope, "upper"], "hello"]],
+      ["world", [[ops.scope, "upper"], "world"]],
     ];
 
     const result = await evaluate.call(scope, code);
@@ -78,15 +76,16 @@ describe("ops", () => {
   test("can instantiate an Origami tree", async () => {
     const code = [
       ops.tree,
-      {
-        name: "world",
-        message: expressionFunction.createExpressionFunction([
+      ["name", "world"],
+      [
+        "message",
+        expressionFunction.createExpressionFunction([
           ops.concat,
           "Hello, ",
           [ops.scope, "name"],
           "!",
         ]),
-      },
+      ],
     ];
     const result = await evaluate.call({}, code);
     assert(result instanceof OrigamiTree);
