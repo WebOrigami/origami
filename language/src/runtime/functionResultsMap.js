@@ -1,5 +1,4 @@
-import { mapTransform } from "@graphorigami/async-tree";
-import * as Tree from "@graphorigami/async-tree/src/Tree.js";
+import { mapTransform, Tree } from "@graphorigami/async-tree";
 import Scope from "./Scope.js";
 
 /**

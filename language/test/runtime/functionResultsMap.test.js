@@ -1,4 +1,4 @@
-import * as Tree from "@graphorigami/async-tree/src/Tree.js";
+import { Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/runtime/Scope.js";
