@@ -16,7 +16,7 @@
     "watcher": "2.3.0"
   },
   "scripts": {
-    "build": "peggy --allowed-start-rules=\"*\" --format es src/peggy/origami.pegjs --output src/peggy/parse.js",
+    "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
     "prepublishOnly": "npm run build",
     "test": "node --test",
     "typecheck": "tsc"

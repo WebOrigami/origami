@@ -1,51 +1,21 @@
-import assert from "node:assert";
-import { parse as parseNew } from "../peggy/parse.js";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
-import { lex, state } from "./lex.js";
-import * as parse from "./parse.js";
+import { parse } from "./parse.js";
 
-function compile(text, compiler, initialLexState = state.EXPRESSION) {
-  const old0 = performance.now();
-
-  const tokens = lex(text, initialLexState);
-  const parsed = compiler(tokens);
-  if (!parsed || parsed.rest.length > 0) {
-    throw new SyntaxError(`Invalid expression: ${text}`);
-  }
-  const code = parsed.value;
-
-  const old1 = performance.now();
-  console.log(`old parser: ${old1 - old0} milliseconds`);
-
-  const startRule =
-    initialLexState === state.EXPRESSION ? "expression" : "templateDocument";
-
+function compile(text, startRule) {
   // Trim whitespace from template blocks before we begin lexing, as our
   // heuristics are non-local and hard to implement in our parser.
-  const new0 = performance.now();
   const preprocessed = trimTemplateWhitespace(text);
-  const codeNew = parseNew(preprocessed, { startRule });
-
-  const new1 = performance.now();
-  console.log(`new parser: ${new1 - new0} milliseconds`);
-
-  try {
-    assert.deepEqual(codeNew, code);
-  } catch (e) {
-    debugger;
-  }
-
-  // const fn = createExpressionFunction(code);
-  const fn = createExpressionFunction(codeNew);
+  const code = parse(preprocessed, { startRule });
+  const fn = createExpressionFunction(code);
   return fn;
 }
 
 export function expression(text) {
-  return compile(text, parse.expression);
+  return compile(text, "expression");
 }
 
 export function templateDocument(text) {
-  return compile(text, parse.templateDocument, state.TEMPLATE_DOCUMENT);
+  return compile(text, "templateDocument");
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's
