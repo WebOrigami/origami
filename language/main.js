@@ -18,3 +18,4 @@ export { default as evaluate } from "./src/runtime/evaluate.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export { default as extname } from "./src/runtime/extname.js";
 export { default as format } from "./src/runtime/format.js";
+export { default as functionResultsMap } from "./src/runtime/functionResultsMap.js";

@@ -1,6 +1,5 @@
 import { Tree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
-import functionResultsMap from "@graphorigami/language/src/runtime/functionResultsMap.js";
+import { Scope, functionResultsMap } from "@graphorigami/language";
 import builtins from "../../src/builtins/@builtins.js";
 import arrowFunctionsMap from "../common/arrowFunctionsMap.js";
 import { keySymbol } from "../common/utilities.js";
