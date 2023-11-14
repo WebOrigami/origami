@@ -19,9 +19,9 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/async-tree?48c304b6",
-    "@graphorigami/language": "https://gitpkg.now.sh/GraphOrigami/origami/language?48c304b6",
-    "@graphorigami/types": "https://gitpkg.now.sh/GraphOrigami/origami/origami?48c304b6",
+    "@graphorigami/async-tree": "0.0.32",
+    "@graphorigami/language": "0.0.32",
+    "@graphorigami/types": "0.0.32",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
     "marked": "9.1.5",
