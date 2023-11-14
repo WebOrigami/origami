@@ -54,16 +54,16 @@ comment
   = "#" [^\n\r]* { return ""; }
 
 digits
-  = digits:[0-9]+ { return digits; }
+  = @[0-9]+
 
 doubleQuoteString
   = '"' chars:doubleQuoteStringChar* '"' { return chars.join(""); }
 
 doubleQuoteStringChar
-  = !('"' / newLine) char:textChar { return char; }
+  = !('"' / newLine) @textChar
 
 escapedChar
-  = "\\" char:. { return char; }
+  = "\\" @.
 
 // An Origami expression, no leading/trailing whitespace
 expr
@@ -89,11 +89,11 @@ expr
 
 // Top-level Origami expression, possible leading/trailing whitepsace.
 expression
-  = __ expr:expr __ { return expr; }
+  = __ @expr __
 
 float
-  = sign:sign? left:digits? "." right:digits {
-      return parseFloat((sign ?? "") + (left?.join("") ?? "0") + "." + right.join(""));
+  = sign? digits? "." digits {
+      return parseFloat(text());
     }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
@@ -103,7 +103,7 @@ functionComposition
 
 // An expression in parentheses: `(foo)`
 group
-  = "(" __ expr:expr __ ")" { return expr; }
+  = "(" __ @expr __ ")"
 
 identifier
   = chars:identifierChar+ { return chars.join(""); }
@@ -115,21 +115,21 @@ identifierChar
 // A function call with implicit parentheses: `fn 1, 2, 3`
 implicitParensCall
   = target:(functionComposition / callTarget) inlineSpace+ args:list {
-    return [target, ...args];
-  }
+      return [target, ...args];
+    }
 
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host
-  = identifier:identifier (":" port:number)? { return text(); }
+  = identifier (":" number)? { return text(); }
 
 inlineSpace
   = [ \t]
 
 integer
-  = sign:sign? digits:digits {
-      return parseInt((sign ?? '') + digits.join(''));
+  = sign? digits {
+      return parseInt(text());
     }
 
 // A lambda expression: `=foo()`
@@ -138,7 +138,7 @@ lambda
 
 // A path that begins with a slash: `/foo/bar`
 leadingSlashPath
-  = "/" path:path { return path; }
+  = "/" @path
   / "/" { return [""]; }
 
 // A separated list of expressions
@@ -164,8 +164,8 @@ object
 // A separated list of object properties or shorthands
 objectProperties
   = head:objectPropertyOrShorthand tail:(separator @objectPropertyOrShorthand)* separator? __ {
-    return makeObject([head].concat(tail));
-  }
+      return makeObject([head].concat(tail));
+    }
 
 // A single object property with key and value: `x: 1`
 objectProperty
@@ -199,8 +199,8 @@ pathKey
 // There can be zero, one, or two slashes after the colon.
 protocolCall
   = protocol:protocol ":" "/"|0..2| host:host path:leadingSlashPath? {
-    return [protocol, host, ...(path ?? [])];
-  }
+      return [protocol, host, ...(path ?? [])];
+    }
 
 protocol
   = reservedProtocol
@@ -220,7 +220,7 @@ singleQuoteString
   = "'" chars:singleQuoteStringChar* "'" { return chars.join(""); }
 
 singleQuoteStringChar
-  = !("'" / newLine) char:textChar { return char; }
+  = !("'" / newLine) @textChar
 
 start
   = number
@@ -236,7 +236,7 @@ templateDocument
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar
-  = !"{{" char:textChar { return char; }
+  = !"{{" @textChar
 
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
@@ -247,10 +247,10 @@ templateDocumentText
 
 // A backtick-quoted template literal
 templateLiteral
-  = "`" contents:templateLiteralContents "`" { return contents; }
+  = "`" @templateLiteralContents "`"
 
 templateLiteralChar
-  = !("`" / "{{") char:textChar { return char; }
+  = !("`" / "{{") @textChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
@@ -262,7 +262,7 @@ templateLiteralText
 
 // A substitution in a template literal: `{{ fn() }}`
 templateSubstitution
-  = "{{" expression:expression "}}" { return expression; }
+  = "{{" @expression "}}"
 
 textChar
   = escapedChar / .
@@ -274,15 +274,15 @@ tree
 // A separated list of assignments or shorthands
 treeAssignments
   = head:assignmentOrShorthand tail:(separator @assignmentOrShorthand)* separator? __ {
-    let entries = [head].concat(tail);
-    //
-    // TODO: Drop ops.assign
-    //
-    entries = entries.map(([_, key, value]) => {
-      return { [key]: value };
-    });
-    return makeObject(entries);
-  }
+      let entries = [head].concat(tail);
+      //
+      // TODO: Drop ops.assign
+      //
+      entries = entries.map(([_, key, value]) => {
+        return { [key]: value };
+      });
+      return makeObject(entries);
+    }
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
