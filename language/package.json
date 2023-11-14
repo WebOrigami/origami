@@ -10,8 +10,8 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@graphorigami/types": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f4058a89",
-    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f4058a89",
+    "@graphorigami/types": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f58b2453",
+    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/origami?f58b2453",
     "peggy": "3.0.2",
     "watcher": "2.3.0"
   },
