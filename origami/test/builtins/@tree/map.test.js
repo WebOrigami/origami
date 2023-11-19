@@ -10,7 +10,7 @@ describe("@tree/map", () => {
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ];
-    const fixture = map.call(null, {
+    const fixture = map({
       /** @this {import("@graphorigami/types").AsyncTree} */
       keyMap: async function (sourceValue, sourceKey, tree) {
         const keyInScope = await this.get("@key");
@@ -34,7 +34,7 @@ describe("@tree/map", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     };
-    const transform = map.call(null, {
+    const transform = map({
       extensions: "txt->upper",
       valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
@@ -49,7 +49,8 @@ describe("@tree/map", () => {
       a: 1,
       b: 2,
     };
-    const transform = map.call(null, {
+    const transform = map({
+      /** @this {import("@graphorigami/types").AsyncTree} */
       keyMap: async function (sourceValue, sourceKey, tree) {
         const letter = await this.get("letter");
         const value = await this.get("number");
@@ -72,7 +73,7 @@ describe("@tree/map", () => {
         b: 2,
       },
     };
-    const transform = map.call(null, {
+    const transform = map({
       deep: true,
       keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
       valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
@@ -93,16 +94,12 @@ describe("@tree/map", () => {
         b: 2,
       },
     };
-    const mapped = map.call(
-      null,
-      /** @satisfies {import("../../../src/builtins/@tree/map.js").OptionsWithSource} */ ({
-        deep: true,
-        keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
-        // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
-        source: treelike,
-        valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
-      })
-    );
+    const mapped = map(treelike, {
+      deep: true,
+      keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
+      // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
+      valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
+    });
     assert.deepEqual(await Tree.plain(mapped), {
       a1: 2,
       more: {
@@ -121,7 +118,7 @@ describe("@tree/map", () => {
         "file5.bar": "won't be mapped",
       },
     };
-    const transform = map.call(null, {
+    const transform = map({
       deep: true,
       extensions: "txt->upper",
       valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),

@@ -11,7 +11,7 @@ import { toFunction } from "../../common/utilities.js";
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
  *
- * @typedef {import("@graphorigami/async-tree").KeyFn} KeyMapFn
+ * @typedef {import("@graphorigami/async-tree").KeyFn} KeyFn
  * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("@graphorigami/async-tree").ValueKeyFn} ValueKeyFn
  * @typedef {import("@graphorigami/async-tree").TreeTransform} TreeTransform
@@ -19,54 +19,65 @@ import { toFunction } from "../../common/utilities.js";
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  *
  * @typedef {{ deep?: boolean, description?: string, extensions?: string,
- * inverseKeyMap?: KeyMapFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
- * ValueKeyFn, valueName?: string }} Options
- * @typedef {Options & { source: Treelike }} OptionsWithSource
+ * inverseKeyMap?: KeyFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
+ * ValueKeyFn, valueName?: string }} TreeMapOptions
  *
  * @this {import("@graphorigami/types").AsyncTree|null}
  *
  * @overload
- * @param {ValueKeyFn} options
- * @returns {TreeTransform}
+ * @param {ValueKeyFn} param1
+ * @returns {TreelikeTransform}
  *
  * @overload
- * @param {OptionsWithSource} options
+ * @param {TreeMapOptions} param1
+ * @returns {TreelikeTransform}
+ *
+ * @overload
+ * @param {Treelike} param1
+ * @param {ValueKeyFn} param2
  * @returns {AsyncTree}
  *
  * @overload
- * @param {Options} options
- * @returns {TreelikeTransform}
+ * @param {Treelike} param1
+ * @param {TreeMapOptions} param2
+ * @returns {AsyncTree}
  */
-export default function treeMap(options) {
-  let deep;
-  let description;
-  let extensions;
-  let inverseKeyMap;
-  let keyMap;
-  let keyName;
+export default function treeMap(param1, param2) {
+  // Identify whether the valueMap/options are the first parameter
+  // or the second.
   let source;
+  let options;
+  if (param2 === undefined) {
+    options = param1;
+  } else {
+    source = param1;
+    options = param2;
+  }
+
+  // Identify whether the valueMap/options is a valueMap function
+  // or an options dictionary.
   let valueMap;
-  let valueName;
   if (
     typeof options === "function" ||
     typeof (/** @type {any} */ (options)?.unpack) === "function"
   ) {
-    // Take the single function argument as the valueMap
     valueMap = options;
+    options = {};
   } else {
-    ({
-      deep,
-      description,
-      extensions,
-      inverseKeyMap,
-      keyMap,
-      keyName,
-      valueMap,
-      valueName,
-      source,
-    } = options);
-    description ??= `@tree/map ${extensions ?? ""}`;
+    valueMap = options.valueMap;
   }
+
+  let {
+    deep,
+    description,
+    extensions,
+    inverseKeyMap,
+    keyMap,
+    keyName,
+    valueName,
+  } = options;
+
+  description ??= `@tree/map ${extensions ?? ""}`;
 
   if (extensions) {
     if (keyMap || inverseKeyMap) {
