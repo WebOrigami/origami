@@ -79,12 +79,10 @@ export default function treeMap(param1, param2) {
 
   description ??= `@tree/map ${extensions ?? ""}`;
 
-  if (extensions) {
-    if (keyMap || inverseKeyMap) {
-      throw new TypeError(
-        `@tree/map: You can't specify both extensions and a keyMap or inverseKeyMap`
-      );
-    }
+  if (extensions && (keyMap || inverseKeyMap)) {
+    throw new TypeError(
+      `@tree/map: You can't specify both extensions and a keyMap or inverseKeyMap`
+    );
   }
 
   const baseScope = Scope.getScope(this);
