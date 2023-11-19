@@ -2,8 +2,8 @@
 
 import http from "node:http";
 import { requestListener } from "../../src/server/server.js";
-import sample from "./sample.js";
+import sampleSite from "./sampleSite.js";
 
 const port = 5000;
-http.createServer(requestListener(sample)).listen(port);
+http.createServer(requestListener(sampleSite)).listen(port);
 console.log(`Server running at http://localhost:${port}`);
