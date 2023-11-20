@@ -23,5 +23,5 @@ export default async function tree(treelike) {
   return result;
 }
 
-tree.usage = `tree <treelike>\tConvert JSON, YAML, function, or plain object to a tree`;
+tree.usage = `from <treelike>\tConvert JSON, YAML, function, or plain object to a tree`;
 tree.documentation = "https://graphorigami.org/cli/builtins.html#tree";

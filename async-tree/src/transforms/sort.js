@@ -5,7 +5,6 @@
  * character's Unicode code point value.
  *
  * @param {(a: any, b: any) => number} [compareFn]
- *
  */
 export default function createSortTransform(compareFn) {
   /**
