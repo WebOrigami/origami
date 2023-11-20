@@ -3,6 +3,7 @@
 // Origami language parser
 //
 // Generate the parser via `npm build`.
+// @ts-nocheck
 //
 
 import * as ops from "../runtime/ops.js";
