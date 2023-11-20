@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/language",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "Graph Origami expression language compiler and runtime",
   "type": "module",
   "main": "./main.js",
@@ -10,8 +10,8 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@graphorigami/types": "0.0.33",
-    "@graphorigami/async-tree": "0.0.33",
+    "@graphorigami/types": "0.0.34",
+    "@graphorigami/async-tree": "0.0.34",
     "peggy": "3.0.2",
     "watcher": "2.3.0"
   },

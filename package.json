@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/monorepo",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "workspaces": [
     "async-tree",
     "language",
