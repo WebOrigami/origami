@@ -1,7 +1,7 @@
 import {
   cachedKeyMaps,
   keyMapsForExtensions,
-  mapTransform,
+  map,
   Tree,
 } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
@@ -138,9 +138,9 @@ export default function treeMap(param1, param2) {
     extendedInnerKeyMap = keyFns.inverseKeyMap;
   }
 
-  const transform = function map(treelike) {
+  const transform = function mapTreelike(treelike) {
     const tree = Tree.from(treelike);
-    return mapTransform({
+    return map({
       deep,
       description,
       inverseKeyMap: extendedInnerKeyMap,

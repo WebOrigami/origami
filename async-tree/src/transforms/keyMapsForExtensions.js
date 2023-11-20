@@ -3,7 +3,7 @@
  * functions that map between them.
  *
  * The resulting `inverseKeyMap` and `keyMap` functions are compatible with those
- * expected by mapTransform and other transforms.
+ * expected by map and other transforms.
  *
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @param {{ resultExtension?: string, sourceExtension: string }}

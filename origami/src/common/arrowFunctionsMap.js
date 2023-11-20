@@ -1,9 +1,9 @@
-import { cachedKeyMaps, mapTransform } from "@graphorigami/async-tree";
+import { cachedKeyMaps, map } from "@graphorigami/async-tree";
 import { toFunction } from "./utilities.js";
 
 export default function arrowFunctionsMap() {
   const deep = true;
-  return mapTransform({
+  return map({
     deep,
     description: "arrowFunctions",
     valueMap,

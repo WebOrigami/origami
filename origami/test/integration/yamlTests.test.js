@@ -1,11 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import {
-  Tree,
-  keyMapsForExtensions,
-  mapTransform,
-} from "@graphorigami/async-tree";
+import { Tree, keyMapsForExtensions, map } from "@graphorigami/async-tree";
 import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,7 +12,7 @@ const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 // Map the YAML files to test suites.
-const mapped = mapTransform({
+const mapped = map({
   deep: true,
   description: "yamlTests",
   valueMap: registerYamlSuite,

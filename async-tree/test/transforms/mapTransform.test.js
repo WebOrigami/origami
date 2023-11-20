@@ -2,15 +2,15 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
-import mapTransform from "../../src/transforms/mapTransform.js";
+import map from "../../src/transforms/map.js";
 
-describe("mapTransform", () => {
+describe("map", () => {
   test("returns identity graph if no keyMap or valueMap", async () => {
     const tree = new ObjectTree({
       a: "letter a",
       b: "letter b",
     });
-    const mapped = mapTransform({})(tree);
+    const mapped = map({})(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "letter a",
       b: "letter b",
@@ -23,7 +23,7 @@ describe("mapTransform", () => {
       b: "letter b",
       c: undefined, // Won't be mapped
     });
-    const uppercaseValues = mapTransform({
+    const uppercaseValues = map({
       valueMap: (sourceValue, sourceKey, innerTree) => {
         assert(sourceKey === "a" || sourceKey === "b");
         assert.equal(innerTree, tree);
@@ -43,13 +43,11 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const uppercaseValues = mapTransform(
-      (sourceValue, sourceKey, innerTree) => {
-        assert(sourceKey === "a" || sourceKey === "b");
-        assert.equal(innerTree, tree);
-        return sourceValue.toUpperCase();
-      }
-    );
+    const uppercaseValues = map((sourceValue, sourceKey, innerTree) => {
+      assert(sourceKey === "a" || sourceKey === "b");
+      assert.equal(innerTree, tree);
+      return sourceValue.toUpperCase();
+    });
     const mapped = uppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "LETTER A",
@@ -62,7 +60,7 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const doubleKeys = mapTransform({
+    const doubleKeys = map({
       keyMap: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKeyMap: async (resultKey, tree) => resultKey.slice(1),
     });
@@ -78,7 +76,7 @@ describe("mapTransform", () => {
       a: "letter a",
       b: "letter b",
     });
-    const doubleKeysUppercaseValues = mapTransform({
+    const doubleKeysUppercaseValues = map({
       keyMap: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKeyMap: async (resultKey, tree) => resultKey.slice(1),
       valueMap: async (sourceValue, sourceKey, tree) =>
@@ -98,7 +96,7 @@ describe("mapTransform", () => {
         b: "letter b",
       },
     });
-    const doubleKeys = mapTransform({
+    const doubleKeys = map({
       keyMap: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKeyMap: async (resultKey, tree) => resultKey.slice(1),
       valueMap: async (sourceValue, sourceKey, tree) => sourceKey,
@@ -117,7 +115,7 @@ describe("mapTransform", () => {
         b: "letter b",
       },
     });
-    const uppercaseValues = mapTransform({
+    const uppercaseValues = map({
       deep: true,
       valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
@@ -137,7 +135,7 @@ describe("mapTransform", () => {
         b: "letter b",
       },
     });
-    const doubleKeys = mapTransform({
+    const doubleKeys = map({
       deep: true,
       keyMap: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKeyMap: async (resultKey, tree) => resultKey.slice(1),
@@ -158,7 +156,7 @@ describe("mapTransform", () => {
         b: "letter b",
       },
     });
-    const doubleKeysUppercaseValues = mapTransform({
+    const doubleKeysUppercaseValues = map({
       deep: true,
       keyMap: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKeyMap: async (resultKey, tree) => resultKey.slice(1),

@@ -3,7 +3,7 @@ import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
-import mapTransform from "./transforms/mapTransform.js";
+import mapTransform from "./transforms/map.js";
 import * as utilities from "./utilities.js";
 import { castArrayLike, isPlainObject } from "./utilities.js";
 

@@ -15,7 +15,7 @@ export { default as merge } from "./src/operations/merge.js";
 export { default as mergeDeep } from "./src/operations/mergeDeep.js";
 export { default as cachedKeyMaps } from "./src/transforms/cachedKeyMaps.js";
 export { default as keyMapsForExtensions } from "./src/transforms/keyMapsForExtensions.js";
-export { default as mapTransform } from "./src/transforms/mapTransform.js";
+export { default as map } from "./src/transforms/map.js";
 export { default as sort } from "./src/transforms/sort.js";
 export { default as sortBy } from "./src/transforms/sortBy.js";
 export { default as sortNatural } from "./src/transforms/sortNatural.js";

@@ -27,14 +27,14 @@ export default function createMapTransform(options) {
 
   if ((keyMap && !inverseKeyMap) || (!keyMap && inverseKeyMap)) {
     throw new TypeError(
-      `mapTransform: You must specify both keyMap and inverseKeyMap, or neither.`
+      `map: You must specify both keyMap and inverseKeyMap, or neither.`
     );
   }
 
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function mapTransform(tree) {
+  return function map(tree) {
     // The transformed tree is actually an extension of the original tree's
     // prototype chain. This allows the transformed tree to inherit any
     // properties/methods that do not need to be specified. For example, the
@@ -67,7 +67,7 @@ export default function createMapTransform(options) {
           resultValue = undefined;
         } else if (deep && Tree.isAsyncTree(sourceValue)) {
           // Map a subtree.
-          resultValue = mapTransform(sourceValue);
+          resultValue = map(sourceValue);
         } else if (valueMap) {
           // Map a single value.
           resultValue = await valueMap(sourceValue, sourceKey, tree);

@@ -1,4 +1,4 @@
-import { mapTransform, Tree } from "@graphorigami/async-tree";
+import { map, Tree } from "@graphorigami/async-tree";
 import Scope from "./Scope.js";
 
 /**
@@ -8,7 +8,7 @@ import Scope from "./Scope.js";
  * @type {import("@graphorigami/async-tree").TreeTransform}
  */
 export default function functionResultsMap(tree) {
-  return mapTransform({
+  return map({
     description: "functionResultsMap",
 
     valueMap: async (sourceValue, sourceKey, tree) => {

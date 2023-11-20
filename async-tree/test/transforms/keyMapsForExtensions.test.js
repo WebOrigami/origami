@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
 import keyMapsForExtensions from "../../src/transforms/keyMapsForExtensions.js";
-import mapTransform from "../../src/transforms/mapTransform.js";
+import map from "../../src/transforms/map.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
@@ -27,7 +27,7 @@ describe("keyMapsForExtensions", () => {
     assert.equal(await keyMap("file.foo"), undefined);
   });
 
-  test("works with mapTransform to handle keys that end in a given resultExtension", async () => {
+  test("works with map to handle keys that end in a given resultExtension", async () => {
     const files = new ObjectTree({
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
@@ -36,7 +36,7 @@ describe("keyMapsForExtensions", () => {
     const { inverseKeyMap, keyMap } = keyMapsForExtensions({
       sourceExtension: "txt",
     });
-    const transform = mapTransform({
+    const transform = map({
       inverseKeyMap,
       keyMap,
       valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
@@ -47,7 +47,7 @@ describe("keyMapsForExtensions", () => {
     });
   });
 
-  test("works with mapTransform to change a key's resultExtension", async () => {
+  test("works with map to change a key's resultExtension", async () => {
     const files = new ObjectTree({
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
@@ -57,7 +57,7 @@ describe("keyMapsForExtensions", () => {
       resultExtension: "upper",
       sourceExtension: "txt",
     });
-    const transform = mapTransform({
+    const transform = map({
       inverseKeyMap,
       keyMap,
       valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),

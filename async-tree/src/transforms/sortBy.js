@@ -5,7 +5,7 @@
  * should produce a sort key for that pair. The sort keys are then compared to
  * determine the sort order for the tree's keys.
  *
- * @param {import("./mapTransform.js").KeyFn} sortKeyFn
+ * @param {import("./map.js").KeyFn} sortKeyFn
  */
 export default function createSortByTransform(sortKeyFn) {
   /**
