@@ -10,7 +10,9 @@
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @returns {AsyncTree & { description: string }}
  */
-export default function merge(...trees) {
+export default function merge(...sources) {
+  const trees = sources.map((source) => Object.create(source));
+  let mergeParent;
   return {
     description: "merge",
 
@@ -41,6 +43,16 @@ export default function merge(...trees) {
         }
       }
       return keys;
+    },
+
+    get parent() {
+      return mergeParent;
+    },
+    set parent(parent) {
+      mergeParent = parent;
+      for (const tree of trees) {
+        tree.parent = parent;
+      }
     },
   };
 }
