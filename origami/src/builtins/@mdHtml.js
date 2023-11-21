@@ -3,7 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import textDocument2 from "../common/textDocument2.js";
+import * as textDocument2 from "../common/textDocument2.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -30,10 +30,10 @@ marked.use(
  * @param {StringLike} input
  */
 export default async function mdHtml(input) {
-  const markdownDocument = textDocument2(input);
+  const markdownDocument = textDocument2.from(input);
   const markdown = String(markdownDocument);
   const html = marked(markdown);
-  const htmlDocument = textDocument2(html, markdownDocument);
+  const htmlDocument = textDocument2.bodyWithData(html, markdownDocument);
   return htmlDocument;
 }
 
