@@ -50,18 +50,16 @@ function isJsonValue(obj) {
 
 /**
  * @param {string} text
- * @param {PlainObject} [base]
  * @returns {JsonValue|AsyncTree}
  */
-export function parseYaml(text, base) {
-  const parsed = YAML.parse(text, {
+export function parseYaml(text) {
+  const data = YAML.parse(text, {
     customTags: [yamlOrigamiTag],
   });
-  const merged = Object.assign({}, base, parsed);
-  if (objectContainsFunctions(merged)) {
-    return new OrigamiTree(merged);
+  if (objectContainsFunctions(data)) {
+    return new OrigamiTree(data);
   } else {
-    return merged;
+    return data;
   }
 }
 
