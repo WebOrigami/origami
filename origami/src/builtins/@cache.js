@@ -22,8 +22,8 @@ export default async function cacheBuiltin(
 
   const sourceTree = Tree.from(sourceTreelike);
   /** @type {any} */
-  const cacheTree = Tree.from(cacheTreelike);
-  const filterTree = Tree.from(filterTreelike);
+  const cacheTree = cacheTreelike ? Tree.from(cacheTreelike) : undefined;
+  const filterTree = filterTreelike ? Tree.from(filterTreelike) : undefined;
 
   /** @type {AsyncTree} */
   let result = cache(sourceTree, cacheTree, filterTree);

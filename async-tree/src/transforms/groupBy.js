@@ -18,6 +18,10 @@ export default function createGroupByTransform(groupKeyFn) {
 
       // Get the groups for this value.
       let groups = await groupKeyFn(value, key, tree);
+      if (!groups) {
+        continue;
+      }
+
       if (!Tree.isTreelike(groups)) {
         // A single value was returned
         groups = [groups];
