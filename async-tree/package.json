@@ -11,7 +11,7 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@graphorigami/types": "0.0.34"
+    "@graphorigami/types": "https://gitpkg.now.sh/GraphOrigami/origami/types?main"
   },
   "scripts": {
     "test": "node --test",

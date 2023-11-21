@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@graphorigami/types": "0.0.34",
-    "@graphorigami/async-tree": "0.0.34",
+    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/async-tree?main",
     "peggy": "3.0.2",
     "watcher": "2.3.0"
   },
