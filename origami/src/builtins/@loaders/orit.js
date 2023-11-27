@@ -3,8 +3,9 @@ import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
-import * as textDocument2 from "../../common/textDocument2.js";
+import textDocument2 from "../../common/textDocument2.js";
 import builtins from "../@builtins.js";
+import unpackText from "./txt.js";
 
 /**
  * Load and evaluate an Origami template from a file.
@@ -14,12 +15,9 @@ import builtins from "../@builtins.js";
 export default async function unpackOrigamiTemplate(input, options = {}) {
   const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;
 
-  // Get the input body text and attached content.
-  const inputDocument = textDocument2.from(input);
+  // Get the input text and any attached front matter.
+  const inputDocument = await unpackText(input, { parent });
   const text = String(inputDocument);
-  if (parent && !inputDocument.parent) {
-    inputDocument.parent = parent;
-  }
 
   // Compile the body text as an Origami expression and evaluate it.
   const expression = compile.templateDocument(text);
@@ -29,13 +27,12 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   // Wrap the lambda with a function that will attach the input data to the
   // result.
   /** @this {AsyncTree|null} */
-  const fn = async function attachDataToResult(templateInput) {
+  const fn = async function createTemplateResult(templateInput) {
     const text = await lambda.call(this, templateInput);
     const data = Tree.isAsyncTree(templateInput)
       ? await Tree.plain(templateInput)
-      : await templateInput?.unpack?.();
-    const outputDocument = textDocument2.bodyWithData(text, data);
-    outputDocument.parent = parent;
+      : templateInput;
+    const outputDocument = textDocument2(text, data);
     return outputDocument;
   };
   fn.code = lambda.code;

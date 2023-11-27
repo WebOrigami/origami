@@ -15,7 +15,7 @@ describe("mdHtml", () => {
   });
 
   test("transformed result includes the source data", async () => {
-    const markdownDocument = textDocument2.from(
+    const markdownDocument = textDocument2.unpack(
       `---\ntitle: Hello\n---\n# Hello, world.`
     );
     const htmlDocument = await mdHtml.call(null, markdownDocument);

@@ -1,82 +1,31 @@
-import { Tree, isPlainObject, merge } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
-import * as YAMLModule from "yaml";
-import { parseYaml } from "./serialize.js";
-
-// @ts-ignore
-const YAML = YAMLModule.default ?? YAMLModule.YAML;
-
-/**
- * Return a new TextDocument for the given input.
- *
- * If the input is already a TextDocument, a new copy will be returned.
- *
- * If the input is string-like, it will be used as the text for a new
- * TextDocument. This process will parse out any YAML or JSON front matter and
- * attach it to the document as data. The first line of the text must be "---",
- * followed by a block of JSON or YAML, followed by another line of "---". Any
- * lines following will be treated as the document text.
- *
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- *
- * @param {StringLike|AsyncTree} input
- */
-export function from(input) {
-  if (Tree.isAsyncTree(input)) {
-    return Object.create(input);
+// Helper class. We define the `toString` method on a separate prototype so that
+// the method *won't* be enumerated as a property of a text document object.
+class ObjectWithText extends Object {
+  toString() {
+    return this["@text"];
   }
-
-  const text = String(input);
-  const regex =
-    /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
-  const match = regex.exec(text);
-  const frontData = match?.groups ? parseYaml(match.groups.frontText) : null;
-  const body = match?.groups?.body ?? text;
-
-  return bodyWithData(body, frontData);
 }
 
 /**
+ * Create a new text document: a plain object with a `@text` property and a
+ * `toString()` method that returns that text.
+ *
+ * The `input` parameter can be anything that can be converted to a string. The
+ * optional `data` parameter can be any object; if the object is a plain object,
+ * its properties will be copied to the new document; otherwise, that parameter
+ * is ignored.
+ *
+ * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+ * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
  *
  * @param {StringLike} input
- * @param {Treelike} [data]
+ * @param {any} [data]
+ * @returns {PlainObject}
  */
-export function bodyWithData(input, data) {
-  const body = String(input);
-  const bodyData = {
-    "@body": body,
-  };
-
-  // If data is present, merge it with the body data.
-  let tree;
-  if (isPlainObject(data)) {
-    tree = Tree.from({ ...data, ...bodyData });
-  } else if (data) {
-    tree = merge(Tree.from(bodyData), data);
-    // HACK
-    let treeScope;
-    Object.defineProperty(tree, "scope", {
-      get() {
-        if (!treeScope) {
-          return tree.parent
-            ? new Scope(tree, Scope.getScope(tree.parent))
-            : tree;
-        }
-        return treeScope;
-      },
-      set(scope) {
-        treeScope = scope;
-        for (const t of tree.trees) {
-          t.scope = scope;
-        }
-      },
-    });
-  } else {
-    tree = Tree.from(bodyData);
-  }
-
-  tree.toString = () => body;
-  return tree;
+export default function textDocument2(input, data) {
+  const document = Object.assign({}, typeof data === "object" ? data : null, {
+    "@text": String(input),
+  });
+  Object.setPrototypeOf(document, ObjectWithText.prototype);
+  return document;
 }

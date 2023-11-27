@@ -2,11 +2,11 @@ import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import { from } from "../../src/common/textDocument2.js";
+import { unpack } from "../../src/common/textDocument2.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
-    const document = from(`Hello, {{ name }}!`);
+    const document = unpack(`Hello, {{ name }}!`);
     document.parent = new ObjectTree({
       name: "Alice",
     });
@@ -16,7 +16,7 @@ describe("inline", () => {
   });
 
   test("can reference keys in an attached tree", async () => {
-    const document = from(`---
+    const document = unpack(`---
 name: Bob
 ---
 Hello, {{ name }}!`);
@@ -27,7 +27,7 @@ Hello, {{ name }}!`);
   });
 
   test("can reference itself via `_` ambient", async () => {
-    const document = from(`---
+    const document = unpack(`---
 name: Bob
 ---
 Hello, {{ _/name }}!`);

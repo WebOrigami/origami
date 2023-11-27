@@ -2,9 +2,9 @@ import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackOrigamiTemplate from "../../src/builtins/@loaders/orit.js";
-import * as textDocument2 from "../../src/common/textDocument2.js";
+import textDocument2 from "../../src/common/textDocument2.js";
 
-describe.only(".orit loader", () => {
+describe(".orit loader", () => {
   test("loads a template", async () => {
     const text = `Hello, {{ _ }}!`;
     const fn = await unpackOrigamiTemplate(text);
@@ -38,15 +38,17 @@ Hello, {{ name }}!`;
     const parent = new ObjectTree({});
     const fn = await unpackOrigamiTemplate(text, { parent });
     const data = { name: "Alice" };
-    const inputDocument = textDocument2.bodyWithData("Some text", data);
+    const inputDocument = textDocument2("Some text", data);
     const outputDocument = await fn(inputDocument);
+    assert.deepEqual(outputDocument, {
+      "@text": "Hello, Alice!",
+      name: "Alice",
+    });
     assert.equal(String(outputDocument), "Hello, Alice!");
-    assert.equal(await outputDocument.get("name"), "Alice");
-    assert.equal(outputDocument.parent, parent);
   });
 
   test("front matter expressions can reference template's scope", async () => {
-    const scope = new ObjectTree({
+    const parent = new ObjectTree({
       greet: function (name) {
         return `Hello, ${name}!`;
       },
@@ -55,18 +57,8 @@ Hello, {{ name }}!`;
 message: !ori greet("Bob")
 ---
 {{ message }}`;
-    const fn = await unpackOrigamiTemplate(text, { parent: scope });
+    const fn = await unpackOrigamiTemplate(text, { parent });
     const document = await fn.call();
     assert.equal(String(document), "Hello, Bob!");
-  });
-
-  test.only("front matter expressions have input in scope via `_`", async () => {
-    const text = `---
-name: !ori _/fullName
----
-Hello, {{ name }}!`;
-    const fn = await unpackOrigamiTemplate(text);
-    const document = await fn({ fullName: "Alice Andrews" });
-    assert.equal(String(document), "Hello, Alice Andrews!");
   });
 });

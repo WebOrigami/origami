@@ -30,10 +30,9 @@ marked.use(
  * @param {StringLike} input
  */
 export default async function mdHtml(input) {
-  const markdownDocument = textDocument2.from(input);
-  const markdown = String(markdownDocument);
+  const markdown = String(input);
   const html = marked(markdown);
-  const htmlDocument = textDocument2.bodyWithData(html, markdownDocument);
+  const htmlDocument = textDocument2.bodyWithData(html, input);
   return htmlDocument;
 }
 
