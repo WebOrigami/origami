@@ -1,4 +1,4 @@
-import TextDocument from "../common/TextDocument.js";
+import * as textDocument2 from "../common/textDocument2.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import unpackOrigamiTemplate from "./@loaders/orit.js";
 
@@ -14,10 +14,10 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  const inputDocument = TextDocument.from(input);
+  const inputDocument = textDocument2.from(input);
   const templateFn = await unpackOrigamiTemplate(input);
   const text = await templateFn(inputDocument);
-  return new TextDocument(text, inputDocument.data, inputDocument.parent);
+  return textDocument2.bodyWithData(text, inputDocument);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

@@ -2,8 +2,8 @@
 import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
-import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
+import * as textDocument2 from "../../common/textDocument2.js";
 import builtins from "../@builtins.js";
 
 /**
@@ -15,11 +15,10 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;
 
   // Get the input body text and attached content.
-  const inputDocument = TextDocument.from(input);
-  const text = inputDocument.text;
-  const attachedData = inputDocument.data;
-  if (parent && Tree.isAsyncTree(attachedData) && !attachedData.parent) {
-    attachedData.parent = parent;
+  const inputDocument = textDocument2.from(input);
+  const text = String(inputDocument);
+  if (parent && !inputDocument.parent) {
+    inputDocument.parent = parent;
   }
 
   // Compile the body text as an Origami expression and evaluate it.
@@ -35,9 +34,11 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
     const data = Tree.isAsyncTree(templateInput)
       ? await Tree.plain(templateInput)
       : await templateInput?.unpack?.();
-    return data ? new TextDocument(text, data, parent) : text;
+    const outputDocument = textDocument2.bodyWithData(text, data);
+    outputDocument.parent = parent;
+    return outputDocument;
   };
   fn.code = lambda.code;
 
-  return processUnpackedContent(fn, parent, attachedData);
+  return processUnpackedContent(fn, parent, inputDocument);
 }

@@ -2,14 +2,14 @@ import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackOrigamiTemplate from "../../src/builtins/@loaders/orit.js";
-import TextDocument from "../../src/common/TextDocument.js";
+import * as textDocument2 from "../../src/common/textDocument2.js";
 
-describe(".orit loader", () => {
+describe.only(".orit loader", () => {
   test("loads a template", async () => {
     const text = `Hello, {{ _ }}!`;
     const fn = await unpackOrigamiTemplate(text);
-    const value = await fn.call(null, "world");
-    assert.deepEqual(value, "Hello, world!");
+    const document = await fn.call(null, "world");
+    assert.equal(String(document), "Hello, world!");
   });
 
   test("template has access to its parent via scope", async () => {
@@ -19,8 +19,8 @@ describe(".orit loader", () => {
     const fn = await unpackOrigamiTemplate("{{ a }}", {
       parent,
     });
-    const value = await fn();
-    assert.deepEqual(value, "1");
+    const document = await fn();
+    assert.equal(String(document), "1");
   });
 
   test("template expressions have front matter in scope", async () => {
@@ -30,7 +30,7 @@ name: Carol
 Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
     const document = await fn();
-    assert.deepEqual(String(document), "Hello, Carol!");
+    assert.equal(String(document), "Hello, Carol!");
   });
 
   test("template result includes input data", async () => {
@@ -38,12 +38,11 @@ Hello, {{ name }}!`;
     const parent = new ObjectTree({});
     const fn = await unpackOrigamiTemplate(text, { parent });
     const data = { name: "Alice" };
-    const document = new TextDocument("Some text", data);
-    const result = await fn(document);
-    assert.deepEqual(String(result), "Hello, Alice!");
-    const resultData = await result.unpack();
-    assert.deepEqual(resultData, { name: "Alice" });
-    assert.deepEqual(result.parent, parent);
+    const inputDocument = textDocument2.bodyWithData("Some text", data);
+    const outputDocument = await fn(inputDocument);
+    assert.equal(String(outputDocument), "Hello, Alice!");
+    assert.equal(await outputDocument.get("name"), "Alice");
+    assert.equal(outputDocument.parent, parent);
   });
 
   test("front matter expressions can reference template's scope", async () => {
@@ -57,17 +56,17 @@ message: !ori greet("Bob")
 ---
 {{ message }}`;
     const fn = await unpackOrigamiTemplate(text, { parent: scope });
-    const value = await fn.call();
-    assert.deepEqual(String(value), "Hello, Bob!");
+    const document = await fn.call();
+    assert.equal(String(document), "Hello, Bob!");
   });
 
-  test("front matter expressions have input in scope via `_`", async () => {
+  test.only("front matter expressions have input in scope via `_`", async () => {
     const text = `---
 name: !ori _/fullName
 ---
 Hello, {{ name }}!`;
     const fn = await unpackOrigamiTemplate(text);
-    const value = await fn({ fullName: "Alice Andrews" });
-    assert.deepEqual(String(value), "Hello, Alice Andrews!");
+    const document = await fn({ fullName: "Alice Andrews" });
+    assert.equal(String(document), "Hello, Alice Andrews!");
   });
 });

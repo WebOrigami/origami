@@ -1,4 +1,5 @@
 import { Tree, isPlainObject, merge } from "@graphorigami/async-tree";
+import { Scope } from "@graphorigami/language";
 import * as YAMLModule from "yaml";
 import { parseYaml } from "./serialize.js";
 
@@ -54,6 +55,24 @@ export function bodyWithData(input, data) {
     tree = Tree.from({ ...data, ...bodyData });
   } else if (data) {
     tree = merge(Tree.from(bodyData), data);
+    // HACK
+    let treeScope;
+    Object.defineProperty(tree, "scope", {
+      get() {
+        if (!treeScope) {
+          return tree.parent
+            ? new Scope(tree, Scope.getScope(tree.parent))
+            : tree;
+        }
+        return treeScope;
+      },
+      set(scope) {
+        treeScope = scope;
+        for (const t of tree.trees) {
+          t.scope = scope;
+        }
+      },
+    });
   } else {
     tree = Tree.from(bodyData);
   }

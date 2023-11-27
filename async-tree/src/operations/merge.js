@@ -11,7 +11,7 @@
  * @returns {AsyncTree & { description: string }}
  */
 export default function merge(...sources) {
-  const trees = sources.map((source) => Object.create(source));
+  let trees = sources;
   let mergeParent;
   return {
     description: "merge",
@@ -50,9 +50,10 @@ export default function merge(...sources) {
     },
     set parent(parent) {
       mergeParent = parent;
-      for (const tree of trees) {
+      trees = sources.map((source) => {
+        const tree = Object.create(source);
         tree.parent = parent;
-      }
+      });
     },
   };
 }
