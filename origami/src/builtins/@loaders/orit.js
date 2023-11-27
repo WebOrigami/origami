@@ -1,4 +1,3 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
@@ -10,13 +9,17 @@ import unpackText from "./txt.js";
 /**
  * Load and evaluate an Origami template from a file.
  *
+ * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  * @type {import("@graphorigami/language").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
-  const parent = options.parent ?? /** @type {any} */ (input)?.parent ?? null;
+  const parent = options.parent ?? /** @type {any} */ (input).getParent?.();
 
   // Get the input text and any attached front matter.
-  const inputDocument = await unpackText(input, { parent });
+  const isInputDocument = input["@text"] !== undefined;
+  const inputDocument = isInputDocument
+    ? input
+    : await unpackText(input, { parent });
   const text = String(inputDocument);
 
   // Compile the body text as an Origami expression and evaluate it.

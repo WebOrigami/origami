@@ -70,6 +70,7 @@ export { default as treeFn } from "../src/builtins/@tree/fn.js";
 export { default as treeFrom } from "../src/builtins/@tree/from.js";
 export { default as treeFromJson } from "../src/builtins/@tree/fromJson.js";
 export { default as treeFromYaml } from "../src/builtins/@tree/fromYaml.js";
+export { default as treeGroupBy } from "../src/builtins/@tree/groupBy.js";
 export { default as treeInners } from "../src/builtins/@tree/inners.js";
 export { default as treeIsAsyncTree } from "../src/builtins/@tree/isAsyncTree.js";
 export { default as treeKeys } from "../src/builtins/@tree/keys.js";
@@ -113,6 +114,7 @@ export { default as processUnpackedContent } from "../src/common/processUnpacked
 export * from "../src/common/serialize.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
 export { default as TextDocument } from "../src/common/TextDocument.js";
+export { default as textDocument2 } from "../src/common/textDocument2.js";
 export * from "../src/common/utilities.js";
 export { default as assertScopeIsDefined } from "../src/misc/assertScopeIsDefined.js";
 export { default as OriCommandTransform } from "../src/misc/OriCommandTransform.js";

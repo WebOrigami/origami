@@ -51,8 +51,8 @@ export default async function sitemap(treelike, baseHref = "") {
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
   const templateFn = await unpackOrigamiTemplate(templateText);
-  const result = await templateFn.call(builtins, htmlPaths);
-  return result;
+  const templateResult = await templateFn.call(builtins, htmlPaths);
+  return String(templateResult);
 }
 
 sitemap.usage = `@sitemap <tree>\tGenerate a sitemap for a tree`;

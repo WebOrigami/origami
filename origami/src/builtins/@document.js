@@ -1,4 +1,4 @@
-import TextDocument from "../common/TextDocument.js";
+import textDocument2 from "../common/textDocument2.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -13,11 +13,5 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default function document(text, data, parent) {
   assertScopeIsDefined(this);
-  if (data) {
-    return new TextDocument(text, data, parent ?? this);
-  } else {
-    const document = TextDocument.from(text);
-    document.parent = parent;
-    return document;
-  }
+  return textDocument2(text, data, parent ?? this);
 }

@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
+import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackText from "../../src/builtins/@loaders/txt.js";
@@ -23,7 +23,7 @@ describe("text loader", () => {
     });
   });
 
-  test("from() accepts front matter with Origami expressions", async () => {
+  test("unpacks front matter with Origami expressions", async () => {
     const text = `---
 message: !ori greeting
 ---
@@ -32,7 +32,7 @@ Body text`;
       greeting: "Hello",
     });
     const document = await unpackText(text, { parent });
-    assert.deepEqual(await Tree.plain(document), {
+    assert.deepEqual(document, {
       "@text": "Body text",
       message: "Hello",
     });

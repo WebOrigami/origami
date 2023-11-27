@@ -1,10 +1,4 @@
-// Helper class. We define the `toString` method on a separate prototype so that
-// the method *won't* be enumerated as a property of a text document object.
-class ObjectWithText extends Object {
-  toString() {
-    return this["@text"];
-  }
-}
+import { toYaml } from "./serialize.js";
 
 /**
  * Create a new text document: a plain object with a `@text` property and a
@@ -15,17 +9,46 @@ class ObjectWithText extends Object {
  * its properties will be copied to the new document; otherwise, that parameter
  * is ignored.
  *
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
  * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+ * @typedef {import("@graphorigami/types").AsyncTree|null} AsyncTree
  *
  * @param {StringLike} input
  * @param {any} [data]
+ * @param {AsyncTree} [parent]
  * @returns {PlainObject}
  */
-export default function textDocument2(input, data) {
+export default function textDocument2(input, data, parent) {
   const document = Object.assign({}, typeof data === "object" ? data : null, {
     "@text": String(input),
   });
-  Object.setPrototypeOf(document, ObjectWithText.prototype);
+
+  // We define methods on a separate prototype so that these methods *won't* be
+  // enumerated properties of the document object.
+  Object.setPrototypeOf(document, {
+    getParent() {
+      return parent;
+    },
+
+    /**
+     * Render the text and data as a document with YAML front matter.
+     */
+    async pack() {
+      const text = this["@text"];
+      const dataWithoutText = Object.assign({}, this);
+      delete dataWithoutText["@text"];
+      if (Object.keys(dataWithoutText).length > 0) {
+        const frontMatter = (await toYaml(data)).trimEnd();
+        return `---\n${frontMatter}\n---\n${text}`;
+      } else {
+        return text;
+      }
+    },
+
+    toString() {
+      return this["@text"];
+    },
+  });
+
   return document;
 }

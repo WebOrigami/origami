@@ -1,3 +1,4 @@
+import { Tree } from "@graphorigami/async-tree";
 import * as YAMLModule from "yaml";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import { parseYaml } from "../../common/serialize.js";
@@ -11,8 +12,12 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  *
  * @type {import("@graphorigami/language").FileUnpackFunction}
  */
-export default function unpackYaml(input, options = {}) {
+export default async function unpackYaml(input, options = {}) {
   const parent = options.parent ?? null;
-  const content = parseYaml(String(input));
-  return processUnpackedContent(content, parent);
+  let data = parseYaml(String(input));
+  if (Tree.isAsyncTree(data)) {
+    data.parent = parent;
+    data = await Tree.plain(data);
+  }
+  return processUnpackedContent(data, parent);
 }

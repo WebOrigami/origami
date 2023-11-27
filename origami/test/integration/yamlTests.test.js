@@ -6,7 +6,6 @@ import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
-import TextDocument from "../../src/common/TextDocument.js";
 
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
 const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
@@ -41,7 +40,7 @@ async function registerYamlSuite(yamlFile) {
         const expression = await fixture.get("actual.ori");
         const actual = await expression.unpack();
         const actualNormalized =
-          actual instanceof TextDocument ? String(actual) : actual;
+          typeof expected === "string" ? String(actual) : actual;
         assert.deepEqual(actualNormalized, expected);
       });
     }

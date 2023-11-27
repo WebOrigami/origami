@@ -30,5 +30,5 @@ export default async function unpackText(input, options = {}) {
     frontData = await Tree.plain(frontData);
   }
 
-  return textDocument2(body, frontData);
+  return textDocument2(body, frontData, options.parent);
 }

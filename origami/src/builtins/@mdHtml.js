@@ -3,7 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import * as textDocument2 from "../common/textDocument2.js";
+import textDocument2 from "../common/textDocument2.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -29,10 +29,10 @@ marked.use(
  * @this {import("@graphorigami/types").AsyncTree|null|void}
  * @param {StringLike} input
  */
-export default async function mdHtml(input) {
+export default function mdHtml(input) {
   const markdown = String(input);
   const html = marked(markdown);
-  const htmlDocument = textDocument2.bodyWithData(html, input);
+  const htmlDocument = textDocument2(html, input);
   return htmlDocument;
 }
 
