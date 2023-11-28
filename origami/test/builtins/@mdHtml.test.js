@@ -6,7 +6,7 @@ import mdHtml from "../../src/builtins/@mdHtml.js";
 describe("mdHtml", () => {
   test("transforms markdown to HTML", async () => {
     const markdown = `# Hello, world.`;
-    const htmlDocument = mdHtml(markdown);
+    const htmlDocument = await mdHtml(markdown);
     assert.equal(
       String(htmlDocument),
       `<h1 id="hello-world">Hello, world.</h1>\n`
@@ -17,7 +17,7 @@ describe("mdHtml", () => {
     const markdownDocument = await unpackText(
       `---\ntitle: Hello\n---\n# Hello, world.`
     );
-    const htmlDocument = mdHtml.call(null, markdownDocument);
+    const htmlDocument = await mdHtml.call(null, markdownDocument);
     assert.equal(
       String(htmlDocument),
       `<h1 id="hello-world">Hello, world.</h1>\n`

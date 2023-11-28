@@ -29,10 +29,11 @@ marked.use(
  * @this {import("@graphorigami/types").AsyncTree|null|void}
  * @param {StringLike} input
  */
-export default function mdHtml(input) {
-  const markdown = String(input);
+export default async function mdHtml(input) {
+  const inputDocument = (await /** @type {any} */ (input).unpack?.()) ?? input;
+  const markdown = String(inputDocument);
   const html = marked(markdown);
-  const htmlDocument = new TextDocument(html, input);
+  const htmlDocument = new TextDocument(html, inputDocument);
   return htmlDocument;
 }
 

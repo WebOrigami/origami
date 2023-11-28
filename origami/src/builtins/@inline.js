@@ -14,9 +14,10 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  const templateFn = await unpackOrigamiTemplate(input);
-  const text = await templateFn(input);
-  return new TextDocument(text, input);
+  const inputDocument = (await /** @type {any} */ (input).unpack?.()) ?? input;
+  const templateFn = await unpackOrigamiTemplate(inputDocument);
+  const text = await templateFn(inputDocument);
+  return new TextDocument(text, inputDocument);
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;
