@@ -53,6 +53,7 @@ export default function merge(...sources) {
       trees = sources.map((source) => {
         const tree = Object.create(source);
         tree.parent = parent;
+        return tree;
       });
     },
   };
