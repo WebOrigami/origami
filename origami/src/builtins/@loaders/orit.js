@@ -13,7 +13,10 @@ import unpackText from "./txt.js";
  * @type {import("@graphorigami/language").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
-  const parent = options.parent ?? /** @type {any} */ (input).getParent?.();
+  const parent =
+    options.parent ??
+    /** @type {any} */ (input).parent ??
+    /** @type {any} */ (input).getParent?.();
 
   // Get the input text and any attached front matter.
   const isInputDocument = input["@text"] !== undefined;
