@@ -1,85 +1,53 @@
-import { parseYaml, toYaml } from "./serialize.js";
+import { toYaml } from "./serialize.js";
+
+const parentKey = Symbol("parent");
 
 /**
- * A text document with optional associated data.
- *
- * @typedef {import("../../index.js").JsonValue} JsonValue
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
- * @typedef {import("@graphorigami/async-tree").Unpackable} HasContents
- * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * A text document is any object with a `@text` property and a `toString()`
+ * method that returns that text. This class is a helper for constructing such
+ * text documents.
  */
 export default class TextDocument {
   /**
-   * @param {StringLike} text
+   * The `input` parameter can be anything that can be converted to a string.
+   * The optional `data` parameter can be any object; if the object is a plain
+   * object, its properties will be copied to the new document; otherwise, that
+   * parameter is ignored.
+   *
+   * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+   * @typedef {import("@graphorigami/types").AsyncTree|null} AsyncTree
+   *
+   * @param {StringLike} input
    * @param {any} [data]
-   * @param {AsyncTree|null} [parent]
+   * @param {AsyncTree} [parent]
    */
-  constructor(text, data = {}, parent) {
-    this.text = String(text);
-    // Make a copy of the data so we don't modify the original when setting
-    // parent.
-    this.data = data;
-    this.parent = parent;
+  constructor(input, data, parent) {
+    Object.assign(this, data);
+    this["@text"] = String(input);
+    this[parentKey] = parent;
   }
 
-  /**
-   * Return a new TextDocument for the given input.
-   *
-   * If the input is already a TextDocument, a new copy will be returned.
-   *
-   * If the input is string-like, it will be used as the text for a new
-   * TextDocument. This process will parse out any YAML or JSON front matter and
-   * attach it to the document as data. The first line of the text must be
-   * "---", followed by a block of JSON or YAML, followed by another line of
-   * "---". Any lines following will be treated as the document text.
-   *
-   * @param {StringLike|TextDocument} input
-   */
-  static from(input) {
-    if (input instanceof this) {
-      return new this(input.text, input.data, input.parent);
-    }
-
-    const text = String(input);
-    const parent = /** @type {any} */ (input).parent;
-
-    const regex =
-      /^(?<frontBlock>---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<bodyText>[\s\S]*$)/;
-    const match = regex.exec(text);
-    const data = match?.groups ? parseYaml(match.groups.frontText) : {};
-    const bodyText = match?.groups ? match.groups.bodyText : text;
-
-    return new this(bodyText, data, parent);
+  getParent() {
+    return this[parentKey];
   }
 
   /**
    * Render the text and data as a document with YAML front matter.
    */
   async pack() {
-    if (this.data) {
-      const frontMatter = (await toYaml(this.data)).trimEnd();
-      return `---\n${frontMatter}\n---\n${this.text}`;
+    const text = this["@text"];
+    /** @type {any} */
+    const dataWithoutText = Object.assign({}, this);
+    delete dataWithoutText["@text"];
+    if (Object.keys(dataWithoutText).length > 0) {
+      const frontMatter = (await toYaml(dataWithoutText)).trimEnd();
+      return `---\n${frontMatter}\n---\n${text}`;
     } else {
-      return this.text;
-    }
-  }
-
-  get parent() {
-    return this._parent;
-  }
-  set parent(parent) {
-    this._parent = parent;
-    if (this.data && "parent" in this.data) {
-      this.data.parent = parent;
+      return text;
     }
   }
 
   toString() {
-    return this.text;
-  }
-
-  unpack() {
-    return this.data;
+    return this["@text"];
   }
 }

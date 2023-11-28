@@ -2,7 +2,7 @@ import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackOrigamiTemplate from "../../src/builtins/@loaders/orit.js";
-import textDocument2 from "../../src/common/textDocument2.js";
+import TextDocument from "../../src/common/TextDocument.js";
 
 describe(".orit loader", () => {
   test("loads a template", async () => {
@@ -38,7 +38,7 @@ Hello, {{ name }}!`;
     const parent = new ObjectTree({});
     const fn = await unpackOrigamiTemplate(text, { parent });
     const data = { name: "Alice" };
-    const inputDocument = textDocument2("Some text", data);
+    const inputDocument = new TextDocument("Some text", data);
     const outputDocument = await fn(inputDocument);
     assert.deepEqual(outputDocument, {
       "@text": "Hello, Alice!",

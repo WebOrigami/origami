@@ -3,7 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import textDocument2 from "../common/textDocument2.js";
+import TextDocument from "../common/TextDocument.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -32,7 +32,7 @@ marked.use(
 export default function mdHtml(input) {
   const markdown = String(input);
   const html = marked(markdown);
-  const htmlDocument = textDocument2(html, input);
+  const htmlDocument = new TextDocument(html, input);
   return htmlDocument;
 }
 

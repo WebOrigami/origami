@@ -1,5 +1,5 @@
 import { Tree } from "@graphorigami/async-tree";
-import textDocument2 from "../common/textDocument2.js";
+import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -63,7 +63,7 @@ export default async function index(treelike) {
       </body>
     </html>`;
 
-  return textDocument2(html.trim(), tree);
+  return new TextDocument(html.trim(), tree);
 }
 
 index.usage = `@index\tReturn a default index.html page for the current tree`;

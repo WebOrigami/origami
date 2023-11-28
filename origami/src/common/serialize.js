@@ -1,7 +1,7 @@
 /**
  * @typedef {import("../../index.ts").JsonValue} JsonValue
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
  * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
  */
 
@@ -17,20 +17,19 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 // @ts-ignore
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
-// Return true if the given object has any functions in it.
-function objectContainsFunctions(obj) {
-  for (const key in obj) {
-    const value = obj[key];
-    if (typeof value === "function") {
-      return true;
-    } else if (isPlainObject(value)) {
-      const valueContainsExpression = objectContainsFunctions(value);
-      if (valueContainsExpression) {
-        return true;
-      }
-    }
+/**
+ *
+ * @param {string} text
+ * @param {AsyncTree|null} [parent]
+ */
+export async function evaluateYaml(text, parent) {
+  const data = parseYaml(String(text));
+  if (Tree.isAsyncTree(data)) {
+    data.parent = parent;
+    return Tree.plain(data);
+  } else {
+    return data;
   }
-  return false;
 }
 
 /**
@@ -46,6 +45,22 @@ function isJsonValue(obj) {
     obj instanceof Date ||
     obj === null
   );
+}
+
+// Return true if the given object has any functions in it.
+function objectContainsFunctions(obj) {
+  for (const key in obj) {
+    const value = obj[key];
+    if (typeof value === "function") {
+      return true;
+    } else if (isPlainObject(value)) {
+      const valueContainsExpression = objectContainsFunctions(value);
+      if (valueContainsExpression) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**

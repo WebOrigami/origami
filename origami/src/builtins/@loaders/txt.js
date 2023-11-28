@@ -1,6 +1,5 @@
-import { Tree } from "@graphorigami/async-tree";
-import { parseYaml } from "../../common/serialize.js";
-import textDocument2 from "../../common/textDocument2.js";
+import TextDocument from "../../common/TextDocument.js";
+import { evaluateYaml } from "../../common/serialize.js";
 
 /**
  * Load a file as text document with possible front matter.
@@ -16,6 +15,7 @@ import textDocument2 from "../../common/textDocument2.js";
  * @type {import("@graphorigami/language").FileUnpackFunction}
  */
 export default async function unpackText(input, options = {}) {
+  const parent = options.parent ?? null;
   const text = String(input);
   const regex =
     /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
@@ -23,12 +23,9 @@ export default async function unpackText(input, options = {}) {
 
   const body = match?.groups?.body ?? text;
 
-  let frontData = match?.groups ? parseYaml(match.groups.frontText) : null;
-  if (Tree.isAsyncTree(frontData)) {
-    // The front matter contains Origami expressions; evaluate.
-    frontData.parent = options.parent; // May be undefined
-    frontData = await Tree.plain(frontData);
-  }
+  const frontData = match?.groups
+    ? await evaluateYaml(match.groups.frontText, parent)
+    : null;
 
-  return textDocument2(body, frontData, options.parent);
+  return new TextDocument(body, frontData, options.parent);
 }
