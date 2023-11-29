@@ -4,7 +4,6 @@ import { OrigamiFiles, Scope } from "@graphorigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
-import TextDocument from "../common/TextDocument.js";
 import { keySymbol } from "../common/utilities.js";
 import debug from "./@debug.js";
 
@@ -29,8 +28,9 @@ export default async function explore() {
   ambientsTree[keySymbol] = "explore command";
   const extendedScope = new Scope(ambientsTree, scope);
 
-  const tree = await debug.call(this, extendedScope);
-  const result = new TextDocument(text, tree);
+  /** @type {any} */
+  const result = new String(text);
+  result.unpack = () => debug.call(scope, extendedScope);
 
   return result;
 }
