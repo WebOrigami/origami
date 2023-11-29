@@ -1,4 +1,7 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree, isPlainObject, isStringLike } from "@graphorigami/async-tree";
+
+const textDecoder = new TextDecoder();
+const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 export function isTransformApplied(Transform, obj) {
   let transformName = Transform.name;
@@ -51,6 +54,35 @@ export function toFunction(obj) {
   } else {
     // Return a constant function.
     return () => obj;
+  }
+}
+
+/**
+ * Return a string form of the object, handling two cases not generally handled
+ * by a .toString() method:
+ *
+ * 1. If the object is a plain JavaScript object with a `@text` property, return
+ *    the value of that property.
+ * 2. If the object is an ArrayBuffer or TypedArray, decode the array as UTF-8.
+ *
+ * Finally, if the object is otherwise a plain JavaScript object with the
+ * useless default toString() method, return null instead of "[object Object]".
+ * In practice, it's generally more useful to have this method fail than to
+ * return a useless string.
+ *
+ * @param {any} object
+ * @returns {string|null}
+ */
+export function toString(object) {
+  if (isPlainObject(object) && "@text" in object) {
+    return object["@text"];
+  } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+    // Serialize data as UTF-8.
+    return textDecoder.decode(object);
+  } else if (isStringLike(object)) {
+    return String(object);
+  } else {
+    return null;
   }
 }
 

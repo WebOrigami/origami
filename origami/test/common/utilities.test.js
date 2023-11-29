@@ -38,6 +38,30 @@ describe("utilities", () => {
     assert.equal(fn(), "constant");
   });
 
+  test("toString returns the value of an object's `@text` property", () => {
+    const obj = {
+      "@text": "text",
+    };
+    assert.equal(utilities.toString(obj), "text");
+  });
+
+  test("toString returns the value of an object's `toString` method", () => {
+    const obj = {
+      toString: () => "text",
+    };
+    assert.equal(utilities.toString(obj), "text");
+  });
+
+  test("toString returns null for an object with no useful `toString`", () => {
+    const obj = {};
+    assert.equal(utilities.toString(obj), null);
+  });
+
+  test("toString decodes an ArrayBuffer as UTF-8", () => {
+    const buffer = Buffer.from("text", "utf8");
+    assert.equal(utilities.toString(buffer), "text");
+  });
+
   test("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {
