@@ -27,5 +27,7 @@ export default async function unpackText(input, options = {}) {
     ? await evaluateYaml(match.groups.frontText, parent)
     : null;
 
-  return new TextDocument(body, frontData, options.parent);
+  const object = Object.assign({}, frontData, { "@text": body });
+
+  return new TextDocument(object, options.parent);
 }

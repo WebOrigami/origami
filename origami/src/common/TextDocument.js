@@ -1,3 +1,4 @@
+import { isStringLike } from "@graphorigami/async-tree";
 import { toYaml } from "./serialize.js";
 
 const parentKey = Symbol("parent");
@@ -14,17 +15,24 @@ export default class TextDocument {
    * object, its properties will be copied to the new document; otherwise, that
    * parameter is ignored.
    *
-   * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
    * @typedef {import("@graphorigami/types").AsyncTree|null} AsyncTree
    *
-   * @param {StringLike} input
    * @param {any} [data]
    * @param {AsyncTree} [parent]
    */
-  constructor(input, data, parent) {
+  constructor(data, parent) {
     Object.assign(this, data);
-    this["@text"] = String(input);
     this[parentKey] = parent;
+  }
+
+  static async from(input) {
+    if (input["@text"]) {
+      return input;
+    } else if (input.unpack) {
+      return input.unpack();
+    } else if (isStringLike(input)) {
+      return new TextDocument(input);
+    }
   }
 
   getParent() {

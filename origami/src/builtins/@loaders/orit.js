@@ -1,7 +1,6 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree, isPlainObject } from "@graphorigami/async-tree";
 import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
-import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import builtins from "../@builtins.js";
 import unpackText from "./txt.js";
@@ -37,9 +36,12 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
     const text = await lambda.call(this, templateInput);
     const data = Tree.isAsyncTree(templateInput)
       ? await Tree.plain(templateInput)
-      : templateInput;
-    const outputDocument = new TextDocument(text, data);
-    return outputDocument;
+      : isPlainObject(templateInput)
+      ? templateInput
+      : null;
+    return Object.assign({}, data, {
+      "@text": text,
+    });
   };
   fn.code = lambda.code;
 

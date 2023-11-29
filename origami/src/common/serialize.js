@@ -10,6 +10,7 @@ import { OrigamiTree } from "@graphorigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
 
+const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
@@ -119,7 +120,7 @@ export async function toJsonValue(object) {
     return Tree.plain(mapped);
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
     // Serialize data as UTF-8.
-    return new TextDecoder().decode(object);
+    return textDecoder.decode(object);
   }
 
   throw new TypeError("Couldn't serialize object");

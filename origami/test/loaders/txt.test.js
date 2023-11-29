@@ -10,13 +10,11 @@ describe("text loader", () => {
     assert.deepEqual(document, {
       "@text": text,
     });
-    assert.equal(String(document), text);
   });
 
   test("unpacks a document with YAML/JSON front matter", async () => {
     const text = "---\na: 1\n---\nBody text";
     const document = await unpackText(text);
-    assert.equal(document.toString(), "Body text");
     assert.deepEqual(document, {
       "@text": "Body text",
       a: 1,
