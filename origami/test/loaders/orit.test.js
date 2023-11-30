@@ -2,7 +2,6 @@ import { ObjectTree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import unpackOrigamiTemplate from "../../src/builtins/@loaders/orit.js";
-import unpackText from "../../src/builtins/@loaders/txt.js";
 import TextDocument from "../../src/common/TextDocument.js";
 
 describe(".orit loader", () => {
@@ -29,8 +28,7 @@ describe(".orit loader", () => {
 name: Carol
 ---
 Hello, {{ name }}!`;
-    const inputDocument = await unpackText(text);
-    const fn = await unpackOrigamiTemplate(inputDocument);
+    const fn = await unpackOrigamiTemplate(text);
     const result = await fn();
     assert.equal(String(result), "Hello, Carol!");
   });
@@ -54,14 +52,11 @@ Hello, {{ name }}!`;
         return `Hello, ${name}!`;
       },
     });
-    const templateDocument = await unpackText(
-      `---
+    const text = `---
 message: !ori greet("Bob")
 ---
-{{ message }}`,
-      { parent }
-    );
-    const fn = await unpackOrigamiTemplate(templateDocument);
+{{ message }}`;
+    const fn = await unpackOrigamiTemplate(text, { parent });
     const result = await fn.call();
     assert.equal(String(result), "Hello, Bob!");
   });
