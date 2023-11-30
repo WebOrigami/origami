@@ -1,9 +1,9 @@
 import { Scope } from "@graphorigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
-import TextDocument from "../../common/TextDocument.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import * as utilities from "../../common/utilities.js";
 import builtins from "../@builtins.js";
+import unpackText from "./txt.js";
 
 /**
  * Load and evaluate an Origami template from a file.
@@ -18,7 +18,13 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
     /** @type {any} */ (input)[utilities.parentSymbol];
 
   // Get the input text and any attached front matter.
-  const inputDocument = await TextDocument.from(input, parent);
+  let inputDocument;
+  if (input["@text"]) {
+    inputDocument = input;
+  } else {
+    // Unpack the input as a text document with possible front matter.
+    inputDocument = await unpackText(input, options);
+  }
   const text = utilities.toString(inputDocument);
 
   // Compile the body text as an Origami expression and evaluate it.
