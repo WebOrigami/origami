@@ -13,5 +13,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default function document(text, data, parent) {
   assertScopeIsDefined(this);
-  return new TextDocument(text, data, parent ?? this);
+  const merged = Object.assign({}, data, { "@text": text });
+  return new TextDocument(merged, parent ?? this);
 }

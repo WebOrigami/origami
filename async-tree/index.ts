@@ -23,19 +23,22 @@ export type ReduceFn = (values: any[], keys: any[]) => Promise<any>;
 
 export type StringLike = string | HasString;
 
-export type Treelike =
+type NativeTreelike = 
   any[] |
   AsyncTree |
   Function | 
   Map<any, any> | 
   PlainObject | 
-  Set<any> | 
-  Unpackable;
+  Set<any>;
+
+export type Treelike =
+  NativeTreelike |
+  Unpackable<NativeTreelike>;
 
 export type TreeTransform = (tree: AsyncTree) => AsyncTree;
 
-export type Unpackable = {
-  unpack(): Promise<any>
+export type Unpackable<T> = {
+  unpack(): Promise<T>
 };
 
 export type ValueKeyFn = (value: any, key: any, innerTree: AsyncTree) => any;

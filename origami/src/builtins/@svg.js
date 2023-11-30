@@ -1,6 +1,5 @@
 import { Tree } from "@graphorigami/async-tree";
 import graphviz from "graphviz-wasm";
-import TextDocument from "../common/TextDocument.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import dot from "./@tree/dot.js";
 
@@ -29,9 +28,12 @@ export default async function svg(treelike, options = {}) {
   }
   const tree = Tree.from(treelike);
   const dotText = await dot.call(this, tree, options);
-  const svgText =
-    dotText === undefined ? undefined : await graphviz.layout(dotText, "svg");
-  const result = svgText ? new TextDocument(svgText, tree) : undefined;
+  if (dotText === undefined) {
+    return undefined;
+  }
+  const svgText = await graphviz.layout(dotText, "svg");
+  const result = new String(svgText);
+  result.unpack = () => tree;
   return result;
 }
 

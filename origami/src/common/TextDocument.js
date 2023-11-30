@@ -22,16 +22,16 @@ export default class TextDocument {
    */
   constructor(data, parent) {
     Object.assign(this, data);
-    this[parentKey] = parent;
+    if (parent) {
+      this[parentKey] = parent;
+    }
   }
 
-  static async from(input) {
+  static from(input, parent) {
     if (input["@text"]) {
       return input;
-    } else if (input.unpack) {
-      return input.unpack();
     } else if (isStringLike(input)) {
-      return new TextDocument(input);
+      return new TextDocument({ "@text": input }, parent);
     }
   }
 

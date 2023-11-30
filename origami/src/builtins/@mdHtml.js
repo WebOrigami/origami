@@ -3,7 +3,6 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import TextDocument from "../common/TextDocument.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -25,16 +24,21 @@ marked.use(
 
 /**
  * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+ * @typedef {import("@graphorigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
  *
  * @this {import("@graphorigami/types").AsyncTree|null|void}
- * @param {StringLike} input
+ * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {
-  const inputDocument = (await /** @type {any} */ (input).unpack?.()) ?? input;
-  const markdown = String(inputDocument);
+  if (input.unpack) {
+    input = await input.unpack();
+  }
+  const inputDocument = input["@text"] ? input : null;
+  const markdown = inputDocument?.["@text"] ?? String(input);
   const html = marked(markdown);
-  const htmlDocument = new TextDocument(html, inputDocument);
-  return htmlDocument;
+  return inputDocument
+    ? Object.assign({}, inputDocument, { "@text": html })
+    : html;
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;

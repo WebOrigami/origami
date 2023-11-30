@@ -35,4 +35,10 @@ Body text`;
       message: "Hello",
     });
   });
+
+  test("unpacks and packs in the same format", async () => {
+    const text = "---\na: 1\n---\nBody text";
+    const document = await unpackText(text);
+    assert.equal(await document.pack(), text);
+  });
 });

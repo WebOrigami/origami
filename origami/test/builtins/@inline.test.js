@@ -11,7 +11,9 @@ describe("inline", () => {
     });
     const document = await unpackText(`Hello, {{ name }}!`, { parent });
     const inlined = await inline.call(null, document);
-    assert.equal(String(inlined), "Hello, Alice!");
+    assert.deepEqual(inlined, {
+      "@text": "Hello, Alice!",
+    });
   });
 
   test("can reference values in front matter", async () => {
@@ -21,7 +23,6 @@ name: Bob
 Hello, {{ name }}!`);
     /** @type {any} */
     const inlined = await inline.call(null, document);
-    assert.equal(String(inlined), `Hello, Bob!`);
     assert.deepEqual(inlined, {
       "@text": `Hello, Bob!`,
       name: "Bob",
@@ -35,6 +36,9 @@ name: Bob
 Hello, {{ _/name }}!`);
     /** @type {any} */
     const inlined = await inline.call(null, document);
-    assert.equal(String(inlined), `Hello, Bob!`);
+    assert.deepEqual(inlined, {
+      "@text": `Hello, Bob!`,
+      name: "Bob",
+    });
   });
 });
