@@ -1,5 +1,6 @@
 
 export const keySymbol: unique symbol;
+export const parentSymbol: unique symbol;
 export function isTransformApplied(Transform: Function, object: any): boolean;
 export function toFunction(object: any): Function;
 export function toString(object: any): string|null;

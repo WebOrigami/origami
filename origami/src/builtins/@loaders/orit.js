@@ -15,7 +15,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   const parent =
     options.parent ??
     /** @type {any} */ (input).parent ??
-    /** @type {any} */ (input).getParent?.();
+    /** @type {any} */ (input)[utilities.parentSymbol];
 
   // Get the input text and any attached front matter.
   const inputDocument = await TextDocument.from(input, parent);

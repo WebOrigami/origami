@@ -23,6 +23,8 @@ export function isTransformApplied(Transform, obj) {
 
 export const keySymbol = Symbol("key");
 
+export const parentSymbol = Symbol("parent");
+
 /**
  * Convert the given object to a function.
  *

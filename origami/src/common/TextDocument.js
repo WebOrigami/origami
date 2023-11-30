@@ -1,7 +1,6 @@
 import { isStringLike } from "@graphorigami/async-tree";
 import { toYaml } from "./serialize.js";
-
-const parentKey = Symbol("parent");
+import * as utilities from "./utilities.js";
 
 /**
  * A text document is any object with a `@text` property and a `toString()`
@@ -23,7 +22,7 @@ export default class TextDocument {
   constructor(data, parent) {
     Object.assign(this, data);
     if (parent) {
-      this[parentKey] = parent;
+      this[utilities.parentSymbol] = parent;
     }
   }
 
@@ -31,12 +30,9 @@ export default class TextDocument {
     if (input["@text"]) {
       return input;
     } else if (isStringLike(input)) {
-      return new TextDocument({ "@text": input }, parent);
+      const text = utilities.toString(input);
+      return new TextDocument({ "@text": text }, parent);
     }
-  }
-
-  getParent() {
-    return this[parentKey];
   }
 
   /**
