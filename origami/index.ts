@@ -12,7 +12,7 @@ import { AsyncTree } from "@graphorigami/types";
  */
 export type Constructor<T> = new (...args: any[]) => T;
 
-export type Invocable = Function | Unpackable | Treelike;
+export type Invocable = Function | Unpackable<Function|Treelike> | Treelike;
 
 export interface JsonObject {
   [key: string]: JsonValue;

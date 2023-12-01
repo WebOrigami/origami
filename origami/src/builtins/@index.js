@@ -62,6 +62,7 @@ export default async function index(treelike) {
       </body>
     </html>`;
 
+  /** @type {any} */
   const result = new String(html.trim());
   result.unpack = () => tree;
   return result;

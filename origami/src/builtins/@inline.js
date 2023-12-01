@@ -13,8 +13,8 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  if (input.unpack) {
-    input = await input.unpack();
+  if (/** @type {any} */ (input).unpack) {
+    input = await /** @type {any} */ (input).unpack();
   }
   const inputDocument = input["@text"] ? input : null;
   const templateInput = inputDocument ?? input;

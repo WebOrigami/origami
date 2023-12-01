@@ -37,6 +37,7 @@ export default async function unpackOrigamiTemplate(input, options = {}) {
   /** @this {AsyncTree|null} */
   const fn = async function createTemplateResult(templateInput) {
     const text = await lambda.call(this, templateInput);
+    /** @type {any} */
     const result = new String(text);
     result.unpack = () => templateInput;
     return result;

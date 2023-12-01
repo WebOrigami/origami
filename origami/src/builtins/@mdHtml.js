@@ -30,8 +30,8 @@ marked.use(
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {
-  if (input.unpack) {
-    input = await input.unpack();
+  if (/** @type {any} */ (input).unpack) {
+    input = await /** @type {any} */ (input).unpack();
   }
   const inputDocument = input["@text"] ? input : null;
   const markdown = inputDocument?.["@text"] ?? String(input);
