@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/types",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "Type declarations for asynchronous dictionaries and graphs",
   "type": "module",
   "types": "./index.d.ts"

@@ -1,6 +1,6 @@
 {
   "name": "@graphorigami/async-tree",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
