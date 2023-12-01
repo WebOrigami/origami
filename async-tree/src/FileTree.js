@@ -119,6 +119,11 @@ export default class FileTree {
       value = "";
     }
 
+    if (value instanceof ArrayBuffer) {
+      // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
+      value = new Uint8Array(value);
+    }
+
     // True if fs.writeFile can directly write the value to a file.
     let isWriteable =
       value instanceof TypedArray ||
