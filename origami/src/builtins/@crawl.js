@@ -9,6 +9,7 @@ import {
   Scope,
   extname,
 } from "@graphorigami/language";
+import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -176,25 +177,27 @@ function filterPaths(paths, baseUrl, localPath) {
 }
 
 function findPaths(value, key, baseUrl, localPath) {
+  const text = utilities.toString(value);
+
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
   const ext = key ? extname(key).toLowerCase() : "";
   const maybeHtml = ext === "" || value.trim?.().startsWith("<");
   let foundPaths;
   if (ext === ".html" || ext === ".htm") {
-    foundPaths = findPathsInHtml(String(value));
+    foundPaths = findPathsInHtml(text);
   } else if (ext === ".css") {
-    foundPaths = findPathsInCss(String(value));
+    foundPaths = findPathsInCss(text);
   } else if (ext === ".js") {
-    foundPaths = findPathsInJs(String(value));
+    foundPaths = findPathsInJs(text);
   } else if (ext === ".map") {
-    foundPaths = findPathsInImageMap(String(value));
+    foundPaths = findPathsInImageMap(text);
   } else if (key === "robots.txt") {
-    foundPaths = findPathsInRobotsTxt(String(value));
+    foundPaths = findPathsInRobotsTxt(text);
   } else if (key === "sitemap.xml") {
-    foundPaths = findPathsInSitemapXml(String(value));
+    foundPaths = findPathsInSitemapXml(text);
   } else if (maybeHtml) {
-    foundPaths = findPathsInHtml(String(value));
+    foundPaths = findPathsInHtml(text);
   } else {
     // Doesn't have an extension we want to process
     return {
@@ -394,14 +397,14 @@ async function processPath(tree, path, baseUrl) {
   let keys = keysFromPath(path);
 
   // Traverse tree to get value.
-  let value = await Tree.traverse(tree, ...keys);
+  let value = await traverse(tree, ...keys);
   if (Tree.isTreelike(value)) {
     // Path is actually a directory; see if it has an index.html
     if (keys.at(-1) === "") {
       keys.pop();
     }
     keys.push("index.html");
-    value = await Tree.traverse(value, "index.html");
+    value = await traverse(value, "index.html");
   }
 
   if (value === undefined) {
@@ -424,6 +427,19 @@ async function processPath(tree, path, baseUrl) {
   );
 
   return { crawlablePaths, keys, path, resourcePaths, value };
+}
+
+async function traverse(tree, ...keys) {
+  if (tree.resolve && keys.length > 1) {
+    // Tree like SiteTree that supports resolve() method
+    const lastKey = keys.pop();
+    const path = keys.join("/");
+    const resolved = tree.resolve(path);
+    return resolved.get(lastKey);
+  } else {
+    // Regular async tree
+    return Tree.traverse(tree, ...keys);
+  }
 }
 
 crawl.usage = `@crawl <tree>\tCrawl a tree`;
