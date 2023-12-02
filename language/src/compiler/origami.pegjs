@@ -7,7 +7,7 @@
 //
 
 import * as ops from "../runtime/ops.js";
-import { makeFunctionCall, makeTemplate } from "./parserHelpers.js";
+import { makeFunctionCall, makePipeline, makeTemplate } from "./parserHelpers.js";
 }}
 
 // A block of optional whitespace
@@ -63,27 +63,8 @@ escapedChar "backslash-escaped character"
   = "\\" @.
 
 // An Origami expression, no leading/trailing whitespace
-expr "expression"
-  // Try function calls first, as they can start with expression types that
-  // follow (array, object, etc.); we want to parse the largest thing first.
-  = implicitParensCall
-  / functionComposition
-  // Then try parsers that look for a distinctive token at the start: an opening
-  // slash, bracket, curly brace, etc.
-  / absoluteFilePath
-  / array
-  / object
-  / tree
-  / templateLiteral
-  / lambda
-  / parameterizedLambda
-  / group
-  / string
-  / number
-  // Protocol calls are distinguished by a colon, but it's not at the start.
-  / protocolCall
-  // Least distinctive option is a simple scope reference, so it comes last.
-  / scopeReference
+expr
+  = pipeline
 
 // Top-level Origami expression, possible leading/trailing whitepsace.
 expression "Origami expression"
@@ -108,7 +89,9 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\]<>,/:=\`"'\\# \t\n\r] // No unescaped whitespace or special chars
+  = '-' !'>' // Don't allow a two-character single arrow
+  / '=' !'>' // Don't allow a two-character double arrow
+  / [^(){}\[\]<>,/:\`"'\\# →\t\n\r] // No unescaped whitespace or special chars
   / escapedChar
 
 identifierList
@@ -185,12 +168,40 @@ parameterizedLambda
 parensArgs "function arguments in parentheses"
   = "(" __ list:list? ")" { return list ?? [undefined]; }
 
+pipeline
+  = steps:(@step|1.., __ singleArrow __ |) {
+      return makePipeline(steps);
+    }
+
+singleArrow = "→" / "->"
+
 separator
   = __ "," __
   / whitespaceWithNewLine
 
 sign
   = [+\-]
+
+// A single step in a pipeline, or a top-level expression
+step
+  // Try function calls first, as they can start with expression types that
+  // follow (array, object, etc.); we want to parse the largest thing first.
+  = functionComposition
+  // Then try parsers that look for a distinctive token at the start: an opening
+  // slash, bracket, curly brace, etc.
+  / absoluteFilePath
+  / array
+  / object
+  / tree
+  / lambda
+  / templateLiteral
+  / group
+  / string
+  / number
+  // Protocol calls are distinguished by a colon, but it's not at the start.
+  / protocolCall
+  // Least distinctive option is a simple scope reference, so it comes last.
+  / scopeReference
 
 // A slash-separated path of keys
 path "slash-separated path"

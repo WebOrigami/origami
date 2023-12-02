@@ -17,6 +17,16 @@ export function makeFunctionCall(target, chain) {
   return value;
 }
 
+// Similar to a function call, but the order is reversed.
+export function makePipeline(steps) {
+  const [first, ...rest] = steps;
+  let value = first;
+  for (const args of rest) {
+    value = [args, value];
+  }
+  return value;
+}
+
 export function makeTemplate(parts) {
   // Drop empty/null strings.
   const filtered = parts.filter((part) => part);
