@@ -59,10 +59,10 @@ export default async function crawl(treelike, baseHref) {
 
     // Add indirect resource references to the cache.
     for (const resourcePath of resourcePaths) {
-      const fn = () => {
-        return Tree.traversePath(tree, resourcePath);
-      };
       const resourceKeys = keysFromPath(resourcePath);
+      const fn = () => {
+        return traverse(tree, ...resourceKeys);
+      };
       addValueToObject(cache, resourceKeys, fn);
     }
   }
@@ -113,9 +113,8 @@ async function* crawlPaths(tree, baseUrl) {
   // setting its entry in the dictionary to null.
   const promisesForPaths = {};
 
-  // Seed the promise dictionary with robots.txt and an empty path that will be
-  // equivalent to the base URL.
-  const initialPaths = ["/robots.txt", ""];
+  // Seed the promise dictionary with robots.txt and the root path.
+  const initialPaths = ["/robots.txt", "/"];
   initialPaths.forEach((path) => {
     promisesForPaths[path] = processPath(tree, path, baseUrl);
   });
@@ -182,7 +181,7 @@ function findPaths(value, key, baseUrl, localPath) {
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
   const ext = key ? extname(key).toLowerCase() : "";
-  const maybeHtml = ext === "" || value.trim?.().startsWith("<");
+  const maybeHtml = ext === "" || text?.trim().startsWith("<");
   let foundPaths;
   if (ext === ".html" || ext === ".htm") {
     foundPaths = findPathsInHtml(text);
