@@ -48,7 +48,12 @@ function ProgressTransform(Base) {
     async set(...args) {
       countFiles++;
       copyRoot.showProgress();
-      const result = await super.set(...args);
+      let result;
+      try {
+        result = await super.set(...args);
+      } catch (e) {
+        console.error(e);
+      }
       countCopied++;
       copyRoot.showProgress();
       return result;
