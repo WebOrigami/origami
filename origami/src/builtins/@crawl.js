@@ -11,6 +11,7 @@ import {
 } from "@graphorigami/language";
 import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import treeHttps from "./@treeHttps.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to
@@ -21,7 +22,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * that obtain the requested value from the original site.
  *
  * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@graphorigami/async-tree").Treelike|string} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
@@ -29,7 +30,10 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default async function crawl(treelike, baseHref) {
   assertScopeIsDefined(this);
-  const tree = Tree.from(treelike);
+  const tree =
+    typeof treelike === "string"
+      ? treeHttps.call(this, treelike)
+      : Tree.from(treelike);
 
   if (baseHref === undefined) {
     // Ask tree or original treelike if it has an `href` property we can use as

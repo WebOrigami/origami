@@ -10,9 +10,9 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {string} host
  * @param  {...string|Symbol} keys
  */
-export default async function treeHttp(host, ...keys) {
+export default function treeHttp(host, ...keys) {
   assertScopeIsDefined(this);
-  return ops.http.call(this, host, ...keys);
+  return ops.treeHttp.call(this, host, ...keys);
 }
 
 treeHttp.usage = `@treeHttp <domain>, <...keys>\tA web site tree via HTTP`;
