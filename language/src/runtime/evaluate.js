@@ -63,7 +63,7 @@ export default async function evaluate(code) {
         ? // Invoke the function
           await fn.call(scope, ...args)
         : // Traverse the tree.
-          await Tree.traverseOrThrow.call(scope, fn, ...args);
+          await Tree.traverseOrThrow(fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });

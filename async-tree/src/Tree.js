@@ -328,7 +328,6 @@ export async function traverse(treelike, ...keys) {
  * Return the value at the corresponding path of keys. Throw if any interior
  * step of the path doesn't lead to a result.
  *
- * @this {any}
  * @param {Treelike} treelike
  * @param  {...any} keys
  */
@@ -348,16 +347,6 @@ export async function traverseOrThrow(treelike, ...keys) {
         value,
         keys
       );
-    }
-
-    if (typeof value.unpack === "function") {
-      value = await value.unpack();
-    }
-
-    // If the traversal operation was given a context, and the value we need to
-    // traverse is a function, bind the function to the context.
-    if (this && typeof value === "function") {
-      value = value.bind(this);
     }
 
     // Get the next key.

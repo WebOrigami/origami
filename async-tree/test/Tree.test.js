@@ -296,18 +296,6 @@ describe("Tree", () => {
     assert.equal(await Tree.traverse(tree, "a", "b", "c"), "Hello");
   });
 
-  test("traverse() binds traversed functions to `this`", async () => {
-    const context = {};
-    const tree = new ObjectTree({
-      bold: function (key) {
-        assert.equal(this, context);
-        return `**${key}**`;
-      },
-    });
-    const result = await Tree.traverse.call(context, tree, "bold", "Hello");
-    assert.equal(result, "**Hello**");
-  });
-
   test("traversing a final empty string can unpack the last value", async () => {
     class Unpackable {
       unpack() {
