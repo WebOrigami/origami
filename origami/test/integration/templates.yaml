@@ -32,7 +32,7 @@ tests:
         - Bob
         - Carol
       template.orit: |
-        {{ @tree/map(=`Hello, {{ _ }}!
+        {{ @map(=`Hello, {{ _ }}!
         `)(names) }}
     expected: |
       Hello, Alice!

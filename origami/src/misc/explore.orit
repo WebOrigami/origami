@@ -225,10 +225,10 @@
       <button id="buttonSVG">SVG</button>
       <button id="buttonYAML">YAML</button>
     </div>
-    {{ @tree/map(=`
+    {{ @map(=`
       <ul>
         <h2>{{ _/name }}</h2>
-        {{ @tree/map(=`
+        {{ @map(=`
         <li>
           <a href="./!@explore/{{ _ }}" target="frame">{{ _ }}</a>
         </li>

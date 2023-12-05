@@ -77,11 +77,11 @@ export default function treeMap(param1, param2) {
     valueName,
   } = options;
 
-  description ??= `@tree/map ${extensions ?? ""}`;
+  description ??= `@map ${extensions ?? ""}`;
 
   if (extensions && (keyMap || inverseKeyMap)) {
     throw new TypeError(
-      `@tree/map: You can't specify both extensions and a keyMap or inverseKeyMap`
+      `@map: You can't specify both extensions and a keyMap or inverseKeyMap`
     );
   }
 

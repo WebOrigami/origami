@@ -5,5 +5,5 @@
     'Carol'
   ]
 
-  greetings = @tree/map(=`Hello, {{ _ }}!`)(names)
+  greetings = @map(=`Hello, {{ _ }}!`)(names)
 }

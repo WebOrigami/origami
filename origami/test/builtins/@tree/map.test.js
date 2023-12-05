@@ -1,9 +1,9 @@
 import { Tree } from "@graphorigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import map from "../../../src/builtins/@tree/map.js";
+import map from "../../../src/builtins/@map.js";
 
-describe("@tree/map", () => {
+describe("@map", () => {
   test("puts value and key in scope", async () => {
     const treelike = [
       { name: "Alice", age: 1 },

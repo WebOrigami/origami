@@ -81,8 +81,8 @@ describe("Origami parser", () => {
       ],
       [[ops.scope, "files"], "snapshot"],
     ]);
-    assertParse("expr", "@tree/map =`<li>{{_}}</li>`", [
-      [[ops.scope, "@tree"], "map"],
+    assertParse("expr", "@map =`<li>{{_}}</li>`", [
+      [ops.scope, "@map"],
       [ops.lambda, [ops.concat, "<li>", [ops.scope, "_"], "</li>"]],
     ]);
     assertParse("expr", `"https://example.com"`, "https://example.com");
@@ -94,7 +94,7 @@ describe("Origami parser", () => {
       `
         {
           index.html = index.orit(teamData.yaml)
-          thumbnails = @tree/map({ source: images, valueMap: thumbnail.js })
+          thumbnails = @map(images, { valueMap: thumbnail.js })
         }
       `,
       [
@@ -109,12 +109,9 @@ describe("Origami parser", () => {
         [
           "thumbnails",
           [
-            [[ops.scope, "@tree"], "map"],
-            [
-              ops.object,
-              ["source", [ops.scope, "images"]],
-              ["valueMap", [ops.scope, "thumbnail.js"]],
-            ],
+            [ops.scope, "@map"],
+            [ops.scope, "images"],
+            [ops.object, ["valueMap", [ops.scope, "thumbnail.js"]]],
           ],
         ],
       ]
