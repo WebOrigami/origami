@@ -46,7 +46,12 @@ export default class SiteTree {
     }
 
     // Fetch the data at the given route.
-    const response = await fetch(href);
+    let response;
+    try {
+      response = await fetch(href);
+    } catch (error) {
+      return undefined;
+    }
     if (!response.ok) {
       return undefined;
     }
