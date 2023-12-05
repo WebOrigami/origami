@@ -51,10 +51,10 @@ function ProgressTransform(Base) {
       let result;
       try {
         result = await super.set(...args);
+        countCopied++;
       } catch (e) {
         console.error(e);
       }
-      countCopied++;
       copyRoot.showProgress();
       return result;
     }
