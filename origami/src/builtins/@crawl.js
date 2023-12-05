@@ -13,6 +13,10 @@ import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import treeHttps from "./@treeHttps.js";
 
+// A fake base URL used to handle cases where an href is relative and must be
+// treated relative to some base URL.
+const fakeBaseUrl = new URL("https://fake");
+
 /**
  * Crawl a tree, starting its root index.html page, and following links to
  * crawlable pages, scripts, and stylesheets.
@@ -51,6 +55,7 @@ export default async function crawl(treelike, baseHref) {
   const baseUrl = new URL(baseHref);
 
   const cache = {};
+  const resources = {};
 
   // We iterate until there are no more promises to wait for.
   for await (const result of crawlPaths(tree, baseUrl)) {
@@ -61,20 +66,36 @@ export default async function crawl(treelike, baseHref) {
       addValueToObject(cache, keys, value);
     }
 
-    // Add indirect resource references to the cache.
+    // Add indirect resource functions to the resource tree. When requested,
+    // these functions will obtain the resource from the original site.
     for (const resourcePath of resourcePaths) {
-      const resourceKeys = keysFromPath(resourcePath);
+      const resourceKeys = adjustKeys(keysFromPath(resourcePath));
       const fn = () => {
         return traverse(tree, ...resourceKeys);
       };
-      addValueToObject(cache, resourceKeys, fn);
+      addValueToObject(resources, resourceKeys, fn);
     }
   }
 
+  // Merge the cache on top of the resources tree. If we have an actual value
+  // for something already, that's better than a function that will get that
+  // value.
+  const merged = Object.assign({}, resources, cache);
+
   /** @type {AsyncTree} */
-  let result = new (InvokeFunctionsTransform(ObjectTree))(cache);
+  let result = new (InvokeFunctionsTransform(ObjectTree))(merged);
   result = Scope.treeWithScope(result, this);
   return result;
+}
+
+// For indexing and storage purposes, treat a path that ends in a trailing slash
+// (or the dot we use to seed the queue) as if it ends in index.html.
+function adjustKeys(keys) {
+  const adjustedKeys = keys.slice();
+  if (adjustedKeys.at(-1) === "") {
+    adjustedKeys[adjustedKeys.length - 1] = "index.html";
+  }
+  return adjustedKeys;
 }
 
 function addValueToObject(object, keys, value) {
@@ -230,9 +251,12 @@ function findPathsInCss(css) {
   let match;
 
   // Find `url()` functions.
-  const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
+  const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(css))) {
-    resourcePaths.push(match.groups?.url);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      resourcePaths.push();
+    }
   }
 
   return {
@@ -252,7 +276,10 @@ function findPathsInImageMap(imageMap) {
   // Find hrefs as the second column in each line.
   const hrefRegex = /^\w+ (?<href>\S+)(\s*$| [\d, ]+$)/gm;
   while ((match = hrefRegex.exec(imageMap))) {
-    resourcePaths.push(match.groups?.href);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      resourcePaths.push(href);
+    }
   }
 
   return {
@@ -268,7 +295,10 @@ function findPathsInJs(js) {
   // Find `import` statements.
   const importRegex = /import [\s\S]+?from\s+["'](?<import>[^"']*)["'];/g;
   while ((match = importRegex.exec(js))) {
-    crawlablePaths.push(match.groups?.import);
+    const href = normalizeHref(match.groups?.import);
+    if (href) {
+      crawlablePaths.push(href);
+    }
   }
 
   return {
@@ -288,11 +318,13 @@ function findPathsInHtml(html) {
   while ((match = linkRegex.exec(html))) {
     // Links can point to be other crawlable paths and resource paths.
     // We guess the type based on the extension.
-    const href = match.groups?.link;
-    if (isCrawlableHref(href)) {
-      crawlablePaths.push(href);
-    } else {
-      resourcePaths.push(href);
+    const href = normalizeHref(match.groups?.link);
+    if (href) {
+      if (isCrawlableHref(href)) {
+        crawlablePaths.push(href);
+      } else {
+        resourcePaths.push(href);
+      }
     }
   }
 
@@ -301,38 +333,53 @@ function findPathsInHtml(html) {
     /<(?<tag>img|IMG|script|SCRIPT) [^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
   while ((match = srcRegex.exec(html))) {
     const tag = match.groups?.tag;
-    if (tag === "script" || tag === "SCRIPT") {
-      crawlablePaths.push(match.groups?.src);
-    } else {
-      resourcePaths.push(match.groups?.src);
+    const src = normalizeHref(match.groups?.src);
+    if (src) {
+      if (tag === "script" || tag === "SCRIPT") {
+        crawlablePaths.push(src);
+      } else {
+        resourcePaths.push(src);
+      }
     }
   }
 
   // Find `url()` functions in CSS.
-  const urlRegex = /url\(["']?(?<url>[^"')]*?)["']?\)/g;
+  const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
   while ((match = urlRegex.exec(html))) {
-    resourcePaths.push(match.groups?.url);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      resourcePaths.push(href);
+    }
   }
 
   // Find `src` attribute on frame tags.
   const frameRegex =
-    /<(?:frame|FRAME) [^>]*?(?:src|SRC)=["'](?<frame>[^>]*?)["'][^>]*>/g;
+    /<(?:frame|FRAME) [^>]*?(?:src|SRC)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = frameRegex.exec(html))) {
-    crawlablePaths.push(match.groups?.frame);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      crawlablePaths.push(href);
+    }
   }
 
   // Find ancient `background` attribute on body tag.
   const backgroundRegex =
-    /<(?:body|BODY) [^>]*?(?:background|BACKGROUND)=["'](?<background>[^>]*?)["'][^>]*>/g;
+    /<(?:body|BODY) [^>]*?(?:background|BACKGROUND)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = backgroundRegex.exec(html))) {
-    resourcePaths.push(match.groups?.background);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      resourcePaths.push(href);
+    }
   }
 
   // Find `href` attribute on area tags.
   const areaRegex =
     /<(?:area|AREA) [^>]*?(?:href|HREF)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = areaRegex.exec(html))) {
-    crawlablePaths.push(match.groups?.href);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      crawlablePaths.push(href);
+    }
   }
 
   return { crawlablePaths, resourcePaths };
@@ -343,9 +390,12 @@ function findPathsInRobotsTxt(txt) {
   let match;
 
   // Find `Sitemap` directives.
-  const sitemapRegex = /Sitemap:\s*(?<sitemap>[^\s]*)/g;
+  const sitemapRegex = /Sitemap:\s*(?<href>[^\s]*)/g;
   while ((match = sitemapRegex.exec(txt))) {
-    crawlablePaths.push(match.groups?.sitemap);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      crawlablePaths.push(href);
+    }
   }
 
   return {
@@ -359,9 +409,12 @@ function findPathsInSitemapXml(xml) {
   let match;
 
   // Find `loc` elements.
-  const locRegex = /<loc>(?<loc>[^<]*)<\/loc>/g;
+  const locRegex = /<loc>(?<href>[^<]*)<\/loc>/g;
   while ((match = locRegex.exec(xml))) {
-    crawlablePaths.push(match.groups?.loc);
+    const href = normalizeHref(match.groups?.href);
+    if (href) {
+      crawlablePaths.push(href);
+    }
   }
 
   return {
@@ -372,7 +425,7 @@ function findPathsInSitemapXml(xml) {
 
 function isCrawlableHref(href) {
   // Use a fake base URL to cover the case where the href is relative.
-  const url = new URL(href, "fake://");
+  const url = new URL(href, fakeBaseUrl);
   const pathname = url.pathname;
   const lastKey = pathname.split("/").pop() ?? "";
   if (lastKey === "robots.txt" || lastKey === "sitemap.xml") {
@@ -382,6 +435,18 @@ function isCrawlableHref(href) {
   // We assume an empty extension is HTML.
   const crawlableExtensions = [".html", ".css", ".js", ".map", ""];
   return crawlableExtensions.includes(ext);
+}
+
+// Remove any search parameters or hash from the href. Preserve absolute or
+// relative nature of URL. If the URL only has a search or hash, return null.
+function normalizeHref(href) {
+  if (href.startsWith("#") || href.startsWith("?")) {
+    return null;
+  }
+  const url = new URL(href, fakeBaseUrl);
+  url.search = "";
+  url.hash = "";
+  return url.host === fakeBaseUrl.host ? url.pathname : url.href;
 }
 
 async function processPath(tree, path, baseUrl) {
@@ -403,10 +468,6 @@ async function processPath(tree, path, baseUrl) {
   let value = await traverse(tree, ...keys);
   if (Tree.isTreelike(value)) {
     // Path is actually a directory; see if it has an index.html
-    if (keys.at(-1) === "") {
-      keys.pop();
-    }
-    keys.push("index.html");
     value = await traverse(value, "index.html");
   }
 
@@ -414,14 +475,10 @@ async function processPath(tree, path, baseUrl) {
     return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
   }
 
-  if (keys.at(-1) === "") {
-    // For indexing and storage purposes, treat a path that ends in a trailing
-    // slash (or the dot we use to seed the queue) as if it ends in index.html.
-    keys[keys.length - 1] = "index.html";
-  }
+  const adjustedKeys = adjustKeys(keys);
 
   // Find paths in the value
-  const key = keys.at(-1);
+  const key = adjustedKeys.at(-1);
   const { crawlablePaths, resourcePaths } = await findPaths(
     value,
     key,
@@ -429,7 +486,13 @@ async function processPath(tree, path, baseUrl) {
     path
   );
 
-  return { crawlablePaths, keys, path, resourcePaths, value };
+  return {
+    crawlablePaths,
+    keys: adjustedKeys,
+    path,
+    resourcePaths,
+    value,
+  };
 }
 
 async function traverse(tree, ...keys) {
