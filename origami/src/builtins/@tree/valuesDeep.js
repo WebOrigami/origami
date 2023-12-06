@@ -20,4 +20,4 @@ export default async function valuesDeep(treelike) {
 
 valuesDeep.usage = `valuesDeep <tree>\tThe in-order tree values as a flat array`;
 valuesDeep.documentation =
-  "https://graphorigami.org/cli/builtins.html#valuesDeep";
+  "https://weborigami.org/cli/builtins.html#valuesDeep";

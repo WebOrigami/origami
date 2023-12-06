@@ -14,4 +14,4 @@ export default function isAsyncTree(value) {
 
 isAsyncTree.usage = `@tree/isAsyncTree <value>\tReturn true for an async tree`;
 isAsyncTree.documentation =
-  "https://graphorigami.org/cli/builtins.html#isAsyncTree";
+  "https://weborigami.org/cli/builtins.html#isAsyncTree";

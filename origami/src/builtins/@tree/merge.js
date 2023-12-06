@@ -44,4 +44,4 @@ export default async function treeMerge(...trees) {
 }
 
 treeMerge.usage = `@merge <...trees>\tMerge the given trees`;
-treeMerge.documentation = "https://graphorigami.org/cli/builtins.html#@merge";
+treeMerge.documentation = "https://weborigami.org/cli/builtins.html#@merge";

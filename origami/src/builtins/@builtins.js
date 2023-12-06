@@ -13,6 +13,6 @@ const builtins = new (CommandModulesTransform(ImportModulesMixin(FileTree)))(
 );
 
 builtins.usage = `@builtins\tThe Tree Origami built-in functions`;
-builtins.documentation = "https://graphorigami.org/language/@builtins.html";
+builtins.documentation = "https://weborigami.org/language/@builtins.html";
 
 export default builtins;

@@ -47,4 +47,4 @@ class ExceptionsTree {
 
 exceptions.usage = `exceptions tree\tReturn a tree of exceptions thrown in the tree`;
 exceptions.documentation =
-  "https://graphorigami.org/cli/builtins.html#exceptions";
+  "https://weborigami.org/cli/builtins.html#exceptions";

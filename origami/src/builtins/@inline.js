@@ -26,4 +26,4 @@ export default async function inline(input) {
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;
-inline.documentation = "https://graphorigami.org/language/@inline.html";
+inline.documentation = "https://weborigami.org/language/@inline.html";

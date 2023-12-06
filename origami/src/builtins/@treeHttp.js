@@ -16,4 +16,4 @@ export default function treeHttp(host, ...keys) {
 }
 
 treeHttp.usage = `@treeHttp <domain>, <...keys>\tA web site tree via HTTP`;
-treeHttp.documentation = "https://graphorigami.org/language/@treeHttp.html";
+treeHttp.documentation = "https://weborigami.org/language/@treeHttp.html";

@@ -68,4 +68,4 @@ async function findConfigContainer(start) {
 }
 
 project.usage = `@project\tThe root of the current Tree Origami project`;
-project.documentation = "https://graphorigami.org/language/@project.html";
+project.documentation = "https://weborigami.org/language/@project.html";

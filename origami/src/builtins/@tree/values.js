@@ -20,4 +20,4 @@ export default async function values(treelike) {
 }
 
 values.usage = `values <tree>\tThe top-level values in the tree`;
-values.documentation = "https://graphorigami.org/cli/builtins.html#values";
+values.documentation = "https://weborigami.org/cli/builtins.html#values";

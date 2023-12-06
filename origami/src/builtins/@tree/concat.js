@@ -18,4 +18,4 @@ export default async function concat(...args) {
 }
 
 concat.usage = `concat <...objs>\tConcatenate text and/or trees of text`;
-concat.documentation = "https://graphorigami.org/cli/@tree.html#concat";
+concat.documentation = "https://weborigami.org/cli/@tree.html#concat";

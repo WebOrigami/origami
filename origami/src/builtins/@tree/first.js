@@ -25,4 +25,4 @@ export default async function first(treelike) {
 }
 
 first.usage = `first <tree>\tReturns the first value in the tree.`;
-first.documentation = "https://graphorigami.org/cli/builtins.html#first";
+first.documentation = "https://weborigami.org/cli/builtins.html#first";

@@ -31,4 +31,4 @@ export default async function arrows(treelike) {
 }
 
 arrows.usage = `@arrows <obj>\tInterpret arrow keys in the tree as function calls`;
-arrows.documentation = "https://graphorigami.org/language/@arrows.html";
+arrows.documentation = "https://weborigami.org/language/@arrows.html";

@@ -20,4 +20,4 @@ export default async function filter(treelike, filterVariant) {
 }
 
 filter.usage = `@filter <tree>, <filter>\tOnly returns values whose keys match the filter`;
-filter.documentation = "https://graphorigami.org/language/@filter.html";
+filter.documentation = "https://weborigami.org/language/@filter.html";

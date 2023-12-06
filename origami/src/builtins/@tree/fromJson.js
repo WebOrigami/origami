@@ -3,4 +3,4 @@ export default async function fromJson(text) {
 }
 
 fromJson.usage = `fromJson <text>\tParse text as JSON`;
-fromJson.documentation = "https://graphorigami.org/cli/builtins.html#fromJson";
+fromJson.documentation = "https://weborigami.org/cli/builtins.html#fromJson";

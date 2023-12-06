@@ -22,4 +22,4 @@ export default function setScope(treelike, ...scopeTrees) {
 }
 
 setScope.usage = `@scope/set <tree>, <...trees>\tReturns a tree copy with the given scope`;
-setScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";
+setScope.documentation = "https://weborigami.org/cli/builtins.html#@scope";

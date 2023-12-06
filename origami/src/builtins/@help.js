@@ -3,11 +3,11 @@ import child_process from "node:child_process";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 const groupUrls = {
-  "@cache": "https://graphorigami.org/language/@cache.html",
-  "@tree": "https://graphorigami.org/language/@tree.html",
-  "@image": "https://graphorigami.org/language/@image.html",
-  "@parse": "https://graphorigami.org/language/@parse.html",
-  "@scope": "https://graphorigami.org/language/@scope.html",
+  "@cache": "https://weborigami.org/language/@cache.html",
+  "@tree": "https://weborigami.org/language/@tree.html",
+  "@image": "https://weborigami.org/language/@image.html",
+  "@parse": "https://weborigami.org/language/@parse.html",
+  "@scope": "https://weborigami.org/language/@scope.html",
 };
 
 /**
@@ -32,7 +32,7 @@ export default async function help(name) {
       return;
     }
   } else {
-    url = "https://graphorigami.org/cli/";
+    url = "https://weborigami.org/cli/";
   }
   const platform = process.platform;
   const start =
@@ -46,4 +46,4 @@ export default async function help(name) {
 }
 
 help.usage = `@help/<name>\tOpens documentation for the named built-in command`;
-help.documentation = "https://graphorigami.org/language/@help.html";
+help.documentation = "https://weborigami.org/language/@help.html";

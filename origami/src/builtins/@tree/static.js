@@ -48,4 +48,4 @@ function StaticTransform(Base) {
 }
 
 staticTree.usage = `static <tree>\tAdd keys for generating common static files`;
-staticTree.documentation = "https://graphorigami.org/cli/builtins.html#static";
+staticTree.documentation = "https://weborigami.org/cli/builtins.html#static";

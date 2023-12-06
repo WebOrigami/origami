@@ -22,4 +22,4 @@ export default async function sort(treelike) {
 }
 
 sort.usage = `sort <tree>\tReturn a new tree with the original's keys sorted`;
-sort.documentation = "https://graphorigami.org/cli/builtins.html#@sort";
+sort.documentation = "https://weborigami.org/cli/builtins.html#@sort";

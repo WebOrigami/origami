@@ -21,4 +21,4 @@ export default async function keys(treelike) {
 }
 
 keys.usage = `keys <tree>\tThe top-level keys in the tree`;
-keys.documentation = "https://graphorigami.org/cli/builtins.html#keys";
+keys.documentation = "https://weborigami.org/cli/builtins.html#keys";

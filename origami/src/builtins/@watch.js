@@ -105,4 +105,4 @@ function updateIndirectPointer(indirect, target) {
 }
 
 watch.usage = `@watch <folder>, [expr]\tLet a folder tree respond to changes`;
-watch.documentation = "https://graphorigami.org/language/@watch.html";
+watch.documentation = "https://weborigami.org/language/@watch.html";

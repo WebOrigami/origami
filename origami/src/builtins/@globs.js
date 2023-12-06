@@ -20,4 +20,4 @@ export default async function globs(tree) {
 }
 
 globs.usage = `@globs <patterns>\tDefine a tree whose keys can include wildcard globs`;
-globs.documentation = "https://graphorigami.org/language/@globs.html";
+globs.documentation = "https://weborigami.org/language/@globs.html";

@@ -71,4 +71,4 @@ async function valueForFirstKey(tree) {
 
 table.usage =
   "table <tree>\tFormat the tree's top level as a tab-delimited table";
-table.documentation = "https://graphorigami.org/cli/builtins.html#table";
+table.documentation = "https://weborigami.org/cli/builtins.html#table";

@@ -37,4 +37,4 @@ export default async function take(treelike, n) {
 }
 
 take.usage = `take tree, n\tReturn the first n items from tree`;
-take.documentation = "https://graphorigami.org/cli/builtins.html#take";
+take.documentation = "https://weborigami.org/cli/builtins.html#take";

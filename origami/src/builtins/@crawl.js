@@ -504,4 +504,4 @@ async function traverse(tree, ...keys) {
 }
 
 crawl.usage = `@crawl <tree>\tCrawl a tree`;
-crawl.documentation = "https://graphorigami.org/language/@crawl.html";
+crawl.documentation = "https://weborigami.org/language/@crawl.html";

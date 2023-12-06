@@ -16,4 +16,4 @@ export default async function http(host, ...keys) {
 }
 
 http.usage = `@http <host>, <...keys>\tA web resource via HTTP`;
-http.documentation = "https://graphorigami.org/language/@http.html";
+http.documentation = "https://weborigami.org/language/@http.html";

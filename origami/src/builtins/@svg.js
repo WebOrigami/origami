@@ -39,4 +39,4 @@ export default async function svg(treelike, options = {}) {
 }
 
 svg.usage = `@svg <tree>\tRender a tree visually as in SVG format`;
-svg.documentation = "https://graphorigami.org/language/@svg.html";
+svg.documentation = "https://weborigami.org/language/@svg.html";

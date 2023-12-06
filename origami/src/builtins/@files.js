@@ -19,4 +19,4 @@ export default async function files(...keys) {
 }
 
 files.usage = `@files [path]\tTree of files at the given path`;
-files.documentation = "https://graphorigami.org/language/@files.html";
+files.documentation = "https://weborigami.org/language/@files.html";

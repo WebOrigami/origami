@@ -28,4 +28,4 @@ export default async function shuffle(treelike) {
 }
 
 shuffle.usage = `shuffle <tree>\tReturn a new tree with the original's keys shuffled`;
-shuffle.documentation = "https://graphorigami.org/cli/builtins.html#shuffle";
+shuffle.documentation = "https://weborigami.org/cli/builtins.html#shuffle";

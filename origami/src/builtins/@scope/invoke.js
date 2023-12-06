@@ -19,4 +19,4 @@ export default async function invoke(context, invocable, ...args) {
 }
 
 invoke.usage = `@scope/invoke fn, <...args>\tInvoke the function in the current scope`;
-invoke.documentation = "https://graphorigami.org/cli/builtins.html#@scope";
+invoke.documentation = "https://weborigami.org/cli/builtins.html#@scope";

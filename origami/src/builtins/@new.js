@@ -3,4 +3,4 @@ export default function newBuiltin(constructor, ...args) {
 }
 
 newBuiltin.usage = "@new <classFn>\tCreate a new instance of the given class";
-newBuiltin.documentation = "https://graphorigami.org/language/@new.html";
+newBuiltin.documentation = "https://weborigami.org/language/@new.html";

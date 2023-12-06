@@ -20,4 +20,4 @@ export default async function toYaml(obj) {
 }
 
 toYaml.usage = `@yaml <obj>\tRender the object as text in YAML format`;
-toYaml.documentation = "https://graphorigami.org/language/@yaml.html";
+toYaml.documentation = "https://weborigami.org/language/@yaml.html";

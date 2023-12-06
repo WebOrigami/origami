@@ -32,5 +32,4 @@ export default async function cacheBuiltin(
 }
 
 cacheBuiltin.usage = `@cache/tree tree, [cache], [filter]\tCaches tree values`;
-cacheBuiltin.documentation =
-  "https://graphorigami.org/cli/builtins.html#@cache";
+cacheBuiltin.documentation = "https://weborigami.org/cli/builtins.html#@cache";

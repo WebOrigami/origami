@@ -86,4 +86,4 @@ function DebugTransform(Base) {
 }
 
 debug.usage = `@debug <tree>\tAdd debug features to a tree`;
-debug.documentation = "https://graphorigami.org/language/@debug.html";
+debug.documentation = "https://weborigami.org/language/@debug.html";

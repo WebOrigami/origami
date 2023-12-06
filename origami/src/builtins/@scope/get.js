@@ -22,4 +22,4 @@ export default async function getScope(obj) {
 }
 
 getScope.usage = `@scope/get [<tree>]\tReturns the scope of the tree or the current scope`;
-getScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";
+getScope.documentation = "https://weborigami.org/cli/builtins.html#@scope";

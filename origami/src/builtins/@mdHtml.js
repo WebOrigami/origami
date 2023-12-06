@@ -42,4 +42,4 @@ export default async function mdHtml(input) {
 }
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
-mdHtml.documentation = "https://graphorigami.org/language/@mdHtml.html";
+mdHtml.documentation = "https://weborigami.org/language/@mdHtml.html";

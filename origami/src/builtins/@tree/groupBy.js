@@ -36,4 +36,4 @@ export default async function groupByBuiltin(treelike, groupKeyFn) {
 
 groupByBuiltin.usage = `groupBy <tree>, [groupKeyFn]\tReturn a new tree with the original's values grouped`;
 groupByBuiltin.documentation =
-  "https://graphorigami.org/cli/builtins.html#@group";
+  "https://weborigami.org/cli/builtins.html#@group";

@@ -10,6 +10,6 @@ const node = {
 };
 
 node.usage = "@node\tAccess Node classes and utility functions";
-node.documentation = "https://graphorigami.org/language/@node.html";
+node.documentation = "https://weborigami.org/language/@node.html";
 
 export default node;

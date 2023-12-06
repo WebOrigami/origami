@@ -14,4 +14,4 @@ export default async function inherited(key) {
 }
 
 inherited.usage = `@inherited <key>\tThe value of the key in the tree's inherited scope`;
-inherited.documentation = "https://graphorigami.org/language/@inherited.html";
+inherited.documentation = "https://weborigami.org/language/@inherited.html";

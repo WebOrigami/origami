@@ -28,6 +28,6 @@ const js = {
 };
 
 js.usage = "@js\tAccess JavaScript classes and utility functions";
-js.documentation = "https://graphorigami.org/language/@js.html";
+js.documentation = "https://weborigami.org/language/@js.html";
 
 export default js;

@@ -46,4 +46,4 @@ function itemRss(jsonFeedItem) {
 }
 
 rss.usage = `@rss <feed>\tTransforms a JSON Feed tree to RSS XML`;
-rss.documentation = "https://graphorigami.org/language/@rss.html";
+rss.documentation = "https://weborigami.org/language/@rss.html";

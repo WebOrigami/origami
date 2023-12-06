@@ -22,4 +22,4 @@ export default async function config(key) {
 }
 
 config.usage = `@config\tThe current project's configuration tree`;
-config.documentation = "https://graphorigami.org/language/@config.html";
+config.documentation = "https://weborigami.org/language/@config.html";

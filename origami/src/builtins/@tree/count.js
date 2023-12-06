@@ -21,4 +21,4 @@ export default async function count(treelike) {
 }
 
 count.usage = `count <treelike>\tReturn the number of keys in the tree`;
-count.documentation = "https://graphorigami.org/cli/@tree.html#count";
+count.documentation = "https://weborigami.org/cli/@tree.html#count";

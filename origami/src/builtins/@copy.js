@@ -68,4 +68,4 @@ function ProgressTransform(Base) {
 }
 
 copy.usage = `@copy <source>, <target>\tCopies the source tree to the target`;
-copy.documentation = "https://graphorigami.org/language/@copy.html";
+copy.documentation = "https://weborigami.org/language/@copy.html";

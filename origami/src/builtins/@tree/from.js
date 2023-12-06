@@ -24,4 +24,4 @@ export default async function tree(treelike) {
 }
 
 tree.usage = `from <treelike>\tConvert JSON, YAML, function, or plain object to a tree`;
-tree.documentation = "https://graphorigami.org/cli/builtins.html#tree";
+tree.documentation = "https://weborigami.org/cli/builtins.html#tree";

@@ -3,5 +3,4 @@ export default async function parseJson(text) {
 }
 
 parseJson.usage = `parseJson <text>\tParse text as JSON`;
-parseJson.documentation =
-  "https://graphorigami.org/cli/builtins.html#parseJson";
+parseJson.documentation = "https://weborigami.org/cli/builtins.html#parseJson";

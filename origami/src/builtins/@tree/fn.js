@@ -31,4 +31,4 @@ export default async function fn(invocable, keys = []) {
 }
 
 fn.usage = `fn <fn>, [<keys>]\tCreate a tree from a function and a set of keys`;
-fn.documentation = "https://graphorigami.org/cli/tree.html#fn";
+fn.documentation = "https://weborigami.org/cli/tree.html#fn";

@@ -80,4 +80,4 @@ async function formatResult(result) {
 }
 
 ori.usage = `@ori <text>\tEvaluates the text as an Origami expression`;
-ori.documentation = "https://graphorigami.org/language/@ori.html";
+ori.documentation = "https://weborigami.org/language/@ori.html";

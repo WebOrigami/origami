@@ -19,4 +19,4 @@ export default async function plain(treelike) {
 }
 
 plain.usage = `plain <tree>\tA plain JavaScript object representation of the tree`;
-plain.documentation = "https://graphorigami.org/cli/builtins.html#plain";
+plain.documentation = "https://weborigami.org/cli/builtins.html#plain";

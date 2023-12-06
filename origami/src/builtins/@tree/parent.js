@@ -21,4 +21,4 @@ export default async function parent(treelike) {
 }
 
 parent.usage = `parent\tThe parent of the current tree`;
-parent.documentation = "https://graphorigami.org/cli/builtins.html#parent";
+parent.documentation = "https://weborigami.org/cli/builtins.html#parent";

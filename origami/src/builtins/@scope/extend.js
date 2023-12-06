@@ -19,4 +19,4 @@ export default function extendScope(treelike, ...scopeTrees) {
 }
 
 extendScope.usage = `@scope/extend <tree>, <...trees>\tExtends tree's scope with the given trees`;
-extendScope.documentation = "https://graphorigami.org/cli/builtins.html#@scope";
+extendScope.documentation = "https://weborigami.org/cli/builtins.html#@scope";

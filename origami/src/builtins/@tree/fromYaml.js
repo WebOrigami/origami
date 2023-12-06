@@ -21,4 +21,4 @@ export default async function fromYaml(text) {
 }
 
 fromYaml.usage = `fromYaml <text>\tParse text as YAML`;
-fromYaml.documentation = "https://graphorigami.org/cli/builtins.html#fromYaml";
+fromYaml.documentation = "https://weborigami.org/cli/builtins.html#fromYaml";

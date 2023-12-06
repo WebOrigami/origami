@@ -5,5 +5,4 @@ export default async function parseYaml(text) {
 }
 
 parseYaml.usage = `parseYaml <text>\tParse text as YAML (including JSON)`;
-parseYaml.documentation =
-  "https://graphorigami.org/cli/builtins.html#parseYaml";
+parseYaml.documentation = "https://weborigami.org/cli/builtins.html#parseYaml";

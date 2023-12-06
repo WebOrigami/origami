@@ -41,4 +41,4 @@ export default async function inners(treelike) {
 }
 
 inners.usage = `inners <tree>\tThe source nodes of the tree`;
-inners.documentation = "https://graphorigami.org/cli/builtins.html#inners";
+inners.documentation = "https://weborigami.org/cli/builtins.html#inners";

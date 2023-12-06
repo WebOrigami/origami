@@ -26,4 +26,4 @@ export default async function previousKey(treelike, key) {
 
 previousKey.usage = `previousKey <tree>, <key>\tReturns the key before the indicated key`;
 previousKey.documentation =
-  "https://graphorigami.org/cli/builtins.html#previousKey";
+  "https://weborigami.org/cli/builtins.html#previousKey";

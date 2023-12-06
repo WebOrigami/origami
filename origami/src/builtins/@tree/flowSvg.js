@@ -52,4 +52,4 @@ ${edges.join("\n")}
 }
 
 // flowSvg.usage = `flowSvg <dataflow>\tRenders the output of dataflow() as an SVG`;
-// flowSvg.documentation = "https://graphorigami.org/cli/builtins.html#flowSvg";
+// flowSvg.documentation = "https://weborigami.org/cli/builtins.html#flowSvg";

@@ -48,4 +48,4 @@ export default async function reverse(treelike, options = {}) {
 }
 
 reverse.usage = `reverse <tree>\tReverses the order of the tree's top-level keys`;
-reverse.documentation = "https://graphorigami.org/cli/builtins.html#reverse";
+reverse.documentation = "https://weborigami.org/cli/builtins.html#reverse";

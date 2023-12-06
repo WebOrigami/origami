@@ -56,4 +56,4 @@ export default async function sitemap(treelike, baseHref = "") {
 }
 
 sitemap.usage = `@sitemap <tree>\tGenerate a sitemap for a tree`;
-sitemap.documentation = "https://graphorigami.org/cli/builtins.html#@sitemap";
+sitemap.documentation = "https://weborigami.org/cli/builtins.html#@sitemap";

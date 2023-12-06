@@ -3,4 +3,4 @@ export default function or(...args) {
 }
 
 or.usage = `@or ...values\tReturns the first truthy value`;
-or.documentation = "https://graphorigami.org/language/@or.html";
+or.documentation = "https://weborigami.org/language/@or.html";

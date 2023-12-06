@@ -69,4 +69,4 @@ export default async function index(treelike) {
 }
 
 index.usage = `@index\tReturn a default index.html page for the current tree`;
-index.documentation = "https://graphorigami.org/language/@index.html";
+index.documentation = "https://weborigami.org/language/@index.html";

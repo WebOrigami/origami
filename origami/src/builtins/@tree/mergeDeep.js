@@ -41,4 +41,4 @@ export default async function treeMergeDeep(...trees) {
 
 treeMergeDeep.usage = `mergeDeep <...trees>\tMerge the given trees deeply`;
 treeMergeDeep.documentation =
-  "https://graphorigami.org/cli/builtins.html#mergeDeep";
+  "https://weborigami.org/cli/builtins.html#mergeDeep";

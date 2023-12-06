@@ -24,4 +24,4 @@ export default async function ifCommand(value, trueResult, falseResult) {
 }
 
 ifCommand.usage = `@if <value>, <true>, [<false>]\tThe true or false result based on the value`;
-ifCommand.documentation = "https://graphorigami.org/language/@if.html";
+ifCommand.documentation = "https://weborigami.org/language/@if.html";

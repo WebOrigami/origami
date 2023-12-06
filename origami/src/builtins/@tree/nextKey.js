@@ -26,4 +26,4 @@ export default async function nextKey(treelike, key) {
 }
 
 nextKey.usage = `nextKey <tree>, <key>\tReturns the key after the indicated key`;
-nextKey.documentation = "https://graphorigami.org/cli/builtins.html#nextKey";
+nextKey.documentation = "https://weborigami.org/cli/builtins.html#nextKey";

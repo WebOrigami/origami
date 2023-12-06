@@ -65,4 +65,4 @@ async function getScopeData(scope) {
 }
 
 explore.usage = "@explore\tExplore the current scope in the browser";
-explore.documentation = "https://graphorigami.org/language/@explore.html";
+explore.documentation = "https://weborigami.org/language/@explore.html";
