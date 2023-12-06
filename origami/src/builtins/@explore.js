@@ -1,6 +1,6 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { ObjectTree } from "@graphorigami/async-tree";
-import { OrigamiFiles, Scope } from "@graphorigami/language";
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { ObjectTree } from "@weborigami/async-tree";
+import { OrigamiFiles, Scope } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";

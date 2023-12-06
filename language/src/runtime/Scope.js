@@ -1,7 +1,7 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class Scope {
@@ -62,7 +62,7 @@ export default class Scope {
    *
    * The tree itself will be automatically included at the front of the scope.
    *
-   * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+   * @typedef {import("@weborigami/async-tree").Treelike} Treelike
    * @param {Treelike} treelike
    * @param {Treelike|null} scope
    * @returns {AsyncTree & { scope: AsyncTree }}

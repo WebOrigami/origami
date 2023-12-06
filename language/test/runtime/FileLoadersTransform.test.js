@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FileLoadersTransform from "../../src/runtime/FileLoadersTransform.js";
@@ -25,7 +25,7 @@ describe("FileLoadersTransform", () => {
 });
 
 function createFixture() {
-  /** @type {import("@graphorigami/types").AsyncTree} */
+  /** @type {import("@weborigami/types").AsyncTree} */
   let tree = new (FileLoadersTransform(ObjectTree))({
     foo: 1, // No extension, should be left alone
     "bar.json": `{ "bar": 2 }`,

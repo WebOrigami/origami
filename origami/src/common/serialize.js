@@ -1,12 +1,12 @@
 /**
  * @typedef {import("../../index.ts").JsonValue} JsonValue
- * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import { Tree, isPlainObject, isStringLike } from "@graphorigami/async-tree";
-import { OrigamiTree } from "@graphorigami/language";
+import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
+import { OrigamiTree } from "@weborigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
 

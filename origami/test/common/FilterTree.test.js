@@ -1,4 +1,4 @@
-import { FunctionTree, Tree } from "@graphorigami/async-tree";
+import { FunctionTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterTree from "../../src/common/FilterTree.js";

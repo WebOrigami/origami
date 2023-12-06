@@ -1,10 +1,10 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 import { toFunction } from "../../common/utilities.js";
 
 /**
  * Invokes the given function in the context of the current scope.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../../index.ts").Invocable} Invocable
  *
  * @this {AsyncTree|null}

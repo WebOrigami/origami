@@ -1,5 +1,5 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { keyMapsForExtensions, map } from "@graphorigami/async-tree";
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { keyMapsForExtensions, map } from "@weborigami/async-tree";
 import unpackOrigamiTemplate from "../src/builtins/@loaders/orit.js";
 import { transformObject } from "../src/common/utilities.js";
 import PathTransform from "./PathTransform.js";

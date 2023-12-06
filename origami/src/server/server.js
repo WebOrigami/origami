@@ -4,8 +4,8 @@ import {
   isPlainObject,
   isStringLike,
   keysFromPath,
-} from "@graphorigami/async-tree";
-import { Scope, extname } from "@graphorigami/language";
+} from "@weborigami/async-tree";
+import { Scope, extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
@@ -176,7 +176,7 @@ export async function handleRequest(request, response, tree) {
  * A request listener for use with the node http.createServer and
  * https.createServer calls, letting you serve an async tree as a set of pages.
  *
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @param {Treelike} treelike
  */
 export function requestListener(treelike) {

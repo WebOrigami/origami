@@ -1,4 +1,4 @@
-import { ObjectTree } from "@graphorigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import InheritScopeMixin from "../../src/runtime/InheritScopeMixin.js";

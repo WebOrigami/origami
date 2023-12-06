@@ -1,12 +1,12 @@
-import { merge } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { merge } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Create a tree that's the result of merging the given trees.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
  * @this {AsyncTree|null}
  * @param {(Treelike|null)[]} trees

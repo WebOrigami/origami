@@ -12,7 +12,7 @@ import { evaluateYaml } from "../../common/serialize.js";
  * Any Origami expressions in the front matter will be evaluated and the results
  * incorporated into the document data.
  *
- * @type {import("@graphorigami/language").FileUnpackFunction}
+ * @type {import("@weborigami/language").FileUnpackFunction}
  */
 export default async function unpackText(input, options = {}) {
   const parent = options.parent ?? null;

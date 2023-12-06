@@ -1,5 +1,5 @@
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */

@@ -8,7 +8,7 @@ import * as Tree from "./Tree.js";
  * used as a wrapper that can be returned immediately. The tree will be loaded
  * the first time the keys() or get() functions are called.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class DeferredTree {

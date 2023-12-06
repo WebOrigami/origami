@@ -3,7 +3,7 @@ import * as Tree from "./Tree.js";
 /**
  * A tree of Set objects.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class SetTree {

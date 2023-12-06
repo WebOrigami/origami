@@ -1,10 +1,10 @@
-import { ops } from "@graphorigami/language";
+import { ops } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Retrieve the indicated web resource via HTTPS.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {string} host

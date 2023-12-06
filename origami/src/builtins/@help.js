@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import child_process from "node:child_process";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 

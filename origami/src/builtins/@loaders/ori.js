@@ -1,4 +1,4 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import builtins from "../@builtins.js";
@@ -6,7 +6,7 @@ import builtins from "../@builtins.js";
 /**
  * Load and evaluate an Origami expression from a file.
  *
- * @type {import("@graphorigami/language").FileUnpackFunction}
+ * @type {import("@weborigami/language").FileUnpackFunction}
  */
 export default async function unpackOrigamiExpression(input, options = {}) {
   const parent = options.parent ?? null;

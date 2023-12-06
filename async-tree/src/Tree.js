@@ -14,8 +14,8 @@ import { castArrayLike, isPlainObject } from "./utilities.js";
  * @typedef {import("../index.ts").ReduceFn} ReduceFn
  * @typedef {import("../index.ts").Treelike} Treelike
  * @typedef {import("../index.ts").ValueKeyFn} ValueKeyFn
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
 /**

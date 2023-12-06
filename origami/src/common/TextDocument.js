@@ -1,4 +1,4 @@
-import { isStringLike } from "@graphorigami/async-tree";
+import { isStringLike } from "@weborigami/async-tree";
 import { toYaml } from "./serialize.js";
 import * as utilities from "./utilities.js";
 
@@ -14,7 +14,7 @@ export default class TextDocument {
    * object, its properties will be copied to the new document; otherwise, that
    * parameter is ignored.
    *
-   * @typedef {import("@graphorigami/types").AsyncTree|null} AsyncTree
+   * @typedef {import("@weborigami/types").AsyncTree|null} AsyncTree
    *
    * @param {any} [data]
    * @param {AsyncTree} [parent]

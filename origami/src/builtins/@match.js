@@ -1,5 +1,5 @@
-import { Tree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { Tree } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -16,8 +16,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * incorporate the matched pattern's wildcard values into the scope and invoke
  * the indicated function to produce a result.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("../../index.ts").Invocable} Invocable
  *
  * @param {string|RegExp} pattern

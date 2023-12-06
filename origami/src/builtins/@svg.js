@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import graphviz from "graphviz-wasm";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import dot from "./@tree/dot.js";
@@ -8,9 +8,9 @@ let graphvizLoaded = false;
 /**
  * Render a tree visually in SVG format.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]

@@ -1,4 +1,4 @@
-import { merge } from "@graphorigami/async-tree";
+import { merge } from "@weborigami/async-tree";
 import builtins from "../../../src/builtins/@builtins.js";
 
 export default merge(

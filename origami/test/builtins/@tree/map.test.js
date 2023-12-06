@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import map from "../../../src/builtins/@map.js";
@@ -11,7 +11,7 @@ describe("@map", () => {
       { name: "Carol", age: 3 },
     ];
     const fixture = map({
-      /** @this {import("@graphorigami/types").AsyncTree} */
+      /** @this {import("@weborigami/types").AsyncTree} */
       keyMap: async function (sourceValue, sourceKey, tree) {
         const keyInScope = await this.get("@key");
         assert.equal(keyInScope, sourceKey);
@@ -50,7 +50,7 @@ describe("@map", () => {
       b: 2,
     };
     const transform = map({
-      /** @this {import("@graphorigami/types").AsyncTree} */
+      /** @this {import("@weborigami/types").AsyncTree} */
       keyMap: async function (sourceValue, sourceKey, tree) {
         const letter = await this.get("letter");
         const value = await this.get("number");

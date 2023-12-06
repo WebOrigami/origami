@@ -5,8 +5,8 @@ import setScope from "./set.js";
  * Return a copy of the given tree whose scope includes the given trees *and*
  * the current scope.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param  {...Treelike} scopeTrees

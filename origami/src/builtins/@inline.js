@@ -5,8 +5,8 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  * Inline any Origami expressions found inside {{...}} placeholders in the input
  * text.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  *
  * @this {AsyncTree|null}
  * @param {StringLike} input

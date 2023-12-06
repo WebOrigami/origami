@@ -1,9 +1,9 @@
-import { ObjectTree, Tree, merge } from "@graphorigami/async-tree";
+import { ObjectTree, Tree, merge } from "@weborigami/async-tree";
 
 const globstar = "**";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class GlobTree {

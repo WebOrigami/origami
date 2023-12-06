@@ -5,7 +5,7 @@
  * The resulting `inverseKeyMap` and `keyMap` functions are compatible with those
  * expected by map and other transforms.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @param {{ resultExtension?: string, sourceExtension: string }}
  * options
  */

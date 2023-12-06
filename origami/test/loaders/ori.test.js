@@ -1,5 +1,5 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
-import { OrigamiFiles, Scope } from "@graphorigami/language";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { OrigamiFiles, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";

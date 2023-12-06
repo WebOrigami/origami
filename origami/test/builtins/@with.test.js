@@ -1,4 +1,4 @@
-import { ObjectTree } from "@graphorigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import withTree from "../../src/builtins/@with.js";
@@ -13,7 +13,7 @@ describe("@with", () => {
       {
         inWith: "bar",
       },
-      /** @this {import("@graphorigami/types").AsyncTree} */
+      /** @this {import("@weborigami/types").AsyncTree} */
       async function () {
         return `${await this.get("inScope")}-${await this.get("inWith")}`;
       }

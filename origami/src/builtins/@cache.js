@@ -1,13 +1,13 @@
-import { cache, Tree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { cache, Tree } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Caches tree values in a storable cache.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef  {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @param {Treelike} sourceTreelike
  * @param {Treelike} [cacheTreelike]
  * @param {Treelike} [filterTreelike]

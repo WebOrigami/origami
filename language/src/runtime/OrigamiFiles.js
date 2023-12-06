@@ -1,4 +1,4 @@
-import { FileTree } from "@graphorigami/async-tree";
+import { FileTree } from "@weborigami/async-tree";
 import EventTargetMixin from "./EventTargetMixin.js";
 import ImportModulesMixin from "./ImportModulesMixin.js";
 import OrigamiTransform from "./OrigamiTransform.js";

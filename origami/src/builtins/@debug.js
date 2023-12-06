@@ -1,4 +1,4 @@
-import { Tree, isPlainObject } from "@graphorigami/async-tree";
+import { Tree, isPlainObject } from "@weborigami/async-tree";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
@@ -7,8 +7,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 /**
  * Add debugging features to the indicated tree.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]

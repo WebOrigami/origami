@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";

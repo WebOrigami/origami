@@ -1,10 +1,10 @@
-import { OrigamiFiles, Scope } from "@graphorigami/language";
+import { OrigamiFiles, Scope } from "@weborigami/language";
 import path from "node:path";
 import process from "node:process";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {string[]} keys

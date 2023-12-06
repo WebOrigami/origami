@@ -1,4 +1,4 @@
-import type { AsyncTree } from "@graphorigami/types";
+import type { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 

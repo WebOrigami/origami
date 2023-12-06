@@ -1,9 +1,9 @@
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  */
 
-import { SiteTree } from "@graphorigami/async-tree";
+import { SiteTree } from "@weborigami/async-tree";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";

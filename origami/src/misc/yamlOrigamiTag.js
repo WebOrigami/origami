@@ -1,4 +1,4 @@
-import { expressionFunction } from "@graphorigami/language";
+import { expressionFunction } from "@weborigami/language";
 import * as compile from "../../../language/src/compiler/compile.js";
 /**
  * A YAML tag for an Origami expression.

@@ -1,4 +1,4 @@
-import { Tree, isPlainObject, isStringLike } from "@graphorigami/async-tree";
+import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);

@@ -1,8 +1,8 @@
-import { OrigamiFiles, Scope } from "@graphorigami/language";
+import { OrigamiFiles, Scope } from "@weborigami/language";
 import os from "node:os";
 import builtins from "./@builtins.js";
 
-/** @type {import("@graphorigami/types").AsyncTree} */
+/** @type {import("@weborigami/types").AsyncTree} */
 let tree = new OrigamiFiles(os.homedir());
 tree = Scope.treeWithScope(tree, builtins);
 

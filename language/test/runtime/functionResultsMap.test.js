@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import Scope from "../../src/runtime/Scope.js";
@@ -11,7 +11,7 @@ describe("functionResultsMap", () => {
     };
     const tree = Scope.treeWithScope(
       {
-        fn: /** @this {import("@graphorigami/types").AsyncTree} */ function () {
+        fn: /** @this {import("@weborigami/types").AsyncTree} */ function () {
           return this.get("message");
         },
         string: "string",

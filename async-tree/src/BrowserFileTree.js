@@ -8,7 +8,7 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * Origin Private File System or the (as of October 2023) experimental File
  * System Access API.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
 export default class BrowserFileTree {

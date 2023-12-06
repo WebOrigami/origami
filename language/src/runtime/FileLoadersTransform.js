@@ -1,9 +1,9 @@
-import { Tree, isStringLike } from "@graphorigami/async-tree";
+import { Tree, isStringLike } from "@weborigami/async-tree";
 import Scope from "./Scope.js";
 import extname from "./extname.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @typedef {import("../../index.js").FileUnpackFunction} FileUnpackFunction
  *

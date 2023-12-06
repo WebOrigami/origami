@@ -1,5 +1,5 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
-import { InvokeFunctionsTransform } from "@graphorigami/language";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { InvokeFunctionsTransform } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import exceptions from "../../../src/builtins/@tree/exceptions.js";

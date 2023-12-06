@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 
 import { evaluate, format } from "./internal.js";
 

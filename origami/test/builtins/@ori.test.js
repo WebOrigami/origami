@@ -1,5 +1,5 @@
-import { ObjectTree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { ObjectTree } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";

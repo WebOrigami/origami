@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@graphorigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 
 /**
  * Caches values from a source tree in a second cache tree. If no second tree is
@@ -7,8 +7,8 @@ import { ObjectTree, Tree } from "@graphorigami/async-tree";
  * An optional third filter tree can be supplied. If a filter tree is supplied,
  * only values for keys that match the filter will be cached.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  *
  * @param {AsyncTree} source
  * @param {AsyncMutableTree} [cacheTree]

@@ -1,5 +1,5 @@
 {
-  "name": "@graphorigami/origami",
+  "name": "@weborigami/origami",
   "version": "0.0.35",
   "description": "Graph Origami language, CLI, framework, and server",
   "type": "module",
@@ -19,9 +19,9 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "@graphorigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/async-tree?main",
-    "@graphorigami/language": "https://gitpkg.now.sh/GraphOrigami/origami/language?main",
-    "@graphorigami/types": "0.0.35",
+    "@weborigami/async-tree": "https://gitpkg.now.sh/GraphOrigami/origami/async-tree?main",
+    "@weborigami/language": "https://gitpkg.now.sh/GraphOrigami/origami/language?main",
+    "@weborigami/types": "0.0.35",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
     "marked": "9.1.5",

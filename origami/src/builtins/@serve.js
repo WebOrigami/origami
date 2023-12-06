@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
@@ -14,8 +14,8 @@ const defaultPort = 5000;
 /**
  * Start a local web server for the indicated tree.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
  * @param {Treelike} treelike
  * @param {number} [port]

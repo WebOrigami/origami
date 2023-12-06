@@ -1,5 +1,5 @@
-import { FileTree } from "@graphorigami/async-tree";
-import { ImportModulesMixin } from "@graphorigami/language";
+import { FileTree } from "@weborigami/async-tree";
+import { ImportModulesMixin } from "@weborigami/language";
 import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";

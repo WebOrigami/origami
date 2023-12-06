@@ -1,4 +1,4 @@
-import { ObjectTree, Tree, isStringLike } from "@graphorigami/async-tree";
+import { ObjectTree, Tree, isStringLike } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";

@@ -1,11 +1,11 @@
-import { map, Tree } from "@graphorigami/async-tree";
+import { map, Tree } from "@weborigami/async-tree";
 import Scope from "./Scope.js";
 
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
  *
- * @type {import("@graphorigami/async-tree").TreeTransform}
+ * @type {import("@weborigami/async-tree").TreeTransform}
  */
 export default function functionResultsMap(tree) {
   return map({

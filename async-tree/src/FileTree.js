@@ -13,7 +13,7 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 /**
  * A file system tree via the Node file system API.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
 export default class FileTree {

@@ -1,11 +1,11 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 
 /**
  * A number of transforms accept functions that can accept a single value. This
  * helper adds the value and key to the scope as ambients.
  *
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.js").Invocable} Invocable
  *
  * @param {AsyncTree|null} scope

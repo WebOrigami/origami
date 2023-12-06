@@ -5,7 +5,7 @@ import path from "node:path";
  * of commands. For every module `foo.js`, the tree will expose a key `foo` with the value
  * of the module's export(s).
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Constructor<AsyncTree & { import: function }>} BaseConstructor
  * @param {BaseConstructor} Base
  */

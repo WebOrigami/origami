@@ -1,12 +1,12 @@
-import { Tree } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { Tree } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This
  * lets treat the contents of various file types consistently.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {any} content
  * @param {AsyncTree|null} parent

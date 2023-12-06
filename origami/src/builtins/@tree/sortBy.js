@@ -1,5 +1,5 @@
-import { Tree, sortBy } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { Tree, sortBy } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction } from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
@@ -8,8 +8,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * Return a new tree with the original's keys sorted using the given function to
  * obtain a sort key for each value in the tree.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("../../../index.ts").Invocable} Invocable
  *
  * @this {AsyncTree|null}

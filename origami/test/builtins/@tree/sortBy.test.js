@@ -1,4 +1,4 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import sortBy from "../../../src/builtins/@tree/sortBy.js";
@@ -13,7 +13,7 @@ describe("@tree/sortBy", () => {
     const sorted = await sortBy.call(
       null,
       tree,
-      /** @this {import("@graphorigami/types").AsyncTree} */
+      /** @this {import("@weborigami/types").AsyncTree} */
       function (value, key, tree) {
         return Tree.traverse(this, "_", "age");
       }

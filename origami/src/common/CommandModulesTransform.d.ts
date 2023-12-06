@@ -1,4 +1,4 @@
-import { Mixin } from "@graphorigami/language";
+import { Mixin } from "@weborigami/language";
 
 declare const CommandModulesTransform: Mixin<{}>;
 

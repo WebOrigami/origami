@@ -1,5 +1,5 @@
-import { Tree, keysJson } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { Tree, keysJson } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import index from "../builtins/@index.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 
@@ -19,7 +19,7 @@ import { isTransformApplied, transformObject } from "../common/utilities.js";
  * As a convenience, this transform also provides a default index.html page if
  * the tree doesn't define one.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */

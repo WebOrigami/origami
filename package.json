@@ -1,5 +1,5 @@
 {
-  "name": "@graphorigami/monorepo",
+  "name": "@weborigami/monorepo",
   "version": "0.0.35",
   "workspaces": [
     "async-tree",

@@ -3,7 +3,7 @@ import processUnpackedContent from "../../common/processUnpackedContent.js";
 /**
  * Load a .js file as module's default export or exports.
  *
- * @type {import("@graphorigami/language").FileUnpackFunction}
+ * @type {import("@weborigami/language").FileUnpackFunction}
  */
 export default async function unpackModule(input, options = {}) {
   const { key, parent } = options;

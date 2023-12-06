@@ -1,11 +1,11 @@
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return the interior nodes of the tree.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */

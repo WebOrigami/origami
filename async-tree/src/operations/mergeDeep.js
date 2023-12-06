@@ -3,7 +3,7 @@ import * as Tree from "../Tree.js";
 /**
  * Return a tree that performs a deep merge of the given trees.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @returns {AsyncTree & { description: string }}
  */
 export default function mergeDeep(...trees) {

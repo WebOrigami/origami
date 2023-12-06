@@ -68,7 +68,7 @@ export function isPlainObject(object) {
  * method.
  *
  * @param {any} obj
- * @returns {obj is import("@graphorigami/async-tree").StringLike}
+ * @returns {obj is import("@weborigami/async-tree").StringLike}
  */
 export function isStringLike(obj) {
   if (typeof obj === "string") {

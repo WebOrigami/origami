@@ -1,6 +1,6 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 
-import { Tree } from "@graphorigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 
 /**
  * Return true if the value is an async tree.

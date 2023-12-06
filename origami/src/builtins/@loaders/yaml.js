@@ -9,7 +9,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /**
  * Load a file as YAML.
  *
- * @type {import("@graphorigami/language").FileUnpackFunction}
+ * @type {import("@weborigami/language").FileUnpackFunction}
  */
 export default async function unpackYaml(input, options = {}) {
   const parent = options.parent ?? null;

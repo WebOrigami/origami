@@ -1,4 +1,4 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 

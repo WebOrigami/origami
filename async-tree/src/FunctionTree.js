@@ -1,7 +1,7 @@
 /**
  * A tree defined by a function and an optional domain.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class FunctionTree {

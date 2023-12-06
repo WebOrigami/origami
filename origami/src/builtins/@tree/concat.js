@@ -1,11 +1,11 @@
-import { Tree } from "@graphorigami/async-tree";
-import { ops } from "@graphorigami/language";
+import { Tree } from "@weborigami/async-tree";
+import { ops } from "@weborigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Concatenate the text content of objects or trees.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {any[]} args

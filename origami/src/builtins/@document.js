@@ -2,8 +2,8 @@ import TextDocument from "../common/TextDocument.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  *
  * @this {AsyncTree|null}
  * @param {StringLike} text

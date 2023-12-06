@@ -1,12 +1,12 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 import GlobTree from "../common/GlobTree.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Define a tree whose keys are globs.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
  * @param {Treelike} tree
  * @this {AsyncTree|null}

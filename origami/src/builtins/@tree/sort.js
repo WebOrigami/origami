@@ -1,12 +1,12 @@
-import { Tree, sortNatural } from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+import { Tree, sortNatural } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
  * Return a new tree with the original's keys sorted in natural sort order.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("../../../index.ts").Invocable} Invocable
  *
  * @this {AsyncTree|null}

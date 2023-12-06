@@ -2,7 +2,7 @@ import FileLoadersTransform from "./FileLoadersTransform.js";
 import InheritScopeMixin from "./InheritScopeMixin.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */

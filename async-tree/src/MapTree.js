@@ -9,7 +9,7 @@ import * as Tree from "./Tree.js";
  * we'd like to construct this by subclassing `Map`, that class appears
  * puzzingly and deliberately implemented to break subclasses.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
 export default class MapTree {

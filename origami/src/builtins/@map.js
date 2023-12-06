@@ -3,26 +3,26 @@ import {
   keyMapsForExtensions,
   map,
   Tree,
-} from "@graphorigami/async-tree";
-import { Scope } from "@graphorigami/language";
+} from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../common/addValueKeyToScope.js";
 import { toFunction } from "../common/utilities.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
  *
- * @typedef {import("@graphorigami/async-tree").KeyFn} KeyFn
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
- * @typedef {import("@graphorigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("@graphorigami/async-tree").TreeTransform} TreeTransform
+ * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
+ * @typedef {import("@weborigami/async-tree").TreeTransform} TreeTransform
  * @typedef {import("../../index.ts").TreelikeTransform} TreelikeTransform
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @typedef {{ deep?: boolean, description?: string, extensions?: string,
  * inverseKeyMap?: KeyFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
  * ValueKeyFn, valueName?: string }} TreeMapOptions
  *
- * @this {import("@graphorigami/types").AsyncTree|null}
+ * @this {import("@weborigami/types").AsyncTree|null}
  *
  * @overload
  * @param {ValueKeyFn} param1

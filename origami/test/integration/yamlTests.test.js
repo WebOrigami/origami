@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import { Tree, keyMapsForExtensions, map } from "@graphorigami/async-tree";
-import { OrigamiFiles, OrigamiTree, Scope } from "@graphorigami/language";
+import { Tree, keyMapsForExtensions, map } from "@weborigami/async-tree";
+import { OrigamiFiles, OrigamiTree, Scope } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";

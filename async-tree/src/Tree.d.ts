@@ -1,4 +1,4 @@
-import type { AsyncMutableTree, AsyncTree } from "@graphorigami/types";
+import type { AsyncMutableTree, AsyncTree } from "@weborigami/types";
 import { PlainObject, ReduceFn, Treelike, ValueKeyFn } from "../index.ts";
 
 export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;

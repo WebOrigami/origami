@@ -1,5 +1,5 @@
-/** @typedef {import("@graphorigami/types").AsyncTree} AsyncTree */
-import { ops } from "@graphorigami/language";
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { ops } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**

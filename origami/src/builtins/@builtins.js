@@ -1,5 +1,5 @@
-import { FileTree } from "@graphorigami/async-tree";
-import { ImportModulesMixin } from "@graphorigami/language";
+import { FileTree } from "@weborigami/async-tree";
+import { ImportModulesMixin } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import CommandModulesTransform from "../common/CommandModulesTransform.js";

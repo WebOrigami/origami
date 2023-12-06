@@ -4,12 +4,8 @@ import {
   isPlainObject,
   keysFromPath,
   mergeDeep,
-} from "@graphorigami/async-tree";
-import {
-  InvokeFunctionsTransform,
-  Scope,
-  extname,
-} from "@graphorigami/language";
+} from "@weborigami/async-tree";
+import { InvokeFunctionsTransform, Scope, extname } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import treeHttps from "./@treeHttps.js";
@@ -26,8 +22,8 @@ const fakeBaseUrl = new URL("https://fake");
  * in-memory. Referenced resources like images will be represented as functions
  * that obtain the requested value from the original site.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike|string} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike|string} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]

@@ -1,7 +1,7 @@
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {any} obj

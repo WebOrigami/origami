@@ -1,12 +1,12 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 import FilterTree from "../common/FilterTree.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Apply a filter to a tree.
  *
- * @typedef  {import("@graphorigami/types").AsyncTree} AsyncTree
- * @typedef {import("@graphorigami/async-tree").Treelike} Treelike
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {Treelike} filterVariant

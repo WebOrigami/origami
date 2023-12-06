@@ -1,4 +1,4 @@
-import { Scope } from "@graphorigami/language";
+import { Scope } from "@weborigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import * as utilities from "../../common/utilities.js";
@@ -8,8 +8,8 @@ import unpackText from "./txt.js";
 /**
  * Load and evaluate an Origami template from a file.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
- * @type {import("@graphorigami/language").FileUnpackFunction}
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @type {import("@weborigami/language").FileUnpackFunction}
  */
 export default async function unpackOrigamiTemplate(input, options = {}) {
   const parent =

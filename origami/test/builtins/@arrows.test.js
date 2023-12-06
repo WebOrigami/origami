@@ -1,4 +1,4 @@
-import { OrigamiTree, Scope } from "@graphorigami/language";
+import { OrigamiTree, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import arrows from "../../src/builtins/@arrows.js";

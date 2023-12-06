@@ -19,7 +19,7 @@ import builtins from "./@builtins.js";
  * chmod +x foo.ori
  * ```
  *
- * @this {import("@graphorigami/types").AsyncTree|null}
+ * @this {import("@weborigami/types").AsyncTree|null}
  */
 export default async function invoke(fn) {
   if (typeof fn !== "function" && fn.unpack) {

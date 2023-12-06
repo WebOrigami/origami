@@ -3,7 +3,7 @@ import Scope from "./Scope.js";
 const scopeKey = Symbol("scope");
 
 /**
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
@@ -14,7 +14,7 @@ export default function InheritScopeMixin(Base) {
       this[scopeKey] = null;
     }
 
-    /** @type {import("@graphorigami/types").AsyncTree} */
+    /** @type {import("@weborigami/types").AsyncTree} */
     get scope() {
       if (this[scopeKey] === null) {
         if (this.parent) {

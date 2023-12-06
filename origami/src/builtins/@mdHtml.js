@@ -23,10 +23,10 @@ marked.use(
 );
 
 /**
- * @typedef {import("@graphorigami/async-tree").StringLike} StringLike
- * @typedef {import("@graphorigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
+ * @typedef {import("@weborigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
  *
- * @this {import("@graphorigami/types").AsyncTree|null|void}
+ * @this {import("@weborigami/types").AsyncTree|null|void}
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {

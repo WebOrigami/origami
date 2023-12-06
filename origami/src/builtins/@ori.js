@@ -1,4 +1,4 @@
-import { Tree, getRealmObjectPrototype } from "@graphorigami/async-tree";
+import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
 import * as compile from "../../../language/src/compiler/compile.js";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
@@ -10,7 +10,7 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * Parse an Origami expression, evaluate it in the context of a tree (provided
  * by `this`), and return the result as text.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {string} expression

@@ -1,5 +1,5 @@
-import { KeyFn, Treelike, ValueKeyFn } from "@graphorigami/async-tree";
-import { AsyncTree } from "@graphorigami/types";
+import { KeyFn, Treelike, ValueKeyFn } from "@weborigami/async-tree";
+import { AsyncTree } from "@weborigami/types";
 import { TreelikeTransform } from "../../../index.ts";
 
 type TreeMapOptions = {

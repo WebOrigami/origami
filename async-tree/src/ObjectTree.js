@@ -4,7 +4,7 @@ import { getRealmObjectPrototype, isPlainObject } from "./utilities.js";
 /**
  * A tree defined by a plain object or array.
  *
- * @typedef {import("@graphorigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
 export default class ObjectTree {

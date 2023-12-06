@@ -7,7 +7,7 @@ import project from "./@project.js";
  * the default export of that file. Otherwise, the configuration is the set of
  * built-in functions.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {any} [key]

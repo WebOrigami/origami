@@ -4,7 +4,7 @@ import * as keysJson from "./keysJson.js";
 /**
  * An HTTP/HTTPS site as a tree of ArrayBuffers.
  *
- * @typedef {import("@graphorigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
  */
 export default class SiteTree {
