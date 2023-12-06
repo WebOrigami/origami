@@ -3,6 +3,7 @@ import {
   Tree,
   isPlainObject,
   keysFromPath,
+  mergeDeep,
 } from "@graphorigami/async-tree";
 import {
   InvokeFunctionsTransform,
@@ -80,10 +81,12 @@ export default async function crawl(treelike, baseHref) {
   // Merge the cache on top of the resources tree. If we have an actual value
   // for something already, that's better than a function that will get that
   // value.
-  const merged = Object.assign({}, resources, cache);
 
   /** @type {AsyncTree} */
-  let result = new (InvokeFunctionsTransform(ObjectTree))(merged);
+  let result = mergeDeep(
+    new ObjectTree(cache),
+    new (InvokeFunctionsTransform(ObjectTree))(resources)
+  );
   result = Scope.treeWithScope(result, this);
   return result;
 }
@@ -139,7 +142,7 @@ async function* crawlPaths(tree, baseUrl) {
   const promisesForPaths = {};
 
   // Seed the promise dictionary with robots.txt and the root path.
-  const initialPaths = ["/robots.txt", "/"];
+  const initialPaths = ["/robots.txt", ""];
   initialPaths.forEach((path) => {
     promisesForPaths[path] = processPath(tree, path, baseUrl);
   });
@@ -440,13 +443,9 @@ function isCrawlableHref(href) {
 // Remove any search parameters or hash from the href. Preserve absolute or
 // relative nature of URL. If the URL only has a search or hash, return null.
 function normalizeHref(href) {
-  if (href.startsWith("#") || href.startsWith("?")) {
-    return null;
-  }
-  const url = new URL(href, fakeBaseUrl);
-  url.search = "";
-  url.hash = "";
-  return url.host === fakeBaseUrl.host ? url.pathname : url.href;
+  // Remove everything after a `#` or `?` character.
+  const normalized = href.split(/[?#]/)[0];
+  return normalized === "" ? null : normalized;
 }
 
 async function processPath(tree, path, baseUrl) {
@@ -462,7 +461,7 @@ async function processPath(tree, path, baseUrl) {
 
   // Convert path to keys
   /** @type {any[]} */
-  let keys = keysFromPath(path);
+  let keys = path === "" ? [""] : keysFromPath(path);
 
   // Traverse tree to get value.
   let value = await traverse(tree, ...keys);
