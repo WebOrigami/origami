@@ -53,6 +53,7 @@ export default async function crawl(treelike, baseHref) {
 
   const cache = {};
   const resources = {};
+  const errors = [];
 
   // We iterate until there are no more promises to wait for.
   for await (const result of crawlPaths(tree, baseUrl)) {
@@ -61,6 +62,12 @@ export default async function crawl(treelike, baseHref) {
     // Cache the value
     if (value) {
       addValueToObject(cache, keys, value);
+    } else if (keys) {
+      // A missing robots.txt isn't an error; anything else missing is.
+      const path = keys.join("/");
+      if (path !== "robots.txt") {
+        errors.push(path);
+      }
     }
 
     // Add indirect resource functions to the resource tree. When requested,
@@ -74,10 +81,17 @@ export default async function crawl(treelike, baseHref) {
     }
   }
 
+  if (errors.length) {
+    addValueToObject(
+      cache,
+      ["crawl-errors.json"],
+      JSON.stringify(errors, null, 2)
+    );
+  }
+
   // Merge the cache on top of the resources tree. If we have an actual value
   // for something already, that's better than a function that will get that
   // value.
-
   /** @type {AsyncTree} */
   let result = mergeDeep(
     new ObjectTree(cache),
@@ -461,16 +475,22 @@ async function processPath(tree, path, baseUrl) {
 
   // Traverse tree to get value.
   let value = await traverse(tree, ...keys);
-  if (Tree.isTreelike(value)) {
+  if (Tree.isAsyncTree(value)) {
     // Path is actually a directory; see if it has an index.html
     value = await traverse(value, "index.html");
   }
 
-  if (value === undefined) {
-    return { crawlablePaths: [], keys, path, resourcePaths: [], value: null };
-  }
-
   const adjustedKeys = adjustKeys(keys);
+
+  if (value === undefined) {
+    return {
+      crawlablePaths: [],
+      keys: adjustedKeys,
+      path,
+      resourcePaths: [],
+      value: null,
+    };
+  }
 
   // Find paths in the value
   const key = adjustedKeys.at(-1);

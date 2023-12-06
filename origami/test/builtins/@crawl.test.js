@@ -52,12 +52,12 @@ describe("crawl", () => {
     // in practice, where a site's robots.txt file is out of date. We test that
     // the crawler ignores the protocol when deciding whether to crawl a path.
     const tree = {
-      "foo.html": "Foo",
+      "index.html": "Foo",
       "sitemap.xml": `
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://example.com/foo.html</loc>
+    <loc>https://example.com/index.html</loc>
   </url>
 </urlset>`,
       "robots.txt": "Sitemap: http://example.com/sitemap.xml",
@@ -65,8 +65,19 @@ describe("crawl", () => {
     const crawled = await crawl.call(null, tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
+      "index.html",
       "sitemap.xml",
-      "foo.html",
     ]);
+  });
+
+  test("can report missing crawlable resources like pages", async () => {
+    const tree = {
+      "index.html": `<a href="missing.html">Missing</a>`,
+    };
+    const crawled = await crawl.call(null, tree);
+    assert.equal(
+      await crawled.get("crawl-errors.json"),
+      JSON.stringify(["missing.html"], null, 2)
+    );
   });
 });
