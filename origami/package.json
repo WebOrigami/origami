@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/origami",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "Web Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
@@ -21,7 +21,7 @@
   "dependencies": {
     "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?main",
     "@weborigami/language": "https://gitpkg.now.sh/WebOrigami/origami/language?main",
-    "@weborigami/types": "0.0.35",
+    "@weborigami/types": "0.0.36",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
     "marked": "9.1.5",
