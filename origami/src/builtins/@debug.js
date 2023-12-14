@@ -50,13 +50,8 @@ function DebugTransform(Base) {
 
       // Ensure debug transforms are applied to explorable results.
       if (Tree.isAsyncTree(value)) {
-        if (!isTransformApplied(ExplorableSiteTransform, value)) {
-          value = transformObject(ExplorableSiteTransform, value);
-        }
-
-        if (!isTransformApplied(DebugTransform, value)) {
-          value = transformObject(DebugTransform, value);
-        }
+        value = transformObject(ExplorableSiteTransform, value);
+        value = transformObject(DebugTransform, value);
       }
 
       if (value?.unpack) {
@@ -70,12 +65,8 @@ function DebugTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
-            tree = transformObject(ExplorableSiteTransform, tree);
-          }
-          if (!isTransformApplied(DebugTransform, tree)) {
-            tree = transformObject(DebugTransform, tree);
-          }
+          tree = transformObject(ExplorableSiteTransform, tree);
+          tree = transformObject(DebugTransform, tree);
           return tree;
         };
       }

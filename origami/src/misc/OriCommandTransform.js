@@ -2,11 +2,7 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import ori from "../builtins/@ori.js";
-import {
-  isTransformApplied,
-  keySymbol,
-  transformObject,
-} from "../common/utilities.js";
+import { keySymbol, transformObject } from "../common/utilities.js";
 
 /**
  * Add support for commands prefixed with `!`.
@@ -40,10 +36,7 @@ export default function OriCommandTransform(Base) {
         value = await ori.call(extendedScope, source);
 
         // Ensure this transform is applied to any subtree.
-        if (
-          Tree.isAsyncTree(value) &&
-          !isTransformApplied(OriCommandTransform, value)
-        ) {
+        if (Tree.isAsyncTree(value)) {
           value = transformObject(OriCommandTransform, value);
         }
       }

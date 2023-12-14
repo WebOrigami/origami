@@ -1,7 +1,7 @@
 import { Tree, keysJson } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import index from "../builtins/@index.js";
-import { isTransformApplied, transformObject } from "../common/utilities.js";
+import { transformObject } from "../common/utilities.js";
 
 /**
  * Wraps a tree (typically a SiteTree) to turn a standard site into an
@@ -47,10 +47,7 @@ export default function ExplorableSiteTransform(Base) {
       // Ensure this transform is applied to any explorable result. This lets
       // the user browse into data and explorable trees of types other than the
       // current class.
-      if (
-        Tree.isAsyncTree(value) &&
-        !isTransformApplied(ExplorableSiteTransform, value)
-      ) {
+      if (Tree.isAsyncTree(value)) {
         value = transformObject(ExplorableSiteTransform, value);
       }
 
@@ -65,9 +62,7 @@ export default function ExplorableSiteTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
-            tree = transformObject(ExplorableSiteTransform, tree);
-          }
+          tree = transformObject(ExplorableSiteTransform, tree);
           return tree;
         };
       }
