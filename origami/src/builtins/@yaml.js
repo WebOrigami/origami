@@ -15,6 +15,9 @@ export default async function toYaml(obj) {
   if (obj === undefined) {
     return undefined;
   }
+  if (typeof obj.unpack === "function") {
+    obj = await obj.unpack();
+  }
   const value = await serialize.toJsonValue(obj);
   return YAML.stringify(value);
 }
