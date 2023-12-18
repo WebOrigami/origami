@@ -47,6 +47,14 @@ describe(".ori loader", () => {
     );
   });
 
+  test("loads an object containing an object shorthand", async () => {
+    const assets = new ObjectTree({});
+    const parent = new ObjectTree({ assets });
+    const source = `{ assets }`;
+    const object = await unpackOrigamiExpression(source, { parent });
+    assert.equal(object.assets, assets);
+  });
+
   test("loads a template literal", async () => {
     const scope = new ObjectTree({
       name: "Alice",

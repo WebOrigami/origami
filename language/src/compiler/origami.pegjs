@@ -169,7 +169,7 @@ objectProperty
 
 objectPropertyOrShorthand
   = objectProperty
-  / key:identifier { return [key, [ops.inherited, key]]; }
+  / key:identifier { return [key, [ops.scope, key]]; }
 
 // Function arguments in parentheses
 parensArgs

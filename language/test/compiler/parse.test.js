@@ -259,7 +259,7 @@ describe("Origami parser", () => {
     assertParse("object", "{ a: 1, b }", [
       ops.object,
       ["a", 1],
-      ["b", [ops.inherited, "b"]],
+      ["b", [ops.scope, "b"]],
     ]);
   });
 
@@ -275,7 +275,7 @@ describe("Origami parser", () => {
   test("objectPropertyOrShorthand", () => {
     assertParse("objectPropertyOrShorthand", "foo", [
       "foo",
-      [ops.inherited, "foo"],
+      [ops.scope, "foo"],
     ]);
     assertParse("objectPropertyOrShorthand", "x: y", ["x", [ops.scope, "y"]]);
   });

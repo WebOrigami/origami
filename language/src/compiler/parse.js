@@ -278,7 +278,7 @@ function peg$parse(input, options) {
   var peg$f16 = function(head, tail) {
       return [head].concat(tail);
     };
-  var peg$f17 = function(key) { return [key, [ops.inherited, key]]; };
+  var peg$f17 = function(key) { return [key, [ops.scope, key]]; };
   var peg$f18 = function(list) { return list ?? [undefined]; };
   var peg$f19 = function(head, tail) { return [head].concat(tail); };
   var peg$f20 = function(key) { return [key]; };
