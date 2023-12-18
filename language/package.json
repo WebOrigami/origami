@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/language",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "Web Origami expression language compiler and runtime",
   "type": "module",
   "main": "./main.js",
