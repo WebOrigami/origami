@@ -3,6 +3,13 @@ import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
+// Return true if the text appears to contain non-printable binary characters;
+// used to infer whether a file is binary or text.
+export function hasNonPrintableCharacters(text) {
+  // https://stackoverflow.com/a/1677660/76472
+  return /[\x00-\x08\x0E-\x1F]/.test(text);
+}
+
 export function isTransformApplied(Transform, obj) {
   let transformName = Transform.name;
   if (!transformName) {
@@ -80,7 +87,9 @@ export function toString(object) {
     return object["@text"];
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
     // Serialize data as UTF-8.
-    return textDecoder.decode(object);
+    const decoded = textDecoder.decode(object);
+    // If the result has non-printable characters, it's probably not a string.
+    return hasNonPrintableCharacters(decoded) ? null : decoded;
   } else if (isStringLike(object)) {
     return String(object);
   } else {

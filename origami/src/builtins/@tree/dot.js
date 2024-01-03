@@ -1,7 +1,10 @@
 import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 import { extname } from "@weborigami/language";
 import * as serialize from "../../common/serialize.js";
-import { keySymbol } from "../../common/utilities.js";
+import {
+  hasNonPrintableCharacters,
+  keySymbol,
+} from "../../common/utilities.js";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 
 /**
@@ -34,12 +37,6 @@ export default async function dot(treelike, options = {}) {
 
 ${treeArcs.join("\n")}
 }`;
-}
-
-// Return true if the text appears to contain non-printable binary characters.
-function probablyBinary(text) {
-  // https://stackoverflow.com/a/1677660/76472
-  return /[\x00-\x08\x0E-\x1F]/.test(text);
 }
 
 async function statements(tree, nodePath, nodeLabel, options) {
@@ -110,7 +107,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
   let i = 0;
   for (const key of Object.keys(nodes)) {
     let label = String(nodes[key].label);
-    if (probablyBinary(label)) {
+    if (hasNonPrintableCharacters(label)) {
       nodes[key].label = "[binary data]";
     } else if (label) {
       let clippedStart = false;

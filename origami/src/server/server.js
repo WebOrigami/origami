@@ -7,6 +7,7 @@ import {
 } from "@weborigami/async-tree";
 import { Scope, extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
+import { toString } from "../common/utilities.js";
 import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -131,7 +132,7 @@ export async function handleRequest(request, response, tree) {
 
   let data;
   if (mediaType) {
-    data = mediaTypeIsText[mediaType] ? String(resource) : resource;
+    data = mediaTypeIsText[mediaType] ? toString(resource) : resource;
   } else {
     data = textOrObject(resource);
   }
@@ -233,26 +234,12 @@ ${message}
  * Convert to a string if we can, but leave objects that convert to something
  * like "[object Object]" alone.
  *
- * @param {any} obj
+ * @param {any} object
  */
-function textOrObject(obj) {
-  if (typeof obj === "string") {
-    // Return string as is.
-    return obj;
+function textOrObject(object) {
+  // Return buffers and typed arrays as is.
+  if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+    return object;
   }
-
-  // See if we can convert the object to a string.
-  const text = String(obj);
-
-  // See if we ended up with a default string.
-  const constructor = obj.constructor;
-  const name = constructor.name || "Object";
-  if (text === `[object Object]` || text === `[object ${name}]`) {
-    // Got a default string, so probably not what we wanted.
-    // Return original object.
-    return obj;
-  } else {
-    // We appear to have cast the object to a string; return that.
-    return text;
-  }
+  return toString(object);
 }
