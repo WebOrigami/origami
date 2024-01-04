@@ -32,9 +32,9 @@ export default function treeCache(source, cacheTree, filter) {
       // Cache miss or interior node cache hit.
       let value = await source.get(key);
       if (value !== undefined) {
-        // Does this key match the filter?
-        const filterValue = filter ? await filter.get(key) : true;
-        const filterMatch = filterValue !== undefined;
+        // If a filter is defined, does the key match the filter?
+        const filterValue = await filter?.get(key);
+        const filterMatch = !filter || filterValue !== undefined;
         if (filterMatch) {
           if (Tree.isAsyncTree(value)) {
             // Construct merged tree for a tree result.
