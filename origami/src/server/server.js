@@ -153,7 +153,7 @@ export async function handleRequest(request, response, tree) {
   const validResponse = typeof data === "string" || data instanceof TypedArray;
 
   if (!validResponse) {
-    const typeName = data.constructor?.name ?? typeof data;
+    const typeName = data?.constructor?.name ?? typeof data;
     console.error(
       `A served tree must return a string or a TypedArray (such as a Buffer) but returned an instance of ${typeName}.`
     );
