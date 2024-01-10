@@ -2,21 +2,22 @@ name: Template integration tests
 tests:
   - title: One template can reference another in local scope
     fixture:
-      actual.ori: includeGreet.orit("Bob")
-      includeGreet.orit: <h1>{{ greet.orit(_) }}</h1>
-      greet.orit: Hello, {{ _ }}!
+      actual.ori: includeGreet.ori("Bob")
+      includeGreet.ori: =`<h1>{{ greet.ori(_) }}</h1>`
+      greet.ori: =`Hello, {{ _ }}!`
     expected: <h1>Hello, Bob!</h1>
 
   - title: Result of one template can be passed to another
     fixture:
-      actual.ori: index.orit("Hello, world!")
-      page.orit: |
-        <html>
+      actual.ori: index.ori("Hello, world!")
+      page.ori: |
+        =`<html>
           <body>
             {{ _ }}
           </body>
         </html>
-      index.orit: "{{ page.orit(_) }}"
+        `
+      index.ori: "=page.ori(_)"
     expected: |
       <html>
         <body>
@@ -26,14 +27,14 @@ tests:
 
   - title: Template can invoke a map
     fixture:
-      actual.ori: template.orit()
+      actual.ori: template.ori()
       names:
         - Alice
         - Bob
         - Carol
-      template.orit: |
-        {{ @map(=`Hello, {{ _ }}!
-        `)(names) }}
+      template.ori: |
+        =`{{ @map(names, =`Hello, {{ _ }}!
+        `) }}`
     expected: |
       Hello, Alice!
       Hello, Bob!
@@ -41,10 +42,8 @@ tests:
 
   - title: Template can reference input front matter
     fixture:
-      actual.ori: template.orit(person)
-      template.orit: |
-        <h1>{{ _/name }}</h1>
+      actual.ori: template.ori(person)
+      template.ori: =`<h1>{{ _/name }}</h1>`
       person:
         name: Carol
-    expected: |
-      <h1>Carol</h1>
+    expected: <h1>Carol</h1>

@@ -14,7 +14,11 @@ export type Constructor<T> = new (...args: any[]) => T;
  */
 export type FileUnpackFunction = (
   input: StringLike,
-  options?: { key?: any, parent?: AsyncTree | null }
+  options?: {
+    attachedData?: any,
+    key?: any,
+    parent?: AsyncTree | null
+  }
 ) => any;
 
 /**

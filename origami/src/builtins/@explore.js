@@ -16,7 +16,7 @@ const miscFiles = Scope.treeWithScope(new OrigamiFiles(miscDir), builtins);
  */
 export default async function explore() {
   const scope = Scope.getScope(this);
-  const templateFile = await miscFiles.get("explore.orit");
+  const templateFile = await miscFiles.get("explore.ori");
   const template = await templateFile.unpack();
 
   const data = await getScopeData(scope);

@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import unpackYaml from "../../src/builtins/@loaders/yaml.js";
+import unpackYaml from "../../../src/builtins/@loaders/yaml.js";
 
 describe(".yaml loader", () => {
   test("loads input as a YAML file", async () => {

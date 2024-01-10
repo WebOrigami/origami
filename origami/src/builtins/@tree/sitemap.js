@@ -1,10 +1,10 @@
 import { Tree } from "@weborigami/async-tree";
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
 import builtins from "../@builtins.js";
-import unpackOrigamiTemplate from "../@loaders/orit.js";
+import unpackOrigamiExpression from "../@loaders/ori.js";
 import paths from "./paths.js";
 
-const templateText = `<?xml version="1.0" encoding="UTF-8"?>
+const templateText = `=\`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {{ @map(=\`
   <url>
@@ -12,6 +12,7 @@ const templateText = `<?xml version="1.0" encoding="UTF-8"?>
   </url>
 \`)(_) }}
 </urlset>
+\`
 `;
 
 /**
@@ -50,7 +51,7 @@ export default async function sitemap(treelike, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFn = await unpackOrigamiTemplate(templateText);
+  const templateFn = await unpackOrigamiExpression(templateText);
   const templateResult = await templateFn.call(builtins, htmlPaths);
   return String(templateResult);
 }

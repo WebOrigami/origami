@@ -1,5 +1,7 @@
+import unpackText from "../builtins/@loaders/txt.js";
+import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import unpackOrigamiTemplate from "./@loaders/orit.js";
+import unpackOrigamiExpression from "./@loaders/ori.js";
 
 /**
  * Inline any Origami expressions found inside {{...}} placeholders in the input
@@ -13,16 +15,32 @@ import unpackOrigamiTemplate from "./@loaders/orit.js";
  */
 export default async function inline(input) {
   assertScopeIsDefined(this);
-  if (/** @type {any} */ (input).unpack) {
-    input = await /** @type {any} */ (input).unpack();
+
+  // Get the input text and any attached front matter.
+  let inputDocument;
+  if (input["@text"]) {
+    inputDocument = input;
+  } else if (/** @type {any} */ (input).unpack) {
+    // Have the input unpack itself.
+    inputDocument = await /** @type {any} */ (input).unpack();
+  } else {
+    // Unpack the input as a text document with possible front matter.
+    inputDocument = await unpackText(input);
   }
-  const inputDocument = input["@text"] ? input : null;
-  const templateInput = inputDocument ?? input;
-  const templateFn = await unpackOrigamiTemplate(templateInput);
-  const text = await templateFn(inputDocument);
+
+  // Treat the input text as the body of an Origami template literal.
+  const inputText = utilities.toString(inputDocument);
+  const templateDocument = Object.assign({}, inputDocument, {
+    "@text": `=\`${inputText}\``,
+  });
+
+  const templateFn = await unpackOrigamiExpression(templateDocument, {
+    attachedData: inputDocument,
+  });
+  const templateResult = await templateFn(inputDocument);
   return inputDocument
-    ? Object.assign({}, inputDocument, { "@text": String(text) })
-    : text;
+    ? Object.assign({}, inputDocument, { "@text": String(templateResult) })
+    : templateResult;
 }
 
 inline.usage = `@inline <text>\tInline Origami expressions found in the text`;

@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import unpackText from "../../src/builtins/@loaders/txt.js";
+import unpackText from "../../../src/builtins/@loaders/txt.js";
 
 describe("text loader", () => {
   test("unpacks text without data", async () => {

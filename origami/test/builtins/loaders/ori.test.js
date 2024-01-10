@@ -4,8 +4,8 @@ import assert from "node:assert";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import builtins from "../../src/builtins/@builtins.js";
-import unpackOrigamiExpression from "../../src/builtins/@loaders/ori.js";
+import builtins from "../../../src/builtins/@builtins.js";
+import unpackOrigamiExpression from "../../../src/builtins/@loaders/ori.js";
 
 const dirname = path.join(
   path.dirname(fileURLToPath(import.meta.url)),

@@ -7,7 +7,7 @@ import builtins from "../../src/builtins/@builtins.js";
 describe("arrowMap", () => {
   test("interprets ← in a key as a function call", async () => {
     const treelike = new OrigamiTree({
-      "index.html ← .orit": "<h1>{{ title }}</h1>",
+      "index.html ← .ori": "=`<h1>{{ title }}</h1>`",
       title: "Our Site",
     });
     const tree = Scope.treeWithScope(treelike, builtins);

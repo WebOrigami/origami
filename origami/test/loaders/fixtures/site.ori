@@ -1,5 +1,0 @@
-{
-  index.html = index.orit()
-  index.orit = "Hello, {{ name }}!"
-  name = "world"
-}
