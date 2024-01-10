@@ -34,9 +34,7 @@ export default async function inline(input) {
     "@text": `=\`${inputText}\``,
   });
 
-  const templateFn = await unpackOrigamiExpression(templateDocument, {
-    attachedData: inputDocument,
-  });
+  const templateFn = await unpackOrigamiExpression(templateDocument);
   const templateResult = await templateFn(inputDocument);
   return inputDocument
     ? Object.assign({}, inputDocument, { "@text": String(templateResult) })
