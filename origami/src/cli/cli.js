@@ -9,6 +9,8 @@ import project from "../builtins/@project.js";
 import { keySymbol } from "../common/utilities.js";
 import showUsage from "./showUsage.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 async function main(...args) {
   const expression = args.join(" ");
 
@@ -42,7 +44,12 @@ async function main(...args) {
   const scope = Scope.getScope(tree);
   const result = await ori.call(scope, expression);
   if (result !== undefined) {
-    const output = result instanceof Buffer ? result : String(result);
+    const output =
+      result instanceof ArrayBuffer
+        ? new Uint8Array(result)
+        : typeof result === "string" || result instanceof TypedArray
+        ? result
+        : String(result);
     await stdout.write(output);
 
     // If stdout points to the console, and the result didn't end in a newline,

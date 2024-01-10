@@ -39,7 +39,11 @@ export default async function ori(expression) {
 }
 
 async function formatResult(result) {
-  if (typeof result === "string" || result instanceof TypedArray) {
+  if (
+    typeof result === "string" ||
+    result instanceof ArrayBuffer ||
+    result instanceof TypedArray
+  ) {
     // Use as is
     return result;
   }
