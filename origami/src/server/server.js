@@ -54,11 +54,14 @@ export async function handleRequest(request, response, tree) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url, `https://${request.headers.host}`);
 
-  // We allow the use of %2F in paths as a way to insert a slash into a key, so
-  // we parse the path into keys first, then decode them.
-  const keys = keysFromPath(url.pathname).map((key) =>
-    typeof key === "string" ? decodeURIComponent(key) : key
-  );
+  // Split on occurrences of `/!`, which represent Origami debug commands.
+  // Command arguments can contain slashes; don't treat those as path keys.
+  const parts = url.pathname.split(/\/!/);
+  const keys = parts.flatMap((part, index) => {
+    const decoded = decodeURIComponent(part);
+    // Split keys that aren't commands; add back the `!` to commands.
+    return index % 2 === 0 ? keysFromPath(decoded) : `!${decoded}`;
+  });
 
   // If the path ends with a trailing slash, the final key will be an empty
   // string. Change that to "index.html".
