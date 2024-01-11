@@ -24,6 +24,13 @@ async function getText(value, scope) {
     value = await value.call(scope);
   }
 
+  if (Tree.isTreelike(value)) {
+    // The mapReduce operation above only implicit casts its top-level input to
+    // a tree. If we're asked for the text of a treelike value, we need to
+    // explicitly recurse.
+    return concatTreeValues.call(scope, value);
+  }
+
   // Convert to text, preferring .toString but avoiding dumb Object.toString.
   // Exception: if the result is an array, we'll concatenate the values.
   let text;
