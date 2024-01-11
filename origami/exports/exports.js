@@ -46,6 +46,7 @@ export { default as not } from "../src/builtins/@not.js";
 export { default as or } from "../src/builtins/@or.js";
 export { default as ori } from "../src/builtins/@ori.js";
 export { default as pack } from "../src/builtins/@pack.js";
+export { default as package } from "../src/builtins/@package.js";
 export { default as parseJson } from "../src/builtins/@parse/json.js";
 export { default as parseYaml } from "../src/builtins/@parse/yaml.js";
 export { default as project } from "../src/builtins/@project.js";

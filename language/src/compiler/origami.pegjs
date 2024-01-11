@@ -205,9 +205,10 @@ protocol
 reservedProtocol
   = "https" { return ops.https; }
   / "http" { return ops.http; }
+  / "package" { return [ops.scope, "@package"] } // Alias
   / "treehttps" { return ops.treeHttps; }
   / "treehttp" { return ops.treeHttp; }
-  / "tree" { return ops.treeHttps; } // Shorthand alias
+  / "tree" { return ops.treeHttps; } // Alias
 
 scopeReference
   = key:identifier { return [ops.scope, key]; }
