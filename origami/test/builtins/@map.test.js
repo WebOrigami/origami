@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import map from "../../../src/builtins/@map.js";
+import map from "../../src/builtins/@map.js";
 
 describe("@map", () => {
   test("puts value and key in scope", async () => {
