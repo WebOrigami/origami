@@ -10,6 +10,9 @@ import Scope from "./Scope.js";
 import concatTreeValues from "./concatTreeValues.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 
+// For memoizing lambda functions
+const lambdaFnMap = new Map();
+
 /**
  * Construct an array.
  *
@@ -130,6 +133,9 @@ inherited.toString = () => "«ops.inherited»";
  * @param {Code} code
  */
 export function lambda(code) {
+  if (lambdaFnMap.has(code)) {
+    return lambdaFnMap.get(code);
+  }
   /** @this {AsyncTree|null} */
   async function invoke(input) {
     // Add ambients to scope.
@@ -142,6 +148,7 @@ export function lambda(code) {
     return result;
   }
   invoke.code = code;
+  lambdaFnMap.set(code, invoke);
   return invoke;
 }
 lambda.toString = () => "«ops.lambda»";
