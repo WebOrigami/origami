@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background: #333;
+  color: #eee;
+  display: grid;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: minMax(0, 1fr);
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+nav {
+  display: grid;
+  gap: 1em;
+  grid-auto-rows: min-content;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: auto;
+  padding: 1em 0.5em;
+}
+
+#label {
+  font-weight: bold;
+}
+
+#scopeToolbar {
+  display: grid;
+  grid-template-columns: repeat(4, auto);        
+}
+
+button {
+  background: transparent;
+  border: solid 1px #555;
+  color: inherit;
+  font-size: smaller;
+  font-family: inherit;
+  font-weight: inherit;
+  padding: 0.25em;
+}
+button:hover {
+  border-color: #999;
+}
+button:active {
+  border-color: #eee;
+}
+button[aria-pressed="true"] {
+  background: #555;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  color: #999;
+  font-size: inherit;
+  margin: 0.25em 0;
+  padding-left: 0.25em;
+}
+
+li {
+  padding: 0.25em;
+  padding-left: 1em;
+  text-indent: -0.75em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+iframe {
+  background: white;
+  border: none;
+  height: 100%;
+  width: 100%;
+}
