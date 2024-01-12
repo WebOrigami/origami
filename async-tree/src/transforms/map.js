@@ -6,27 +6,32 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {ValueKeyFn|{ deep?: boolean, description?: string, inverseKeyMap?: KeyFn, keyMap?: KeyFn, valueMap?: ValueKeyFn }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKeyMap?: KeyFn, keyMap?: KeyFn, valueMap?: ValueKeyFn }} options
  */
 export default function createMapTransform(options) {
   let deep;
   let description;
   let inverseKeyMap;
   let keyMap;
+  let needsSourceValue;
   let valueMap;
   if (typeof options === "function") {
     // Take the single function argument as the valueMap
     valueMap = options;
   } else {
-    deep = options.deep ?? false;
-    description = options.description ?? "key/value map";
+    deep = options.deep;
+    description = options.description;
     inverseKeyMap = options.inverseKeyMap;
     keyMap = options.keyMap;
+    needsSourceValue = options.needsSourceValue;
     valueMap = options.valueMap;
   }
 
-  keyMap ??= valueMap?.keyMap;
+  deep ??= false;
+  description ??= "key/value map";
   inverseKeyMap ??= valueMap?.inverseKeyMap;
+  keyMap ??= valueMap?.keyMap;
+  needsSourceValue ??= true;
 
   if ((keyMap && !inverseKeyMap) || (!keyMap && inverseKeyMap)) {
     throw new TypeError(
@@ -61,11 +66,18 @@ export default function createMapTransform(options) {
         }
 
         // Step 2: Get the source value.
-        const sourceValue = await tree.get(sourceKey);
+        let sourceValue;
+        if (needsSourceValue) {
+          // Normal case: get the value from the source tree.
+          sourceValue = await tree.get(sourceKey);
+        } else if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
+          // Only get the source value if it's a subtree.
+          sourceValue = tree;
+        }
 
         // Step 3: Map the source value to the result value.
         let resultValue;
-        if (sourceValue === undefined) {
+        if (sourceValue === needsSourceValue && undefined) {
           // No source value means no result value.
           resultValue = undefined;
         } else if (deep && Tree.isAsyncTree(sourceValue)) {

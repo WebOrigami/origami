@@ -74,6 +74,7 @@ export default function treeMap(param1, param2) {
     inverseKeyMap,
     keyMap,
     keyName,
+    needsSourceValue,
     valueName,
   } = options;
 
@@ -149,6 +150,7 @@ export default function treeMap(param1, param2) {
       description,
       inverseKeyMap: extendedInverseKeyMap,
       keyMap: extendedKeyMap,
+      needsSourceValue,
       valueMap: extendedValueFn,
     })(tree);
   };
