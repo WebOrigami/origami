@@ -25,6 +25,9 @@ export default function createMapTransform(options) {
     valueMap = options.valueMap;
   }
 
+  keyMap ??= valueMap?.keyMap;
+  inverseKeyMap ??= valueMap?.inverseKeyMap;
+
   if ((keyMap && !inverseKeyMap) || (!keyMap && inverseKeyMap)) {
     throw new TypeError(
       `map: You must specify both keyMap and inverseKeyMap, or neither.`

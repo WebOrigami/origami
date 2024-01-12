@@ -3,6 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
+import { replaceExtension } from "../common/utilities.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -40,6 +41,10 @@ export default async function mdHtml(input) {
     ? Object.assign({}, inputDocument, { "@text": html })
     : html;
 }
+
+mdHtml.keyMap = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
+mdHtml.inverseKeyMap = (resultKey) =>
+  replaceExtension(resultKey, ".html", ".md");
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
 mdHtml.documentation = "https://weborigami.org/language/@mdHtml.html";

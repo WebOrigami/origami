@@ -108,6 +108,21 @@ describe("map", () => {
     });
   });
 
+  test("valueMap can provide a default keyMap and inverseKeyMap", async () => {
+    const uppercase = (s) => s.toUpperCase();
+    uppercase.keyMap = (sourceKey) => `_${sourceKey}`;
+    uppercase.inverseKeyMap = (resultKey) => resultKey.slice(1);
+    const tree = new ObjectTree({
+      a: "letter a",
+      b: "letter b",
+    });
+    const mapped = map(uppercase)(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      _a: "LETTER A",
+      _b: "LETTER B",
+    });
+  });
+
   test("deep maps values", async () => {
     const tree = new ObjectTree({
       a: "letter a",

@@ -33,6 +33,22 @@ export const keySymbol = Symbol("key");
 export const parentSymbol = Symbol("parent");
 
 /**
+ * If the given key ends in the source extension (which will generally include a
+ * period), replace that extension with the result extension (which again should
+ * generally include a period). Otherwise, return the key as is.
+ *
+ * @param {string} key
+ * @param {string} sourceExtension
+ * @param {string} resultExtension
+ */
+export function replaceExtension(key, sourceExtension, resultExtension) {
+  if (!key.endsWith(sourceExtension)) {
+    return key;
+  }
+  return key.slice(0, -sourceExtension.length) + resultExtension;
+}
+
+/**
  * Convert the given object to a function.
  *
  * @typedef {import("../../index.ts").Invocable} Invocable

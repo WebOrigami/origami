@@ -12,6 +12,17 @@ describe("utilities", () => {
     assert(isStringLike({ toString: () => "string" }));
   });
 
+  test("replaceExtension", () => {
+    assert.equal(
+      utilities.replaceExtension("file.md", ".md", ".html"),
+      "file.html"
+    );
+    assert.equal(
+      utilities.replaceExtension("file.md", ".txt", ".html"),
+      "file.md"
+    );
+  });
+
   test("toFunction returns a plain function as is", () => {
     const fn = () => {};
     assert.equal(utilities.toFunction(fn), fn);
