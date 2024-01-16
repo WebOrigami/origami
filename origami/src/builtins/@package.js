@@ -13,6 +13,7 @@ export default async function packageBuiltin(...packageKeys) {
     scope = Scope.getScope(projectRoot);
   }
   const packageRoot = await Tree.traverse(
+    // @ts-ignore
     scope,
     "node_modules",
     ...packageKeys

@@ -29,7 +29,9 @@ export default function createMapTransform(options) {
 
   deep ??= false;
   description ??= "key/value map";
+  // @ts-ignore
   inverseKeyMap ??= valueMap?.inverseKeyMap;
+  // @ts-ignore
   keyMap ??= valueMap?.keyMap;
   needsSourceValue ??= true;
 
