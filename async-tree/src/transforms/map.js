@@ -77,7 +77,7 @@ export default function createMapTransform(options) {
 
         // Step 3: Map the source value to the result value.
         let resultValue;
-        if (sourceValue === needsSourceValue && undefined) {
+        if (needsSourceValue && sourceValue === undefined) {
           // No source value means no result value.
           resultValue = undefined;
         } else if (deep && Tree.isAsyncTree(sourceValue)) {

@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import FunctionTree from "../../src/FunctionTree.js";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
 import map from "../../src/transforms/map.js";
@@ -185,5 +186,22 @@ describe("map", () => {
         _b: "LETTER B",
       },
     });
+  });
+
+  test("needsSourceValue can be set to false in cases where the value isn't necessary", async () => {
+    let flag = false;
+    const tree = new FunctionTree(() => {
+      flag = true;
+    }, ["a", "b", "c"]);
+    const mapped = map({
+      needsSourceValue: false,
+      valueMap: () => "X",
+    })(tree);
+    assert.deepEqual(await Tree.plain(mapped), {
+      a: "X",
+      b: "X",
+      c: "X",
+    });
+    assert(!flag);
   });
 });
