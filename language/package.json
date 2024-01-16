@@ -6,8 +6,8 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.8.10",
-    "typescript": "5.2.2"
+    "@types/node": "20.11.3",
+    "typescript": "5.3.3"
   },
   "dependencies": {
     "@weborigami/types": "*",

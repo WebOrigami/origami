@@ -13,10 +13,10 @@
   "main": "./exports/exports.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/chai": "4.3.9",
-    "@types/mocha": "10.0.3",
-    "@types/node": "20.8.10",
-    "typescript": "5.2.2"
+    "@types/chai": "4.3.11",
+    "@types/mocha": "10.0.6",
+    "@types/node": "20.11.3",
+    "typescript": "5.3.3"
   },
   "dependencies": {
     "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?ca0443e4",
@@ -24,12 +24,12 @@
     "@weborigami/types": "0.0.38",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
-    "marked": "9.1.5",
-    "marked-gfm-heading-id": "3.1.0",
-    "marked-highlight": "2.0.6",
-    "marked-smartypants": "1.1.3",
-    "sharp": "0.32.6",
-    "yaml": "2.3.3"
+    "marked": "11.1.1",
+    "marked-gfm-heading-id": "3.1.2",
+    "marked-highlight": "2.1.0",
+    "marked-smartypants": "1.1.5",
+    "sharp": "0.33.2",
+    "yaml": "2.3.4"
   },
   "scripts": {
     "build": "ori exports/buildExports.js src > exports/exports.js",
