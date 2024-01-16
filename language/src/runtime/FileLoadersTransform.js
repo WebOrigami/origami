@@ -32,7 +32,7 @@ export default function FileLoadersTransform(Base) {
             value = new String(input);
             const parent = this;
             value.parent = parent;
-            value.unpack = () => unpackFn(input, { key, parent });
+            value.unpack = unpackFn.bind(null, input, { key, parent });
           }
         }
       }

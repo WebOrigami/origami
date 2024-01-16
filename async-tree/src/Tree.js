@@ -111,9 +111,12 @@ export function from(obj) {
   } else if (obj instanceof Set) {
     return new SetTree(obj);
   } else if (obj && typeof obj === "object" && "unpack" in obj) {
-    // Invoke unpack and convert the result to a tree.
-    let result = obj.unpack();
-    return result instanceof Promise ? new DeferredTree(result) : from(result);
+    async function AsyncFunction() {} // Sample async function
+    return obj.unpack instanceof AsyncFunction.constructor
+      ? // Async unpack: return a deferred tree.
+        new DeferredTree(obj.unpack)
+      : // Synchronous unpack: cast the result of unpack() to a tree.
+        from(obj.unpack());
   } else if (obj && typeof obj === "object") {
     // An instance of some class.
     return new ObjectTree(obj);
