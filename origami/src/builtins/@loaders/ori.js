@@ -20,7 +20,23 @@ export default async function unpackOrigamiExpression(
 
   // Compile the body text as an Origami expression and evaluate it.
   const inputText = utilities.toString(inputDocument);
-  const fn = compile.expression(inputText);
+  let fn;
+  try {
+    fn = compile.expression(inputText);
+  } catch (/** @type {any} */ error) {
+    let location = "";
+    if (options.key) {
+      location += `${options.key}`;
+    }
+    if (error.location) {
+      const { start } = error.location;
+      location += `, line ${start.line}, column ${start.column}`;
+    }
+    if (location) {
+      error.message += ` (${location})`;
+    }
+    throw error;
+  }
   const parentScope = parent ? Scope.getScope(parent) : builtins;
   let content = await fn.call(parentScope);
 
