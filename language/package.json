@@ -18,7 +18,7 @@
   "scripts": {
     "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
     "prepublishOnly": "npm run build",
-    "test": "node --test",
+    "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
 }

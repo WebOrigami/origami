@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "pushd language; npm run build; popd; pushd origami; npm run build; popd",
-    "test": "node --test --test-reporter=spec */test/*.test.js */test/*/*.test.js */test/*/*/*.test.js",
+    "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
 }

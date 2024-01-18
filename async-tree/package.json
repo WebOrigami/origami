@@ -14,7 +14,7 @@
     "@weborigami/types": "*"
   },
   "scripts": {
-    "test": "node --test",
+    "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
 }
