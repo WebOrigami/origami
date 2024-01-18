@@ -24,10 +24,6 @@ export default class MapTree {
   async get(key) {
     let value = this.map.get(key);
 
-    if (value instanceof Map) {
-      value = Reflect.construct(this.constructor, [value]);
-    }
-
     if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
@@ -37,7 +33,7 @@ export default class MapTree {
 
   async isKeyForSubtree(key) {
     const value = this.map.get(key);
-    return value instanceof Map || Tree.isAsyncTree(value);
+    return Tree.isAsyncTree(value);
   }
 
   async keys() {

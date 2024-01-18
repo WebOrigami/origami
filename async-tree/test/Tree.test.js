@@ -166,7 +166,7 @@ describe("Tree", () => {
   });
 
   test("isKeyForSubtree() returns true if the key is for a subtree", async () => {
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: 1,
       more: {
         b: 2,

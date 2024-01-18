@@ -18,10 +18,6 @@ export default class SetTree {
   async get(key) {
     let value = this.values[key];
 
-    if (value instanceof Set) {
-      value = Reflect.construct(this.constructor, [value]);
-    }
-
     if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
@@ -31,7 +27,7 @@ export default class SetTree {
 
   async isKeyForSubtree(key) {
     const value = this.values[key];
-    return value instanceof Set || Tree.isAsyncTree(value);
+    return Tree.isAsyncTree(value);
   }
 
   async keys() {

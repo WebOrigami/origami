@@ -90,13 +90,13 @@ describe("ObjectTree", () => {
   test("isKeyForSubtree() indicates which values are subtrees", async () => {
     const tree = new ObjectTree({
       a1: 1,
-      a2: {
+      a2: new ObjectTree({
         b1: 2,
-      },
+      }),
       a3: 3,
-      a4: {
+      a4: new ObjectTree({
         b2: 4,
-      },
+      }),
     });
     const keys = Array.from(await tree.keys());
     const subtrees = await Promise.all(

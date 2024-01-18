@@ -1,5 +1,5 @@
 import * as Tree from "./Tree.js";
-import { getRealmObjectPrototype, isPlainObject } from "./utilities.js";
+import { getRealmObjectPrototype } from "./utilities.js";
 
 /**
  * A tree defined by a plain object or array.
@@ -46,7 +46,7 @@ export default class ObjectTree {
 
   async isKeyForSubtree(key) {
     const value = this.object[key];
-    return isPlainObject(value) || Tree.isAsyncTree(value);
+    return Tree.isAsyncTree(value);
   }
 
   /**
