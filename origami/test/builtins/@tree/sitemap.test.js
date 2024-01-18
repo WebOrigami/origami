@@ -1,16 +1,17 @@
+import { DeepObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import sitemap from "../../../src/builtins/@tree/sitemap.js";
 
 describe("@tree/sitemap", () => {
   test("returns a sitemap for a tree", async () => {
-    const tree = {
+    const tree = new DeepObjectTree({
       "a.html": "A",
       b: {
         "index.html": "Index",
         "c.html": "C",
       },
-    };
+    });
     const result = await sitemap.call(null, tree, "https://example.com");
     assert.deepEqual(
       result,

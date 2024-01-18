@@ -1,4 +1,10 @@
-import { ObjectTree, Tree, merge } from "@weborigami/async-tree";
+import {
+  DeepObjectTree,
+  ObjectTree,
+  Tree,
+  isPlainObject,
+  merge,
+} from "@weborigami/async-tree";
 
 const globstar = "**";
 
@@ -8,7 +14,9 @@ const globstar = "**";
  */
 export default class GlobTree {
   constructor(globs) {
-    this.globs = Tree.from(globs);
+    this.globs = isPlainObject(globs)
+      ? new DeepObjectTree(globs)
+      : Tree.from(globs);
   }
 
   async get(key) {

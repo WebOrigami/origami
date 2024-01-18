@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import map from "../../src/builtins/@map.js";
@@ -17,9 +17,9 @@ describe("@map", () => {
         assert.equal(keyInScope, sourceKey);
         const valueInScope = await this.get("_");
         assert.equal(valueInScope, sourceValue);
-        return valueInScope.get("name");
+        return valueInScope.name;
       },
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.get("age"),
+      valueMap: (sourceValue, sourceKey, tree) => sourceValue.age,
     })(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       Alice: 1,
@@ -67,12 +67,12 @@ describe("@map", () => {
   });
 
   test("can map keys and values deeply", async () => {
-    const treelike = {
+    const treelike = new DeepObjectTree({
       a: 1,
       more: {
         b: 2,
       },
-    };
+    });
     const transform = map({
       deep: true,
       keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
@@ -88,12 +88,12 @@ describe("@map", () => {
   });
 
   test("can take a treelike source and return the transformed tree", async () => {
-    const treelike = {
+    const treelike = new DeepObjectTree({
       a: 1,
       more: {
         b: 2,
       },
-    };
+    });
     const mapped = map(treelike, {
       deep: true,
       keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
@@ -109,7 +109,7 @@ describe("@map", () => {
   });
 
   test("can map extensions deeply", async () => {
-    const treelike = {
+    const treelike = new DeepObjectTree({
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -117,7 +117,7 @@ describe("@map", () => {
         "file4.txt": "will be mapped",
         "file5.bar": "won't be mapped",
       },
-    };
+    });
     const transform = map({
       deep: true,
       extensions: "txt->upper",

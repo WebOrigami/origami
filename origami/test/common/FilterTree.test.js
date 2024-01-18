@@ -1,4 +1,4 @@
-import { FunctionTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, FunctionTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterTree from "../../src/common/FilterTree.js";
@@ -8,7 +8,7 @@ describe("FilterTree", () => {
   test("uses keys from filter, values from tree", async () => {
     const tree = new FilterTree(
       // Tree
-      {
+      new DeepObjectTree({
         a: 1,
         b: 2,
         more: {
@@ -18,7 +18,7 @@ describe("FilterTree", () => {
         extra: {
           e: 5,
         },
-      },
+      }),
       // Filter
       {
         a: true,
@@ -56,7 +56,7 @@ describe("FilterTree", () => {
   test("filter be defined with globs", async () => {
     const fixture = new FilterTree(
       // Tree
-      {
+      new DeepObjectTree({
         a: 1,
         b: 2,
         "hello.txt": "Hello",
@@ -72,7 +72,7 @@ describe("FilterTree", () => {
         // It would be very expensive to filter out empty trees, even if they
         // don't contain anything that matches the filter, so for now we don't.
         empty: {},
-      },
+      }),
       // Filter
       new GlobTree({
         a: true,

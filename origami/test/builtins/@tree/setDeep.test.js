@@ -1,10 +1,10 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import setDeep from "../../../src/builtins/@tree/setDeep.js";
 describe("@tree/setDeep", () => {
   test("can apply updates with a single argument to set", async () => {
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: 1,
       b: 2,
       more: {
@@ -13,19 +13,22 @@ describe("@tree/setDeep", () => {
     });
 
     // Apply changes.
-    await setDeep(tree, {
-      a: 4, // Overwrite existing value
-      b: undefined, // Delete
-      c: 5, // Add
-      more: {
-        // Should leave existing `more` keys alone.
-        e: 6, // Add
-      },
-      // Add new subtree
-      extra: {
-        f: 7,
-      },
-    });
+    await setDeep(
+      tree,
+      new DeepObjectTree({
+        a: 4, // Overwrite existing value
+        b: undefined, // Delete
+        c: 5, // Add
+        more: {
+          // Should leave existing `more` keys alone.
+          e: 6, // Add
+        },
+        // Add new subtree
+        extra: {
+          f: 7,
+        },
+      })
+    );
 
     assert.deepEqual(await Tree.plain(tree), {
       a: 4,

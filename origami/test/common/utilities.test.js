@@ -1,4 +1,9 @@
-import { ObjectTree, Tree, isStringLike } from "@weborigami/async-tree";
+import {
+  DeepObjectTree,
+  ObjectTree,
+  Tree,
+  isStringLike,
+} from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
@@ -117,7 +122,7 @@ describe("utilities", () => {
         }
       };
     }
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: "a",
       more: {
         b: "b",

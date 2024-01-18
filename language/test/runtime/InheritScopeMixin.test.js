@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { DeepObjectTree, ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import InheritScopeMixin from "../../src/runtime/InheritScopeMixin.js";
@@ -16,7 +16,7 @@ describe("InheritScopeMixin", () => {
   });
 
   test("adds a subtree's parent to the subtrees's scope", async () => {
-    const fixture = new (InheritScopeMixin(ObjectTree))({
+    const fixture = new (InheritScopeMixin(DeepObjectTree))({
       a: 1,
       subtree: {
         b: 2,

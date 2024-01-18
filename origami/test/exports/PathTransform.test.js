@@ -1,10 +1,10 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import PathTransform from "../../exports/PathTransform.js";
 describe("PathTransform", () => {
   test("defines an ambient @path value for subtrees", async () => {
-    const tree = new (PathTransform(ObjectTree))({
+    const tree = new (PathTransform(DeepObjectTree))({
       a: {
         b: {
           c: {},
