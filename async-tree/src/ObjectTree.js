@@ -37,13 +37,6 @@ export default class ObjectTree {
 
     let value = this.object[key];
 
-    const isPlain =
-      value instanceof Array ||
-      (isPlainObject(value) && !Tree.isAsyncTree(value));
-    if (isPlain) {
-      value = Reflect.construct(this.constructor, [value]);
-    }
-
     if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }

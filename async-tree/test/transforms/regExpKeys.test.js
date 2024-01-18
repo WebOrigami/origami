@@ -1,12 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import DeepObjectTree from "../../src/DeepObjectTree.js";
 import * as Tree from "../../src/Tree.js";
 import regExpKeys from "../../src/transforms/regExpKeys.js";
 
 describe("regExpKeys", () => {
   test("matches keys using regular expressions", async () => {
     const fixture = await regExpKeys(
-      Tree.from({
+      new DeepObjectTree({
         a: true,
         "b.*": true,
         c: {

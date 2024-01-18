@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import DeepObjectTree from "../../src/DeepObjectTree.js";
 import FunctionTree from "../../src/FunctionTree.js";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
@@ -125,7 +126,7 @@ describe("map", () => {
   });
 
   test("deep maps values", async () => {
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: "letter a",
       more: {
         b: "letter b",
@@ -145,7 +146,7 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys", async () => {
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: "letter a",
       more: {
         b: "letter b",
@@ -166,7 +167,7 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys and values", async () => {
-    const tree = new ObjectTree({
+    const tree = new DeepObjectTree({
       a: "letter a",
       more: {
         b: "letter b",

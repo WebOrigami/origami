@@ -76,28 +76,13 @@ describe("ObjectTree", () => {
     assert.equal(await fixture.get("prop"), "Goodbye");
   });
 
-  test("creates an ObjectTree for subtrees", async () => {
-    const object = {
-      a: 1,
-      more: {
-        b: 2,
-      },
-    };
-    const fixture = new ObjectTree(object);
-    const more = await fixture.get("more");
-    assert.equal(more.constructor, ObjectTree);
-    const b = await more.get("b");
-    assert.equal(b, 2);
-  });
-
   test("sets parent on subtrees", async () => {
-    const object = {
+    const fixture = new ObjectTree({
       a: 1,
-      more: {
+      more: new ObjectTree({
         b: 2,
-      },
-    };
-    const fixture = new ObjectTree(object);
+      }),
+    });
     const more = await fixture.get("more");
     assert.equal(more.parent, fixture);
   });
@@ -118,24 +103,6 @@ describe("ObjectTree", () => {
       keys.map(async (key) => await tree.isKeyForSubtree(key))
     );
     assert.deepEqual(subtrees, [false, true, false, true]);
-  });
-
-  test("returns an ObjectTree for value that's a plain sub-object or sub-array", async () => {
-    const tree = new ObjectTree({
-      a: 1,
-      object: {
-        b: 2,
-      },
-      array: [3],
-    });
-
-    const object = await tree.get("object");
-    assert.equal(object instanceof ObjectTree, true);
-    assert.deepEqual(await Tree.plain(object), { b: 2 });
-
-    const array = await tree.get("array");
-    assert.equal(array instanceof ObjectTree, true);
-    assert.deepEqual(await Tree.plain(array), [3]);
   });
 
   test("returns an async tree value as is", async () => {

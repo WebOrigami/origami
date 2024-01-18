@@ -12,9 +12,7 @@ describe("groupBy transform", () => {
       { name: "Work Sans", tags: ["Grotesque", "Sans Serif"] },
     ];
     const tree = Tree.from(fonts);
-    const grouped = await groupBy((value, key, tree) => value.get("tags"))(
-      tree
-    );
+    const grouped = await groupBy((value, key, tree) => value.tags)(tree);
     assert.deepEqual(await Tree.plain(grouped), {
       Geometric: [{ name: "Albert Sans", tags: ["Geometric", "Sans Serif"] }],
       Grotesque: [{ name: "Work Sans", tags: ["Grotesque", "Sans Serif"] }],

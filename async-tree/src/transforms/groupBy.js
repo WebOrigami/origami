@@ -26,6 +26,7 @@ export default function createGroupByTransform(groupKeyFn) {
         // A single value was returned
         groups = [groups];
       }
+      groups = Tree.from(groups);
 
       // Add the value to each group.
       for (const groupKey of await groups.keys()) {

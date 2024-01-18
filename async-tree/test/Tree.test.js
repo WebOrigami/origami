@@ -1,12 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { DeepObjectTree } from "../main.js";
 import MapTree from "../src/MapTree.js";
 import ObjectTree from "../src/ObjectTree.js";
 import * as Tree from "../src/Tree.js";
 
 describe("Tree", () => {
   test("assign applies one tree to another", async () => {
-    const target = new ObjectTree({
+    const target = new DeepObjectTree({
       a: 1,
       b: 2,
       more: {
@@ -14,7 +15,7 @@ describe("Tree", () => {
       },
     });
 
-    const source = {
+    const source = new DeepObjectTree({
       a: 4, // Overwrite existing value
       b: undefined, // Delete
       c: 5, // Add
@@ -26,7 +27,7 @@ describe("Tree", () => {
       extra: {
         f: 7,
       },
-    };
+    });
 
     // Apply changes.
     const result = await Tree.assign(target, source);
@@ -176,12 +177,12 @@ describe("Tree", () => {
   });
 
   test("map() maps values", async () => {
-    const tree = {
+    const tree = new DeepObjectTree({
       a: "Alice",
       more: {
         b: "Bob",
       },
-    };
+    });
     const mapped = Tree.map(tree, (value) => value.toUpperCase());
     assert.deepEqual(await Tree.plain(mapped), {
       a: "ALICE",
@@ -192,14 +193,14 @@ describe("Tree", () => {
   });
 
   test("mapReduce() can map values and reduce them", async () => {
-    const tree = {
+    const tree = new DeepObjectTree({
       a: 1,
       b: 2,
       more: {
         c: 3,
       },
       d: 4,
-    };
+    });
     const reduced = await Tree.mapReduce(
       tree,
       (value) => value,

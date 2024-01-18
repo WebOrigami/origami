@@ -1,12 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import DeepObjectTree from "../../src/DeepObjectTree.js";
 import * as Tree from "../../src/Tree.js";
 import mergeDeep from "../../src/operations/mergeDeep.js";
 
 describe("mergeDeep", () => {
   test("can merge deep", async () => {
     const fixture = mergeDeep(
-      Tree.from({
+      new DeepObjectTree({
         a: {
           b: 1,
           c: {
@@ -14,7 +15,7 @@ describe("mergeDeep", () => {
           },
         },
       }),
-      Tree.from({
+      new DeepObjectTree({
         a: {
           b: 0, // Will be obscured by `b` above
           c: {
