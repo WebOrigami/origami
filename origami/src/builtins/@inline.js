@@ -1,5 +1,5 @@
+import { compile } from "@weborigami/language";
 import unpackText from "../builtins/@loaders/txt.js";
-import * as utilities from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import unpackOrigamiExpression from "./@loaders/ori.js";
 
@@ -28,13 +28,9 @@ export default async function inline(input) {
     inputDocument = await unpackText(input);
   }
 
-  // Treat the input text as the body of an Origami template literal.
-  const inputText = utilities.toString(inputDocument);
-  const templateDocument = Object.assign({}, inputDocument, {
-    "@text": `=\`${inputText}\``,
+  const templateFn = await unpackOrigamiExpression(inputDocument, {
+    compiler: compile.templateDocument,
   });
-
-  const templateFn = await unpackOrigamiExpression(templateDocument);
   const templateResult = await templateFn(inputDocument);
   return inputDocument
     ? Object.assign({}, inputDocument, { "@text": String(templateResult) })

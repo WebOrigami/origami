@@ -17,12 +17,13 @@ export default async function unpackOrigamiExpression(
     options.parent ??
     /** @type {any} */ (inputDocument).parent ??
     /** @type {any} */ (inputDocument)[utilities.parentSymbol];
+  const compiler = options.compiler ?? compile.expression;
 
   // Compile the body text as an Origami expression and evaluate it.
   const inputText = utilities.toString(inputDocument);
   let fn;
   try {
-    fn = compile.expression(inputText);
+    fn = compiler(inputText);
   } catch (/** @type {any} */ error) {
     let location = "";
     if (options.key) {

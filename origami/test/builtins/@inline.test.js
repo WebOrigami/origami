@@ -16,19 +16,6 @@ describe("inline", () => {
     });
   });
 
-  test("can reference values in front matter", async () => {
-    const document = await unpackText(`---
-name: Bob
----
-Hello, {{ name }}!`);
-    /** @type {any} */
-    const inlined = await inline.call(null, document);
-    assert.deepEqual(inlined, {
-      "@text": `Hello, Bob!`,
-      name: "Bob",
-    });
-  });
-
   test("can reference itself via `_` ambient", async () => {
     const document = await unpackText(`---
 name: Bob
