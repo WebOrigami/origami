@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles, Scope } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,14 +14,8 @@ const miscFiles = Scope.treeWithScope(new OrigamiFiles(miscDir), builtins);
 /**
  * @this {AsyncTree|null}
  */
-export default async function explore() {
+export default async function explore(...keys) {
   const scope = Scope.getScope(this);
-  const templateFile = await miscFiles.get("explore.ori");
-  const template = await templateFile.unpack();
-
-  const data = await getScopeData(scope);
-  const text = await template(data);
-
   const ambientsTree = new ObjectTree({
     "@current": this,
   });
@@ -29,8 +23,30 @@ export default async function explore() {
   const extendedScope = new Scope(ambientsTree, scope);
 
   /** @type {any} */
-  const result = new String(text);
-  result.unpack = () => debug.call(scope, extendedScope);
+  let result;
+  if (keys.length > 0) {
+    // Traverse the scope using the given keys.
+    const debugScope = await debug.call(scope, extendedScope);
+    // HACK: reproduce logic of ExplorableSiteTransform that turns a trailing
+    // slash into index.html. Calling `debug` applies that transform and the
+    // transform should handle that logic, but unfortunately the `traverse`
+    // operation has special casing to treat a trailing slash, and never gives
+    // ExplorableSiteTransform a chance.
+    if (keys.at(-1) === "") {
+      keys[keys.length - 1] = "index.html";
+    }
+    result = await Tree.traverse(debugScope, ...keys);
+  } else {
+    // Return the Explore page for the current scope.
+    const templateFile = await miscFiles.get("explore.ori");
+    const template = await templateFile.unpack();
+
+    const data = await getScopeData(scope);
+    const text = await template(data);
+
+    result = new String(text);
+    result.unpack = () => debug.call(scope, extendedScope);
+  }
 
   return result;
 }
