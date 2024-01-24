@@ -53,21 +53,7 @@ export function treeRouter(tree) {
 export async function handleRequest(request, response, tree) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
   const url = new URL(request.url, `https://${request.headers.host}`);
-
-  // Split on occurrences of `/!`, which represent Origami debug commands.
-  // Command arguments can contain slashes; don't treat those as path keys.
-  const parts = url.pathname.split(/\/!/);
-  const keys = parts.flatMap((part, index) => {
-    const decoded = decodeURIComponent(part);
-    // Split keys that aren't commands; add back the `!` to commands.
-    return index % 2 === 0 ? keysFromPath(decoded) : `!${decoded}`;
-  });
-
-  // If the path ends with a trailing slash, the final key will be an empty
-  // string. Change that to "index.html".
-  if (keys[keys.length - 1] === "") {
-    keys[keys.length - 1] = "index.html";
-  }
+  const keys = keysFromUrl(url);
 
   const extendedTree =
     url.searchParams && "parent" in tree
@@ -174,6 +160,28 @@ export async function handleRequest(request, response, tree) {
   }
 
   return true;
+}
+
+function keysFromUrl(url) {
+  // Split on occurrences of `/!`, which represent Origami debug commands.
+  // Command arguments can contain slashes; don't treat those as path keys.
+  const parts = url.pathname.split(/\/!/);
+
+  // Split everything before the first command by slashes and decode those.
+  const path = parts.shift();
+  const pathKeys = keysFromPath(path).map((key) => decodeURIComponent(key));
+
+  // If there are no commands, and the path ends with a trailing slash, the
+  // final key will be an empty string. Change that to "index.html".
+  if (parts.length === 0 && pathKeys[pathKeys.length - 1] === "") {
+    pathKeys[pathKeys.length - 1] = "index.html";
+  }
+
+  // Add back the `!` to commands.
+  const commandKeys = parts.map((command) => `!${command}`);
+
+  const keys = [...pathKeys, ...commandKeys];
+  return keys;
 }
 
 /**
