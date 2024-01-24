@@ -15,7 +15,10 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * @this {AsyncTree|null}
  * @param {string} expression
  */
-export default async function ori(expression) {
+export default async function ori(
+  expression,
+  options = { formatResult: true }
+) {
   assertScopeIsDefined(this);
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression);
@@ -34,8 +37,7 @@ export default async function ori(expression) {
     result = await result.call(scope);
   }
 
-  const formatted = await formatResult(result);
-  return formatted;
+  return options.formatResult ? await formatResult(result) : result;
 }
 
 async function formatResult(result) {

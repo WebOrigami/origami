@@ -33,7 +33,7 @@ export default function OriCommandTransform(Base) {
         ambientsTree[keySymbol] = "ori command";
         const extendedScope = new Scope(ambientsTree, Scope.getScope(this));
         const source = key.slice(1).trim();
-        value = await ori.call(extendedScope, source);
+        value = await ori.call(extendedScope, source, { formatResult: false });
 
         // Ensure this transform is applied to any subtree.
         if (Tree.isAsyncTree(value)) {
