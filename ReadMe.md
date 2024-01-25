@@ -3,7 +3,7 @@
 This is the main repo for the Web Origami project, an ongoing research project that encompasses:
 
 - A generalized programmatic interface and [pattern](https://weborigami.org/pattern/) for treating data as a particular type of [directed graph](<https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Directed_graph>) called an async graph. This pattern could be used in many programming languages; Web Origami itself uses JavaScript.
-- A [core library](https://weborigami.org/core/) to facilitate working with async graphs
+- A [core library](https://weborigami.org/async-tree/) to facilitate working with async graphs
 - An [expression language](https://weborigami.org/language/) for traversing graphs and evaluating functions
 - A general-purpose [command-line interface](https://weborigami.org/cli/) for easily calling JavaScript from the shell, and for manipulating files and data in the shell
 - A [framework](https://weborigami.org/framework/) for creating digital content, such as web sites and documentation, using graph concepts
