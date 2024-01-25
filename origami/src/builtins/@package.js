@@ -4,13 +4,19 @@ import project from "./@project.js";
 
 /**
  * @this {import("@weborigami/types").AsyncTree|null}
- * @param {string[]} packageKeys
+ * @param {string[]} keys
  */
-export default async function packageBuiltin(...packageKeys) {
+export default async function packageBuiltin(...keys) {
   let scope = this;
   if (!scope) {
     const projectRoot = await project.call(null);
     scope = Scope.getScope(projectRoot);
+  }
+
+  const packageKeys = [keys.shift()];
+  if (packageKeys[0]?.startsWith("@")) {
+    // First key is an npm organization, get the next key too.
+    packageKeys.push(keys.shift());
   }
 
   const packageRoot = await Tree.traverse(
@@ -26,7 +32,7 @@ export default async function packageBuiltin(...packageKeys) {
   const mainPath = await Tree.traverse(packageRoot, "package.json", "main");
   if (!mainPath) {
     throw new Error(
-      `node_modules/${packageKeys.join(
+      `node_modules/${keys.join(
         "/"
       )} doesn't contain a package.json with a "main" entry.`
     );
@@ -37,5 +43,10 @@ export default async function packageBuiltin(...packageKeys) {
   const mainFileName = mainKeys[mainKeys.length - 1];
   const mainContainer = await Tree.traverse(packageRoot, ...mainContainerKeys);
   const packageExports = await mainContainer.import(mainFileName);
-  return packageExports;
+
+  const result =
+    keys.length > 0
+      ? await Tree.traverse(packageExports, ...keys)
+      : packageExports;
+  return result;
 }
