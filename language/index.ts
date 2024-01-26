@@ -15,6 +15,7 @@ export type Constructor<T> = new (...args: any[]) => T;
 export type FileUnpackFunction = (
   input: StringLike,
   options?: {
+    compiler?: any,
     key?: any,
     parent?: AsyncTree | null
   }
