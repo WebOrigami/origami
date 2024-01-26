@@ -27,7 +27,7 @@ describe("ops", () => {
       message: "Hello",
     });
 
-    const code = [ops.lambda, [ops.scope, "message"]];
+    const code = [ops.lambda, null, [ops.scope, "message"]];
 
     const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
@@ -35,14 +35,14 @@ describe("ops", () => {
   });
 
   test("lambda adds input to scope as `_`", async () => {
-    const code = [ops.lambda, [ops.scope, "_"]];
+    const code = [ops.lambda, null, [ops.scope, "_"]];
     const fn = await evaluate.call(null, code);
     const result = await fn("Hello");
     assert.equal(result, "Hello");
   });
 
   test("a lambda can reference itself with @recurse", async () => {
-    const code = [ops.lambda, [ops.scope, "@recurse"]];
+    const code = [ops.lambda, null, [ops.scope, "@recurse"]];
     const fn = await evaluate.call(null, code);
     const result = await fn();
     assert.equal(result, fn);

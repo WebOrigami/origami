@@ -45,7 +45,7 @@ describe("Origami language code formatter", () => {
   });
 
   test("lambda", () => {
-    const code = [ops.lambda, [ops.scope, "message"]];
+    const code = [ops.lambda, null, [ops.scope, "message"]];
     assert.equal(format(code), "=message");
   });
 

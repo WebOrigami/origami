@@ -131,7 +131,7 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ expr:expr { return [ops.lambda, expr]; }
+  = "=" __ expr:expr { return [ops.lambda, null, expr]; }
 
 // A path that begins with a slash: `/foo/bar`
 leadingSlashPath "path with a leading slash"
@@ -231,7 +231,7 @@ string "string"
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
 templateDocument "template"
-  = contents:templateDocumentContents { return [ops.lambda, contents]; }
+  = contents:templateDocumentContents { return [ops.lambda, null, contents]; }
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar

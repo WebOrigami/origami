@@ -308,7 +308,7 @@ function peg$parse(input, options) {
   var peg$f11 = function() {
       return parseInt(text());
     };
-  var peg$f12 = function(expr) { return [ops.lambda, expr]; };
+  var peg$f12 = function(expr) { return [ops.lambda, null, expr]; };
   var peg$f13 = function() { return [""]; };
   var peg$f14 = function(head, tail) { return [head].concat(tail); };
   var peg$f15 = function(properties) { return [ops.object, ...(properties ?? [])]; };
@@ -331,7 +331,7 @@ function peg$parse(input, options) {
   var peg$f28 = function() { return ops.treeHttps; };
   var peg$f29 = function(key) { return [ops.scope, key]; };
   var peg$f30 = function(chars) { return chars.join(""); };
-  var peg$f31 = function(contents) { return [ops.lambda, contents]; };
+  var peg$f31 = function(contents) { return [ops.lambda, null, contents]; };
   var peg$f32 = function(parts) { return makeTemplate(parts); };
   var peg$f33 = function(chars) { return chars.join(""); };
   var peg$f34 = function(parts) { return makeTemplate(parts); };

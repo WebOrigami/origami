@@ -87,7 +87,8 @@ function formatName(name) {
 }
 
 function formatLambda(code) {
-  return `=${format(code[1])}`;
+  // TODO: named parameters
+  return `=${format(code[2])}`;
 }
 
 function formatScopeTraversal(code, implicitFunctionCall = false) {

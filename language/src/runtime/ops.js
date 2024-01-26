@@ -130,9 +130,10 @@ inherited.toString = () => "«ops.inherited»";
  *
  * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  * @this {AsyncTree|null}
+ * @param {string[]} parameters
  * @param {Code} code
  */
-export function lambda(code) {
+export function lambda(parameters, code) {
   if (lambdaFnMap.has(code)) {
     return lambdaFnMap.get(code);
   }
