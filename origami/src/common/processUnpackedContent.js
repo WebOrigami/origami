@@ -31,7 +31,10 @@ export default function processUnpackedContent(content, parent, inputDocument) {
 
     extendScope.code = fn.code;
     return extendScope;
-  } else if (Tree.isAsyncTree(content)) {
+  } else if (
+    Tree.isAsyncTree(content) &&
+    !(/** @type {any} */ (content).scope)
+  ) {
     const result = Object.create(content);
     result.parent = parent;
     return result;

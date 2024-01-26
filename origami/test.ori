@@ -1,0 +1,3 @@
+=@map(["Alice", "Bob", "Carol"], ={
+  index.html = greeting.ori(_)
+})

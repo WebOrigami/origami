@@ -189,7 +189,9 @@ export async function tree(...entries) {
     return [key, value];
   });
   const object = Object.fromEntries(fns);
-  return new OrigamiTree(object);
+  const result = new OrigamiTree(object);
+  result.scope = new Scope(result, this);
+  return result;
 }
 tree.toString = () => "«ops.tree»";
 
