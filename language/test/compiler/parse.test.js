@@ -280,6 +280,24 @@ describe("Origami parser", () => {
     assertParse("objectPropertyOrShorthand", "x: y", ["x", [ops.scope, "y"]]);
   });
 
+  test("parameterizedLambda", () => {
+    assertParse("parameterizedLambda", "() => foo", [
+      ops.lambda,
+      [],
+      [ops.scope, "foo"],
+    ]);
+    assertParse("parameterizedLambda", "(a, b, c) => fn(a, b, c)", [
+      ops.lambda,
+      ["a", "b", "c"],
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+        [ops.scope, "c"],
+      ],
+    ]);
+  });
+
   test("parensArgs", () => {
     assertParse("parensArgs", "()", [undefined]);
     assertParse("parensArgs", "(a, b, c)", [

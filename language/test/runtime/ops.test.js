@@ -41,6 +41,13 @@ describe("ops", () => {
     assert.equal(result, "Hello");
   });
 
+  test("parameterized lambda adds input args to scope", async () => {
+    const code = [ops.lambda, ["a", "b"], [ops.scope, "b"]];
+    const fn = await evaluate.call(null, code);
+    const result = await fn("Hello", "World");
+    assert.equal(result, "World");
+  });
+
   test("a lambda can reference itself with @recurse", async () => {
     const code = [ops.lambda, null, [ops.scope, "@recurse"]];
     const fn = await evaluate.call(null, code);

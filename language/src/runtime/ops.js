@@ -137,13 +137,18 @@ export function lambda(parameters, code) {
   if (lambdaFnMap.has(code)) {
     return lambdaFnMap.get(code);
   }
+
+  // By default, the first input argument is named `_`.
+  parameters ??= ["_"];
+
   /** @this {AsyncTree|null} */
-  async function invoke(input) {
-    // Add ambients to scope.
-    const ambients = {
-      _: input,
-      "@recurse": invoke,
-    };
+  async function invoke(...args) {
+    // Add arguments and @recurse to scope.
+    const ambients = {};
+    for (const parameter of parameters) {
+      ambients[parameter] = args.shift();
+    }
+    ambients["@recurse"] = invoke;
     const scope = new Scope(ambients, this);
     const result = await evaluate.call(scope, code);
     return result;

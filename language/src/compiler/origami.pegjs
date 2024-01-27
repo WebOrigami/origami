@@ -75,6 +75,7 @@ expr "expression"
   / tree
   / lambda
   / templateLiteral
+  / parameterizedLambda
   / group
   / string
   / number
@@ -106,8 +107,13 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\],/:=\`"'\\# \t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]<>,/:=\`"'\\# \t\n\r] // No unescaped whitespace or special chars
   / escapedChar
+
+identifierList
+  = head:identifier tail:(separator @identifier)* separator? {
+    return [head].concat(tail);
+  }
 
 // A function call with implicit parentheses: `fn 1, 2, 3`
 implicitParensCall "function call with implicit parentheses"
@@ -172,6 +178,11 @@ objectProperty "object property"
 objectPropertyOrShorthand
   = objectProperty
   / key:identifier { return [key, [ops.scope, key]]; }
+
+parameterizedLambda
+  = "(" __ parameters:identifierList? ")" __ "=>" __ expr:expr {
+    return [ops.lambda, parameters ?? [], expr];
+  }
 
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
