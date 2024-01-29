@@ -1,6 +1,6 @@
-import { Tree, sortNatural } from "@weborigami/async-tree";
+import { sortNatural } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return a new tree with the original's keys sorted in natural sort order.
@@ -13,9 +13,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function sort(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const sorted = sortNatural()(tree);
   const scoped = Scope.treeWithScope(sorted, this);
   return scoped;

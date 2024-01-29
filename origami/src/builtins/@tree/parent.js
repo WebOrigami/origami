@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Returns the parent of the current tree.
@@ -11,12 +10,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function parent(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   return tree.parent;
 }
 

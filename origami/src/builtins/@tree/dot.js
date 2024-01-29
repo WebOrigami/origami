@@ -5,7 +5,7 @@ import {
   hasNonPrintableCharacters,
   keySymbol,
 } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Render a tree in DOT format.
@@ -19,12 +19,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(treelike, options = {}) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const rootLabel = tree[keySymbol] ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {

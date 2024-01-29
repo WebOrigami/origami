@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return the number of keys in the tree.
@@ -10,12 +9,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function count(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = await Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const keys = [...(await tree.keys())];
   return keys.length;
 }

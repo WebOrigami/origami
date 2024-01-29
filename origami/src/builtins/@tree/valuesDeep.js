@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return the in-order exterior values of a tree as a flat array.
@@ -10,12 +10,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function valuesDeep(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  return Tree.mapReduce(treelike, null, async (values) => values.flat());
+  const tree = await getTreeArgument(this, arguments, treelike);
+  return Tree.mapReduce(tree, null, async (values) => values.flat());
 }
 
 valuesDeep.usage = `valuesDeep <tree>\tThe in-order tree values as a flat array`;

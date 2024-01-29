@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 import defineds from "./defineds.js";
 
 /**
@@ -10,11 +10,10 @@ import defineds from "./defineds.js";
  * @param {Treelike} treelike
  */
 export default async function exceptions(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   /** @type {AsyncTree} */
-  let exceptionsTree = new ExceptionsTree(treelike);
+  let exceptionsTree = new ExceptionsTree(tree);
   exceptionsTree = Scope.treeWithScope(exceptionsTree, this);
   return defineds.call(this, exceptionsTree);
 }
@@ -23,8 +22,8 @@ export default async function exceptions(treelike) {
  * @implements {AsyncTree}
  */
 class ExceptionsTree {
-  constructor(treelike) {
-    this.tree = Tree.from(treelike);
+  constructor(tree) {
+    this.tree = tree;
   }
 
   async get(key) {

@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 import builtins from "../@builtins.js";
 import unpackOrigamiExpression from "../@loaders/ori.js";
 import paths from "./paths.js";
@@ -23,9 +22,7 @@ const templateText = `=\`<?xml version="1.0" encoding="UTF-8"?>
  * @param {string} [baseHref ]
  */
 export default async function sitemap(treelike, baseHref = "") {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

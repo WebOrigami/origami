@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
 import graphviz from "graphviz-wasm";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../misc/getTreeArgument.js";
 import dot from "./@tree/dot.js";
 
 let graphvizLoaded = false;
@@ -17,16 +16,11 @@ let graphvizLoaded = false;
  * @param {PlainObject} [options]
  */
 export default async function svg(treelike, options = {}) {
-  assertScopeIsDefined(this);
   if (!graphvizLoaded) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const dotText = await dot.call(this, tree, options);
   if (dotText === undefined) {
     return undefined;

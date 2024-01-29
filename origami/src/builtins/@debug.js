@@ -2,7 +2,7 @@ import { Tree, isPlainObject } from "@weborigami/async-tree";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
  * Add debugging features to the indicated tree.
@@ -14,15 +14,9 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function debug(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return;
-  }
-
   // The debug command leaves the tree's existing scope intact; it does not
   // apply its own scope to the tree.
-  let tree = Tree.from(treelike);
+  let tree = await getTreeArgument(this, arguments, treelike);
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);

@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
 import { keySymbol } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
  * Return a default index.html page for the current tree.
@@ -11,12 +10,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function index(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const keys = Array.from(await tree.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

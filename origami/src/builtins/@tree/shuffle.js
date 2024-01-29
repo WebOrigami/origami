@@ -1,8 +1,7 @@
-import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import ShuffleTransform from "../../common/ShuffleTransform.js";
 import { transformObject } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return a new tree with the original's keys shuffled
@@ -14,12 +13,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function shuffle(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   /** @type {AsyncTree} */
   let shuffled = transformObject(ShuffleTransform, tree);

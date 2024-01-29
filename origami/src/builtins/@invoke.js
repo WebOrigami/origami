@@ -1,3 +1,4 @@
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
 
 /**
@@ -22,6 +23,13 @@ import builtins from "./@builtins.js";
  * @this {import("@weborigami/types").AsyncTree|null}
  */
 export default async function invoke(fn) {
+  assertScopeIsDefined(this);
+  // A fragment of the logic from getTreeArgument.js
+  if (arguments.length > 0 && fn === undefined) {
+    throw new Error(
+      "An Origami function was called with an initial argument, but its value is undefined."
+    );
+  }
   if (typeof fn !== "function" && fn.unpack) {
     fn = await fn.unpack();
   }

@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Cast the indicated treelike to a tree.
@@ -11,16 +10,9 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function tree(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-
-  /** @type {AsyncTree} */
-  let result = Tree.from(treelike);
-  result = Scope.treeWithScope(result, this);
-  return result;
+  let tree = await getTreeArgument(this, arguments, treelike);
+  tree = Scope.treeWithScope(tree, this);
+  return tree;
 }
 
 tree.usage = `from <treelike>\tConvert JSON, YAML, function, or plain object to a tree`;

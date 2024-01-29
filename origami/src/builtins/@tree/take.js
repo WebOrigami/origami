@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Given a tree, take the first n items from it.
@@ -12,12 +11,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {number} n
  */
 export default async function take(treelike, n) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   /** @type {AsyncTree} */
   let takeTree = {

@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
@@ -14,13 +14,8 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {PlainObject} [options]
  */
 export default async function reverse(treelike, options = {}) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
+  const tree = await getTreeArgument(this, arguments, treelike);
   const scope = this;
-  const tree = Tree.from(treelike);
   const deep = options.deep ?? false;
 
   /** @type {AsyncTree} */

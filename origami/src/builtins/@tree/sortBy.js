@@ -1,8 +1,8 @@
-import { Tree, sortBy } from "@weborigami/async-tree";
+import { sortBy } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return a new tree with the original's keys sorted using the given function to
@@ -17,9 +17,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Invocable} sortKeyFn
  */
 export default async function sortByBuiltin(treelike, sortKeyFn) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   const fn = toFunction(sortKeyFn);
   const baseScope = Scope.getScope(this);

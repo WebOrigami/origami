@@ -1,8 +1,8 @@
-import { Tree, groupBy } from "@weborigami/async-tree";
+import { groupBy } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../../common/addValueKeyToScope.js";
 import { toFunction } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return a new tree with the values from the original tree in groups.
@@ -17,9 +17,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Invocable} groupKeyFn
  */
 export default async function groupByBuiltin(treelike, groupKeyFn) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   const fn = toFunction(groupKeyFn);
   const baseScope = Scope.getScope(this);

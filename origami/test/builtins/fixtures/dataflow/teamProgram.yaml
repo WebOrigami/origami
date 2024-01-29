@@ -1,4 +1,0 @@
-teamByName = mapKeys(team.yaml, =id):
-index.html = index.ori(teamByName):
-thumbnails = map(headshots, thumbnail):
-team = map(teamByName, person.ori, '', '.html'):

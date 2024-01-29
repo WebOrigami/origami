@@ -1,9 +1,8 @@
-import { Tree } from "@weborigami/async-tree";
 import { Scope, functionResultsMap } from "@weborigami/language";
 import builtins from "../../src/builtins/@builtins.js";
 import arrowFunctionsMap from "../common/arrowFunctionsMap.js";
 import { keySymbol } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
  * Interpret arrow keys in the tree as function calls.
@@ -14,15 +13,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} [treelike]
  */
 export default async function arrows(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    throw TypeError(
-      "@arrows requires a treelike argument, but received undefined"
-    );
-  }
-  /** @type {AsyncTree} */
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   const mapped = functionResultsMap(arrowFunctionsMap()(tree));
   const scope = this ?? builtins;
   const scoped = Scope.treeWithScope(mapped, scope);

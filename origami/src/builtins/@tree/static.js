@@ -1,7 +1,7 @@
 import { Tree, keysJson } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import { transformObject } from "../../common/utilities.js";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 import index from "../@index.js";
 
 /**
@@ -13,12 +13,7 @@ import index from "../@index.js";
  * @param {Treelike} treelike
  */
 export default async function staticTree(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(this, arguments, treelike);
   let result = transformObject(StaticTransform, tree);
   result = Scope.treeWithScope(result, this);
   return result;

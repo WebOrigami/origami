@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
  * Let a tree (e.g., of files) respond to changes.
@@ -15,15 +15,10 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Invocable} [fn]
  */
 export default async function watch(treelike, fn) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    return undefined;
-  }
+  /** @type {any} */
+  const container = await getTreeArgument(this, arguments, treelike);
 
   // Watch the indicated tree.
-  /** @type {any} */
-  const container = Tree.from(treelike);
   await /** @type {any} */ (container).watch?.();
 
   // // Watch trees in scope.

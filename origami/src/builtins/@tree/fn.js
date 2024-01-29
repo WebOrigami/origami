@@ -15,6 +15,12 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  */
 export default async function fn(invocable, keys = []) {
   assertScopeIsDefined(this);
+  // A fragment of the logic from getTreeArgument.js
+  if (arguments.length > 0 && invocable === undefined) {
+    throw new Error(
+      "An Origami function was called with an initial argument, but its value is undefined."
+    );
+  }
   invocable = invocable ?? (await this?.get("@current"));
   if (invocable === undefined) {
     return undefined;

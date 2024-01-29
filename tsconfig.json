@@ -13,6 +13,6 @@
     "strictNullChecks": true,
     "target": "ESNext"
   },
-  "include": ["**/*.js"],
+  "include": ["**/*.js", "origami/test/builtins/fixtures/ori.config.js.foo"],
   "exclude": ["origami/exports/exports.js"]
 }

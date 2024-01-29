@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
 
 /**
  * Return only the defined (not `undefined`) values in the tree.
@@ -12,14 +12,10 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {Treelike} treelike
  */
 export default async function defineds(treelike) {
-  assertScopeIsDefined(this);
-  treelike = treelike ?? (await this?.get("@current"));
-  if (treelike === undefined) {
-    throw new TypeError("A treelike argument is required");
-  }
+  const tree = await getTreeArgument(this, arguments, treelike);
 
   /** @type {AsyncTree} */
-  let result = await Tree.mapReduce(treelike, null, async (values, keys) => {
+  let result = await Tree.mapReduce(tree, null, async (values, keys) => {
     const result = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {
