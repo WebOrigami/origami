@@ -18,6 +18,8 @@ import { castArrayLike, isPlainObject } from "./utilities.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
+const treeModule = this;
+
 /**
  * Apply the key/values pairs from the source tree to the target tree.
  *
@@ -331,6 +333,7 @@ export async function traverse(treelike, ...keys) {
  * Return the value at the corresponding path of keys. Throw if any interior
  * step of the path doesn't lead to a result.
  *
+ * @this {AsyncTree|null|undefined}
  * @param {Treelike} treelike
  * @param  {...any} keys
  */
@@ -339,11 +342,28 @@ export async function traverseOrThrow(treelike, ...keys) {
   /** @type {any} */
   let value = treelike;
 
-  // Process each key in turn.
-  // If the value is ever undefined, short-circuit the traversal.
+  // If traversal operation was called with a `this` context, use that as the
+  // target for function calls.
+  const target = this === treeModule ? undefined : this;
+
+  // Special case: if the initial treelike object is a function or unpacks to
+  // one, and the function's length is zero (indicating a possible spread
+  // parameter), pass all the keys at once as arguments.
+  if (
+    value instanceof Function ||
+    (!isAsyncTree(value) && value.unpack instanceof Function)
+  ) {
+    value = value instanceof Function ? value : await value.unpack();
+    if (value.length === 0) {
+      return await value.call(target, ...keys);
+    }
+  }
+
+  // Process all the keys.
   const remainingKeys = keys.slice();
   while (remainingKeys.length > 0) {
     if (value === undefined) {
+      // Attempted to traverse an undefined value
       const keyStrings = keys.map((key) => String(key));
       throw new TraverseError(
         `Couldn't traverse the path: ${keyStrings.join("/")}`,
@@ -352,24 +372,40 @@ export async function traverseOrThrow(treelike, ...keys) {
       );
     }
 
-    // Get the next key.
-    const key = remainingKeys.shift();
-
-    // An empty string as the last key is a special case.
-    if (key === "" && remainingKeys.length === 0) {
+    // Special case: one key left that's an empty string
+    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
       // Unpack the value if it defines an `unpack` function, otherwise return
       // the value itself.
-      value = typeof value.unpack === "function" ? await value.unpack() : value;
-      continue;
+      return typeof value.unpack === "function" ? await value.unpack() : value;
     }
 
-    // Someone is trying to traverse the value, so they mean to treat it as a
-    // tree. If it's not already a tree, cast it to one.
-    const tree = from(value);
+    // If the value is not a function or async tree already, but can be
+    // unpacked, unpack it.
+    if (
+      !(value instanceof Function) &&
+      !isAsyncTree(value) &&
+      value.unpack instanceof Function
+    ) {
+      value = await value.unpack();
+    }
 
-    // Get the value for the key.
-    value = await tree.get(key);
+    if (value instanceof Function) {
+      // Value is a function: call it with the remaining keys.
+      const fn = value;
+      // We'll take as many keys as the function's length, but at least one.
+      let fnKeyCount = Math.max(fn.length, 1);
+      const args = remainingKeys.splice(0, fnKeyCount);
+      value = await fn.call(target, ...args);
+    } else {
+      // Value is some other treelike object: cast it to a tree.
+      const tree = from(value);
+      // Get the next key.
+      const key = remainingKeys.shift();
+      // Get the value for the key.
+      value = await tree.get(key);
+    }
   }
+
   return value;
 }
 

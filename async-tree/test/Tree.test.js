@@ -285,6 +285,13 @@ describe("Tree", () => {
     );
   });
 
+  test("traverse() a function with fixed number of arguments", async () => {
+    const tree = (a, b) => ({
+      c: "Result",
+    });
+    assert.equal(await Tree.traverse(tree, "a", "b", "c"), "Result");
+  });
+
   test("traverse() from one tree into another", async () => {
     const tree = new ObjectTree({
       a: {

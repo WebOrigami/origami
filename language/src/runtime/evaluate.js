@@ -45,25 +45,12 @@ export default async function evaluate(code) {
     throw ReferenceError(
       `Couldn't find function or tree key: ${format(code[0])}`
     );
-  } else if (!(fn instanceof Object)) {
-    throw TypeError(`Can't invoke primitive value: ${format(code[0])}`);
-  } else if (!(fn instanceof Function) && typeof fn.unpack === "function") {
-    // The object has a unpack function; see if it returns a function.
-    const unpacked = await fn.unpack();
-    if (unpacked instanceof Function) {
-      fn = unpacked;
-    }
   }
 
   // Execute the function or traverse the tree.
   let result;
   try {
-    result =
-      fn instanceof Function
-        ? // Invoke the function
-          await fn.call(scope, ...args)
-        : // Traverse the tree.
-          await Tree.traverseOrThrow(fn, ...args);
+    result = await Tree.traverseOrThrow.call(scope, fn, ...args);
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });

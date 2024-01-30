@@ -43,6 +43,14 @@ describe("evaluate", () => {
     await evaluate.call(scope, code);
   });
 
+  test("evaluates a function with fixed number of arguments", async () => {
+    const fn = (x, y) => ({
+      c: `${x}${y}c`,
+    });
+    const code = [fn, "a", "b", "c"];
+    assert.equal(await evaluate.call(null, code), "abc");
+  });
+
   test("if object in function position isn't a function, can unpack it", async () => {
     const fn = (...args) => args.join(",");
     const packed = {

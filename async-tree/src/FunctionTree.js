@@ -23,7 +23,8 @@ export default class FunctionTree {
   async get(key) {
     const value =
       this.fn.length <= 1
-        ? // Function takes no arguments or only one argument: invoke
+        ? // Function takes no arguments, one argument, or a variable number of
+          // arguments: invoke it.
           await this.fn.call(null, key)
         : // Bind the key to the first parameter. Subsequent get calls will
           // eventually bind all parameters until only one remains. At that point,
