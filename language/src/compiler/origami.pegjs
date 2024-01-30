@@ -41,6 +41,7 @@ callTarget "function call"
   / object
   / tree
   / lambda
+  / parameterizedLambda
   / protocolCall
   / group
   / scopeReference
@@ -73,8 +74,8 @@ expr "expression"
   / array
   / object
   / tree
-  / lambda
   / templateLiteral
+  / lambda
   / parameterizedLambda
   / group
   / string

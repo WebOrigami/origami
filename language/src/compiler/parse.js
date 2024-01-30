@@ -697,11 +697,14 @@ function peg$parse(input, options) {
           if (s0 === peg$FAILED) {
             s0 = peg$parselambda();
             if (s0 === peg$FAILED) {
-              s0 = peg$parseprotocolCall();
+              s0 = peg$parseparameterizedLambda();
               if (s0 === peg$FAILED) {
-                s0 = peg$parsegroup();
+                s0 = peg$parseprotocolCall();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parsescopeReference();
+                  s0 = peg$parsegroup();
+                  if (s0 === peg$FAILED) {
+                    s0 = peg$parsescopeReference();
+                  }
                 }
               }
             }
@@ -940,9 +943,9 @@ function peg$parse(input, options) {
             if (s0 === peg$FAILED) {
               s0 = peg$parsetree();
               if (s0 === peg$FAILED) {
-                s0 = peg$parselambda();
+                s0 = peg$parsetemplateLiteral();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parsetemplateLiteral();
+                  s0 = peg$parselambda();
                   if (s0 === peg$FAILED) {
                     s0 = peg$parseparameterizedLambda();
                     if (s0 === peg$FAILED) {

@@ -296,6 +296,19 @@ describe("Origami parser", () => {
         [ops.scope, "c"],
       ],
     ]);
+    assertParse("parameterizedLambda", "(a) => (b) => fn(a, b)", [
+      ops.lambda,
+      ["a"],
+      [
+        ops.lambda,
+        ["b"],
+        [
+          [ops.scope, "fn"],
+          [ops.scope, "a"],
+          [ops.scope, "b"],
+        ],
+      ],
+    ]);
   });
 
   test("parensArgs", () => {
