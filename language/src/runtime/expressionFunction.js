@@ -27,6 +27,7 @@ export function createExpressionFunction(code, name) {
  * expression.
  *
  * @param {any} obj
+ * @returns {obj is { code: Array }}
  */
 export function isExpressionFunction(obj) {
   return typeof obj === "function" && obj.code;
