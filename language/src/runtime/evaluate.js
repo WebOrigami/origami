@@ -37,20 +37,36 @@ export default async function evaluate(code) {
     );
   }
 
-  // The head of the array is a tree or function, the rest are args or keys.
+  // The head of the array is a function or a tree; the rest are args or keys.
   let [fn, ...args] = evaluated;
 
   if (!fn) {
-    // The code wants to invoke something that's not in scope.
+    // The code wants to invoke something that's couldn't be found in scope.
     throw ReferenceError(
       `Couldn't find function or tree key: ${format(code[0])}`
+    );
+  }
+
+  if (!Tree.isTreelike(fn) && typeof fn.unpack === "function") {
+    // Unpack the object and use the result as the function or tree.
+    fn = await fn.unpack();
+  }
+
+  if (!Tree.isTreelike(fn)) {
+    throw TypeError(
+      `Expect to invoke a function or a tree but instead got: ${format(
+        code[0]
+      )}`
     );
   }
 
   // Execute the function or traverse the tree.
   let result;
   try {
-    result = await Tree.traverseOrThrow.call(scope, fn, ...args);
+    result =
+      fn instanceof Function
+        ? await fn.call(scope, ...args) // Invoke the function
+        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
     const message = `Error triggered by Origami expression: ${format(code)}`;
     throw new Error(message, { cause: error });

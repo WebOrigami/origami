@@ -12,19 +12,6 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("argsChain", () => {
-    assertParse("argsChain", "(a)(b)(c)", [
-      [[ops.scope, "a"]],
-      [[ops.scope, "b"]],
-      [[ops.scope, "c"]],
-    ]);
-    assertParse("argsChain", "(a)/b(c)", [
-      [[ops.scope, "a"]],
-      ["b"],
-      [[ops.scope, "c"]],
-    ]);
-  });
-
   test("array", () => {
     assertParse("array", "[]", [ops.array]);
     assertParse("array", "[1, 2, 3]", [ops.array, 1, 2, 3]);
@@ -134,25 +121,32 @@ describe("Origami parser", () => {
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "fn()/key", [
+      ops.traverse,
       [[ops.scope, "fn"], undefined],
       "key",
     ]);
-    assertParse("functionComposition", "tree/", [[ops.scope, "tree"], ""]);
+    assertParse("functionComposition", "tree/", [
+      ops.traverse,
+      [ops.scope, "tree"],
+      "",
+    ]);
     assertParse("functionComposition", "tree/key", [
+      ops.traverse,
       [ops.scope, "tree"],
       "key",
     ]);
     assertParse("functionComposition", "tree/foo/bar", [
+      ops.traverse,
       [ops.scope, "tree"],
       "foo",
       "bar",
     ]);
     assertParse("functionComposition", "tree/key()", [
-      [[ops.scope, "tree"], "key"],
+      [ops.traverse, [ops.scope, "tree"], "key"],
       undefined,
     ]);
     assertParse("functionComposition", "fn()/key()", [
-      [[[ops.scope, "fn"], undefined], "key"],
+      [ops.traverse, [[ops.scope, "fn"], undefined], "key"],
       undefined,
     ]);
     assertParse("functionComposition", "(fn())('arg')", [
@@ -169,6 +163,7 @@ describe("Origami parser", () => {
       [ops.scope, "b"],
     ]);
     assertParse("functionComposition", "{ a: 1, b: 2}/b", [
+      ops.traverse,
       [ops.object, ["a", 1], ["b", 2]],
       "b",
     ]);

@@ -18,9 +18,9 @@ __
 absoluteFilePath "absolute file path"
   = path:leadingSlashPath { return [[ops.filesRoot], ...path]; }
 
-// A chain of arguments: `(arg1)(arg2)(arg3)`
-argsChain "function arguments"
-  = parts:(parensArgs / leadingSlashPath)+ { return parts; }
+args "function arguments"
+  = parensArgs
+  / path:leadingSlashPath { return [ops.traverse, ...path]; }
 
 // An assignment statement: `foo = 1`
 assignment "tree assignment"
@@ -95,7 +95,8 @@ float "floating-point number"
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 functionComposition "function composition"
-  = target:callTarget chain:argsChain { return makeFunctionCall(target, chain); }
+  // = target:callTarget chain:argsChain { return makeFunctionCall(target, chain); }
+  = target:callTarget chain:args+ { return makeFunctionCall(target, chain); }
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"

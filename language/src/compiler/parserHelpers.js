@@ -8,7 +8,11 @@ export function makeFunctionCall(target, chain) {
   // successively apply the top-level elements of that chain to build up the
   // function composition.
   for (const args of chain) {
-    value = [value, ...args];
+    if (args[0] === ops.traverse) {
+      value = [ops.traverse, value, ...args.slice(1)];
+    } else {
+      value = [value, ...args];
+    }
   }
   return value;
 }

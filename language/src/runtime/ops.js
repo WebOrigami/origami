@@ -3,7 +3,7 @@
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  */
 
-import { SiteTree } from "@weborigami/async-tree";
+import { SiteTree, Tree } from "@weborigami/async-tree";
 import FileLoadersTransform from "./FileLoadersTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
@@ -171,6 +171,11 @@ export async function object(...entries) {
   return Object.fromEntries(evaluated);
 }
 object.toString = () => "«ops.object»";
+
+/**
+ * Traverse a path of keys through a tree.
+ */
+export const traverse = Tree.traverseOrThrow;
 
 /**
  * Construct an tree. This is similar to ops.object but the values are turned
