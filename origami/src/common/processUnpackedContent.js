@@ -24,13 +24,8 @@ export default function processUnpackedContent(content, parent, inputDocument) {
       ? new Scope(inputDocument, parentScope)
       : parentScope;
 
-    /** @this {AsyncTree|null} */
-    async function extendScope(input, ...rest) {
-      return fn.call(extendedScope, input, ...rest);
-    }
-
-    extendScope.code = fn.code;
-    return extendScope;
+    const boundFn = fn.bind(extendedScope);
+    return boundFn;
   } else if (
     Tree.isAsyncTree(content) &&
     !(/** @type {any} */ (content).scope)
