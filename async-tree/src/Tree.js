@@ -346,19 +346,6 @@ export async function traverseOrThrow(treelike, ...keys) {
   // target for function calls.
   const target = this === treeModule ? undefined : this;
 
-  // Special case: if the initial treelike object is a function or unpacks to
-  // one, and the function's length is zero (indicating a possible spread
-  // parameter), pass all the keys at once as arguments.
-  if (
-    value instanceof Function ||
-    (!isAsyncTree(value) && value.unpack instanceof Function)
-  ) {
-    value = value instanceof Function ? value : await value.unpack();
-    if (value.length === 0) {
-      return await value.call(target, ...keys);
-    }
-  }
-
   // Process all the keys.
   const remainingKeys = keys.slice();
   while (remainingKeys.length > 0) {
