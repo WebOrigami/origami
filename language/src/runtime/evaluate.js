@@ -47,7 +47,10 @@ export default async function evaluate(code) {
     );
   }
 
-  if (!Tree.isTreelike(fn) && typeof fn.unpack === "function") {
+  if (
+    !(fn instanceof Function || Tree.isAsyncTree(fn)) &&
+    typeof fn.unpack === "function"
+  ) {
     // Unpack the object and use the result as the function or tree.
     fn = await fn.unpack();
   }
