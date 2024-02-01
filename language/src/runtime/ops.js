@@ -150,7 +150,20 @@ export function lambda(parameters, code) {
     }
     ambients["@recurse"] = invoke;
     const scope = new Scope(ambients, this);
-    const result = await evaluate.call(scope, code);
+
+    let result = await evaluate.call(scope, code);
+
+    // Bind a function result to the scope so that it has access to the
+    // parameter values -- i.e., like a closure.
+    if (result instanceof Function) {
+      const resultCode = result.code;
+      result = result.bind(scope);
+      if (code) {
+        // Copy over Origami code
+        result.code = resultCode;
+      }
+    }
+
     return result;
   }
 
