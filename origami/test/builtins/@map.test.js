@@ -44,28 +44,6 @@ describe("@map", () => {
     });
   });
 
-  test("can bind the @key and value (_) to different names", async () => {
-    const treelike = {
-      a: 1,
-      b: 2,
-    };
-    const transform = map({
-      /** @this {import("@weborigami/types").AsyncTree} */
-      keyMap: async function (sourceValue, sourceKey, tree) {
-        const letter = await this.get("letter");
-        const value = await this.get("number");
-        return `${letter}${value}`;
-      },
-      keyName: "letter",
-      valueName: "number",
-    });
-    const fixture = transform(treelike);
-    assert.deepEqual(await Tree.plain(fixture), {
-      a1: 1,
-      b2: 2,
-    });
-  });
-
   test("can map keys and values deeply", async () => {
     const treelike = new DeepObjectTree({
       a: 1,

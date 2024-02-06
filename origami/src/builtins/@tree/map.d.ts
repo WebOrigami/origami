@@ -8,9 +8,7 @@ type TreeMapOptions = {
   extensions?: string;
   inverseKeyMap?: KeyFn;
   keyMap?: ValueKeyFn;
-  keyName?: string;
   valueMap?: ValueKeyFn;
-  valueName?: string
 };
 
 export default function treeMap(valueMap: ValueKeyFn): TreelikeTransform;

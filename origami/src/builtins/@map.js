@@ -19,8 +19,8 @@ import { toFunction } from "../common/utilities.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @typedef {{ deep?: boolean, description?: string, extensions?: string,
- * inverseKeyMap?: KeyFn, keyMap?: ValueKeyFn, keyName?: string, valueMap?:
- * ValueKeyFn, valueName?: string }} TreeMapOptions
+ * inverseKeyMap?: KeyFn, keyMap?: ValueKeyFn, valueMap?: ValueKeyFn }}
+ * TreeMapOptions
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  *
@@ -73,9 +73,7 @@ export default function treeMap(param1, param2) {
     extensions,
     inverseKeyMap,
     keyMap,
-    keyName,
     needsSourceValue,
-    valueName,
   } = options;
 
   description ??= `@map ${extensions ?? ""}`;
@@ -93,13 +91,7 @@ export default function treeMap(param1, param2) {
   if (valueMap) {
     const resolvedValueFn = toFunction(valueMap);
     extendedValueFn = function (sourceValue, sourceKey, tree) {
-      const scope = addValueKeyToScope(
-        baseScope,
-        sourceValue,
-        sourceKey,
-        valueName,
-        keyName
-      );
+      const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
       return resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
     };
   }
@@ -119,13 +111,7 @@ export default function treeMap(param1, param2) {
     const resolvedKeyFn = toFunction(keyMap);
     async function scopedKeyFn(sourceKey, tree) {
       const sourceValue = await tree.get(sourceKey);
-      const scope = addValueKeyToScope(
-        baseScope,
-        sourceValue,
-        sourceKey,
-        valueName,
-        keyName
-      );
+      const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
       const resultKey = await resolvedKeyFn.call(
         scope,
         sourceValue,

@@ -11,20 +11,12 @@ import { Scope } from "@weborigami/language";
  * @param {AsyncTree|null} scope
  * @param {any} value
  * @param {any} key
- * @param {string} [valueName]
- * @param {string} [keyName]
  */
-export default function addValueKeyToScope(
-  scope,
-  value,
-  key,
-  valueName = "_",
-  keyName = "@key"
-) {
+export default function addValueKeyToScope(scope, value, key) {
   // Add the key and value to the scope as ambients.
   const ambients = {
-    [keyName]: key,
-    [valueName]: value,
+    "@key": key,
+    _: value,
   };
   return new Scope(ambients, scope);
 }
