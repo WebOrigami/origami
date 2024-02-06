@@ -181,7 +181,7 @@ objectPropertyOrShorthand
   / key:identifier { return [key, [ops.scope, key]]; }
 
 parameterizedLambda
-  = "(" __ parameters:identifierList? ")" __ "=>" __ expr:expr {
+  = "(" __ parameters:identifierList? ")" __ ("=>"/"⇒") __ expr:expr {
     return [ops.lambda, parameters ?? [], expr];
   }
 

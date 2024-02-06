@@ -286,7 +286,7 @@ describe("Origami parser", () => {
       [],
       [ops.scope, "foo"],
     ]);
-    assertParse("parameterizedLambda", "(a, b, c) => fn(a, b, c)", [
+    assertParse("parameterizedLambda", "(a, b, c) ⇒ fn(a, b, c)", [
       ops.lambda,
       ["a", "b", "c"],
       [
