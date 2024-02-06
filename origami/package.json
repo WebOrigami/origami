@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@weborigami/async-tree": "0.0.40",
-    "@weborigami/language": "0.0.40",
+    "@weborigami/language": "https://gitpkg.now.sh/WebOrigami/origami/language?af63f942",
     "@weborigami/types": "0.0.40",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
