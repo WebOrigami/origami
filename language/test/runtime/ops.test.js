@@ -10,7 +10,7 @@ import {
   ops,
 } from "../../src/runtime/internal.js";
 
-describe.only("ops", () => {
+describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {
     const scope = new ObjectTree({
       name: "world",
@@ -42,13 +42,17 @@ describe.only("ops", () => {
   });
 
   test("parameterized lambda adds input args to scope", async () => {
-    const code = [ops.lambda, ["a", "b"], [ops.scope, "b"]];
+    const code = [
+      ops.lambda,
+      ["a", "b"],
+      [ops.concat, [ops.scope, "b"], [ops.scope, "a"]],
+    ];
     const fn = await evaluate.call(null, code);
-    const result = await fn("Hello", "World");
-    assert.equal(result, "World");
+    const result = await fn("x", "y");
+    assert.equal(result, "yx");
   });
 
-  test.only("a lambda can reference itself with @recurse", async () => {
+  test("a lambda can reference itself with @recurse", async () => {
     const code = [ops.lambda, null, [ops.scope, "@recurse"]];
     const fn = await evaluate.call(null, code);
     const result = await fn();
