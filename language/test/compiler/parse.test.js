@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
 import * as ops from "../../src/runtime/ops.js";
 
-describe("Origami parser", () => {
+describe.only("Origami parser", () => {
   test("absoluteFilePath", () => {
     assertParse("absoluteFilePath", "/foo/bar", [
       [ops.filesRoot],
@@ -301,19 +301,19 @@ describe("Origami parser", () => {
         [ops.scope, "c"],
       ],
     ]);
-    // assertParse("parameterizedLambda", "(a) => (b) => fn(a, b)", [
-    //   ops.lambda,
-    //   ["a"],
-    //   [
-    //     ops.lambda,
-    //     ["b"],
-    //     [
-    //       [ops.scope, "fn"],
-    //       [ops.scope, "a"],
-    //       [ops.scope, "b"],
-    //     ],
-    //   ],
-    // ]);
+    assertParse("parameterizedLambda", "(a) => (b) => fn(a, b)", [
+      ops.lambda,
+      ["a"],
+      [
+        ops.lambda,
+        ["b"],
+        [
+          [ops.scope, "fn"],
+          [ops.scope, "a"],
+          [ops.scope, "b"],
+        ],
+      ],
+    ]);
   });
 
   test("parensArgs", () => {

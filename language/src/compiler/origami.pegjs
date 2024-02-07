@@ -85,13 +85,19 @@ functionComposition "function composition"
 group "parenthetical group"
   = "(" __ @expr __ ")"
 
+// A host identifier that may include a colon and port number: `example.com:80`.
+// This is used as a special case at the head of a path, where we want to
+// interpret a colon as part of a text identifier.
+host "HTTP/HTTPS host"
+  = identifier (":" number)? { return text(); }
+
 identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = '-' !'>' // Don't allow a two-character single arrow
-  / '=' !'>' // Don't allow a two-character double arrow
-  / [^(){}\[\]<>,/:\`"'\\# →\t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]\-<>,/:\`"'\\# →⇒\t\n\r] // No unescaped whitespace or special chars
+  / '-' !'>' // Allow a hyphen but not a single arrow combination
+  / '=' !'>' // Allow an equals sign but not a double arrow combination
   / escapedChar
 
 identifierList
@@ -99,15 +105,9 @@ identifierList
 
 // A function call with implicit parentheses: `fn 1, 2, 3`
 implicitParensCall "function call with implicit parentheses"
-  = target:(functionComposition / callTarget) inlineSpace+ args:list {
+  = target:callTarget inlineSpace+ args:list {
       return [target, ...args];
     }
-
-// A host identifier that may include a colon and port number: `example.com:80`.
-// This is used as a special case at the head of a path, where we want to
-// interpret a colon as part of a text identifier.
-host "HTTP/HTTPS host"
-  = identifier (":" number)? { return text(); }
 
 inlineSpace
   = [ \t]
@@ -173,36 +173,6 @@ pipeline
       return makePipeline(steps);
     }
 
-singleArrow = "→" / "->"
-
-separator
-  = __ "," __
-  / whitespaceWithNewLine
-
-sign
-  = [+\-]
-
-// A single step in a pipeline, or a top-level expression
-step
-  // Try function calls first, as they can start with expression types that
-  // follow (array, object, etc.); we want to parse the largest thing first.
-  = functionComposition
-  // Then try parsers that look for a distinctive token at the start: an opening
-  // slash, bracket, curly brace, etc.
-  / absoluteFilePath
-  / array
-  / object
-  / tree
-  / lambda
-  / templateLiteral
-  / group
-  / string
-  / number
-  // Protocol calls are distinguished by a colon, but it's not at the start.
-  / protocolCall
-  // Least distinctive option is a simple scope reference, so it comes last.
-  / scopeReference
-
 // A slash-separated path of keys
 path "slash-separated path"
   = pathKey|1.., "/"|
@@ -233,11 +203,42 @@ reservedProtocol "reserved protocol"
 scopeReference "scope reference"
   = key:identifier { return [ops.scope, key]; }
 
+separator
+  = __ "," __
+  / whitespaceWithNewLine
+
+sign
+  = [+\-]
+
+singleArrow = "→" / "->"
+
 singleQuoteString "single quote string"
   = "'" chars:singleQuoteStringChar* "'" { return chars.join(""); }
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
+
+// A single step in a pipeline, or a top-level expression
+step
+  // Try function calls first, as they can start with expression types that
+  // follow (array, object, etc.); we want to parse the largest thing first.
+  = implicitParensCall
+  / functionComposition
+  // Then try parsers that look for a distinctive token at the start: an opening
+  // slash, bracket, curly brace, etc.
+  / absoluteFilePath
+  / array
+  / object
+  / tree
+  / lambda
+  / templateLiteral
+  / group
+  / string
+  / number
+  // Protocol calls are distinguished by a colon, but it's not at the start.
+  / protocolCall
+  // Least distinctive option is a simple scope reference, so it comes last.
+  / scopeReference
 
 start
   = number
