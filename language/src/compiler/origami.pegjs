@@ -53,6 +53,8 @@ comment "comment"
 digits
   = @[0-9]+
 
+doubleArrow = "⇒" / "=>"
+
 doubleQuoteString "double quote string"
   = '"' chars:doubleQuoteStringChar* '"' { return chars.join(""); }
 
@@ -160,7 +162,7 @@ objectPropertyOrShorthand
   / key:identifier { return [key, [ops.scope, key]]; }
 
 parameterizedLambda
-  = "(" __ parameters:identifierList? ")" __ ("=>"/"⇒") __ expr:expr {
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
     return [ops.lambda, parameters ?? [], expr];
   }
 
@@ -231,6 +233,7 @@ step
   / object
   / tree
   / lambda
+  / parameterizedLambda
   / templateLiteral
   / group
   / string
