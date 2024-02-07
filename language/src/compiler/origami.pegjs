@@ -31,7 +31,7 @@ assignmentOrShorthand
   / key:identifier { return [key, [ops.inherited, key]]; }
 
 array "array"
-  = "[" __ list:list? "]" { return [ops.array, ...(list ?? [])]; }
+  = "[" __ list:list? __ "]" { return [ops.array, ...(list ?? [])]; }
 
 // Something that can be called. This is more restrictive than the `expr`
 // parser; it doesn't accept regular function calls.
@@ -112,9 +112,7 @@ identifierChar
   / escapedChar
 
 identifierList
-  = head:identifier tail:(separator @identifier)* separator? {
-    return [head].concat(tail);
-  }
+  = @identifier|1.., separator| separator?
 
 // A function call with implicit parentheses: `fn 1, 2, 3`
 implicitParensCall "function call with implicit parentheses"
@@ -147,7 +145,7 @@ leadingSlashPath "path with a leading slash"
 
 // A separated list of expressions
 list "list"
-  = head:expr tail:(separator @expr)* separator? { return [head].concat(tail); }
+  = @expr|1.., separator| separator?
 
 newLine
   = "\n"
@@ -164,13 +162,11 @@ number "number"
 // TODO: Use Object.fromEntries with array of key/value pairs
 //
 object "object literal"
-  = "{" __ properties:objectProperties? "}" { return [ops.object, ...(properties ?? [])]; }
+  = "{" __ properties:objectProperties? __ "}" { return [ops.object, ...(properties ?? [])]; }
 
 // A separated list of object properties or shorthands
 objectProperties
-  = head:objectPropertyOrShorthand tail:(separator @objectPropertyOrShorthand)* separator? __ {
-      return [head].concat(tail);
-    }
+  = @objectPropertyOrShorthand|1.., separator| separator?
 
 // A single object property with key and value: `x: 1`
 objectProperty "object property"
@@ -198,8 +194,7 @@ sign
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = head:pathKey "/" tail:path { return [head].concat(tail); }
-  / key:pathKey { return [key]; }
+  = pathKey|1.., "/"|
 
 // A single key in a slash-separated path
 pathKey "path element"
@@ -280,13 +275,11 @@ textChar
 
 // A tree literal: `{ index.html = "Hello" }`
 tree "tree literal"
-  = "{" __ assignments:treeAssignments? "}" { return [ops.tree, ...(assignments ?? [])]; }
+  = "{" __ assignments:treeAssignments? __ "}" { return [ops.tree, ...(assignments ?? [])]; }
 
 // A separated list of assignments or shorthands
 treeAssignments
-  = head:assignmentOrShorthand tail:(separator @assignmentOrShorthand)* separator? __ {
-      return [head].concat(tail);
-    }
+  = @assignmentOrShorthand|1.., separator| separator?
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

@@ -15,6 +15,7 @@ describe("Origami parser", () => {
   test("array", () => {
     assertParse("array", "[]", [ops.array]);
     assertParse("array", "[1, 2, 3]", [ops.array, 1, 2, 3]);
+    assertParse("array", "[ 1 , 2 , 3 ]", [ops.array, 1, 2, 3]);
   });
 
   test("assignment", () => {
@@ -235,7 +236,7 @@ describe("Origami parser", () => {
     assertParse("leadingSlashPath", "/tree/", ["tree", ""]);
   });
 
-  describe("list", () => {
+  test("list", () => {
     assertParse("list", "1", [1]);
     assertParse("list", "1,2,3", [1, 2, 3]);
     assertParse("list", "1, 2, 3,", [1, 2, 3]);
