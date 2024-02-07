@@ -119,6 +119,7 @@ export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
 export { default as TextDocument } from "../src/common/TextDocument.js";
 export * from "../src/common/utilities.js";
 export { default as assertScopeIsDefined } from "../src/misc/assertScopeIsDefined.js";
+export { default as getTreeArgument } from "../src/misc/getTreeArgument.js";
 export { default as OriCommandTransform } from "../src/misc/OriCommandTransform.js";
 export { default as yamlOrigamiTag } from "../src/misc/yamlOrigamiTag.js";
 export * from "../src/server/mediaTypes.js";
