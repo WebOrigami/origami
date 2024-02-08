@@ -50,6 +50,17 @@ export default class DeferredTree {
     }
   }
 
+  // HACK: The concept of scope is defined in Origami, not at the AsyncTree
+  // level. If a DeferredTree is used to wrap an OrigamiTree, the inner
+  // OrigamiTree will have a `scope` but not a `parent`. If someone asks the
+  // outer deferrred tree for a scope, they'd otherwise get `undefined`, which
+  // is incorrect. As a workaround, we introduce a `scope` getter here that
+  // defers to the inner tree, but we need to find a way to avoid having to
+  // introduce the concept of scope here.
+  get scope() {
+    return /** @type {any} */ (this._tree)?.scope;
+  }
+
   async tree() {
     if (this._tree) {
       return this._tree;
