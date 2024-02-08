@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
 import * as ops from "../../src/runtime/ops.js";
 
-describe.only("Origami parser", () => {
+describe("Origami parser", () => {
   test("absoluteFilePath", () => {
     assertParse("absoluteFilePath", "/foo/bar", [
       [ops.filesRoot],
@@ -189,6 +189,7 @@ describe.only("Origami parser", () => {
     assertParse("identifier", "abc", "abc");
     assertParse("identifier", "index.html", "index.html");
     assertParse("identifier", "foo\\ bar", "foo bar");
+    assertParse("identifier", "x-y-z", "x-y-z");
   });
 
   test("implicitParensCall", () => {
