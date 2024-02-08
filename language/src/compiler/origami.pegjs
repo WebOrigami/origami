@@ -80,8 +80,12 @@ float "floating-point number"
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 functionComposition "function composition"
-  // = target:callTarget chain:argsChain { return makeFunctionCall(target, chain); }
-  = target:callTarget chain:args+ { return makeFunctionCall(target, chain); }
+  = target:callTarget chain:args* end:implicitParensArgs? {
+    if (end) {
+      chain.push(end);
+    }
+    return makeFunctionCall(target, chain);
+  }
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
@@ -104,11 +108,8 @@ identifierChar
 identifierList
   = @identifier|1.., separator| separator?
 
-// A function call with implicit parentheses: `fn 1, 2, 3`
-implicitParensCall "function call with implicit parentheses"
-  = target:callTarget inlineSpace+ args:list {
-      return [target, ...args];
-    }
+implicitParensArgs "arguments with implicit parentheses"
+  = inlineSpace+ @list
 
 inlineSpace
   = [ \t]
@@ -221,9 +222,10 @@ singleQuoteStringChar
 
 // A single step in a pipeline, or a top-level expression
 step
-  // Try function calls first, as they can start with expression types that
-  // follow (array, object, etc.); we want to parse the largest thing first.
-  = implicitParensCall
+  // Literals that can't start a function call
+  = number
+  // Try functions next; they can start with expression types that follow
+  // (array, object, etc.), and we want to parse the larger thing first.
   / functionComposition
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
@@ -234,9 +236,8 @@ step
   / lambda
   / parameterizedLambda
   / templateLiteral
-  / group
   / string
-  / number
+  / group
   // Protocol calls are distinguished by a colon, but it's not at the start.
   / protocolCall
   // Least distinctive option is a simple scope reference, so it comes last.

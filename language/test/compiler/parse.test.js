@@ -172,6 +172,39 @@ describe("Origami parser", () => {
       [ops.object, ["a", 1], ["b", 2]],
       "b",
     ]);
+    assertParse("functionComposition", "fn arg", [
+      [ops.scope, "fn"],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("functionComposition", "fn 'a', 'b'", [
+      [ops.scope, "fn"],
+      "a",
+      "b",
+    ]);
+    assertParse("functionComposition", "fn a(b), c", [
+      [ops.scope, "fn"],
+      [
+        [ops.scope, "a"],
+        [ops.scope, "b"],
+      ],
+      [ops.scope, "c"],
+    ]);
+    assertParse("functionComposition", "fn1 fn2 'arg'", [
+      [ops.scope, "fn1"],
+      [[ops.scope, "fn2"], "arg"],
+    ]);
+    assertParse("functionComposition", "(fn()) 'arg'", [
+      [[ops.scope, "fn"], undefined],
+      "arg",
+    ]);
+    assertParse("functionComposition", "tree/key arg", [
+      [ops.traverse, [ops.scope, "tree"], "key"],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("functionComposition", "https://example.com/tree.yaml 'key'", [
+      [ops.https, "example.com", "tree.yaml"],
+      "key",
+    ]);
   });
 
   test("group", () => {
@@ -190,38 +223,6 @@ describe("Origami parser", () => {
     assertParse("identifier", "index.html", "index.html");
     assertParse("identifier", "foo\\ bar", "foo bar");
     assertParse("identifier", "x-y-z", "x-y-z");
-  });
-
-  test("implicitParensCall", () => {
-    assertParse("implicitParensCall", "fn arg", [
-      [ops.scope, "fn"],
-      [ops.scope, "arg"],
-    ]);
-    assertParse("implicitParensCall", "fn 'a', 'b'", [
-      [ops.scope, "fn"],
-      "a",
-      "b",
-    ]);
-    assertParse("implicitParensCall", "fn a(b), c", [
-      [ops.scope, "fn"],
-      [
-        [ops.scope, "a"],
-        [ops.scope, "b"],
-      ],
-      [ops.scope, "c"],
-    ]);
-    assertParse("implicitParensCall", "fn1 fn2 'arg'", [
-      [ops.scope, "fn1"],
-      [[ops.scope, "fn2"], "arg"],
-    ]);
-    assertParse("implicitParensCall", "(fn()) 'arg'", [
-      [[ops.scope, "fn"], undefined],
-      "arg",
-    ]);
-    assertParse("implicitParensCall", "https://example.com/tree.yaml 'key'", [
-      [ops.https, "example.com", "tree.yaml"],
-      "key",
-    ]);
   });
 
   test("lambda", () => {
