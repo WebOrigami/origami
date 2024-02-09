@@ -37,12 +37,6 @@ export default class ScopeNew {
         more.length === 1 && more[0] instanceof ScopeNew
           ? more[0]
           : new ScopeNew(...more);
-      // This scope's cache extends the prototype chain of the base scope's
-      // cache. This allows the base scope's cache to be shared among any scopes
-      // that extend it.
-
-      // @ts-ignore
-      Object.setPrototypeOf(this.cache, this.baseScope.cache);
     }
   }
 
@@ -51,8 +45,7 @@ export default class ScopeNew {
       console.warn(`Tried to look up a non-primitive value in scope: ${key}`);
     }
 
-    // Search cache first. Because this cache extends the prototype chain of its
-    // base scope's cache, this searches the entire base scope chain.
+    // Search local cache first.
     if (key in this.cache) {
       return this.cache[key];
     }
@@ -60,13 +53,13 @@ export default class ScopeNew {
     // Search local tree
     let value = await this.tree.get(key);
 
-    if (value !== undefined || !this.baseScope) {
-      // Cache the result to avoid looking it up again later.
-      this.cache[key] = value;
-    } else if (value === undefined) {
+    if (value === undefined && this.baseScope) {
       // Search base scope
       value = await this.baseScope.get(key);
     }
+
+    // Cache the value, even if it's undefined.
+    this.cache[key] = value;
 
     return value;
   }

@@ -30,7 +30,7 @@ describe("ScopeNew", () => {
     assert.equal(await scope.get("a"), 1);
     assert.equal(await scope.get("b"), 2);
     assert.equal(await scope.get("c"), undefined);
-    assert.deepEqual(scope.cache, { b: 2 });
+    assert.deepEqual(scope.cache, { a: 1, b: 2, c: undefined });
     assert.deepEqual(baseScope.cache, { a: 1, c: undefined });
   });
 });
