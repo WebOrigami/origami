@@ -60,6 +60,12 @@ export default class DeferredTree {
   get scope() {
     return /** @type {any} */ (this._tree)?.scope;
   }
+  set scope(scope) {
+    // If tree hasn't been loaded yet, setting scope has no effect.
+    if (this._tree) {
+      /** @type {any} */ (this._tree).scope = scope;
+    }
+  }
 
   async tree() {
     if (this._tree) {
