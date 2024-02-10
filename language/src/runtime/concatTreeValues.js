@@ -4,6 +4,9 @@ import {
   isPlainObject,
 } from "@weborigami/async-tree";
 
+const textDecoder = new TextDecoder();
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 /**
  * Concatenate the text values in a tree.
  *
@@ -52,6 +55,9 @@ async function getText(value, scope) {
     text = "";
   } else if (typeof value === "string") {
     text = value;
+  } else if (value instanceof ArrayBuffer || value instanceof TypedArray) {
+    // Serialize data as UTF-8.
+    text = textDecoder.decode(value);
   } else if (
     !(value instanceof Array) &&
     value.toString !== getRealmObjectPrototype(value).toString
