@@ -122,7 +122,7 @@ export async function handleRequest(request, response, tree) {
 
   let data;
   if (mediaType) {
-    data = SiteTree.mediaTypeIsText[mediaType] ? toString(resource) : resource;
+    data = SiteTree.mediaTypeIsText(mediaType) ? toString(resource) : resource;
   } else {
     data = textOrObject(resource);
   }
@@ -136,7 +136,7 @@ export async function handleRequest(request, response, tree) {
         ? "text/html"
         : "text/plain";
   }
-  const encoding = SiteTree.mediaTypeIsText[mediaType] ? "utf-8" : undefined;
+  const encoding = SiteTree.mediaTypeIsText(mediaType) ? "utf-8" : undefined;
 
   // If we didn't get back some kind of data that response.write() accepts,
   // assume it was an error.
