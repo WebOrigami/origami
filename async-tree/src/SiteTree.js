@@ -2,7 +2,9 @@ import * as Tree from "./Tree.js";
 import * as keysJson from "./keysJson.js";
 
 /**
- * An HTTP/HTTPS site as a tree of ArrayBuffers.
+ * A tree of values obtained via HTTP/HTTPS calls. These values will be strings
+ * for HTTP responses with a MIME text type; otherwise they will be ArrayBuffer
+ * instances.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @implements {AsyncTree}
@@ -64,7 +66,10 @@ export default class SiteTree {
       }
     }
 
-    return response.arrayBuffer();
+    const mediaType = response.headers?.get("Content-Type");
+    return SiteTree.mediaTypeIsText(mediaType)
+      ? response.text()
+      : response.arrayBuffer();
   }
 
   async getKeyDictionary() {
@@ -104,6 +109,32 @@ export default class SiteTree {
   async keys() {
     const keyDictionary = await this.getKeyDictionary();
     return keyDictionary ? Object.keys(keyDictionary) : [];
+  }
+
+  // Return true if the given media type is a standard text type.
+  static mediaTypeIsText(mediaType) {
+    if (!mediaType) {
+      return false;
+    }
+    const regex = /^(?<type>[^/]+)\/(?<subtype>[^;]+)/;
+    const match = mediaType.match(regex);
+    if (!match) {
+      return false;
+    }
+    const { type, subtype } = match.groups;
+    if (type === "text") {
+      return true;
+    } else if (type === "application") {
+      return (
+        subtype === "json" ||
+        subtype.endsWith("+json") ||
+        subtype.endsWith(".json") ||
+        subtype === "xml" ||
+        subtype.endsWith("+xml") ||
+        subtype.endsWith(".xml")
+      );
+    }
+    return false;
   }
 
   /**

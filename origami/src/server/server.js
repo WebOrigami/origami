@@ -1,5 +1,6 @@
 import {
   ObjectTree,
+  SiteTree,
   Tree,
   isPlainObject,
   isStringLike,
@@ -8,7 +9,7 @@ import {
 import { Scope, extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
-import { mediaTypeForExtension, mediaTypeIsText } from "./mediaTypes.js";
+import { mediaTypeForExtension } from "./mediaTypes.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -121,7 +122,7 @@ export async function handleRequest(request, response, tree) {
 
   let data;
   if (mediaType) {
-    data = mediaTypeIsText[mediaType] ? toString(resource) : resource;
+    data = SiteTree.mediaTypeIsText[mediaType] ? toString(resource) : resource;
   } else {
     data = textOrObject(resource);
   }
@@ -135,7 +136,7 @@ export async function handleRequest(request, response, tree) {
         ? "text/html"
         : "text/plain";
   }
-  const encoding = mediaTypeIsText[mediaType] ? "utf-8" : undefined;
+  const encoding = SiteTree.mediaTypeIsText[mediaType] ? "utf-8" : undefined;
 
   // If we didn't get back some kind of data that response.write() accepts,
   // assume it was an error.
@@ -248,8 +249,11 @@ ${message}
  * @param {any} object
  */
 function textOrObject(object) {
-  // Return buffers and typed arrays as is.
-  if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+  if (object instanceof ArrayBuffer) {
+    // Convert to Buffer.
+    return Buffer.from(object);
+  } else if (object instanceof TypedArray) {
+    // Return typed arrays as is.
     return object;
   }
   return toString(object);
