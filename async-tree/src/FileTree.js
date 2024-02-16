@@ -23,6 +23,17 @@ export default class FileTree {
   constructor(location) {
     if (location instanceof URL) {
       location = location.href;
+    } else if (
+      !(
+        typeof location === "string" ||
+        /** @type {any} */ (location) instanceof String
+      )
+    ) {
+      throw new TypeError(
+        `FileTree constructor needs a string or URL, received an instance of ${
+          /** @type {any} */ (location)?.constructor?.name
+        }`
+      );
     }
     this.dirname = location.startsWith("file://")
       ? fileURLToPath(location)
