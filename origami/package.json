@@ -19,8 +19,8 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?ec8b93ba",
-    "@weborigami/language": "https://gitpkg.now.sh/WebOrigami/origami/language?ec8b93ba",
+    "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?c13bba68",
+    "@weborigami/language": "https://gitpkg.now.sh/WebOrigami/origami/language?c13bba68",
     "@weborigami/types": "0.0.41",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
