@@ -1,15 +1,12 @@
 import { FileTree } from "@weborigami/async-tree";
 import { ImportModulesMixin } from "@weborigami/language";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import CommandModulesTransform from "../common/CommandModulesTransform.js";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const commandsFolder = path.resolve(dirname, "../builtins");
+const commandsUrl = new URL("../builtins", import.meta.url);
 
 /** @type {any} */
 const builtins = new (CommandModulesTransform(ImportModulesMixin(FileTree)))(
-  commandsFolder
+  commandsUrl
 );
 
 builtins.usage = `@builtins\tThe Tree Origami built-in functions`;

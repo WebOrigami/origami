@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
 
-const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)));
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 // Map the YAML files to test suites.

@@ -1,15 +1,12 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles, Scope } from "@weborigami/language";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import builtins from "../builtins/@builtins.js";
 import { keySymbol } from "../common/utilities.js";
 import debug from "./@debug.js";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const miscDir = path.resolve(dirname, "../misc");
-const miscFiles = Scope.treeWithScope(new OrigamiFiles(miscDir), builtins);
+const miscUrl = new URL("../misc", import.meta.url);
+const miscFiles = Scope.treeWithScope(new OrigamiFiles(miscUrl), builtins);
 
 /**
  * @this {AsyncTree|null}

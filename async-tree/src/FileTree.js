@@ -18,11 +18,14 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  */
 export default class FileTree {
   /**
-   * @param {string} location
+   * @param {string|URL} location
    */
   constructor(location) {
+    if (location instanceof URL) {
+      location = location.href;
+    }
     this.dirname = location.startsWith("file://")
-      ? path.dirname(fileURLToPath(location))
+      ? fileURLToPath(location)
       : path.resolve(process.cwd(), location);
     this.parent = null;
   }
