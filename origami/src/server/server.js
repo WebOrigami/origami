@@ -1,17 +1,41 @@
-import {
-  ObjectTree,
-  SiteTree,
-  Tree,
-  isPlainObject,
-  isStringLike,
-  keysFromPath,
-} from "@weborigami/async-tree";
-import { Scope, extname } from "@weborigami/language";
-import * as serialize from "../common/serialize.js";
-import { toString } from "../common/utilities.js";
-import { mediaTypeForExtension } from "./mediaTypes.js";
+import { ObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
+import { ServerResponse } from "node:http";
+import constructResponse from "./constructResponse.js";
 
-const TypedArray = Object.getPrototypeOf(Uint8Array);
+/**
+ * Copy a constructed response to a ServerResponse. Return true if the response
+ * was successfully copied, and false if there was a problem.
+ *
+ * @param {Response} constructed
+ * @param {ServerResponse} response
+ */
+async function copyResponse(constructed, response) {
+  response.statusCode = constructed.status;
+  response.statusMessage = constructed.statusText;
+
+  for (const [key, value] of constructed.headers) {
+    response.setHeader(key, value);
+  }
+
+  if (constructed.body) {
+    try {
+      // Write the response body to the ServerResponse.
+      const reader = constructed.body.getReader();
+      let { done, value } = await reader.read();
+      while (!done) {
+        response.write(value);
+        ({ done, value } = await reader.read());
+      }
+      response.end();
+    } catch (/** @type {any} */ error) {
+      console.error(error.message);
+      return false;
+    }
+  }
+
+  return true;
+}
 
 // Extend the tree's scope with the URL's search parameters.
 function extendTreeScopeWithParams(tree, url) {
@@ -39,21 +63,16 @@ function extendTreeScopeWithParams(tree, url) {
   return extendedTree;
 }
 
-// Asynchronous tree router as Express middleware.
-export function treeRouter(tree) {
-  // Return a router for the tree source.
-  return async function (request, response, next) {
-    const handled = await handleRequest(request, response, tree);
-    if (!handled) {
-      // Module not found, let next middleware function try.
-      next();
-    }
-  };
-}
-
+/**
+ * Handle a client request.
+ *
+ * @param {import("node:http").IncomingMessage} request
+ * @param {ServerResponse} response
+ * @param {import("@weborigami/types").AsyncTree} tree
+ */
 export async function handleRequest(request, response, tree) {
   // For parsing purposes, we assume HTTPS -- it doesn't affect parsing.
-  const url = new URL(request.url, `https://${request.headers.host}`);
+  const url = new URL(request.url ?? "", `https://${request.headers.host}`);
   const keys = keysFromUrl(url);
 
   const extendedTree =
@@ -74,93 +93,15 @@ export async function handleRequest(request, response, tree) {
     return true;
   }
 
-  let mediaType;
-
-  if (!resource) {
+  // Construct the response.
+  const constructed = await constructResponse(request, resource);
+  if (!constructed) {
     return false;
   }
 
-  // Determine media type, what data we'll send, and encoding.
-  const extension = extname(url.pathname).toLowerCase();
-  mediaType = extension ? mediaTypeForExtension[extension] : undefined;
-
-  if (
-    mediaType === undefined &&
-    !request.url.endsWith("/") &&
-    (Tree.isAsyncTree(resource) ||
-      isPlainObject(resource) ||
-      resource instanceof Array)
-  ) {
-    // Redirect to an index page for the result.
-    // Redirect to the root of the tree.
-    const Location = `${request.url}/`;
-    response.writeHead(307, { Location });
-    response.end("ok");
-    return true;
-  }
-
-  // If the request is for a JSON or YAML result, and the resource we got
-  // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
-  if (
-    (mediaType === "application/json" || mediaType === "text/yaml") &&
-    !isStringLike(resource)
-  ) {
-    const tree = Tree.from(resource);
-    resource =
-      mediaType === "text/yaml"
-        ? await serialize.toYaml(tree)
-        : await serialize.toJson(tree);
-  } else if (
-    mediaType === undefined &&
-    (isPlainObject(resource) || resource instanceof Array)
-  ) {
-    // The resource is data, try showing it as YAML.
-    const tree = Tree.from(resource);
-    resource = await serialize.toYaml(tree);
-    mediaType = "text/yaml";
-  }
-
-  let data;
-  if (mediaType) {
-    data = SiteTree.mediaTypeIsText(mediaType) ? toString(resource) : resource;
-  } else {
-    data = textOrObject(resource);
-  }
-
-  if (!mediaType) {
-    // Can't identify media type; infer default type.
-    mediaType =
-      typeof data !== "string"
-        ? "application/octet-stream"
-        : data.trimStart().startsWith("<")
-        ? "text/html"
-        : "text/plain";
-  }
-  const encoding = SiteTree.mediaTypeIsText(mediaType) ? "utf-8" : undefined;
-
-  // If we didn't get back some kind of data that response.write() accepts,
-  // assume it was an error.
-  const validResponse = typeof data === "string" || data instanceof TypedArray;
-
-  if (!validResponse) {
-    const typeName = data?.constructor?.name ?? typeof data;
-    console.error(
-      `A served tree must return a string or a TypedArray (such as a Buffer) but returned an instance of ${typeName}.`
-    );
-    return false;
-  }
-
-  response.writeHead(200, {
-    "Content-Type": mediaType,
-  });
-  try {
-    response.end(data, encoding);
-  } catch (/** @type {any} */ error) {
-    console.error(error.message);
-    return false;
-  }
-
-  return true;
+  // Copy the construct response to the ServerResponse and return true if
+  // the response was valid.
+  return copyResponse(constructed, response);
 }
 
 function keysFromUrl(url) {
@@ -242,19 +183,14 @@ ${message}
   console.error(message);
 }
 
-/**
- * Convert to a string if we can, but leave objects that convert to something
- * like "[object Object]" alone.
- *
- * @param {any} object
- */
-function textOrObject(object) {
-  if (object instanceof ArrayBuffer) {
-    // Convert to Buffer.
-    return Buffer.from(object);
-  } else if (object instanceof TypedArray) {
-    // Return typed arrays as is.
-    return object;
-  }
-  return toString(object);
+// Asynchronous tree router as Express middleware.
+export function treeRouter(tree) {
+  // Return a router for the tree source.
+  return async function (request, response, next) {
+    const handled = await handleRequest(request, response, tree);
+    if (!handled) {
+      // Module not found, let next middleware function try.
+      next();
+    }
+  };
 }
