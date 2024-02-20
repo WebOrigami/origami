@@ -19,7 +19,7 @@ describe("ori builtin", () => {
       tree,
       builtins
     );
-    const result = await ori.call(scope, `@tree/keys`);
+    const result = await ori.call(scope, `@keys`);
     assert.equal(
       String(result),
       `- a
