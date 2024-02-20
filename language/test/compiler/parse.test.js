@@ -122,6 +122,11 @@ describe("Origami parser", () => {
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
+    assertParse("functionComposition", "fn( a , b )", [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
     assertParse("functionComposition", "fn()(arg)", [
       [[ops.scope, "fn"], undefined],
       [ops.scope, "arg"],

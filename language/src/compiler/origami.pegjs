@@ -192,7 +192,7 @@ parameterizedLambda
 
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
-  = "(" __ list:list? ")" {
+  = "(" __ list:list? __ ")" {
       return list ?? annotate([undefined], location());
     }
 
