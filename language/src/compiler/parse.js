@@ -13,9 +13,11 @@
 import * as ops from "../runtime/ops.js";
 import { makeFunctionCall, makePipeline, makeTemplate } from "./parserHelpers.js";
 
-function annotate(parseResult, range) {
+// If a parse result is an object that will be evaluated at runtime, attach the
+// location of the source code that produced it for debugging and error messages.
+function annotate(parseResult, location) {
   if (typeof parseResult === "object" && parseResult !== null) {
-    parseResult.range = range;
+    parseResult.location = location;
   }
   return parseResult;
 }
@@ -311,16 +313,16 @@ function peg$parse(input, options) {
 
   var peg$f0 = function() { return ""; };
   var peg$f1 = function(path) {
-      return annotate([[ops.filesRoot], ...path], range());
+      return annotate([[ops.filesRoot], ...path], location());
     };
   var peg$f2 = function(path) {
-      return annotate([ops.traverse, ...path], range());
+      return annotate([ops.traverse, ...path], location());
     };
   var peg$f3 = function(key) {
-      return annotate([key, [ops.inherited, key]], range());
+      return annotate([key, [ops.inherited, key]], location());
     };
   var peg$f4 = function(list) {
-      return annotate([ops.array, ...(list ?? [])], range());
+      return annotate([ops.array, ...(list ?? [])], location());
     };
   var peg$f5 = function(chars) { return chars.join(""); };
   var peg$f6 = function() {
@@ -330,7 +332,7 @@ function peg$parse(input, options) {
     if (end) {
       chain.push(end);
     }
-    return annotate(makeFunctionCall(target, chain), range());
+    return annotate(makeFunctionCall(target, chain), location());
   };
   var peg$f8 = function() { return text(); };
   var peg$f9 = function(chars) { return chars.join(""); };
@@ -338,27 +340,27 @@ function peg$parse(input, options) {
       return parseInt(text());
     };
   var peg$f11 = function(expr) {
-      return annotate([ops.lambda, null, expr], range());
+      return annotate([ops.lambda, null, expr], location());
     };
-  var peg$f12 = function() { return annotate([""], range()); };
+  var peg$f12 = function() { return annotate([""], location()); };
   var peg$f13 = function(properties) {
-      return annotate([ops.object, ...(properties ?? [])], range());
+      return annotate([ops.object, ...(properties ?? [])], location());
     };
   var peg$f14 = function(key) {
-      return annotate([key, [ops.scope, key]], range());
+      return annotate([key, [ops.scope, key]], location());
     };
   var peg$f15 = function(parameters, expr) {
-    return annotate([ops.lambda, parameters ?? [], expr], range());
+    return annotate([ops.lambda, parameters ?? [], expr], location());
   };
   var peg$f16 = function(list) {
-      return list ?? annotate([undefined], range());
+      return list ?? annotate([undefined], location());
     };
   var peg$f17 = function(steps) {
-      return annotate(makePipeline(steps), range());
+      return annotate(makePipeline(steps), location());
     };
   var peg$f18 = function(key) { return key.join(""); };
   var peg$f19 = function(protocol, host, path) {
-      return annotate([protocol, host, ...(path ?? [])], range());
+      return annotate([protocol, host, ...(path ?? [])], location());
     };
   var peg$f20 = function() { return ops.https; };
   var peg$f21 = function() { return ops.http; };
@@ -367,22 +369,22 @@ function peg$parse(input, options) {
   var peg$f24 = function() { return ops.treeHttp; };
   var peg$f25 = function() { return ops.treeHttps; };
   var peg$f26 = function(key) {
-      return annotate([ops.scope, key], range());
+      return annotate([ops.scope, key], location());
     };
   var peg$f27 = function(chars) { return chars.join(""); };
   var peg$f28 = function(contents) {
-      return annotate([ops.lambda, null, contents], range());
+      return annotate([ops.lambda, null, contents], location());
     };
   var peg$f29 = function(parts) {
-      return annotate(makeTemplate(parts), range());
+      return annotate(makeTemplate(parts), location());
     };
   var peg$f30 = function(chars) { return chars.join(""); };
   var peg$f31 = function(parts) {
-      return annotate(makeTemplate(parts), range());
+      return annotate(makeTemplate(parts), location());
     };
   var peg$f32 = function(chars) { return chars.join(""); };
   var peg$f33 = function(assignments) {
-      return annotate([ops.tree, ...(assignments ?? [])], range());
+      return annotate([ops.tree, ...(assignments ?? [])], location());
     };
   var peg$currPos = 0;
   var peg$savedPos = 0;

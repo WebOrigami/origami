@@ -441,19 +441,19 @@ describe("Origami parser", () => {
 function assertParse(startRule, source, expected) {
   /** @type {any} */
   const parseResult = parse(source, { grammarSource: source, startRule });
-  const actual = stripRanges(parseResult);
+  const actual = stripLocations(parseResult);
   assert.deepEqual(actual, expected);
 }
 
-// For comparison purposes, strip the `range` property added by the parser.
-function stripRanges(parseResult) {
+// For comparison purposes, strip the `location` property added by the parser.
+function stripLocations(parseResult) {
   if (Array.isArray(parseResult)) {
-    return parseResult.map(stripRanges);
+    return parseResult.map(stripLocations);
   } else if (isPlainObject(parseResult)) {
     const result = {};
     for (const key in parseResult) {
-      if (key !== "range") {
-        result[key] = stripRanges(parseResult[key]);
+      if (key !== "location") {
+        result[key] = stripLocations(parseResult[key]);
       }
     }
     return result;

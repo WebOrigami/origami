@@ -1,7 +1,8 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
 import { format, ops } from "./internal.js";
 
-const expressionSymbol = Symbol("expression");
+const codeSymbol = Symbol("code");
+const sourceSymbol = Symbol("source");
 
 /**
  * Evaluate the given code and return the result.
@@ -71,25 +72,24 @@ export default async function evaluate(code) {
         ? await fn.call(scope, ...args) // Invoke the function
         : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
-    const message = `Error triggered by Origami expression: ${format(code)}`;
-    throw new Error(message, { cause: error });
+    if (!error.location) {
+      // Attach the location of the code we were evaluating.
+      error.location = /** @type {any} */ (code).location;
+    }
+    throw error;
   }
 
-  // To aid debugging, add the expression source to the result.
+  // To aid debugging, add the code to the result.
   if (
     result &&
     typeof result === "object" &&
     Object.isExtensible(result) &&
     !isPlainObject(result)
   ) {
-    try {
-      result[expressionSymbol] = format(code);
-    } catch (error) {
-      // Setting a Symbol-keyed property on some objects fails with `TypeError:
-      // Cannot convert a Symbol value to a string` but it's unclear why
-      // implicit casting of the symbol to a string occurs. Since this is not a
-      // vital operation, we ignore such errors.
-    }
+    result[codeSymbol] = code;
+    const location = /** @type {any} */ (code).location;
+    const { source, start, end } = location;
+    result[sourceSymbol] = source.text.slice(start.offset, end.offset);
   }
 
   return result;

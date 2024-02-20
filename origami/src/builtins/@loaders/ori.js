@@ -37,18 +37,7 @@ export default async function unpackOrigamiExpression(
 
   // Compile the source code as an Origami expression and evaluate it.
   const compiler = options.compiler ?? compile.expression;
-  let fn;
-  try {
-    fn = compiler(source);
-  } catch (/** @type {any} */ error) {
-    if (error.location) {
-      const { start } = error.location;
-      let location = url ? `${url}:` : "";
-      location += `${start.line}:${start.column}`;
-      error.message += `\n${location}`;
-    }
-    throw error;
-  }
+  const fn = compiler(source);
   const parentScope = parent ? Scope.getScope(parent) : builtins;
   let content = await fn.call(parentScope);
 
