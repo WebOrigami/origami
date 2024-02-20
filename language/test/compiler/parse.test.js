@@ -1,3 +1,4 @@
+import { isPlainObject } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
@@ -438,6 +439,25 @@ describe("Origami parser", () => {
 });
 
 function assertParse(startRule, source, expected) {
-  const actual = parse(source, { startRule });
+  /** @type {any} */
+  const parseResult = parse(source, { grammarSource: source, startRule });
+  const actual = stripRanges(parseResult);
   assert.deepEqual(actual, expected);
+}
+
+// For comparison purposes, strip the `range` property added by the parser.
+function stripRanges(parseResult) {
+  if (Array.isArray(parseResult)) {
+    return parseResult.map(stripRanges);
+  } else if (isPlainObject(parseResult)) {
+    const result = {};
+    for (const key in parseResult) {
+      if (key !== "range") {
+        result[key] = stripRanges(parseResult[key]);
+      }
+    }
+    return result;
+  } else {
+    return parseResult;
+  }
 }

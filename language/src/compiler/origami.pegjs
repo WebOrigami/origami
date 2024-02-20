@@ -8,6 +8,14 @@
 
 import * as ops from "../runtime/ops.js";
 import { makeFunctionCall, makePipeline, makeTemplate } from "./parserHelpers.js";
+
+function annotate(parseResult, range) {
+  if (typeof parseResult === "object" && parseResult !== null) {
+    parseResult.range = range;
+  }
+  return parseResult;
+}
+
 }}
 
 // A block of optional whitespace
@@ -16,11 +24,15 @@ __
 
 // A filesystem path that begins with a slash: `/foo/bar`
 absoluteFilePath "absolute file path"
-  = path:leadingSlashPath { return [[ops.filesRoot], ...path]; }
+  = path:leadingSlashPath {
+      return annotate([[ops.filesRoot], ...path], range());
+    }
 
 args "function arguments"
   = parensArgs
-  / path:leadingSlashPath { return [ops.traverse, ...path]; }
+  / path:leadingSlashPath {
+      return annotate([ops.traverse, ...path], range());
+    }
 
 // An assignment statement: `foo = 1`
 assignment "tree assignment"
@@ -28,10 +40,14 @@ assignment "tree assignment"
 
 assignmentOrShorthand
   = assignment
-  / key:identifier { return [key, [ops.inherited, key]]; }
+  / key:identifier {
+      return annotate([key, [ops.inherited, key]], range());
+    }
 
 array "array"
-  = "[" __ list:list? __ "]" { return [ops.array, ...(list ?? [])]; }
+  = "[" __ list:list? __ "]" {
+      return annotate([ops.array, ...(list ?? [])], range());
+    }
 
 // Something that can be called. This is more restrictive than the `expr`
 // parser; it doesn't accept regular function calls.
@@ -84,7 +100,7 @@ functionComposition "function composition"
     if (end) {
       chain.push(end);
     }
-    return makeFunctionCall(target, chain);
+    return annotate(makeFunctionCall(target, chain), range());
   }
 
 // An expression in parentheses: `(foo)`
@@ -121,12 +137,14 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ expr:expr { return [ops.lambda, null, expr]; }
+  = "=" __ expr:expr {
+      return annotate([ops.lambda, null, expr], range());
+    }
 
 // A path that begins with a slash: `/foo/bar`
 leadingSlashPath "path with a leading slash"
   = "/" @path
-  / "/" { return [""]; }
+  / "/" { return annotate([""], range()); }
 
 // A separated list of expressions
 list "list"
@@ -147,7 +165,9 @@ number "number"
 // TODO: Use Object.fromEntries with array of key/value pairs
 //
 object "object literal"
-  = "{" __ properties:objectProperties? __ "}" { return [ops.object, ...(properties ?? [])]; }
+  = "{" __ properties:objectProperties? __ "}" {
+      return annotate([ops.object, ...(properties ?? [])], range());
+    }
 
 // A separated list of object properties or shorthands
 objectProperties
@@ -159,20 +179,24 @@ objectProperty "object property"
 
 objectPropertyOrShorthand
   = objectProperty
-  / key:identifier { return [key, [ops.scope, key]]; }
+  / key:identifier {
+      return annotate([key, [ops.scope, key]], range());
+    }
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
-    return [ops.lambda, parameters ?? [], expr];
+    return annotate([ops.lambda, parameters ?? [], expr], range());
   }
 
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
-  = "(" __ list:list? ")" { return list ?? [undefined]; }
+  = "(" __ list:list? ")" {
+      return list ?? annotate([undefined], range());
+    }
 
 pipeline
   = steps:(@step|1.., __ singleArrow __ |) {
-      return makePipeline(steps);
+      return annotate(makePipeline(steps), range());
     }
 
 // A slash-separated path of keys
@@ -187,7 +211,7 @@ pathKey "path element"
 // There can be zero, one, or two slashes after the colon.
 protocolCall "function call using protocol: syntax"
   = protocol:protocol ":" "/"|0..2| host:host path:leadingSlashPath? {
-      return [protocol, host, ...(path ?? [])];
+      return annotate([protocol, host, ...(path ?? [])], range());
     }
 
 protocol "protocol"
@@ -203,7 +227,9 @@ reservedProtocol "reserved protocol"
   / "tree" { return ops.treeHttps; } // Alias
 
 scopeReference "scope reference"
-  = key:identifier { return [ops.scope, key]; }
+  = key:identifier {
+      return annotate([ops.scope, key], range());
+    }
 
 separator
   = __ "," __
@@ -253,7 +279,9 @@ string "string"
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
 templateDocument "template"
-  = contents:templateDocumentContents { return [ops.lambda, null, contents]; }
+  = contents:templateDocumentContents {
+      return annotate([ops.lambda, null, contents], range());
+    }
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar
@@ -261,7 +289,9 @@ templateDocumentChar
 
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
-  = parts:(templateDocumentText / templateSubstitution)* { return makeTemplate(parts); }
+  = parts:(templateDocumentText / templateSubstitution)* {
+      return annotate(makeTemplate(parts), range());
+    }
 
 templateDocumentText "template text"
   = chars:templateDocumentChar+ { return chars.join(""); }
@@ -275,7 +305,9 @@ templateLiteralChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
-  = parts:(templateLiteralText / templateSubstitution)* { return makeTemplate(parts); }
+  = parts:(templateLiteralText / templateSubstitution)* {
+      return annotate(makeTemplate(parts), range());
+    }
 
 // Plain text in a template literal
 templateLiteralText
@@ -290,7 +322,9 @@ textChar
 
 // A tree literal: `{ index.html = "Hello" }`
 tree "tree literal"
-  = "{" __ assignments:treeAssignments? __ "}" { return [ops.tree, ...(assignments ?? [])]; }
+  = "{" __ assignments:treeAssignments? __ "}" {
+      return annotate([ops.tree, ...(assignments ?? [])], range());
+    }
 
 // A separated list of assignments or shorthands
 treeAssignments
