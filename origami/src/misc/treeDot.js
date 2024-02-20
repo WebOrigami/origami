@@ -1,11 +1,8 @@
 import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 import { extname } from "@weborigami/language";
-import * as serialize from "../../common/serialize.js";
-import {
-  hasNonPrintableCharacters,
-  keySymbol,
-} from "../../common/utilities.js";
-import getTreeArgument from "../../misc/getTreeArgument.js";
+import * as serialize from "../common/serialize.js";
+import { hasNonPrintableCharacters, keySymbol } from "../common/utilities.js";
+import getTreeArgument from "./getTreeArgument.js";
 
 /**
  * Render a tree in DOT format.

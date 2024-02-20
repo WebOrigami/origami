@@ -1,6 +1,6 @@
 import graphviz from "graphviz-wasm";
 import getTreeArgument from "../misc/getTreeArgument.js";
-import dot from "./@tree/dot.js";
+import dot from "../misc/treeDot.js";
 
 let graphvizLoaded = false;
 
