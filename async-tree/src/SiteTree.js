@@ -137,6 +137,10 @@ export default class SiteTree {
     return false;
   }
 
+  get path() {
+    return this.href;
+  }
+
   /**
    * Returns a new `SiteTree` for the given relative route.
    *
@@ -151,5 +155,9 @@ export default class SiteTree {
   async unpack() {
     const response = await fetch(this.href);
     return response.ok ? response.arrayBuffer() : undefined;
+  }
+
+  get url() {
+    return new URL(this.href);
   }
 }

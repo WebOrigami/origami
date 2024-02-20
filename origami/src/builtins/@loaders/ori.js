@@ -17,24 +17,35 @@ export default async function unpackOrigamiExpression(
     options.parent ??
     /** @type {any} */ (inputDocument).parent ??
     /** @type {any} */ (inputDocument)[utilities.parentSymbol];
-  const compiler = options.compiler ?? compile.expression;
 
-  // Compile the body text as an Origami expression and evaluate it.
-  const inputText = utilities.toString(inputDocument);
+  // Construct an object to represent the source code.
+  const sourceName = options.key;
+  let url;
+  if (sourceName && parent?.url) {
+    let parentHref = parent.url.href;
+    if (!parentHref.endsWith("/")) {
+      parentHref += "/";
+    }
+    url = new URL(sourceName, parentHref);
+  }
+
+  const source = {
+    text: utilities.toString(inputDocument),
+    name: options.key,
+    url,
+  };
+
+  // Compile the source code as an Origami expression and evaluate it.
+  const compiler = options.compiler ?? compile.expression;
   let fn;
   try {
-    fn = compiler(inputText);
+    fn = compiler(source);
   } catch (/** @type {any} */ error) {
-    let location = "";
-    if (options.key) {
-      location += `${options.key}`;
-    }
     if (error.location) {
       const { start } = error.location;
-      location += `, line ${start.line}, column ${start.column}`;
-    }
-    if (location) {
-      error.message += ` (${location})`;
+      let location = url ? `${url}:` : "";
+      location += `${start.line}:${start.column}`;
+      error.message += `\n${location}`;
     }
     throw error;
   }

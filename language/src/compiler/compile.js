@@ -1,21 +1,27 @@
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { parse } from "./parse.js";
 
-function compile(text, startRule) {
+function compile(source, startRule) {
+  if (typeof source === "string") {
+    source = { text: source };
+  }
   // Trim whitespace from template blocks before we begin lexing, as our
   // heuristics are non-local and hard to implement in our parser.
-  const preprocessed = trimTemplateWhitespace(text);
-  const code = parse(preprocessed, { startRule });
+  const preprocessed = trimTemplateWhitespace(source.text);
+  const code = parse(preprocessed, {
+    grammarSource: source,
+    startRule,
+  });
   const fn = createExpressionFunction(code);
   return fn;
 }
 
-export function expression(text) {
-  return compile(text, "expression");
+export function expression(source) {
+  return compile(source, "expression");
 }
 
-export function templateDocument(text) {
-  return compile(text, "templateDocument");
+export function templateDocument(source) {
+  return compile(source, "templateDocument");
 }
 
 // Trim the whitespace around and in substitution blocks in a template. There's

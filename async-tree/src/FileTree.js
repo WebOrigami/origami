@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Tree from "./Tree.js";
 import {
   getRealmObjectPrototype,
@@ -167,6 +167,10 @@ export default class FileTree {
     }
 
     return this;
+  }
+
+  get url() {
+    return pathToFileURL(this.dirname);
   }
 }
 
