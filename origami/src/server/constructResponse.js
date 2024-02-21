@@ -7,6 +7,7 @@ import {
 import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
+import Response from "./Response.js";
 import { mediaTypeForExtension } from "./mediaTypes.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);

@@ -20,14 +20,19 @@ async function copyResponse(constructed, response) {
 
   if (constructed.body) {
     try {
-      // Write the response body to the ServerResponse.
-      const reader = constructed.body.getReader();
-      let { done, value } = await reader.read();
-      while (!done) {
-        response.write(value);
-        ({ done, value } = await reader.read());
+      if ("isFake" in constructed) {
+        // This is a fake Response; just write the body directly.
+        response.end(constructed.body);
+      } else {
+        // Write the response body to the ServerResponse.
+        const reader = constructed.body.getReader();
+        let { done, value } = await reader.read();
+        while (!done) {
+          response.write(value);
+          ({ done, value } = await reader.read());
+        }
+        response.end();
       }
-      response.end();
     } catch (/** @type {any} */ error) {
       console.error(error.message);
       return false;
