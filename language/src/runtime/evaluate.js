@@ -88,8 +88,10 @@ export default async function evaluate(code) {
   ) {
     result[codeSymbol] = code;
     const location = /** @type {any} */ (code).location;
-    const { source, start, end } = location;
-    result[sourceSymbol] = source.text.slice(start.offset, end.offset);
+    if (location) {
+      const { source, start, end } = location;
+      result[sourceSymbol] = source.text.slice(start.offset, end.offset);
+    }
   }
 
   return result;
