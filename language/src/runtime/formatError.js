@@ -41,8 +41,6 @@ export default function formatError(error) {
       message += `\n    at ${source.url.href}:${start.line}:${start.column}`;
     } else if (source.text.includes("\n")) {
       message += `\n    at line ${start.line}, column ${start.column}`;
-    } else {
-      message += `\n    at column ${start.column}`;
     }
   }
   return message;

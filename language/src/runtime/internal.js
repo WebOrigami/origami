@@ -11,8 +11,6 @@ export * as ops from "./ops.js";
 
 export { default as evaluate } from "./evaluate.js";
 
-export { default as format } from "./format.js";
-
 export * as expressionFunction from "./expressionFunction.js";
 
 export { default as ExpressionTree } from "./ExpressionTree.js";

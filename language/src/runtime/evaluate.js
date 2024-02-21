@@ -1,5 +1,5 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
-import { format, ops } from "./internal.js";
+import { ops } from "./internal.js";
 
 const codeSymbol = Symbol("code");
 const sourceSymbol = Symbol("source");
@@ -43,9 +43,7 @@ export default async function evaluate(code) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    throw ReferenceError(
-      `Couldn't find function or tree key: ${format(code[0])}`
-    );
+    throw ReferenceError(`${codeFragment(code[0])} is not defined`);
   }
 
   if (
@@ -58,9 +56,7 @@ export default async function evaluate(code) {
 
   if (!Tree.isTreelike(fn)) {
     throw TypeError(
-      `Expect to invoke a function or a tree but instead got: ${format(
-        code[0]
-      )}`
+      `${codeFragment(code[0])} didn't return a function that can be called`
     );
   }
 
@@ -87,12 +83,15 @@ export default async function evaluate(code) {
     !isPlainObject(result)
   ) {
     result[codeSymbol] = code;
-    const location = /** @type {any} */ (code).location;
-    if (location) {
-      const { source, start, end } = location;
-      result[sourceSymbol] = source.text.slice(start.offset, end.offset);
+    if (/** @type {any} */ (code).location) {
+      result[sourceSymbol] = codeFragment(code);
     }
   }
 
   return result;
+}
+
+function codeFragment(code) {
+  const { source, start, end } = code.location;
+  return source.text.slice(start.offset, end.offset);
 }

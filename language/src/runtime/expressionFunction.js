@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 
-import { evaluate, format } from "./internal.js";
+import { evaluate } from "./internal.js";
 
 /**
  * Given parsed Origami code, return a function that executes that code.
@@ -17,8 +17,7 @@ export function createExpressionFunction(code, name) {
     Object.defineProperty(fn, "name", { value: name });
   }
   fn.code = code;
-  fn.source = format(code);
-  fn.toString = () => fn.source;
+  fn.toString = () => fn.code.source.text;
   return fn;
 }
 
