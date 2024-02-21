@@ -4,6 +4,15 @@ import { StringLike } from "../async-tree/index.js";
 export * from "./main.js";
 
 /**
+ * A chunk of compiled Origami code. This is just an Array with an additional
+ * `source` property.
+ */
+interface ArrayWithSource extends Array<any> {
+  source?: Source;
+}
+export type Code = ArrayWithSource;
+
+/**
  * A class constructor is an object with a `new` method that returns an
  * instance of the indicated type.
  */
@@ -32,3 +41,12 @@ export type FileUnpackFunction = (
 export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
+
+/**
+ * Source code representation used by the parser.
+ */
+export type Source = {
+  name: string;
+  text: string;
+  url: URL;
+}

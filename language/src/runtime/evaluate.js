@@ -10,10 +10,9 @@ const sourceSymbol = Symbol("source");
  * `this` should be the scope used to look up references found in the code.
  *
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  *
  * @this {Treelike|null}
- * @param {Code} code
+ * @param {any} code
  */
 export default async function evaluate(code) {
   const scope = this;
