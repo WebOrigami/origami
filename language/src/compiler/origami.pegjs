@@ -47,7 +47,7 @@ assignmentOrShorthand
     }
 
 array "array"
-  = "[" __ list:list? __ "]" {
+  = "[" __ list:list? __ closingBracket {
       return annotate([ops.array, ...(list ?? [])], location());
     }
 
@@ -63,6 +63,31 @@ callTarget "function call"
   / protocolCall
   / group
   / scopeReference
+
+// Required closing curly brace. We use this for the `tree` term: it's the last
+// term in the `step` parser that starts with a curly brace, so if that parser
+// sees a left curly brace, here we must see a right curly brace.
+closingBrace
+  = "}"
+  / .? {
+    error("Expected right curly brace");
+  }
+
+// Required closing bracket
+closingBracket
+  = "]"
+  / .? {
+    error("Expected right bracket");
+  }
+
+// Required closing parenthesis. We use this for the `group` term: it's the last
+// term in the `step` parser that starts with a parenthesis, so if that parser
+// sees a left parenthesis, here we must see a right parenthesis.
+closingParen
+  = ")"
+  / .? {
+    error("Expected right parenthesis");
+  }
 
 // A single line comment
 comment "comment"
@@ -107,7 +132,7 @@ functionComposition "function composition"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" __ @expr __ ")"
+  = "(" __ @expr __ closingParen
 
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to
@@ -324,7 +349,7 @@ textChar
 
 // A tree literal: `{ index.html = "Hello" }`
 tree "tree literal"
-  = "{" __ assignments:treeAssignments? __ "}" {
+  = "{" __ assignments:treeAssignments? __ closingBrace {
       return annotate([ops.tree, ...(assignments ?? [])], location());
     }
 
