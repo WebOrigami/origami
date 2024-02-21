@@ -37,10 +37,12 @@ export default function ExplorableSiteTransform(Base) {
       if (value === undefined) {
         // The tree doesn't have the key; try the defaults.
         const scope = Scope.getScope(this);
-        if (key === "index.html") {
-          value = await index.call(scope, this);
-        } else if (key === ".keys.json") {
-          value = await keysJson.stringify(this);
+        if (scope) {
+          if (key === "index.html") {
+            value = await index.call(scope, this);
+          } else if (key === ".keys.json") {
+            value = await keysJson.stringify(this);
+          }
         }
       }
 
