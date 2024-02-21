@@ -338,6 +338,10 @@ export async function traverse(treelike, ...keys) {
  * @param  {...any} keys
  */
 export async function traverseOrThrow(treelike, ...keys) {
+  if (!treelike) {
+    throw new TraverseError("Tried to traverse a null or undefined value");
+  }
+
   // Start our traversal at the root of the tree.
   /** @type {any} */
   let value = treelike;
@@ -348,15 +352,16 @@ export async function traverseOrThrow(treelike, ...keys) {
 
   // Process all the keys.
   const remainingKeys = keys.slice();
+  let key;
   while (remainingKeys.length > 0) {
     if (value === undefined) {
       // Attempted to traverse an undefined value
-      const keyStrings = keys.map((key) => String(key));
-      throw new TraverseError(
-        `Couldn't traverse the path: ${keyStrings.join("/")}`,
-        value,
-        keys
-      );
+      const message = key
+        ? `${key} does not exist`
+        : `Couldn't traverse the path: ${keys
+            .map((key) => String(key))
+            .join("/")}`;
+      throw new TraverseError(message, treelike, keys);
     }
 
     // Special case: one key left that's an empty string
@@ -382,12 +387,13 @@ export async function traverseOrThrow(treelike, ...keys) {
       // We'll take as many keys as the function's length, but at least one.
       let fnKeyCount = Math.max(fn.length, 1);
       const args = remainingKeys.splice(0, fnKeyCount);
+      key = null;
       value = await fn.call(target, ...args);
     } else {
       // Value is some other treelike object: cast it to a tree.
       const tree = from(value);
       // Get the next key.
-      const key = remainingKeys.shift();
+      key = remainingKeys.shift();
       // Get the value for the key.
       value = await tree.get(key);
     }
