@@ -18,7 +18,7 @@ export default async function cacheBuiltin(
   cacheTreelike,
   filterTreelike
 ) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "cache");
 
   const sourceTree = Tree.from(sourceTreelike);
   /** @type {any} */

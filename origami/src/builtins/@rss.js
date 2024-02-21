@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} jsonFeedTree
  */
 export default async function rss(jsonFeedTree) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "rss");
   const jsonFeed = await Tree.plain(jsonFeedTree);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 

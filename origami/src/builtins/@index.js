@@ -10,7 +10,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function index(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@index");
   const keys = Array.from(await tree.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

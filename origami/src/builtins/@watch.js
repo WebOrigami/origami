@@ -16,7 +16,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  */
 export default async function watch(treelike, fn) {
   /** @type {any} */
-  const container = await getTreeArgument(this, arguments, treelike);
+  const container = await getTreeArgument(this, arguments, treelike, "@watch");
 
   // Watch the indicated tree.
   await /** @type {any} */ (container).watch?.();

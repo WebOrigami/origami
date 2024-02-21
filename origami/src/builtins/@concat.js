@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any[]} args
  */
 export default async function concat(...args) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "concat");
   const tree =
     args.length === 0 ? await this?.get("@current") : Tree.from(args);
   return ops.concat.call(this, tree);

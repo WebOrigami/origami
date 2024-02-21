@@ -14,7 +14,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {Invocable} invocable
  */
 export default function withTree(treelike, invocable) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "with");
   const tree = Tree.from(treelike);
   const fn = toFunction(invocable);
   const scope = new Scope(tree, this);

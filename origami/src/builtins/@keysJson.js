@@ -12,7 +12,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} treelike
  */
 export default async function treeKeysJson(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@keysJson");
   let result = transformObject(KeysJsonTransform, tree);
   result = Scope.treeWithScope(result, this);
   return result;

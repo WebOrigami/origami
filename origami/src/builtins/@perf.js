@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Function} fn
  */
 export default async function perf(fn, count = 10000) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "perf");
   const start = performance.now();
   for (let i = 0; i < count; i++) {
     await fn.call(this);

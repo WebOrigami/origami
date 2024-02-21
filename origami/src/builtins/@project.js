@@ -21,7 +21,7 @@ const configFileName = "ori.config.js";
  * @param {any} [key]
  */
 export default async function project(key) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "project");
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);

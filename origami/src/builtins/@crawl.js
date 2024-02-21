@@ -30,7 +30,7 @@ const fakeBaseUrl = new URL("https://fake");
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawl(treelike, baseHref) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "crawl");
   const tree =
     typeof treelike === "string"
       ? treeHttps.call(this, treelike)

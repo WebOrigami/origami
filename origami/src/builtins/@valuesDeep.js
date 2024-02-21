@@ -10,7 +10,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function valuesDeep(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@valuesDeep");
   return Tree.mapReduce(tree, null, async (values) => values.flat());
 }
 

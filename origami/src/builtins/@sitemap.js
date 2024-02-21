@@ -22,7 +22,7 @@ const templateText = `=\`<?xml version="1.0" encoding="UTF-8"?>
  * @param {string} [baseHref ]
  */
 export default async function sitemap(treelike, baseHref = "") {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

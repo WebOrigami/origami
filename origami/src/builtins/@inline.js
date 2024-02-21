@@ -14,7 +14,7 @@ import unpackOrigamiExpression from "./@loaders/ori.js";
  * @param {StringLike} input
  */
 export default async function inline(input) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "inline");
 
   // Get the input text and any attached front matter.
   let inputDocument;

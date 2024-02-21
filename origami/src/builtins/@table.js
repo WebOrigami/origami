@@ -8,7 +8,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} treelike
  */
 export default async function table(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@table");
   const firstValue = await valueForFirstKey(tree);
   if (Tree.isAsyncTree(firstValue)) {
     return fullTable(tree, firstValue);

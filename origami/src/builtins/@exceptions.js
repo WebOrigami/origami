@@ -10,7 +10,7 @@ import defineds from "./@defineds.js";
  * @param {Treelike} treelike
  */
 export default async function exceptions(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@exceptions");
 
   /** @type {AsyncTree} */
   let exceptionsTree = new ExceptionsTree(tree);

@@ -22,7 +22,7 @@ const defaultPort = 5000;
  * @this {AsyncTree|null}
  */
 export default async function serve(treelike, port) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "serve");
   let tree;
   if (treelike) {
     tree = Tree.from(treelike);

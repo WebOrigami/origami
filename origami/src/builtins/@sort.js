@@ -13,7 +13,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function sort(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@sort");
   const sorted = sortNatural()(tree);
   const scoped = Scope.treeWithScope(sorted, this);
   return scoped;

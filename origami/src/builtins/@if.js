@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [falseResult]
  */
 export default async function ifCommand(value, trueResult, falseResult) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "if");
   let condition = await value;
   if (Tree.isAsyncTree(condition)) {
     const keys = Array.from(await condition.keys());

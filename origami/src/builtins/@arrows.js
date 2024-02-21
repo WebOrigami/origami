@@ -13,7 +13,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function arrows(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@arrows");
   const mapped = functionResultsMap(arrowFunctionsMap()(tree));
   const scope = this ?? builtins;
   const scoped = Scope.treeWithScope(mapped, scope);

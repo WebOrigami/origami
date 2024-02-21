@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import { isTreelike } from "@weborigami/async-tree/src/Tree.js";
 import assertScopeIsDefined from "./assertScopeIsDefined.js";
 
 /**
@@ -16,26 +17,37 @@ import assertScopeIsDefined from "./assertScopeIsDefined.js";
  * @param {AsyncTree|null} scope
  * @param {IArguments} args
  * @param {Treelike|undefined} treelike
+ * @param {string} methodName
  * @returns {Promise<AsyncTree>}
  */
-export default async function getTreeArgument(scope, args, treelike) {
+export default async function getTreeArgument(
+  scope,
+  args,
+  treelike,
+  methodName
+) {
   assertScopeIsDefined(scope);
 
   if (treelike !== undefined) {
-    return Tree.from(treelike);
+    if (isTreelike(treelike)) {
+      return Tree.from(treelike);
+    }
+    throw new Error(
+      `The first argument to ${methodName} should be some kind of tree, but it was not.`
+    );
   }
 
   if (args.length === 0) {
     if (!scope) {
       // Should never happen because assertScopeIsDefined throws an exception.
       throw new Error(
-        "An Origami tree function was called with no tree argument and no scope."
+        `${methodName} was called with no tree argument and no scope.`
       );
     }
     return scope.get("@current");
   }
 
   throw new Error(
-    "An Origami tree function was called with an initial argument, but its value is undefined."
+    `The first argument to ${methodName} should be some kind of tree, but it was undefined.`
   );
 }

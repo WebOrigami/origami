@@ -12,7 +12,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {(Treelike|null)[]} trees
  */
 export default async function treeMerge(...trees) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "merge");
 
   // Filter out null or undefined trees.
   /** @type {Treelike[]}

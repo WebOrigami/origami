@@ -9,7 +9,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function first(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@first");
   for (const key of await tree.keys()) {
     // Just return first value immediately.
     const value = await tree.get(key);

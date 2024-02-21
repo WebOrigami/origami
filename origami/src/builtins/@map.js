@@ -47,8 +47,16 @@ export default function treeMap(param1, param2) {
   // or the second.
   let source;
   let options;
-  if (param2 === undefined) {
+  if (arguments.length === 0) {
+    throw new TypeError(
+      `@map: You must give @map a function or a dictionary of options`
+    );
+  } else if (!param1) {
+    throw new TypeError(`@map: The first argument was undefined`);
+  } else if (arguments.length === 1) {
     options = param1;
+  } else if (!param2) {
+    throw new TypeError(`@map: The second argument was undefined`);
   } else {
     source = param1;
     options = param2;
@@ -63,6 +71,10 @@ export default function treeMap(param1, param2) {
   ) {
     valueMap = options;
     options = {};
+  } else if (!options) {
+    throw new TypeError(
+      `@map: You must specify a valueMap function or options dictionary`
+    );
   } else {
     valueMap = options.valueMap;
   }

@@ -14,7 +14,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {PlainObject} [options]
  */
 export default async function reverse(treelike, options = {}) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@reverse");
   const scope = this;
   const deep = options.deep ?? false;
 

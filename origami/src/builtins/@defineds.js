@@ -12,7 +12,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} treelike
  */
 export default async function defineds(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@defineds");
 
   /** @type {AsyncTree} */
   let result = await Tree.mapReduce(tree, null, async (values, keys) => {

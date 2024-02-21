@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {...string|Symbol} keys
  */
 export default function treeHttp(host, ...keys) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "treeHttp");
   return ops.treeHttp.call(this, host, ...keys);
 }
 

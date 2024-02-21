@@ -17,7 +17,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Invocable} groupKeyFn
  */
 export default async function groupByBuiltin(treelike, groupKeyFn) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@groupBy");
 
   const fn = toFunction(groupKeyFn);
   const baseScope = Scope.getScope(this);

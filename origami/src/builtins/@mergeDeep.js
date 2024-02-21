@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike[]} trees
  */
 export default async function treeMergeDeep(...trees) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "mergeDeep");
   // Filter out null or undefined trees.
   const filtered = trees.filter((tree) => tree);
 

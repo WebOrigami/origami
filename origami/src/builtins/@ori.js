@@ -19,7 +19,7 @@ export default async function ori(
   expression,
   options = { formatResult: true }
 ) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "ori");
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression);
 

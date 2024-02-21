@@ -2,7 +2,6 @@ import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { hasNonPrintableCharacters, keySymbol } from "../common/utilities.js";
-import getTreeArgument from "./getTreeArgument.js";
 
 /**
  * Render a tree in DOT format.
@@ -16,7 +15,7 @@ import getTreeArgument from "./getTreeArgument.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(treelike, options = {}) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = Tree.from(treelike);
   const rootLabel = tree[keySymbol] ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {

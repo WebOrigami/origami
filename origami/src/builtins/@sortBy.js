@@ -17,7 +17,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Invocable} sortKeyFn
  */
 export default async function sortByBuiltin(treelike, sortKeyFn) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@sortBy");
 
   const fn = toFunction(sortKeyFn);
   const baseScope = Scope.getScope(this);

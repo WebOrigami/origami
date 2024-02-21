@@ -10,7 +10,7 @@ const fnPromiseMap = new WeakMap();
  * @param {Function} fn
  */
 export default async function once(fn) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "once");
   if (!fnPromiseMap.has(fn)) {
     fnPromiseMap.set(fn, fn.call(this));
   }

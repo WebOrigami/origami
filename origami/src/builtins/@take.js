@@ -11,7 +11,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {number} n
  */
 export default async function take(treelike, n) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@take");
 
   /** @type {AsyncTree} */
   let takeTree = {

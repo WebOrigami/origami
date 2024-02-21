@@ -16,7 +16,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
 export default async function debug(treelike) {
   // The debug command leaves the tree's existing scope intact; it does not
   // apply its own scope to the tree.
-  let tree = await getTreeArgument(this, arguments, treelike);
+  let tree = await getTreeArgument(this, arguments, treelike, "@debug");
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);

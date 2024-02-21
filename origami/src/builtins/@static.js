@@ -13,7 +13,7 @@ import index from "./@index.js";
  * @param {Treelike} treelike
  */
 export default async function staticTree(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@static");
   let result = transformObject(StaticTransform, tree);
   result = Scope.treeWithScope(result, this);
   return result;

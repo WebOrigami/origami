@@ -12,7 +12,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} filterVariant
  */
 export default async function filter(treelike, filterVariant) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "filter");
   /** @type {AsyncTree} */
   let result = new FilterTree(treelike, filterVariant);
   result = Scope.treeWithScope(result, this);

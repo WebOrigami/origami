@@ -14,7 +14,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Invocable} [invocable]
  */
 export default async function fnTree(invocable, keys = []) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "fnTree");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && invocable === undefined) {
     throw new Error(

@@ -12,7 +12,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {string} [prefix]
  */
 export default async function paths(treelike, prefix = "") {
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@paths");
   const result = [];
   for (const key of await tree.keys()) {
     const valuePath = prefix ? `${prefix}/${key}` : key;

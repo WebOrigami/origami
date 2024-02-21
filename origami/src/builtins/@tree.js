@@ -10,7 +10,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function tree(treelike) {
-  let tree = await getTreeArgument(this, arguments, treelike);
+  let tree = await getTreeArgument(this, arguments, treelike, "@tree");
   tree = Scope.treeWithScope(tree, this);
   return tree;
 }

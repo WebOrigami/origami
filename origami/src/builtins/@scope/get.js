@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function getScope(obj) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "getScope");
   if (obj) {
     /** @type {any}  */
     const tree = Tree.from(obj);
