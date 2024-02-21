@@ -33,7 +33,7 @@ export default async function getTreeArgument(
       return Tree.from(treelike);
     }
     throw new Error(
-      `The first argument to ${methodName} should be some kind of tree, but it was not.`
+      `${methodName}: The first argument must be a tree, like an array, object, or files.`
     );
   }
 
@@ -47,7 +47,5 @@ export default async function getTreeArgument(
     return scope.get("@current");
   }
 
-  throw new Error(
-    `The first argument to ${methodName} should be some kind of tree, but it was undefined.`
-  );
+  throw new Error(`${methodName}: The first argument was undefined.`);
 }

@@ -1,6 +1,11 @@
-// Text we look for in an error stack to guess whether the error was raised by
-// the Origami evaluate() function.
-const evaluateStackSignal = "at Scope.evaluate";
+// Text we look for in an error stack to guess whether a given line represents a
+// function in the Origami source code.
+const origamiSourceSignals = [
+  "async-tree/src/",
+  "language/src/",
+  "origami/src/",
+  "at Scope.evaluate",
+];
 
 /**
  * Format an error for display in the console.
@@ -9,13 +14,13 @@ const evaluateStackSignal = "at Scope.evaluate";
  */
 export default function formatError(error) {
   let message;
-  if (error.stack?.includes(evaluateStackSignal)) {
-    // Error was raised by the Origami evaluate() function. Include the top of
-    // error stack until we reach a line for that function.
+  if (error.stack) {
+    // Display the stack only until we reach the Origami source code.
     message = "";
     let lines = error.stack.split("\n");
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes(evaluateStackSignal)) {
+      const line = lines[i];
+      if (origamiSourceSignals.some((signal) => line.includes(signal))) {
         break;
       }
       if (message) {
