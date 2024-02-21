@@ -36,6 +36,11 @@ args "function arguments"
       return annotate([ops.traverse, ...path], location());
     }
 
+array "array"
+  = "[" __ list:list? __ closingBracket {
+      return annotate([ops.array, ...(list ?? [])], location());
+    }
+
 // An assignment statement: `foo = 1`
 assignment "tree assignment"
   = @identifier __ "=" __ @expr
@@ -44,11 +49,6 @@ assignmentOrShorthand
   = assignment
   / key:identifier {
       return annotate([key, [ops.inherited, key]], location());
-    }
-
-array "array"
-  = "[" __ list:list? __ closingBracket {
-      return annotate([ops.array, ...(list ?? [])], location());
     }
 
 // Something that can be called. This is more restrictive than the `expr`
