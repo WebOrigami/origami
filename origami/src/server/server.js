@@ -1,5 +1,5 @@
 import { ObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
+import { Scope, formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
 
@@ -153,16 +153,7 @@ export function requestListener(treelike) {
  * the console.
  */
 function respondWithError(response, error) {
-  let message = "";
-  // Work up to the root cause, displaying intermediate messages as we go up.
-  while (error.cause) {
-    message += error.message + `\n`;
-    error = error.cause;
-  }
-  if (error.name) {
-    message += `${error.name}: `;
-  }
-  message += error.message;
+  let message = formatError(error);
   // Prevent HTML in the error message from being interpreted as HTML.
   message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const html = `<!DOCTYPE html>

@@ -92,6 +92,10 @@ export default async function evaluate(code) {
 }
 
 function codeFragment(code) {
-  const { source, start, end } = code.location;
-  return source.text.slice(start.offset, end.offset);
+  if (code.location) {
+    const { source, start, end } = code.location;
+    return source.text.slice(start.offset, end.offset);
+  } else {
+    return "";
+  }
 }
