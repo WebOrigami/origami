@@ -154,7 +154,11 @@ async function statements(tree, nodePath, nodeLabel, options) {
   for (const key in nodes) {
     const node = nodes[key];
     const icon = node.isError ? "⚠️ " : "";
-    const label = `label="${icon}${node.label}"`;
+    // GraphViz has trouble rendering DOT nodes whose labels contain ellipsis
+    // characters, so we map those to three periods. GraphViz appears to turn
+    // those back into ellipsis characters when rendering the graph.
+    const text = node.label.replace(/…/g, "...");
+    const label = `label="${icon}${text}"`;
     const color = node.isError ? `; color="red"` : "";
     const fill = node.isError ? `; fillcolor="#FFF4F4"` : "";
     const destPath = nodePath ? `${nodePath}/${key}` : key;
