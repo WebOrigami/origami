@@ -27,7 +27,9 @@ export default function resize(param1, param2) {
     options = param2;
   }
 
-  const transform = (buffer) => sharp(buffer).resize(options).toBuffer();
+  // Include `rotate()` to auto-rotate according to EXIF data.
+  const transform = (buffer) =>
+    sharp(buffer).rotate().resize(options).toBuffer();
 
   return buffer ? transform(buffer) : transform;
 }
