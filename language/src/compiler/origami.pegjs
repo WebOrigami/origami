@@ -25,8 +25,10 @@ __
   = (inlineSpace / newLine / comment)*  { return ""; }
 
 // A filesystem path that begins with a slash: `/foo/bar`
+// We take care to avoid treating two consecutive leading slashes as a path;
+// that starts a comment.
 absoluteFilePath "absolute file path"
-  = path:leadingSlashPath {
+  = !"//" path:leadingSlashPath {
       return annotate([[ops.filesRoot], ...path], location());
     }
 
@@ -91,7 +93,8 @@ closingParen
 
 // A single line comment
 comment "comment"
-  = "#" [^\n\r]*
+  = multiLineComment
+  / singleLineComment
 
 digits
   = @[0-9]+
@@ -176,6 +179,9 @@ leadingSlashPath "path with a leading slash"
 // A separated list of expressions
 list "list"
   = @expr|1.., separator| separator?
+
+multiLineComment
+  = "/*" (!"*/" .)* "*/" { return null; }
 
 newLine
   = "\n"
@@ -266,6 +272,10 @@ sign
   = [+\-]
 
 singleArrow = "→" / "->"
+
+singleLineComment
+  = "#" [^\n\r]* { return null; }
+  / "//" [^\n\r]* { return null; }
 
 singleQuoteString "single quote string"
   = "'" chars:singleQuoteStringChar* "'" { return chars.join(""); }

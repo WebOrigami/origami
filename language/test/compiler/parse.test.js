@@ -109,6 +109,18 @@ describe("Origami parser", () => {
         ],
       ]
     );
+
+    // Consecutive slahes inside a path = empty string key
+    assertParse("expression", "path//key", [
+      ops.traverse,
+      [ops.scope, "path"],
+      "",
+      "key",
+    ]);
+    // Single slash at start of something = absolute file path
+    assertParse("expression", "/path", [[ops.filesRoot], "path"]);
+    // Consecutive slashes at start of something = comment
+    assertParse("expression", "path //comment", [ops.scope, "path"]);
   });
 
   test("functionComposition", () => {
@@ -257,6 +269,10 @@ describe("Origami parser", () => {
     assertParse("list", "'a' , 'b' , 'c'", ["a", "b", "c"]);
   });
 
+  test("multiLineComment", () => {
+    assertParse("multiLineComment", "/*\nHello, world!\n*/", null);
+  });
+
   test("number", () => {
     assertParse("number", "123", 123);
     assertParse("number", "-456", -456);
@@ -367,6 +383,14 @@ describe("Origami parser", () => {
       "localhost:5000",
       "foo",
     ]);
+  });
+
+  test("singleLineComment", () => {
+    assertParse("singleLineComment", "# Hello, world!", null);
+  });
+
+  test("singleLineComment (JS)", () => {
+    assertParse("singleLineComment", "// Hello, world!", null);
   });
 
   test("scopeReference", () => {
