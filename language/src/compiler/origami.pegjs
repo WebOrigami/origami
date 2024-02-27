@@ -328,7 +328,7 @@ templateLiteral "template literal"
   = "`" @templateLiteralContents "`"
 
 templateLiteralChar
-  = !("`" / "{{") @textChar
+  = !("`" / "{{" / "${") @textChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
@@ -343,6 +343,7 @@ templateLiteralText
 // A substitution in a template literal: `{{ fn() }}`
 templateSubstitution "template substitution"
   = "{{" @expression "}}"
+  / "${" @expression "}"
 
 textChar
   = escapedChar / .

@@ -414,8 +414,31 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("templateLiteral (JS)", () => {
+    assertParse("templateLiteral", "`Hello, world.`", "Hello, world.");
+    assertParse("templateLiteral", "`foo ${x} bar`", [
+      ops.concat,
+      "foo ",
+      [ops.scope, "x"],
+      " bar",
+    ]);
+    assertParse("templateLiteral", "`${`nested`}`", "nested");
+    assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
+      ops.concat,
+      [
+        [ops.scope, "map"],
+        [ops.scope, "people"],
+        [ops.lambda, null, [ops.concat, [ops.scope, "name"]]],
+      ],
+    ]);
+  });
+
   test("templateSubstitution", () => {
     assertParse("templateSubstitution", "{{foo}}", [ops.scope, "foo"]);
+  });
+
+  test("templateSubtitution (JS)", () => {
+    assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"]);
   });
 
   test("tree", () => {
