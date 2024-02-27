@@ -9,7 +9,7 @@ describe("inline", () => {
     const parent = new ObjectTree({
       name: "Alice",
     });
-    const document = await unpackText(`Hello, {{ name }}!`, { parent });
+    const document = await unpackText("Hello, ${name}!", { parent });
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {
       "@text": "Hello, Alice!",
@@ -20,7 +20,7 @@ describe("inline", () => {
     const document = await unpackText(`---
 name: Bob
 ---
-Hello, {{ _/name }}!`);
+Hello, \${ _/name }!`);
     /** @type {any} */
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {

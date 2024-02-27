@@ -4,7 +4,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import unpackOrigamiExpression from "./@loaders/ori.js";
 
 /**
- * Inline any Origami expressions found inside {{...}} placeholders in the input
+ * Inline any Origami expressions found inside ${...} placeholders in the input
  * text.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

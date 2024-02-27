@@ -30,14 +30,14 @@ export function templateDocument(source) {
 //
 // Example:
 //
-//     {{ if `
+//     ${ if `
 //       true text
 //     `, `
 //       false text
-//     ` }}
+//     ` }
 //
 // Case 1: a substitution that starts the text or starts a line (there's only
-// whitespace before the `{{`), and has the line end with the start of a
+// whitespace before the `${`), and has the line end with the start of a
 // template literal (there's only whitespace after the backtick) marks the start
 // of a block.
 //
@@ -45,15 +45,15 @@ export function templateDocument(source) {
 // another is an internal break in the block. Edge case: three backticks in a
 // row, like ```, are common in markdown and are not treated as a break.
 //
-// Case 3: a line that ends a template literal and ends with `}}` or ends the
+// Case 3: a line that ends a template literal and ends with `}` or ends the
 // text marks the end of the block.
 //
 // In all three cases, we trim spaces and tabs from the start and end of the
 // line. In case 1, we also remove the preceding newline.
 function trimTemplateWhitespace(text) {
-  const regex1 = /(^|\n)[ \t]*({{.*?`)[ \t]*\n/g;
+  const regex1 = /(^|\n)[ \t]*(\${.*?`)[ \t]*\n/g;
   const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
-  const regex3 = /\n[ \t]*(`(?!`).*?}})[ \t]*(?:\n|$)/g;
+  const regex3 = /\n[ \t]*(`(?!`).*?})[ \t]*(?:\n|$)/g;
   const trimBlockStarts = text.replace(regex1, "$1$2");
   const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
   const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");

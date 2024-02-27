@@ -20,7 +20,7 @@ describe(".ori loader", () => {
       name: "world",
     });
     const source = `{
-      message = \`Hello, {{ name }}!\`
+      message = \`Hello, \${name}!\`
     }`;
     const tree = await unpackOrigamiExpression(source, { parent });
     assert.deepEqual(await Tree.plain(tree), {
@@ -32,7 +32,7 @@ describe(".ori loader", () => {
     const source = `{
       name = "world",
       public = {
-        message = \`Hello, {{ name }}!\`
+        message = \`Hello, \${name}!\`
       }
     }`;
     const tree = await unpackOrigamiExpression(source);
@@ -54,7 +54,7 @@ describe(".ori loader", () => {
     const scope = new ObjectTree({
       name: "Alice",
     });
-    const source = `\`Hello, {{ name }}!\``;
+    const source = `\`Hello, \${name}!\``;
     const unpackedText = await unpackOrigamiExpression(source, {
       parent: scope,
     });
@@ -65,14 +65,14 @@ describe(".ori loader", () => {
     const parent = new ObjectTree({
       name: "Alice",
     });
-    const source = `=\`Hello, {{ name }}!\``;
+    const source = `=\`Hello, \${name}!\``;
     const templateFn = await unpackOrigamiExpression(source, { parent });
     const value = await templateFn();
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
-    const source = `=\`Hello, {{ _/name }}!\``;
+    const source = `=\`Hello, \${ _/name }!\``;
     const templateFn = await unpackOrigamiExpression(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");

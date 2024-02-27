@@ -1,5 +1,5 @@
 {
   index.html = index.ori()
-  index.ori = "=`Hello, {{ name }}!`"
+  index.ori = "=`Hello, ${ name }!`"
   name = "world"
 }

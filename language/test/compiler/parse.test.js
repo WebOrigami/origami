@@ -70,7 +70,7 @@ describe("Origami parser", () => {
       ],
       [[ops.scope, "files"], "snapshot"],
     ]);
-    assertParse("expr", "@map =`<li>{{_}}</li>`", [
+    assertParse("expr", "@map =`<li>${_}</li>`", [
       [ops.scope, "@map"],
       [ops.lambda, null, [ops.concat, "<li>", [ops.scope, "_"], "</li>"]],
     ]);
@@ -249,7 +249,7 @@ describe("Origami parser", () => {
       null,
       [ops.scope, "message"],
     ]);
-    assertParse("lambda", "=`Hello, {{name}}.`", [
+    assertParse("lambda", "=`Hello, ${name}.`", [
       ops.lambda,
       null,
       [ops.concat, "Hello, ", [ops.scope, "name"], "."],
@@ -407,7 +407,7 @@ describe("Origami parser", () => {
   });
 
   test("templateDocument", () => {
-    assertParse("templateDocument", "hello{{foo}}world", [
+    assertParse("templateDocument", "hello${foo}world", [
       ops.lambda,
       null,
       [ops.concat, "hello", [ops.scope, "foo"], "world"],

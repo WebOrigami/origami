@@ -322,7 +322,7 @@ templateDocument "template"
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar
-  = !"{{" @textChar
+  = !("{{" / "${") @textChar
 
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
