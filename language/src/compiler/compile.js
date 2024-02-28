@@ -51,11 +51,11 @@ export function templateDocument(source) {
 // In all three cases, we trim spaces and tabs from the start and end of the
 // line. In case 1, we also remove the preceding newline.
 function trimTemplateWhitespace(text) {
-  const regex1 = /(^|\n)[ \t]*(\${.*?`)[ \t]*\n/g;
+  const regex1 = /(^|\n)[ \t]*((?:{{|\${).*?`)[ \t]*\n/g;
   const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
-  const regex3 = /\n[ \t]*(`(?!`).*?})[ \t]*(?:\n|$)/g;
+  const regex3js = /\n[ \t]*(`(?!`).*?(?:}}|[^\\]}))[ \t]*(?:\n|$)/g;
   const trimBlockStarts = text.replace(regex1, "$1$2");
   const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
-  const trimBlockEnds = trimBlockBreaks.replace(regex3, "\n$1");
+  const trimBlockEnds = trimBlockBreaks.replace(regex3js, "\n$1");
   return trimBlockEnds;
 }
