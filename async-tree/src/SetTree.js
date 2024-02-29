@@ -11,7 +11,7 @@ export default class SetTree {
    * @param {Set} set
    */
   constructor(set) {
-    this.values = [...set];
+    this.values = Array.from(set);
     this.parent = null;
   }
 

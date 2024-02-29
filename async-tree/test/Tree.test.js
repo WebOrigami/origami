@@ -55,19 +55,16 @@ describe("Tree", () => {
   test("clear() removes all values", async () => {
     const fixture = createFixture();
     await Tree.clear(fixture);
-    assert.deepEqual([...(await Tree.entries(fixture))], []);
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), []);
   });
 
   test("entries() returns the [key, value] pairs", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await Tree.entries(fixture))],
-      [
-        ["Alice.md", "Hello, **Alice**."],
-        ["Bob.md", "Hello, **Bob**."],
-        ["Carol.md", "Hello, **Carol**."],
-      ]
-    );
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), [
+      ["Alice.md", "Hello, **Alice**."],
+      ["Bob.md", "Hello, **Bob**."],
+      ["Carol.md", "Hello, **Carol**."],
+    ]);
   });
 
   test("forEach() invokes a callback for each entry", async () => {
@@ -246,13 +243,10 @@ describe("Tree", () => {
   test("remove method removes a value", async () => {
     const fixture = createFixture();
     await Tree.remove(fixture, "Alice.md");
-    assert.deepEqual(
-      [...(await Tree.entries(fixture))],
-      [
-        ["Bob.md", "Hello, **Bob**."],
-        ["Carol.md", "Hello, **Carol**."],
-      ]
-    );
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), [
+      ["Bob.md", "Hello, **Bob**."],
+      ["Carol.md", "Hello, **Carol**."],
+    ]);
   });
 
   test("toFunction returns a function that invokes a tree's get() method", async () => {
@@ -337,10 +331,11 @@ describe("Tree", () => {
 
   test("values() returns the store's values", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await Tree.values(fixture))],
-      ["Hello, **Alice**.", "Hello, **Bob**.", "Hello, **Carol**."]
-    );
+    assert.deepEqual(Array.from(await Tree.values(fixture)), [
+      "Hello, **Alice**.",
+      "Hello, **Bob**.",
+      "Hello, **Carol**.",
+    ]);
   });
 });
 

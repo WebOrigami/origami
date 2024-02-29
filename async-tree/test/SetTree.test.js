@@ -7,7 +7,7 @@ describe("SetTree", () => {
   test("can get the keys of the tree", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetTree(set);
-    assert.deepEqual([...(await fixture.keys())], [0, 1, 2]);
+    assert.deepEqual(Array.from(await fixture.keys()), [0, 1, 2]);
   });
 
   test("can get the value for a key", async () => {

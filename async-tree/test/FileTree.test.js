@@ -12,10 +12,11 @@ const tempDirectory = path.join(dirname, "fixtures/temp");
 describe("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
-    assert.deepEqual(
-      [...(await fixture.keys())],
-      ["Alice.md", "Bob.md", "Carol.md"]
-    );
+    assert.deepEqual(Array.from(await fixture.keys()), [
+      "Alice.md",
+      "Bob.md",
+      "Carol.md",
+    ]);
   });
 
   test("can get the value for a key", async () => {

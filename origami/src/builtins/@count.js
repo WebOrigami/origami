@@ -10,7 +10,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  */
 export default async function count(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@count");
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   return keys.length;
 }
 

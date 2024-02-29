@@ -100,7 +100,7 @@ export default function createMapTransform(options) {
     if (keyMap) {
       transformed.keys = async () => {
         // Apply the keyMap to source keys for leaf values (not subtrees).
-        const sourceKeys = [...(await tree.keys())];
+        const sourceKeys = Array.from(await tree.keys());
         const mapped = await Promise.all(
           sourceKeys.map(async (sourceKey) => {
             let resultKey;

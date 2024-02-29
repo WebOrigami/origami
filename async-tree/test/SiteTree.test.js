@@ -43,7 +43,11 @@ describe("SiteTree", () => {
     const fixture = new SiteTree(mockHost);
     const about = fixture.resolve("about");
     const keys = await about.keys();
-    assert.deepEqual([...keys], ["Alice.html", "Bob.html", "Carol.html"]);
+    assert.deepEqual(Array.from(keys), [
+      "Alice.html",
+      "Bob.html",
+      "Carol.html",
+    ]);
   });
 
   test("can get the value for a key", async () => {

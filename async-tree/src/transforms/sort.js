@@ -13,7 +13,7 @@ export default function createSortTransform(compareFn) {
   return function sortTransform(tree) {
     const transform = Object.create(tree);
     transform.keys = async () => {
-      const keys = [...(await tree.keys())];
+      const keys = Array.from(await tree.keys());
       keys.sort(compareFn);
       return keys;
     };

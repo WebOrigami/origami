@@ -12,7 +12,7 @@ const commands = new (CommandModulesTransform(ImportModulesMixin(FileTree)))(
 describe("CommandModulesTransform", () => {
   test("maps foo.js file keys to foo keys", async () => {
     const keys = await commands.keys();
-    assert.deepEqual([...keys], ["greet", "obj", "text"]);
+    assert.deepEqual(Array.from(keys), ["greet", "obj", "text"]);
   });
 
   test("Gets the exports of the .js file named by the key", async () => {

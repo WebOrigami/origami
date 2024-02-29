@@ -29,7 +29,7 @@ export default async function regExpKeys(tree) {
     },
 
     async keys() {
-      return [...map.keys()];
+      return map.keys();
     },
   };
 

@@ -74,7 +74,7 @@ export async function clear(tree) {
  * @param {AsyncTree} tree
  */
 export async function entries(tree) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => [key, await tree.get(key)]);
   return Promise.all(promises);
 }
@@ -87,7 +87,7 @@ export async function entries(tree) {
  * @param {Function} callbackFn
  */
 export async function forEach(tree, callbackFn) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => {
     const value = await tree.get(key);
     return callbackFn(value, key);
@@ -430,7 +430,7 @@ class TraverseError extends ReferenceError {
  * @param {AsyncTree} tree
  */
 export async function values(tree) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => tree.get(key));
   return Promise.all(promises);
 }
