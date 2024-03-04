@@ -1,4 +1,2 @@
-import yaml from "./yaml.js";
-
-// .yml files uses the YAML loader
-export default yaml;
+// .yml extension is a synonym for .yaml
+export { default } from "./yaml.js";

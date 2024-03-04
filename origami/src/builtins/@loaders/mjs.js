@@ -1,4 +1,2 @@
-import unpackModule from "./js.js";
-
-// .mjs modules use the same loader as .js modules.
-export default unpackModule;
+// .mjs files use the .js loader
+export { default } from "./js.js";
