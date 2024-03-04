@@ -5,7 +5,7 @@ import unpackJpeg from "../../../src/builtins/@loaders/jpeg.js";
 
 describe(".jpeg loader", () => {
   test("loads Exif metadata", async () => {
-    const fixturePath = new URL("fixtures/sampleExif.jpeg", import.meta.url);
+    const fixturePath = new URL("fixtures/exif.jpeg", import.meta.url);
     const image = await fs.readFile(fixturePath);
     const tags = await unpackJpeg(image);
     assert.equal(tags.LensMake, "Apple");
