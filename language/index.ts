@@ -1,5 +1,4 @@
 import { AsyncTree } from "@weborigami/types";
-import { StringLike } from "../async-tree/index.js";
 
 export * from "./main.js";
 
@@ -19,10 +18,11 @@ export type Code = ArrayWithSource;
 export type Constructor<T> = new (...args: any[]) => T;
 
 /**
- * A function that can convert a string-like input value into some live object.
+ * A function that can convert a value from some persistent form into some kind
+ * of live value.
  */
 export type FileUnpackFunction = (
-  input: StringLike,
+  input: any,
   options?: {
     compiler?: any,
     key?: any,

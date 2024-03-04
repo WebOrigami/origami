@@ -13,6 +13,6 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
  */
 export default async function unpackYaml(input, options = {}) {
   const parent = options.parent ?? null;
-  const data = evaluateYaml(String(input), options.parent);
+  const data = await evaluateYaml(String(input), options.parent);
   return processUnpackedContent(data, parent);
 }

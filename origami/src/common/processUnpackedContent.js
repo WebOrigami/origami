@@ -20,6 +20,10 @@ export default function processUnpackedContent(content, parent, inputDocument) {
 
     // Use the parent's scope, adding any attached data.
     const parentScope = parent ? Scope.getScope(parent) : builtins;
+
+    // TODO: Remove
+    const isTreelike = Tree.isTreelike(inputDocument);
+
     const extendedScope = Tree.isTreelike(inputDocument)
       ? new Scope(inputDocument, parentScope)
       : parentScope;

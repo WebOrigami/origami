@@ -41,5 +41,9 @@ export default async function unpackOrigamiExpression(
   const parentScope = parent ? Scope.getScope(parent) : builtins;
   let content = await fn.call(parentScope);
 
-  return processUnpackedContent(content, parent, inputDocument);
+  // TODO: See why we need to pass inputDocument in the first place.
+
+  // TODO: Only pass inputDocument if it's a plain object with @text.
+
+  return processUnpackedContent(content, parent /* inputDocument */);
 }
