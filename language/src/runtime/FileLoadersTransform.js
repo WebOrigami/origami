@@ -32,7 +32,14 @@ export default function FileLoadersTransform(Base) {
             }
             const parent = this;
             value[symbols.parent] = parent;
-            value.unpack = loader.bind(null, input, { key, parent });
+
+            // Wrap the loader with a function that will only be called once per
+            // value.
+            let loaded;
+            value.unpack = async () => {
+              loaded ??= await loader(input, { key, parent });
+              return loaded;
+            };
           }
         }
       }
