@@ -29,8 +29,6 @@ export default function FileLoadersTransform(Base) {
             // attach data to it.
             if (typeof input === "string") {
               value = new String(input);
-            } else if (value instanceof Buffer) {
-              value = Buffer.from(value);
             }
             const parent = this;
             value[symbols.parent] = parent;
