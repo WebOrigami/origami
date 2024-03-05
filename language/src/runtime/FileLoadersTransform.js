@@ -32,21 +32,11 @@ export default function FileLoadersTransform(Base) {
               value = Buffer.from(value);
             }
 
-            // TODO: We want to be able to use the value without having to copy it,
-            // but we also don't want the resulting object (with an unpack method)
-            // to be treated as an AsyncTree by processUnpackedContent.
-
-            const parent = this;
-
             // TODO: Move parentSymbol to language package, use it here.
             // value[utilities.parentSymbol] = parent;
-
-            // value.parent = parent;
+            const parent = this;
             Object.defineProperty(value, "parent", {
               value: parent,
-              // enumerable: false,
-              // writable: true,
-              // configurable: true,
             });
             value.unpack = loader.bind(null, input, { key, parent });
           }

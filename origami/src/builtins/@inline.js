@@ -1,3 +1,4 @@
+import { Tree, isPlainObject } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import unpackText from "../builtins/@loaders/txt.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
@@ -28,7 +29,17 @@ export default async function inline(input) {
     inputDocument = await unpackText(input);
   }
 
+  // If the input document is a plain object or AsyncTree, we'll have it
+  // included in scope for the evaluated expression. We ignore other kinds of
+  // treelike inputs for this test: in particular, a Buffer will be interpreted
+  // as a tree, but we don't want to put a Buffer in scope.
+  const attachedData =
+    isPlainObject(inputDocument) || Tree.isAsyncTree(inputDocument)
+      ? inputDocument
+      : null;
+
   const templateFn = await unpackOrigamiExpression(inputDocument, {
+    attachedData,
     compiler: compile.templateDocument,
   });
   const templateResult = await templateFn(inputDocument);
