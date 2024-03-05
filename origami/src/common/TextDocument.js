@@ -1,4 +1,5 @@
 import { isStringLike } from "@weborigami/async-tree";
+import { symbols } from "@weborigami/language";
 import { toYaml } from "./serialize.js";
 import * as utilities from "./utilities.js";
 
@@ -22,7 +23,7 @@ export default class TextDocument {
   constructor(data, parent) {
     Object.assign(this, data);
     if (parent) {
-      this[utilities.parentSymbol] = parent;
+      this[symbols.parent] = parent;
     }
   }
 

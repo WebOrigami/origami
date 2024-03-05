@@ -1,4 +1,4 @@
-import { Scope } from "@weborigami/language";
+import { Scope, symbols } from "@weborigami/language";
 import * as compile from "../../../../language/src/compiler/compile.js";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import * as utilities from "../../common/utilities.js";
@@ -17,7 +17,7 @@ export default async function unpackOrigamiExpression(
   const parent =
     options.parent ??
     /** @type {any} */ (inputDocument).parent ??
-    /** @type {any} */ (inputDocument)[utilities.parentSymbol];
+    /** @type {any} */ (inputDocument)[symbols.parent];
 
   // Construct an object to represent the source code.
   const sourceName = options.key;

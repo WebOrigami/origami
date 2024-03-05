@@ -1,6 +1,5 @@
 
 export const keySymbol: unique symbol;
-export const parentSymbol: unique symbol;
 export function hasNonPrintableCharacters(text: string): boolean;
 export function isTransformApplied(Transform: Function, object: any): boolean;
 export function replaceExtension(key: string, sourceExtension: string, resultExtension: string): string;

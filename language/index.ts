@@ -1,4 +1,3 @@
-import { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 
@@ -23,11 +22,7 @@ export type Constructor<T> = new (...args: any[]) => T;
  */
 export type FileUnpackFunction = (
   input: any,
-  options?: {
-    compiler?: any,
-    key?: any,
-    parent?: AsyncTree | null
-  }
+  options?: any
 ) => any;
 
 /**

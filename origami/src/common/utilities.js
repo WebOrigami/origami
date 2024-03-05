@@ -30,8 +30,6 @@ export function isTransformApplied(Transform, obj) {
 
 export const keySymbol = Symbol("key");
 
-export const parentSymbol = Symbol("parent");
-
 /**
  * If the given key ends in the source extension (which will generally include a
  * period), replace that extension with the result extension (which again should

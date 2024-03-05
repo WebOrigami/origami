@@ -1,6 +1,7 @@
 import { Tree, isStringLike } from "@weborigami/async-tree";
 import Scope from "./Scope.js";
 import extname from "./extname.js";
+import * as symbols from "./symbols.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -31,13 +32,8 @@ export default function FileLoadersTransform(Base) {
             } else if (value instanceof Buffer) {
               value = Buffer.from(value);
             }
-
-            // TODO: Move parentSymbol to language package, use it here.
-            // value[utilities.parentSymbol] = parent;
             const parent = this;
-            Object.defineProperty(value, "parent", {
-              value: parent,
-            });
+            value[symbols.parent] = parent;
             value.unpack = loader.bind(null, input, { key, parent });
           }
         }
