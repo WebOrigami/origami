@@ -81,9 +81,13 @@ export default async function evaluate(code) {
     Object.isExtensible(result) &&
     !isPlainObject(result)
   ) {
-    result[codeSymbol] = code;
-    if (/** @type {any} */ (code).location) {
-      result[sourceSymbol] = codeFragment(code);
+    try {
+      result[codeSymbol] = code;
+      if (/** @type {any} */ (code).location) {
+        result[sourceSymbol] = codeFragment(code);
+      }
+    } catch (/** @type {any} */ error) {
+      // Ignore errors.
     }
   }
 
