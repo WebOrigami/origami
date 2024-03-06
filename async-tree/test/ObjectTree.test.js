@@ -116,6 +116,13 @@ describe("ObjectTree", () => {
     });
     assert.equal(await tree.get("subtree"), subtree);
   });
+
+  test("method on an object is bound to the object", async () => {
+    const n = new Number(123);
+    const tree = new ObjectTree(n);
+    const method = await tree.get("toString");
+    assert.equal(method(), "123");
+  });
 });
 
 function createFixture() {

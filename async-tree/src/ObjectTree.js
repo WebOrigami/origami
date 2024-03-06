@@ -41,6 +41,11 @@ export default class ObjectTree {
       value.parent = this;
     }
 
+    if (typeof value === "function" && !this.object.hasOwnProperty(key)) {
+      // Value is an inherited method; bind it to the object.
+      value = value.bind(this.object);
+    }
+
     return value;
   }
 
