@@ -1,5 +1,5 @@
-import { expressionFunction } from "@weborigami/language";
-import * as compile from "../../../language/src/compiler/compile.js";
+import { compile, expressionFunction } from "@weborigami/language";
+
 /**
  * A YAML tag for an Origami expression.
  */

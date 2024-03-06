@@ -1,8 +1,8 @@
 import { Scope, functionResultsMap } from "@weborigami/language";
-import builtins from "../../src/builtins/@builtins.js";
 import arrowFunctionsMap from "../common/arrowFunctionsMap.js";
 import { keySymbol } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
+import builtins from "./@builtins.js";
 
 /**
  * Interpret arrow keys in the tree as function calls.

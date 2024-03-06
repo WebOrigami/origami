@@ -1,5 +1,5 @@
 import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
-import * as compile from "../../../language/src/compiler/compile.js";
+import { compile } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";

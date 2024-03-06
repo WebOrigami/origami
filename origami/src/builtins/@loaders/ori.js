@@ -1,5 +1,4 @@
-import { Scope, symbols } from "@weborigami/language";
-import * as compile from "../../../../language/src/compiler/compile.js";
+import { Scope, compile, symbols } from "@weborigami/language";
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 import * as utilities from "../../common/utilities.js";
 import builtins from "../@builtins.js";
