@@ -27,7 +27,7 @@ export default async function rss(jsonFeedTree) {
     <title>${title}</title>
     <link>${home_page_url}</link>
     <description>${description}</description>
-  ${itemsRss}</channel>
+${itemsRss}</channel>
 </rss>`;
 }
 
@@ -35,9 +35,10 @@ function itemRss(jsonFeedItem) {
   const { content_html, date_published, id, title, url } = jsonFeedItem;
   // RSS wants dates in RFC-822.
   const date = date_published?.toUTCString() ?? null;
-  const dateElement = date ? `      <pubDate>${date}</pubDate>\n` : "";
+  const dateElement = date ? `<pubDate>${date}</pubDate>` : "";
   return `    <item>
-      ${dateElement}<title>${title}</title>
+      ${dateElement}
+      <title>${title}</title>
       <link>${url}</link>
       <guid>${id}</guid>
       <description><![CDATA[${content_html}]]></description>
