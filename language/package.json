@@ -10,7 +10,7 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?a3d29b06",
+    "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?e69ac509",
     "@weborigami/types": "0.0.43",
     "peggy": "3.0.2",
     "watcher": "2.3.0"
