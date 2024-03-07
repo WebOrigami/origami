@@ -38,7 +38,7 @@ function itemRss(jsonFeedItem) {
   const dateElement = date ? `      <pubDate>${date}</pubDate>\n` : "";
   const guidElement = id ? `      <guid>${id}</guid>\n` : "";
   const contentElement = content_html
-    ? `      <description>${content_html}</description>\n`
+    ? `      <description><![CDATA[${content_html}]]></description>\n`
     : "";
   return `    <item>
 ${dateElement}      <title>${title}</title>
