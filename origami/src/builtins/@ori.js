@@ -73,13 +73,13 @@ async function formatResult(result) {
     text = result;
   }
 
-  // If the result is a tree, attach the tree to the text output.
+  // If the result is treelike, attach it to the text output.
   if (Tree.isTreelike(result)) {
     if (typeof text === "string") {
       // @ts-ignore
       text = new String(text);
     }
-    /** @type {any} */ (text).unpack = () => Tree.from(result);
+    /** @type {any} */ (text).unpack = () => result;
   }
 
   return text;
