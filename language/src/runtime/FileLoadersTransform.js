@@ -1,7 +1,6 @@
-import { Tree, isStringLike } from "@weborigami/async-tree";
+import { isStringLike } from "@weborigami/async-tree";
 import Scope from "./Scope.js";
-import extname from "./extname.js";
-import * as symbols from "./symbols.js";
+import attachFileLoader from "./attachFileLoader.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -15,33 +14,11 @@ export default function FileLoadersTransform(Base) {
     async get(key) {
       let value = await super.get(key);
 
-      // If the key is string-like and has an extension, look for a loader that
-      // handles that extension.
+      // If the key is string-like and has an extension, attach a loader (if one
+      // exists) that handles that extension.
       if (value && isStringLike(key)) {
-        const extension = extname(String(key)).toLowerCase().slice(1);
-        if (extension) {
-          /** @type {any} */
-          const scope = Scope.getScope(this);
-          const loader = await Tree.traverse(scope, "@loaders", extension);
-          if (loader) {
-            const input = value;
-            // If the input is a plain string, convert it to a String so we can
-            // attach data to it.
-            if (typeof input === "string") {
-              value = new String(input);
-            }
-            const parent = this;
-            value[symbols.parent] = parent;
-
-            // Wrap the loader with a function that will only be called once per
-            // value.
-            let loaded;
-            value.unpack = async () => {
-              loaded ??= await loader(input, { key, parent });
-              return loaded;
-            };
-          }
-        }
+        const scope = Scope.getScope(this);
+        value = await attachFileLoader(scope, String(key), value, this);
       }
 
       return value;
