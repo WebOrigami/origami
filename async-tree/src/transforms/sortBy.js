@@ -22,7 +22,8 @@ export default function createSortByTransform(sortKeyFn) {
       keysAndSortKeys.sort((a, b) =>
         a.sortKey < b.sortKey ? -1 : a.sortKey > b.sortKey ? 1 : 0
       );
-      return keysAndSortKeys.map(({ key }) => key);
+      const sortedKeys = keysAndSortKeys.map(({ key }) => key);
+      return sortedKeys;
     };
     return transform;
   };
