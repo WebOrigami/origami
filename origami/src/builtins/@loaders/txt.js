@@ -1,5 +1,6 @@
 import TextDocument from "../../common/TextDocument.js";
 import { evaluateYaml } from "../../common/serialize.js";
+import * as utilities from "../../common/utilities.js";
 
 /**
  * Load a file as text document with possible front matter.
@@ -16,7 +17,10 @@ import { evaluateYaml } from "../../common/serialize.js";
  */
 export default async function unpackText(input, options = {}) {
   const parent = options.parent ?? null;
-  const text = String(input);
+  const text = utilities.toString(input);
+  if (!text) {
+    throw new Error("Tried to treat something as text but it wasn't text.");
+  }
   const regex =
     /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
   const match = regex.exec(text);
