@@ -49,6 +49,7 @@ export * from "../src/builtins/@loaders/md.js";
 export * from "../src/builtins/@loaders/mjs.js";
 export { default as loadersOri } from "../src/builtins/@loaders/ori.js";
 export { default as loadersTxt } from "../src/builtins/@loaders/txt.js";
+export { default as loadersWasm } from "../src/builtins/@loaders/wasm.js";
 export * from "../src/builtins/@loaders/xhtml.js";
 export { default as loadersYaml } from "../src/builtins/@loaders/yaml.js";
 export * from "../src/builtins/@loaders/yml.js";
