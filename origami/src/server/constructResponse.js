@@ -30,8 +30,16 @@ export default async function constructResponse(request, resource) {
 
   // Determine media type, what data we'll send, and encoding.
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
-  const extension = extname(url.pathname).toLowerCase();
-  let mediaType = extension ? mediaTypeForExtension[extension] : undefined;
+
+  let mediaType;
+  if (resource.mediaType) {
+    // Resource indicates its own media type.
+    mediaType = resource.mediaType;
+  } else {
+    // Infer expected media type from file extension on request URL.
+    const extension = extname(url.pathname).toLowerCase();
+    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
+  }
 
   if (
     mediaType === undefined &&
