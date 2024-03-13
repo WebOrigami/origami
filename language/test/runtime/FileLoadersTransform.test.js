@@ -33,7 +33,9 @@ function createFixture() {
   /** @type {any} */
   const scope = {
     "@loaders": {
-      json: (buffer) => JSON.parse(String(buffer)),
+      json: {
+        unpack: (buffer) => JSON.parse(String(buffer)),
+      },
     },
   };
   tree = Scope.treeWithScope(tree, scope);

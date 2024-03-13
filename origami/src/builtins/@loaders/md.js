@@ -1,2 +1,7 @@
 // .md files use the .txt loader
-export { default } from "./txt.js";
+import fileTypeText from "./txt.js";
+
+export default {
+  ...fileTypeText,
+  mediaType: "text/markdown",
+};

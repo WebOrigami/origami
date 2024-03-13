@@ -1,6 +1,6 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
 import builtins from "./@builtins.js";
-import unpackOrigamiExpression from "./@loaders/ori.js";
+import fileTypeOrigami from "./@loaders/ori.js";
 import paths from "./@paths.js";
 
 const templateText = `=\`<?xml version="1.0" encoding="UTF-8"?>
@@ -48,7 +48,7 @@ export default async function sitemap(treelike, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFn = await unpackOrigamiExpression(templateText);
+  const templateFn = await fileTypeOrigami.unpack(templateText);
   const templateResult = await templateFn.call(builtins, htmlPaths);
   return String(templateResult);
 }

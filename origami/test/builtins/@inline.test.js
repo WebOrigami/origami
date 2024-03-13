@@ -2,14 +2,14 @@ import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import unpackText from "../../src/builtins/@loaders/txt.js";
+import fileTypeText from "../../src/builtins/@loaders/txt.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {
     const parent = new ObjectTree({
       name: "Alice",
     });
-    const document = await unpackText("Hello, ${name}!", { parent });
+    const document = await fileTypeText.unpack("Hello, ${name}!", { parent });
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {
       "@text": "Hello, Alice!",
@@ -17,7 +17,7 @@ describe("inline", () => {
   });
 
   test("can reference itself via `_` ambient", async () => {
-    const document = await unpackText(`---
+    const document = await fileTypeText.unpack(`---
 name: Bob
 ---
 Hello, \${ _/name }!`);

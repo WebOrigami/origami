@@ -1,2 +1,2 @@
-// .htm files use the .txt loader
-export { default } from "./txt.js";
+// .htm is a synonynm for .html
+export { default } from "./html.js";

@@ -1,8 +1,8 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import unpackText from "../builtins/@loaders/txt.js";
+import fileTypeText from "../builtins/@loaders/txt.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import unpackOrigamiExpression from "./@loaders/ori.js";
+import fileTypeOrigami from "./@loaders/ori.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input
@@ -26,7 +26,7 @@ export default async function inline(input) {
     inputDocument = await /** @type {any} */ (input).unpack();
   } else {
     // Unpack the input as a text document with possible front matter.
-    inputDocument = await unpackText(input);
+    inputDocument = await fileTypeText.unpack(input);
   }
 
   // If the input document is a plain object or AsyncTree, we'll have it
@@ -38,7 +38,7 @@ export default async function inline(input) {
       ? inputDocument
       : null;
 
-  const templateFn = await unpackOrigamiExpression(inputDocument, {
+  const templateFn = await fileTypeOrigami.unpack(inputDocument, {
     attachedData,
     compiler: compile.templateDocument,
   });

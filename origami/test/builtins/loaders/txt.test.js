@@ -1,12 +1,12 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import unpackText from "../../../src/builtins/@loaders/txt.js";
+import fileTypeText from "../../../src/builtins/@loaders/txt.js";
 
 describe("text loader", () => {
   test("unpacks text without data", async () => {
     const text = "Body text";
-    const document = await unpackText(text);
+    const document = await fileTypeText.unpack(text);
     assert.deepEqual(document, {
       "@text": text,
     });
@@ -14,7 +14,7 @@ describe("text loader", () => {
 
   test("unpacks a document with YAML/JSON front matter", async () => {
     const text = "---\na: 1\n---\nBody text";
-    const document = await unpackText(text);
+    const document = await fileTypeText.unpack(text);
     assert.deepEqual(document, {
       "@text": "Body text",
       a: 1,
@@ -29,7 +29,7 @@ Body text`;
     const parent = new ObjectTree({
       greeting: "Hello",
     });
-    const document = await unpackText(text, { parent });
+    const document = await fileTypeText.unpack(text, { parent });
     assert.deepEqual(document, {
       "@text": "Body text",
       message: "Hello",
@@ -38,7 +38,7 @@ Body text`;
 
   test("unpacks and packs in the same format", async () => {
     const text = "---\na: 1\n---\nBody text";
-    const document = await unpackText(text);
+    const document = await fileTypeText.unpack(text);
     assert.equal(await document.pack(), text);
   });
 });

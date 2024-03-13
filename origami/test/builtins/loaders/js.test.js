@@ -2,7 +2,7 @@ import { FileTree } from "@weborigami/async-tree";
 import { ImportModulesMixin } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import unpackModule from "../../../src/builtins/@loaders/js.js";
+import fileTypeJs from "../../../src/builtins/@loaders/js.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);
@@ -10,7 +10,7 @@ const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);
 describe(".js loader", () => {
   test("loads .js file that exports a string", async () => {
     const buffer = await fixturesTree.get("string.js");
-    const text = await unpackModule(buffer, {
+    const text = await fileTypeJs.unpack(buffer, {
       key: "string.js",
       parent: fixturesTree,
     });
@@ -19,7 +19,7 @@ describe(".js loader", () => {
 
   test("loads .js file that exports a function", async () => {
     const buffer = await fixturesTree.get("list.js");
-    const list = await unpackModule(buffer, {
+    const list = await fileTypeJs.unpack(buffer, {
       key: "list.js",
       parent: fixturesTree,
     });
@@ -28,7 +28,7 @@ describe(".js loader", () => {
 
   test("loads .js file that exports an object", async () => {
     const buffer = await fixturesTree.get("obj.js");
-    const obj = await unpackModule(buffer, {
+    const obj = await fileTypeJs.unpack(buffer, {
       key: "obj.js",
       parent: fixturesTree,
     });

@@ -8,16 +8,22 @@ import * as utilities from "../../common/utilities.js";
 const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
- * Load a file as YAML.
+ * A YAML file
  *
- * @type {import("@weborigami/language").FileUnpackFunction}
+ * Unpacking a YAML file returns the parsed data.
+ *
  */
-export default async function unpackYaml(input, options = {}) {
-  const parent = options.parent ?? null;
-  const yaml = utilities.toString(input);
-  if (!yaml) {
-    throw new Error("Tried to parse something as YAML but it wasn't text.");
-  }
-  const data = await evaluateYaml(yaml, options.parent);
-  return processUnpackedContent(data, parent);
-}
+export default {
+  mediaType: "application/yaml",
+
+  /** @type {import("@weborigami/language").FileUnpackFunction} */
+  async unpack(input, options = {}) {
+    const parent = options.parent ?? null;
+    const yaml = utilities.toString(input);
+    if (!yaml) {
+      throw new Error("Tried to parse something as YAML but it wasn't text.");
+    }
+    const data = await evaluateYaml(yaml, options.parent);
+    return processUnpackedContent(data, parent);
+  },
+};

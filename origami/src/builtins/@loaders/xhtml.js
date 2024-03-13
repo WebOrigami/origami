@@ -1,2 +1,2 @@
-// .xhtml files use the .txt loader
-export { default } from "./txt.js";
+// .xhtml is a synonynm for .html
+export { default } from "./html.js";

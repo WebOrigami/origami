@@ -3,35 +3,38 @@ import { evaluateYaml } from "../../common/serialize.js";
 import * as utilities from "../../common/utilities.js";
 
 /**
- * Load a file as text document with possible front matter.
+ * A text file with possible front matter
  *
- * This process will parse out any YAML or JSON front matter and attach it to
- * the document as data. The first line of the text must be "---", followed by a
- * block of JSON or YAML, followed by another line of "---". Any lines following
- * will be treated as the document text.
+ * The unpacking process will parse out any YAML or JSON front matter and attach
+ * it to the document as data. The first line of the text must be "---",
+ * followed by a block of JSON or YAML, followed by another line of "---". Any
+ * lines following will be treated as the document text.
  *
  * Any Origami expressions in the front matter will be evaluated and the results
  * incorporated into the document data.
- *
- * @type {import("@weborigami/language").FileUnpackFunction}
  */
-export default async function unpackText(input, options = {}) {
-  const parent = options.parent ?? null;
-  const text = utilities.toString(input);
-  if (!text) {
-    throw new Error("Tried to treat something as text but it wasn't text.");
-  }
-  const regex =
-    /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
-  const match = regex.exec(text);
+export default {
+  mediaType: "text/plain",
 
-  const body = match?.groups?.body ?? text;
+  /** @type {import("@weborigami/language").FileUnpackFunction} */
+  async unpack(input, options = {}) {
+    const parent = options.parent ?? null;
+    const text = utilities.toString(input);
+    if (!text) {
+      throw new Error("Tried to treat something as text but it wasn't text.");
+    }
+    const regex =
+      /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
+    const match = regex.exec(text);
 
-  const frontData = match?.groups
-    ? await evaluateYaml(match.groups.frontText, parent)
-    : null;
+    const body = match?.groups?.body ?? text;
 
-  const object = Object.assign({}, frontData, { "@text": body });
+    const frontData = match?.groups
+      ? await evaluateYaml(match.groups.frontText, parent)
+      : null;
 
-  return new TextDocument(object, options.parent);
-}
+    const object = Object.assign({}, frontData, { "@text": body });
+
+    return new TextDocument(object, options.parent);
+  },
+};

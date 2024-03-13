@@ -1,2 +1,2 @@
-// .mjs files use the .js loader
+// .mjs is a synonynm for .js
 export { default } from "./js.js";

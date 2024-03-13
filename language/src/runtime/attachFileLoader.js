@@ -7,8 +7,8 @@ export default async function attachFileLoader(scope, key, value, parent) {
   let result = value;
   if (extension) {
     const loaderName = extension.slice(1);
-    const loader = await Tree.traverse(scope, "@loaders", loaderName);
-    if (loader) {
+    const fileType = await Tree.traverse(scope, "@loaders", loaderName);
+    if (fileType) {
       const input = value;
 
       // If the result is a plain string, box it as a String so we can attach
@@ -16,13 +16,16 @@ export default async function attachFileLoader(scope, key, value, parent) {
       if (typeof result === "string") {
         result = new String(result);
       }
+
+      if (fileType.mediaType) {
+        result.mediaType = fileType.mediaType;
+      }
       result[symbols.parent] = parent;
 
-      // Wrap the loader with a function that will only be called once per
-      // value.
+      // Wrap the unpack function so its only called once per value.
       let loaded;
       result.unpack = async () => {
-        loaded ??= await loader(input, { key, parent });
+        loaded ??= await fileType.unpack(input, { key, parent });
         return loaded;
       };
     }

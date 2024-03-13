@@ -3,7 +3,7 @@ import { OrigamiFiles, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../../src/builtins/@builtins.js";
-import unpackOrigamiExpression from "../../../src/builtins/@loaders/ori.js";
+import fileTypeOrigami from "../../../src/builtins/@loaders/ori.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = Scope.treeWithScope(new OrigamiFiles(fixturesUrl), builtins);
@@ -11,7 +11,7 @@ const fixtures = Scope.treeWithScope(new OrigamiFiles(fixturesUrl), builtins);
 describe(".ori loader", () => {
   test("loads a string expression", async () => {
     const source = `"Hello"`;
-    const text = await unpackOrigamiExpression(source);
+    const text = await fileTypeOrigami.unpack(source);
     assert.equal(text, "Hello");
   });
 
@@ -22,7 +22,7 @@ describe(".ori loader", () => {
     const source = `{
       message = \`Hello, \${name}!\`
     }`;
-    const tree = await unpackOrigamiExpression(source, { parent });
+    const tree = await fileTypeOrigami.unpack(source, { parent });
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, world!",
     });
@@ -35,7 +35,7 @@ describe(".ori loader", () => {
         message = \`Hello, \${name}!\`
       }
     }`;
-    const tree = await unpackOrigamiExpression(source);
+    const tree = await fileTypeOrigami.unpack(source);
     assert.deepEqual(
       await Tree.traverse(tree, "public", "message"),
       "Hello, world!"
@@ -46,7 +46,7 @@ describe(".ori loader", () => {
     const assets = new ObjectTree({});
     const parent = new ObjectTree({ assets });
     const source = `{ assets }`;
-    const object = await unpackOrigamiExpression(source, { parent });
+    const object = await fileTypeOrigami.unpack(source, { parent });
     assert.equal(object.assets, assets);
   });
 
@@ -55,7 +55,7 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const source = `\`Hello, \${name}!\``;
-    const unpackedText = await unpackOrigamiExpression(source, {
+    const unpackedText = await fileTypeOrigami.unpack(source, {
       parent: scope,
     });
     assert.deepEqual(unpackedText, "Hello, Alice!");
@@ -66,14 +66,14 @@ describe(".ori loader", () => {
       name: "Alice",
     });
     const source = `=\`Hello, \${name}!\``;
-    const templateFn = await unpackOrigamiExpression(source, { parent });
+    const templateFn = await fileTypeOrigami.unpack(source, { parent });
     const value = await templateFn();
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
     const source = `=\`Hello, \${ _/name }!\``;
-    const templateFn = await unpackOrigamiExpression(source);
+    const templateFn = await fileTypeOrigami.unpack(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");
   });

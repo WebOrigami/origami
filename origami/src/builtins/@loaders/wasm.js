@@ -1,11 +1,16 @@
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 
 /**
- * Load a WebAssembly module and return its exports.
+ * A WebAssembly module
  *
- * @type {import("@weborigami/language").FileUnpackFunction}
+ * Unpacking a WebAssembly module returns its exports.
  */
-export default async function unpackWasm(buffer, options = {}) {
-  const wasmModule = await WebAssembly.instantiate(buffer);
-  return processUnpackedContent(wasmModule.instance.exports, options.parent);
-}
+export default {
+  mediaType: "application/wasm",
+
+  /** @type {import("@weborigami/language").FileUnpackFunction} */
+  async unpack(buffer, options = {}) {
+    const wasmModule = await WebAssembly.instantiate(buffer);
+    return processUnpackedContent(wasmModule.instance.exports, options.parent);
+  },
+};
