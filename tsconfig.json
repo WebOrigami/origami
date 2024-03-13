@@ -10,7 +10,6 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
-    "strictNullChecks": true,
     "target": "ESNext"
   },
   "include": ["**/*.js"],
