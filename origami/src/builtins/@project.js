@@ -67,5 +67,5 @@ async function findConfigContainer(start) {
   return undefined;
 }
 
-project.usage = `@project\tThe root of the current Tree Origami project`;
+project.usage = `@project\tThe root of the current Origami project`;
 project.documentation = "https://weborigami.org/language/@project.html";
