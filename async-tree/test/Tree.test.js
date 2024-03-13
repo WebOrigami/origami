@@ -89,13 +89,14 @@ describe("Tree", () => {
   });
 
   test("from() uses an object's unpack() method if defined", async () => {
-    const obj = {
+    class Fixture {
       unpack() {
         return {
           a: "Hello, a.",
         };
-      },
-    };
+      }
+    }
+    const obj = new Fixture();
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",
@@ -103,13 +104,14 @@ describe("Tree", () => {
   });
 
   test("from() creates a deferred tree if unpack() returns a promise", async () => {
-    const obj = {
+    class Fixture {
       async unpack() {
         return {
           a: "Hello, a.",
         };
-      },
-    };
+      }
+    }
+    const obj = new Fixture();
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",

@@ -112,6 +112,8 @@ export function from(obj) {
     return new MapTree(obj);
   } else if (obj instanceof Set) {
     return new SetTree(obj);
+  } else if (isPlainObject(obj)) {
+    return new ObjectTree(obj);
   } else if (obj && typeof obj === "object" && "unpack" in obj) {
     async function AsyncFunction() {} // Sample async function
     return obj.unpack instanceof AsyncFunction.constructor
