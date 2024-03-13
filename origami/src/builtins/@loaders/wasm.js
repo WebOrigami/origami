@@ -1,7 +1,7 @@
 import processUnpackedContent from "../../common/processUnpackedContent.js";
 
 /**
- * Load a .js file as module's default export or exports.
+ * Load a WebAssembly module and return its exports.
  *
  * @type {import("@weborigami/language").FileUnpackFunction}
  */
