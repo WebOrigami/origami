@@ -26,29 +26,31 @@ export default async function project(key) {
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
-  let projectTree = await findConfigContainer(currentTree);
+  let containerTree = await findConfigContainer(currentTree);
 
-  let scope;
-  if (projectTree) {
+  let config;
+  if (containerTree) {
     // Load the configuration.
-    const buffer = await projectTree.get(configFileName);
-    const config = await fileTypeOrigami.unpack(buffer, {
+    const configParent = Scope.treeWithScope(containerTree, builtins);
+    const buffer = await configParent.get(configFileName);
+    config = await fileTypeOrigami.unpack(buffer, {
       key: configFileName,
-      parent: projectTree,
+      parent: configParent,
     });
     if (!config) {
+      const configPath = /** @type {any} */ (configParent).path;
       throw new Error(
-        `Couldn't load the Origami configuration in ${projectTree.path}`
+        `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
       );
     }
-    scope = new Scope(config, builtins);
   } else {
-    projectTree = currentTree;
-    scope = builtins;
+    containerTree = currentTree;
+    config = null;
   }
 
   // Add the configuration as the context for the project root.
-  const result = Scope.treeWithScope(projectTree, scope);
+  const scope = new Scope(config, builtins);
+  const result = Scope.treeWithScope(containerTree, scope);
   return key === undefined ? result : result.get(key);
 }
 
