@@ -7,7 +7,9 @@ export default async function attachFileLoader(scope, key, value, parent) {
   let result = value;
   if (extension) {
     const loaderName = extension.slice(1);
-    const fileType = await Tree.traverse(scope, "@loaders", loaderName);
+    const fileType =
+      (await Tree.traverse(scope, "@loaders", loaderName)) ||
+      (await scope.get(loaderName));
     if (fileType) {
       const input = value;
 
