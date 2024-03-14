@@ -1,18 +1,19 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { OrigamiFiles, Scope } from "@weborigami/language";
+import fileTypeOrigami from "../builtins/@loaders/ori.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
 
-const configFileName = "ori.config.js";
+const configFileName = "config.ori";
 
 /**
  * Return the tree for the current project's root folder.
  *
- * This searches the current directory and its ancestors for an Origami
- * configuration file. If an Origami configuration file is found, the containing
- * folder is considered to be the project root. This returns a tree for that
- * folder, with the exported configuration as the context for that folder — that
- * is, the tree exported by the configuration will be the scope.
+ * This searches the current directory and its ancestors for an Origami file
+ * called `config.ori`. If an Origami configuration file is found, the
+ * containing folder is considered to be the project root. This returns a tree
+ * for that folder, with the exported configuration as the context for that
+ * folder — that is, the tree exported by the configuration will be the scope.
  *
  * If no Origami configuration file is found, the current folder will be
  * returned as a tree, with the builtins as its parent.
@@ -27,22 +28,27 @@ export default async function project(key) {
   const currentTree = new OrigamiFiles(dirname);
   let projectTree = await findConfigContainer(currentTree);
 
-  let config;
+  let scope;
   if (projectTree) {
     // Load the configuration.
-    config = await projectTree.import(configFileName);
+    const buffer = await projectTree.get(configFileName);
+    const config = await fileTypeOrigami.unpack(buffer, {
+      key: configFileName,
+      parent: projectTree,
+    });
     if (!config) {
       throw new Error(
         `Couldn't load the Origami configuration in ${projectTree.path}`
       );
     }
+    scope = new Scope(config, builtins);
   } else {
     projectTree = currentTree;
-    config = builtins;
+    scope = builtins;
   }
 
   // Add the configuration as the context for the project root.
-  const result = Scope.treeWithScope(projectTree, config);
+  const result = Scope.treeWithScope(projectTree, scope);
   return key === undefined ? result : result.get(key);
 }
 
