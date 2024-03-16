@@ -78,7 +78,12 @@ async function statements(tree, nodePath, nodeLabel, options) {
     } else {
       const label = isStringLike(value)
         ? String(value)
-        : await serialize.toYaml(value);
+        : value != null
+        ? await serialize.toYaml(value)
+        : "";
+      if (value == null) {
+        isError = true;
+      }
       nodes[key] = { label };
       if (isError) {
         nodes[key].isError = true;
