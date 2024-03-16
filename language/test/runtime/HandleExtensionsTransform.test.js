@@ -1,10 +1,10 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FileLoadersTransform from "../../src/runtime/FileLoadersTransform.js";
+import HandleExtensionsTransform from "../../src/runtime/HandleExtensionsTransform.js";
 import Scope from "../../src/runtime/Scope.js";
 
-describe("FileLoadersTransform", () => {
+describe("HandleExtensionsTransform", () => {
   test("invokes an appropriate loader for a .json file extension", async () => {
     const fixture = createFixture();
     const numberValue = await fixture.get("foo");
@@ -26,7 +26,7 @@ describe("FileLoadersTransform", () => {
 
 function createFixture() {
   /** @type {import("@weborigami/types").AsyncTree} */
-  let tree = new (FileLoadersTransform(ObjectTree))({
+  let tree = new (HandleExtensionsTransform(ObjectTree))({
     foo: 1, // No extension, should be left alone
     "bar.json": `{ "bar": 2 }`,
   });

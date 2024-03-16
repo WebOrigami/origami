@@ -4,12 +4,12 @@ import attachFileLoader from "./attachFileLoader.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
- * @typedef {import("../../index.js").FileUnpackFunction} FileUnpackFunction
+ * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.ts").FileUnpackFunction} FileUnpackFunction
  *
  * @param {AsyncTreeConstructor} Base
  */
-export default function FileLoadersTransform(Base) {
+export default function HandleExtensionsTransform(Base) {
   return class FileLoaders extends Base {
     async get(key) {
       let value = await super.get(key);

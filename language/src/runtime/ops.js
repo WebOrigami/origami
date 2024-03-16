@@ -4,7 +4,7 @@
  */
 
 import { SiteTree, Tree } from "@weborigami/async-tree";
-import FileLoadersTransform from "./FileLoadersTransform.js";
+import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
 import attachFileLoader from "./attachFileLoader.js";
@@ -252,7 +252,7 @@ tree.toString = () => "«ops.tree»";
 export function treeHttp(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
   /** @type {AsyncTree} */
-  let result = new (FileLoadersTransform(SiteTree))(href);
+  let result = new (HandleExtensionsTransform(SiteTree))(href);
   result = Scope.treeWithScope(result, this);
   return result;
 }
@@ -268,7 +268,7 @@ treeHttp.toString = () => "«ops.treeHttp»";
 export function treeHttps(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
   /** @type {AsyncTree} */
-  let result = new (FileLoadersTransform(SiteTree))(href);
+  let result = new (HandleExtensionsTransform(SiteTree))(href);
   result = Scope.treeWithScope(result, this);
   return result;
 }
