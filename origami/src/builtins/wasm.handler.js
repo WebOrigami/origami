@@ -1,4 +1,4 @@
-import processUnpackedContent from "../../common/processUnpackedContent.js";
+import processUnpackedContent from "../common/processUnpackedContent.js";
 
 /**
  * A WebAssembly module

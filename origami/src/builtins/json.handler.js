@@ -1,4 +1,4 @@
-import * as utilities from "../../common/utilities.js";
+import * as utilities from "../common/utilities.js";
 
 /**
  * A JSON file

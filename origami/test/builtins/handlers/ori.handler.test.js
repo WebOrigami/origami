@@ -3,12 +3,12 @@ import { OrigamiFiles, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../../src/builtins/@builtins.js";
-import fileTypeOrigami from "../../../src/builtins/@loaders/ori.js";
+import fileTypeOrigami from "../../../src/builtins/ori.handler.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = Scope.treeWithScope(new OrigamiFiles(fixturesUrl), builtins);
 
-describe(".ori loader", () => {
+describe(".ori handler", () => {
   test("loads a string expression", async () => {
     const source = `"Hello"`;
     const text = await fileTypeOrigami.unpack(source);

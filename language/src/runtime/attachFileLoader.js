@@ -1,4 +1,3 @@
-import { Tree } from "@weborigami/async-tree";
 import extname from "./extname.js";
 import * as symbols from "./symbols.js";
 
@@ -6,10 +5,8 @@ export default async function attachFileLoader(scope, key, value, parent) {
   const extension = extname(key);
   let result = value;
   if (extension) {
-    const loaderName = extension.slice(1);
-    const fileType =
-      (await Tree.traverse(scope, "@loaders", loaderName)) ||
-      (await scope.get(loaderName));
+    const loaderName = `${extension.slice(1)}.handler`;
+    const fileType = await scope.get(loaderName);
     if (fileType) {
       const input = value;
 

@@ -1,9 +1,9 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import fileTypeText from "../../../src/builtins/@loaders/txt.js";
+import fileTypeText from "../../../src/builtins/txt.handler.js";
 
-describe("text loader", () => {
+describe("text handler", () => {
   test("unpacks text without data", async () => {
     const text = "Body text";
     const document = await fileTypeText.unpack(text);

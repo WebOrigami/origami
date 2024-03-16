@@ -1,8 +1,8 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import fileTypeText from "../builtins/@loaders/txt.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import fileTypeOrigami from "./@loaders/ori.js";
+import fileTypeOrigami from "./ori.handler.js";
+import fileTypeText from "./txt.handler.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input

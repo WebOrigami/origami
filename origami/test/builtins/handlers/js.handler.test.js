@@ -2,12 +2,12 @@ import { FileTree } from "@weborigami/async-tree";
 import { ImportModulesMixin } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import fileTypeJs from "../../../src/builtins/@loaders/js.js";
+import fileTypeJs from "../../../src/builtins/js.handler.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);
 
-describe(".js loader", () => {
+describe(".js handler", () => {
   test("loads .js file that exports a string", async () => {
     const buffer = await fixturesTree.get("string.js");
     const text = await fileTypeJs.unpack(buffer, {

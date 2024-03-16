@@ -1,6 +1,6 @@
-import TextDocument from "../../common/TextDocument.js";
-import { evaluateYaml } from "../../common/serialize.js";
-import * as utilities from "../../common/utilities.js";
+import TextDocument from "../common/TextDocument.js";
+import { evaluateYaml } from "../common/serialize.js";
+import * as utilities from "../common/utilities.js";
 
 /**
  * A text file with possible front matter

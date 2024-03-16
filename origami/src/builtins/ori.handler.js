@@ -1,7 +1,7 @@
 import { Scope, compile, symbols } from "@weborigami/language";
-import processUnpackedContent from "../../common/processUnpackedContent.js";
-import * as utilities from "../../common/utilities.js";
-import builtins from "../@builtins.js";
+import processUnpackedContent from "../common/processUnpackedContent.js";
+import * as utilities from "../common/utilities.js";
+import builtins from "./@builtins.js";
 
 /**
  * An Origami expression file
