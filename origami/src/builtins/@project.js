@@ -2,7 +2,7 @@
 import { OrigamiFiles, Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
-import fileTypeOrigami from "./ori.handler.js";
+import fileTypeOrigami from "./ori_handler.js";
 
 const configFileName = "config.ori";
 

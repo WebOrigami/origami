@@ -32,7 +32,7 @@ function createFixture() {
   });
   /** @type {any} */
   const scope = {
-    "json.handler": {
+    json_handler: {
       unpack: (buffer) => JSON.parse(String(buffer)),
     },
   };

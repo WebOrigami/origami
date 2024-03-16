@@ -1,6 +1,6 @@
 import { isStringLike } from "@weborigami/async-tree";
 import Scope from "./Scope.js";
-import attachFileLoader from "./attachFileLoader.js";
+import handleExtension from "./handleExtension.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -18,7 +18,7 @@ export default function HandleExtensionsTransform(Base) {
       // exists) that handles that extension.
       if (value && isStringLike(key)) {
         const scope = Scope.getScope(this);
-        value = await attachFileLoader(scope, String(key), value, this);
+        value = await handleExtension(scope, String(key), value, this);
       }
 
       return value;

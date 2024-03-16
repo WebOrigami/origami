@@ -3,11 +3,23 @@ import * as symbols from "./symbols.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
-export default async function attachFileLoader(scope, key, value, parent) {
+/**
+ * Given a value that was retrieved using the given key, search in scope for a
+ * handler for the file extension on the key (if present). If a handler is
+ * found, attach information from it to the value and return the modified value.
+ *
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ *
+ * @param {AsyncTree} scope
+ * @param {any} key
+ * @param {any} value
+ * @param {AsyncTree} parent
+ */
+export default async function handleExtension(scope, key, value, parent) {
   const extension = extname(key);
   let result = value;
   if (extension) {
-    const handlerName = `${extension.slice(1)}.handler`;
+    const handlerName = `${extension.slice(1)}_handler`;
     let extensionHandler = await scope.get(handlerName);
     if (
       extensionHandler instanceof Buffer ||

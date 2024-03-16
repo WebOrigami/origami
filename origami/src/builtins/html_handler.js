@@ -1,5 +1,5 @@
 // .html files use the .txt loader
-import fileTypeText from "./txt.handler.js";
+import fileTypeText from "./txt_handler.js";
 
 export default {
   ...fileTypeText,

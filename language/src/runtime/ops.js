@@ -7,8 +7,8 @@ import { SiteTree, Tree } from "@weborigami/async-tree";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
-import attachFileLoader from "./attachFileLoader.js";
 import concatTreeValues from "./concatTreeValues.js";
+import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 
 // For memoizing lambda functions
@@ -75,7 +75,7 @@ async function fetchResponse(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (filename) {
-    buffer = await attachFileLoader(this, filename, buffer, null);
+    buffer = await handleExtension(this, filename, buffer, null);
   }
 
   return buffer;

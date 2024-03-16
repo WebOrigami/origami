@@ -3,7 +3,7 @@ import { OrigamiFiles, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../../src/builtins/@builtins.js";
-import fileTypeOrigami from "../../../src/builtins/ori.handler.js";
+import fileTypeOrigami from "../../../src/builtins/ori_handler.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = Scope.treeWithScope(new OrigamiFiles(fixturesUrl), builtins);
