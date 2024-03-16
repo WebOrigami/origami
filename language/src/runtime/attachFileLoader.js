@@ -1,13 +1,24 @@
 import extname from "./extname.js";
 import * as symbols from "./symbols.js";
 
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 export default async function attachFileLoader(scope, key, value, parent) {
   const extension = extname(key);
   let result = value;
   if (extension) {
-    const loaderName = `${extension.slice(1)}.handler`;
-    const fileType = await scope.get(loaderName);
-    if (fileType) {
+    const handlerName = `${extension.slice(1)}.handler`;
+    let extensionHandler = await scope.get(handlerName);
+    if (
+      extensionHandler instanceof Buffer ||
+      extensionHandler instanceof TypedArray
+    ) {
+      // The extension handler itself needs to be unpacked. E.g., if it's a
+      // buffer containing JavaScript file, we need to unpack it to get its
+      // default export.
+      extensionHandler = await extensionHandler.unpack();
+    }
+    if (extensionHandler) {
       const input = value;
 
       // If the result is a plain string, box it as a String so we can attach
@@ -16,15 +27,15 @@ export default async function attachFileLoader(scope, key, value, parent) {
         result = new String(result);
       }
 
-      if (fileType.mediaType) {
-        result.mediaType = fileType.mediaType;
+      if (extensionHandler.mediaType) {
+        result.mediaType = extensionHandler.mediaType;
       }
       result[symbols.parent] = parent;
 
       // Wrap the unpack function so its only called once per value.
       let loaded;
       result.unpack = async () => {
-        loaded ??= await fileType.unpack(input, { key, parent });
+        loaded ??= await extensionHandler.unpack(input, { key, parent });
         return loaded;
       };
     }
