@@ -9,8 +9,8 @@ import processUnpackedContent from "../common/processUnpackedContent.js";
 export default {
   mediaType: "application/javascript",
 
-  /** @type {import("@weborigami/language").FileUnpackFunction} */
-  async unpack(input, options = {}) {
+  /** @type {import("@weborigami/language").UnpackFunction} */
+  async unpack(packed, options = {}) {
     const { key, parent } = options;
     if (parent && "import" in parent) {
       const content = await /** @type {any} */ (parent).import?.(key);

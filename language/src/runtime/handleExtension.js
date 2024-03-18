@@ -10,17 +10,18 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {AsyncTree} scope
+ * @param {AsyncTree|null} scope
  * @param {any} key
  * @param {any} value
- * @param {AsyncTree} parent
+ * @param {AsyncTree|null} parent
  */
 export default async function handleExtension(scope, key, value, parent) {
   const extension = extname(key);
   let result = value;
   if (extension) {
     const handlerName = `${extension.slice(1)}_handler`;
-    let extensionHandler = await scope.get(handlerName);
+    /** @type {import("../../index.ts").ExtensionHandler} */
+    let extensionHandler = await scope?.get(handlerName);
     if (
       extensionHandler instanceof Buffer ||
       extensionHandler instanceof TypedArray
@@ -28,6 +29,7 @@ export default async function handleExtension(scope, key, value, parent) {
       // The extension handler itself needs to be unpacked. E.g., if it's a
       // buffer containing JavaScript file, we need to unpack it to get its
       // default export.
+      // @ts-ignore
       extensionHandler = await extensionHandler.unpack();
     }
     if (extensionHandler) {
@@ -44,12 +46,15 @@ export default async function handleExtension(scope, key, value, parent) {
       }
       result[symbols.parent] = parent;
 
-      // Wrap the unpack function so its only called once per value.
-      let loaded;
-      result.unpack = async () => {
-        loaded ??= await extensionHandler.unpack(input, { key, parent });
-        return loaded;
-      };
+      const unpack = extensionHandler.unpack;
+      if (unpack) {
+        // Wrap the unpack function so its only called once per value.
+        let loaded;
+        result.unpack = async () => {
+          loaded ??= await unpack(input, { key, parent });
+          return loaded;
+        };
+      }
     }
   }
   return result;

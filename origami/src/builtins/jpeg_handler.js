@@ -15,9 +15,9 @@ const exifDateTags = [
 export default {
   mediaType: "image/jpeg",
 
-  /** @type {import("@weborigami/language").FileUnpackFunction} */
-  async unpack(buffer, options) {
-    const parser = exifParser.create(buffer);
+  /** @type {import("@weborigami/language").UnpackFunction} */
+  async unpack(packed, options) {
+    const parser = exifParser.create(packed);
     parser.enableTagNames(true);
     parser.enableSimpleValues(true);
     const parsed = await parser.parse();

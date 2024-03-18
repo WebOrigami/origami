@@ -1,3 +1,4 @@
+import { Packed } from "@weborigami/async-tree";
 
 export * from "./main.js";
 
@@ -17,13 +18,13 @@ export type Code = ArrayWithSource;
 export type Constructor<T> = new (...args: any[]) => T;
 
 /**
- * A function that can convert a value from some persistent form into some kind
- * of live value.
+ * A structure associating a media type and an unpack function with a given file
+ * extension.
  */
-export type FileUnpackFunction = (
-  input: any,
-  options?: any
-) => any;
+export type ExtensionHandler = {
+  mediaType?: string;
+  unpack?: UnpackFunction;
+}
 
 /**
  * A mixin is a function that takes an existing class and returns a new class.
@@ -39,9 +40,14 @@ export type Mixin<MixinMembers> = <T>(
 
 /**
  * Source code representation used by the parser.
- */
+*/
 export type Source = {
   name: string;
   text: string;
-  url: URL;
+  url: URL;  
 }
+
+/**
+ * A function that converts a value from a persistent form into a live value.
+ */
+export type UnpackFunction = (input: Packed, options?: any) => any;

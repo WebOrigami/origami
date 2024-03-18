@@ -100,7 +100,7 @@ export function toString(object) {
   if (isPlainObject(object) && "@text" in object) {
     return object["@text"];
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
-    // Serialize data as UTF-8.
+    // Treat the buffer as UTF-8 text.
     const decoded = textDecoder.decode(object);
     // If the result has non-printable characters, it's probably not a string.
     return hasNonPrintableCharacters(decoded) ? null : decoded;

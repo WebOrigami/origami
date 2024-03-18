@@ -16,10 +16,10 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 export default {
   mediaType: "application/yaml",
 
-  /** @type {import("@weborigami/language").FileUnpackFunction} */
-  async unpack(input, options = {}) {
+  /** @type {import("@weborigami/language").UnpackFunction} */
+  async unpack(packed, options = {}) {
     const parent = options.parent ?? null;
-    const yaml = utilities.toString(input);
+    const yaml = utilities.toString(packed);
     if (!yaml) {
       throw new Error("Tried to parse something as YAML but it wasn't text.");
     }

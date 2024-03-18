@@ -16,10 +16,10 @@ import * as utilities from "../common/utilities.js";
 export default {
   mediaType: "text/plain",
 
-  /** @type {import("@weborigami/language").FileUnpackFunction} */
-  async unpack(input, options = {}) {
+  /** @type {import("@weborigami/language").UnpackFunction} */
+  async unpack(packed, options = {}) {
     const parent = options.parent ?? null;
-    const text = utilities.toString(input);
+    const text = utilities.toString(packed);
     if (!text) {
       throw new Error("Tried to treat something as text but it wasn't text.");
     }

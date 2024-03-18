@@ -5,7 +5,7 @@ import handleExtension from "./handleExtension.js";
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
- * @typedef {import("../../index.ts").FileUnpackFunction} FileUnpackFunction
+ * @typedef {import("../../index.ts").UnpackFunction} FileUnpackFunction
  *
  * @param {AsyncTreeConstructor} Base
  */

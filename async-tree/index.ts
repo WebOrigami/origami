@@ -15,6 +15,12 @@ export type HasString = {
   toString(): string;
 };
 
+/**
+ * A packed value is one that can be written to a file via fs.writeFile or into
+ * an HTTP response via response.write, or readily converted to such a form.
+ */
+export type Packed = ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray;
+
 export type PlainObject = {
   [key: string]: any;
 };
@@ -36,6 +42,17 @@ export type Treelike =
   Unpackable<NativeTreelike>;
 
 export type TreeTransform = (treelike: Treelike) => AsyncTree;
+
+export type TypedArray =
+  Float32Array |
+  Float64Array |
+  Int8Array |
+  Int16Array |
+  Int32Array |
+  Uint8Array |
+  Uint8ClampedArray |
+  Uint16Array |
+  Uint32Array;
 
 export type Unpackable<T> = {
   unpack(): Promise<T>

@@ -5,10 +5,9 @@ import * as Tree from "./Tree.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
+  isPacked,
   sortNatural,
 } from "./utilities.js";
-
-const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
  * A file system tree via the Node file system API.
@@ -142,10 +141,7 @@ export default class FileTree {
     }
 
     // True if fs.writeFile can directly write the value to a file.
-    let isWriteable =
-      value instanceof TypedArray ||
-      value instanceof DataView ||
-      (globalThis.ReadableStream && value instanceof ReadableStream);
+    let isWriteable = isPacked(value);
 
     if (!isWriteable && isStringLike(value)) {
       // Value has a meaningful `toString` method, use that.

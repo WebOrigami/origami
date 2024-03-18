@@ -11,13 +11,13 @@ import builtins from "./@builtins.js";
 export default {
   mediaType: "text/plain",
 
-  /** @type {import("@weborigami/language").FileUnpackFunction} */
-  async unpack(inputDocument, options = {}) {
+  /** @type {import("@weborigami/language").UnpackFunction} */
+  async unpack(packed, options = {}) {
     const attachedData = options.attachedData;
     const parent =
       options.parent ??
-      /** @type {any} */ (inputDocument).parent ??
-      /** @type {any} */ (inputDocument)[symbols.parent];
+      /** @type {any} */ (packed).parent ??
+      /** @type {any} */ (packed)[symbols.parent];
 
     // Construct an object to represent the source code.
     const sourceName = options.key;
@@ -31,7 +31,7 @@ export default {
     }
 
     const source = {
-      text: utilities.toString(inputDocument),
+      text: utilities.toString(packed),
       name: options.key,
       url,
     };

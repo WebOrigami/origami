@@ -1,6 +1,7 @@
 import {
   SiteTree,
   Tree,
+  isPacked,
   isPlainObject,
   isStringLike,
 } from "@weborigami/async-tree";
@@ -100,7 +101,7 @@ export default async function constructResponse(request, resource) {
 
   // If we didn't get back some kind of data that response.write() accepts,
   // assume it was an error.
-  const validResponse = typeof body === "string" || body instanceof TypedArray;
+  const validResponse = isPacked(body);
   if (!validResponse) {
     const typeName = body?.constructor?.name ?? typeof body;
     console.error(
