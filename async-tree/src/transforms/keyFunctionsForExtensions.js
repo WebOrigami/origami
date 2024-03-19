@@ -2,14 +2,14 @@
  * Given a source resultExtension and a result resultExtension, return a pair of key
  * functions that map between them.
  *
- * The resulting `inverseKeyMap` and `keyMap` functions are compatible with those
+ * The resulting `inverseKey` and `key` functions are compatible with those
  * expected by map and other transforms.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @param {{ resultExtension?: string, sourceExtension: string }}
  * options
  */
-export default function keyMapsForExtensions({
+export default function keyFunctionsForExtensions({
   resultExtension,
   sourceExtension,
 }) {
@@ -18,12 +18,12 @@ export default function keyMapsForExtensions({
   }
 
   return {
-    async inverseKeyMap(resultKey, tree) {
+    async inverseKey(resultKey, tree) {
       const basename = matchExtension(resultKey, resultExtension);
       return basename ? `${basename}${dotPrefix(sourceExtension)}` : undefined;
     },
 
-    async keyMap(sourceKey, tree) {
+    async key(sourceKey, tree) {
       const basename = matchExtension(sourceKey, sourceExtension);
       return basename ? `${basename}${dotPrefix(resultExtension)}` : undefined;
     },

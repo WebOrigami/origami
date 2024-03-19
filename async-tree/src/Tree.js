@@ -212,11 +212,11 @@ export async function isKeyForSubtree(tree, key) {
  * Return a new tree with deeply-mapped values of the original tree.
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn} valueMap
+ * @param {ValueKeyFn} valueFn
  */
-export function map(treelike, valueMap) {
+export function map(treelike, valueFn) {
   const tree = from(treelike);
-  return mapTransform({ deep: true, valueMap })(tree);
+  return mapTransform({ deep: true, value: valueFn })(tree);
 }
 
 /**
@@ -230,10 +230,10 @@ export function map(treelike, valueMap) {
  * reduceFn, which should consolidate those into a single result.
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn|null} valueMap
+ * @param {ValueKeyFn|null} valueFn
  * @param {ReduceFn} reduceFn
  */
-export async function mapReduce(treelike, valueMap, reduceFn) {
+export async function mapReduce(treelike, valueFn, reduceFn) {
   const tree = from(treelike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
@@ -244,9 +244,9 @@ export async function mapReduce(treelike, valueMap, reduceFn) {
     tree.get(key).then((value) =>
       // If the value is a subtree, recurse.
       isAsyncTree(value)
-        ? mapReduce(value, valueMap, reduceFn)
-        : valueMap
-        ? valueMap(value, key, tree)
+        ? mapReduce(value, valueFn, reduceFn)
+        : valueFn
+        ? valueFn(value, key, tree)
         : value
     )
   );

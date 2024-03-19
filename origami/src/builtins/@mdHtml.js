@@ -42,9 +42,8 @@ export default async function mdHtml(input) {
     : html;
 }
 
-mdHtml.keyMap = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
-mdHtml.inverseKeyMap = (resultKey) =>
-  replaceExtension(resultKey, ".html", ".md");
+mdHtml.key = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
+mdHtml.inverseKey = (resultKey) => replaceExtension(resultKey, ".html", ".md");
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
 mdHtml.documentation = "https://weborigami.org/language/@mdHtml.html";

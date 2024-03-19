@@ -3,18 +3,18 @@ import * as Tree from "../Tree.js";
 const treeToCaches = new WeakMap();
 
 /**
- * Given a keyMap, return a new keyMap and inverseKeyMap that cache the results of
- * the original keyMap.
+ * Given a key function, return a new key function and inverse key function that
+ * cache the results of the original.
  *
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  *
- * @param {KeyFn} keyMap
+ * @param {KeyFn} keyFn
  * @param {boolean} [deep]
- * @returns {{ keyMap: KeyFn, inverseKeyMap: KeyFn }}
+ * @returns {{ key: KeyFn, inverseKey: KeyFn }}
  */
-export default function createCachedKeysTransform(keyMap, deep = false) {
+export default function createCachedKeysTransform(keyFn, deep = false) {
   return {
-    async inverseKeyMap(resultKey, tree) {
+    async inverseKey(resultKey, tree) {
       const caches = getCachesForTree(tree);
 
       // First check to see if we've already computed an source key for this
@@ -37,7 +37,7 @@ export default function createCachedKeysTransform(keyMap, deep = false) {
         if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
           computedResultKey = sourceKey;
         } else {
-          computedResultKey = await keyMap(sourceKey, tree);
+          computedResultKey = await keyFn(sourceKey, tree);
         }
 
         caches.sourceKeyToResultKey.set(sourceKey, computedResultKey);
@@ -52,7 +52,7 @@ export default function createCachedKeysTransform(keyMap, deep = false) {
       return undefined;
     },
 
-    async keyMap(sourceKey, tree) {
+    async key(sourceKey, tree) {
       const keyMaps = getCachesForTree(tree);
 
       // First check to see if we've already computed an result key for this
@@ -62,7 +62,7 @@ export default function createCachedKeysTransform(keyMap, deep = false) {
         return keyMaps.sourceKeyToResultKey.get(sourceKey);
       }
 
-      const resultKey = await keyMap(sourceKey, tree);
+      const resultKey = await keyFn(sourceKey, tree);
 
       // Cache the mappings from source key <-> result key for next time.
       keyMaps.sourceKeyToResultKey.set(sourceKey, resultKey);

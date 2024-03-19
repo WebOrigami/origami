@@ -6,12 +6,12 @@ type TreeMapOptions = {
   deep?: boolean;
   description?: string;
   extensions?: string;
-  inverseKeyMap?: KeyFn;
-  keyMap?: ValueKeyFn;
-  valueMap?: ValueKeyFn;
+  inverseKey?: KeyFn;
+  key?: ValueKeyFn;
+  value?: ValueKeyFn;
 };
 
-export default function treeMap(valueMap: ValueKeyFn): TreelikeTransform;
+export default function treeMap(value: ValueKeyFn): TreelikeTransform;
 export default function treeMap(options: TreeMapOptions): TreelikeTransform;
-export default function treeMap(treelike: Treelike, valueMap: ValueKeyFn): AsyncTree;
+export default function treeMap(treelike: Treelike, value: ValueKeyFn): AsyncTree;
 export default function treeMap(treelike: Treelike, options: TreeMapOptions): AsyncTree;

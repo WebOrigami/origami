@@ -2,29 +2,29 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
-import keyMapsForExtensions from "../../src/transforms/keyMapsForExtensions.js";
+import keyFunctionsForExtensions from "../../src/transforms/keyFunctionsForExtensions.js";
 import map from "../../src/transforms/map.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
-    const { inverseKeyMap, keyMap } = keyMapsForExtensions({
+    const { inverseKey, key } = keyFunctionsForExtensions({
       sourceExtension: "txt",
     });
-    assert.equal(await inverseKeyMap("file.txt"), "file.txt");
-    assert.equal(await keyMap("file.txt"), "file.txt");
-    assert.equal(await inverseKeyMap("file.foo"), undefined);
-    assert.equal(await keyMap("file.foo"), undefined);
+    assert.equal(await inverseKey("file.txt"), "file.txt");
+    assert.equal(await key("file.txt"), "file.txt");
+    assert.equal(await inverseKey("file.foo"), undefined);
+    assert.equal(await key("file.foo"), undefined);
   });
 
   test("returns key functions that can map extensions", async () => {
-    const { inverseKeyMap, keyMap } = keyMapsForExtensions({
+    const { inverseKey, key } = keyFunctionsForExtensions({
       resultExtension: "html",
       sourceExtension: "md",
     });
-    assert.equal(await inverseKeyMap("file.html"), "file.md");
-    assert.equal(await keyMap("file.md"), "file.html");
-    assert.equal(await inverseKeyMap("file.foo"), undefined);
-    assert.equal(await keyMap("file.foo"), undefined);
+    assert.equal(await inverseKey("file.html"), "file.md");
+    assert.equal(await key("file.md"), "file.html");
+    assert.equal(await inverseKey("file.foo"), undefined);
+    assert.equal(await key("file.foo"), undefined);
   });
 
   test("works with map to handle keys that end in a given resultExtension", async () => {
@@ -33,13 +33,13 @@ describe("keyMapsForExtensions", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     });
-    const { inverseKeyMap, keyMap } = keyMapsForExtensions({
+    const { inverseKey, key } = keyFunctionsForExtensions({
       sourceExtension: "txt",
     });
     const transform = map({
-      inverseKeyMap,
-      keyMap,
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
+      inverseKey,
+      key,
+      value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(files);
     assert.deepEqual(await Tree.plain(fixture), {
@@ -53,14 +53,14 @@ describe("keyMapsForExtensions", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     });
-    const { inverseKeyMap, keyMap } = keyMapsForExtensions({
+    const { inverseKey, key } = keyFunctionsForExtensions({
       resultExtension: "upper",
       sourceExtension: "txt",
     });
     const transform = map({
-      inverseKeyMap,
-      keyMap,
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
+      inverseKey,
+      key,
+      value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(files);
     assert.deepEqual(await Tree.plain(fixture), {

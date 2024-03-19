@@ -12,14 +12,14 @@ describe("@map", () => {
     ];
     const fixture = map({
       /** @this {import("@weborigami/types").AsyncTree} */
-      keyMap: async function (sourceValue, sourceKey, tree) {
+      key: async function (sourceValue, sourceKey, tree) {
         const keyInScope = await this.get("@key");
         assert.equal(keyInScope, sourceKey);
         const valueInScope = await this.get("_");
         assert.equal(valueInScope, sourceValue);
         return valueInScope.name;
       },
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.age,
+      value: (sourceValue, sourceKey, tree) => sourceValue.age,
     })(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       Alice: 1,
@@ -36,7 +36,7 @@ describe("@map", () => {
     };
     const transform = map({
       extensions: "txt->upper",
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
+      value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
@@ -53,8 +53,8 @@ describe("@map", () => {
     });
     const transform = map({
       deep: true,
-      keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
-      valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
+      key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
+      value: (sourceValue, sourceKey, tree) => 2 * sourceValue,
     });
     const mapped = transform(treelike);
     assert.deepEqual(await Tree.plain(mapped), {
@@ -74,9 +74,9 @@ describe("@map", () => {
     });
     const mapped = map(treelike, {
       deep: true,
-      keyMap: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
+      key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
       // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
-      valueMap: (sourceValue, sourceKey, tree) => 2 * sourceValue,
+      value: (sourceValue, sourceKey, tree) => 2 * sourceValue,
     });
     assert.deepEqual(await Tree.plain(mapped), {
       a1: 2,
@@ -99,7 +99,7 @@ describe("@map", () => {
     const transform = map({
       deep: true,
       extensions: "txt->upper",
-      valueMap: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
+      value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {

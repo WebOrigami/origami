@@ -87,7 +87,7 @@ describe("Origami parser", () => {
       `
         {
           index.html = index.ori(teamData.yaml)
-          thumbnails = @map(images, { valueMap: thumbnail.js })
+          thumbnails = @map(images, { value: thumbnail.js })
         }
       `,
       [
@@ -104,7 +104,7 @@ describe("Origami parser", () => {
           [
             [ops.scope, "@map"],
             [ops.scope, "images"],
-            [ops.object, ["valueMap", [ops.scope, "thumbnail.js"]]],
+            [ops.object, ["value", [ops.scope, "thumbnail.js"]]],
           ],
         ],
       ]
