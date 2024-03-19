@@ -62,7 +62,7 @@ export default function createMapTransform(options) {
             ? await inverseKeyFn(resultKey, tree)
             : resultKey;
 
-        if (!sourceKey) {
+        if (sourceKey == null) {
           // No source key means no value.
           return undefined;
         }
