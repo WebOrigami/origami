@@ -4,6 +4,15 @@ import { describe, test } from "node:test";
 import fileTypeText from "../../../src/builtins/txt_handler.js";
 
 describe("text handler", () => {
+  test("packs an object as YAML with front matter", async () => {
+    const object = {
+      "@text": "Body text",
+      a: 1,
+    };
+    const packed = await fileTypeText.pack(object);
+    assert.equal(packed, "---\na: 1\n---\nBody text");
+  });
+
   test("unpacks text without data", async () => {
     const text = "Body text";
     const document = await fileTypeText.unpack(text);
@@ -34,11 +43,5 @@ Body text`;
       "@text": "Body text",
       message: "Hello",
     });
-  });
-
-  test("unpacks and packs in the same format", async () => {
-    const text = "---\na: 1\n---\nBody text";
-    const document = await fileTypeText.unpack(text);
-    assert.equal(await document.pack(), text);
   });
 });

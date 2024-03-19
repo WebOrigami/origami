@@ -1,5 +1,6 @@
-import TextDocument from "../common/TextDocument.js";
-import { evaluateYaml } from "../common/serialize.js";
+import { isPacked } from "@weborigami/async-tree";
+import { symbols } from "@weborigami/language";
+import { evaluateYaml, toYaml } from "../common/serialize.js";
 import * as utilities from "../common/utilities.js";
 
 /**
@@ -15,6 +16,36 @@ import * as utilities from "../common/utilities.js";
  */
 export default {
   mediaType: "text/plain",
+
+  /**
+   * If the input is already in some packed format, it will be returned as is.
+   *
+   * Otherwise, the properties of the object will be formatted as YAML. If the
+   * object has a `@text` property, that will be used as the body of the text
+   * document; otherwise, an empty string will be used.
+   *
+   * @param {any} object
+   * @returns {Promise<import("@weborigami/async-tree").Packed>}
+   */
+  async pack(object) {
+    if (isPacked(object)) {
+      return object;
+    } else if (!object || typeof object !== "object") {
+      throw new TypeError("The input to pack must be a JavaScript object.");
+    }
+
+    const text = object["@text"] ?? "";
+
+    /** @type {any} */
+    const dataWithoutText = Object.assign({}, object);
+    delete dataWithoutText["@text"];
+    if (Object.keys(dataWithoutText).length > 0) {
+      const frontMatter = (await toYaml(dataWithoutText)).trimEnd();
+      return `---\n${frontMatter}\n---\n${text}`;
+    } else {
+      return text;
+    }
+  },
 
   /** @type {import("@weborigami/language").UnpackFunction} */
   async unpack(packed, options = {}) {
@@ -34,7 +65,7 @@ export default {
       : null;
 
     const object = Object.assign({}, frontData, { "@text": body });
-
-    return new TextDocument(object, options.parent);
+    object[symbols.parent] = parent;
+    return object;
   },
 };

@@ -3,6 +3,7 @@ import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
+import document from "../common/document.js";
 import { replaceExtension } from "../common/utilities.js";
 
 marked.use(
@@ -37,9 +38,7 @@ export default async function mdHtml(input) {
   const inputDocument = input["@text"] ? input : null;
   const markdown = inputDocument?.["@text"] ?? String(input);
   const html = marked(markdown);
-  return inputDocument
-    ? Object.assign({}, inputDocument, { "@text": html })
-    : html;
+  return inputDocument ? document(html, inputDocument) : html;
 }
 
 mdHtml.key = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
