@@ -11,7 +11,8 @@ export default function createGroupByTransform(groupKeyFn) {
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return async function groupByTransform(tree) {
+  return async function groupByTransform(treelike) {
+    const tree = Tree.from(treelike);
     const result = {};
     for (const key of await tree.keys()) {
       const value = await tree.get(key);

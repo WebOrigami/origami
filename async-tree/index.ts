@@ -35,7 +35,7 @@ export type Treelike =
   NativeTreelike |
   Unpackable<NativeTreelike>;
 
-export type TreeTransform = (tree: AsyncTree) => AsyncTree;
+export type TreeTransform = (treelike: Treelike) => AsyncTree;
 
 export type Unpackable<T> = {
   unpack(): Promise<T>

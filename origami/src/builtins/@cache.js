@@ -1,4 +1,4 @@
-import { cache, Tree } from "@weborigami/async-tree";
+import { Tree, cache } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -19,14 +19,10 @@ export default async function cacheBuiltin(
   filterTreelike
 ) {
   assertScopeIsDefined(this, "cache");
-
-  const sourceTree = Tree.from(sourceTreelike);
   /** @type {any} */
   const cacheTree = cacheTreelike ? Tree.from(cacheTreelike) : undefined;
-  const filterTree = filterTreelike ? Tree.from(filterTreelike) : undefined;
-
   /** @type {AsyncTree} */
-  let result = cache(sourceTree, cacheTree, filterTree);
+  let result = cache(sourceTreelike, cacheTree, filterTreelike);
   result = Scope.treeWithScope(result, this);
   return result;
 }

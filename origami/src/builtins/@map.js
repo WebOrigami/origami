@@ -2,7 +2,6 @@ import {
   cachedKeyFunctions,
   keyFunctionsForExtensions,
   map,
-  Tree,
 } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../common/addValueKeyToScope.js";
@@ -136,7 +135,6 @@ export default function treeMap(param1, param2) {
   }
 
   const transform = function mapTreelike(treelike) {
-    const tree = Tree.from(treelike);
     return map({
       deep,
       description,
@@ -144,7 +142,7 @@ export default function treeMap(param1, param2) {
       key: extendedKeyFn,
       needsSourceValue,
       value: extendedValueFn,
-    })(tree);
+    })(treelike);
   };
 
   return source ? transform(source) : transform;

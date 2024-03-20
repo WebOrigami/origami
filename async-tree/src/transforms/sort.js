@@ -1,3 +1,5 @@
+import * as Tree from "../Tree.js";
+
 /**
  * Return a transform function that sorts a tree's keys.
  *
@@ -10,7 +12,8 @@ export default function createSortTransform(compareFn) {
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function sortTransform(tree) {
+  return function sortTransform(treelike) {
+    const tree = Tree.from(treelike);
     const transform = Object.create(tree);
     transform.keys = async () => {
       const keys = Array.from(await tree.keys());

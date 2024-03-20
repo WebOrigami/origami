@@ -128,12 +128,15 @@ export default class FileTree {
       return this;
     }
 
-    // Treat null value as empty string; will create an empty file.
-    if (value === null) {
-      value = "";
+    if (typeof value === "function") {
+      // Invoke function; write out the result.
+      value = await value();
     }
 
-    if (value instanceof ArrayBuffer) {
+    if (value === null) {
+      // Treat null value as empty string; will create an empty file.
+      value = "";
+    } else if (value instanceof ArrayBuffer) {
       // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
       value = new Uint8Array(value);
     }

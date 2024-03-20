@@ -9,13 +9,17 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {AsyncTree} source
+ * @param {Treelike} sourceTreelike
  * @param {AsyncMutableTree} [cacheTree]
- * @param {AsyncTree} [filter]
+ * @param {Treelike} [filterTreelike]
  * @returns {AsyncTree & { description: string }}
  */
-export default function treeCache(source, cacheTree, filter) {
+export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
+  const source = Tree.from(sourceTreelike);
+  const filter = filterTreelike ? Tree.from(filterTreelike) : undefined;
+
   /** @type {AsyncMutableTree} */
   const cache = cacheTree ?? new ObjectTree({});
   return {

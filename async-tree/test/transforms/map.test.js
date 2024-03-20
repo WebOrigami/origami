@@ -1,18 +1,18 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { ObjectTree } from "../../main.js";
 import DeepObjectTree from "../../src/DeepObjectTree.js";
 import FunctionTree from "../../src/FunctionTree.js";
-import ObjectTree from "../../src/ObjectTree.js";
 import * as Tree from "../../src/Tree.js";
 import map from "../../src/transforms/map.js";
 
 describe("map", () => {
   test("returns identity graph if no key or value", async () => {
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       b: "letter b",
-    });
-    const mapped = map({})(tree);
+    };
+    const mapped = map()(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       a: "letter a",
       b: "letter b",
@@ -41,13 +41,12 @@ describe("map", () => {
   });
 
   test("interprets a single function argument as the value function", async () => {
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       b: "letter b",
-    });
-    const uppercaseValues = map((sourceValue, sourceKey, innerTree) => {
+    };
+    const uppercaseValues = map((sourceValue, sourceKey, tree) => {
       assert(sourceKey === "a" || sourceKey === "b");
-      assert.equal(innerTree, tree);
       return sourceValue.toUpperCase();
     });
     const mapped = uppercaseValues(tree);
@@ -58,10 +57,10 @@ describe("map", () => {
   });
 
   test("maps keys using key and inverseKey", async () => {
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       b: "letter b",
-    });
+    };
     const doubleKeys = map({
       key: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
@@ -74,10 +73,10 @@ describe("map", () => {
   });
 
   test("maps keys and values", async () => {
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       b: "letter b",
-    });
+    };
     const doubleKeysUppercaseValues = map({
       key: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
@@ -91,12 +90,12 @@ describe("map", () => {
   });
 
   test("a shallow map is applied to async subtrees too", async () => {
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       more: {
         b: "letter b",
       },
-    });
+    };
     const doubleKeys = map({
       key: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
@@ -113,10 +112,10 @@ describe("map", () => {
     const uppercase = (s) => s.toUpperCase();
     uppercase.key = (sourceKey) => `_${sourceKey}`;
     uppercase.inverseKey = (resultKey) => resultKey.slice(1);
-    const tree = new ObjectTree({
+    const tree = {
       a: "letter a",
       b: "letter b",
-    });
+    };
     const mapped = map(uppercase)(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "LETTER A",

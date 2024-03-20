@@ -8,7 +8,7 @@ import * as Tree from "../Tree.js";
  *
  * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKey?: KeyFn, key?: KeyFn, value?: ValueKeyFn }} options
  */
-export default function createMapTransform(options) {
+export default function createMapTransform(options = {}) {
   let deep;
   let description;
   let inverseKeyFn;
@@ -44,11 +44,12 @@ export default function createMapTransform(options) {
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function map(tree) {
+  return function map(treelike) {
+    const tree = Tree.from(treelike);
     // The transformed tree is actually an extension of the original tree's
     // prototype chain. This allows the transformed tree to inherit any
-    // properties/methods that do not need to be specified. For example, the
-    // `parent` of the transformed tree is the original tree's parent.
+    // properties/methods. For example, the `parent` of the transformed tree is
+    // the original tree's parent.
     const transformed = Object.create(tree);
 
     transformed.description = description;
