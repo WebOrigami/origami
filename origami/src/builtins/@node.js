@@ -7,7 +7,8 @@ import url from "node:url";
 const patchedProcess = Object.create(null, {
   ...Object.getOwnPropertyDescriptors(process),
   env: {
-    value: function () {
+    enumerable: true,
+    get: function () {
       return Object.assign({}, process.env);
     },
   },
