@@ -33,8 +33,8 @@ export default async function getTreeArgument(
     if (isTreelike(treelike)) {
       let tree = Tree.from(treelike);
       // If the tree was created from a treelike object and does not yet have a
-      // parent, put it in the current scope.
-      if (!tree.parent) {
+      // parent or scope, put it in the current scope.
+      if (!tree.parent && !(/** @type {any} */ (tree).scope)) {
         tree = Scope.treeWithScope(tree, scope);
       }
       return tree;
