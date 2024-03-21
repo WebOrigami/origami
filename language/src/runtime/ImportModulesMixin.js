@@ -32,8 +32,10 @@ export default function ImportModulesMixin(Base) {
           // Ignore errors.
         }
         if (stats) {
-          // Module exists, but we can't load it, probably due to a syntax error.
-          throw new SyntaxError(`Error loading ${filePath}`);
+          // Module exists, but we can't load it. This is often due to a syntax
+          // error in the target module, so we offer that as a hint.
+          const message = `Error loading ${filePath}, possibly due to a syntax error.\n${error.message}`;
+          throw new SyntaxError(message);
         }
 
         // Module doesn't exist.
