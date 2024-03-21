@@ -12,7 +12,7 @@
   "dependencies": {
     "@weborigami/async-tree": "0.0.46",
     "@weborigami/types": "0.0.46",
-    "peggy": "3.0.2",
+    "peggy": "4.0.2",
     "watcher": "2.3.0"
   },
   "scripts": {
