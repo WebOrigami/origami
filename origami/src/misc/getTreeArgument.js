@@ -1,5 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { isTreelike } from "@weborigami/async-tree/src/Tree.js";
+import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "./assertScopeIsDefined.js";
 
 /**
@@ -30,7 +31,13 @@ export default async function getTreeArgument(
 
   if (treelike !== undefined) {
     if (isTreelike(treelike)) {
-      return Tree.from(treelike);
+      let tree = Tree.from(treelike);
+      // If the tree was created from a treelike object and does not yet have a
+      // parent, put it in the current scope.
+      if (!tree.parent) {
+        tree = Scope.treeWithScope(tree, scope);
+      }
+      return tree;
     }
     throw new Error(
       `${methodName}: The first argument must be a tree, like an array, object, or files.`
