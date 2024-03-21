@@ -47,7 +47,8 @@ async function exportStatementForCode(codeBuffer, key) {
   const pathParts = path.split("/");
   pathParts.pop(); // Drop key
 
-  const exportsDefault = code.match(/^export default /m);
+  const exportsDefault =
+    code.match(/^export default /m) || code.match(/^export { default } /m);
   if (!exportsDefault) {
     // Export everything.
     return `export * from "../src/${path}";\n`;
@@ -76,12 +77,15 @@ async function exportStatementForCode(codeBuffer, key) {
     name = specialName;
   }
 
-  // Add the name to the parts.
-  exportIdentifierParts.push(name);
+  // Split the name into parts based on dots.
+  const nameParts = name.split(".");
 
-  // Remove the @ prefix from any parts, if present.
+  // Add the name to the parts.
+  exportIdentifierParts.push(...nameParts);
+
+  // Remove characters that can't be in JavaScript identifiers.
   exportIdentifierParts = exportIdentifierParts.map((part) =>
-    part.startsWith("@") ? part.slice(1) : part
+    part.replace(/[^a-zA-Z0-9]/g, "")
   );
 
   // Join the parts in camelCase to form the identifier.
