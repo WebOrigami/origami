@@ -72,7 +72,7 @@ export default function treeMap(param1, param2) {
     options = {};
   } else if (!options) {
     throw new TypeError(
-      `@map: You must specify a valueFn function or options dictionary.`
+      `@map: You must specify a value function or options dictionary.`
     );
   } else {
     valueFn = options.value;
@@ -86,7 +86,7 @@ export default function treeMap(param1, param2) {
 
   if (extension && (keyFn || inverseKey)) {
     throw new TypeError(
-      `@map: You can't specify both extensions and a keyFn or inverseKey`
+      `@map: You can't specify extensions and also a key or inverseKey function`
     );
   }
 
@@ -131,7 +131,7 @@ export default function treeMap(param1, param2) {
     extendedInverseKeyFn = keyFns.inverseKey;
   } else {
     // Use sidecar keyFn/inverseKey functions if the valueFn defines them.
-    extendedKeyFn = valueFn?.keyFn;
+    extendedKeyFn = valueFn?.key;
     extendedInverseKeyFn = valueFn?.inverseKey;
   }
 

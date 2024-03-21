@@ -37,7 +37,7 @@ export default function createMapTransform(options = {}) {
 
   if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
     throw new TypeError(
-      `map: You must specify both keyFn and inverseKey functions, or neither.`
+      `map: You must specify both key and inverseKey functions, or neither.`
     );
   }
 
