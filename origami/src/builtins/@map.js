@@ -17,9 +17,9 @@ import { toFunction } from "../common/utilities.js";
  * @typedef {import("../../index.ts").TreelikeTransform} TreelikeTransform
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @typedef {{ deep?: boolean, description?: string, extensions?: string,
- * inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?: ValueKeyFn, value?:
- * ValueKeyFn, valueFn?: ValueKeyFn }} TreeMapOptions
+ * @typedef {{ deep?: boolean, description?: string, extension?: string,
+ * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
+ * ValueKeyFn, value?: ValueKeyFn, valueFn?: ValueKeyFn }} TreeMapOptions
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  *
@@ -78,12 +78,13 @@ export default function treeMap(param1, param2) {
     valueFn = options.value;
   }
 
-  let { deep, description, extensions, inverseKey, needsSourceValue } = options;
+  let { deep, description, inverseKey, needsSourceValue } = options;
+  let extension = options.extension ?? options.extensions;
   let keyFn = options.keyFn ?? options.key;
 
-  description ??= `@map ${extensions ?? ""}`;
+  description ??= `@map ${extension ?? ""}`;
 
-  if (extensions && (keyFn || inverseKey)) {
+  if (extension && (keyFn || inverseKey)) {
     throw new TypeError(
       `@map: You can't specify both extensions and a keyFn or inverseKey`
     );
@@ -104,8 +105,8 @@ export default function treeMap(param1, param2) {
   // Extend the key function to include the value and key in scope.
   let extendedKeyFn;
   let extendedInverseKeyFn;
-  if (extensions) {
-    let { resultExtension, sourceExtension } = parseExtensions(extensions);
+  if (extension) {
+    let { resultExtension, sourceExtension } = parseExtensions(extension);
     const keyFns = keyFunctionsForExtensions({
       resultExtension,
       sourceExtension,
