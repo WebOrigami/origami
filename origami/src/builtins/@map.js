@@ -75,12 +75,12 @@ export default function treeMap(param1, param2) {
       `@map: You must specify a value function or options dictionary.`
     );
   } else {
-    valueFn = options.value;
+    valueFn = options.value ?? options.valueMap;
   }
 
   let { deep, description, inverseKey, needsSourceValue } = options;
   let extension = options.extension ?? options.extensions;
-  let keyFn = options.keyFn ?? options.key;
+  let keyFn = options.keyMap ?? options.key;
 
   description ??= `@map ${extension ?? ""}`;
 
