@@ -38,13 +38,20 @@ export default class Scope {
   static getScope(tree) {
     if (!tree) {
       return null;
-    } else if ("scope" in tree) {
-      return /** @type {any} */ (tree).scope;
-    } else if (Tree.isAsyncTree(tree)) {
-      return new Scope(tree, this.getScope(tree.parent));
-    } else {
-      return tree;
+    } else if (!Tree.isAsyncTree(tree)) {
+      throw new Error("Tried to get the scope of something that's not a tree.");
     }
+
+    if ("scope" in tree) {
+      // Ask tree for its scope, use that if defined.
+      const scope = /** @type {any} */ (tree).scope;
+      if (scope) {
+        return scope;
+      }
+    }
+
+    // Default scope is tree plus its parent scope.
+    return new Scope(tree, this.getScope(tree.parent));
   }
 
   async keys() {
