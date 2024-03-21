@@ -110,7 +110,7 @@ export { default as addValueKeyToScope } from "../src/common/addValueKeyToScope.
 export { default as arrowFunctionsMap } from "../src/common/arrowFunctionsMap.js";
 export { default as CommandModulesTransform } from "../src/common/CommandModulesTransform.js";
 export { default as ConstantTree } from "../src/common/ConstantTree.js";
-export { default as document } from "../src/common/document.js";
+export { default as documentObject } from "../src/common/documentObject.js";
 export { default as ExplorableSiteTransform } from "../src/common/ExplorableSiteTransform.js";
 export { default as FilterTree } from "../src/common/FilterTree.js";
 export { default as GlobTree } from "../src/common/GlobTree.js";

@@ -8,7 +8,7 @@ import txtHandler from "../builtins/txt_handler.js";
  *
  * The `text` input will be coerced to a string.
  */
-export default function document(text, data) {
+export default function documentObject(text, data) {
   const result = Object.assign({}, data, { "@text": String(text) });
   result[symbols.pack] = txtHandler.pack;
   return result;

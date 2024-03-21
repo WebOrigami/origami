@@ -1,4 +1,4 @@
-import document from "../common/document.js";
+import documentObject from "../common/documentObject.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -12,5 +12,5 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default function documentBuiltin(text, data) {
   assertScopeIsDefined(this, "document");
-  return document(text, data);
+  return documentObject(text, data);
 }

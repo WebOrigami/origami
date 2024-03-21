@@ -1,6 +1,6 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import document from "../common/document.js";
+import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import fileTypeOrigami from "./ori_handler.js";
@@ -53,7 +53,7 @@ export default async function inline(input) {
   });
   const templateResult = await templateFn(inputDocument);
   return inputDocument
-    ? document(templateResult, inputDocument)
+    ? documentObject(templateResult, inputDocument)
     : templateResult;
 }
 
