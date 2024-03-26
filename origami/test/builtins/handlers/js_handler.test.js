@@ -34,4 +34,13 @@ describe(".js handler", () => {
     });
     assert.deepEqual(obj, { a: 1 });
   });
+
+  test("returns multiple exports as an object", async () => {
+    const buffer = await fixturesTree.get("multiple.js");
+    const obj = await fileTypeJs.unpack(buffer, {
+      key: "multiple.js",
+      parent: fixturesTree,
+    });
+    assert.deepEqual(obj, { n: 1, s: "string" });
+  });
 });
