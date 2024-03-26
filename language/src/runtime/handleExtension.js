@@ -1,5 +1,5 @@
+import { symbols } from "@weborigami/async-tree";
 import extname from "./extname.js";
-import * as symbols from "./symbols.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 

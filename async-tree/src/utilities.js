@@ -45,7 +45,7 @@ export const hiddenFileNames = [".DS_Store"];
  * a form) that can be given to fs.writeFile or response.write().
  *
  * @param {any} object
- * @returns {object is import("../index").Packed}
+ * @returns {object is import("../index.ts").Packed}
  */
 export function isPacked(object) {
   return (
@@ -66,7 +66,7 @@ export function isPacked(object) {
  * `Module`) as plain objects.
  *
  * @param {any} object
- * @returns {object is import("../index").PlainObject}
+ * @returns {object is import("../index.ts").PlainObject}
  */
 export function isPlainObject(object) {
   // From https://stackoverflow.com/q/51722354/76472
@@ -89,7 +89,7 @@ export function isPlainObject(object) {
  * method.
  *
  * @param {any} object
- * @returns {obj is import("../index").StringLike}
+ * @returns {obj is import("../index.ts").StringLike}
  */
 export function isStringLike(object) {
   if (typeof object === "string") {

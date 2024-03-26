@@ -1,5 +1,4 @@
-import { isStringLike } from "@weborigami/async-tree";
-import { symbols } from "@weborigami/language";
+import { isStringLike, symbols } from "@weborigami/async-tree";
 import { toYaml } from "./serialize.js";
 import * as utilities from "./utilities.js";
 

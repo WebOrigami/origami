@@ -1,4 +1,4 @@
-import { symbols } from "@weborigami/language";
+import { symbols } from "@weborigami/async-tree";
 import txtHandler from "../builtins/txt_handler.js";
 
 /**
@@ -10,6 +10,6 @@ import txtHandler from "../builtins/txt_handler.js";
  */
 export default function documentObject(text, data) {
   const result = Object.assign({}, data, { "@text": String(text) });
-  result[symbols.pack] = txtHandler.pack;
+  result[symbols.pack] = () => txtHandler.pack(result);
   return result;
 }

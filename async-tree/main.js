@@ -15,6 +15,7 @@ export * as keysJson from "./src/keysJson.js";
 export { default as cache } from "./src/operations/cache.js";
 export { default as merge } from "./src/operations/merge.js";
 export { default as mergeDeep } from "./src/operations/mergeDeep.js";
+export * as symbols from "./src/symbols.js";
 export { default as cachedKeyFunctions } from "./src/transforms/cachedKeyFunctions.js";
 export { default as groupBy } from "./src/transforms/groupBy.js";
 export { default as keyFunctionsForExtensions } from "./src/transforms/keyFunctionsForExtensions.js";

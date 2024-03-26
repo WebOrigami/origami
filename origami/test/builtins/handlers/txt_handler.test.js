@@ -15,10 +15,8 @@ describe("text handler", () => {
 
   test("unpacks text without data", async () => {
     const text = "Body text";
-    const document = await fileTypeText.unpack(text);
-    assert.deepEqual(document, {
-      "@text": text,
-    });
+    const result = await fileTypeText.unpack(text);
+    assert.equal(result, text);
   });
 
   test("unpacks a document with YAML/JSON front matter", async () => {

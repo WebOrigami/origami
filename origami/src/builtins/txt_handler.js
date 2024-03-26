@@ -1,5 +1,4 @@
-import { isPacked } from "@weborigami/async-tree";
-import { symbols } from "@weborigami/language";
+import { isPacked, symbols } from "@weborigami/async-tree";
 import { evaluateYaml, toYaml } from "../common/serialize.js";
 import * as utilities from "../common/utilities.js";
 
@@ -11,8 +10,12 @@ import * as utilities from "../common/utilities.js";
  * followed by a block of JSON or YAML, followed by another line of "---". Any
  * lines following will be treated as the document text.
  *
- * Any Origami expressions in the front matter will be evaluated and the results
- * incorporated into the document data.
+ * If there is no front matter, the document will be treated as plain text and
+ * returned as a String object.
+ *
+ * If there is front matter, any Origami expressions in the front matter will be
+ * evaluated. The result will be a plain JavaScript object with the evaluated
+ * data and a `@text` property containing the document text.
  */
 export default {
   mediaType: "text/plain",
@@ -54,18 +57,22 @@ export default {
     if (!text) {
       throw new Error("Tried to treat something as text but it wasn't text.");
     }
+
     const regex =
       /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
     const match = regex.exec(text);
+    let unpacked;
+    if (match) {
+      // Document object with front matter
+      const { body, frontText } = /** @type {any} */ (match.groups);
+      const frontData = await evaluateYaml(frontText, parent);
+      unpacked = Object.assign({}, frontData, { "@text": body });
+    } else {
+      // Plain text
+      unpacked = new String(text);
+    }
 
-    const body = match?.groups?.body ?? text;
-
-    const frontData = match?.groups
-      ? await evaluateYaml(match.groups.frontText, parent)
-      : null;
-
-    const object = Object.assign({}, frontData, { "@text": body });
-    object[symbols.parent] = parent;
-    return object;
+    unpacked[symbols.parent] = parent;
+    return unpacked;
   },
 };

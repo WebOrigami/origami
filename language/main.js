@@ -19,4 +19,3 @@ export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export { default as extname } from "./src/runtime/extname.js";
 export { default as formatError } from "./src/runtime/formatError.js";
 export { default as functionResultsMap } from "./src/runtime/functionResultsMap.js";
-export * as symbols from "./src/runtime/symbols.js";
