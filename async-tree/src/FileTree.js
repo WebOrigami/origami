@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Tree from "./Tree.js";
+import * as symbols from "./symbols.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
@@ -132,24 +133,29 @@ export default class FileTree {
       value = await value();
     }
 
+    let packed = false;
     if (value === null) {
       // Treat null value as empty string; will create an empty file.
       value = "";
-    } else if (value instanceof ArrayBuffer) {
-      // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
-      value = new Uint8Array(value);
-    }
-
-    // True if fs.writeFile can directly write the value to a file.
-    let isWriteable = isPacked(value);
-
-    if (!isWriteable && isStringLike(value)) {
+      packed = true;
+    } else if (isPacked(value)) {
+      packed = true;
+    } else if (typeof value[symbols.pack] === "function") {
+      // Try to pack the value for writing.
+      value = await value[symbols.pack]();
+      packed = true;
+    } else if (isStringLike(value)) {
       // Value has a meaningful `toString` method, use that.
       value = String(value);
-      isWriteable = true;
+      packed = true;
     }
 
-    if (isWriteable) {
+    if (packed) {
+      // Single writeable value.
+      if (value instanceof ArrayBuffer) {
+        // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
+        value = new Uint8Array(value);
+      }
       // Ensure this directory exists.
       await fs.mkdir(this.dirname, { recursive: true });
       // Write out the value as the contents of a file.

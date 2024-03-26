@@ -4,6 +4,7 @@ import {
   isPacked,
   isPlainObject,
   isStringLike,
+  symbols,
 } from "@weborigami/async-tree";
 import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
@@ -59,12 +60,16 @@ export default async function constructResponse(request, resource) {
     });
   }
 
-  // If the request is for a JSON or YAML result, and the resource we got
-  // isn't yet a string or Buffer, convert the resource to JSON or YAML now.
+  if (typeof resource[symbols.pack] === "function") {
+    resource = await resource[symbols.pack]();
+  }
+
   if (
     (mediaType === "application/json" || mediaType === "text/yaml") &&
     !isStringLike(resource)
   ) {
+    // The request is for a JSON or YAML result, and the resource we got isn't
+    // yet a string or Buffer: convert the resource to JSON or YAML now.
     const tree = Tree.from(resource);
     resource =
       mediaType === "text/yaml"
