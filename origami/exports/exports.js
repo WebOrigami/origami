@@ -117,7 +117,6 @@ export { default as GlobTree } from "../src/common/GlobTree.js";
 export { default as processUnpackedContent } from "../src/common/processUnpackedContent.js";
 export * from "../src/common/serialize.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
-export { default as TextDocument } from "../src/common/TextDocument.js";
 export * from "../src/common/utilities.js";
 export { default as assertScopeIsDefined } from "../src/misc/assertScopeIsDefined.js";
 export { default as getTreeArgument } from "../src/misc/getTreeArgument.js";
