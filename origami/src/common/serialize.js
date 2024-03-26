@@ -132,17 +132,15 @@ export async function toValue(input, jsonValuesOnly = false) {
   if (input instanceof Promise) {
     // Resolve promise before processing.
     return toValue(await input, jsonValuesOnly);
+  } else if (isJsonValue(input)) {
+    return input;
   } else if (typeof input !== "object") {
     if (jsonValuesOnly) {
-      if (isJsonValue(input)) {
-        return input;
-      } else {
-        throw new TypeError(`Couldn't serialize value to JSON: ${input}`);
-      }
+      throw new TypeError(`Couldn't serialize value to JSON: ${input}`);
     } else {
       return input;
     }
-  } else if (input && typeof input.unpack === "function") {
+  } else if (typeof input.unpack === "function") {
     // Unpack first, then convert to JSON value.
     const unpacked = await input.unpack();
     return toValue(unpacked);
