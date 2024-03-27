@@ -194,6 +194,16 @@ export function isTreelike(object) {
   );
 }
 
+export function isTreelike2(object) {
+  return (
+    isAsyncTree(object) ||
+    object instanceof Function ||
+    object instanceof Array ||
+    object instanceof Set ||
+    isPlainObject(object)
+  );
+}
+
 /**
  * Return true if the indicated key produces or is expected to produce an
  * async tree.
@@ -373,13 +383,9 @@ export async function traverseOrThrow(treelike, ...keys) {
       return typeof value.unpack === "function" ? await value.unpack() : value;
     }
 
-    // If the value is not a function or async tree already, but can be
-    // unpacked, unpack it.
-    if (
-      !(value instanceof Function) &&
-      !isAsyncTree(value) &&
-      value.unpack instanceof Function
-    ) {
+    // If the value is not a function or treelike already, but can be unpacked,
+    // unpack it.
+    if (!isTreelike2(value) && value.unpack instanceof Function) {
       value = await value.unpack();
     }
 
