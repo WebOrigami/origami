@@ -1,4 +1,5 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
@@ -59,7 +60,13 @@ function DebugTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          tree = transformObject(ExplorableSiteTransform, tree);
+          if (!tree.parent && !tree.scope) {
+            const scope = Scope.getScope(this);
+            tree = Scope.treeWithScope(tree, scope);
+          }
+          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+            tree = transformObject(ExplorableSiteTransform, tree);
+          }
           tree = transformObject(DebugTransform, tree);
           return tree;
         };

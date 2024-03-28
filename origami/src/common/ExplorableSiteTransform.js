@@ -64,6 +64,10 @@ export default function ExplorableSiteTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
+          if (!tree.parent && !tree.scope) {
+            const scope = Scope.getScope(this);
+            tree = Scope.treeWithScope(tree, scope);
+          }
           tree = transformObject(ExplorableSiteTransform, tree);
           return tree;
         };
