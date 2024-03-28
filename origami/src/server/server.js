@@ -55,10 +55,11 @@ function extendTreeScopeWithParams(tree, url) {
   });
 
   // Create a new scope that includes search parameter tree.
-  const newScope = new Scope(paramTree, tree.parent);
+  const scope = Scope.getScope(tree);
+  const extendedScope = new Scope(paramTree, scope);
 
   // Create a new tree that extends the prototype chain of the supplied tree.
-  const extendedTree = Scope.treeWithScope(tree, newScope);
+  const extendedTree = Scope.treeWithScope(tree, extendedScope);
 
   return extendedTree;
 }
