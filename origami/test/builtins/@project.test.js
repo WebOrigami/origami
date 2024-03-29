@@ -1,4 +1,5 @@
 import assert from "node:assert";
+import path from "node:path";
 import process from "node:process";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -24,7 +25,7 @@ describe("@project", () => {
     const result = await promise;
 
     // Get result path, it'll need a trailing slash to compare.
-    const resultPath = result.path + "/";
+    const resultPath = result.path + path.sep;
     assert.equal(resultPath, fileURLToPath(projectUrl));
   });
 });
