@@ -22,4 +22,4 @@ Bugs are an unavoidable aspect of software development — but a lousy way for y
 
 Many thanks to the people who contributed their time to watch a demo, provide feedback, review documentation, offer suggestions, participate in a usability test, etc.
 
-Chris Zimmerman ・ Rob Bearman ・ Derik Stenerson ・ Bruce Oberg ・ Alex Russell ・ Jade Pennig ・ Wolfram Kriesing ・ Dan Clark ・ Nolan Lawson ・ Eric Candell ・ Robby Ingebretsen ・ Joel Fillmore ・ Lee White ・ Bill Barnes ・ Brandon Ferrua ・ Pierre-Marie Dartus ・ Liron Shapira ・ Chris Miksovsky ・ Will Friedman ・ Josie Bolotski ・ Peter Chane ・ Emilis Dambauskas ・ Nick Simson ・ Mia Wilson ・ Anders Hejlsberg ・ Joe Belfiore
+Chris Zimmerman ・ Rob Bearman ・ Derik Stenerson ・ Bruce Oberg ・ Alex Russell ・ Jade Pennig ・ Wolfram Kriesing ・ Dan Clark ・ Nolan Lawson ・ Eric Candell ・ Robby Ingebretsen ・ Joel Fillmore ・ Lee White ・ Bill Barnes ・ Brandon Ferrua ・ Pierre-Marie Dartus ・ Liron Shapira ・ Chris Miksovsky ・ Will Friedman ・ Josie Bolotski ・ Peter Chane ・ Emilis Dambauskas ・ Nick Simson ・ Mia Wilson ・ Anders Hejlsberg ・ Joe Belfiore ・ Liam Bigelow ・ Brad Frost
