@@ -152,11 +152,6 @@ export default class SiteTree {
     return Reflect.construct(this.constructor, [href]);
   }
 
-  async unpack() {
-    const response = await fetch(this.href);
-    return response.ok ? response.arrayBuffer() : undefined;
-  }
-
   get url() {
     return new URL(this.href);
   }

@@ -5,7 +5,7 @@ import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
 import mapTransform from "./transforms/map.js";
 import * as utilities from "./utilities.js";
-import { castArrayLike, isPlainObject } from "./utilities.js";
+import { castArrayLike, isPacked, isPlainObject } from "./utilities.js";
 
 /**
  * Helper functions for working with async trees
@@ -210,16 +210,6 @@ export function isTreelike(object) {
   );
 }
 
-export function isTreelike2(object) {
-  return (
-    isAsyncTree(object) ||
-    object instanceof Function ||
-    object instanceof Array ||
-    object instanceof Set ||
-    isPlainObject(object)
-  );
-}
-
 /**
  * Return a new tree with deeply-mapped values of the original tree.
  *
@@ -376,20 +366,16 @@ export async function traverseOrThrow(treelike, ...keys) {
       throw new TraverseError(message, treelike, keys);
     }
 
-    // Special case: one key left that's an empty string
-    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
-      // Unpack the value if it defines an `unpack` function, otherwise return
-      // the value itself.
-      return typeof value.unpack === "function" ? await value.unpack() : value;
-    }
-
-    // If the value is not a function or treelike already, but can be unpacked,
-    // unpack it.
-    if (!isTreelike2(value) && value.unpack instanceof Function) {
+    // If the value is packed and can be unpacked, unpack it.
+    if (!isPacked(value) && value.unpack instanceof Function) {
       value = await value.unpack();
     }
 
-    if (value instanceof Function) {
+    // Peek ahead: if there's only one key left and it's an empty string, return
+    // the value itself.
+    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
+      return value;
+    } else if (value instanceof Function) {
       // Value is a function: call it with the remaining keys.
       const fn = value;
       // We'll take as many keys as the function's length, but at least one.
