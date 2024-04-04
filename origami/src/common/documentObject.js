@@ -1,4 +1,4 @@
-import { isPlainObject, symbols } from "@weborigami/async-tree";
+import { isPlainObject } from "@weborigami/async-tree";
 import txtHandler from "../builtins/txt_handler.js";
 
 /**
@@ -22,8 +22,12 @@ export default function documentObject(input, data) {
     text = String(input);
     inputData = null;
   }
-  const result = Object.assign({}, inputData, data, { "@text": text });
-  // @ts-ignore
-  result[symbols.pack] = () => txtHandler.pack(result);
+  const base = {
+    pack() {
+      return txtHandler.pack(this);
+    },
+  };
+  const result = Object.create(base);
+  Object.assign(result, inputData, data, { "@text": text });
   return result;
 }

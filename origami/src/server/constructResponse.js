@@ -4,7 +4,6 @@ import {
   isPacked,
   isPlainObject,
   isStringLike,
-  symbols,
 } from "@weborigami/async-tree";
 import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
@@ -60,8 +59,8 @@ export default async function constructResponse(request, resource) {
     });
   }
 
-  if (typeof resource[symbols.pack] === "function") {
-    resource = await resource[symbols.pack]();
+  if (!isPacked(resource) && typeof resource.pack === "function") {
+    resource = await resource.pack();
   }
 
   if (

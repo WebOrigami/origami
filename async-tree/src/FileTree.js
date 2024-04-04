@@ -2,7 +2,6 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Tree from "./Tree.js";
-import * as symbols from "./symbols.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
@@ -140,9 +139,9 @@ export default class FileTree {
       packed = true;
     } else if (isPacked(value)) {
       packed = true;
-    } else if (typeof value[symbols.pack] === "function") {
-      // Try to pack the value for writing.
-      value = await value[symbols.pack]();
+    } else if (typeof value.pack === "function") {
+      // Pack the value for writing.
+      value = await value.pack();
       packed = true;
     } else if (isStringLike(value)) {
       // Value has a meaningful `toString` method, use that.
