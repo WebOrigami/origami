@@ -20,9 +20,6 @@ export default async function json(obj) {
   if (obj === undefined) {
     return undefined;
   }
-  if (typeof obj.unpack === "function") {
-    obj = await obj.unpack();
-  }
   const value = await serialize.toJsonValue(obj);
   return JSON.stringify(value, null, 2);
 }
