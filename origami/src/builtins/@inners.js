@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -14,7 +13,7 @@ export default async function inners(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@inners");
 
   /** @type {AsyncTree} */
-  let result = {
+  const result = {
     async get(key) {
       const value = await tree.get(key);
       return Tree.isAsyncTree(value) ? inners.call(this, value) : undefined;
@@ -31,7 +30,6 @@ export default async function inners(treelike) {
     },
   };
 
-  result = Scope.treeWithScope(result, this);
   return result;
 }
 

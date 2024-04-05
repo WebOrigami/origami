@@ -1,5 +1,4 @@
 import { Tree, keysJson } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import { transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -13,9 +12,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  */
 export default async function treeKeysJson(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@keysJson");
-  let result = transformObject(KeysJsonTransform, tree);
-  result = Scope.treeWithScope(result, this);
-  return result;
+  return transformObject(KeysJsonTransform, tree);
 }
 
 function KeysJsonTransform(Base) {

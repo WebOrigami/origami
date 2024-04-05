@@ -1,5 +1,5 @@
 import {
-  ObjectTree,
+  DeepObjectTree,
   Tree,
   isPlainObject,
   keysFromPath,
@@ -94,8 +94,8 @@ export default async function crawl(treelike, baseHref) {
   // value.
   /** @type {AsyncTree} */
   let result = mergeDeep(
-    new ObjectTree(cache),
-    new (InvokeFunctionsTransform(ObjectTree))(resources)
+    new DeepObjectTree(cache),
+    new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );
   result = Scope.treeWithScope(result, this);
   return result;
