@@ -182,22 +182,35 @@ export async function isKeyForSubtree(tree, key) {
 }
 
 /**
+ * Return true if the object can be traversed via the `traverse()` method. The
+ * object must be either treelike or a packed object with an `unpack()` method.
+ *
+ * @param {any} object
+ */
+export function isTraversable(object) {
+  return (
+    isTreelike(object) ||
+    (isPacked(object) && /** @type {any} */ (object).unpack instanceof Function)
+  );
+}
+
+/**
  * Returns true if the indicated object can be directly treated as an
  * asynchronous tree. This includes:
  *
  * - An object that implements the AsyncTree interface (including
  *   AsyncTree instances)
- * - An object that implements the `unpack()` method
  * - A function
  * - An `Array` instance
  * - A `Map` instance
  * - A `Set` instance
  * - A plain object
  *
- * Note: the `from()` method accepts any JavaScript object, but `isTreeable`
+ * Note: the `from()` method accepts any JavaScript object, but `isTreelike`
  * returns `false` for an object that isn't one of the above types.
  *
  * @param {any} object
+ * @returns {obj is Treelike}
  */
 export function isTreelike(object) {
   return (
@@ -205,7 +218,6 @@ export function isTreelike(object) {
     object instanceof Function ||
     object instanceof Array ||
     object instanceof Set ||
-    object?.unpack instanceof Function ||
     isPlainObject(object)
   );
 }

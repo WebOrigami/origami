@@ -55,7 +55,7 @@ function DebugTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           let content = await original();
-          if (!Tree.isTreelike(content)) {
+          if (!Tree.isTraversable(content)) {
             return content;
           }
           /** @type {any} */

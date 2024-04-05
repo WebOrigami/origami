@@ -1,8 +1,4 @@
-import {
-  Tree,
-  getRealmObjectPrototype,
-  isPlainObject,
-} from "@weborigami/async-tree";
+import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -31,16 +27,7 @@ async function getText(value, scope) {
     value = await value.call(scope);
   }
 
-  // We'd prefer to use Tree.isTreelike() here, but that counts an object with
-  // an unpack() function as a treelike object. In this case, we don't want to
-  // unpack anything that's not already treelike.
-  const isTreelike =
-    Tree.isAsyncTree(value) ||
-    value instanceof Function ||
-    value instanceof Array ||
-    value instanceof Set ||
-    isPlainObject(value);
-  if (isTreelike) {
+  if (Tree.isTreelike(value)) {
     // The mapReduce operation above only implicit casts its top-level input to
     // a tree. If we're asked for the text of a treelike value, we need to
     // explicitly recurse.

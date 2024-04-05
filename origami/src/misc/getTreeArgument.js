@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { Tree, isPacked } from "@weborigami/async-tree";
 import { isTreelike } from "@weborigami/async-tree/src/Tree.js";
 import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "./assertScopeIsDefined.js";
@@ -30,6 +30,12 @@ export default async function getTreeArgument(
   assertScopeIsDefined(scope);
 
   if (treelike !== undefined) {
+    if (
+      isPacked(treelike) &&
+      typeof (/** @type {any} */ (treelike).unpack) === "function"
+    ) {
+      treelike = await /** @type {any} */ (treelike).unpack();
+    }
     if (isTreelike(treelike)) {
       let tree = Tree.from(treelike);
       // If the tree was created from a treelike object and does not yet have a

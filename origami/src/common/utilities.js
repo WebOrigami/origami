@@ -1,4 +1,9 @@
-import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
+import {
+  Tree,
+  isPacked,
+  isPlainObject,
+  isStringLike,
+} from "@weborigami/async-tree";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -58,7 +63,7 @@ export function toFunction(obj) {
     // Return a function as is.
     return obj;
   } else if (
-    typeof obj === "object" &&
+    isPacked(obj) &&
     typeof (/** @type {any} */ (obj)?.unpack) === "function"
   ) {
     // Extract the contents of the object and convert that to a function.

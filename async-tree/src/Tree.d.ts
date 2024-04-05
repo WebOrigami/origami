@@ -10,6 +10,7 @@ export function has(AsyncTree: AsyncTree, key: any): Promise<boolean>;
 export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;
 export function isKeyForSubtree(tree: AsyncTree, obj: any): Promise<boolean>;
+export function isTraversable(obj: any): boolean;
 export function isTreelike(obj: any): obj is Treelike;
 export function map(tree: Treelike, valueFn: ValueKeyFn): AsyncTree;
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn|null, reduceFn: ReduceFn): Promise<any>;
