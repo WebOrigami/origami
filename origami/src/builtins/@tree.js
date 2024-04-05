@@ -1,4 +1,3 @@
-import { Scope } from "@weborigami/language";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -10,9 +9,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function tree(treelike) {
-  let tree = await getTreeArgument(this, arguments, treelike, "@tree");
-  tree = Scope.treeWithScope(tree, this);
-  return tree;
+  return getTreeArgument(this, arguments, treelike, "@tree");
 }
 
 tree.usage = `@tree <treelike>\tConvert JSON, YAML, function, or plain object to a tree`;
