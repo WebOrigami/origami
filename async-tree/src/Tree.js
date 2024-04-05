@@ -5,7 +5,12 @@ import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
 import mapTransform from "./transforms/map.js";
 import * as utilities from "./utilities.js";
-import { castArrayLike, isPacked, isPlainObject } from "./utilities.js";
+import {
+  castArrayLike,
+  isPacked,
+  isPlainObject,
+  isUnpackable,
+} from "./utilities.js";
 
 /**
  * Helper functions for working with async trees
@@ -379,7 +384,7 @@ export async function traverseOrThrow(treelike, ...keys) {
     }
 
     // If the value is packed and can be unpacked, unpack it.
-    if (!isPacked(value) && value.unpack instanceof Function) {
+    if (isUnpackable(value)) {
       value = await value.unpack();
     }
 

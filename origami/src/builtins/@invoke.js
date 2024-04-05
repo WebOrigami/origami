@@ -1,3 +1,4 @@
+import { isUnpackable } from "@weborigami/async-tree";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
 
@@ -30,7 +31,7 @@ export default async function invoke(fn) {
       "An Origami function was called with an initial argument, but its value is undefined."
     );
   }
-  if (typeof fn !== "function" && fn.unpack) {
+  if (isUnpackable(fn)) {
     fn = await fn.unpack();
   }
   const scope = (await this?.get("@current")) ?? builtins;

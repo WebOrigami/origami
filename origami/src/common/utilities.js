@@ -1,8 +1,8 @@
 import {
   Tree,
-  isPacked,
   isPlainObject,
   isStringLike,
+  isUnpackable,
 } from "@weborigami/async-tree";
 
 const textDecoder = new TextDecoder();
@@ -62,16 +62,13 @@ export function toFunction(obj) {
   if (typeof obj === "function") {
     // Return a function as is.
     return obj;
-  } else if (
-    isPacked(obj) &&
-    typeof (/** @type {any} */ (obj)?.unpack) === "function"
-  ) {
+  } else if (isUnpackable(obj)) {
     // Extract the contents of the object and convert that to a function.
     let fn;
     /** @this {any} */
     return async function (...args) {
       if (!fn) {
-        const content = await /** @type {any} */ (obj).unpack();
+        const content = await obj.unpack();
         fn = toFunction(content);
       }
       return fn.call(this, ...args);

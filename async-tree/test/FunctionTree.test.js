@@ -18,12 +18,6 @@ describe("FunctionTree", async () => {
     assert.equal(alice, "Hello, **Alice**.");
   });
 
-  test("unpacking the tree returns the function itself", async () => {
-    const fn = () => true;
-    const fixture = new FunctionTree(fn);
-    assert.equal(await fixture.unpack(), fn);
-  });
-
   test("getting a value from function with multiple arguments curries the function", async () => {
     const fixture = new FunctionTree((a, b, c) => a + b + c);
     const fnA = await fixture.get(1);

@@ -41,8 +41,4 @@ export default class FunctionTree {
   async keys() {
     return this.domain;
   }
-
-  async unpack() {
-    return this.fn;
-  }
 }

@@ -1,7 +1,5 @@
-import { symbols } from "@weborigami/async-tree";
+import { isUnpackable, symbols } from "@weborigami/async-tree";
 import extname from "./extname.js";
-
-const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
  * Given a value that was retrieved using the given key, search in scope for a
@@ -22,10 +20,7 @@ export default async function handleExtension(scope, key, value, parent) {
     const handlerName = `${extension.slice(1)}_handler`;
     /** @type {import("../../index.ts").ExtensionHandler} */
     let extensionHandler = await scope?.get(handlerName);
-    if (
-      extensionHandler instanceof Buffer ||
-      extensionHandler instanceof TypedArray
-    ) {
+    if (isUnpackable(extensionHandler)) {
       // The extension handler itself needs to be unpacked. E.g., if it's a
       // buffer containing JavaScript file, we need to unpack it to get its
       // default export.

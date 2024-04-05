@@ -1,4 +1,4 @@
-import { Tree, isPlainObject } from "@weborigami/async-tree";
+import { Tree, isPlainObject, isUnpackable } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
@@ -23,9 +23,9 @@ export default async function inline(input) {
   let inputDocument;
   if (input["@text"]) {
     inputDocument = input;
-  } else if (/** @type {any} */ (input).unpack) {
+  } else if (isUnpackable(input)) {
     // Have the input unpack itself.
-    inputDocument = await /** @type {any} */ (input).unpack();
+    inputDocument = await input.unpack();
   } else {
     // Unpack the input as a text document with possible front matter.
     const text = toString(input);

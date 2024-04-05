@@ -10,7 +10,7 @@ import txtHandler from "../builtins/txt_handler.js";
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
  * @param {StringLike|PlainObject} input
- * @param {PlainObject} [data]
+ * @param {any} [data]
  */
 export default function documentObject(input, data) {
   let text;

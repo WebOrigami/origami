@@ -106,6 +106,13 @@ export function isStringLike(object) {
   }
 }
 
+export function isUnpackable(object) {
+  return (
+    isPacked(object) &&
+    typeof (/** @type {any} */ (object).unpack) === "function"
+  );
+}
+
 /**
  * Given a path like "/foo/bar/baz", return an array of keys like ["foo", "bar",
  * "baz"].

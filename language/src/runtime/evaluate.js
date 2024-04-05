@@ -1,4 +1,4 @@
-import { Tree, isPacked, isPlainObject } from "@weborigami/async-tree";
+import { Tree, isPlainObject, isUnpackable } from "@weborigami/async-tree";
 import { ops } from "./internal.js";
 
 const codeSymbol = Symbol("code");
@@ -45,9 +45,9 @@ export default async function evaluate(code) {
     throw ReferenceError(`${codeFragment(code[0])} is not defined`);
   }
 
-  if (isPacked(fn) && typeof (/** @type {any} */ (fn).unpack) === "function") {
+  if (isUnpackable(fn)) {
     // Unpack the object and use the result as the function or tree.
-    fn = await /** @type {any} */ (fn).unpack();
+    fn = await fn.unpack();
   }
 
   if (!Tree.isTreelike(fn)) {

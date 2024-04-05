@@ -301,12 +301,10 @@ describe("Tree", () => {
   });
 
   test("traversing a final empty string can unpack the last value", async () => {
+    const unpackable = new String();
+    /** @type {any} */ (unpackable).unpack = () => "Content";
     const tree = {
-      unpackable: {
-        unpack() {
-          return "Content";
-        },
-      },
+      unpackable,
     };
     const result = await Tree.traverse(tree, "unpackable", "");
     assert.equal(result, "Content");

@@ -1,3 +1,4 @@
+import { isUnpackable } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
@@ -32,8 +33,8 @@ marked.use(
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {
-  if (/** @type {any} */ (input).unpack) {
-    input = await /** @type {any} */ (input).unpack();
+  if (isUnpackable(input)) {
+    input = await input.unpack();
   }
   const inputDocument = input["@text"] ? input : null;
   const markdown = inputDocument?.["@text"] ?? String(input);

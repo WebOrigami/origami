@@ -34,11 +34,8 @@ b: !ori a`;
   });
 
   test("toValue() invokes an object's unpack() method", async () => {
-    const obj = {
-      async unpack() {
-        return 1;
-      },
-    };
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = () => 1;
     const value = await serialize.toValue(obj);
     assert.deepEqual(value, 1);
   });
