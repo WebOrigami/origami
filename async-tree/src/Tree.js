@@ -1,8 +1,8 @@
 import DeferredTree from "./DeferredTree.js";
 import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
-import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
+import { DeepObjectTree, ObjectTree } from "./internal.js";
 import mapTransform from "./transforms/map.js";
 import * as utilities from "./utilities.js";
 import {
@@ -118,8 +118,8 @@ export function from(obj) {
   } else if (obj instanceof Set) {
     return new SetTree(obj);
   } else if (isPlainObject(obj)) {
-    return new ObjectTree(obj);
-  } else if (obj && typeof obj === "object" && "unpack" in obj) {
+    return new DeepObjectTree(obj);
+  } else if (isUnpackable(obj)) {
     async function AsyncFunction() {} // Sample async function
     return obj.unpack instanceof AsyncFunction.constructor
       ? // Async unpack: return a deferred tree.

@@ -1,5 +1,5 @@
+import { Tree } from "./internal.js";
 import MapTree from "./MapTree.js";
-import * as Tree from "./Tree.js";
 
 export default class DeepMapTree extends MapTree {
   async get(key) {

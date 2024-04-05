@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import BrowserFileTree from "../src/BrowserFileTree.js";
-import * as Tree from "../src/Tree.js";
+import { Tree } from "../src/internal.js";
 
 // Skip these tests if we're not in a browser.
 const isBrowser = typeof window !== "undefined";

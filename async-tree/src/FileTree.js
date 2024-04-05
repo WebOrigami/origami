@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,

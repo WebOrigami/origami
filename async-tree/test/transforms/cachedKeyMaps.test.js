@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/ObjectTree.js";
+import { ObjectTree } from "../../src/internal.js";
 import cachedKeyFunctions from "../../src/transforms/cachedKeyFunctions.js";
 
 describe("cachedKeyFunctions", () => {

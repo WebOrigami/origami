@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
 import SiteTree from "../src/SiteTree.js";
-import * as Tree from "../src/Tree.js";
+import { Tree } from "../src/internal.js";
 
 const mockHost = "https://mock";
 

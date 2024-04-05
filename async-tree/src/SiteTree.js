@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 import * as keysJson from "./keysJson.js";
 
 /**

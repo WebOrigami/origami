@@ -1,3 +1,4 @@
+import { ObjectTree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 
 /**
@@ -14,9 +15,9 @@ import { Scope } from "@weborigami/language";
  */
 export default function addValueKeyToScope(scope, value, key) {
   // Add the key and value to the scope as ambients.
-  const ambients = {
+  const ambients = new ObjectTree({
     "@key": key,
     _: value,
-  };
+  });
   return new Scope(ambients, scope);
 }

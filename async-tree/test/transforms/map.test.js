@@ -1,9 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { ObjectTree } from "../../main.js";
-import DeepObjectTree from "../../src/DeepObjectTree.js";
 import FunctionTree from "../../src/FunctionTree.js";
-import * as Tree from "../../src/Tree.js";
+import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
 import map from "../../src/transforms/map.js";
 
 describe("map", () => {

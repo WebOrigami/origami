@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, Tree } from "../internal.js";
 
 /**
  * Caches values from a source tree in a second cache tree. If no second tree is
@@ -21,7 +21,7 @@ export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
   const filter = filterTreelike ? Tree.from(filterTreelike) : undefined;
 
   /** @type {AsyncMutableTree} */
-  const cache = cacheTree ?? new ObjectTree({});
+  const cache = cacheTree ?? new DeepObjectTree({});
   return {
     description: "cache",
 

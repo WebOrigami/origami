@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import * as Tree from "../../src/Tree.js";
+import { Tree } from "../../src/internal.js";
 import merge from "../../src/operations/merge.js";
 
 describe("merge", () => {

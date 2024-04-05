@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 
 /**
  * The .keys.json file format lets a site expose the keys of a node in the site

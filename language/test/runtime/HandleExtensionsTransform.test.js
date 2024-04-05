@@ -31,11 +31,11 @@ function createFixture() {
     "bar.json": `{ "bar": 2 }`,
   });
   /** @type {any} */
-  const scope = {
+  const scope = new ObjectTree({
     json_handler: {
       unpack: (buffer) => JSON.parse(String(buffer)),
     },
-  };
+  });
   tree = Scope.treeWithScope(tree, scope);
   return tree;
 }

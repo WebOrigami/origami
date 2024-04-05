@@ -1,4 +1,4 @@
-import * as Tree from "../Tree.js";
+import { Tree } from "../internal.js";
 
 /**
  * Return a transform function that sorts a tree's keys.

@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../src/ObjectTree.js";
-import * as Tree from "../src/Tree.js";
+import { ObjectTree, Tree } from "../src/internal.js";
 
 describe("ObjectTree", () => {
   test("can get the keys of the tree", async () => {

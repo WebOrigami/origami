@@ -1,9 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree } from "../main.js";
 import MapTree from "../src/MapTree.js";
-import ObjectTree from "../src/ObjectTree.js";
-import * as Tree from "../src/Tree.js";
+import { DeepObjectTree, ObjectTree, Tree } from "../src/internal.js";
 
 describe("Tree", () => {
   test("assign applies one tree to another", async () => {
@@ -89,14 +87,10 @@ describe("Tree", () => {
   });
 
   test("from() uses an object's unpack() method if defined", async () => {
-    class Fixture {
-      unpack() {
-        return {
-          a: "Hello, a.",
-        };
-      }
-    }
-    const obj = new Fixture();
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = () => ({
+      a: "Hello, a.",
+    });
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",
@@ -104,14 +98,10 @@ describe("Tree", () => {
   });
 
   test("from() creates a deferred tree if unpack() returns a promise", async () => {
-    class Fixture {
-      async unpack() {
-        return {
-          a: "Hello, a.",
-        };
-      }
-    }
-    const obj = new Fixture();
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = async () => ({
+      a: "Hello, a.",
+    });
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",
