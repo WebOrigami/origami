@@ -59,7 +59,7 @@ export default {
     }
 
     const regex =
-      /^(---\r?\n(?<frontText>[\s\S]*?\r?\n)---\r?\n)(?<body>[\s\S]*$)/;
+      /^(---\r?\n(?<frontText>[\s\S]*?\r?\n?)---\r?\n)(?<body>[\s\S]*$)/;
     const match = regex.exec(text);
     let unpacked;
     if (match) {
