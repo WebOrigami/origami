@@ -5,7 +5,7 @@ import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
 import documentObject from "../common/documentObject.js";
-import { replaceExtension } from "../common/utilities.js";
+import { replaceExtension, toString } from "../common/utilities.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -36,10 +36,10 @@ export default async function mdHtml(input) {
   if (isUnpackable(input)) {
     input = await input.unpack();
   }
-  const inputDocument = input["@text"] ? input : null;
-  const markdown = inputDocument?.["@text"] ?? String(input);
+  const inputIsDocument = input["@text"] !== undefined;
+  const markdown = inputIsDocument ? input["@text"] : toString(input);
   const html = marked(markdown);
-  return inputDocument ? documentObject(html, inputDocument) : html;
+  return inputIsDocument ? documentObject(html, input) : html;
 }
 
 mdHtml.key = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
