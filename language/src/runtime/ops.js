@@ -3,7 +3,7 @@
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  */
 
-import { SiteTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree, SiteTree, Tree } from "@weborigami/async-tree";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
@@ -163,7 +163,7 @@ export function lambda(parameters, code) {
       ambients[parameter] = args.shift();
     }
     ambients["@recurse"] = invoke;
-    const scope = new Scope(ambients, this);
+    const scope = new Scope(new ObjectTree(ambients), this);
 
     let result = await evaluate.call(scope, code);
 

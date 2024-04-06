@@ -1,4 +1,4 @@
-import { FunctionTree } from "@weborigami/async-tree";
+import { FunctionTree, ObjectTree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import { toFunction } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
@@ -29,7 +29,10 @@ export default async function fnTree(invocable, keys = []) {
 
   /** @this {AsyncTree|null} */
   async function extendedFn(key) {
-    const ambientsTree = Scope.treeWithScope({ "@key": key }, this);
+    const ambientsTree = Scope.treeWithScope(
+      new ObjectTree({ "@key": key }),
+      this
+    );
     return invocableFn.call(ambientsTree, key);
   }
 
