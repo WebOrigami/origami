@@ -54,7 +54,7 @@ export default {
   async unpack(packed, options = {}) {
     const parent = options.parent ?? null;
     const text = utilities.toString(packed);
-    if (!text) {
+    if (text === null) {
       throw new Error("Tried to treat something as text but it wasn't text.");
     }
 
