@@ -46,4 +46,24 @@ describe("@merge", () => {
       d: 1,
     });
   });
+
+  test("if all arguments are plain objects, result is a plain object", async () => {
+    const result = await merge.call(
+      null,
+      {
+        a: 1,
+        b: 2,
+      },
+      {
+        c: 3,
+        d: 4,
+      }
+    );
+    assert.deepEqual(result, {
+      a: 1,
+      b: 2,
+      c: 3,
+      d: 4,
+    });
+  });
 });

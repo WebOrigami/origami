@@ -1,4 +1,4 @@
-import { merge } from "@weborigami/async-tree";
+import { isPlainObject, isUnpackable, merge } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -24,10 +24,22 @@ export default async function treeMerge(...trees) {
     return filtered[0];
   }
 
+  // Unpack any packed objects.
+  const unpacked = await Promise.all(
+    filtered.map((obj) =>
+      isUnpackable(obj) ? /** @type {any} */ (obj).unpack() : obj
+    )
+  );
+
+  // If all trees are plain objects, return a plain object.
+  if (unpacked.every((tree) => isPlainObject(tree))) {
+    return Object.assign({}, ...unpacked);
+  }
+
   // If a tree can take a scope, give it one that includes the other trees and
   // the current scope.
-  const scopedTrees = filtered.map((tree) => {
-    const otherTrees = filtered.filter((g) => g !== tree);
+  const scopedTrees = unpacked.map((tree) => {
+    const otherTrees = unpacked.filter((g) => g !== tree);
     const scope = new Scope(...otherTrees, this);
     // Each tree will be included first in its own scope.
     return Scope.treeWithScope(tree, scope);
