@@ -11,7 +11,7 @@ describe("arrowFunctionsMap", () => {
       "y ← fn": fn,
     });
     const arrows = arrowFunctionsMap()(tree);
-    assert.deepEqual([...(await arrows.keys())], ["x", "y"]);
+    assert.deepEqual(Array.from(await arrows.keys()), ["x", "y"]);
     assert.equal(await arrows.get("x"), 1);
     const yFn = await arrows.get("y");
     assert.equal(yFn, fn);

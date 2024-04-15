@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 import { hiddenFileNames, isStringLike, sortNatural } from "./utilities.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);

@@ -1,7 +1,8 @@
-import { Tree, isPlainObject } from "@weborigami/async-tree";
-import { format, ops } from "./internal.js";
+import { Tree, isPlainObject, isUnpackable } from "@weborigami/async-tree";
+import { ops } from "./internal.js";
 
-const expressionSymbol = Symbol("expression");
+const codeSymbol = Symbol("code");
+const sourceSymbol = Symbol("source");
 
 /**
  * Evaluate the given code and return the result.
@@ -9,10 +10,9 @@ const expressionSymbol = Symbol("expression");
  * `this` should be the scope used to look up references found in the code.
  *
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../../language/src/compiler/code.js").Code} Code
  *
  * @this {Treelike|null}
- * @param {Code} code
+ * @param {any} code
  */
 export default async function evaluate(code) {
   const scope = this;
@@ -42,24 +42,17 @@ export default async function evaluate(code) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    throw ReferenceError(
-      `Couldn't find function or tree key: ${format(code[0])}`
-    );
+    throw ReferenceError(`${codeFragment(code[0])} is not defined`);
   }
 
-  if (
-    !(fn instanceof Function || Tree.isAsyncTree(fn)) &&
-    typeof fn.unpack === "function"
-  ) {
+  if (isUnpackable(fn)) {
     // Unpack the object and use the result as the function or tree.
     fn = await fn.unpack();
   }
 
   if (!Tree.isTreelike(fn)) {
     throw TypeError(
-      `Expect to invoke a function or a tree but instead got: ${format(
-        code[0]
-      )}`
+      `${codeFragment(code[0])} didn't return a function or a treelike object`
     );
   }
 
@@ -71,11 +64,14 @@ export default async function evaluate(code) {
         ? await fn.call(scope, ...args) // Invoke the function
         : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
-    const message = `Error triggered by Origami expression: ${format(code)}`;
-    throw new Error(message, { cause: error });
+    if (!error.location) {
+      // Attach the location of the code we were evaluating.
+      error.location = /** @type {any} */ (code).location;
+    }
+    throw error;
   }
 
-  // To aid debugging, add the expression source to the result.
+  // To aid debugging, add the code to the result.
   if (
     result &&
     typeof result === "object" &&
@@ -83,14 +79,23 @@ export default async function evaluate(code) {
     !isPlainObject(result)
   ) {
     try {
-      result[expressionSymbol] = format(code);
-    } catch (error) {
-      // Setting a Symbol-keyed property on some objects fails with `TypeError:
-      // Cannot convert a Symbol value to a string` but it's unclear why
-      // implicit casting of the symbol to a string occurs. Since this is not a
-      // vital operation, we ignore such errors.
+      result[codeSymbol] = code;
+      if (/** @type {any} */ (code).location) {
+        result[sourceSymbol] = codeFragment(code);
+      }
+    } catch (/** @type {any} */ error) {
+      // Ignore errors.
     }
   }
 
   return result;
+}
+
+function codeFragment(code) {
+  if (code.location) {
+    const { source, start, end } = code.location;
+    return source.text.slice(start.offset, end.offset);
+  } else {
+    return "";
+  }
 }

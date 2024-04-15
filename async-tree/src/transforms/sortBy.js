@@ -1,3 +1,5 @@
+import { Tree } from "../internal.js";
+
 /**
  * Return a transform function that sorts a tree's keys.
  *
@@ -11,7 +13,8 @@ export default function createSortByTransform(sortKeyFn) {
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function sortByTransform(tree) {
+  return function sortByTransform(treelike) {
+    const tree = Tree.from(treelike);
     const transform = Object.create(tree);
     transform.keys = async () => {
       const keysAndSortKeys = [];
@@ -22,7 +25,8 @@ export default function createSortByTransform(sortKeyFn) {
       keysAndSortKeys.sort((a, b) =>
         a.sortKey < b.sortKey ? -1 : a.sortKey > b.sortKey ? 1 : 0
       );
-      return keysAndSortKeys.map(({ key }) => key);
+      const sortedKeys = keysAndSortKeys.map(({ key }) => key);
+      return sortedKeys;
     };
     return transform;
   };

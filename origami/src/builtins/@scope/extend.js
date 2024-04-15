@@ -1,5 +1,5 @@
 import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
-import setScope from "./set.js";
+import scopeSet from "./set.js";
 
 /**
  * Return a copy of the given tree whose scope includes the given trees *and*
@@ -12,11 +12,11 @@ import setScope from "./set.js";
  * @param  {...Treelike} scopeTrees
  * @this {AsyncTree|null}
  */
-export default function extendScope(treelike, ...scopeTrees) {
-  assertScopeIsDefined(this);
+export default function scopeExtend(treelike, ...scopeTrees) {
+  assertScopeIsDefined(this, "scopeExtend");
   const scope = this;
-  return setScope.call(scope, treelike, ...scopeTrees, scope);
+  return scopeSet.call(scope, treelike, ...scopeTrees, scope);
 }
 
-extendScope.usage = `@scope/extend <tree>, <...trees>\tExtends tree's scope with the given trees`;
-extendScope.documentation = "https://weborigami.org/cli/builtins.html#@scope";
+scopeExtend.usage = `@scope/extend <tree>, <...trees>\tExtends tree's scope with the given trees`;
+scopeExtend.documentation = "https://weborigami.org/cli/builtins.html#@scope";

@@ -1,4 +1,4 @@
-import TextDocument from "../common/TextDocument.js";
+import documentObject from "../common/documentObject.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -8,11 +8,9 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {StringLike} text
  * @param {any} [data]
- * @param {AsyncTree|null} [parent]
  * @returns
  */
-export default function document(text, data, parent) {
-  assertScopeIsDefined(this);
-  const merged = Object.assign({}, data, { "@text": text });
-  return new TextDocument(merged, parent ?? this);
+export default function documentBuiltin(text, data) {
+  assertScopeIsDefined(this, "document");
+  return documentObject(text, data);
 }

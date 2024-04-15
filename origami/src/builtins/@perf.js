@@ -6,10 +6,9 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  * @param {Function} fn
- * @param {number} [count]
  */
-export default async function perf(fn, count = 1) {
-  assertScopeIsDefined(this);
+export default async function perf(fn, count = 10000) {
+  assertScopeIsDefined(this, "perf");
   const start = performance.now();
   for (let i = 0; i < count; i++) {
     await fn.call(this);

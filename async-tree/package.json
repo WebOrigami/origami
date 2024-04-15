@@ -1,17 +1,17 @@
 {
   "name": "@weborigami/async-tree",
-  "version": "0.0.41",
+  "version": "0.0.47",
   "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
   "browser": "./browser.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.11.7",
-    "typescript": "5.3.3"
+    "@types/node": "20.11.27",
+    "typescript": "5.4.2"
   },
   "dependencies": {
-    "@weborigami/types": "0.0.41"
+    "@weborigami/types": "0.0.47"
   },
   "scripts": {
     "test": "node --test --test-reporter=spec",

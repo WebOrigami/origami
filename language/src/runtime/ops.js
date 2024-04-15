@@ -3,11 +3,12 @@
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  */
 
-import { SiteTree, Tree } from "@weborigami/async-tree";
-import FileLoadersTransform from "./FileLoadersTransform.js";
+import { ObjectTree, SiteTree, Tree } from "@weborigami/async-tree";
+import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
 import concatTreeValues from "./concatTreeValues.js";
+import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 
 // For memoizing lambda functions
@@ -60,11 +61,24 @@ function constructHref(protocol, host, ...keys) {
 /**
  * Fetch the resource at the given href.
  *
+ * @this {AsyncTree|null}
  * @param {string} href
  */
 async function fetchResponse(href) {
   const response = await fetch(href);
-  return response.ok ? await response.arrayBuffer() : undefined;
+  if (!response.ok) {
+    return undefined;
+  }
+  let buffer = await response.arrayBuffer();
+
+  // Attach any loader defined for the file type.
+  const url = new URL(href);
+  const filename = url.pathname.split("/").pop();
+  if (filename) {
+    buffer = await handleExtension(this, filename, buffer, null);
+  }
+
+  return buffer;
 }
 
 /**
@@ -93,7 +107,7 @@ export async function filesRoot() {
  */
 export async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
-  return fetchResponse(href);
+  return fetchResponse.call(this, href);
 }
 http.toString = () => "«ops.http»";
 
@@ -106,7 +120,7 @@ http.toString = () => "«ops.http»";
  */
 export function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
-  return fetchResponse(href);
+  return fetchResponse.call(this, href);
 }
 https.toString = () => "«ops.https»";
 
@@ -128,7 +142,7 @@ inherited.toString = () => "«ops.inherited»";
 /**
  * Return a function that will invoke the given code.
  *
- * @typedef {import("../../../language/src/compiler/code.js").Code} Code
+ * @typedef {import("../../index.ts").Code} Code
  * @this {AsyncTree|null}
  * @param {string[]} parameters
  * @param {Code} code
@@ -149,7 +163,7 @@ export function lambda(parameters, code) {
       ambients[parameter] = args.shift();
     }
     ambients["@recurse"] = invoke;
-    const scope = new Scope(ambients, this);
+    const scope = new Scope(new ObjectTree(ambients), this);
 
     let result = await evaluate.call(scope, code);
 
@@ -238,7 +252,7 @@ tree.toString = () => "«ops.tree»";
 export function treeHttp(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
   /** @type {AsyncTree} */
-  let result = new (FileLoadersTransform(SiteTree))(href);
+  let result = new (HandleExtensionsTransform(SiteTree))(href);
   result = Scope.treeWithScope(result, this);
   return result;
 }
@@ -254,7 +268,7 @@ treeHttp.toString = () => "«ops.treeHttp»";
 export function treeHttps(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
   /** @type {AsyncTree} */
-  let result = new (FileLoadersTransform(SiteTree))(href);
+  let result = new (HandleExtensionsTransform(SiteTree))(href);
   result = Scope.treeWithScope(result, this);
   return result;
 }

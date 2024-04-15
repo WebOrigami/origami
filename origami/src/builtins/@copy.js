@@ -2,7 +2,7 @@ import { Tree } from "@weborigami/async-tree";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import setDeep from "./@tree/setDeep.js";
+import setDeep from "./@setDeep.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -13,7 +13,7 @@ import setDeep from "./@tree/setDeep.js";
  * @param {Treelike} target
  */
 export default async function copy(source, target) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "copy");
   // const start = performance.now();
   const sourceTree = Tree.from(source);
   /** @type {any} */ let targetTree = Tree.from(target);

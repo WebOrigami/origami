@@ -1,3 +1,5 @@
+const TypedArray = Object.getPrototypeOf(Uint8Array);
+
 /**
  * If the given plain object has only sequential integer keys, return it as an
  * array. Otherwise return it as is.
@@ -19,9 +21,6 @@ export function castArrayLike(object) {
   return hasKeys ? Object.values(object) : object;
 }
 
-// Names of OS-generated files that should not be enumerated
-export const hiddenFileNames = [".DS_Store"];
-
 /**
  * Return the Object prototype at the root of the object's prototype chain.
  *
@@ -38,6 +37,27 @@ export function getRealmObjectPrototype(object) {
   return proto;
 }
 
+// Names of OS-generated files that should not be enumerated
+export const hiddenFileNames = [".DS_Store"];
+
+/**
+ * Return true if the object is in a packed form (or can be readily packed into
+ * a form) that can be given to fs.writeFile or response.write().
+ *
+ * @param {any} object
+ * @returns {object is import("../index.ts").Packed}
+ */
+export function isPacked(object) {
+  return (
+    typeof object === "string" ||
+    object instanceof ArrayBuffer ||
+    object instanceof Buffer ||
+    object instanceof ReadableStream ||
+    object instanceof String ||
+    object instanceof TypedArray
+  );
+}
+
 /**
  * Return true if the object is a plain JavaScript object created by `{}`,
  * `new Object()`, or `Object.create(null)`.
@@ -46,6 +66,7 @@ export function getRealmObjectPrototype(object) {
  * `Module`) as plain objects.
  *
  * @param {any} object
+ * @returns {object is import("../index.ts").PlainObject}
  */
 export function isPlainObject(object) {
   // From https://stackoverflow.com/q/51722354/76472
@@ -67,15 +88,15 @@ export function isPlainObject(object) {
  * Return true if the object is a string or object with a non-trival `toString`
  * method.
  *
- * @param {any} obj
- * @returns {obj is import("@weborigami/async-tree").StringLike}
+ * @param {any} object
+ * @returns {obj is import("../index.ts").StringLike}
  */
-export function isStringLike(obj) {
-  if (typeof obj === "string") {
+export function isStringLike(object) {
+  if (typeof object === "string") {
     return true;
-  } else if (obj?.toString === undefined) {
+  } else if (object?.toString === undefined) {
     return false;
-  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
+  } else if (object.toString === getRealmObjectPrototype(object).toString) {
     // The stupid Object.prototype.toString implementation always returns
     // "[object Object]", so if that's the only toString method the object has,
     // we return false.
@@ -83,6 +104,13 @@ export function isStringLike(obj) {
   } else {
     return true;
   }
+}
+
+export function isUnpackable(object) {
+  return (
+    isPacked(object) &&
+    typeof (/** @type {any} */ (object).unpack) === "function"
+  );
 }
 
 /**

@@ -5,7 +5,12 @@
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
+import {
+  Tree,
+  isPlainObject,
+  isStringLike,
+  isUnpackable,
+} from "@weborigami/async-tree";
 import { OrigamiTree } from "@weborigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
@@ -90,40 +95,76 @@ export async function toJson(obj) {
 }
 
 /**
- * Convert the given object to a corresponding JSON value that can be serialized
- * as JSON or YAML.
- *
- * If the object is already a JSON value, it is returned as is.
- *
- * If the object implements the `pack()` method, that method's result will be
- * returned.
- *
- * If the object is treelike, it will be converted to a plain JavaScript
- * object, recursively traversing the tree and converting all values to native
- * types.
- *
- * If the object has a `valueOf()` or `toString()` method, that method's result
- * will be returned.
+ * Convert the given object to a corresponding JSON value that can be
+ * represented as JSON or YAML.
  *
  * @param {any} object
  * @returns {Promise<JsonValue>}
  */
 export async function toJsonValue(object) {
-  if (isJsonValue(object)) {
-    return object;
-  } else if (object && typeof object.pack === "function") {
-    return object.pack();
-  } else if (isStringLike(object) && !(object instanceof Array)) {
-    return String(object);
-  } else if (Tree.isTreelike(object)) {
-    const mapped = await Tree.map(object, (value) => toJsonValue(value));
-    return Tree.plain(mapped);
-  } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
-    // Serialize data as UTF-8.
-    return textDecoder.decode(object);
-  }
+  return toValue(object, true);
+}
 
-  throw new TypeError("Couldn't serialize object");
+/**
+ * Convert the given input to the plainest possible JavaScript value. This
+ * helper is intended for functions that want to accept an argument from the ori
+ * CLI, which could a string, a file buffer, an ArrayBuffer from a URL, or some
+ * other kind of JavaScript object.
+ *
+ * If the input implements the `unpack()` method, the input will be unpacked and
+ * before processing.
+ *
+ * If the input is treelike, it will be converted to a plain JavaScript object,
+ * recursively traversing the tree and converting all values to plain types.
+ *
+ * If the input is stringlike, its text will be returned.
+ *
+ * If the input is a Buffer or ArrayBuffer, it will be interpreted as UTF-8
+ * text.
+ *
+ * If the input has a custom class instance, its public properties will be
+ * returned as a plain object.
+ *
+ * The `jsonValuesOnly` parameter can be set to `true` to ensure that the
+ * returned value can be represented as JSON. If the input can't be represented
+ * as JSON, an error is thrown.
+ *
+ * @param {any} input
+ * @param {boolean} [jsonValuesOnly]
+ * @returns {Promise<any>}
+ */
+export async function toValue(input, jsonValuesOnly = false) {
+  if (input instanceof Promise) {
+    // Resolve promise before processing.
+    return toValue(await input, jsonValuesOnly);
+  } else if (isJsonValue(input)) {
+    return input;
+  } else if (typeof input !== "object") {
+    if (jsonValuesOnly) {
+      throw new TypeError(`Couldn't serialize value to JSON: ${input}`);
+    } else {
+      return input;
+    }
+  } else if (isUnpackable(input)) {
+    // Unpack first, then convert to JSON value.
+    const unpacked = await input.unpack();
+    return toValue(unpacked);
+  } else if (isStringLike(input) && !(input instanceof Array)) {
+    return String(input);
+  } else if (Tree.isTreelike(input)) {
+    const mapped = await Tree.map(input, (value) => toValue(value));
+    return Tree.plain(mapped);
+  } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {
+    // Interpret input as UTF-8 text.
+    return textDecoder.decode(input);
+  } else {
+    // Some other kind of class instance; return its public properties.
+    const plain = {};
+    for (const [key, value] of Object.entries(input)) {
+      plain[key] = await toValue(value);
+    }
+    return plain;
+  }
 }
 
 /**

@@ -1,15 +1,15 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../src/ObjectTree.js";
-import * as Tree from "../src/Tree.js";
+import { ObjectTree, Tree } from "../src/internal.js";
 
 describe("ObjectTree", () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await fixture.keys())],
-      ["Alice.md", "Bob.md", "Carol.md"]
-    );
+    assert.deepEqual(Array.from(await fixture.keys()), [
+      "Alice.md",
+      "Bob.md",
+      "Carol.md",
+    ]);
   });
 
   test("can get the value for a key", async () => {
@@ -114,6 +114,13 @@ describe("ObjectTree", () => {
       subtree,
     });
     assert.equal(await tree.get("subtree"), subtree);
+  });
+
+  test("method on an object is bound to the object", async () => {
+    const n = new Number(123);
+    const tree = new ObjectTree(n);
+    const method = await tree.get("toString");
+    assert.equal(method(), "123");
   });
 });
 

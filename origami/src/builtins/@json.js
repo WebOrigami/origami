@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function json(obj) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "json");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(
@@ -19,9 +19,6 @@ export default async function json(obj) {
   obj = obj ?? (await this?.get("@current"));
   if (obj === undefined) {
     return undefined;
-  }
-  if (typeof obj.unpack === "function") {
-    obj = await obj.unpack();
   }
   const value = await serialize.toJsonValue(obj);
   return JSON.stringify(value, null, 2);

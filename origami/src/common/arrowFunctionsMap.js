@@ -1,4 +1,4 @@
-import { cachedKeyMaps, map } from "@weborigami/async-tree";
+import { cachedKeyFunctions, map } from "@weborigami/async-tree";
 import { toFunction } from "./utilities.js";
 
 export default function arrowFunctionsMap() {
@@ -6,12 +6,12 @@ export default function arrowFunctionsMap() {
   return map({
     deep,
     description: "arrowFunctions",
-    valueMap,
-    ...cachedKeyMaps(keyMap, deep),
+    value: valueFn,
+    ...cachedKeyFunctions(keyFn, deep),
   });
 }
 
-function keyMap(sourceKey, tree) {
+function keyFn(sourceKey, tree) {
   return parseArrowKey(sourceKey) ?? sourceKey;
 }
 
@@ -23,7 +23,7 @@ function parseArrowKey(sourceKey) {
   return match?.groups.lhs;
 }
 
-function valueMap(sourceValue, sourceKey, tree) {
+function valueFn(sourceValue, sourceKey, tree) {
   let resultValue;
   if (parseArrowKey(sourceKey)) {
     // Treat the value as a function to be invoked.

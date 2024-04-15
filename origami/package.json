@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/origami",
-  "version": "0.0.41",
+  "version": "0.0.47",
   "description": "Web Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
@@ -13,23 +13,22 @@
   "main": "./exports/exports.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/chai": "4.3.11",
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.11.7",
-    "typescript": "5.3.3"
+    "@types/node": "20.11.27",
+    "typescript": "5.4.2"
   },
   "dependencies": {
-    "@weborigami/async-tree": "https://gitpkg.now.sh/WebOrigami/origami/async-tree?136aab43",
-    "@weborigami/language": "https://gitpkg.now.sh/WebOrigami/origami/language?136aab43",
-    "@weborigami/types": "0.0.41",
+    "@weborigami/async-tree": "0.0.47",
+    "@weborigami/language": "0.0.47",
+    "@weborigami/types": "0.0.47",
+    "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.1",
     "highlight.js": "11.9.0",
-    "marked": "11.1.1",
-    "marked-gfm-heading-id": "3.1.2",
-    "marked-highlight": "2.1.0",
-    "marked-smartypants": "1.1.5",
+    "marked": "12.0.1",
+    "marked-gfm-heading-id": "3.1.3",
+    "marked-highlight": "2.1.1",
+    "marked-smartypants": "1.1.6",
     "sharp": "0.33.2",
-    "yaml": "2.3.4"
+    "yaml": "2.4.1"
   },
   "scripts": {
     "build": "ori exports/buildExports.js src > exports/exports.js",

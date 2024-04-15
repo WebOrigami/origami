@@ -1,5 +1,5 @@
 import {
-  ObjectTree,
+  DeepObjectTree,
   Tree,
   isPlainObject,
   keysFromPath,
@@ -30,7 +30,7 @@ const fakeBaseUrl = new URL("https://fake");
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawl(treelike, baseHref) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "crawl");
   const tree =
     typeof treelike === "string"
       ? treeHttps.call(this, treelike)
@@ -94,8 +94,8 @@ export default async function crawl(treelike, baseHref) {
   // value.
   /** @type {AsyncTree} */
   let result = mergeDeep(
-    new ObjectTree(cache),
-    new (InvokeFunctionsTransform(ObjectTree))(resources)
+    new DeepObjectTree(cache),
+    new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );
   result = Scope.treeWithScope(result, this);
   return result;

@@ -1,5 +1,0 @@
-names:
-  - Alice
-  - Bob
-  - Carol
-greetings: !ori map(names, =`Hello, {{ _ }}!`)

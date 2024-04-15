@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {...string} keys
  */
 export default async function https(host, ...keys) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "https");
   return ops.https.call(this, host, ...keys);
 }
 

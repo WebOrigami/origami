@@ -5,22 +5,17 @@ import FunctionTree from "../src/FunctionTree.js";
 describe("FunctionTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await fixture.keys())],
-      ["Alice.md", "Bob.md", "Carol.md"]
-    );
+    assert.deepEqual(Array.from(await fixture.keys()), [
+      "Alice.md",
+      "Bob.md",
+      "Carol.md",
+    ]);
   });
 
   test("can get the value for a key", async () => {
     const fixture = createFixture();
     const alice = await fixture.get("Alice.md");
     assert.equal(alice, "Hello, **Alice**.");
-  });
-
-  test("unpacking the tree returns the function itself", async () => {
-    const fn = () => true;
-    const fixture = new FunctionTree(fn);
-    assert.equal(await fixture.unpack(), fn);
   });
 
   test("getting a value from function with multiple arguments curries the function", async () => {

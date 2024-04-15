@@ -1,4 +1,5 @@
 import { Tree, isPlainObject } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
@@ -16,7 +17,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
 export default async function debug(treelike) {
   // The debug command leaves the tree's existing scope intact; it does not
   // apply its own scope to the tree.
-  let tree = await getTreeArgument(this, arguments, treelike);
+  let tree = await getTreeArgument(this, arguments, treelike, "@debug");
 
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);
@@ -54,12 +55,18 @@ function DebugTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           let content = await original();
-          if (!Tree.isTreelike(content)) {
+          if (!Tree.isTraversable(content)) {
             return content;
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          tree = transformObject(ExplorableSiteTransform, tree);
+          if (!tree.parent && !tree.scope) {
+            const scope = Scope.getScope(this);
+            tree = Scope.treeWithScope(tree, scope);
+          }
+          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+            tree = transformObject(ExplorableSiteTransform, tree);
+          }
           tree = transformObject(DebugTransform, tree);
           return tree;
         };

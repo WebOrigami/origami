@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileTree from "../src/FileTree.js";
-import * as Tree from "../src/Tree.js";
+import { Tree } from "../src/internal.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
@@ -12,10 +12,11 @@ const tempDirectory = path.join(dirname, "fixtures/temp");
 describe("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
-    assert.deepEqual(
-      [...(await fixture.keys())],
-      ["Alice.md", "Bob.md", "Carol.md"]
-    );
+    assert.deepEqual(Array.from(await fixture.keys()), [
+      "Alice.md",
+      "Bob.md",
+      "Carol.md",
+    ]);
   });
 
   test("can get the value for a key", async () => {

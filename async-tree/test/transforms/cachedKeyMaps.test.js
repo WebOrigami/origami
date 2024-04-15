@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/ObjectTree.js";
-import cachedKeyMaps from "../../src/transforms/cachedKeyMaps.js";
+import { ObjectTree } from "../../src/internal.js";
+import cachedKeyFunctions from "../../src/transforms/cachedKeyFunctions.js";
 
-describe("cachedKeyMaps", () => {
+describe("cachedKeyFunctions", () => {
   test("maps keys with caching", async () => {
     const tree = new ObjectTree({
       a: "letter a",
@@ -16,26 +16,26 @@ describe("cachedKeyMaps", () => {
       return `_${sourceKey}`;
     };
 
-    const { inverseKeyMap, keyMap } = cachedKeyMaps(underscoreKeys);
+    const { inverseKey, key } = cachedKeyFunctions(underscoreKeys);
 
-    assert.equal(await inverseKeyMap("_a", tree), "a"); // Cache miss
+    assert.equal(await inverseKey("_a", tree), "a"); // Cache miss
     assert.equal(callCount, 1);
-    assert.equal(await inverseKeyMap("_a", tree), "a");
+    assert.equal(await inverseKey("_a", tree), "a");
     assert.equal(callCount, 1);
-    assert.equal(await inverseKeyMap("_b", tree), "b"); // Cache miss
+    assert.equal(await inverseKey("_b", tree), "b"); // Cache miss
     assert.equal(callCount, 2);
 
-    assert.equal(await keyMap("a", tree), "_a");
-    assert.equal(await keyMap("a", tree), "_a");
-    assert.equal(await keyMap("b", tree), "_b");
+    assert.equal(await key("a", tree), "_a");
+    assert.equal(await key("a", tree), "_a");
+    assert.equal(await key("b", tree), "_b");
     assert.equal(callCount, 2);
 
     // `c` isn't in tree, so we should get undefined.
-    assert.equal(await inverseKeyMap("_c", tree), undefined);
+    assert.equal(await inverseKey("_c", tree), undefined);
     // But key mapping is still possible.
-    assert.equal(await keyMap("c", tree), "_c");
+    assert.equal(await key("c", tree), "_c");
     // And now we have a cache hit.
-    assert.equal(await inverseKeyMap("_c", tree), "c");
+    assert.equal(await inverseKey("_c", tree), "c");
     assert.equal(callCount, 3);
   });
 });

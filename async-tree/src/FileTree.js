@@ -1,14 +1,13 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import * as Tree from "./Tree.js";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { Tree } from "./internal.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
+  isPacked,
   sortNatural,
 } from "./utilities.js";
-
-const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
  * A file system tree via the Node file system API.
@@ -18,11 +17,25 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  */
 export default class FileTree {
   /**
-   * @param {string} location
+   * @param {string|URL} location
    */
   constructor(location) {
+    if (location instanceof URL) {
+      location = location.href;
+    } else if (
+      !(
+        typeof location === "string" ||
+        /** @type {any} */ (location) instanceof String
+      )
+    ) {
+      throw new TypeError(
+        `FileTree constructor needs a string or URL, received an instance of ${
+          /** @type {any} */ (location)?.constructor?.name
+        }`
+      );
+    }
     this.dirname = location.startsWith("file://")
-      ? path.dirname(fileURLToPath(location))
+      ? fileURLToPath(location)
       : path.resolve(process.cwd(), location);
     this.parent = null;
   }
@@ -114,29 +127,34 @@ export default class FileTree {
       return this;
     }
 
-    // Treat null value as empty string; will create an empty file.
+    if (typeof value === "function") {
+      // Invoke function; write out the result.
+      value = await value();
+    }
+
+    let packed = false;
     if (value === null) {
+      // Treat null value as empty string; will create an empty file.
       value = "";
-    }
-
-    if (value instanceof ArrayBuffer) {
-      // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
-      value = new Uint8Array(value);
-    }
-
-    // True if fs.writeFile can directly write the value to a file.
-    let isWriteable =
-      value instanceof TypedArray ||
-      value instanceof DataView ||
-      (globalThis.ReadableStream && value instanceof ReadableStream);
-
-    if (!isWriteable && isStringLike(value)) {
+      packed = true;
+    } else if (isPacked(value)) {
+      packed = true;
+    } else if (typeof value.pack === "function") {
+      // Pack the value for writing.
+      value = await value.pack();
+      packed = true;
+    } else if (isStringLike(value)) {
       // Value has a meaningful `toString` method, use that.
       value = String(value);
-      isWriteable = true;
+      packed = true;
     }
 
-    if (isWriteable) {
+    if (packed) {
+      // Single writeable value.
+      if (value instanceof ArrayBuffer) {
+        // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
+        value = new Uint8Array(value);
+      }
       // Ensure this directory exists.
       await fs.mkdir(this.dirname, { recursive: true });
       // Write out the value as the contents of a file.
@@ -153,6 +171,10 @@ export default class FileTree {
     }
 
     return this;
+  }
+
+  get url() {
+    return pathToFileURL(this.dirname);
   }
 }
 

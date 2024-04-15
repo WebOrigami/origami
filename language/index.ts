@@ -1,7 +1,15 @@
-import { AsyncTree } from "@weborigami/types";
-import { StringLike } from "../async-tree/index.js";
+import { Packed } from "@weborigami/async-tree";
 
 export * from "./main.js";
+
+/**
+ * A chunk of compiled Origami code. This is just an Array with an additional
+ * `source` property.
+ */
+interface ArrayWithSource extends Array<any> {
+  source?: Source;
+}
+export type Code = ArrayWithSource;
 
 /**
  * A class constructor is an object with a `new` method that returns an
@@ -10,16 +18,13 @@ export * from "./main.js";
 export type Constructor<T> = new (...args: any[]) => T;
 
 /**
- * A function that can convert a string-like input value into some live object.
+ * A structure associating a media type and an unpack function with a given file
+ * extension.
  */
-export type FileUnpackFunction = (
-  input: StringLike,
-  options?: {
-    compiler?: any,
-    key?: any,
-    parent?: AsyncTree | null
-  }
-) => any;
+export type ExtensionHandler = {
+  mediaType?: string;
+  unpack?: UnpackFunction;
+}
 
 /**
  * A mixin is a function that takes an existing class and returns a new class.
@@ -32,3 +37,17 @@ export type FileUnpackFunction = (
 export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
+
+/**
+ * Source code representation used by the parser.
+*/
+export type Source = {
+  name: string;
+  text: string;
+  url: URL;  
+}
+
+/**
+ * A function that converts a value from a persistent form into a live value.
+ */
+export type UnpackFunction = (input: Packed, options?: any) => any;

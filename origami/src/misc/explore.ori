@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Web Origami Explorer</title>
-    <style>{{ explore.css }}</style>
-    <script>{{ explore.js.inline }}</script>
+    <style>${ explore.css }</style>
+    <script>${ explore.js.inline }</script>
   </head>
   <body>
     <nav>
@@ -18,10 +18,10 @@
     </div>
     {{ @map(=`
       <ul>
-        <h2>{{ _/name }}</h2>
+        <h2>${ _/name }</h2>
         {{ @map(=`
         <li>
-          <a href="./!@explore/{{ _ }}" target="frame">{{ _ }}</a>
+          <a href="./!@explore/${ _ }" target="frame">${ _ }</a>
         </li>
         `)(_/keys) }}
       </ul>

@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import BrowserFileTree from "../src/BrowserFileTree.js";
-import * as Tree from "../src/Tree.js";
+import { Tree } from "../src/internal.js";
 
 // Skip these tests if we're not in a browser.
 const isBrowser = typeof window !== "undefined";
@@ -9,10 +9,11 @@ if (isBrowser) {
   describe("BrowserFileTree", async () => {
     test("can get the keys of the tree", async () => {
       const fixture = await createFixture();
-      assert.deepEqual(
-        [...(await fixture.keys())],
-        ["Alice.md", "Bob.md", "Carol.md"]
-      );
+      assert.deepEqual(Array.from(await fixture.keys()), [
+        "Alice.md",
+        "Bob.md",
+        "Carol.md",
+      ]);
     });
 
     test("can get the value for a key", async () => {

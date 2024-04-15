@@ -1,4 +1,4 @@
-import * as Tree from "../Tree.js";
+import { Tree } from "../internal.js";
 
 /**
  * A tree whose keys are strings interpreted as regular expressions.
@@ -10,7 +10,8 @@ import * as Tree from "../Tree.js";
  *
  * @type {import("../../index.ts").TreeTransform}
  */
-export default async function regExpKeys(tree) {
+export default async function regExpKeys(treelike) {
+  const tree = Tree.from(treelike);
   const map = new Map();
 
   // We build the output tree first so that we can refer to it when setting
@@ -29,7 +30,7 @@ export default async function regExpKeys(tree) {
     },
 
     async keys() {
-      return [...map.keys()];
+      return map.keys();
     },
   };
 

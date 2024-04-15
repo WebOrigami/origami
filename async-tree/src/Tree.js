@@ -1,11 +1,16 @@
 import DeferredTree from "./DeferredTree.js";
 import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
-import ObjectTree from "./ObjectTree.js";
 import SetTree from "./SetTree.js";
+import { DeepObjectTree, ObjectTree } from "./internal.js";
 import mapTransform from "./transforms/map.js";
 import * as utilities from "./utilities.js";
-import { castArrayLike, isPlainObject } from "./utilities.js";
+import {
+  castArrayLike,
+  isPacked,
+  isPlainObject,
+  isUnpackable,
+} from "./utilities.js";
 
 /**
  * Helper functions for working with async trees
@@ -74,7 +79,7 @@ export async function clear(tree) {
  * @param {AsyncTree} tree
  */
 export async function entries(tree) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => [key, await tree.get(key)]);
   return Promise.all(promises);
 }
@@ -87,7 +92,7 @@ export async function entries(tree) {
  * @param {Function} callbackFn
  */
 export async function forEach(tree, callbackFn) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => {
     const value = await tree.get(key);
     return callbackFn(value, key);
@@ -112,7 +117,9 @@ export function from(obj) {
     return new MapTree(obj);
   } else if (obj instanceof Set) {
     return new SetTree(obj);
-  } else if (obj && typeof obj === "object" && "unpack" in obj) {
+  } else if (isPlainObject(obj)) {
+    return new DeepObjectTree(obj);
+  } else if (isUnpackable(obj)) {
     async function AsyncFunction() {} // Sample async function
     return obj.unpack instanceof AsyncFunction.constructor
       ? // Async unpack: return a deferred tree.
@@ -164,35 +171,6 @@ export function isAsyncMutableTree(object) {
 }
 
 /**
- * Returns true if the indicated object can be directly treated as an
- * asynchronous tree. This includes:
- *
- * - An object that implements the AsyncTree interface (including
- *   AsyncTree instances)
- * - An object that implements the `unpack()` method
- * - A function
- * - An `Array` instance
- * - A `Map` instance
- * - A `Set` instance
- * - A plain object
- *
- * Note: the `from()` method accepts any JavaScript object, but `isTreeable`
- * returns `false` for an object that isn't one of the above types.
- *
- * @param {any} object
- */
-export function isTreelike(object) {
-  return (
-    isAsyncTree(object) ||
-    object instanceof Function ||
-    object instanceof Array ||
-    object instanceof Set ||
-    object?.unpack instanceof Function ||
-    isPlainObject(object)
-  );
-}
-
-/**
  * Return true if the indicated key produces or is expected to produce an
  * async tree.
  *
@@ -209,14 +187,55 @@ export async function isKeyForSubtree(tree, key) {
 }
 
 /**
+ * Return true if the object can be traversed via the `traverse()` method. The
+ * object must be either treelike or a packed object with an `unpack()` method.
+ *
+ * @param {any} object
+ */
+export function isTraversable(object) {
+  return (
+    isTreelike(object) ||
+    (isPacked(object) && /** @type {any} */ (object).unpack instanceof Function)
+  );
+}
+
+/**
+ * Returns true if the indicated object can be directly treated as an
+ * asynchronous tree. This includes:
+ *
+ * - An object that implements the AsyncTree interface (including
+ *   AsyncTree instances)
+ * - A function
+ * - An `Array` instance
+ * - A `Map` instance
+ * - A `Set` instance
+ * - A plain object
+ *
+ * Note: the `from()` method accepts any JavaScript object, but `isTreelike`
+ * returns `false` for an object that isn't one of the above types.
+ *
+ * @param {any} object
+ * @returns {obj is Treelike}
+ */
+export function isTreelike(object) {
+  return (
+    isAsyncTree(object) ||
+    object instanceof Function ||
+    object instanceof Array ||
+    object instanceof Set ||
+    isPlainObject(object)
+  );
+}
+
+/**
  * Return a new tree with deeply-mapped values of the original tree.
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn} valueMap
+ * @param {ValueKeyFn} valueFn
  */
-export function map(treelike, valueMap) {
+export function map(treelike, valueFn) {
   const tree = from(treelike);
-  return mapTransform({ deep: true, valueMap })(tree);
+  return mapTransform({ deep: true, value: valueFn })(tree);
 }
 
 /**
@@ -230,10 +249,10 @@ export function map(treelike, valueMap) {
  * reduceFn, which should consolidate those into a single result.
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn|null} valueMap
+ * @param {ValueKeyFn|null} valueFn
  * @param {ReduceFn} reduceFn
  */
-export async function mapReduce(treelike, valueMap, reduceFn) {
+export async function mapReduce(treelike, valueFn, reduceFn) {
   const tree = from(treelike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
@@ -244,9 +263,9 @@ export async function mapReduce(treelike, valueMap, reduceFn) {
     tree.get(key).then((value) =>
       // If the value is a subtree, recurse.
       isAsyncTree(value)
-        ? mapReduce(value, valueMap, reduceFn)
-        : valueMap
-        ? valueMap(value, key, tree)
+        ? mapReduce(value, valueFn, reduceFn)
+        : valueFn
+        ? valueFn(value, key, tree)
         : value
     )
   );
@@ -338,6 +357,10 @@ export async function traverse(treelike, ...keys) {
  * @param  {...any} keys
  */
 export async function traverseOrThrow(treelike, ...keys) {
+  if (!treelike) {
+    throw new TraverseError("Tried to traverse a null or undefined value");
+  }
+
   // Start our traversal at the root of the tree.
   /** @type {any} */
   let value = treelike;
@@ -348,46 +371,40 @@ export async function traverseOrThrow(treelike, ...keys) {
 
   // Process all the keys.
   const remainingKeys = keys.slice();
+  let key;
   while (remainingKeys.length > 0) {
     if (value === undefined) {
       // Attempted to traverse an undefined value
-      const keyStrings = keys.map((key) => String(key));
-      throw new TraverseError(
-        `Couldn't traverse the path: ${keyStrings.join("/")}`,
-        value,
-        keys
-      );
+      const message = key
+        ? `${key} does not exist`
+        : `Couldn't traverse the path: ${keys
+            .map((key) => String(key))
+            .join("/")}`;
+      throw new TraverseError(message, treelike, keys);
     }
 
-    // Special case: one key left that's an empty string
-    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
-      // Unpack the value if it defines an `unpack` function, otherwise return
-      // the value itself.
-      return typeof value.unpack === "function" ? await value.unpack() : value;
-    }
-
-    // If the value is not a function or async tree already, but can be
-    // unpacked, unpack it.
-    if (
-      !(value instanceof Function) &&
-      !isAsyncTree(value) &&
-      value.unpack instanceof Function
-    ) {
+    // If the value is packed and can be unpacked, unpack it.
+    if (isUnpackable(value)) {
       value = await value.unpack();
     }
 
-    if (value instanceof Function) {
+    // Peek ahead: if there's only one key left and it's an empty string, return
+    // the value itself.
+    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
+      return value;
+    } else if (value instanceof Function) {
       // Value is a function: call it with the remaining keys.
       const fn = value;
       // We'll take as many keys as the function's length, but at least one.
       let fnKeyCount = Math.max(fn.length, 1);
       const args = remainingKeys.splice(0, fnKeyCount);
+      key = null;
       value = await fn.call(target, ...args);
     } else {
       // Value is some other treelike object: cast it to a tree.
       const tree = from(value);
       // Get the next key.
-      const key = remainingKeys.shift();
+      key = remainingKeys.shift();
       // Get the value for the key.
       value = await tree.get(key);
     }
@@ -424,7 +441,7 @@ class TraverseError extends ReferenceError {
  * @param {AsyncTree} tree
  */
 export async function values(tree) {
-  const keys = [...(await tree.keys())];
+  const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => tree.get(key));
   return Promise.all(promises);
 }

@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function inherited(key) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "inherited");
   return ops.inherited.call(this, key);
 }
 

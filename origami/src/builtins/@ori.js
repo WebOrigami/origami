@@ -1,5 +1,5 @@
 import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
-import * as compile from "../../../language/src/compiler/compile.js";
+import { compile } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
@@ -19,7 +19,7 @@ export default async function ori(
   expression,
   options = { formatResult: true }
 ) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "ori");
   // In case expression is a Buffer, cast it to a string.
   expression = String(expression);
 
@@ -73,13 +73,13 @@ async function formatResult(result) {
     text = result;
   }
 
-  // If the result is a tree, attach the tree to the text output.
+  // If the result is treelike, attach it to the text output.
   if (Tree.isTreelike(result)) {
     if (typeof text === "string") {
       // @ts-ignore
       text = new String(text);
     }
-    /** @type {any} */ (text).unpack = () => Tree.from(result);
+    /** @type {any} */ (text).unpack = () => result;
   }
 
   return text;

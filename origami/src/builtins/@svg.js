@@ -1,6 +1,6 @@
 import graphviz from "graphviz-wasm";
 import getTreeArgument from "../misc/getTreeArgument.js";
-import dot from "./@tree/dot.js";
+import dot from "../misc/treeDot.js";
 
 let graphvizLoaded = false;
 
@@ -20,7 +20,7 @@ export default async function svg(treelike, options = {}) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  const tree = await getTreeArgument(this, arguments, treelike);
+  const tree = await getTreeArgument(this, arguments, treelike, "@svg");
   const dotText = await dot.call(this, tree, options);
   if (dotText === undefined) {
     return undefined;

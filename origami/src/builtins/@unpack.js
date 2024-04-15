@@ -8,6 +8,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @returns
  */
 export default function unpack(obj) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "unpack");
   return obj?.unpack?.();
 }

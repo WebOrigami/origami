@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "files");
   const resolved = path.resolve(process.cwd(), ...keys);
   /** @type {AsyncTree} */
   let result = new OrigamiFiles(resolved);

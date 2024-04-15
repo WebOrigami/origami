@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
 import SiteTree from "../src/SiteTree.js";
-import * as Tree from "../src/Tree.js";
+import { Tree } from "../src/internal.js";
 
 const mockHost = "https://mock";
 
@@ -43,7 +43,11 @@ describe("SiteTree", () => {
     const fixture = new SiteTree(mockHost);
     const about = fixture.resolve("about");
     const keys = await about.keys();
-    assert.deepEqual([...keys], ["Alice.html", "Bob.html", "Carol.html"]);
+    assert.deepEqual(Array.from(keys), [
+      "Alice.html",
+      "Bob.html",
+      "Carol.html",
+    ]);
   });
 
   test("can get the value for a key", async () => {

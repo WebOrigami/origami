@@ -10,9 +10,8 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
-    "strictNullChecks": true,
     "target": "ESNext"
   },
-  "include": ["**/*.js", "origami/test/builtins/fixtures/ori.config.js.foo"],
+  "include": ["**/*.js"],
   "exclude": ["origami/exports/exports.js"]
 }

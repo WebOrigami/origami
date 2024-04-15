@@ -53,9 +53,8 @@ describe("evaluate", () => {
 
   test("if object in function position isn't a function, can unpack it", async () => {
     const fn = (...args) => args.join(",");
-    const packed = {
-      unpack: async () => fn,
-    };
+    const packed = new String();
+    /** @type {any} */ (packed).unpack = async () => fn;
     const code = [packed, "a", "b", "c"];
     const result = await evaluate.call(null, code);
     assert.equal(result, "a,b,c");

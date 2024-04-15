@@ -1,8 +1,7 @@
 import {
-  cachedKeyMaps,
-  keyMapsForExtensions,
+  cachedKeyFunctions,
+  keyFunctionsForExtensions,
   map,
-  Tree,
 } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../common/addValueKeyToScope.js";
@@ -18,9 +17,9 @@ import { toFunction } from "../common/utilities.js";
  * @typedef {import("../../index.ts").TreelikeTransform} TreelikeTransform
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @typedef {{ deep?: boolean, description?: string, extensions?: string,
- * inverseKeyMap?: KeyFn, keyMap?: ValueKeyFn, valueMap?: ValueKeyFn }}
- * TreeMapOptions
+ * @typedef {{ deep?: boolean, description?: string, extension?: string,
+ * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
+ * ValueKeyFn, value?: ValueKeyFn, valueFn?: ValueKeyFn }} TreeMapOptions
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  *
@@ -43,44 +42,51 @@ import { toFunction } from "../common/utilities.js";
  * @returns {AsyncTree}
  */
 export default function treeMap(param1, param2) {
-  // Identify whether the valueMap/options are the first parameter
+  // Identify whether the valueFn/options are the first parameter
   // or the second.
   let source;
   let options;
-  if (param2 === undefined) {
+  if (arguments.length === 0) {
+    throw new TypeError(
+      `@map: You must give @map a function or a dictionary of options.`
+    );
+  } else if (!param1) {
+    throw new TypeError(`@map: The first argument was undefined.`);
+  } else if (arguments.length === 1) {
     options = param1;
+  } else if (!param2) {
+    throw new TypeError(`@map: The second argument was undefined.`);
   } else {
     source = param1;
     options = param2;
   }
 
-  // Identify whether the valueMap/options is a valueMap function
+  // Identify whether the valueFn/options is a valueFn function
   // or an options dictionary.
-  let valueMap;
+  let valueFn;
   if (
     typeof options === "function" ||
     typeof (/** @type {any} */ (options)?.unpack) === "function"
   ) {
-    valueMap = options;
+    valueFn = options;
     options = {};
+  } else if (!options) {
+    throw new TypeError(
+      `@map: You must specify a value function or options dictionary.`
+    );
   } else {
-    valueMap = options.valueMap;
+    valueFn = options.value ?? options.valueMap;
   }
 
-  let {
-    deep,
-    description,
-    extensions,
-    inverseKeyMap,
-    keyMap,
-    needsSourceValue,
-  } = options;
+  let { deep, description, inverseKey, needsSourceValue } = options;
+  let extension = options.extension ?? options.extensions;
+  let keyFn = options.keyMap ?? options.key;
 
-  description ??= `@map ${extensions ?? ""}`;
+  description ??= `@map ${extension ?? ""}`;
 
-  if (extensions && (keyMap || inverseKeyMap)) {
+  if (extension && (keyFn || inverseKey)) {
     throw new TypeError(
-      `@map: You can't specify both extensions and a keyMap or inverseKeyMap`
+      `@map: You can't specify extensions and also a key or inverseKey function`
     );
   }
 
@@ -88,8 +94,8 @@ export default function treeMap(param1, param2) {
 
   // Extend the value function to include the value and key in scope.
   let extendedValueFn;
-  if (valueMap) {
-    const resolvedValueFn = toFunction(valueMap);
+  if (valueFn) {
+    const resolvedValueFn = toFunction(valueFn);
     extendedValueFn = function (sourceValue, sourceKey, tree) {
       const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
       return resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
@@ -97,18 +103,18 @@ export default function treeMap(param1, param2) {
   }
 
   // Extend the key function to include the value and key in scope.
-  let extendedKeyMap;
-  let extendedInverseKeyMap;
-  if (extensions) {
-    let { resultExtension, sourceExtension } = parseExtensions(extensions);
-    const keyFns = keyMapsForExtensions({
+  let extendedKeyFn;
+  let extendedInverseKeyFn;
+  if (extension) {
+    let { resultExtension, sourceExtension } = parseExtensions(extension);
+    const keyFns = keyFunctionsForExtensions({
       resultExtension,
       sourceExtension,
     });
-    extendedKeyMap = keyFns.keyMap;
-    extendedInverseKeyMap = keyFns.inverseKeyMap;
-  } else if (keyMap) {
-    const resolvedKeyFn = toFunction(keyMap);
+    extendedKeyFn = keyFns.key;
+    extendedInverseKeyFn = keyFns.inverseKey;
+  } else if (keyFn) {
+    const resolvedKeyFn = toFunction(keyFn);
     async function scopedKeyFn(sourceKey, tree) {
       const sourceValue = await tree.get(sourceKey);
       const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
@@ -120,25 +126,24 @@ export default function treeMap(param1, param2) {
       );
       return resultKey;
     }
-    const keyFns = cachedKeyMaps(scopedKeyFn);
-    extendedKeyMap = keyFns.keyMap;
-    extendedInverseKeyMap = keyFns.inverseKeyMap;
+    const keyFns = cachedKeyFunctions(scopedKeyFn);
+    extendedKeyFn = keyFns.key;
+    extendedInverseKeyFn = keyFns.inverseKey;
   } else {
-    // Use sidecar keyMap/inverseKeyMap functions if the valueMap defines them.
-    extendedKeyMap = valueMap?.keyMap;
-    extendedInverseKeyMap = valueMap?.inverseKeyMap;
+    // Use sidecar keyFn/inverseKey functions if the valueFn defines them.
+    extendedKeyFn = valueFn?.key;
+    extendedInverseKeyFn = valueFn?.inverseKey;
   }
 
   const transform = function mapTreelike(treelike) {
-    const tree = Tree.from(treelike);
     return map({
       deep,
       description,
-      inverseKeyMap: extendedInverseKeyMap,
-      keyMap: extendedKeyMap,
+      inverseKey: extendedInverseKeyFn,
+      key: extendedKeyFn,
       needsSourceValue,
-      valueMap: extendedValueFn,
-    })(tree);
+      value: extendedValueFn,
+    })(treelike);
   };
 
   return source ? transform(source) : transform;

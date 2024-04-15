@@ -11,7 +11,7 @@ export default function functionResultsMap(tree) {
   return map({
     description: "functionResultsMap",
 
-    valueMap: async (sourceValue, sourceKey, tree) => {
+    value: async (sourceValue, sourceKey, tree) => {
       let resultValue;
       if (typeof sourceValue === "function") {
         const scope = Scope.getScope(tree);

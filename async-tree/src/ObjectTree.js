@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 import { getRealmObjectPrototype } from "./utilities.js";
 
 /**
@@ -39,6 +39,11 @@ export default class ObjectTree {
 
     if (Tree.isAsyncTree(value) && !value.parent) {
       value.parent = this;
+    }
+
+    if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
+      // Value is an inherited method; bind it to the object.
+      value = value.bind(this.object);
     }
 
     return value;

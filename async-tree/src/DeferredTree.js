@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 
 /**
  * A tree that is loaded lazily.
@@ -19,7 +19,8 @@ export default class DeferredTree {
     this.loader = loader;
     this.treePromise = null;
     this._tree = null;
-    this._parent = null;
+    this._parentUntilLoaded = null;
+    this._scopeUntilLoaded = null;
   }
 
   async get(key) {
@@ -39,14 +40,17 @@ export default class DeferredTree {
     return tree.keys();
   }
 
+  // A deferred tree's parent generally comes from the loaded tree. However, if
+  // someone tries to get or set the parent before the tree is loaded, we store
+  // that parent reference and apply it once the tree is loaded.
   get parent() {
-    return this._tree?.parent ?? this._parent;
+    return this._tree?.parent ?? this._parentUntilLoaded;
   }
   set parent(parent) {
     if (this._tree && !this._tree.parent) {
       this._tree.parent = parent;
     } else {
-      this._parent = parent;
+      this._parentUntilLoaded = parent;
     }
   }
 
@@ -61,9 +65,11 @@ export default class DeferredTree {
     return /** @type {any} */ (this._tree)?.scope;
   }
   set scope(scope) {
-    // If tree hasn't been loaded yet, setting scope has no effect.
-    if (this._tree) {
+    // As with `parent`, we can defer setting of scope.
+    if (this._tree && !(/** @type {any} */ (this._tree).scope)) {
       /** @type {any} */ (this._tree).scope = scope;
+    } else {
+      this._scopeUntilLoaded = scope;
     }
   }
 
@@ -75,11 +81,18 @@ export default class DeferredTree {
     // Use a promise to ensure the treelike is only converted to a tree once.
     this.treePromise ??= this.loadResult().then((treelike) => {
       this._tree = Tree.from(treelike);
-      if (this._parent) {
+      if (this._parentUntilLoaded) {
+        // Now that the tree has been loaded, we can set its parent.
         if (!this._tree.parent) {
-          this._tree.parent = this._parent;
+          this._tree.parent = this._parentUntilLoaded;
         }
-        this._parent = null;
+        this._parentUntilLoaded = null;
+      }
+      if (this._scopeUntilLoaded) {
+        if (!(/** @type {any} */ (this._tree).scope)) {
+          /** @type {any} */ (this._tree).scope = this._scopeUntilLoaded;
+        }
+        this._scopeUntilLoaded = null;
       }
       return this._tree;
     });

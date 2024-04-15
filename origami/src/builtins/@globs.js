@@ -12,7 +12,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function globs(tree) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "globs");
   /** @type {AsyncTree} */
   let result = new GlobTree(tree);
   result = Scope.treeWithScope(result, this);

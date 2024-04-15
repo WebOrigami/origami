@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { ObjectTree, Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
+import { Scope, formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
@@ -75,19 +75,6 @@ while (args[0] === "") {
 try {
   await main(...args);
 } catch (/** @type {any} */ error) {
-  // Work up to the root cause, displaying intermediate messages as we go up.
-  if (!error.cause && !error.stack) {
-    console.error(error.message);
-  } else {
-    while (error.cause) {
-      console.error(error.message);
-      error = error.cause;
-    }
-  }
-  if (error.stack) {
-    // Display stack trace for root cause, under the theory that that's the most
-    // useful place to look for the problem.
-    console.error(error.stack);
-  }
+  console.error(formatError(error));
   process.exitCode = 1;
 }

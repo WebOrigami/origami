@@ -1,9 +1,0 @@
-{
-  names = [
-    'Alice',
-    'Bob',
-    'Carol'
-  ]
-
-  greetings = @map(=`Hello, {{ _ }}!`)(names)
-}

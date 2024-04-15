@@ -1,10 +1,12 @@
+import { isUnpackable, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import unpackText from "../builtins/@loaders/txt.js";
+import documentObject from "../common/documentObject.js";
+import { toString } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
-import unpackOrigamiExpression from "./@loaders/ori.js";
+import fileTypeOrigami from "./ori_handler.js";
 
 /**
- * Inline any Origami expressions found inside {{...}} placeholders in the input
+ * Inline any Origami expressions found inside ${...} placeholders in the input
  * text.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -14,26 +16,28 @@ import unpackOrigamiExpression from "./@loaders/ori.js";
  * @param {StringLike} input
  */
 export default async function inline(input) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "inline");
 
   // Get the input text and any attached front matter.
-  let inputDocument;
-  if (input["@text"]) {
-    inputDocument = input;
-  } else if (/** @type {any} */ (input).unpack) {
-    // Have the input unpack itself.
-    inputDocument = await /** @type {any} */ (input).unpack();
-  } else {
-    // Unpack the input as a text document with possible front matter.
-    inputDocument = await unpackText(input);
+  if (isUnpackable(input)) {
+    input = await input.unpack();
   }
+  const inputIsDocument = input["@text"] !== undefined;
+  const origami = inputIsDocument ? input["@text"] : toString(input);
+  const parent = input.parent ?? input[symbols.parent];
 
-  const templateFn = await unpackOrigamiExpression(inputDocument, {
+  // If the input document is a plain object, include it in scope for the
+  // evaluated expression.
+  const inputData = inputIsDocument ? input : null;
+
+  const templateFn = await fileTypeOrigami.unpack(origami, {
+    attachedData: inputData,
     compiler: compile.templateDocument,
+    parent,
   });
-  const templateResult = await templateFn(inputDocument);
-  return inputDocument
-    ? Object.assign({}, inputDocument, { "@text": String(templateResult) })
+  const templateResult = await templateFn(inputData);
+  return inputIsDocument
+    ? documentObject(templateResult, inputData)
     : templateResult;
 }
 

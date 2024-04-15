@@ -37,10 +37,12 @@ export default function ExplorableSiteTransform(Base) {
       if (value === undefined) {
         // The tree doesn't have the key; try the defaults.
         const scope = Scope.getScope(this);
-        if (key === "index.html") {
-          value = await index.call(scope, this);
-        } else if (key === ".keys.json") {
-          value = await keysJson.stringify(this);
+        if (scope) {
+          if (key === "index.html") {
+            value = await index.call(scope, this);
+          } else if (key === ".keys.json") {
+            value = await keysJson.stringify(this);
+          }
         }
       }
 
@@ -57,11 +59,15 @@ export default function ExplorableSiteTransform(Base) {
         const original = value.unpack.bind(value);
         value.unpack = async () => {
           const content = await original();
-          if (!Tree.isTreelike(content)) {
+          if (!Tree.isTraversable(content)) {
             return content;
           }
           /** @type {any} */
           let tree = Tree.from(content);
+          if (!tree.parent && !tree.scope) {
+            const scope = Scope.getScope(this);
+            tree = Scope.treeWithScope(tree, scope);
+          }
           tree = transformObject(ExplorableSiteTransform, tree);
           return tree;
         };

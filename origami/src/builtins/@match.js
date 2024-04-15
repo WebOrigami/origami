@@ -26,7 +26,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default function match(pattern, resultFn, keys = []) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "match");
   let regex;
   if (typeof pattern === "string") {
     // Convert the simple pattern format into a regular expression.

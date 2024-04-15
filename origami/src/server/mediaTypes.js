@@ -79,19 +79,3 @@ export const mediaTypeForExtension = {
   ".yaml": "text/yaml", // Not official
   ".zip": "application/zip",
 };
-
-export const mediaTypeIsText = {
-  "application/json": true,
-  "application/ld+json": true,
-  "application/vnd.oasis.opendocument.text": true,
-  "application/x-httpd-php": true,
-  "application/x-sh": true,
-  "application/xhtml+xml": true,
-  "text/css": true,
-  "text/csv": true,
-  "text/html": true,
-  "text/javascript": true,
-  "text/plain": true,
-  "text/yaml": true,
-  "text/yml": true,
-};

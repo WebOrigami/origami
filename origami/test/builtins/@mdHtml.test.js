@@ -7,10 +7,7 @@ describe("mdHtml", () => {
   test("transforms markdown text to HTML text", async () => {
     const markdown = `# Hello, world.`;
     const htmlDocument = await mdHtml(markdown);
-    assert.equal(
-      String(htmlDocument),
-      `<h1 id="hello-world">Hello, world.</h1>\n`
-    );
+    assert.equal(htmlDocument, `<h1 id="hello-world">Hello, world.</h1>\n`);
   });
 
   test("transformed markdown document to HTML document", async () => {

@@ -27,7 +27,7 @@ export default function CommandsModulesTransform(Base) {
     }
 
     async keys() {
-      const keys = [...(await super.keys())];
+      const keys = Array.from(await super.keys());
       // If we find a key like "foo.js", then return "foo" as the key.
       return keys.map((key) =>
         key.endsWith(".js") ? path.basename(key, ".js") : key

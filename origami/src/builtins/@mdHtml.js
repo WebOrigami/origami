@@ -1,9 +1,11 @@
+import { isUnpackable } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
-import { replaceExtension } from "../common/utilities.js";
+import documentObject from "../common/documentObject.js";
+import { replaceExtension, toString } from "../common/utilities.js";
 
 marked.use(
   markedGfmHeadingId(),
@@ -31,20 +33,17 @@ marked.use(
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {
-  if (/** @type {any} */ (input).unpack) {
-    input = await /** @type {any} */ (input).unpack();
+  if (isUnpackable(input)) {
+    input = await input.unpack();
   }
-  const inputDocument = input["@text"] ? input : null;
-  const markdown = inputDocument?.["@text"] ?? String(input);
+  const inputIsDocument = input["@text"] !== undefined;
+  const markdown = inputIsDocument ? input["@text"] : toString(input);
   const html = marked(markdown);
-  return inputDocument
-    ? Object.assign({}, inputDocument, { "@text": html })
-    : html;
+  return inputIsDocument ? documentObject(html, input) : html;
 }
 
-mdHtml.keyMap = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
-mdHtml.inverseKeyMap = (resultKey) =>
-  replaceExtension(resultKey, ".html", ".md");
+mdHtml.key = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
+mdHtml.inverseKey = (resultKey) => replaceExtension(resultKey, ".html", ".md");
 
 mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
 mdHtml.documentation = "https://weborigami.org/language/@mdHtml.html";

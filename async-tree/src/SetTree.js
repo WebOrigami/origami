@@ -1,4 +1,4 @@
-import * as Tree from "./Tree.js";
+import { Tree } from "./internal.js";
 
 /**
  * A tree of Set objects.
@@ -11,7 +11,7 @@ export default class SetTree {
    * @param {Set} set
    */
   constructor(set) {
-    this.values = [...set];
+    this.values = Array.from(set);
     this.parent = null;
   }
 

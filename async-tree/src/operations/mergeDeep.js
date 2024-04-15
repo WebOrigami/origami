@@ -1,4 +1,4 @@
-import * as Tree from "../Tree.js";
+import { Tree } from "../internal.js";
 
 /**
  * Return a tree that performs a deep merge of the given trees.

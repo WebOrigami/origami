@@ -5,7 +5,7 @@ import MapTree from "../src/MapTree.js";
 describe("MapTree", () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
-    assert.deepEqual([...(await fixture.keys())], ["a", "b", "c"]);
+    assert.deepEqual(Array.from(await fixture.keys()), ["a", "b", "c"]);
   });
 
   test("can get the value for a key", async () => {

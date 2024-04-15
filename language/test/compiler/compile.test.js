@@ -49,7 +49,7 @@ describe("compile", () => {
   });
 
   test("templateLiteral", async () => {
-    await assertCompile("`Hello, {{name}}!`", "Hello, Alice!");
+    await assertCompile("`Hello, ${name}!`", "Hello, Alice!");
     await assertCompile(
       "`escape characters with \\`backslash\\``",
       "escape characters with `backslash`"

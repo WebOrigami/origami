@@ -19,7 +19,7 @@ describe("OriCommandTransform", () => {
       b: 2,
     });
     /** @type {any} */ (tree).scope = builtins;
-    const value = await tree.get("!@tree/keys");
+    const value = await tree.get("!@keys");
     assert.deepEqual(await Tree.plain(value), ["a", "b"]);
   });
 });

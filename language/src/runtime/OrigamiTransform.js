@@ -1,4 +1,4 @@
-import FileLoadersTransform from "./FileLoadersTransform.js";
+import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import InheritScopeMixin from "./InheritScopeMixin.js";
 
 /**
@@ -7,5 +7,7 @@ import InheritScopeMixin from "./InheritScopeMixin.js";
  * @param {AsyncTreeConstructor} Base
  */
 export default function OrigamiTransform(Base) {
-  return class Origami extends InheritScopeMixin(FileLoadersTransform(Base)) {};
+  return class Origami extends InheritScopeMixin(
+    HandleExtensionsTransform(Base)
+  ) {};
 }

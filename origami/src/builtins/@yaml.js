@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function toYaml(obj) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "yaml");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(
@@ -20,9 +20,6 @@ export default async function toYaml(obj) {
   obj = obj ?? (await this?.get("@current"));
   if (obj === undefined) {
     return undefined;
-  }
-  if (typeof obj.unpack === "function") {
-    obj = await obj.unpack();
   }
   const value = await serialize.toJsonValue(obj);
   return YAML.stringify(value);

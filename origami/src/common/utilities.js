@@ -1,4 +1,9 @@
-import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
+import {
+  Tree,
+  isPlainObject,
+  isStringLike,
+  isUnpackable,
+} from "@weborigami/async-tree";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -30,8 +35,6 @@ export function isTransformApplied(Transform, obj) {
 
 export const keySymbol = Symbol("key");
 
-export const parentSymbol = Symbol("parent");
-
 /**
  * If the given key ends in the source extension (which will generally include a
  * period), replace that extension with the result extension (which again should
@@ -59,16 +62,13 @@ export function toFunction(obj) {
   if (typeof obj === "function") {
     // Return a function as is.
     return obj;
-  } else if (
-    typeof obj === "object" &&
-    typeof (/** @type {any} */ (obj)?.unpack) === "function"
-  ) {
+  } else if (isUnpackable(obj)) {
     // Extract the contents of the object and convert that to a function.
     let fn;
     /** @this {any} */
     return async function (...args) {
       if (!fn) {
-        const content = await /** @type {any} */ (obj).unpack();
+        const content = await obj.unpack();
         fn = toFunction(content);
       }
       return fn.call(this, ...args);
@@ -102,7 +102,7 @@ export function toString(object) {
   if (isPlainObject(object) && "@text" in object) {
     return object["@text"];
   } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
-    // Serialize data as UTF-8.
+    // Treat the buffer as UTF-8 text.
     const decoded = textDecoder.decode(object);
     // If the result has non-printable characters, it's probably not a string.
     return hasNonPrintableCharacters(decoded) ? null : decoded;

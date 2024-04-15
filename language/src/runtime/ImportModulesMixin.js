@@ -32,17 +32,24 @@ export default function ImportModulesMixin(Base) {
           // Ignore errors.
         }
         if (stats) {
-          // Module exists, but we can't load it, probably due to a syntax error.
-          throw new SyntaxError(`Error loading ${filePath}`);
+          // Module exists, but we can't load it. This is often due to a syntax
+          // error in the target module, so we offer that as a hint.
+          const message = `Error loading ${filePath}, possibly due to a syntax error.\n${error.message}`;
+          throw new SyntaxError(message);
         }
 
         // Module doesn't exist.
         return undefined;
       }
 
-      // If the module loaded and defines a default export, return that, otherwise
-      // return the overall module.
-      return typeof obj === "object" && "default" in obj ? obj.default : obj;
+      if ("default" in obj) {
+        // Module with a default export; return that.
+        return obj.default;
+      } else {
+        // Module with multiple named exports. Cast from a module namespace
+        // object to a plain object.
+        return { ...obj };
+      }
     }
   };
 }

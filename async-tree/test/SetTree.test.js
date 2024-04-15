@@ -1,13 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../src/ObjectTree.js";
 import SetTree from "../src/SetTree.js";
+import { ObjectTree } from "../src/internal.js";
 
 describe("SetTree", () => {
   test("can get the keys of the tree", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetTree(set);
-    assert.deepEqual([...(await fixture.keys())], [0, 1, 2]);
+    assert.deepEqual(Array.from(await fixture.keys()), [0, 1, 2]);
   });
 
   test("can get the value for a key", async () => {

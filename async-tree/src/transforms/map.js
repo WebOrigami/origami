@@ -1,4 +1,4 @@
-import * as Tree from "../Tree.js";
+import { Tree } from "../internal.js";
 
 /**
  * Return a transform function that maps the keys and/or values of a tree.
@@ -6,63 +6,64 @@ import * as Tree from "../Tree.js";
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
- * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKeyMap?: KeyFn, keyMap?: KeyFn, valueMap?: ValueKeyFn }} options
+ * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKey?: KeyFn, key?: KeyFn, value?: ValueKeyFn }} options
  */
-export default function createMapTransform(options) {
+export default function createMapTransform(options = {}) {
   let deep;
   let description;
-  let inverseKeyMap;
-  let keyMap;
+  let inverseKeyFn;
+  let keyFn;
   let needsSourceValue;
-  let valueMap;
+  let valueFn;
   if (typeof options === "function") {
-    // Take the single function argument as the valueMap
-    valueMap = options;
+    // Take the single function argument as the valueFn
+    valueFn = options;
   } else {
     deep = options.deep;
     description = options.description;
-    inverseKeyMap = options.inverseKeyMap;
-    keyMap = options.keyMap;
+    inverseKeyFn = options.inverseKey;
+    keyFn = options.key;
     needsSourceValue = options.needsSourceValue;
-    valueMap = options.valueMap;
+    valueFn = options.value;
   }
 
   deep ??= false;
   description ??= "key/value map";
   // @ts-ignore
-  inverseKeyMap ??= valueMap?.inverseKeyMap;
+  inverseKeyFn ??= valueFn?.inverseKey;
   // @ts-ignore
-  keyMap ??= valueMap?.keyMap;
+  keyFn ??= valueFn?.key;
   needsSourceValue ??= true;
 
-  if ((keyMap && !inverseKeyMap) || (!keyMap && inverseKeyMap)) {
+  if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
     throw new TypeError(
-      `map: You must specify both keyMap and inverseKeyMap, or neither.`
+      `map: You must specify both key and inverseKey functions, or neither.`
     );
   }
 
   /**
    * @type {import("../../index.ts").TreeTransform}
    */
-  return function map(tree) {
+  return function map(treelike) {
+    const tree = Tree.from(treelike);
     // The transformed tree is actually an extension of the original tree's
     // prototype chain. This allows the transformed tree to inherit any
-    // properties/methods that do not need to be specified. For example, the
-    // `parent` of the transformed tree is the original tree's parent.
+    // properties/methods. For example, the `parent` of the transformed tree is
+    // the original tree's parent.
     const transformed = Object.create(tree);
 
     transformed.description = description;
 
-    if (keyMap || valueMap) {
+    if (keyFn || valueFn) {
       transformed.get = async (resultKey) => {
         // Step 1: Map the result key to the source key.
         const isSubtree = deep && (await Tree.isKeyForSubtree(tree, resultKey));
         const sourceKey =
-          !isSubtree && inverseKeyMap
-            ? await inverseKeyMap(resultKey, tree)
+          !isSubtree && inverseKeyFn
+            ? await inverseKeyFn(resultKey, tree)
             : resultKey;
 
-        if (!sourceKey) {
+        if (sourceKey == null) {
           // No source key means no value.
           return undefined;
         }
@@ -85,9 +86,9 @@ export default function createMapTransform(options) {
         } else if (deep && Tree.isAsyncTree(sourceValue)) {
           // Map a subtree.
           resultValue = map(sourceValue);
-        } else if (valueMap) {
+        } else if (valueFn) {
           // Map a single value.
-          resultValue = await valueMap(sourceValue, sourceKey, tree);
+          resultValue = await valueFn(sourceValue, sourceKey, tree);
         } else {
           // Return source value as is.
           resultValue = sourceValue;
@@ -97,22 +98,22 @@ export default function createMapTransform(options) {
       };
     }
 
-    if (keyMap) {
+    if (keyFn) {
       transformed.keys = async () => {
-        // Apply the keyMap to source keys for leaf values (not subtrees).
-        const sourceKeys = [...(await tree.keys())];
+        // Apply the keyFn to source keys for leaf values (not subtrees).
+        const sourceKeys = Array.from(await tree.keys());
         const mapped = await Promise.all(
           sourceKeys.map(async (sourceKey) => {
             let resultKey;
             if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
               resultKey = sourceKey;
             } else {
-              resultKey = await keyMap(sourceKey, tree);
+              resultKey = await keyFn(sourceKey, tree);
             }
             return resultKey;
           })
         );
-        // Filter out any cases where the keyMap returned undefined.
+        // Filter out any cases where the keyFn returned undefined.
         const resultKeys = mapped.filter((key) => key !== undefined);
         return resultKeys;
       };

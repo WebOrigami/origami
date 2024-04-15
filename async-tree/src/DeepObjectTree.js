@@ -1,5 +1,4 @@
-import ObjectTree from "./ObjectTree.js";
-import * as Tree from "./Tree.js";
+import { ObjectTree, Tree } from "./internal.js";
 import { isPlainObject } from "./utilities.js";
 
 export default class DeepObjectTree extends ObjectTree {

@@ -15,7 +15,7 @@ const groupUrls = {
  * @param {string} [name]
  */
 export default async function help(name) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "help");
   let url;
   const scope = this;
   if (scope && name) {

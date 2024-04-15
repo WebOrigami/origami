@@ -23,5 +23,11 @@ export default function InvokeFunctionsTransform(Base) {
       }
       return value;
     }
+
+    // Need to evaluate the value before checking if it is a tree.
+    async isKeyForSubtree(key) {
+      const value = await this.get(key);
+      return Tree.isAsyncTree(value);
+    }
   };
 }

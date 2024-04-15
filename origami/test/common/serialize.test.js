@@ -33,19 +33,16 @@ b: !ori a`;
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
-  test("toJsonValue() invokes an object's pack() method", async () => {
-    const obj = {
-      async pack() {
-        return 1;
-      },
-    };
-    const value = await serialize.toJsonValue(obj);
+  test("toValue() invokes an object's unpack() method", async () => {
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = () => 1;
+    const value = await serialize.toValue(obj);
     assert.deepEqual(value, 1);
   });
 
-  test("toJsonValue() can map a tree to a plain object", async () => {
+  test("toValue() can map a tree to a plain object", async () => {
     const tree = new ObjectTree({ a: "Hello, a." });
-    const value = await serialize.toJsonValue(tree);
+    const value = await serialize.toValue(tree);
     assert.deepEqual(value, { a: "Hello, a." });
   });
 

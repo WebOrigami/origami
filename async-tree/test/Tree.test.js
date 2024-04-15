@@ -1,9 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree } from "../main.js";
 import MapTree from "../src/MapTree.js";
-import ObjectTree from "../src/ObjectTree.js";
-import * as Tree from "../src/Tree.js";
+import { DeepObjectTree, ObjectTree, Tree } from "../src/internal.js";
 
 describe("Tree", () => {
   test("assign applies one tree to another", async () => {
@@ -55,19 +53,16 @@ describe("Tree", () => {
   test("clear() removes all values", async () => {
     const fixture = createFixture();
     await Tree.clear(fixture);
-    assert.deepEqual([...(await Tree.entries(fixture))], []);
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), []);
   });
 
   test("entries() returns the [key, value] pairs", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await Tree.entries(fixture))],
-      [
-        ["Alice.md", "Hello, **Alice**."],
-        ["Bob.md", "Hello, **Bob**."],
-        ["Carol.md", "Hello, **Carol**."],
-      ]
-    );
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), [
+      ["Alice.md", "Hello, **Alice**."],
+      ["Bob.md", "Hello, **Bob**."],
+      ["Carol.md", "Hello, **Carol**."],
+    ]);
   });
 
   test("forEach() invokes a callback for each entry", async () => {
@@ -92,13 +87,10 @@ describe("Tree", () => {
   });
 
   test("from() uses an object's unpack() method if defined", async () => {
-    const obj = {
-      unpack() {
-        return {
-          a: "Hello, a.",
-        };
-      },
-    };
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = () => ({
+      a: "Hello, a.",
+    });
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",
@@ -106,13 +98,10 @@ describe("Tree", () => {
   });
 
   test("from() creates a deferred tree if unpack() returns a promise", async () => {
-    const obj = {
-      async unpack() {
-        return {
-          a: "Hello, a.",
-        };
-      },
-    };
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = async () => ({
+      a: "Hello, a.",
+    });
     const tree = Tree.from(obj);
     assert.deepEqual(await Tree.plain(tree), {
       a: "Hello, a.",
@@ -246,13 +235,10 @@ describe("Tree", () => {
   test("remove method removes a value", async () => {
     const fixture = createFixture();
     await Tree.remove(fixture, "Alice.md");
-    assert.deepEqual(
-      [...(await Tree.entries(fixture))],
-      [
-        ["Bob.md", "Hello, **Bob**."],
-        ["Carol.md", "Hello, **Carol**."],
-      ]
-    );
+    assert.deepEqual(Array.from(await Tree.entries(fixture)), [
+      ["Bob.md", "Hello, **Bob**."],
+      ["Carol.md", "Hello, **Carol**."],
+    ]);
   });
 
   test("toFunction returns a function that invokes a tree's get() method", async () => {
@@ -305,12 +291,10 @@ describe("Tree", () => {
   });
 
   test("traversing a final empty string can unpack the last value", async () => {
+    const unpackable = new String();
+    /** @type {any} */ (unpackable).unpack = () => "Content";
     const tree = {
-      unpackable: {
-        unpack() {
-          return "Content";
-        },
-      },
+      unpackable,
     };
     const result = await Tree.traverse(tree, "unpackable", "");
     assert.equal(result, "Content");
@@ -337,10 +321,11 @@ describe("Tree", () => {
 
   test("values() returns the store's values", async () => {
     const fixture = createFixture();
-    assert.deepEqual(
-      [...(await Tree.values(fixture))],
-      ["Hello, **Alice**.", "Hello, **Bob**.", "Hello, **Carol**."]
-    );
+    assert.deepEqual(Array.from(await Tree.values(fixture)), [
+      "Hello, **Alice**.",
+      "Hello, **Bob**.",
+      "Hello, **Carol**.",
+    ]);
   });
 });
 

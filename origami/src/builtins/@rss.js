@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} jsonFeedTree
  */
 export default async function rss(jsonFeedTree) {
-  assertScopeIsDefined(this);
+  assertScopeIsDefined(this, "rss");
   const jsonFeed = await Tree.plain(jsonFeedTree);
   const { description, home_page_url, items, feed_url, title } = jsonFeed;
 
@@ -18,7 +18,7 @@ export default async function rss(jsonFeedTree) {
   parts.push("rss.xml");
   const rssUrl = parts.join("/");
 
-  const itemsRss = items?.map((story) => itemRss(story)).join("\n") ?? [];
+  const itemsRss = items?.map((story) => itemRss(story)).join("") ?? [];
 
   return `<?xml version="1.0" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -27,7 +27,7 @@ export default async function rss(jsonFeedTree) {
     <title>${title}</title>
     <link>${home_page_url}</link>
     <description>${description}</description>
-  ${itemsRss}</channel>
+${itemsRss}</channel>
 </rss>`;
 }
 
@@ -36,12 +36,14 @@ function itemRss(jsonFeedItem) {
   // RSS wants dates in RFC-822.
   const date = date_published?.toUTCString() ?? null;
   const dateElement = date ? `      <pubDate>${date}</pubDate>\n` : "";
+  const guidElement = id ? `      <guid>${id}</guid>\n` : "";
+  const contentElement = content_html
+    ? `      <description><![CDATA[${content_html}]]></description>\n`
+    : "";
   return `    <item>
-      ${dateElement}<title>${title}</title>
+${dateElement}      <title>${title}</title>
       <link>${url}</link>
-      <guid>${id}</guid>
-      <description><![CDATA[${content_html}]]></description>
-    </item>
+${guidElement}${contentElement}    </item>
 `;
 }
 

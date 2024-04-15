@@ -1,3 +1,4 @@
+import { isPlainObject } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
@@ -69,7 +70,7 @@ describe("Origami parser", () => {
       ],
       [[ops.scope, "files"], "snapshot"],
     ]);
-    assertParse("expr", "@map =`<li>{{_}}</li>`", [
+    assertParse("expr", "@map =`<li>${_}</li>`", [
       [ops.scope, "@map"],
       [ops.lambda, null, [ops.concat, "<li>", [ops.scope, "_"], "</li>"]],
     ]);
@@ -86,7 +87,7 @@ describe("Origami parser", () => {
       `
         {
           index.html = index.ori(teamData.yaml)
-          thumbnails = @map(images, { valueMap: thumbnail.js })
+          thumbnails = @map(images, { value: thumbnail.js })
         }
       `,
       [
@@ -103,11 +104,23 @@ describe("Origami parser", () => {
           [
             [ops.scope, "@map"],
             [ops.scope, "images"],
-            [ops.object, ["valueMap", [ops.scope, "thumbnail.js"]]],
+            [ops.object, ["value", [ops.scope, "thumbnail.js"]]],
           ],
         ],
       ]
     );
+
+    // Consecutive slahes inside a path = empty string key
+    assertParse("expression", "path//key", [
+      ops.traverse,
+      [ops.scope, "path"],
+      "",
+      "key",
+    ]);
+    // Single slash at start of something = absolute file path
+    assertParse("expression", "/path", [[ops.filesRoot], "path"]);
+    // Consecutive slashes at start of something = comment
+    assertParse("expression", "path //comment", [ops.scope, "path"]);
   });
 
   test("functionComposition", () => {
@@ -117,6 +130,11 @@ describe("Origami parser", () => {
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "fn(a, b)", [
+      [ops.scope, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse("functionComposition", "fn( a , b )", [
       [ops.scope, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
@@ -231,7 +249,7 @@ describe("Origami parser", () => {
       null,
       [ops.scope, "message"],
     ]);
-    assertParse("lambda", "=`Hello, {{name}}.`", [
+    assertParse("lambda", "=`Hello, ${name}.`", [
       ops.lambda,
       null,
       [ops.concat, "Hello, ", [ops.scope, "name"], "."],
@@ -249,6 +267,10 @@ describe("Origami parser", () => {
     assertParse("list", "1 , 2 , 3", [1, 2, 3]);
     assertParse("list", "1\n2\n3", [1, 2, 3]);
     assertParse("list", "'a' , 'b' , 'c'", ["a", "b", "c"]);
+  });
+
+  test("multiLineComment", () => {
+    assertParse("multiLineComment", "/*\nHello, world!\n*/", null);
   });
 
   test("number", () => {
@@ -363,6 +385,14 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("singleLineComment", () => {
+    assertParse("singleLineComment", "# Hello, world!", null);
+  });
+
+  test("singleLineComment (JS)", () => {
+    assertParse("singleLineComment", "// Hello, world!", null);
+  });
+
   test("scopeReference", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
@@ -377,7 +407,7 @@ describe("Origami parser", () => {
   });
 
   test("templateDocument", () => {
-    assertParse("templateDocument", "hello{{foo}}world", [
+    assertParse("templateDocument", "hello${foo}world", [
       ops.lambda,
       null,
       [ops.concat, "hello", [ops.scope, "foo"], "world"],
@@ -408,8 +438,31 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("templateLiteral (JS)", () => {
+    assertParse("templateLiteral", "`Hello, world.`", "Hello, world.");
+    assertParse("templateLiteral", "`foo ${x} bar`", [
+      ops.concat,
+      "foo ",
+      [ops.scope, "x"],
+      " bar",
+    ]);
+    assertParse("templateLiteral", "`${`nested`}`", "nested");
+    assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
+      ops.concat,
+      [
+        [ops.scope, "map"],
+        [ops.scope, "people"],
+        [ops.lambda, null, [ops.concat, [ops.scope, "name"]]],
+      ],
+    ]);
+  });
+
   test("templateSubstitution", () => {
     assertParse("templateSubstitution", "{{foo}}", [ops.scope, "foo"]);
+  });
+
+  test("templateSubtitution (JS)", () => {
+    assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"]);
   });
 
   test("tree", () => {
@@ -438,6 +491,25 @@ describe("Origami parser", () => {
 });
 
 function assertParse(startRule, source, expected) {
-  const actual = parse(source, { startRule });
+  /** @type {any} */
+  const parseResult = parse(source, { grammarSource: source, startRule });
+  const actual = stripLocations(parseResult);
   assert.deepEqual(actual, expected);
+}
+
+// For comparison purposes, strip the `location` property added by the parser.
+function stripLocations(parseResult) {
+  if (Array.isArray(parseResult)) {
+    return parseResult.map(stripLocations);
+  } else if (isPlainObject(parseResult)) {
+    const result = {};
+    for (const key in parseResult) {
+      if (key !== "location") {
+        result[key] = stripLocations(parseResult[key]);
+      }
+    }
+    return result;
+  } else {
+    return parseResult;
+  }
 }
