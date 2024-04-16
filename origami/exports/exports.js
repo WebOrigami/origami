@@ -76,6 +76,7 @@ export { default as sort } from "../src/builtins/@sort.js";
 export { default as sortBy } from "../src/builtins/@sortBy.js";
 export { default as static } from "../src/builtins/@static.js";
 export { default as stdin } from "../src/builtins/@stdin.js";
+export { default as string } from "../src/builtins/@string.js";
 export { default as svg } from "../src/builtins/@svg.js";
 export { default as table } from "../src/builtins/@table.js";
 export { default as take } from "../src/builtins/@take.js";
