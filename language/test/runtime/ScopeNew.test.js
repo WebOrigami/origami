@@ -5,7 +5,7 @@ import ScopeNew from "../../src/runtime/ScopeNew.js";
 
 describe("ScopeNew", () => {
   test("caches values", async () => {
-    // A tree { a: 1 } that tracks how many times its get method is called.
+    // A tree { a: 1 } that tracks how many times its `get` method is called.
     let count = 0;
     const tree = new FunctionTree(
       (key) => {
@@ -32,5 +32,14 @@ describe("ScopeNew", () => {
     assert.equal(await scope.get("c"), undefined);
     assert.deepEqual(scope.cache, { a: 1, b: 2, c: undefined });
     assert.deepEqual(baseScope.cache, { a: 1, c: undefined });
+  });
+
+  test("an extended scope can define something not found in the base scope", async () => {
+    const baseScope = new ScopeNew({});
+    assert.equal(await baseScope.get("a"), undefined);
+    assert.deepEqual(baseScope.cache, { a: undefined });
+    const scope = new ScopeNew({ a: 1 }, baseScope);
+    assert.equal(await scope.get("a"), 1);
+    assert.deepEqual(scope.cache, { a: 1 });
   });
 });

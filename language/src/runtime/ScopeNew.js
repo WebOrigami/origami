@@ -17,26 +17,14 @@ const keyTypes = ["bigint", "boolean", "number", "string", "symbol"];
  */
 export default class ScopeNew {
   /**
-   * @typedef {import("@weborigami/async-tree").Treelike} Treelike
-   * @param {(Treelike|null)[]} treelikes
+   * @param {import("@weborigami/async-tree").Treelike} treelike
+   * @param {ScopeNew|null} [base]
    */
-  constructor(...treelikes) {
-    const filtered = treelikes.filter((treelike) => treelike != undefined);
-    if (filtered.length === 0) {
-      filtered.push({});
-    }
-    const trees = filtered.map((treelike) => Tree.from(treelike));
-    let [tree, ...more] = trees;
-    if (tree.trees?.length > 1) {
-      return new ScopeNew(...[...tree.trees, ...more]);
-    }
-    this.tree = tree;
+  constructor(treelike, base) {
+    this.tree = Tree.from(treelike);
     this.cache = {};
-    if (more.length > 0) {
-      this.baseScope =
-        more.length === 1 && more[0] instanceof ScopeNew
-          ? more[0]
-          : new ScopeNew(...more);
+    if (base) {
+      this.base = base;
     }
   }
 
@@ -45,7 +33,7 @@ export default class ScopeNew {
       console.warn(`Tried to look up a non-primitive value in scope: ${key}`);
     }
 
-    // Search local cache first.
+    // Search cache first.
     if (key in this.cache) {
       return this.cache[key];
     }
@@ -53,9 +41,9 @@ export default class ScopeNew {
     // Search local tree
     let value = await this.tree.get(key);
 
-    if (value === undefined && this.baseScope) {
-      // Search base scope
-      value = await this.baseScope.get(key);
+    // Search base scope
+    if (value === undefined && this.base) {
+      value = await this.base.get(key);
     }
 
     // Cache the value, even if it's undefined.
@@ -70,7 +58,7 @@ export default class ScopeNew {
    * Otherwise, return the tree itself.
    *
    * @param {AsyncTree|null|undefined} tree
-   * @returns {AsyncTree|null}
+   * @returns {ScopeNew|null}
    */
   static getScope(tree) {
     if (!tree) {
@@ -100,7 +88,7 @@ export default class ScopeNew {
   // This method exists for debugging purposes, as it's helpful to be able to
   // quickly flatten and view the entire scope chain.
   get trees() {
-    return [this.tree, ...(this.baseScope?.trees ?? [])];
+    return [this.tree, ...(this.base?.trees ?? [])];
   }
 
   /**
