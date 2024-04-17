@@ -17,6 +17,10 @@ export default class Scope {
     this.trees = scopes;
   }
 
+  get base() {
+    return new Scope(...this.trees.slice(1));
+  }
+
   async get(key) {
     for (const tree of this.trees) {
       const value = await tree.get(key);

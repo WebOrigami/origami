@@ -133,9 +133,7 @@ https.toString = () => "«ops.https»";
  */
 export async function inherited(key) {
   const scope = this;
-  const scopeTrees = /** @type {any} */ (scope).trees ?? scope;
-  const inheritedScope = new Scope(...scopeTrees.slice(1));
-  return inheritedScope.get(key);
+  return scope?.base?.get(key);
 }
 inherited.toString = () => "«ops.inherited»";
 
