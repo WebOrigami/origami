@@ -13,17 +13,25 @@ const keyTypes = ["bigint", "boolean", "number", "string", "symbol"];
  * or tree. A scope's cache is shared by all scopes that are based on it.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ *
  * @implements {AsyncTree}
  */
 export default class ScopeNew {
   /**
-   * @param {import("@weborigami/async-tree").Treelike} treelike
-   * @param {ScopeNew|null} [base]
+   * @param {Treelike} treelike
+   * @param {ScopeNew|Treelike|null} [base]
    */
-  constructor(treelike, base) {
+  constructor(treelike, base, ...rest) {
     this.tree = Tree.from(treelike);
     this.cache = {};
+
     if (base) {
+      if (rest?.length > 0) {
+        base = new ScopeNew(base, ...rest);
+      } else if (!(base instanceof ScopeNew)) {
+        base = new ScopeNew(base);
+      }
       this.base = base;
     }
   }
@@ -77,7 +85,7 @@ export default class ScopeNew {
     const keys = new Set(await this.tree.keys());
 
     // Add base keys
-    const baseKeys = (await this.baseScope?.keys()) ?? [];
+    const baseKeys = (await this.base?.keys()) ?? [];
     for (const key of baseKeys) {
       keys.add(key);
     }
