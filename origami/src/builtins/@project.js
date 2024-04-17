@@ -49,7 +49,7 @@ export default async function project(key) {
   }
 
   // Add the configuration as the context for the project root.
-  const scope = new Scope(config, builtins);
+  const scope = config ? new Scope(config, builtins) : builtins;
   const result = Scope.treeWithScope(containerTree, scope);
   return key === undefined ? result : result.get(key);
 }
