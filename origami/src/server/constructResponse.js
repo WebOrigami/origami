@@ -25,7 +25,7 @@ export default async function constructResponse(request, resource) {
   if (resource instanceof Response) {
     // Already a Response, return as is.
     return resource;
-  } else if (!resource) {
+  } else if (resource == null) {
     return null;
   }
 
