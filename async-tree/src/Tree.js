@@ -388,11 +388,16 @@ export async function traverseOrThrow(treelike, ...keys) {
       value = await value.unpack();
     }
 
-    // Peek ahead: if there's only one key left and it's an empty string, return
-    // the value itself.
-    if (remainingKeys.length === 1 && remainingKeys[0] === "") {
-      return value;
-    } else if (value instanceof Function) {
+    if (!isTreelike(value)) {
+      // Value isn't treelike, so can't be traversed except for a special case:
+      // if there's only one key left and it's an empty string, return the
+      // non-treelike value.
+      if (remainingKeys.length === 1 && remainingKeys[0] === "") {
+        return value;
+      }
+    }
+
+    if (value instanceof Function) {
       // Value is a function: call it with the remaining keys.
       const fn = value;
       // We'll take as many keys as the function's length, but at least one.
@@ -407,6 +412,13 @@ export async function traverseOrThrow(treelike, ...keys) {
       key = remainingKeys.shift();
       // Get the value for the key.
       value = await tree.get(key);
+
+      // The empty key as the final key is a special case: if the tree doesn't
+      // have a value for the empty key, keep the tree itself as the value to be
+      // returned.
+      if (value === undefined && remainingKeys.length === 0 && key === "") {
+        value = tree;
+      }
     }
   }
 
