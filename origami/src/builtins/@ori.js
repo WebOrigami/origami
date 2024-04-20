@@ -62,7 +62,7 @@ async function formatResult(result) {
   } else if (
     !(result instanceof Array) &&
     (typeof result !== "object" ||
-      result.toString !== getRealmObjectPrototype(result).toString)
+      result.toString !== getRealmObjectPrototype(result)?.toString)
   ) {
     text = result.toString();
   } else if (typeof result === "object") {

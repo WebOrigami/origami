@@ -189,7 +189,7 @@ function isStringLike(obj) {
     return true;
   } else if (obj?.toString === undefined) {
     return false;
-  } else if (obj.toString === getRealmObjectPrototype(obj).toString) {
+  } else if (obj.toString === getRealmObjectPrototype(obj)?.toString) {
     // The stupid Object.prototype.toString implementation always returns
     // "[object Object]", so if that's the only toString method the object has,
     // we return false.

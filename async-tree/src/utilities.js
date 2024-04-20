@@ -30,6 +30,10 @@ export function castArrayLike(object) {
  * @param {any} object
  */
 export function getRealmObjectPrototype(object) {
+  if (Object.getPrototypeOf(object) === null) {
+    // The object has no prototype.
+    return null;
+  }
   let proto = object;
   while (Object.getPrototypeOf(proto) !== null) {
     proto = Object.getPrototypeOf(proto);
@@ -96,7 +100,7 @@ export function isStringLike(object) {
     return true;
   } else if (object?.toString === undefined) {
     return false;
-  } else if (object.toString === getRealmObjectPrototype(object).toString) {
+  } else if (object.toString === getRealmObjectPrototype(object)?.toString) {
     // The stupid Object.prototype.toString implementation always returns
     // "[object Object]", so if that's the only toString method the object has,
     // we return false.

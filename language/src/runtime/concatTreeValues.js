@@ -47,7 +47,7 @@ async function getText(value, scope) {
     text = textDecoder.decode(value);
   } else if (
     !(value instanceof Array) &&
-    value.toString !== getRealmObjectPrototype(value).toString
+    value.toString !== getRealmObjectPrototype(value)?.toString
   ) {
     text = value.toString();
   } else {
