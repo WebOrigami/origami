@@ -10,7 +10,7 @@ describe("@map", () => {
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ]);
-    const fixture = map({
+    const fixture = map.call(null, {
       /** @this {import("@weborigami/types").AsyncTree} */
       key: async function (sourceValue, sourceKey, tree) {
         const keyInScope = await this.get("@key");
@@ -34,7 +34,7 @@ describe("@map", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     };
-    const transform = map({
+    const transform = map.call(null, {
       extensions: "txt->upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
@@ -51,7 +51,7 @@ describe("@map", () => {
         b: 2,
       },
     });
-    const transform = map({
+    const transform = map.call(null, {
       deep: true,
       key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
       value: (sourceValue, sourceKey, tree) => 2 * sourceValue,
@@ -72,7 +72,7 @@ describe("@map", () => {
         b: 2,
       },
     });
-    const mapped = map(treelike, {
+    const mapped = map.call(null, treelike, {
       deep: true,
       key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
       // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
@@ -96,7 +96,7 @@ describe("@map", () => {
         "file5.bar": "won't be mapped",
       },
     };
-    const transform = map({
+    const transform = map.call(null, {
       deep: true,
       extensions: "txt->upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),

@@ -6,6 +6,7 @@ import {
 import { Scope } from "@weborigami/language";
 import addValueKeyToScope from "../common/addValueKeyToScope.js";
 import { toFunction } from "../common/utilities.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
@@ -42,6 +43,8 @@ import { toFunction } from "../common/utilities.js";
  * @returns {AsyncTree}
  */
 export default function treeMap(param1, param2) {
+  assertScopeIsDefined(this, "map");
+
   // Identify whether the valueFn/options are the first parameter
   // or the second.
   let source;
