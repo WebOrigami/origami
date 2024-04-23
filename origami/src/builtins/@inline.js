@@ -1,4 +1,4 @@
-import { isUnpackable, symbols } from "@weborigami/async-tree";
+import { ObjectTree, isUnpackable, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
@@ -24,7 +24,13 @@ export default async function inline(input) {
   }
   const inputIsDocument = input["@text"] !== undefined;
   const origami = inputIsDocument ? input["@text"] : toString(input);
-  const parent = input.parent ?? input[symbols.parent];
+
+  let parent = input.parent ?? input[symbols.parent];
+  if (!parent) {
+    // Construct a temporary parent that has the right scope.
+    parent = new ObjectTree({});
+    parent.scope = this;
+  }
 
   // If the input document is a plain object, include it in scope for the
   // evaluated expression.
