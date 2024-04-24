@@ -1,4 +1,4 @@
-import { isPlainObject } from "@weborigami/async-tree";
+import { isPlainObject, isUnpackable } from "@weborigami/async-tree";
 import txtHandler from "../builtins/txt_handler.js";
 
 /**
@@ -12,9 +12,15 @@ import txtHandler from "../builtins/txt_handler.js";
  * @param {StringLike|PlainObject} input
  * @param {any} [data]
  */
-export default function documentObject(input, data) {
+export default async function documentObject(input, data) {
   let text;
   let inputData;
+
+  if (isUnpackable(input)) {
+    // Unpack the input first, might already be a document object.
+    input = await input.unpack();
+  }
+
   if (isPlainObject(input)) {
     text = input["@text"];
     inputData = input;
