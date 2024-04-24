@@ -24,7 +24,7 @@ export default async function rss(jsonFeedTree) {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <atom:link href="${rssUrl}" rel="self" type="application/rss+xml"/>
-    <title>${title}</title>
+    <title><![CDATA[${title}]]></title>
     <link>${home_page_url}</link>
     <description>${description}</description>
 ${itemsRss}</channel>
@@ -33,15 +33,19 @@ ${itemsRss}</channel>
 
 function itemRss(jsonFeedItem) {
   const { content_html, date_published, id, title, url } = jsonFeedItem;
-  // RSS wants dates in RFC-822.
-  const date = date_published?.toUTCString() ?? null;
+  // RSS wants dates in RFC-822, essentially the same as ISO 8601.
+  const date =
+    date_published instanceof Date
+      ? date_published.toUTCString()
+      : date_published;
   const dateElement = date ? `      <pubDate>${date}</pubDate>\n` : "";
   const guidElement = id ? `      <guid>${id}</guid>\n` : "";
   const contentElement = content_html
     ? `      <description><![CDATA[${content_html}]]></description>\n`
     : "";
+  const titleElement = `<![CDATA[${title}]]>`;
   return `    <item>
-${dateElement}      <title>${title}</title>
+${dateElement}      <title>${titleElement}</title>
       <link>${url}</link>
 ${guidElement}${contentElement}    </item>
 `;
