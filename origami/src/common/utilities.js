@@ -45,10 +45,13 @@ export const keySymbol = Symbol("key");
  * @param {string} resultExtension
  */
 export function replaceExtension(key, sourceExtension, resultExtension) {
-  if (!key.endsWith(sourceExtension)) {
+  if (!key) {
+    return undefined;
+  } else if (!key.endsWith(sourceExtension)) {
     return key;
+  } else {
+    return key.slice(0, -sourceExtension.length) + resultExtension;
   }
-  return key.slice(0, -sourceExtension.length) + resultExtension;
 }
 
 /**
