@@ -1,4 +1,4 @@
-import { Tree, isPlainObject } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -17,11 +17,11 @@ export default async function sequence(treelike) {
       value: async (key) => {
         let value = await tree.get(key);
 
-        if (isPlainObject(value)) {
+        if (Tree.isTreelike(value)) {
+          value = await Tree.plain(value);
+        } else if (typeof value === "object") {
           // Clone value to avoid modifying the original object.
           value = { ...value };
-        } else if (Tree.isTreelike(value)) {
-          value = await Tree.plain(value);
         } else {
           return value;
         }
