@@ -8,9 +8,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {StringLike} text
  * @param {any} [data]
- * @returns
  */
-export default function documentBuiltin(text, data) {
+export default async function documentBuiltin(text, data) {
   assertScopeIsDefined(this, "document");
   return documentObject(text, data);
 }
