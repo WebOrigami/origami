@@ -1,4 +1,4 @@
-import { DeepObjectTree, Tree } from "../internal.js";
+import { ObjectTree, Tree } from "../internal.js";
 
 /**
  * Given a function that returns a grouping key for a value, returns a transform
@@ -36,6 +36,6 @@ export default function createGroupByTransform(groupKeyFn) {
       }
     }
 
-    return new DeepObjectTree(result);
+    return new ObjectTree(result);
   };
 }
