@@ -27,7 +27,7 @@ export default function mergeDeep(...trees) {
 
     async isKeyForSubtree(key) {
       for (const tree of trees) {
-        if (await tree.isKeyForSubtree(key)) {
+        if (await Tree.isKeyForSubtree(tree, key)) {
           return true;
         }
       }
