@@ -1,6 +1,5 @@
-import { KeyFn, Treelike, ValueKeyFn } from "@weborigami/async-tree";
+import { KeyFn, Treelike, TreeTransform, ValueKeyFn } from "@weborigami/async-tree";
 import { AsyncTree } from "@weborigami/types";
-import { TreelikeTransform } from "../../index.ts";
 
 type TreeMapOptions = {
   deep?: boolean;
@@ -8,10 +7,10 @@ type TreeMapOptions = {
   extensions?: string;
   inverseKey?: KeyFn;
   key?: ValueKeyFn;
+  needsSourceValue?: boolean;
   value?: ValueKeyFn;
 };
 
-export default function treeMap(value: ValueKeyFn): TreelikeTransform;
-export default function treeMap(options: TreeMapOptions): TreelikeTransform;
-export default function treeMap(treelike: Treelike, value: ValueKeyFn): AsyncTree;
-export default function treeMap(treelike: Treelike, options: TreeMapOptions): AsyncTree;
+export default function treeMap(options: ValueKeyFn | TreeMapOptions): TreeTransform;
+export default function treeMap(treelike: Treelike, options: ValueKeyFn | TreeMapOptions): AsyncTree;
+export default function treeMap(param1: Treelike | ValueKeyFn | TreeMapOptions, param2?: ValueKeyFn | TreeMapOptions): AsyncTree | TreeTransform;
