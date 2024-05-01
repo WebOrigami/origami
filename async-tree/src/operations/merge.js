@@ -10,6 +10,7 @@ import { Tree } from "../internal.js";
  * return a defined value, the `get` method returns undefined.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @param {import("../../index.ts").Treelike[]} sources
  * @returns {AsyncTree & { description: string }}
  */
 export default function merge(...sources) {

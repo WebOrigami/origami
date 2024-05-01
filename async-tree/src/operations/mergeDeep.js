@@ -4,9 +4,12 @@ import { Tree } from "../internal.js";
  * Return a tree that performs a deep merge of the given trees.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @param {import("../../index.ts").Treelike[]} sources
  * @returns {AsyncTree & { description: string }}
  */
-export default function mergeDeep(...trees) {
+export default function mergeDeep(...sources) {
+  let trees = sources.map((treelike) => Tree.from(treelike));
+  let mergeParent;
   return {
     description: "mergeDeep",
 
@@ -42,6 +45,20 @@ export default function mergeDeep(...trees) {
         }
       }
       return keys;
+    },
+
+    get parent() {
+      return mergeParent;
+    },
+    set parent(parent) {
+      mergeParent = parent;
+      trees = sources.map((treelike) => {
+        const tree = Tree.isAsyncTree(treelike)
+          ? Object.create(treelike)
+          : Tree.from(treelike);
+        tree.parent = parent;
+        return tree;
+      });
     },
   };
 }
