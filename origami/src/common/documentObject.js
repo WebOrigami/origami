@@ -1,5 +1,5 @@
 import { isPlainObject, isUnpackable } from "@weborigami/async-tree";
-import txtHandler from "../builtins/txt_handler.js";
+// import txtHandler from "../builtins/txt_handler.js";
 
 /**
  * In Origami, a text document object is any object with a `@text` property and
@@ -28,12 +28,15 @@ export default async function documentObject(input, data) {
     text = String(input);
     inputData = null;
   }
-  const base = {
-    pack() {
-      return txtHandler.pack(this);
-    },
-  };
-  const result = Object.create(base);
+  // TODO: Either restore this code, or move responsibility for packing a
+  // document to HandleExtensionsTransform set().
+  // const base = {
+  //   pack() {
+  //     return txtHandler.pack(this);
+  //   },
+  // };
+  // const result = Object.create(base);
+  const result = {};
   Object.assign(result, inputData, data, { "@text": text });
   return result;
 }

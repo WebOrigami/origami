@@ -19,8 +19,9 @@ export default async function debug(treelike) {
   // apply its own scope to the tree.
   let tree = await getTreeArgument(this, arguments, treelike, "@debug");
 
-  tree = transformObject(DebugTransform, tree);
-
+  if (!isTransformApplied(DebugTransform, tree)) {
+    tree = transformObject(DebugTransform, tree);
+  }
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);
   }
@@ -45,7 +46,9 @@ function DebugTransform(Base) {
         if (!value.parent && !value.scope) {
           value = Scope.treeWithScope(value, scope);
         }
-        value = transformObject(DebugTransform, value);
+        if (!isTransformApplied(DebugTransform, value)) {
+          value = transformObject(DebugTransform, value);
+        }
       } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to provide debug support for it.
@@ -60,7 +63,9 @@ function DebugTransform(Base) {
           if (!tree.parent && !tree.scope) {
             tree = Scope.treeWithScope(tree, scope);
           }
-          tree = transformObject(DebugTransform, tree);
+          if (!isTransformApplied(DebugTransform, tree)) {
+            tree = transformObject(DebugTransform, tree);
+          }
           return tree;
         };
       }

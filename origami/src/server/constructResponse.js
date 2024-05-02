@@ -42,14 +42,8 @@ export default async function constructResponse(request, resource) {
     mediaType = extension ? mediaTypeForExtension[extension] : undefined;
   }
 
-  if (
-    mediaType === undefined &&
-    !url.pathname.endsWith("/") &&
-    (Tree.isAsyncTree(resource) ||
-      isPlainObject(resource) ||
-      resource instanceof Array)
-  ) {
-    // Redirect to an index page for the result.
+  if (!url.pathname.endsWith("/") && Tree.isTreelike(resource)) {
+    // Treelike resource: redirect to its index page.
     const Location = `${request.url}/`;
     return new Response("ok", {
       headers: {

@@ -1,8 +1,8 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import ori from "../builtins/@ori.js";
-import { keySymbol, transformObject } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 
 /**
  * Add support for commands prefixed with `!`.
@@ -34,11 +34,6 @@ export default function OriCommandTransform(Base) {
         const extendedScope = new Scope(ambientsTree, Scope.getScope(this));
         const source = key.slice(1).trim();
         value = await ori.call(extendedScope, source, { formatResult: false });
-
-        // Ensure this transform is applied to any subtree.
-        if (Tree.isAsyncTree(value)) {
-          value = transformObject(OriCommandTransform, value);
-        }
       }
 
       return value;
