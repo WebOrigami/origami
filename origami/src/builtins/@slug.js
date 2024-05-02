@@ -1,0 +1,15 @@
+export default function slug(filename) {
+  let slug = filename.toLowerCase();
+
+  // Convert spaces to dashes
+  slug = slug.replace(/\s+/g, "-");
+
+  // Remove special characters except dashes, letters, numbers, and periods.
+  slug = slug.replace(/[^\w\-\.]/g, "");
+
+  // Trim leading or trailing dashes.
+  slug = slug.replace(/^-+/, "");
+  slug = slug.replace(/-+$/, "");
+
+  return slug;
+}
