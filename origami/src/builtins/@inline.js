@@ -25,7 +25,7 @@ export default async function inline(input) {
   const inputIsDocument = input["@text"] !== undefined;
   const origami = inputIsDocument ? input["@text"] : toString(input);
 
-  let parent = input.parent ?? input[symbols.parent];
+  let parent = /** @type {any} */ (input).parent ?? input[symbols.parent];
   if (!parent) {
     // Construct a temporary parent that has the right scope.
     parent = new ObjectTree({});

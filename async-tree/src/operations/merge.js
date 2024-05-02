@@ -1,3 +1,5 @@
+import { Tree } from "../internal.js";
+
 /**
  * Return a tree that performs a shallow merge of the given trees.
  *
@@ -8,10 +10,11 @@
  * return a defined value, the `get` method returns undefined.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @param {import("../../index.ts").Treelike[]} sources
  * @returns {AsyncTree & { description: string }}
  */
 export default function merge(...sources) {
-  let trees = sources;
+  let trees = sources.map((treelike) => Tree.from(treelike));
   let mergeParent;
   return {
     description: "merge",
@@ -28,7 +31,7 @@ export default function merge(...sources) {
 
     async isKeyForSubtree(key) {
       for (const tree of trees) {
-        if (await tree.isKeyForSubtree(key)) {
+        if (await Tree.isKeyForSubtree(tree, key)) {
           return true;
         }
       }
@@ -50,8 +53,10 @@ export default function merge(...sources) {
     },
     set parent(parent) {
       mergeParent = parent;
-      trees = sources.map((source) => {
-        const tree = Object.create(source);
+      trees = sources.map((treelike) => {
+        const tree = Tree.isAsyncTree(treelike)
+          ? Object.create(treelike)
+          : Tree.from(treelike);
         tree.parent = parent;
         return tree;
       });

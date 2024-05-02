@@ -4,7 +4,7 @@ import documentObject from "../../src/common/documentObject.js";
 
 describe("@pack", () => {
   test("invokes its argument's pack() method", async () => {
-    const document = documentObject("Hello, world!", {
+    const document = await documentObject("Hello, world!", {
       foo: "bar",
     });
     // @ts-ignore

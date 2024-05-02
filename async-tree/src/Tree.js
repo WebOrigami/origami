@@ -406,6 +406,8 @@ export async function traverseOrThrow(treelike, ...keys) {
       key = null;
       value = await fn.call(target, ...args);
     } else {
+      const originalValue = value;
+
       // Value is some other treelike object: cast it to a tree.
       const tree = from(value);
       // Get the next key.
@@ -414,10 +416,9 @@ export async function traverseOrThrow(treelike, ...keys) {
       value = await tree.get(key);
 
       // The empty key as the final key is a special case: if the tree doesn't
-      // have a value for the empty key, keep the tree itself as the value to be
-      // returned.
+      // have a value for the empty key, use the original value.
       if (value === undefined && remainingKeys.length === 0 && key === "") {
-        value = tree;
+        value = originalValue;
       }
     }
   }

@@ -7,8 +7,8 @@
   "browser": "./browser.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.11.27",
-    "typescript": "5.4.2"
+    "@types/node": "20.12.8",
+    "typescript": "5.4.5"
   },
   "dependencies": {
     "@weborigami/types": "0.0.48"

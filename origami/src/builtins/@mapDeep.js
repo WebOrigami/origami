@@ -3,57 +3,69 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import treeMap from "./@map.js";
 
 /**
- * Map a deep tree of keys and values to a new tree of keys and values.
+ * Map a hierarchical tree of keys and values to a new tree of keys and values.
  *
  * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
  * @typedef {import("@weborigami/async-tree").TreeTransform} TreeTransform
- * @typedef {import("../../index.ts").TreelikeTransform} TreelikeTransform
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @typedef {{ description?: string, extension?: string,
+ * @typedef {{ deep?: boolean, description?: string, extension?: string,
  * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
- * ValueKeyFn, value?: ValueKeyFn, valueFn?: ValueKeyFn }} TreeMapOptions
+ * ValueKeyFn, needsSourceValue?: boolean, value?: ValueKeyFn, valueMap?:
+ * ValueKeyFn }} MapOptionsDictionary
  *
- * @this {import("@weborigami/types").AsyncTree|null}
- *
- * @overload
- * @param {ValueKeyFn} param1
- * @returns {TreelikeTransform}
+ * @typedef {ValueKeyFn|MapOptionsDictionary} OptionsOrValueFn
  *
  * @overload
- * @param {TreeMapOptions} param1
- * @returns {TreelikeTransform}
- *
- * @overload
- * @param {Treelike} param1
- * @param {ValueKeyFn} param2
+ * @param {Treelike} source
+ * @param {OptionsOrValueFn} instructions
  * @returns {AsyncTree}
  *
  * @overload
- * @param {Treelike} param1
- * @param {TreeMapOptions} param2
- * @returns {AsyncTree}
+ * @param {OptionsOrValueFn} instructions
+ * @returns {TreeTransform}
+ *
+ * @this {AsyncTree|null}
+ * @param {Treelike|OptionsOrValueFn} param1
+ * @param {OptionsOrValueFn} [param2]
  */
 export default function mapDeep(param1, param2) {
   assertScopeIsDefined(this, "mapDeep");
 
-  // Identify whether the valueFn/options are the first parameter
-  // or the second.
-  let source;
-  let options;
-  if (param2 === undefined) {
-    options = param1;
+  // Identify whether the map instructions are the first parameter or the
+  // second.
+  if (arguments.length === 1) {
+    // One argument, which is a dictionary or function.
+    /** @type {MapOptionsDictionary} */
+    const options = isPlainObject(param1)
+      ? // Dictionary
+        { ...param1, deep: true }
+      : // Function
+        { deep: true, value: param1 };
+    const transform = treeMap.call(this, options);
+    return transform;
   } else {
-    source = param1;
-    if (isPlainObject(param2)) {
-      options = param2;
-    } else {
-      options = { value: param2 };
-    }
-  }
+    // Two arguments, second is a dictionary or function.
+    /** @type {Treelike} */
+    const source = param1;
+    /** @type {MapOptionsDictionary} */
+    const options = isPlainObject(param2)
+      ? // Dictionary
+        { ...param2, deep: true }
+      : // Function
+        { deep: true, value: param2 };
 
-  options.deep = true;
-  return treeMap.call(this, source, options);
+    // We go through some type gymnastics to convince TypeScript that the return
+    // value is an AsyncTree. Using `.call()` with the overloaded `@map`
+    // function seems to confuse TypeScript into thinking the call will return a
+    // TreeTransform.
+
+    /** @type {AsyncTree} */
+    let tree;
+    // @ts-ignore
+    tree = treeMap.call(this, source, options);
+    return tree;
+  }
 }
