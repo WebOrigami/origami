@@ -120,8 +120,11 @@ function keysFromUrl(url) {
     pathKeys[pathKeys.length - 1] = "index.html";
   }
 
-  // Add back the `!` to commands.
-  const commandKeys = parts.map((command) => `!${command}`);
+  // Decode the text of the commands, prefix spaces with a backslash, and add
+  // back the `!` character.
+  const commandKeys = parts.map(
+    (command) => `!${decodeURIComponent(command).replace(/ /g, "\\ ")}`
+  );
 
   const keys = [...pathKeys, ...commandKeys];
   return keys;
