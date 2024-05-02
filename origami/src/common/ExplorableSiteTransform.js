@@ -33,10 +33,10 @@ export default function ExplorableSiteTransform(Base) {
 
       // Ask the tree if it has the key.
       let value = await super.get(key);
+      const scope = Scope.getScope(this);
 
       if (value === undefined) {
         // The tree doesn't have the key; try the defaults.
-        const scope = Scope.getScope(this);
         if (scope) {
           if (key === "index.html") {
             value = await index.call(scope, this);
@@ -46,15 +46,17 @@ export default function ExplorableSiteTransform(Base) {
         }
       }
 
-      // Ensure this transform is applied to any explorable result. This lets
-      // the user browse into data and explorable trees of types other than the
-      // current class.
       if (Tree.isAsyncTree(value)) {
+        // Ensure this transform is applied to any tree result so the user
+        // browse into data and trees of classes other than the current class.
         value = transformObject(ExplorableSiteTransform, value);
-      }
 
-      if (value?.unpack) {
-        // If the value isn't a tree, but has a tree attached via a `unpack`
+        if (key.endsWith?.("/")) {
+          // Instead of return the tree directly, return an index for it.
+          value = await index.call(scope, value);
+        }
+      } else if (value?.unpack) {
+        // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.
         const original = value.unpack.bind(value);
         value.unpack = async () => {
