@@ -1,9 +1,9 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import sequence from "../../src/builtins/@sequence.js";
+import sequence from "../../src/builtins/@addNextPrevious.js";
 
-describe("@sequence", () => {
+describe("@addNextPrevious", () => {
   test("adds next/previous properties to values", async () => {
     const tree = {
       alice: {
