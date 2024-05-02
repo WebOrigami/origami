@@ -1,4 +1,4 @@
-import { Tree, isPlainObject } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
@@ -19,11 +19,11 @@ export default async function debug(treelike) {
   // apply its own scope to the tree.
   let tree = await getTreeArgument(this, arguments, treelike, "@debug");
 
+  tree = transformObject(DebugTransform, tree);
+
   if (!isTransformApplied(ExplorableSiteTransform, tree)) {
     tree = transformObject(ExplorableSiteTransform, tree);
   }
-
-  tree = transformObject(DebugTransform, tree);
 
   return tree;
 }
@@ -36,20 +36,17 @@ function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {
     async get(key) {
       let value = await super.get(key);
+      const scope = Scope.getScope(this);
 
-      // Since this transform is for diagnostic purposes, cast arrays
-      // or plain objects to trees so we can debug them too.
-      if (value instanceof Array || isPlainObject(value)) {
+      // Since this transform is for diagnostic purposes, cast any treelike
+      // result to a tree so we can debug the result too.
+      if (Tree.isTreelike(value)) {
         value = Tree.from(value);
-      }
-
-      // Ensure debug transforms are applied to explorable results.
-      if (Tree.isAsyncTree(value)) {
-        value = transformObject(ExplorableSiteTransform, value);
+        if (!value.parent && !value.scope) {
+          value = Scope.treeWithScope(value, scope);
+        }
         value = transformObject(DebugTransform, value);
-      }
-
-      if (value?.unpack) {
+      } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to provide debug support for it.
         const original = value.unpack.bind(value);
@@ -61,11 +58,7 @@ function DebugTransform(Base) {
           /** @type {any} */
           let tree = Tree.from(content);
           if (!tree.parent && !tree.scope) {
-            const scope = Scope.getScope(this);
             tree = Scope.treeWithScope(tree, scope);
-          }
-          if (!isTransformApplied(ExplorableSiteTransform, tree)) {
-            tree = transformObject(ExplorableSiteTransform, tree);
           }
           tree = transformObject(DebugTransform, tree);
           return tree;
