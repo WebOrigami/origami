@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import groupBy from "../../src/builtins/@groupBy.js";
+import groupByBuiltin from "../../src/builtins/@groupBy.js";
 
 describe("@groupBy", () => {
   test("groups using a group key function", async () => {
@@ -11,7 +11,7 @@ describe("@groupBy", () => {
       { name: "Alegreya", tags: ["Serif"] },
       { name: "Work Sans", tags: ["Grotesque", "Sans Serif"] },
     ];
-    const grouped = await groupBy.call(
+    const grouped = await groupByBuiltin.call(
       null,
       fonts,
       (value, key, tree) => value.tags
