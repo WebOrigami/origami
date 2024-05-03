@@ -47,7 +47,7 @@ export default function createMapTransform(options = {}) {
    */
   return function map(treelike) {
     const tree =
-      !deep && isPlainObject(treelike)
+      !deep && isPlainObject(treelike) && !Tree.isAsyncTree(treelike)
         ? new ObjectTree(treelike)
         : Tree.from(treelike);
 
