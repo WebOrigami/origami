@@ -1,4 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { isUnpackable } from "@weborigami/async-tree";
 import YAML from "yaml";
 import * as serialize from "../common/serialize.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
@@ -20,6 +21,9 @@ export default async function toYaml(obj) {
   obj = obj ?? (await this?.get("@current"));
   if (obj === undefined) {
     return undefined;
+  }
+  if (isUnpackable(obj)) {
+    obj = await obj.unpack();
   }
   const value = await serialize.toJsonValue(obj);
   return YAML.stringify(value);

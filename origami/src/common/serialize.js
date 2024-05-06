@@ -140,10 +140,6 @@ export async function toValue(input, jsonValuesOnly = false) {
     } else {
       return input;
     }
-    // } else if (isUnpackable(input)) {
-    //   // Unpack first, then convert to JSON value.
-    //   const unpacked = await input.unpack();
-    //   return toValue(unpacked);
   } else if (isStringLike(input) && !(input instanceof Array)) {
     return String(input);
   } else if (Tree.isTreelike(input)) {
