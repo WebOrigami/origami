@@ -26,6 +26,8 @@ marked.use(
 );
 
 /**
+ * Transform markdown to HTML.
+ *
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  * @typedef {import("@weborigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
  *
