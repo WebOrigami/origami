@@ -5,12 +5,7 @@
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import {
-  Tree,
-  isPlainObject,
-  isStringLike,
-  isUnpackable,
-} from "@weborigami/async-tree";
+import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
 import { OrigamiTree } from "@weborigami/language";
 import * as YAMLModule from "yaml";
 import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
@@ -145,10 +140,10 @@ export async function toValue(input, jsonValuesOnly = false) {
     } else {
       return input;
     }
-  } else if (isUnpackable(input)) {
-    // Unpack first, then convert to JSON value.
-    const unpacked = await input.unpack();
-    return toValue(unpacked);
+    // } else if (isUnpackable(input)) {
+    //   // Unpack first, then convert to JSON value.
+    //   const unpacked = await input.unpack();
+    //   return toValue(unpacked);
   } else if (isStringLike(input) && !(input instanceof Array)) {
     return String(input);
   } else if (Tree.isTreelike(input)) {
