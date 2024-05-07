@@ -16,7 +16,8 @@ export default async function ifCommand(value, trueResult, falseResult) {
     condition = keys.length > 0;
   }
 
-  let result = condition ? trueResult : falseResult;
+  // 0 is true, null/undefined/false is false
+  let result = condition || condition === 0 ? trueResult : falseResult;
   if (typeof result === "function") {
     result = await result.call(this);
   }
