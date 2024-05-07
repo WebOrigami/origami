@@ -14,7 +14,7 @@ export default function extname(path) {
   // We want at least one character before the dot, then a dot, then a non-empty
   // sequence of characters after the dot that aren't slahes or dots.
   const extnameRegex = /[^/](?<ext>\.[^/\.]+)$/;
-  const match = path.match(extnameRegex);
+  const match = String(path).match(extnameRegex);
   const extension = match?.groups?.ext.toLowerCase() ?? "";
   return extension;
 }
