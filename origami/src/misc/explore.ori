@@ -1,4 +1,4 @@
-=`<!DOCTYPE html>
+(scope) => `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -16,16 +16,16 @@
       <button id="buttonSVG">SVG</button>
       <button id="buttonYAML">YAML</button>
     </div>
-    {{ @map(=`
+    ${ @map(scope, (scopeTree) => `
       <ul>
-        <h2>${ _/name }</h2>
-        {{ @map(=`
+        <h2>${ scopeTree/name }</h2>
+        ${ @map(scopeTree/keys, (key) => `
         <li>
-          <a href="./!@explore/${ _ }" target="frame">${ _ }</a>
+          <a href="./!@explore/${ key }" target="frame">${ key }</a>
         </li>
-        `)(_/keys) }}
+        `) }
       </ul>
-    `)(_) }}
+    `) }
     </nav>
     <iframe id="frame" name="frame"></iframe>
   </body>
