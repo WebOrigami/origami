@@ -1,7 +1,7 @@
 import { toString } from "../common/utilities.js";
 
 /**
- * Return the tree structure of a markdown document.
+ * Returns the tree structure of a markdown document.
  *
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  * @typedef {import("@weborigami/async-tree").Unpackable<StringLike>}
