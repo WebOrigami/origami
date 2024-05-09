@@ -10,7 +10,7 @@ describe("@map", () => {
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ]);
-    const fixture = map.call(null, {
+    const transform = map.call(null, {
       /** @this {import("@weborigami/types").AsyncTree} */
       key: async function (sourceValue, sourceKey, tree) {
         const keyInScope = await this.get("@key");
@@ -20,7 +20,8 @@ describe("@map", () => {
         return valueInScope.name;
       },
       value: (sourceValue, sourceKey, tree) => sourceValue.age,
-    })(treelike);
+    });
+    const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
       Alice: 1,
       Bob: 2,
@@ -77,14 +78,17 @@ describe("@map", () => {
     // out which one is being used if we use `map.call()` vs a direct `map()`
     // call. Unfortunately, we need to use `.call` to ensure the `this` context
     // is set correctly. For now we ignore the type error.
-    //
-    // @ts-ignore
-    const mapped = map.call(null, treelike, {
-      deep: true,
-      key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
-      // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
-      value: (sourceValue, sourceKey, tree) => 2 * sourceValue,
-    });
+    const mapped = map.call(
+      null,
+      {
+        deep: true,
+        key: (sourceValue, sourceKey, tree) => `${sourceKey}${sourceValue}`,
+        // @ts-ignore until we can figure out why @satisfies doesn't fix this type error
+        value: (sourceValue, sourceKey, tree) => 2 * sourceValue,
+      },
+      // @ts-ignore
+      treelike
+    );
 
     assert.deepEqual(await Tree.plain(mapped), {
       a1: 2,

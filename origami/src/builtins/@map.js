@@ -23,69 +23,42 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * ValueKeyFn, needsSourceValue?: boolean, value?: ValueKeyFn, valueMap?:
  * ValueKeyFn }} MapOptionsDictionary
  *
- * @typedef {ValueKeyFn|MapOptionsDictionary} OptionsOrValueFn
- *
  * @overload
+ * @param {ValueKeyFn|MapOptionsDictionary} operation
  * @param {Treelike} source
- * @param {OptionsOrValueFn} instructions
  * @returns {AsyncTree}
  *
  * @overload
- * @param {OptionsOrValueFn} instructions
+ * @param {ValueKeyFn|MapOptionsDictionary} operation
  * @returns {TreeTransform}
  *
  * @this {AsyncTree|null}
- * @param {Treelike|OptionsOrValueFn} param1
- * @param {OptionsOrValueFn} [param2]
+ * @param {ValueKeyFn|MapOptionsDictionary} operation
+ * @param {Treelike} [source]
+ * @returns {AsyncTree|TreeTransform}
  */
-export default function treeMap(param1, param2) {
+export default function treeMap(operation, source) {
   assertScopeIsDefined(this, "map");
-
-  // Identify whether the map instructions are in the first parameter or the
-  // second. If present, identify the function to apply to values.
-
-  /** @type {Treelike|undefined} */
-  let source;
-  /** @type {OptionsOrValueFn} */
-  let instructions;
-  /** @type {ValueKeyFn|undefined} */
-  let valueFn;
-
-  if (arguments.length === 0) {
-    throw new TypeError(
-      `@map: You must give @map a function or a dictionary of options.`
-    );
-  } else if (!param1) {
-    throw new TypeError(`@map: The first argument was undefined.`);
-  } else if (arguments.length === 1) {
-    // One argument
-    // @ts-ignore
-    instructions = param1;
-  } else if (param2 === undefined) {
-    throw new TypeError(`@map: The second argument was undefined.`);
-  } else {
-    // Two arguments
-    source = param1;
-    instructions = param2;
-  }
 
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.
   /** @type {MapOptionsDictionary} */
   let options;
-  if (isPlainObject(instructions)) {
+  /** @type {ValueKeyFn|undefined} */
+  let valueFn;
+  if (isPlainObject(operation)) {
     // @ts-ignore
-    options = instructions;
+    options = operation;
     valueFn = options?.value ?? options?.valueMap;
   } else if (
-    typeof instructions === "function" ||
-    typeof (/** @type {any} */ (instructions)?.unpack) === "function"
+    typeof operation === "function" ||
+    typeof (/** @type {any} */ (operation)?.unpack) === "function"
   ) {
-    valueFn = instructions;
+    valueFn = operation;
     options = {};
   } else {
     throw new TypeError(
-      `@map: You must specify a value function or options dictionary.`
+      `@map: You must specify a value function or options dictionary as the first parameter.`
     );
   }
 
