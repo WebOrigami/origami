@@ -8,6 +8,7 @@ import { isPlainObject } from "../utilities.js";
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
  * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKey?: KeyFn, key?: KeyFn, value?: ValueKeyFn }} options
+ * @returns {import("../../index.ts").TreeTransform}
  */
 export default function createMapTransform(options = {}) {
   let deep;

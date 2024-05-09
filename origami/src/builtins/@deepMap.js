@@ -1,7 +1,8 @@
-import treeMap from "./@map.js";
+import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import deepMapFn from "./@deepMapFn.js";
 
 /**
- * Map a hierarchical tree of keys and values to a new tree of keys and values.
+ * Shorthand for calling `@map` with `deep: true` option.
  *
  * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -18,7 +19,7 @@ import treeMap from "./@map.js";
  * @param {Treelike} source
  * @param {ValueKeyFn|MapOptionsDictionary} operation
  */
-export default function applyMap(source, operation) {
-  const map = treeMap.call(this, operation);
-  return map(source);
+export default function deepMap(source, operation) {
+  assertScopeIsDefined(this, "deepMap");
+  return deepMapFn.call(this, operation)(source);
 }

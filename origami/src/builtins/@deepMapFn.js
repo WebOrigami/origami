@@ -1,8 +1,9 @@
+import { isPlainObject } from "@weborigami/async-tree";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import mapFn from "./@mapFn.js";
 
 /**
- * Map a hierarchical tree of keys and values to a new tree of keys and values.
+ * Shorthand for calling `@mapFn` with `deep: true` option.
  *
  * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -16,10 +17,15 @@ import mapFn from "./@mapFn.js";
  * ValueKeyFn }} MapOptionsDictionary
  *
  * @this {AsyncTree|null}
- * @param {Treelike} source
  * @param {ValueKeyFn|MapOptionsDictionary} operation
  */
-export default function map(source, operation) {
-  assertScopeIsDefined(this, "map");
-  return mapFn.call(this, operation)(source);
+export default function deepMapFn(operation) {
+  assertScopeIsDefined(this, "deepMap");
+  /** @type {MapOptionsDictionary} */
+  const options = isPlainObject(operation)
+    ? // Dictionary
+      { ...operation, deep: true }
+    : // Function
+      { deep: true, value: operation };
+  return mapFn.call(this, options);
 }

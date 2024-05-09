@@ -29,4 +29,4 @@ export default async function json(obj) {
 }
 
 json.usage = "@json <obj>\tRender the object as text in JSON format";
-json.documentation = "https://weborigami.org/language/@json.html";
+json.documentation = "https://weborigami.org/builtins/@json.html";

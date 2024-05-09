@@ -1,6 +1,6 @@
 const parsers = {};
 
-export default function regexParser(text) {
+export default function regexParseFn(text) {
   if (!parsers[text]) {
     const regexp = new RegExp(text);
     parsers[text] = (input) => input.match(regexp)?.groups;
