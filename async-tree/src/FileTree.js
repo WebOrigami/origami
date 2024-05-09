@@ -6,7 +6,7 @@ import {
   getRealmObjectPrototype,
   hiddenFileNames,
   isPacked,
-  sortNatural,
+  naturalOrder,
 } from "./utilities.js";
 
 /**
@@ -91,7 +91,8 @@ export default class FileTree {
 
     // Node fs.readdir sort order appears to be unreliable; see, e.g.,
     // https://github.com/nodejs/node/issues/3232.
-    sortNatural(names);
+    names.sort(naturalOrder);
+
     return names;
   }
 

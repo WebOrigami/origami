@@ -21,4 +21,10 @@ describe("utilities", () => {
     assert.deepEqual(utilities.keysFromPath("a/b/c"), ["a", "b", "c"]);
     assert.deepEqual(utilities.keysFromPath("foo/"), ["foo", ""]);
   });
+
+  test("naturalOrder compares strings in natural order", () => {
+    const strings = ["file10", "file1", "file9"];
+    strings.sort(utilities.naturalOrder);
+    assert.deepEqual(strings, ["file1", "file9", "file10"]);
+  });
 });

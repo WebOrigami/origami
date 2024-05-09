@@ -3,7 +3,7 @@ import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import SetTree from "./SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
-import mapTransform from "./transforms/map.js";
+import mapTransform from "./transforms/mapFn.js";
 import * as utilities from "./utilities.js";
 import {
   castArrayLike,

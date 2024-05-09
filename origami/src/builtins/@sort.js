@@ -1,20 +1,23 @@
-import { sortNatural } from "@weborigami/async-tree";
 import getTreeArgument from "../misc/getTreeArgument.js";
+import sortFn from "./@sortFn.js";
 
 /**
- * Return a new tree with the original's keys sorted in natural sort order.
+ * Return a new tree with the original's keys sorted.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../index.ts").Invocable} Invocable
+ * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
+ * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: ValueKeyFn }}
+ * SortOptions
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
+ * @param {SortOptions} [options]
  */
-export default async function sort(treelike) {
+export default async function sortBuiltin(treelike, options) {
   const tree = await getTreeArgument(this, arguments, treelike, "@sort");
-  return sortNatural()(tree);
+  return sortFn.call(this, options)(tree);
 }
 
-sort.usage = `@sort <tree>\tReturn a new tree with the original's keys sorted`;
-sort.documentation = "https://weborigami.org/cli/builtins.html#@sort";
+sortBuiltin.usage = `@sort <tree>, [options]\tReturn a new tree with the original's keys sorted`;
+sortBuiltin.documentation = "https://weborigami.org/builtins/@sort.html";

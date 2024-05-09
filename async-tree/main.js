@@ -18,7 +18,7 @@ export { default as cachedKeyFunctions } from "./src/transforms/cachedKeyFunctio
 export { default as groupBy } from "./src/transforms/groupBy.js";
 export { default as keyFunctionsForExtensions } from "./src/transforms/keyFunctionsForExtensions.js";
 export { default as map } from "./src/transforms/map.js";
+export { default as mapFn } from "./src/transforms/mapFn.js";
 export { default as sort } from "./src/transforms/sort.js";
-export { default as sortBy } from "./src/transforms/sortBy.js";
-export { default as sortNatural } from "./src/transforms/sortNatural.js";
+export { default as sortFn } from "./src/transforms/sortFn.js";
 export * from "./src/utilities.js";

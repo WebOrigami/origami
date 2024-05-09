@@ -1,25 +1,18 @@
-import { Tree } from "../internal.js";
+import sortFn from "./sortFn.js";
 
 /**
- * Return a transform function that sorts a tree's keys.
+ * Return a new tree with the original's keys sorted. A comparison function can
+ * be provided; by default the keys will be sorted in [natural sort
+ * order](https://en.wikipedia.org/wiki/Natural_sort_order).
  *
- * For sorting, the keys are converted to strings, then sorted according to each
- * character's Unicode code point value.
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {(key: any, tree: AsyncTree) => any} SortKeyFn
+ * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }}
+ * SortOptions
  *
- * @param {(a: any, b: any) => number} [compareFn]
+ * @param {import("../../index.ts").Treelike} treelike
+ * @param {SortOptions} [options]
  */
-export default function createSortTransform(compareFn) {
-  /**
-   * @type {import("../../index.ts").TreeTransform}
-   */
-  return function sortTransform(treelike) {
-    const tree = Tree.from(treelike);
-    const transform = Object.create(tree);
-    transform.keys = async () => {
-      const keys = Array.from(await tree.keys());
-      keys.sort(compareFn);
-      return keys;
-    };
-    return transform;
-  };
+export default function sort(treelike, options) {
+  return sortFn(options)(treelike);
 }

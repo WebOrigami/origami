@@ -1,5 +1,5 @@
 import { Tree } from "./internal.js";
-import { hiddenFileNames, isStringLike, sortNatural } from "./utilities.js";
+import { hiddenFileNames, isStringLike, naturalOrder } from "./utilities.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -74,7 +74,8 @@ export default class BrowserFileTree {
     }
     // Filter out unhelpful file names.
     keys = keys.filter((key) => !hiddenFileNames.includes(key));
-    sortNatural(keys);
+    keys.sort(naturalOrder);
+
     return keys;
   }
 

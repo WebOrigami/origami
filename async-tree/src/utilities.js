@@ -135,22 +135,10 @@ export function keysFromPath(pathname) {
   return keys;
 }
 
-// Used for natural sort order
-export const naturalSortCompareFn = new Intl.Collator(undefined, {
+/**
+ * Compare two strings using [natural sort
+ * order](https://en.wikipedia.org/wiki/Natural_sort_order).
+ */
+export const naturalOrder = new Intl.Collator(undefined, {
   numeric: true,
 }).compare;
-
-/**
- * Sort the given array using [natural sort
- * order](https://en.wikipedia.org/wiki/Natural_sort_order). Like the native
- * `Array` `sort` function, this operation destructively modifies the array in
- * place.
- *
- * The default sort order for some sources like operating system files can be
- * unpredictable. Since it's quite common for file names to include numbers, it
- * can helpful to use natural sort order instead: ["file1", "file9", "file10"]
- * instead of ["file1", "file10", "file9"].
- */
-export function sortNatural(array) {
-  array.sort(naturalSortCompareFn);
-}

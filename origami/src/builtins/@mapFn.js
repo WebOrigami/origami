@@ -2,10 +2,9 @@ import {
   cachedKeyFunctions,
   isPlainObject,
   keyFunctionsForExtensions,
-  map,
+  mapFn,
 } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
-import addValueKeyToScope from "../common/addValueKeyToScope.js";
 import { toFunction } from "../common/utilities.js";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -27,8 +26,9 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {ValueKeyFn|MapOptionsDictionary} operation
  */
-export default function mapFn(operation) {
+export default function mapFnBuiltin(operation) {
   assertScopeIsDefined(this, "map");
+  const scope = Scope.getScope(this);
 
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.
@@ -64,16 +64,12 @@ export default function mapFn(operation) {
     );
   }
 
-  const baseScope = Scope.getScope(this);
-
   // Extend the value function to include the value and key in scope.
   let extendedValueFn;
   if (valueFn) {
     const resolvedValueFn = toFunction(valueFn);
-    extendedValueFn = function (sourceValue, sourceKey, tree) {
-      const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
-      return resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
-    };
+    extendedValueFn = (sourceValue, sourceKey, tree) =>
+      resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
   }
 
   // Extend the key function to include the value and key in scope.
@@ -91,7 +87,6 @@ export default function mapFn(operation) {
     const resolvedKeyFn = toFunction(keyFn);
     async function scopedKeyFn(sourceKey, tree) {
       const sourceValue = await tree.get(sourceKey);
-      const scope = addValueKeyToScope(baseScope, sourceValue, sourceKey);
       const resultKey = await resolvedKeyFn.call(
         scope,
         sourceValue,
@@ -109,14 +104,18 @@ export default function mapFn(operation) {
     extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
   }
 
-  return map({
-    deep,
-    description,
-    inverseKey: extendedInverseKeyFn,
-    key: extendedKeyFn,
-    needsSourceValue,
-    value: extendedValueFn,
-  });
+  return async (treelike) => {
+    const mapped = await mapFn({
+      deep,
+      description,
+      inverseKey: extendedInverseKeyFn,
+      key: extendedKeyFn,
+      needsSourceValue,
+      value: extendedValueFn,
+    })(treelike);
+    const scoped = Scope.treeWithScope(mapped, scope);
+    return scoped;
+  };
 }
 
 /**
