@@ -28,7 +28,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default function mapFnBuiltin(operation) {
   assertScopeIsDefined(this, "map");
-  const scope = Scope.getScope(this);
+  const scope = this;
 
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.

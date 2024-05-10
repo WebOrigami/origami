@@ -21,4 +21,5 @@ export { default as map } from "./src/transforms/map.js";
 export { default as mapFn } from "./src/transforms/mapFn.js";
 export { default as sort } from "./src/transforms/sort.js";
 export { default as sortFn } from "./src/transforms/sortFn.js";
+export { default as takeFn } from "./src/transforms/takeFn.js";
 export * from "./src/utilities.js";

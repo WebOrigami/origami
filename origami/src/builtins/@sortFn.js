@@ -24,7 +24,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  */
 export default function sortFnBuiltin(options) {
   assertScopeIsDefined(this);
-  const scope = Scope.getScope(this);
+  const scope = this;
 
   const compare = options?.compare;
   let extendedSortKeyFn;
