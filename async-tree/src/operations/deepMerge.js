@@ -7,11 +7,11 @@ import { Tree } from "../internal.js";
  * @param {import("../../index.ts").Treelike[]} sources
  * @returns {AsyncTree & { description: string }}
  */
-export default function mergeDeep(...sources) {
+export default function deepMerge(...sources) {
   let trees = sources.map((treelike) => Tree.from(treelike));
   let mergeParent;
   return {
-    description: "mergeDeep",
+    description: "deepMerge",
 
     async get(key) {
       const subtrees = [];
@@ -25,7 +25,7 @@ export default function mergeDeep(...sources) {
         }
       }
 
-      return subtrees.length > 0 ? mergeDeep(...subtrees) : undefined;
+      return subtrees.length > 0 ? deepMerge(...subtrees) : undefined;
     },
 
     async isKeyForSubtree(key) {

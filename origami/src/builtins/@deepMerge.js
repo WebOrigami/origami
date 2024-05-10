@@ -1,4 +1,4 @@
-import { mergeDeep } from "@weborigami/async-tree";
+import { deepMerge } from "@weborigami/async-tree";
 import { Scope } from "@weborigami/language";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
@@ -10,8 +10,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {Treelike[]} trees
  */
-export default async function treeMergeDeep(...trees) {
-  assertScopeIsDefined(this, "mergeDeep");
+export default async function treedeepMerge(...trees) {
+  assertScopeIsDefined(this, "deepMerge");
   // Filter out null or undefined trees.
   const filtered = trees.filter((tree) => tree);
 
@@ -30,7 +30,7 @@ export default async function treeMergeDeep(...trees) {
   });
 
   // Merge the trees.
-  const result = mergeDeep(...scopedTrees);
+  const result = deepMerge(...scopedTrees);
 
   // Give the overall mixed tree a scope that includes the component trees and
   // the current scope.
@@ -39,6 +39,6 @@ export default async function treeMergeDeep(...trees) {
   return result;
 }
 
-treeMergeDeep.usage = `@mergeDeep <...trees>\tMerge the given trees deeply`;
-treeMergeDeep.documentation =
-  "https://weborigami.org/cli/builtins.html#mergeDeep";
+treedeepMerge.usage = `@deepMerge <...trees>\tMerge the given trees deeply`;
+treedeepMerge.documentation =
+  "https://weborigami.org/cli/builtins.html#deepMerge";

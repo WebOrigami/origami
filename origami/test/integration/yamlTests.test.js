@@ -11,12 +11,12 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
 
 // Map the YAML files to test suites.
-const mapped = map({
+const mapped = map(fixtures, {
   deep: true,
   description: "yamlTests",
   value: registerYamlSuite,
   ...keyFunctionsForExtensions({ sourceExtension: "yaml" }),
-})(fixtures);
+});
 
 // Force a traversal of the tree, triggering registration of all the tests.
 await Tree.plain(mapped);

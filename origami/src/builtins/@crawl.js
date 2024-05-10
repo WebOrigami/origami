@@ -1,9 +1,9 @@
 import {
   DeepObjectTree,
   Tree,
+  deepMerge,
   isPlainObject,
   keysFromPath,
-  mergeDeep,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform, Scope, extname } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
@@ -93,7 +93,7 @@ export default async function crawl(treelike, baseHref) {
   // for something already, that's better than a function that will get that
   // value.
   /** @type {AsyncTree} */
-  let result = mergeDeep(
+  let result = deepMerge(
     new DeepObjectTree(cache),
     new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );

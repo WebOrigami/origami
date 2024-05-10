@@ -13,15 +13,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @overload
- * @param {Treelike} treelike
- * @param {Invocable} groupKeyFn
- * @returns {AsyncTree}
- *
- * @overload
- * @param {Invocable} groupKeyFn
- * @returns {TreeTransform}
- *
  * @this {AsyncTree|null}
  * @param {Treelike|Invocable} param1
  * @param {Invocable} [param2]

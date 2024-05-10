@@ -1,7 +1,7 @@
 import { OrigamiTree, Scope } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import arrows from "../../src/builtins/@arrows.js";
+import arrowsMap from "../../src/builtins/@arrowsMap.js";
 import builtins from "../../src/builtins/@builtins.js";
 
 describe("arrowMap", () => {
@@ -11,7 +11,7 @@ describe("arrowMap", () => {
       title: "Our Site",
     });
     const tree = Scope.treeWithScope(treelike, builtins);
-    const fixture = await arrows.call(null, tree);
+    const fixture = await arrowsMap.call(null, tree);
     assert.deepEqual(Array.from(await fixture.keys()), ["index.html", "title"]);
     const indexHtml = await fixture.get("index.html");
     assert.equal(String(indexHtml), "<h1>Our Site</h1>");

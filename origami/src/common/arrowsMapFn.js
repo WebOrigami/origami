@@ -1,9 +1,9 @@
-import { cachedKeyFunctions, map } from "@weborigami/async-tree";
+import { cachedKeyFunctions, mapFn } from "@weborigami/async-tree";
 import { toFunction } from "./utilities.js";
 
-export default function arrowFunctionsMap() {
+export default function arrowsMapFn() {
   const deep = true;
-  return map({
+  return mapFn({
     deep,
     description: "arrowFunctions",
     value: valueFn,

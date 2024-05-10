@@ -3,13 +3,13 @@ import builtins from "./@builtins.js";
 import paths from "./@paths.js";
 import fileTypeOrigami from "./ori_handler.js";
 
-const templateText = `=\`<?xml version="1.0" encoding="UTF-8"?>
+const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-\${ @map(=\`
+\${ @map(urls, (url) => \`
   <url>
-    <loc>\${ _ }</loc>
+    <loc>\${ url }</loc>
   </url>
-\`)(_) }
+\`) }
 </urlset>
 \`
 `;

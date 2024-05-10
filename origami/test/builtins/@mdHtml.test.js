@@ -27,7 +27,7 @@ describe("mdHtml", () => {
       "Alice.md": "Hello, **Alice**!",
       "Bob.md": "Hello, **Bob**!",
     });
-    const htmlFiles = await map(mdHtml)(markdownFiles);
+    const htmlFiles = await map(markdownFiles, mdHtml);
     assert.deepEqual(await Tree.plain(htmlFiles), {
       "Alice.html": "<p>Hello, <strong>Alice</strong>!</p>\n",
       "Bob.html": "<p>Hello, <strong>Bob</strong>!</p>\n",

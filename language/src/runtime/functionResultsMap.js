@@ -4,11 +4,9 @@ import Scope from "./Scope.js";
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
- *
- * @type {import("@weborigami/async-tree").TreeTransform}
  */
-export default function functionResultsMap(tree) {
-  return map({
+export default function functionResultsMap(treelike) {
+  return map(treelike, {
     description: "functionResultsMap",
 
     value: async (sourceValue, sourceKey, tree) => {
@@ -24,5 +22,5 @@ export default function functionResultsMap(tree) {
       }
       return resultValue;
     },
-  })(tree);
+  });
 }

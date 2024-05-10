@@ -1,1 +1,1 @@
-export { naturalSortCompareFn as default } from "@weborigami/async-tree";
+export { naturalOrder as default } from "@weborigami/async-tree";
