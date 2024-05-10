@@ -104,15 +104,17 @@ export default function mapFnBuiltin(operation) {
     extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
   }
 
-  return async (treelike) => {
-    const mapped = await mapFn({
-      deep,
-      description,
-      inverseKey: extendedInverseKeyFn,
-      key: extendedKeyFn,
-      needsSourceValue,
-      value: extendedValueFn,
-    })(treelike);
+  const fn = mapFn({
+    deep,
+    description,
+    inverseKey: extendedInverseKeyFn,
+    key: extendedKeyFn,
+    needsSourceValue,
+    value: extendedValueFn,
+  });
+
+  return (treelike) => {
+    const mapped = fn(treelike);
     const scoped = Scope.treeWithScope(mapped, scope);
     return scoped;
   };

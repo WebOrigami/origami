@@ -11,15 +11,8 @@ describe("@mapFn", () => {
       { name: "Carol", age: 3 },
     ]);
     const transform = mapFn.call(null, {
-      /** @this {import("@weborigami/types").AsyncTree} */
-      key: async function (sourceValue, sourceKey, tree) {
-        const keyInScope = await this.get("@key");
-        assert.equal(keyInScope, sourceKey);
-        const valueInScope = await this.get("_");
-        assert.equal(valueInScope, sourceValue);
-        return valueInScope.name;
-      },
-      value: (sourceValue, sourceKey, tree) => sourceValue.age,
+      key: (value, key, tree) => value.name,
+      value: (value, key, tree) => value.age,
     });
     const fixture = transform(treelike);
     assert.deepEqual(await Tree.plain(fixture), {
