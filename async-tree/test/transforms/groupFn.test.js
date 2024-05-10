@@ -1,9 +1,9 @@
-import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import groupByBuiltin from "../../src/builtins/@groupBy.js";
+import { Tree } from "../../src/internal.js";
+import groupFn from "../../src/operations/groupFn.js";
 
-describe("@groupBy", () => {
+describe("groupFn transform", () => {
   test("groups using a group key function", async () => {
     const fonts = [
       { name: "Aboreto", tags: ["Sans Serif"] },
@@ -11,11 +11,8 @@ describe("@groupBy", () => {
       { name: "Alegreya", tags: ["Serif"] },
       { name: "Work Sans", tags: ["Grotesque", "Sans Serif"] },
     ];
-    const grouped = await groupByBuiltin.call(
-      null,
-      fonts,
-      (value, key, tree) => value.tags
-    );
+    const tree = Tree.from(fonts);
+    const grouped = await groupFn((value, key, tree) => value.tags)(tree);
     assert.deepEqual(await Tree.plain(grouped), {
       Geometric: [{ name: "Albert Sans", tags: ["Geometric", "Sans Serif"] }],
       Grotesque: [{ name: "Work Sans", tags: ["Grotesque", "Sans Serif"] }],

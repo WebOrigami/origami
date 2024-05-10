@@ -37,11 +37,13 @@ export default function sortFnBuiltin(options) {
     };
   }
 
+  const fn = sortFn({
+    compare,
+    sortKey: extendedSortKeyFn,
+  });
+
   return (treelike) => {
-    const sorted = sortFn({
-      compare,
-      sortKey: extendedSortKeyFn,
-    })(treelike);
+    const sorted = fn(treelike);
     const scoped = Scope.treeWithScope(sorted, scope);
     return scoped;
   };
