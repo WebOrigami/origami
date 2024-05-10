@@ -14,8 +14,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 export default function deepTakeFnBuiltin(count) {
   assertScopeIsDefined(this, "deepTakeFn");
   const scope = this;
-  return (treelike) => {
-    const taken = deepTakeFn(count)(treelike);
+  return async (treelike) => {
+    const taken = await deepTakeFn(count)(treelike);
     const scoped = Scope.treeWithScope(taken, scope);
     return scoped;
   };
