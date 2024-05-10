@@ -1,11 +1,10 @@
-import { DeepObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import valuesDeep from "../../src/builtins/@valuesDeep.js";
+import deepValues from "../../src/operations/deepValues.js";
 
-describe("@valuesDeep", () => {
+describe("deepValues", () => {
   test("returns in-order array of a tree's values", async () => {
-    const tree = new DeepObjectTree({
+    const tree = {
       a: 1,
       b: {
         c: 2,
@@ -16,8 +15,8 @@ describe("@valuesDeep", () => {
       f: {
         g: 4,
       },
-    });
-    const values = await valuesDeep.call(null, tree);
+    };
+    const values = await deepValues(tree);
     assert.deepEqual(values, [1, 2, 3, 4]);
   });
 });

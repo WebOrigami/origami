@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { deepValues } from "@weborigami/async-tree";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -6,14 +6,15 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
-export default async function valuesDeep(treelike) {
+export default async function deepValuesBuiltin(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@valuesDeep");
-  return Tree.mapReduce(tree, null, async (values) => values.flat());
+  return deepValues(tree);
 }
 
-valuesDeep.usage = `@valuesDeep <tree>\tThe in-order tree values as a flat array`;
-valuesDeep.documentation =
+deepValuesBuiltin.usage = `@valuesDeep <tree>\tThe in-order tree values as a flat array`;
+deepValuesBuiltin.documentation =
   "https://weborigami.org/cli/builtins.html#valuesDeep";
