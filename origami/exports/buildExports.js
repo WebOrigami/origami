@@ -103,11 +103,11 @@ function exportStatements(src) {
   const withPaths = transformObject(PathTransform, src);
 
   // Map each source file to an export statement.
-  const mapped = map({
+  const mapped = map(withPaths, {
     deep: true,
     value: exportStatementForCode,
     ...keyFunctionsForExtensions({ sourceExtension: "js" }),
-  })(withPaths);
+  });
 
   return mapped;
 }
