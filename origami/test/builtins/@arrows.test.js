@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import arrowsMap from "../../src/builtins/@arrowsMap.js";
 import builtins from "../../src/builtins/@builtins.js";
 
-describe("arrowMap", () => {
+describe("arrowsMap", () => {
   test("interprets ← in a key as a function call", async () => {
     const treelike = new OrigamiTree({
       "index.html ← .ori": "=`<h1>${ title }</h1>`",

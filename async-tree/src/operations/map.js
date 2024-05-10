@@ -9,6 +9,6 @@ import mapFn from "../transforms/mapFn.js";
  * @param {import("../../index.ts").Treelike} treelike
  * @param {ValueKeyFn|{ deep?: boolean, description?: string, needsSourceValue?: boolean, inverseKey?: KeyFn, key?: KeyFn, value?: ValueKeyFn }} options
  */
-export default async function mapBuiltin(treelike, options = {}) {
+export default function map(treelike, options = {}) {
   return mapFn(options)(treelike);
 }
