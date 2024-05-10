@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { DeepObjectTree, Tree } from "../../src/internal.js";
-import mergeDeep from "../../src/operations/mergeDeep.js";
+import mergeDeep from "../../src/operations/deepMerge.js";
 
 describe("mergeDeep", () => {
   test("can merge deep", async () => {

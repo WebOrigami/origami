@@ -1,4 +1,4 @@
-import sortFn from "./sortFn.js";
+import sortFn from "../transforms/sortFn.js";
 
 /**
  * Return a new tree with the original's keys sorted. A comparison function can

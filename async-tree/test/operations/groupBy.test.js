@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import groupBy from "../../src/transforms/groupBy.js";
+import groupBy from "../../src/operations/groupBy.js";
 
 describe("groupBy transform", () => {
   test("groups using a group key function", async () => {
