@@ -101,7 +101,7 @@ export default class FileTree {
 
   async set(key, value) {
     // Where are we going to write this value?
-    const stringKey = key ? String(key) : "";
+    const stringKey = key != null ? String(key) : "";
     const destPath = path.resolve(this.dirname, stringKey);
 
     if (value === undefined) {
