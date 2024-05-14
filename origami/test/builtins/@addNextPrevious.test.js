@@ -35,4 +35,6 @@ describe("@addNextPrevious", () => {
       },
     });
   });
+
+  test("upgrades text nodes to objects", async () => {});
 });

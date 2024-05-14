@@ -22,8 +22,12 @@ export default async function sequence(treelike) {
         } else if (typeof value === "object") {
           // Clone value to avoid modifying the original object.
           value = { ...value };
+        } else if (typeof value === "string") {
+          // Upgrade text nodes to objects.
+          value = { "@text": value };
         } else {
-          return value;
+          // Upgrade other scalar types to objects.
+          value = { "@data": value };
         }
 
         if (keys === undefined) {
@@ -36,10 +40,15 @@ export default async function sequence(treelike) {
         }
 
         // Extend value with nextKey/previousKey properties.
-        return Object.assign(value, {
-          nextKey: keys[index + 1],
-          previousKey: keys[index - 1],
-        });
+        const nextKey = keys[index + 1];
+        if (nextKey) {
+          value.nextKey = nextKey;
+        }
+        const previousKey = keys[index - 1];
+        if (previousKey) {
+          value.previousKey = previousKey;
+        }
+        return value;
       },
       writable: true,
     },
