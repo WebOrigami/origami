@@ -4,20 +4,14 @@ import mapFn from "./@mapFn.js";
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
  *
- * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/async-tree").TreeTransform} TreeTransform
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- *
- * @typedef {{ deep?: boolean, description?: string, extension?: string,
- * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
- * ValueKeyFn, needsSourceValue?: boolean, value?: ValueKeyFn, valueMap?:
- * ValueKeyFn }} MapOptionsDictionary
+ * @typedef {import("./map.d.ts").TreeMapOptions} TreeMapOptions
  *
  * @this {AsyncTree|null}
  * @param {Treelike} source
- * @param {ValueKeyFn|MapOptionsDictionary} operation
+ * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function map(source, operation) {
   assertScopeIsDefined(this, "map");

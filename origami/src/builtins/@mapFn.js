@@ -12,19 +12,13 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * Return a function that transforms a tree of keys and values to a new tree of
  * keys and values.
  *
- * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/async-tree").TreeTransform} TreeTransform
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- *
- * @typedef {{ deep?: boolean, description?: string, extension?: string,
- * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
- * ValueKeyFn, needsSourceValue?: boolean, value?: ValueKeyFn, valueMap?:
- * ValueKeyFn }} MapOptionsDictionary
+ * @typedef {import("./map.d.ts").TreeMapOptions} TreeMapOptions
  *
  * @this {AsyncTree|null}
- * @param {ValueKeyFn|MapOptionsDictionary} operation
+ * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function mapFnBuiltin(operation) {
   assertScopeIsDefined(this, "map");
@@ -32,14 +26,14 @@ export default function mapFnBuiltin(operation) {
 
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.
-  /** @type {MapOptionsDictionary} */
+  /** @type {TreeMapOptions} */
   let options;
   /** @type {ValueKeyFn|undefined} */
   let valueFn;
   if (isPlainObject(operation)) {
     // @ts-ignore
     options = operation;
-    valueFn = options?.value ?? options?.valueMap;
+    valueFn = options?.value;
   } else if (
     typeof operation === "function" ||
     typeof (/** @type {any} */ (operation)?.unpack) === "function"
@@ -52,13 +46,12 @@ export default function mapFnBuiltin(operation) {
     );
   }
 
-  let { deep, description, inverseKey, needsSourceValue } = options;
-  let extension = options.extension ?? options.extensions;
-  let keyFn = options.keyMap ?? options.key;
+  const { deep, extension, needsSourceValue } = options;
+  const description = options.description ?? `@mapFn ${extension ?? ""}`;
+  const keyFn = options.key;
+  const inverseKeyFn = options.inverseKey;
 
-  description ??= `@mapFn ${extension ?? ""}`;
-
-  if (extension && (keyFn || inverseKey)) {
+  if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
       `@mapFn: You can't specify extensions and also a key or inverseKey function`
     );

@@ -29,7 +29,7 @@ describe("@mapFn", () => {
       "file3.foo": "won't be mapped",
     };
     const transform = mapFn.call(null, {
-      extensions: "txt->upper",
+      extension: "txt->upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(treelike);
@@ -93,7 +93,7 @@ describe("@mapFn", () => {
     };
     const transform = mapFn.call(null, {
       deep: true,
-      extensions: "txt->upper",
+      extension: "txt->upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     const fixture = transform(treelike);

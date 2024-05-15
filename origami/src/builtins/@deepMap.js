@@ -4,20 +4,14 @@ import deepMapFn from "./@deepMapFn.js";
 /**
  * Shorthand for calling `@map` with `deep: true` option.
  *
- * @typedef {import("@weborigami/async-tree").KeyFn} KeyFn
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/async-tree").TreeTransform} TreeTransform
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- *
- * @typedef {{ deep?: boolean, description?: string, extension?: string,
- * extensions?: string, inverseKey?: KeyFn, key?: ValueKeyFn, keyMap?:
- * ValueKeyFn, needsSourceValue?: boolean, value?: ValueKeyFn, valueMap?:
- * ValueKeyFn }} MapOptionsDictionary
+ * @typedef {import("./map.d.ts").TreeMapOptions} TreeMapOptions
  *
  * @this {AsyncTree|null}
  * @param {Treelike} source
- * @param {ValueKeyFn|MapOptionsDictionary} operation
+ * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function deepMap(source, operation) {
   assertScopeIsDefined(this, "deepMap");

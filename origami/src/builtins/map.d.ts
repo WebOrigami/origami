@@ -4,7 +4,7 @@ import { AsyncTree } from "@weborigami/types";
 type TreeMapOptions = {
   deep?: boolean;
   description?: string;
-  extensions?: string;
+  extension?: string;
   inverseKey?: KeyFn;
   key?: ValueKeyFn;
   needsSourceValue?: boolean;
