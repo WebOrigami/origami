@@ -13,22 +13,28 @@ describe("@paginateFn", () => {
       e: 5,
     };
     const paginated = await paginateFn.call(null, 2)(treelike);
-    assert.deepEqual(await Tree.plain(paginated), [
-      {
+    assert.deepEqual(await Tree.plain(paginated), {
+      1: {
         items: { a: 1, b: 2 },
-        nextKey: 1,
-        previousKey: null,
+        nextPage: 2,
+        pageCount: 3,
+        pageNumber: 1,
+        previousPage: null,
       },
-      {
+      2: {
         items: { c: 3, d: 4 },
-        nextKey: 2,
-        previousKey: 0,
+        nextPage: 3,
+        pageCount: 3,
+        pageNumber: 2,
+        previousPage: 1,
       },
-      {
+      3: {
         items: { e: 5 },
-        nextKey: null,
-        previousKey: 1,
+        nextPage: null,
+        pageCount: 3,
+        pageNumber: 3,
+        previousPage: 2,
       },
-    ]);
+    });
   });
 });
