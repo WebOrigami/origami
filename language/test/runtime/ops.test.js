@@ -121,4 +121,16 @@ describe("ops", () => {
     const result = await evaluate.call(b.scope, code);
     assert.equal(result, 1);
   });
+
+  test("returns a constructor", async () => {
+    const scope = new ObjectTree({
+      "@js": {
+        Number: Number,
+      },
+    });
+    const fn = await ops.constructor.call(scope, "@js", "Number");
+    const number = fn("1");
+    assert(number instanceof Number);
+    assert.equal(number, 1);
+  });
 });

@@ -59,6 +59,20 @@ function constructHref(protocol, host, ...keys) {
 }
 
 /**
+ * Find the indicated constructor in scope, then return a function which invokes
+ * it with `new`.
+ *
+ * @this {AsyncTree}
+ * @param  {...any} keys
+ */
+export async function constructor(...keys) {
+  const scope = this;
+  const constructor = await Tree.traverseOrThrow(scope, ...keys);
+  return (...args) => new constructor(...args);
+}
+constructor.toString = () => "«ops.constructor»";
+
+/**
  * Fetch the resource at the given href.
  *
  * @this {AsyncTree|null}

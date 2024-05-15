@@ -254,6 +254,7 @@ protocol "protocol"
 reservedProtocol "reserved protocol"
   = "https" { return ops.https; }
   / "http" { return ops.http; }
+  / "new" { return ops.constructor; }
   / "package" { return [ops.scope, "@package"] } // Alias
   / "treehttps" { return ops.treeHttps; }
   / "treehttp" { return ops.treeHttp; }

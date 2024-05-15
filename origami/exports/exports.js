@@ -8,6 +8,7 @@ export { default as cache } from "../src/builtins/@cache.js";
 export { default as changes } from "../src/builtins/@changes.js";
 export { default as concat } from "../src/builtins/@concat.js";
 export { default as config } from "../src/builtins/@config.js";
+export { default as constructor } from "../src/builtins/@constructor.js";
 export { default as copy } from "../src/builtins/@copy.js";
 export { default as count } from "../src/builtins/@count.js";
 export { default as crawl } from "../src/builtins/@crawl.js";

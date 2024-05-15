@@ -273,6 +273,13 @@ describe("Origami parser", () => {
     assertParse("multiLineComment", "/*\nHello, world!\n*/", null);
   });
 
+  test("new", () => {
+    assertParse("expression", "new:@js/Date('2025-01-01')", [
+      [ops.constructor, "@js", "Date"],
+      "2025-01-01",
+    ]);
+  });
+
   test("number", () => {
     assertParse("number", "123", 123);
     assertParse("number", "-456", -456);
