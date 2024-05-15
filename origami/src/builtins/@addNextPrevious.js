@@ -17,7 +17,9 @@ export default async function addNextPrevious(treelike) {
       value: async (key) => {
         let value = await tree.get(key);
 
-        if (Tree.isTreelike(value)) {
+        if (value === undefined) {
+          return undefined;
+        } else if (Tree.isTreelike(value)) {
           value = await Tree.plain(value);
         } else if (typeof value === "object") {
           // Clone value to avoid modifying the original object.
