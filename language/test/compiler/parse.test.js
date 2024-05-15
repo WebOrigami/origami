@@ -386,10 +386,6 @@ describe("Origami parser", () => {
   });
 
   test("singleLineComment", () => {
-    assertParse("singleLineComment", "# Hello, world!", null);
-  });
-
-  test("singleLineComment (JS)", () => {
     assertParse("singleLineComment", "// Hello, world!", null);
   });
 
@@ -421,14 +417,14 @@ describe("Origami parser", () => {
 
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", "Hello, world.");
-    assertParse("templateLiteral", "`foo {{x}} bar`", [
+    assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.concat,
       "foo ",
       [ops.scope, "x"],
       " bar",
     ]);
-    assertParse("templateLiteral", "`{{`nested`}}`", "nested");
-    assertParse("templateLiteral", "`{{map(people, =`{{name}}`)}}`", [
+    assertParse("templateLiteral", "`${`nested`}`", "nested");
+    assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
       ops.concat,
       [
         [ops.scope, "map"],
@@ -457,11 +453,7 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("templateSubstitution", () => {
-    assertParse("templateSubstitution", "{{foo}}", [ops.scope, "foo"]);
-  });
-
-  test("templateSubtitution (JS)", () => {
+  test("templateSubtitution", () => {
     assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"]);
   });
 
@@ -482,8 +474,8 @@ describe("Origami parser", () => {
     assertParse(
       "__",
       `  
-  # First line of comment
-  # Second line of comment
+  // First comment
+  // Second comment
      `,
       ""
     );

@@ -147,7 +147,7 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\]<>\-=,/:\`"'\\# →⇒\t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]<>\-=,/:\`"'\\ →⇒\t\n\r] // No unescaped whitespace or special chars
   / @'-' !'>' // Accept a hyphen but not in a single arrow combination
   / escapedChar
 
@@ -274,8 +274,7 @@ sign
 singleArrow = "→" / "->"
 
 singleLineComment
-  = "#" [^\n\r]* { return null; }
-  / "//" [^\n\r]* { return null; }
+  = "//" [^\n\r]* { return null; }
 
 singleQuoteString "single quote string"
   = "'" chars:singleQuoteStringChar* "'" { return chars.join(""); }
@@ -322,7 +321,7 @@ templateDocument "template"
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar
-  = !("{{" / "${") @textChar
+  = !("${") @textChar
 
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
@@ -338,7 +337,7 @@ templateLiteral "template literal"
   = "`" @templateLiteralContents "`"
 
 templateLiteralChar
-  = !("`" / "{{" / "${") @textChar
+  = !("`" / "${") @textChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
@@ -350,10 +349,9 @@ templateLiteralContents
 templateLiteralText
   = chars:templateLiteralChar+ { return chars.join(""); }
 
-// A substitution in a template literal: `{{ fn() }}`
+// A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "{{" @expression "}}"
-  / "${" @expression "}"
+  = "${" @expression "}"
 
 textChar
   = escapedChar / .

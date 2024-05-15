@@ -3,8 +3,8 @@ tests:
   - title: One template can reference another in local scope
     fixture:
       actual.ori: includeGreet.ori("Bob")
-      includeGreet.ori: =`<h1>{{ greet.ori(_) }}</h1>`
-      greet.ori: =`Hello, {{ _ }}!`
+      includeGreet.ori: =`<h1>${ greet.ori(_) }</h1>`
+      greet.ori: =`Hello, ${ _ }!`
     expected: <h1>Hello, Bob!</h1>
 
   - title: Result of one template can be passed to another
@@ -13,7 +13,7 @@ tests:
       page.ori: |
         =`<html>
           <body>
-            {{ _ }}
+            ${ _ }
           </body>
         </html>
         `
@@ -33,8 +33,8 @@ tests:
         - Bob
         - Carol
       template.ori: |
-        =`{{ @map(names, =`Hello, {{ _ }}!
-        `) }}`
+        =`${ @map(names, =`Hello, ${ _ }!
+        `) }`
     expected: |
       Hello, Alice!
       Hello, Bob!
@@ -43,7 +43,7 @@ tests:
   - title: Template can reference input front matter
     fixture:
       actual.ori: template.ori(person)
-      template.ori: =`<h1>{{ _/name }}</h1>`
+      template.ori: =`<h1>${ _/name }</h1>`
       person:
         name: Carol
     expected: <h1>Carol</h1>

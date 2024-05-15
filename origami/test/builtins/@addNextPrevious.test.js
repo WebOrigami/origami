@@ -21,7 +21,6 @@ describe("@addNextPrevious", () => {
       alice: {
         name: "Alice",
         nextKey: "bob",
-        previousKey: undefined,
       },
       bob: {
         name: "Bob",
@@ -30,7 +29,6 @@ describe("@addNextPrevious", () => {
       },
       carol: {
         name: "Carol",
-        nextKey: undefined,
         previousKey: "bob",
       },
     });
