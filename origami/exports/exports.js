@@ -6,6 +6,7 @@ export { default as basename } from "../src/builtins/@basename.js";
 export { default as builtins } from "../src/builtins/@builtins.js";
 export { default as cache } from "../src/builtins/@cache.js";
 export { default as changes } from "../src/builtins/@changes.js";
+export { default as clean } from "../src/builtins/@clean.js";
 export { default as concat } from "../src/builtins/@concat.js";
 export { default as config } from "../src/builtins/@config.js";
 export { default as constructor } from "../src/builtins/@constructor.js";
