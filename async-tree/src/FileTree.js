@@ -41,6 +41,11 @@ export default class FileTree {
   }
 
   async get(key) {
+    if (!key) {
+      // Undefined key or empty string key is invalid.
+      return undefined;
+    }
+
     const filePath = path.resolve(this.dirname, key);
 
     let stats;
