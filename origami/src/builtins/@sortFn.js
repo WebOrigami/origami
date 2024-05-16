@@ -20,11 +20,16 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * SortOptions
  *
  * @this {AsyncTree|null}
- * @param {SortOptions} [options]
+ * @param {ValueKeyFn|SortOptions} [options]
  */
 export default function sortFnBuiltin(options) {
   assertScopeIsDefined(this);
   const scope = this;
+
+  if (typeof options === "function") {
+    // Take the function as the `sortKey` option
+    options = { sortKey: options };
+  }
 
   const compare = options?.compare;
   let extendedSortKeyFn;

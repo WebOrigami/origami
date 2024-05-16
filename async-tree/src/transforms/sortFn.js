@@ -27,14 +27,14 @@ export default function sortFn(options) {
    */
   return function sort(treelike) {
     const tree = Tree.from(treelike);
-    const transform = Object.create(tree);
-    transform.keys = async () => {
+    const transformed = Object.create(tree);
+    transformed.keys = async () => {
       const keys = Array.from(await tree.keys());
 
-      let sortKeys;
       if (sortKey) {
         // Invoke the async sortKey function to get sort keys.
-        sortKeys = await Promise.all(
+        // Create { key, sortKey } tuples.
+        const tuples = await Promise.all(
           keys.map(async (key) => {
             return {
               key,
@@ -46,18 +46,19 @@ export default function sortFn(options) {
         // Wrap the comparison function so it applies to sort keys.
         const defaultCompare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
         const originalCompare = compare ?? defaultCompare;
-        compare = (a, b) => originalCompare(a.sort, b.sort);
+        // Sort by the sort key.
+        const sortedTuples = tuples.toSorted((a, b) =>
+          originalCompare(a.sort, b.sort)
+        );
+        // Map back to the original keys.
+        const sorted = sortedTuples.map((pair) => pair.key);
+        return sorted;
       } else {
         // Use original keys as sort keys.
-        sortKeys = keys;
+        // If compare is undefined, this uses default sort order.
+        return keys.toSorted(compare);
       }
-
-      const sorted = sortKeys.sort(compare);
-      return sortKey
-        ? // Map back to the original keys.
-          sorted.map((pair) => pair.key)
-        : sorted;
     };
-    return transform;
+    return transformed;
   };
 }

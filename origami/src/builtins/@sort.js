@@ -12,7 +12,7 @@ import sortFn from "./@sortFn.js";
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
- * @param {SortOptions} [options]
+ * @param {ValueKeyFn|SortOptions} [options]
  */
 export default async function sortBuiltin(treelike, options) {
   const tree = await getTreeArgument(this, arguments, treelike, "@sort");
