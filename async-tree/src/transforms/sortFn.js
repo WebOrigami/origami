@@ -36,10 +36,13 @@ export default function sortFn(options) {
         // Create { key, sortKey } tuples.
         const tuples = await Promise.all(
           keys.map(async (key) => {
-            return {
-              key,
-              sort: await sortKey(key, tree),
-            };
+            const sort = await sortKey(key, tree);
+            if (sort === undefined) {
+              throw new Error(
+                `sortKey function returned undefined for key ${key}`
+              );
+            }
+            return { key, sort };
           })
         );
 
