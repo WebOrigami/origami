@@ -114,9 +114,10 @@ escapedChar "backslash-escaped character"
 expr
   = pipeline
 
-// Top-level Origami expression, possible leading/trailing whitepsace.
+// Top-level Origami expression, possible shebang directive and leading/trailing
+// whitepsace.
 expression "Origami expression"
-  = __ @expr __
+  = shebang? __ @expr __
 
 float "floating-point number"
   = sign? digits? "." digits {
@@ -268,6 +269,9 @@ scopeReference "scope reference"
 separator
   = __ "," __
   / whitespaceWithNewLine
+
+shebang
+  = "#!" [^\n\r]* { return null; }
 
 sign
   = [+\-]

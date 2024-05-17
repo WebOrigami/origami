@@ -392,6 +392,16 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("shebang", () => {
+    assertParse(
+      "expression",
+      `#!/usr/bin/env ori @invoke
+'Hello'
+`,
+      "Hello"
+    );
+  });
+
   test("singleLineComment", () => {
     assertParse("singleLineComment", "// Hello, world!", null);
   });

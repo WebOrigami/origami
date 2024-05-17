@@ -3,7 +3,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 import builtins from "./@builtins.js";
 
 /**
- * Invoke the given function.
+ * Invoke the given text as an Origami function.
  *
  * This built-in exists to facilitate executing an Origami file as a script via
  * a [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) directive.
