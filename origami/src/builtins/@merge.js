@@ -33,6 +33,8 @@ export default async function treeMerge(...trees) {
 
   // If all trees are plain objects, return a plain object.
   if (unpacked.every((tree) => isPlainObject(tree))) {
+    // Reverse the order to get earlier trees precedence.
+    unpacked.reverse();
     return Object.assign({}, ...unpacked);
   }
 
