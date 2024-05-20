@@ -78,10 +78,10 @@ async function statements(tree, nodePath, nodeLabel, options) {
     } else {
       const label = isStringLike(value)
         ? String(value)
-        : value != null
+        : value !== undefined
         ? await serialize.toYaml(value)
         : "";
-      if (value == null) {
+      if (value === undefined) {
         isError = true;
       }
       nodes[key] = { label };
