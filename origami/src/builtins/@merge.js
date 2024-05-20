@@ -33,9 +33,7 @@ export default async function treeMerge(...trees) {
 
   // If all trees are plain objects, return a plain object.
   if (unpacked.every((tree) => isPlainObject(tree))) {
-    // Reverse the order to get earlier trees precedence.
-    unpacked.reverse();
-    return Object.assign({}, ...unpacked);
+    return mergeObjects(...unpacked);
   }
 
   // If a tree can take a scope, give it one that includes the other trees and
@@ -54,6 +52,26 @@ export default async function treeMerge(...trees) {
   // the current scope.
   /** @type {any} */ (result).scope = new Scope(result, this);
 
+  return result;
+}
+
+/**
+ * Merge the indicated plain objects. If a key is present in multiple objects,
+ * the value from the first object is used.
+ *
+ * This is similar to calling Object.assign() with the objects in reverse order,
+ * but we want to ensure the keys end up in the same order they're encountered
+ * in the objects.
+ *
+ * @param  {...any} objects
+ */
+function mergeObjects(...objects) {
+  const result = {};
+  for (const obj of objects) {
+    for (const key of Object.keys(obj)) {
+      result[key] ??= obj[key];
+    }
+  }
   return result;
 }
 
