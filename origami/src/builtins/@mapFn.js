@@ -57,15 +57,14 @@ export default function mapFnBuiltin(operation) {
     );
   }
 
-  // Extend the value function to include the value and key in scope.
   let extendedValueFn;
   if (valueFn) {
     const resolvedValueFn = toFunction(valueFn);
-    extendedValueFn = (sourceValue, sourceKey, tree) =>
-      resolvedValueFn.call(scope, sourceValue, sourceKey, tree);
+    // Have the value function run in this scope.
+    extendedValueFn = resolvedValueFn.bind(scope);
   }
 
-  // Extend the key function to include the value and key in scope.
+  // Extend the value function to run in scope.
   let extendedKeyFn;
   let extendedInverseKeyFn;
   if (extension) {

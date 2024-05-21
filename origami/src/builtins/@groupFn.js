@@ -15,9 +15,13 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 export default function groupFnBuiltin(groupKey) {
   assertScopeIsDefined(this);
   const scope = this;
+
   const groupKeyFn = toFunction(groupKey);
+  // Have the group key function run in this scope.
+  const extendedGroupKeyFn = groupKeyFn.bind(scope);
+
   // @ts-ignore
-  const fn = groupFn(groupKeyFn);
+  const fn = groupFn(extendedGroupKeyFn);
   return async (treelike) => {
     const grouped = await fn(treelike);
     const scoped = Scope.treeWithScope(grouped, scope);
