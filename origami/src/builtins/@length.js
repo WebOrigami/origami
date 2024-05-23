@@ -8,11 +8,8 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
-export default async function count(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@count");
+export default async function length(treelike) {
+  const tree = await getTreeArgument(this, arguments, treelike, "@length");
   const keys = Array.from(await tree.keys());
   return keys.length;
 }
-
-count.usage = `@count <treelike>\tReturn the number of keys in the tree`;
-count.documentation = "https://weborigami.org/cli/@tree.html#count";
