@@ -33,6 +33,9 @@ export default function mapFnBuiltin(operation) {
   if (isPlainObject(operation)) {
     // @ts-ignore
     options = operation;
+    if (`value` in options && !options.value) {
+      throw new TypeError(`@mapFn: The value function is not defined.`);
+    }
     valueFn = options?.value;
   } else if (
     typeof operation === "function" ||
