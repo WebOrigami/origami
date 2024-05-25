@@ -19,23 +19,20 @@ describe("Origami parser", () => {
     assertParse("array", "[ 1 , 2 , 3 ]", [ops.array, 1, 2, 3]);
   });
 
-  test("assignment", () => {
-    assertParse("assignment", "data = obj.json", [
+  test("treeAssignment", () => {
+    assertParse("treeAssignment", "data = obj.json", [
       "data",
       [ops.scope, "obj.json"],
     ]);
-    assertParse("assignment", "foo = fn 'bar'", [
+    assertParse("treeAssignment", "foo = fn 'bar'", [
       "foo",
       [[ops.scope, "fn"], "bar"],
     ]);
   });
 
-  test("assignmentOrShorthand", () => {
-    assertParse("assignmentOrShorthand", "foo", [
-      "foo",
-      [ops.inherited, "foo"],
-    ]);
-    assertParse("assignmentOrShorthand", "foo = 1", ["foo", 1]);
+  test("treeEntry", () => {
+    assertParse("treeEntry", "foo", ["foo", [ops.inherited, "foo"]]);
+    assertParse("treeEntry", "foo = 1", ["foo", 1]);
   });
 
   test("expr", () => {
@@ -297,6 +294,11 @@ describe("Origami parser", () => {
       ["a", 1],
       ["b", [ops.scope, "b"]],
     ]);
+    assertParse("object", "{ a: 1, ...b }", [
+      ops.merge,
+      [ops.object, ["a", 1]],
+      [ops.scope, "b"],
+    ]);
   });
 
   test("objectProperty", () => {
@@ -308,12 +310,9 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("objectPropertyOrShorthand", () => {
-    assertParse("objectPropertyOrShorthand", "foo", [
-      "foo",
-      [ops.scope, "foo"],
-    ]);
-    assertParse("objectPropertyOrShorthand", "x: y", ["x", [ops.scope, "y"]]);
+  test("objectEntry", () => {
+    assertParse("objectEntry", "foo", ["foo", [ops.scope, "foo"]]);
+    assertParse("objectEntry", "x: y", ["x", [ops.scope, "y"]]);
   });
 
   test("parameterizedLambda", () => {
@@ -410,6 +409,11 @@ describe("Origami parser", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
 
+  test("spread", () => {
+    assertParse("spread", "...a", [ops.spread, [ops.scope, "a"]]);
+    assertParse("spread", "…a", [ops.spread, [ops.scope, "a"]]);
+  });
+
   test("string", () => {
     assertParse("string", '"foo"', "foo");
     assertParse("string", "'bar'", "bar");
@@ -484,6 +488,11 @@ describe("Origami parser", () => {
     assertParse("tree", "{ x = fn('a') }", [
       ops.tree,
       ["x", [[ops.scope, "fn"], "a"]],
+    ]);
+    assertParse("tree", "{ a = 1, ...b }", [
+      ops.merge,
+      [ops.tree, ["a", 1]],
+      [ops.scope, "b"],
     ]);
   });
 

@@ -7,7 +7,7 @@
 //
 
 import * as ops from "../runtime/ops.js";
-import { makeFunctionCall, makePipeline, makeTemplate } from "./parserHelpers.js";
+import { makeFunctionCall, makeObject, makePipeline, makeTemplate } from "./parserHelpers.js";
 
 // If a parse result is an object that will be evaluated at runtime, attach the
 // location of the source code that produced it for debugging and error messages.
@@ -41,16 +41,6 @@ args "function arguments"
 array "array"
   = "[" __ list:list? __ closingBracket {
       return annotate([ops.array, ...(list ?? [])], location());
-    }
-
-// An assignment statement: `foo = 1`
-assignment "tree assignment"
-  = @identifier __ "=" __ @expr
-
-assignmentOrShorthand
-  = assignment
-  / key:identifier {
-      return annotate([key, [ops.inherited, key]], location());
     }
 
 // Something that can be called. This is more restrictive than the `expr`
@@ -106,6 +96,8 @@ doubleQuoteString "double quote string"
 
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
+
+ellipsis = "..." / "…" // Unicode ellipsis
 
 escapedChar "backslash-escaped character"
   = "\\" @.
@@ -199,23 +191,24 @@ number "number"
 // TODO: Use Object.fromEntries with array of key/value pairs
 //
 object "object literal"
-  = "{" __ properties:objectProperties? __ "}" {
-      return annotate([ops.object, ...(properties ?? [])], location());
+  = "{" __ entries:objectEntries? __ "}" {
+      return annotate(makeObject(entries ?? [], ops.object), location());
     }
 
-// A separated list of object properties or shorthands
-objectProperties
-  = @objectPropertyOrShorthand|1.., separator| separator?
+// A separated list of object entries
+objectEntries
+  = @objectEntry|1.., separator| separator?
+
+objectEntry
+  = spread
+  / objectProperty
+  / key:identifier {
+      return annotate([key, [ops.scope, key]], location());
+    }
 
 // A single object property with key and value: `x: 1`
 objectProperty "object property"
   = @identifier __ ":" __ @expr
-
-objectPropertyOrShorthand
-  = objectProperty
-  / key:identifier {
-      return annotate([key, [ops.scope, key]], location());
-    }
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
@@ -286,6 +279,9 @@ singleQuoteString "single quote string"
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
+
+spread
+  = ellipsis expr:expr { return [ops.spread, expr]; }
 
 // A single step in a pipeline, or a top-level expression
 step
@@ -363,13 +359,24 @@ textChar
 
 // A tree literal: `{ index.html = "Hello" }`
 tree "tree literal"
-  = "{" __ assignments:treeAssignments? __ closingBrace {
-      return annotate([ops.tree, ...(assignments ?? [])], location());
+  = "{" __ entries:treeEntries? __ closingBrace {
+      return annotate(makeObject(entries ?? [], ops.tree), location());
     }
 
+// A tree assignment statement: `foo = 1`
+treeAssignment "tree assignment"
+  = @identifier __ "=" __ @expr
+
 // A separated list of assignments or shorthands
-treeAssignments
-  = @assignmentOrShorthand|1.., separator| separator?
+treeEntries
+  = @treeEntry|1.., separator| separator?
+
+treeEntry
+  = spread
+  / treeAssignment
+  / key:identifier {
+      return annotate([key, [ops.inherited, key]], location());
+    }
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

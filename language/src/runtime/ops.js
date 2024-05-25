@@ -10,6 +10,7 @@ import Scope from "./Scope.js";
 import concatTreeValues from "./concatTreeValues.js";
 import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
+import mergeTrees from "./mergeTrees.js";
 
 // For memoizing lambda functions
 const lambdaFnMap = new Map();
@@ -210,6 +211,17 @@ export function lambda(parameters, code) {
 lambda.toString = () => "«ops.lambda»";
 
 /**
+ * Merge the given trees. If they are all plain objects, return a plain object.
+ *
+ * @this {AsyncTree|null}
+ * @param {import("@weborigami/async-tree").Treelike[]} trees
+ */
+export async function merge(...trees) {
+  return mergeTrees.call(this, ...trees);
+}
+merge.toString = () => "«ops.merge»";
+
+/**
  * Construct an object. The keys will be the same as the given `obj`
  * parameter's, and the values will be the results of evaluating the
  * corresponding code values in `obj`.
@@ -227,6 +239,17 @@ export async function object(...entries) {
   return Object.fromEntries(evaluated);
 }
 object.toString = () => "«ops.object»";
+
+/**
+ * The spread operator is a placeholder during parsing. It should be replaced
+ * with an object merge.
+ */
+export function spread(...args) {
+  throw new Error(
+    "A compile-time spread operator wasn't converted to an object merge."
+  );
+}
+spread.toString = () => "«ops.spread»";
 
 /**
  * Traverse a path of keys through a tree.

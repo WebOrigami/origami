@@ -17,6 +17,38 @@ export function makeFunctionCall(target, chain) {
   return value;
 }
 
+export function makeObject(entries, op) {
+  let currentEntries = [];
+  const spreads = [];
+
+  for (const [key, value] of entries) {
+    if (key === ops.spread) {
+      if (currentEntries.length > 0) {
+        spreads.push([op, ...currentEntries]);
+        currentEntries = [];
+      }
+      spreads.push(value);
+    } else {
+      currentEntries.push([key, value]);
+    }
+  }
+
+  // Finish any current entries.
+  if (currentEntries.length > 0) {
+    spreads.push([op, ...currentEntries]);
+    currentEntries = [];
+  }
+
+  if (spreads.length > 1) {
+    return [ops.merge, ...spreads];
+  }
+  if (spreads.length === 1) {
+    return spreads[0];
+  } else {
+    return [op];
+  }
+}
+
 // Similar to a function call, but the order is reversed.
 export function makePipeline(steps) {
   const [first, ...rest] = steps;
