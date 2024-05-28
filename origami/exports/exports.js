@@ -15,6 +15,7 @@ export { default as debug } from "../src/builtins/@debug.js";
 export { default as deepMap } from "../src/builtins/@deepMap.js";
 export { default as deepMapFn } from "../src/builtins/@deepMapFn.js";
 export { default as deepMerge } from "../src/builtins/@deepMerge.js";
+export { default as deepReverse } from "../src/builtins/@deepReverse.js";
 export { default as deepTake } from "../src/builtins/@deepTake.js";
 export { default as deepTakeFn } from "../src/builtins/@deepTakeFn.js";
 export { default as deepValues } from "../src/builtins/@deepValues.js";
