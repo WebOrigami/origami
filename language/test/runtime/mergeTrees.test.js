@@ -66,4 +66,9 @@ describe("mergeTrees", () => {
       d: 4,
     });
   });
+
+  test("if all arguments are arrays, result is an array", async () => {
+    const result = await mergeTrees.call(null, [1, 2], [3, 4]);
+    assert.deepEqual(result, [1, 2, 3, 4]);
+  });
 });

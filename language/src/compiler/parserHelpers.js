@@ -2,6 +2,38 @@ import * as ops from "../runtime/ops.js";
 
 // Parser helpers
 
+export function makeArray(entries) {
+  let currentEntries = [];
+  const spreads = [];
+
+  for (const value of entries) {
+    if (Array.isArray(value) && value[0] === ops.spread) {
+      if (currentEntries.length > 0) {
+        spreads.push([ops.array, ...currentEntries]);
+        currentEntries = [];
+      }
+      spreads.push(...value.slice(1));
+    } else {
+      currentEntries.push(value);
+    }
+  }
+
+  // Finish any current entries.
+  if (currentEntries.length > 0) {
+    spreads.push([ops.array, ...currentEntries]);
+    currentEntries = [];
+  }
+
+  if (spreads.length > 1) {
+    return [ops.merge, ...spreads];
+  }
+  if (spreads.length === 1) {
+    return spreads[0];
+  } else {
+    return [ops.array];
+  }
+}
+
 export function makeFunctionCall(target, chain) {
   let value = target;
   // The chain is an array of arguments (which are themselves arrays). We

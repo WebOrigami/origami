@@ -7,7 +7,7 @@
 //
 
 import * as ops from "../runtime/ops.js";
-import { makeFunctionCall, makeObject, makePipeline, makeTemplate } from "./parserHelpers.js";
+import { makeArray, makeFunctionCall, makeObject, makePipeline, makeTemplate } from "./parserHelpers.js";
 
 // If a parse result is an object that will be evaluated at runtime, attach the
 // location of the source code that produced it for debugging and error messages.
@@ -39,9 +39,17 @@ args "function arguments"
     }
 
 array "array"
-  = "[" __ list:list? __ closingBracket {
-      return annotate([ops.array, ...(list ?? [])], location());
+  = "[" __ entries:arrayEntries? __ closingBracket {
+      return annotate(makeArray(entries ?? []), location());
     }
+
+// A separated list of array entries
+arrayEntries
+  = @arrayEntry|1.., separator| separator?
+
+arrayEntry
+  = spread
+  / expr
 
 // Something that can be called. This is more restrictive than the `expr`
 // parser; it doesn't accept regular function calls.

@@ -17,6 +17,11 @@ describe("Origami parser", () => {
     assertParse("array", "[]", [ops.array]);
     assertParse("array", "[1, 2, 3]", [ops.array, 1, 2, 3]);
     assertParse("array", "[ 1 , 2 , 3 ]", [ops.array, 1, 2, 3]);
+    assertParse("array", "[ 1, ...[2, 3]]", [
+      ops.merge,
+      [ops.array, 1],
+      [ops.array, 2, 3],
+    ]);
   });
 
   test("treeAssignment", () => {

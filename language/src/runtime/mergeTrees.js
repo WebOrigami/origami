@@ -33,6 +33,11 @@ export default async function mergeTrees(...trees) {
     return mergeObjects(...unpacked);
   }
 
+  // If all trees are arrays, return an array.
+  if (unpacked.every((tree) => Array.isArray(tree))) {
+    return unpacked.flat();
+  }
+
   // If a tree can take a scope, give it one that includes the other trees and
   // the current scope.
   const scopedTrees = unpacked.map((tree) => {
