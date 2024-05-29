@@ -1,8 +1,10 @@
-import { Tree, isPlainObject, isUnpackable } from "@weborigami/async-tree";
+import { Tree, isUnpackable } from "@weborigami/async-tree";
 import { ops } from "./internal.js";
 
-const codeSymbol = Symbol("code");
-const sourceSymbol = Symbol("source");
+export const codeSymbol = Symbol("code");
+export const sourceSymbol = Symbol("source");
+export const inputsSymbol = Symbol("inputs");
+export const outputSymbol = Symbol("output");
 
 /**
  * Evaluate the given code and return the result.
@@ -72,23 +74,44 @@ export default async function evaluate(code) {
   }
 
   // To aid debugging, add the code to the result.
-  if (
-    result &&
-    typeof result === "object" &&
-    Object.isExtensible(result) &&
-    !isPlainObject(result)
-  ) {
+  if (result) {
+    result = box(result);
     try {
+      if (result[codeSymbol]) {
+        // Annotated result that is being passed through.
+        result[outputSymbol] = {
+          [codeSymbol]: result[codeSymbol],
+          [sourceSymbol]: result[sourceSymbol],
+          [inputsSymbol]: result[inputsSymbol],
+        };
+      }
       result[codeSymbol] = code;
       if (/** @type {any} */ (code).location) {
         result[sourceSymbol] = codeFragment(code);
       }
+      result[inputsSymbol] = evaluated;
     } catch (/** @type {any} */ error) {
       // Ignore errors.
     }
   }
 
   return result;
+}
+
+function box(value) {
+  switch (typeof value) {
+    case "number":
+      return new Number(value);
+
+    case "string":
+      return new String(value);
+
+    case "boolean":
+      return new Boolean(value);
+
+    default:
+      return value;
+  }
 }
 
 function codeFragment(code) {
