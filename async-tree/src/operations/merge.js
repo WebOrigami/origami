@@ -20,8 +20,9 @@ export default function merge(...sources) {
     description: "merge",
 
     async get(key) {
-      for (const tree of trees) {
-        const value = await tree.get(key);
+      // Check trees for the indicated key in reverse order.
+      for (let index = trees.length - 1; index >= 0; index--) {
+        const value = await trees[index].get(key);
         if (value !== undefined) {
           return value;
         }
@@ -30,8 +31,9 @@ export default function merge(...sources) {
     },
 
     async isKeyForSubtree(key) {
-      for (const tree of trees) {
-        if (await Tree.isKeyForSubtree(tree, key)) {
+      // Check trees for the indicated key in reverse order.
+      for (let index = trees.length - 1; index >= 0; index--) {
+        if (await Tree.isKeyForSubtree(trees[index], key)) {
           return true;
         }
       }
@@ -40,6 +42,7 @@ export default function merge(...sources) {
 
     async keys() {
       const keys = new Set();
+      // Collect keys in the order the trees were provided.
       for (const tree of trees) {
         for (const key of await tree.keys()) {
           keys.add(key);

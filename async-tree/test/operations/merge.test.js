@@ -6,34 +6,34 @@ import merge from "../../src/operations/merge.js";
 describe("merge", () => {
   test("performs a shallow merge", async () => {
     const fixture = merge(
-      Tree.from({
+      {
         a: 1,
+        // Will be obscured by `b` that follows
         b: {
           c: 2,
         },
-      }),
-      Tree.from({
-        // Will be obscured by `b` above
+      },
+      {
         b: {
           d: 3,
         },
         e: {
           f: 4,
         },
-      })
+      }
     );
 
     assert.deepEqual(await Tree.plain(fixture), {
       a: 1,
       b: {
-        c: 2,
+        d: 3,
       },
       e: {
         f: 4,
       },
     });
 
-    const d = await Tree.traverse(fixture, "b", "d");
-    assert.equal(d, undefined);
+    const c = await Tree.traverse(fixture, "b", "c");
+    assert.equal(c, undefined);
   });
 });

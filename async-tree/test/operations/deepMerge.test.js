@@ -8,7 +8,7 @@ describe("mergeDeep", () => {
     const fixture = mergeDeep(
       new DeepObjectTree({
         a: {
-          b: 1,
+          b: 0, // Will be obscured by `b` below
           c: {
             d: 2,
           },
@@ -16,7 +16,7 @@ describe("mergeDeep", () => {
       }),
       new DeepObjectTree({
         a: {
-          b: 0, // Will be obscured by `b` above
+          b: 1,
           c: {
             e: 3,
           },
