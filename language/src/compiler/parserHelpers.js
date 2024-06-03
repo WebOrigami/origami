@@ -56,10 +56,10 @@ export function makeObject(entries, op) {
   for (const [key, value] of entries) {
     if (key === ops.spread) {
       if (currentEntries.length > 0) {
-        spreads.push([op, ...currentEntries]);
+        spreads.unshift([op, ...currentEntries]);
         currentEntries = [];
       }
-      spreads.push(value);
+      spreads.unshift(value);
     } else {
       currentEntries.push([key, value]);
     }
@@ -67,7 +67,7 @@ export function makeObject(entries, op) {
 
   // Finish any current entries.
   if (currentEntries.length > 0) {
-    spreads.push([op, ...currentEntries]);
+    spreads.unshift([op, ...currentEntries]);
     currentEntries = [];
   }
 
