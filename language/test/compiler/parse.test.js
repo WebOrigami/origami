@@ -301,8 +301,8 @@ describe("Origami parser", () => {
     ]);
     assertParse("object", "{ a: 1, ...b }", [
       ops.merge,
-      [ops.scope, "b"],
       [ops.object, ["a", 1]],
+      [ops.scope, "b"],
     ]);
   });
 
@@ -496,8 +496,8 @@ describe("Origami parser", () => {
     ]);
     assertParse("tree", "{ a = 1, ...b }", [
       ops.merge,
-      [ops.scope, "b"],
       [ops.tree, ["a", 1]],
+      [ops.scope, "b"],
     ]);
   });
 
