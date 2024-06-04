@@ -33,7 +33,7 @@ export default async function treeMerge(...trees) {
 
   // If all trees are plain objects, return a plain object.
   if (unpacked.every((tree) => isPlainObject(tree))) {
-    return mergeObjects(...unpacked);
+    return merge(...unpacked);
   }
 
   // If a tree can take a scope, give it one that includes the other trees and

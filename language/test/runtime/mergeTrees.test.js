@@ -20,7 +20,7 @@ describe("mergeTrees", () => {
     // @ts-ignore
     assert.deepEqual(await Tree.plain(tree), {
       a: 1,
-      b: 2,
+      b: 3,
       c: 4,
     });
   });
@@ -60,7 +60,7 @@ describe("mergeTrees", () => {
     );
     assert.deepEqual(result, {
       a: 1,
-      b: 2,
+      b: 3,
       c: 4,
     });
   });
