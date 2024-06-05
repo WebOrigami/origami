@@ -299,6 +299,11 @@ describe("Origami parser", () => {
       ["a", 1],
       ["b", [ops.scope, "b"]],
     ]);
+    assertParse("object", `{ "a": 1, "b": 2 }`, [
+      ops.object,
+      ["a", 1],
+      ["b", 2],
+    ]);
     assertParse("object", "{ a: 1, ...b }", [
       ops.merge,
       [ops.object, ["a", 1]],

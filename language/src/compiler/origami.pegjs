@@ -155,6 +155,10 @@ identifierChar
 identifierList
   = @identifier|1.., separator| separator?
 
+identifierOrString
+  = identifier
+  / string
+
 implicitParensArgs "arguments with implicit parentheses"
   = inlineSpace+ @list
 
@@ -210,13 +214,13 @@ objectEntries
 objectEntry
   = spread
   / objectProperty
-  / key:identifier {
+  / key:identifierOrString {
       return annotate([key, [ops.scope, key]], location());
     }
 
 // A single object property with key and value: `x: 1`
 objectProperty "object property"
-  = @identifier __ ":" __ @expr
+  = @identifierOrString __ ":" __ @expr
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
@@ -373,7 +377,7 @@ tree "tree literal"
 
 // A tree assignment statement: `foo = 1`
 treeAssignment "tree assignment"
-  = @identifier __ "=" __ @expr
+  = @identifierOrString __ "=" __ @expr
 
 // A separated list of assignments or shorthands
 treeEntries
@@ -382,7 +386,7 @@ treeEntries
 treeEntry
   = spread
   / treeAssignment
-  / key:identifier {
+  / key:identifierOrString {
       return annotate([key, [ops.inherited, key]], location());
     }
 
