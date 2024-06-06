@@ -1,5 +1,4 @@
 import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
-import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { hasNonPrintableCharacters, keySymbol } from "../common/utilities.js";
 
@@ -61,17 +60,9 @@ async function statements(tree, nodePath, nodeLabel, options) {
           : error.name ?? error.message ?? error;
     }
 
-    // We expand certain types of files known to contain trees.
-    const extension = key ? extname(key).toLowerCase() : "";
-    const expand =
-      {
-        ".json": true,
-        ".yaml": true,
-      }[extension] ?? extension === "";
-
     const expandable =
       value instanceof Array || isPlainObject(value) || Tree.isAsyncTree(value);
-    if (expand && expandable) {
+    if (expandable) {
       const subtree = Tree.from(value);
       const subStatements = await statements(subtree, destPath, null, options);
       result = result.concat(subStatements);
