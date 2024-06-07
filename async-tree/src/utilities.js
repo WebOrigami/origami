@@ -1,3 +1,4 @@
+const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 /**
@@ -142,3 +143,31 @@ export function keysFromPath(pathname) {
 export const naturalOrder = new Intl.Collator(undefined, {
   numeric: true,
 }).compare;
+
+/**
+ * Return a string form of the object, handling cases not generally handled by
+ * the standard JavaScript `toString()` method:
+ *
+ * 1. If the object is an ArrayBuffer or TypedArray, decode the array as UTF-8.
+ * 2. If the object is otherwise a plain JavaScript object with the useless
+ *    default toString() method, return null instead of "[object Object]". In
+ *    practice, it's generally more useful to have this method fail than to
+ *    return a useless string.
+ *
+ * @param {any} object
+ * @returns {string|null}
+ */
+export function toString(object) {
+  if (object instanceof ArrayBuffer || object instanceof TypedArray) {
+    // Treat the buffer as UTF-8 text.
+    const decoded = textDecoder.decode(object);
+    // If the result appears to contain non-printable characters, it's probably not a string.
+    // https://stackoverflow.com/a/1677660/76472
+    const hasNonPrintableCharacters = /[\x00-\x08\x0E-\x1F]/.test(decoded);
+    return hasNonPrintableCharacters ? null : decoded;
+  } else if (isStringLike(object)) {
+    return String(object);
+  } else {
+    return null;
+  }
+}

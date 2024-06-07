@@ -1,6 +1,11 @@
-import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
+import {
+  Tree,
+  isPlainObject,
+  isStringLike,
+  toString,
+} from "@weborigami/async-tree";
 import * as serialize from "../common/serialize.js";
-import { hasNonPrintableCharacters, keySymbol } from "../common/utilities.js";
+import { keySymbol } from "../common/utilities.js";
 
 /**
  * Render a tree in DOT format.
@@ -93,8 +98,8 @@ async function statements(tree, nodePath, nodeLabel, options) {
   // Trim labels.
   let i = 0;
   for (const key of Object.keys(nodes)) {
-    let label = String(nodes[key].label);
-    if (hasNonPrintableCharacters(label)) {
+    let label = toString(nodes[key].label);
+    if (label === null) {
       nodes[key].label = "[binary data]";
     } else if (label) {
       let clippedStart = false;

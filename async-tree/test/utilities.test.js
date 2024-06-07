@@ -27,4 +27,21 @@ describe("utilities", () => {
     strings.sort(utilities.naturalOrder);
     assert.deepEqual(strings, ["file1", "file9", "file10"]);
   });
+
+  test("toString returns the value of an object's `toString` method", () => {
+    const object = {
+      toString: () => "text",
+    };
+    assert.equal(utilities.toString(object), "text");
+  });
+
+  test("toString returns null for an object with no useful `toString`", () => {
+    const object = {};
+    assert.equal(utilities.toString(object), null);
+  });
+
+  test("toString decodes an ArrayBuffer as UTF-8", () => {
+    const buffer = Buffer.from("text", "utf8");
+    assert.equal(utilities.toString(buffer), "text");
+  });
 });

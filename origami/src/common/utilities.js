@@ -1,12 +1,9 @@
 import {
   Tree,
+  toString as asyncTreeToString,
   isPlainObject,
-  isStringLike,
   isUnpackable,
 } from "@weborigami/async-tree";
-
-const textDecoder = new TextDecoder();
-const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 // Return true if the text appears to contain non-printable binary characters;
 // used to infer whether a file is binary or text.
@@ -86,17 +83,8 @@ export function toFunction(obj) {
 }
 
 /**
- * Return a string form of the object, handling two cases not generally handled
- * by a .toString() method:
- *
- * 1. If the object is a plain JavaScript object with a `@text` property, return
- *    the value of that property.
- * 2. If the object is an ArrayBuffer or TypedArray, decode the array as UTF-8.
- *
- * Finally, if the object is otherwise a plain JavaScript object with the
- * useless default toString() method, return null instead of "[object Object]".
- * In practice, it's generally more useful to have this method fail than to
- * return a useless string.
+ * Extend the async-tree toString method: objects that have a `@text` property
+ * will return the value of that property as a string.
  *
  * @param {any} object
  * @returns {string|null}
@@ -104,15 +92,8 @@ export function toFunction(obj) {
 export function toString(object) {
   if (isPlainObject(object) && "@text" in object) {
     return object["@text"];
-  } else if (object instanceof ArrayBuffer || object instanceof TypedArray) {
-    // Treat the buffer as UTF-8 text.
-    const decoded = textDecoder.decode(object);
-    // If the result has non-printable characters, it's probably not a string.
-    return hasNonPrintableCharacters(decoded) ? null : decoded;
-  } else if (isStringLike(object)) {
-    return String(object);
   } else {
-    return null;
+    return asyncTreeToString(object);
   }
 }
 
