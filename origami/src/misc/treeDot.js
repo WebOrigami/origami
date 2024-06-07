@@ -73,7 +73,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
       result = result.concat(subStatements);
     } else {
       const label = isStringLike(value)
-        ? String(value)
+        ? toString(value)
         : value !== undefined
         ? await serialize.toYaml(value)
         : "";
@@ -98,7 +98,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
   // Trim labels.
   let i = 0;
   for (const key of Object.keys(nodes)) {
-    let label = toString(nodes[key].label);
+    let label = nodes[key].label;
     if (label === null) {
       nodes[key].label = "[binary data]";
     } else if (label) {
