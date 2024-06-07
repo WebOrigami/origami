@@ -55,25 +55,5 @@ export default async function treeMerge(...trees) {
   return result;
 }
 
-/**
- * Merge the indicated plain objects. If a key is present in multiple objects,
- * the value from the first object is used.
- *
- * This is similar to calling Object.assign() with the objects in reverse order,
- * but we want to ensure the keys end up in the same order they're encountered
- * in the objects.
- *
- * @param  {...any} objects
- */
-function mergeObjects(...objects) {
-  const result = {};
-  for (const obj of objects) {
-    for (const key of Object.keys(obj)) {
-      result[key] ??= obj[key];
-    }
-  }
-  return result;
-}
-
 treeMerge.usage = `@merge <...trees>\tMerge the given trees`;
 treeMerge.documentation = "https://weborigami.org/cli/builtins.html#@merge";

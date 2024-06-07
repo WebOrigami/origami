@@ -1,13 +1,19 @@
-import reverse from "./@reverse.js";
+import { deepReverse } from "@weborigami/async-tree";
+import { Scope } from "@weborigami/language";
+import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
- * Shorthand for reversing a tree with the `deep` option set to true.
- * 
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
-
-* @this {AsyncTree|null}
- * @param {*} treelike 
+ * Reverse the order of keys at all levels of the tree.
+ *
+ * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ *
+ * @this {AsyncTree|null}
+ * @param {Treelike} [treelike]
  */
-export default function deepReverse(treelike) {
-  return reverse.call(this, treelike, { deep: true });
+export default async function deepReverseBuiltin(treelike) {
+  const tree = await getTreeArgument(this, arguments, treelike, "@deepReverse");
+  let reversed = deepReverse(tree);
+  reversed = Scope.treeWithScope(reversed, this);
+  return reversed;
 }
