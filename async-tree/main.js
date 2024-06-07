@@ -23,6 +23,7 @@ export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export * as symbols from "./src/symbols.js";
 export { default as cachedKeyFunctions } from "./src/transforms/cachedKeyFunctions.js";
+export { default as invokeFunctions } from "./src/transforms/invokeFunctions.js";
 export { default as keyFunctionsForExtensions } from "./src/transforms/keyFunctionsForExtensions.js";
 export { default as mapFn } from "./src/transforms/mapFn.js";
 export { default as sortFn } from "./src/transforms/sortFn.js";
