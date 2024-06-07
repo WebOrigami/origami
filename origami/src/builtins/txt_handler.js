@@ -1,5 +1,5 @@
 import { isPacked, symbols } from "@weborigami/async-tree";
-import { evaluateYaml, toYaml } from "../common/serialize.js";
+import { parseYaml, toYaml } from "../common/serialize.js";
 import * as utilities from "../common/utilities.js";
 
 /**
@@ -51,7 +51,7 @@ export default {
   },
 
   /** @type {import("@weborigami/language").UnpackFunction} */
-  async unpack(packed, options = {}) {
+  unpack(packed, options = {}) {
     const parent = options.parent ?? null;
     const text = utilities.toString(packed);
     if (text === null) {
@@ -65,7 +65,7 @@ export default {
     if (match) {
       // Document object with front matter
       const { body, frontText } = /** @type {any} */ (match.groups);
-      const frontData = await evaluateYaml(frontText, parent);
+      const frontData = parseYaml(frontText);
       unpacked = Object.assign({}, frontData, { "@text": body });
     } else {
       // Plain text

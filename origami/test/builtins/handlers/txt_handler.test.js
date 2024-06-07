@@ -1,4 +1,3 @@
-import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import fileTypeText from "../../../src/builtins/txt_handler.js";
@@ -25,21 +24,6 @@ describe("text handler", () => {
     assert.deepEqual(document, {
       "@text": "Body text",
       a: 1,
-    });
-  });
-
-  test("unpacks front matter with Origami expressions", async () => {
-    const text = `---
-message: !ori greeting
----
-Body text`;
-    const parent = new ObjectTree({
-      greeting: "Hello",
-    });
-    const document = await fileTypeText.unpack(text, { parent });
-    assert.deepEqual(document, {
-      "@text": "Body text",
-      message: "Hello",
     });
   });
 });

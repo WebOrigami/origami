@@ -5,10 +5,8 @@
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import { Tree, isPlainObject, isStringLike } from "@weborigami/async-tree";
-import { OrigamiTree } from "@weborigami/language";
+import { Tree, isStringLike } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
-import yamlOrigamiTag from "../misc/yamlOrigamiTag.js";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -48,35 +46,12 @@ function isJsonValue(obj) {
   );
 }
 
-// Return true if the given object has any functions in it.
-function objectContainsFunctions(obj) {
-  for (const key in obj) {
-    const value = obj[key];
-    if (typeof value === "function") {
-      return true;
-    } else if (isPlainObject(value)) {
-      const valueContainsExpression = objectContainsFunctions(value);
-      if (valueContainsExpression) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 /**
  * @param {string} text
  * @returns {JsonValue|AsyncTree}
  */
 export function parseYaml(text) {
-  const data = YAML.parse(text, {
-    customTags: [yamlOrigamiTag],
-  });
-  if (objectContainsFunctions(data)) {
-    return new OrigamiTree(data);
-  } else {
-    return data;
-  }
+  return YAML.parse(text);
 }
 
 /**

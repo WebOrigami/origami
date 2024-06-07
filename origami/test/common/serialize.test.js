@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as serialize from "../../src/common/serialize.js";
@@ -13,17 +13,6 @@ c: Hello, c.`;
       a: "Hello, a.",
       b: "Hello, b.",
       c: "Hello, c.",
-    });
-  });
-
-  test("parseYaml() can parse YAML text with expressions", async () => {
-    const yaml = `a: 1
-b: !ori a`;
-    const tree = serialize.parseYaml(yaml);
-    // @ts-ignore
-    assert.deepEqual(await Tree.plain(tree), {
-      a: 1,
-      b: 1,
     });
   });
 

@@ -138,7 +138,6 @@ export { default as assertScopeIsDefined } from "../src/misc/assertScopeIsDefine
 export { default as getTreeArgument } from "../src/misc/getTreeArgument.js";
 export { default as OriCommandTransform } from "../src/misc/OriCommandTransform.js";
 export { default as treeDot } from "../src/misc/treeDot.js";
-export { default as yamlOrigamiTag } from "../src/misc/yamlOrigamiTag.js";
 export { default as constructResponse } from "../src/server/constructResponse.js";
 export * from "../src/server/mediaTypes.js";
 export * from "../src/server/server.js";
