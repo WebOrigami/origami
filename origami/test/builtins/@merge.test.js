@@ -59,7 +59,7 @@ describe("@merge", () => {
         d: 4,
       }
     );
-    assert.deepEqual(result, {
+    assert.deepEqual(await Tree.plain(result), {
       a: 1,
       b: 2,
       c: 3,
