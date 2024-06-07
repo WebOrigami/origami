@@ -6,11 +6,9 @@ import PathTransform from "./PathTransform.js";
 
 // For builtins that should be renamed or not exported
 const specialBuiltinNames = {
-  "!": null,
-  "@false": null,
-  "@new": null,
-  "@true": null,
-  "~": "homeFiles",
+  constructor: null,
+  false: null,
+  true: null,
 };
 
 // Top-level template for the export file
@@ -44,8 +42,6 @@ async function exportStatementForCode(codeBuffer, key) {
 
   // @ts-ignore
   const path = codeBuffer[PathTransform.pathKey] ?? "";
-  const pathParts = path.split("/");
-  pathParts.pop(); // Drop key
 
   const exportsDefault =
     code.match(/^export default /m) || code.match(/^export { default } /m);
@@ -54,46 +50,45 @@ async function exportStatementForCode(codeBuffer, key) {
     return `export * from "../src/${path}";\n`;
   }
 
-  // Export a single default export.
+  // Single export
 
   // We construct an identifier for the export based on the path to the file and
   // the file name. This omits the first part of the path, which is the name of
-  // a folder that's a direct child of the `src` folder. The remaining parts are
-  // joined in camelCase to form the export name. We remove the `@` prefix from
-  // any parts that start with it. As an example, the file inside the src folder
-  // at `builtins/@tree/concat.js` will be identified as `treeConcat`.
-  let exportIdentifierParts = pathParts.slice(1);
+  // a folder that's a direct child of the `src` folder. We omit the `.js`
+  // extension, and remove any characters that aren't valid in JS identifiers.
+  // We use camelCase to combine the parts. As an example, the file inside the
+  // src folder at `builtins/@image/format.js` will be identified as
+  // `imageFormat`.
 
-  // The file name is the last part of the path; remove the .js extension.
-  let name = key.slice(0, -3);
+  // Split the name into parts wherever there are characters that can't be in
+  // JavaScript identifiers; drop any empty parts.
+  const parts = path.split(/[^a-zA-Z0-9]/g).filter(Boolean);
 
-  // Ignore certain builtins like `@true` and `@false` that would conflict with
-  // JavaScript keywords. Developers can use those JavaScript keywords directly.
-  const specialName = specialBuiltinNames[name];
-  if (specialName === null) {
-    return "";
-  }
-  if (specialName) {
-    name = specialName;
-  }
-
-  // Split the name into parts based on dots.
-  const nameParts = name.split(".");
-
-  // Add the name to the parts.
-  exportIdentifierParts.push(...nameParts);
-
-  // Remove characters that can't be in JavaScript identifiers.
-  exportIdentifierParts = exportIdentifierParts.map((part) =>
-    part.replace(/[^a-zA-Z0-9]/g, "")
-  );
+  // Drop the first (folder) part and the last (`.js`) part.
+  parts.shift();
+  parts.pop();
 
   // Join the parts in camelCase to form the identifier.
-  const identifier = exportIdentifierParts
+  let identifier = parts
     .map((part, index) =>
       index === 0 ? part : part[0].toUpperCase() + part.slice(1)
     )
     .join("");
+
+  if (!identifier) {
+    // Name is entirely non-JS characters, like `~`. For now we ignore it.
+    return "";
+  }
+
+  // Ignore certain builtins like `@true` and `@false` that would conflict with
+  // JavaScript keywords. Developers can use those JavaScript keywords directly.
+  const specialName = specialBuiltinNames[identifier];
+  if (specialName === null) {
+    return "";
+  }
+  if (specialName) {
+    identifier = specialName;
+  }
 
   return `export { default as ${identifier} } from "../src/${path}";\n`;
 }
