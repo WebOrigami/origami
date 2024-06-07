@@ -145,6 +145,17 @@ export const naturalOrder = new Intl.Collator(undefined, {
 }).compare;
 
 /**
+ * Apply a series of functions to a value, passing the result of each function
+ * to the next one.
+ *
+ * @param {any} start
+ * @param  {...Function} fns
+ */
+export async function pipeline(start, ...fns) {
+  return fns.reduce(async (acc, fn) => fn(await acc), start);
+}
+
+/**
  * Return a string form of the object, handling cases not generally handled by
  * the standard JavaScript `toString()` method:
  *

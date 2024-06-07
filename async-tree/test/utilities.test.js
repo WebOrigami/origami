@@ -28,6 +28,14 @@ describe("utilities", () => {
     assert.deepEqual(strings, ["file1", "file9", "file10"]);
   });
 
+  test("pipeline applies a series of functions to a value", async () => {
+    const addOne = (n) => n + 1;
+    const double = (n) => n * 2;
+    const square = (n) => n * n;
+    const result = await utilities.pipeline(1, addOne, double, square);
+    assert.equal(result, 16);
+  });
+
   test("toString returns the value of an object's `toString` method", () => {
     const object = {
       toString: () => "text",
