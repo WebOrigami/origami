@@ -9,7 +9,7 @@ import { Tree } from "../src/internal.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("FileTree", async () => {
+describe.only("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert.deepEqual(Array.from(await fixture.keys()), [
@@ -57,6 +57,23 @@ describe("FileTree", async () => {
     const actualText = String(await fs.readFile(filePath));
 
     assert.equal(fileText, actualText);
+
+    await removeTempDirectory();
+  });
+
+  test.only("can create empty subfolder via set()", async () => {
+    await createTempDirectory();
+
+    // Write out new, empty folder called "empty".
+    const tempFiles = new FileTree(tempDirectory);
+    await tempFiles.set("empty", {});
+
+    // Verify folder exists and has no contents.
+    const folderPath = path.join(tempDirectory, "empty");
+    const stats = await fs.stat(folderPath);
+    assert(stats.isDirectory());
+    const files = await fs.readdir(folderPath);
+    assert.deepEqual(files, []);
 
     await removeTempDirectory();
   });

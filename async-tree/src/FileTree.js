@@ -6,6 +6,7 @@ import {
   getRealmObjectPrototype,
   hiddenFileNames,
   isPacked,
+  isPlainObject,
   naturalOrder,
 } from "./utilities.js";
 
@@ -165,6 +166,9 @@ export default class FileTree {
       await fs.mkdir(this.dirname, { recursive: true });
       // Write out the value as the contents of a file.
       await fs.writeFile(destPath, value);
+    } else if (isPlainObject(value) && Object.keys(value).length === 0) {
+      // Special case: empty object means create an empty directory.
+      await fs.mkdir(destPath, { recursive: true });
     } else if (Tree.isTreelike(value)) {
       // Treat value as a tree and write it out as a subdirectory.
       const destTree = Reflect.construct(this.constructor, [destPath]);
