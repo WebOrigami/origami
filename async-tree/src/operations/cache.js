@@ -1,8 +1,10 @@
 import { DeepObjectTree, Tree } from "../internal.js";
 
 /**
- * Caches values from a source tree in a second cache tree. If no second tree is
- * supplied, an in-memory cache is used.
+ * Caches values from a source tree in a second cache tree. Cache source tree
+ * keys in memory.
+ *
+ * If no second tree is supplied, an in-memory value cache is used.
  *
  * An optional third filter tree can be supplied. If a filter tree is supplied,
  * only values for keys that match the filter will be cached.
@@ -22,6 +24,7 @@ export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
 
   /** @type {AsyncMutableTree} */
   const cache = cacheTree ?? new DeepObjectTree({});
+  let keys;
   return {
     description: "cache",
 
@@ -65,14 +68,7 @@ export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
     },
 
     async keys() {
-      const keys = new Set(await source.keys());
-
-      // We also add the cache's keys in case the keys provided by the source
-      // tree have changed since the cache was updated.
-      for (const key of await cache.keys()) {
-        keys.add(key);
-      }
-
+      keys ??= source.keys();
       return keys;
     },
   };
