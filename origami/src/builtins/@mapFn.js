@@ -129,17 +129,22 @@ export default function mapFnBuiltin(operation) {
 function parseExtensions(specifier) {
   const lowercase = specifier?.toLowerCase() ?? "";
   const extensionRegex =
-    /^\.?(?<sourceExtension>\S*)(?:\s*(→|->)\s*)\.?(?<extension>\S+)$/;
-  let resultExtension;
-  let sourceExtension;
+    /^(\.?(?<sourceExtension>\S*)\s*(→|->)\s*\.?(?<resultExtension>\S*))|(\.?(?<extension>\S*))$/;
   const match = lowercase.match(extensionRegex);
-  if (match?.groups) {
+  if (!match) {
+    // Shouldn't happen because the regex is exhaustive.
+    throw new Error(`@mapFn: Invalid extension specifier "${specifier}".`);
+  }
+  // @ts-ignore
+  const { extension, resultExtension, sourceExtension } = match.groups;
+  if (sourceExtension || resultExtension) {
     // foo→bar
-    ({ extension: resultExtension, sourceExtension } = match.groups);
+    return { resultExtension, sourceExtension };
   } else {
     // foo
-    resultExtension = lowercase;
-    sourceExtension = lowercase;
+    return {
+      resultExtension: specifier,
+      sourceExtension: specifier,
+    };
   }
-  return { resultExtension, sourceExtension };
 }

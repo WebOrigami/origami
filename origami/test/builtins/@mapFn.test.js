@@ -38,6 +38,21 @@ describe("@mapFn", () => {
     });
   });
 
+  test("can remove a key's extension", async () => {
+    const treelike = {
+      "file1.txt": 1,
+      "file2.txt": 2,
+    };
+    const transform = mapFn.call(null, {
+      extension: "txt->",
+    });
+    const fixture = transform(treelike);
+    assert.deepEqual(await Tree.plain(fixture), {
+      file1: 1,
+      file2: 2,
+    });
+  });
+
   test("can map keys and values deeply", async () => {
     const treelike = new DeepObjectTree({
       a: 1,

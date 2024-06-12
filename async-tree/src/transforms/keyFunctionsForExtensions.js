@@ -13,7 +13,7 @@ export default function keyFunctionsForExtensions({
   resultExtension,
   sourceExtension,
 }) {
-  if (!resultExtension) {
+  if (resultExtension === undefined) {
     resultExtension = sourceExtension;
   }
 
