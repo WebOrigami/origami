@@ -26,40 +26,49 @@ export default async function project(key) {
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
-  let containerTree = await findConfigContainer(currentTree);
 
-  let config;
-  if (containerTree) {
+  // Search up the tree for the configuration file or package.json to determine
+  // the project root.
+  let rootTree =
+    (await findAncestorFile(currentTree, configFileName)) ??
+    (await findAncestorFile(currentTree, "package.json"));
+
+  let config = null;
+  if (rootTree) {
     // Load the configuration.
-    const configParent = Scope.treeWithScope(containerTree, builtins);
+    const configParent = Scope.treeWithScope(rootTree, builtins);
     const buffer = await configParent.get(configFileName);
-    config = await fileTypeOrigami.unpack(buffer, {
-      key: configFileName,
-      parent: configParent,
-    });
-    if (!config) {
-      const configPath = /** @type {any} */ (configParent).path;
-      throw new Error(
-        `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
-      );
+    if (buffer) {
+      // Project has configuration file
+      config = await fileTypeOrigami.unpack(buffer, {
+        key: configFileName,
+        parent: configParent,
+      });
+      if (!config) {
+        const configPath = /** @type {any} */ (configParent).path;
+        throw new Error(
+          `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
+        );
+      }
     }
   } else {
-    containerTree = currentTree;
-    config = null;
+    rootTree = currentTree;
   }
 
   // Add the configuration as the context for the project root.
   const scope = new Scope(config, builtins);
-  const result = Scope.treeWithScope(containerTree, scope);
+  const result = Scope.treeWithScope(rootTree, scope);
   return key === undefined ? result : result.get(key);
 }
 
-async function findConfigContainer(start) {
+// Return the first ancestor of the given tree that contains a file with the
+// given name.
+async function findAncestorFile(start, fileName) {
   let current = start;
   while (current) {
-    const config = await current.get(configFileName);
-    if (config) {
-      // Found a configuration; its container is the project root.
+    const value = await current.get(fileName);
+    if (value) {
+      // Found the desired file; its container is the project root.
       return current;
     }
     // Not found; try the parent.
