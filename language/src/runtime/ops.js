@@ -3,7 +3,12 @@
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  */
 
-import { ObjectTree, SiteTree, Tree } from "@weborigami/async-tree";
+import {
+  ObjectTree,
+  SiteTree,
+  Tree,
+  isUnpackable,
+} from "@weborigami/async-tree";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
@@ -68,7 +73,10 @@ function constructHref(protocol, host, ...keys) {
  */
 export async function constructor(...keys) {
   const scope = this;
-  const constructor = await Tree.traverseOrThrow(scope, ...keys);
+  let constructor = await Tree.traverseOrThrow(scope, ...keys);
+  if (isUnpackable(constructor)) {
+    constructor = await constructor.unpack();
+  }
   return (...args) => new constructor(...args);
 }
 constructor.toString = () => "«ops.constructor»";
