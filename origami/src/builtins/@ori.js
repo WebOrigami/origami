@@ -44,7 +44,8 @@ async function formatResult(result) {
   if (
     typeof result === "string" ||
     result instanceof ArrayBuffer ||
-    result instanceof TypedArray
+    result instanceof TypedArray ||
+    result instanceof ReadableStream
   ) {
     // Use as is
     return result;

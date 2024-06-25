@@ -4,6 +4,7 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { Scope, formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
+import { Readable } from "node:stream";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
 import { keySymbol } from "../common/utilities.js";
@@ -44,21 +45,26 @@ async function main(...args) {
   const scope = Scope.getScope(tree);
   const result = await ori.call(scope, expression);
   if (result !== undefined) {
-    const output =
-      result instanceof ArrayBuffer
-        ? new Uint8Array(result)
-        : typeof result === "string" || result instanceof TypedArray
-        ? result
-        : String(result);
-    await stdout.write(output);
+    if (result instanceof ReadableStream) {
+      const readable = Readable.from(result[Symbol.asyncIterator]());
+      await readable.pipe(stdout);
+    } else {
+      const output =
+        result instanceof ArrayBuffer
+          ? new Uint8Array(result)
+          : typeof result === "string" || result instanceof TypedArray
+          ? result
+          : String(result);
+      await stdout.write(output);
 
-    // If stdout points to the console, and the result didn't end in a newline,
-    // then output a newline.
-    if (stdout.isTTY) {
-      const lastChar = output[output.length - 1];
-      const isNewLine = lastChar === "\n" || lastChar === 10;
-      if (!isNewLine) {
-        await stdout.write("\n");
+      // If stdout points to the console, and the result didn't end in a newline,
+      // then output a newline.
+      if (stdout.isTTY) {
+        const lastChar = output[output.length - 1];
+        const isNewLine = lastChar === "\n" || lastChar === 10;
+        if (!isNewLine) {
+          await stdout.write("\n");
+        }
       }
     }
   }
