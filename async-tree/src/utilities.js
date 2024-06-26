@@ -1,3 +1,4 @@
+const Generator = Object.getPrototypeOf(function* () {}).constructor;
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -174,11 +175,13 @@ export async function pipeline(start, ...fns) {
  * the standard JavaScript `toString()` method:
  *
  * 1. If the object is an ArrayBuffer or TypedArray, decode the array as UTF-8.
- * 2. If the object is otherwise a plain JavaScript object with the useless
+ * 2. If the object is a generator or iterator, collect the values as
+ *    strings and join them.
+ * 3. If the object is otherwise a plain JavaScript object with the useless
  *    default toString() method, return null instead of "[object Object]". In
  *    practice, it's generally more useful to have this method fail than to
  *    return a useless string.
- * 3. If the object is a primitive value, return the result of String(object).
+ * 4. If the object is a primitive value, return the result of String(object).
  *
  * @param {any} object
  * @returns {string|null}
@@ -191,6 +194,11 @@ export function toString(object) {
     // https://stackoverflow.com/a/1677660/76472
     const hasNonPrintableCharacters = /[\x00-\x08\x0E-\x1F]/.test(decoded);
     return hasNonPrintableCharacters ? null : decoded;
+  } else if (object instanceof Generator) {
+    return toString(object());
+  } else if (typeof object?.next === "function") {
+    // Collect the string values of the iterator.
+    return Array.from(object).map(toString).join("");
   } else if (isStringLike(object) || isPrimitive(object)) {
     return String(object);
   } else {

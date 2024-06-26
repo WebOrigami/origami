@@ -52,4 +52,12 @@ describe("utilities", () => {
     const buffer = Buffer.from("text", "utf8");
     assert.equal(utilities.toString(buffer), "text");
   });
+
+  test("toString returns the string values of a generator", () => {
+    const iterator = function* () {
+      yield 1;
+      yield "a";
+    };
+    assert.equal(utilities.toString(iterator), "1a");
+  });
 });
