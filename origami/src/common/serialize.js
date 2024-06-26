@@ -89,7 +89,7 @@ export async function toJsonValue(object) {
  *
  * If the input is stringlike, its text will be returned.
  *
- * If the input is a Buffer or ArrayBuffer, it will be interpreted as UTF-8
+ * If the input is a ArrayBuffer or typed array, it will be interpreted as UTF-8
  * text.
  *
  * If the input has a custom class instance, its public properties will be
