@@ -90,6 +90,20 @@ export function isPlainObject(object) {
 }
 
 /**
+ * Return true if the value is a defined primitive value (string, number,
+ * boolean, undefined, null, or symbol).
+ *
+ * @param {any} value
+ */
+export function isPrimitive(value) {
+  if (value == null) {
+    return false;
+  }
+  const type = typeof value;
+  return type !== "object" && type !== "function";
+}
+
+/**
  * Return true if the object is a string or object with a non-trival `toString`
  * method.
  *
@@ -164,6 +178,7 @@ export async function pipeline(start, ...fns) {
  *    default toString() method, return null instead of "[object Object]". In
  *    practice, it's generally more useful to have this method fail than to
  *    return a useless string.
+ * 3. If the object is a primitive value, return the result of String(object).
  *
  * @param {any} object
  * @returns {string|null}
@@ -176,7 +191,7 @@ export function toString(object) {
     // https://stackoverflow.com/a/1677660/76472
     const hasNonPrintableCharacters = /[\x00-\x08\x0E-\x1F]/.test(decoded);
     return hasNonPrintableCharacters ? null : decoded;
-  } else if (isStringLike(object)) {
+  } else if (isStringLike(object) || isPrimitive(object)) {
     return String(object);
   } else {
     return null;

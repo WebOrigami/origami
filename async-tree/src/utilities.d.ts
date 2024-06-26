@@ -5,6 +5,7 @@ export function getRealmObjectPrototype(object: any): any;
 export const hiddenFileNames: string[];
 export function isPacked(object: any): object is Packed;
 export function isPlainObject(object: any): object is PlainObject;
+export function isPrimitive(object: any): boolean;
 export function isUnpackable(object): object is { unpack: () => any };
 export function isStringLike(object: any): object is StringLike;
 export function keysFromPath(path: string): string[];

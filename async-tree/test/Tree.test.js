@@ -56,6 +56,22 @@ describe("Tree", () => {
     assert.deepEqual(Array.from(await Tree.entries(fixture)), []);
   });
 
+  test("deepValuesIterator() returns a generator of values", async () => {
+    const tree = new DeepObjectTree({
+      a: 1,
+      b: 2,
+      more: {
+        c: 3,
+        d: 4,
+      },
+    });
+    const values = [];
+    for await (const value of Tree.deepValuesIterator(tree)) {
+      values.push(value);
+    }
+    assert.deepEqual(values, [1, 2, 3, 4]);
+  });
+
   test("entries() returns the [key, value] pairs", async () => {
     const fixture = createFixture();
     assert.deepEqual(Array.from(await Tree.entries(fixture)), [

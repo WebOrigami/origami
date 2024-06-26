@@ -72,6 +72,26 @@ export async function clear(tree) {
   }
 }
 
+export async function* deepValuesIterator(
+  treelike,
+  options = { expand: false }
+) {
+  const tree = from(treelike);
+  for (const key of await tree.keys()) {
+    let value = await tree.get(key);
+
+    // Recurse into child trees, but don't expand functions.
+    const recurse =
+      isAsyncTree(value) ||
+      (options.expand && typeof value !== "function" && isTreelike(value));
+    if (recurse) {
+      yield* deepValuesIterator(value, options);
+    } else {
+      yield value;
+    }
+  }
+}
+
 /**
  * Returns a new `Iterator` object that contains a two-member array of `[key,
  * value]` for each element in the specific node of the tree.

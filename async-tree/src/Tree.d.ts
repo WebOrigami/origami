@@ -3,6 +3,7 @@ import { PlainObject, ReduceFn, Treelike, ValueKeyFn } from "../index.ts";
 
 export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;
 export function clear(AsyncTree: AsyncMutableTree): Promise<void>;
+export function deepValuesIterator(treelike: Treelike, options?: { expand: boolean }): AsyncIterableIterator<any>
 export function entries(AsyncTree: AsyncTree): Promise<IterableIterator<any>>;
 export function forEach(AsyncTree: AsyncTree, callbackfn: (value: any, key: any) => Promise<void>): Promise<void>;
 export function from(obj: any): AsyncTree;
