@@ -1,4 +1,3 @@
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
 const AsyncGenerator = Object.getPrototypeOf(async function* () {}).constructor;
 const Generator = Object.getPrototypeOf(function* () {}).constructor;
 const textDecoder = new TextDecoder();
@@ -59,7 +58,6 @@ export function isPacked(object) {
   return (
     typeof object === "string" ||
     object instanceof ArrayBuffer ||
-    object instanceof Buffer ||
     object instanceof ReadableStream ||
     object instanceof String ||
     object instanceof TypedArray

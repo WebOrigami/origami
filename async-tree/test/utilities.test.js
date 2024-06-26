@@ -48,8 +48,8 @@ describe("utilities", () => {
     assert.equal(utilities.toString(object), null);
   });
 
-  test("toString decodes an ArrayBuffer as UTF-8", () => {
-    const buffer = Buffer.from("text", "utf8");
+  test("toString decodes a typed array as UTF-8", () => {
+    const buffer = new TextEncoder().encode("text");
     assert.equal(utilities.toString(buffer), "text");
   });
 

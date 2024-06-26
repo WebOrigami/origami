@@ -12,7 +12,7 @@ describe("utilities", () => {
   test("isStringLike returns true for things that can act like strings", () => {
     assert(isStringLike("string"));
     assert(isStringLike(new String("string")));
-    assert(isStringLike(Buffer.from("buffer")));
+    assert(isStringLike(new TextEncoder().encode("buffer")));
     assert(!isStringLike({}));
     assert(isStringLike({ toString: () => "string" }));
   });

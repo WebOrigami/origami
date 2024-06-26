@@ -1,4 +1,8 @@
-import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
+import {
+  Tree,
+  getRealmObjectPrototype,
+  toString,
+} from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
@@ -20,8 +24,8 @@ export default async function ori(
   options = { formatResult: true }
 ) {
   assertScopeIsDefined(this, "ori");
-  // In case expression is a Buffer, cast it to a string.
-  expression = String(expression);
+
+  expression = toString(expression);
 
   // Obtain the scope from `this` or builtins.
   let scope = this ?? builtins;

@@ -12,7 +12,8 @@ import {
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
-import concatTreeValues from "./concatTreeValues.js";
+// import concatTreeValues from "./concatTreeValues.js";
+import concatTreeValues from "./concatTreeValues2.js";
 import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
