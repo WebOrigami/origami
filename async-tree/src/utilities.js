@@ -1,3 +1,5 @@
+const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const AsyncGenerator = Object.getPrototypeOf(async function* () {}).constructor;
 const Generator = Object.getPrototypeOf(function* () {}).constructor;
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -203,5 +205,27 @@ export function toString(object) {
     return String(object);
   } else {
     return null;
+  }
+}
+
+export async function toStringAsync(object) {
+  if (typeof object === "function") {
+    object = await object();
+  }
+
+  if (object instanceof ReadableStream) {
+    return toStringAsync(object[Symbol.asyncIterator]());
+  } else if (object instanceof AsyncGenerator) {
+    return toStringAsync(object());
+  } else if (typeof object?.next === "function") {
+    // Collect the string values of the async iterator.
+    const values = [];
+    for await (let value of object) {
+      values.push(value);
+    }
+    const strings = await Promise.all(values.map(toStringAsync));
+    return strings.join("");
+  } else {
+    return toString(object);
   }
 }

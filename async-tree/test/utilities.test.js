@@ -53,11 +53,28 @@ describe("utilities", () => {
     assert.equal(utilities.toString(buffer), "text");
   });
 
-  test("toString returns the string values of a generator", () => {
+  test("toString returns the text produced by a generator", () => {
     const iterator = function* () {
       yield 1;
       yield "a";
     };
     assert.equal(utilities.toString(iterator), "1a");
+  });
+
+  test("toStringAsync returns the text produced by an async generator", async () => {
+    const asyncIterator = async function* () {
+      yield 1;
+      yield "a";
+    };
+    assert.equal(await utilities.toStringAsync(asyncIterator), "1a");
+  });
+
+  test("toStringAsync returns the text of a ReadableStream", async () => {
+    const asyncIterator = (async function* () {
+      yield 1;
+      yield "a";
+    })();
+    const stream = ReadableStream.from(asyncIterator);
+    assert.equal(await utilities.toStringAsync(stream), "1a");
   });
 });
