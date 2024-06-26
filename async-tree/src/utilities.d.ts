@@ -11,4 +11,6 @@ export function isStringLike(object: any): object is StringLike;
 export function keysFromPath(path: string): string[];
 export const naturalOrder: (a: string, b: string) => number;
 export function pipeline(start: any, ...functions: Function[]): Promise<any>;
+export function toPlainValue(object: any): Promise<any>;
+export function toStringAsync(object: any): Promise<string>;
 export function toString(object: any): string;
