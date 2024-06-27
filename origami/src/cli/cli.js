@@ -70,6 +70,15 @@ async function main(...args) {
   }
 }
 
+function streamResult(result) {
+  if (result instanceof ReadableStream) {
+    return result;
+  }
+
+  if (result instanceof ArrayBuffer) {
+  }
+}
+
 // Process command line arguments
 const args = process.argv;
 args.shift(); // "node"
