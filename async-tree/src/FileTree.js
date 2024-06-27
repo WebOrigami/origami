@@ -144,7 +144,11 @@ export default class FileTree {
       // Treat null value as empty string; will create an empty file.
       value = "";
       packed = true;
-    } else if (isPacked(value)) {
+    } else if (!(value instanceof String) && isPacked(value)) {
+      // As of Node 22, fs.writeFile is incredibly slow for large String
+      // instances. Instead of treating a String instance as a Packed value, we
+      // want to consider it as a stringlike below. That will convert it to a
+      // primitive string before writing — which is orders of magnitude faster.
       packed = true;
     } else if (typeof value.pack === "function") {
       // Pack the value for writing.
