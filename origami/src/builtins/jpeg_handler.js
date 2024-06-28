@@ -17,6 +17,10 @@ export default {
 
   /** @type {import("@weborigami/language").UnpackFunction} */
   async unpack(packed, options) {
+    if (packed instanceof Uint8Array) {
+      // Downgrade to old Node Buffer for exif-parser.
+      packed = Buffer.from(packed);
+    }
     const parser = exifParser.create(packed);
     parser.enableTagNames(true);
     parser.enableSimpleValues(true);
