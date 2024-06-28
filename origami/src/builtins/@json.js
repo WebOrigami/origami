@@ -1,6 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { isUnpackable } from "@weborigami/async-tree";
-import * as serialize from "../common/serialize.js";
+import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
@@ -24,7 +23,7 @@ export default async function json(obj) {
   if (isUnpackable(obj)) {
     obj = await obj.unpack();
   }
-  const value = await serialize.toJsonValue(obj);
+  const value = await toPlainValue(obj);
   return JSON.stringify(value, null, 2);
 }
 

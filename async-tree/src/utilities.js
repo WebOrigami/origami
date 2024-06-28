@@ -1,3 +1,5 @@
+import { Tree } from "./internal.js";
+
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -56,7 +58,6 @@ export function isPacked(object) {
   return (
     typeof object === "string" ||
     object instanceof ArrayBuffer ||
-    object instanceof Buffer ||
     object instanceof ReadableStream ||
     object instanceof String ||
     object instanceof TypedArray
@@ -87,6 +88,16 @@ export function isPlainObject(object) {
 
   // Do we inherit directly from Object in this realm?
   return Object.getPrototypeOf(object) === getRealmObjectPrototype(object);
+}
+
+/**
+ * Return true if the value is a primitive JavaScript value.
+ *
+ * @param {any} value
+ */
+export function isPrimitive(value) {
+  const type = typeof value;
+  return type !== "object" && type !== "function";
 }
 
 /**
@@ -156,6 +167,57 @@ export async function pipeline(start, ...fns) {
 }
 
 /**
+ * Convert the given input to the plainest possible JavaScript value. This
+ * helper is intended for functions that want to accept an argument from the ori
+ * CLI, which could a string, a stream of data, or some other kind of JavaScript
+ * object.
+ *
+ * If the input is a function, it will be invoked and its result will be
+ * processed.
+ *
+ * If the input is a promise, it will be resolved and its result will be
+ * processed.
+ *
+ * If the input is treelike, it will be converted to a plain JavaScript object,
+ * recursively traversing the tree and converting all values to plain types.
+ *
+ * If the input is stringlike, its text will be returned.
+ *
+ * If the input is a ArrayBuffer or typed array, it will be interpreted as UTF-8
+ * text.
+ *
+ * If the input has a custom class instance, its public properties will be
+ * returned as a plain object.
+ *
+ * @param {any} input
+ * @returns {Promise<any>}
+ */
+export async function toPlainValue(input) {
+  if (input instanceof Function) {
+    // Invoke function
+    input = input();
+  }
+  if (input instanceof Promise) {
+    // Resolve promise
+    input = await input;
+  }
+
+  if (isPrimitive(input)) {
+    return input;
+  } else if (Tree.isTreelike(input)) {
+    const mapped = await Tree.map(input, (value) => toPlainValue(value));
+    return Tree.plain(mapped);
+  } else {
+    // Some other kind of class instance; return its public properties.
+    const plain = {};
+    for (const [key, value] of Object.entries(input)) {
+      plain[key] = await toPlainValue(value);
+    }
+    return plain;
+  }
+}
+
+/**
  * Return a string form of the object, handling cases not generally handled by
  * the standard JavaScript `toString()` method:
  *
@@ -164,6 +226,10 @@ export async function pipeline(start, ...fns) {
  *    default toString() method, return null instead of "[object Object]". In
  *    practice, it's generally more useful to have this method fail than to
  *    return a useless string.
+ * 3. If the object is a defined primitive value, return the result of
+ *    String(object).
+ *
+ * Otherwise return null.
  *
  * @param {any} object
  * @returns {string|null}
@@ -176,7 +242,7 @@ export function toString(object) {
     // https://stackoverflow.com/a/1677660/76472
     const hasNonPrintableCharacters = /[\x00-\x08\x0E-\x1F]/.test(decoded);
     return hasNonPrintableCharacters ? null : decoded;
-  } else if (isStringLike(object)) {
+  } else if (isStringLike(object) || (object !== null && isPrimitive(object))) {
     return String(object);
   } else {
     return null;

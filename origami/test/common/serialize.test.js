@@ -22,12 +22,6 @@ c: Hello, c.`;
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
-  test("toValue() can map a tree to a plain object", async () => {
-    const tree = new ObjectTree({ a: "Hello, a." });
-    const value = await serialize.toValue(tree);
-    assert.deepEqual(value, { a: "Hello, a." });
-  });
-
   test("toYaml() renders a tree as YAML", async () => {
     const tree = new ObjectTree({ a: "Hello, a." });
     const yaml = await serialize.toYaml(tree);

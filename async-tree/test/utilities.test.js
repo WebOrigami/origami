@@ -36,6 +36,22 @@ describe("utilities", () => {
     assert.equal(result, 16);
   });
 
+  test("toPlainValue returns the plainest representation of an object", async () => {
+    class User {
+      constructor(name) {
+        this.name = name;
+      }
+    }
+
+    assert.equal(await utilities.toPlainValue(1), 1);
+    assert.equal(await utilities.toPlainValue("string"), "string");
+    assert.deepEqual(await utilities.toPlainValue({ a: 1 }), { a: 1 });
+    assert.equal(await utilities.toPlainValue(async () => "result"), "result");
+    assert.deepEqual(await utilities.toPlainValue(new User("Alice")), {
+      name: "Alice",
+    });
+  });
+
   test("toString returns the value of an object's `toString` method", () => {
     const object = {
       toString: () => "text",
