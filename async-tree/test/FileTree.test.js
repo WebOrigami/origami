@@ -9,6 +9,8 @@ import { Tree } from "../src/internal.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
+const textDecoder = new TextDecoder();
+
 describe.only("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
@@ -21,8 +23,9 @@ describe.only("FileTree", async () => {
 
   test("can get the value for a key", async () => {
     const fixture = createFixture("fixtures/markdown");
-    const alice = await fixture.get("Alice.md");
-    assert.equal(alice, "Hello, **Alice**.");
+    const buffer = await fixture.get("Alice.md");
+    const text = textDecoder.decode(buffer);
+    assert.equal(text, "Hello, **Alice**.");
   });
 
   test("getting an unsupported key returns undefined", async () => {
@@ -95,7 +98,9 @@ describe.only("FileTree", async () => {
 
     // Read them back in.
     const actualFiles = await tempFiles.get("folder");
-    const strings = Tree.map(actualFiles, (buffer) => String(buffer));
+    const strings = Tree.map(actualFiles, (buffer) =>
+      textDecoder.decode(buffer)
+    );
     const plain = await Tree.plain(strings);
     assert.deepEqual(plain, obj);
 

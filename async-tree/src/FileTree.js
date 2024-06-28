@@ -13,6 +13,12 @@ import {
 /**
  * A file system tree via the Node file system API.
  *
+ * File values are returned as Uint8Array instances. The underlying Node fs API
+ * returns file contents as instances of the node-specific Buffer class, but
+ * that class has some incompatible method implementations; see
+ * https://nodejs.org/api/buffer.html#buffers-and-typedarrays. For greater
+ * compatibility, files are returned as standard Uint8Array instances instead.
+ *
  * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  * @implements {AsyncMutableTree}
  */
@@ -65,8 +71,9 @@ export default class FileTree {
       subtree.parent = this;
       return subtree;
     } else {
-      // Return file contents
-      return fs.readFile(filePath);
+      // Return file contents as a standard Uint8Array.
+      const buffer = await fs.readFile(filePath);
+      return Uint8Array.from(buffer);
     }
   }
 
