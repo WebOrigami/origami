@@ -2,7 +2,16 @@ import type { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 
-export type KeyFn = (key: any, innerTree: AsyncTree) => any;
+/**
+ * Like an HTTP Response object, but without the HTTP part.
+ */
+export type AsyncData = {
+  body: ReadableStream;
+  arrayBuffer(): Promise<ArrayBuffer>;
+  blob(): Promise<Blob>;
+  bytes(): Promise<Uint8Array>;
+  text(): Promise<string>;
+}
 
 /**
  * An object with a non-trivial `toString` method.
@@ -15,11 +24,19 @@ export type HasString = {
   toString(): string;
 };
 
+export type KeyFn = (key: any, innerTree: AsyncTree) => any;
+
 /**
  * A packed value is one that can be written to a file via fs.writeFile or into
  * an HTTP response via response.write, or readily converted to such a form.
  */
-export type Packed = ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray;
+export type Packed =
+  ArrayBuffer | 
+  AsyncData | 
+  ReadableStream | 
+  string | 
+  String | 
+  TypedArray;
 
 export type PlainObject = {
   [key: string]: any;

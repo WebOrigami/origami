@@ -1,3 +1,4 @@
+import AsyncDataStream from "./data/AsyncDataStream.js";
 import { Tree } from "./internal.js";
 
 const AsyncGenerator = Object.getPrototypeOf(async function* () {}).constructor;
@@ -220,6 +221,27 @@ export async function toPlainValue(input) {
     }
     return plain;
   }
+}
+
+export function toStream(object) {
+  return toAsyncData(object).body;
+}
+
+export function toAsyncData(object) {
+  if (object instanceof AsyncData) {
+    return object;
+  } else if (object instanceof ArrayBuffer) {
+    return new AsyncDataArrayBuffer(object);
+  } else if (object instanceof Blob) {
+    return new AsyncDataBlob(object);
+  } else if (object instanceof Uint8Array) {
+    return new AsyncDataBytes(object);
+  } else if (object instanceof ReadableStream) {
+    return new AsyncDataStream(object);
+  } else if (isStringLike(object)) {
+    return new AsyncDataText(object);
+  }
+  throw new Error("Cannot convert object to AsyncData");
 }
 
 /**
