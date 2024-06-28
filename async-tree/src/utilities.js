@@ -96,6 +96,10 @@ export function isPlainObject(object) {
  * @param {any} value
  */
 export function isPrimitive(value) {
+  // Check for null first, since typeof null === "object".
+  if (value === null) {
+    return true;
+  }
   const type = typeof value;
   return type !== "object" && type !== "function";
 }
