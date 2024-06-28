@@ -15,6 +15,7 @@ export { default as deepMerge } from "./src/operations/deepMerge.js";
 export { default as deepTake } from "./src/operations/deepTake.js";
 export { default as deepTakeFn } from "./src/operations/deepTakeFn.js";
 export { default as deepValues } from "./src/operations/deepValues.js";
+export { default as deepValuesIterator } from "./src/operations/deepValuesIterator.js";
 export { default as group } from "./src/operations/group.js";
 export { default as groupFn } from "./src/operations/groupFn.js";
 export { default as map } from "./src/operations/map.js";
