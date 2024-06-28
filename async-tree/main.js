@@ -11,6 +11,7 @@ export { default as SiteTree } from "./src/SiteTree.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
 export * as keysJson from "./src/keysJson.js";
 export { default as cache } from "./src/operations/cache.js";
+export { default as concat } from "./src/operations/concat.js";
 export { default as deepMerge } from "./src/operations/deepMerge.js";
 export { default as deepTake } from "./src/operations/deepTake.js";
 export { default as deepTakeFn } from "./src/operations/deepTakeFn.js";

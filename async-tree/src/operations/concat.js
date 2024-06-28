@@ -1,10 +1,7 @@
 import { deepValuesIterator, toString } from "@weborigami/async-tree";
 
 /**
- * Concatenate the text values in a tree.
- *
- * This is a map-reduce operation: convert everything to strings, then
- * concatenate the strings.
+ * Concatenate the deep text values in a tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *

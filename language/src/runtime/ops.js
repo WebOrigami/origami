@@ -8,11 +8,11 @@ import {
   SiteTree,
   Tree,
   isUnpackable,
+  concat as treeConcat,
 } from "@weborigami/async-tree";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import Scope from "./Scope.js";
-import concatTreeValues from "./concatTreeValues.js";
 import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -42,7 +42,7 @@ export const assign = "«ops.assign»";
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return concatTreeValues.call(this, args);
+  return treeConcat.call(this, args);
 }
 concat.toString = () => "«ops.concat»";
 

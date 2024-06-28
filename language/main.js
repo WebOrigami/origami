@@ -13,7 +13,6 @@ export { default as OrigamiTree } from "./src/runtime/OrigamiTree.js";
 export { default as Scope } from "./src/runtime/Scope.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";
-export { default as concatTreeValues } from "./src/runtime/concatTreeValues.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export { default as extname } from "./src/runtime/extname.js";

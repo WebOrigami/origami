@@ -1,9 +1,9 @@
 import { FunctionTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import concatTreeValues from "../../src/runtime/concatTreeValues.js";
+import concat from "../../src/operations/concat.js";
 
-describe("concatTreeValues", () => {
+describe("concat", () => {
   test("concatenates deep tree values", async () => {
     const tree = Tree.from({
       a: "A",
@@ -14,7 +14,7 @@ describe("concatTreeValues", () => {
         e: "E",
       },
     });
-    const result = await concatTreeValues.call(null, tree);
+    const result = await concat.call(null, tree);
     assert.equal(result, "ABCDE");
   });
 
@@ -27,7 +27,7 @@ describe("concatTreeValues", () => {
       }),
       letters
     );
-    const result = await concatTreeValues.call(null, specimens);
+    const result = await concat.call(null, specimens);
     assert.equal(result, "aAbBcC");
   });
 });
