@@ -42,7 +42,9 @@ export default class AsyncDataStream {
   async bytes() {
     const chunks = [];
     for await (const chunk of this.stream) {
-      chunks.push(chunk);
+      const array =
+        chunk instanceof Uint8Array ? chunk : new TextEncoder().encode(chunk);
+      chunks.push(array);
     }
 
     const size = chunks.reduce((acc, chunk) => acc + chunk.length, 0);

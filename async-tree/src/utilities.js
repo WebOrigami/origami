@@ -51,6 +51,21 @@ export function getRealmObjectPrototype(object) {
 export const hiddenFileNames = [".DS_Store"];
 
 /**
+ * Return true if the object is an async data object compatible with the HTTP
+ * Response class.
+ *
+ * @param {any} object
+ * @returns {object is import("../index.ts").AsyncData}
+ */
+export function isAsyncData(object) {
+  return (
+    "body" in object &&
+    typeof object.bytes === "function" &&
+    typeof object.text === "function"
+  );
+}
+
+/**
  * Return true if the object is in a packed form (or can be readily packed into
  * a form) that can be given to fs.writeFile or response.write().
  *
@@ -228,14 +243,12 @@ export function toStream(object) {
 }
 
 export function toAsyncData(object) {
-  if (object instanceof AsyncData) {
+  if (isAsyncData(object)) {
     return object;
-  } else if (object instanceof ArrayBuffer) {
-    return new AsyncDataArrayBuffer(object);
-  } else if (object instanceof Blob) {
-    return new AsyncDataBlob(object);
-  } else if (object instanceof Uint8Array) {
-    return new AsyncDataBytes(object);
+    // } else if (object instanceof Blob) {
+    //   return new AsyncDataBlob(object);
+    // } else if (object instanceof Uint8Array) {
+    //   return new AsyncDataBytes(object);
   } else if (object instanceof ReadableStream) {
     return new AsyncDataStream(object);
   } else if (isStringLike(object)) {

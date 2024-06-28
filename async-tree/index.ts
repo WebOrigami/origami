@@ -7,8 +7,8 @@ export * from "./main.js";
  */
 export type AsyncData = {
   body: ReadableStream;
-  arrayBuffer(): Promise<ArrayBuffer>;
-  blob(): Promise<Blob>;
+  // arrayBuffer(): Promise<ArrayBuffer>;
+  // blob(): Promise<Blob>;
   bytes(): Promise<Uint8Array>;
   text(): Promise<string>;
 }
