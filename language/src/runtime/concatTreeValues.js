@@ -1,7 +1,4 @@
-import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
-
-const textDecoder = new TextDecoder();
-const TypedArray = Object.getPrototypeOf(Uint8Array);
+import { deepValuesIterator, toString } from "@weborigami/async-tree";
 
 /**
  * Concatenate the text values in a tree.
@@ -15,45 +12,11 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  * @param {import("@weborigami/async-tree").Treelike} treelike
  */
 export default async function concatTreeValues(treelike) {
-  const scope = this;
-  const mapFn = async (value) => getText(value, scope);
-  const reduceFn = (values) => values.join("");
-  return Tree.mapReduce(treelike, mapFn, reduceFn);
-}
-
-async function getText(value, scope) {
-  // If the value is a function (e.g., a lambda), call it and use its result.
-  if (typeof value === "function") {
-    value = await value.call(scope);
+  const strings = [];
+  for await (const value of deepValuesIterator(treelike, { expand: true })) {
+    if (value) {
+      strings.push(toString(value));
+    }
   }
-
-  if (Tree.isTreelike(value)) {
-    // The mapReduce operation above only implicit casts its top-level input to
-    // a tree. If we're asked for the text of a treelike value, we need to
-    // explicitly recurse.
-    return concatTreeValues.call(scope, value);
-  }
-
-  // Convert to text, preferring .toString but avoiding dumb Object.toString.
-  // Exception: if the result is an array, we'll concatenate the values.
-  let text;
-  if (value == null || value === false) {
-    // Treat falsy values (but not zero) as the empty string.
-    text = "";
-  } else if (typeof value === "string") {
-    text = value;
-  } else if (value instanceof ArrayBuffer || value instanceof TypedArray) {
-    // Serialize data as UTF-8.
-    text = textDecoder.decode(value);
-  } else if (
-    !(value instanceof Array) &&
-    value.toString !== getRealmObjectPrototype(value)?.toString
-  ) {
-    text = value.toString();
-  } else {
-    // Anything else maps to the empty string.
-    text = "";
-  }
-
-  return text;
+  return strings.join("");
 }
