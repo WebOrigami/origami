@@ -211,6 +211,8 @@ export async function toPlainValue(input) {
   } else if (Tree.isTreelike(input)) {
     const mapped = await Tree.map(input, (value) => toPlainValue(value));
     return Tree.plain(mapped);
+  } else if (isStringLike(input)) {
+    return toString(input);
   } else {
     // Some other kind of class instance; return its public properties.
     const plain = {};
