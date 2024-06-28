@@ -62,7 +62,7 @@ export default async function constructResponse(request, resource) {
     !isStringLike(resource)
   ) {
     // The request is for a JSON or YAML result, and the resource we got isn't
-    // yet a string or Buffer: convert the resource to JSON or YAML now.
+    // yet a string: convert the resource to JSON or YAML now.
     const tree = Tree.from(resource);
     resource =
       mediaType === "text/yaml"
@@ -103,7 +103,7 @@ export default async function constructResponse(request, resource) {
   if (!validResponse) {
     const typeName = body?.constructor?.name ?? typeof body;
     console.error(
-      `A served tree must return a string or a TypedArray (such as a Buffer) but returned an instance of ${typeName}.`
+      `A served tree must return a string or a TypedArray but returned an instance of ${typeName}.`
     );
     return null;
   }
@@ -123,8 +123,8 @@ export default async function constructResponse(request, resource) {
  */
 function textOrObject(object) {
   if (object instanceof ArrayBuffer) {
-    // Convert to Buffer.
-    return Buffer.from(object);
+    // Convert to Uint8Array so we can write it to the Response.
+    return new Uint8Array(object);
   } else if (object instanceof TypedArray) {
     // Return typed arrays as is.
     return object;

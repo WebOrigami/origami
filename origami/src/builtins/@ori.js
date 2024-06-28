@@ -20,7 +20,8 @@ export default async function ori(
   options = { formatResult: true }
 ) {
   assertScopeIsDefined(this, "ori");
-  // In case expression is a Buffer, cast it to a string.
+
+  // In case expression has come from a file, cast it to a string.
   expression = String(expression);
 
   // Obtain the scope from `this` or builtins.

@@ -65,7 +65,7 @@ describe("utilities", () => {
   });
 
   test("toString decodes an ArrayBuffer as UTF-8", () => {
-    const buffer = Buffer.from("text", "utf8");
-    assert.equal(utilities.toString(buffer), "text");
+    const arrayBuffer = new TextEncoder().encode("text").buffer;
+    assert.equal(utilities.toString(arrayBuffer), "text");
   });
 });

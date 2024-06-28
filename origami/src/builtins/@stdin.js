@@ -16,7 +16,13 @@ function readAll(readable) {
     });
 
     readable.on("end", () => {
-      const buffer = Buffer.concat(chunks);
+      const size = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+      const buffer = new Uint8Array(size);
+      let offset = 0;
+      for (const chunk of chunks) {
+        buffer.set(chunk, offset);
+        offset += chunk.length;
+      }
       resolve(buffer);
     });
   });

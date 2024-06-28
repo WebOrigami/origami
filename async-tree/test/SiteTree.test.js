@@ -3,6 +3,9 @@ import { beforeEach, describe, mock, test } from "node:test";
 import SiteTree from "../src/SiteTree.js";
 import { Tree } from "../src/internal.js";
 
+const textDecoder = new TextDecoder();
+const textEncoder = new TextEncoder();
+
 const mockHost = "https://mock";
 
 const mockResponses = {
@@ -53,8 +56,9 @@ describe("SiteTree", () => {
   test("can get the value for a key", async () => {
     const fixture = new SiteTree(mockHost);
     const about = fixture.resolve("about");
-    const alice = await about.get("Alice.html");
-    assert.equal(alice, "Hello, Alice!");
+    const arrayBuffer = await about.get("Alice.html");
+    const text = textDecoder.decode(arrayBuffer);
+    assert.equal(text, "Hello, Alice!");
   });
 
   test("getting an unsupported key returns undefined", async () => {
@@ -78,7 +82,7 @@ describe("SiteTree", () => {
   test("can convert a SiteGraph to a plain object", async () => {
     const fixture = new SiteTree(mockHost);
     // Convert buffers to strings.
-    const strings = Tree.map(fixture, (value) => value.toString());
+    const strings = Tree.map(fixture, (value) => textDecoder.decode(value));
     assert.deepEqual(await Tree.plain(strings), {
       about: {
         "Alice.html": "Hello, Alice!",
@@ -98,8 +102,7 @@ async function mockFetch(href) {
   if (mockedResponse) {
     return Object.assign(
       {
-        // Returns a Buffer, not an ArrayBuffer
-        arrayBuffer: () => Buffer.from(mockedResponse.data),
+        arrayBuffer: () => textEncoder.encode(mockedResponse.data).buffer,
         ok: true,
         status: 200,
         text: () => mockedResponse.data,

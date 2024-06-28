@@ -1,7 +1,7 @@
 import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
 
 /**
- * Unpack a packed format like a Buffer or ArrayBuffer to a usable form like
+ * Unpack a packed format like a Uint8Array or ArrayBuffer to a usable form like
  * text or a plain JavaScript object.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
