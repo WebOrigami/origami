@@ -1,4 +1,4 @@
-import AsyncDataStream from "./data/AsyncDataStream.js";
+import AsyncDataStream from "./data/StreamBuffer.js";
 import { Tree } from "./internal.js";
 
 const AsyncGenerator = Object.getPrototypeOf(async function* () {}).constructor;

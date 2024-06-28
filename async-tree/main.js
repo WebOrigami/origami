@@ -8,6 +8,7 @@ export { default as MapTree } from "./src/MapTree.js";
 export { default as DeepMapTree } from "./src/DeepMapTree.js";
 export { default as SetTree } from "./src/SetTree.js";
 export { default as SiteTree } from "./src/SiteTree.js";
+export { default as StreamBuffer } from "./src/data/StreamBuffer.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
 export * as keysJson from "./src/keysJson.js";
 export { default as cache } from "./src/operations/cache.js";
