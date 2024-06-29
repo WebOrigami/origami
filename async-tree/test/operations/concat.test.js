@@ -1,6 +1,7 @@
-import { FunctionTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import FunctionTree from "../../src/FunctionTree.js";
+import { Tree } from "../../src/internal.js";
 import concat from "../../src/operations/concat.js";
 
 describe("concat", () => {

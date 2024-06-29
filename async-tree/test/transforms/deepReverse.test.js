@@ -1,6 +1,6 @@
-import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { Tree } from "../../src/internal.js";
 import deepReverse from "../../src/transforms/deepReverse.js";
 
 describe("deepReverse", () => {

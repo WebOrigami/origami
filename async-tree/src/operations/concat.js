@@ -1,4 +1,5 @@
-import { deepValuesIterator, toString } from "@weborigami/async-tree";
+import { toString } from "../utilities.js";
+import deepValuesIterator from "./deepValuesIterator.js";
 
 /**
  * Concatenate the deep text values in a tree.

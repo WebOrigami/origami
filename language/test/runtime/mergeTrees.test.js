@@ -1,7 +1,11 @@
 import { Tree } from "@weborigami/async-tree";
-import { ExpressionTree, expressionFunction, ops } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import {
+  ExpressionTree,
+  expressionFunction,
+  ops,
+} from "../../src/runtime/internal.js";
 import mergeTrees from "../../src/runtime/mergeTrees.js";
 
 describe("mergeTrees", () => {
