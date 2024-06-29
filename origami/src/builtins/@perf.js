@@ -14,5 +14,6 @@ export default async function perf(fn, count = 1) {
     await fn.call(this);
   }
   const end = performance.now();
-  return Math.round(end - start);
+  const milliseconds = Math.round(end - start);
+  return `${milliseconds} ms`;
 }
