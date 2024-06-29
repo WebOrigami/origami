@@ -206,7 +206,7 @@ export async function toPlainValue(input) {
     input = await input;
   }
 
-  if (isPrimitive(input)) {
+  if (isPrimitive(input) || input instanceof Date) {
     return input;
   } else if (Tree.isTreelike(input)) {
     const mapped = await Tree.map(input, (value) => toPlainValue(value));
