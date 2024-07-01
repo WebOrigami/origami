@@ -366,7 +366,7 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" @expression "}"
+  = "${" __ @expr __ "}"
 
 textChar
   = escapedChar / .

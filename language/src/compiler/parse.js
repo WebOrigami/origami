@@ -2974,7 +2974,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsetemplateSubstitution() {
-    var s0, s1, s2, s3;
+    var s0, s1, s2, s3, s4, s5;
 
     peg$silentFails++;
     s0 = peg$currPos;
@@ -2986,17 +2986,19 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e73); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parseexpression();
-      if (s2 !== peg$FAILED) {
+      s2 = peg$parse__();
+      s3 = peg$parsepipeline();
+      if (s3 !== peg$FAILED) {
+        s4 = peg$parse__();
         if (input.charCodeAt(peg$currPos) === 125) {
-          s3 = peg$c2;
+          s5 = peg$c2;
           peg$currPos++;
         } else {
-          s3 = peg$FAILED;
+          s5 = peg$FAILED;
           if (peg$silentFails === 0) { peg$fail(peg$e6); }
         }
-        if (s3 !== peg$FAILED) {
-          s0 = s2;
+        if (s5 !== peg$FAILED) {
+          s0 = s3;
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
