@@ -160,7 +160,9 @@ identifierOrString
   / string
 
 implicitParensArgs "arguments with implicit parentheses"
-  = inlineSpace+ @list
+  // Implicit parens args are a separate list of `step`, not `expr`, because
+  // they can't contain a pipeline.
+  = inlineSpace+ @step|1.., separator| separator?
 
 inlineSpace
   = [ \t]

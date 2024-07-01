@@ -383,6 +383,13 @@ describe("Origami parser", () => {
         [ops.scope, "input"],
       ],
     ]);
+    assertParse("pipeline", "fn a -> b", [
+      [ops.scope, "b"],
+      [
+        [ops.scope, "fn"],
+        [ops.scope, "a"],
+      ],
+    ]);
   });
 
   test("protocolCall", () => {
