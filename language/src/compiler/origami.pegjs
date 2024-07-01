@@ -246,7 +246,15 @@ path "slash-separated path"
 
 // A single key in a slash-separated path
 pathKey "path element"
-  = key:identifierChar* { return key.join(""); }
+  = chars:pathKeyChar* { return chars.join(""); }
+
+// A single character in a slash-separated path.
+pathKeyChar
+  // This is more permissive than an identifier. It allows some characters
+  // like brackets or quotes that are not allowed in identifiers. It still
+  // does not allow parens, commas, slashes, or unescaped whitespace.
+  = [^(),/\\ \t\n\r]
+  / escapedChar
 
 // Parse a protocol call like `fn://foo/bar`.
 // There can be zero, one, or two slashes after the colon.
