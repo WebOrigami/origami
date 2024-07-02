@@ -1,5 +1,9 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { keyFunctionsForExtensions, map } from "@weborigami/async-tree";
+import {
+  keyFunctionsForExtensions,
+  map,
+  toString,
+} from "@weborigami/async-tree";
 import fileTypeOrigami from "../src/builtins/ori_handler.js";
 import { transformObject } from "../src/common/utilities.js";
 import PathTransform from "./PathTransform.js";
@@ -32,7 +36,7 @@ export default async function exportFile(src) {
  * @this {AsyncTree}
  */
 async function exportStatementForCode(codeBuffer, key) {
-  const code = String(codeBuffer);
+  const code = toString(codeBuffer);
 
   const exportsAnything = code.match(/^export /m);
   if (!exportsAnything) {
