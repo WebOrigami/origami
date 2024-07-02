@@ -6,9 +6,9 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.12.8",
-    "peggy": "4.0.2",
-    "typescript": "5.4.5"
+    "@types/node": "20.14.9",
+    "peggy": "4.0.3",
+    "typescript": "5.5.3"
   },
   "dependencies": {
     "@weborigami/async-tree": "0.0.58",
