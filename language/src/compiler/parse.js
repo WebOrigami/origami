@@ -238,7 +238,7 @@ function peg$parse(input, options) {
   var peg$r0 = /^[0-9]/;
   var peg$r1 = /^[^(){}[\]<>\-=,\/:`"'\\ \u2192\u21D2\t\n\r]/;
   var peg$r2 = /^[ \t]/;
-  var peg$r3 = /^[^(),\/\\ \t\n\r]/;
+  var peg$r3 = /^[^(){}[\],:\/\\ \t\n\r]/;
   var peg$r4 = /^[^\n\r]/;
   var peg$r5 = /^[+\-]/;
 
@@ -294,7 +294,7 @@ function peg$parse(input, options) {
   var peg$e49 = peg$otherExpectation("function arguments in parentheses");
   var peg$e50 = peg$otherExpectation("slash-separated path");
   var peg$e51 = peg$otherExpectation("path element");
-  var peg$e52 = peg$classExpectation(["(", ")", ",", "/", "\\", " ", "\t", "\n", "\r"], true, false);
+  var peg$e52 = peg$classExpectation(["(", ")", "{", "}", "[", "]", ",", ":", "/", "\\", " ", "\t", "\n", "\r"], true, false);
   var peg$e53 = peg$otherExpectation("function call using protocol: syntax");
   var peg$e54 = peg$otherExpectation("protocol");
   var peg$e55 = peg$otherExpectation("reserved protocol");

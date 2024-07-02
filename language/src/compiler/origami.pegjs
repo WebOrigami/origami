@@ -250,10 +250,9 @@ pathKey "path element"
 
 // A single character in a slash-separated path.
 pathKeyChar
-  // This is more permissive than an identifier. It allows some characters
-  // like brackets or quotes that are not allowed in identifiers. It still
-  // does not allow parens, commas, slashes, or unescaped whitespace.
-  = [^(),/\\ \t\n\r]
+  // This is more permissive than an identifier. It allows some characters like
+  // brackets or quotes that are not allowed in identifiers.
+  = [^(){}\[\],:/\\ \t\n\r]
   / escapedChar
 
 // Parse a protocol call like `fn://foo/bar`.
