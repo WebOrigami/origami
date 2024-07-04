@@ -438,6 +438,7 @@ describe("Origami parser", () => {
     assertParse("string", "'bar baz'", "bar baz");
     assertParse("string", `"foo\\"s bar"`, `foo"s bar`);
     assertParse("string", `'bar\\'s baz'`, `bar's baz`);
+    assertParse("string", `«string»`, "string");
   });
 
   test("templateDocument", () => {

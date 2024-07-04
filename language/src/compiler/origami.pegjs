@@ -138,6 +138,12 @@ functionComposition "function composition"
 group "parenthetical group"
   = "(" __ @expr __ closingParen
 
+guillemetString "guillemet string"
+  = '«' chars:guillemetStringChar* '»' { return chars.join(""); }
+
+guillemetStringChar
+  = !('»' / newLine) @textChar
+
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
@@ -148,7 +154,7 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\]<>\-=,/:\`"'\\ →⇒\t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r] // No unescaped whitespace or special chars
   / @'-' !'>' // Accept a hyphen but not in a single arrow combination
   / escapedChar
 
@@ -333,6 +339,7 @@ start
 string "string"
   = doubleQuoteString
   / singleQuoteString
+  / guillemetString
 
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
