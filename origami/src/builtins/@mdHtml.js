@@ -39,7 +39,7 @@ export default async function mdHtml(input) {
     input = await input.unpack();
   }
   const inputIsDocument = input["@text"] !== undefined;
-  const markdown = inputIsDocument ? input["@text"] : toString(input);
+  const markdown = toString(inputIsDocument ? input["@text"] : input);
   const html = marked(markdown);
   return inputIsDocument ? documentObject(html, input) : html;
 }
