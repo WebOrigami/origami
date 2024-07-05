@@ -1,4 +1,4 @@
-import { isPlainObject, isUnpackable } from "@weborigami/async-tree";
+import { isPlainObject, isUnpackable, toString } from "@weborigami/async-tree";
 // import txtHandler from "../builtins/txt_handler.js";
 
 /**
@@ -25,7 +25,7 @@ export default async function documentObject(input, data) {
     text = input["@text"];
     inputData = input;
   } else {
-    text = String(input);
+    text = toString(input);
     inputData = null;
   }
   // TODO: Either restore this code, or move responsibility for packing a
