@@ -122,7 +122,6 @@ export { default as yamlHandler } from "../src/builtins/yaml_handler.js";
 export { default as ymlHandler } from "../src/builtins/yml_handler.js";
 export { default as defaultModuleExport } from "../src/cli/defaultModuleExport.js";
 export { default as showUsage } from "../src/cli/showUsage.js";
-export { default as addValueKeyToScope } from "../src/common/addValueKeyToScope.js";
 export { default as arrowsMapFn } from "../src/common/arrowsMapFn.js";
 export { default as CommandModulesTransform } from "../src/common/CommandModulesTransform.js";
 export { default as ConstantTree } from "../src/common/ConstantTree.js";
