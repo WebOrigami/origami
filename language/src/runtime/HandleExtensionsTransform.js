@@ -1,5 +1,4 @@
 import { isStringLike } from "@weborigami/async-tree";
-import Scope from "./Scope.js";
 import handleExtension from "./handleExtension.js";
 
 /**
@@ -17,8 +16,7 @@ export default function HandleExtensionsTransform(Base) {
       // If the key is string-like and has an extension, attach a loader (if one
       // exists) that handles that extension.
       if (value && isStringLike(key)) {
-        const scope = Scope.getScope(this);
-        value = await handleExtension(scope, String(key), value, this);
+        value = await handleExtension(this, String(key), value);
       }
 
       return value;

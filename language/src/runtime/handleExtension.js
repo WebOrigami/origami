@@ -1,4 +1,4 @@
-import { isUnpackable, symbols } from "@weborigami/async-tree";
+import { isUnpackable, scope, symbols } from "@weborigami/async-tree";
 import extname from "./extname.js";
 
 /**
@@ -8,18 +8,18 @@ import extname from "./extname.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {AsyncTree|null} scope
+ * @param {AsyncTree} parent
  * @param {any} key
  * @param {any} value
- * @param {AsyncTree|null} parent
  */
-export default async function handleExtension(scope, key, value, parent) {
+export default async function handleExtension(parent, key, value) {
   const extension = extname(key);
   let result = value;
   if (extension) {
     const handlerName = `${extension.slice(1)}_handler`;
+    const parentScope = scope(parent);
     /** @type {import("../../index.ts").ExtensionHandler} */
-    let extensionHandler = await scope?.get(handlerName);
+    let extensionHandler = await parentScope?.get(handlerName);
     if (isUnpackable(extensionHandler)) {
       // The extension handler itself needs to be unpacked. E.g., if it's a
       // buffer containing JavaScript file, we need to unpack it to get its

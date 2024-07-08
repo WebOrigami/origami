@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 
-const scope = new ObjectTree({
+const shared = new ObjectTree({
   greet: (name) => `Hello, ${name}!`,
   name: "Alice",
 });
@@ -24,7 +24,7 @@ describe("compile", () => {
   test("tree", async () => {
     const fn = compile.expression("{ message = greet(name) }");
     const tree = await fn.call(null);
-    tree.scope = scope;
+    tree.parent = shared;
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, Alice!",
     });
@@ -43,7 +43,7 @@ describe("compile", () => {
 
   test("templateDocument", async () => {
     const fn = compile.templateDocument("Documents can contain ` backticks");
-    const templateFn = await fn.call(scope);
+    const templateFn = await fn.call(shared);
     const value = await templateFn.call(null);
     assert.deepEqual(value, "Documents can contain ` backticks");
   });
@@ -59,6 +59,6 @@ describe("compile", () => {
 
 async function assertCompile(text, expected) {
   const fn = compile.expression(text);
-  const result = await fn.call(scope);
+  const result = await fn.call(shared);
   assert.deepEqual(result, expected);
 }

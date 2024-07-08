@@ -8,10 +8,12 @@ import evaluate from "../../src/runtime/evaluate.js";
 describe("evaluate", () => {
   test("can retrieve values from scope", async () => {
     const code = [ops.scope, "message"];
-    const scope = {
+    const parent = new ObjectTree({
       message: "Hello",
-    };
-    const result = await evaluate.call(scope, code);
+    });
+    const tree = new ObjectTree({});
+    tree.parent = parent;
+    const result = await evaluate.call(tree, code);
     assert.equal(result, "Hello");
   });
 
@@ -22,25 +24,25 @@ describe("evaluate", () => {
       [ops.scope, "name"],
     ];
 
-    const scope = new ObjectTree({
+    const tree = new ObjectTree({
       async greet(name) {
         return `Hello ${name}`;
       },
       name: "world",
     });
 
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(tree, code);
     assert.equal(result, "Hello world");
   });
 
   test("passes context to invoked functions", async () => {
     const code = [ops.scope, "fn"];
-    const scope = {
+    const tree = {
       async fn() {
-        assert.equal(this, scope);
+        assert.equal(this, tree);
       },
     };
-    await evaluate.call(scope, code);
+    await evaluate.call(tree, code);
   });
 
   test("evaluates a function with fixed number of arguments", async () => {

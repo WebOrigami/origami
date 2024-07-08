@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import Scope from "./Scope.js";
 
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
@@ -14,8 +13,7 @@ export default function InvokeFunctionsTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (typeof value === "function") {
-        const scope = Scope.getScope(this);
-        value = await value.call(scope);
+        value = await value.call(this);
 
         if (Tree.isAsyncTree(value)) {
           value.parent = this;

@@ -17,10 +17,7 @@ const sourceSymbol = Symbol("source");
 export default async function evaluate(code) {
   const scope = this;
 
-  if (code === ops.scope) {
-    // ops.scope is a placeholder for the context's scope.
-    return scope;
-  } else if (!(code instanceof Array)) {
+  if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
   }

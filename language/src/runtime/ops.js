@@ -8,11 +8,11 @@ import {
   SiteTree,
   Tree,
   isUnpackable,
+  scope as scopeFn,
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import OrigamiFiles from "./OrigamiFiles.js";
-import Scope from "./Scope.js";
 import handleExtension from "./handleExtension.js";
 import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -103,7 +103,7 @@ async function fetchResponse(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (filename) {
-    buffer = await handleExtension(this, filename, buffer, null);
+    buffer = await handleExtension(this, filename, buffer);
   }
 
   return buffer;
@@ -118,10 +118,10 @@ export async function filesRoot() {
   /** @type {AsyncTree} */
   let root = new OrigamiFiles("/");
 
-  // The root itself needs a scope so that expressions evaluated within it
+  // The root itself needs a parent so that expressions evaluated within it
   // (e.g., Origami expressions loaded from .ori files) will have access to
   // things like the built-in functions.
-  root = Scope.treeWithScope(root, this);
+  root.parent = this;
 
   return root;
 }
@@ -160,10 +160,7 @@ https.toString = () => "«ops.https»";
  * @param {*} key
  */
 export async function inherited(key) {
-  const scope = this;
-  const scopeTrees = /** @type {any} */ (scope).trees ?? scope;
-  const inheritedScope = new Scope(...scopeTrees.slice(1));
-  return inheritedScope.get(key);
+  return this?.parent?.get(key);
 }
 inherited.toString = () => "«ops.inherited»";
 
@@ -175,6 +172,7 @@ inherited.toString = () => "«ops.inherited»";
  * @param {string[]} parameters
  * @param {Code} code
  */
+
 export function lambda(parameters, code) {
   if (lambdaFnMap.has(code)) {
     return lambdaFnMap.get(code);
@@ -191,15 +189,16 @@ export function lambda(parameters, code) {
       ambients[parameter] = args.shift();
     }
     ambients["@recurse"] = invoke;
-    const scope = new Scope(new ObjectTree(ambients), this);
+    const ambientTree = new ObjectTree(ambients);
+    ambientTree.parent = this;
 
-    let result = await evaluate.call(scope, code);
+    let result = await evaluate.call(ambientTree, code);
 
-    // Bind a function result to the scope so that it has access to the
+    // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
     if (result instanceof Function) {
       const resultCode = result.code;
-      result = result.bind(scope);
+      result = result.bind(ambientTree);
       if (code) {
         // Copy over Origami code
         result.code = resultCode;
@@ -221,7 +220,7 @@ export function lambda(parameters, code) {
   lambdaFnMap.set(code, invoke);
   return invoke;
 }
-lambda.toString = () => "«ops.lambda»";
+lambda.toString = () => "«ops.lambda";
 
 /**
  * Merge the given trees. If they are all plain objects, return a plain object.
@@ -252,6 +251,20 @@ export async function object(...entries) {
   return Object.fromEntries(evaluated);
 }
 object.toString = () => "«ops.object»";
+
+/**
+ * Look up the given key in the scope for the current tree.
+ *
+ * @this {AsyncTree|null}
+ */
+export async function scope(key) {
+  if (!this) {
+    throw new Error("Tried to get the scope of a null or undefined tree.");
+  }
+  const scope = scopeFn(this);
+  return scope.get(key);
+}
+scope.toString = () => "«ops.scope»";
 
 /**
  * The spread operator is a placeholder during parsing. It should be replaced
@@ -287,7 +300,7 @@ export async function tree(...entries) {
   });
   const object = Object.fromEntries(fns);
   const result = new OrigamiTree(object);
-  result.scope = new Scope(result, this);
+  result.parent = this;
   return result;
 }
 tree.toString = () => "«ops.tree»";
@@ -303,7 +316,7 @@ export function treeHttp(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
   /** @type {AsyncTree} */
   let result = new (HandleExtensionsTransform(SiteTree))(href);
-  result = Scope.treeWithScope(result, this);
+  result.parent = this;
   return result;
 }
 treeHttp.toString = () => "«ops.treeHttp»";
@@ -319,10 +332,7 @@ export function treeHttps(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
   /** @type {AsyncTree} */
   let result = new (HandleExtensionsTransform(SiteTree))(href);
-  result = Scope.treeWithScope(result, this);
+  result.parent = this;
   return result;
 }
 treeHttps.toString = () => "«ops.treeHttps»";
-
-// The scope op is a placeholder for the tree's scope.
-export const scope = "«ops.scope»";

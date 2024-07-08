@@ -2,7 +2,6 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import HandleExtensionsTransform from "../../src/runtime/HandleExtensionsTransform.js";
-import Scope from "../../src/runtime/Scope.js";
 
 describe("HandleExtensionsTransform", () => {
   test("invokes an appropriate loader for a .json file extension", async () => {
@@ -25,17 +24,17 @@ describe("HandleExtensionsTransform", () => {
 });
 
 function createFixture() {
+  /** @type {any} */
+  const parent = new ObjectTree({
+    json_handler: {
+      unpack: (buffer) => JSON.parse(String(buffer)),
+    },
+  });
   /** @type {import("@weborigami/types").AsyncTree} */
   let tree = new (HandleExtensionsTransform(ObjectTree))({
     foo: 1, // No extension, should be left alone
     "bar.json": `{ "bar": 2 }`,
   });
-  /** @type {any} */
-  const scope = new ObjectTree({
-    json_handler: {
-      unpack: (buffer) => JSON.parse(String(buffer)),
-    },
-  });
-  tree = Scope.treeWithScope(tree, scope);
+  tree.parent = parent;
   return tree;
 }

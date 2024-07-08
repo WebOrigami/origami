@@ -15,9 +15,11 @@ describe("DeepObjectTree", () => {
     const object = await tree.get("object");
     assert.equal(object instanceof DeepObjectTree, true);
     assert.deepEqual(await Tree.plain(object), { b: 2 });
+    assert.equal(object.parent, tree);
 
     const array = await tree.get("array");
     assert.equal(array instanceof DeepObjectTree, true);
     assert.deepEqual(await Tree.plain(array), [3]);
+    assert.equal(array.parent, tree);
   });
 });

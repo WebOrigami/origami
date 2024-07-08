@@ -1,7 +1,6 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import Scope from "../../src/runtime/Scope.js";
 
 import {
   OrigamiTree,
@@ -109,16 +108,16 @@ describe("ops", () => {
   });
 
   test("can search inherited scope", async () => {
-    const a = new ObjectTree({
+    const parent = new ObjectTree({
       a: 1, // This is the inherited value we want
     });
     /** @type {any} */
-    const b = new ObjectTree({
+    const child = new ObjectTree({
       a: 2, // Should be ignored
     });
-    b.scope = new Scope(b, a);
+    child.parent = parent;
     const code = [ops.inherited, "a"];
-    const result = await evaluate.call(b.scope, code);
+    const result = await evaluate.call(child, code);
     assert.equal(result, 1);
   });
 

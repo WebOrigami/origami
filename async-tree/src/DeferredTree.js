@@ -20,7 +20,6 @@ export default class DeferredTree {
     this.treePromise = null;
     this._tree = null;
     this._parentUntilLoaded = null;
-    this._scopeUntilLoaded = null;
   }
 
   async get(key) {
@@ -54,25 +53,6 @@ export default class DeferredTree {
     }
   }
 
-  // HACK: The concept of scope is defined in Origami, not at the AsyncTree
-  // level. If a DeferredTree is used to wrap an OrigamiTree, the inner
-  // OrigamiTree will have a `scope` but not a `parent`. If someone asks the
-  // outer deferrred tree for a scope, they'd otherwise get `undefined`, which
-  // is incorrect. As a workaround, we introduce a `scope` getter here that
-  // defers to the inner tree, but we need to find a way to avoid having to
-  // introduce the concept of scope here.
-  get scope() {
-    return /** @type {any} */ (this._tree)?.scope;
-  }
-  set scope(scope) {
-    // As with `parent`, we can defer setting of scope.
-    if (this._tree && !(/** @type {any} */ (this._tree).scope)) {
-      /** @type {any} */ (this._tree).scope = scope;
-    } else {
-      this._scopeUntilLoaded = scope;
-    }
-  }
-
   async tree() {
     if (this._tree) {
       return this._tree;
@@ -87,12 +67,6 @@ export default class DeferredTree {
           this._tree.parent = this._parentUntilLoaded;
         }
         this._parentUntilLoaded = null;
-      }
-      if (this._scopeUntilLoaded) {
-        if (!(/** @type {any} */ (this._tree).scope)) {
-          /** @type {any} */ (this._tree).scope = this._scopeUntilLoaded;
-        }
-        this._scopeUntilLoaded = null;
       }
       return this._tree;
     });

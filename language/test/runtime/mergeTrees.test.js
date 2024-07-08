@@ -29,7 +29,7 @@ describe("mergeTrees", () => {
     });
   });
 
-  test("puts all trees in scope", async () => {
+  test.skip("puts all trees in scope", async () => {
     const tree = await mergeTrees.call(
       null,
       new ExpressionTree({

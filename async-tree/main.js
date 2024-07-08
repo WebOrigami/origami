@@ -21,6 +21,7 @@ export { default as group } from "./src/operations/group.js";
 export { default as groupFn } from "./src/operations/groupFn.js";
 export { default as map } from "./src/operations/map.js";
 export { default as merge } from "./src/operations/merge.js";
+export { default as scope } from "./src/operations/scope.js";
 export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export * as symbols from "./src/symbols.js";
