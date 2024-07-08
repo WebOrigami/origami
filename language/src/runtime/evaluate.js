@@ -9,13 +9,11 @@ const sourceSymbol = Symbol("source");
  *
  * `this` should be the scope used to look up references found in the code.
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- *
- * @this {Treelike|null}
+ * @this {import("@weborigami/types").AsyncTree|null}
  * @param {any} code
  */
 export default async function evaluate(code) {
-  const scope = this;
+  const tree = this;
 
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
@@ -30,7 +28,7 @@ export default async function evaluate(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate.call(scope, instruction))
+      code.map((instruction) => evaluate.call(tree, instruction))
     );
   }
 
@@ -58,7 +56,7 @@ export default async function evaluate(code) {
   try {
     result =
       fn instanceof Function
-        ? await fn.call(scope, ...args) // Invoke the function
+        ? await fn.call(tree, ...args) // Invoke the function
         : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
     if (!error.location) {
@@ -66,6 +64,12 @@ export default async function evaluate(code) {
       error.location = /** @type {any} */ (code).location;
     }
     throw error;
+  }
+
+  // If the result is a tree, then the default parent of the tree is the current
+  // tree.
+  if (Tree.isAsyncTree(result) && !result.parent) {
+    result.parent = tree;
   }
 
   // To aid debugging, add the code to the result.

@@ -61,4 +61,12 @@ describe("evaluate", () => {
     const result = await evaluate.call(null, code);
     assert.equal(result, "a,b,c");
   });
+
+  test("by defalut sets the parent of a returned tree to the current tree", async () => {
+    const fn = () => new ObjectTree({});
+    const code = [fn];
+    const tree = new ObjectTree({});
+    const result = await evaluate.call(tree, code);
+    assert.equal(result.parent, tree);
+  });
 });
