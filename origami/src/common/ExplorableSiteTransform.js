@@ -1,5 +1,4 @@
 import { Tree, keysJson } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import index from "../builtins/@index.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 
@@ -33,16 +32,14 @@ export default function ExplorableSiteTransform(Base) {
 
       // Ask the tree if it has the key.
       let value = await super.get(key);
-      const scope = Scope.getScope(this);
 
       if (value === undefined) {
         // The tree doesn't have the key; try the defaults.
-        if (scope) {
-          if (key === "index.html") {
-            value = await index.call(scope, this);
-          } else if (key === ".keys.json") {
-            value = await keysJson.stringify(this);
-          }
+        if (key === "index.html") {
+          // This tree is both the function call target and the parameter.
+          value = await index.call(this, this);
+        } else if (key === ".keys.json") {
+          value = await keysJson.stringify(this);
         }
       }
 
@@ -55,12 +52,13 @@ export default function ExplorableSiteTransform(Base) {
 
         if (key.endsWith?.("/")) {
           // Instead of return the tree directly, return an index for it.
-          value = await index.call(scope, value);
+          value = await index.call(this, value);
         }
       } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.
         const original = value.unpack.bind(value);
+        const parent = this;
         value.unpack = async () => {
           const content = await original();
           if (!Tree.isTraversable(content)) {
@@ -68,9 +66,8 @@ export default function ExplorableSiteTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          if (!tree.parent && !tree.scope) {
-            const scope = Scope.getScope(this);
-            tree = Scope.treeWithScope(tree, scope);
+          if (!tree.parent) {
+            tree.parent = parent;
           }
           if (!isTransformApplied(ExplorableSiteTransform, tree)) {
             tree = transformObject(ExplorableSiteTransform, tree);

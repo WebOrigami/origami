@@ -2,7 +2,7 @@ import { ObjectTree, isUnpackable, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import fileTypeOrigami from "./ori_handler.js";
 
 /**
@@ -16,7 +16,7 @@ import fileTypeOrigami from "./ori_handler.js";
  * @param {StringLike} input
  */
 export default async function inline(input) {
-  assertScopeIsDefined(this, "inline");
+  assertTreeIsDefined(this, "inline");
 
   // Get the input text and any attached front matter.
   if (isUnpackable(input)) {

@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -14,20 +13,18 @@ import getTreeArgument from "../misc/getTreeArgument.js";
 export default async function defineds(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@defineds");
 
-  /** @type {AsyncTree} */
-  let result = await Tree.mapReduce(tree, null, async (values, keys) => {
-    const result = {};
+  const result = await Tree.mapReduce(tree, null, async (values, keys) => {
+    const object = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {
       const value = values[i];
       if (value != null) {
         someValuesExist = true;
-        result[keys[i]] = values[i];
+        object[keys[i]] = values[i];
       }
     }
-    return someValuesExist ? result : null;
+    return someValuesExist ? object : null;
   });
 
-  result = Scope.treeWithScope(result, this);
   return result;
 }

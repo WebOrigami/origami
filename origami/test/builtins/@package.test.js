@@ -1,24 +1,22 @@
-import { Tree } from "@weborigami/async-tree";
-import { OrigamiFiles, Scope } from "@weborigami/language";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../src/builtins/@builtins.js";
 import packageBuiltin from "../../src/builtins/@package.js";
 
-// Create a scope that includes the monorepo's node_modules.
-const nodeModulesUrl = new URL("../../../node_modules", import.meta.url);
-const node_modules = Scope.treeWithScope(
-  new OrigamiFiles(nodeModulesUrl),
-  builtins
-);
-
 describe("@package", () => {
   test("imports a package from node_modules", async () => {
-    const scope = new Scope({
-      node_modules,
+    // Create a tree whose scope includes the monorepo's node_modules.
+    const nodeModulesUrl = new URL("../../../node_modules", import.meta.url);
+    const nodeModulesTree = new OrigamiFiles(nodeModulesUrl);
+    nodeModulesTree.parent = builtins;
+
+    const tree = new ObjectTree({
+      node_modules: nodeModulesTree,
     });
     const packageExports = await packageBuiltin.call(
-      scope,
+      tree,
       "@weborigami",
       "async-tree"
     );

@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import mapFn from "./@mapFn.js";
 
 /**
@@ -14,6 +14,6 @@ import mapFn from "./@mapFn.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function map(source, operation) {
-  assertScopeIsDefined(this, "map");
+  assertTreeIsDefined(this, "map");
   return mapFn.call(this, operation)(source);
 }

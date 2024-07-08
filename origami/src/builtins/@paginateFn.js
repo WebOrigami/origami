@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 
 /**
  * Return a new grouping of the treelike's values into "pages" of the specified
@@ -12,7 +11,6 @@ import { Scope } from "@weborigami/language";
  * @param {number} [size=10]
  */
 export default function paginateFn(size = 10) {
-  const scope = this;
   /**
    * @param {Treelike} [treelike]
    */
@@ -21,7 +19,7 @@ export default function paginateFn(size = 10) {
     const keys = Array.from(await tree.keys());
     const pageCount = Math.ceil(keys.length / size);
 
-    const result = {
+    return {
       async get(pageKey) {
         // Note: page numbers are 1-based.
         const pageNumber = Number(pageKey);
@@ -54,8 +52,5 @@ export default function paginateFn(size = 10) {
         return Array.from({ length: pageCount }, (_, index) => index + 1);
       },
     };
-
-    const scoped = Scope.treeWithScope(result, scope);
-    return scoped;
   };
 }

@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
 import imageFormatFn from "./formatFn.js";
 
 /**
@@ -13,6 +13,6 @@ import imageFormatFn from "./formatFn.js";
  * @param {any} options
  */
 export default async function imageFormat(input, format, options) {
-  assertScopeIsDefined(this, "image/format");
+  assertTreeIsDefined(this, "image/format");
   return imageFormatFn.call(this, format, options)(input);
 }

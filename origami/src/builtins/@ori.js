@@ -2,7 +2,7 @@ import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -19,7 +19,7 @@ export default async function ori(
   expression,
   options = { formatResult: true }
 ) {
-  assertScopeIsDefined(this, "ori");
+  assertTreeIsDefined(this, "ori");
 
   // In case expression has come from a file, cast it to a string.
   expression = String(expression);

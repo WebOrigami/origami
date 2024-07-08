@@ -2,13 +2,14 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 import { Tree, keyFunctionsForExtensions, map } from "@weborigami/async-tree";
-import { OrigamiFiles, OrigamiTree, Scope } from "@weborigami/language";
+import { OrigamiFiles, OrigamiTree } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import builtins from "../../src/builtins/@builtins.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const fixtures = Scope.treeWithScope(new OrigamiFiles(dirname), builtins);
+const fixtures = new OrigamiFiles(dirname);
+fixtures.parent = builtins;
 
 // Map the YAML files to test suites.
 const mapped = map(fixtures, {
@@ -30,11 +31,8 @@ async function registerYamlSuite(yamlFile) {
   describe(name, async () => {
     for (const suiteTest of tests) {
       const { title, expected } = suiteTest;
-
-      const fixture = Scope.treeWithScope(
-        new OrigamiTree(suiteTest.fixture),
-        builtins
-      );
+      const fixture = new OrigamiTree(suiteTest.fixture);
+      fixture.parent = builtins;
 
       test(title, async () => {
         const expression = await fixture.get("actual.ori");

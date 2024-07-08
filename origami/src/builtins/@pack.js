@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -8,6 +8,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @returns
  */
 export default function pack(obj) {
-  assertScopeIsDefined(this, "pack");
+  assertTreeIsDefined(this, "pack");
   return obj?.pack?.();
 }

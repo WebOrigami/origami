@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { ObjectTree, Tree } from "@weborigami/async-tree";
-import { Scope, formatError } from "@weborigami/language";
+import { formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
@@ -17,8 +17,8 @@ async function main(...args) {
   // Find the project root.
   const projectTree = await project.call(null);
 
-  // HACK: get the configuration via the project.
-  const config = new Scope(...projectTree.scope.trees.slice(1));
+  // HACK: the config is the parent of the project tree.
+  const config = projectTree.parent;
 
   // If no arguments were passed, show usage.
   if (!expression) {
@@ -29,7 +29,10 @@ async function main(...args) {
   // Splice ambients tree into project tree scope.
   const ambients = new ObjectTree({});
   ambients[keySymbol] = "Origami CLI";
-  let tree = Scope.treeWithScope(projectTree, new Scope(ambients, config));
+  ambients.parent = config;
+
+  let tree = projectTree;
+  tree.parent = ambients;
 
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();
@@ -41,8 +44,7 @@ async function main(...args) {
   // Add ambient property for the current tree.
   await ambients.set("@current", tree);
 
-  const scope = Scope.getScope(tree);
-  const result = await ori.call(scope, expression);
+  const result = await ori.call(tree, expression);
   if (result !== undefined) {
     const output =
       result instanceof ArrayBuffer

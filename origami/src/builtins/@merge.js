@@ -1,6 +1,5 @@
 import { isPlainObject, isUnpackable, merge } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Create a tree that's the result of merging the given trees.
@@ -12,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {(Treelike|null)[]} trees
  */
 export default async function treeMerge(...trees) {
-  assertScopeIsDefined(this, "merge");
+  assertTreeIsDefined(this, "merge");
 
   // Filter out null or undefined trees.
   /** @type {Treelike[]}
@@ -36,22 +35,8 @@ export default async function treeMerge(...trees) {
     return merge(...unpacked);
   }
 
-  // If a tree can take a scope, give it one that includes the other trees and
-  // the current scope.
-  const scopedTrees = unpacked.map((tree) => {
-    const otherTrees = unpacked.filter((g) => g !== tree);
-    const scope = new Scope(...otherTrees, this);
-    // Each tree will be included first in its own scope.
-    return Scope.treeWithScope(tree, scope);
-  });
-
   // Merge the trees.
-  const result = merge(...scopedTrees);
-
-  // Give the overall mixed tree a scope that includes the component trees and
-  // the current scope.
-  /** @type {any} */ (result).scope = new Scope(result, this);
-
+  const result = merge(...unpacked);
   return result;
 }
 

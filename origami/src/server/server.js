@@ -1,5 +1,5 @@
 import { DeepObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
-import { Scope, formatError } from "@weborigami/language";
+import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
 
@@ -53,15 +53,8 @@ function extendTreeScopeWithParams(tree, url) {
   const paramTree = new DeepObjectTree({
     "@params": params,
   });
-
-  // Create a new scope that includes search parameter tree.
-  const scope = Scope.getScope(tree);
-  const extendedScope = new Scope(paramTree, scope);
-
-  // Create a new tree that extends the prototype chain of the supplied tree.
-  const extendedTree = Scope.treeWithScope(tree, extendedScope);
-
-  return extendedTree;
+  paramTree.parent = tree;
+  return paramTree;
 }
 
 /**

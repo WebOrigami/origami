@@ -1,8 +1,8 @@
-import { OrigamiFiles, Scope } from "@weborigami/language";
+import { OrigamiFiles } from "@weborigami/language";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
-  assertScopeIsDefined(this, "files");
+  assertTreeIsDefined(this, "files");
 
   // If path begins with `~`, treat it relative to the home directory.
   // Otherwise, treat it relative to the current working directory.
@@ -25,9 +25,7 @@ export default async function files(...keys) {
   }
   const resolved = path.resolve(basePath, relativePath);
 
-  /** @type {AsyncTree} */
-  let result = new OrigamiFiles(resolved);
-  result = Scope.treeWithScope(result, this);
+  const result = new OrigamiFiles(resolved);
   return result;
 }
 

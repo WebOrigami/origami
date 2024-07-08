@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Unpack a packed format like a Uint8Array or ArrayBuffer to a usable form like
@@ -9,6 +9,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} obj
  */
 export default function unpack(obj) {
-  assertScopeIsDefined(this, "unpack");
+  assertTreeIsDefined(this, "unpack");
   return obj?.unpack?.();
 }

@@ -1,5 +1,5 @@
 import { isPlainObject } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import mapFn from "./@mapFn.js";
 
 /**
@@ -14,7 +14,7 @@ import mapFn from "./@mapFn.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function deepMapFn(operation) {
-  assertScopeIsDefined(this, "deepMap");
+  assertTreeIsDefined(this, "deepMap");
   /** @type {TreeMapOptions} */
   const options = isPlainObject(operation)
     ? // Dictionary

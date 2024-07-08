@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return the number of milliseconds required to execute the given function the
@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Function} fn
  */
 export default async function perf(fn, count = 1) {
-  assertScopeIsDefined(this, "perf");
+  assertTreeIsDefined(this, "perf");
   const start = performance.now();
   for (let i = 0; i < count; i++) {
     await fn.call(this);

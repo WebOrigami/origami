@@ -115,7 +115,6 @@ async function fetchResponse(href) {
  * @this {AsyncTree|null}
  */
 export async function filesRoot() {
-  /** @type {AsyncTree} */
   let root = new OrigamiFiles("/");
 
   // The root itself needs a parent so that expressions evaluated within it
@@ -314,7 +313,6 @@ tree.toString = () => "«ops.tree»";
  */
 export function treeHttp(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
-  /** @type {AsyncTree} */
   let result = new (HandleExtensionsTransform(SiteTree))(href);
   result.parent = this;
   return result;
@@ -330,7 +328,6 @@ treeHttp.toString = () => "«ops.treeHttp»";
  */
 export function treeHttps(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
-  /** @type {AsyncTree} */
   let result = new (HandleExtensionsTransform(SiteTree))(href);
   result.parent = this;
   return result;

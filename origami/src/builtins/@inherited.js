@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { ops } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return the inherited value (if any) for the indicated key.
@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function inherited(key) {
-  assertScopeIsDefined(this, "inherited");
+  assertTreeIsDefined(this, "inherited");
   return ops.inherited.call(this, key);
 }
 

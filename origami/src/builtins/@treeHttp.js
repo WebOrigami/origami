@@ -1,5 +1,5 @@
 import { ops } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {...string|Symbol} keys
  */
 export default function treeHttp(host, ...keys) {
-  assertScopeIsDefined(this, "treeHttp");
+  assertTreeIsDefined(this, "treeHttp");
   return ops.treeHttp.call(this, host, ...keys);
 }
 

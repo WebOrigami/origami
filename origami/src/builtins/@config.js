@@ -1,4 +1,3 @@
-import { Scope } from "@weborigami/language";
 import project from "./@project.js";
 
 /**
@@ -15,17 +14,9 @@ import project from "./@project.js";
 export default async function config(key) {
   const projectTree = await project.call(this);
   // HACK: We use specific knowledge of how @project returns a tree to get the
-  // config. We get the scope of the project's root folder, then remove that
-  // folder from the scope, leaving config + builtins.
-  /** @type {any} */
-  const projectTreeScope = Scope.getScope(projectTree);
-  const trees = projectTreeScope?.trees;
-  if (!trees) {
-    return undefined;
-  }
-  trees.shift();
-  const scope = new Scope(...trees);
-  return key === undefined ? scope : scope.get(key);
+  // config. The config is always the parent of the project folder.
+  const parent = projectTree.parent;
+  return key === undefined ? parent : parent.get(key);
 }
 
 config.usage = `@config\tThe current project's configuration tree`;

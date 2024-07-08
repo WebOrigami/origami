@@ -12,7 +12,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
 export default async function inners(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@inners");
 
-  /** @type {AsyncTree} */
   const result = {
     async get(key) {
       const value = await tree.get(key);

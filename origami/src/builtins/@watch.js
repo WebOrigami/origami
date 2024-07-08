@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -21,16 +20,12 @@ export default async function watch(treelike, fn) {
   // Watch the indicated tree.
   await /** @type {any} */ (container).watch?.();
 
-  // // Watch trees in scope.
-  // const scope = /** @type {any} */ (container).scope;
-  // await scope?.watch?.();
-
   if (fn === undefined) {
     return container;
   }
 
   // The caller supplied a function to reevaluate whenever the tree changes.
-  let tree = await evaluateTree(container.scope, fn);
+  let tree = await evaluateTree(container, fn);
 
   // We want to return a stable reference to the tree, so we'll use a prototype
   // chain that will always point to the latest tree. We'll extend the tree's
@@ -40,19 +35,19 @@ export default async function watch(treelike, fn) {
 
   // Reevaluate the function whenever the tree changes.
   container.addEventListener?.("change", async () => {
-    const tree = await evaluateTree(container.scope, fn);
+    const tree = await evaluateTree(container, fn);
     updateIndirectPointer(handle, tree);
   });
 
   return handle;
 }
 
-async function evaluateTree(scope, fn) {
+async function evaluateTree(container, fn) {
   let tree;
   let message;
   let result;
   try {
-    result = await fn.call(scope);
+    result = await fn.call(container);
   } catch (error) {
     message = messageForError(error);
   }
@@ -65,9 +60,7 @@ async function evaluateTree(scope, fn) {
   }
   console.warn(message);
   tree = new ConstantTree(message);
-  if (scope) {
-    tree = Scope.treeWithScope(tree, scope);
-  }
+  tree.parent = container;
   return tree;
 }
 

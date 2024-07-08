@@ -1,5 +1,5 @@
 import { symbols } from "@weborigami/async-tree";
-import { Scope, compile } from "@weborigami/language";
+import { compile } from "@weborigami/language";
 import processUnpackedContent from "../common/processUnpackedContent.js";
 import * as utilities from "../common/utilities.js";
 import builtins from "./@builtins.js";
@@ -40,8 +40,8 @@ export default {
     // Compile the source code as an Origami expression and evaluate it.
     const compiler = options.compiler ?? compile.expression;
     const fn = compiler(source);
-    const parentScope = parent ? Scope.getScope(parent) : builtins;
-    let content = await fn.call(parentScope);
+    const target = parent ?? builtins;
+    let content = await fn.call(target);
 
     return processUnpackedContent(content, parent, attachedData);
   },

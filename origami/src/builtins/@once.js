@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const fnPromiseMap = new WeakMap();
 
@@ -10,7 +10,7 @@ const fnPromiseMap = new WeakMap();
  * @param {Function} fn
  */
 export default async function once(fn) {
-  assertScopeIsDefined(this, "once");
+  assertTreeIsDefined(this, "once");
   if (!fnPromiseMap.has(fn)) {
     fnPromiseMap.set(fn, fn.call(this));
   }

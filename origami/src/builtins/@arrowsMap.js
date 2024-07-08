@@ -1,4 +1,4 @@
-import { Scope, functionResultsMap } from "@weborigami/language";
+import { functionResultsMap } from "@weborigami/language";
 import arrowsMapFn from "../common/arrowsMapFn.js";
 import { keySymbol } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
@@ -15,10 +15,9 @@ import builtins from "./@builtins.js";
 export default async function arrowsMap(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "arrowsMap");
   const mapped = functionResultsMap(arrowsMapFn()(tree));
-  const scope = this ?? builtins;
-  const scoped = Scope.treeWithScope(mapped, scope);
-  scoped[keySymbol] = "@arrowsMap";
-  return scoped;
+  mapped.parent = this ?? builtins;
+  mapped[keySymbol] = "@arrowsMap";
+  return mapped;
 }
 
 arrowsMap.usage = `@arrowsMap <obj>\tInterpret arrow keys in the tree as function calls`;

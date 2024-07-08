@@ -1,5 +1,5 @@
 import { toString } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Convert an object to a string.
@@ -9,6 +9,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} object
  */
 export default function stringBuiltin(object) {
-  assertScopeIsDefined(this, "string");
+  assertTreeIsDefined(this, "string");
   return toString(object);
 }

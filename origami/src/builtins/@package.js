@@ -1,5 +1,4 @@
-import { Tree, keysFromPath } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
+import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
 import project from "./@project.js";
 
 /**
@@ -7,11 +6,8 @@ import project from "./@project.js";
  * @param {string[]} keys
  */
 export default async function packageBuiltin(...keys) {
-  let scope = this;
-  if (!scope) {
-    const projectRoot = await project.call(null);
-    scope = Scope.getScope(projectRoot);
-  }
+  const parent = this ?? (await project.call(null));
+  const parentScope = scope(parent);
 
   const packageKeys = [keys.shift()];
   if (packageKeys[0]?.startsWith("@")) {
@@ -21,7 +17,7 @@ export default async function packageBuiltin(...keys) {
 
   const packageRoot = await Tree.traverse(
     // @ts-ignore
-    scope,
+    parentScope,
     "node_modules",
     ...packageKeys
   );

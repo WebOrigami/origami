@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
 import imageResizeFn from "./resizeFn.js";
 
 /**
@@ -9,6 +9,6 @@ import imageResizeFn from "./resizeFn.js";
  * @param {import("sharp").ResizeOptions} options
  */
 export default async function resize(input, options) {
-  assertScopeIsDefined(this, "image/resize");
+  assertTreeIsDefined(this, "image/resize");
   return imageResizeFn.call(this, options)(input);
 }

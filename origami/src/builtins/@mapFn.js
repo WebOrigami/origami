@@ -4,9 +4,8 @@ import {
   keyFunctionsForExtensions,
   mapFn,
 } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import { toFunction } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return a function that transforms a tree of keys and values to a new tree of
@@ -21,8 +20,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function mapFnBuiltin(operation) {
-  assertScopeIsDefined(this, "map");
-  const scope = this;
+  assertTreeIsDefined(this, "map");
+  const tree = this;
 
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.
@@ -64,7 +63,7 @@ export default function mapFnBuiltin(operation) {
   if (valueFn) {
     const resolvedValueFn = toFunction(valueFn);
     // Have the value function run in this scope.
-    extendedValueFn = resolvedValueFn.bind(scope);
+    extendedValueFn = resolvedValueFn.bind(tree);
   }
 
   // Extend the value function to run in scope.
@@ -83,7 +82,7 @@ export default function mapFnBuiltin(operation) {
     async function scopedKeyFn(sourceKey, tree) {
       const sourceValue = await tree.get(sourceKey);
       const resultKey = await resolvedKeyFn.call(
-        scope,
+        tree,
         sourceValue,
         sourceKey,
         tree
@@ -110,8 +109,8 @@ export default function mapFnBuiltin(operation) {
 
   return (treelike) => {
     const mapped = fn(treelike);
-    const scoped = Scope.treeWithScope(mapped, scope);
-    return scoped;
+    mapped.parent = tree;
+    return mapped;
   };
 }
 

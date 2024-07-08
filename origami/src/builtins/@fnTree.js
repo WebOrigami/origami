@@ -1,6 +1,6 @@
 import { FunctionTree } from "@weborigami/async-tree";
 import { toFunction } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Create a tree from a function and a set of keys.
@@ -13,7 +13,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Invocable} [invocable]
  */
 export default async function fnTree(invocable, keys = []) {
-  assertScopeIsDefined(this, "fnTree");
+  assertTreeIsDefined(this, "fnTree");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && invocable === undefined) {
     throw new Error(

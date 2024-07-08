@@ -1,7 +1,6 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import { isTreelike } from "@weborigami/async-tree/src/Tree.js";
-import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "./assertScopeIsDefined.js";
+import assertTreeIsDefined from "./assertTreeIsDefined.js";
 
 /**
  * Many Origami built-in functions accept an optional treelike object as their
@@ -15,19 +14,19 @@ import assertScopeIsDefined from "./assertScopeIsDefined.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @param {AsyncTree|null} scope
+ * @param {AsyncTree|null} parent
  * @param {IArguments} args
  * @param {Treelike|undefined} treelike
  * @param {string} methodName
  * @returns {Promise<AsyncTree>}
  */
 export default async function getTreeArgument(
-  scope,
+  parent,
   args,
   treelike,
   methodName
 ) {
-  assertScopeIsDefined(scope);
+  assertTreeIsDefined(parent);
 
   if (treelike !== undefined) {
     if (isUnpackable(treelike)) {
@@ -36,9 +35,9 @@ export default async function getTreeArgument(
     if (isTreelike(treelike)) {
       let tree = Tree.from(treelike);
       // If the tree was created from a treelike object and does not yet have a
-      // parent or scope, put it in the current scope.
-      if (!tree.parent && !(/** @type {any} */ (tree).scope)) {
-        tree = Scope.treeWithScope(tree, scope);
+      // parent, make the current tree its parent.
+      if (!tree.parent) {
+        tree.parent = parent;
       }
       return tree;
     }
@@ -48,13 +47,13 @@ export default async function getTreeArgument(
   }
 
   if (args.length === 0) {
-    if (!scope) {
-      // Should never happen because assertScopeIsDefined throws an exception.
+    if (!parent) {
+      // Should never happen because assertTreeIsDefined throws an exception.
       throw new Error(
-        `${methodName} was called with no tree argument and no scope.`
+        `${methodName} was called with no tree argument and no parent.`
       );
     }
-    return scope.get("@current");
+    return parent.get("@current");
   }
 
   throw new Error(`${methodName}: The first argument was undefined.`);

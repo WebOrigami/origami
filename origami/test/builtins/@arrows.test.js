@@ -1,4 +1,4 @@
-import { OrigamiTree, Scope } from "@weborigami/language";
+import { OrigamiTree } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import arrowsMap from "../../src/builtins/@arrowsMap.js";
@@ -6,11 +6,11 @@ import builtins from "../../src/builtins/@builtins.js";
 
 describe("arrowsMap", () => {
   test("interprets ← in a key as a function call", async () => {
-    const treelike = new OrigamiTree({
+    const tree = new OrigamiTree({
       "index.html ← .ori": "=`<h1>${ title }</h1>`",
       title: "Our Site",
     });
-    const tree = Scope.treeWithScope(treelike, builtins);
+    tree.parent = builtins;
     const fixture = await arrowsMap.call(null, tree);
     assert.deepEqual(Array.from(await fixture.keys()), ["index.html", "title"]);
     const indexHtml = await fixture.get("index.html");

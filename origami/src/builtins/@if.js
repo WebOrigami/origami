@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @this {AsyncTree|null}
@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [falseResult]
  */
 export default async function ifCommand(value, trueResult, falseResult) {
-  assertScopeIsDefined(this, "if");
+  assertTreeIsDefined(this, "if");
   let condition = await value;
   if (Tree.isAsyncTree(condition)) {
     const keys = Array.from(await condition.keys());

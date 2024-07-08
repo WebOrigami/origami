@@ -1,5 +1,5 @@
 import documentObject from "../common/documentObject.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -10,6 +10,6 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [data]
  */
 export default async function documentBuiltin(text, data) {
-  assertScopeIsDefined(this, "document");
+  assertTreeIsDefined(this, "document");
   return documentObject(text, data);
 }

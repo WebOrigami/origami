@@ -1,7 +1,7 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 import YAML from "yaml";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Render the object as text in YAML format.
@@ -10,7 +10,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function toYaml(obj) {
-  assertScopeIsDefined(this, "yaml");
+  assertTreeIsDefined(this, "yaml");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(

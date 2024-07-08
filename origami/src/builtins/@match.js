@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -20,13 +19,13 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("../../index.ts").Invocable} Invocable
  *
+ * @this {AsyncTree|null}
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
  * @param {Treelike} [keys]
- * @this {AsyncTree|null}
  */
 export default function match(pattern, resultFn, keys = []) {
-  assertScopeIsDefined(this, "match");
+  assertTreeIsDefined(this, "match");
   let regex;
   if (typeof pattern === "string") {
     // Convert the simple pattern format into a regular expression.
@@ -41,11 +40,9 @@ export default function match(pattern, resultFn, keys = []) {
     throw new Error(`match(): Unsupported pattern`);
   }
 
-  // Remember the scope used to invoke this function so we can extend it below.
-  const scope = this;
+  const tree = this;
 
-  /** @type {AsyncTree} */
-  let result = {
+  const result = {
     async get(key) {
       const keyMatch = regex.exec(key);
       if (!keyMatch) {
@@ -63,15 +60,20 @@ export default function match(pattern, resultFn, keys = []) {
       // If the pattern contained named wildcards, extend the scope. It appears
       // that the `groups` property of a match is *not* a real plain object, so
       // we have to make one.
-      const bindings = keyMatch.groups
-        ? Object.fromEntries(Object.entries(keyMatch.groups))
-        : null;
-      const fnScope = bindings ? new Scope(bindings, scope) : scope;
+      let target;
+      if (keyMatch.groups) {
+        target = new ObjectTree(
+          Object.fromEntries(Object.entries(keyMatch.groups))
+        );
+        target.parent = tree;
+      } else {
+        target = tree;
+      }
 
       // Invoke the result function with the extended scope.
       let value;
       if (typeof resultFn === "function") {
-        value = await resultFn.call(fnScope);
+        value = await resultFn.call(target);
       } else {
         value = Object.create(resultFn);
       }
@@ -80,11 +82,10 @@ export default function match(pattern, resultFn, keys = []) {
     },
 
     async keys() {
-      return typeof keys === "function" ? await keys.call(scope) : keys;
+      return typeof keys === "function" ? await keys.call(tree) : keys;
     },
   };
 
-  result = Scope.treeWithScope(result, this);
   return result;
 }
 

@@ -1,5 +1,4 @@
 import { deepReverse } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -13,7 +12,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  */
 export default async function deepReverseBuiltin(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@deepReverse");
-  let reversed = deepReverse(tree);
-  reversed = Scope.treeWithScope(reversed, this);
+  const reversed = deepReverse(tree);
   return reversed;
 }

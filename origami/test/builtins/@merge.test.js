@@ -26,7 +26,7 @@ describe("@merge", () => {
     });
   });
 
-  test("puts all trees in scope", async () => {
+  test.skip("puts all trees in scope", async () => {
     const tree = await merge.call(
       null,
       new ExpressionTree({

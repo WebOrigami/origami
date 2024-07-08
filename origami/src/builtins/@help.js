@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import child_process from "node:child_process";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const groupUrls = {
   "@cache": "https://weborigami.org/language/@cache.html",
@@ -15,7 +15,7 @@ const groupUrls = {
  * @param {string} [name]
  */
 export default async function help(name) {
-  assertScopeIsDefined(this, "help");
+  assertTreeIsDefined(this, "help");
   let url;
   const scope = this;
   if (scope && name) {

@@ -1,6 +1,5 @@
 import { takeFn } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Limit the number of keys to the indicated count.
@@ -11,11 +10,11 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {number} count
  */
 export default function takeFnBuiltin(count) {
-  assertScopeIsDefined(this, "takeFn");
-  const scope = this;
+  assertTreeIsDefined(this, "takeFn");
+  const parent = this;
   return (treelike) => {
     const taken = takeFn(count)(treelike);
-    const scoped = Scope.treeWithScope(taken, scope);
-    return scoped;
+    taken.parent = parent;
+    return taken;
   };
 }

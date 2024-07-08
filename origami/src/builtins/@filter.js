@@ -1,6 +1,5 @@
-import { Scope } from "@weborigami/language";
 import FilterTree from "../common/FilterTree.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Apply a filter to a tree.
@@ -12,10 +11,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {Treelike} filterVariant
  */
 export default async function filter(treelike, filterVariant) {
-  assertScopeIsDefined(this, "filter");
-  /** @type {AsyncTree} */
-  let result = new FilterTree(treelike, filterVariant);
-  result = Scope.treeWithScope(result, this);
+  assertTreeIsDefined(this, "filter");
+  const result = new FilterTree(treelike, filterVariant);
   return result;
 }
 

@@ -1,4 +1,4 @@
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import deepMapFn from "./@deepMapFn.js";
 
 /**
@@ -14,6 +14,6 @@ import deepMapFn from "./@deepMapFn.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function deepMap(source, operation) {
-  assertScopeIsDefined(this, "deepMap");
+  assertTreeIsDefined(this, "deepMap");
   return deepMapFn.call(this, operation)(source);
 }

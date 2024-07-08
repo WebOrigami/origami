@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Render the given object in JSON format.
@@ -9,7 +9,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function json(obj) {
-  assertScopeIsDefined(this, "json");
+  assertTreeIsDefined(this, "json");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(

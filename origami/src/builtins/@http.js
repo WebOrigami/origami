@@ -1,5 +1,5 @@
 import { ops } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Retrieve the indicated web resource via HTTP.
@@ -11,7 +11,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {...string} keys
  */
 export default async function http(host, ...keys) {
-  assertScopeIsDefined(this, "http");
+  assertTreeIsDefined(this, "http");
   return ops.http.call(this, host, ...keys);
 }
 

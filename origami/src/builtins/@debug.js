@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
@@ -37,14 +36,14 @@ function DebugTransform(Base) {
   return class Debug extends OriCommandTransform(Base) {
     async get(key) {
       let value = await super.get(key);
-      const scope = Scope.getScope(this);
+      const parent = this;
 
       // Since this transform is for diagnostic purposes, cast any treelike
       // result to a tree so we can debug the result too.
       if (Tree.isTreelike(value)) {
         value = Tree.from(value);
-        if (!value.parent && !value.scope) {
-          value = Scope.treeWithScope(value, scope);
+        if (!value.parent) {
+          value.parent = parent;
         }
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
@@ -60,8 +59,8 @@ function DebugTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          if (!tree.parent && !tree.scope) {
-            tree = Scope.treeWithScope(tree, scope);
+          if (!tree.parent) {
+            tree.parent = parent;
           }
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);

@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { OrigamiFiles, Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import { OrigamiFiles } from "@weborigami/language";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import builtins from "./@builtins.js";
 import fileTypeOrigami from "./ori_handler.js";
 
@@ -22,43 +22,41 @@ const configFileName = "config.ori";
  * @param {any} [key]
  */
 export default async function project(key) {
-  assertScopeIsDefined(this, "project");
+  assertTreeIsDefined(this, "project");
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
+  currentTree.parent = builtins;
 
   // Search up the tree for the configuration file or package.json to determine
   // the project root.
-  let rootTree =
+  let projectRoot =
     (await findAncestorFile(currentTree, configFileName)) ??
     (await findAncestorFile(currentTree, "package.json"));
 
-  let config = null;
-  if (rootTree) {
-    // Load the configuration.
-    const configParent = Scope.treeWithScope(rootTree, builtins);
-    const buffer = await configParent.get(configFileName);
+  if (!projectRoot) {
+    // No configuration file or package.json found; use the current directory.
+    projectRoot = currentTree;
+  } else {
+    // Load the configuration file if one exists.
+    const buffer = await projectRoot.get(configFileName);
     if (buffer) {
       // Project has configuration file
-      config = await fileTypeOrigami.unpack(buffer, {
+      const configTree = await fileTypeOrigami.unpack(buffer, {
         key: configFileName,
-        parent: configParent,
+        parent: builtins,
       });
-      if (!config) {
-        const configPath = /** @type {any} */ (configParent).path;
+      if (!configTree) {
+        const configPath = /** @type {any} */ (projectRoot).path;
         throw new Error(
           `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
         );
       }
+      projectRoot.parent = configTree;
     }
-  } else {
-    rootTree = currentTree;
   }
 
-  // Add the configuration as the context for the project root.
-  const scope = new Scope(config, builtins);
-  const result = Scope.treeWithScope(rootTree, scope);
-  return key === undefined ? result : result.get(key);
+  return key === undefined ? projectRoot : projectRoot.get(key);
 }
 
 // Return the first ancestor of the given tree that contains a file with the
@@ -68,7 +66,10 @@ async function findAncestorFile(start, fileName) {
   while (current) {
     const value = await current.get(fileName);
     if (value) {
-      // Found the desired file; its container is the project root.
+      // Found the desired file; its container is the project root. Set the
+      // parent to the builtins; in the context of this project, there's nothing
+      // higher up.
+      current.parent = builtins;
       return current;
     }
     // Not found; try the parent.

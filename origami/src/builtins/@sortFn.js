@@ -1,7 +1,6 @@
 import { sortFn } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
 import { toFunction } from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return a transform function that sorts a tree's keys using a comparison
@@ -23,8 +22,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {ValueKeyFn|SortOptions} [options]
  */
 export default function sortFnBuiltin(options) {
-  assertScopeIsDefined(this);
-  const scope = this;
+  assertTreeIsDefined(this);
+  const parent = this;
 
   if (typeof options === "function") {
     // Take the function as the `sortKey` option
@@ -37,7 +36,7 @@ export default function sortFnBuiltin(options) {
     const originalSortKey = toFunction(options?.sortKey);
     extendedSortKeyFn = async (key, tree) => {
       const value = await tree.get(key);
-      const sortKey = await originalSortKey.call(scope, value, key);
+      const sortKey = await originalSortKey.call(parent, value, key);
       return sortKey;
     };
   }
@@ -49,8 +48,8 @@ export default function sortFnBuiltin(options) {
 
   return (treelike) => {
     const sorted = fn(treelike);
-    const scoped = Scope.treeWithScope(sorted, scope);
-    return scoped;
+    sorted.parent = parent;
+    return sorted;
   };
 }
 

@@ -1,6 +1,5 @@
-import { Scope } from "@weborigami/language";
 import GlobTree from "../common/GlobTree.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Define a tree whose keys are globs.
@@ -12,10 +11,8 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function globs(tree) {
-  assertScopeIsDefined(this, "globs");
-  /** @type {AsyncTree} */
-  let result = new GlobTree(tree);
-  result = Scope.treeWithScope(result, this);
+  assertTreeIsDefined(this, "globs");
+  const result = new GlobTree(tree);
   return result;
 }
 

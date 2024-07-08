@@ -1,5 +1,5 @@
 import { ops } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -8,7 +8,7 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param  {...any} keys
  */
 export default function constructor(...keys) {
-  assertScopeIsDefined(this, "constructor");
+  assertTreeIsDefined(this, "constructor");
   const scope = this;
   if (!scope) {
     throw new Error("@constructor requires a non-null scope.");

@@ -5,9 +5,9 @@ import {
   isPlainObject,
   keysFromPath,
 } from "@weborigami/async-tree";
-import { InvokeFunctionsTransform, Scope, extname } from "@weborigami/language";
+import { InvokeFunctionsTransform, extname } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import treeHttps from "./@treeHttps.js";
 
 // A fake base URL used to handle cases where an href is relative and must be
@@ -30,7 +30,7 @@ const fakeBaseUrl = new URL("https://fake");
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawl(treelike, baseHref) {
-  assertScopeIsDefined(this, "crawl");
+  assertTreeIsDefined(this, "crawl");
   const tree =
     typeof treelike === "string"
       ? treeHttps.call(this, treelike)
@@ -92,12 +92,10 @@ export default async function crawl(treelike, baseHref) {
   // Merge the cache on top of the resources tree. If we have an actual value
   // for something already, that's better than a function that will get that
   // value.
-  /** @type {AsyncTree} */
-  let result = deepMerge(
+  const result = deepMerge(
     new DeepObjectTree(cache),
     new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );
-  result = Scope.treeWithScope(result, this);
   return result;
 }
 

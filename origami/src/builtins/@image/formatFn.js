@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
 
 /**
  * Return a function that transforms an input image to a different format.
@@ -10,6 +10,6 @@ import assertScopeIsDefined from "../../misc/assertScopeIsDefined.js";
  * @param {any} options
  */
 export default function imageFormatFn(format, options) {
-  assertScopeIsDefined(this, "image/formatFn");
+  assertTreeIsDefined(this, "image/formatFn");
   return (buffer) => sharp(buffer).toFormat(format, options).toBuffer();
 }

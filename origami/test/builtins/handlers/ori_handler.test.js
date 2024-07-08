@@ -1,12 +1,13 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
-import { OrigamiFiles, Scope } from "@weborigami/language";
+import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import builtins from "../../../src/builtins/@builtins.js";
 import fileTypeOrigami from "../../../src/builtins/ori_handler.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
-const fixtures = Scope.treeWithScope(new OrigamiFiles(fixturesUrl), builtins);
+const fixtures = new OrigamiFiles(fixturesUrl);
+fixtures.parent = builtins;
 
 describe(".ori handler", () => {
   test("loads a string expression", async () => {

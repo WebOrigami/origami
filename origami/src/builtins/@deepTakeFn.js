@@ -1,6 +1,5 @@
 import { deepTakeFn } from "@weborigami/async-tree";
-import { Scope } from "@weborigami/language";
-import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -12,11 +11,11 @@ import assertScopeIsDefined from "../misc/assertScopeIsDefined.js";
  * @param {number} count
  */
 export default function deepTakeFnBuiltin(count) {
-  assertScopeIsDefined(this, "deepTakeFn");
-  const scope = this;
+  assertTreeIsDefined(this, "deepTakeFn");
+  const parent = this;
   return async (treelike) => {
     const taken = await deepTakeFn(count)(treelike);
-    const scoped = Scope.treeWithScope(taken, scope);
-    return scoped;
+    taken.parent = parent;
+    return taken;
   };
 }
