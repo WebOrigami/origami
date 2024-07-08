@@ -1,7 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { ObjectTree } from "@weborigami/async-tree";
 import ori from "../builtins/@ori.js";
-import { keySymbol } from "../common/utilities.js";
 
 /**
  * Add support for commands prefixed with `!`.
@@ -26,13 +24,8 @@ export default function OriCommandTransform(Base) {
           return undefined;
         }
         // Key is an Origami command; invoke it.
-        const ambientsTree = new ObjectTree({
-          "@current": this,
-        });
-        ambientsTree[keySymbol] = "ori command";
-        ambientsTree.parent = this;
         const source = key.slice(1).trim();
-        value = await ori.call(ambientsTree, source, { formatResult: false });
+        value = await ori.call(this, source, { formatResult: false });
       }
 
       return value;

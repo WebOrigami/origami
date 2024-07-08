@@ -17,7 +17,7 @@ export default async function toYaml(obj) {
       "An Origami function was called with an initial argument, but its value is undefined."
     );
   }
-  obj = obj ?? (await this?.get("@current"));
+  obj = obj ?? this;
   if (obj === undefined) {
     return undefined;
   }

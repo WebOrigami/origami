@@ -24,18 +24,18 @@ export default async function ori(
   // In case expression has come from a file, cast it to a string.
   expression = String(expression);
 
-  // Obtain the scope from `this` or builtins.
-  let scope = this ?? builtins;
+  // Run in the context of `this` if defined, otherwise use the builtins.
+  const tree = this ?? builtins;
 
   // Parse
   const fn = compile.expression(expression);
 
   // Execute
-  let result = await fn.call(scope);
+  let result = await fn.call(tree);
 
   // If result was a function, execute it.
   if (typeof result === "function") {
-    result = await result.call(scope);
+    result = await result.call(tree);
   }
 
   return options.formatResult ? await formatResult(result) : result;

@@ -14,19 +14,15 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  */
 export default async function fnTree(invocable, keys = []) {
   assertTreeIsDefined(this, "fnTree");
-  // A fragment of the logic from getTreeArgument.js
-  if (arguments.length > 0 && invocable === undefined) {
+  if (invocable === undefined) {
     throw new Error(
       "An Origami function was called with an initial argument, but its value is undefined."
     );
   }
-  invocable = invocable ?? (await this?.get("@current"));
-  if (invocable === undefined) {
-    return undefined;
-  }
   const fn = toFunction(invocable);
-
-  return new FunctionTree(fn, keys);
+  const tree = new FunctionTree(fn, keys);
+  tree.parent = this;
+  return tree;
 }
 
 fnTree.usage = `@fnTree <fn>, [<keys>]\tCreate a tree from a function and a set of keys`;

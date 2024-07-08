@@ -1,3 +1,4 @@
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import builtins from "./@builtins.js";
 import paths from "./@paths.js";
@@ -22,6 +23,7 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  * @param {string} [baseHref ]
  */
 export default async function sitemap(treelike, baseHref = "") {
+  assertTreeIsDefined(this);
   const tree = await getTreeArgument(this, arguments, treelike, "@sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
@@ -49,7 +51,8 @@ export default async function sitemap(treelike, baseHref = "") {
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
   const templateFn = await fileTypeOrigami.unpack(templateText);
-  const templateResult = await templateFn.call(builtins, htmlPaths);
+  const target = this ?? builtins;
+  const templateResult = await templateFn.call(target, htmlPaths);
   return String(templateResult);
 }
 

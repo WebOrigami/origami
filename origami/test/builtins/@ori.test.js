@@ -12,11 +12,7 @@ describe("ori builtin", () => {
       c: 3,
     });
     tree.parent = builtins;
-    const ambients = new ObjectTree({
-      "@current": tree,
-    });
-    ambients.parent = tree;
-    const result = await ori.call(ambients, `@keys`);
+    const result = await ori.call(tree, `@keys`);
     assert.equal(
       String(result),
       `- a

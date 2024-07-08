@@ -1,4 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { merge } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import builtins from "./@builtins.js";
@@ -30,29 +31,36 @@ export default async function project(key) {
 
   // Search up the tree for the configuration file or package.json to determine
   // the project root.
-  let projectRoot =
+  const configContainer =
     (await findAncestorFile(currentTree, configFileName)) ??
     (await findAncestorFile(currentTree, "package.json"));
 
-  if (!projectRoot) {
+  let projectRoot;
+  if (!configContainer) {
     // No configuration file or package.json found; use the current directory.
     projectRoot = currentTree;
   } else {
     // Load the configuration file if one exists.
-    const buffer = await projectRoot.get(configFileName);
-    if (buffer) {
-      // Project has configuration file
+    const buffer = await configContainer.get(configFileName);
+    if (!buffer) {
+      // Project root defined by package.json
+      projectRoot = configContainer;
+    } else {
+      // Load Origami configuration file
       const configTree = await fileTypeOrigami.unpack(buffer, {
         key: configFileName,
-        parent: builtins,
+        parent: configContainer,
       });
       if (!configTree) {
-        const configPath = /** @type {any} */ (projectRoot).path;
+        const configPath = /** @type {any} */ (configContainer).path;
         throw new Error(
           `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
         );
       }
-      projectRoot.parent = configTree;
+      projectRoot = merge(configTree, configContainer);
+      // HACK so cli.js can get a path
+      /** @type {any} */ (projectRoot).path = configContainer.path;
+      projectRoot.parent = builtins;
     }
   }
 

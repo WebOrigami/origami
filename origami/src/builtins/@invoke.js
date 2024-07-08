@@ -1,6 +1,5 @@
 import { isUnpackable } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import builtins from "./@builtins.js";
 
 /**
  * Invoke the given text as an Origami function.
@@ -25,8 +24,7 @@ import builtins from "./@builtins.js";
  */
 export default async function invoke(fn) {
   assertTreeIsDefined(this, "invoke");
-  // A fragment of the logic from getTreeArgument.js
-  if (arguments.length > 0 && fn === undefined) {
+  if (fn === undefined) {
     throw new Error(
       "An Origami function was called with an initial argument, but its value is undefined."
     );
@@ -34,6 +32,5 @@ export default async function invoke(fn) {
   if (isUnpackable(fn)) {
     fn = await fn.unpack();
   }
-  const scope = (await this?.get("@current")) ?? builtins;
-  return typeof fn === "function" ? fn.call(scope) : fn;
+  return typeof fn === "function" ? fn.call(this) : fn;
 }

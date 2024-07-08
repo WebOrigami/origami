@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import ori from "../builtins/@ori.js";
 import project from "../builtins/@project.js";
-import { keySymbol } from "../common/utilities.js";
 import showUsage from "./showUsage.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -17,32 +16,18 @@ async function main(...args) {
   // Find the project root.
   const projectTree = await project.call(null);
 
-  // HACK: the config is the parent of the project tree.
-  const config = projectTree.parent;
-
   // If no arguments were passed, show usage.
   if (!expression) {
+    // HACK: the config is the parent of the project tree.
+    const config = projectTree.parent;
     await showUsage(config);
     return;
   }
 
-  // Splice ambients tree into project tree scope.
-  const ambients = new ObjectTree({});
-  ambients[keySymbol] = "Origami CLI";
-  ambients.parent = config;
-
-  let tree = projectTree;
-  tree.parent = ambients;
-
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();
   const relative = path.relative(projectTree.path, currentDirectory);
-  if (relative !== "") {
-    tree = await Tree.traversePath(tree, relative);
-  }
-
-  // Add ambient property for the current tree.
-  await ambients.set("@current", tree);
+  const tree = await Tree.traversePath(projectTree, relative);
 
   const result = await ori.call(tree, expression);
   if (result !== undefined) {

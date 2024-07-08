@@ -33,7 +33,12 @@ describe("merge", () => {
       },
     });
 
+    // Merge is shallow, and last tree wins, so `b/c` doesn't exist
     const c = await Tree.traverse(fixture, "b", "c");
     assert.equal(c, undefined);
+
+    // Parent of a subvalue is the merged tree
+    const b = await Tree.traverse(fixture, "b");
+    assert.equal(b.parent, fixture);
   });
 });

@@ -1,8 +1,9 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { ObjectTree, Tree, scope } from "@weborigami/async-tree";
+import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { keySymbol } from "../common/utilities.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import debug from "./@debug.js";
 
 const miscUrl = new URL("../misc", import.meta.url);
@@ -13,18 +14,16 @@ miscFiles.parent = builtins;
  * @this {AsyncTree|null}
  */
 export default async function explore(...keys) {
-  const tree = this;
-  const ambientsTree = new ObjectTree({
-    "@current": this,
-  });
-  ambientsTree[keySymbol] = "explore command";
-  ambientsTree.parent = this;
+  assertTreeIsDefined(this, "explore");
+  if (!this) {
+    return undefined;
+  }
 
   /** @type {any} */
   let result;
   if (keys.length > 0) {
     // Traverse the scope using the given keys.
-    const debugScope = await debug.call(this, ambientsTree);
+    const debugScope = await debug.call(this, this);
     if (!debugScope) {
       return undefined;
     }
@@ -43,11 +42,12 @@ export default async function explore(...keys) {
     const templateFile = await miscFiles.get("explore.ori");
     const template = await templateFile.unpack();
 
-    const data = await getScopeData(scope(tree));
+    const data = await getScopeData(scope(this));
     const text = await template(data);
 
     result = new String(text);
-    result.unpack = () => debug.call(tree, ambientsTree);
+    const tree = this;
+    result.unpack = () => debug.call(tree, tree);
   }
 
   return result;

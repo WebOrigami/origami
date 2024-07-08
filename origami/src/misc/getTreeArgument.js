@@ -53,7 +53,7 @@ export default async function getTreeArgument(
         `${methodName} was called with no tree argument and no parent.`
       );
     }
-    return parent.get("@current");
+    return parent;
   }
 
   throw new Error(`${methodName}: The first argument was undefined.`);
