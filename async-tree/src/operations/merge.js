@@ -20,10 +20,11 @@ export default function merge(...sources) {
     async get(key) {
       // Check trees for the indicated key in reverse order.
       for (let index = this.trees.length - 1; index >= 0; index--) {
-        const value = await this.trees[index].get(key);
+        const tree = this.trees[index];
+        const value = await tree.get(key);
         if (value !== undefined) {
-          if (Tree.isAsyncTree(value)) {
-            // Merged tree acts as parent
+          if (Tree.isAsyncTree(value) && value.parent === tree) {
+            // Merged tree acts as parent instead of the source tree.
             value.parent = this;
           }
           return value;

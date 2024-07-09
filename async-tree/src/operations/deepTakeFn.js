@@ -13,7 +13,7 @@ export default function deepTakeFn(count) {
   return async function deepTakeFn(treelike) {
     const tree = await Tree.from(treelike);
     const { values } = await traverse(tree, count);
-    return values;
+    return Tree.from(values);
   };
 }
 

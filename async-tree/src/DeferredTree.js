@@ -62,7 +62,8 @@ export default class DeferredTree {
     this.treePromise ??= this.loadResult().then((treelike) => {
       this._tree = Tree.from(treelike);
       if (this._parentUntilLoaded) {
-        // Now that the tree has been loaded, we can set its parent.
+        // Now that the tree has been loaded, we can set its parent if it hasn't
+        // already been set.
         if (!this._tree.parent) {
           this._tree.parent = this._parentUntilLoaded;
         }

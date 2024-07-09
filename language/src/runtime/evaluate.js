@@ -1,7 +1,13 @@
-import { Tree, isPlainObject, isUnpackable } from "@weborigami/async-tree";
+import {
+  Tree,
+  isPlainObject,
+  isUnpackable,
+  scope,
+} from "@weborigami/async-tree";
 import { ops } from "./internal.js";
 
 const codeSymbol = Symbol("code");
+const scopeSymbol = Symbol("scope");
 const sourceSymbol = Symbol("source");
 
 /**
@@ -83,6 +89,14 @@ export default async function evaluate(code) {
       result[codeSymbol] = code;
       if (/** @type {any} */ (code).location) {
         result[sourceSymbol] = codeFragment(code);
+      }
+      if (!result[scopeSymbol]) {
+        Object.defineProperty(result, scopeSymbol, {
+          get() {
+            return scope(result).trees;
+          },
+          enumerable: false,
+        });
       }
     } catch (/** @type {any} */ error) {
       // Ignore errors.

@@ -12,7 +12,7 @@ export default function functionResultsMap(treelike) {
       let resultValue;
       if (typeof sourceValue === "function") {
         resultValue = await sourceValue.call(tree);
-        if (Tree.isAsyncTree(resultValue)) {
+        if (Tree.isAsyncTree(resultValue) && !resultValue.parent) {
           resultValue.parent = tree;
         }
       } else {

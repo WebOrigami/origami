@@ -188,7 +188,8 @@ export async function pipeline(start, ...fns) {
  * If the input is stringlike, its text will be returned.
  *
  * If the input is a ArrayBuffer or typed array, it will be interpreted as UTF-8
- * text.
+ * text if it does not contain unprintable characters. If it does, it will be
+ * returned as a base64-encoded string.
  *
  * If the input has a custom class instance, its public properties will be
  * returned as a plain object.
@@ -212,7 +213,12 @@ export async function toPlainValue(input) {
     const mapped = await Tree.map(input, (value) => toPlainValue(value));
     return Tree.plain(mapped);
   } else if (isStringLike(input)) {
-    return toString(input);
+    const text = toString(input);
+    if (text !== null) {
+      return text;
+    } else {
+      return toBase64(input);
+    }
   } else {
     // Some other kind of class instance; return its public properties.
     const plain = {};
@@ -221,6 +227,10 @@ export async function toPlainValue(input) {
     }
     return plain;
   }
+}
+
+function toBase64(object) {
+  return Buffer.from(object).toString("base64");
 }
 
 /**

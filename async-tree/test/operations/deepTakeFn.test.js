@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { Tree } from "../../src/internal.js";
 import deepTakeFn from "../../src/operations/deepTakeFn.js";
 
 describe("deepTakeFn", () => {
@@ -16,6 +17,6 @@ describe("deepTakeFn", () => {
       g: 5,
     };
     const result = await deepTakeFn(4)(tree);
-    assert.deepEqual(result, [1, 2, 3, 4]);
+    assert.deepEqual(await Tree.plain(result), [1, 2, 3, 4]);
   });
 });

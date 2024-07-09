@@ -40,7 +40,7 @@ export default async function mdHtml(input) {
   }
   const inputIsDocument = input["@text"] !== undefined;
   const markdown = toString(input);
-  if (!markdown) {
+  if (markdown === null) {
     throw new Error("@mdHtml: The provided input couldn't be treated as text.");
   }
   const html = marked(markdown);

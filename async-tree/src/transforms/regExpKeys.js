@@ -56,7 +56,9 @@ export default async function regExpKeys(treelike) {
     let value = await tree.get(key);
     if (Tree.isAsyncTree(value)) {
       value = regExpKeys(value);
-      value.parent = result;
+      if (!value.parent) {
+        value.parent = result;
+      }
     }
 
     map.set(regExp, value);
