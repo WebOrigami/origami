@@ -11,5 +11,8 @@ import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
  */
 export default function imageFormatFn(format, options) {
   assertTreeIsDefined(this, "image/formatFn");
-  return (buffer) => sharp(buffer).toFormat(format, options).toBuffer();
+  return (buffer) =>
+    buffer instanceof Uint8Array || buffer instanceof ArrayBuffer
+      ? sharp(buffer).toFormat(format, options).toBuffer()
+      : undefined;
 }

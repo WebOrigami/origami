@@ -10,5 +10,8 @@ import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
 export default function imageResizeFn(options) {
   assertTreeIsDefined(this, "image/resizeFn");
   // Include `rotate()` to auto-rotate according to EXIF data.
-  return (buffer) => sharp(buffer).rotate().resize(options).toBuffer();
+  return (buffer) =>
+    buffer instanceof Uint8Array || buffer instanceof ArrayBuffer
+      ? sharp(buffer).rotate().resize(options).toBuffer()
+      : undefined;
 }
