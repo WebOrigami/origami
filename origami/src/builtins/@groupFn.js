@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {import("../../index.ts").Invocable} groupKey
  */
 export default function groupFnBuiltin(groupKey) {
-  assertTreeIsDefined(this);
+  assertTreeIsDefined(this, "groupFn");
   const tree = this;
 
   const groupKeyFn = toFunction(groupKey);

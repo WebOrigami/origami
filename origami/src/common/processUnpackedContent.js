@@ -25,10 +25,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
       target = base;
     }
     return content.bind(target);
-  } else if (
-    Tree.isAsyncTree(content) &&
-    !(/** @type {any} */ (content).scope)
-  ) {
+  } else if (Tree.isAsyncTree(content) && !content.parent) {
     const result = Object.create(content);
     result.parent = parent;
     return result;

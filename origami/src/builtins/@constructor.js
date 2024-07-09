@@ -9,9 +9,5 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  */
 export default function constructor(...keys) {
   assertTreeIsDefined(this, "constructor");
-  const scope = this;
-  if (!scope) {
-    throw new Error("@constructor requires a non-null scope.");
-  }
-  return ops.constructor.call(scope, ...keys);
+  return ops.constructor.call(this, ...keys);
 }

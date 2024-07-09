@@ -72,7 +72,8 @@ function constructHref(protocol, host, ...keys) {
  * @param  {...any} keys
  */
 export async function constructor(...keys) {
-  const scope = this;
+  const tree = this;
+  const scope = scopeFn(tree);
   let constructor = await Tree.traverseOrThrow(scope, ...keys);
   if (isUnpackable(constructor)) {
     constructor = await constructor.unpack();
@@ -102,7 +103,7 @@ async function fetchResponse(href) {
   // Attach any loader defined for the file type.
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
-  if (filename) {
+  if (this && filename) {
     buffer = await handleExtension(this, filename, buffer);
   }
 
@@ -152,14 +153,18 @@ export function https(host, ...keys) {
 https.toString = () => "«ops.https»";
 
 /**
- * Search the inherited scope -- i.e., exclude the current tree -- for the
- * given key.
+ * Search the parent's scope -- i.e., exclude the current tree -- for the given
+ * key.
  *
  * @this {AsyncTree|null}
  * @param {*} key
  */
 export async function inherited(key) {
-  return this?.parent?.get(key);
+  if (!this?.parent) {
+    return undefined;
+  }
+  const parentScope = scopeFn(this.parent);
+  return parentScope.get(key);
 }
 inherited.toString = () => "«ops.inherited»";
 
@@ -241,10 +246,10 @@ merge.toString = () => "«ops.merge»";
  * @param {any[]} entries
  */
 export async function object(...entries) {
-  const scope = this;
+  const tree = this;
   const promises = entries.map(async ([key, value]) => [
     key,
-    await evaluate.call(scope, value),
+    await evaluate.call(tree, value),
   ]);
   const evaluated = await Promise.all(promises);
   return Object.fromEntries(evaluated);

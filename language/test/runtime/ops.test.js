@@ -99,7 +99,7 @@ describe("ops", () => {
         ]),
       ],
     ];
-    const result = await evaluate.call({}, code);
+    const result = await evaluate.call(null, code);
     assert(result instanceof OrigamiTree);
     assert.deepEqual(await Tree.plain(result), {
       name: "world",

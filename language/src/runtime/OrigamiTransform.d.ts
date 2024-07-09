@@ -1,9 +1,5 @@
 import { Mixin } from "../../index.ts";
 
-import type { AsyncTree } from "@weborigami/types";
-
-declare const OrigamiTransform: Mixin<{
-  scope: AsyncTree|null;
-}>;
+declare const OrigamiTransform: Mixin<{}>;
 
 export default OrigamiTransform;

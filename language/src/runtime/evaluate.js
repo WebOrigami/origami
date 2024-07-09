@@ -7,7 +7,7 @@ const sourceSymbol = Symbol("source");
 /**
  * Evaluate the given code and return the result.
  *
- * `this` should be the scope used to look up references found in the code.
+ * `this` should be the tree used as the context for the evaluation.
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  * @param {any} code

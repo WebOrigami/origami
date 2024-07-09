@@ -62,11 +62,11 @@ export default function mapFnBuiltin(operation) {
   let extendedValueFn;
   if (valueFn) {
     const resolvedValueFn = toFunction(valueFn);
-    // Have the value function run in this scope.
+    // Have the value function run in this tree.
     extendedValueFn = resolvedValueFn.bind(tree);
   }
 
-  // Extend the value function to run in scope.
+  // Extend the key functions to run in this tree.
   let extendedKeyFn;
   let extendedInverseKeyFn;
   if (extension) {

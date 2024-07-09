@@ -1,0 +1,1 @@
+export default function assertTreeIsDefined(tree: any, methodName: string): asserts tree is object

@@ -26,7 +26,7 @@ export default async function getTreeArgument(
   treelike,
   methodName
 ) {
-  assertTreeIsDefined(parent);
+  assertTreeIsDefined(parent, methodName);
 
   if (treelike !== undefined) {
     if (isUnpackable(treelike)) {

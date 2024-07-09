@@ -22,7 +22,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {ValueKeyFn|SortOptions} [options]
  */
 export default function sortFnBuiltin(options) {
-  assertTreeIsDefined(this);
+  assertTreeIsDefined(this, "sortFn");
   const parent = this;
 
   if (typeof options === "function") {

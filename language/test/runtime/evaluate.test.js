@@ -37,11 +37,11 @@ describe("evaluate", () => {
 
   test("passes context to invoked functions", async () => {
     const code = [ops.scope, "fn"];
-    const tree = {
+    const tree = new ObjectTree({
       async fn() {
         assert.equal(this, tree);
       },
-    };
+    });
     await evaluate.call(tree, code);
   });
 
