@@ -1,11 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import {
-  ExpressionTree,
-  expressionFunction,
-  ops,
-} from "../../src/runtime/internal.js";
 import mergeTrees from "../../src/runtime/mergeTrees.js";
 
 describe("mergeTrees", () => {
@@ -26,27 +21,6 @@ describe("mergeTrees", () => {
       a: 1,
       b: 3,
       c: 4,
-    });
-  });
-
-  test.skip("puts all trees in scope", async () => {
-    const tree = await mergeTrees.call(
-      null,
-      new ExpressionTree({
-        a: 1,
-        b: expressionFunction.createExpressionFunction([ops.scope, "c"]),
-      }),
-      new ExpressionTree({
-        c: 2,
-        d: expressionFunction.createExpressionFunction([ops.scope, "a"]),
-      })
-    );
-    // @ts-ignore
-    assert.deepEqual(await Tree.plain(tree), {
-      a: 1,
-      b: 2,
-      c: 2,
-      d: 1,
     });
   });
 
