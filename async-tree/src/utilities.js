@@ -213,6 +213,9 @@ export async function toPlainValue(input) {
     const mapped = await Tree.map(input, (value) => toPlainValue(value));
     return Tree.plain(mapped);
   } else if (isStringLike(input)) {
+    return toString(input);
+  } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {
+    // Try to interpret the buffer as UTF-8 text, otherwise use base64.
     const text = toString(input);
     if (text !== null) {
       return text;

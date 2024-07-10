@@ -50,6 +50,11 @@ describe("utilities", () => {
       await utilities.toPlainValue(new TextEncoder().encode("bytes")),
       "bytes"
     );
+    // ArrayBuffer with non-printable characters should be returned as base64
+    assert.equal(
+      await utilities.toPlainValue(new Uint8Array([1, 2, 3]).buffer),
+      "AQID"
+    );
     assert.equal(await utilities.toPlainValue(async () => "result"), "result");
     assert.deepEqual(await utilities.toPlainValue(new User("Alice")), {
       name: "Alice",
