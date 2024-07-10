@@ -68,7 +68,7 @@ export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
     },
 
     async keys() {
-      keys ??= source.keys();
+      keys ??= await source.keys();
       return keys;
     },
   };
