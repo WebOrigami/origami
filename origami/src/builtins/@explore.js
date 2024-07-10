@@ -23,11 +23,11 @@ export default async function explore(...keys) {
   let result;
   if (keys.length > 0) {
     // Traverse the scope using the given keys.
-    const debugScope = await debug.call(this, this);
-    if (!debugScope) {
+    const debugTree = await debug.call(this, this);
+    if (!debugTree) {
       return undefined;
     }
-
+    const debugScope = scope(debugTree);
     // HACK: reproduce logic of ExplorableSiteTransform that turns a trailing
     // slash into index.html. Calling `debug` applies that transform and the
     // transform should handle that logic, but unfortunately the `traverse`

@@ -34,5 +34,9 @@ describe("mergeDeep", () => {
         f: 4,
       },
     });
+
+    // Parent of a subvalue is the merged tree
+    const a = await fixture.get("a");
+    assert.equal(a.parent, fixture);
   });
 });

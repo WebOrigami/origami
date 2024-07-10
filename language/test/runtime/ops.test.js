@@ -99,12 +99,14 @@ describe("ops", () => {
         ]),
       ],
     ];
-    const result = await evaluate.call(null, code);
+    const parent = new ObjectTree({});
+    const result = await evaluate.call(parent, code);
     assert(result instanceof OrigamiTree);
     assert.deepEqual(await Tree.plain(result), {
       name: "world",
       message: "Hello, world!",
     });
+    assert.equal(result.parent, parent);
   });
 
   test("can search inherited scope", async () => {

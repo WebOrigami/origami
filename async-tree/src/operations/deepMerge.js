@@ -18,15 +18,28 @@ export default function deepMerge(...sources) {
 
       // Check trees for the indicated key in reverse order.
       for (let index = trees.length - 1; index >= 0; index--) {
-        const value = await trees[index].get(key);
+        const tree = trees[index];
+        const value = await tree.get(key);
         if (Tree.isAsyncTree(value)) {
+          if (value.parent === tree) {
+            // Merged tree acts as parent instead of the source tree.
+            value.parent = this;
+          }
           subtrees.unshift(value);
         } else if (value !== undefined) {
           return value;
         }
       }
 
-      return subtrees.length > 0 ? deepMerge(...subtrees) : undefined;
+      if (subtrees.length > 1) {
+        const merged = deepMerge(...subtrees);
+        merged.parent = this;
+        return merged;
+      } else if (subtrees.length === 1) {
+        return subtrees[0];
+      } else {
+        return undefined;
+      }
     },
 
     async isKeyForSubtree(key) {
