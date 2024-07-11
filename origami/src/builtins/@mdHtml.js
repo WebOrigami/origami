@@ -6,6 +6,9 @@ import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
 import documentObject from "../common/documentObject.js";
 import { replaceExtension, toString } from "../common/utilities.js";
+import origamiHighlightDefinition from "../misc/origamiHighlightDefinition.js";
+
+highlight.registerLanguage("ori", origamiHighlightDefinition);
 
 marked.use(
   markedGfmHeadingId(),
