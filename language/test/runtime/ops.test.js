@@ -95,6 +95,17 @@ describe("ops", () => {
     assert.equal(result[symbols.parent], parent);
   });
 
+  test("returned tree can be unpacked", async () => {
+    const code = [ops.tree, ["data.json", `{ "a": 1 }`]];
+    const parent = new ObjectTree({
+      json_handler: JSON.parse,
+    });
+    const result = await evaluate.call(parent, code);
+    const dataJson = await result["data.json"];
+    const json = await dataJson.unpack();
+    assert.deepEqual(json, { a: 1 });
+  });
+
   test("can search inherited scope", async () => {
     const parent = new ObjectTree({
       a: 1, // This is the inherited value we want

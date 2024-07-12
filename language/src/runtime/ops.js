@@ -301,14 +301,27 @@ export async function tree(...entries) {
   let tree;
   for (const [key, value] of entries) {
     if (value instanceof Array) {
+      const code = value;
       // Add a code entry as a property getter
-      Object.defineProperty(object, key, {
-        enumerable: true,
-        get() {
+
+      let get;
+      const extname = extensions.extname(key);
+      if (extname) {
+        // Key has extension, getter will invoke code then attach unpack method.
+        get = async () => {
           tree ??= new ObjectTree(this);
-          return evaluate.call(tree, value);
-        },
-      });
+          const result = await evaluate.call(tree, code);
+          return extensions.attachUnpackMethodIfPacked(tree, extname, result);
+        };
+      } else {
+        // No extension, so getter just invoke code.
+        get = () => {
+          tree ??= new ObjectTree(this);
+          return evaluate.call(tree, code);
+        };
+      }
+
+      Object.defineProperty(object, key, { enumerable: true, get });
     } else {
       // Add a primitive entry as a regular property
       object[key] = value;
