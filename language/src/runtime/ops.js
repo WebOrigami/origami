@@ -9,13 +9,14 @@ import {
   Tree,
   isUnpackable,
   scope as scopeFn,
+  symbols,
   concat as treeConcat,
 } from "@weborigami/async-tree";
-import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
-import OrigamiFiles from "./OrigamiFiles.js";
 import handleExtension from "./handleExtension.js";
-import { OrigamiTree, evaluate, expressionFunction } from "./internal.js";
+import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
+import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
+import OrigamiFiles from "./OrigamiFiles.js";
 
 // For memoizing lambda functions
 const lambdaFnMap = new Map();
@@ -295,17 +296,31 @@ export const traverse = Tree.traverseOrThrow;
  * @param {any[]} entries
  */
 export async function tree(...entries) {
-  const fns = entries.map(([key, code]) => {
-    const value =
-      code instanceof Array
-        ? expressionFunction.createExpressionFunction(code)
-        : code;
-    return [key, value];
+  // Convert the non-code entries to plain properties.
+  const object = {};
+  let tree;
+  for (const [key, value] of entries) {
+    if (value instanceof Array) {
+      // Add a code entry as a property getter
+      Object.defineProperty(object, key, {
+        enumerable: true,
+        get() {
+          tree ??= new ObjectTree(this);
+          return evaluate.call(tree, value);
+        },
+      });
+    } else {
+      // Add a primitive entry as a regular property
+      object[key] = value;
+    }
+  }
+  Object.defineProperty(object, symbols.parent, {
+    value: this,
+    writable: true,
+    configurable: true,
+    enumerable: false,
   });
-  const object = Object.fromEntries(fns);
-  const result = new OrigamiTree(object);
-  result.parent = this;
-  return result;
+  return object;
 }
 tree.toString = () => "«ops.tree»";
 

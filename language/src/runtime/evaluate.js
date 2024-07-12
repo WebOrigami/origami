@@ -79,12 +79,7 @@ export default async function evaluate(code) {
   }
 
   // To aid debugging, add the code to the result.
-  if (
-    result &&
-    typeof result === "object" &&
-    Object.isExtensible(result) &&
-    !isPlainObject(result)
-  ) {
+  if (Object.isExtensible(result) && !isPlainObject(result)) {
     try {
       result[codeSymbol] = code;
       if (/** @type {any} */ (code).location) {

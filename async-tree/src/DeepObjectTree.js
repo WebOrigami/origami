@@ -12,10 +12,6 @@ export default class DeepObjectTree extends ObjectTree {
       value = Reflect.construct(this.constructor, [value]);
     }
 
-    if (Tree.isAsyncTree(value) && !value.parent) {
-      value.parent = this;
-    }
-
     return value;
   }
 

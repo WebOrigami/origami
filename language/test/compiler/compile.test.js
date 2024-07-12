@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
@@ -24,7 +24,7 @@ describe("compile", () => {
   test("tree", async () => {
     const fn = compile.expression("{ message = greet(name) }");
     const tree = await fn.call(null);
-    tree.parent = shared;
+    tree[symbols.parent] = shared;
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, Alice!",
     });

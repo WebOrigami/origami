@@ -1,13 +1,8 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import {
-  OrigamiTree,
-  evaluate,
-  expressionFunction,
-  ops,
-} from "../../src/runtime/internal.js";
+import { evaluate, ops } from "../../src/runtime/internal.js";
 
 describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {
@@ -89,24 +84,15 @@ describe("ops", () => {
     const code = [
       ops.tree,
       ["name", "world"],
-      [
-        "message",
-        expressionFunction.createExpressionFunction([
-          ops.concat,
-          "Hello, ",
-          [ops.scope, "name"],
-          "!",
-        ]),
-      ],
+      ["message", [ops.concat, "Hello, ", [ops.scope, "name"], "!"]],
     ];
     const parent = new ObjectTree({});
     const result = await evaluate.call(parent, code);
-    assert(result instanceof OrigamiTree);
     assert.deepEqual(await Tree.plain(result), {
       name: "world",
       message: "Hello, world!",
     });
-    assert.equal(result.parent, parent);
+    assert.equal(result[symbols.parent], parent);
   });
 
   test("can search inherited scope", async () => {

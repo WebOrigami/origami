@@ -232,6 +232,15 @@ describe("Tree", () => {
     assert.deepEqual(plain, original);
   });
 
+  test("plain() awaits async properties", async () => {
+    const object = {
+      get name() {
+        return Promise.resolve("Alice");
+      },
+    };
+    assert.deepEqual(await Tree.plain(object), { name: "Alice" });
+  });
+
   test("remove method removes a value", async () => {
     const fixture = createFixture();
     await Tree.remove(fixture, "Alice.md");

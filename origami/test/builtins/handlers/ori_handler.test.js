@@ -27,6 +27,7 @@ describe(".ori handler", () => {
     assert.deepEqual(await Tree.plain(tree), {
       message: "Hello, world!",
     });
+    assert.equal(await tree.message, "Hello, world!");
   });
 
   test("loads a tree with a nested tree", async () => {
@@ -82,7 +83,7 @@ describe(".ori handler", () => {
   test("loads a tree that includes a template", async () => {
     const treeDocument = await fixtures.get("site.ori");
     const tree = await treeDocument.unpack();
-    const indexHtml = await tree.get("index.html");
+    const indexHtml = await tree["index.html"];
     assert.equal(indexHtml, "Hello, world!");
   });
 });

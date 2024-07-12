@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { symbols, Tree } from "@weborigami/async-tree";
 import builtins from "../builtins/@builtins.js";
 
 /**
@@ -29,6 +29,14 @@ export default function processUnpackedContent(content, parent, attachedData) {
     const result = Object.create(content);
     result.parent = parent;
     return result;
+  } else if (Object.isExtensible(content) && !content[symbols.parent]) {
+    Object.defineProperty(content, symbols.parent, {
+      configurable: true,
+      enumerable: false,
+      value: parent,
+      writable: true,
+    });
+    return content;
   } else {
     return content;
   }

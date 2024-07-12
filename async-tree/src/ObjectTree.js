@@ -1,4 +1,5 @@
 import { Tree } from "./internal.js";
+import * as symbols from "./symbols.js";
 import { getRealmObjectPrototype } from "./utilities.js";
 
 /**
@@ -15,7 +16,7 @@ export default class ObjectTree {
    */
   constructor(object) {
     this.object = object;
-    this.parent = null;
+    this.parent = object[symbols.parent] ?? null;
   }
 
   /**
@@ -35,15 +36,26 @@ export default class ObjectTree {
       return undefined;
     }
 
-    let value = this.object[key];
+    let value = await this.object[key];
 
-    if (Tree.isAsyncTree(value) && !value.parent) {
-      value.parent = this;
-    }
-
-    if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
+    if (Tree.isAsyncTree(value)) {
+      if (!value.parent) {
+        value.parent = this;
+      }
+    } else if (
+      typeof value === "function" &&
+      !Object.hasOwn(this.object, key)
+    ) {
       // Value is an inherited method; bind it to the object.
       value = value.bind(this.object);
+    }
+    if (Object.isExtensible(value) && !value[symbols.parent]) {
+      Object.defineProperty(value, symbols.parent, {
+        configurable: true,
+        enumerable: false,
+        value: this,
+        writable: true,
+      });
     }
 
     return value;
