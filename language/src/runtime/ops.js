@@ -12,7 +12,7 @@ import {
   symbols,
   concat as treeConcat,
 } from "@weborigami/async-tree";
-import handleExtension from "./handleExtension.js";
+import { attachHandlerIfApplicable, extname } from "./extensions.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -305,23 +305,27 @@ export async function tree(...entries) {
       // Add a code entry as a property getter
 
       let get;
-      const extname = extensions.extname(key);
-      if (extname) {
+      const extension = extname(key);
+      if (extension) {
         // Key has extension, getter will invoke code then attach unpack method.
         get = async () => {
           tree ??= new ObjectTree(this);
           const result = await evaluate.call(tree, code);
-          return extensions.attachUnpackMethodIfPacked(tree, extname, result);
+          return attachHandlerIfApplicable(tree, result, key);
         };
       } else {
-        // No extension, so getter just invoke code.
+        // No extension, so getter just invokes code.
         get = () => {
           tree ??= new ObjectTree(this);
           return evaluate.call(tree, code);
         };
       }
 
-      Object.defineProperty(object, key, { enumerable: true, get });
+      Object.defineProperty(object, key, {
+        configurable: true,
+        enumerable: true,
+        get,
+      });
     } else {
       // Add a primitive entry as a regular property
       object[key] = value;

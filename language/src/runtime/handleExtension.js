@@ -1,5 +1,5 @@
 import { isUnpackable, scope, symbols } from "@weborigami/async-tree";
-import extname from "./extname.js";
+import extname from "./extensions.js";
 
 /**
  * Given a value that was retrieved using the given key, search in scope for a

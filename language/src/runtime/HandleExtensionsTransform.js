@@ -1,5 +1,4 @@
-import { isStringLike } from "@weborigami/async-tree";
-import handleExtension from "./handleExtension.js";
+import { attachHandlerIfApplicable } from "./extensions.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -12,14 +11,7 @@ export default function HandleExtensionsTransform(Base) {
   return class FileLoaders extends Base {
     async get(key) {
       let value = await super.get(key);
-
-      // If the value is packed (writable to disk),
-      // If the key is string-like and has an extension, attach a loader (if one
-      // exists) that handles that extension.
-      if (value && isStringLike(key)) {
-        value = await handleExtension(this, String(key), value);
-      }
-
+      value = attachHandlerIfApplicable(this, value, key);
       return value;
     }
   };
