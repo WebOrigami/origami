@@ -3,6 +3,27 @@ import { describe, test } from "node:test";
 import * as utilities from "../src/utilities.js";
 
 describe("utilities", () => {
+  test("box returns a boxed value", () => {
+    const string = "string";
+    const stringObject = utilities.box(string);
+    assert(stringObject instanceof String);
+    assert.equal(stringObject, string);
+
+    const number = 1;
+    const numberObject = utilities.box(number);
+    assert(numberObject instanceof Number);
+    assert.equal(numberObject, number);
+
+    const boolean = true;
+    const booleanObject = utilities.box(boolean);
+    assert(booleanObject instanceof Boolean);
+    assert.equal(booleanObject, boolean);
+
+    const object = {};
+    const boxedObject = utilities.box(object);
+    assert.equal(boxedObject, object);
+  });
+
   test("getRealmObjectPrototype returns the object's root prototype", () => {
     const object = {};
     const proto = utilities.getRealmObjectPrototype(object);

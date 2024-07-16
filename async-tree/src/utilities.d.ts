@@ -1,5 +1,6 @@
 import { Packed, PlainObject, StringLike } from "../index.ts";
 
+export function box(value: any): any;
 export function castArrayLike(object: any): any;
 export function getRealmObjectPrototype(object: any): any;
 export const hiddenFileNames: string[];
