@@ -25,7 +25,7 @@ describe("expressionObject", () => {
   test("can define a property getter", async () => {
     let count = 0;
     const increment = () => count++;
-    const entries = [["count", [ops.getter, increment]]];
+    const entries = [["count", [ops.getter, [increment]]]];
     const object = await expressionObject(entries, null);
     assert.equal(await object.count, 0);
     assert.equal(await object.count, 1);

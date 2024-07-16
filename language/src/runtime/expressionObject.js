@@ -40,7 +40,7 @@ export default async function expressionObject(entries, parent) {
       // Property defined by code, add as a getter
       let code;
       if (value[0] === ops.getter) {
-        code = value.slice(1);
+        code = value[1];
       } else {
         immediateProperties.push(key);
         code = value;

@@ -24,22 +24,6 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("treeAssignment", () => {
-    assertParse("treeAssignment", "data = obj.json", [
-      "data",
-      [ops.scope, "obj.json"],
-    ]);
-    assertParse("treeAssignment", "foo = fn 'bar'", [
-      "foo",
-      [[ops.scope, "fn"], "bar"],
-    ]);
-  });
-
-  test("treeEntry", () => {
-    assertParse("treeEntry", "foo", ["foo", [ops.inherited, "foo"]]);
-    assertParse("treeEntry", "foo = 1", ["foo", 1]);
-  });
-
   test("expr", () => {
     assertParse("expr", "obj.json", [ops.scope, "obj.json"]);
     assertParse("expr", "(fn a, b, c)", [
@@ -93,20 +77,26 @@ describe("Origami parser", () => {
         }
       `,
       [
-        ops.tree,
+        ops.object,
         [
           "index.html",
           [
-            [ops.scope, "index.ori"],
-            [ops.scope, "teamData.yaml"],
+            ops.getter,
+            [
+              [ops.scope, "index.ori"],
+              [ops.scope, "teamData.yaml"],
+            ],
           ],
         ],
         [
           "thumbnails",
           [
-            [ops.scope, "@map"],
-            [ops.scope, "images"],
-            [ops.object, ["value", [ops.scope, "thumbnail.js"]]],
+            ops.getter,
+            [
+              [ops.scope, "@map"],
+              [ops.scope, "images"],
+              [ops.object, ["value", [ops.scope, "thumbnail.js"]]],
+            ],
           ],
         ],
       ]
@@ -297,17 +287,42 @@ describe("Origami parser", () => {
     assertParse("object", "{ a: 1, b }", [
       ops.object,
       ["a", 1],
-      ["b", [ops.scope, "b"]],
+      ["b", [ops.inherited, "b"]],
     ]);
     assertParse("object", `{ "a": 1, "b": 2 }`, [
       ops.object,
       ["a", 1],
       ["b", 2],
     ]);
+    assertParse("object", "{ a = b, b: 2 }", [
+      ops.object,
+      ["a", [ops.getter, [ops.scope, "b"]]],
+      ["b", 2],
+    ]);
+    assertParse("object", "{ x = fn('a') }", [
+      ops.object,
+      ["x", [ops.getter, [[ops.scope, "fn"], "a"]]],
+    ]);
     assertParse("object", "{ a: 1, ...b }", [
       ops.merge,
       [ops.object, ["a", 1]],
       [ops.scope, "b"],
+    ]);
+  });
+
+  test("objectEntry", () => {
+    assertParse("objectEntry", "foo", ["foo", [ops.inherited, "foo"]]);
+    assertParse("objectEntry", "x: y", ["x", [ops.scope, "y"]]);
+  });
+
+  test("objectGetter", () => {
+    assertParse("objectGetter", "data = obj.json", [
+      "data",
+      [ops.getter, [ops.scope, "obj.json"]],
+    ]);
+    assertParse("objectGetter", "foo = fn 'bar'", [
+      "foo",
+      [ops.getter, [[ops.scope, "fn"], "bar"]],
     ]);
   });
 
@@ -318,11 +333,6 @@ describe("Origami parser", () => {
       "x",
       [[ops.scope, "fn"], "a"],
     ]);
-  });
-
-  test("objectEntry", () => {
-    assertParse("objectEntry", "foo", ["foo", [ops.scope, "foo"]]);
-    assertParse("objectEntry", "x: y", ["x", [ops.scope, "y"]]);
   });
 
   test("parameterizedLambda", () => {
@@ -494,24 +504,6 @@ describe("Origami parser", () => {
 
   test("templateSubtitution", () => {
     assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"]);
-  });
-
-  test("tree", () => {
-    assertParse("tree", "{}", [ops.tree]);
-    assertParse("tree", "{ a = 1, b }", [
-      ops.tree,
-      ["a", 1],
-      ["b", [ops.inherited, "b"]],
-    ]);
-    assertParse("tree", "{ x = fn('a') }", [
-      ops.tree,
-      ["x", [[ops.scope, "fn"], "a"]],
-    ]);
-    assertParse("tree", "{ a = 1, ...b }", [
-      ops.merge,
-      [ops.tree, ["a", 1]],
-      [ops.scope, "b"],
-    ]);
   });
 
   test("whitespace block", () => {

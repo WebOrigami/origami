@@ -11,6 +11,8 @@ import {
   scope as scopeFn,
   concat as treeConcat,
 } from "@weborigami/async-tree";
+import expressionObject from "./expressionObject.js";
+import { attachHandlerIfApplicable } from "./extensions.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -103,7 +105,7 @@ async function fetchResponse(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (this && filename) {
-    buffer = await handleExtension(this, filename, buffer);
+    buffer = await attachHandlerIfApplicable(this, buffer, filename);
   }
 
   return buffer;
@@ -251,13 +253,7 @@ merge.toString = () => "«ops.merge»";
  * @param {any[]} entries
  */
 export async function object(...entries) {
-  const tree = this;
-  const promises = entries.map(async ([key, value]) => [
-    key,
-    await evaluate.call(tree, value),
-  ]);
-  const evaluated = await Promise.all(promises);
-  return Object.fromEntries(evaluated);
+  return expressionObject(entries, this);
 }
 object.toString = () => "«ops.object»";
 

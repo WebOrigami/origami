@@ -57,7 +57,6 @@ callTarget "function call"
   = absoluteFilePath
   / array
   / object
-  / tree
   / lambda
   / parameterizedLambda
   / protocolCall
@@ -207,9 +206,6 @@ number "number"
   / integer
 
 // An object literal: `{foo: 1, bar: 2}`
-//
-// TODO: Use Object.fromEntries with array of key/value pairs
-//
 object "object literal"
   = "{" __ entries:objectEntries? __ "}" {
       return annotate(makeObject(entries ?? [], ops.object), location());
@@ -222,11 +218,22 @@ objectEntries
 objectEntry
   = spread
   / objectProperty
-  / key:identifierOrString {
-      return annotate([key, [ops.scope, key]], location());
+  / objectGetter
+  / objectIdentifier
+
+// A getter definition inside an object literal: `foo = 1`
+objectGetter "object getter"
+  = key:identifierOrString __ "=" __ value:expr {
+    return annotate([key, [ops.getter, value]], location());
+  }
+
+// A standalone reference inside an object literal: `foo`
+objectIdentifier "object identifier"
+  = key:identifierOrString {
+      return annotate([key, [ops.inherited, key]], location());
     }
 
-// A single object property with key and value: `x: 1`
+// A property definition in an object literal: `x: 1`
 objectProperty "object property"
   = @identifierOrString __ ":" __ @expr
 
@@ -322,7 +329,6 @@ step
   / absoluteFilePath
   / array
   / object
-  / tree
   / lambda
   / parameterizedLambda
   / templateLiteral
@@ -384,27 +390,6 @@ templateSubstitution "template substitution"
 
 textChar
   = escapedChar / .
-
-// A tree literal: `{ index.html = "Hello" }`
-tree "tree literal"
-  = "{" __ entries:treeEntries? __ closingBrace {
-      return annotate(makeObject(entries ?? [], ops.tree), location());
-    }
-
-// A tree assignment statement: `foo = 1`
-treeAssignment "tree assignment"
-  = @identifierOrString __ "=" __ @expr
-
-// A separated list of assignments or shorthands
-treeEntries
-  = @treeEntry|1.., separator| separator?
-
-treeEntry
-  = spread
-  / treeAssignment
-  / key:identifierOrString {
-      return annotate([key, [ops.inherited, key]], location());
-    }
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
