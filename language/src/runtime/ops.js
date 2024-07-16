@@ -9,10 +9,8 @@ import {
   Tree,
   isUnpackable,
   scope as scopeFn,
-  symbols,
   concat as treeConcat,
 } from "@weborigami/async-tree";
-import { attachHandlerIfApplicable, extname } from "./extensions.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -110,6 +108,12 @@ async function fetchResponse(href) {
 
   return buffer;
 }
+
+/**
+ * This op is only used during parsing. It signals to ops.object that the
+ * "arguments" of the expression should be used to define a property getter.
+ */
+export const getter = new String("«ops.getter»");
 
 /**
  * Construct a files tree for the filesystem root.
@@ -286,60 +290,6 @@ spread.toString = () => "«ops.spread»";
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
-
-/**
- * Construct an tree. This is similar to ops.object but the values are turned
- * into functions rather than being immediately evaluated, and the result is an
- * OrigamiTree.
- *
- * @this {AsyncTree|null}
- * @param {any[]} entries
- */
-export async function tree(...entries) {
-  // Convert the non-code entries to plain properties.
-  const object = {};
-  let tree;
-  for (const [key, value] of entries) {
-    if (value instanceof Array) {
-      const code = value;
-      // Add a code entry as a property getter
-
-      let get;
-      const extension = extname(key);
-      if (extension) {
-        // Key has extension, getter will invoke code then attach unpack method.
-        get = async () => {
-          tree ??= new ObjectTree(this);
-          const result = await evaluate.call(tree, code);
-          return attachHandlerIfApplicable(tree, result, key);
-        };
-      } else {
-        // No extension, so getter just invokes code.
-        get = () => {
-          tree ??= new ObjectTree(this);
-          return evaluate.call(tree, code);
-        };
-      }
-
-      Object.defineProperty(object, key, {
-        configurable: true,
-        enumerable: true,
-        get,
-      });
-    } else {
-      // Add a primitive entry as a regular property
-      object[key] = value;
-    }
-  }
-  Object.defineProperty(object, symbols.parent, {
-    value: this,
-    writable: true,
-    configurable: true,
-    enumerable: false,
-  });
-  return object;
-}
-tree.toString = () => "«ops.tree»";
 
 /**
  * A website tree via HTTP.

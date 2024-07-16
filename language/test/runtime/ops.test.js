@@ -1,4 +1,4 @@
-import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
@@ -78,32 +78,6 @@ describe("ops", () => {
     const code = [ops.array, "Hello", 1, [[ops.scope, "upper"], "world"]];
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
-  });
-
-  test("can instantiate an Origami tree", async () => {
-    const code = [
-      ops.tree,
-      ["name", "world"],
-      ["message", [ops.concat, "Hello, ", [ops.scope, "name"], "!"]],
-    ];
-    const parent = new ObjectTree({});
-    const result = await evaluate.call(parent, code);
-    assert.deepEqual(await Tree.plain(result), {
-      name: "world",
-      message: "Hello, world!",
-    });
-    assert.equal(result[symbols.parent], parent);
-  });
-
-  test("returned tree can be unpacked", async () => {
-    const code = [ops.tree, ["data.json", `{ "a": 1 }`]];
-    const parent = new ObjectTree({
-      json_handler: JSON.parse,
-    });
-    const result = await evaluate.call(parent, code);
-    const dataJson = await result["data.json"];
-    const json = await dataJson.unpack();
-    assert.deepEqual(json, { a: 1 });
   });
 
   test("can search inherited scope", async () => {
