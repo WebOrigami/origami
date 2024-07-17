@@ -17,11 +17,11 @@ describe("programs", async () => {
   for (const key of await fixtures.keys()) {
     const file = await fixtures.get(key);
     const program = await file.unpack();
-    const title = await program.get("title");
+    const title = await program.title;
 
     test(title, async () => {
-      const actual = await program.get("actual");
-      const expected = await program.get("expected");
+      const actual = await program.actual;
+      const expected = await program.expected;
       assert.deepEqual(actual, expected);
     });
   }
