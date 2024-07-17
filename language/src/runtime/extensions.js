@@ -23,23 +23,24 @@ export async function attachHandlerIfApplicable(parent, value, key) {
     const extension = extname(key);
     if (extension) {
       const handler = await getExtensionHandler(parent, extension);
+      if (handler) {
+        // If the value is a primitive, box it so we can attach data to it.
+        value = box(value);
 
-      // If the value is a primitive, box it so we can attach data to it.
-      value = box(value);
+        if (handler.mediaType) {
+          value.mediaType = handler.mediaType;
+        }
+        value[symbols.parent] = parent;
 
-      if (handler.mediaType) {
-        value.mediaType = handler.mediaType;
-      }
-      value[symbols.parent] = parent;
-
-      const unpack = handler.unpack;
-      if (unpack) {
-        // Wrap the unpack function so its only called once per value.
-        let loaded;
-        value.unpack = async () => {
-          loaded ??= await unpack(value, { key, parent });
-          return loaded;
-        };
+        const unpack = handler.unpack;
+        if (unpack) {
+          // Wrap the unpack function so its only called once per value.
+          let loaded;
+          value.unpack = async () => {
+            loaded ??= await unpack(value, { key, parent });
+            return loaded;
+          };
+        }
       }
     }
   }
