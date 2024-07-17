@@ -16,7 +16,7 @@ export default class DeepObjectTree extends ObjectTree {
   }
 
   async isKeyForSubtree(key) {
-    const value = this.object[key];
+    const value = await this.object[key];
     return isPlainObject(value) || Tree.isAsyncTree(value);
   }
 }
