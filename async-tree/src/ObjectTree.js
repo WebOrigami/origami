@@ -39,6 +39,7 @@ export default class ObjectTree {
     let value = await this.object[key];
 
     if (Tree.isAsyncTree(value)) {
+      // Value is a subtree; set its parent to this tree.
       if (!value.parent) {
         value.parent = this;
       }
@@ -48,8 +49,9 @@ export default class ObjectTree {
     ) {
       // Value is an inherited method; bind it to the object.
       value = value.bind(this.object);
-    }
-    if (Object.isExtensible(value) && !value[symbols.parent]) {
+    } else if (Object.isExtensible(value) && !value[symbols.parent]) {
+      // Add parent reference as a symbol to avoid polluting the object. This
+      // reference will be used if the object is later used as a tree.
       Object.defineProperty(value, symbols.parent, {
         configurable: true,
         enumerable: false,

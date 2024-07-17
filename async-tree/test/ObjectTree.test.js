@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { ObjectTree, Tree } from "../src/internal.js";
+import * as symbols from "../src/symbols.js";
 
 describe("ObjectTree", () => {
   test("can get the keys of the tree", async () => {
@@ -74,6 +75,14 @@ describe("ObjectTree", () => {
     await fixture.set("prop", "Goodbye");
     assert.equal(bar.prop, "Goodbye");
     assert.equal(await fixture.get("prop"), "Goodbye");
+  });
+
+  test("sets parent symbol on subobjects", async () => {
+    const fixture = new ObjectTree({
+      sub: {},
+    });
+    const sub = await fixture.get("sub");
+    assert.equal(sub[symbols.parent], fixture);
   });
 
   test("sets parent on subtrees", async () => {
