@@ -3,8 +3,8 @@ import { Tree } from "@weborigami/async-tree";
 // Given an old tree and a new tree, return a tree of changes indicated
 // by the values: "added", "changed", or "deleted".
 export default async function changes(oldTreelike, newTreelike) {
-  const oldTree = Tree.from(oldTreelike);
-  const newTree = Tree.from(newTreelike);
+  const oldTree = Tree.from(oldTreelike, { deep: true });
+  const newTree = Tree.from(newTreelike, { deep: true });
 
   const oldKeys = Array.from(await oldTree.keys());
   const newKeys = Array.from(await newTree.keys());

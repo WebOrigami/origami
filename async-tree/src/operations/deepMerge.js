@@ -8,7 +8,7 @@ import { Tree } from "../internal.js";
  * @returns {AsyncTree & { description: string }}
  */
 export default function deepMerge(...sources) {
-  let trees = sources.map((treelike) => Tree.from(treelike));
+  let trees = sources.map((treelike) => Tree.from(treelike, { deep: true }));
   let mergeParent;
   return {
     description: "deepMerge",

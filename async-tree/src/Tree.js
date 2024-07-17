@@ -103,10 +103,15 @@ export async function forEach(tree, callbackFn) {
 /**
  * Attempts to cast the indicated object to an async tree.
  *
+ * If the object is a plain object, it will be converted to an ObjectTree. The
+ * optional `deep` option can be set to `true` to convert a plain object to a
+ * DeepObjectTree.
+ *
  * @param {Treelike | Object} obj
+ * @param {{ deep?: true }} [options]
  * @returns {AsyncTree}
  */
-export function from(obj) {
+export function from(obj, options = {}) {
   if (isAsyncTree(obj)) {
     // Argument already supports the tree interface.
     // @ts-ignore
@@ -118,7 +123,7 @@ export function from(obj) {
   } else if (obj instanceof Set) {
     return new SetTree(obj);
   } else if (isPlainObject(obj)) {
-    return new DeepObjectTree(obj);
+    return options.deep ? new DeepObjectTree(obj) : new ObjectTree(obj);
   } else if (isUnpackable(obj)) {
     async function AsyncFunction() {} // Sample async function
     return obj.unpack instanceof AsyncFunction.constructor

@@ -11,7 +11,7 @@ export default function deepTakeFn(count) {
    * @param {import("../../index.ts").Treelike} treelike
    */
   return async function deepTakeFn(treelike) {
-    const tree = await Tree.from(treelike);
+    const tree = await Tree.from(treelike, { deep: true });
     const { values } = await traverse(tree, count);
     return Tree.from(values);
   };

@@ -14,7 +14,7 @@ export default async function* deepValuesIterator(
   treelike,
   options = { expand: false }
 ) {
-  const tree = Tree.from(treelike);
+  const tree = Tree.from(treelike, { deep: true });
   for (const key of await tree.keys()) {
     let value = await tree.get(key);
 

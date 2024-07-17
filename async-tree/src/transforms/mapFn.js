@@ -1,5 +1,4 @@
-import { ObjectTree, Tree } from "../internal.js";
-import { isPlainObject } from "../utilities.js";
+import { Tree } from "../internal.js";
 
 /**
  * Return a transform function that maps the keys and/or values of a tree.
@@ -47,10 +46,7 @@ export default function createMapTransform(options = {}) {
    * @type {import("../../index.ts").TreeTransform}
    */
   return function map(treelike) {
-    const tree =
-      !deep && isPlainObject(treelike) && !Tree.isAsyncTree(treelike)
-        ? new ObjectTree(treelike)
-        : Tree.from(treelike);
+    const tree = Tree.from(treelike, { deep });
 
     // The transformed tree is actually an extension of the original tree's
     // prototype chain. This allows the transformed tree to inherit any

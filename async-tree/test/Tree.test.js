@@ -97,6 +97,16 @@ describe("Tree", () => {
     });
   });
 
+  test("from returns a deep object tree if deep option is true", async () => {
+    const obj = {
+      sub: {
+        a: 1,
+      },
+    };
+    const tree = Tree.from(obj, { deep: true });
+    assert(tree instanceof DeepObjectTree);
+  });
+
   test("from() creates a deferred tree if unpack() returns a promise", async () => {
     const obj = new String();
     /** @type {any} */ (obj).unpack = async () => ({

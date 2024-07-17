@@ -10,7 +10,7 @@ describe("@sortFn", () => {
       Carol: { age: 42 },
     };
     const transform = await sortFn.call(null, {
-      sortKey: async (value) => value.get("age"),
+      sortKey: (value) => value.age,
     });
     const result = transform(tree);
     assert.deepEqual(Array.from(await result.keys()), [

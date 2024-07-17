@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
 import merge from "../../src/operations/merge.js";
+import * as symbols from "../../src/symbols.js";
 
 describe("merge", () => {
   test("performs a shallow merge", async () => {
@@ -38,7 +39,7 @@ describe("merge", () => {
     assert.equal(c, undefined);
 
     // Parent of a subvalue is the merged tree
-    const b = await Tree.traverse(fixture, "b");
-    assert.equal(b.parent, fixture);
+    const b = await fixture.get("b");
+    assert.equal(b[symbols.parent], fixture);
   });
 });
