@@ -1,0 +1,9 @@
+{
+  title = "One template can reference another in local scope"
+
+  includeGreet.ori = (text) => `<h1>${ greet.ori(text) }</h1>`
+  greet.ori = (name) => `Hello, ${ name }!`
+
+  actual = includeGreet.ori("Bob")
+  expected = "<h1>Hello, Bob!</h1>"
+}

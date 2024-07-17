@@ -1,0 +1,12 @@
+{
+  title = "Template can reference input front matter"
+
+  template.ori = (input) => `<p>${ input/name }</p>`
+  person.md = `---
+name: Carol
+---
+`
+
+  actual = template.ori(person.md)
+  expected = "<p>Carol</p>"
+}

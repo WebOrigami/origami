@@ -1,4 +1,0 @@
-title: Reference the special context key
-
-# This will pull in the value of "obj.yaml" from the result tree.
-obj = context 'obj.yaml':
