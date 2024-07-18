@@ -107,33 +107,33 @@ export async function forEach(tree, callbackFn) {
  * optional `deep` option can be set to `true` to convert a plain object to a
  * DeepObjectTree.
  *
- * @param {Treelike | Object} obj
+ * @param {Treelike | Object} object
  * @param {{ deep?: true }} [options]
  * @returns {AsyncTree}
  */
-export function from(obj, options = {}) {
-  if (isAsyncTree(obj)) {
+export function from(object, options = {}) {
+  if (isAsyncTree(object)) {
     // Argument already supports the tree interface.
     // @ts-ignore
-    return obj;
-  } else if (typeof obj === "function") {
-    return new FunctionTree(obj);
-  } else if (obj instanceof Map) {
-    return new MapTree(obj);
-  } else if (obj instanceof Set) {
-    return new SetTree(obj);
-  } else if (isPlainObject(obj)) {
-    return options.deep ? new DeepObjectTree(obj) : new ObjectTree(obj);
-  } else if (isUnpackable(obj)) {
+    return object;
+  } else if (typeof object === "function") {
+    return new FunctionTree(object);
+  } else if (object instanceof Map) {
+    return new MapTree(object);
+  } else if (object instanceof Set) {
+    return new SetTree(object);
+  } else if (isPlainObject(object) || object instanceof Array) {
+    return options.deep ? new DeepObjectTree(object) : new ObjectTree(object);
+  } else if (isUnpackable(object)) {
     async function AsyncFunction() {} // Sample async function
-    return obj.unpack instanceof AsyncFunction.constructor
+    return object.unpack instanceof AsyncFunction.constructor
       ? // Async unpack: return a deferred tree.
-        new DeferredTree(obj.unpack)
+        new DeferredTree(object.unpack)
       : // Synchronous unpack: cast the result of unpack() to a tree.
-        from(obj.unpack());
-  } else if (obj && typeof obj === "object") {
+        from(object.unpack());
+  } else if (object && typeof object === "object") {
     // An instance of some class.
-    return new ObjectTree(obj);
+    return new ObjectTree(object);
   }
 
   throw new TypeError("Couldn't convert argument to an async tree");
