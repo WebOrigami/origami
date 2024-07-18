@@ -1,4 +1,8 @@
-import { Tree, getRealmObjectPrototype } from "@weborigami/async-tree";
+import {
+  Tree,
+  getRealmObjectPrototype,
+  toString,
+} from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
@@ -22,7 +26,7 @@ export default async function ori(
   assertTreeIsDefined(this, "ori");
 
   // In case expression has come from a file, cast it to a string.
-  expression = String(expression);
+  expression = toString(expression);
 
   // Run in the context of `this` if defined, otherwise use the builtins.
   const tree = this ?? builtins;
