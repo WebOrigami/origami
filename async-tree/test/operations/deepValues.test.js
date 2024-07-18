@@ -19,4 +19,10 @@ describe("deepValues", () => {
     const values = await deepValues(tree);
     assert.deepEqual(values, [1, 2, 3, 4]);
   });
+
+  test("returns in-order array of values in nested arrays", async () => {
+    const tree = [1, [2, 3], 4];
+    const values = await deepValues(tree);
+    assert.deepEqual(values, [1, 2, 3, 4]);
+  });
 });
