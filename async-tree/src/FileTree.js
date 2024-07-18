@@ -7,7 +7,6 @@ import {
   hiddenFileNames,
   isPacked,
   isPlainObject,
-  naturalOrder,
 } from "./utilities.js";
 
 /**
@@ -103,8 +102,9 @@ export default class FileTree {
     names = names.filter((name) => !hiddenFileNames.includes(name));
 
     // Node fs.readdir sort order appears to be unreliable; see, e.g.,
-    // https://github.com/nodejs/node/issues/3232.
-    names.sort(naturalOrder);
+    // https://github.com/nodejs/node/issues/3232. Use JavaScript sort to ensure
+    // a consistent order.
+    names.sort();
 
     return names;
   }
