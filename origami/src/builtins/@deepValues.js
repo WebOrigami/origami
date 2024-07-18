@@ -11,7 +11,13 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function deepValuesBuiltin(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@valuesDeep");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "@valuesDeep",
+    true
+  );
   return deepValues(tree);
 }
 

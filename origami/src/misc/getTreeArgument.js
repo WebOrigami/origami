@@ -18,13 +18,15 @@ import assertTreeIsDefined from "./assertTreeIsDefined.js";
  * @param {IArguments} args
  * @param {Treelike|undefined} treelike
  * @param {string} methodName
+ * @param {boolean} [deep]
  * @returns {Promise<AsyncTree>}
  */
 export default async function getTreeArgument(
   parent,
   args,
   treelike,
-  methodName
+  methodName,
+  deep = false
 ) {
   assertTreeIsDefined(parent, methodName);
 
@@ -33,7 +35,7 @@ export default async function getTreeArgument(
       treelike = await treelike.unpack();
     }
     if (isTreelike(treelike)) {
-      let tree = Tree.from(treelike);
+      let tree = Tree.from(treelike, { deep });
       // If the tree was created from a treelike object and does not yet have a
       // parent, make the current tree its parent.
       if (!tree.parent) {
