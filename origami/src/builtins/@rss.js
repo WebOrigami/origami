@@ -57,7 +57,7 @@ export default async function rss(jsonFeedTree, options = {}) {
   return `<?xml version="1.0" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-${titleElement}${descriptionElement}${linkElement}${languageElement}${feedLinkElement}${itemsRss}</channel>
+${titleElement}${descriptionElement}${linkElement}${languageElement}${feedLinkElement}${itemsRss}  </channel>
 </rss>`;
 }
 
