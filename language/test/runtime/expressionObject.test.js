@@ -31,6 +31,12 @@ describe("expressionObject", () => {
     assert.equal(await object.count, 1);
   });
 
+  test("treats a getter for a primitive value as a regular property", async () => {
+    const entries = [["name", [ops.getter, "world"]]];
+    const object = await expressionObject(entries, null);
+    assert.equal(object.name, "world");
+  });
+
   test("can instantiate an Origami tree", async () => {
     const entries = [
       ["name", "world"],

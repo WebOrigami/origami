@@ -31,13 +31,30 @@ export default async function expressionObject(entries, parent) {
 
   let tree;
   const immediateProperties = [];
-  for (const [key, value] of entries) {
+  for (let [key, value] of entries) {
+    // Determine if we need to define a getter or a regular property. If the key
+    // has an extension, we need to define a getter. If the value is code (an
+    // array), we need to define a getter -- but if that code takes the form
+    // [ops.getter, <primitive>], we can define a regular property.
+
+    let defineProperty;
     const extension = extname(key);
-    if (!extension && !(value instanceof Array)) {
-      // Simple property
+    if (extension) {
+      defineProperty = false;
+    } else if (!(value instanceof Array)) {
+      defineProperty = true;
+    } else if (value[0] === ops.getter && !(value[1] instanceof Array)) {
+      defineProperty = true;
+      value = value[1];
+    } else {
+      defineProperty = false;
+    }
+
+    if (defineProperty) {
+      // Define simple property
       object[key] = value;
     } else {
-      // Property defined by code, add as a getter
+      // Property getter
       let code;
       if (value[0] === ops.getter) {
         code = value[1];
