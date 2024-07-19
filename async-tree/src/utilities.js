@@ -1,4 +1,5 @@
 import { Tree } from "./internal.js";
+import * as symbols from "./symbols.js";
 
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
@@ -189,6 +190,35 @@ export const naturalOrder = new Intl.Collator(undefined, {
  */
 export async function pipeline(start, ...fns) {
   return fns.reduce(async (acc, fn) => fn(await acc), start);
+}
+
+/**
+ * If the child object doesn't have a parent yet, set it to the indicated
+ * parent. If the child is an AsyncTree, set the `parent` property. Otherwise,
+ * set the `symbols.parent` property.
+ *
+ * @param {*} child
+ * @param {*} parent
+ */
+export function setParent(child, parent) {
+  if (Tree.isAsyncTree(child)) {
+    // Value is a subtree; set its parent to this tree.
+    if (!child.parent) {
+      child.parent = parent;
+    }
+  } else if (Object.isExtensible(child) && !child[symbols.parent]) {
+    // Add parent reference as a symbol to avoid polluting the object. This
+    // reference will be used if the object is later used as a tree. We set
+    // `enumerable` to false even thought this makes no practical difference
+    // (symbols are never enumerated) because it can provide a hint in the
+    // debugger that the property is for internal use.
+    Object.defineProperty(child, symbols.parent, {
+      configurable: true,
+      enumerable: false,
+      value: parent,
+      writable: true,
+    });
+  }
 }
 
 /**

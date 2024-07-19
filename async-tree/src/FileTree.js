@@ -8,6 +8,7 @@ import {
   isPacked,
   isPlainObject,
   naturalOrder,
+  setParent,
 } from "./utilities.js";
 
 /**
@@ -65,16 +66,18 @@ export default class FileTree {
       throw error;
     }
 
+    let value;
     if (stats.isDirectory()) {
       // Return subdirectory as a tree
-      const subtree = Reflect.construct(this.constructor, [filePath]);
-      subtree.parent = this;
-      return subtree;
+      value = Reflect.construct(this.constructor, [filePath]);
     } else {
       // Return file contents as a standard Uint8Array.
       const buffer = await fs.readFile(filePath);
-      return Uint8Array.from(buffer);
+      value = Uint8Array.from(buffer);
     }
+
+    setParent(value, this);
+    return value;
   }
 
   async isKeyForSubtree(key) {

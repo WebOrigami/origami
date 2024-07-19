@@ -1,4 +1,5 @@
 import { Tree } from "./internal.js";
+import { setParent } from "./utilities.js";
 
 /**
  * A tree backed by a JavaScript `Map` object.
@@ -22,12 +23,8 @@ export default class MapTree {
   }
 
   async get(key) {
-    let value = this.map.get(key);
-
-    if (Tree.isAsyncTree(value) && !value.parent) {
-      value.parent = this;
-    }
-
+    const value = this.map.get(key);
+    setParent(value, this);
     return value;
   }
 

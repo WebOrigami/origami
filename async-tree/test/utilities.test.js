@@ -1,5 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { symbols } from "../main.js";
+import { ObjectTree } from "../src/internal.js";
 import * as utilities from "../src/utilities.js";
 
 describe("utilities", () => {
@@ -55,6 +57,33 @@ describe("utilities", () => {
     const square = (n) => n * n;
     const result = await utilities.pipeline(1, addOne, double, square);
     assert.equal(result, 16);
+  });
+
+  test("setParent sets a child's parent", () => {
+    const parent = new ObjectTree({});
+
+    // Set [symbols.parent] on a plain object.
+    const object = {};
+    utilities.setParent(object, parent);
+    assert.equal(object[symbols.parent], parent);
+
+    // Leave [symbols.parent] alone if it's already set.
+    const childWithParent = {
+      [symbols.parent]: "parent",
+    };
+    utilities.setParent(childWithParent, parent);
+    assert.equal(childWithParent[symbols.parent], "parent");
+
+    // Set `parent` on a tree.
+    const tree = new ObjectTree({});
+    utilities.setParent(tree, parent);
+    assert.equal(tree.parent, parent);
+
+    // Leave `parent` alone if it's already set.
+    const treeWithParent = new ObjectTree({});
+    treeWithParent.parent = "parent";
+    utilities.setParent(treeWithParent, parent);
+    assert.equal(treeWithParent.parent, "parent");
   });
 
   test("toPlainValue returns the plainest representation of an object", async () => {

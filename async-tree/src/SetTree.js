@@ -1,4 +1,5 @@
 import { Tree } from "./internal.js";
+import { setParent } from "./utilities.js";
 
 /**
  * A tree of Set objects.
@@ -16,12 +17,8 @@ export default class SetTree {
   }
 
   async get(key) {
-    let value = this.values[key];
-
-    if (Tree.isAsyncTree(value) && !value.parent) {
-      value.parent = this;
-    }
-
+    const value = this.values[key];
+    setParent(value, this);
     return value;
   }
 

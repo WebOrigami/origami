@@ -1,6 +1,6 @@
 import { Tree } from "./internal.js";
 import * as symbols from "./symbols.js";
-import { getRealmObjectPrototype } from "./utilities.js";
+import { getRealmObjectPrototype, setParent } from "./utilities.js";
 
 /**
  * A tree defined by a plain object or array.
@@ -37,27 +37,11 @@ export default class ObjectTree {
     }
 
     let value = await this.object[key];
+    setParent(value, this);
 
-    if (Tree.isAsyncTree(value)) {
-      // Value is a subtree; set its parent to this tree.
-      if (!value.parent) {
-        value.parent = this;
-      }
-    } else if (
-      typeof value === "function" &&
-      !Object.hasOwn(this.object, key)
-    ) {
+    if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
       // Value is an inherited method; bind it to the object.
       value = value.bind(this.object);
-    } else if (Object.isExtensible(value) && !value[symbols.parent]) {
-      // Add parent reference as a symbol to avoid polluting the object. This
-      // reference will be used if the object is later used as a tree.
-      Object.defineProperty(value, symbols.parent, {
-        configurable: true,
-        enumerable: false,
-        value: this,
-        writable: true,
-      });
     }
 
     return value;

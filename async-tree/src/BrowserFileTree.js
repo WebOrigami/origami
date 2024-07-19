@@ -1,5 +1,10 @@
 import { Tree } from "./internal.js";
-import { hiddenFileNames, isStringLike, naturalOrder } from "./utilities.js";
+import {
+  hiddenFileNames,
+  isStringLike,
+  naturalOrder,
+  setParent,
+} from "./utilities.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -34,7 +39,9 @@ export default class BrowserFileTree {
     // Try the key as a subfolder name.
     try {
       const subfolderHandle = await directory.getDirectoryHandle(key);
-      return Reflect.construct(this.constructor, [subfolderHandle]);
+      const value = Reflect.construct(this.constructor, [subfolderHandle]);
+      setParent(value, this);
+      return value;
     } catch (error) {
       if (
         !(
@@ -50,7 +57,9 @@ export default class BrowserFileTree {
     try {
       const fileHandle = await directory.getFileHandle(key);
       const file = await fileHandle.getFile();
-      return file.arrayBuffer();
+      const buffer = file.arrayBuffer();
+      setParent(buffer, this);
+      return buffer;
     } catch (error) {
       if (!(error instanceof DOMException && error.name === "NotFoundError")) {
         throw error;

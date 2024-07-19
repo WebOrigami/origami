@@ -1,3 +1,5 @@
+import { setParent } from "./utilities.js";
+
 /**
  * A tree defined by a function and an optional domain.
  *
@@ -30,7 +32,7 @@ export default class FunctionTree {
           // eventually bind all parameters until only one remains. At that point,
           // the above condition will apply and the function will be invoked.
           Reflect.construct(this.constructor, [this.fn.bind(null, key)]);
-
+    setParent(value, this);
     return value;
   }
 

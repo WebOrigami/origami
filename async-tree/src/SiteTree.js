@@ -1,5 +1,6 @@
 import { Tree } from "./internal.js";
 import * as keysJson from "./keysJson.js";
+import { setParent } from "./utilities.js";
 
 /**
  * A tree of values obtained via HTTP/HTTPS calls. These values will be strings
@@ -44,7 +45,9 @@ export default class SiteTree {
     // If the (possibly adjusted) route ends with a slash and the site is an
     // explorable site, we return a tree for the indicated route.
     if (href.endsWith("/") && (await this.hasKeysJson())) {
-      return Reflect.construct(this.constructor, [href]);
+      const value = Reflect.construct(this.constructor, [href]);
+      setParent(value, this);
+      return value;
     }
 
     // Fetch the data at the given route.
@@ -67,9 +70,13 @@ export default class SiteTree {
     }
 
     const mediaType = response.headers?.get("Content-Type");
-    return SiteTree.mediaTypeIsText(mediaType)
-      ? response.text()
-      : response.arrayBuffer();
+    if (SiteTree.mediaTypeIsText(mediaType)) {
+      return response.text();
+    } else {
+      const buffer = response.arrayBuffer();
+      setParent(buffer, this);
+      return buffer;
+    }
   }
 
   async getKeyDictionary() {
