@@ -19,7 +19,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
-export default function mapFnBuiltin(operation) {
+export default async function mapFnBuiltin(operation) {
   assertTreeIsDefined(this, "map");
   const tree = this;
 
@@ -61,10 +61,15 @@ export default function mapFnBuiltin(operation) {
 
   let extendedValueFn;
   if (valueFn) {
-    const resolvedValueFn = toFunction(valueFn);
+    if (!(valueFn instanceof Function) && valueFn.unpack) {
+      valueFn = await valueFn.unpack();
+    }
     // Have the value function run in this tree.
-    extendedValueFn = resolvedValueFn.bind(tree);
+    extendedValueFn = valueFn.bind(tree);
   }
+
+  const sidecarKeyFn = /** @type {any} */ (valueFn)?.keyFn;
+  const sidecarInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
 
   // Extend the key functions to run in this tree.
   let extendedKeyFn;
@@ -92,10 +97,15 @@ export default function mapFnBuiltin(operation) {
     const keyFns = cachedKeyFunctions(scopedKeyFn);
     extendedKeyFn = keyFns.key;
     extendedInverseKeyFn = keyFns.inverseKey;
-  } else {
-    // Use sidecar keyFn/inverseKey functions if the valueFn defines them.
+  } else if (sidecarKeyFn && sidecarInverseKeyFn) {
+    // Use sidecar keyFn/inverseKey functions
     extendedKeyFn = /** @type {any} */ (valueFn)?.key;
     extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
+  } else if (sidecarKeyFn) {
+    // Only keyFn is defined
+    const keyFns = cachedKeyFunctions(sidecarKeyFn);
+    extendedKeyFn = keyFns.key;
+    extendedInverseKeyFn = keyFns.inverseKey;
   }
 
   const fn = mapFn({

@@ -13,7 +13,8 @@ import mapFn from "./@mapFn.js";
  * @param {Treelike} source
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
-export default function map(source, operation) {
+export default async function map(source, operation) {
   assertTreeIsDefined(this, "map");
-  return mapFn.call(this, operation)(source);
+  const fn = await mapFn.call(this, operation);
+  return fn(source);
 }
