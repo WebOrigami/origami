@@ -24,7 +24,14 @@ export default function processUnpackedContent(content, parent, attachedData) {
     } else {
       target = base;
     }
-    return content.bind(target);
+    const boundFn = content.bind(target);
+    if (content.keyFn) {
+      boundFn.keyFn = content.keyFn;
+    }
+    if (content.inverseKeyFn) {
+      boundFn.inverseKeyFn = content.inverseKeyFn;
+    }
+    return boundFn;
   } else if (Tree.isAsyncTree(content) && !content.parent) {
     const result = Object.create(content);
     result.parent = parent;

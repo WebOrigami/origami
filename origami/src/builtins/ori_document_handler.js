@@ -1,5 +1,5 @@
 import { symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
+import { compile, extname } from "@weborigami/language";
 import processUnpackedContent from "../common/processUnpackedContent.js";
 import * as utilities from "../common/utilities.js";
 
@@ -18,14 +18,14 @@ export default {
       /** @type {any} */ (packed)[symbols.parent];
 
     // Construct an object to represent the source code.
-    const sourceName = options.key;
+    const key = options.key;
     let url;
-    if (sourceName && parent?.url) {
+    if (key && parent?.url) {
       let parentHref = parent.url.href;
       if (!parentHref.endsWith("/")) {
         parentHref += "/";
       }
-      url = new URL(sourceName, parentHref);
+      url = new URL(key, parentHref);
     }
 
     const source = {
@@ -37,6 +37,23 @@ export default {
     // Compile the text as an Origami template document.
     const templateDefineFn = compile.templateDocument(source);
     const templateFn = await templateDefineFn.call(parent);
+
+    if (key) {
+      // Add sidecar function in case someone uses this in a @map.
+      const targetExtension = extname(key);
+      templateFn.keyFn = (sourceKey) => {
+        const sourceExtension = extname(sourceKey);
+        if (sourceExtension) {
+          return utilities.replaceExtension(
+            sourceKey,
+            sourceExtension,
+            targetExtension
+          );
+        } else {
+          return sourceKey + targetExtension;
+        }
+      };
+    }
 
     return processUnpackedContent(templateFn, parent);
   },
