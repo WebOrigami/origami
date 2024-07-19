@@ -110,6 +110,7 @@ export { default as jsHandler } from "../src/builtins/js_handler.js";
 export { default as jsonHandler } from "../src/builtins/json_handler.js";
 export { default as mdHandler } from "../src/builtins/md_handler.js";
 export { default as mjsHandler } from "../src/builtins/mjs_handler.js";
+export { default as oriDocumentHandler } from "../src/builtins/ori_document_handler.js";
 export { default as oriHandler } from "../src/builtins/ori_handler.js";
 export { default as txtHandler } from "../src/builtins/txt_handler.js";
 export { default as wasmHandler } from "../src/builtins/wasm_handler.js";

@@ -20,7 +20,9 @@ import {
 export async function attachHandlerIfApplicable(parent, value, key) {
   if (isPacked(value) && isStringLike(key)) {
     key = toString(key);
-    const extension = extname(key);
+
+    // Special case: `.ori.<ext>` extensions are Origami documents.
+    const extension = key.match(/\.ori\.\S+$/) ? ".ori_document" : extname(key);
     if (extension) {
       const handler = await getExtensionHandler(parent, extension);
       if (handler) {
