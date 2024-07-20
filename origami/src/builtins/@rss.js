@@ -41,9 +41,9 @@ export default async function rss(jsonFeedTree, options = {}) {
 
   const itemsRss = items?.map((story) => itemRss(story)).join("") ?? [];
 
-  const titleElement = title ? `    <title><![CDATA[${title}]]></title>\n` : "";
+  const titleElement = title ? `    <title>${escapeXml(title)}</title>\n` : "";
   const descriptionElement = description
-    ? `    <description>${description}</description>\n`
+    ? `    <description>${escapeXml(description)}</description>\n`
     : "";
   const linkElement = home_page_url
     ? `    <link>${home_page_url}</link>\n`
@@ -78,19 +78,29 @@ function itemRss(jsonFeedItem) {
     id !== undefined && !URL.canParse(id) ? ` isPermaLink="false"` : "";
   const guidElement = id ? `      <guid${isPermaLink}>${id}</guid>\n` : "";
   const descriptionElement = summary
-    ? `      <description><![CDATA[${summary}]]></description>\n`
+    ? `      <description>${escapeXml(summary)}</description>\n`
     : "";
   const contentElement = content_html
     ? `      <content:encoded><![CDATA[${content_html}]]></content:encoded>\n`
     : "";
   const titleElement = title
-    ? `      <title><![CDATA[${title}]]></title>\n`
+    ? `      <title>${escapeXml(title)}</title>\n`
     : "";
   const linkElement = url ? `      <link>${url}</link>\n` : "";
 
   return `    <item>
 ${dateElement}${titleElement}${linkElement}${guidElement}${descriptionElement}${contentElement}    </item>
 `;
+}
+
+// Escape XML entities for in the text.
+function escapeXml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
 // RSS wants dates in RFC-822.
