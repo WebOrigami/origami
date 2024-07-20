@@ -41,7 +41,7 @@ export default async function rss(jsonFeedTree, options = {}) {
 
   const itemsRss = items?.map((story) => itemRss(story)).join("") ?? [];
 
-  const titleElement = title ? `    <title>![CDATA[${title}]]</title>\n` : "";
+  const titleElement = title ? `    <title><![CDATA[${title}]]></title>\n` : "";
   const descriptionElement = description
     ? `    <description>${description}</description>\n`
     : "";
