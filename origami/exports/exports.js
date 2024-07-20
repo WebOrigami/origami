@@ -98,6 +98,7 @@ export { default as treeHttp } from "../src/builtins/@treeHttp.js";
 export { default as treeHttps } from "../src/builtins/@treeHttps.js";
 export { default as unpack } from "../src/builtins/@unpack.js";
 export { default as values } from "../src/builtins/@values.js";
+export { default as version } from "../src/builtins/@version.js";
 export { default as watch } from "../src/builtins/@watch.js";
 export { default as yaml } from "../src/builtins/@yaml.js";
 export { default as yamlParse } from "../src/builtins/@yamlParse.js";
