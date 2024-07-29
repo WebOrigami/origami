@@ -118,6 +118,13 @@ describe("Tree", () => {
     });
   });
 
+  test("from() autoboxes primitive values", async () => {
+    const tree = Tree.from("Hello, world.");
+    const slice = await tree.get("slice");
+    const result = await slice(0, 5);
+    assert.equal(result, "Hello");
+  });
+
   test("has returns true if the key exists", async () => {
     const fixture = createFixture();
     assert.equal(await Tree.has(fixture, "Alice.md"), true);

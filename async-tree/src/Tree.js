@@ -134,6 +134,14 @@ export function from(object, options = {}) {
   } else if (object && typeof object === "object") {
     // An instance of some class.
     return new ObjectTree(object);
+  } else if (
+    typeof object === "string" ||
+    typeof object === "number" ||
+    typeof object === "boolean"
+  ) {
+    // A primitive value; box it into an object and construct a tree.
+    const boxed = utilities.box(object);
+    return new ObjectTree(boxed);
   }
 
   throw new TypeError("Couldn't convert argument to an async tree");
