@@ -11,7 +11,13 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} treelike
  */
 export default async function treeKeysJson(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@keysJson");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "@keysJson",
+    true
+  );
   return transformObject(KeysJsonTransform, tree);
 }
 
@@ -21,8 +27,9 @@ function KeysJsonTransform(Base) {
       let value = await super.get(key);
       if (value === undefined && key === ".keys.json") {
         value = await keysJson.stringify(this);
-      } else if (Tree.isAsyncTree(value)) {
-        value = transformObject(KeysJsonTransform, value);
+      } else if (Tree.isTreelike(value)) {
+        const tree = Tree.from(value, { deep: true });
+        value = transformObject(KeysJsonTransform, tree);
       }
       return value;
     }
