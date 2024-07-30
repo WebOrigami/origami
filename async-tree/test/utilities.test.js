@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { symbols } from "../main.js";
 import { ObjectTree } from "../src/internal.js";
+import * as symbols from "../src/symbols.js";
 import * as utilities from "../src/utilities.js";
 
 describe("utilities", () => {
