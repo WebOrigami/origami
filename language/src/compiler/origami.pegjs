@@ -63,9 +63,8 @@ callTarget "function call"
   / group
   / scopeReference
 
-// Required closing curly brace. We use this for the `tree` term: it's the last
-// term in the `step` parser that starts with a curly brace, so if that parser
-// sees a left curly brace, here we must see a right curly brace.
+// Required closing curly brace. We use this for the `object` term: if the
+// parser sees a left curly brace, here we must see a right curly brace.
 closingBrace
   = "}"
   / .? {
@@ -207,7 +206,7 @@ number "number"
 
 // An object literal: `{foo: 1, bar: 2}`
 object "object literal"
-  = "{" __ entries:objectEntries? __ "}" {
+  = "{" __ entries:objectEntries? __ closingBrace {
       return annotate(makeObject(entries ?? [], ops.object), location());
     }
 
