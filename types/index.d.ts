@@ -1,7 +1,2 @@
-import type AsyncMutableTree from './src/AsyncMutableTree.js';
-import type AsyncTree from './src/AsyncTree.js';
-
-export {
-  AsyncMutableTree,
-  AsyncTree
-};
+export { default as AsyncMutableTree } from "./src/AsyncMutableTree";
+export { default as AsyncTree } from "./src/AsyncTree";
