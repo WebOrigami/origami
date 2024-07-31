@@ -73,16 +73,16 @@ export const hiddenFileNames = [".DS_Store"];
  * Return true if the object is in a packed form (or can be readily packed into
  * a form) that can be given to fs.writeFile or response.write().
  *
- * @param {any} object
- * @returns {object is import("../index.ts").Packed}
+ * @param {any} obj
+ * @returns {obj is import("../index.ts").Packed}
  */
-export function isPacked(object) {
+export function isPacked(obj) {
   return (
-    typeof object === "string" ||
-    object instanceof ArrayBuffer ||
-    object instanceof ReadableStream ||
-    object instanceof String ||
-    object instanceof TypedArray
+    typeof obj === "string" ||
+    obj instanceof ArrayBuffer ||
+    obj instanceof ReadableStream ||
+    obj instanceof String ||
+    obj instanceof TypedArray
   );
 }
 
@@ -93,23 +93,23 @@ export function isPacked(object) {
  * This function also considers object-like things with no prototype (like a
  * `Module`) as plain objects.
  *
- * @param {any} object
- * @returns {object is import("../index.ts").PlainObject}
+ * @param {any} obj
+ * @returns {obj is import("../index.ts").PlainObject}
  */
-export function isPlainObject(object) {
+export function isPlainObject(obj) {
   // From https://stackoverflow.com/q/51722354/76472
-  if (typeof object !== "object" || object === null) {
+  if (typeof obj !== "object" || obj === null) {
     return false;
   }
 
   // We treat object-like things with no prototype (like a Module) as plain
   // objects.
-  if (Object.getPrototypeOf(object) === null) {
+  if (Object.getPrototypeOf(obj) === null) {
     return true;
   }
 
   // Do we inherit directly from Object in this realm?
-  return Object.getPrototypeOf(object) === getRealmObjectPrototype(object);
+  return Object.getPrototypeOf(obj) === getRealmObjectPrototype(obj);
 }
 
 /**
@@ -130,15 +130,15 @@ export function isPrimitive(value) {
  * Return true if the object is a string or object with a non-trival `toString`
  * method.
  *
- * @param {any} object
+ * @param {any} obj
  * @returns {obj is import("../index.ts").StringLike}
  */
-export function isStringLike(object) {
-  if (typeof object === "string") {
+export function isStringLike(obj) {
+  if (typeof obj === "string") {
     return true;
-  } else if (object?.toString === undefined) {
+  } else if (obj?.toString === undefined) {
     return false;
-  } else if (object.toString === getRealmObjectPrototype(object)?.toString) {
+  } else if (obj.toString === getRealmObjectPrototype(obj)?.toString) {
     // The stupid Object.prototype.toString implementation always returns
     // "[object Object]", so if that's the only toString method the object has,
     // we return false.
@@ -148,10 +148,9 @@ export function isStringLike(object) {
   }
 }
 
-export function isUnpackable(object) {
+export function isUnpackable(obj) {
   return (
-    isPacked(object) &&
-    typeof (/** @type {any} */ (object).unpack) === "function"
+    isPacked(obj) && typeof (/** @type {any} */ (obj).unpack) === "function"
   );
 }
 

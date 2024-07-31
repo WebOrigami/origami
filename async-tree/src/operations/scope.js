@@ -1,11 +1,11 @@
-import { Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
  * ancestors.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
  * @returns {AsyncTree & {trees: AsyncTree[]}}

@@ -7,7 +7,7 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {import("@weborigami/async-tree").Treelike} treelike
+ * @param {import("../../index.ts").Treelike} treelike
  */
 export default async function concatTreeValues(treelike) {
   const strings = [];

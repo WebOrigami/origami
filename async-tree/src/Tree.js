@@ -162,25 +162,23 @@ export async function has(tree, key) {
 /**
  * Return true if the indicated object is an async tree.
  *
- * @param {any} object
+ * @param {any} obj
  * @returns {obj is AsyncTree}
  */
-export function isAsyncTree(object) {
-  return (
-    object &&
-    typeof object.get === "function" &&
-    typeof object.keys === "function"
-  );
+export function isAsyncTree(obj) {
+  return obj && typeof obj.get === "function" && typeof obj.keys === "function";
 }
 
 /**
  * Return true if the indicated object is an async mutable tree.
  *
- * @param {any} object
+ * @param {any} obj
  * @returns {obj is AsyncMutableTree}
  */
-export function isAsyncMutableTree(object) {
-  return isAsyncTree(object) && typeof object.set === "function";
+export function isAsyncMutableTree(obj) {
+  return (
+    isAsyncTree(obj) && typeof (/** @type {any} */ (obj).set) === "function"
+  );
 }
 
 /**
@@ -227,16 +225,16 @@ export function isTraversable(object) {
  * Note: the `from()` method accepts any JavaScript object, but `isTreelike`
  * returns `false` for an object that isn't one of the above types.
  *
- * @param {any} object
+ * @param {any} obj
  * @returns {obj is Treelike}
  */
-export function isTreelike(object) {
+export function isTreelike(obj) {
   return (
-    isAsyncTree(object) ||
-    object instanceof Function ||
-    object instanceof Array ||
-    object instanceof Set ||
-    isPlainObject(object)
+    isAsyncTree(obj) ||
+    obj instanceof Function ||
+    obj instanceof Array ||
+    obj instanceof Set ||
+    isPlainObject(obj)
   );
 }
 
