@@ -29,7 +29,7 @@ export type ReduceFn = (values: any[], keys: any[]) => Promise<any>;
 
 export type StringLike = string | HasString;
 
-type NativeTreelike = 
+export type NativeTreelike = 
   any[] |
   AsyncTree |
   Function | 
