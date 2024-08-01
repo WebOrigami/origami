@@ -215,6 +215,18 @@ describe("Tree", () => {
     assert.deepEqual(reduced, "1234");
   });
 
+  test("paths returns an array of paths to the values in the tree", async () => {
+    const tree = new DeepObjectTree({
+      a: 1,
+      b: 2,
+      c: {
+        d: 3,
+        e: 4,
+      },
+    });
+    assert.deepEqual(await Tree.paths(tree), ["a", "b", "c/d", "c/e"]);
+  });
+
   test("plain() produces a plain object version of a tree", async () => {
     const original = {
       a: 1,

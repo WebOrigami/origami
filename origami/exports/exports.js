@@ -68,7 +68,6 @@ export { default as package } from "../src/builtins/@package.js";
 export { default as paginate } from "../src/builtins/@paginate.js";
 export { default as paginateFn } from "../src/builtins/@paginateFn.js";
 export { default as parent } from "../src/builtins/@parent.js";
-export { default as paths } from "../src/builtins/@paths.js";
 export { default as perf } from "../src/builtins/@perf.js";
 export { default as plain } from "../src/builtins/@plain.js";
 export { default as project } from "../src/builtins/@project.js";

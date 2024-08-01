@@ -290,6 +290,27 @@ export async function mapReduce(treelike, valueFn, reduceFn) {
 }
 
 /**
+ * Returns slash-separated paths for all values in the tree.
+ *
+ * @param {Treelike} treelike
+ * @param {string} base
+ */
+export async function paths(treelike, base = "") {
+  const tree = from(treelike);
+  const result = [];
+  for (const key of await tree.keys()) {
+    const valuePath = base ? `${base}/${key}` : key;
+    const value = await tree.get(key);
+    if (await isAsyncTree(value)) {
+      const subPaths = await paths(value, valuePath);
+      result.push(...subPaths);
+    } else {
+      result.push(valuePath);
+    }
+  }
+  return result;
+}
+/**
  * Converts an asynchronous tree into a synchronous plain JavaScript object.
  *
  * The result's keys will be the tree's keys cast to strings. Any tree value

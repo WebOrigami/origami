@@ -1,7 +1,7 @@
+import { Tree } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import builtins from "./@builtins.js";
-import paths from "./@paths.js";
 import fileTypeOrigami from "./ori_handler.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
@@ -41,7 +41,7 @@ export default async function sitemap(treelike, baseHref = "") {
     },
   };
 
-  const treePaths = await paths.call(this, filterTree, baseHref);
+  const treePaths = await Tree.paths(filterTree, baseHref);
 
   // For simplicity, we assume that HTML pages will end in .html.
   // If the page is named index.html, we remove index.html from
