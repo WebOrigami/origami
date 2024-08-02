@@ -14,6 +14,7 @@ async function copyResponse(constructed, response) {
   response.statusCode = constructed.status;
   response.statusMessage = constructed.statusText;
 
+  // @ts-ignore Headers has an iterator in ES2022 but tsc doesn't know that.
   for (const [key, value] of constructed.headers) {
     response.setHeader(key, value);
   }

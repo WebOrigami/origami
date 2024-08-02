@@ -3,6 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "checkJs": true,
+    "lib": ["ES2022"],
     "noEmit": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
@@ -10,7 +11,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
-    "target": "ESNext"
+    "target": "ES2022"
   },
   "include": ["**/*.js"],
   "exclude": ["origami/exports/exports.js"]

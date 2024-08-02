@@ -50,16 +50,14 @@ export default function sortFn(options) {
         const defaultCompare = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
         const originalCompare = compare ?? defaultCompare;
         // Sort by the sort key.
-        const sortedTuples = tuples.toSorted((a, b) =>
-          originalCompare(a.sort, b.sort)
-        );
+        tuples.sort((a, b) => originalCompare(a.sort, b.sort));
         // Map back to the original keys.
-        const sorted = sortedTuples.map((pair) => pair.key);
+        const sorted = tuples.map((pair) => pair.key);
         return sorted;
       } else {
         // Use original keys as sort keys.
         // If compare is undefined, this uses default sort order.
-        return keys.toSorted(compare);
+        return keys.slice().sort(compare);
       }
     };
     return transformed;
