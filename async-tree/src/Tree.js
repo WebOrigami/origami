@@ -166,7 +166,14 @@ export async function has(tree, key) {
  * @returns {obj is AsyncTree}
  */
 export function isAsyncTree(obj) {
-  return obj && typeof obj.get === "function" && typeof obj.keys === "function";
+  return (
+    obj &&
+    typeof obj.get === "function" &&
+    typeof obj.keys === "function" &&
+    // JavaScript Map look like trees but can't be extended the same way, so we
+    // report false.
+    !(obj instanceof Map)
+  );
 }
 
 /**
@@ -231,8 +238,9 @@ export function isTraversable(object) {
 export function isTreelike(obj) {
   return (
     isAsyncTree(obj) ||
-    obj instanceof Function ||
     obj instanceof Array ||
+    obj instanceof Function ||
+    obj instanceof Map ||
     obj instanceof Set ||
     isPlainObject(obj)
   );

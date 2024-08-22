@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapTree from "../src/MapTree.js";
+import * as symbols from "../src/symbols.js";
 
 describe("MapTree", () => {
   test("can get the keys of the tree", async () => {
@@ -18,7 +19,7 @@ describe("MapTree", () => {
     const map = new Map([["more", new Map([["a", 1]])]]);
     const fixture = new MapTree(map);
     const more = await fixture.get("more");
-    assert.equal(more.parent, fixture);
+    assert.equal(more[symbols.parent], fixture);
   });
 
   test("getting an unsupported key returns undefined", async () => {
