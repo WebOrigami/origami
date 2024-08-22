@@ -23,10 +23,10 @@ export default async function expressionObject(entries, parent) {
   // Create the object and set its parent
   const object = {};
   Object.defineProperty(object, symbols.parent, {
-    value: parent,
-    writable: true,
     configurable: true,
     enumerable: false,
+    value: parent,
+    writable: true,
   });
 
   let tree;
@@ -50,9 +50,21 @@ export default async function expressionObject(entries, parent) {
       defineProperty = false;
     }
 
+    let enumerable = true;
+    if (key[0] === "(" && key[key.length - 1] === ")") {
+      key = key.slice(1, -1);
+      enumerable = false;
+    }
+
     if (defineProperty) {
       // Define simple property
-      object[key] = value;
+      // object[key] = value;
+      Object.defineProperty(object, key, {
+        configurable: true,
+        enumerable,
+        value,
+        writable: true,
+      });
     } else {
       // Property getter
       let code;
@@ -81,7 +93,7 @@ export default async function expressionObject(entries, parent) {
 
       Object.defineProperty(object, key, {
         configurable: true,
-        enumerable: true,
+        enumerable,
         get,
       });
     }
@@ -91,9 +103,11 @@ export default async function expressionObject(entries, parent) {
   // and overwrite the property getter with the actual value.
   for (const key of immediateProperties) {
     const value = await object[key];
+    // @ts-ignore Unclear why TS thinks `object` might be undefined here
+    const enumerable = Object.getOwnPropertyDescriptor(object, key).enumerable;
     Object.defineProperty(object, key, {
       configurable: true,
-      enumerable: true,
+      enumerable,
       value,
       writable: true,
     });

@@ -222,7 +222,7 @@ objectEntry
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
-  = key:identifierOrString __ "=" __ value:expr {
+  = key:objectKey __ "=" __ value:expr {
     return annotate([key, [ops.getter, value]], location());
   }
 
@@ -232,9 +232,13 @@ objectIdentifier "object identifier"
       return annotate([key, [ops.inherited, key]], location());
     }
 
+objectKey "object key"
+  = hiddenKey:("(" identifierOrString ")") { return hiddenKey.join(""); }
+  / identifierOrString
+
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = @identifierOrString __ ":" __ @expr
+  = @objectKey __ ":" __ @expr
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {

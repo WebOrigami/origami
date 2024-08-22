@@ -63,4 +63,14 @@ describe("expressionObject", () => {
     const json = await dataJson.unpack();
     assert.deepEqual(json, { a: 1 });
   });
+
+  test("a key declared with parentheses is not enumerable", async () => {
+    const entries = [
+      ["(hidden)", "shh"],
+      ["visible", "hey"],
+    ];
+    const object = await expressionObject(entries, null);
+    assert.deepEqual(Object.keys(object), ["visible"]);
+    assert.equal(object["hidden"], "shh");
+  });
 });
