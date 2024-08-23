@@ -261,6 +261,13 @@ describe("Tree", () => {
     assert.deepEqual(plain, original);
   });
 
+  test("plain() returns empty array or object for ObjectTree as necessary", async () => {
+    const tree = new ObjectTree({});
+    assert.deepEqual(await Tree.plain(tree), {});
+    const arrayTree = new ObjectTree([]);
+    assert.deepEqual(await Tree.plain(arrayTree), []);
+  });
+
   test("plain() awaits async properties", async () => {
     const object = {
       get name() {

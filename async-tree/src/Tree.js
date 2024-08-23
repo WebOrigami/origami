@@ -294,14 +294,14 @@ export async function mapReduce(treelike, valueFn, reduceFn) {
   const values = await Promise.all(promises);
 
   // Reduce the values to a single result.
-  return reduceFn(values, keys);
+  return reduceFn(values, keys, tree);
 }
 
 /**
  * Returns slash-separated paths for all values in the tree.
  *
  * @param {Treelike} treelike
- * @param {string} base
+ * @param {string?} base
  */
 export async function paths(treelike, base = "") {
   const tree = from(treelike);
@@ -318,6 +318,7 @@ export async function paths(treelike, base = "") {
   }
   return result;
 }
+
 /**
  * Converts an asynchronous tree into a synchronous plain JavaScript object.
  *
@@ -328,7 +329,11 @@ export async function paths(treelike, base = "") {
  * @returns {Promise<PlainObject|Array>}
  */
 export async function plain(treelike) {
-  return mapReduce(treelike, null, (values, keys) => {
+  return mapReduce(treelike, null, (values, keys, tree) => {
+    // Special case for an empty tree: if based on array, return array.
+    if (tree instanceof ObjectTree && keys.length === 0) {
+      return tree.object instanceof Array ? [] : {};
+    }
     const object = {};
     for (let i = 0; i < keys.length; i++) {
       object[keys[i]] = values[i];
