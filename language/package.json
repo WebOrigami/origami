@@ -11,8 +11,8 @@
     "typescript": "5.5.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?5045bb32",
-    "@weborigami/types": "https://gitpkg.vercel.app/WebOrigami/origami/types?5045bb32",
+    "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?4cb7a74a",
+    "@weborigami/types": "https://gitpkg.vercel.app/WebOrigami/origami/types?4cb7a74a",
     "watcher": "2.3.1"
   },
   "scripts": {

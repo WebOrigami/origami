@@ -11,7 +11,7 @@
     "typescript": "5.5.3"
   },
   "dependencies": {
-    "@weborigami/types": "https://gitpkg.vercel.app/WebOrigami/origami/types?5045bb32"
+    "@weborigami/types": "https://gitpkg.vercel.app/WebOrigami/origami/types?4cb7a74a"
   },
   "scripts": {
     "test": "node --test --test-reporter=spec",
