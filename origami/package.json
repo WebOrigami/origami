@@ -17,9 +17,9 @@
     "typescript": "5.5.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "0.0.64-beta.1",
-    "@weborigami/language": "0.0.64-beta.1",
-    "@weborigami/types": "0.0.64-beta.1",
+    "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?5045bb32",
+    "@weborigami/language": "https://gitpkg.vercel.app/WebOrigami/origami/language?5045bb32",
+    "@weborigami/types": "https://gitpkg.vercel.app/WebOrigami/origami/types?5045bb32",
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.9.0",
