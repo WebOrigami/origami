@@ -79,13 +79,15 @@ export default function mapFnBuiltin(operation) {
     extendedInverseKeyFn = keyFns.inverseKey;
   } else if (keyFn) {
     const resolvedKeyFn = toFunction(keyFn);
-    async function scopedKeyFn(sourceKey, tree) {
-      const sourceValue = await tree.get(sourceKey);
+    async function scopedKeyFn(sourceKey, sourceTree) {
+      const sourceValue = await sourceTree.get(sourceKey);
+      // The key function will be given the source tree, but will run with the
+      // scope of this tree.
       const resultKey = await resolvedKeyFn.call(
         tree,
         sourceValue,
         sourceKey,
-        tree
+        sourceTree
       );
       return resultKey;
     }
