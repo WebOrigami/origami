@@ -47,7 +47,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
   );
 
   // Draw edges and collect labels for the nodes they lead to.
-  let nodes = {};
+  let nodes = new Map();
   for (const key of await tree.keys()) {
     const destPath = nodePath ? `${nodePath}/${key}` : key;
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"];`;
@@ -80,10 +80,12 @@ async function statements(tree, nodePath, nodeLabel, options) {
       if (value === undefined) {
         isError = true;
       }
-      nodes[key] = { label };
+
+      const data = { label };
       if (isError) {
-        nodes[key].isError = true;
+        data.isError = true;
       }
+      nodes.set(key, data);
     }
   }
 
@@ -97,10 +99,10 @@ async function statements(tree, nodePath, nodeLabel, options) {
 
   // Trim labels.
   let i = 0;
-  for (const key of Object.keys(nodes)) {
-    let label = nodes[key].label;
+  for (const data of nodes.values()) {
+    let label = data.label;
     if (label === null) {
-      nodes[key].label = "[binary data]";
+      data.label = "[binary data]";
     } else if (label) {
       let clippedStart = false;
       let clippedEnd = false;
@@ -146,14 +148,13 @@ async function statements(tree, nodePath, nodeLabel, options) {
         label += "\\l";
       }
 
-      nodes[key].label = label;
+      data.label = label;
     }
     i++;
   }
 
   // Draw labels.
-  for (const key in nodes) {
-    const node = nodes[key];
+  for (const [key, node] of nodes.entries()) {
     const icon = node.isError ? "⚠️ " : "";
     // GraphViz has trouble rendering DOT nodes whose labels contain ellipsis
     // characters, so we map those to three periods. GraphViz appears to turn
