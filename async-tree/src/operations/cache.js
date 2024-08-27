@@ -1,4 +1,4 @@
-import { DeepObjectTree, Tree } from "../internal.js";
+import { ObjectTree, Tree } from "../internal.js";
 
 /**
  * Caches values from a source tree in a second cache tree. Cache source tree
@@ -14,16 +14,30 @@ import { DeepObjectTree, Tree } from "../internal.js";
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} sourceTreelike
- * @param {AsyncMutableTree} [cacheTree]
+ * @param {AsyncMutableTree} [cacheTreelike]
  * @param {Treelike} [filterTreelike]
  * @returns {AsyncTree & { description: string }}
  */
-export default function treeCache(sourceTreelike, cacheTree, filterTreelike) {
+export default function treeCache(
+  sourceTreelike,
+  cacheTreelike,
+  filterTreelike
+) {
   const source = Tree.from(sourceTreelike);
   const filter = filterTreelike ? Tree.from(filterTreelike) : undefined;
 
   /** @type {AsyncMutableTree} */
-  const cache = cacheTree ?? new DeepObjectTree({});
+  let cache;
+  if (cacheTreelike) {
+    // @ts-ignore
+    cache = Tree.from(cacheTreelike);
+    if (!Tree.isAsyncMutableTree(cache)) {
+      throw new Error("Cache tree must define a set() method.");
+    }
+  } else {
+    cache = new ObjectTree({});
+  }
+
   let keys;
   return {
     description: "cache",
