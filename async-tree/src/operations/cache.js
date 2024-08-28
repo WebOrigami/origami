@@ -61,8 +61,9 @@ export default function treeCache(
             // Construct merged tree for a tree result.
             if (cacheValue === undefined) {
               // Construct new container in cache
-              await cache.set(key, {});
-              cacheValue = await cache.get(key);
+              cacheValue = new ObjectTree({});
+              cacheValue.parent = this;
+              await cache.set(key, cacheValue);
             }
             value = treeCache(value, cacheValue, filterValue);
           } else {
