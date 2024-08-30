@@ -17,8 +17,8 @@
     "typescript": "5.5.3"
   },
   "dependencies": {
-    "@weborigami/async-tree": "0.0.64",
-    "@weborigami/language": "0.0.64",
+    "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?b5d8eebf",
+    "@weborigami/language": "https://gitpkg.vercel.app/WebOrigami/origami/language?b5d8eebf",
     "@weborigami/types": "0.0.64",
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
