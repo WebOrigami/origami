@@ -1,4 +1,4 @@
-import { Tree, keysJson } from "@weborigami/async-tree";
+import { Tree, jsonKeys } from "@weborigami/async-tree";
 import index from "../builtins/@index.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 
@@ -39,7 +39,7 @@ export default function ExplorableSiteTransform(Base) {
           // This tree is both the function call target and the parameter.
           value = await index.call(this, this);
         } else if (key === ".keys.json") {
-          value = await keysJson.stringify(this);
+          value = await jsonKeys.stringify(this);
         }
       }
 

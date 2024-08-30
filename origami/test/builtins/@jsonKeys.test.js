@@ -1,9 +1,9 @@
 import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import keysJson from "../../src/builtins/@keysJson.js";
+import jsonKeys from "../../src/builtins/@jsonKeys.js";
 
-describe("keysJson", () => {
+describe("@jsonKeys", () => {
   test("adds .keys.json entries to tree", async () => {
     const tree = new DeepObjectTree({
       about: {
@@ -12,7 +12,7 @@ describe("keysJson", () => {
         "Carol.html": "Hello, Carol!",
       },
     });
-    const result = await keysJson.call(null, tree);
+    const result = await jsonKeys.call(null, tree);
     assert.deepEqual(await Tree.plain(result), {
       ".keys.json": `["about/"]`,
       about: {

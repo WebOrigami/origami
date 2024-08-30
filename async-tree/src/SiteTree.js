@@ -1,5 +1,5 @@
 import { Tree } from "./internal.js";
-import * as keysJson from "./keysJson.js";
+import * as jsonKeys from "./jsonKeys.js";
 import { setParent } from "./utilities.js";
 
 /**
@@ -86,7 +86,7 @@ export default class SiteTree {
       .then((response) => (response.ok ? response.text() : null))
       .then((text) => {
         try {
-          return text ? keysJson.parse(text) : null;
+          return text ? jsonKeys.parse(text) : null;
         } catch (error) {
           // Got a response, but it's not JSON. Most likely the site doesn't
           // actually have a .keys.json file, and is returning a Not Found page,

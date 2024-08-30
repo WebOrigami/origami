@@ -1,8 +1,8 @@
 import { Tree } from "./internal.js";
 
 /**
- * The .keys.json file format lets a site expose the keys of a node in the site
- * so that they can be read by SiteTree.
+ * The JSON Keys protocol lets a site expose the keys of a node in the site so
+ * that they can be read by SiteTree.
  *
  * This file format is a JSON array of key descriptors: a string like
  * "index.html" for a specific resource available at the node, or a string with

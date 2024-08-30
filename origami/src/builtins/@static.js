@@ -1,4 +1,4 @@
-import { Tree, keysJson } from "@weborigami/async-tree";
+import { Tree, jsonKeys } from "@weborigami/async-tree";
 import { transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import index from "./@index.js";
@@ -24,7 +24,7 @@ function StaticTransform(Base) {
       if (value === undefined && key === "index.html") {
         value = index.call(this, this);
       } else if (value === undefined && key === ".keys.json") {
-        value = keysJson.stringify(this);
+        value = jsonKeys.stringify(this);
       } else if (Tree.isAsyncTree(value)) {
         value = transformObject(StaticTransform, value);
       }
