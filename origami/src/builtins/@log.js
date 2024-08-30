@@ -1,4 +1,4 @@
-import logFn from "./@logFn.js";
+import yaml from "./@yaml.js";
 
 /**
  * Log the first argument to the console as a side effect and return the second
@@ -9,5 +9,8 @@ import logFn from "./@logFn.js";
  * @param {any} [result]
  */
 export default async function log(result, object = result) {
-  return logFn.call(this, object)(result);
+  let text = await yaml.call(this, object);
+  text = text?.trim();
+  console.log(text);
+  return result;
 }
