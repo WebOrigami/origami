@@ -92,7 +92,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
   // If we have more than one label, we'll focus on the labels' differences.
   // We'll use the first label as a representative baseline for all labels but
   // the first (which will use the second label as a baseline).
-  const values = Object.values(nodes);
+  const values = [...nodes.values()];
   const showLabelDiffs = values.length > 1;
   const label1 = showLabelDiffs ? String(values[0].label) : undefined;
   const label2 = showLabelDiffs ? String(values[1].label) : undefined;
