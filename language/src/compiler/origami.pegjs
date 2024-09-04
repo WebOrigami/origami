@@ -106,7 +106,14 @@ doubleQuoteStringChar
 ellipsis = "..." / "…" // Unicode ellipsis
 
 escapedChar "backslash-escaped character"
-  = "\\" @.
+  = "\\0" { return "\0"; }
+  / "\\b" { return "\b"; }
+  / "\\f" { return "\f"; }
+  / "\\n" { return "\n"; }
+  / "\\r" { return "\r"; }
+  / "\\t" { return "\t"; }
+  / "\\v" { return "\v"; }
+  / "\\" @.
 
 // An Origami expression, no leading/trailing whitespace
 expr
@@ -392,7 +399,8 @@ templateSubstitution "template substitution"
   = "${" __ @expr __ "}"
 
 textChar
-  = escapedChar / .
+  = escapedChar
+  / .
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
