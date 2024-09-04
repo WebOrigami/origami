@@ -25,17 +25,6 @@ export default class ObjectTree {
    * @param {any} key
    */
   async get(key) {
-    // If the value is an array, we require that the key be one of its own
-    // properties: we don't want to return Array prototype methods like `map`
-    // and `find`.
-    if (
-      this.object instanceof Array &&
-      key &&
-      !this.object.hasOwnProperty(key)
-    ) {
-      return undefined;
-    }
-
     let value = await this.object[key];
     setParent(value, this);
 
