@@ -9,7 +9,7 @@ import yaml from "./@yaml.js";
  * @param {any} [result]
  */
 export default async function log(result, object = result) {
-  let text = await yaml.call(this, object);
+  let text = object !== undefined ? await yaml.call(this, object) : "undefined";
   text = text?.trim();
   console.log(text);
   return result;
