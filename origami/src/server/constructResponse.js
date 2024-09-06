@@ -44,7 +44,7 @@ export default async function constructResponse(request, resource) {
 
   if (!url.pathname.endsWith("/") && Tree.isTreelike(resource)) {
     // Treelike resource: redirect to its index page.
-    const Location = `${request.url}/`;
+    const Location = `${url.pathname}/`;
     return new Response("ok", {
       headers: {
         Location,
