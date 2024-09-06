@@ -13,8 +13,8 @@
   "main": "./exports/exports.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.14.9",
-    "typescript": "5.5.3"
+    "@types/node": "22.5.4",
+    "typescript": "5.5.4"
   },
   "dependencies": {
     "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?b5d8eebf",
@@ -22,13 +22,13 @@
     "@weborigami/types": "0.0.64",
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
-    "highlight.js": "11.9.0",
-    "marked": "13.0.1",
-    "marked-gfm-heading-id": "4.0.0",
-    "marked-highlight": "2.1.3",
-    "marked-smartypants": "1.1.7",
-    "sharp": "0.33.4",
-    "yaml": "2.4.5"
+    "highlight.js": "11.10.0",
+    "marked": "14.1.1",
+    "marked-gfm-heading-id": "4.1.0",
+    "marked-highlight": "2.1.4",
+    "marked-smartypants": "1.1.8",
+    "sharp": "0.33.5",
+    "yaml": "2.5.1"
   },
   "scripts": {
     "build": "ori exports/buildExports.js src > exports/exports.js",

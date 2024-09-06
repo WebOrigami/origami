@@ -6,9 +6,9 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "20.14.9",
+    "@types/node": "22.5.4",
     "peggy": "4.0.3",
-    "typescript": "5.5.3"
+    "typescript": "5.5.4"
   },
   "dependencies": {
     "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?b5d8eebf",
