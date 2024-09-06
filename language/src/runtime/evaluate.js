@@ -88,7 +88,7 @@ export default async function evaluate(code) {
       if (!result[scopeSymbol]) {
         Object.defineProperty(result, scopeSymbol, {
           get() {
-            return scope(result).trees;
+            return scope(this).trees;
           },
           enumerable: false,
         });
