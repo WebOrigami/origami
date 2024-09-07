@@ -24,6 +24,16 @@ describe("ObjectTree", () => {
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
+  test("getting a null/undefined key throws an exception", async () => {
+    const fixture = createFixture();
+    await assert.rejects(async () => {
+      await fixture.get(null);
+    });
+    await assert.rejects(async () => {
+      await fixture.get(undefined);
+    });
+  });
+
   test("can set a value", async () => {
     const tree = new ObjectTree({
       a: 1,

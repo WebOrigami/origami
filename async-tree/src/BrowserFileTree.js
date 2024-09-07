@@ -34,6 +34,13 @@ export default class BrowserFileTree {
   }
 
   async get(key) {
+    if (key == null) {
+      // Reject nullish key.
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`
+      );
+    }
+
     const directory = await this.getDirectory();
 
     // Try the key as a subfolder name.

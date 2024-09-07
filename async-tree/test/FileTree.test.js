@@ -11,7 +11,7 @@ const tempDirectory = path.join(dirname, "fixtures/temp");
 
 const textDecoder = new TextDecoder();
 
-describe.only("FileTree", async () => {
+describe("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert.deepEqual(Array.from(await fixture.keys()), [
@@ -31,6 +31,16 @@ describe.only("FileTree", async () => {
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert.equal(await fixture.get("xyz"), undefined);
+  });
+
+  test("getting a null/undefined key throws an exception", async () => {
+    const fixture = createFixture("fixtures/markdown");
+    await assert.rejects(async () => {
+      await fixture.get(null);
+    });
+    await assert.rejects(async () => {
+      await fixture.get(undefined);
+    });
   });
 
   test("sets parent on subtrees", async () => {
@@ -64,7 +74,7 @@ describe.only("FileTree", async () => {
     await removeTempDirectory();
   });
 
-  test.only("can create empty subfolder via set()", async () => {
+  test("can create empty subfolder via set()", async () => {
     await createTempDirectory();
 
     // Write out new, empty folder called "empty".

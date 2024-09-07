@@ -17,6 +17,13 @@ export default class SetTree {
   }
 
   async get(key) {
+    if (key == null) {
+      // Reject nullish key.
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`
+      );
+    }
+
     const value = this.values[key];
     setParent(value, this);
     return value;

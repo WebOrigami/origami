@@ -66,6 +66,16 @@ describe("SiteTree", () => {
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
+  test("getting a null/undefined key throws an exception", async () => {
+    const fixture = new SiteTree(mockHost);
+    await assert.rejects(async () => {
+      await fixture.get(null);
+    });
+    await assert.rejects(async () => {
+      await fixture.get(undefined);
+    });
+  });
+
   test("a redirect on a site with keys returns a SiteTree for the new URL", async () => {
     const fixture = new SiteTree(mockHost);
     const about = await fixture.get("about");

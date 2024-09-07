@@ -49,9 +49,11 @@ export default class FileTree {
   }
 
   async get(key) {
-    if (!key) {
-      // Undefined key or empty string key is invalid.
-      return undefined;
+    if (key == null) {
+      // Reject nullish key.
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`
+      );
     }
 
     const filePath = path.resolve(this.dirname, key);

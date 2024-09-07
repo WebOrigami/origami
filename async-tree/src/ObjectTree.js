@@ -25,6 +25,13 @@ export default class ObjectTree {
    * @param {any} key
    */
   async get(key) {
+    if (key == null) {
+      // Reject nullish key.
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`
+      );
+    }
+
     let value = await this.object[key];
     setParent(value, this);
 

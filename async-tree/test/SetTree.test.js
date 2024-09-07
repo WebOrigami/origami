@@ -23,6 +23,17 @@ describe("SetTree", () => {
     assert.equal(await fixture.get(3), undefined);
   });
 
+  test("getting a null/undefined key throws an exception", async () => {
+    const set = new Set(["a", "b", "c"]);
+    const fixture = new SetTree(set);
+    await assert.rejects(async () => {
+      await fixture.get(null);
+    });
+    await assert.rejects(async () => {
+      await fixture.get(undefined);
+    });
+  });
+
   test("sets parent on subtrees", async () => {
     const set = new Set();
     set.add(new ObjectTree({}));

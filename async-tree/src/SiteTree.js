@@ -31,6 +31,13 @@ export default class SiteTree {
   }
 
   async get(key) {
+    if (key == null) {
+      // Reject nullish key.
+      throw new ReferenceError(
+        `${this.constructor.name}: Cannot get a null or undefined key.`
+      );
+    }
+
     // If there is only one key and it's the empty string, and the site is
     // explorable, we take the route as "index.html". With this and subsequent
     // checks, we try to avoid sniffing the site to see if it's explorable, as
