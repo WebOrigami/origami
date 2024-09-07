@@ -402,13 +402,10 @@ export async function traverse(treelike, ...keys) {
  * @param  {...any} keys
  */
 export async function traverseOrThrow(treelike, ...keys) {
-  if (!treelike) {
-    throw new TraverseError("Tried to traverse a null or undefined value");
-  }
-
   // Start our traversal at the root of the tree.
   /** @type {any} */
   let value = treelike;
+  let position = 0;
 
   // If traversal operation was called with a `this` context, use that as the
   // target for function calls.
@@ -419,13 +416,11 @@ export async function traverseOrThrow(treelike, ...keys) {
   let key;
   while (remainingKeys.length > 0) {
     if (value === undefined) {
-      // Attempted to traverse an undefined value
-      const message = key
-        ? `${key} does not exist`
-        : `Couldn't traverse the path: ${keys
-            .map((key) => String(key))
-            .join("/")}`;
-      throw new TraverseError(message, treelike, keys);
+      throw new TraverseError("Tried to traverse a null or undefined value", {
+        tree: treelike,
+        keys,
+        position,
+      });
     }
 
     // If the value is packed and can be unpacked, unpack it.
@@ -466,6 +461,8 @@ export async function traverseOrThrow(treelike, ...keys) {
         value = originalValue;
       }
     }
+
+    position++;
   }
 
   return value;
@@ -485,11 +482,10 @@ export async function traversePath(tree, path) {
 
 // Error class thrown by traverseOrThrow()
 class TraverseError extends ReferenceError {
-  constructor(message, tree, keys) {
+  constructor(message, options) {
     super(message);
-    this.tree = tree;
     this.name = "TraverseError";
-    this.keys = keys;
+    Object.assign(this, options);
   }
 }
 
