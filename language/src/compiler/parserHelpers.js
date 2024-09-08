@@ -2,6 +2,17 @@ import * as ops from "../runtime/ops.js";
 
 // Parser helpers
 
+/**
+ * If a parse result is an object that will be evaluated at runtime, attach the
+ * location of the source code that produced it for debugging and error messages.
+ */
+export function annotate(parseResult, location) {
+  if (typeof parseResult === "object" && parseResult !== null) {
+    parseResult.location = location;
+  }
+  return parseResult;
+}
+
 export function makeArray(entries) {
   let currentEntries = [];
   const spreads = [];
@@ -34,18 +45,45 @@ export function makeArray(entries) {
   }
 }
 
+/**
+ * @typedef {import("../../index.ts").Code} Code
+ *
+ * @param {Code} target
+ * @param {Code[]} chain
+ * @returns
+ */
 export function makeFunctionCall(target, chain) {
   let value = target;
+  const source = target.location.source;
   // The chain is an array of arguments (which are themselves arrays). We
   // successively apply the top-level elements of that chain to build up the
   // function composition.
+  let start = target.location.start;
+  let end = target.location.end;
   for (const args of chain) {
-    if (args[0] === ops.traverse) {
-      value = [ops.traverse, value, ...args.slice(1)];
-    } else {
-      value = [value, ...args];
+    /** @type {Code} */
+    let fnCall;
+
+    // @ts-ignore
+    fnCall =
+      args[0] === ops.traverse
+        ? [ops.traverse, value, ...args.slice(1)]
+        : [value, ...args];
+
+    // Create a location spanning the newly-constructed function call.
+    if (args instanceof Array) {
+      if (args.location) {
+        end = args.location.end;
+      } else {
+        throw "Internal parser error: no location for function call argument";
+      }
     }
+
+    fnCall.location = { start, source, end };
+
+    value = fnCall;
   }
+
   return value;
 }
 

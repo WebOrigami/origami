@@ -1,3 +1,3 @@
-import { Code } from "../../index.ts";
+import { ParseResult } from "../../index.ts";
 
-export function parse(input: string, options: any): Code;
+export function parse(input: string, options: any): ParseResult;

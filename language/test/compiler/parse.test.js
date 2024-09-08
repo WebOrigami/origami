@@ -112,7 +112,7 @@ describe("Origami parser", () => {
     // Single slash at start of something = absolute file path
     assertParse("expression", "/path", [[ops.filesRoot], "path"]);
     // Consecutive slashes at start of something = comment
-    assertParse("expression", "path //comment", [ops.scope, "path"]);
+    assertParse("expression", "path //comment", [ops.scope, "path"], false);
   });
 
   test("functionComposition", () => {
@@ -520,9 +520,24 @@ describe("Origami parser", () => {
   });
 });
 
-function assertParse(startRule, source, expected) {
-  /** @type {any} */
-  const parseResult = parse(source, { grammarSource: source, startRule });
+function assertParse(startRule, source, expected, checkLocation = true) {
+  const parseResult = parse(source, {
+    grammarSource: { text: source },
+    startRule,
+  });
+
+  // Verify that the parser returned a `location` property and that it spans the
+  // entire source. We skip this check in cases where the source starts or ends
+  // with a comment; the parser will strip those.
+  if (checkLocation && parseResult instanceof Array) {
+    assert(parseResult.location);
+    const resultSource = parseResult.location.source.text.slice(
+      parseResult.location.start.offset,
+      parseResult.location.end.offset
+    );
+    assert.equal(resultSource, source.trim());
+  }
+
   const actual = stripLocations(parseResult);
   assert.deepEqual(actual, expected);
 }

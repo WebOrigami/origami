@@ -3,13 +3,16 @@ import { Packed } from "@weborigami/async-tree";
 export * from "./main.js";
 
 /**
- * A chunk of compiled Origami code. This is just an Array with an additional
- * `source` property.
+ * A chunk of compiled Origami code. This is just an array with an additional
+ * `location` property.
  */
-interface ArrayWithSource extends Array<any> {
-  source?: Source;
-}
-export type Code = ArrayWithSource;
+export type Code = Array<any> & {
+  location: {
+    source: Source;
+    start: Position;
+    end: Position;
+  };
+};
 
 /**
  * A class constructor is an object with a `new` method that returns an
@@ -26,6 +29,14 @@ export type ExtensionHandler = {
   unpack?: UnpackFunction;
 }
 
+export type ParseResult = Code | string | number;
+
+export type Position = {
+  column: number;
+  line: number;
+  offset: number;
+}
+
 /**
  * A mixin is a function that takes an existing class and returns a new class.
  *
@@ -40,11 +51,11 @@ export type Mixin<MixinMembers> = <T>(
 
 /**
  * Source code representation used by the parser.
-*/
+ */
 export type Source = {
-  name: string;
+  name?: string;
   text: string;
-  url: URL;  
+  url?: URL;
 }
 
 /**

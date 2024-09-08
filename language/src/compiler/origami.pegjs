@@ -7,16 +7,14 @@
 //
 
 import * as ops from "../runtime/ops.js";
-import { makeArray, makeFunctionCall, makeObject, makePipeline, makeTemplate } from "./parserHelpers.js";
-
-// If a parse result is an object that will be evaluated at runtime, attach the
-// location of the source code that produced it for debugging and error messages.
-function annotate(parseResult, location) {
-  if (typeof parseResult === "object" && parseResult !== null) {
-    parseResult.location = location;
-  }
-  return parseResult;
-}
+import {
+  annotate,
+  makeArray,
+  makeFunctionCall,
+  makeObject,
+  makePipeline,
+  makeTemplate
+} from "./parserHelpers.js";
 
 }}
 
@@ -45,7 +43,9 @@ array "array"
 
 // A separated list of array entries
 arrayEntries
-  = @arrayEntry|1.., separator| separator?
+  = entries:arrayEntry|1.., separator| separator? {
+      return annotate(entries, location());
+    }
 
 arrayEntry
   = spread
@@ -68,15 +68,15 @@ callTarget "function call"
 closingBrace
   = "}"
   / .? {
-    error("Expected right curly brace");
-  }
+      error("Expected right curly brace");
+    }
 
 // Required closing bracket
 closingBracket
   = "]"
   / .? {
-    error("Expected right bracket");
-  }
+      error("Expected right bracket");
+    }
 
 // Required closing parenthesis. We use this for the `group` term: it's the last
 // term in the `step` parser that starts with a parenthesis, so if that parser
@@ -84,8 +84,8 @@ closingBracket
 closingParen
   = ")"
   / .? {
-    error("Expected right parenthesis");
-  }
+      error("Expected right parenthesis");
+    }
 
 // A single line comment
 comment "comment"
@@ -133,15 +133,17 @@ float "floating-point number"
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 functionComposition "function composition"
   = target:callTarget chain:args* end:implicitParensArgs? {
-    if (end) {
-      chain.push(end);
+      if (end) {
+        chain.push(end);
+      }
+      return annotate(makeFunctionCall(target, chain), location());
     }
-    return annotate(makeFunctionCall(target, chain), location());
-  }
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" __ @expr __ closingParen
+  = "(" __ expr:expr __ closingParen {
+      return annotate(expr, location());
+    }
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* '»' { return chars.join(""); }
@@ -164,7 +166,9 @@ identifierChar
   / escapedChar
 
 identifierList
-  = @identifier|1.., separator| separator?
+  = list:identifier|1.., separator| separator? {
+      return annotate(list, location());
+    }
 
 identifierOrString
   = identifier
@@ -173,7 +177,10 @@ identifierOrString
 implicitParensArgs "arguments with implicit parentheses"
   // Implicit parens args are a separate list of `step`, not `expr`, because
   // they can't contain a pipeline.
-  = inlineSpace+ @step|1.., separator| separator?
+  = inlineSpace+ args:step|1.., separator| separator? {
+      /* Stuff */
+      return annotate(args, location());
+    }
 
 inlineSpace
   = [ \t]
@@ -191,12 +198,18 @@ lambda "lambda function"
 
 // A path that begins with a slash: `/foo/bar`
 leadingSlashPath "path with a leading slash"
-  = "/" @path
-  / "/" { return annotate([""], location()); }
+  = "/" path:path {
+      return annotate(path, location());
+    }
+  / "/" {
+      return annotate([""], location());
+    }
 
 // A separated list of expressions
 list "list"
-  = @expr|1.., separator| separator?
+  = list:expr|1.., separator| separator? {
+      return annotate(list, location());
+    }
 
 multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
@@ -219,7 +232,9 @@ object "object literal"
 
 // A separated list of object entries
 objectEntries
-  = @objectEntry|1.., separator| separator?
+  = entries:objectEntry|1.., separator| separator? {
+      return annotate(entries, location());
+    }
 
 objectEntry
   = spread
@@ -230,8 +245,8 @@ objectEntry
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
   = key:objectKey __ "=" __ value:expr {
-    return annotate([key, [ops.getter, value]], location());
-  }
+      return annotate([key, [ops.getter, value]], location());
+    }
 
 // A standalone reference inside an object literal: `foo`
 objectIdentifier "object identifier"
@@ -245,17 +260,19 @@ objectKey "object key"
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = @objectKey __ ":" __ @expr
+  = key:objectKey __ ":" __ value:expr {
+      return annotate([key, value], location());  
+    }
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
-    return annotate([ops.lambda, parameters ?? [], expr], location());
-  }
+      return annotate([ops.lambda, parameters ?? [], expr], location());
+    }
 
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
-      return list ?? annotate([undefined], location());
+      return annotate(list ?? [undefined], location());
     }
 
 pipeline
@@ -265,7 +282,9 @@ pipeline
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = pathKey|1.., "/"|
+  = path:pathKey|1.., "/"| {
+      return annotate(path, location());
+    }
 
 // A single key in a slash-separated path
 pathKey "path element"
@@ -325,7 +344,9 @@ singleQuoteStringChar
   = !("'" / newLine) @textChar
 
 spread
-  = ellipsis expr:expr { return [ops.spread, expr]; }
+  = ellipsis expr:expr {
+      return annotate([ops.spread, expr], location());
+    }
 
 // A single step in a pipeline, or a top-level expression
 step
@@ -379,7 +400,9 @@ templateDocumentText "template text"
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
-  = "`" @templateLiteralContents "`"
+  = "`" contents:templateLiteralContents "`" {
+      return annotate(contents, location());
+    }
 
 templateLiteralChar
   = !("`" / "${") @textChar
@@ -396,7 +419,9 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" __ @expr __ "}"
+  = "${" __ expr:expr __ "}" {
+      return annotate(expr, location());
+    }
 
 textChar
   = escapedChar
