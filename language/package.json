@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/language",
-  "version": "0.0.64",
+  "version": "0.0.65-beta.1",
   "description": "Web Origami expression language compiler and runtime",
   "type": "module",
   "main": "./main.js",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@weborigami/async-tree": "https://gitpkg.vercel.app/WebOrigami/origami/async-tree?b5d8eebf",
-    "@weborigami/types": "0.0.64",
+    "@weborigami/types": "0.0.65-beta.1",
     "watcher": "2.3.1"
   },
   "scripts": {
