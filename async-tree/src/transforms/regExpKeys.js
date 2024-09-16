@@ -21,6 +21,13 @@ export default async function regExpKeys(treelike) {
     description: "regExpKeys",
 
     async get(key) {
+      if (key == null) {
+        // Reject nullish key.
+        throw new ReferenceError(
+          `${this.constructor.name}: Cannot get a null or undefined key.`
+        );
+      }
+
       for (const [regExp, value] of map) {
         if (regExp.test(key)) {
           return value;
