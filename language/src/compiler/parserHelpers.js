@@ -52,7 +52,13 @@ export function makeArray(entries) {
  * @param {Code[]} chain
  * @returns
  */
-export function makeFunctionCall(target, chain) {
+export function makeFunctionCall(target, chain, location) {
+  if (!(target instanceof Array)) {
+    const error = new TypeError(`Can't call this like a function: ${target}`);
+    /** @type {any} */ (error).location = location;
+    throw error;
+  }
+
   let value = target;
   const source = target.location.source;
   // The chain is an array of arguments (which are themselves arrays). We

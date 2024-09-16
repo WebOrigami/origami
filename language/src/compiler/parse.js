@@ -379,7 +379,7 @@ function peg$parse(input, options) {
       if (end) {
         chain.push(end);
       }
-      return annotate(makeFunctionCall(target, chain), location());
+      return annotate(makeFunctionCall(target, chain, location()), location());
     };
   var peg$f18 = function(expr) {
       return annotate(expr, location());

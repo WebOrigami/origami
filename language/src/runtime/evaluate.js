@@ -16,7 +16,7 @@ const sourceSymbol = Symbol("source");
  * `this` should be the tree used as the context for the evaluation.
  *
  * @this {import("@weborigami/types").AsyncTree|null}
- * @param {any} code
+ * @param {import("../../index.ts").ParseResult} code
  */
 export default async function evaluate(code) {
   const tree = this;
@@ -43,7 +43,9 @@ export default async function evaluate(code) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    throw ReferenceError(`${codeFragment(code[0])} is not defined`);
+    const error = ReferenceError(`${codeFragment(code[0])} is not defined`);
+    /** @type {any} */ (error).location = code.location;
+    throw error;
   }
 
   if (isUnpackable(fn)) {
@@ -52,9 +54,12 @@ export default async function evaluate(code) {
   }
 
   if (!Tree.isTreelike(fn)) {
-    throw TypeError(
-      `${codeFragment(code[0])} didn't return a function or a treelike object`
+    const text = fn.toString?.() ?? codeFragment(code[0]);
+    const error = new TypeError(
+      `Not a callable function or tree: ${text.slice(0, 80)}`
     );
+    /** @type {any} */ (error).location = code.location;
+    throw error;
   }
 
   // Execute the function or traverse the tree.

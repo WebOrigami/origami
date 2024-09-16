@@ -136,7 +136,7 @@ functionComposition "function composition"
       if (end) {
         chain.push(end);
       }
-      return annotate(makeFunctionCall(target, chain), location());
+      return annotate(makeFunctionCall(target, chain, location()), location());
     }
 
 // An expression in parentheses: `(foo)`
