@@ -16,7 +16,7 @@ const sourceSymbol = Symbol("source");
  * `this` should be the tree used as the context for the evaluation.
  *
  * @this {import("@weborigami/types").AsyncTree|null}
- * @param {import("../../index.ts").ParseResult} code
+ * @param {import("../../index.ts").Code} code
  */
 export default async function evaluate(code) {
   const tree = this;

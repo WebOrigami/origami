@@ -142,7 +142,9 @@ export function makeTemplate(parts) {
   // empty string. If there's just one string, return that directly.
   return filtered.length === 0
     ? ""
-    : filtered.length === 1 && typeof filtered[0] === "string"
+    : filtered.length === 1 &&
+      filtered[0][0] === ops.primitive &&
+      typeof filtered[0][1] === "string"
     ? filtered[0]
     : [ops.concat, ...filtered];
 }

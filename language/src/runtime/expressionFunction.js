@@ -5,20 +5,19 @@ import { evaluate } from "./internal.js";
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
- * @param {import("../../index.js").ParseResult} parsed - parsed Origami expression
+ * @param {import("../../index.js").Code} code - parsed Origami expression
  * @param {string} [name] - optional name of the function
  */
-export function createExpressionFunction(parsed, name) {
+export function createExpressionFunction(code, name) {
   /** @this {AsyncTree|null} */
   async function fn() {
-    return evaluate.call(this, parsed);
+    return evaluate.call(this, code);
   }
   if (name) {
     Object.defineProperty(fn, "name", { value: name });
   }
-  fn.code = parsed;
-  fn.toString = () =>
-    parsed instanceof Array ? parsed.location.source.text : parsed;
+  fn.code = code;
+  fn.toString = () => code.location.source.text;
   return fn;
 }
 

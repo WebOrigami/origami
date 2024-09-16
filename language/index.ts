@@ -29,8 +29,6 @@ export type ExtensionHandler = {
   unpack?: UnpackFunction;
 }
 
-export type ParseResult = Code | string | number;
-
 export type Position = {
   column: number;
   line: number;

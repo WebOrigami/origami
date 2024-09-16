@@ -20,7 +20,9 @@ import {
 
 // A block of optional whitespace
 __
-  = (inlineSpace / newLine / comment)*  { return ""; }
+  = (inlineSpace / newLine / comment)*  {
+    return null;
+  }
 
 // A filesystem path that begins with a slash: `/foo/bar`
 // We take care to avoid treating two consecutive leading slashes as a path;
@@ -98,7 +100,9 @@ digits
 doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
-  = '"' chars:doubleQuoteStringChar* '"' { return chars.join(""); }
+  = '"' chars:doubleQuoteStringChar* '"' {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
@@ -126,7 +130,7 @@ expression "Origami expression"
 
 float "floating-point number"
   = sign? digits? "." digits {
-      return parseFloat(text());
+      return annotate([ops.primitive, parseFloat(text())], location());
     }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
@@ -146,7 +150,9 @@ group "parenthetical group"
     }
 
 guillemetString "guillemet string"
-  = '«' chars:guillemetStringChar* '»' { return chars.join(""); }
+  = '«' chars:guillemetStringChar* '»' {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 guillemetStringChar
   = !('»' / newLine) @textChar
@@ -155,7 +161,9 @@ guillemetStringChar
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier (":" number)? { return text(); }
+  = identifier (":" number)? {
+    return annotate([ops.primitive, text()], location());
+  }
 
 identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
@@ -170,10 +178,6 @@ identifierList
       return annotate(list, location());
     }
 
-identifierOrString
-  = identifier
-  / string
-
 implicitParensArgs "arguments with implicit parentheses"
   // Implicit parens args are a separate list of `step`, not `expr`, because
   // they can't contain a pipeline.
@@ -187,7 +191,7 @@ inlineSpace
 
 integer "integer"
   = sign? digits {
-      return parseInt(text());
+      return annotate([ops.primitive, parseInt(text())], location());
     }
 
 // A lambda expression: `=foo()`
@@ -240,7 +244,7 @@ objectEntry
   = spread
   / objectProperty
   / objectGetter
-  / objectIdentifier
+  / objectShorthandProperty
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
@@ -248,20 +252,30 @@ objectGetter "object getter"
       return annotate([key, [ops.getter, value]], location());
     }
 
-// A standalone reference inside an object literal: `foo`
-objectIdentifier "object identifier"
-  = key:identifierOrString {
-      return annotate([key, [ops.inherited, key]], location());
-    }
+objectHiddenKey
+  = hiddenKey:("(" objectPublicKey ")") { return hiddenKey.join(""); }
 
 objectKey "object key"
-  = hiddenKey:("(" identifierOrString ")") { return hiddenKey.join(""); }
-  / identifierOrString
+  = objectHiddenKey
+  / objectPublicKey
+
+objectPublicKey
+  = identifier
+  / string:string {
+    // Remove `ops.primitive` from the string code
+    return string[1];
+  }
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
   = key:objectKey __ ":" __ value:expr {
       return annotate([key, value], location());  
+    }
+
+// A shorthand reference inside an object literal: `foo`
+objectShorthandProperty "object identifier"
+  = key:objectPublicKey {
+      return annotate([key, [ops.inherited, key]], location());
     }
 
 parameterizedLambda
@@ -288,7 +302,9 @@ path "slash-separated path"
 
 // A single key in a slash-separated path
 pathKey "path element"
-  = chars:pathKeyChar* { return chars.join(""); }
+  = chars:pathKeyChar* {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 // A single character in a slash-separated path.
 pathKeyChar
@@ -338,7 +354,9 @@ singleLineComment
   = "//" [^\n\r]* { return null; }
 
 singleQuoteString "single quote string"
-  = "'" chars:singleQuoteStringChar* "'" { return chars.join(""); }
+  = "'" chars:singleQuoteStringChar* "'" {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
@@ -396,7 +414,9 @@ templateDocumentContents
     }
 
 templateDocumentText "template text"
-  = chars:templateDocumentChar+ { return chars.join(""); }
+  = chars:templateDocumentChar+ {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
@@ -415,7 +435,9 @@ templateLiteralContents
 
 // Plain text in a template literal
 templateLiteralText
-  = chars:templateLiteralChar+ { return chars.join(""); }
+  = chars:templateLiteralChar+ {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"

@@ -10,7 +10,7 @@ describe("ops", () => {
       name: "world",
     });
 
-    const code = [ops.concat, "Hello, ", [ops.scope, "name"], "."];
+    const code = createCode([ops.concat, "Hello, ", [ops.scope, "name"], "."]);
 
     const result = await evaluate.call(scope, code);
     assert.equal(result, "Hello, world.");
@@ -21,7 +21,7 @@ describe("ops", () => {
       message: "Hello",
     });
 
-    const code = [ops.lambda, null, [ops.scope, "message"]];
+    const code = createCode([ops.lambda, null, [ops.scope, "message"]]);
 
     const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
@@ -29,25 +29,25 @@ describe("ops", () => {
   });
 
   test("lambda adds input to scope as `_`", async () => {
-    const code = [ops.lambda, null, [ops.scope, "_"]];
+    const code = createCode([ops.lambda, null, [ops.scope, "_"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn("Hello");
     assert.equal(result, "Hello");
   });
 
   test("parameterized lambda adds input args to scope", async () => {
-    const code = [
+    const code = createCode([
       ops.lambda,
       ["a", "b"],
       [ops.concat, [ops.scope, "b"], [ops.scope, "a"]],
-    ];
+    ]);
     const fn = await evaluate.call(null, code);
     const result = await fn("x", "y");
     assert.equal(result, "yx");
   });
 
   test("a lambda can reference itself with @recurse", async () => {
-    const code = [ops.lambda, null, [ops.scope, "@recurse"]];
+    const code = createCode([ops.lambda, null, [ops.scope, "@recurse"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn();
     // We're expecting the function to return itself, but testing recursion is
@@ -60,11 +60,11 @@ describe("ops", () => {
       upper: (s) => s.toUpperCase(),
     });
 
-    const code = [
+    const code = createCode([
       ops.object,
       ["hello", [[ops.scope, "upper"], "hello"]],
       ["world", [[ops.scope, "upper"], "world"]],
-    ];
+    ]);
 
     const result = await evaluate.call(scope, code);
     assert.equal(result.hello, "HELLO");
@@ -75,7 +75,12 @@ describe("ops", () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
-    const code = [ops.array, "Hello", 1, [[ops.scope, "upper"], "world"]];
+    const code = createCode([
+      ops.array,
+      "Hello",
+      1,
+      [[ops.scope, "upper"], "world"],
+    ]);
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
@@ -89,7 +94,7 @@ describe("ops", () => {
       a: 2, // Should be ignored
     });
     child.parent = parent;
-    const code = [ops.inherited, "a"];
+    const code = createCode([ops.inherited, "a"]);
     const result = await evaluate.call(child, code);
     assert.equal(result, 1);
   });
@@ -106,3 +111,16 @@ describe("ops", () => {
     assert.equal(number, 1);
   });
 });
+
+/**
+ * @returns {import("../../index.ts").Code}
+ */
+function createCode(array) {
+  const code = array;
+  /** @type {any} */ (code).location = {
+    source: {
+      text: "",
+    },
+  };
+  return code;
+}

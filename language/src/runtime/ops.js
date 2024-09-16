@@ -283,6 +283,14 @@ export function spread(...args) {
 spread.toString = () => "«ops.spread»";
 
 /**
+ * Return a primitive value
+ */
+export async function primitive(value) {
+  return value;
+}
+primitive.toString = () => "«ops.primitive»";
+
+/**
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
