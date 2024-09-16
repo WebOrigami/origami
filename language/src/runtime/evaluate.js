@@ -4,6 +4,7 @@ import {
   isUnpackable,
   scope,
 } from "@weborigami/async-tree";
+import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
 
 const codeSymbol = Symbol("code");
@@ -43,7 +44,9 @@ export default async function evaluate(code) {
 
   if (!fn) {
     // The code wants to invoke something that's couldn't be found in scope.
-    const error = ReferenceError(`${codeFragment(code[0])} is not defined`);
+    const error = ReferenceError(
+      `${codeFragment(code[0].location)} is not defined`
+    );
     /** @type {any} */ (error).location = code.location;
     throw error;
   }
@@ -54,7 +57,7 @@ export default async function evaluate(code) {
   }
 
   if (!Tree.isTreelike(fn)) {
-    const text = fn.toString?.() ?? codeFragment(code[0]);
+    const text = fn.toString?.() ?? codeFragment(code[0].location);
     const error = new TypeError(
       `Not a callable function or tree: ${text.slice(0, 80)}`
     );
@@ -72,16 +75,13 @@ export default async function evaluate(code) {
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
-      let location;
-      if (error.position !== undefined) {
-        // Use location of the argument with the given position (need to offset
-        // by 1 to skip the function).
-        location = code[error.position + 1].location;
-      } else {
-        // Use overall location.
-        location = code.location;
-      }
-      error.location = location;
+      error.location =
+        error.position !== undefined
+          ? // Use location of the argument with the given position (need to
+            // offset by 1 to skip the function).
+            code[error.position + 1].location
+          : // Use overall location.
+            code.location;
     }
     throw error;
   }
@@ -113,13 +113,4 @@ export default async function evaluate(code) {
   }
 
   return result;
-}
-
-function codeFragment(code) {
-  if (code.location) {
-    const { source, start, end } = code.location;
-    return source.text.slice(start.offset, end.offset);
-  } else {
-    return "";
-  }
 }

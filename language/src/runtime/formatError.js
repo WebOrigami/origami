@@ -1,4 +1,7 @@
 // Text we look for in an error stack to guess whether a given line represents a
+
+import codeFragment from "./codeFragment.js";
+
 // function in the Origami source code.
 const origamiSourceSignals = [
   "async-tree/src/",
@@ -35,12 +38,9 @@ export default function formatError(error) {
   // Add location
   let location = /** @type {any} */ (error).location;
   if (location) {
-    let { source, start, end } = location;
-    let fragment = source.text.slice(start.offset, end.offset);
-    if (fragment.length === 0) {
-      // Use entire source.
-      fragment = source.text;
-    }
+    const fragment = codeFragment(location);
+    let { source, start } = location;
+
     message += `\nevaluating: ${fragment}`;
     if (typeof source === "object" && source.url) {
       message += `\n    at ${source.url.href}:${start.line}:${start.column}`;
