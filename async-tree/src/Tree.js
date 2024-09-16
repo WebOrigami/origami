@@ -416,7 +416,7 @@ export async function traverseOrThrow(treelike, ...keys) {
   let key;
   while (remainingKeys.length > 0) {
     if (value === undefined) {
-      throw new TraverseError("Tried to traverse a null or undefined value", {
+      throw new TraverseError("A null or undefined value can't be traversed", {
         tree: treelike,
         keys,
         position,
