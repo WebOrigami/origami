@@ -26,6 +26,12 @@ export default function sortFn(options) {
    * @type {import("../../index.ts").TreeTransform}
    */
   return function sort(treelike) {
+    if (!treelike) {
+      const error = new TypeError(`sort: The tree to sort isn't defined.`);
+      /** @type {any} */ (error).position = 0;
+      throw error;
+    }
+
     const tree = Tree.from(treelike);
     const transformed = Object.create(tree);
     transformed.keys = async () => {

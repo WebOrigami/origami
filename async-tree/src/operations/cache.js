@@ -23,6 +23,12 @@ export default function treeCache(
   cacheTreelike,
   filterTreelike
 ) {
+  if (!sourceTreelike) {
+    const error = new TypeError(`cache: The source tree isn't defined.`);
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const source = Tree.from(sourceTreelike);
   const filter = filterTreelike ? Tree.from(filterTreelike) : undefined;
 

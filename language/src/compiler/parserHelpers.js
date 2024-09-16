@@ -54,7 +54,7 @@ export function makeArray(entries) {
  */
 export function makeFunctionCall(target, chain, location) {
   if (!(target instanceof Array)) {
-    const error = new TypeError(`Can't call this like a function: ${target}`);
+    const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = location;
     throw error;
   }

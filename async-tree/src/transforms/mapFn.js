@@ -46,6 +46,12 @@ export default function createMapTransform(options = {}) {
    * @type {import("../../index.ts").TreeTransform}
    */
   return function map(treelike) {
+    if (!treelike) {
+      const error = new TypeError(`map: The tree to map isn't defined.`);
+      /** @type {any} */ (error).position = 0;
+      throw error;
+    }
+
     const tree = Tree.from(treelike, { deep });
 
     // The transformed tree is actually an extension of the original tree's

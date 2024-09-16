@@ -10,6 +10,12 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {import("../../index.ts").Treelike} treelike
  */
 export default async function concatTreeValues(treelike) {
+  if (!treelike) {
+    const error = new TypeError(`concat: The tree isn't defined.`);
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const strings = [];
   for await (const value of deepValuesIterator(treelike, { expand: true })) {
     if (value) {

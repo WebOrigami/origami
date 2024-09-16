@@ -11,6 +11,12 @@ import { Tree } from "../internal.js";
  * @returns {AsyncTree & {trees: AsyncTree[]}}
  */
 export default function scope(treelike) {
+  if (!treelike) {
+    const error = new TypeError(`scope: The tree isn't defined.`);
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const tree = Tree.from(treelike);
 
   return {

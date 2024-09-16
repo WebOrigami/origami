@@ -11,6 +11,14 @@ import { Tree } from "../internal.js";
  * @type {import("../../index.ts").TreeTransform}
  */
 export default async function regExpKeys(treelike) {
+  if (!treelike) {
+    const error = new TypeError(
+      `regExpKeys: The tree of regular expressions isn't defined.`
+    );
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const tree = Tree.from(treelike);
   const map = new Map();
 

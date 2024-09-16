@@ -14,6 +14,12 @@ export default async function* deepValuesIterator(
   treelike,
   options = { expand: false }
 ) {
+  if (!treelike) {
+    const error = new TypeError(`deepValues: The tree isn't defined.`);
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const tree = Tree.from(treelike, { deep: true });
   for (const key of await tree.keys()) {
     let value = await tree.get(key);

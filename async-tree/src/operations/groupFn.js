@@ -11,6 +11,12 @@ export default function createGroupByTransform(groupKeyFn) {
    * @type {import("../../index.ts").TreeTransform}
    */
   return async function groupByTransform(treelike) {
+    if (!treelike) {
+      const error = new TypeError(`groupBy: The tree to group isn't defined.`);
+      /** @type {any} */ (error).position = 0;
+      throw error;
+    }
+
     const tree = Tree.from(treelike);
     const result = {};
     for (const key of await tree.keys()) {

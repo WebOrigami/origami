@@ -10,6 +10,14 @@ import { Tree } from "../internal.js";
  * @returns {AsyncTree}
  */
 export default function deepReverse(treelike) {
+  if (!treelike) {
+    const error = new TypeError(
+      `deepReverse: The tree to reverse isn't defined.`
+    );
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
+
   const tree = Tree.from(treelike);
   return {
     async get(key) {
