@@ -38,6 +38,11 @@ marked.use(
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {
+  if (!input) {
+    const error = new TypeError("@mdHtml: The input is not defined.");
+    /** @type {any} */ (error).position = 0;
+    throw error;
+  }
   if (isUnpackable(input)) {
     input = await input.unpack();
   }

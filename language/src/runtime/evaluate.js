@@ -97,7 +97,7 @@ export default async function evaluate(code) {
     try {
       result[codeSymbol] = code;
       if (/** @type {any} */ (code).location) {
-        result[sourceSymbol] = codeFragment(code);
+        result[sourceSymbol] = codeFragment(code.location);
       }
       if (!result[scopeSymbol]) {
         Object.defineProperty(result, scopeSymbol, {

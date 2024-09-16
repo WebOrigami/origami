@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
@@ -52,8 +53,8 @@ function ProgressTransform(Base) {
       try {
         result = await super.set(...args);
         countCopied++;
-      } catch (e) {
-        console.error(e);
+      } catch (/** @type {any} */ error) {
+        console.error(formatError(error));
       }
       copyRoot.showProgress();
       return result;
