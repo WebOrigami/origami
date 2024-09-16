@@ -23,13 +23,6 @@ export default class MapTree {
   }
 
   async get(key) {
-    if (key == null) {
-      // Reject nullish key.
-      throw new ReferenceError(
-        `${this.constructor.name}: Cannot get a null or undefined key.`
-      );
-    }
-
     const value = this.map.get(key);
     setParent(value, this);
     return value;

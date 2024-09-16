@@ -26,16 +26,6 @@ describe("MapTree", () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("d"), undefined);
   });
-
-  test("getting a null/undefined key throws an exception", async () => {
-    const fixture = createFixture();
-    await assert.rejects(async () => {
-      await fixture.get(null);
-    });
-    await assert.rejects(async () => {
-      await fixture.get(undefined);
-    });
-  });
 });
 
 function createFixture() {
