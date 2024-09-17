@@ -49,12 +49,12 @@ export default class FilterTree {
     // Also include any keys in the filter that are found in the tree. This
     // lets the filter "pull" values from a tree that, e.g., is defined by a
     // function without an explicit domain.
-    for (const key of await this.filter.keys()) {
-      const value = await this.tree.get(key);
-      if (value !== undefined) {
-        keys.add(key);
-      }
-    }
+    // for (const key of await this.filter.keys()) {
+    //   const value = await this.tree.get(key);
+    //   if (value !== undefined) {
+    //     keys.add(key);
+    //   }
+    // }
 
     return keys;
   }
