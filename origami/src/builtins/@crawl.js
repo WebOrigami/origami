@@ -34,7 +34,7 @@ export default async function crawl(treelike, baseHref) {
   const tree =
     typeof treelike === "string"
       ? treeHttps.call(this, treelike)
-      : Tree.from(treelike);
+      : Tree.from(treelike, { parent: this });
 
   if (baseHref === undefined) {
     // Ask tree or original treelike if it has an `href` property we can use as

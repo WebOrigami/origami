@@ -1,4 +1,4 @@
-import { DeepObjectTree, Tree, isPlainObject } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -7,9 +7,8 @@ import { DeepObjectTree, Tree, isPlainObject } from "@weborigami/async-tree";
 export default class FilterTree {
   constructor(tree, filter) {
     this.tree = Tree.from(tree);
-    this.filter = isPlainObject(filter)
-      ? new DeepObjectTree(filter)
-      : Tree.from(filter);
+    this.filter = Tree.from(filter, { deep: true });
+    this.parent = null;
   }
 
   async get(key) {

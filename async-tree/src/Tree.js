@@ -105,35 +105,38 @@ export async function forEach(tree, callbackFn) {
  *
  * If the object is a plain object, it will be converted to an ObjectTree. The
  * optional `deep` option can be set to `true` to convert a plain object to a
- * DeepObjectTree.
+ * DeepObjectTree. The optional `parent` parameter can be used as the default
+ * parent of the new tree.
  *
  * @param {Treelike | Object} object
- * @param {{ deep?: true }} [options]
+ * @param {{ deep?: true, parent?: AsyncTree|null }} [options]
  * @returns {AsyncTree}
  */
 export function from(object, options = {}) {
+  let tree;
   if (isAsyncTree(object)) {
     // Argument already supports the tree interface.
     // @ts-ignore
     return object;
   } else if (typeof object === "function") {
-    return new FunctionTree(object);
+    tree = new FunctionTree(object);
   } else if (object instanceof Map) {
-    return new MapTree(object);
+    tree = new MapTree(object);
   } else if (object instanceof Set) {
-    return new SetTree(object);
+    tree = new SetTree(object);
   } else if (isPlainObject(object) || object instanceof Array) {
-    return options.deep ? new DeepObjectTree(object) : new ObjectTree(object);
+    tree = options.deep ? new DeepObjectTree(object) : new ObjectTree(object);
   } else if (isUnpackable(object)) {
     async function AsyncFunction() {} // Sample async function
-    return object.unpack instanceof AsyncFunction.constructor
-      ? // Async unpack: return a deferred tree.
-        new DeferredTree(object.unpack)
-      : // Synchronous unpack: cast the result of unpack() to a tree.
-        from(object.unpack());
+    tree =
+      object.unpack instanceof AsyncFunction.constructor
+        ? // Async unpack: return a deferred tree.
+          new DeferredTree(object.unpack)
+        : // Synchronous unpack: cast the result of unpack() to a tree.
+          from(object.unpack());
   } else if (object && typeof object === "object") {
     // An instance of some class.
-    return new ObjectTree(object);
+    tree = new ObjectTree(object);
   } else if (
     typeof object === "string" ||
     typeof object === "number" ||
@@ -141,10 +144,15 @@ export function from(object, options = {}) {
   ) {
     // A primitive value; box it into an object and construct a tree.
     const boxed = utilities.box(object);
-    return new ObjectTree(boxed);
+    tree = new ObjectTree(boxed);
+  } else {
+    throw new TypeError("Couldn't convert argument to an async tree");
   }
 
-  throw new TypeError("Couldn't convert argument to an async tree");
+  if (!tree.parent && options.parent) {
+    tree.parent = options.parent;
+  }
+  return tree;
 }
 
 /**

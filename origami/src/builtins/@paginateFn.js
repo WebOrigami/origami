@@ -11,11 +11,13 @@ import { Tree } from "@weborigami/async-tree";
  * @param {number} [size=10]
  */
 export default function paginateFn(size = 10) {
+  const parent = this;
+
   /**
    * @param {Treelike} [treelike]
    */
   return async function (treelike) {
-    const tree = Tree.from(treelike);
+    const tree = Tree.from(treelike, { parent });
     const keys = Array.from(await tree.keys());
     const pageCount = Math.ceil(keys.length / size);
 

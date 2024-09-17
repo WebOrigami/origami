@@ -18,7 +18,7 @@ describe("@changes", () => {
       },
       e: "new",
     };
-    const result = await changes(oldTree, newTree);
+    const result = await changes.call(null, oldTree, newTree);
     assert.deepEqual(result, {
       a: {
         b: "changed",

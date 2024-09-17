@@ -16,8 +16,8 @@ import setDeep from "./@setDeep.js";
 export default async function copy(source, target) {
   assertTreeIsDefined(this, "copy");
   // const start = performance.now();
-  const sourceTree = Tree.from(source);
-  /** @type {any} */ let targetTree = Tree.from(target);
+  const sourceTree = Tree.from(source, { parent: this });
+  /** @type {any} */ let targetTree = Tree.from(target, { parent: this });
 
   if (stdout.isTTY) {
     targetTree = transformObject(ProgressTransform, targetTree);
@@ -26,7 +26,7 @@ export default async function copy(source, target) {
     countCopied = 0;
   }
 
-  await setDeep(targetTree, sourceTree);
+  await setDeep.call(this, targetTree, sourceTree);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);

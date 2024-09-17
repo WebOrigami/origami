@@ -25,7 +25,7 @@ export default async function serve(treelike, port) {
   assertTreeIsDefined(this, "serve");
   let tree;
   if (treelike) {
-    tree = Tree.from(treelike);
+    tree = Tree.from(treelike, { parent: this });
 
     // TODO: Instead of applying ExplorableSiteTransform, apply a transform
     // that just maps the empty string to index.html.

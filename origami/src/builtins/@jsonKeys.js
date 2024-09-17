@@ -28,7 +28,7 @@ function KeysJsonTransform(Base) {
       if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
-        const tree = Tree.from(value, { deep: true });
+        const tree = Tree.from(value, { deep: true, parent: this });
         value = transformObject(KeysJsonTransform, tree);
       }
       return value;

@@ -5,7 +5,7 @@ export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;
 export function clear(AsyncTree: AsyncMutableTree): Promise<void>;
 export function entries(AsyncTree: AsyncTree): Promise<IterableIterator<any>>;
 export function forEach(AsyncTree: AsyncTree, callbackfn: (value: any, key: any) => Promise<void>): Promise<void>;
-export function from(obj: any, options?: { deep: boolean }): AsyncTree;
+export function from(obj: any, options?: { deep?: boolean, parent?: AsyncTree|null }): AsyncTree;
 export function has(AsyncTree: AsyncTree, key: any): Promise<boolean>;
 export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;

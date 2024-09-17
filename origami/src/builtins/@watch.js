@@ -42,16 +42,16 @@ export default async function watch(treelike, fn) {
   return handle;
 }
 
-async function evaluateTree(container, fn) {
+async function evaluateTree(parent, fn) {
   let tree;
   let message;
   let result;
   try {
-    result = await fn.call(container);
+    result = await fn.call(parent);
   } catch (error) {
     message = messageForError(error);
   }
-  tree = result ? Tree.from(result) : undefined;
+  tree = result ? Tree.from(result, { parent }) : undefined;
   if (tree) {
     return tree;
   }
@@ -60,7 +60,7 @@ async function evaluateTree(container, fn) {
   }
   console.warn(message);
   tree = new ConstantTree(message);
-  tree.parent = container;
+  tree.parent = parent;
   return tree;
 }
 

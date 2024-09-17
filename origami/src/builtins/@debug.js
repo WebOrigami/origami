@@ -41,10 +41,7 @@ function DebugTransform(Base) {
       // Since this transform is for diagnostic purposes, cast any treelike
       // result to a tree so we can debug the result too.
       if (Tree.isTreelike(value)) {
-        value = Tree.from(value);
-        if (!value.parent) {
-          value.parent = parent;
-        }
+        value = Tree.from(value, { parent });
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
         }
@@ -58,10 +55,7 @@ function DebugTransform(Base) {
             return content;
           }
           /** @type {any} */
-          let tree = Tree.from(content);
-          if (!tree.parent) {
-            tree.parent = parent;
-          }
+          let tree = Tree.from(content, { parent });
           if (!isTransformApplied(DebugTransform, tree)) {
             tree = transformObject(DebugTransform, tree);
           }

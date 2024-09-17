@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import FilterTree from "../common/FilterTree.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
@@ -7,12 +8,15 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
- * @param {Treelike} treelike
- * @param {Treelike} filterVariant
+ * @param {Treelike} sourceTreelike
+ * @param {Treelike} filterTreelike
  */
-export default async function filter(treelike, filterVariant) {
+export default async function filter(sourceTreelike, filterTreelike) {
   assertTreeIsDefined(this, "filter");
-  const result = new FilterTree(treelike, filterVariant);
+  const sourceTree = Tree.from(sourceTreelike, { parent: this });
+  const filterTree = Tree.from(filterTreelike, { deep: true, parent: this });
+  const result = new FilterTree(sourceTree, filterTree);
+  result.parent = this;
   return result;
 }
 
