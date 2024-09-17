@@ -222,7 +222,7 @@ export function lambda(parameters, code) {
   // We set the `length` property on the function so that Tree.traverseOrThrow()
   // will correctly identify how many parameters it wants. This is unorthodox
   // but doesn't appear to affect other behavior.
-  const fnLength = Object.keys(parameters).length;
+  const fnLength = parameters.length;
   Object.defineProperty(invoke, "length", {
     value: fnLength,
   });
