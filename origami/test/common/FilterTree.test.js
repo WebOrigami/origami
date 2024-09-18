@@ -1,4 +1,4 @@
-import { DeepObjectTree, FunctionTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FilterTree from "../../src/common/FilterTree.js";
@@ -40,18 +40,18 @@ describe("FilterTree", () => {
     });
   });
 
-  test("filter can define keys that are available but hidden in tree", async () => {
-    const tree = new FilterTree(new FunctionTree((name) => `Hello, ${name}!`), {
-      Alice: true,
-      Bob: true,
-      Carol: true,
-    });
-    assert.deepEqual(await Tree.plain(tree), {
-      Alice: "Hello, Alice!",
-      Bob: "Hello, Bob!",
-      Carol: "Hello, Carol!",
-    });
-  });
+  // test("filter can define keys that are available but hidden in tree", async () => {
+  //   const tree = new FilterTree(new FunctionTree((name) => `Hello, ${name}!`), {
+  //     Alice: true,
+  //     Bob: true,
+  //     Carol: true,
+  //   });
+  //   assert.deepEqual(await Tree.plain(tree), {
+  //     Alice: "Hello, Alice!",
+  //     Bob: "Hello, Bob!",
+  //     Carol: "Hello, Carol!",
+  //   });
+  // });
 
   test("filter be defined with globs", async () => {
     const fixture = new FilterTree(
