@@ -105,7 +105,7 @@ export async function forEach(tree, callbackFn) {
  *
  * If the object is a plain object, it will be converted to an ObjectTree. The
  * optional `deep` option can be set to `true` to convert a plain object to a
- * DeepObjectTree. The optional `parent` parameter can be used as the default
+ * DeepObjectTree. The optional `parent` parameter will be used as the default
  * parent of the new tree.
  *
  * @param {Treelike | Object} object
