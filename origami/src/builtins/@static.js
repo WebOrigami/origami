@@ -14,6 +14,7 @@ import index from "./@index.js";
 export default async function staticTree(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "@static");
   const result = transformObject(StaticTransform, tree);
+  result.parent = this;
   return result;
 }
 
@@ -22,11 +23,12 @@ function StaticTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (value === undefined && key === "index.html") {
-        value = index.call(this, this);
+        value = await index.call(this, this);
       } else if (value === undefined && key === ".keys.json") {
-        value = jsonKeys.stringify(this);
-      } else if (Tree.isAsyncTree(value)) {
-        value = transformObject(StaticTransform, value);
+        value = await jsonKeys.stringify(this);
+      } else if (Tree.isTreelike(value)) {
+        const tree = Tree.from(value, { parent: this });
+        value = transformObject(StaticTransform, tree);
       }
       return value;
     }
