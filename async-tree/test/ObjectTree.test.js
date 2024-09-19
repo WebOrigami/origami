@@ -41,19 +41,23 @@ describe("ObjectTree", () => {
       c: 3,
     });
 
-    // Update existing key.
+    // Update existing key
     await tree.set("a", 4);
 
-    // New key.
+    // New key
     await tree.set("d", 5);
 
-    // Delete key.
+    // New key with trailing slash
+    await tree.set("e/", 6);
+
+    // Delete key
     await tree.set("b", undefined);
 
     assert.deepEqual(await Tree.entries(tree), [
       ["a", 4],
       ["c", 3],
       ["d", 5],
+      ["e", 6],
     ]);
   });
 
@@ -106,7 +110,7 @@ describe("ObjectTree", () => {
     assert.equal(more.parent, fixture);
   });
 
-  test("isKeyForSubtree() indicates which values are subtrees", async () => {
+  test("adds trailing slashes to keys for subtrees", async () => {
     const tree = new ObjectTree({
       a1: 1,
       a2: new ObjectTree({
@@ -118,21 +122,22 @@ describe("ObjectTree", () => {
       }),
     });
     const keys = Array.from(await tree.keys());
-    const subtrees = await Promise.all(
-      keys.map(async (key) => await tree.isKeyForSubtree(key))
-    );
-    assert.deepEqual(subtrees, [false, true, false, true]);
+    assert.deepEqual(keys, ["a1", "a2/", "a3", "a4/"]);
   });
 
-  test("returns an async tree value as is", async () => {
+  test("can retrieve values with optional trailing slash", async () => {
     const subtree = {
       async get(key) {},
       async keys() {},
     };
     const tree = new ObjectTree({
+      a: 1,
       subtree,
     });
+    assert.equal(await tree.get("a"), 1);
+    assert.equal(await tree.get("a/"), undefined); // not a subtree
     assert.equal(await tree.get("subtree"), subtree);
+    assert.equal(await tree.get("subtree/"), subtree);
   });
 
   test("method on an object is bound to the object", async () => {

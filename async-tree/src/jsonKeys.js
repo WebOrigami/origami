@@ -41,16 +41,9 @@ export function parse(json) {
  */
 export async function stringify(treelike) {
   const tree = Tree.from(treelike);
-  const keyDescriptors = [];
-  for (const key of await tree.keys()) {
-    // Skip the key `.keys.json` if present.
-    if (key === ".keys.json") {
-      continue;
-    }
-    const isKeyForSubtree = await Tree.isKeyForSubtree(tree, key);
-    const keyDescriptor = isKeyForSubtree ? `${key}/` : key;
-    keyDescriptors.push(keyDescriptor);
-  }
-  const json = JSON.stringify(keyDescriptors);
+  let keys = Array.from(await tree.keys());
+  // Skip the key `.keys.json` if present.
+  keys = keys.filter((key) => key !== ".keys.json");
+  const json = JSON.stringify(keys);
   return json;
 }

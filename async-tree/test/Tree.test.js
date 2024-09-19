@@ -4,6 +4,13 @@ import MapTree from "../src/MapTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../src/internal.js";
 
 describe("Tree", () => {
+  test("addTrailingSlash adds a trailing slash to a string key for a truthy value", () => {
+    assert.equal(Tree.addTrailingSlash("key", true), "key/");
+    assert.equal(Tree.addTrailingSlash("key", false), "key");
+    assert.equal(Tree.addTrailingSlash(1, true), 1);
+    assert.equal(Tree.addTrailingSlash("key/", true), "key/");
+  });
+
   test("assign applies one tree to another", async () => {
     const target = new DeepObjectTree({
       a: 1,
@@ -31,7 +38,8 @@ describe("Tree", () => {
     const result = await Tree.assign(target, source);
 
     assert.equal(result, target);
-    assert.deepEqual(await Tree.plain(target), {
+    const plain = await Tree.plain(target);
+    assert.deepEqual(plain, {
       a: 4,
       c: 5,
       more: {
@@ -131,6 +139,12 @@ describe("Tree", () => {
     assert.equal(await Tree.has(fixture, "David.md"), false);
   });
 
+  test("hasTrailingSlash returns true if a string key has a trailing slash", () => {
+    assert.equal(Tree.hasTrailingSlash("key/"), true);
+    assert.equal(Tree.hasTrailingSlash("key"), false);
+    assert.equal(Tree.hasTrailingSlash(1), false);
+  });
+
   test("isAsyncTree returns true if the object is a tree", () => {
     const missingGetAndKeys = {};
     assert(!Tree.isAsyncTree(missingGetAndKeys));
@@ -228,18 +242,26 @@ describe("Tree", () => {
   });
 
   test("plain() produces a plain object version of a tree", async () => {
-    const original = {
+    const tree = new ObjectTree({
       a: 1,
-      b: 2,
-      c: 3,
-      more: {
-        d: 4,
-        e: 5,
+      // Slashes should be normalized
+      "sub1/": {
+        b: 2,
       },
-    };
-    const tree = new ObjectTree(original);
+      sub2: {
+        c: 3,
+      },
+    });
     const plain = await Tree.plain(tree);
-    assert.deepEqual(plain, original);
+    assert.deepEqual(plain, {
+      a: 1,
+      sub1: {
+        b: 2,
+      },
+      sub2: {
+        c: 3,
+      },
+    });
   });
 
   test("plain() produces an array for an array-like tree", async () => {
@@ -284,6 +306,12 @@ describe("Tree", () => {
       ["Bob.md", "Hello, **Bob**."],
       ["Carol.md", "Hello, **Carol**."],
     ]);
+  });
+
+  test("removeTrailingSlash removes a trailing slash from a string key", () => {
+    assert.equal(Tree.removeTrailingSlash("key/"), "key");
+    assert.equal(Tree.removeTrailingSlash("key"), "key");
+    assert.equal(Tree.removeTrailingSlash(1), 1);
   });
 
   test("toFunction returns a function that invokes a tree's get() method", async () => {

@@ -1,12 +1,14 @@
 import type { AsyncMutableTree, AsyncTree } from "@weborigami/types";
 import { PlainObject, ReduceFn, Treelike, ValueKeyFn } from "../index.ts";
 
+export function addTrailingSlash(key: any, value: any): any;
 export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;
 export function clear(AsyncTree: AsyncMutableTree): Promise<void>;
 export function entries(AsyncTree: AsyncTree): Promise<IterableIterator<any>>;
 export function forEach(AsyncTree: AsyncTree, callbackfn: (value: any, key: any) => Promise<void>): Promise<void>;
 export function from(obj: any, options?: { deep?: boolean, parent?: AsyncTree|null }): AsyncTree;
 export function has(AsyncTree: AsyncTree, key: any): Promise<boolean>;
+export function hasTrailingSlash(key: any): boolean;
 export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;
 export function isKeyForSubtree(tree: AsyncTree, obj: any): Promise<boolean>;
@@ -17,6 +19,7 @@ export function mapReduce(tree: Treelike, mapFn: ValueKeyFn | null, reduceFn: Re
 export function paths(tree: Treelike, base?: string): string[];
 export function plain(tree: Treelike): Promise<PlainObject>;
 export function remove(AsyncTree: AsyncMutableTree, key: any): Promise<boolean>;
+export function removeTrailingSlash(key: any): any;
 export function toFunction(tree: Treelike): Function;
 export function traverse(tree: Treelike, ...keys: any[]): Promise<any>;
 export function traverseOrThrow(tree: Treelike, ...keys: any[]): Promise<any>;

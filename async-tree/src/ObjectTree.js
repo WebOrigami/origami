@@ -32,7 +32,28 @@ export default class ObjectTree {
       );
     }
 
+    // Try key as is
     let value = await this.object[key];
+    if (value === undefined) {
+      if (Tree.hasTrailingSlash(key)) {
+        // Try key without trailing slash
+        key = key.slice(0, -1);
+        value = await this.object[key];
+        if (!Tree.isTreelike(value)) {
+          return undefined;
+        }
+      } else {
+        // Try key with trailing slash
+        key += "/";
+        value = await this.object[key];
+      }
+    }
+
+    if (value === undefined) {
+      // Not found
+      return undefined;
+    }
+
     setParent(value, this);
 
     if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
@@ -69,7 +90,11 @@ export default class ObjectTree {
         )
         .map(([name]) => name);
       for (const name of propertyNames) {
-        result.add(name);
+        const key = Tree.addTrailingSlash(
+          name,
+          await this.isKeyForSubtree(name)
+        );
+        result.add(key);
       }
       obj = Object.getPrototypeOf(obj);
     }
@@ -83,6 +108,7 @@ export default class ObjectTree {
    * @param {any} value
    */
   async set(key, value) {
+    key = Tree.removeTrailingSlash(key);
     if (value === undefined) {
       // Delete the key.
       delete this.object[key];

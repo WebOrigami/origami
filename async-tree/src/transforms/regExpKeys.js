@@ -57,25 +57,29 @@ export default async function regExpKeys(treelike) {
       continue;
     }
 
-    // Construct regular expression.
-    let text = key;
-    if (!text.startsWith("^")) {
-      text = "^" + text;
-    }
-    if (!text.endsWith("$")) {
-      text = text + "$";
-    }
-    const regExp = new RegExp(text);
-
     // Get value.
     let value = await tree.get(key);
-    if (Tree.isAsyncTree(value)) {
+
+    let regExp;
+    if (Tree.hasTrailingSlash(key) || Tree.isAsyncTree(value)) {
+      const baseKey = Tree.removeTrailingSlash(key);
+      regExp = new RegExp("^" + baseKey + "/?$");
+      // Subtree
       value = regExpKeys(value);
       if (!value.parent) {
         value.parent = result;
       }
+    } else {
+      // Construct regular expression.
+      let text = key;
+      if (!text.startsWith("^")) {
+        text = "^" + text;
+      }
+      if (!text.endsWith("$")) {
+        text = text + "$";
+      }
+      regExp = new RegExp(text);
     }
-
     map.set(regExp, value);
   }
 
