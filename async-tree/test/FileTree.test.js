@@ -47,7 +47,7 @@ describe("FileTree", async () => {
   test("can retrieve values with optional trailing slash", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert(await fixture.get("Alice.md"));
-    assert(!(await fixture.get("Alice.md/"))); // not a subtree
+    assert(await fixture.get("Alice.md/"));
     assert(await fixture.get("subfolder"));
     assert(await fixture.get("subfolder/"));
   });

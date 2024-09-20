@@ -27,18 +27,20 @@ export default class MapTree {
     // Try key as is
     let value = this.map.get(key);
     if (value === undefined) {
-      if (trailingSlash.has(key)) {
-        // Try key without trailing slash
-        key = trailingSlash.remove(key);
-        value = this.map.get(key);
-        if (!Tree.isTreelike(value)) {
-          return undefined;
-        }
-      } else {
-        // Try key with trailing slash
-        key = trailingSlash.add(key);
-        value = this.map.get(key);
+      // Try the other variation of the key
+      const alternateKey = trailingSlash.toggle(key);
+      value = this.map.get(alternateKey);
+      if (value === undefined) {
+        // Key doesn't exist
+        return undefined;
       }
+    }
+
+    value = await value;
+
+    if (value === undefined) {
+      // Key exists but value is undefined
+      return undefined;
     }
 
     setParent(value, this);

@@ -42,12 +42,14 @@ export default class BrowserFileTree {
       );
     }
 
+    // Remove trailing slash if present
+    key = trailingSlash.remove(key);
+
     const directory = await this.getDirectory();
 
-    // Try the key as a subfolder name.
+    // Try the key as a subfolder name
     try {
-      const baseKey = trailingSlash.remove(key);
-      const subfolderHandle = await directory.getDirectoryHandle(baseKey);
+      const subfolderHandle = await directory.getDirectoryHandle(key);
       const value = Reflect.construct(this.constructor, [subfolderHandle]);
       setParent(value, this);
       return value;
@@ -62,20 +64,16 @@ export default class BrowserFileTree {
       }
     }
 
-    if (!trailingSlash.has(key)) {
-      // Try the key as a file name.
-      try {
-        const fileHandle = await directory.getFileHandle(key);
-        const file = await fileHandle.getFile();
-        const buffer = file.arrayBuffer();
-        setParent(buffer, this);
-        return buffer;
-      } catch (error) {
-        if (
-          !(error instanceof DOMException && error.name === "NotFoundError")
-        ) {
-          throw error;
-        }
+    // Try the key as a file name
+    try {
+      const fileHandle = await directory.getFileHandle(key);
+      const file = await fileHandle.getFile();
+      const buffer = file.arrayBuffer();
+      setParent(buffer, this);
+      return buffer;
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "NotFoundError")) {
+        throw error;
       }
     }
 

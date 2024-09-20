@@ -51,14 +51,15 @@ export default class FileTree {
 
   async get(key) {
     if (key == null) {
-      // Reject nullish key.
+      // Reject nullish key
       throw new ReferenceError(
         `${this.constructor.name}: Cannot get a null or undefined key.`
       );
     }
 
-    const baseKey = trailingSlash.remove(key);
-    const filePath = path.resolve(this.dirname, baseKey);
+    // Remove trailing slash if present
+    key = trailingSlash.remove(key);
+    const filePath = path.resolve(this.dirname, key);
 
     let stats;
     try {
@@ -74,11 +75,8 @@ export default class FileTree {
     if (stats.isDirectory()) {
       // Return subdirectory as a tree
       value = Reflect.construct(this.constructor, [filePath]);
-    } else if (trailingSlash.has(key)) {
-      // Was asked for a directory, but got a file.
-      return undefined;
     } else {
-      // Return file contents as a standard Uint8Array.
+      // Return file contents as a standard Uint8Array
       const buffer = await fs.readFile(filePath);
       value = Uint8Array.from(buffer);
     }

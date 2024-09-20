@@ -146,7 +146,7 @@ describe("ObjectTree", () => {
       subtree,
     });
     assert.equal(await tree.get("a"), 1);
-    assert.equal(await tree.get("a/"), undefined); // not a subtree
+    assert.equal(await tree.get("a/"), 1);
     assert.equal(await tree.get("subtree"), subtree);
     assert.equal(await tree.get("subtree/"), subtree);
   });

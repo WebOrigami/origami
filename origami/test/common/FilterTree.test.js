@@ -4,8 +4,8 @@ import { describe, test } from "node:test";
 import FilterTree from "../../src/common/FilterTree.js";
 import GlobTree from "../../src/common/GlobTree.js";
 
-describe("FilterTree", () => {
-  test("uses keys from filter, values from tree", async () => {
+describe.only("FilterTree", () => {
+  test.only("uses keys from filter, values from tree", async () => {
     const tree = new FilterTree(
       // Tree
       new DeepObjectTree({

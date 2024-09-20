@@ -33,25 +33,14 @@ export default class ObjectTree {
       );
     }
 
-    // Try key as is
-    let value = this.object[key];
-    if (value === undefined) {
-      if (trailingSlash.has(key)) {
-        // Try key without trailing slash
-        key = trailingSlash.remove(key);
-        value = this.object[key];
-        if (!Tree.isTreelike(value)) {
-          return undefined;
-        }
-      } else {
-        // Try key with trailing slash
-        key = trailingSlash.add(key);
-        value = this.object[key];
-      }
+    // Does the object have the key with or without a trailing slash?
+    const existingKey = findExistingKey(this.object, key);
+    if (existingKey === null) {
+      // Key doesn't exist
+      return undefined;
     }
 
-    // Resolve the value if it's a promise
-    value = await value;
+    let value = await this.object[existingKey];
 
     if (value === undefined) {
       // Key exists but value is undefined
