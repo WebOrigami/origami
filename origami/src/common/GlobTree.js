@@ -1,10 +1,4 @@
-import {
-  DeepObjectTree,
-  ObjectTree,
-  Tree,
-  isPlainObject,
-  merge,
-} from "@weborigami/async-tree";
+import { ObjectTree, Tree, merge, trailingSlash } from "@weborigami/async-tree";
 
 const globstar = "**";
 
@@ -14,15 +8,17 @@ const globstar = "**";
  */
 export default class GlobTree {
   constructor(globs) {
-    this.globs = isPlainObject(globs)
-      ? new DeepObjectTree(globs)
-      : Tree.from(globs);
+    this.globs = Tree.from(globs, { deep: true });
   }
 
   async get(key) {
     if (typeof key !== "string") {
       return undefined;
     }
+
+    // Remove trailing slash if it exists
+    key = trailingSlash.remove(key);
+
     let value = await matchGlobs(this.globs, key);
     if (Tree.isAsyncTree(value)) {
       value = Reflect.construct(this.constructor, [value]);
@@ -35,8 +31,8 @@ export default class GlobTree {
   }
 }
 
+// Convert the glob to a regular expression
 function matchGlob(glob, text) {
-  // Convert the glob to a regular expression
   const regexText = glob
     // Escape special regex characters
     .replace(/[+?^${}()|\[\]\\]/g, "\\$&")
@@ -49,10 +45,15 @@ function matchGlob(glob, text) {
 
 async function matchGlobs(globs, text) {
   let value;
-  for (const glob of await globs.keys()) {
+  for (let glob of await globs.keys()) {
     if (typeof glob !== "string") {
       continue;
-    } else if (glob !== globstar && matchGlob(glob, text)) {
+    }
+
+    // Remove trailing slash if it exists
+    glob = trailingSlash.remove(glob);
+
+    if (glob !== globstar && matchGlob(glob, text)) {
       value = await globs.get(glob);
       if (value !== undefined) {
         break;

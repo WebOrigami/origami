@@ -84,7 +84,13 @@ export default class ObjectTree {
         )
         .map(([name]) => name);
       for (const name of propertyNames) {
-        const key = trailingSlash.add(name, await this.isKeyForSubtree(name));
+        let isSubtree;
+        try {
+          isSubtree = await this.isKeyForSubtree(name);
+        } catch (error) {
+          isSubtree = false;
+        }
+        const key = trailingSlash.add(name, isSubtree);
         result.add(key);
       }
       obj = Object.getPrototypeOf(obj);
