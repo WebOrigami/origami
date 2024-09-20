@@ -38,7 +38,7 @@ describe("compile", () => {
 
   test("object", async () => {
     await assertCompile("{a:1, b:2}", { a: 1, b: 2 });
-    await assertCompile("{ a: { b: { c: 0 } } }", { a: { b: { c: 0 } } });
+    await assertCompile("{ a: { b: { c: 0 } } }", { "a/": { "b/": { c: 0 } } });
   });
 
   test("templateDocument", async () => {

@@ -20,7 +20,7 @@ describe("@changes", () => {
     };
     const result = await changes.call(null, oldTree, newTree);
     assert.deepEqual(result, {
-      a: {
+      "a/": {
         b: "changed",
         d: "deleted",
       },
