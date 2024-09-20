@@ -33,21 +33,24 @@ export default class ObjectTree {
     }
 
     // Try key as is
-    let value = await this.object[key];
+    let value = this.object[key];
     if (value === undefined) {
       if (Tree.hasTrailingSlash(key)) {
         // Try key without trailing slash
         key = key.slice(0, -1);
-        value = await this.object[key];
+        value = this.object[key];
         if (!Tree.isTreelike(value)) {
           return undefined;
         }
       } else {
         // Try key with trailing slash
         key += "/";
-        value = await this.object[key];
+        value = this.object[key];
       }
     }
+
+    // Resolve the value if it's a promise
+    value = await value;
 
     if (value === undefined) {
       // Not found
@@ -108,11 +111,27 @@ export default class ObjectTree {
    * @param {any} value
    */
   async set(key, value) {
-    key = Tree.removeTrailingSlash(key);
+    // Figure out which form of the key exists on the object.
+    const keyWithoutSlash = Tree.removeTrailingSlash(key);
+    const keyWithSlash = keyWithoutSlash + "/";
+    const existingKey =
+      keyWithoutSlash in this.object
+        ? keyWithoutSlash
+        : keyWithSlash in this.object
+        ? keyWithSlash
+        : null;
+
     if (value === undefined) {
-      // Delete the key.
-      delete this.object[key];
+      // Delete the key if it exists.
+      if (existingKey !== null) {
+        delete this.object[existingKey];
+      }
     } else {
+      // If the key exists under a different form, delete the existing key.
+      if (existingKey !== null && existingKey !== key) {
+        delete this.object[existingKey];
+      }
+
       // Set the value for the key.
       this.object[key] = value;
     }

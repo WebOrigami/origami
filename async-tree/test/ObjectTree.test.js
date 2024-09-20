@@ -44,20 +44,19 @@ describe("ObjectTree", () => {
     // Update existing key
     await tree.set("a", 4);
 
-    // New key
-    await tree.set("d", 5);
-
-    // New key with trailing slash
-    await tree.set("e/", 6);
-
     // Delete key
     await tree.set("b", undefined);
 
+    // Overwrite key with trailing slash
+    await tree.set("c/", {});
+
+    // New key
+    await tree.set("d", 5);
+
     assert.deepEqual(await Tree.entries(tree), [
       ["a", 4],
-      ["c", 3],
+      ["c/", {}],
       ["d", 5],
-      ["e", 6],
     ]);
   });
 
