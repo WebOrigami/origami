@@ -1,3 +1,4 @@
+import * as trailingSlash from "../src/trailingSlash.js";
 import { Tree } from "./internal.js";
 import {
   hiddenFileNames,
@@ -45,7 +46,8 @@ export default class BrowserFileTree {
 
     // Try the key as a subfolder name.
     try {
-      const subfolderHandle = await directory.getDirectoryHandle(key);
+      const baseKey = trailingSlash.remove(key);
+      const subfolderHandle = await directory.getDirectoryHandle(baseKey);
       const value = Reflect.construct(this.constructor, [subfolderHandle]);
       setParent(value, this);
       return value;
@@ -60,16 +62,20 @@ export default class BrowserFileTree {
       }
     }
 
-    // Try the key as a file name.
-    try {
-      const fileHandle = await directory.getFileHandle(key);
-      const file = await fileHandle.getFile();
-      const buffer = file.arrayBuffer();
-      setParent(buffer, this);
-      return buffer;
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === "NotFoundError")) {
-        throw error;
+    if (!trailingSlash.has(key)) {
+      // Try the key as a file name.
+      try {
+        const fileHandle = await directory.getFileHandle(key);
+        const file = await fileHandle.getFile();
+        const buffer = file.arrayBuffer();
+        setParent(buffer, this);
+        return buffer;
+      } catch (error) {
+        if (
+          !(error instanceof DOMException && error.name === "NotFoundError")
+        ) {
+          throw error;
+        }
       }
     }
 
@@ -81,13 +87,26 @@ export default class BrowserFileTree {
     return this.directory;
   }
 
+  async isKeyForSubtree(key) {
+    const baseKey = trailingSlash.remove(key);
+    const subfolderHandle = await this.directory
+      .getDirectoryHandle(baseKey)
+      .catch(() => null);
+    return subfolderHandle !== null;
+  }
+
   async keys() {
     const directory = await this.getDirectory();
     let keys = [];
     // @ts-ignore
-    for await (const key of directory.keys()) {
+    for await (const entryKey of directory.keys()) {
+      const key = trailingSlash.add(
+        entryKey,
+        await this.isKeyForSubtree(entryKey)
+      );
       keys.push(key);
     }
+
     // Filter out unhelpful file names.
     keys = keys.filter((key) => !hiddenFileNames.includes(key));
     keys.sort(naturalOrder);
@@ -96,12 +115,13 @@ export default class BrowserFileTree {
   }
 
   async set(key, value) {
+    const baseKey = trailingSlash.remove(key);
     const directory = await this.getDirectory();
 
     if (value === undefined) {
       // Delete file.
       try {
-        await directory.removeEntry(key);
+        await directory.removeEntry(baseKey);
       } catch (error) {
         // If the file didn't exist, ignore the error.
         if (
@@ -133,13 +153,15 @@ export default class BrowserFileTree {
 
     if (isWriteable) {
       // Write file.
-      const fileHandle = await directory.getFileHandle(key, { create: true });
+      const fileHandle = await directory.getFileHandle(baseKey, {
+        create: true,
+      });
       const writable = await fileHandle.createWritable();
       await writable.write(value);
       await writable.close();
     } else if (Tree.isTreelike(value)) {
       // Treat value as a tree and write it out as a subdirectory.
-      const subdirectory = await directory.getDirectoryHandle(key, {
+      const subdirectory = await directory.getDirectoryHandle(baseKey, {
         create: true,
       });
       const destTree = Reflect.construct(this.constructor, [subdirectory]);

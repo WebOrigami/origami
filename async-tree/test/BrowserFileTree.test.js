@@ -13,16 +13,14 @@ if (isBrowser) {
         "Alice.md",
         "Bob.md",
         "Carol.md",
+        "subfolder/",
       ]);
     });
 
     test("can get the value for a key", async () => {
       const fixture = await createFixture();
-      assert.deepEqual(await strings(fixture), {
-        "Alice.md": "Hello, **Alice**.",
-        "Bob.md": "Hello, **Bob**.",
-        "Carol.md": "Hello, **Carol**.",
-      });
+      const buffer = await fixture.get("Alice.md");
+      assert.equal(text(buffer), "Hello, **Alice**.");
     });
 
     test("getting an unsupported key returns undefined", async () => {
@@ -38,6 +36,27 @@ if (isBrowser) {
       await assert.rejects(async () => {
         await fixture.get(undefined);
       });
+    });
+
+    test("sets parent on subtrees", async () => {
+      const fixture = await createFixture();
+      const subfolder = await fixture.get("subfolder");
+      assert.equal(subfolder.parent, fixture);
+    });
+
+    test("can indicate which values are subtrees", async () => {
+      const fixture = await createFixture();
+      assert(!(await fixture.isKeyForSubtree("Alice.md")));
+      assert(await fixture.isKeyForSubtree("subfolder"));
+      assert(await fixture.isKeyForSubtree("subfolder/"));
+    });
+
+    test("can retrieve values with optional trailing slash", async () => {
+      const fixture = await createFixture();
+      assert(await fixture.get("Alice.md"));
+      assert(!(await fixture.get("Alice.md/"))); // not a subtree
+      assert(await fixture.get("subfolder"));
+      assert(await fixture.get("subfolder/"));
     });
 
     test("can set a value", async () => {
@@ -59,6 +78,7 @@ if (isBrowser) {
         "Alice.md": "Goodbye, **Alice**.",
         "Carol.md": "Hello, **Carol**.",
         "David.md": "Hello, **David**.",
+        subfolder: {},
       });
     });
 
@@ -81,6 +101,7 @@ if (isBrowser) {
         more: {
           "Ellen.md": "Hello, **Ellen**.",
         },
+        subfolder: {},
       });
     });
   });
@@ -117,6 +138,10 @@ async function createFixture() {
   await createFile(subdirectory, "Alice.md", "Hello, **Alice**.");
   await createFile(subdirectory, "Bob.md", "Hello, **Bob**.");
   await createFile(subdirectory, "Carol.md", "Hello, **Carol**.");
+
+  await subdirectory.getDirectoryHandle("subfolder", {
+    create: true,
+  });
 
   return new BrowserFileTree(subdirectory);
 }
