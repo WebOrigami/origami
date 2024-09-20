@@ -3,6 +3,7 @@ import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import SetTree from "./SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
+import * as trailingSlash from "./trailingSlash.js";
 import mapTransform from "./transforms/mapFn.js";
 import * as utilities from "./utilities.js";
 import {
@@ -24,19 +25,6 @@ import {
  */
 
 const treeModule = this;
-
-/**
- * Add a trailing slash to a string key if the value is truthy. If the key
- * is not a string, it will be returned as is.
- *
- * @param {any} key
- * @param {any} value
- */
-export function addTrailingSlash(key, value) {
-  return typeof key === "string" && value && !key.endsWith("/")
-    ? `${key}/`
-    : key;
-}
 
 /**
  * Apply the key/values pairs from the source tree to the target tree.
@@ -181,16 +169,6 @@ export async function has(tree, key) {
 }
 
 /**
- * Return true if the indicated key is a string with a trailing slash,
- * false otherwise.
- *
- * @param {any} key
- */
-export function hasTrailingSlash(key) {
-  return typeof key === "string" && key.endsWith("/");
-}
-
-/**
  * Return true if the indicated object is an async tree.
  *
  * @param {any} obj
@@ -198,7 +176,8 @@ export function hasTrailingSlash(key) {
  */
 export function isAsyncTree(obj) {
   return (
-    obj &&
+    obj !== null &&
+    typeof obj === "object" &&
     typeof obj.get === "function" &&
     typeof obj.keys === "function" &&
     // JavaScript Map look like trees but can't be extended the same way, so we
@@ -338,7 +317,7 @@ export async function paths(treelike, base = "") {
   const tree = from(treelike);
   const result = [];
   for (const key of await tree.keys()) {
-    const separator = base?.endsWith("/") ? "" : "/";
+    const separator = trailingSlash.has(base) ? "" : "/";
     const valuePath = base ? `${base}${separator}${key}` : key;
     const value = await tree.get(key);
     if (await isAsyncTree(value)) {
@@ -369,7 +348,7 @@ export async function plain(treelike) {
     const object = {};
     for (let i = 0; i < keys.length; i++) {
       // Normalize slashes in keys.
-      const key = removeTrailingSlash(keys[i]);
+      const key = trailingSlash.remove(keys[i]);
       const value = values[i];
       object[key] = value;
     }
@@ -394,15 +373,6 @@ export async function remove(tree, key) {
   } else {
     return false;
   }
-}
-
-/**
- * Remove a trailing slash from a string key.
- *
- * @param {any} key
- */
-export function removeTrailingSlash(key) {
-  return typeof key === "string" ? key.replace(/\/$/, "") : key;
 }
 
 /**

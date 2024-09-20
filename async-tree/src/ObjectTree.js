@@ -1,5 +1,6 @@
 import { Tree } from "./internal.js";
 import * as symbols from "./symbols.js";
+import * as trailingSlash from "./trailingSlash.js";
 import { getRealmObjectPrototype, setParent } from "./utilities.js";
 
 /**
@@ -35,16 +36,16 @@ export default class ObjectTree {
     // Try key as is
     let value = this.object[key];
     if (value === undefined) {
-      if (Tree.hasTrailingSlash(key)) {
+      if (trailingSlash.has(key)) {
         // Try key without trailing slash
-        key = key.slice(0, -1);
+        key = trailingSlash.remove(key);
         value = this.object[key];
         if (!Tree.isTreelike(value)) {
           return undefined;
         }
       } else {
         // Try key with trailing slash
-        key += "/";
+        key = trailingSlash.add(key);
         value = this.object[key];
       }
     }
@@ -53,7 +54,7 @@ export default class ObjectTree {
     value = await value;
 
     if (value === undefined) {
-      // Not found
+      // Key exists but value is undefined
       return undefined;
     }
 
@@ -93,10 +94,7 @@ export default class ObjectTree {
         )
         .map(([name]) => name);
       for (const name of propertyNames) {
-        const key = Tree.addTrailingSlash(
-          name,
-          await this.isKeyForSubtree(name)
-        );
+        const key = trailingSlash.add(name, await this.isKeyForSubtree(name));
         result.add(key);
       }
       obj = Object.getPrototypeOf(obj);
@@ -111,15 +109,7 @@ export default class ObjectTree {
    * @param {any} value
    */
   async set(key, value) {
-    // Figure out which form of the key exists on the object.
-    const keyWithoutSlash = Tree.removeTrailingSlash(key);
-    const keyWithSlash = keyWithoutSlash + "/";
-    const existingKey =
-      keyWithoutSlash in this.object
-        ? keyWithoutSlash
-        : keyWithSlash in this.object
-        ? keyWithSlash
-        : null;
+    const existingKey = findExistingKey(this.object, key);
 
     if (value === undefined) {
       // Delete the key if it exists.
@@ -135,6 +125,20 @@ export default class ObjectTree {
       // Set the value for the key.
       this.object[key] = value;
     }
+
     return this;
   }
+}
+
+function findExistingKey(object, key) {
+  // First try key as is
+  if (key in object) {
+    return key;
+  }
+  // Try alternate form
+  const alternateKey = trailingSlash.toggle(key);
+  if (alternateKey in object) {
+    return alternateKey;
+  }
+  return null;
 }

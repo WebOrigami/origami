@@ -25,6 +25,7 @@ export { default as take } from "./src/operations/take.js";
 export { default as SetTree } from "./src/SetTree.js";
 export { default as SiteTree } from "./src/SiteTree.js";
 export * as symbols from "./src/symbols.js";
+export * as trailingSlash from "./src/trailingSlash.js";
 export { default as cachedKeyFunctions } from "./src/transforms/cachedKeyFunctions.js";
 export { default as deepReverse } from "./src/transforms/deepReverse.js";
 export { default as invokeFunctions } from "./src/transforms/invokeFunctions.js";

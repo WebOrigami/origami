@@ -4,13 +4,6 @@ import MapTree from "../src/MapTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../src/internal.js";
 
 describe("Tree", () => {
-  test("addTrailingSlash adds a trailing slash to a string key for a truthy value", () => {
-    assert.equal(Tree.addTrailingSlash("key", true), "key/");
-    assert.equal(Tree.addTrailingSlash("key", false), "key");
-    assert.equal(Tree.addTrailingSlash(1, true), 1);
-    assert.equal(Tree.addTrailingSlash("key/", true), "key/");
-  });
-
   test("assign applies one tree to another", async () => {
     const target = new DeepObjectTree({
       a: 1,
@@ -137,12 +130,6 @@ describe("Tree", () => {
     const fixture = createFixture();
     assert.equal(await Tree.has(fixture, "Alice.md"), true);
     assert.equal(await Tree.has(fixture, "David.md"), false);
-  });
-
-  test("hasTrailingSlash returns true if a string key has a trailing slash", () => {
-    assert.equal(Tree.hasTrailingSlash("key/"), true);
-    assert.equal(Tree.hasTrailingSlash("key"), false);
-    assert.equal(Tree.hasTrailingSlash(1), false);
   });
 
   test("isAsyncTree returns true if the object is a tree", () => {
@@ -306,12 +293,6 @@ describe("Tree", () => {
       ["Bob.md", "Hello, **Bob**."],
       ["Carol.md", "Hello, **Carol**."],
     ]);
-  });
-
-  test("removeTrailingSlash removes a trailing slash from a string key", () => {
-    assert.equal(Tree.removeTrailingSlash("key/"), "key");
-    assert.equal(Tree.removeTrailingSlash("key"), "key");
-    assert.equal(Tree.removeTrailingSlash(1), 1);
   });
 
   test("toFunction returns a function that invokes a tree's get() method", async () => {

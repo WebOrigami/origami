@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 
 /**
  * A tree whose keys are strings interpreted as regular expressions.
@@ -61,8 +62,8 @@ export default async function regExpKeys(treelike) {
     let value = await tree.get(key);
 
     let regExp;
-    if (Tree.hasTrailingSlash(key) || Tree.isAsyncTree(value)) {
-      const baseKey = Tree.removeTrailingSlash(key);
+    if (trailingSlash.has(key) || Tree.isAsyncTree(value)) {
+      const baseKey = trailingSlash.remove(key);
       regExp = new RegExp("^" + baseKey + "/?$");
       // Subtree
       value = regExpKeys(value);
