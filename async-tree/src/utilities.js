@@ -283,7 +283,19 @@ export async function toPlainValue(input) {
 }
 
 function toBase64(object) {
-  return Buffer.from(object).toString("base64");
+  if (typeof Buffer !== "undefined") {
+    // Node.js environment
+    return Buffer.from(object).toString("base64");
+  } else {
+    // Browser environment
+    let binary = "";
+    const bytes = new Uint8Array(object);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
 }
 
 /**
