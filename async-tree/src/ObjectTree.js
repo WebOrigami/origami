@@ -69,7 +69,8 @@ export default class ObjectTree {
   }
 
   async isKeyForSubtree(key) {
-    const value = await this.object[key];
+    const baseKey = trailingSlash.remove(key);
+    const value = await this.object[baseKey];
     return Tree.isAsyncTree(value);
   }
 

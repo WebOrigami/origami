@@ -17,7 +17,7 @@ export default class DeepMapTree extends MapTree {
   }
 
   async isKeyForSubtree(key) {
-    const value = this.map.get[key];
+    const value = this.map.get(key);
     return value instanceof Map || Tree.isAsyncTree(value);
   }
 }

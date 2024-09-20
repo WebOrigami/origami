@@ -22,6 +22,37 @@ describe("MapTree", () => {
     assert.equal(more[symbols.parent], fixture);
   });
 
+  test("can indicate which values are subtrees", async () => {
+    const fixture = new MapTree([
+      ["a", 1],
+      ["subtree", new MapTree([["b", 2]])],
+    ]);
+    assert(!(await fixture.isKeyForSubtree("a")));
+    assert(await fixture.isKeyForSubtree("subtree"));
+    assert(await fixture.isKeyForSubtree("subtree/"));
+  });
+
+  test("adds trailing slashes to keys for subtrees", async () => {
+    const tree = new MapTree([
+      ["a", 1],
+      ["subtree", new MapTree([["b", 2]])],
+    ]);
+    const keys = Array.from(await tree.keys());
+    assert.deepEqual(keys, ["a", "subtree/"]);
+  });
+
+  test("can retrieve values with optional trailing slash", async () => {
+    const subtree = new MapTree([["b", 2]]);
+    const tree = new MapTree([
+      ["a", 1],
+      ["subtree", subtree],
+    ]);
+    assert.equal(await tree.get("a"), 1);
+    assert.equal(await tree.get("a/"), undefined); // not a subtree
+    assert.equal(await tree.get("subtree"), subtree);
+    assert.equal(await tree.get("subtree/"), subtree);
+  });
+
   test("getting an unsupported key returns undefined", async () => {
     const fixture = createFixture();
     assert.equal(await fixture.get("d"), undefined);
