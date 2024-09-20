@@ -82,6 +82,8 @@ export default class BrowserFileTree {
     return undefined;
   }
 
+  // Return the directory handle, creating it if necessary. We can't create the
+  // default value in the constructor because we need to await it.
   async getDirectory() {
     this.directory ??= await navigator.storage.getDirectory();
     return this.directory;
