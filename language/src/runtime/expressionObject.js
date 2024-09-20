@@ -1,4 +1,4 @@
-import { ObjectTree, symbols } from "@weborigami/async-tree";
+import { ObjectTree, symbols, trailingSlash } from "@weborigami/async-tree";
 import { attachHandlerIfApplicable, extname } from "./extensions.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -36,7 +36,6 @@ export default async function expressionObject(entries, parent) {
     // has an extension, we need to define a getter. If the value is code (an
     // array), we need to define a getter -- but if that code takes the form
     // [ops.getter, <primitive>], we can define a regular property.
-
     let defineProperty;
     const extension = extname(key);
     if (extension) {
@@ -50,11 +49,18 @@ export default async function expressionObject(entries, parent) {
       defineProperty = false;
     }
 
+    // If the key is wrapped in parentheses, it is not enumerable.
     let enumerable = true;
     if (key[0] === "(" && key[key.length - 1] === ")") {
       key = key.slice(1, -1);
       enumerable = false;
     }
+
+    // If the value defines a subobject, add a trailing slash to the key.
+    key = trailingSlash.add(
+      key,
+      value instanceof Array && value[0] === ops.object
+    );
 
     if (defineProperty) {
       // Define simple property
