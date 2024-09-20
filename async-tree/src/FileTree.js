@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { Tree } from "./internal.js";
+import * as trailingSlash from "./trailingSlash.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
@@ -56,7 +57,8 @@ export default class FileTree {
       );
     }
 
-    const filePath = path.resolve(this.dirname, key);
+    const baseKey = trailingSlash.remove(key);
+    const filePath = path.resolve(this.dirname, baseKey);
 
     let stats;
     try {
@@ -72,6 +74,9 @@ export default class FileTree {
     if (stats.isDirectory()) {
       // Return subdirectory as a tree
       value = Reflect.construct(this.constructor, [filePath]);
+    } else if (trailingSlash.has(key)) {
+      // Was asked for a directory, but got a file.
+      return undefined;
     } else {
       // Return file contents as a standard Uint8Array.
       const buffer = await fs.readFile(filePath);
@@ -83,6 +88,7 @@ export default class FileTree {
   }
 
   async isKeyForSubtree(key) {
+    // fs will normalize trailing slashes
     const filePath = path.join(this.dirname, key);
     const stats = await stat(filePath);
     return stats ? stats.isDirectory() : false;
@@ -102,7 +108,9 @@ export default class FileTree {
       entries = [];
     }
 
-    let names = entries.map((entry) => entry.name);
+    let names = entries.map((entry) =>
+      trailingSlash.add(entry.name, entry.isDirectory())
+    );
 
     // Filter out unhelpful file names.
     names = names.filter((name) => !hiddenFileNames.includes(name));
@@ -121,7 +129,8 @@ export default class FileTree {
   async set(key, value) {
     // Where are we going to write this value?
     const stringKey = key != null ? String(key) : "";
-    const destPath = path.resolve(this.dirname, stringKey);
+    const baseKey = trailingSlash.remove(stringKey);
+    const destPath = path.resolve(this.dirname, baseKey);
 
     if (value === undefined) {
       // Delete the file or directory.

@@ -18,6 +18,7 @@ describe("FileTree", async () => {
       "Alice.md",
       "Bob.md",
       "Carol.md",
+      "subfolder/",
     ]);
   });
 
@@ -43,6 +44,14 @@ describe("FileTree", async () => {
     });
   });
 
+  test("can retrieve values with optional trailing slash", async () => {
+    const fixture = createFixture("fixtures/markdown");
+    assert(await fixture.get("Alice.md"));
+    assert(!(await fixture.get("Alice.md/"))); // not a subtree
+    assert(await fixture.get("subfolder"));
+    assert(await fixture.get("subfolder/"));
+  });
+
   test("sets parent on subtrees", async () => {
     const fixture = createFixture("fixtures");
     const markdown = await fixture.get("markdown");
@@ -50,10 +59,10 @@ describe("FileTree", async () => {
   });
 
   test("can indicate which values are subtrees", async () => {
-    const fixture = createFixture("fixtures");
-    assert(await fixture.isKeyForSubtree("markdown"));
-    const markdown = await fixture.get("markdown");
-    assert(!(await markdown.isKeyForSubtree("a.txt")));
+    const fixture = createFixture("fixtures/markdown");
+    assert(!(await fixture.isKeyForSubtree("Alice.md")));
+    assert(await fixture.isKeyForSubtree("subfolder"));
+    assert(await fixture.isKeyForSubtree("subfolder/"));
   });
 
   test("can write out a file via set()", async () => {
