@@ -111,8 +111,16 @@ function keysFromUrl(url) {
   const parts = url.pathname.split(/\/!/);
 
   // Split everything before the first command by slashes and decode those.
-  const path = parts.shift();
+  let path = parts.shift();
+  if (parts.length > 0) {
+    // HACK: Add back trailing slash that was removed by split
+    path += "/";
+  }
   const pathKeys = keysFromPath(path).map((key) => decodeURIComponent(key));
+  if (parts.length > 0 && pathKeys.at(-1) === "") {
+    // HACK part 2: Remove empty string that was added for trailing slash
+    pathKeys.pop();
+  }
 
   // If there are no commands, and the path ends with a trailing slash, the
   // final key will be an empty string. Change that to "index.html".

@@ -49,11 +49,6 @@ export default function ExplorableSiteTransform(Base) {
         if (!isTransformApplied(ExplorableSiteTransform, value)) {
           value = transformObject(ExplorableSiteTransform, value);
         }
-
-        if (key.endsWith?.("/")) {
-          // Instead of return the tree directly, return an index for it.
-          value = await index.call(this, value);
-        }
       } else if (value?.unpack) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.
