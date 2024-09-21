@@ -296,14 +296,14 @@ pipeline
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = path:pathKey|1.., "/"| {
-      return annotate(path, location());
+  = head:pathHead|0..| tail:pathTail {
+      return annotate([...head, tail], location());
     }
 
-// A single key in a slash-separated path
-pathKey "path element"
-  = chars:pathKeyChar* {
-    return annotate([ops.primitive, chars.join("")], location());
+// A path key followed by a slash
+pathHead
+  = chars:pathKeyChar* "/" {
+    return annotate([ops.primitive, chars.join("") + "/"], location());
   }
 
 // A single character in a slash-separated path.
@@ -312,6 +312,12 @@ pathKeyChar
   // brackets or quotes that are not allowed in identifiers.
   = [^(){}\[\],:/\\ \t\n\r]
   / escapedChar
+
+// A path key without a slash
+pathTail
+  = chars:pathKeyChar* {
+    return annotate([ops.primitive, chars.join("")], location());
+  }
 
 // Parse a protocol call like `fn://foo/bar`.
 // There can be zero, one, or two slashes after the colon.

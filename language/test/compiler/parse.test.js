@@ -8,7 +8,7 @@ describe("Origami parser", () => {
   test("absoluteFilePath", () => {
     assertParse("absoluteFilePath", "/foo/bar", [
       [ops.filesRoot],
-      [ops.primitive, "foo"],
+      [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
     ]);
   });
@@ -138,7 +138,7 @@ describe("Origami parser", () => {
     assertParse("expression", "path//key", [
       ops.traverse,
       [ops.scope, "path"],
-      [ops.primitive, ""],
+      [ops.primitive, "/"],
       [ops.primitive, "key"],
     ]);
     // Single slash at start of something = absolute file path
@@ -188,7 +188,7 @@ describe("Origami parser", () => {
     assertParse("functionComposition", "tree/foo/bar", [
       ops.traverse,
       [ops.scope, "tree"],
-      [ops.primitive, "foo"],
+      [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
     ]);
     assertParse("functionComposition", "tree/key()", [
@@ -296,7 +296,7 @@ describe("Origami parser", () => {
 
   test("leadingSlashPath", () => {
     assertParse("leadingSlashPath", "/tree/", [
-      [ops.primitive, "tree"],
+      [ops.primitive, "tree/"],
       [ops.primitive, ""],
     ]);
   });
@@ -471,16 +471,16 @@ describe("Origami parser", () => {
 
   test("path", () => {
     assertParse("path", "tree/", [
-      [ops.primitive, "tree"],
+      [ops.primitive, "tree/"],
       [ops.primitive, ""],
     ]);
     assertParse("path", "month/12", [
-      [ops.primitive, "month"],
+      [ops.primitive, "month/"],
       [ops.primitive, "12"],
     ]);
     assertParse("path", "tree/foo/bar", [
-      [ops.primitive, "tree"],
-      [ops.primitive, "foo"],
+      [ops.primitive, "tree/"],
+      [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
     ]);
   });
@@ -514,7 +514,7 @@ describe("Origami parser", () => {
     assertParse("protocolCall", "https://example.com/foo/", [
       ops.https,
       [ops.primitive, "example.com"],
-      [ops.primitive, "foo"],
+      [ops.primitive, "foo/"],
       [ops.primitive, ""],
     ]);
     assertParse("protocolCall", "http:example.com", [
