@@ -358,6 +358,14 @@ describe("Origami parser", () => {
       ["a", [ops.primitive, 1]],
       ["b", [ops.inherited, "b"]],
     ]);
+    assertParse("object", "{ sub: { a: 1 } }", [
+      ops.object,
+      ["sub", [ops.object, ["a", [ops.primitive, 1]]]],
+    ]);
+    assertParse("object", "{ sub: { a/: 1 } }", [
+      ops.object,
+      ["sub", [ops.object, ["a/", [ops.primitive, 1]]]],
+    ]);
     assertParse("object", `{ "a": 1, "b": 2 }`, [
       ops.object,
       ["a", [ops.primitive, 1]],

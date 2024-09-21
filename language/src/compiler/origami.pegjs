@@ -259,13 +259,6 @@ objectKey "object key"
   = objectHiddenKey
   / objectPublicKey
 
-objectPublicKey
-  = identifier
-  / string:string {
-    // Remove `ops.primitive` from the string code
-    return string[1];
-  }
-
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
   = key:objectKey __ ":" __ value:expr {
@@ -277,6 +270,15 @@ objectShorthandProperty "object identifier"
   = key:objectPublicKey {
       return annotate([key, [ops.inherited, key]], location());
     }
+
+objectPublicKey
+  = identifier "/"? {
+    return text();
+  }
+  / string:string {
+    // Remove `ops.primitive` from the string code
+    return string[1];
+  }
 
 parameterizedLambda
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
