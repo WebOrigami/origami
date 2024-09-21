@@ -483,7 +483,7 @@ export async function traverseOrThrow(treelike, ...keys) {
 }
 
 /**
- * Given a slash-separated path like "foo/bar", traverse the keys "foo" and
+ * Given a slash-separated path like "foo/bar", traverse the keys "foo/" and
  * "bar" and return the resulting value.
  *
  * @param {Treelike} tree

@@ -4,6 +4,7 @@ import {
   deepMerge,
   isPlainObject,
   keysFromPath,
+  trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform, extname } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
@@ -111,7 +112,7 @@ function adjustKeys(keys) {
 
 function addValueToObject(object, keys, value) {
   for (let i = 0, current = object; i < keys.length; i++) {
-    const key = keys[i];
+    const key = trailingSlash.remove(keys[i]);
     if (i === keys.length - 1) {
       // Write out value
       if (isPlainObject(current[key])) {

@@ -1,5 +1,5 @@
-import { trailingSlash } from "../main.js";
 import { Tree } from "./internal.js";
+import * as trailingSlash from "./trailingSlash.js";
 import { setParent } from "./utilities.js";
 
 /**

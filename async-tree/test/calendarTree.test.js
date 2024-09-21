@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { toPlainValue } from "../main.js";
 import calendarTree from "../src/calendarTree.js";
+import { toPlainValue } from "../src/utilities.js";
 
 describe("calendarTree", () => {
   test("without a start or end, returns a tree for today", async () => {
