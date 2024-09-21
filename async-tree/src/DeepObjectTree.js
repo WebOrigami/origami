@@ -10,13 +10,8 @@ export default class DeepObjectTree extends ObjectTree {
     return value;
   }
 
-  async isKeyForSubtree(key) {
-    let value = await this.object[key];
-    if (value === undefined) {
-      // Try adding or removing trailing slash
-      key = key.endsWith("/") ? key.slice(0, -1) : key + "/";
-      value = await this.object[key];
-    }
+  /** @returns {boolean} */
+  isSubtree(value) {
     return (
       value instanceof Array || isPlainObject(value) || Tree.isAsyncTree(value)
     );

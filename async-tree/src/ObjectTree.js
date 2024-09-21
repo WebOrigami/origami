@@ -60,6 +60,11 @@ export default class ObjectTree {
   async isKeyForSubtree(key) {
     const baseKey = trailingSlash.remove(key);
     const value = await this.object[baseKey];
+    return this.isSubtree(value);
+  }
+
+  /** @returns {boolean} */
+  isSubtree(value) {
     return Tree.isAsyncTree(value);
   }
 
@@ -84,13 +89,8 @@ export default class ObjectTree {
         )
         .map(([name]) => name);
       for (const name of propertyNames) {
-        let isSubtree;
-        try {
-          isSubtree = await this.isKeyForSubtree(name);
-        } catch (error) {
-          isSubtree = false;
-        }
-        const key = trailingSlash.add(name, isSubtree);
+        const value = obj[name];
+        const key = trailingSlash.add(name, this.isSubtree(value));
         result.add(key);
       }
       obj = Object.getPrototypeOf(obj);
