@@ -2,6 +2,7 @@ import { ObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
+import parsePostData from "./parsePostData.js";
 
 /**
  * Copy a constructed response to a ServerResponse. Return true if the response
@@ -81,13 +82,16 @@ export async function handleRequest(request, response, tree) {
       ? extendTreeScopeWithParams(tree, url)
       : tree;
 
+  const data = request.method === "POST" ? await parsePostData(request) : null;
+
   // Ask the tree for the resource with those keys.
   let resource;
   try {
     resource = await Tree.traverse(extendedTree, ...keys);
     // If resource is a function, invoke to get the object we want to return.
+    // For a POST request, pass the data to the function.
     if (typeof resource === "function") {
-      resource = await resource();
+      resource = data ? await resource(data) : await resource();
     }
   } catch (/** @type {any} */ error) {
     respondWithError(response, error);
