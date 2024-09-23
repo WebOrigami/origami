@@ -61,7 +61,8 @@ export default function ExplorableSiteTransform(Base) {
         const parent = this;
         value.unpack = async () => {
           const content = await original();
-          if (!Tree.isTraversable(content)) {
+          // See function notes at @debug
+          if (!Tree.isTraversable(content) || typeof content === "function") {
             return content;
           }
           /** @type {any} */
