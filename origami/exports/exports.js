@@ -72,6 +72,7 @@ export { default as paginateFn } from "../src/builtins/@paginateFn.js";
 export { default as parent } from "../src/builtins/@parent.js";
 export { default as perf } from "../src/builtins/@perf.js";
 export { default as plain } from "../src/builtins/@plain.js";
+export { default as post } from "../src/builtins/@post.js";
 export { default as project } from "../src/builtins/@project.js";
 export { default as redirect } from "../src/builtins/@redirect.js";
 export { default as regexMatch } from "../src/builtins/@regexMatch.js";
@@ -139,4 +140,5 @@ export { default as origamiHighlightDefinition } from "../src/misc/origamiHighli
 export { default as treeDot } from "../src/misc/treeDot.js";
 export { default as constructResponse } from "../src/server/constructResponse.js";
 export * from "../src/server/mediaTypes.js";
+export { default as parsePostData } from "../src/server/parsePostData.js";
 export * from "../src/server/server.js";
