@@ -189,6 +189,8 @@ export function lambda(parameters, code) {
     return lambdaFnMap.get(code);
   }
 
+  const baseScope = this;
+
   // By default, the first input argument is named `_`.
   parameters ??= ["_"];
 
@@ -201,7 +203,7 @@ export function lambda(parameters, code) {
     }
     ambients["@recurse"] = invoke;
     const ambientTree = new ObjectTree(ambients);
-    ambientTree.parent = this;
+    ambientTree.parent = baseScope;
 
     let result = await evaluate.call(ambientTree, code);
 
