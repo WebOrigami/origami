@@ -334,13 +334,14 @@ protocol "protocol"
   / scopeReference
 
 reservedProtocol "reserved protocol"
-  = "https" { return ops.https; }
+  = "haskeys" { return ops.openSite; }
   / "http" { return ops.http; }
+  / "https" { return ops.https; }
   / "new" { return ops.constructor; }
   / "package" { return [ops.scope, "@package"] } // Alias
-  / "treehttps" { return ops.treeHttps; }
-  / "treehttp" { return ops.treeHttp; }
   / "tree" { return ops.treeHttps; } // Alias
+  / "treehttp" { return ops.treeHttp; }
+  / "treehttps" { return ops.treeHttps; }
 
 scopeReference "scope reference"
   = key:identifier {

@@ -5,10 +5,12 @@
 
 import {
   ObjectTree,
+  OpenSiteTree,
   SiteTree,
   Tree,
   isUnpackable,
   scope as scopeFn,
+  trailingSlash,
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import expressionObject from "./expressionObject.js";
@@ -48,24 +50,6 @@ export async function concat(...args) {
 concat.toString = () => "«ops.concat»";
 
 /**
- * Given a protocol, a host, and a list of keys, construct an href.
- *
- * @param {string} protocol
- * @param {string} host
- * @param  {...string|Symbol} keys
- */
-function constructHref(protocol, host, ...keys) {
-  let href = [host, ...keys].join("/");
-  if (!href.startsWith(protocol)) {
-    if (!href.startsWith("//")) {
-      href = `//${href}`;
-    }
-    href = `${protocol}${href}`;
-  }
-  return href;
-}
-
-/**
  * Find the indicated constructor in scope, then return a function which invokes
  * it with `new`.
  *
@@ -87,6 +71,49 @@ export async function constructor(...keys) {
       : new constructor(...args);
 }
 constructor.toString = () => "«ops.constructor»";
+
+/**
+ * Given a protocol, a host, and a list of keys, construct an href.
+ *
+ * @param {string} protocol
+ * @param {string} host
+ * @param  {...string|Symbol} keys
+ */
+function constructHref(protocol, host, ...keys) {
+  // Remove trailing slashes
+  const baseKeys = keys.map((key) => trailingSlash.remove(key));
+  let href = [host, ...baseKeys].join("/");
+  if (!href.startsWith(protocol)) {
+    if (!href.startsWith("//")) {
+      href = `//${href}`;
+    }
+    href = `${protocol}${href}`;
+  }
+  return href;
+}
+
+/**
+ * Given a protocol, a host, and a list of keys, construct an href.
+ *
+ * @param {string} protocol
+ * @param {import("../../index.ts").Constructor<AsyncTree>} treeClass
+ * @param {AsyncTree|null} parent
+ * @param {string} host
+ * @param  {...string|Symbol} keys
+ */
+async function constructSiteTree(protocol, treeClass, parent, host, ...keys) {
+  // If the last key doesn't end in a slash, remove it for now.
+  let lastKey;
+  if (keys.length > 0 && keys.at(-1) && !trailingSlash.has(keys.at(-1))) {
+    lastKey = keys.pop();
+  }
+
+  const href = constructHref(protocol, host, ...keys);
+  let result = new (HandleExtensionsTransform(treeClass))(href);
+  result.parent = parent;
+
+  return lastKey ? result.get(lastKey) : result;
+}
 
 /**
  * Fetch the resource at the given href.
@@ -260,6 +287,18 @@ export async function object(...entries) {
 object.toString = () => "«ops.object»";
 
 /**
+ * An open tree with JSON Keys via HTTPS.
+ *
+ * @this {AsyncTree|null}
+ * @param {string} host
+ * @param  {...string|Symbol} keys
+ */
+export function openSite(host, ...keys) {
+  return constructSiteTree("https:", OpenSiteTree, this, host, ...keys);
+}
+openSite.toString = () => "«ops.openSite»";
+
+/**
  * Look up the given key in the scope for the current tree.
  *
  * @this {AsyncTree|null}
@@ -305,10 +344,7 @@ export const traverse = Tree.traverseOrThrow;
  * @param  {...string|Symbol} keys
  */
 export function treeHttp(host, ...keys) {
-  const href = constructHref("http:", host, ...keys);
-  let result = new (HandleExtensionsTransform(SiteTree))(href);
-  result.parent = this;
-  return result;
+  return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }
 treeHttp.toString = () => "«ops.treeHttp»";
 
@@ -320,9 +356,6 @@ treeHttp.toString = () => "«ops.treeHttp»";
  * @param  {...string|Symbol} keys
  */
 export function treeHttps(host, ...keys) {
-  const href = constructHref("https:", host, ...keys);
-  let result = new (HandleExtensionsTransform(SiteTree))(href);
-  result.parent = this;
-  return result;
+  return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
 treeHttps.toString = () => "«ops.treeHttps»";

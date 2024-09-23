@@ -8,6 +8,7 @@ export { default as MapTree } from "./src/MapTree.js";
 export { default as DeepMapTree } from "./src/DeepMapTree.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
 export * as jsonKeys from "./src/jsonKeys.js";
+export { default as OpenSiteTree } from "./src/OpenSiteTree.js";
 export { default as cache } from "./src/operations/cache.js";
 export { default as concat } from "./src/operations/concat.js";
 export { default as deepMerge } from "./src/operations/deepMerge.js";
