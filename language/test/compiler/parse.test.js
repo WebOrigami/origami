@@ -137,7 +137,7 @@ describe("Origami parser", () => {
     // Consecutive slahes inside a path = empty string key
     assertParse("expression", "path//key", [
       ops.traverse,
-      [ops.scope, "path"],
+      [ops.scope, "path/"],
       [ops.primitive, "/"],
       [ops.primitive, "key"],
     ]);
@@ -177,22 +177,22 @@ describe("Origami parser", () => {
     ]);
     assertParse("functionComposition", "tree/", [
       ops.traverse,
-      [ops.scope, "tree"],
+      [ops.scope, "tree/"],
       [ops.primitive, ""],
     ]);
     assertParse("functionComposition", "tree/key", [
       ops.traverse,
-      [ops.scope, "tree"],
+      [ops.scope, "tree/"],
       [ops.primitive, "key"],
     ]);
     assertParse("functionComposition", "tree/foo/bar", [
       ops.traverse,
-      [ops.scope, "tree"],
+      [ops.scope, "tree/"],
       [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
     ]);
     assertParse("functionComposition", "tree/key()", [
-      [ops.traverse, [ops.scope, "tree"], [ops.primitive, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "fn()/key()", [
@@ -249,7 +249,7 @@ describe("Origami parser", () => {
       [ops.primitive, "arg"],
     ]);
     assertParse("functionComposition", "tree/key arg", [
-      [ops.traverse, [ops.scope, "tree"], [ops.primitive, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "https://example.com/tree.yaml 'key'", [
@@ -536,6 +536,19 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("scopeReference", () => {
+    assertParse("scopeReference", "x", [ops.scope, "x"]);
+  });
+
+  test("scopeTraverse", () => {
+    assertParse("scopeTraverse", "tree/foo/bar", [
+      ops.traverse,
+      [ops.scope, "tree/"],
+      [ops.primitive, "foo/"],
+      [ops.primitive, "bar"],
+    ]);
+  });
+
   test("shebang", () => {
     assertParse(
       "expression",
@@ -549,10 +562,6 @@ describe("Origami parser", () => {
 
   test("singleLineComment", () => {
     assertParse("singleLineComment", "// Hello, world!", null, false);
-  });
-
-  test("scopeReference", () => {
-    assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
 
   test("spread", () => {

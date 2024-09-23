@@ -63,6 +63,7 @@ callTarget "function call"
   / parameterizedLambda
   / protocolCall
   / group
+  / scopeTraverse
   / scopeReference
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -298,12 +299,12 @@ pipeline
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = head:pathHead|0..| tail:pathTail {
+  = head:pathElement|0..| tail:pathTail {
       return annotate([...head, tail], location());
     }
 
 // A path key followed by a slash
-pathHead
+pathElement
   = chars:pathKeyChar* "/" {
     return annotate([ops.primitive, chars.join("") + "/"], location());
   }
@@ -344,6 +345,12 @@ reservedProtocol "reserved protocol"
 scopeReference "scope reference"
   = key:identifier {
       return annotate([ops.scope, key], location());
+    }
+
+scopeTraverse
+  = ref:scopeReference "/" path:path {
+      const head = [ops.scope, `${ ref[1] }/`];
+      return annotate([ops.traverse, head, ...path], location());
     }
 
 separator
