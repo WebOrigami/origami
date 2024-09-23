@@ -39,8 +39,10 @@ function DebugTransform(Base) {
       const parent = this;
 
       // Since this transform is for diagnostic purposes, cast any treelike
-      // result to a tree so we can debug the result too.
-      if (Tree.isTreelike(value)) {
+      // result to a tree so we can debug the result too. (Don't do this for
+      // functions, as that can be undesirable, e.g., when writing functions
+      // that handle POST requests.)
+      if (Tree.isTreelike(value) && typeof value !== "function") {
         value = Tree.from(value, { parent });
         if (!isTransformApplied(DebugTransform, value)) {
           value = transformObject(DebugTransform, value);
