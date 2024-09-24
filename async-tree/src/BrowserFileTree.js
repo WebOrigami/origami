@@ -89,7 +89,8 @@ export default class BrowserFileTree {
 
   async isKeyForSubtree(key) {
     const baseKey = trailingSlash.remove(key);
-    const subfolderHandle = await this.directory
+    const directory = await this.getDirectory();
+    const subfolderHandle = await directory
       .getDirectoryHandle(baseKey)
       .catch(() => null);
     return subfolderHandle !== null;

@@ -50,14 +50,18 @@ export default class MapTree {
   async isKeyForSubtree(key) {
     const baseKey = trailingSlash.remove(key);
     const value = this.map.get(baseKey);
+    return this.isSubtree(value);
+  }
+
+  /** @returns {boolean} */
+  isSubtree(value) {
     return Tree.isAsyncTree(value);
   }
 
   async keys() {
-    const mapKeys = this.map.keys();
     const keys = [];
-    for (const key of mapKeys) {
-      keys.push(trailingSlash.add(key, await this.isKeyForSubtree(key)));
+    for (const [key, value] of this.map.entries()) {
+      keys.push(trailingSlash.add(key, this.isSubtree(value)));
     }
     return keys;
   }
