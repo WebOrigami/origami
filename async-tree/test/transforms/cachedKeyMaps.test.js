@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { ObjectTree } from "../../src/internal.js";
+import { DeepObjectTree, ObjectTree } from "../../src/internal.js";
 import cachedKeyFunctions from "../../src/transforms/cachedKeyFunctions.js";
 
 describe("cachedKeyFunctions", () => {
@@ -11,12 +11,12 @@ describe("cachedKeyFunctions", () => {
     });
 
     let callCount = 0;
-    const underscoreKeys = async (sourceKey, tree) => {
+    const addUnderscore = async (sourceKey, tree) => {
       callCount++;
       return `_${sourceKey}`;
     };
 
-    const { inverseKey, key } = cachedKeyFunctions(underscoreKeys);
+    const { inverseKey, key } = cachedKeyFunctions(addUnderscore);
 
     assert.equal(await inverseKey("_a", tree), "a"); // Cache miss
     assert.equal(callCount, 1);
@@ -37,5 +37,39 @@ describe("cachedKeyFunctions", () => {
     // And now we have a cache hit.
     assert.equal(await inverseKey("_c", tree), "c");
     assert.equal(callCount, 3);
+  });
+
+  test("maps keys with caching and deep option", async () => {
+    const tree = new DeepObjectTree({
+      a: "letter a",
+      b: {
+        c: "letter c",
+      },
+    });
+
+    let callCount = 0;
+    const addUnderscore = async (sourceKey, tree) => {
+      callCount++;
+      return `_${sourceKey}`;
+    };
+
+    const { inverseKey, key } = cachedKeyFunctions(addUnderscore, true);
+
+    assert.equal(await inverseKey("_a", tree), "a"); // Cache miss
+    assert.equal(await inverseKey("_a", tree), "a");
+    assert.equal(callCount, 1);
+
+    // Subtree key left alone
+    assert.equal(await inverseKey("_b", tree), undefined);
+    assert.equal(await inverseKey("b", tree), "b/");
+    assert.equal(callCount, 1);
+
+    assert.equal(await key("a", tree), "_a");
+    assert.equal(await key("a", tree), "_a");
+    assert.equal(callCount, 1);
+
+    assert.equal(await key("b/", tree), "b/");
+    assert.equal(await key("b", tree), "b/");
+    assert.equal(callCount, 1);
   });
 });

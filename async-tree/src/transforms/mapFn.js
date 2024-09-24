@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 
 /**
  * Return a transform function that maps the keys and/or values of a tree.
@@ -65,13 +66,9 @@ export default function createMapTransform(options = {}) {
     if (keyFn || valueFn) {
       transformed.get = async (resultKey) => {
         // Step 1: Map the result key to the source key.
-        const isSubtree = deep && (await Tree.isKeyForSubtree(tree, resultKey));
-        const sourceKey =
-          !isSubtree && inverseKeyFn
-            ? await inverseKeyFn(resultKey, tree)
-            : resultKey;
+        const sourceKey = (await inverseKeyFn?.(resultKey, tree)) ?? resultKey;
 
-        if (sourceKey == null) {
+        if (sourceKey === undefined) {
           // No source key means no value.
           return undefined;
         }
@@ -81,8 +78,8 @@ export default function createMapTransform(options = {}) {
         if (needsSourceValue) {
           // Normal case: get the value from the source tree.
           sourceValue = await tree.get(sourceKey);
-        } else if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
-          // Only get the source value if it's a subtree.
+        } else if (deep && trailingSlash.has(sourceKey)) {
+          // Only get the source value if it's expected to be a subtree.
           sourceValue = tree;
         }
 
@@ -111,15 +108,12 @@ export default function createMapTransform(options = {}) {
         // Apply the keyFn to source keys for leaf values (not subtrees).
         const sourceKeys = Array.from(await tree.keys());
         const mapped = await Promise.all(
-          sourceKeys.map(async (sourceKey) => {
-            let resultKey;
-            if (deep && (await Tree.isKeyForSubtree(tree, sourceKey))) {
-              resultKey = sourceKey;
-            } else {
-              resultKey = await keyFn(sourceKey, tree);
-            }
-            return resultKey;
-          })
+          sourceKeys.map(async (sourceKey) =>
+            // Deep maps leave source keys for subtrees alone
+            deep && trailingSlash.has(sourceKey)
+              ? sourceKey
+              : await keyFn(sourceKey, tree)
+          )
         );
         // Filter out any cases where the keyFn returned undefined.
         const resultKeys = mapped.filter((key) => key !== undefined);

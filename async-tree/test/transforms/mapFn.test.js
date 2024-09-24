@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionTree from "../../src/FunctionTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import * as trailingSlash from "../../src/trailingSlash.js";
 import mapFn from "../../src/transforms/mapFn.js";
 
 describe("mapFn", () => {
@@ -59,11 +60,11 @@ describe("mapFn", () => {
       a: "letter a",
       b: "letter b",
     };
-    const doubleKeys = mapFn({
-      key: async (sourceKey, tree) => `_${sourceKey}`,
-      inverseKey: async (resultKey, tree) => resultKey.slice(1),
+    const underscopeKeys = mapFn({
+      key: addUnderscore,
+      inverseKey: removeUnderscore,
     });
-    const mapped = doubleKeys(tree);
+    const mapped = underscopeKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "letter a",
       _b: "letter b",
@@ -75,12 +76,12 @@ describe("mapFn", () => {
       a: "letter a",
       b: "letter b",
     };
-    const doubleKeysUppercaseValues = mapFn({
-      key: async (sourceKey, tree) => `_${sourceKey}`,
-      inverseKey: async (resultKey, tree) => resultKey.slice(1),
+    const underscoreKeysUppercaseValues = mapFn({
+      key: addUnderscore,
+      inverseKey: removeUnderscore,
       value: async (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    const mapped = doubleKeysUppercaseValues(tree);
+    const mapped = underscoreKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "LETTER A",
       _b: "LETTER B",
@@ -94,12 +95,12 @@ describe("mapFn", () => {
         b: "letter b",
       },
     };
-    const doubleKeys = mapFn({
+    const underscopeKeys = mapFn({
       key: async (sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
       value: async (sourceValue, sourceKey, tree) => sourceKey,
     });
-    const mapped = doubleKeys(tree);
+    const mapped = underscopeKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "a",
       _more: "more",
@@ -108,8 +109,8 @@ describe("mapFn", () => {
 
   test("value can provide a default key and inverse key functions", async () => {
     const uppercase = (s) => s.toUpperCase();
-    uppercase.key = (sourceKey) => `_${sourceKey}`;
-    uppercase.inverseKey = (resultKey) => resultKey.slice(1);
+    uppercase.key = addUnderscore;
+    uppercase.inverseKey = removeUnderscore;
     const tree = {
       a: "letter a",
       b: "letter b",
@@ -148,12 +149,12 @@ describe("mapFn", () => {
         b: "letter b",
       },
     });
-    const doubleKeys = mapFn({
+    const underscoreKeys = mapFn({
       deep: true,
-      key: async (sourceKey, tree) => `_${sourceKey}`,
-      inverseKey: async (resultKey, tree) => resultKey.slice(1),
+      key: addUnderscore,
+      inverseKey: removeUnderscore,
     });
-    const mapped = doubleKeys(tree);
+    const mapped = underscoreKeys(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "letter a",
       more: {
@@ -169,13 +170,13 @@ describe("mapFn", () => {
         b: "letter b",
       },
     });
-    const doubleKeysUppercaseValues = mapFn({
+    const underscoreKeysUppercaseValues = mapFn({
       deep: true,
-      key: async (sourceKey, tree) => `_${sourceKey}`,
-      inverseKey: async (resultKey, tree) => resultKey.slice(1),
+      key: addUnderscore,
+      inverseKey: removeUnderscore,
       value: async (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    const mapped = doubleKeysUppercaseValues(tree);
+    const mapped = underscoreKeysUppercaseValues(tree);
     assert.deepEqual(await Tree.plain(mapped), {
       _a: "LETTER A",
       more: {
@@ -201,3 +202,11 @@ describe("mapFn", () => {
     assert(!flag);
   });
 });
+
+function addUnderscore(key) {
+  return `_${key}`;
+}
+
+function removeUnderscore(key) {
+  return trailingSlash.has(key) ? key : key.slice(1);
+}

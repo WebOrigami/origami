@@ -91,7 +91,7 @@ export default function mapFnBuiltin(operation) {
       );
       return resultKey;
     }
-    const keyFns = cachedKeyFunctions(scopedKeyFn);
+    const keyFns = cachedKeyFunctions(scopedKeyFn, deep);
     extendedKeyFn = keyFns.key;
     extendedInverseKeyFn = keyFns.inverseKey;
   } else {
