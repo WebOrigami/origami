@@ -42,16 +42,6 @@ export default function deepMerge(...sources) {
       }
     },
 
-    async isKeyForSubtree(key) {
-      // Check trees for the indicated key in reverse order.
-      for (let index = trees.length - 1; index >= 0; index--) {
-        if (await Tree.isKeyForSubtree(trees[index], key)) {
-          return true;
-        }
-      }
-      return false;
-    },
-
     async keys() {
       const keys = new Set();
       // Collect keys in the order the trees were provided.

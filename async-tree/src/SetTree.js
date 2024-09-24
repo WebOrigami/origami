@@ -1,4 +1,3 @@
-import { Tree } from "./internal.js";
 import { setParent } from "./utilities.js";
 
 /**
@@ -27,11 +26,6 @@ export default class SetTree {
     const value = this.values[key];
     setParent(value, this);
     return value;
-  }
-
-  async isKeyForSubtree(key) {
-    const value = this.values[key];
-    return Tree.isAsyncTree(value);
   }
 
   async keys() {

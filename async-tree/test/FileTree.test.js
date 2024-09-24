@@ -58,13 +58,6 @@ describe("FileTree", async () => {
     assert.equal(markdown.parent, fixture);
   });
 
-  test("can indicate which values are subtrees", async () => {
-    const fixture = createFixture("fixtures/markdown");
-    assert(!(await fixture.isKeyForSubtree("Alice.md")));
-    assert(await fixture.isKeyForSubtree("subfolder"));
-    assert(await fixture.isKeyForSubtree("subfolder/"));
-  });
-
   test("can write out a file via set()", async () => {
     await createTempDirectory();
 

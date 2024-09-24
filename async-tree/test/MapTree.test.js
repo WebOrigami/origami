@@ -22,16 +22,6 @@ describe("MapTree", () => {
     assert.equal(more[symbols.parent], fixture);
   });
 
-  test("can indicate which values are subtrees", async () => {
-    const fixture = new MapTree([
-      ["a", 1],
-      ["subtree", new MapTree([["b", 2]])],
-    ]);
-    assert(!(await fixture.isKeyForSubtree("a")));
-    assert(await fixture.isKeyForSubtree("subtree"));
-    assert(await fixture.isKeyForSubtree("subtree/"));
-  });
-
   test("adds trailing slashes to keys for subtrees", async () => {
     const tree = new MapTree([
       ["a", 1],

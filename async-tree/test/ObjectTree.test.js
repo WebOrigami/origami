@@ -109,18 +109,6 @@ describe("ObjectTree", () => {
     assert.equal(more.parent, fixture);
   });
 
-  test("can indicate which values are subtrees", async () => {
-    const fixture = new ObjectTree({
-      a: 1,
-      subtree: new ObjectTree({
-        b: 2,
-      }),
-    });
-    assert(!(await fixture.isKeyForSubtree("a")));
-    assert(await fixture.isKeyForSubtree("subtree"));
-    assert(await fixture.isKeyForSubtree("subtree/"));
-  });
-
   test("adds trailing slashes to keys for subtrees", async () => {
     const tree = new ObjectTree({
       a1: 1,

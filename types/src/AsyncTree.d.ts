@@ -6,7 +6,6 @@
  */
 export default interface AsyncTree {
   get(key: any): Promise<any>;
-  isKeyForSubtree?(key: any): Promise<boolean>;
   keys(): Promise<Iterable<any>>;
   parent?: AsyncTree|null;
 }

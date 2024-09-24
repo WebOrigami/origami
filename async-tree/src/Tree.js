@@ -199,22 +199,6 @@ export function isAsyncMutableTree(obj) {
 }
 
 /**
- * Return true if the indicated key produces or is expected to produce an
- * async tree.
- *
- * This defers to the tree's own isKeyForSubtree method. If not found, this
- * gets the value of that key and returns true if the value is an async
- * tree.
- */
-export async function isKeyForSubtree(tree, key) {
-  if (tree.isKeyForSubtree) {
-    return tree.isKeyForSubtree(key);
-  }
-  const value = await tree.get(key);
-  return isAsyncTree(value);
-}
-
-/**
  * Return true if the object can be traversed via the `traverse()` method. The
  * object must be either treelike or a packed object with an `unpack()` method.
  *

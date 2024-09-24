@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -40,7 +40,7 @@ export default class FilterTree {
       // must be a tree too.
       const match =
         (!isFilterValueTree && filterValue) ||
-        (isFilterValueTree && (await Tree.isKeyForSubtree(this.tree, key)));
+        (isFilterValueTree && trailingSlash.has(key));
       if (match) {
         keys.add(key);
       }

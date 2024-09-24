@@ -172,17 +172,6 @@ describe("Tree", () => {
     assert(Tree.isTreelike(new Set()));
   });
 
-  test("isKeyForSubtree() returns true if the key is for a subtree", async () => {
-    const tree = new DeepObjectTree({
-      a: 1,
-      more: {
-        b: 2,
-      },
-    });
-    assert(!(await Tree.isKeyForSubtree(tree, "a")));
-    assert(await Tree.isKeyForSubtree(tree, "more"));
-  });
-
   test("map() maps values", async () => {
     const tree = new DeepObjectTree({
       a: "Alice",

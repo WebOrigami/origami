@@ -44,13 +44,6 @@ if (isBrowser) {
       assert.equal(subfolder.parent, fixture);
     });
 
-    test("can indicate which values are subtrees", async () => {
-      const fixture = await createFixture();
-      assert(!(await fixture.isKeyForSubtree("Alice.md")));
-      assert(await fixture.isKeyForSubtree("subfolder"));
-      assert(await fixture.isKeyForSubtree("subfolder/"));
-    });
-
     test("can retrieve values with optional trailing slash", async () => {
       const fixture = await createFixture();
       assert(await fixture.get("Alice.md"));

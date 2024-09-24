@@ -87,24 +87,19 @@ export default class BrowserFileTree {
     return this.directory;
   }
 
-  async isKeyForSubtree(key) {
-    const baseKey = trailingSlash.remove(key);
-    const directory = await this.getDirectory();
-    const subfolderHandle = await directory
-      .getDirectoryHandle(baseKey)
-      .catch(() => null);
-    return subfolderHandle !== null;
-  }
-
   async keys() {
     const directory = await this.getDirectory();
     let keys = [];
     // @ts-ignore
     for await (const entryKey of directory.keys()) {
-      const key = trailingSlash.add(
-        entryKey,
-        await this.isKeyForSubtree(entryKey)
-      );
+      // Check if the entry is a subfolder
+      const baseKey = trailingSlash.remove(entryKey);
+      const subfolderHandle = await directory
+        .getDirectoryHandle(baseKey)
+        .catch(() => null);
+      const isSubfolder = subfolderHandle !== null;
+
+      const key = trailingSlash.add(entryKey, isSubfolder);
       keys.push(key);
     }
 

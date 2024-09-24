@@ -74,12 +74,6 @@ describe("OpenSiteTree", () => {
     assert.equal(about.href, "https://mock/about/");
   });
 
-  test("can determine whether a key is for a subtree", async () => {
-    const fixture = new OpenSiteTree(mockHost);
-    assert.equal(await fixture.isKeyForSubtree("about"), true);
-    assert.equal(await fixture.isKeyForSubtree("index.html"), false);
-  });
-
   test("can convert a site to a plain object", async () => {
     const fixture = new OpenSiteTree(mockHost);
     // Convert buffers to strings.

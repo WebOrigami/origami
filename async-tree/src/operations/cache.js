@@ -84,10 +84,6 @@ export default function treeCache(
       return undefined;
     },
 
-    async isKeyForSubtree(key) {
-      return Tree.isKeyForSubtree(source, key);
-    },
-
     async keys() {
       keys ??= await source.keys();
       return keys;

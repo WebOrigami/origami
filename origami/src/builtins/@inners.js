@@ -1,8 +1,9 @@
-import { Tree } from "@weborigami/async-tree";
+import { trailingSlash, Tree } from "@weborigami/async-tree";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
- * Return the source nodes of the tree: the nodes with children.
+ * Return the interior nodes of the tree. This relies on subtree keys having
+ * trailing slashes.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -19,12 +20,8 @@ export default async function inners(treelike) {
     },
 
     async keys() {
-      const subtreeKeys = [];
-      for (const key of await tree.keys()) {
-        if (await Tree.isKeyForSubtree(tree, key)) {
-          subtreeKeys.push(key);
-        }
-      }
+      const keys = [...(await tree.keys())];
+      const subtreeKeys = keys.filter(trailingSlash.has);
       return subtreeKeys;
     },
   };
@@ -32,5 +29,5 @@ export default async function inners(treelike) {
   return result;
 }
 
-inners.usage = `@inners <tree>\tThe source nodes of the tree`;
+inners.usage = `@inners <tree>\tThe interior nodes of the tree`;
 inners.documentation = "https://weborigami.org/cli/builtins.html#inners";

@@ -47,12 +47,6 @@ export default class MapTree {
     return value;
   }
 
-  async isKeyForSubtree(key) {
-    const baseKey = trailingSlash.remove(key);
-    const value = this.map.get(baseKey);
-    return this.isSubtree(value);
-  }
-
   /** @returns {boolean} */
   isSubtree(value) {
     return Tree.isAsyncTree(value);

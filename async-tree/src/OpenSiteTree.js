@@ -1,6 +1,4 @@
-import { Tree } from "./internal.js";
 import SiteTree from "./SiteTree.js";
-import * as trailingSlash from "./trailingSlash.js";
 
 export default class OpenSiteTree extends SiteTree {
   constructor(...args) {
@@ -24,19 +22,6 @@ export default class OpenSiteTree extends SiteTree {
         }
       });
     return this.serverKeysPromise;
-  }
-
-  async isKeyForSubtree(key) {
-    const serverKeys = await this.getServerKeys();
-    if (serverKeys) {
-      // The key will need to have a trailing slash to match.
-      const keyWithSlash = trailingSlash.add(key);
-      return serverKeys.includes(keyWithSlash);
-    } else {
-      // Expensive check, since this fetches the key's value.
-      const value = await this.get(key);
-      return Tree.isAsyncTree(value);
-    }
   }
 
   async keys() {

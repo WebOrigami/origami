@@ -85,13 +85,6 @@ export default class FileTree {
     return value;
   }
 
-  async isKeyForSubtree(key) {
-    // fs will normalize trailing slashes
-    const filePath = path.join(this.dirname, key);
-    const stats = await stat(filePath);
-    return stats ? stats.isDirectory() : false;
-  }
-
   /**
    * Enumerate the names of the files/subdirectories in this directory.
    */
