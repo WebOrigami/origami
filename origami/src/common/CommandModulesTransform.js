@@ -1,3 +1,4 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import path from "node:path";
 
 /**
@@ -18,6 +19,7 @@ export default function CommandsModulesTransform(Base) {
       }
 
       // See if we have a JS module for the requested key.
+      key = trailingSlash.remove(key);
       if (key === undefined || key.endsWith?.(".js")) {
         return undefined;
       }

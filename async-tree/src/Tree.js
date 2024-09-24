@@ -428,10 +428,10 @@ export async function traverseOrThrow(treelike, ...keys) {
 
     if (!isTreelike(value)) {
       // Value isn't treelike, so can't be traversed except for a special case:
-      // if there's only one key left and it's an empty string, return the
-      // non-treelike value.
+      // if there's only one key left and it's an empty string, in which case
+      // we return the value as is.
       if (remainingKeys.length === 1 && remainingKeys[0] === "") {
-        return value;
+        break;
       }
     }
 
