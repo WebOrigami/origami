@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 
 /**
  * Return a tree that performs a deep merge of the given trees.
@@ -47,6 +48,12 @@ export default function deepMerge(...sources) {
       // Collect keys in the order the trees were provided.
       for (const tree of trees) {
         for (const key of await tree.keys()) {
+          // Remove the alternate form of the key (if it exists)
+          const alternateKey = trailingSlash.toggle(key);
+          if (alternateKey !== key) {
+            keys.delete(alternateKey);
+          }
+
           keys.add(key);
         }
       }
