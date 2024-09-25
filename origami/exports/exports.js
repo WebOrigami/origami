@@ -85,6 +85,7 @@ export { default as setDeep } from "../src/builtins/@setDeep.js";
 export { default as shell } from "../src/builtins/@shell.js";
 export { default as shuffle } from "../src/builtins/@shuffle.js";
 export { default as sitemap } from "../src/builtins/@sitemap.js";
+export * from "../src/builtins/@slash.js";
 export { default as slug } from "../src/builtins/@slug.js";
 export { default as sort } from "../src/builtins/@sort.js";
 export { default as sortFn } from "../src/builtins/@sortFn.js";
