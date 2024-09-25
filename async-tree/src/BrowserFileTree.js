@@ -41,6 +41,10 @@ export default class BrowserFileTree {
         `${this.constructor.name}: Cannot get a null or undefined key.`
       );
     }
+    if (key === "") {
+      // Can't have a file with no name
+      return undefined;
+    }
 
     // Remove trailing slash if present
     key = trailingSlash.remove(key);

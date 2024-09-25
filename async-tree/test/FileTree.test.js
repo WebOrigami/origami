@@ -34,6 +34,11 @@ describe("FileTree", async () => {
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
+  test("getting empty key returns undefined", async () => {
+    const fixture = createFixture("fixtures/markdown");
+    assert.equal(await fixture.get(""), undefined);
+  });
+
   test("getting a null/undefined key throws an exception", async () => {
     const fixture = createFixture("fixtures/markdown");
     await assert.rejects(async () => {

@@ -28,6 +28,11 @@ if (isBrowser) {
       assert.equal(await fixture.get("xyz"), undefined);
     });
 
+    test("getting empty key returns undefined", async () => {
+      const fixture = await createFixture();
+      assert.equal(await fixture.get(""), undefined);
+    });
+
     test("getting a null/undefined key throws an exception", async () => {
       const fixture = await createFixture();
       await assert.rejects(async () => {
