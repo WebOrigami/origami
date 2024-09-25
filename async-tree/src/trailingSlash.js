@@ -34,7 +34,12 @@ export function remove(key) {
  * If the key has a trailing slash, remove it; otherwise add it.
  *
  * @param {any} key
+ * @param {boolean} [force]
  */
-export function toggle(key) {
-  return typeof key !== "string" ? key : has(key) ? remove(key) : add(key);
+export function toggle(key, force = undefined) {
+  if (typeof key !== "string") {
+    return key;
+  }
+  const addSlash = force ?? !has(key);
+  return addSlash ? add(key) : remove(key);
 }

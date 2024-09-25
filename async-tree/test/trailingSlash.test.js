@@ -28,4 +28,11 @@ describe("trailingSlash", () => {
     assert.equal(toggle("key"), "key/");
     assert.equal(toggle(1), 1);
   });
+
+  test("toggle can force toggling on or off", () => {
+    assert.equal(toggle("key/", false), "key");
+    assert.equal(toggle("key/", true), "key/");
+    assert.equal(toggle("key", false), "key");
+    assert.equal(toggle("key", true), "key/");
+  });
 });
