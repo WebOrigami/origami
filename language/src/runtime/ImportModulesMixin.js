@@ -1,6 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { maybeOrigamiSourceCode } from "./formatError.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -25,21 +26,23 @@ export default function ImportModulesMixin(Base) {
         }
 
         // Does the module exist as a file?
-        let stats;
         try {
-          stats = await fs.stat(filePath);
+          await fs.stat(filePath);
         } catch (error) {
-          // Ignore errors.
-        }
-        if (stats) {
-          // Module exists, but we can't load it. This is often due to a syntax
-          // error in the target module, so we offer that as a hint.
-          const message = `Error loading ${filePath}, possibly due to a syntax error.\n${error.message}`;
-          throw new SyntaxError(message);
+          // File doesn't exist
+          return undefined;
         }
 
-        // Module doesn't exist.
-        return undefined;
+        // Module exists, but we can't load it. Is the error internal?
+        if (maybeOrigamiSourceCode(error.message)) {
+          throw new Error(
+            `Internal Origami error loading ${filePath}\n${error.message}`
+          );
+        }
+
+        // Error may be a syntax error, so we offer that as a hint.
+        const message = `Error loading ${filePath}, possibly due to a syntax error.\n${error.message}`;
+        throw new SyntaxError(message);
       }
 
       if ("default" in obj) {

@@ -23,7 +23,7 @@ export default function formatError(error) {
     let lines = error.stack.split("\n");
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (origamiSourceSignals.some((signal) => line.includes(signal))) {
+      if (maybeOrigamiSourceCode(line)) {
         break;
       }
       if (message) {
@@ -49,4 +49,8 @@ export default function formatError(error) {
     }
   }
   return message;
+}
+
+export function maybeOrigamiSourceCode(text) {
+  return origamiSourceSignals.some((signal) => text.includes(signal));
 }
