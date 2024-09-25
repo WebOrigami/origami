@@ -6,6 +6,7 @@ import {
   scope,
   symbols,
   toString,
+  trailingSlash,
 } from "@weborigami/async-tree";
 
 /**
@@ -19,7 +20,7 @@ import {
  */
 export async function attachHandlerIfApplicable(parent, value, key) {
   if (isPacked(value) && isStringLike(key)) {
-    key = toString(key);
+    key = trailingSlash.remove(toString(key));
 
     // Special case: `.ori.<ext>` extensions are Origami documents.
     const extension = key.match(/\.ori\.\S+$/) ? ".ori_document" : extname(key);
