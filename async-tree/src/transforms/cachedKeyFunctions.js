@@ -30,21 +30,23 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
       // until we find a match. Cache all the intermediate results and the
       // final match. This is O(n), but we stop as soon as we find a match,
       // and subsequent calls will benefit from the intermediate results.
+      const resultKeyWithoutSlash = trailingSlash.remove(resultKey);
       for (const sourceKey of await tree.keys()) {
         // Skip any source keys we already know about.
         if (sourceKeyToResultKey.has(sourceKey)) {
           continue;
         }
 
-        let computedResultKey = await computeResultKey(
+        const computedResultKey = await computeAndCacheResultKey(
           tree,
           keyFn,
           skipSubtrees,
           sourceKey
         );
-        if (computedResultKey === resultKey) {
-          // Match found.
-          return sourceKey;
+
+        if (trailingSlash.remove(computedResultKey) === resultKeyWithoutSlash) {
+          // Match found, match trailing slash and return
+          return trailingSlash.toggle(sourceKey, trailingSlash.has(resultKey));
         }
       }
 
@@ -59,7 +61,7 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
         return cachedResultKey;
       }
 
-      let resultKey = await computeResultKey(
+      const resultKey = await computeAndCacheResultKey(
         tree,
         keyFn,
         skipSubtrees,
@@ -70,7 +72,7 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
   };
 }
 
-async function computeResultKey(tree, keyFn, skipSubtrees, sourceKey) {
+async function computeAndCacheResultKey(tree, keyFn, skipSubtrees, sourceKey) {
   const { resultKeyToSourceKey, sourceKeyToResultKey } =
     getKeyMapsForTree(tree);
 
@@ -99,17 +101,21 @@ function getKeyMapsForTree(tree) {
   return keyMaps;
 }
 
+// Search the given key map for the key. Ignore trailing slashes in the search,
+// but preserve them in the result.
 function searchKeyMap(keyMap, key) {
   // Check key as is
+  let match;
   if (keyMap.has(key)) {
-    return keyMap.get(key);
-  }
-  if (!trailingSlash.has(key)) {
+    match = keyMap.get(key);
+  } else if (!trailingSlash.has(key)) {
     // Check key without trailing slash
     const withSlash = trailingSlash.add(key);
     if (keyMap.has(withSlash)) {
-      return keyMap.get(withSlash);
+      match = keyMap.get(withSlash);
     }
   }
-  return undefined;
+  return match
+    ? trailingSlash.toggle(match, trailingSlash.has(key))
+    : undefined;
 }

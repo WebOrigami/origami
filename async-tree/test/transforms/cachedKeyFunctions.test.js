@@ -72,4 +72,18 @@ describe("cachedKeyFunctions", () => {
     assert.equal(await key("b", tree), "b/");
     assert.equal(callCount, 1);
   });
+
+  test("preserves trailing slashes", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+    });
+    const addUnderscore = async (sourceKey) => `_${sourceKey}`;
+    const { inverseKey, key } = cachedKeyFunctions(addUnderscore);
+
+    assert.equal(await key("a/", tree), "_a/");
+    assert.equal(await key("a", tree), "_a");
+
+    assert.equal(await inverseKey("_a/", tree), "a/");
+    assert.equal(await inverseKey("_a", tree), "a");
+  });
 });
