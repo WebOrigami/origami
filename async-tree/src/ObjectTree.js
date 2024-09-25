@@ -81,11 +81,15 @@ export default class ObjectTree {
             (descriptor.enumerable ||
               (descriptor.get !== undefined && descriptor.set !== undefined))
         )
-        .map(([name]) => name);
+        .map(([name, descriptor]) =>
+          // Add a slash if the value is a plain property and a subtree
+          trailingSlash.add(
+            name,
+            descriptor.value !== undefined && this.isSubtree(descriptor.value)
+          )
+        );
       for (const name of propertyNames) {
-        const value = obj[name];
-        const key = trailingSlash.add(name, this.isSubtree(value));
-        result.add(key);
+        result.add(name);
       }
       obj = Object.getPrototypeOf(obj);
     }

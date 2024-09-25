@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
-describe.only("ops", () => {
+describe("ops", () => {
   test("can resolve substitutions in a template literal", async () => {
     const scope = new ObjectTree({
       name: "world",
@@ -71,7 +71,7 @@ describe.only("ops", () => {
     assert.equal(result.world, "WORLD");
   });
 
-  test.only("adds trailing slash to keys for subobjects", async () => {
+  test("adds trailing slash to keys for subobjects", async () => {
     const code = createCode([ops.object, ["sub", [ops.object, ["a", 1]]]]);
     const result = await evaluate.call(null, code);
     assert.deepEqual(Object.keys(result), ["sub/"]);
