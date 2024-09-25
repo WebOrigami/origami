@@ -1,3 +1,5 @@
+import { trailingSlash } from "@weborigami/async-tree";
+
 export default function PathTransform(Base) {
   return class Path extends Base {
     async get(key) {
@@ -6,7 +8,7 @@ export default function PathTransform(Base) {
         // @ts-ignore
         const path = this[PathTransform.pathKey]
           ? // @ts-ignore
-            `${this[PathTransform.pathKey]}/${key}`
+            `${trailingSlash.add(this[PathTransform.pathKey])}${key}`
           : key;
         value[PathTransform.pathKey] = path;
       }
