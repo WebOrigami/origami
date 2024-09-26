@@ -61,7 +61,8 @@ describe("cachedKeyFunctions", () => {
 
     // Subtree key left alone
     assert.equal(await inverseKey("_b", tree), undefined);
-    assert.equal(await inverseKey("b", tree), "b/");
+    assert.equal(await inverseKey("b", tree), "b");
+    assert.equal(await inverseKey("b/", tree), "b/");
     assert.equal(callCount, 1);
 
     assert.equal(await key("a", tree), "_a");
@@ -69,7 +70,7 @@ describe("cachedKeyFunctions", () => {
     assert.equal(callCount, 1);
 
     assert.equal(await key("b/", tree), "b/");
-    assert.equal(await key("b", tree), "b/");
+    assert.equal(await key("b", tree), "b");
     assert.equal(callCount, 1);
   });
 
