@@ -6,6 +6,9 @@
  * @param {any?} value
  */
 export function add(key, value = true) {
+  if (key == null) {
+    throw new ReferenceError("trailingSlash: key was undefined");
+  }
   return typeof key === "string" && value && !key.endsWith("/")
     ? `${key}/`
     : key;
@@ -18,6 +21,9 @@ export function add(key, value = true) {
  * @param {any} key
  */
 export function has(key) {
+  if (key == null) {
+    throw new ReferenceError("trailingSlash: key was undefined");
+  }
   return typeof key === "string" && key.endsWith("/");
 }
 
@@ -27,6 +33,9 @@ export function has(key) {
  * @param {any} key
  */
 export function remove(key) {
+  if (key == null) {
+    throw new ReferenceError("trailingSlash: key was undefined");
+  }
   return typeof key === "string" ? key.replace(/\/$/, "") : key;
 }
 
@@ -37,6 +46,9 @@ export function remove(key) {
  * @param {boolean} [force]
  */
 export function toggle(key, force = undefined) {
+  if (key == null) {
+    throw new ReferenceError("trailingSlash: key was undefined");
+  }
   if (typeof key !== "string") {
     return key;
   }
