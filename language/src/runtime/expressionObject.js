@@ -1,4 +1,4 @@
-import { ObjectTree, symbols, trailingSlash } from "@weborigami/async-tree";
+import { ObjectTree, symbols } from "@weborigami/async-tree";
 import { attachHandlerIfApplicable, extname } from "./extensions.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -55,12 +55,6 @@ export default async function expressionObject(entries, parent) {
       key = key.slice(1, -1);
       enumerable = false;
     }
-
-    // If the value defines a subobject, add a trailing slash to the key.
-    key = trailingSlash.add(
-      key,
-      value instanceof Array && value[0] === ops.object
-    );
 
     if (defineProperty) {
       // Define simple property

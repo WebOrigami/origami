@@ -376,6 +376,18 @@ describe("Origami parser", () => {
       ["a", [ops.getter, [ops.scope, "b"]]],
       ["b", [ops.primitive, 2]],
     ]);
+    assertParse("object", "{ a: { b: 1 } }", [
+      ops.object,
+      ["a", [ops.object, ["b", [ops.primitive, 1]]]],
+    ]);
+    assertParse("object", "{ a: { b = 1 } }", [
+      ops.object,
+      ["a", [ops.object, ["b", [ops.primitive, 1]]]],
+    ]);
+    assertParse("object", "{ a: { b = fn() } }", [
+      ops.object,
+      ["a/", [ops.object, ["b", [ops.getter, [[ops.scope, "fn"], undefined]]]]],
+    ]);
     assertParse("object", "{ x = fn('a') }", [
       ops.object,
       [

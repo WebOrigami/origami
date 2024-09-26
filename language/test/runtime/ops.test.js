@@ -71,12 +71,6 @@ describe("ops", () => {
     assert.equal(result.world, "WORLD");
   });
 
-  test("adds trailing slash to keys for subobjects", async () => {
-    const code = createCode([ops.object, ["sub", [ops.object, ["a", 1]]]]);
-    const result = await evaluate.call(null, code);
-    assert.deepEqual(Object.keys(result), ["sub/"]);
-  });
-
   test("can instantiate an array", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),

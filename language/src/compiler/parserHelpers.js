@@ -13,6 +13,22 @@ export function annotate(parseResult, location) {
   return parseResult;
 }
 
+// Return true if the code will generate an async object.
+function isAsyncObject(code) {
+  if (!(code instanceof Array)) {
+    return false;
+  }
+  if (code[0] !== ops.object) {
+    return false;
+  }
+  // Are any of the properties getters?
+  const entries = code.slice(1);
+  const hasGetter = entries.some(([key, value]) => {
+    return value instanceof Array && value[0] === ops.getter;
+  });
+  return hasGetter;
+}
+
 export function makeArray(entries) {
   let currentEntries = [];
   const spreads = [];
@@ -99,6 +115,7 @@ export function makeObject(entries, op) {
 
   for (let [key, value] of entries) {
     if (key === ops.spread) {
+      // Accumulate spread entry
       if (currentEntries.length > 0) {
         spreads.push([op, ...currentEntries]);
         currentEntries = [];
@@ -113,7 +130,11 @@ export function makeObject(entries, op) {
       ) {
         // Simplify a getter for a primitive value to a regular property
         value = value[1];
+      } else if (isAsyncObject(value)) {
+        // Add a trailing slash to key if value is an async object
+        key = key + "/";
       }
+
       currentEntries.push([key, value]);
     }
   }
