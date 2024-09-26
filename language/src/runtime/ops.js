@@ -357,3 +357,13 @@ export function treeHttps(host, ...keys) {
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
 treeHttps.toString = () => "«ops.treeHttps»";
+
+/**
+ * If the value is packed but has an unpack method, call it and return that as
+ * the result; otherwise, return the value as is.
+ *
+ * @param {any} value
+ */
+export async function unpack(value) {
+  return isUnpackable(value) ? value.unpack() : value;
+}

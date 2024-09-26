@@ -110,6 +110,13 @@ describe("ops", () => {
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
+
+  test("ops.unpack unpacks a value", async () => {
+    const fixture = new String("packed");
+    /** @type {any} */ (fixture).unpack = async () => "unpacked";
+    const result = await ops.unpack.call(null, fixture);
+    assert.equal(result, "unpacked");
+  });
 });
 
 /**
