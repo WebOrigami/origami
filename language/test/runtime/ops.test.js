@@ -5,7 +5,7 @@ import { describe, test } from "node:test";
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
 describe("ops", () => {
-  test("can resolve substitutions in a template literal", async () => {
+  test("ops.concat concatenates tree value text", async () => {
     const scope = new ObjectTree({
       name: "world",
     });
@@ -16,7 +16,33 @@ describe("ops", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  test("can invoke a lambda", async () => {
+  test("ops.constructor returns a constructor", async () => {
+    const scope = new ObjectTree({
+      "@js": {
+        Number: Number,
+      },
+    });
+    const fn = await ops.constructor.call(scope, "@js", "Number");
+    const number = fn("1");
+    assert(number instanceof Number);
+    assert.equal(number, 1);
+  });
+
+  test("ops.inherited searches inherited scope", async () => {
+    const parent = new ObjectTree({
+      a: 1, // This is the inherited value we want
+    });
+    /** @type {any} */
+    const child = new ObjectTree({
+      a: 2, // Should be ignored
+    });
+    child.parent = parent;
+    const code = createCode([ops.inherited, "a"]);
+    const result = await evaluate.call(child, code);
+    assert.equal(result, 1);
+  });
+
+  test("ops.lambda defines a function", async () => {
     const scope = new ObjectTree({
       message: "Hello",
     });
@@ -28,14 +54,14 @@ describe("ops", () => {
     assert.equal(result, "Hello");
   });
 
-  test("lambda adds input to scope as `_`", async () => {
+  test("ops.lambda adds input to scope as `_`", async () => {
     const code = createCode([ops.lambda, null, [ops.scope, "_"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn("Hello");
     assert.equal(result, "Hello");
   });
 
-  test("parameterized lambda adds input args to scope", async () => {
+  test("ops.lambda adds input parameters to scope", async () => {
     const code = createCode([
       ops.lambda,
       ["a", "b"],
@@ -46,7 +72,7 @@ describe("ops", () => {
     assert.equal(result, "yx");
   });
 
-  test("a lambda can reference itself with @recurse", async () => {
+  test("ops.lambda function can reference itself with @recurse", async () => {
     const code = createCode([ops.lambda, null, [ops.scope, "@recurse"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn();
@@ -55,7 +81,7 @@ describe("ops", () => {
     assert.equal(result.code, fn.code);
   });
 
-  test("can instantiate an object", async () => {
+  test("ops.object instantiates an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
@@ -71,7 +97,7 @@ describe("ops", () => {
     assert.equal(result.world, "WORLD");
   });
 
-  test("can instantiate an array", async () => {
+  test("ops.object instantiates an array", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
@@ -83,32 +109,6 @@ describe("ops", () => {
     ]);
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
-  });
-
-  test("can search inherited scope", async () => {
-    const parent = new ObjectTree({
-      a: 1, // This is the inherited value we want
-    });
-    /** @type {any} */
-    const child = new ObjectTree({
-      a: 2, // Should be ignored
-    });
-    child.parent = parent;
-    const code = createCode([ops.inherited, "a"]);
-    const result = await evaluate.call(child, code);
-    assert.equal(result, 1);
-  });
-
-  test("returns a constructor", async () => {
-    const scope = new ObjectTree({
-      "@js": {
-        Number: Number,
-      },
-    });
-    const fn = await ops.constructor.call(scope, "@js", "Number");
-    const number = fn("1");
-    assert(number instanceof Number);
-    assert.equal(number, 1);
   });
 });
 
