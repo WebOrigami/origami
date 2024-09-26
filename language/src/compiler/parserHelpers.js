@@ -97,7 +97,7 @@ export function makeObject(entries, op) {
   let currentEntries = [];
   const spreads = [];
 
-  for (const [key, value] of entries) {
+  for (let [key, value] of entries) {
     if (key === ops.spread) {
       if (currentEntries.length > 0) {
         spreads.push([op, ...currentEntries]);
@@ -105,6 +105,15 @@ export function makeObject(entries, op) {
       }
       spreads.push(value);
     } else {
+      if (
+        value instanceof Array &&
+        value[0] === ops.getter &&
+        value[1] instanceof Array &&
+        value[1][0] === ops.primitive
+      ) {
+        // Simplify a getter for a primitive value to a regular property
+        value = value[1];
+      }
       currentEntries.push([key, value]);
     }
   }
