@@ -4,11 +4,9 @@ import { add, has, remove, toggle } from "../src/trailingSlash.js";
 
 describe("trailingSlash", () => {
   test("add adds a trailing slash to a string key for a truthy value", () => {
-    assert.equal(add("key", true), "key/");
-    assert.equal(add("key", false), "key");
-    assert.equal(add(1, true), 1);
-    assert.equal(add("key/", true), "key/");
     assert.equal(add("key"), "key/");
+    assert.equal(add("key/"), "key/");
+    assert.equal(add(1), 1);
   });
 
   test("has returns true if a string key has a trailing slash", () => {

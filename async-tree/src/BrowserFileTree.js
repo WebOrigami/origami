@@ -103,7 +103,7 @@ export default class BrowserFileTree {
         .catch(() => null);
       const isSubfolder = subfolderHandle !== null;
 
-      const key = trailingSlash.add(entryKey, isSubfolder);
+      const key = trailingSlash.toggle(entryKey, isSubfolder);
       keys.push(key);
     }
 

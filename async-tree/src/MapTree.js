@@ -55,7 +55,7 @@ export default class MapTree {
   async keys() {
     const keys = [];
     for (const [key, value] of this.map.entries()) {
-      keys.push(trailingSlash.add(key, this.isSubtree(value)));
+      keys.push(trailingSlash.toggle(key, this.isSubtree(value)));
     }
     return keys;
   }

@@ -82,11 +82,15 @@ export default class ObjectTree {
               (descriptor.get !== undefined && descriptor.set !== undefined))
         )
         .map(([name, descriptor]) =>
-          // Add a slash if the value is a plain property and a subtree
-          trailingSlash.add(
-            name,
-            descriptor.value !== undefined && this.isSubtree(descriptor.value)
-          )
+          trailingSlash.has(name)
+            ? // Preserve existing slash
+              name
+            : // Add a slash if the value is a plain property and a subtree
+              trailingSlash.toggle(
+                name,
+                descriptor.value !== undefined &&
+                  this.isSubtree(descriptor.value)
+              )
         );
       for (const name of propertyNames) {
         result.add(name);

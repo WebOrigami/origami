@@ -3,15 +3,12 @@
  * is not a string, it will be returned as is.
  *
  * @param {any} key
- * @param {any?} value
  */
-export function add(key, value = true) {
+export function add(key) {
   if (key == null) {
     throw new ReferenceError("trailingSlash: key was undefined");
   }
-  return typeof key === "string" && value && !key.endsWith("/")
-    ? `${key}/`
-    : key;
+  return typeof key === "string" && !key.endsWith("/") ? `${key}/` : key;
 }
 
 /**

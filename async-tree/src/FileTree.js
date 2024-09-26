@@ -104,7 +104,7 @@ export default class FileTree {
     }
 
     let names = entries.map((entry) =>
-      trailingSlash.add(entry.name, entry.isDirectory())
+      trailingSlash.toggle(entry.name, entry.isDirectory())
     );
 
     // Filter out unhelpful file names.
