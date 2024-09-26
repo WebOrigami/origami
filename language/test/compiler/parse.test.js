@@ -178,7 +178,6 @@ describe("Origami parser", () => {
     assertParse("functionComposition", "tree/", [
       ops.traverse,
       [ops.scope, "tree/"],
-      [ops.primitive, ""],
     ]);
     assertParse("functionComposition", "tree/key", [
       ops.traverse,
@@ -295,10 +294,9 @@ describe("Origami parser", () => {
   });
 
   test("leadingSlashPath", () => {
-    assertParse("leadingSlashPath", "/tree/", [
-      [ops.primitive, "tree/"],
-      [ops.primitive, ""],
-    ]);
+    assertParse("leadingSlashPath", "/", []);
+    assertParse("leadingSlashPath", "/tree", [[ops.primitive, "tree"]]);
+    assertParse("leadingSlashPath", "/tree/", [[ops.primitive, "tree/"]]);
   });
 
   test("list", () => {
@@ -490,10 +488,7 @@ describe("Origami parser", () => {
   });
 
   test("path", () => {
-    assertParse("path", "tree/", [
-      [ops.primitive, "tree/"],
-      [ops.primitive, ""],
-    ]);
+    assertParse("path", "tree/", [[ops.primitive, "tree/"]]);
     assertParse("path", "month/12", [
       [ops.primitive, "month/"],
       [ops.primitive, "12"],
@@ -535,7 +530,6 @@ describe("Origami parser", () => {
       ops.https,
       [ops.primitive, "example.com"],
       [ops.primitive, "foo/"],
-      [ops.primitive, ""],
     ]);
     assertParse("protocolCall", "http:example.com", [
       ops.http,
@@ -558,6 +552,12 @@ describe("Origami parser", () => {
       [ops.scope, "tree/"],
       [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
+    ]);
+    assertParse("scopeTraverse", "tree/foo/bar/", [
+      ops.traverse,
+      [ops.scope, "tree/"],
+      [ops.primitive, "foo/"],
+      [ops.primitive, "bar/"],
     ]);
   });
 

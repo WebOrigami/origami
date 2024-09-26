@@ -203,11 +203,8 @@ lambda "lambda function"
 
 // A path that begins with a slash: `/foo/bar`
 leadingSlashPath "path with a leading slash"
-  = "/" path:path {
-      return annotate(path, location());
-    }
-  / "/" {
-      return annotate([""], location());
+  = "/" path:path? {
+      return annotate(path ?? [], location());
     }
 
 // A separated list of expressions
@@ -299,14 +296,15 @@ pipeline
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = head:pathElement|0..| tail:pathTail {
-      return annotate([...head, tail], location());
+  = head:pathElement|0..| tail:pathTail? {
+      const path = tail ? [...head, tail] : head;
+      return annotate(path, location());
     }
 
 // A path key followed by a slash
 pathElement
   = chars:pathKeyChar* "/" {
-    return annotate([ops.primitive, chars.join("") + "/"], location());
+    return annotate([ops.primitive, text()], location());
   }
 
 // A single character in a slash-separated path.
@@ -318,8 +316,8 @@ pathKeyChar
 
 // A path key without a slash
 pathTail
-  = chars:pathKeyChar* {
-    return annotate([ops.primitive, chars.join("")], location());
+  = chars:pathKeyChar+ {
+    return annotate([ops.primitive, text()], location());
   }
 
 // Parse a protocol call like `fn://foo/bar`.
@@ -431,7 +429,7 @@ templateDocumentContents
 
 templateDocumentText "template text"
   = chars:templateDocumentChar+ {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.primitive, text()], location());
   }
 
 // A backtick-quoted template literal
