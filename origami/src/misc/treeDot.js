@@ -3,6 +3,7 @@ import {
   isPlainObject,
   isStringLike,
   toString,
+  trailingSlash,
 } from "@weborigami/async-tree";
 import * as serialize from "../common/serialize.js";
 import { keySymbol } from "../common/utilities.js";
@@ -163,7 +164,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
     const label = `label="${icon}${text}"`;
     const color = node.isError ? `; color="red"` : "";
     const fill = node.isError ? `; fillcolor="#FFF4F4"` : "";
-    const destPath = nodePath ? `${nodePath}/${key}` : key;
+    const destPath = nodePath ? `${trailingSlash.add(nodePath)}${key}` : key;
     const url = createLinks ? `; URL="${destPath}"` : "";
     result.push(`  "${destPath}" [${label}${color}${fill}${url}];`);
   }
