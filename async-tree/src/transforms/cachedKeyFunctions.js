@@ -44,7 +44,10 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
           sourceKey
         );
 
-        if (trailingSlash.remove(computedResultKey) === resultKeyWithoutSlash) {
+        if (
+          computedResultKey &&
+          trailingSlash.remove(computedResultKey) === resultKeyWithoutSlash
+        ) {
           // Match found, match trailing slash and return
           return trailingSlash.toggle(sourceKey, trailingSlash.has(resultKey));
         }
