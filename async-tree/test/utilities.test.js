@@ -42,7 +42,10 @@ describe("utilities", () => {
 
   test("keysFromPath() returns the keys from a slash-separated path", () => {
     assert.deepEqual(utilities.keysFromPath("a/b/c"), ["a/", "b/", "c"]);
-    assert.deepEqual(utilities.keysFromPath("foo/"), ["foo/", ""]);
+    assert.deepEqual(utilities.keysFromPath("a/b/c/"), ["a/", "b/", "c/"]);
+    assert.deepEqual(utilities.keysFromPath("/foo/"), ["foo/"]);
+    assert.deepEqual(utilities.keysFromPath("a///b"), ["a/", "b"]);
+    assert.deepEqual(utilities.keysFromPath(""), []);
   });
 
   test("naturalOrder compares strings in natural order", () => {
