@@ -434,7 +434,7 @@ export async function traverseOrThrow(treelike, ...keys) {
       const args = remainingKeys.splice(0, fnKeyCount);
       key = null;
       value = await fn.call(target, ...args);
-    } else if (isTreelike(value)) {
+    } else if (isTraversable(value) || typeof value === "object") {
       // Value is some other treelike object: cast it to a tree.
       const tree = from(value);
       // Get the next key.
