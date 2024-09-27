@@ -35,11 +35,6 @@ export default class SiteTree {
       );
     }
 
-    // If the key is the empty string, return tree itself.
-    if (key === "") {
-      return this;
-    }
-
     // If the keys ends with a slash, return a tree for the indicated route.
     if (trailingSlash.has(key)) {
       const href = new URL(key, this.href).href;

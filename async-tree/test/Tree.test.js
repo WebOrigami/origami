@@ -333,24 +333,6 @@ describe("Tree", () => {
     assert.equal(await Tree.traverse(tree, "a", "b", "c"), "Hello");
   });
 
-  test("traversing a final empty string can unpack the last value", async () => {
-    const unpackable = new String();
-    /** @type {any} */ (unpackable).unpack = () => "Content";
-    const tree = {
-      unpackable,
-    };
-    const result = await Tree.traverse(tree, "unpackable", "");
-    assert.equal(result, "Content");
-  });
-
-  test("traversing a final empty string returns a value as is if it's not unpackable", async () => {
-    const tree = new ObjectTree({
-      a: "Hello",
-    });
-    const result = await Tree.traverse(tree, "a", "");
-    assert.equal(result, "Hello");
-  });
-
   test("traversePath() traverses a slash-separated path", async () => {
     const tree = new ObjectTree({
       a: {

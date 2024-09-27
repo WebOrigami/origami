@@ -76,7 +76,7 @@ export default async function crawl(treelike, baseHref) {
     for (const resourcePath of resourcePaths) {
       const resourceKeys = adjustKeys(keysFromPath(resourcePath));
       const fn = () => {
-        return traverse(tree, ...resourceKeys);
+        return Tree.traverse(tree, ...resourceKeys);
       };
       addValueToObject(resources, resourceKeys, fn);
     }
@@ -101,12 +101,13 @@ export default async function crawl(treelike, baseHref) {
 }
 
 // For indexing and storage purposes, treat a path that ends in a trailing slash
-// (or the dot we use to seed the queue) as if it ends in index.html.
+// as if it ends in index.html.
 function adjustKeys(keys) {
-  const adjustedKeys = keys.slice();
-  if (adjustedKeys.at(-1) === "") {
-    adjustedKeys[adjustedKeys.length - 1] = "index.html";
+  if (keys.length > 0 && !trailingSlash.has(keys.at(-1))) {
+    return keys;
   }
+  const adjustedKeys = keys.slice();
+  adjustedKeys.push("index.html");
   return adjustedKeys;
 }
 
@@ -151,7 +152,7 @@ async function* crawlPaths(tree, baseUrl) {
   const promisesForPaths = {};
 
   // Seed the promise dictionary with robots.txt and the root path.
-  const initialPaths = ["/robots.txt", ""];
+  const initialPaths = ["/robots.txt", "/"];
   initialPaths.forEach((path) => {
     promisesForPaths[path] = processPath(tree, path, baseUrl);
   });
@@ -469,14 +470,13 @@ async function processPath(tree, path, baseUrl) {
   }
 
   // Convert path to keys
-  /** @type {any[]} */
-  let keys = path === "" ? [""] : keysFromPath(path);
+  const keys = keysFromPath(path);
 
   // Traverse tree to get value.
-  let value = await traverse(tree, ...keys);
+  let value = await Tree.traverse(tree, ...keys);
   if (Tree.isAsyncTree(value)) {
     // Path is actually a directory; see if it has an index.html
-    value = await traverse(value, "index.html");
+    value = await Tree.traverse(value, "index.html");
   }
 
   const adjustedKeys = adjustKeys(keys);
@@ -507,19 +507,6 @@ async function processPath(tree, path, baseUrl) {
     resourcePaths,
     value,
   };
-}
-
-async function traverse(tree, ...keys) {
-  if (tree.resolve && keys.length > 1) {
-    // Tree like SiteTree that supports resolve() method
-    const lastKey = keys.pop();
-    const path = keys.join("/");
-    const resolved = tree.resolve(path);
-    return resolved.get(lastKey);
-  } else {
-    // Regular async tree
-    return Tree.traverse(tree, ...keys);
-  }
 }
 
 crawl.usage = `@crawl <tree>\tCrawl a tree`;
