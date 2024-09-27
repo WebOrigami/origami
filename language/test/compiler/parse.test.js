@@ -193,6 +193,10 @@ describe("Origami parser", () => {
       [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
       undefined,
     ]);
+    assertParse("functionComposition", "(tree)/", [
+      ops.unpack,
+      [ops.scope, "tree"],
+    ]);
     assertParse("functionComposition", "fn()/key()", [
       [ops.traverse, [[ops.scope, "fn"], undefined], [ops.primitive, "key"]],
       undefined,

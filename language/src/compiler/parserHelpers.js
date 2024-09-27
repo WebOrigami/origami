@@ -88,9 +88,14 @@ export function makeFunctionCall(target, chain, location) {
 
     // @ts-ignore
     fnCall =
-      args[0] === ops.traverse
-        ? [ops.traverse, value, ...args.slice(1)]
-        : [value, ...args];
+      args[0] !== ops.traverse
+        ? // Function call
+          [value, ...args]
+        : args.length > 1
+        ? // Traverse
+          [ops.traverse, value, ...args.slice(1)]
+        : // Traverse without arguments equates to unpack
+          [ops.unpack, value];
 
     // Create a location spanning the newly-constructed function call.
     if (args instanceof Array) {
