@@ -162,8 +162,10 @@ guillemetStringChar
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier (":" number)? {
-    return annotate([ops.primitive, text()], location());
+  = identifier:identifier port:(":" @number)? {
+    const portText = port ? `:${port[1]}` : "";
+    const hostText = identifier + portText;
+    return annotate([ops.primitive, hostText], location());
   }
 
 identifier "identifier"
@@ -270,8 +272,8 @@ objectShorthandProperty "object identifier"
     }
 
 objectPublicKey
-  = identifier "/"? {
-    return text();
+  = identifier:identifier slash:"/"? {
+    return identifier + (slash ?? "");
   }
   / string:string {
     // Remove `ops.primitive` from the string code
@@ -306,7 +308,7 @@ path "slash-separated path"
 // A path key followed by a slash
 pathElement
   = chars:pathKeyChar* "/" {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("") + "/"], location());
   }
 
 // A single character in a slash-separated path.
@@ -319,7 +321,7 @@ pathKeyChar
 // A path key without a slash
 pathTail
   = chars:pathKeyChar+ {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("")], location());
   }
 
 // Parse a protocol call like `fn://foo/bar`.
@@ -431,7 +433,7 @@ templateDocumentContents
 
 templateDocumentText "template text"
   = chars:templateDocumentChar+ {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("")], location());
   }
 
 // A backtick-quoted template literal

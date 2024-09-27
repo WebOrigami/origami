@@ -392,8 +392,10 @@ function peg$parse(input, options) {
   var peg$f19 = function(chars) {
     return annotate([ops.primitive, chars.join("")], location());
   };
-  var peg$f20 = function() {
-    return annotate([ops.primitive, text()], location());
+  var peg$f20 = function(identifier, port) {
+    const portText = port ? `:${port[1]}` : "";
+    const hostText = identifier + portText;
+    return annotate([ops.primitive, hostText], location());
   };
   var peg$f21 = function(chars) { return chars.join(""); };
   var peg$f22 = function(list) {
@@ -432,8 +434,8 @@ function peg$parse(input, options) {
   var peg$f34 = function(key) {
       return annotate([key, [ops.inherited, key]], location());
     };
-  var peg$f35 = function() {
-    return text();
+  var peg$f35 = function(identifier, slash) {
+    return identifier + (slash ?? "");
   };
   var peg$f36 = function(string) {
     // Remove `ops.primitive` from the string code
@@ -455,10 +457,10 @@ function peg$parse(input, options) {
       return annotate(path, location());
     };
   var peg$f41 = function(chars) {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("") + "/"], location());
   };
   var peg$f42 = function(chars) {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("")], location());
   };
   var peg$f43 = function(protocol, host, path) {
       return annotate([protocol, host, ...(path ?? [])], location());
@@ -493,7 +495,7 @@ function peg$parse(input, options) {
       return annotate(makeTemplate(parts), location());
     };
   var peg$f60 = function(chars) {
-    return annotate([ops.primitive, text()], location());
+    return annotate([ops.primitive, chars.join("")], location());
   };
   var peg$f61 = function(contents) {
       return annotate(contents, location());
@@ -1569,8 +1571,7 @@ function peg$parse(input, options) {
       if (s3 !== peg$FAILED) {
         s4 = peg$parsenumber();
         if (s4 !== peg$FAILED) {
-          s3 = [s3, s4];
-          s2 = s3;
+          s2 = s4;
         } else {
           peg$currPos = s2;
           s2 = peg$FAILED;
@@ -1583,7 +1584,7 @@ function peg$parse(input, options) {
         s2 = null;
       }
       peg$savedPos = s0;
-      s0 = peg$f20();
+      s0 = peg$f20(s1, s2);
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;
@@ -2387,7 +2388,7 @@ function peg$parse(input, options) {
         s2 = null;
       }
       peg$savedPos = s0;
-      s0 = peg$f35();
+      s0 = peg$f35(s1, s2);
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;

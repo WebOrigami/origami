@@ -269,6 +269,7 @@ describe("Origami parser", () => {
   test("host", () => {
     assertParse("host", "abc", [ops.primitive, "abc"]);
     assertParse("host", "abc:123", [ops.primitive, "abc:123"]);
+    assertParse("host", "foo\\ bar", [ops.primitive, "foo bar"]);
   });
 
   test("identifier", () => {
@@ -448,6 +449,12 @@ describe("Origami parser", () => {
         [ops.primitive, "a"],
       ],
     ]);
+  });
+
+  test("objectPublicKey", () => {
+    assertParse("objectPublicKey", "a", "a", false);
+    assertParse("objectPublicKey", "markdown/", "markdown/", false);
+    assertParse("objectPublicKey", "foo\\ bar", "foo bar", false);
   });
 
   test("parameterizedLambda", () => {
