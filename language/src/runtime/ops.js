@@ -14,7 +14,7 @@ import {
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import expressionObject from "./expressionObject.js";
-import { attachHandlerIfApplicable } from "./extensions.js";
+import { handleExtension } from "./extensions.js";
 import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -132,7 +132,7 @@ async function fetchResponse(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (this && filename) {
-    buffer = await attachHandlerIfApplicable(this, buffer, filename);
+    buffer = await handleExtension(this, buffer, filename);
   }
 
   return buffer;

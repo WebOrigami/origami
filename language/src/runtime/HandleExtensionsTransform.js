@@ -1,4 +1,4 @@
-import { attachHandlerIfApplicable } from "./extensions.js";
+import { handleExtension } from "./extensions.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -10,9 +10,8 @@ import { attachHandlerIfApplicable } from "./extensions.js";
 export default function HandleExtensionsTransform(Base) {
   return class FileLoaders extends Base {
     async get(key) {
-      let value = await super.get(key);
-      value = attachHandlerIfApplicable(this, value, key);
-      return value;
+      const value = await super.get(key);
+      return handleExtension(this, value, key);
     }
   };
 }

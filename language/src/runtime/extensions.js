@@ -5,49 +5,28 @@ import {
   isUnpackable,
   scope,
   symbols,
-  toString,
   trailingSlash,
 } from "@weborigami/async-tree";
 
 /**
- * If the given value is packed (e.g., buffer) and the key is a string-like path
- * that ends in an extension, search for a handler for that extension and, if
- * found, attach it to the value.
+ * If the given path ends in an extension, return it. Otherwise, return the
+ * empty string.
  *
- * @param {import("@weborigami/types").AsyncTree} parent
- * @param {any} value
- * @param {any} key
+ * This is meant as a basic replacement for the standard Node `path.extname`.
+ * That standard function inaccurately returns an extension for a path that
+ * includes a near-final extension but ends in a final slash, like `foo.txt/`.
+ * Node thinks that path has a ".txt" extension, but for our purposes it
+ * doesn't.
+ *
+ * @param {string} path
  */
-export async function attachHandlerIfApplicable(parent, value, key) {
-  if (isPacked(value) && isStringLike(key)) {
-    key = trailingSlash.remove(toString(key));
-
-    // Special case: `.ori.<ext>` extensions are Origami documents.
-    const extension = key.match(/\.ori\.\S+$/) ? ".ori_document" : extname(key);
-    if (extension) {
-      const handler = await getExtensionHandler(parent, extension);
-      if (handler) {
-        // If the value is a primitive, box it so we can attach data to it.
-        value = box(value);
-
-        if (handler.mediaType) {
-          value.mediaType = handler.mediaType;
-        }
-        value[symbols.parent] = parent;
-
-        const unpack = handler.unpack;
-        if (unpack) {
-          // Wrap the unpack function so its only called once per value.
-          let loaded;
-          value.unpack = async () => {
-            loaded ??= await unpack(value, { key, parent });
-            return loaded;
-          };
-        }
-      }
-    }
-  }
-  return value;
+export function extname(path) {
+  // We want at least one character before the dot, then a dot, then a non-empty
+  // sequence of characters after the dot that aren't slahes or dots.
+  const extnameRegex = /[^/](?<ext>\.[^/\.]+)$/;
+  const match = String(path).match(extnameRegex);
+  const extension = match?.groups?.ext.toLowerCase() ?? "";
+  return extension;
 }
 
 /**
@@ -74,22 +53,50 @@ export async function getExtensionHandler(parent, extension) {
 }
 
 /**
- * If the given path ends in an extension, return it. Otherwise, return the
- * empty string.
+ * If the given value is packed (e.g., buffer) and the key is a string-like path
+ * that ends in an extension, search for a handler for that extension and, if
+ * found, attach it to the value.
  *
- * This is meant as a basic replacement for the standard Node `path.extname`.
- * That standard function inaccurately returns an extension for a path that
- * includes a near-final extension but ends in a final slash, like `foo.txt/`.
- * Node thinks that path has a ".txt" extension, but for our purposes it
- * doesn't.
- *
- * @param {string} path
+ * @param {import("@weborigami/types").AsyncTree} parent
+ * @param {any} value
+ * @param {any} key
  */
-export function extname(path) {
-  // We want at least one character before the dot, then a dot, then a non-empty
-  // sequence of characters after the dot that aren't slahes or dots.
-  const extnameRegex = /[^/](?<ext>\.[^/\.]+)$/;
-  const match = String(path).match(extnameRegex);
-  const extension = match?.groups?.ext.toLowerCase() ?? "";
-  return extension;
+export async function handleExtension(parent, value, key) {
+  if (isPacked(value) && isStringLike(key)) {
+    const hasSlash = trailingSlash.has(key);
+    if (hasSlash) {
+      key = trailingSlash.remove(key);
+    }
+
+    // Special case: `.ori.<ext>` extensions are Origami documents.
+    const extension = key.match(/\.ori\.\S+$/) ? ".ori_document" : extname(key);
+    if (extension) {
+      const handler = await getExtensionHandler(parent, extension);
+      if (handler) {
+        if (hasSlash && handler.unpack) {
+          // Key like `data.json/` ends in slash -- unpack immediately
+          return handler.unpack(value, { key, parent });
+        }
+
+        // If the value is a primitive, box it so we can attach data to it.
+        value = box(value);
+
+        if (handler.mediaType) {
+          value.mediaType = handler.mediaType;
+        }
+        value[symbols.parent] = parent;
+
+        const unpack = handler.unpack;
+        if (unpack) {
+          // Wrap the unpack function so its only called once per value.
+          let loaded;
+          value.unpack = async () => {
+            loaded ??= await unpack(value, { key, parent });
+            return loaded;
+          };
+        }
+      }
+    }
+  }
+  return value;
 }
