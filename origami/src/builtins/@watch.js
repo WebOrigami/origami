@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import { formatError } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -48,8 +49,8 @@ async function evaluateTree(parent, fn) {
   let result;
   try {
     result = await fn.call(parent);
-  } catch (error) {
-    message = messageForError(error);
+  } catch (/** @type {any} */ error) {
+    message = formatError(error);
   }
   tree = result ? Tree.from(result, { parent }) : undefined;
   if (tree) {
@@ -64,29 +65,19 @@ async function evaluateTree(parent, fn) {
   return tree;
 }
 
-function messageForError(error) {
-  let message = "";
-  // Work up to the root cause, displaying intermediate messages as we go up.
-  while (error.cause) {
-    message += error.message + `\n`;
-    error = error.cause;
-  }
-  if (error.name) {
-    message += `${error.name}: `;
-  }
-  message += error.message;
-  return message;
-}
-
 // Update an indirect pointer to a target.
 function updateIndirectPointer(indirect, target) {
   // Clean the pointer of any named properties or symbols that have been set
   // directly on it.
-  for (const key of Object.getOwnPropertyNames(indirect)) {
-    delete indirect[key];
-  }
-  for (const key of Object.getOwnPropertySymbols(indirect)) {
-    delete indirect[key];
+  try {
+    for (const key of Object.getOwnPropertyNames(indirect)) {
+      delete indirect[key];
+    }
+    for (const key of Object.getOwnPropertySymbols(indirect)) {
+      delete indirect[key];
+    }
+  } catch {
+    // Ignore errors.
   }
 
   Object.setPrototypeOf(indirect, target);
