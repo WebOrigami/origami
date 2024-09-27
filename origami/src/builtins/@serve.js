@@ -26,9 +26,6 @@ export default async function serve(treelike, port) {
   let tree;
   if (treelike) {
     tree = Tree.from(treelike, { parent: this });
-
-    // TODO: Instead of applying ExplorableSiteTransform, apply a transform
-    // that just maps the empty string to index.html.
     if (!isTransformApplied(ExplorableSiteTransform, tree)) {
       tree = transformObject(ExplorableSiteTransform, tree);
     }

@@ -25,11 +25,6 @@ import { isTransformApplied, transformObject } from "../common/utilities.js";
 export default function ExplorableSiteTransform(Base) {
   return class ExplorableSite extends Base {
     async get(key) {
-      // The empty string key represents "index.html".
-      if (key === "") {
-        key = "index.html";
-      }
-
       // Ask the tree if it has the key.
       let value = await super.get(key);
 
@@ -72,6 +67,12 @@ export default function ExplorableSiteTransform(Base) {
         };
       }
       return value;
+    }
+
+    // If this value is given to the server, the server will call this pack()
+    // method. We respond with the index page.
+    async pack() {
+      return this.get("index.html");
     }
   };
 }
