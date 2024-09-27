@@ -449,7 +449,9 @@ function peg$parse(input, options) {
       return annotate(makePipeline(steps), location());
     };
   var peg$f40 = function(head, tail) {
-      const path = tail ? [...head, tail] : head;
+      let path = tail ? [...head, tail] : head;
+      // Remove parts for consecutive slashes
+      path = path.filter((part) => part[1] !== "/");
       return annotate(path, location());
     };
   var peg$f41 = function(chars) {

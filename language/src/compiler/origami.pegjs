@@ -297,7 +297,9 @@ pipeline
 // A slash-separated path of keys
 path "slash-separated path"
   = head:pathElement|0..| tail:pathTail? {
-      const path = tail ? [...head, tail] : head;
+      let path = tail ? [...head, tail] : head;
+      // Remove parts for consecutive slashes
+      path = path.filter((part) => part[1] !== "/");
       return annotate(path, location());
     }
 

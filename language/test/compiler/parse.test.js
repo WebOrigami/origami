@@ -134,11 +134,10 @@ describe("Origami parser", () => {
       ]
     );
 
-    // Consecutive slahes inside a path = empty string key
+    // Consecutive slahes in a path are removed
     assertParse("expression", "path//key", [
       ops.traverse,
       [ops.scope, "path/"],
-      [ops.primitive, "/"],
       [ops.primitive, "key"],
     ]);
     // Single slash at start of something = absolute file path
@@ -497,6 +496,10 @@ describe("Origami parser", () => {
       [ops.primitive, "tree/"],
       [ops.primitive, "foo/"],
       [ops.primitive, "bar"],
+    ]);
+    assertParse("path", "a///b", [
+      [ops.primitive, "a/"],
+      [ops.primitive, "b"],
     ]);
   });
 
