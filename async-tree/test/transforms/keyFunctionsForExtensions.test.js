@@ -10,18 +10,22 @@ describe("keyMapsForExtensions", () => {
       sourceExtension: "txt",
     });
     assert.equal(await inverseKey("file.txt"), "file.txt");
+    assert.equal(await inverseKey("file.txt/"), "file.txt");
     assert.equal(await key("file.txt"), "file.txt");
+    assert.equal(await key("file.txt/"), "file.txt/");
     assert.equal(await inverseKey("file.foo"), undefined);
     assert.equal(await key("file.foo"), undefined);
   });
 
   test("returns key functions that can map extensions", async () => {
     const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: "html",
+      resultExtension: "json",
       sourceExtension: "md",
     });
-    assert.equal(await inverseKey("file.html"), "file.md");
-    assert.equal(await key("file.md"), "file.html");
+    assert.equal(await inverseKey("file.json"), "file.md");
+    assert.equal(await inverseKey("file.json/"), "file.md");
+    assert.equal(await key("file.md"), "file.json");
+    assert.equal(await key("file.md/"), "file.json/");
     assert.equal(await inverseKey("file.foo"), undefined);
     assert.equal(await key("file.foo"), undefined);
   });
