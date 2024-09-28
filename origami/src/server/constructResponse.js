@@ -32,16 +32,6 @@ export default async function constructResponse(request, resource) {
   // Determine media type, what data we'll send, and encoding.
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
 
-  let mediaType;
-  if (resource.mediaType) {
-    // Resource indicates its own media type.
-    mediaType = resource.mediaType;
-  } else {
-    // Infer expected media type from file extension on request URL.
-    const extension = extname(url.pathname).toLowerCase();
-    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
-  }
-
   if (!url.pathname.endsWith("/") && Tree.isTreelike(resource)) {
     // Treelike resource: redirect to its index page.
     const Location = `${url.pathname}/`;
@@ -55,6 +45,16 @@ export default async function constructResponse(request, resource) {
 
   if (!isPacked(resource) && typeof resource.pack === "function") {
     resource = await resource.pack();
+  }
+
+  let mediaType;
+  if (resource.mediaType) {
+    // Resource indicates its own media type.
+    mediaType = resource.mediaType;
+  } else {
+    // Infer expected media type from file extension on request URL.
+    const extension = extname(url.pathname).toLowerCase();
+    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
   }
 
   if (
