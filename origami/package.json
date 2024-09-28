@@ -13,8 +13,8 @@
   "main": "./exports/exports.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "22.5.4",
-    "typescript": "5.5.4"
+    "@types/node": "22.7.4",
+    "typescript": "5.6.2"
   },
   "dependencies": {
     "@weborigami/async-tree": "0.0.66-beta.1",
@@ -23,7 +23,7 @@
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.10.0",
-    "marked": "14.1.1",
+    "marked": "14.1.2",
     "marked-gfm-heading-id": "4.1.0",
     "marked-highlight": "2.1.4",
     "marked-smartypants": "1.1.8",
