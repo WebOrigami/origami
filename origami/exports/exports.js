@@ -50,6 +50,7 @@ export { default as json } from "../src/builtins/@json.js";
 export { default as jsonKeys } from "../src/builtins/@jsonKeys.js";
 export { default as jsonParse } from "../src/builtins/@jsonParse.js";
 export { default as keys } from "../src/builtins/@keys.js";
+export { default as keysTree } from "../src/builtins/@keysTree.js";
 export { default as length } from "../src/builtins/@length.js";
 export { default as log } from "../src/builtins/@log.js";
 export { default as map } from "../src/builtins/@map.js";

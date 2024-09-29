@@ -1,6 +1,6 @@
 import SiteTree from "./SiteTree.js";
 
-export default class OpenSiteTree extends SiteTree {
+export default class SiteTreeWithKeys extends SiteTree {
   constructor(...args) {
     super(...args);
     this.serverKeysPromise = undefined;

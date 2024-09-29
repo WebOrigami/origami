@@ -5,8 +5,8 @@
 
 import {
   ObjectTree,
-  OpenSiteTree,
   SiteTree,
+  SiteTreeWithKeys,
   Tree,
   isUnpackable,
   scope as scopeFn,
@@ -285,16 +285,16 @@ export async function object(...entries) {
 object.toString = () => "«ops.object»";
 
 /**
- * An open tree with JSON Keys via HTTPS.
+ * A site tree with JSON Keys via HTTPS.
  *
  * @this {AsyncTree|null}
  * @param {string} host
  * @param  {...string|Symbol} keys
  */
-export function openSite(host, ...keys) {
-  return constructSiteTree("https:", OpenSiteTree, this, host, ...keys);
+export function keysTree(host, ...keys) {
+  return constructSiteTree("https:", SiteTreeWithKeys, this, host, ...keys);
 }
-openSite.toString = () => "«ops.openSite»";
+keysTree.toString = () => "«ops.keysTree»";
 
 /**
  * Look up the given key in the scope for the current tree.

@@ -321,6 +321,8 @@ export async function paths(treelike, base = "") {
  * The result's keys will be the tree's keys cast to strings. Any tree value
  * that is itself a tree will be similarly converted to a plain object.
  *
+ * Any trailing slashes in keys will be removed.
+ *
  * @param {Treelike} treelike
  * @returns {Promise<PlainObject|Array>}
  */

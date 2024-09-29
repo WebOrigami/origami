@@ -336,9 +336,9 @@ protocol "protocol"
   / scopeReference
 
 reservedProtocol "reserved protocol"
-  = "haskeys" { return ops.openSite; }
-  / "https" { return ops.https; } // Must come before "http"
+  = "https" { return ops.https; } // Must come before "http"
   / "http" { return ops.http; }
+  / "keystree" { return ops.keysTree; }
   / "new" { return ops.constructor; }
   / "package" { return [ops.scope, "@package"] } // Alias
   / "tree" { return ops.treeHttps; } // Alias
