@@ -6,6 +6,7 @@ export { default as FunctionTree } from "./src/FunctionTree.js";
 export { default as MapTree } from "./src/MapTree.js";
 // Skip BrowserFileTree.js, which is browser-only.
 export { default as DeepMapTree } from "./src/DeepMapTree.js";
+export { default as ExplorableSiteTree } from "./src/ExplorableSiteTree.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
 export * as jsonKeys from "./src/jsonKeys.js";
 export { default as cache } from "./src/operations/cache.js";
@@ -24,7 +25,6 @@ export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export { default as SetTree } from "./src/SetTree.js";
 export { default as SiteTree } from "./src/SiteTree.js";
-export { default as SiteTreeWithKeys } from "./src/SiteTreeWithKeys.js";
 export * as symbols from "./src/symbols.js";
 export * as trailingSlash from "./src/trailingSlash.js";
 export { default as cachedKeyFunctions } from "./src/transforms/cachedKeyFunctions.js";

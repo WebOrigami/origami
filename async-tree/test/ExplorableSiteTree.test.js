@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
-import SiteTreeWithKeys from "../src/SiteTreeWithKeys.js";
+import ExplorableSiteTree from "../src/ExplorableSiteTree.js";
 import { Tree } from "../src/internal.js";
 
 const textDecoder = new TextDecoder();
@@ -34,31 +34,31 @@ const mockResponses = {
   },
 };
 
-describe("SiteTreeWithKeys", () => {
+describe("ExplorableSiteTree", () => {
   beforeEach(() => {
     mock.method(global, "fetch", mockFetch);
   });
 
   test("can get the keys of a tree", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     const keys = await fixture.keys();
     assert.deepEqual(Array.from(keys), ["about/", "index.html"]);
   });
 
   test("can get a plain value for a key", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     const arrayBuffer = await fixture.get("index.html");
     const text = textDecoder.decode(arrayBuffer);
     assert.equal(text, "Home page");
   });
 
   test("getting an unsupported key returns undefined", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     assert.equal(await fixture.get("xyz"), undefined);
   });
 
   test("getting a null/undefined key throws an exception", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     await assert.rejects(async () => {
       await fixture.get(null);
     });
@@ -68,14 +68,14 @@ describe("SiteTreeWithKeys", () => {
   });
 
   test("can return a new tree for a key that redirects", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     const about = await fixture.get("about");
-    assert(about instanceof SiteTreeWithKeys);
+    assert(about instanceof ExplorableSiteTree);
     assert.equal(about.href, "https://mock/about/");
   });
 
   test("can convert a site to a plain object", async () => {
-    const fixture = new SiteTreeWithKeys(mockHost);
+    const fixture = new ExplorableSiteTree(mockHost);
     // Convert buffers to strings.
     const strings = Tree.map(fixture, (value) => textDecoder.decode(value));
     assert.deepEqual(await Tree.plain(strings), {

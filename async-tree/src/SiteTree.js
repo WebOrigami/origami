@@ -56,6 +56,14 @@ export default class SiteTree {
     return this.processResponse(response);
   }
 
+  /**
+   * Returns an empty set of keys.
+   *
+   * For a variation of `SiteTree` that can return the keys for a site route,
+   * see [ExplorableSiteTree](ExplorableSiteTree.html).
+   *
+   * @returns {Promise<Iterable<string>>}
+   */
   async keys() {
     return [];
   }

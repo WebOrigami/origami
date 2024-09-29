@@ -4,9 +4,9 @@
  */
 
 import {
+  ExplorableSiteTree,
   ObjectTree,
   SiteTree,
-  SiteTreeWithKeys,
   Tree,
   isUnpackable,
   scope as scopeFn,
@@ -291,10 +291,10 @@ object.toString = () => "«ops.object»";
  * @param {string} host
  * @param  {...string|Symbol} keys
  */
-export function keysTree(host, ...keys) {
-  return constructSiteTree("https:", SiteTreeWithKeys, this, host, ...keys);
+export function explorableSite(host, ...keys) {
+  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
 }
-keysTree.toString = () => "«ops.keysTree»";
+explorableSite.toString = () => "«ops.explorableSite»";
 
 /**
  * Look up the given key in the scope for the current tree.

@@ -227,14 +227,14 @@ function peg$parse(input, options) {
   var peg$c30 = "\r\n";
   var peg$c31 = "\r";
   var peg$c32 = "{";
-  var peg$c33 = "https";
-  var peg$c34 = "http";
-  var peg$c35 = "keystree";
+  var peg$c33 = "explore";
+  var peg$c34 = "https";
+  var peg$c35 = "http";
   var peg$c36 = "new";
   var peg$c37 = "package";
-  var peg$c38 = "tree";
+  var peg$c38 = "treehttps";
   var peg$c39 = "treehttp";
-  var peg$c40 = "treehttps";
+  var peg$c40 = "tree";
   var peg$c41 = ",";
   var peg$c42 = "#!";
   var peg$c43 = "\u2192";
@@ -318,14 +318,14 @@ function peg$parse(input, options) {
   var peg$e65 = peg$otherExpectation("function call using protocol: syntax");
   var peg$e66 = peg$otherExpectation("protocol");
   var peg$e67 = peg$otherExpectation("reserved protocol");
-  var peg$e68 = peg$literalExpectation("https", false);
-  var peg$e69 = peg$literalExpectation("http", false);
-  var peg$e70 = peg$literalExpectation("keystree", false);
+  var peg$e68 = peg$literalExpectation("explore", false);
+  var peg$e69 = peg$literalExpectation("https", false);
+  var peg$e70 = peg$literalExpectation("http", false);
   var peg$e71 = peg$literalExpectation("new", false);
   var peg$e72 = peg$literalExpectation("package", false);
-  var peg$e73 = peg$literalExpectation("tree", false);
+  var peg$e73 = peg$literalExpectation("treehttps", false);
   var peg$e74 = peg$literalExpectation("treehttp", false);
-  var peg$e75 = peg$literalExpectation("treehttps", false);
+  var peg$e75 = peg$literalExpectation("tree", false);
   var peg$e76 = peg$otherExpectation("scope reference");
   var peg$e77 = peg$literalExpectation(",", false);
   var peg$e78 = peg$literalExpectation("#!", false);
@@ -465,9 +465,9 @@ function peg$parse(input, options) {
   var peg$f43 = function(protocol, host, path) {
       return annotate([protocol, host, ...(path ?? [])], location());
     };
-  var peg$f44 = function() { return ops.https; };
-  var peg$f45 = function() { return ops.http; };
-  var peg$f46 = function() { return ops.keysTree; };
+  var peg$f44 = function() { return ops.explorableSite; };
+  var peg$f45 = function() { return ops.https; };
+  var peg$f46 = function() { return ops.http; };
   var peg$f47 = function() { return ops.constructor; };
   var peg$f48 = function() { return [ops.scope, "@package"] };
   var peg$f49 = function() { return ops.treeHttps; };
@@ -2741,9 +2741,9 @@ function peg$parse(input, options) {
 
     peg$silentFails++;
     s0 = peg$currPos;
-    if (input.substr(peg$currPos, 5) === peg$c33) {
+    if (input.substr(peg$currPos, 7) === peg$c33) {
       s1 = peg$c33;
-      peg$currPos += 5;
+      peg$currPos += 7;
     } else {
       s1 = peg$FAILED;
       if (peg$silentFails === 0) { peg$fail(peg$e68); }
@@ -2755,9 +2755,9 @@ function peg$parse(input, options) {
     s0 = s1;
     if (s0 === peg$FAILED) {
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 4) === peg$c34) {
+      if (input.substr(peg$currPos, 5) === peg$c34) {
         s1 = peg$c34;
-        peg$currPos += 4;
+        peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$e69); }
@@ -2769,9 +2769,9 @@ function peg$parse(input, options) {
       s0 = s1;
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
-        if (input.substr(peg$currPos, 8) === peg$c35) {
+        if (input.substr(peg$currPos, 4) === peg$c35) {
           s1 = peg$c35;
-          peg$currPos += 8;
+          peg$currPos += 4;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) { peg$fail(peg$e70); }
@@ -2811,9 +2811,9 @@ function peg$parse(input, options) {
             s0 = s1;
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
-              if (input.substr(peg$currPos, 4) === peg$c38) {
+              if (input.substr(peg$currPos, 9) === peg$c38) {
                 s1 = peg$c38;
-                peg$currPos += 4;
+                peg$currPos += 9;
               } else {
                 s1 = peg$FAILED;
                 if (peg$silentFails === 0) { peg$fail(peg$e73); }
@@ -2839,9 +2839,9 @@ function peg$parse(input, options) {
                 s0 = s1;
                 if (s0 === peg$FAILED) {
                   s0 = peg$currPos;
-                  if (input.substr(peg$currPos, 9) === peg$c40) {
+                  if (input.substr(peg$currPos, 4) === peg$c40) {
                     s1 = peg$c40;
-                    peg$currPos += 9;
+                    peg$currPos += 4;
                   } else {
                     s1 = peg$FAILED;
                     if (peg$silentFails === 0) { peg$fail(peg$e75); }

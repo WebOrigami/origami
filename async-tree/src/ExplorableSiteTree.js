@@ -1,6 +1,11 @@
 import SiteTree from "./SiteTree.js";
 
-export default class SiteTreeWithKeys extends SiteTree {
+/**
+ * A [SiteTree](SiteTree.html) that implements the [JSON Keys](jsonKeys.html)
+ * protocol. This enables a `keys()` method that can return the keys of a site
+ * route even though such a mechanism is not built into the HTTP protocol.
+ */
+export default class ExplorableSiteTree extends SiteTree {
   constructor(...args) {
     super(...args);
     this.serverKeysPromise = undefined;
@@ -24,6 +29,12 @@ export default class SiteTreeWithKeys extends SiteTree {
     return this.serverKeysPromise;
   }
 
+  /**
+   * Returns the keys of the site route. For this to work, the route must have a
+   * `.keys.json` file that contains a JSON array of string keys.
+   *
+   * @returns {Promise<Iterable<string>>}
+   */
   async keys() {
     const serverKeys = await this.getServerKeys();
     return serverKeys ?? [];

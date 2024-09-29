@@ -336,14 +336,14 @@ protocol "protocol"
   / scopeReference
 
 reservedProtocol "reserved protocol"
-  = "https" { return ops.https; } // Must come before "http"
+  = "explore" { return ops.explorableSite; }
+  / "https" { return ops.https; } // Must come before "http"
   / "http" { return ops.http; }
-  / "keystree" { return ops.keysTree; }
   / "new" { return ops.constructor; }
   / "package" { return [ops.scope, "@package"] } // Alias
-  / "tree" { return ops.treeHttps; } // Alias
-  / "treehttp" { return ops.treeHttp; }
-  / "treehttps" { return ops.treeHttps; }
+  / "treehttps" { return ops.treeHttps; } // Must come before `treehttp`
+  / "treehttp" { return ops.treeHttp; } // Must come before `tree`
+  / "tree" { return ops.treeHttps; }
 
 scopeReference "scope reference"
   = key:identifier {
