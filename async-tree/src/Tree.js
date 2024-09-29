@@ -110,10 +110,11 @@ export async function forEach(tree, callbackFn) {
  * parent of the new tree.
  *
  * @param {Treelike | Object} object
- * @param {{ deep?: true, parent?: AsyncTree|null }} [options]
+ * @param {{ deep?: boolean, parent?: AsyncTree|null }} [options]
  * @returns {AsyncTree}
  */
 export function from(object, options = {}) {
+  const deep = options.deep ?? false;
   let tree;
   if (isAsyncTree(object)) {
     // Argument already supports the tree interface.
@@ -126,13 +127,13 @@ export function from(object, options = {}) {
   } else if (object instanceof Set) {
     tree = new SetTree(object);
   } else if (isPlainObject(object) || object instanceof Array) {
-    tree = options.deep ? new DeepObjectTree(object) : new ObjectTree(object);
+    tree = deep ? new DeepObjectTree(object) : new ObjectTree(object);
   } else if (isUnpackable(object)) {
     async function AsyncFunction() {} // Sample async function
     tree =
       object.unpack instanceof AsyncFunction.constructor
         ? // Async unpack: return a deferred tree.
-          new DeferredTree(object.unpack)
+          new DeferredTree(object.unpack, { deep })
         : // Synchronous unpack: cast the result of unpack() to a tree.
           from(object.unpack());
   } else if (object && typeof object === "object") {

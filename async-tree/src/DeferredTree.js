@@ -14,12 +14,14 @@ import { Tree } from "./internal.js";
 export default class DeferredTree {
   /**
    * @param {Function|Promise<any>} loader
+   * @param {{ deep?: boolean }} [options]
    */
-  constructor(loader) {
+  constructor(loader, options) {
     this.loader = loader;
     this.treePromise = null;
     this._tree = null;
     this._parentUntilLoaded = null;
+    this._deep = options?.deep ?? false;
   }
 
   async get(key) {
@@ -60,7 +62,7 @@ export default class DeferredTree {
 
     // Use a promise to ensure the treelike is only converted to a tree once.
     this.treePromise ??= this.loadResult().then((treelike) => {
-      this._tree = Tree.from(treelike);
+      this._tree = Tree.from(treelike, { deep: this._deep });
       if (this._parentUntilLoaded) {
         // Now that the tree has been loaded, we can set its parent if it hasn't
         // already been set.
