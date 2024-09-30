@@ -12,5 +12,5 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  */
 export default function keysTree(host, ...keys) {
   assertTreeIsDefined(this, "keysTree");
-  return ops.keysTree.call(this, host, ...keys);
+  return ops.explorableSite.call(this, host, ...keys);
 }
