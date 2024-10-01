@@ -35,12 +35,18 @@ export default class SiteTree {
       );
     }
 
-    // If the keys ends with a slash, return a tree for the indicated route.
-    if (trailingSlash.has(key)) {
+    // A key with a trailing slash and no extension is for a folder; return a
+    // subtree without making a network request.
+    if (trailingSlash.has(key) && !key.includes(".")) {
       const href = new URL(key, this.href).href;
       const value = Reflect.construct(this.constructor, [href]);
       setParent(value, this);
       return value;
+    }
+
+    // HACK: For now we don't allow lookup of Origami extension handlers.
+    if (key.endsWith("_handler")) {
+      return undefined;
     }
 
     const href = new URL(key, this.href).href;
