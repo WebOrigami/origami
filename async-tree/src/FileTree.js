@@ -190,8 +190,11 @@ export default class FileTree {
       // Special case: empty object means create an empty directory.
       await fs.mkdir(destPath, { recursive: true });
     } else if (Tree.isTreelike(value)) {
-      // Treat value as a tree and write it out as a subdirectory.
+      // Treat value as a subtree and write it out as a subdirectory.
       const destTree = Reflect.construct(this.constructor, [destPath]);
+      // Create the directory here, even if the subtree is empty.
+      await fs.mkdir(destPath, { recursive: true });
+      // Write out the subtree.
       await Tree.assign(destTree, value);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";

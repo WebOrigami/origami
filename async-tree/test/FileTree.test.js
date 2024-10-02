@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileTree from "../src/FileTree.js";
-import { Tree } from "../src/internal.js";
+import { ObjectTree, Tree } from "../src/internal.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
@@ -81,12 +81,29 @@ describe("FileTree", async () => {
     await removeTempDirectory();
   });
 
-  test("can create empty subfolder via set()", async () => {
+  test("create subfolder via set() with empty object value", async () => {
     await createTempDirectory();
 
     // Write out new, empty folder called "empty".
     const tempFiles = new FileTree(tempDirectory);
     await tempFiles.set("empty", {});
+
+    // Verify folder exists and has no contents.
+    const folderPath = path.join(tempDirectory, "empty");
+    const stats = await fs.stat(folderPath);
+    assert(stats.isDirectory());
+    const files = await fs.readdir(folderPath);
+    assert.deepEqual(files, []);
+
+    await removeTempDirectory();
+  });
+
+  test("create subfolder via set() with empty tree value", async () => {
+    await createTempDirectory();
+
+    // Write out new, empty folder called "empty".
+    const tempFiles = new FileTree(tempDirectory);
+    await tempFiles.set("empty", new ObjectTree({}));
 
     // Verify folder exists and has no contents.
     const folderPath = path.join(tempDirectory, "empty");
