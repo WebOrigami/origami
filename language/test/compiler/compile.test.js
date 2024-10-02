@@ -8,7 +8,7 @@ const shared = new ObjectTree({
   name: "Alice",
 });
 
-describe("compile", () => {
+describe.only("compile", () => {
   test("array", async () => {
     await assertCompile("[]", []);
     await assertCompile("[ 1, 2, 3, ]", [1, 2, 3]);
@@ -60,6 +60,22 @@ describe("compile", () => {
       "`escape characters with \\`backslash\\``",
       "escape characters with `backslash`"
     );
+  });
+
+  test.only("templateLiteral block with whitespace", () => {
+    // Test the preprocessor that trims whitespace around template blocks
+    const text = `  \${ if(\`
+    true text
+  \`, \`
+    false text
+  \`) }`;
+    const fn = compile.templateDocument(text);
+    const { code } = fn;
+    const ifCall = code[2][1];
+    const trueText = ifCall[1][1];
+    const falseText = ifCall[2][1];
+    assert.equal(trueText, "    true text\n");
+    assert.equal(falseText, "    false text\n");
   });
 });
 

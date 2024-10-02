@@ -51,11 +51,39 @@ export function templateDocument(source) {
 // In all three cases, we trim spaces and tabs from the start and end of the
 // line. In case 1, we also remove the preceding newline.
 function trimTemplateWhitespace(text) {
+  // old
   const regex1 = /(^|\n)[ \t]*((?:{{|\${).*?`)[ \t]*\n/g;
   const regex2 = /\n[ \t]*(`(?!`).*?`)[ \t]*\n/g;
   const regex3js = /\n[ \t]*(`(?!`).*?(?:}}|[^\\]}))[ \t]*(?:\n|$)/g;
   const trimBlockStarts = text.replace(regex1, "$1$2");
   const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
   const trimBlockEnds = trimBlockBreaks.replace(regex3js, "\n$1");
-  return trimBlockEnds;
+
+  // new
+  const case1 = /^[ \t]*((?:{{|\${).*?`)[ \t]*$/;
+  const case2 = /^[ \t]*(`(?!`).*?`)[ \t]*$/;
+  const case3 = /^[ \t]*(`(?!`).*?(?:}}|[^\\]}))[ \t]*(?:\n|$)/;
+  const processed = [];
+  const lines = text.split("\n");
+  const lineCount = lines.length;
+
+  let result;
+  if (lineCount <= 1) {
+    result = text;
+  } else {
+    for (const [index, line] of lines.entries()) {
+      const trimLine = case1.test(line) || case2.test(line) || case3.test(line);
+      const trimmed = trimLine ? line.trim() : line;
+      const isLastLine = index === lineCount - 1;
+      const lineEnding = isLastLine ? "" : trimLine ? "" : "\n";
+      processed.push(trimmed + lineEnding);
+    }
+    result = processed.join("");
+  }
+
+  if (result !== trimBlockEnds) {
+    console.warn("*** old:\n", trimBlockEnds);
+    console.warn("*** new:\n", result);
+  }
+  return result;
 }
