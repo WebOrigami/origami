@@ -60,16 +60,22 @@ export default function treeCache(
       let value = await source.get(key);
       if (value !== undefined) {
         // If a filter is defined, does the key match the filter?
-        const filterValue = await filter?.get(key);
+        const filterValue = filter ? await filter.get(key) : undefined;
         const filterMatch = !filter || filterValue !== undefined;
         if (filterMatch) {
           if (Tree.isAsyncTree(value)) {
             // Construct merged tree for a tree result.
             if (cacheValue === undefined) {
-              // Construct new container in cache
-              cacheValue = new ObjectTree({});
-              cacheValue.parent = this;
-              await cache.set(key, cacheValue);
+              // Construct new empty container in cache
+              await cache.set(key, {});
+              cacheValue = await cache.get(key);
+              if (!Tree.isAsyncTree(cacheValue)) {
+                // Coerce to tree and then save it back to the cache. This is
+                // necessary, e.g., if cache is an ObjectTree; we want the
+                // subtree to also be an ObjectTree, not a plain object.
+                cacheValue = Tree.from(cacheValue);
+                await cache.set(key, cacheValue);
+              }
             }
             value = treeCache(value, cacheValue, filterValue);
           } else {
