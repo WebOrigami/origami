@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/origami",
-  "version": "0.0.66",
+  "version": "0.0.67-beta.1",
   "description": "Web Origami language, CLI, framework, and server",
   "type": "module",
   "repository": {
@@ -17,9 +17,9 @@
     "typescript": "5.6.2"
   },
   "dependencies": {
-    "@weborigami/async-tree": "0.0.66",
-    "@weborigami/language": "0.0.66",
-    "@weborigami/types": "0.0.66",
+    "@weborigami/async-tree": "0.0.67-beta.1",
+    "@weborigami/language": "0.0.67-beta.1",
+    "@weborigami/types": "0.0.67-beta.1",
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.10.0",
