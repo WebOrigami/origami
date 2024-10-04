@@ -1,15 +1,17 @@
 export function add(...args) {
-  return args.reduce((acc, val) => acc + val, 0);
+  const numbers = args.map((arg) => Number(arg));
+  return numbers.reduce((acc, val) => acc + val, 0);
 }
 
 export function subtract(a, b) {
-  return a - b;
+  return Number(a) - Number(b);
 }
 
 export function multiply(...args) {
-  return args.reduce((acc, val) => acc * val, 1);
+  const numbers = args.map((arg) => Number(arg));
+  return numbers.reduce((acc, val) => acc * val, 1);
 }
 
 export function divide(a, b) {
-  return a / b;
+  return Number(a) / Number(b);
 }
