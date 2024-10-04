@@ -56,6 +56,7 @@ export { default as log } from "../src/builtins/@log.js";
 export { default as map } from "../src/builtins/@map.js";
 export { default as mapFn } from "../src/builtins/@mapFn.js";
 export { default as match } from "../src/builtins/@match.js";
+export * from "../src/builtins/@math.js";
 export { default as mdHtml } from "../src/builtins/@mdHtml.js";
 export { default as mdTree } from "../src/builtins/@mdTree.js";
 export { default as merge } from "../src/builtins/@merge.js";
