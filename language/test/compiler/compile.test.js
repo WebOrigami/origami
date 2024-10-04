@@ -71,7 +71,7 @@ describe.only("compile", () => {
   \`) }`;
     const fn = compile.templateDocument(text);
     const { code } = fn;
-    const ifCall = code[2][1];
+    const ifCall = code[2][2];
     const trueText = ifCall[1][1];
     const falseText = ifCall[2][1];
     assert.equal(trueText, "    true text\n");

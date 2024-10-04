@@ -7,7 +7,8 @@ function compile(source, startRule) {
   }
   // Trim whitespace from template blocks before we begin lexing, as our
   // heuristics are non-local and hard to implement in our parser.
-  const preprocessed = trimTemplateWhitespace(source.text);
+  // const preprocessed = trimTemplateWhitespace(source.text);
+  const preprocessed = source.text;
   const parseResult = parse(preprocessed, {
     grammarSource: source,
     startRule,

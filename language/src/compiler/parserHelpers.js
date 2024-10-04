@@ -49,6 +49,10 @@ function isCodeForAsyncObject(code) {
   return hasGetter;
 }
 
+function isWhitespace(char) {
+  return char === " " || char === "\n" || char === "\r" || char === "\t";
+}
+
 export function makeArray(entries) {
   let currentEntries = [];
   const spreads = [];
@@ -200,13 +204,85 @@ export function makeProperty(key, value) {
 export function makeTemplate(parts) {
   // Drop empty/null strings.
   const filtered = parts.filter((part) => part);
+  const trimmed = filtered.map((part) => trimTemplatePart(part));
+
   // Return a concatenation of the parts. If there are no parts, return the
   // empty string. If there's just one string, return that directly.
-  return filtered.length === 0
+  return trimmed.length === 0
     ? ""
-    : filtered.length === 1 &&
-      filtered[0][0] === ops.primitive &&
-      typeof filtered[0][1] === "string"
-    ? filtered[0]
-    : [ops.concat, ...filtered];
+    : trimmed.length === 1 &&
+      trimmed[0][0] === ops.primitive &&
+      typeof trimmed[0][1] === "string"
+    ? trimmed[0]
+    : [ops.concat, ...trimmed];
+}
+
+function trimTemplatePart(part) {
+  if (part[0] !== ops.primitive || typeof part[1] !== "string") {
+    // Not a string
+    return part;
+  }
+
+  const location = part.location;
+  if (location.start.line === location.end.line) {
+    // Single-line string, don't trim
+    return part;
+  }
+
+  // For this part of the process, we look at the raw source code. This will
+  // differ from the parsed part, as the parser will have prcoessed escape
+  // sequences.
+  const source = location.source.text;
+
+  // Identify the offset of the start of the line that begins the string. Note
+  // that Peggy `column` locations are 1-based, while `offset` locations are
+  // 0-based.
+  const startLineOffset = location.start.offset - location.start.column + 1;
+
+  // Identify the first non-whitespace character on the beginning line.
+  let codeStartOffset = startLineOffset;
+  while (isWhitespace(source[codeStartOffset])) {
+    codeStartOffset++;
+  }
+
+  // Does the code begin with a `${` or a backtick?
+  const trimStart =
+    (source[codeStartOffset] === "$" && source[codeStartOffset + 1] === "{") ||
+    source[codeStartOffset] === "`";
+
+  // Identify the last non-whitespace character on the ending line.
+  let codeEndOffset = location.end.offset;
+  for (let i = codeEndOffset + 1; i < source.length; i++) {
+    if (source[i] === "\n") {
+      break;
+    }
+    if (!isWhitespace(source[i])) {
+      codeEndOffset = i;
+    }
+  }
+
+  // Does the code end with a `}` or a backtick?
+  const trimEnd =
+    source[codeEndOffset] === "}" || source[codeEndOffset] === "`";
+
+  // From this point forward, we work with the parsed template text
+  let text = part[1];
+  if (trimStart) {
+    // Remove first line, including the line break
+    const firstNewlineOffset = text.indexOf("\n");
+    if (firstNewlineOffset >= 0) {
+      text = text.slice(firstNewlineOffset + 1);
+    }
+  }
+  if (trimEnd) {
+    // Remove everything after the last line break but keep the line break
+    const lastNewlineOffset = text.lastIndexOf("\n");
+    if (lastNewlineOffset >= 0) {
+      text = text.slice(0, lastNewlineOffset + 1);
+    }
+  }
+
+  const trimmed = [ops.primitive, text];
+  /** @type {Code} */ (trimmed).location = location;
+  return trimmed;
 }
