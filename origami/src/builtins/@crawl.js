@@ -63,13 +63,14 @@ export default async function crawl(treelike, baseHref) {
     // Cache the value
     if (value) {
       addValueToObject(cache, keys, value);
-    } else if (keys) {
-      // A missing robots.txt isn't an error; anything else missing is.
-      const path = keys.join("/");
-      if (path !== "robots.txt") {
-        errors.push(path);
-      }
     }
+    // else if (keys) {
+    //   // A missing robots.txt isn't an error; anything else missing is.
+    //   const path = keys.join("/");
+    //   if (path !== "robots.txt") {
+    //     errors.push(path);
+    //   }
+    // }
 
     // Add indirect resource functions to the resource tree. When requested,
     // these functions will obtain the resource from the original site.
@@ -151,6 +152,11 @@ async function* crawlPaths(tree, baseUrl) {
   // setting its entry in the dictionary to null.
   const promisesForPaths = {};
 
+  // Keep track of which resources refer to which paths.
+  const mapResourceToPaths = {};
+
+  let errorPaths = [];
+
   // Seed the promise dictionary with robots.txt and the root path.
   const initialPaths = ["/robots.txt", "/"];
   initialPaths.forEach((path) => {
@@ -174,6 +180,9 @@ async function* crawlPaths(tree, baseUrl) {
     // Mark the promise for that result as resolved.
     promisesForPaths[result.path] = null;
 
+    // Add the crawlable paths to the map.
+    mapResourceToPaths[result.path] = result.crawlablePaths;
+
     // Add promises for crawlable paths in the result.
     result.crawlablePaths.forEach((path) => {
       // Only add a promise for this path if we don't already have one.
@@ -182,7 +191,34 @@ async function* crawlPaths(tree, baseUrl) {
       }
     });
 
+    // If there was no value, add this to the errors.
+    // A missing robots.txt isn't an error; anything else missing is.
+    if (result.value === null && result.path !== "/robots.txt") {
+      errorPaths.push(result.path);
+    }
+
     yield result;
+  }
+
+  if (errorPaths.length > 0) {
+    // Create a map of the resources that refer to each error.
+    const errorsMap = {};
+    for (const resource in mapResourceToPaths) {
+      const paths = mapResourceToPaths[resource];
+      for (const path of paths) {
+        if (errorPaths.includes(path)) {
+          errorsMap[resource] ??= [];
+          errorsMap[resource].push(path);
+        }
+      }
+    }
+    const errorsJson = JSON.stringify(errorsMap, null, 2);
+    yield {
+      keys: ["crawl-errors.json"],
+      path: "crawl-errors.json",
+      resourcePaths: [],
+      value: errorsJson,
+    };
   }
 }
 
@@ -485,6 +521,9 @@ async function processPath(tree, path, baseUrl) {
   }
 
   const adjustedKeys = adjustKeys(keys);
+  const adjustedPath = adjustedKeys
+    .map((key) => trailingSlash.remove(key))
+    .join("/");
 
   if (value === undefined) {
     return {

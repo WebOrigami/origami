@@ -75,9 +75,10 @@ describe("crawl", () => {
       "index.html": `<a href="missing.html">Missing</a>`,
     };
     const crawled = await crawl.call(null, tree);
-    assert.equal(
-      await crawled.get("crawl-errors.json"),
-      JSON.stringify(["missing.html"], null, 2)
-    );
+    const json = await crawled.get("crawl-errors.json");
+    const parsed = JSON.parse(json);
+    assert.deepEqual(parsed, {
+      "/": ["missing.html"],
+    });
   });
 });
