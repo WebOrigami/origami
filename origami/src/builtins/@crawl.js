@@ -470,7 +470,12 @@ async function processPath(tree, path, baseUrl) {
   }
 
   // Convert path to keys
-  const keys = keysFromPath(path);
+  let keys = keysFromPath(path);
+
+  // Paths (including those created by the filterPaths function above) will have
+  // spaces, etc., escaped. In general, these need to be unescaped so we can
+  // find them in the tree.
+  keys = keys.map(decodeURIComponent);
 
   // Traverse tree to get value.
   let value = await Tree.traverse(tree, ...keys);
