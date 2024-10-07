@@ -1,4 +1,7 @@
-import ShuffleTransform from "../common/ShuffleTransform.js";
+import {
+  default as ShuffleTransform,
+  shuffle,
+} from "../common/ShuffleTransform.js";
 import { transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -11,10 +14,21 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  */
-export default async function shuffle(treelike) {
+export default async function shuffleTree(treelike) {
+  // Special case: If the treelike is an array, shuffle it directly. Otherwise
+  // we'll end up shuffling the array's indexes, and if this is directly
+  // displayed by the ori CLI, this will end up creating a plain object. Even
+  // though this object will be created with the keys in the correct shuffled
+  // order, a JS object will always return numeric keys in numeric order --
+  // undoing the shuffle.
+  if (Array.isArray(treelike)) {
+    const array = treelike.slice();
+    shuffle(array);
+    return array;
+  }
   const tree = await getTreeArgument(this, arguments, treelike, "@shuffle");
   return transformObject(ShuffleTransform, tree);
 }
 
-shuffle.usage = `@shuffle <tree>\tReturn a new tree with the original's keys shuffled`;
-shuffle.documentation = "https://weborigami.org/cli/builtins.html#shuffle";
+shuffleTree.usage = `@shuffle <tree>\tReturn a new tree with the original's keys shuffled`;
+shuffleTree.documentation = "https://weborigami.org/cli/builtins.html#shuffle";
