@@ -521,9 +521,6 @@ async function processPath(tree, path, baseUrl) {
   }
 
   const adjustedKeys = adjustKeys(keys);
-  const adjustedPath = adjustedKeys
-    .map((key) => trailingSlash.remove(key))
-    .join("/");
 
   if (value === undefined) {
     return {
