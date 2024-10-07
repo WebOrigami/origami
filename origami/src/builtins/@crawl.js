@@ -64,13 +64,6 @@ export default async function crawl(treelike, baseHref) {
     if (value) {
       addValueToObject(cache, keys, value);
     }
-    // else if (keys) {
-    //   // A missing robots.txt isn't an error; anything else missing is.
-    //   const path = keys.join("/");
-    //   if (path !== "robots.txt") {
-    //     errors.push(path);
-    //   }
-    // }
 
     // Add indirect resource functions to the resource tree. When requested,
     // these functions will obtain the resource from the original site.
@@ -363,7 +356,7 @@ function findPathsInHtml(html) {
 
   // Find `href` attributes in anchor and link tags.
   const linkRegex =
-    /<(?:a|A|link|LINK) [^>]*?(?:href|HREF)=["'](?<link>[^>]*?)["'][^>]*>/g;
+    /<(?:a|A|link|LINK)[\s][^>]*?(?:href|HREF)=["'](?<link>[^>]*?)["'][^>]*>/g;
   while ((match = linkRegex.exec(html))) {
     // Links can point to be other crawlable paths and resource paths.
     // We guess the type based on the extension.
@@ -379,7 +372,7 @@ function findPathsInHtml(html) {
 
   // Find `src` attributes in img and script tags.
   const srcRegex =
-    /<(?<tag>img|IMG|script|SCRIPT) [^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
+    /<(?<tag>img|IMG|script|SCRIPT)[\s][^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
   while ((match = srcRegex.exec(html))) {
     const tag = match.groups?.tag;
     const src = normalizeHref(match.groups?.src);
@@ -403,7 +396,7 @@ function findPathsInHtml(html) {
 
   // Find `src` attribute on frame tags.
   const frameRegex =
-    /<(?:frame|FRAME) [^>]*?(?:src|SRC)=["'](?<href>[^>]*?)["'][^>]*>/g;
+    /<(?:frame|FRAME)[\s][^>]*?(?:src|SRC)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = frameRegex.exec(html))) {
     const href = normalizeHref(match.groups?.href);
     if (href) {
@@ -413,7 +406,7 @@ function findPathsInHtml(html) {
 
   // Find ancient `background` attribute on body tag.
   const backgroundRegex =
-    /<(?:body|BODY) [^>]*?(?:background|BACKGROUND)=["'](?<href>[^>]*?)["'][^>]*>/g;
+    /<(?:body|BODY)[\s][^>]*?(?:background|BACKGROUND)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = backgroundRegex.exec(html))) {
     const href = normalizeHref(match.groups?.href);
     if (href) {
@@ -423,7 +416,7 @@ function findPathsInHtml(html) {
 
   // Find `href` attribute on area tags.
   const areaRegex =
-    /<(?:area|AREA) [^>]*?(?:href|HREF)=["'](?<href>[^>]*?)["'][^>]*>/g;
+    /<(?:area|AREA)[\s][^>]*?(?:href|HREF)=["'](?<href>[^>]*?)["'][^>]*>/g;
   while ((match = areaRegex.exec(html))) {
     const href = normalizeHref(match.groups?.href);
     if (href) {
