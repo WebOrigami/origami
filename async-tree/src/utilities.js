@@ -27,24 +27,38 @@ export function box(value) {
 }
 
 /**
- * If the given plain object has only sequential integer keys, return it as an
- * array. Otherwise return it as is.
+ * Create an array or plain object from the given keys and values.
  *
- * @param {any} object
+ * If the given plain object has only sequential integer keys, return the
+ * values as an array. Otherwise, create a plain object with the keys and
+ * values.
+ *
+ * @param {any[]} keys
+ * @param {any[]} values
  */
-export function castArrayLike(object) {
-  let hasKeys = false;
-  let expectedIndex = 0;
-  for (const key in object) {
-    hasKeys = true;
-    const index = Number(key);
-    if (key === "" || isNaN(index) || index !== expectedIndex) {
-      // Not an array-like object.
-      return object;
+export function castArrayLike(keys, values) {
+  let isArrayLike = false;
+
+  // Need at least one key to count as an array
+  if (keys.length > 0) {
+    // Assume it's an array
+    isArrayLike = true;
+    // Then check if all the keys are sequential integers
+    let expectedIndex = 0;
+    for (const key of keys) {
+      const index = Number(key);
+      if (key === "" || isNaN(index) || index !== expectedIndex) {
+        // Not array-like
+        isArrayLike = false;
+        break;
+      }
+      expectedIndex++;
     }
-    expectedIndex++;
   }
-  return hasKeys ? Object.values(object) : object;
+
+  return isArrayLike
+    ? values
+    : Object.fromEntries(keys.map((key, i) => [key, values[i]]));
 }
 
 /**

@@ -332,14 +332,9 @@ export async function plain(treelike) {
     if (tree instanceof ObjectTree && keys.length === 0) {
       return tree.object instanceof Array ? [] : {};
     }
-    const object = {};
-    for (let i = 0; i < keys.length; i++) {
-      // Normalize slashes in keys.
-      const key = trailingSlash.remove(keys[i]);
-      const value = values[i];
-      object[key] = value;
-    }
-    return castArrayLike(object);
+    // Normalize slashes in keys.
+    keys = keys.map(trailingSlash.remove);
+    return castArrayLike(keys, values);
   });
 }
 
