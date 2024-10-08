@@ -11,5 +11,8 @@ export default function slug(filename) {
   slug = slug.replace(/^-+/, "");
   slug = slug.replace(/-+$/, "");
 
+  // Collapse consecutive dashes to a single dash.
+  slug = slug.replace(/-+/g, "-");
+
   return slug;
 }
