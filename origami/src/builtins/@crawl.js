@@ -515,7 +515,7 @@ async function processPath(tree, path, baseUrl) {
   let value = await Tree.traverse(tree, ...keys);
   const normalizedKeys = normalizeKeys(keys);
   let normalizedPath = path;
-  if (Tree.isAsyncTree(value)) {
+  if (Tree.isTreelike(value)) {
     // Path is actually a directory; see if it has an index.html
     value = await Tree.traverse(value, "index.html");
     if (value !== undefined) {
