@@ -1,21 +1,33 @@
+import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import crawl from "../../src/builtins/@crawl.js";
+
+// Test version of DeepObjectTree that doesn't return keys so we can confirm
+// that the crawler is able to find linked resources without them.
+class DeepObjectTreeWithoutKeys extends DeepObjectTree {
+  async keys() {
+    return new Set();
+  }
+}
 
 describe("crawl", () => {
   test("finds linked pages", async () => {
     const tree = {
       "index.html": `
-        <a href="about.html">About</a>
+        <a href="about/index.html">About</a>
         <a href="https://example.com">External</a>
       `,
-      "about.html": "About page",
+      about: {
+        "index.html": `About Us <a href="team.html">Team</a>`,
+        "team.html": "Our Team",
+      },
     };
-    const crawled = await crawl.call(null, tree);
-    assert.deepEqual(Array.from(await crawled.keys()), [
-      "index.html",
-      "about.html",
-    ]);
+    const treeWithoutKeys = new DeepObjectTreeWithoutKeys(tree);
+    const crawled = await crawl.call(null, treeWithoutKeys);
+    // Crawl should recover entire tree
+    const plain = await Tree.plain(crawled);
+    assert.deepEqual(plain, tree);
   });
 
   test("finds linked images", async () => {
@@ -78,7 +90,7 @@ describe("crawl", () => {
     const json = await crawled.get("crawl-errors.json");
     const parsed = JSON.parse(json);
     assert.deepEqual(parsed, {
-      "/": ["missing.html"],
+      "index.html": ["missing.html"],
     });
   });
 });

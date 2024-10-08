@@ -4,6 +4,7 @@ import {
   deepMerge,
   isPlainObject,
   keysFromPath,
+  pathFromKeys,
   trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform, extname } from "@weborigami/language";
@@ -58,17 +59,17 @@ export default async function crawl(treelike, baseHref) {
 
   // We iterate until there are no more promises to wait for.
   for await (const result of crawlPaths(tree, baseUrl)) {
-    const { keys, resourcePaths, value } = result;
+    const { normalizedKeys, resourcePaths, value } = result;
 
     // Cache the value
     if (value) {
-      addValueToObject(cache, keys, value);
+      addValueToObject(cache, normalizedKeys, value);
     }
 
     // Add indirect resource functions to the resource tree. When requested,
     // these functions will obtain the resource from the original site.
     for (const resourcePath of resourcePaths) {
-      const resourceKeys = adjustKeys(keysFromPath(resourcePath));
+      const resourceKeys = normalizeKeys(keysFromPath(resourcePath));
       const fn = () => {
         return Tree.traverse(tree, ...resourceKeys);
       };
@@ -92,17 +93,6 @@ export default async function crawl(treelike, baseHref) {
     new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );
   return result;
-}
-
-// For indexing and storage purposes, treat a path that ends in a trailing slash
-// as if it ends in index.html.
-function adjustKeys(keys) {
-  if (keys.length > 0 && !trailingSlash.has(keys.at(-1))) {
-    return keys;
-  }
-  const adjustedKeys = keys.slice();
-  adjustedKeys.push("index.html");
-  return adjustedKeys;
 }
 
 function addValueToObject(object, keys, value) {
@@ -173,8 +163,10 @@ async function* crawlPaths(tree, baseUrl) {
     // Mark the promise for that result as resolved.
     promisesForPaths[result.path] = null;
 
-    // Add the crawlable paths to the map.
-    mapResourceToPaths[result.path] = result.crawlablePaths;
+    // Add the crawlable paths to the map. Use the normalized keys (will include
+    // "index.html" if the path ends in a trailing slash).
+    const normalizedPath = pathFromKeys(result.normalizedKeys);
+    mapResourceToPaths[normalizedPath] = result.crawlablePaths;
 
     // Add promises for crawlable paths in the result.
     result.crawlablePaths.forEach((path) => {
@@ -187,7 +179,7 @@ async function* crawlPaths(tree, baseUrl) {
     // If there was no value, add this to the errors.
     // A missing robots.txt isn't an error; anything else missing is.
     if (result.value === null && result.path !== "/robots.txt") {
-      errorPaths.push(result.path);
+      errorPaths.push(normalizedPath);
     }
 
     yield result;
@@ -207,7 +199,7 @@ async function* crawlPaths(tree, baseUrl) {
     }
     const errorsJson = JSON.stringify(errorsMap, null, 2);
     yield {
-      keys: ["crawl-errors.json"],
+      normalizedKeys: ["crawl-errors.json"],
       path: "crawl-errors.json",
       resourcePaths: [],
       value: errorsJson,
@@ -277,11 +269,13 @@ function findPaths(value, key, baseUrl, localPath) {
     baseUrl,
     localPath
   );
+
   const resourcePaths = filterPaths(
     foundPaths.resourcePaths,
     baseUrl,
     localPath
   );
+
   return {
     crawlablePaths,
     resourcePaths,
@@ -487,11 +481,22 @@ function normalizeHref(href) {
   return normalized === "" ? null : normalized;
 }
 
+// For indexing and storage purposes, treat a path that ends in a trailing slash
+// as if it ends in index.html.
+function normalizeKeys(keys) {
+  const normalized = keys.slice();
+  if (normalized.length > 0 && trailingSlash.has(normalized.at(-1))) {
+    normalized.push("index.html");
+  }
+  return normalized;
+}
+
 async function processPath(tree, path, baseUrl) {
   if (path === undefined) {
     return {
       crawlablePaths: [],
       keys: null,
+      normalizedKeys: null,
       path,
       resourcePaths: [],
       value: null,
@@ -508,17 +513,27 @@ async function processPath(tree, path, baseUrl) {
 
   // Traverse tree to get value.
   let value = await Tree.traverse(tree, ...keys);
+  const normalizedKeys = normalizeKeys(keys);
+  let normalizedPath = path;
   if (Tree.isAsyncTree(value)) {
     // Path is actually a directory; see if it has an index.html
     value = await Tree.traverse(value, "index.html");
-  }
+    if (value !== undefined) {
+      // Mark the path as ending in a slash
+      normalizedPath = trailingSlash.add(path);
 
-  const adjustedKeys = adjustKeys(keys);
+      // Add index.html to keys if it's not already there
+      if (normalizedKeys.at(-1) !== "index.html") {
+        normalizedKeys.push("index.html");
+      }
+    }
+  }
 
   if (value === undefined) {
     return {
       crawlablePaths: [],
-      keys: adjustedKeys,
+      keys,
+      normalizedKeys,
       path,
       resourcePaths: [],
       value: null,
@@ -526,17 +541,18 @@ async function processPath(tree, path, baseUrl) {
   }
 
   // Find paths in the value
-  const key = adjustedKeys.at(-1);
+  const key = normalizedKeys.at(-1);
   const { crawlablePaths, resourcePaths } = await findPaths(
     value,
     key,
     baseUrl,
-    path
+    normalizedPath
   );
 
   return {
     crawlablePaths,
-    keys: adjustedKeys,
+    keys,
+    normalizedKeys,
     path,
     resourcePaths,
     value,
