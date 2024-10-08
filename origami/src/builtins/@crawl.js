@@ -135,8 +135,8 @@ async function* crawlPaths(tree, baseUrl) {
   // setting its entry in the dictionary to null.
   const promisesForPaths = {};
 
-  // Keep track of which resources refer to which paths.
-  const mapResourceToPaths = {};
+  // Keep track of which resources make which outbound links.
+  const resourceOutboundReferences = {};
 
   let errorPaths = [];
 
@@ -166,7 +166,7 @@ async function* crawlPaths(tree, baseUrl) {
     // Add the crawlable paths to the map. Use the normalized keys (will include
     // "index.html" if the path ends in a trailing slash).
     const normalizedPath = pathFromKeys(result.normalizedKeys);
-    mapResourceToPaths[normalizedPath] = result.crawlablePaths;
+    resourceOutboundReferences[normalizedPath] = result.crawlablePaths;
 
     // Add promises for crawlable paths in the result.
     result.crawlablePaths.forEach((path) => {
@@ -179,24 +179,36 @@ async function* crawlPaths(tree, baseUrl) {
     // If there was no value, add this to the errors.
     // A missing robots.txt isn't an error; anything else missing is.
     if (result.value === null && result.path !== "/robots.txt") {
-      errorPaths.push(normalizedPath);
+      errorPaths.push(result.path);
     }
 
     yield result;
   }
 
   if (errorPaths.length > 0) {
-    // Create a map of the resources that refer to each error.
+    // Create a map of the resources that refer to each missing resource.
     const errorsMap = {};
-    for (const resource in mapResourceToPaths) {
-      const paths = mapResourceToPaths[resource];
-      for (const path of paths) {
-        if (errorPaths.includes(path)) {
-          errorsMap[resource] ??= [];
-          errorsMap[resource].push(path);
+    for (const sourcePath in resourceOutboundReferences) {
+      // Does this resource refer to any of the error paths?
+      const targetPaths = resourceOutboundReferences[sourcePath];
+      for (const targetPath of targetPaths) {
+        if (errorPaths.includes(targetPath)) {
+          errorsMap[sourcePath] ??= [];
+          errorsMap[sourcePath].push(targetPath);
         }
       }
     }
+
+    // Review the errors map to find any paths that could not be traced back to
+    // a referring resource. These are internal crawler errors. We log them so
+    // that the use can report them and we can investigate them.
+    for (const errorPath of errorPaths) {
+      if (!Object.values(errorsMap).flat().includes(errorPath)) {
+        errorsMap["(unknown)"] ??= [];
+        errorsMap["(unknown)"].push(errorPath);
+      }
+    }
+
     const errorsJson = JSON.stringify(errorsMap, null, 2);
     yield {
       normalizedKeys: ["crawl-errors.json"],
