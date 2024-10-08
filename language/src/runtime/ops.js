@@ -9,6 +9,7 @@ import {
   SiteTree,
   Tree,
   isUnpackable,
+  pathFromKeys,
   scope as scopeFn,
   trailingSlash,
   concat as treeConcat,
@@ -77,12 +78,11 @@ constructor.toString = () => "«ops.constructor»";
  *
  * @param {string} protocol
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {string[]} keys
  */
 function constructHref(protocol, host, ...keys) {
-  // Remove trailing slashes
-  const baseKeys = keys.map((key) => trailingSlash.remove(key));
-  let href = [host, ...baseKeys].join("/");
+  const path = pathFromKeys(keys);
+  let href = [host, path].join("/");
   if (!href.startsWith(protocol)) {
     if (!href.startsWith("//")) {
       href = `//${href}`;
@@ -99,7 +99,7 @@ function constructHref(protocol, host, ...keys) {
  * @param {import("../../index.ts").Constructor<AsyncTree>} treeClass
  * @param {AsyncTree|null} parent
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {string[]} keys
  */
 async function constructSiteTree(protocol, treeClass, parent, host, ...keys) {
   // If the last key doesn't end in a slash, remove it for now.

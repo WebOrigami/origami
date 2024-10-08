@@ -55,6 +55,12 @@ describe("utilities", () => {
     assert.deepEqual(strings, ["file1", "file9", "file10"]);
   });
 
+  test("pathFromKeys() returns a slash-separated path from keys", () => {
+    assert.equal(utilities.pathFromKeys([]), "");
+    assert.equal(utilities.pathFromKeys(["a", "b", "c"]), "a/b/c");
+    assert.equal(utilities.pathFromKeys(["a/", "b/", "c"]), "a/b/c");
+  });
+
   test("pipeline applies a series of functions to a value", async () => {
     const addOne = (n) => n + 1;
     const double = (n) => n * 2;

@@ -11,6 +11,7 @@ export function isStringLike(obj: any): obj is StringLike;
 export function isUnpackable(obj): obj is { unpack: () => any };
 export function keysFromPath(path: string): string[];
 export const naturalOrder: (a: string, b: string) => number;
+export function pathFromKeys(keys: string[]): string;
 export function pipeline(start: any, ...functions: Function[]): Promise<any>;
 export function setParent(child: any, parent: AsyncTree): void;
 export function toPlainValue(object: any): Promise<any>;

@@ -211,6 +211,19 @@ export const naturalOrder = new Intl.Collator(undefined, {
 }).compare;
 
 /**
+ * Return a slash-separated path for the given keys.
+ *
+ * This takes care to avoid adding consecutive slashes if they keys themselves
+ * already have trailing slashes.
+ *
+ * @param {string[]} keys
+ */
+export function pathFromKeys(keys) {
+  const normalized = keys.map((key) => trailingSlash.remove(key));
+  return normalized.join("/");
+}
+
+/**
  * Apply a series of functions to a value, passing the result of each function
  * to the next one.
  *
