@@ -8,7 +8,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export default function treeHttp(host, ...keys) {
   assertTreeIsDefined(this, "treeHttp");

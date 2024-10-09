@@ -165,7 +165,7 @@ export async function filesRoot() {
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
@@ -178,7 +178,7 @@ http.toString = () => "«ops.http»";
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
@@ -289,7 +289,7 @@ object.toString = () => "«ops.object»";
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export function explorableSite(host, ...keys) {
   return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
@@ -339,7 +339,7 @@ export const traverse = Tree.traverseOrThrow;
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export function treeHttp(host, ...keys) {
   return constructSiteTree("http:", SiteTree, this, host, ...keys);
@@ -351,7 +351,7 @@ treeHttp.toString = () => "«ops.treeHttp»";
  *
  * @this {AsyncTree|null}
  * @param {string} host
- * @param  {...string|Symbol} keys
+ * @param  {...string} keys
  */
 export function treeHttps(host, ...keys) {
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
