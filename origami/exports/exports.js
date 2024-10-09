@@ -137,7 +137,7 @@ export { default as processUnpackedContent } from "../src/common/processUnpacked
 export * from "../src/common/serialize.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
 export * from "../src/common/utilities.js";
-export { default as crawl } from "../src/crawler/crawl.js";
+export { default as crawlResources } from "../src/crawler/crawlResources.js";
 export { default as findPaths } from "../src/crawler/findPaths.js";
 export * from "../src/crawler/utilities.js";
 export { default as assertTreeIsDefined } from "../src/misc/assertTreeIsDefined.js";

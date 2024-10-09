@@ -7,7 +7,7 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
-import crawl from "../crawler/crawl.js";
+import crawlResources from "../crawler/crawlResources.js";
 import { normalizeKeys } from "../crawler/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -63,7 +63,7 @@ export default async function crawlBuiltin(treelike, baseHref) {
   const errors = [];
 
   // We iterate until there are no more promises to wait for.
-  for await (const result of crawl(tree, baseUrl)) {
+  for await (const result of crawlResources(tree, baseUrl)) {
     const { normalizedKeys, resourcePaths, value } = result;
 
     // Cache the value

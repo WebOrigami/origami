@@ -13,7 +13,7 @@ import { normalizeKeys } from "./utilities.js";
  *
  * Each will include the HTML/script/stylesheet value retrieved at a given path.
  */
-export default async function* crawl(tree, baseUrl) {
+export default async function* crawlResources(tree, baseUrl) {
   // We want to kick off requests for new paths as quickly as we find them, then
   // yield whichever result finishes first. Unfortunately, Promise.any() only
   // tells us the result of the first promise to resolve, not which promise that
