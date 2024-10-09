@@ -41,7 +41,7 @@ export default function findPaths(value, key, baseUrl, localPath) {
   const ext = key ? extname(key).toLowerCase() : "";
   const maybeHtml = ext === "" || text?.trim().startsWith("<");
   let foundPaths;
-  if (ext === ".html" || ext === ".htm") {
+  if (ext === ".html" || ext === ".htm" || ext === ".xhtml") {
     foundPaths = findPathsInHtml(text);
   } else if (ext === ".css") {
     foundPaths = findPathsInCss(text);

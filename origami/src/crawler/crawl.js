@@ -52,9 +52,9 @@ export default async function* crawl(tree, baseUrl) {
     promisesForPaths[result.path] = null;
 
     if (result.value === null) {
-      // Expected resource doesn't exist; add this to the errors.
-      // A missing robots.txt isn't an error.
-      if (result.path !== "/robots.txt") {
+      // Expected resource doesn't exist; add this to the errors. Exception: a
+      // path in the set of initialPaths that doesn't exist is not an error.
+      if (!initialPaths.includes(result.path)) {
         errorPaths.push(result.path);
       }
       continue;

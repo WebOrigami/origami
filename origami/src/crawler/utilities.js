@@ -15,7 +15,7 @@ export function isCrawlableHref(href) {
   }
   const ext = extname(lastKey);
   // We assume an empty extension is HTML.
-  const crawlableExtensions = [".html", ".css", ".js", ".map", ""];
+  const crawlableExtensions = [".html", ".css", ".js", ".map", ".xhtml", ""];
   return crawlableExtensions.includes(ext);
 }
 
