@@ -18,6 +18,7 @@ import {
   makeFunctionCall,
   makeObject,
   makePipeline,
+  makeProperty,
   makeTemplate
 } from "./parserHelpers.js";
 
@@ -425,11 +426,11 @@ function peg$parse(input, options) {
       return annotate(entries, location());
     };
   var peg$f31 = function(key, value) {
-      return annotate([key, [ops.getter, value]], location());
+      return annotate(makeProperty(key, [ops.getter, value]), location());
     };
   var peg$f32 = function(hiddenKey) { return hiddenKey.join(""); };
   var peg$f33 = function(key, value) {
-      return annotate([key, value], location());  
+      return annotate(makeProperty(key, value), location());
     };
   var peg$f34 = function(key) {
       return annotate([key, [ops.inherited, key]], location());

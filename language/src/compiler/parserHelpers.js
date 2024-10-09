@@ -13,8 +13,28 @@ export function annotate(parseResult, location) {
   return parseResult;
 }
 
+// The indicated code is being used to define a property named by the given key.
+// Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
+// infinite recursion.
+function avoidRecursivePropertyCalls(code, key) {
+  if (!(code instanceof Array)) {
+    return code;
+  }
+  let modified;
+  if (code[0] === ops.scope && code[1] === key) {
+    // Rewrite to avoid recursion
+    modified = [ops.inherited, key];
+  } else {
+    // Process any nested code
+    modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
+  }
+  // @ts-ignore
+  modified.location = code.location;
+  return modified;
+}
+
 // Return true if the code will generate an async object.
-function isAsyncObject(code) {
+function isCodeForAsyncObject(code) {
   if (!(code instanceof Array)) {
     return false;
   }
@@ -120,28 +140,29 @@ export function makeObject(entries, op) {
 
   for (let [key, value] of entries) {
     if (key === ops.spread) {
-      // Accumulate spread entry
+      // Spread entry; accumulate
       if (currentEntries.length > 0) {
         spreads.push([op, ...currentEntries]);
         currentEntries = [];
       }
       spreads.push(value);
-    } else {
-      if (
-        value instanceof Array &&
-        value[0] === ops.getter &&
-        value[1] instanceof Array &&
-        value[1][0] === ops.primitive
-      ) {
-        // Simplify a getter for a primitive value to a regular property
-        value = value[1];
-      } else if (isAsyncObject(value)) {
-        // Add a trailing slash to key if value is an async object
-        key = key + "/";
-      }
-
-      currentEntries.push([key, value]);
+      continue;
     }
+
+    if (
+      value instanceof Array &&
+      value[0] === ops.getter &&
+      value[1] instanceof Array &&
+      value[1][0] === ops.primitive
+    ) {
+      // Simplify a getter for a primitive value to a regular property
+      value = value[1];
+    } else if (isCodeForAsyncObject(value)) {
+      // Add a trailing slash to key to indicate value is a subtree
+      key = key + "/";
+    }
+
+    currentEntries.push([key, value]);
   }
 
   // Finish any current entries.
@@ -168,6 +189,12 @@ export function makePipeline(steps) {
     value = [args, value];
   }
   return value;
+}
+
+// Define a property on an object.
+export function makeProperty(key, value) {
+  const modified = avoidRecursivePropertyCalls(value, key);
+  return [key, modified];
 }
 
 export function makeTemplate(parts) {

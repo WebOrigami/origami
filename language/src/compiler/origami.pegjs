@@ -13,6 +13,7 @@ import {
   makeFunctionCall,
   makeObject,
   makePipeline,
+  makeProperty,
   makeTemplate
 } from "./parserHelpers.js";
 
@@ -249,7 +250,7 @@ objectEntry
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
   = key:objectKey __ "=" __ value:expr {
-      return annotate([key, [ops.getter, value]], location());
+      return annotate(makeProperty(key, [ops.getter, value]), location());
     }
 
 objectHiddenKey
@@ -262,7 +263,7 @@ objectKey "object key"
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
   = key:objectKey __ ":" __ value:expr {
-      return annotate([key, value], location());  
+      return annotate(makeProperty(key, value), location());
     }
 
 // A shorthand reference inside an object literal: `foo`

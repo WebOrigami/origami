@@ -417,6 +417,7 @@ describe("Origami parser", () => {
   test("objectEntry", () => {
     assertParse("objectEntry", "foo", ["foo", [ops.inherited, "foo"]]);
     assertParse("objectEntry", "x: y", ["x", [ops.scope, "y"]]);
+    assertParse("objectEntry", "a: a", ["a", [ops.inherited, "a"]]);
   });
 
   test("objectGetter", () => {
