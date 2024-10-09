@@ -86,6 +86,7 @@ export { default as serve } from "../src/builtins/@serve.js";
 export { default as setDeep } from "../src/builtins/@setDeep.js";
 export { default as shell } from "../src/builtins/@shell.js";
 export { default as shuffle } from "../src/builtins/@shuffle.js";
+export { default as siteAudit } from "../src/builtins/@siteAudit.js";
 export { default as sitemap } from "../src/builtins/@sitemap.js";
 export * from "../src/builtins/@slash.js";
 export { default as slug } from "../src/builtins/@slug.js";
@@ -136,6 +137,9 @@ export { default as processUnpackedContent } from "../src/common/processUnpacked
 export * from "../src/common/serialize.js";
 export { default as ShuffleTransform } from "../src/common/ShuffleTransform.js";
 export * from "../src/common/utilities.js";
+export { default as crawl } from "../src/crawler/crawl.js";
+export { default as findPaths } from "../src/crawler/findPaths.js";
+export * from "../src/crawler/utilities.js";
 export { default as assertTreeIsDefined } from "../src/misc/assertTreeIsDefined.js";
 export { default as getTreeArgument } from "../src/misc/getTreeArgument.js";
 export { default as OriCommandTransform } from "../src/misc/OriCommandTransform.js";
