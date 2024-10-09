@@ -93,4 +93,17 @@ describe("crawl", () => {
       "index.html": ["missing.html"],
     });
   });
+
+  test("if given a baseHref, just crawls resources under that baseHref", async () => {
+    const tree = {
+      "index.html": `
+        <a href="/">Home</a>
+        <a href="team.html">Team</a>
+      `,
+      "team.html": "Our Team",
+    };
+    const crawled = await crawl.call(null, tree, "about/");
+    const plain = await Tree.plain(crawled);
+    assert.deepEqual(plain, tree);
+  });
 });

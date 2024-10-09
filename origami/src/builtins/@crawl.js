@@ -49,7 +49,21 @@ export default async function crawl(treelike, baseHref) {
     if (!baseHref?.endsWith("/")) {
       baseHref += "/";
     }
+  } else {
+    // Is the href already valid?
+    let isHrefValid = false;
+    try {
+      new URL(baseHref);
+      isHrefValid = true;
+    } catch (e) {
+      // Ignore
+    }
+    if (!isHrefValid) {
+      // Use a fake base URL.
+      baseHref = `local:/${baseHref}`;
+    }
   }
+
   // @ts-ignore
   const baseUrl = new URL(baseHref);
 
@@ -140,8 +154,9 @@ async function* crawlPaths(tree, baseUrl) {
 
   let errorPaths = [];
 
-  // Seed the promise dictionary with robots.txt and the root path.
-  const initialPaths = ["/robots.txt", "/"];
+  // Seed the promise dictionary with robots.txt at the root and an empty path
+  // indicating the current directory (relative to the baseUrl).
+  const initialPaths = ["/robots.txt", ""];
   initialPaths.forEach((path) => {
     promisesForPaths[path] = processPath(tree, path, baseUrl);
   });
@@ -163,6 +178,15 @@ async function* crawlPaths(tree, baseUrl) {
     // Mark the promise for that result as resolved.
     promisesForPaths[result.path] = null;
 
+    if (result.value === null) {
+      // Expected resource doesn't exist; add this to the errors.
+      // A missing robots.txt isn't an error.
+      if (result.path !== "/robots.txt") {
+        errorPaths.push(result.path);
+      }
+      continue;
+    }
+
     // Add the crawlable paths to the map. Use the normalized keys (will include
     // "index.html" if the path ends in a trailing slash).
     const normalizedPath = pathFromKeys(result.normalizedKeys);
@@ -175,12 +199,6 @@ async function* crawlPaths(tree, baseUrl) {
         promisesForPaths[path] = processPath(tree, path, baseUrl);
       }
     });
-
-    // If there was no value, add this to the errors.
-    // A missing robots.txt isn't an error; anything else missing is.
-    if (result.value === null && result.path !== "/robots.txt") {
-      errorPaths.push(result.path);
-    }
 
     yield result;
   }
@@ -497,20 +515,18 @@ function normalizeHref(href) {
 // as if it ends in index.html.
 function normalizeKeys(keys) {
   const normalized = keys.slice();
-  if (normalized.length > 0 && trailingSlash.has(normalized.at(-1))) {
+  if (normalized.length === 0 || trailingSlash.has(normalized.at(-1))) {
     normalized.push("index.html");
   }
   return normalized;
 }
 
 async function processPath(tree, path, baseUrl) {
-  if (path === undefined) {
+  // Don't process any path outside the baseUrl.
+  const url = new URL(path, baseUrl);
+  if (!url.pathname.startsWith(baseUrl.pathname)) {
     return {
-      crawlablePaths: [],
-      keys: null,
-      normalizedKeys: null,
       path,
-      resourcePaths: [],
       value: null,
     };
   }
@@ -531,8 +547,10 @@ async function processPath(tree, path, baseUrl) {
     // Path is actually a directory; see if it has an index.html
     value = await Tree.traverse(value, "index.html");
     if (value !== undefined) {
-      // Mark the path as ending in a slash
-      normalizedPath = trailingSlash.add(path);
+      if (path.length > 0) {
+        // Mark the path as ending in a slash
+        normalizedPath = trailingSlash.add(path);
+      }
 
       // Add index.html to keys if it's not already there
       if (normalizedKeys.at(-1) !== "index.html") {
