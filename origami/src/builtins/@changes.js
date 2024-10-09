@@ -17,10 +17,11 @@ export default async function changes(oldTreelike, newTreelike) {
   const oldKeys = Array.from(await oldTree.keys());
   const newKeys = Array.from(await newTree.keys());
 
-  const result = {};
+  let result;
 
   for (const key of oldKeys) {
     if (!newKeys.includes(key)) {
+      result ??= {};
       result[key] = "deleted";
       continue;
     }
@@ -30,22 +31,26 @@ export default async function changes(oldTreelike, newTreelike) {
 
     if (Tree.isAsyncTree(oldValue) && Tree.isAsyncTree(newValue)) {
       const treeChanges = await changes.call(this, oldValue, newValue);
-      if (Object.keys(treeChanges).length > 0) {
+      if (treeChanges && Object.keys(treeChanges).length > 0) {
+        result ??= {};
         result[key] = treeChanges;
       }
     } else if (oldValue?.toString && newValue?.toString) {
       const oldText = oldValue.toString();
       const newText = newValue.toString();
       if (oldText !== newText) {
+        result ??= {};
         result[key] = "changed";
       }
     } else {
+      result ??= {};
       result[key] = "changed";
     }
   }
 
   for (const key of newKeys) {
     if (!oldKeys.includes(key)) {
+      result ??= {};
       result[key] = "added";
     }
   }

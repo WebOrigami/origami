@@ -27,4 +27,15 @@ describe("@changes", () => {
       e: "added",
     });
   });
+
+  test("returns undefined if two trees are the same", async () => {
+    const tree1 = {
+      a: {
+        b: "same",
+      },
+    };
+    const tree2 = structuredClone(tree1);
+    const result = await changes.call(null, tree1, tree2);
+    assert.strictEqual(result, undefined);
+  });
 });
