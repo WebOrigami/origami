@@ -27,9 +27,10 @@ export default async function* crawlResources(tree, baseUrl) {
 
   let errorPaths = [];
 
-  // Seed the promise dictionary with robots.txt at the root and an empty path
-  // indicating the current directory (relative to the baseUrl).
-  const initialPaths = ["/robots.txt", ""];
+  // Seed the promise dictionary with robots.txt at the root, a sitemap.xml at
+  // the root, and an empty path indicating the current directory (relative to
+  // the baseUrl).
+  const initialPaths = ["/robots.txt", "/sitemap.xml", ""];
   initialPaths.forEach((path) => {
     promisesForPaths[path] = processPath(tree, path, baseUrl);
   });

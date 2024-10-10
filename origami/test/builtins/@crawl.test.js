@@ -58,27 +58,45 @@ describe("crawl", () => {
     ]);
   });
 
-  test("finds a robots.txt file and sitemap", async () => {
+  test("finds a sitemap", async () => {
+    const tree = {
+      "a.html": "A",
+      "sitemap.xml": `
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://example.com/a.html</loc>
+  </url>
+</urlset>`,
+    };
+    const crawled = await crawl.call(null, tree, "https://example.com");
+    assert.deepEqual(Array.from(await crawled.keys()), [
+      "sitemap.xml",
+      "a.html",
+    ]);
+  });
+
+  test("finds sitemap via robots.txt", async () => {
     // Note: the robots.txt file uses an `http:` URL for the sitemap even though
     // the (fake) site is defined as `https:`. This tests a situation we've hit
     // in practice, where a site's robots.txt file is out of date. We test that
     // the crawler ignores the protocol when deciding whether to crawl a path.
     const tree = {
       "index.html": "Foo",
-      "sitemap.xml": `
+      "mysitemap.xml": `
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://example.com/index.html</loc>
   </url>
 </urlset>`,
-      "robots.txt": "Sitemap: http://example.com/sitemap.xml",
+      "robots.txt": "Sitemap: http://example.com/mysitemap.xml",
     };
     const crawled = await crawl.call(null, tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
       "index.html",
-      "sitemap.xml",
+      "mysitemap.xml",
     ]);
   });
 
