@@ -7,7 +7,7 @@ function compile(source, startRule) {
   }
   // Trim whitespace from template blocks before we begin lexing, as our
   // heuristics are non-local and hard to implement in our parser.
-  // const preprocessed = trimTemplateWhitespace(source.text);
+  const preprocessedOld = trimTemplateWhitespace(source.text);
   const preprocessed = source.text;
   const parseResult = parse(preprocessed, {
     grammarSource: source,
@@ -60,31 +60,33 @@ function trimTemplateWhitespace(text) {
   const trimBlockBreaks = trimBlockStarts.replace(regex2, "\n$1");
   const trimBlockEnds = trimBlockBreaks.replace(regex3js, "\n$1");
 
-  // new
-  const case1 = /^[ \t]*((?:{{|\${).*?`)[ \t]*$/;
-  const case2 = /^[ \t]*(`(?!`).*?`)[ \t]*$/;
-  const case3 = /^[ \t]*(`(?!`).*?(?:}}|[^\\]}))[ \t]*(?:\n|$)/;
-  const processed = [];
-  const lines = text.split("\n");
-  const lineCount = lines.length;
+  // // new
+  // const case1 = /^[ \t]*((?:{{|\${).*?`)[ \t]*$/;
+  // const case2 = /^[ \t]*(`(?!`).*?`)[ \t]*$/;
+  // const case3 = /^[ \t]*(`(?!`).*?(?:}}|[^\\]}))[ \t]*(?:\n|$)/;
+  // const processed = [];
+  // const lines = text.split("\n");
+  // const lineCount = lines.length;
 
-  let result;
-  if (lineCount <= 1) {
-    result = text;
-  } else {
-    for (const [index, line] of lines.entries()) {
-      const trimLine = case1.test(line) || case2.test(line) || case3.test(line);
-      const trimmed = trimLine ? line.trim() : line;
-      const isLastLine = index === lineCount - 1;
-      const lineEnding = isLastLine ? "" : trimLine ? "" : "\n";
-      processed.push(trimmed + lineEnding);
-    }
-    result = processed.join("");
-  }
+  // let result;
+  // if (lineCount <= 1) {
+  //   result = text;
+  // } else {
+  //   for (const [index, line] of lines.entries()) {
+  //     const trimLine = case1.test(line) || case2.test(line) || case3.test(line);
+  //     const trimmed = trimLine ? line.trim() : line;
+  //     const isLastLine = index === lineCount - 1;
+  //     const lineEnding = isLastLine ? "" : trimLine ? "" : "\n";
+  //     processed.push(trimmed + lineEnding);
+  //   }
+  //   result = processed.join("");
+  // }
 
-  if (result !== trimBlockEnds) {
-    console.warn("*** old:\n", trimBlockEnds);
-    console.warn("*** new:\n", result);
-  }
-  return result;
+  // if (result !== trimBlockEnds) {
+  //   console.warn("*** old:\n", trimBlockEnds);
+  //   console.warn("*** new:\n", result);
+  // }
+  // return result;
+
+  return trimBlockEnds;
 }

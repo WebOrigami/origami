@@ -77,6 +77,15 @@ describe.only("compile", () => {
     assert.equal(trueText, "    true text\n");
     assert.equal(falseText, "    false text\n");
   });
+
+  test.only("consecutive templateLiteral blocks", () => {
+    const text = `\${a}
+    \${b}`;
+    const fn = compile.templateDocument(text);
+    const { code } = fn;
+    const part = code[2][2][1];
+    assert.equal(part, "\n    ");
+  });
 });
 
 async function assertCompile(text, expected) {

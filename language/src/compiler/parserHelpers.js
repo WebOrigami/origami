@@ -205,6 +205,7 @@ export function makeTemplate(parts) {
   // Drop empty/null strings.
   const filtered = parts.filter((part) => part);
   const trimmed = filtered.map((part) => trimTemplatePart(part));
+  // const trimmed = filtered;
 
   // Return a concatenation of the parts. If there are no parts, return the
   // empty string. If there's just one string, return that directly.
@@ -230,9 +231,17 @@ function trimTemplatePart(part) {
   }
 
   // For this part of the process, we look at the raw source code. This will
-  // differ from the parsed part, as the parser will have prcoessed escape
+  // differ from the parsed part, as the parser will have processed escape
   // sequences.
   const source = location.source.text;
+
+  // TEMPORARY: don't trim parts between substitutions
+  if (
+    source[location.start.offset - 1] === "}" &&
+    source[location.end.offset] === "$"
+  ) {
+    return part;
+  }
 
   // Identify the offset of the start of the line that begins the string. Note
   // that Peggy `column` locations are 1-based, while `offset` locations are
@@ -241,7 +250,10 @@ function trimTemplatePart(part) {
 
   // Identify the first non-whitespace character on the beginning line.
   let codeStartOffset = startLineOffset;
-  while (isWhitespace(source[codeStartOffset])) {
+  while (
+    codeStartOffset < source.length &&
+    isWhitespace(source[codeStartOffset])
+  ) {
     codeStartOffset++;
   }
 
@@ -259,6 +271,14 @@ function trimTemplatePart(part) {
     if (!isWhitespace(source[i])) {
       codeEndOffset = i;
     }
+  }
+
+  // TEMPORARY: Don't trim end if the last line is just a backtick
+  const endLineOffset = location.end.offset - location.end.column + 1;
+  let lastLine = source.slice(endLineOffset, codeEndOffset);
+  lastLine = lastLine.trim();
+  if (lastLine === "") {
+    return part;
   }
 
   // Does the code end with a `}` or a backtick?
