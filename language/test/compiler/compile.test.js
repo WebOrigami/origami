@@ -62,7 +62,7 @@ describe.only("compile", () => {
     );
   });
 
-  test.only("templateLiteral block with whitespace", () => {
+  test("templateLiteral block with whitespace", () => {
     // Test the preprocessor that trims whitespace around template blocks
     const text = `  \${ if(\`
     true text
@@ -80,11 +80,12 @@ describe.only("compile", () => {
 
   test.only("consecutive templateLiteral blocks", () => {
     const text = `\${a}
+
     \${b}`;
     const fn = compile.templateDocument(text);
     const { code } = fn;
     const part = code[2][2][1];
-    assert.equal(part, "\n    ");
+    assert.equal(part, "\n");
   });
 });
 

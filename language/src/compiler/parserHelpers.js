@@ -224,85 +224,13 @@ function trimTemplatePart(part) {
     return part;
   }
 
-  const location = part.location;
-  if (location.start.line === location.end.line) {
-    // Single-line string, don't trim
-    return part;
-  }
-
-  // For this part of the process, we look at the raw source code. This will
-  // differ from the parsed part, as the parser will have processed escape
-  // sequences.
-  const source = location.source.text;
-
-  // TEMPORARY: don't trim parts between substitutions
-  if (
-    source[location.start.offset - 1] === "}" &&
-    source[location.end.offset] === "$"
-  ) {
-    return part;
-  }
-
-  // Identify the offset of the start of the line that begins the string. Note
-  // that Peggy `column` locations are 1-based, while `offset` locations are
-  // 0-based.
-  const startLineOffset = location.start.offset - location.start.column + 1;
-
-  // Identify the first non-whitespace character on the beginning line.
-  let codeStartOffset = startLineOffset;
-  while (
-    codeStartOffset < source.length &&
-    isWhitespace(source[codeStartOffset])
-  ) {
-    codeStartOffset++;
-  }
-
-  // Does the code begin with a `${` or a backtick?
-  const trimStart =
-    (source[codeStartOffset] === "$" && source[codeStartOffset + 1] === "{") ||
-    source[codeStartOffset] === "`";
-
-  // Identify the last non-whitespace character on the ending line.
-  let codeEndOffset = location.end.offset;
-  for (let i = codeEndOffset + 1; i < source.length; i++) {
-    if (source[i] === "\n") {
-      break;
-    }
-    if (!isWhitespace(source[i])) {
-      codeEndOffset = i;
-    }
-  }
-
-  // TEMPORARY: Don't trim end if the last line is just a backtick
-  const endLineOffset = location.end.offset - location.end.column + 1;
-  let lastLine = source.slice(endLineOffset, codeEndOffset);
-  lastLine = lastLine.trim();
-  if (lastLine === "") {
-    return part;
-  }
-
-  // Does the code end with a `}` or a backtick?
-  const trimEnd =
-    source[codeEndOffset] === "}" || source[codeEndOffset] === "`";
-
-  // From this point forward, we work with the parsed template text
-  let text = part[1];
-  if (trimStart) {
-    // Remove first line, including the line break
-    const firstNewlineOffset = text.indexOf("\n");
-    if (firstNewlineOffset >= 0) {
-      text = text.slice(firstNewlineOffset + 1);
-    }
-  }
-  if (trimEnd) {
-    // Remove everything after the last line break but keep the line break
-    const lastNewlineOffset = text.lastIndexOf("\n");
-    if (lastNewlineOffset >= 0) {
-      text = text.slice(0, lastNewlineOffset + 1);
-    }
-  }
+  let text = part[1]
+    // Remove trailing spaces or tabs on the last line
+    .replace(/\n[ \t]+$/, "\n")
+    // Remove a leading newline
+    .replace(/^\n/, "");
 
   const trimmed = [ops.primitive, text];
-  /** @type {Code} */ (trimmed).location = location;
+  /** @type {Code} */ (trimmed).location = part.location;
   return trimmed;
 }
