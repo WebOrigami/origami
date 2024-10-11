@@ -11,5 +11,6 @@ export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtens
 export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.js";
 export { default as InvokeFunctionsTransform } from "./src/runtime/InvokeFunctionsTransform.js";
 export { default as OrigamiFiles } from "./src/runtime/OrigamiFiles.js";
+export * as symbols from "./src/runtime/symbols.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

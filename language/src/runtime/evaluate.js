@@ -1,15 +1,7 @@
-import {
-  Tree,
-  isPlainObject,
-  isUnpackable,
-  scope,
-} from "@weborigami/async-tree";
+import { Tree, isUnpackable, scope } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-
-const codeSymbol = Symbol("code");
-const scopeSymbol = Symbol("scope");
-const sourceSymbol = Symbol("source");
+import { codeSymbol, scopeSymbol, sourceSymbol } from "./symbols.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -93,11 +85,19 @@ export default async function evaluate(code) {
   }
 
   // To aid debugging, add the code to the result.
-  if (Object.isExtensible(result) && !isPlainObject(result)) {
+  if (Object.isExtensible(result) /* && !isPlainObject(result) */) {
     try {
-      result[codeSymbol] = code;
-      if (/** @type {any} */ (code).location) {
-        result[sourceSymbol] = codeFragment(code.location);
+      if (code.location) {
+        Object.defineProperty(result, sourceSymbol, {
+          value: codeFragment(code.location),
+          enumerable: false,
+        });
+      }
+      if (!result[codeSymbol]) {
+        Object.defineProperty(result, codeSymbol, {
+          value: code,
+          enumerable: false,
+        });
       }
       if (!result[scopeSymbol]) {
         Object.defineProperty(result, scopeSymbol, {
