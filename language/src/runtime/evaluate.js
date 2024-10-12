@@ -87,7 +87,7 @@ export default async function evaluate(code) {
   // To aid debugging, add the code to the result.
   if (Object.isExtensible(result) /* && !isPlainObject(result) */) {
     try {
-      if (code.location) {
+      if (code.location && !result[sourceSymbol]) {
         Object.defineProperty(result, sourceSymbol, {
           value: codeFragment(code.location),
           enumerable: false,

@@ -428,14 +428,14 @@ templateDocumentChar
 
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
-  = parts:(templateDocumentText / templateSubstitution)* {
-      return annotate(makeTemplate(parts), location());
+  = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
+      return annotate(makeTemplate(head, tail), location());
     }
 
 templateDocumentText "template text"
-  = chars:templateDocumentChar+ {
-    return annotate([ops.primitive, chars.join("")], location());
-  }
+  = chars:templateDocumentChar* {
+      return chars.join("");
+    }
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
@@ -448,15 +448,15 @@ templateLiteralChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
-  = parts:(templateLiteralText / templateSubstitution)* {
-      return annotate(makeTemplate(parts), location());
+  = head:templateLiteralText tail:(templateSubstitution templateLiteralText)* {
+      return annotate(makeTemplate(head, tail), location());
     }
 
 // Plain text in a template literal
 templateLiteralText
-  = chars:templateLiteralChar+ {
-    return annotate([ops.primitive, chars.join("")], location());
-  }
+  = chars:templateLiteralChar* {
+      return chars.join("");
+    }
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"

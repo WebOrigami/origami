@@ -201,36 +201,12 @@ export function makeProperty(key, value) {
   return [key, modified];
 }
 
-export function makeTemplate(parts) {
-  // Drop empty/null strings.
-  const filtered = parts.filter((part) => part);
-  const trimmed = filtered.map((part) => trimTemplatePart(part));
-  // const trimmed = filtered;
-
-  // Return a concatenation of the parts. If there are no parts, return the
-  // empty string. If there's just one string, return that directly.
-  return trimmed.length === 0
-    ? ""
-    : trimmed.length === 1 &&
-      trimmed[0][0] === ops.primitive &&
-      typeof trimmed[0][1] === "string"
-    ? trimmed[0]
-    : [ops.concat, ...trimmed];
-}
-
-function trimTemplatePart(part) {
-  if (part[0] !== ops.primitive || typeof part[1] !== "string") {
-    // Not a string
-    return part;
+export function makeTemplate(head, tail) {
+  const strings = [ops.array, head];
+  const values = [];
+  for (const [value, string] of tail) {
+    values.push([ops.concat, value]);
+    strings.push(string);
   }
-
-  let text = part[1]
-    // Remove trailing spaces or tabs on the last line
-    .replace(/\n[ \t]+$/, "\n")
-    // Remove a leading newline
-    .replace(/^\n/, "");
-
-  const trimmed = [ops.primitive, text];
-  /** @type {Code} */ (trimmed).location = part.location;
-  return trimmed;
+  return [ops.template, strings, ...values];
 }

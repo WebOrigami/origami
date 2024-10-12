@@ -20,9 +20,17 @@ import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
+import taggedTemplate from "./taggedTemplate.js";
 
 // For memoizing lambda functions
 const lambdaFnMap = new Map();
+
+function addOpLabel(op, label) {
+  Object.defineProperty(op, "toString", {
+    value: () => label,
+    enumerable: false,
+  });
+}
 
 /**
  * Construct an array.
@@ -33,7 +41,7 @@ const lambdaFnMap = new Map();
 export async function array(...items) {
   return Array(...items);
 }
-array.toString = () => "«ops.array»";
+addOpLabel(array, "«ops.array»");
 
 // The assign op is a placeholder for an assignment declaration.
 // It is only used during parsing -- it shouldn't be executed.
@@ -48,7 +56,7 @@ export const assign = "«ops.assign»";
 export async function concat(...args) {
   return treeConcat.call(this, args);
 }
-concat.toString = () => "«ops.concat»";
+addOpLabel(concat, "«ops.concat»");
 
 /**
  * Find the indicated constructor in scope, then return a function which invokes
@@ -71,7 +79,7 @@ export async function constructor(...keys) {
       ? new constructor()
       : new constructor(...args);
 }
-constructor.toString = () => "«ops.constructor»";
+addOpLabel(constructor, "«ops.constructor»");
 
 /**
  * Given a protocol, a host, and a list of keys, construct an href.
@@ -171,7 +179,7 @@ export async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
   return fetchResponse.call(this, href);
 }
-http.toString = () => "«ops.http»";
+addOpLabel(http, "«ops.http»");
 
 /**
  * Retrieve a web resource via HTTPS.
@@ -184,7 +192,7 @@ export function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
   return fetchResponse.call(this, href);
 }
-https.toString = () => "«ops.https»";
+addOpLabel(https, "«ops.https»");
 
 /**
  * Search the parent's scope -- i.e., exclude the current tree -- for the given
@@ -200,7 +208,7 @@ export async function inherited(key) {
   const parentScope = scopeFn(this.parent);
   return parentScope.get(key);
 }
-inherited.toString = () => "«ops.inherited»";
+addOpLabel(inherited, "«ops.inherited»");
 
 /**
  * Return a function that will invoke the given code.
@@ -258,7 +266,7 @@ export function lambda(parameters, code) {
   lambdaFnMap.set(code, invoke);
   return invoke;
 }
-lambda.toString = () => "«ops.lambda";
+addOpLabel(lambda, "«ops.lambda");
 
 /**
  * Merge the given trees. If they are all plain objects, return a plain object.
@@ -269,7 +277,7 @@ lambda.toString = () => "«ops.lambda";
 export async function merge(...trees) {
   return mergeTrees.call(this, ...trees);
 }
-merge.toString = () => "«ops.merge»";
+addOpLabel(merge, "«ops.merge»");
 
 /**
  * Construct an object. The keys will be the same as the given `obj`
@@ -282,7 +290,7 @@ merge.toString = () => "«ops.merge»";
 export async function object(...entries) {
   return expressionObject(entries, this);
 }
-object.toString = () => "«ops.object»";
+addOpLabel(object, "«ops.object»");
 
 /**
  * A site tree with JSON Keys via HTTPS.
@@ -294,7 +302,7 @@ object.toString = () => "«ops.object»";
 export function explorableSite(host, ...keys) {
   return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
 }
-explorableSite.toString = () => "«ops.explorableSite»";
+addOpLabel(explorableSite, "«ops.explorableSite»");
 
 /**
  * Look up the given key in the scope for the current tree.
@@ -308,7 +316,7 @@ export async function scope(key) {
   const scope = scopeFn(this);
   return scope.get(key);
 }
-scope.toString = () => "«ops.scope»";
+addOpLabel(scope, "«ops.scope»");
 
 /**
  * The spread operator is a placeholder during parsing. It should be replaced
@@ -319,7 +327,7 @@ export function spread(...args) {
     "A compile-time spread operator wasn't converted to an object merge."
   );
 }
-spread.toString = () => "«ops.spread»";
+addOpLabel(spread, "«ops.spread»");
 
 /**
  * Return a primitive value
@@ -327,7 +335,15 @@ spread.toString = () => "«ops.spread»";
 export async function primitive(value) {
   return value;
 }
-primitive.toString = () => "«ops.primitive»";
+addOpLabel(primitive, "«ops.primitive»");
+
+/**
+ * Apply the default tagged template function.
+ */
+export function template(strings, ...values) {
+  return taggedTemplate(strings, values);
+}
+addOpLabel(template, "«ops.template»");
 
 /**
  * Traverse a path of keys through a tree.
@@ -344,7 +360,7 @@ export const traverse = Tree.traverseOrThrow;
 export function treeHttp(host, ...keys) {
   return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }
-treeHttp.toString = () => "«ops.treeHttp»";
+addOpLabel(treeHttp, "«ops.treeHttp»");
 
 /**
  * A website tree via HTTPS.
@@ -356,7 +372,7 @@ treeHttp.toString = () => "«ops.treeHttp»";
 export function treeHttps(host, ...keys) {
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
-treeHttps.toString = () => "«ops.treeHttps»";
+addOpLabel(treeHttps, "«ops.treeHttps»");
 
 /**
  * If the value is packed but has an unpack method, call it and return that as
