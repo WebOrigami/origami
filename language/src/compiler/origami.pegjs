@@ -138,7 +138,15 @@ float "floating-point number"
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 functionComposition "function composition"
-  = target:callTarget chain:args* end:implicitParensArgs? {
+  // Function with at least one argument and maybe implicit parens arguments
+  = target:callTarget chain:args+ end:implicitParensArgs? {
+      if (end) {
+        chain.push(end);
+      }
+      return annotate(makeFunctionCall(target, chain, location()), location());
+    }
+  // Function with implicit parens arguments after maybe other arguments
+  / target:callTarget chain:args* end:implicitParensArgs {
       if (end) {
         chain.push(end);
       }
@@ -402,8 +410,10 @@ step
   / templateLiteral
   / string
   / group
-  // Protocol calls are distinguished by a colon, but it's not at the start.
+  // Things that have a distinctive character, but not at the start
   / protocolCall
+  / taggedTemplate
+  / scopeTraverse
   // Least distinctive option is a simple scope reference, so it comes last.
   / scopeReference
 
@@ -414,6 +424,11 @@ string "string"
   = doubleQuoteString
   / singleQuoteString
   / guillemetString
+
+taggedTemplate
+  = tag:callTarget "`" contents:templateLiteralContents "`" {
+      return annotate(makeTemplate(tag, contents[0], contents[1]), location());
+    }
 
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
@@ -429,7 +444,7 @@ templateDocumentChar
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
   = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
-      return annotate(makeTemplate(head, tail), location());
+      return annotate(makeTemplate(ops.template, head, tail), location());
     }
 
 templateDocumentText "template text"
@@ -440,7 +455,7 @@ templateDocumentText "template text"
 // A backtick-quoted template literal
 templateLiteral "template literal"
   = "`" contents:templateLiteralContents "`" {
-      return annotate(contents, location());
+      return annotate(makeTemplate(ops.template, contents[0], contents[1]), location());
     }
 
 templateLiteralChar
@@ -448,9 +463,7 @@ templateLiteralChar
 
 // The contents of a template literal containing plain text and substitutions
 templateLiteralContents
-  = head:templateLiteralText tail:(templateSubstitution templateLiteralText)* {
-      return annotate(makeTemplate(head, tail), location());
-    }
+  = head:templateLiteralText tail:(templateSubstitution templateLiteralText)*
 
 // Plain text in a template literal
 templateLiteralText

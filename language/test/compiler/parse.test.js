@@ -96,6 +96,11 @@ describe("Origami parser", () => {
       [ops.scope, "test.orit"],
       [ops.primitive, "Hello"],
     ]);
+    assertParse("expr", "tag`Hello, ${name}!`", [
+      [ops.scope, "tag"],
+      [ops.array, "Hello, ", "!"],
+      [ops.concat, [ops.scope, "name"]],
+    ]);
   });
 
   test("expression", () => {
@@ -172,21 +177,6 @@ describe("Origami parser", () => {
       ops.traverse,
       [[ops.scope, "fn"], undefined],
       [ops.primitive, "key"],
-    ]);
-    assertParse("functionComposition", "tree/", [
-      ops.traverse,
-      [ops.scope, "tree/"],
-    ]);
-    assertParse("functionComposition", "tree/key", [
-      ops.traverse,
-      [ops.scope, "tree/"],
-      [ops.primitive, "key"],
-    ]);
-    assertParse("functionComposition", "tree/foo/bar", [
-      ops.traverse,
-      [ops.scope, "tree/"],
-      [ops.primitive, "foo/"],
-      [ops.primitive, "bar"],
     ]);
     assertParse("functionComposition", "tree/key()", [
       [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
@@ -560,6 +550,7 @@ describe("Origami parser", () => {
   });
 
   test("scopeTraverse", () => {
+    assertParse("scopeTraverse", "tree/", [ops.traverse, [ops.scope, "tree/"]]);
     assertParse("scopeTraverse", "tree/foo/bar", [
       ops.traverse,
       [ops.scope, "tree/"],
@@ -605,6 +596,13 @@ describe("Origami parser", () => {
     assertParse("string", `"\\0\\b\\f\\n\\r\\t\\v"`, [
       ops.primitive,
       "\0\b\f\n\r\t\v",
+    ]);
+  });
+
+  test("taggedTemplate", () => {
+    assertParse("taggedTemplate", "tag`Hello, world.`", [
+      [ops.scope, "tag"],
+      [ops.array, "Hello, world."],
     ]);
   });
 
