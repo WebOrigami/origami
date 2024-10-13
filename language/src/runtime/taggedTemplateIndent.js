@@ -84,8 +84,9 @@ function joinBlocks(strings, values, blockIndentations) {
           text += blockIndentation + line + "\n";
         }
       }
-      result += text + strings[i + 1];
+      result += text;
     }
+    result += strings[i + 1];
   }
   return result;
 }
