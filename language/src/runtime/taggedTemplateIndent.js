@@ -3,61 +3,44 @@
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 
 export default function taggedTemplateIndent(strings, ...values) {
-  // let isBlockTemplate;
-  // let indent;
-
-  // Does first string start with newline?
-  // if (strings.length === 0 || !strings[0].startsWith("\n")) {
-  //   isBlockTemplate = false;
-  // } else {
-  //   // Is last line of last string empty, or just have whitespace indentation?
-  //   const lastString = strings.at(-1);
-  //   const firstLineWhitespaceRegex = /^\n(?<indent>[ \t]*)/;
-  //   const match = lastString.match(firstLineWhitespaceRegex);
-  //   if (match) {
-  //     // Yes, this is a block template, note the indentation
-  //     isBlockTemplate = true;
-  //     indent = match.groups.indent;
-  //   } else {
-  //     isBlockTemplate = false;
-  //   }
-  // }
-
-  // if (!isBlockTemplate) {
-  //   // Use JS behavior
-  //   return taggedTemplate(strings, values);
-  // }
-
   if (strings.length === 0) {
     return "";
   }
 
-  const firstLineWhitespaceRegex = /^\n(?<indent>[ \t]*)/;
-  const match = strings[0].match(firstLineWhitespaceRegex);
-  const indent = match?.groups.indent ?? "";
+  let indent;
+  if (strings[0].startsWith("\n")) {
+    // Phase one: Identify the indentation based on the first real line of the
+    // first string (skipping the initial newline), and remove this indentation
+    // from all lines of all strings.
 
-  if (match) {
-    // Remove indentation from all strings, matching against the original indent
-    // string. Note that JS passes an odd array-like as the `strings` argument. As
-    // a side effect of the `replaceAll`, we'll convert it to a real array.
-    const indentationRegex = new RegExp(`\n${indent}`, "g");
-    strings = strings.map((string) =>
-      string.replaceAll(indentationRegex, "\n")
-    );
+    const firstLineWhitespaceRegex = /^\n(?<indent>[ \t]*)/;
+    const match = strings[0].match(firstLineWhitespaceRegex);
+    indent = match?.groups.indent ?? "";
 
-    // HACK: Remove indentation from last line of last string
-    strings[strings.length - 1] = strings
-      .at(-1)
-      .replace(lastLineWhitespaceRegex, "\n");
-  } else {
-    // No indentation, so just copy the strings so we have a real array
-    strings = strings.slice();
+    if (indent) {
+      // Note that JS passes an odd array - like as the `strings` argument.As
+      // a side effect of the `replaceAll`, we'll convert it to a real array.
+      const indentationRegex = new RegExp(`\n${indent}`, "g");
+      strings = strings.map((string) =>
+        string.replaceAll(indentationRegex, "\n")
+      );
+
+      // Remove indentation from last line of last string
+      strings[strings.length - 1] = strings
+        .at(-1)
+        .replace(lastLineWhitespaceRegex, "\n");
+    } else {
+      // No indentation, so just copy the strings so we have a real array
+      strings = strings.slice();
+    }
   }
 
-  // Identify any block substitutions, identify and remove their preceding
-  // indentation, remove the following newline.
+  // Phase two: Identify any block substitutions, identify and remove their
+  // preceding indentation, and remove the following newline. Work backward from
+  // the end towards the start because we're modifying the strings in place and
+  // our pattern matching won't work going forward from start to end.
   let blockIndentations = [];
-  for (let i = 0; i < strings.length - 1; i++) {
+  for (let i = strings.length - 2; i >= 0; i--) {
     // Get the strings before and after substitution with index `i`
     const beforeString = strings[i];
     const afterString = strings[i + 1];
@@ -67,7 +50,9 @@ export default function taggedTemplateIndent(strings, ...values) {
       let blockIndentation = match.groups.indent;
       blockIndentations[i] = blockIndentation;
       // Trim the before and after strings
-      strings[i] = beforeString.slice(0, -blockIndentation.length);
+      if (blockIndentation) {
+        strings[i] = beforeString.slice(0, -blockIndentation.length);
+      }
       strings[i + 1] = afterString.slice(1);
     }
   }
@@ -86,19 +71,21 @@ function joinBlocks(strings, values, blockIndentations) {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
     let text = values[i];
-    const blockIndentation = blockIndentations[i];
-    if (blockIndentation) {
-      const lines = text.split("\n");
-      text = "";
-      if (lines.at(-1) === "") {
-        // Drop empty last line
-        lines.pop();
+    if (text) {
+      const blockIndentation = blockIndentations[i];
+      if (blockIndentation) {
+        const lines = text.split("\n");
+        text = "";
+        if (lines.at(-1) === "") {
+          // Drop empty last line
+          lines.pop();
+        }
+        for (let line of lines) {
+          text += blockIndentation + line + "\n";
+        }
       }
-      for (let line of lines) {
-        text += blockIndentation + line + "\n";
-      }
+      result += text + strings[i + 1];
     }
-    result += text + strings[i + 1];
   }
   return result;
 }
