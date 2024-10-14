@@ -35,7 +35,7 @@ export default function taggedTemplateIndent(strings, ...values) {
     }
   }
 
-  // Phase two: Identify any block substitutions, identify and remove their
+  // Phase two: Identify any block placholders, identify and remove their
   // preceding indentation, and remove the following newline. Work backward from
   // the end towards the start because we're modifying the strings in place and
   // our pattern matching won't work going forward from start to end.
@@ -66,7 +66,7 @@ export default function taggedTemplateIndent(strings, ...values) {
 }
 
 // Join strings and values, applying the given block indentation to the lines of
-// values for block substitutions.
+// values for block placholders.
 function joinBlocks(strings, values, blockIndentations) {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {

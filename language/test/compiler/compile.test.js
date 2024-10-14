@@ -61,6 +61,27 @@ describe("compile", () => {
       "escape characters with `backslash`"
     );
   });
+
+  test("tagged template string array is identical across calls", async () => {
+    let saved;
+    const scope = new ObjectTree({
+      tag: (strings, ...values) => {
+        assert.deepEqual(strings, ["Hello, ", "!"]);
+        if (saved) {
+          assert.equal(strings, saved);
+        } else {
+          saved = strings;
+        }
+        return strings[0] + values[0] + strings[1];
+      },
+    });
+    const fn = compile.expression("=tag`Hello, ${_}!`");
+    const templateFn = await fn.call(null);
+    const alice = await templateFn.call(scope, "Alice");
+    assert.equal(alice, "Hello, Alice!");
+    const bob = await templateFn.call(scope, "Bob");
+    assert.equal(bob, "Hello, Bob!");
+  });
 });
 
 async function assertCompile(text, expected) {

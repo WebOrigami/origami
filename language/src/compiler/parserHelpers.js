@@ -202,11 +202,11 @@ export function makeProperty(key, value) {
 }
 
 export function makeTemplate(op, head, tail) {
-  const strings = [ops.array, head];
+  const strings = [head];
   const values = [];
   for (const [value, string] of tail) {
     values.push([ops.concat, value]);
     strings.push(string);
   }
-  return [op, strings, ...values];
+  return [op, [ops.primitive, strings], ...values];
 }

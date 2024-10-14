@@ -20,7 +20,7 @@ export default async function evaluate(code) {
   }
 
   let evaluated;
-  const unevaluatedFns = [ops.lambda, ops.object];
+  const unevaluatedFns = [ops.lambda, ops.object, ops.primitive];
   if (unevaluatedFns.includes(code[0])) {
     // Don't evaluate instructions, use as is.
     evaluated = code;

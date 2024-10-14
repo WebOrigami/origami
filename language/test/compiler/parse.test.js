@@ -63,7 +63,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("expr", "fn =`x`", [
       [ops.scope, "fn"],
-      [ops.lambda, null, [ops.template, [ops.array, "x"]]],
+      [ops.lambda, null, [ops.template, [ops.primitive, ["x"]]]],
     ]);
     assertParse("expr", "copy app(formulas), files 'snapshot'", [
       [ops.scope, "copy"],
@@ -83,7 +83,7 @@ describe("Origami parser", () => {
         null,
         [
           ops.template,
-          [ops.array, "<li>", "</li>"],
+          [ops.primitive, ["<li>", "</li>"]],
           [ops.concat, [ops.scope, "_"]],
         ],
       ],
@@ -98,7 +98,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("expr", "tag`Hello, ${name}!`", [
       [ops.scope, "tag"],
-      [ops.array, "Hello, ", "!"],
+      [ops.primitive, ["Hello, ", "!"]],
       [ops.concat, [ops.scope, "name"]],
     ]);
   });
@@ -279,7 +279,7 @@ describe("Origami parser", () => {
       null,
       [
         ops.template,
-        [ops.array, "Hello, ", "."],
+        [ops.primitive, ["Hello, ", "."]],
         [ops.concat, [ops.scope, "name"]],
       ],
     ]);
@@ -602,7 +602,7 @@ describe("Origami parser", () => {
   test("taggedTemplate", () => {
     assertParse("taggedTemplate", "tag`Hello, world.`", [
       [ops.scope, "tag"],
-      [ops.array, "Hello, world."],
+      [ops.primitive, ["Hello, world."]],
     ]);
   });
 
@@ -612,35 +612,35 @@ describe("Origami parser", () => {
       null,
       [
         ops.template,
-        [ops.array, "hello", "world"],
+        [ops.primitive, ["hello", "world"]],
         [ops.concat, [ops.scope, "foo"]],
       ],
     ]);
     assertParse("templateDocument", "Documents can contain ` backticks", [
       ops.lambda,
       null,
-      [ops.template, [ops.array, "Documents can contain ` backticks"]],
+      [ops.template, [ops.primitive, ["Documents can contain ` backticks"]]],
     ]);
   });
 
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
       ops.template,
-      [ops.array, "Hello, world."],
+      [ops.primitive, ["Hello, world."]],
     ]);
     assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.template,
-      [ops.array, "foo ", " bar"],
+      [ops.primitive, ["foo ", " bar"]],
       [ops.concat, [ops.scope, "x"]],
     ]);
     assertParse("templateLiteral", "`${`nested`}`", [
       ops.template,
-      [ops.array, "", ""],
-      [ops.concat, [ops.template, [ops.array, "nested"]]],
+      [ops.primitive, ["", ""]],
+      [ops.concat, [ops.template, [ops.primitive, ["nested"]]]],
     ]);
     assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
       ops.template,
-      [ops.array, "", ""],
+      [ops.primitive, ["", ""]],
       [
         ops.concat,
         [
@@ -651,7 +651,7 @@ describe("Origami parser", () => {
             null,
             [
               ops.template,
-              [ops.array, "", ""],
+              [ops.primitive, ["", ""]],
               [ops.concat, [ops.scope, "name"]],
             ],
           ],
