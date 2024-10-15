@@ -64,13 +64,16 @@ export function toFunction(obj) {
     return obj;
   } else if (isUnpackable(obj)) {
     // Extract the contents of the object and convert that to a function.
-    let fn;
+    let fnPromise;
     /** @this {any} */
     return async function (...args) {
-      if (!fn) {
-        const content = await obj.unpack();
-        fn = toFunction(content);
+      if (!fnPromise) {
+        // unpack() may return a function or a promise for a function; normalize
+        // to a promise for a function
+        const unpackPromise = Promise.resolve(obj.unpack());
+        fnPromise = unpackPromise.then((content) => toFunction(content));
       }
+      const fn = await fnPromise;
       return fn.call(this, ...args);
     };
   } else if (Tree.isTreelike(obj)) {
