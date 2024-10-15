@@ -8,8 +8,8 @@ describe("Origami parser", () => {
   test("absoluteFilePath", () => {
     assertParse("absoluteFilePath", "/foo/bar", [
       [ops.filesRoot],
-      [ops.primitive, "foo/"],
-      [ops.primitive, "bar"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar"],
     ]);
   });
 
@@ -17,20 +17,20 @@ describe("Origami parser", () => {
     assertParse("array", "[]", [ops.array]);
     assertParse("array", "[1, 2, 3]", [
       ops.array,
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("array", "[ 1 , 2 , 3 ]", [
       ops.array,
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("array", "[ 1, ...[2, 3]]", [
       ops.merge,
-      [ops.array, [ops.primitive, 1]],
-      [ops.array, [ops.primitive, 2], [ops.primitive, 3]],
+      [ops.array, [ops.literal, 1]],
+      [ops.array, [ops.literal, 2], [ops.literal, 3]],
     ]);
   });
 
@@ -44,26 +44,26 @@ describe("Origami parser", () => {
     ]);
     assertParse("expr", "foo.bar('hello', 'world')", [
       [ops.scope, "foo.bar"],
-      [ops.primitive, "hello"],
-      [ops.primitive, "world"],
+      [ops.literal, "hello"],
+      [ops.literal, "world"],
     ]);
     assertParse("expr", "(fn)('a')", [
       [ops.scope, "fn"],
-      [ops.primitive, "a"],
+      [ops.literal, "a"],
     ]);
-    assertParse("expr", "1", [ops.primitive, 1]);
+    assertParse("expr", "1", [ops.literal, 1]);
     assertParse("expr", "{ a: 1, b: 2 }", [
       ops.object,
-      ["a", [ops.primitive, 1]],
-      ["b", [ops.primitive, 2]],
+      ["a", [ops.literal, 1]],
+      ["b", [ops.literal, 2]],
     ]);
     assertParse("expr", "serve { index.html: 'hello' }", [
       [ops.scope, "serve"],
-      [ops.object, ["index.html", [ops.primitive, "hello"]]],
+      [ops.object, ["index.html", [ops.literal, "hello"]]],
     ]);
     assertParse("expr", "fn =`x`", [
       [ops.scope, "fn"],
-      [ops.lambda, null, [ops.template, [ops.primitive, ["x"]]]],
+      [ops.lambda, null, [ops.template, [ops.literal, ["x"]]]],
     ]);
     assertParse("expr", "copy app(formulas), files 'snapshot'", [
       [ops.scope, "copy"],
@@ -73,7 +73,7 @@ describe("Origami parser", () => {
       ],
       [
         [ops.scope, "files"],
-        [ops.primitive, "snapshot"],
+        [ops.literal, "snapshot"],
       ],
     ]);
     assertParse("expr", "@map =`<li>${_}</li>`", [
@@ -83,22 +83,22 @@ describe("Origami parser", () => {
         null,
         [
           ops.template,
-          [ops.primitive, ["<li>", "</li>"]],
+          [ops.literal, ["<li>", "</li>"]],
           [ops.concat, [ops.scope, "_"]],
         ],
       ],
     ]);
     assertParse("expr", `"https://example.com"`, [
-      ops.primitive,
+      ops.literal,
       "https://example.com",
     ]);
     assertParse("expr", "'Hello' -> test.orit", [
       [ops.scope, "test.orit"],
-      [ops.primitive, "Hello"],
+      [ops.literal, "Hello"],
     ]);
     assertParse("expr", "tag`Hello, ${name}!`", [
       [ops.scope, "tag"],
-      [ops.primitive, ["Hello, ", "!"]],
+      [ops.literal, ["Hello, ", "!"]],
       [ops.concat, [ops.scope, "name"]],
     ]);
   });
@@ -142,12 +142,12 @@ describe("Origami parser", () => {
     assertParse("expression", "path//key", [
       ops.traverse,
       [ops.scope, "path/"],
-      [ops.primitive, "key"],
+      [ops.literal, "key"],
     ]);
     // Single slash at start of something = absolute file path
     assertParse("expression", "/path", [
       [ops.filesRoot],
-      [ops.primitive, "path"],
+      [ops.literal, "path"],
     ]);
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
@@ -176,10 +176,10 @@ describe("Origami parser", () => {
     assertParse("functionComposition", "fn()/key", [
       ops.traverse,
       [[ops.scope, "fn"], undefined],
-      [ops.primitive, "key"],
+      [ops.literal, "key"],
     ]);
     assertParse("functionComposition", "tree/key()", [
-      [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "(tree)/", [
@@ -187,19 +187,19 @@ describe("Origami parser", () => {
       [ops.scope, "tree"],
     ]);
     assertParse("functionComposition", "fn()/key()", [
-      [ops.traverse, [[ops.scope, "fn"], undefined], [ops.primitive, "key"]],
+      [ops.traverse, [[ops.scope, "fn"], undefined], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "(fn())('arg')", [
       [[ops.scope, "fn"], undefined],
-      [ops.primitive, "arg"],
+      [ops.literal, "arg"],
     ]);
     assertParse("functionComposition", "fn('a')('b')", [
       [
         [ops.scope, "fn"],
-        [ops.primitive, "a"],
+        [ops.literal, "a"],
       ],
-      [ops.primitive, "b"],
+      [ops.literal, "b"],
     ]);
     assertParse("functionComposition", "(fn())(a, b)", [
       [[ops.scope, "fn"], undefined],
@@ -208,8 +208,8 @@ describe("Origami parser", () => {
     ]);
     assertParse("functionComposition", "{ a: 1, b: 2}/b", [
       ops.traverse,
-      [ops.object, ["a", [ops.primitive, 1]], ["b", [ops.primitive, 2]]],
-      [ops.primitive, "b"],
+      [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
+      [ops.literal, "b"],
     ]);
     assertParse("functionComposition", "fn arg", [
       [ops.scope, "fn"],
@@ -217,8 +217,8 @@ describe("Origami parser", () => {
     ]);
     assertParse("functionComposition", "fn 'a', 'b'", [
       [ops.scope, "fn"],
-      [ops.primitive, "a"],
-      [ops.primitive, "b"],
+      [ops.literal, "a"],
+      [ops.literal, "b"],
     ]);
     assertParse("functionComposition", "fn a(b), c", [
       [ops.scope, "fn"],
@@ -232,20 +232,20 @@ describe("Origami parser", () => {
       [ops.scope, "fn1"],
       [
         [ops.scope, "fn2"],
-        [ops.primitive, "arg"],
+        [ops.literal, "arg"],
       ],
     ]);
     assertParse("functionComposition", "(fn()) 'arg'", [
       [[ops.scope, "fn"], undefined],
-      [ops.primitive, "arg"],
+      [ops.literal, "arg"],
     ]);
     assertParse("functionComposition", "tree/key arg", [
-      [ops.traverse, [ops.scope, "tree/"], [ops.primitive, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "https://example.com/tree.yaml 'key'", [
-      [ops.https, [ops.primitive, "example.com"], [ops.primitive, "tree.yaml"]],
-      [ops.primitive, "key"],
+      [ops.https, [ops.literal, "example.com"], [ops.literal, "tree.yaml"]],
+      [ops.literal, "key"],
     ]);
   });
 
@@ -256,9 +256,9 @@ describe("Origami parser", () => {
   });
 
   test("host", () => {
-    assertParse("host", "abc", [ops.primitive, "abc"]);
-    assertParse("host", "abc:123", [ops.primitive, "abc:123"]);
-    assertParse("host", "foo\\ bar", [ops.primitive, "foo bar"]);
+    assertParse("host", "abc", [ops.literal, "abc"]);
+    assertParse("host", "abc:123", [ops.literal, "abc:123"]);
+    assertParse("host", "foo\\ bar", [ops.literal, "foo bar"]);
   });
 
   test("identifier", () => {
@@ -279,7 +279,7 @@ describe("Origami parser", () => {
       null,
       [
         ops.template,
-        [ops.primitive, ["Hello, ", "."]],
+        [ops.literal, ["Hello, ", "."]],
         [ops.concat, [ops.scope, "name"]],
       ],
     ]);
@@ -287,36 +287,36 @@ describe("Origami parser", () => {
 
   test("leadingSlashPath", () => {
     assertParse("leadingSlashPath", "/", []);
-    assertParse("leadingSlashPath", "/tree", [[ops.primitive, "tree"]]);
-    assertParse("leadingSlashPath", "/tree/", [[ops.primitive, "tree/"]]);
+    assertParse("leadingSlashPath", "/tree", [[ops.literal, "tree"]]);
+    assertParse("leadingSlashPath", "/tree/", [[ops.literal, "tree/"]]);
   });
 
   test("list", () => {
-    assertParse("list", "1", [[ops.primitive, 1]]);
+    assertParse("list", "1", [[ops.literal, 1]]);
     assertParse("list", "1,2,3", [
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("list", "1, 2, 3,", [
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("list", "1 , 2 , 3", [
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("list", "1\n2\n3", [
-      [ops.primitive, 1],
-      [ops.primitive, 2],
-      [ops.primitive, 3],
+      [ops.literal, 1],
+      [ops.literal, 2],
+      [ops.literal, 3],
     ]);
     assertParse("list", "'a' , 'b' , 'c'", [
-      [ops.primitive, "a"],
-      [ops.primitive, "b"],
-      [ops.primitive, "c"],
+      [ops.literal, "a"],
+      [ops.literal, "b"],
+      [ops.literal, "c"],
     ]);
   });
 
@@ -326,53 +326,53 @@ describe("Origami parser", () => {
 
   test("new", () => {
     assertParse("expression", "new:@js/Date('2025-01-01')", [
-      [ops.constructor, [ops.primitive, "@js"], [ops.primitive, "Date"]],
-      [ops.primitive, "2025-01-01"],
+      [ops.constructor, [ops.literal, "@js"], [ops.literal, "Date"]],
+      [ops.literal, "2025-01-01"],
     ]);
   });
 
   test("number", () => {
-    assertParse("number", "123", [ops.primitive, 123]);
-    assertParse("number", "-456", [ops.primitive, -456]);
-    assertParse("number", ".5", [ops.primitive, 0.5]);
-    assertParse("number", "123.45", [ops.primitive, 123.45]);
-    assertParse("number", "-678.90", [ops.primitive, -678.9]);
-    assertParse("number", "+123", [ops.primitive, 123]);
-    assertParse("number", "+456.78", [ops.primitive, 456.78]);
+    assertParse("number", "123", [ops.literal, 123]);
+    assertParse("number", "-456", [ops.literal, -456]);
+    assertParse("number", ".5", [ops.literal, 0.5]);
+    assertParse("number", "123.45", [ops.literal, 123.45]);
+    assertParse("number", "-678.90", [ops.literal, -678.9]);
+    assertParse("number", "+123", [ops.literal, 123]);
+    assertParse("number", "+456.78", [ops.literal, 456.78]);
   });
 
   test("object", () => {
     assertParse("object", "{}", [ops.object]);
     assertParse("object", "{ a: 1, b }", [
       ops.object,
-      ["a", [ops.primitive, 1]],
+      ["a", [ops.literal, 1]],
       ["b", [ops.inherited, "b"]],
     ]);
     assertParse("object", "{ sub: { a: 1 } }", [
       ops.object,
-      ["sub", [ops.object, ["a", [ops.primitive, 1]]]],
+      ["sub", [ops.object, ["a", [ops.literal, 1]]]],
     ]);
     assertParse("object", "{ sub: { a/: 1 } }", [
       ops.object,
-      ["sub", [ops.object, ["a/", [ops.primitive, 1]]]],
+      ["sub", [ops.object, ["a/", [ops.literal, 1]]]],
     ]);
     assertParse("object", `{ "a": 1, "b": 2 }`, [
       ops.object,
-      ["a", [ops.primitive, 1]],
-      ["b", [ops.primitive, 2]],
+      ["a", [ops.literal, 1]],
+      ["b", [ops.literal, 2]],
     ]);
     assertParse("object", "{ a = b, b = 2 }", [
       ops.object,
       ["a", [ops.getter, [ops.scope, "b"]]],
-      ["b", [ops.primitive, 2]],
+      ["b", [ops.literal, 2]],
     ]);
     assertParse("object", "{ a: { b: 1 } }", [
       ops.object,
-      ["a", [ops.object, ["b", [ops.primitive, 1]]]],
+      ["a", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
     assertParse("object", "{ a: { b = 1 } }", [
       ops.object,
-      ["a", [ops.object, ["b", [ops.primitive, 1]]]],
+      ["a", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
     assertParse("object", "{ a: { b = fn() } }", [
       ops.object,
@@ -386,19 +386,19 @@ describe("Origami parser", () => {
           ops.getter,
           [
             [ops.scope, "fn"],
-            [ops.primitive, "a"],
+            [ops.literal, "a"],
           ],
         ],
       ],
     ]);
     assertParse("object", "{ a: 1, ...b }", [
       ops.merge,
-      [ops.object, ["a", [ops.primitive, 1]]],
+      [ops.object, ["a", [ops.literal, 1]]],
       [ops.scope, "b"],
     ]);
     assertParse("object", "{ (a): 1 }", [
       ops.object,
-      ["(a)", [ops.primitive, 1]],
+      ["(a)", [ops.literal, 1]],
     ]);
   });
 
@@ -419,23 +419,23 @@ describe("Origami parser", () => {
         ops.getter,
         [
           [ops.scope, "fn"],
-          [ops.primitive, "bar"],
+          [ops.literal, "bar"],
         ],
       ],
     ]);
   });
 
   test("objectProperty", () => {
-    assertParse("objectProperty", "a: 1", ["a", [ops.primitive, 1]]);
+    assertParse("objectProperty", "a: 1", ["a", [ops.literal, 1]]);
     assertParse("objectProperty", "name: 'Alice'", [
       "name",
-      [ops.primitive, "Alice"],
+      [ops.literal, "Alice"],
     ]);
     assertParse("objectProperty", "x: fn('a')", [
       "x",
       [
         [ops.scope, "fn"],
-        [ops.primitive, "a"],
+        [ops.literal, "a"],
       ],
     ]);
   });
@@ -487,19 +487,19 @@ describe("Origami parser", () => {
   });
 
   test("path", () => {
-    assertParse("path", "tree/", [[ops.primitive, "tree/"]]);
+    assertParse("path", "tree/", [[ops.literal, "tree/"]]);
     assertParse("path", "month/12", [
-      [ops.primitive, "month/"],
-      [ops.primitive, "12"],
+      [ops.literal, "month/"],
+      [ops.literal, "12"],
     ]);
     assertParse("path", "tree/foo/bar", [
-      [ops.primitive, "tree/"],
-      [ops.primitive, "foo/"],
-      [ops.primitive, "bar"],
+      [ops.literal, "tree/"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar"],
     ]);
     assertParse("path", "a///b", [
-      [ops.primitive, "a/"],
-      [ops.primitive, "b"],
+      [ops.literal, "a/"],
+      [ops.literal, "b"],
     ]);
   });
 
@@ -527,21 +527,21 @@ describe("Origami parser", () => {
   test("protocolCall", () => {
     assertParse("protocolCall", "foo://bar", [
       [ops.scope, "foo"],
-      [ops.primitive, "bar"],
+      [ops.literal, "bar"],
     ]);
     assertParse("protocolCall", "https://example.com/foo/", [
       ops.https,
-      [ops.primitive, "example.com"],
-      [ops.primitive, "foo/"],
+      [ops.literal, "example.com"],
+      [ops.literal, "foo/"],
     ]);
     assertParse("protocolCall", "http:example.com", [
       ops.http,
-      [ops.primitive, "example.com"],
+      [ops.literal, "example.com"],
     ]);
     assertParse("protocolCall", "http://localhost:5000/foo", [
       ops.http,
-      [ops.primitive, "localhost:5000"],
-      [ops.primitive, "foo"],
+      [ops.literal, "localhost:5000"],
+      [ops.literal, "foo"],
     ]);
   });
 
@@ -554,14 +554,14 @@ describe("Origami parser", () => {
     assertParse("scopeTraverse", "tree/foo/bar", [
       ops.traverse,
       [ops.scope, "tree/"],
-      [ops.primitive, "foo/"],
-      [ops.primitive, "bar"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar"],
     ]);
     assertParse("scopeTraverse", "tree/foo/bar/", [
       ops.traverse,
       [ops.scope, "tree/"],
-      [ops.primitive, "foo/"],
-      [ops.primitive, "bar/"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar/"],
     ]);
   });
 
@@ -571,7 +571,7 @@ describe("Origami parser", () => {
       `#!/usr/bin/env ori @invoke
 'Hello'
 `,
-      [ops.primitive, "Hello"],
+      [ops.literal, "Hello"],
       false
     );
   });
@@ -586,15 +586,15 @@ describe("Origami parser", () => {
   });
 
   test("string", () => {
-    assertParse("string", '"foo"', [ops.primitive, "foo"]);
-    assertParse("string", "'bar'", [ops.primitive, "bar"]);
-    assertParse("string", '"foo bar"', [ops.primitive, "foo bar"]);
-    assertParse("string", "'bar baz'", [ops.primitive, "bar baz"]);
-    assertParse("string", `"foo\\"s bar"`, [ops.primitive, `foo"s bar`]);
-    assertParse("string", `'bar\\'s baz'`, [ops.primitive, `bar's baz`]);
-    assertParse("string", `«string»`, [ops.primitive, "string"]);
+    assertParse("string", '"foo"', [ops.literal, "foo"]);
+    assertParse("string", "'bar'", [ops.literal, "bar"]);
+    assertParse("string", '"foo bar"', [ops.literal, "foo bar"]);
+    assertParse("string", "'bar baz'", [ops.literal, "bar baz"]);
+    assertParse("string", `"foo\\"s bar"`, [ops.literal, `foo"s bar`]);
+    assertParse("string", `'bar\\'s baz'`, [ops.literal, `bar's baz`]);
+    assertParse("string", `«string»`, [ops.literal, "string"]);
     assertParse("string", `"\\0\\b\\f\\n\\r\\t\\v"`, [
-      ops.primitive,
+      ops.literal,
       "\0\b\f\n\r\t\v",
     ]);
   });
@@ -602,7 +602,7 @@ describe("Origami parser", () => {
   test("taggedTemplate", () => {
     assertParse("taggedTemplate", "tag`Hello, world.`", [
       [ops.scope, "tag"],
-      [ops.primitive, ["Hello, world."]],
+      [ops.literal, ["Hello, world."]],
     ]);
   });
 
@@ -612,35 +612,35 @@ describe("Origami parser", () => {
       null,
       [
         ops.template,
-        [ops.primitive, ["hello", "world"]],
+        [ops.literal, ["hello", "world"]],
         [ops.concat, [ops.scope, "foo"]],
       ],
     ]);
     assertParse("templateDocument", "Documents can contain ` backticks", [
       ops.lambda,
       null,
-      [ops.template, [ops.primitive, ["Documents can contain ` backticks"]]],
+      [ops.template, [ops.literal, ["Documents can contain ` backticks"]]],
     ]);
   });
 
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
       ops.template,
-      [ops.primitive, ["Hello, world."]],
+      [ops.literal, ["Hello, world."]],
     ]);
     assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.template,
-      [ops.primitive, ["foo ", " bar"]],
+      [ops.literal, ["foo ", " bar"]],
       [ops.concat, [ops.scope, "x"]],
     ]);
     assertParse("templateLiteral", "`${`nested`}`", [
       ops.template,
-      [ops.primitive, ["", ""]],
-      [ops.concat, [ops.template, [ops.primitive, ["nested"]]]],
+      [ops.literal, ["", ""]],
+      [ops.concat, [ops.template, [ops.literal, ["nested"]]]],
     ]);
     assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
       ops.template,
-      [ops.primitive, ["", ""]],
+      [ops.literal, ["", ""]],
       [
         ops.concat,
         [
@@ -651,7 +651,7 @@ describe("Origami parser", () => {
             null,
             [
               ops.template,
-              [ops.primitive, ["", ""]],
+              [ops.literal, ["", ""]],
               [ops.concat, [ops.scope, "name"]],
             ],
           ],

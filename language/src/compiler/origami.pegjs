@@ -103,7 +103,7 @@ doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
   = '"' chars:doubleQuoteStringChar* '"' {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   }
 
 doubleQuoteStringChar
@@ -132,7 +132,7 @@ expression "Origami expression"
 
 float "floating-point number"
   = sign? digits? "." digits {
-      return annotate([ops.primitive, parseFloat(text())], location());
+      return annotate([ops.literal, parseFloat(text())], location());
     }
 
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
@@ -161,7 +161,7 @@ group "parenthetical group"
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* '»' {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   }
 
 guillemetStringChar
@@ -174,7 +174,7 @@ host "HTTP/HTTPS host"
   = identifier:identifier port:(":" @number)? {
     const portText = port ? `:${port[1]}` : "";
     const hostText = identifier + portText;
-    return annotate([ops.primitive, hostText], location());
+    return annotate([ops.literal, hostText], location());
   }
 
 identifier "identifier"
@@ -203,7 +203,7 @@ inlineSpace
 
 integer "integer"
   = sign? digits {
-      return annotate([ops.primitive, parseInt(text())], location());
+      return annotate([ops.literal, parseInt(text())], location());
     }
 
 // A lambda expression: `=foo()`
@@ -285,7 +285,7 @@ objectPublicKey
     return identifier + (slash ?? "");
   }
   / string:string {
-    // Remove `ops.primitive` from the string code
+    // Remove `ops.literal` from the string code
     return string[1];
   }
 
@@ -317,7 +317,7 @@ path "slash-separated path"
 // A path key followed by a slash
 pathElement
   = chars:pathKeyChar* "/" {
-    return annotate([ops.primitive, chars.join("") + "/"], location());
+    return annotate([ops.literal, chars.join("") + "/"], location());
   }
 
 // A single character in a slash-separated path.
@@ -330,7 +330,7 @@ pathKeyChar
 // A path key without a slash
 pathTail
   = chars:pathKeyChar+ {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   }
 
 // Parse a protocol call like `fn://foo/bar`.
@@ -382,7 +382,7 @@ singleLineComment
 
 singleQuoteString "single quote string"
   = "'" chars:singleQuoteStringChar* "'" {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   }
 
 singleQuoteStringChar

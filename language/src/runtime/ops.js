@@ -153,6 +153,18 @@ async function fetchResponse(href) {
 export const getter = new String("«ops.getter»");
 
 /**
+ * A site tree with JSON Keys via HTTPS.
+ *
+ * @this {AsyncTree|null}
+ * @param {string} host
+ * @param  {...string} keys
+ */
+export function explorableSite(host, ...keys) {
+  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
+}
+addOpLabel(explorableSite, "«ops.explorableSite»");
+
+/**
  * Construct a files tree for the filesystem root.
  *
  * @this {AsyncTree|null}
@@ -269,6 +281,14 @@ export function lambda(parameters, code) {
 addOpLabel(lambda, "«ops.lambda");
 
 /**
+ * Return a primitive value
+ */
+export async function literal(value) {
+  return value;
+}
+addOpLabel(literal, "«ops.literal»");
+
+/**
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
  * @this {AsyncTree|null}
@@ -291,18 +311,6 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
-
-/**
- * A site tree with JSON Keys via HTTPS.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function explorableSite(host, ...keys) {
-  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
-}
-addOpLabel(explorableSite, "«ops.explorableSite»");
 
 /**
  * Look up the given key in the scope for the current tree.
@@ -328,14 +336,6 @@ export function spread(...args) {
   );
 }
 addOpLabel(spread, "«ops.spread»");
-
-/**
- * Return a primitive value
- */
-export async function primitive(value) {
-  return value;
-}
-addOpLabel(primitive, "«ops.primitive»");
 
 /**
  * Apply the default tagged template function.

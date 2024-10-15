@@ -157,7 +157,7 @@ export function makeObject(entries, op) {
       value instanceof Array &&
       value[0] === ops.getter &&
       value[1] instanceof Array &&
-      value[1][0] === ops.primitive
+      value[1][0] === ops.literal
     ) {
       // Simplify a getter for a primitive value to a regular property
       value = value[1];
@@ -208,5 +208,5 @@ export function makeTemplate(op, head, tail) {
     values.push([ops.concat, value]);
     strings.push(string);
   }
-  return [op, [ops.primitive, strings], ...values];
+  return [op, [ops.literal, strings], ...values];
 }

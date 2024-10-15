@@ -369,7 +369,7 @@ function peg$parse(input, options) {
       error("Expected right parenthesis");
     };
   var peg$f8 = function(chars) {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   };
   var peg$f9 = function() { return "\0"; };
   var peg$f10 = function() { return "\b"; };
@@ -379,7 +379,7 @@ function peg$parse(input, options) {
   var peg$f14 = function() { return "\t"; };
   var peg$f15 = function() { return "\v"; };
   var peg$f16 = function() {
-      return annotate([ops.primitive, parseFloat(text())], location());
+      return annotate([ops.literal, parseFloat(text())], location());
     };
   var peg$f17 = function(target, chain, end) {
       if (end) {
@@ -397,12 +397,12 @@ function peg$parse(input, options) {
       return annotate(expr, location());
     };
   var peg$f20 = function(chars) {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   };
   var peg$f21 = function(identifier, port) {
     const portText = port ? `:${port[1]}` : "";
     const hostText = identifier + portText;
-    return annotate([ops.primitive, hostText], location());
+    return annotate([ops.literal, hostText], location());
   };
   var peg$f22 = function(chars) { return chars.join(""); };
   var peg$f23 = function(list) {
@@ -413,7 +413,7 @@ function peg$parse(input, options) {
       return annotate(args, location());
     };
   var peg$f25 = function() {
-      return annotate([ops.primitive, parseInt(text())], location());
+      return annotate([ops.literal, parseInt(text())], location());
     };
   var peg$f26 = function(expr) {
       return annotate([ops.lambda, null, expr], location());
@@ -445,7 +445,7 @@ function peg$parse(input, options) {
     return identifier + (slash ?? "");
   };
   var peg$f37 = function(string) {
-    // Remove `ops.primitive` from the string code
+    // Remove `ops.literal` from the string code
     return string[1];
   };
   var peg$f38 = function(parameters, expr) {
@@ -464,10 +464,10 @@ function peg$parse(input, options) {
       return annotate(path, location());
     };
   var peg$f42 = function(chars) {
-    return annotate([ops.primitive, chars.join("") + "/"], location());
+    return annotate([ops.literal, chars.join("") + "/"], location());
   };
   var peg$f43 = function(chars) {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   };
   var peg$f44 = function(protocol, host, path) {
       return annotate([protocol, host, ...(path ?? [])], location());
@@ -490,7 +490,7 @@ function peg$parse(input, options) {
   var peg$f55 = function() { return null; };
   var peg$f56 = function() { return null; };
   var peg$f57 = function(chars) {
-    return annotate([ops.primitive, chars.join("")], location());
+    return annotate([ops.literal, chars.join("")], location());
   };
   var peg$f58 = function(expr) {
       return annotate([ops.spread, expr], location());
