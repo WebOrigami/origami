@@ -41,7 +41,7 @@ export { default as imageFormat } from "../src/builtins/@image/format.js";
 export { default as imageFormatFn } from "../src/builtins/@image/formatFn.js";
 export { default as imageResize } from "../src/builtins/@image/resize.js";
 export { default as imageResizeFn } from "../src/builtins/@image/resizeFn.js";
-export * from "../src/builtins/@indent.js";
+export { default as indent } from "../src/builtins/@indent.js";
 export { default as index } from "../src/builtins/@index.js";
 export { default as inherited } from "../src/builtins/@inherited.js";
 export { default as inline } from "../src/builtins/@inline.js";

@@ -1,15 +1,15 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import taggedTemplateIndent from "../../src/runtime/taggedTemplateIndent.js";
+import indent from "../../src/builtins/@indent.js";
 
-describe("taggedTemplateIndent", () => {
+describe("@indent", () => {
   test("joins strings and values together if template isn't a block template", () => {
-    const result = taggedTemplateIndent`a ${"b"} c`;
+    const result = indent`a ${"b"} c`;
     assert.equal(result, "a b c");
   });
 
   test("removes first and last lines if template is a block template", () => {
-    const actual = taggedTemplateIndent`
+    const actual = indent`
     <p>
       Hello, ${"Alice"}!
     </p>
@@ -27,7 +27,7 @@ describe("taggedTemplateIndent", () => {
 Line 1
 Line 2
 Line 3`.trimStart();
-    const actual = taggedTemplateIndent`
+    const actual = indent`
     <main>
       ${lines}
     </main>
