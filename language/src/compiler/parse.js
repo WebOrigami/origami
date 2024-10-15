@@ -485,6 +485,7 @@ function peg$parse(input, options) {
     };
   var peg$f54 = function(ref, path) {
       const head = [ops.scope, `${ ref[1] }/`];
+      head.location = ref.location;
       return annotate([ops.traverse, head, ...path], location());
     };
   var peg$f55 = function() { return null; };
@@ -512,9 +513,6 @@ function peg$parse(input, options) {
     };
   var peg$f64 = function(chars) {
       return chars.join("");
-    };
-  var peg$f65 = function(expr) {
-      return annotate(expr, location());
     };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;
@@ -3593,8 +3591,7 @@ function peg$parse(input, options) {
           if (peg$silentFails === 0) { peg$fail(peg$e6); }
         }
         if (s5 !== peg$FAILED) {
-          peg$savedPos = s0;
-          s0 = peg$f65(s3);
+          s0 = s3;
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;

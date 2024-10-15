@@ -362,6 +362,7 @@ scopeReference "scope reference"
 scopeTraverse
   = ref:scopeReference "/" path:path {
       const head = [ops.scope, `${ ref[1] }/`];
+      head.location = ref.location;
       return annotate([ops.traverse, head, ...path], location());
     }
 
@@ -473,9 +474,7 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" __ expr:expr __ "}" {
-      return annotate(expr, location());
-    }
+  = "${" __ @expr __ "}"
 
 textChar
   = escapedChar

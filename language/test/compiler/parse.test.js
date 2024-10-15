@@ -661,7 +661,7 @@ describe("Origami parser", () => {
   });
 
   test("templateSubtitution", () => {
-    assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"]);
+    assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"], false);
   });
 
   test("whitespace block", () => {
