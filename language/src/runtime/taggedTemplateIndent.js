@@ -49,28 +49,31 @@ function modifyStrings(strings) {
   // first string (skipping the initial newline), and remove this indentation
   // from all lines of all strings.
   let indent;
-  let modified;
-  if (strings.length === 0 || !strings[0].startsWith("\n")) {
-    // No indentation, so just copy the strings so we have a real array
-    modified = strings.slice();
-  } else {
+  if (strings.length > 0 && strings[0].startsWith("\n")) {
+    // Look for indenttation
     const firstLineWhitespaceRegex = /^\n(?<indent>[ \t]*)/;
     const match = strings[0].match(firstLineWhitespaceRegex);
-    indent = match?.groups.indent ?? "";
+    indent = match?.groups.indent;
+  }
 
-    if (indent) {
-      // Note that JS passes an odd array - like as the `strings` argument.As
-      // a side effect of the `replaceAll`, we'll convert it to a real array.
-      const indentationRegex = new RegExp(`\n${indent}`, "g");
-      modified = strings.map((string) =>
-        string.replaceAll(indentationRegex, "\n")
-      );
-
-      // Remove indentation from last line of last string
-      modified[modified.length - 1] = modified
-        .at(-1)
-        .replace(lastLineWhitespaceRegex, "\n");
-    }
+  // Determine the modified strings. If this invoked as a JS tagged template
+  // literal, the `strings` argument will be an odd array-ish object that we'll
+  // want to convert to a real array.
+  let modified;
+  if (indent) {
+    // De-indent the strings.
+    const indentationRegex = new RegExp(`\n${indent}`, "g");
+    // The `replaceAll` also converts strings to a real array.
+    modified = strings.map((string) =>
+      string.replaceAll(indentationRegex, "\n")
+    );
+    // Remove indentation from last line of last string
+    modified[modified.length - 1] = modified
+      .at(-1)
+      .replace(lastLineWhitespaceRegex, "\n");
+  } else {
+    // No indentation; just copy the strings so we have a real array
+    modified = strings.slice();
   }
 
   // Phase two: Identify any block placholders, identify and remove their
@@ -96,7 +99,7 @@ function modifyStrings(strings) {
   }
 
   // Remove newline from start of first string *after* removing indentation.
-  if (indent) {
+  if (modified[0].startsWith("\n")) {
     modified[0] = modified[0].slice(1);
   }
 
