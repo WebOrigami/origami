@@ -43,6 +43,7 @@ export default function WatchFilesMixin(Base) {
       this.watcher = new Watcher(this.dirname, {
         ignoreInitial: true,
         persistent: false,
+        recursive: true,
       });
       this.watcher.on("all", (event, filePath) => {
         const key = path.basename(filePath);
