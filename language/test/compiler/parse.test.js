@@ -1,8 +1,8 @@
-import { isPlainObject } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
 import * as ops from "../../src/runtime/ops.js";
+import { stripCodeLocations } from "./stripCodeLocations.js";
 
 describe("Origami parser", () => {
   test("absoluteFilePath", () => {
@@ -695,23 +695,6 @@ function assertParse(startRule, source, expected, checkLocation = true) {
     assert.equal(resultSource, source.trim());
   }
 
-  const actual = stripLocations(code);
+  const actual = stripCodeLocations(code);
   assert.deepEqual(actual, expected);
-}
-
-// For comparison purposes, strip the `location` property added by the parser.
-function stripLocations(parseResult) {
-  if (Array.isArray(parseResult)) {
-    return parseResult.map(stripLocations);
-  } else if (isPlainObject(parseResult)) {
-    const result = {};
-    for (const key in parseResult) {
-      if (key !== "location") {
-        result[key] = stripLocations(parseResult[key]);
-      }
-    }
-    return result;
-  } else {
-    return parseResult;
-  }
 }

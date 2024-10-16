@@ -2,6 +2,8 @@ import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
+import { ops } from "../../src/runtime/internal.js";
+import { stripCodeLocations } from "./stripCodeLocations.js";
 
 const shared = new ObjectTree({
   greet: (name) => `Hello, ${name}!`,
@@ -81,6 +83,30 @@ describe("compile", () => {
     assert.equal(alice, "Hello, Alice!");
     const bob = await templateFn.call(scope, "Bob");
     assert.equal(bob, "Hello, Bob!");
+  });
+
+  test("converts non-local ops.scope calls to ops.cache", async () => {
+    const expression = `
+      (name) => {
+        a: 1
+        b: a            // local, should be left as ops.scope
+        c: nonLocal     // non-local, should be converted to ops.cache
+        d: name         // local, should be left as ops.scope
+      }
+    `;
+    const fn = compile.expression(expression);
+    const code = fn.code;
+    assert.deepEqual(stripCodeLocations(code), [
+      ops.lambda,
+      ["name"],
+      [
+        ops.object,
+        ["a", [ops.literal, 1]],
+        ["b", [ops.scope, "a"]],
+        ["c", [ops.cache, "nonLocal", {}]],
+        ["d", [ops.scope, "name"]],
+      ],
+    ]);
   });
 });
 

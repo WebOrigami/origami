@@ -43,6 +43,23 @@ export async function array(...items) {
 }
 addOpLabel(array, "«ops.array»");
 
+/**
+ * Look up the given key in the scope for the current tree the first time
+ * the key is requested, holding on to the value for future requests.
+ *
+ * This destructively modifies the `cache` parameter.
+ *
+ * @this {AsyncTree|null}
+ */
+export async function cache(key, cache) {
+  if (key in cache) {
+    return cache[key];
+  }
+  const value = await scope.call(this, key);
+  cache[key] = value;
+  return value;
+}
+
 // The assign op is a placeholder for an assignment declaration.
 // It is only used during parsing -- it shouldn't be executed.
 export const assign = "«ops.assign»";
