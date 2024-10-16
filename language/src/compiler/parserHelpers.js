@@ -49,10 +49,6 @@ function isCodeForAsyncObject(code) {
   return hasGetter;
 }
 
-function isWhitespace(char) {
-  return char === " " || char === "\n" || char === "\r" || char === "\t";
-}
-
 export function makeArray(entries) {
   let currentEntries = [];
   const spreads = [];
