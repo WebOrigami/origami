@@ -1,3 +1,4 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { ops } from "../runtime/internal.js";
 import { parse } from "./parse.js";
@@ -11,6 +12,7 @@ function compile(source, startRule) {
     startRule,
   });
   const modified = cacheNonLocalScopeReferences(code);
+  // const modified = code;
   const fn = createExpressionFunction(modified);
   return fn;
 }
@@ -29,7 +31,8 @@ export function cacheNonLocalScopeReferences(code, locals = {}) {
   switch (fn) {
     case ops.scope:
       const key = args[0];
-      if (locals[key]) {
+      const normalizedKey = trailingSlash.remove(key);
+      if (locals[normalizedKey]) {
         return code;
       } else {
         // Upgrade to cached scope lookup
@@ -45,7 +48,7 @@ export function cacheNonLocalScopeReferences(code, locals = {}) {
 
     case ops.object:
       const entries = args;
-      additionalLocalNames = entries.map(([key]) => key);
+      additionalLocalNames = entries.map(([key]) => trailingSlash.remove(key));
       break;
   }
 
