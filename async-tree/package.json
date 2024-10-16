@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/async-tree",
-  "version": "0.0.69",
+  "version": "0.0.70",
   "description": "Asynchronous tree drivers based on standard JavaScript classes",
   "type": "module",
   "main": "./main.js",
@@ -11,7 +11,7 @@
     "typescript": "5.6.2"
   },
   "dependencies": {
-    "@weborigami/types": "0.0.69"
+    "@weborigami/types": "0.0.70"
   },
   "scripts": {
     "test": "node --test --test-reporter=spec",
