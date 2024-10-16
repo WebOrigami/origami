@@ -36,7 +36,7 @@ export function cacheNonLocalScopeReferences(code, locals = {}) {
         return code;
       } else {
         // Upgrade to cached scope lookup
-        const modified = [ops.cache, key, {}];
+        const modified = [ops.cache, key];
         /** @type {any} */ (modified).location = code.location;
         return modified;
       }

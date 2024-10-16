@@ -7,15 +7,15 @@ import { evaluate, ops } from "../../src/runtime/internal.js";
 describe("ops", () => {
   test("ops.cache looks up a value in scope and memoizes it", async () => {
     let count = 0;
-    const scope = new ObjectTree({
+    const tree = new ObjectTree({
       get count() {
         return ++count;
       },
     });
     const code = createCode([ops.cache, "count", {}]);
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(tree, code);
     assert.equal(result, 1);
-    const result2 = await evaluate.call(scope, code);
+    const result2 = await evaluate.call(tree, code);
     assert.equal(result2, 1);
   });
 
