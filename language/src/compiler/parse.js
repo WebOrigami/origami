@@ -416,7 +416,7 @@ function peg$parse(input, options) {
       return annotate([ops.literal, parseInt(text())], location());
     };
   var peg$f26 = function(expr) {
-      return annotate([ops.lambda, null, expr], location());
+      return annotate([ops.lambda, ["_"], expr], location());
     };
   var peg$f27 = function(path) {
       return annotate(path ?? [], location());
@@ -500,7 +500,7 @@ function peg$parse(input, options) {
       return annotate(makeTemplate(tag, contents[0], contents[1]), location());
     };
   var peg$f60 = function(contents) {
-      return annotate([ops.lambda, null, contents], location());
+      return annotate([ops.lambda, ["_"], contents], location());
     };
   var peg$f61 = function(head, tail) {
       return annotate(makeTemplate(ops.template, head, tail), location());

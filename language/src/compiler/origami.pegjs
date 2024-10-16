@@ -209,7 +209,7 @@ integer "integer"
 // A lambda expression: `=foo()`
 lambda "lambda function"
   = "=" __ expr:expr {
-      return annotate([ops.lambda, null, expr], location());
+      return annotate([ops.lambda, ["_"], expr], location());
     }
 
 // A path that begins with a slash: `/foo/bar`
@@ -435,7 +435,7 @@ taggedTemplate
 // literal, but can contain backticks at the top level.
 templateDocument "template"
   = contents:templateDocumentContents {
-      return annotate([ops.lambda, null, contents], location());
+      return annotate([ops.lambda, ["_"], contents], location());
     }
 
 // Template documents can contain backticks at the top level.

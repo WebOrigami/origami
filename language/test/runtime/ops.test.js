@@ -61,17 +61,10 @@ describe("ops", () => {
       message: "Hello",
     });
 
-    const code = createCode([ops.lambda, null, [ops.scope, "message"]]);
+    const code = createCode([ops.lambda, ["_"], [ops.scope, "message"]]);
 
     const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
-    assert.equal(result, "Hello");
-  });
-
-  test("ops.lambda adds input to scope as `_`", async () => {
-    const code = createCode([ops.lambda, null, [ops.scope, "_"]]);
-    const fn = await evaluate.call(null, code);
-    const result = await fn("Hello");
     assert.equal(result, "Hello");
   });
 
@@ -87,7 +80,7 @@ describe("ops", () => {
   });
 
   test("ops.lambda function can reference itself with @recurse", async () => {
-    const code = createCode([ops.lambda, null, [ops.scope, "@recurse"]]);
+    const code = createCode([ops.lambda, ["_"], [ops.scope, "@recurse"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn();
     // We're expecting the function to return itself, but testing recursion is

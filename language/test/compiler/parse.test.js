@@ -63,7 +63,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("expr", "fn =`x`", [
       [ops.scope, "fn"],
-      [ops.lambda, null, [ops.template, [ops.literal, ["x"]]]],
+      [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
     ]);
     assertParse("expr", "copy app(formulas), files 'snapshot'", [
       [ops.scope, "copy"],
@@ -80,7 +80,7 @@ describe("Origami parser", () => {
       [ops.scope, "@map"],
       [
         ops.lambda,
-        null,
+        ["_"],
         [
           ops.template,
           [ops.literal, ["<li>", "</li>"]],
@@ -271,12 +271,12 @@ describe("Origami parser", () => {
   test("lambda", () => {
     assertParse("lambda", "=message", [
       ops.lambda,
-      null,
+      ["_"],
       [ops.scope, "message"],
     ]);
     assertParse("lambda", "=`Hello, ${name}.`", [
       ops.lambda,
-      null,
+      ["_"],
       [
         ops.template,
         [ops.literal, ["Hello, ", "."]],
@@ -609,7 +609,7 @@ describe("Origami parser", () => {
   test("templateDocument", () => {
     assertParse("templateDocument", "hello${foo}world", [
       ops.lambda,
-      null,
+      ["_"],
       [
         ops.template,
         [ops.literal, ["hello", "world"]],
@@ -618,7 +618,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("templateDocument", "Documents can contain ` backticks", [
       ops.lambda,
-      null,
+      ["_"],
       [ops.template, [ops.literal, ["Documents can contain ` backticks"]]],
     ]);
   });
@@ -648,7 +648,7 @@ describe("Origami parser", () => {
           [ops.scope, "people"],
           [
             ops.lambda,
-            null,
+            ["_"],
             [
               ops.template,
               [ops.literal, ["", ""]],

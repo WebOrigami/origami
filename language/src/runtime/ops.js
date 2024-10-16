@@ -253,9 +253,6 @@ export function lambda(parameters, code) {
     return lambdaFnMap.get(code);
   }
 
-  // By default, the first input argument is named `_`.
-  parameters ??= ["_"];
-
   /** @this {AsyncTree|null} */
   async function invoke(...args) {
     // Add arguments and @recurse to scope.
