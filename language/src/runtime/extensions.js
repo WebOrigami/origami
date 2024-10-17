@@ -89,10 +89,10 @@ export async function handleExtension(parent, value, key) {
         const unpack = handler.unpack;
         if (unpack) {
           // Wrap the unpack function so its only called once per value.
-          let loaded;
-          value.unpack = async () => {
-            loaded ??= await unpack(value, { key, parent });
-            return loaded;
+          let loadPromise;
+          value.unpack = () => {
+            loadPromise ??= unpack(value, { key, parent });
+            return loadPromise;
           };
         }
       }
