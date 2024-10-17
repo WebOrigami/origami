@@ -90,7 +90,7 @@ export async function handleExtension(parent, value, key) {
         if (unpack) {
           // Wrap the unpack function so its only called once per value.
           let loadPromise;
-          value.unpack = () => {
+          value.unpack = async () => {
             loadPromise ??= unpack(value, { key, parent });
             return loadPromise;
           };
