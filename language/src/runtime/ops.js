@@ -43,34 +43,22 @@ export async function array(...items) {
 }
 addOpLabel(array, "«ops.array»");
 
-const scopeCaches = new Map();
-
 /**
  * Look up the given key in the scope for the current tree the first time
  * the key is requested, holding on to the value for future requests.
  *
  * @this {AsyncTree|null}
  */
-export async function cache(key) {
-  let scopeCache;
-  if (this) {
-    scopeCache = scopeCaches.get(this);
-    if (!scopeCache) {
-      scopeCache = new Map();
-      scopeCaches.set(this, scopeCache);
-    } else if (scopeCache.has(key)) {
-      return scopeCache.get(key);
-    }
+export async function cache(key, cache) {
+  if (key in cache) {
+    return cache[key];
   }
+  // First save a promise for the value
   const promise = scope.call(this, key);
-  if (scopeCache) {
-    scopeCache.set(key, promise);
-  }
+  cache[key] = promise;
   const value = await promise;
-  // Update cache with the actual value
-  if (scopeCache) {
-    scopeCache.set(key, value);
-  }
+  // Now update with the actual value
+  cache[key] = value;
   return value;
 }
 

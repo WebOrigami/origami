@@ -103,7 +103,7 @@ describe("compile", () => {
         ops.object,
         ["a", [ops.literal, 1]],
         ["b", [ops.scope, "a"]],
-        ["c", [ops.cache, "nonLocal"]],
+        ["c", [ops.cache, "nonLocal", {}]],
         ["d", [ops.scope, "name"]],
       ],
     ]);

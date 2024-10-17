@@ -11,7 +11,8 @@ function compile(source, startRule) {
     grammarSource: source,
     startRule,
   });
-  const modified = cacheNonLocalScopeReferences(code);
+  const cache = {};
+  const modified = cacheNonLocalScopeReferences(code, cache);
   // const modified = code;
   const fn = createExpressionFunction(modified);
   return fn;
@@ -24,7 +25,7 @@ export function expression(source) {
 // Given code containing ops.scope calls, upgrade them to ops.cache calls unless
 // they refer to local variables: variables defined by object literals or lambda
 // parameters.
-export function cacheNonLocalScopeReferences(code, locals = {}) {
+export function cacheNonLocalScopeReferences(code, cache, locals = {}) {
   const [fn, ...args] = code;
 
   let additionalLocalNames;
@@ -36,7 +37,7 @@ export function cacheNonLocalScopeReferences(code, locals = {}) {
         return code;
       } else {
         // Upgrade to cached scope lookup
-        const modified = [ops.cache, key];
+        const modified = [ops.cache, key, cache];
         /** @type {any} */ (modified).location = code.location;
         return modified;
       }
@@ -66,7 +67,7 @@ export function cacheNonLocalScopeReferences(code, locals = {}) {
       // be preferable to only descend into instructions. This would require
       // surrounding ops.lambda parameters with ops.literal, and ops.object
       // entries with ops.array.
-      return cacheNonLocalScopeReferences(child, updatedLocals);
+      return cacheNonLocalScopeReferences(child, cache, updatedLocals);
     } else {
       return child;
     }
