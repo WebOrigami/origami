@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -12,8 +12,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * The pattern can also be a JavaScript regular expression.
  *
  * If a key is requested, match against the given pattern and, if matches,
- * incorporate the matched pattern's wildcard values into the scope and invoke
- * the indicated function to produce a result.
+ * invokes the given function with an object containing the matched values.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -57,23 +56,13 @@ export default function match(pattern, resultFn, keys = []) {
         return resultFn;
       }
 
-      // If the pattern contained named wildcards, extend the scope. It appears
-      // that the `groups` property of a match is *not* a real plain object, so
-      // we have to make one.
-      let target;
-      if (keyMatch.groups) {
-        target = new ObjectTree(
-          Object.fromEntries(Object.entries(keyMatch.groups))
-        );
-        target.parent = tree;
-      } else {
-        target = tree;
-      }
+      // Copy the `groups` property to a real object
+      const matches = { ...keyMatch.groups };
 
       // Invoke the result function with the extended scope.
       let value;
       if (typeof resultFn === "function") {
-        value = await resultFn.call(target);
+        value = await resultFn.call(this, matches);
       } else {
         value = Object.create(resultFn);
       }

@@ -7,9 +7,8 @@ import match from "../../src/builtins/@match.js";
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
     /** @this {AsyncTree|null} */
-    async function fn() {
-      const name = await this?.get("name");
-      return `Hello, ${name}!`;
+    function fn(matches) {
+      return `Hello, ${matches.name}!`;
     }
     const tree = match.call(null, "[name].html", fn, [
       "Alice.html",
@@ -27,9 +26,8 @@ describe("match", () => {
 
   test("matches keys against a regular expression", async () => {
     /** @this {AsyncTree|null} */
-    async function fn() {
-      const name = await this?.get("name");
-      return `Hello, ${name}!`;
+    function fn(matches) {
+      return `Hello, ${matches.name}!`;
     }
     const tree = match.call(null, /^(?<name>.+)\.html$/, fn);
     const value = await tree.get("Alice.html");
