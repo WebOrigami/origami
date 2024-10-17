@@ -8,6 +8,11 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 
+/** @typedef {import("../../index.ts").ExtensionHandler} ExtensionHandler */
+
+// Track extensions handlers for a given containing tree.
+const handlersForContainer = new Map();
+
 /**
  * If the given path ends in an extension, return it. Otherwise, return the
  * empty string.
@@ -38,18 +43,39 @@ export function extname(path) {
  * @param {string} extension
  */
 export async function getExtensionHandler(parent, extension) {
+  let handlers = handlersForContainer.get(parent);
+  if (handlers) {
+    if (handlers[extension]) {
+      return handlers[extension];
+    }
+  } else {
+    handlers = {};
+    handlersForContainer.set(parent, handlers);
+  }
+
   const handlerName = `${extension.slice(1)}_handler`;
   const parentScope = scope(parent);
-  /** @type {import("../../index.ts").ExtensionHandler} */
-  let extensionHandler = await parentScope?.get(handlerName);
-  if (isUnpackable(extensionHandler)) {
-    // The extension handler itself needs to be unpacked. E.g., if it's a
-    // buffer containing JavaScript file, we need to unpack it to get its
-    // default export.
-    // @ts-ignore
-    extensionHandler = await extensionHandler.unpack();
-  }
-  return extensionHandler;
+
+  /** @type {Promise<ExtensionHandler>} */
+  let handlerPromise = parentScope
+    ?.get(handlerName)
+    .then(async (extensionHandler) => {
+      if (isUnpackable(extensionHandler)) {
+        // The extension handler itself needs to be unpacked. E.g., if it's a
+        // buffer containing JavaScript file, we need to unpack it to get its
+        // default export.
+        // @ts-ignore
+        extensionHandler = await extensionHandler.unpack();
+      }
+      // Update cache with actual handler
+      handlers[extension] = extensionHandler;
+      return extensionHandler;
+    });
+
+  // Cache handler even if it's undefined so we don't look it up again
+  handlers[extension] = handlerPromise;
+
+  return handlerPromise;
 }
 
 /**
