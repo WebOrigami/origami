@@ -22,42 +22,40 @@ export default async function index(treelike) {
   for (const key of filtered) {
     const keyText = String(key);
     // Simple key.
-    const link = `<li><a href="${keyText}">${keyText}</a></li>`;
+    const link = `      <li><a href="${keyText}">${keyText}</a></li>`;
     links.push(link);
   }
 
   const heading = tree[keySymbol] ?? "Index";
-  const list = `
+  const list = `    <ul>\n${links.join("\n")}\n    </ul>`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      li {
+        margin-bottom: 0.20em;
+      }
+
+      a {
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: revert;
+      }
+    </style>
+  </head>
+  <body>
     <h1>${heading.trim()}</h1>
-    <ul>\n${links.join("\n").trim()}\n</ul>
-  `;
-
-  const html = `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <style>
-          li {
-            margin-bottom: 0.20em;
-          }
-
-          a {
-            text-decoration: none;
-          }
-          a:hover {
-            text-decoration: revert;
-          }
-        </style>
-      </head>
-      <body>
-        ${list.trim()}
-      </body>
-    </html>`;
+${list}
+  </body>
+</html>
+`;
 
   /** @type {any} */
-  const result = new String(html.trim());
+  const result = new String(html);
   result.unpack = () => tree;
   return result;
 }
