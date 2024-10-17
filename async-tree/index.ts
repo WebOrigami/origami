@@ -19,7 +19,9 @@ export type HasString = {
  * A packed value is one that can be written to a file via fs.writeFile or into
  * an HTTP response via response.write, or readily converted to such a form.
  */
-export type Packed = ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray;
+export type Packed = (ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray) & {
+  unpack?(): Promise<any>;
+};
 
 export type PlainObject = {
   [key: string]: any;

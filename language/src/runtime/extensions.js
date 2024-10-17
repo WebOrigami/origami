@@ -62,7 +62,7 @@ export async function getExtensionHandler(parent, extension) {
  * @param {any} key
  */
 export async function handleExtension(parent, value, key) {
-  if (isPacked(value) && isStringLike(key)) {
+  if (isPacked(value) && isStringLike(key) && value.unpack === undefined) {
     const hasSlash = trailingSlash.has(key);
     if (hasSlash) {
       key = trailingSlash.remove(key);
