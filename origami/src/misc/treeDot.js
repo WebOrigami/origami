@@ -20,7 +20,7 @@ import { keySymbol } from "../common/utilities.js";
  * @param {PlainObject} [options]
  */
 export default async function dot(treelike, options = {}) {
-  const tree = Tree.from(treelike);
+  const tree = Tree.from(treelike, { deep: true });
   const rootLabel = tree[keySymbol] ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {
