@@ -10,5 +10,5 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  */
 export default function unpack(obj) {
   assertTreeIsDefined(this, "unpack");
-  return obj?.unpack?.();
+  return obj?.unpack?.() ?? obj;
 }
