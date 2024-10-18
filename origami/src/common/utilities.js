@@ -3,6 +3,7 @@ import {
   toString as asyncTreeToString,
   isPlainObject,
   isUnpackable,
+  trailingSlash,
 } from "@weborigami/async-tree";
 
 // Return true if the text appears to contain non-printable binary characters;
@@ -37,6 +38,8 @@ export const keySymbol = Symbol("key");
  * period), replace that extension with the result extension (which again should
  * generally include a period). Otherwise, return the key as is.
  *
+ * If the key ends in a trailing slash, that will be preserved in the result.
+ *
  * @param {string} key
  * @param {string} sourceExtension
  * @param {string} resultExtension
@@ -44,11 +47,16 @@ export const keySymbol = Symbol("key");
 export function replaceExtension(key, sourceExtension, resultExtension) {
   if (!key) {
     return undefined;
-  } else if (!key.endsWith(sourceExtension)) {
-    return key;
-  } else {
-    return key.slice(0, -sourceExtension.length) + resultExtension;
   }
+
+  const normalizedKey = trailingSlash.remove(key);
+  if (!normalizedKey.endsWith(sourceExtension)) {
+    return normalizedKey;
+  }
+
+  const replaced =
+    normalizedKey.slice(0, -sourceExtension.length) + resultExtension;
+  return trailingSlash.toggle(replaced, trailingSlash.has(key));
 }
 
 /**

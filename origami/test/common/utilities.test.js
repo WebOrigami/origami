@@ -26,6 +26,10 @@ describe("utilities", () => {
       utilities.replaceExtension("file.md", ".txt", ".html"),
       "file.md"
     );
+    assert.equal(
+      utilities.replaceExtension("file.md/", ".md", ".html"),
+      "file.html/"
+    );
   });
 
   test("toFunction returns a plain function as is", () => {
