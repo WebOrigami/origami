@@ -18,6 +18,12 @@ export default function createGroupByTransform(groupKeyFn) {
     }
 
     const tree = Tree.from(treelike);
+
+    const keys = Array.from(await tree.keys());
+
+    // Are all the keys integers?
+    const isArray = keys.every((key) => !Number.isNaN(parseInt(key)));
+
     const result = {};
     for (const key of await tree.keys()) {
       const value = await tree.get(key);
@@ -35,10 +41,14 @@ export default function createGroupByTransform(groupKeyFn) {
       groups = Tree.from(groups);
 
       // Add the value to each group.
-      for (const groupKey of await groups.keys()) {
-        const group = await groups.get(groupKey);
-        result[group] ??= [];
-        result[group].push(value);
+      for (const group of await Tree.values(groups)) {
+        if (isArray) {
+          result[group] ??= [];
+          result[group].push(value);
+        } else {
+          result[group] ??= {};
+          result[group][key] = value;
+        }
       }
     }
 
