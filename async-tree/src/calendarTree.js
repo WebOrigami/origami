@@ -1,3 +1,5 @@
+import * as trailingSlash from "./trailingSlash.js";
+
 /**
  * Return a tree of years, months, and days from a start date to an end date.
  *
@@ -10,68 +12,163 @@
  *
  * If a start date is omitted, today will be used, likewise for the end date.
  *
- * @param {string} [start] - Start date in "YYYY-MM-DD", "YYYY-MM", or "YYYY"
- * format
- * @param {string} [end] - End date in "YYYY-MM-DD", "YYYY-MM", or "YYYY" format
+ * @typedef {string|undefined} CalendarOptionsDate
+ * @typedef {( year: string, month: string, day: string ) => any} CalendarOptionsFn
+ * @param {{ end?: CalendarOptionsDate, start?: CalendarOptionsDate, value: CalendarOptionsFn }} options
  */
-export default function calendarTree(start, end) {
-  const startParts = start?.split("-") ?? [];
-  const endParts = end?.split("-") ?? [];
+export default function calendarTree(options) {
+  const start = dateParts(options.start);
+  const end = dateParts(options.end);
+  const valueFn = options.value;
 
+  // Fill in the missing parts of the start and end dates.
   const today = new Date();
 
-  const startYear = startParts[0]
-    ? parseInt(startParts[0])
-    : today.getFullYear();
-  const startMonth = startParts[1]
-    ? parseInt(startParts[1])
-    : startParts[0]
-    ? 1
-    : today.getMonth() + 1;
-  const startDay = startParts[2]
-    ? parseInt(startParts[2])
-    : startParts[1]
-    ? 1
-    : today.getDate();
-
-  const endYear = endParts[0] ? parseInt(endParts[0]) : today.getFullYear();
-  const endMonth = endParts[1]
-    ? parseInt(endParts[1])
-    : endParts[0]
-    ? 12
-    : today.getMonth() + 1;
-  const endDay = endParts[2]
-    ? parseInt(endParts[2])
-    : endParts[1]
-    ? daysInMonth(endYear, endMonth)
-    : today.getDate();
-
-  let years = {};
-  for (let year = startYear; year <= endYear; year++) {
-    let months = new Map();
-    const firstMonth = year === startYear ? startMonth : 1;
-    const lastMonth = year === endYear ? endMonth : 12;
-    for (let month = firstMonth; month <= lastMonth; month++) {
-      const monthPadded = month.toString().padStart(2, "0");
-      let days = new Map();
-      const firstDay =
-        year === startYear && month === startMonth ? startDay : 1;
-      const lastDay =
-        year === endYear && month === endMonth
-          ? endDay
-          : daysInMonth(year, month);
-      for (let day = firstDay; day <= lastDay; day++) {
-        const dayPadded = day.toString().padStart(2, "0");
-        days.set(dayPadded, null);
-      }
-      months.set(monthPadded, days);
-    }
-    years[year] = months;
+  if (start.day === undefined) {
+    start.day = start.year ? 1 : today.getDate();
+  }
+  if (start.month === undefined) {
+    start.month = start.year ? 1 : today.getMonth() + 1;
+  }
+  if (start.year === undefined) {
+    start.year = today.getFullYear();
   }
 
-  return years;
+  if (end.day === undefined) {
+    end.day = end.month
+      ? daysInMonth(end.year, end.month)
+      : end.year
+      ? 31 // Last day of December
+      : today.getDate();
+  }
+  if (end.month === undefined) {
+    end.month = end.year ? 12 : today.getMonth() + 1;
+  }
+  if (end.year === undefined) {
+    end.year = today.getFullYear();
+  }
+
+  return yearsTree(start, end, valueFn);
+}
+
+function dateParts(date) {
+  let year;
+  let month;
+  let day;
+  if (typeof date === "string") {
+    const parts = date.split("-");
+    year = parts[0] ? parseInt(parts[0]) : undefined;
+    month = parts[1] ? parseInt(parts[1]) : undefined;
+    day = parts[2] ? parseInt(parts[2]) : undefined;
+  }
+  return { year, month, day };
+}
+
+function daysForMonthTree(year, month, start, end, valueFn) {
+  return {
+    async get(day) {
+      day = parseInt(trailingSlash.remove(day));
+      return this.inRange(day)
+        ? valueFn(year.toString(), twoDigits(month), twoDigits(day))
+        : undefined;
+    },
+
+    inRange(day) {
+      if (year === start.year && year === end.year) {
+        if (month === start.month && month === end.month) {
+          return day >= start.day && day <= end.day;
+        } else if (month === start.month) {
+          return day >= start.day;
+        } else if (month === end.month) {
+          return day <= end.day;
+        } else {
+          return true;
+        }
+      } else if (year === start.year) {
+        if (month === start.month) {
+          return day >= start.day;
+        } else {
+          return month > start.month;
+        }
+      } else if (year === end.year) {
+        if (month === end.month) {
+          return day <= end.day;
+        } else {
+          return month < end.month;
+        }
+      } else {
+        return true;
+      }
+    },
+
+    async keys() {
+      const days = Array.from(
+        { length: daysInMonth(year, month) },
+        (_, i) => i + 1
+      );
+      return days
+        .filter((day) => this.inRange(day))
+        .map((day) => twoDigits(day));
+    },
+  };
 }
 
 function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
+}
+
+function monthsForYearTree(year, start, end, valueFn) {
+  return {
+    async get(month) {
+      month = parseInt(trailingSlash.remove(month));
+      return this.inRange(month)
+        ? daysForMonthTree(year, month, start, end, valueFn)
+        : undefined;
+    },
+
+    inRange(month) {
+      if (year === start.year && year === end.year) {
+        return month >= start.month && month <= end.month;
+      } else if (year === start.year) {
+        return month >= start.month;
+      } else if (year === end.year) {
+        return month <= end.month;
+      } else {
+        return true;
+      }
+    },
+
+    async keys() {
+      const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      return months
+        .filter((month) => this.inRange(month))
+        .map((month) => twoDigits(month));
+    },
+  };
+}
+
+function twoDigits(number) {
+  return number.toString().padStart(2, "0");
+}
+
+function yearsTree(start, end, valueFn) {
+  return {
+    async get(year) {
+      year = parseInt(trailingSlash.remove(year));
+      return this.inRange(year)
+        ? monthsForYearTree(year, start, end, valueFn)
+        : undefined;
+    },
+
+    inRange(year) {
+      return year >= start.year && year <= end.year;
+    },
+
+    async keys() {
+      return Array.from(
+        { length: end.year - start.year + 1 },
+        (_, i) => start.year + i
+      );
+    },
+  };
 }
