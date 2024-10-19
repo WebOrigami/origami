@@ -1,3 +1,4 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import * as ops from "../runtime/ops.js";
 
 // Parser helpers
@@ -21,9 +22,12 @@ function avoidRecursivePropertyCalls(code, key) {
     return code;
   }
   let modified;
-  if (code[0] === ops.scope && code[1] === key) {
+  if (
+    code[0] === ops.scope &&
+    trailingSlash.remove(code[1]) === trailingSlash.remove(key)
+  ) {
     // Rewrite to avoid recursion
-    modified = [ops.inherited, key];
+    modified = [ops.inherited, code[1]];
   } else {
     // Process any nested code
     modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
