@@ -28,6 +28,7 @@ export default async function svg(treelike, options = {}) {
   const svgText = await graphviz.layout(dotText, "svg");
   /** @type {any} */
   const result = new String(svgText);
+  result.mediaType = "image/svg+xml";
   result.unpack = () => tree;
   return result;
 }

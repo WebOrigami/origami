@@ -79,22 +79,16 @@ export default async function constructResponse(request, resource) {
   }
 
   let body;
-  if (mediaType) {
-    body = SiteTree.mediaTypeIsText(mediaType) ? toString(resource) : resource;
-  } else {
-    body = textOrObject(resource);
-    // Infer media type.
-    mediaType =
-      typeof body !== "string"
-        ? "application/octet-stream"
-        : body.trimStart().startsWith("<")
-        ? "text/html"
-        : "text/plain";
-  }
-
-  // Assume text is encoded in UTF-8.
-  if (SiteTree.mediaTypeIsText(mediaType)) {
+  if (mediaType && SiteTree.mediaTypeIsText(mediaType)) {
+    // Assume text is encoded in UTF-8.
+    body = toString(resource);
     mediaType += "; charset=utf-8";
+  } else if (maybeHtml(resource)) {
+    mediaType = "text/html; charset=utf-8";
+    body = resource;
+  } else {
+    // We don't know the media type, just send the data
+    body = resource;
   }
 
   // If we didn't get back some kind of data that response.write() accepts,
@@ -108,26 +102,26 @@ export default async function constructResponse(request, resource) {
     return null;
   }
 
-  return new Response(body, {
-    headers: {
-      "Content-Type": mediaType,
-    },
-  });
+  const options = mediaType ? { headers: { "Content-Type": mediaType } } : {};
+  const response = new Response(body, options);
+  return response;
 }
 
-/**
- * Convert to a string if we can, but leave objects that convert to something
- * like "[object Object]" alone.
- *
- * @param {any} object
- */
-function textOrObject(object) {
-  if (object instanceof ArrayBuffer) {
-    // Convert to Uint8Array so we can write it to the Response.
-    return new Uint8Array(object);
-  } else if (object instanceof TypedArray) {
-    // Return typed arrays as is.
-    return object;
+// Return true if the resource appears to represent HTML
+function maybeHtml(resource) {
+  const text = toString(resource)?.trimStart();
+  if (!text) {
+    return false;
   }
-  return toString(object);
+  if (text.startsWith("<!DOCTYPE html>")) {
+    return true;
+  }
+  // Check if the text starts with an HTML tag.
+  // - start with '<'
+  // - followed by a letter
+  // - followed by letters, digits, hyphens, underscores, colons, or periods
+  // - followed by '>', or
+  // - followed by whitespace, anything that's not '>', then a '>'
+  const tagRegex = /^<[a-zA-Z][a-zA-Z0-9-_:\.]+(>|[\s]+[^>]*>)/;
+  return tagRegex.test(text);
 }
