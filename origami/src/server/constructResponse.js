@@ -79,13 +79,17 @@ export default async function constructResponse(request, resource) {
   }
 
   let body;
-  if (mediaType && SiteTree.mediaTypeIsText(mediaType)) {
+  if (!mediaType) {
+    // Maybe it's HTML?
+    const text = toString(resource);
+    if (text && maybeHtml(text)) {
+      mediaType = "text/html";
+      body = text;
+    }
+  } else if (mediaType && SiteTree.mediaTypeIsText(mediaType)) {
     // Assume text is encoded in UTF-8.
     body = toString(resource);
     mediaType += "; charset=utf-8";
-  } else if (maybeHtml(resource)) {
-    mediaType = "text/html; charset=utf-8";
-    body = resource;
   } else {
     // We don't know the media type, just send the data
     body = resource;
@@ -108,8 +112,7 @@ export default async function constructResponse(request, resource) {
 }
 
 // Return true if the resource appears to represent HTML
-function maybeHtml(resource) {
-  const text = toString(resource)?.trimStart();
+function maybeHtml(text) {
   if (!text) {
     return false;
   }
@@ -117,11 +120,12 @@ function maybeHtml(resource) {
     return true;
   }
   // Check if the text starts with an HTML tag.
-  // - start with '<'
+  // - start with possible whitespace
+  // - followed by '<'
   // - followed by a letter
   // - followed by letters, digits, hyphens, underscores, colons, or periods
   // - followed by '>', or
   // - followed by whitespace, anything that's not '>', then a '>'
-  const tagRegex = /^<[a-zA-Z][a-zA-Z0-9-_:\.]+(>|[\s]+[^>]*>)/;
+  const tagRegex = /^\s*<[a-zA-Z][a-zA-Z0-9-_:\.]+(>|[\s]+[^>]*>)/;
   return tagRegex.test(text);
 }
