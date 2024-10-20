@@ -87,17 +87,15 @@ export default class SiteTree {
     const { type, subtype } = match.groups;
     if (type === "text") {
       return true;
-    } else if (type === "application") {
-      return (
-        subtype === "json" ||
-        subtype.endsWith("+json") ||
-        subtype.endsWith(".json") ||
-        subtype === "xml" ||
-        subtype.endsWith("+xml") ||
-        subtype.endsWith(".xml")
-      );
     }
-    return false;
+    return (
+      subtype === "json" ||
+      subtype.endsWith("+json") ||
+      subtype.endsWith(".json") ||
+      subtype === "xml" ||
+      subtype.endsWith("+xml") ||
+      subtype.endsWith(".xml")
+    );
   }
 
   get path() {
