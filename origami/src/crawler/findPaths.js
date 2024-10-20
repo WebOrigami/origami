@@ -94,7 +94,7 @@ function findPathsInCss(css) {
   while ((match = urlRegex.exec(css))) {
     const href = normalizeHref(match.groups?.href);
     if (href) {
-      resourcePaths.push();
+      resourcePaths.push(href);
     }
   }
 
