@@ -39,7 +39,6 @@ function filterPaths(paths, baseUrl, localPath) {
  */
 export default function findPaths(value, key, baseUrl, localPath) {
   const text = toString(value);
-  let normalizedKey;
 
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
@@ -60,8 +59,6 @@ export default function findPaths(value, key, baseUrl, localPath) {
   } else if (ext === "" && text?.trim().startsWith("<")) {
     // Probably HTML
     foundPaths = findPathsInHtml(text);
-    // Treat this page as if it had a .html extension
-    normalizedKey = `${key}.html`;
   } else {
     // Doesn't have an extension we want to process
     return {
@@ -84,7 +81,6 @@ export default function findPaths(value, key, baseUrl, localPath) {
 
   return {
     crawlablePaths,
-    normalizedKey,
     resourcePaths,
   };
 }

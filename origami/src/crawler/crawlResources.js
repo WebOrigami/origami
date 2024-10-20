@@ -166,18 +166,12 @@ async function processPath(tree, path, baseUrl) {
 
   // Find paths in the value
   const key = normalizedKeys.at(-1);
-  const { crawlablePaths, normalizedKey, resourcePaths } = await findPaths(
+  const { crawlablePaths, resourcePaths } = await findPaths(
     value,
     key,
     baseUrl,
     normalizedPath
   );
-
-  if (normalizedKey) {
-    // Update the key to reflect the normalized key
-    normalizedKeys.pop();
-    normalizedKeys.push(normalizedKey);
-  }
 
   return {
     crawlablePaths,
