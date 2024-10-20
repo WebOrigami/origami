@@ -11,7 +11,7 @@ class DeepObjectTreeWithoutKeys extends DeepObjectTree {
   }
 }
 
-describe.only("@crawl", () => {
+describe("@crawl", () => {
   test("finds linked pages", async () => {
     const tree = {
       "index.html": `
@@ -125,7 +125,7 @@ describe.only("@crawl", () => {
     assert.deepEqual(plain, tree);
   });
 
-  test.only("if page has no extension but looks like HTML, create a directory for it", async () => {
+  test("treat a folder root page as index.html", async () => {
     const tree = {
       "": "<a href='about'>About</a>",
       about: "<h1>About</h1>",
@@ -134,7 +134,7 @@ describe.only("@crawl", () => {
     const plain = await Tree.plain(crawled);
     assert.deepEqual(plain, {
       "index.html": "<a href='about'>About</a>",
-      "about.html": "<h1>About</h1>",
+      about: "<h1>About</h1>",
     });
   });
 });
