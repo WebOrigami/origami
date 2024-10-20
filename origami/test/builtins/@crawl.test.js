@@ -134,9 +134,7 @@ describe.only("@crawl", () => {
     const plain = await Tree.plain(crawled);
     assert.deepEqual(plain, {
       "index.html": "<a href='about'>About</a>",
-      about: {
-        "index.html": "<h1>About</h1>",
-      },
+      "about.html": "<h1>About</h1>",
     });
   });
 });
