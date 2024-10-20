@@ -5,7 +5,6 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import findPaths from "./findPaths.js";
-import { normalizeKeys } from "./utilities.js";
 
 /**
  * Crawl the paths for the given tree, starting at the given base URL, and yield
@@ -131,15 +130,20 @@ async function processPath(tree, path, baseUrl) {
 
   // Traverse tree to get value.
   let value = await Tree.traverse(tree, ...keys);
-  const normalizedKeys = normalizeKeys(keys);
+  const normalizedKeys = keys.slice();
   let normalizedPath = path;
   if (Tree.isTreelike(value)) {
-    // Path is actually a directory; see if it has an index.html
-    value = await Tree.traverse(value, "index.html");
+    // Path is actually a directory. See if we can get the empty string or
+    // "index.html".
+    value =
+      (await Tree.traverse(value, "")) ??
+      (await Tree.traverse(value, "index.html"));
     if (value !== undefined) {
       if (path.length > 0) {
         // Mark the path as ending in a slash
         normalizedPath = trailingSlash.add(path);
+        const key = normalizedKeys.pop();
+        normalizedKeys.push(trailingSlash.add(key));
       }
 
       // Add index.html to keys if it's not already there
@@ -162,12 +166,19 @@ async function processPath(tree, path, baseUrl) {
 
   // Find paths in the value
   const key = normalizedKeys.at(-1);
-  const { crawlablePaths, resourcePaths } = await findPaths(
+  const { crawlablePaths, createSubfolder, resourcePaths } = await findPaths(
     value,
     key,
     baseUrl,
     normalizedPath
   );
+
+  if (createSubfolder) {
+    // If we're writing out this value, write it out in a subfolder.
+    normalizedKeys.pop();
+    normalizedKeys.push(trailingSlash.add(key));
+    normalizedKeys.push("index.html");
+  }
 
   return {
     crawlablePaths,

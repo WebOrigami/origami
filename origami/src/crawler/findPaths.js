@@ -16,7 +16,11 @@ function filterPaths(paths, baseUrl, localPath) {
   // fumble the use of http and https, treating them interchangeably.
   const relativePaths = absoluteUrls.map((url) => {
     if (url.host === baseUrl.host && url.pathname.startsWith(basePathname)) {
-      return url.pathname.slice(basePathname.length);
+      const path = url.pathname.slice(basePathname.length);
+      // The process of creating the URLs will have escaped characters. We
+      // remove them. This has the side-effect of removing them if they existed
+      // in the original path; it would be better if we avoided that.
+      return decodeURIComponent(path);
     } else {
       return null;
     }
@@ -35,11 +39,11 @@ function filterPaths(paths, baseUrl, localPath) {
  */
 export default function findPaths(value, key, baseUrl, localPath) {
   const text = toString(value);
+  let createSubfolder = false;
 
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
   const ext = key ? extname(key).toLowerCase() : "";
-  const maybeHtml = ext === "" || text?.trim().startsWith("<");
   let foundPaths;
   if (ext === ".html" || ext === ".htm" || ext === ".xhtml") {
     foundPaths = findPathsInHtml(text);
@@ -53,8 +57,11 @@ export default function findPaths(value, key, baseUrl, localPath) {
     foundPaths = findPathsInRobotsTxt(text);
   } else if (key === "sitemap.xml") {
     foundPaths = findPathsInSitemapXml(text);
-  } else if (maybeHtml) {
+  } else if (ext === "" && text?.trim().startsWith("<")) {
+    // Probably HTML
     foundPaths = findPathsInHtml(text);
+    // If we write this out, write it out in a subfolder.
+    createSubfolder = true;
   } else {
     // Doesn't have an extension we want to process
     return {
@@ -77,6 +84,7 @@ export default function findPaths(value, key, baseUrl, localPath) {
 
   return {
     crawlablePaths,
+    createSubfolder,
     resourcePaths,
   };
 }
@@ -216,6 +224,10 @@ function findPathsInHtml(html) {
       crawlablePaths.push(href);
     }
   }
+
+  // Also look for JS `import` statements that might be in <script type="module"> tags.
+  const jsResults = findPathsInJs(html);
+  crawlablePaths.push(...jsResults.crawlablePaths);
 
   return { crawlablePaths, resourcePaths };
 }

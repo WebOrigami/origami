@@ -8,7 +8,6 @@ import {
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
 import crawlResources from "../crawler/crawlResources.js";
-import { normalizeKeys } from "../crawler/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -74,7 +73,7 @@ export default async function crawlBuiltin(treelike, baseHref) {
     // Add indirect resource functions to the resource tree. When requested,
     // these functions will obtain the resource from the original site.
     for (const resourcePath of resourcePaths) {
-      const resourceKeys = normalizeKeys(keysFromPath(resourcePath));
+      const resourceKeys = keysFromPath(resourcePath);
       const fn = () => {
         return Tree.traverse(tree, ...resourceKeys);
       };
