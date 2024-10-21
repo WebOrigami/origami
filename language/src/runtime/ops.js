@@ -257,12 +257,11 @@ export function lambda(parameters, code) {
 
   /** @this {AsyncTree|null} */
   async function invoke(...args) {
-    // Add arguments and @recurse to scope.
+    // Add arguments to scope.
     const ambients = {};
     for (const parameter of parameters) {
       ambients[parameter] = args.shift();
     }
-    ambients["@recurse"] = invoke;
     const ambientTree = new ObjectTree(ambients);
     ambientTree.parent = this;
 

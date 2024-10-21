@@ -79,15 +79,6 @@ describe("ops", () => {
     assert.equal(result, "yx");
   });
 
-  test("ops.lambda function can reference itself with @recurse", async () => {
-    const code = createCode([ops.lambda, ["_"], [ops.scope, "@recurse"]]);
-    const fn = await evaluate.call(null, code);
-    const result = await fn();
-    // We're expecting the function to return itself, but testing recursion is
-    // messy. We just confirm that the result has the same code as the original.
-    assert.equal(result.code, fn.code);
-  });
-
   test("ops.object instantiates an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
