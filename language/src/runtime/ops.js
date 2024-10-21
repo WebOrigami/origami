@@ -62,10 +62,6 @@ export async function cache(key, cache) {
   return value;
 }
 
-// The assign op is a placeholder for an assignment declaration.
-// It is only used during parsing -- it shouldn't be executed.
-export const assign = "«ops.assign»";
-
 /**
  * Concatenate the given arguments.
  *
@@ -143,6 +139,18 @@ async function constructSiteTree(protocol, treeClass, parent, host, ...keys) {
 }
 
 /**
+ * A site tree with JSON Keys via HTTPS.
+ *
+ * @this {AsyncTree|null}
+ * @param {string} host
+ * @param  {...string} keys
+ */
+export function explorableSite(host, ...keys) {
+  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
+}
+addOpLabel(explorableSite, "«ops.explorableSite»");
+
+/**
  * Fetch the resource at the given href.
  *
  * @this {AsyncTree|null}
@@ -170,18 +178,6 @@ async function fetchResponse(href) {
  * "arguments" of the expression should be used to define a property getter.
  */
 export const getter = new String("«ops.getter»");
-
-/**
- * A site tree with JSON Keys via HTTPS.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function explorableSite(host, ...keys) {
-  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
-}
-addOpLabel(explorableSite, "«ops.explorableSite»");
 
 /**
  * Construct a files tree for the filesystem root.
