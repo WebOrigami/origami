@@ -10,7 +10,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {string} host
  * @param  {...string} keys
  */
-export default function keysTree(host, ...keys) {
-  assertTreeIsDefined(this, "keysTree");
+export default function exploreSite(host, ...keys) {
+  assertTreeIsDefined(this, "exploreSite");
   return ops.explorableSite.call(this, host, ...keys);
 }
