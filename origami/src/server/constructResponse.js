@@ -78,7 +78,8 @@ export default async function constructResponse(request, resource) {
     mediaType = "text/yaml";
   }
 
-  let body;
+  // By default, the body will be the resource we got
+  let body = resource;
   if (!mediaType) {
     // Maybe it's HTML?
     const text = toString(resource);
@@ -90,9 +91,6 @@ export default async function constructResponse(request, resource) {
     // Assume text is encoded in UTF-8.
     body = toString(resource);
     mediaType += "; charset=utf-8";
-  } else {
-    // We don't know the media type, just send the data
-    body = resource;
   }
 
   // If we didn't get back some kind of data that response.write() accepts,
