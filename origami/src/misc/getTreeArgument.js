@@ -1,5 +1,4 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
-import { isTreelike } from "@weborigami/async-tree/src/Tree.js";
 import assertTreeIsDefined from "./assertTreeIsDefined.js";
 
 /**
@@ -34,7 +33,7 @@ export default async function getTreeArgument(
     if (isUnpackable(treelike)) {
       treelike = await treelike.unpack();
     }
-    if (isTreelike(treelike)) {
+    if (Tree.isTreelike(treelike)) {
       let tree = Tree.from(treelike, { deep });
       // If the tree was created from a treelike object and does not yet have a
       // parent, make the current tree its parent.
