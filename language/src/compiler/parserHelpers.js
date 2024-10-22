@@ -28,6 +28,9 @@ function avoidRecursivePropertyCalls(code, key) {
   ) {
     // Rewrite to avoid recursion
     modified = [ops.inherited, code[1]];
+  } else if (code[0] === ops.lambda && code[1].includes(key)) {
+    // Lambda that defines the key; don't rewrite
+    return code;
   } else {
     // Process any nested code
     modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
