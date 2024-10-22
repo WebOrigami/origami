@@ -9,7 +9,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  */
 export default async function code(value) {
   if (value === undefined) {
-    value = await getTreeArgument(this, arguments, value, "@clean");
+    value = await getTreeArgument(this, arguments, value, "@code");
   }
   if (value === undefined) {
     return undefined;
