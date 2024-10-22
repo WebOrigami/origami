@@ -4,7 +4,7 @@ export { default as basename } from "../src/builtins/@basename.js";
 export { default as breakpoint } from "../src/builtins/@breakpoint.js";
 export { default as builtins } from "../src/builtins/@builtins.js";
 export { default as cache } from "../src/builtins/@cache.js";
-export { default as calendarTree } from "../src/builtins/@calendarTree.js";
+export * from "../src/builtins/@calendarTree.js";
 export { default as changes } from "../src/builtins/@changes.js";
 export { default as clean } from "../src/builtins/@clean.js";
 export { default as code } from "../src/builtins/@code.js";

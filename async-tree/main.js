@@ -5,6 +5,7 @@ export { default as FileTree } from "./src/FileTree.js";
 export { default as FunctionTree } from "./src/FunctionTree.js";
 export { default as MapTree } from "./src/MapTree.js";
 // Skip BrowserFileTree.js, which is browser-only.
+export { default as calendarTree } from "./src/calendarTree.js";
 export { default as DeepMapTree } from "./src/DeepMapTree.js";
 export { default as ExplorableSiteTree } from "./src/ExplorableSiteTree.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
