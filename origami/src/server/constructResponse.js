@@ -10,8 +10,6 @@ import * as serialize from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { mediaTypeForExtension } from "./mediaTypes.js";
 
-const TypedArray = Object.getPrototypeOf(Uint8Array);
-
 /**
  * Given a resource that was returned from a route, construct an appropriate
  * HTTP Response indicating what should be sent to the client. Return null
