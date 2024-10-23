@@ -7,6 +7,8 @@ export default function invokeFunctions(treelike) {
       let value = await tree.get(key);
       if (typeof value === "function") {
         value = value();
+      } else if (Tree.isAsyncTree(value)) {
+        value = invokeFunctions(value);
       }
       return value;
     },
