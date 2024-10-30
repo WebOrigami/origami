@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/types",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "Type declarations for asynchronous dictionaries and graphs",
   "types": "./index.d.ts"
 }
