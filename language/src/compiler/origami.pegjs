@@ -352,7 +352,7 @@ reservedProtocol "reserved protocol"
   / "package" { return [ops.scope, "@package"] } // Alias
   / "treehttps" { return ops.treeHttps; } // Must come before `treehttp`
   / "treehttp" { return ops.treeHttp; } // Must come before `tree`
-  / "tree" { return ops.treeHttps; }
+  // / "tree" { return ops.treeHttps; }
 
 scopeReference "scope reference"
   = key:identifier {
