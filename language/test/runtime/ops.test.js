@@ -5,6 +5,12 @@ import { describe, test } from "node:test";
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
 describe("ops", () => {
+  test("ops.array creates an array", async () => {
+    const code = createCode([ops.array, 1, 2, 3]);
+    const result = await evaluate.call(null, code);
+    assert.deepEqual(result, [1, 2, 3]);
+  });
+
   test("ops.cache looks up a value in scope and memoizes it", async () => {
     let count = 0;
     const tree = new ObjectTree({

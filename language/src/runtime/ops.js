@@ -39,7 +39,7 @@ function addOpLabel(op, label) {
  * @param {any[]} items
  */
 export async function array(...items) {
-  return Array(...items);
+  return items;
 }
 addOpLabel(array, "«ops.array»");
 
