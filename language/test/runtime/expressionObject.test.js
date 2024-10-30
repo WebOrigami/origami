@@ -54,7 +54,7 @@ describe("expressionObject", () => {
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const parent = new ObjectTree({
-      json_handler: {
+      "json.handler": {
         unpack: JSON.parse,
       },
     });

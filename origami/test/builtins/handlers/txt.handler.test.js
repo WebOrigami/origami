@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import fileTypeText from "../../../src/builtins/txt_handler.js";
+import fileTypeText from "../../../src/builtins/txt.handler.js";
 
 describe("text handler", () => {
   test("packs an object as YAML with front matter", async () => {

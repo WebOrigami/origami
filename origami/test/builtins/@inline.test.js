@@ -2,7 +2,7 @@ import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/builtins/@inline.js";
-import fileTypeText from "../../src/builtins/txt_handler.js";
+import fileTypeText from "../../src/builtins/txt.handler.js";
 
 describe("inline", () => {
   test("inlines Origami expressions found in input text", async () => {

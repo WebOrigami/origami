@@ -4,7 +4,7 @@ import {
   map,
   toString,
 } from "@weborigami/async-tree";
-import fileTypeOrigami from "../src/builtins/ori_handler.js";
+import fileTypeOrigami from "../src/builtins/ori.handler.js";
 import { transformObject } from "../src/common/utilities.js";
 import PathTransform from "./PathTransform.js";
 

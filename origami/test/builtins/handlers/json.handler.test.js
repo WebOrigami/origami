@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import fileTypeJson from "../../../src/builtins/json_handler.js";
+import fileTypeJson from "../../../src/builtins/json.handler.js";
 
 describe(".json handler", () => {
   test("loads input as a JSON file", async () => {

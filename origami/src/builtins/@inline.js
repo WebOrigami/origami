@@ -3,7 +3,7 @@ import { compile } from "@weborigami/language";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import fileTypeOrigami from "./ori_handler.js";
+import fileTypeOrigami from "./ori.handler.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input

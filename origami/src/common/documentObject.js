@@ -1,5 +1,5 @@
 import { isPlainObject, isUnpackable, toString } from "@weborigami/async-tree";
-// import txtHandler from "../builtins/txt_handler.js";
+// import txtHandler from "../builtins/txt.handler.js";
 
 /**
  * In Origami, a text document object is any object with a `@text` property and

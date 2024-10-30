@@ -45,7 +45,7 @@ export default class SiteTree {
     }
 
     // HACK: For now we don't allow lookup of Origami extension handlers.
-    if (key.endsWith("_handler")) {
+    if (key.endsWith(".handler")) {
       return undefined;
     }
 

@@ -53,7 +53,7 @@ export async function getExtensionHandler(parent, extension) {
     handlersForContainer.set(parent, handlers);
   }
 
-  const handlerName = `${extension.slice(1)}_handler`;
+  const handlerName = `${extension.slice(1)}.handler`;
   const parentScope = scope(parent);
 
   /** @type {Promise<ExtensionHandler>} */
@@ -95,7 +95,7 @@ export async function handleExtension(parent, value, key) {
     }
 
     // Special case: `.ori.<ext>` extensions are Origami documents.
-    const extension = key.match(/\.ori\.\S+$/) ? ".ori_document" : extname(key);
+    const extension = key.match(/\.ori\.\S+$/) ? ".oridocument" : extname(key);
     if (extension) {
       const handler = await getExtensionHandler(parent, extension);
       if (handler) {

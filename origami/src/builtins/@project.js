@@ -3,7 +3,7 @@ import { merge } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import builtins from "./@builtins.js";
-import fileTypeOrigami from "./ori_handler.js";
+import fileTypeOrigami from "./ori.handler.js";
 
 const configFileName = "config.ori";
 

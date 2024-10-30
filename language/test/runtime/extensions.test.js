@@ -26,7 +26,7 @@ describe("extensions", () => {
 
 function createFixture() {
   const parent = new ObjectTree({
-    json_handler: {
+    "json.handler": {
       unpack: (buffer) => JSON.parse(String(buffer)),
     },
   });
