@@ -1,7 +1,7 @@
 import { naturalOrder } from "@weborigami/async-tree";
 import * as deprecate from "../common/deprecate.js";
 import basename from "./@basename.js";
-import builtins from "./@builtins.js";
+// import builtins from "./@builtins.js";
 import config from "./@config.js";
 import help from "./@help.js";
 import inherited from "./@inherited.js";
@@ -11,7 +11,7 @@ import once from "./@once.js";
 import ori from "./@ori.js";
 import pack from "./@pack.js";
 import post from "./@post.js";
-import project from "./@project.js";
+// import project from "./@project.js";
 import regexMatch from "./@regexMatch.js";
 import repeat from "./@repeat.js";
 import setDeep from "./@setDeep.js";
@@ -26,7 +26,7 @@ import yamlParse from "./@yamlParse.js";
 
 export default deprecate.commands("origami:", {
   basename,
-  builtins,
+  // builtins,
   config,
   eval: ori,
   help,
@@ -37,7 +37,7 @@ export default deprecate.commands("origami:", {
   once,
   pack,
   post,
-  project,
+  // project,
   regexMatch,
   repeat,
   slash,

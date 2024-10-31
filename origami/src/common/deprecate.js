@@ -1,9 +1,13 @@
+import { Tree } from "@weborigami/async-tree";
+
 export function command(newKey, oldKey, fn) {
   return function (...args) {
     console.warn(
       `ori: the command "${oldKey}" is deprecated. Use "${newKey}" instead.`
     );
-    return fn.call(this, ...args);
+    return fn instanceof Function
+      ? fn.call(this, ...args)
+      : Tree.traverseOrThrow(fn, ...args);
   };
 }
 
