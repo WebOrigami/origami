@@ -1,7 +1,8 @@
 import { isUnpackable } from "@weborigami/async-tree";
+import * as deprecate from "../common/deprecate.js";
 import fetchBuiltin from "./@fetch.js";
 
-export default {
+export default deprecate.commands("js:", {
   Array,
   Boolean,
   Date,
@@ -32,7 +33,7 @@ export default {
   parseInt,
   true: true,
   undefined: undefined,
-};
+});
 
 async function instantiate(constructor) {
   if (isUnpackable(constructor)) {

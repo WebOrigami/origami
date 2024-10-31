@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import * as deprecate from "../common/deprecate.js";
 import addNextPrevious from "./@addNextPrevious.js";
 import cache from "./@cache.js";
 import calendar from "./@calendarTree.js";
@@ -29,7 +30,7 @@ import shuffle from "./@shuffle.js";
 import sort from "./@sort.js";
 import take from "./@take.js";
 
-export default {
+const entries = {
   ...Tree,
   addNextPrevious,
   cache,
@@ -61,3 +62,12 @@ export default {
   sort,
   take,
 };
+
+const withDeprecations = deprecate.commands("tree:", entries);
+withDeprecations["@tree"] = deprecate.command(
+  "tree:",
+  "@tree",
+  (key) => Tree[key]
+);
+
+export default withDeprecations;

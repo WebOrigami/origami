@@ -1,4 +1,5 @@
 import { naturalOrder } from "@weborigami/async-tree";
+import * as deprecate from "../common/deprecate.js";
 import basename from "./@basename.js";
 import builtins from "./@builtins.js";
 import config from "./@config.js";
@@ -23,7 +24,7 @@ import version from "./@version.js";
 import yaml from "./@yaml.js";
 import yamlParse from "./@yamlParse.js";
 
-export default {
+export default deprecate.commands("origami:", {
   basename,
   builtins,
   config,
@@ -48,4 +49,4 @@ export default {
   version,
   yaml,
   yamlParse,
-};
+});

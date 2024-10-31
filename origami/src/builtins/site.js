@@ -1,3 +1,4 @@
+import * as deprecate from "../common/deprecate.js";
 import crawl from "./@crawl.js";
 import index from "./@index.js";
 import jsonKeys from "./@jsonKeys.js";
@@ -8,7 +9,7 @@ import sitemap from "./@sitemap.js";
 import slug from "./@slug.js";
 import staticBuiltin from "./@static.js";
 
-export default {
+export default deprecate.commands("site:", {
   audit,
   crawl,
   index,
@@ -18,4 +19,4 @@ export default {
   sitemap,
   slug,
   static: staticBuiltin,
-};
+});
