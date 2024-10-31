@@ -29,7 +29,7 @@ import shuffle from "./@shuffle.js";
 import sort from "./@sort.js";
 import take from "./@take.js";
 
-const entries = {
+export default {
   ...Tree,
   addNextPrevious,
   cache,
@@ -61,7 +61,3 @@ const entries = {
   sort,
   take,
 };
-
-export default function tree(key) {
-  return entries[key];
-}

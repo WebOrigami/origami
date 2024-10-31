@@ -8,7 +8,7 @@ import sitemap from "./@sitemap.js";
 import slug from "./@slug.js";
 import staticBuiltin from "./@static.js";
 
-const entries = {
+export default {
   audit,
   crawl,
   index,
@@ -19,7 +19,3 @@ const entries = {
   slug,
   static: staticBuiltin,
 };
-
-export default function site(key) {
-  return entries[key];
-}

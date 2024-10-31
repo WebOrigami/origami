@@ -8,7 +8,7 @@ import serve from "./@serve.js";
 import svg from "./@svg.js";
 import watch from "./@watch.js";
 
-const entries = {
+export default {
   breakpoint,
   changes,
   code,
@@ -19,7 +19,3 @@ const entries = {
   svg,
   watch,
 };
-
-export default function dev(key) {
-  return entries[key];
-}

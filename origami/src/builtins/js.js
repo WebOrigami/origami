@@ -1,7 +1,7 @@
 import { isUnpackable } from "@weborigami/async-tree";
 import fetchBuiltin from "./@fetch.js";
 
-const entries = {
+export default {
   Array,
   Boolean,
   Date,
@@ -34,7 +34,7 @@ const entries = {
   undefined: undefined,
 };
 
-export async function instantiate(constructor) {
+async function instantiate(constructor) {
   if (isUnpackable(constructor)) {
     constructor = await constructor.unpack();
   }
@@ -44,8 +44,4 @@ export async function instantiate(constructor) {
     args.length === 1 && args[0] === undefined
       ? new constructor()
       : new constructor(...args);
-}
-
-export default function js(key) {
-  return entries[key];
 }

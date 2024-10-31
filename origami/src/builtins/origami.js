@@ -1,7 +1,7 @@
 import { naturalOrder } from "@weborigami/async-tree";
 import basename from "./@basename.js";
+import builtins from "./@builtins.js";
 import config from "./@config.js";
-import document from "./@document.js";
 import help from "./@help.js";
 import inherited from "./@inherited.js";
 import json from "./@json.js";
@@ -13,6 +13,7 @@ import post from "./@post.js";
 import project from "./@project.js";
 import regexMatch from "./@regexMatch.js";
 import repeat from "./@repeat.js";
+import setDeep from "./@setDeep.js";
 import shell from "./@shell.js";
 import slash from "./@slash.js";
 import stdin from "./@stdin.js";
@@ -22,10 +23,10 @@ import version from "./@version.js";
 import yaml from "./@yaml.js";
 import yamlParse from "./@yamlParse.js";
 
-const entries = {
+export default {
   basename,
+  builtins,
   config,
-  document,
   eval: ori,
   help,
   inherited,
@@ -39,6 +40,7 @@ const entries = {
   regexMatch,
   repeat,
   slash,
+  setDeep,
   shell,
   stdin,
   string,
@@ -47,7 +49,3 @@ const entries = {
   yaml,
   yamlParse,
 };
-
-export default function origami(key) {
-  return entries[key];
-}
