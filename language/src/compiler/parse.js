@@ -3209,9 +3209,9 @@ function peg$parse(input, options) {
                     if (s0 === peg$FAILED) {
                       s0 = peg$parsegroup();
                       if (s0 === peg$FAILED) {
-                        s0 = peg$parseprotocolCall();
+                        s0 = peg$parsetaggedTemplate();
                         if (s0 === peg$FAILED) {
-                          s0 = peg$parsetaggedTemplate();
+                          s0 = peg$parseprotocolCall();
                           if (s0 === peg$FAILED) {
                             s0 = peg$parsescopeTraverse();
                             if (s0 === peg$FAILED) {

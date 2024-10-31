@@ -412,8 +412,8 @@ step
   / string
   / group
   // Things that have a distinctive character, but not at the start
-  / protocolCall
   / taggedTemplate
+  / protocolCall
   / scopeTraverse
   // Least distinctive option is a simple scope reference, so it comes last.
   / scopeReference

@@ -151,6 +151,13 @@ describe("Origami parser", () => {
     ]);
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
+    assertParse("expression", "text:index`Hello`", [
+      [
+        [ops.scope, "text"],
+        [ops.literal, "index"],
+      ],
+      [ops.literal, ["Hello"]],
+    ]);
   });
 
   test("functionComposition", () => {
