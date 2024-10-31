@@ -1,4 +1,5 @@
 import { isUnpackable } from "@weborigami/async-tree";
+import fetchBuiltin from "./@fetch.js";
 
 const entries = {
   Array,
@@ -23,6 +24,7 @@ const entries = {
   encodeURI,
   encodeURIComponent,
   false: false,
+  fetch: fetchBuiltin,
   isFinite,
   isNaN,
   null: null,
