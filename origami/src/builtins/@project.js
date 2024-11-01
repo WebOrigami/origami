@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { merge } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import builtins from "./@builtins.js";
@@ -47,20 +47,26 @@ export default async function project(key) {
       projectRoot = configContainer;
     } else {
       // Load Origami configuration file
-      const configTree = await fileTypeOrigami.unpack(buffer, {
+      const config = await fileTypeOrigami.unpack(buffer, {
         key: configFileName,
         parent: configContainer,
       });
-      if (!configTree) {
+      if (!config) {
         const configPath = /** @type {any} */ (configContainer).path;
         throw new Error(
           `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
         );
       }
-      projectRoot = merge(configTree, configContainer);
-      // HACK so cli.js can get a path
-      /** @type {any} */ (projectRoot).path = configContainer.path;
-      projectRoot.parent = builtins;
+
+      // The config tree may refer to the container tree *and vice versa*. To
+      // support this, we put the container in the tree twice. The chain will
+      // be: projectRoot -> configTree -> configContainer -> builtins, where
+      // the projectRoot and configContainer are the same folder.
+      const configTree = Tree.from(config);
+      projectRoot = new OrigamiFiles(configContainer.path);
+      projectRoot.parent = configTree;
+      configTree.parent = configContainer;
+      configContainer.parent = builtins;
     }
   }
 
