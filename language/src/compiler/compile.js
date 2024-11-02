@@ -3,7 +3,9 @@ import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { ops } from "../runtime/internal.js";
 import { parse } from "./parse.js";
 
-function compile(source, startRule) {
+function compile(source, options) {
+  const { startRule } = options;
+  const scopeCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }
@@ -12,20 +14,25 @@ function compile(source, startRule) {
     startRule,
   });
   const cache = {};
-  const modified = cacheNonLocalScopeReferences(code, cache);
+  const modified = scopeCaching
+    ? cacheExternalScopeReferences(code, cache)
+    : code;
   // const modified = code;
   const fn = createExpressionFunction(modified);
   return fn;
 }
 
-export function expression(source) {
-  return compile(source, "expression");
+export function expression(source, options = {}) {
+  return compile(source, {
+    ...options,
+    startRule: "expression",
+  });
 }
 
 // Given code containing ops.scope calls, upgrade them to ops.cache calls unless
 // they refer to local variables: variables defined by object literals or lambda
 // parameters.
-export function cacheNonLocalScopeReferences(code, cache, locals = {}) {
+export function cacheExternalScopeReferences(code, cache, locals = {}) {
   const [fn, ...args] = code;
 
   let additionalLocalNames;
@@ -67,7 +74,7 @@ export function cacheNonLocalScopeReferences(code, cache, locals = {}) {
       // be preferable to only descend into instructions. This would require
       // surrounding ops.lambda parameters with ops.literal, and ops.object
       // entries with ops.array.
-      return cacheNonLocalScopeReferences(child, cache, updatedLocals);
+      return cacheExternalScopeReferences(child, cache, updatedLocals);
     } else {
       return child;
     }
@@ -79,6 +86,9 @@ export function cacheNonLocalScopeReferences(code, cache, locals = {}) {
   return modified;
 }
 
-export function templateDocument(source) {
-  return compile(source, "templateDocument");
+export function templateDocument(source, options = {}) {
+  return compile(source, {
+    ...options,
+    startRule: "templateDocument",
+  });
 }

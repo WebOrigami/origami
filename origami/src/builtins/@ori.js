@@ -31,8 +31,10 @@ export default async function ori(
   // Run in the context of `this` if defined, otherwise use the builtins.
   const tree = this ?? builtins;
 
-  // Parse
-  const fn = compile.expression(expression);
+  // Compile the expression. Avoid caching scope references so that, e.g.,
+  // passing a function to the `watch` builtin will always look the current
+  // value of things in scope.
+  const fn = compile.expression(expression, { scopeCaching: false });
 
   // Execute
   let result = await fn.call(tree);
