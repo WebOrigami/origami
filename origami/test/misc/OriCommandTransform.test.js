@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import builtins from "../../src/builtins/@builtins.js";
+import { builtins } from "../../src/builtins/internal.js";
 import OriCommandTransform from "../../src/misc/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import fileTypeYaml from "../../../src/builtins/yaml.handler.js";
+import { yamlHandler } from "../../../src/builtins/internal.js";
 
 describe(".yaml handler", () => {
   test("loads input as a YAML file", async () => {
@@ -8,7 +8,7 @@ describe(".yaml handler", () => {
 a: 1
 b: 2
 `;
-    const data = fileTypeYaml.unpack(text);
+    const data = yamlHandler.unpack(text);
     assert.deepEqual(data, {
       a: 1,
       b: 2,

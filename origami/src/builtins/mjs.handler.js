@@ -1,2 +1,2 @@
 // .mjs is a synonynm for .js
-export { default } from "./js.handler.js";
+export { jsHandler as default } from "./internal.js";

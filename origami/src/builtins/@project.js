@@ -2,8 +2,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import builtins from "./@builtins.js";
-import fileTypeOrigami from "./ori.handler.js";
+import { builtins, oriHandler } from "./internal.js";
 
 const configFileName = "config.ori";
 
@@ -47,7 +46,7 @@ export default async function project(key) {
       projectRoot = configContainer;
     } else {
       // Load Origami configuration file
-      const config = await fileTypeOrigami.unpack(buffer, {
+      const config = await oriHandler.unpack(buffer, {
         key: configFileName,
         parent: configContainer,
       });

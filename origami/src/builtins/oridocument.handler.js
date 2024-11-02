@@ -1,7 +1,7 @@
 import { symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import processUnpackedContent from "../common/processUnpackedContent.js";
 import * as utilities from "../common/utilities.js";
+import { processUnpackedContent } from "./internal.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami

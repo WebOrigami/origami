@@ -1,7 +1,7 @@
 import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import builtins from "../../src/builtins/@builtins.js";
+import { builtins } from "../../src/builtins/internal.js";
 
 /**
  * Run the programs in the `programs` directory as unit tests.

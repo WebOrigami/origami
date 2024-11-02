@@ -3,7 +3,7 @@ import { compile } from "@weborigami/language";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import fileTypeOrigami from "./ori.handler.js";
+import { oriHandler } from "./internal.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input
@@ -32,7 +32,7 @@ export default async function inline(input) {
   // evaluated expression.
   const inputData = inputIsDocument ? input : null;
 
-  const templateFn = await fileTypeOrigami.unpack(origami, {
+  const templateFn = await oriHandler.unpack(origami, {
     attachedData: inputData,
     compiler: compile.templateDocument,
     parent,

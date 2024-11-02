@@ -1,8 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
-import builtins from "./@builtins.js";
-import fileTypeOrigami from "./ori.handler.js";
+import { builtins, oriHandler } from "./internal.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -48,7 +47,7 @@ export default async function sitemap(treelike, baseHref = "") {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFn = await fileTypeOrigami.unpack(templateText);
+  const templateFn = await oriHandler.unpack(templateText);
   const target = this ?? builtins;
   const templateResult = await templateFn.call(target, htmlPaths);
   return String(templateResult);

@@ -1,18 +1,20 @@
 import cssHandler from "./css.handler.js";
 import htmHandler from "./htm.handler.js";
 import htmlHandler from "./html.handler.js";
+import {
+  jsHandler,
+  oriHandler,
+  oridocumentHandler,
+  wasmHandler,
+  yamlHandler,
+} from "./internal.js";
 import jpegHandler from "./jpeg.handler.js";
 import jpgHandler from "./jpg.handler.js";
-import jsHandler from "./js.handler.js";
 import jsonHandler from "./json.handler.js";
 import mdHandler from "./md.handler.js";
 import mjsHandler from "./mjs.handler.js";
-import oriHandler from "./ori.handler.js";
-import oridocumentHandler from "./oridocument.handler.js";
 import txtHandler from "./txt.handler.js";
-import wasmHandler from "./wasm.handler.js";
 import xhtmlHandler from "./xhtml.handler.js";
-import yamlHandler from "./yaml.handler.js";
 import ymlHandler from "./yml.handler.js";
 
 export default {

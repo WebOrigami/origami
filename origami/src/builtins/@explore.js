@@ -1,14 +1,12 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
-import builtins from "../builtins/@builtins.js";
 import { keySymbol } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import debug from "./@debug.js";
+import { builtins } from "./internal.js";
 
 const miscUrl = new URL("../misc", import.meta.url);
-const miscFiles = new OrigamiFiles(miscUrl);
-miscFiles.parent = builtins;
 
 /**
  * @this {AsyncTree|null}
@@ -39,6 +37,8 @@ export default async function explore(...keys) {
     result = await Tree.traverse(debugScope, ...keys);
   } else {
     // Return the Explore page for the current scope.
+    const miscFiles = new OrigamiFiles(miscUrl);
+    miscFiles.parent = builtins;
     const templateFile = await miscFiles.get("explore.ori");
     const template = await templateFile.unpack();
 

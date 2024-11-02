@@ -4,9 +4,9 @@ import {
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import builtins from "../builtins/@builtins.js";
 import { toYaml } from "../common/serialize.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import { builtins } from "./internal.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
