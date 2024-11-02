@@ -29,6 +29,7 @@ import reverse from "./@reverse.js";
 import shuffle from "./@shuffle.js";
 import sort from "./@sort.js";
 import take from "./@take.js";
+import values from "./@values.js";
 
 const entries = {
   ...Tree,
@@ -61,6 +62,7 @@ const entries = {
   shuffle,
   sort,
   take,
+  values,
 };
 
 const withDeprecations = deprecate.commands("tree:", entries);
