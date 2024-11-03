@@ -54,6 +54,23 @@ arrayEntry
   = spread
   / expr
 
+// Calling a builtin with no intervening space or parentheses: `fn:arg`
+builtinAffixedCall
+  = fn:builtinReference path:doubleSlashPath {
+      return annotate(makeFunctionCall(fn, [path], location()), location());
+    }
+  / fn:builtinReference arg:expr {
+      const args = [arg];
+      args.location = arg.location;
+      return annotate(makeFunctionCall(fn, [args], location()), location());
+    }
+
+// A builtin reference is a string of letters only, followed by a colon.
+builtinReference
+  = chars:[A-Za-z]+ ":" {
+    return annotate([ops.builtin, chars.join("")], location());
+  }
+
 // Something that can be called. This is more restrictive than the `expr`
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
@@ -62,9 +79,9 @@ callTarget "function call"
   / object
   / lambda
   / parameterizedLambda
-  / protocolCall
   / group
   / scopeTraverse
+  / builtinReference
   / scopeReference
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -108,6 +125,12 @@ doubleQuoteString "double quote string"
 
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
+
+// Path that follows a builtin reference in a URL: `//example.com/index.html`
+doubleSlashPath
+  = "//" host:host path:leadingSlashPath? {
+      return annotate([host, ...(path ?? [])], location());
+    }
 
 ellipsis = "..." / "…" // Unicode ellipsis
 
@@ -333,26 +356,16 @@ pathTail
     return annotate([ops.literal, chars.join("")], location());
   }
 
-protocol "protocol"
-  = ref:scopeReference {
-    // Switch to searching builtins only
-    return annotate([ops.builtin, ref[1]], location());
-  }
-
-// Parse a protocol call like `fn://foo/bar`.
-// There can be zero, one, or two slashes after the colon.
-protocolCall "function call using protocol: syntax"
-  = protocol:protocol ":" "/"|0..2| host:host path:leadingSlashPath? {
-      return annotate([protocol, host, ...(path ?? [])], location());
-    }
-
 scopeReference "scope reference"
   = key:identifier {
       return annotate([ops.scope, key], location());
     }
 
 scopeTraverse
-  = ref:scopeReference "/" path:path {
+  = ref:builtinReference "/" path:path {
+      return annotate([ops.traverse, ref, ...path], location());
+    }
+  / ref:scopeReference "/" path:path {
       const head = [ops.scope, `${ ref[1] }/`];
       head.location = ref.location;
       return annotate([ops.traverse, head, ...path], location());
@@ -393,6 +406,8 @@ step
   // Try functions next; they can start with expression types that follow
   // (array, object, etc.), and we want to parse the larger thing first.
   / functionComposition
+  / taggedTemplate
+  / builtinAffixedCall
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
   / absoluteFilePath
@@ -404,9 +419,8 @@ step
   / string
   / group
   // Things that have a distinctive character, but not at the start
-  / taggedTemplate
-  / protocolCall
   / scopeTraverse
+  / builtinReference
   // Least distinctive option is a simple scope reference, so it comes last.
   / scopeReference
 

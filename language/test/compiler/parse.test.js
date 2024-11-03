@@ -34,6 +34,51 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("builtinAffixedCall", () => {
+    assertParse("builtinAffixedCall", "tree:from", [
+      [ops.builtin, "tree"],
+      [ops.scope, "from"],
+    ]);
+    assertParse("builtinAffixedCall", "a:b:c", [
+      [ops.builtin, "a"],
+      [
+        [ops.builtin, "b"],
+        [ops.scope, "c"],
+      ],
+    ]);
+    assertParse("builtinAffixedCall", "foo://bar", [
+      [ops.builtin, "foo"],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("builtinAffixedCall", "http://example.com", [
+      [ops.builtin, "http"],
+      [ops.literal, "example.com"],
+    ]);
+    assertParse("builtinAffixedCall", "https://example.com/foo/", [
+      [ops.builtin, "https"],
+      [ops.literal, "example.com"],
+      [ops.literal, "foo/"],
+    ]);
+  });
+
+  test("builtinReference", () => {
+    assertParse("builtinReference", "js:", [ops.builtin, "js"]);
+  });
+
+  test("doubleSlashPath", () => {
+    assertParse("doubleSlashPath", "//example.com", [
+      [ops.literal, "example.com"],
+    ]);
+    assertParse("doubleSlashPath", "//example.com/index.html", [
+      [ops.literal, "example.com"],
+      [ops.literal, "index.html"],
+    ]);
+    assertParse("doubleSlashPath", "//localhost:5000/foo", [
+      [ops.literal, "localhost:5000"],
+      [ops.literal, "foo"],
+    ]);
+  });
+
   test("expr", () => {
     assertParse("expr", "obj.json", [ops.scope, "obj.json"]);
     assertParse("expr", "(fn a, b, c)", [
@@ -151,12 +196,19 @@ describe("Origami parser", () => {
     ]);
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
-    assertParse("expression", "text:indent`Hello`", [
+    assertParse("expression", "page.ori(mdHtml:about.md)", [
+      [ops.scope, "page.ori"],
       [
-        [ops.builtin, "text"],
-        [ops.literal, "indent"],
+        [ops.builtin, "mdHtml"],
+        [ops.scope, "about.md"],
       ],
-      [ops.literal, ["Hello"]],
+    ]);
+    assertParse("expression", "inline:template.js`Hello`", [
+      [ops.builtin, "inline"],
+      [
+        [ops.scope, "template.js"],
+        [ops.literal, ["Hello"]],
+      ],
     ]);
   });
 
@@ -250,13 +302,13 @@ describe("Origami parser", () => {
       [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
-    assertParse("functionComposition", "https://example.com/tree.yaml 'key'", [
+    assertParse("functionComposition", "new:(js://Date, '2025-01-01')", [
+      [ops.builtin, "new"],
       [
-        [ops.builtin, "https"],
-        [ops.literal, "example.com"],
-        [ops.literal, "tree.yaml"],
+        [ops.builtin, "js"],
+        [ops.literal, "Date"],
       ],
-      [ops.literal, "key"],
+      [ops.literal, "2025-01-01"],
     ]);
   });
 
@@ -292,6 +344,14 @@ describe("Origami parser", () => {
         ops.template,
         [ops.literal, ["Hello, ", "."]],
         [ops.concat, [ops.scope, "name"]],
+      ],
+    ]);
+    assertParse("lambda", "=indent:`hello`", [
+      ops.lambda,
+      ["_"],
+      [
+        [ops.builtin, "indent"],
+        [ops.literal, ["hello"]],
       ],
     ]);
   });
@@ -333,17 +393,6 @@ describe("Origami parser", () => {
 
   test("multiLineComment", () => {
     assertParse("multiLineComment", "/*\nHello, world!\n*/", null, false);
-  });
-
-  test("new", () => {
-    assertParse("expression", "new:@js/Date('2025-01-01')", [
-      [
-        [ops.builtin, "new"],
-        [ops.literal, "@js"],
-        [ops.literal, "Date"],
-      ],
-      [ops.literal, "2025-01-01"],
-    ]);
   });
 
   test("number", () => {
@@ -551,31 +600,6 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("protocolCall", () => {
-    assertParse("protocolCall", "tree:from", [
-      [ops.builtin, "tree"],
-      [ops.literal, "from"],
-    ]);
-    assertParse("protocolCall", "foo://bar", [
-      [ops.builtin, "foo"],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("protocolCall", "https://example.com/foo/", [
-      [ops.builtin, "https"],
-      [ops.literal, "example.com"],
-      [ops.literal, "foo/"],
-    ]);
-    assertParse("protocolCall", "http:example.com", [
-      [ops.builtin, "http"],
-      [ops.literal, "example.com"],
-    ]);
-    assertParse("protocolCall", "http://localhost:5000/foo", [
-      [ops.builtin, "http"],
-      [ops.literal, "localhost:5000"],
-      [ops.literal, "foo"],
-    ]);
-  });
-
   test("scopeReference", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
@@ -593,6 +617,12 @@ describe("Origami parser", () => {
       [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
+    ]);
+    assertParse("scopeTraverse", "files:/etc/private", [
+      ops.traverse,
+      [ops.builtin, "files"],
+      [ops.literal, "etc/"],
+      [ops.literal, "private"],
     ]);
   });
 
@@ -634,6 +664,10 @@ describe("Origami parser", () => {
     assertParse("taggedTemplate", "tag`Hello, world.`", [
       [ops.scope, "tag"],
       [ops.literal, ["Hello, world."]],
+    ]);
+    assertParse("taggedTemplate", "indent:`hello`", [
+      [ops.builtin, "indent"],
+      [ops.literal, ["hello"]],
     ]);
   });
 
@@ -718,7 +752,7 @@ function assertParse(startRule, source, expected, checkLocation = true) {
   // entire source. We skip this check in cases where the source starts or ends
   // with a comment; the parser will strip those.
   if (checkLocation) {
-    assert(code.location);
+    assert(code.location, "no location");
     const resultSource = code.location.source.text.slice(
       code.location.start.offset,
       code.location.end.offset
