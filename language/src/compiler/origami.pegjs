@@ -333,26 +333,18 @@ pathTail
     return annotate([ops.literal, chars.join("")], location());
   }
 
+protocol "protocol"
+  = ref:scopeReference {
+    // Switch to searching builtins only
+    return annotate([ops.builtin, ref[1]], location());
+  }
+
 // Parse a protocol call like `fn://foo/bar`.
 // There can be zero, one, or two slashes after the colon.
 protocolCall "function call using protocol: syntax"
   = protocol:protocol ":" "/"|0..2| host:host path:leadingSlashPath? {
       return annotate([protocol, host, ...(path ?? [])], location());
     }
-
-protocol "protocol"
-  = reservedProtocol
-  / scopeReference
-
-reservedProtocol "reserved protocol"
-  = "explore" { return ops.explorableSite; }
-  / "https" { return ops.https; } // Must come before "http"
-  / "http" { return ops.http; }
-  / "new" { return ops.constructor; }
-  / "package" { return [ops.scope, "@package"] } // Alias
-  / "treehttps" { return ops.treeHttps; } // Must come before `treehttp`
-  / "treehttp" { return ops.treeHttp; } // Must come before `tree`
-  // / "tree" { return ops.treeHttps; }
 
 scopeReference "scope reference"
   = key:identifier {

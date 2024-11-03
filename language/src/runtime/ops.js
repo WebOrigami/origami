@@ -44,6 +44,23 @@ export async function array(...items) {
 addOpLabel(array, "«ops.array»");
 
 /**
+ * Like ops.scope, but only searches for a builtin at the top of the scope
+ * chain.
+ *
+ * @this {AsyncTree|null}
+ */
+export async function builtin(key) {
+  if (!this) {
+    throw new Error("Tried to get the scope of a null or undefined tree.");
+  }
+  let current = this;
+  while (current.parent) {
+    current = current.parent;
+  }
+  return current.get(key);
+}
+
+/**
  * Look up the given key in the scope for the current tree the first time
  * the key is requested, holding on to the value for future requests.
  *

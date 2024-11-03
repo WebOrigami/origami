@@ -151,10 +151,10 @@ describe("Origami parser", () => {
     ]);
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
-    assertParse("expression", "text:index`Hello`", [
+    assertParse("expression", "text:indent`Hello`", [
       [
-        [ops.scope, "text"],
-        [ops.literal, "index"],
+        [ops.builtin, "text"],
+        [ops.literal, "indent"],
       ],
       [ops.literal, ["Hello"]],
     ]);
@@ -251,7 +251,11 @@ describe("Origami parser", () => {
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "https://example.com/tree.yaml 'key'", [
-      [ops.https, [ops.literal, "example.com"], [ops.literal, "tree.yaml"]],
+      [
+        [ops.builtin, "https"],
+        [ops.literal, "example.com"],
+        [ops.literal, "tree.yaml"],
+      ],
       [ops.literal, "key"],
     ]);
   });
@@ -333,7 +337,11 @@ describe("Origami parser", () => {
 
   test("new", () => {
     assertParse("expression", "new:@js/Date('2025-01-01')", [
-      [ops.constructor, [ops.literal, "@js"], [ops.literal, "Date"]],
+      [
+        [ops.builtin, "new"],
+        [ops.literal, "@js"],
+        [ops.literal, "Date"],
+      ],
       [ops.literal, "2025-01-01"],
     ]);
   });
@@ -544,21 +552,25 @@ describe("Origami parser", () => {
   });
 
   test("protocolCall", () => {
+    assertParse("protocolCall", "tree:from", [
+      [ops.builtin, "tree"],
+      [ops.literal, "from"],
+    ]);
     assertParse("protocolCall", "foo://bar", [
-      [ops.scope, "foo"],
+      [ops.builtin, "foo"],
       [ops.literal, "bar"],
     ]);
     assertParse("protocolCall", "https://example.com/foo/", [
-      ops.https,
+      [ops.builtin, "https"],
       [ops.literal, "example.com"],
       [ops.literal, "foo/"],
     ]);
     assertParse("protocolCall", "http:example.com", [
-      ops.http,
+      [ops.builtin, "http"],
       [ops.literal, "example.com"],
     ]);
     assertParse("protocolCall", "http://localhost:5000/foo", [
-      ops.http,
+      [ops.builtin, "http"],
       [ops.literal, "localhost:5000"],
       [ops.literal, "foo"],
     ]);
