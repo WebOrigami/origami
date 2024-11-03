@@ -7,8 +7,8 @@ export default function codeFragment(location) {
       : // Use entire source
         source.text;
 
-  // Remove newlines and whitespace runs.
-  fragment = fragment.replace(/(\n|\s\s+)+/g, "");
+  // Replace newlines and whitespace runs with a single space.
+  fragment = fragment.replace(/(\n|\s\s+)+/g, " ");
 
   // If longer than 80 characters, truncate with an ellipsis.
   if (fragment.length > 80) {
