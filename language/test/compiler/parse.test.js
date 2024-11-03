@@ -39,6 +39,10 @@ describe("Origami parser", () => {
       [ops.builtin, "tree"],
       [ops.scope, "from"],
     ]);
+    assertParse("builtinAffixedCall", "js:Date", [
+      [ops.builtin, "js"],
+      [ops.literal, "Date"],
+    ]);
     assertParse("builtinAffixedCall", "a:b:c", [
       [ops.builtin, "a"],
       [
