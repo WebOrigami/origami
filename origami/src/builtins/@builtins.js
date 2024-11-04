@@ -6,6 +6,7 @@ import * as files from "./files.js";
 import * as handlers from "./handlers.js";
 import * as image from "./image.js";
 import * as js from "./js.js";
+import instantiate from "./new.js";
 import * as node from "./node.js";
 import * as origami from "./origami.js";
 import * as site from "./site.js";
@@ -14,27 +15,26 @@ import * as tree from "./tree.js";
 
 export default new ObjectTree({
   ...calc.default,
-  calc: calc.default,
+  "calc:": calc.default,
   ...dev.default,
-  dev: dev.default,
-  "@files": deprecate.command("files:", "@files", files.default),
-  ...files.default,
-  files: files.default,
-  ...image.default,
-  image: image.default,
+  "dev:": dev.default,
+  "@files": deprecate.command("files:", "@files/", files.default),
+  "files:": files.default,
+  "@image": deprecate.command("image:", "@image/", files.default),
+  "image:": image.default,
   ...handlers.default,
-  handlers: handlers.default,
-  ...js.default,
-  js: js.default,
-  ...node.default,
-  "@node": deprecate.command("node:", "@node", node.default),
-  node: node.default,
+  "handlers:": handlers.default,
+  "@js": deprecate.command("js:", "@js/", js.default),
+  "js:": js.default,
+  "@node": deprecate.command("node:", "@node/", node.default),
+  "new:": instantiate,
+  "node:": node.default,
   ...origami.default,
-  origami: origami.default,
+  "origami:": origami.default,
   ...site.default,
-  site: site.default,
+  "site:": site.default,
   ...text.default,
-  text: text.default,
+  "text:": text.default,
   ...tree.default,
-  tree: tree.default,
+  "tree:": tree.default,
 });

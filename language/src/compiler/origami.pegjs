@@ -56,19 +56,17 @@ arrayEntry
 
 // Calling a builtin with no intervening space or parentheses: `fn:arg`
 builtinAffixedCall
-  = fn:builtinReference path:doubleSlashPath {
+  // = fn:builtinReference path:doubleSlashPath {
+  //     return annotate(makeFunctionCall(fn, [path], location()), location());
+  //   }
+  = fn:builtinReference path:path {
       return annotate(makeFunctionCall(fn, [path], location()), location());
-    }
-  / fn:builtinReference arg:expr {
-      const args = [arg];
-      args.location = arg.location;
-      return annotate(makeFunctionCall(fn, [args], location()), location());
     }
 
 // A builtin reference is a string of letters only, followed by a colon.
 builtinReference
   = chars:[A-Za-z]+ ":" {
-    return annotate([ops.builtin, chars.join("")], location());
+    return annotate([ops.builtin, chars.join("") + ":"], location());
   }
 
 // Something that can be called. This is more restrictive than the `expr`
@@ -330,12 +328,20 @@ pipeline
 
 // A slash-separated path of keys
 path "slash-separated path"
-  = head:pathElement|0..| tail:pathTail? {
+  // Path with at least a tail
+  = head:pathElement|0..| tail:pathTail {
       let path = tail ? [...head, tail] : head;
       // Remove parts for consecutive slashes
       path = path.filter((part) => part[1] !== "/");
       return annotate(path, location());
     }
+  // Path with slashes, maybe no tail
+  / head:pathElement|1..| tail:pathTail? {
+      let path = tail ? [...head, tail] : head;
+      // Remove parts for consecutive slashes
+      path = path.filter((part) => part[1] !== "/");
+      return annotate(path, location());
+  }
 
 // A path key followed by a slash
 pathElement
@@ -362,13 +368,13 @@ scopeReference "scope reference"
     }
 
 scopeTraverse
-  = ref:builtinReference "/" path:path {
-      return annotate([ops.traverse, ref, ...path], location());
+  = ref:builtinReference "/" path:path? {
+      return annotate([ops.traverse, ref, ...(path ?? [])], location());
     }
-  / ref:scopeReference "/" path:path {
+  / ref:scopeReference "/" path:path? {
       const head = [ops.scope, `${ ref[1] }/`];
       head.location = ref.location;
-      return annotate([ops.traverse, head, ...path], location());
+      return annotate([ops.traverse, head, ...(path ?? [])], location());
     }
 
 separator

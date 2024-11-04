@@ -23,7 +23,7 @@ import version from "./@version.js";
 import yaml from "./@yaml.js";
 import yamlParse from "./@yamlParse.js";
 
-export default deprecate.commands("origami:", {
+export default deprecate.commands({
   basename,
 
   // Use a dynamic import to avoid circular dependencies

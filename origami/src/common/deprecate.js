@@ -1,9 +1,10 @@
 import { Tree } from "@weborigami/async-tree";
+import addColons from "./addColons.js";
 
 export function command(newKey, oldKey, fn) {
   return function (...args) {
     console.warn(
-      `ori: the command "${oldKey}" is deprecated. Use "${newKey}" instead.`
+      `ori: Warning: the "${oldKey}" syntax is deprecated. Use "${newKey}" instead.`
     );
     return fn instanceof Function
       ? fn.call(this, ...args)
@@ -11,11 +12,11 @@ export function command(newKey, oldKey, fn) {
   };
 }
 
-export function commands(namespace, commands) {
-  const deprecatedEntries = Object.entries(commands).map(([key, fn]) => [
+export function commands(object) {
+  const deprecatedEntries = Object.entries(object).map(([key, fn]) => [
     `@${key}`,
-    command(`${namespace}${key}`, `@${key}`, fn),
+    command(`${key}:`, `@${key}`, fn),
   ]);
   const deprecated = Object.fromEntries(deprecatedEntries);
-  return { ...deprecated, ...commands };
+  return { ...deprecated, ...addColons(object) };
 }

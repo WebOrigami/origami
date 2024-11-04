@@ -35,38 +35,32 @@ describe("Origami parser", () => {
   });
 
   test("builtinAffixedCall", () => {
-    assertParse("builtinAffixedCall", "tree:from", [
-      [ops.builtin, "tree"],
-      [ops.scope, "from"],
-    ]);
     assertParse("builtinAffixedCall", "js:Date", [
-      [ops.builtin, "js"],
+      [ops.builtin, "js:"],
       [ops.literal, "Date"],
     ]);
-    assertParse("builtinAffixedCall", "a:b:c", [
-      [ops.builtin, "a"],
-      [
-        [ops.builtin, "b"],
-        [ops.scope, "c"],
-      ],
+    assertParse("builtinAffixedCall", "files:src/assets", [
+      [ops.builtin, "files:"],
+      [ops.literal, "src/"],
+      [ops.literal, "assets"],
     ]);
     assertParse("builtinAffixedCall", "foo://bar", [
-      [ops.builtin, "foo"],
+      [ops.builtin, "foo:"],
       [ops.literal, "bar"],
     ]);
     assertParse("builtinAffixedCall", "http://example.com", [
-      [ops.builtin, "http"],
+      [ops.builtin, "http:"],
       [ops.literal, "example.com"],
     ]);
     assertParse("builtinAffixedCall", "https://example.com/foo/", [
-      [ops.builtin, "https"],
-      [ops.literal, "example.com"],
+      [ops.builtin, "https:"],
+      [ops.literal, "example.com/"],
       [ops.literal, "foo/"],
     ]);
   });
 
   test("builtinReference", () => {
-    assertParse("builtinReference", "js:", [ops.builtin, "js"]);
+    assertParse("builtinReference", "js:", [ops.builtin, "js:"]);
   });
 
   test("doubleSlashPath", () => {
@@ -187,6 +181,9 @@ describe("Origami parser", () => {
       ]
     );
 
+    // Builtin on its own is the function itself, not a function call
+    assertParse("expression", "mdHtml:", [ops.builtin, "mdHtml:"]);
+
     // Consecutive slahes in a path are removed
     assertParse("expression", "path//key", [
       ops.traverse,
@@ -200,18 +197,11 @@ describe("Origami parser", () => {
     ]);
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
-    assertParse("expression", "page.ori(mdHtml:about.md)", [
+    assertParse("expression", "page.ori(mdHtml:(about.md))", [
       [ops.scope, "page.ori"],
       [
-        [ops.builtin, "mdHtml"],
+        [ops.builtin, "mdHtml:"],
         [ops.scope, "about.md"],
-      ],
-    ]);
-    assertParse("expression", "inline:template.js`Hello`", [
-      [ops.builtin, "inline"],
-      [
-        [ops.scope, "template.js"],
-        [ops.literal, ["Hello"]],
       ],
     ]);
   });
@@ -307,9 +297,9 @@ describe("Origami parser", () => {
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "new:(js://Date, '2025-01-01')", [
-      [ops.builtin, "new"],
+      [ops.builtin, "new:"],
       [
-        [ops.builtin, "js"],
+        [ops.builtin, "js:"],
         [ops.literal, "Date"],
       ],
       [ops.literal, "2025-01-01"],
@@ -354,7 +344,7 @@ describe("Origami parser", () => {
       ops.lambda,
       ["_"],
       [
-        [ops.builtin, "indent"],
+        [ops.builtin, "indent:"],
         [ops.literal, ["hello"]],
       ],
     ]);
@@ -624,7 +614,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("scopeTraverse", "files:/etc/private", [
       ops.traverse,
-      [ops.builtin, "files"],
+      [ops.builtin, "files:"],
       [ops.literal, "etc/"],
       [ops.literal, "private"],
     ]);
@@ -670,7 +660,7 @@ describe("Origami parser", () => {
       [ops.literal, ["Hello, world."]],
     ]);
     assertParse("taggedTemplate", "indent:`hello`", [
-      [ops.builtin, "indent"],
+      [ops.builtin, "indent:"],
       [ops.literal, ["hello"]],
     ]);
   });
@@ -707,13 +697,13 @@ describe("Origami parser", () => {
       [ops.literal, ["", ""]],
       [ops.concat, [ops.template, [ops.literal, ["nested"]]]],
     ]);
-    assertParse("templateLiteral", "`${map(people, =`${name}`)}`", [
+    assertParse("templateLiteral", "`${ map:(people, =`${name}`) }`", [
       ops.template,
       [ops.literal, ["", ""]],
       [
         ops.concat,
         [
-          [ops.scope, "map"],
+          [ops.builtin, "map:"],
           [ops.scope, "people"],
           [
             ops.lambda,

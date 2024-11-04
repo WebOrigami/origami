@@ -9,7 +9,7 @@ import sitemap from "./@sitemap.js";
 import slug from "./@slug.js";
 import staticBuiltin from "./@static.js";
 
-export default deprecate.commands("site:", {
+export default deprecate.commands({
   audit,
   crawl,
   index,

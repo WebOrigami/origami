@@ -4,7 +4,7 @@ import indent from "./@indent.js";
 import inline from "./@inline.js";
 import mdHtml from "./@mdHtml.js";
 
-export default deprecate.commands("text:", {
+export default deprecate.commands({
   document,
   indent,
   inline,

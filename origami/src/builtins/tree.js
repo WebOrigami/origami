@@ -65,7 +65,7 @@ const entries = {
   values,
 };
 
-const withDeprecations = deprecate.commands("tree:", entries);
+const withDeprecations = deprecate.commands(entries);
 withDeprecations["@tree"] = deprecate.command(
   "tree:",
   "@tree",

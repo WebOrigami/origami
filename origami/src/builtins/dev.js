@@ -9,7 +9,7 @@ import serve from "./@serve.js";
 import svg from "./@svg.js";
 import watch from "./@watch.js";
 
-export default deprecate.commands("dev:", {
+export default deprecate.commands({
   breakpoint,
   changes,
   code,

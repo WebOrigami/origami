@@ -1,3 +1,4 @@
+import addColons from "../common/addColons.js";
 import * as deprecate from "../common/deprecate.js";
 import equals from "./@equals.js";
 import ifBuiltin from "./@if.js";
@@ -6,13 +7,14 @@ import not from "./@not.js";
 import or from "./@or.js";
 
 export default {
-  ...math,
-  equals,
-  if: ifBuiltin,
-  not,
-  or,
+  ...addColons({
+    equals,
+    if: ifBuiltin,
+    not,
+    or,
+  }),
 
-  ...deprecate.commands("calc:", math),
+  ...deprecate.commands(math),
   "@equals": deprecate.command("calc:equals", "@equals", equals),
   "@if": deprecate.command("calc:if", "@if", ifBuiltin),
   "@not": deprecate.command("calc:not", "@not", not),

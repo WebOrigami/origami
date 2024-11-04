@@ -71,7 +71,7 @@ export default async function evaluate(code) {
         error.position !== undefined
           ? // Use location of the argument with the given position (need to
             // offset by 1 to skip the function).
-            code[error.position + 1].location
+            code[error.position + 1]?.location
           : // Use overall location.
             code.location;
     }

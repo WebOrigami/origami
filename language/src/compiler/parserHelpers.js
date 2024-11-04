@@ -1,14 +1,6 @@
 import { trailingSlash } from "@weborigami/async-tree";
 import * as ops from "../runtime/ops.js";
 
-const objectNamespaces = [
-  "files",
-  "image",
-  "js",
-  "node",
-  // "tree"
-];
-
 // Parser helpers
 
 /**
@@ -131,15 +123,6 @@ export function makeFunctionCall(target, chain, location) {
           [ops.traverse, value, ...args.slice(1)]
         : // Traverse without arguments equates to unpack
           [ops.unpack, value];
-
-    // Fix up calls to object namespaces to use literals
-    if (
-      fnCall[0][0] === ops.builtin &&
-      objectNamespaces.includes(fnCall[0][1]) &&
-      fnCall[1][0] === ops.scope
-    ) {
-      fnCall[1] = [ops.literal, fnCall[1][1]];
-    }
 
     // Create a location spanning the newly-constructed function call.
     if (args instanceof Array) {
