@@ -4,19 +4,13 @@
  */
 
 import {
-  ExplorableSiteTree,
   ObjectTree,
-  SiteTree,
   Tree,
   isUnpackable,
-  pathFromKeys,
   scope as scopeFn,
-  trailingSlash,
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import expressionObject from "./expressionObject.js";
-import { handleExtension } from "./extensions.js";
-import HandleExtensionsTransform from "./HandleExtensionsTransform.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
@@ -133,83 +127,6 @@ export async function constructor(...keys) {
 addOpLabel(constructor, "«ops.constructor»");
 
 /**
- * Given a protocol, a host, and a list of keys, construct an href.
- *
- * @param {string} protocol
- * @param {string} host
- * @param  {string[]} keys
- */
-function constructHref(protocol, host, ...keys) {
-  const path = pathFromKeys(keys);
-  let href = [host, path].join("/");
-  if (!href.startsWith(protocol)) {
-    if (!href.startsWith("//")) {
-      href = `//${href}`;
-    }
-    href = `${protocol}${href}`;
-  }
-  return href;
-}
-
-/**
- * Given a protocol, a host, and a list of keys, construct an href.
- *
- * @param {string} protocol
- * @param {import("../../index.ts").Constructor<AsyncTree>} treeClass
- * @param {AsyncTree|null} parent
- * @param {string} host
- * @param  {string[]} keys
- */
-async function constructSiteTree(protocol, treeClass, parent, host, ...keys) {
-  // If the last key doesn't end in a slash, remove it for now.
-  let lastKey;
-  if (keys.length > 0 && keys.at(-1) && !trailingSlash.has(keys.at(-1))) {
-    lastKey = keys.pop();
-  }
-
-  const href = constructHref(protocol, host, ...keys);
-  let result = new (HandleExtensionsTransform(treeClass))(href);
-  result.parent = parent;
-
-  return lastKey ? result.get(lastKey) : result;
-}
-
-/**
- * A site tree with JSON Keys via HTTPS.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function explorableSite(host, ...keys) {
-  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
-}
-addOpLabel(explorableSite, "«ops.explorableSite»");
-
-/**
- * Fetch the resource at the given href.
- *
- * @this {AsyncTree|null}
- * @param {string} href
- */
-async function fetchResponse(href) {
-  const response = await fetch(href);
-  if (!response.ok) {
-    return undefined;
-  }
-  let buffer = await response.arrayBuffer();
-
-  // Attach any loader defined for the file type.
-  const url = new URL(href);
-  const filename = url.pathname.split("/").pop();
-  if (this && filename) {
-    buffer = await handleExtension(this, buffer, filename);
-  }
-
-  return buffer;
-}
-
-/**
  * This op is only used during parsing. It signals to ops.object that the
  * "arguments" of the expression should be used to define a property getter.
  */
@@ -230,32 +147,6 @@ export async function filesRoot() {
 
   return root;
 }
-
-/**
- * Retrieve a web resource via HTTP.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export async function http(host, ...keys) {
-  const href = constructHref("http:", host, ...keys);
-  return fetchResponse.call(this, href);
-}
-addOpLabel(http, "«ops.http»");
-
-/**
- * Retrieve a web resource via HTTPS.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function https(host, ...keys) {
-  const href = constructHref("https:", host, ...keys);
-  return fetchResponse.call(this, href);
-}
-addOpLabel(https, "«ops.https»");
 
 /**
  * Search the parent's scope -- i.e., exclude the current tree -- for the given
@@ -396,30 +287,6 @@ addOpLabel(template, "«ops.template»");
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
-
-/**
- * A website tree via HTTP.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function treeHttp(host, ...keys) {
-  return constructSiteTree("http:", SiteTree, this, host, ...keys);
-}
-addOpLabel(treeHttp, "«ops.treeHttp»");
-
-/**
- * A website tree via HTTPS.
- *
- * @this {AsyncTree|null}
- * @param {string} host
- * @param  {...string} keys
- */
-export function treeHttps(host, ...keys) {
-  return constructSiteTree("https:", SiteTree, this, host, ...keys);
-}
-addOpLabel(treeHttps, "«ops.treeHttps»");
 
 /**
  * If the value is packed but has an unpack method, call it and return that as

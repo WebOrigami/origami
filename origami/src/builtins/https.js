@@ -1,4 +1,5 @@
-import { ops } from "@weborigami/language";
+import constructHref from "../common/constructHref.js";
+import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -11,9 +12,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param  {...string} keys
  */
 export default async function https(host, ...keys) {
-  assertTreeIsDefined(this, "https");
-  return ops.https.call(this, host, ...keys);
+  assertTreeIsDefined(this, "https:");
+  const href = constructHref("https:", host, ...keys);
+  return fetchAndHandleExtension.call(this, href);
 }
-
-https.usage = `@https <host>, <...keys>\tA web resource via HTTPS`;
-https.documentation = "https://weborigami.org/language/@https.html";
