@@ -54,20 +54,11 @@ arrayEntry
   = spread
   / expr
 
-// Calling a builtin with no intervening space or parentheses: `fn:arg`
-builtinAffixedCall
-  = fn:builtinReference path:doubleSlashPath {
-      return annotate(makeFunctionCall(fn, [path], location()), location());
+// A shorthand reference to a builtin function: `:map`
+builtin
+  = ":" identifier:identifier {
+      return annotate([ops.builtin, ":" + identifier], location());
     }
-  / fn:builtinReference path:path {
-      return annotate(makeFunctionCall(fn, [path], location()), location());
-    }
-
-// A builtin reference is a string of letters only, followed by a colon.
-builtinReference
-  = chars:[A-Za-z]+ ":" {
-    return annotate([ops.builtin, chars.join("") + ":"], location());
-  }
 
 // Something that can be called. This is more restrictive than the `expr`
 // parser; it doesn't accept regular function calls.
@@ -78,8 +69,9 @@ callTarget "function call"
   / lambda
   / parameterizedLambda
   / group
+  / builtin
   / scopeTraverse
-  / builtinReference
+  / namespace
   / scopeReference
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -249,6 +241,21 @@ list "list"
 multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
+// A namespace reference is a string of letters only, followed by a colon.
+namespace
+  = chars:[A-Za-z]+ ":" {
+    return annotate([ops.builtin, chars.join("") + ":"], location());
+  }
+
+// A namespace followed by a path: `fn:a/b/c`
+namespacePath
+  = fn:namespace path:doubleSlashPath {
+      return annotate(makeFunctionCall(fn, [path], location()), location());
+    }
+  / fn:namespace path:path {
+      return annotate(makeFunctionCall(fn, [path], location()), location());
+    }
+
 newLine
   = "\n"
   / "\r\n"
@@ -369,7 +376,7 @@ scopeReference "scope reference"
     }
 
 scopeTraverse
-  = ref:builtinReference "/" path:path? {
+  = ref:namespace "/" path:path? {
       return annotate([ops.traverse, ref, ...(path ?? [])], location());
     }
   / ref:scopeReference "/" path:path? {
@@ -414,7 +421,7 @@ step
   // (array, object, etc.), and we want to parse the larger thing first.
   / functionComposition
   / taggedTemplate
-  / builtinAffixedCall
+  / namespacePath
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
   / absoluteFilePath
@@ -425,9 +432,10 @@ step
   / templateLiteral
   / string
   / group
+  / builtin
   // Things that have a distinctive character, but not at the start
   / scopeTraverse
-  / builtinReference
+  / namespace
   // Least distinctive option is a simple scope reference, so it comes last.
   / scopeReference
 

@@ -11,6 +11,31 @@ describe("ops", () => {
     assert.deepEqual(result, [1, 2, 3]);
   });
 
+  test("ops.builtin gets a value from the top of the scope chain", async () => {
+    const root = new ObjectTree({
+      a: 1,
+    });
+    const tree = new ObjectTree({});
+    tree.parent = root;
+    const code = createCode([ops.builtin, "a"]);
+    const result = await evaluate.call(tree, code);
+    assert.equal(result, 1);
+  });
+
+  test("ops.builtin shorthand for a child of a namespace", async () => {
+    const root = new ObjectTree({
+      a: {},
+      b: {
+        child: 1,
+      },
+    });
+    const tree = new ObjectTree({});
+    tree.parent = root;
+    const code = createCode([ops.builtin, ":child"]);
+    const result = await evaluate.call(tree, code);
+    assert.equal(result, 1);
+  });
+
   test("ops.cache looks up a value in scope and memoizes it", async () => {
     let count = 0;
     const tree = new ObjectTree({

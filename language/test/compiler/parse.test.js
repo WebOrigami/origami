@@ -34,33 +34,8 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("builtinAffixedCall", () => {
-    assertParse("builtinAffixedCall", "js:Date", [
-      [ops.builtin, "js:"],
-      [ops.literal, "Date"],
-    ]);
-    assertParse("builtinAffixedCall", "files:src/assets", [
-      [ops.builtin, "files:"],
-      [ops.literal, "src/"],
-      [ops.literal, "assets"],
-    ]);
-    assertParse("builtinAffixedCall", "foo://bar", [
-      [ops.builtin, "foo:"],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("builtinAffixedCall", "http://example.com", [
-      [ops.builtin, "http:"],
-      [ops.literal, "example.com"],
-    ]);
-    assertParse("builtinAffixedCall", "https://example.com/foo/", [
-      [ops.builtin, "https:"],
-      [ops.literal, "example.com/"],
-      [ops.literal, "foo/"],
-    ]);
-  });
-
-  test("builtinReference", () => {
-    assertParse("builtinReference", "js:", [ops.builtin, "js:"]);
+  test("builtin", () => {
+    assertParse("builtin", ":map", [ops.builtin, ":map"]);
   });
 
   test("doubleSlashPath", () => {
@@ -296,13 +271,18 @@ describe("Origami parser", () => {
       [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
-    assertParse("functionComposition", "new:(js://Date, '2025-01-01')", [
+    assertParse("functionComposition", "new:(js:Date, '2025-01-01')", [
       [ops.builtin, "new:"],
       [
         [ops.builtin, "js:"],
         [ops.literal, "Date"],
       ],
       [ops.literal, "2025-01-01"],
+    ]);
+    assertParse("functionComposition", ":map(markdown, :mdHtml)", [
+      [ops.builtin, ":map"],
+      [ops.scope, "markdown"],
+      [ops.builtin, ":mdHtml"],
     ]);
   });
 
@@ -388,6 +368,35 @@ describe("Origami parser", () => {
 
   test("multiLineComment", () => {
     assertParse("multiLineComment", "/*\nHello, world!\n*/", null, false);
+  });
+
+  test("namespace", () => {
+    assertParse("namespace", "js:", [ops.builtin, "js:"]);
+  });
+
+  test("namespacePath", () => {
+    assertParse("namespacePath", "js:Date", [
+      [ops.builtin, "js:"],
+      [ops.literal, "Date"],
+    ]);
+    assertParse("namespacePath", "files:src/assets", [
+      [ops.builtin, "files:"],
+      [ops.literal, "src/"],
+      [ops.literal, "assets"],
+    ]);
+    assertParse("namespacePath", "foo://bar", [
+      [ops.builtin, "foo:"],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("namespacePath", "http://example.com", [
+      [ops.builtin, "http:"],
+      [ops.literal, "example.com"],
+    ]);
+    assertParse("namespacePath", "https://example.com/foo/", [
+      [ops.builtin, "https:"],
+      [ops.literal, "example.com/"],
+      [ops.literal, "foo/"],
+    ]);
   });
 
   test("number", () => {
