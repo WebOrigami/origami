@@ -1,6 +1,6 @@
 import { ObjectTree } from "@weborigami/async-tree";
-import * as deprecate from "../common/deprecate.js";
 import * as calc from "./calc.js";
+import deprecated from "./deprecated.js";
 import * as dev from "./dev.js";
 import * as files from "./files.js";
 import * as handlers from "./handlers.js";
@@ -14,27 +14,18 @@ import * as text from "./text.js";
 import * as tree from "./tree.js";
 
 export default new ObjectTree({
-  ...calc.default,
   "calc:": calc.default,
-  ...dev.default,
   "dev:": dev.default,
-  "@files": deprecate.command("files:", "@files/", files.default),
   "files:": files.default,
-  "@image": deprecate.command("image:", "@image/", files.default),
   "image:": image.default,
-  ...handlers.default,
-  "handlers:": handlers.default,
-  "@js": deprecate.command("js:", "@js/", js.default),
   "js:": js.default,
-  "@node": deprecate.command("node:", "@node/", node.default),
   "new:": instantiate,
   "node:": node.default,
-  ...origami.default,
   "origami:": origami.default,
-  ...site.default,
   "site:": site.default,
-  ...text.default,
   "text:": text.default,
-  ...tree.default,
   "tree:": tree.default,
+  // Handlers need to be exposed at top level
+  ...handlers.default,
+  ...deprecated,
 });
