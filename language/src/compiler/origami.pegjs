@@ -56,10 +56,10 @@ arrayEntry
 
 // Calling a builtin with no intervening space or parentheses: `fn:arg`
 builtinAffixedCall
-  // = fn:builtinReference path:doubleSlashPath {
-  //     return annotate(makeFunctionCall(fn, [path], location()), location());
-  //   }
-  = fn:builtinReference path:path {
+  = fn:builtinReference path:doubleSlashPath {
+      return annotate(makeFunctionCall(fn, [path], location()), location());
+    }
+  / fn:builtinReference path:path {
       return annotate(makeFunctionCall(fn, [path], location()), location());
     }
 
@@ -126,7 +126,7 @@ doubleQuoteStringChar
 
 // Path that follows a builtin reference in a URL: `//example.com/index.html`
 doubleSlashPath
-  = "//" host:host path:leadingSlashPath? {
+  = "//" host:host path:path? {
       return annotate([host, ...(path ?? [])], location());
     }
 
@@ -192,9 +192,10 @@ guillemetStringChar
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier:identifier port:(":" @number)? {
+  = identifier:identifier port:(":" @number)? slash:"/"? {
     const portText = port ? `:${port[1]}` : "";
-    const hostText = identifier + portText;
+    const slashText = slash ? "/" : "";
+    const hostText = identifier + portText + slashText;
     return annotate([ops.literal, hostText], location());
   }
 

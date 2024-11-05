@@ -68,11 +68,11 @@ describe("Origami parser", () => {
       [ops.literal, "example.com"],
     ]);
     assertParse("doubleSlashPath", "//example.com/index.html", [
-      [ops.literal, "example.com"],
+      [ops.literal, "example.com/"],
       [ops.literal, "index.html"],
     ]);
     assertParse("doubleSlashPath", "//localhost:5000/foo", [
-      [ops.literal, "localhost:5000"],
+      [ops.literal, "localhost:5000/"],
       [ops.literal, "foo"],
     ]);
   });
@@ -316,6 +316,7 @@ describe("Origami parser", () => {
     assertParse("host", "abc", [ops.literal, "abc"]);
     assertParse("host", "abc:123", [ops.literal, "abc:123"]);
     assertParse("host", "foo\\ bar", [ops.literal, "foo bar"]);
+    assertParse("host", "example.com/", [ops.literal, "example.com/"]);
   });
 
   test("identifier", () => {
