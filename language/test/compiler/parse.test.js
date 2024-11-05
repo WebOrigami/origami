@@ -321,11 +321,11 @@ describe("Origami parser", () => {
         [ops.concat, [ops.scope, "name"]],
       ],
     ]);
-    assertParse("lambda", "=indent:`hello`", [
+    assertParse("lambda", "=:indent`hello`", [
       ops.lambda,
       ["_"],
       [
-        [ops.builtin, "indent:"],
+        [ops.builtin, ":indent"],
         [ops.literal, ["hello"]],
       ],
     ]);
@@ -669,8 +669,8 @@ describe("Origami parser", () => {
       [ops.scope, "tag"],
       [ops.literal, ["Hello, world."]],
     ]);
-    assertParse("taggedTemplate", "indent:`hello`", [
-      [ops.builtin, "indent:"],
+    assertParse("taggedTemplate", ":indent`hello`", [
+      [ops.builtin, ":indent"],
       [ops.literal, ["hello"]],
     ]);
   });

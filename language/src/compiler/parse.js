@@ -911,9 +911,12 @@ function peg$parse(input, options) {
                 if (s0 === peg$FAILED) {
                   s0 = peg$parsescopeTraverse();
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parsenamespace();
+                    s0 = peg$parsenamespacePath();
                     if (s0 === peg$FAILED) {
-                      s0 = peg$parsescopeReference();
+                      s0 = peg$parsenamespace();
+                      if (s0 === peg$FAILED) {
+                        s0 = peg$parsescopeReference();
+                      }
                     }
                   }
                 }

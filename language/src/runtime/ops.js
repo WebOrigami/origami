@@ -62,8 +62,13 @@ export async function builtin(key) {
     // Shorthand, look in all top-level values for the given key.
     key = key.slice(1);
     for (const namespaces of await current.keys()) {
-      const namespace = Tree.from(await current.get(namespaces));
-      const value = await namespace.get(key);
+      const namespace = await current.get(namespaces);
+      if (namespace instanceof Function) {
+        // Namespace like files:, http:, etc.; skip
+        continue;
+      }
+      const tree = Tree.from(namespace);
+      const value = await tree.get(key);
       if (value) {
         return value;
       }

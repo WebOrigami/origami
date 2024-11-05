@@ -9,10 +9,13 @@ import site from "./site.js";
 import text from "./text.js";
 import tree from "./tree.js";
 
-export function command(newKey, oldKey, fn) {
+export function command(namespace, newKey, oldKey, fn) {
   return function (...args) {
+    const keys = newKey
+      ? `"${namespace}${newKey}" or ":${newKey}"`
+      : `"${namespace}"`;
     console.warn(
-      `ori: Warning: the "${oldKey}" syntax is deprecated. Use "${newKey}" instead.`
+      `ori: Warning: "${oldKey}" is deprecated. Use ${keys} instead.`
     );
     return fn instanceof Function
       ? fn.call(this, ...args)
@@ -23,7 +26,7 @@ export function command(newKey, oldKey, fn) {
 export function commands(namespace, object) {
   const deprecatedEntries = Object.entries(object).map(([key, fn]) => [
     `@${key}`,
-    command(`${namespace}:${key}`, `@${key}`, fn),
+    command(namespace, key, `@${key}`, fn),
   ]);
   return Object.fromEntries(deprecatedEntries);
 }
@@ -31,13 +34,13 @@ export function commands(namespace, object) {
 export default {
   ...commands("calc:", math),
   ...commands("dev:", dev),
-  "@files": command("files:", "@files/", files),
-  "@image": command("image:", "@image/", files),
-  "@js": command("js:", "@js/", js),
-  "@node": command("node:", "@node/", node),
+  "@files": command("files:", null, "@files/", files),
+  "@image": command("image:", null, "@image/", files),
+  "@js": command("js:", null, "@js/", js),
+  "@node": command("node:", null, "@node/", node),
   ...commands("origami:", origami),
   ...commands("site:", site),
   ...commands("text:", text),
   ...commands("tree:", tree),
-  "@tree": command("tree:", "@tree/", Tree),
+  "@tree": command("tree:", null, "@tree/", Tree),
 };

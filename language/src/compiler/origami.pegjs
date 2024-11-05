@@ -71,6 +71,7 @@ callTarget "function call"
   / group
   / builtin
   / scopeTraverse
+  / namespacePath
   / namespace
   / scopeReference
 
