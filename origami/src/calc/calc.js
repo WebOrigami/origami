@@ -55,7 +55,7 @@ function subtract(a, b) {
   return Number(a) - Number(b);
 }
 
-export default {
+const commands = {
   add,
   divide,
   equals,
@@ -65,3 +65,10 @@ export default {
   or,
   subtract,
 };
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "Math and logical operations",
+});
+
+export default commands;

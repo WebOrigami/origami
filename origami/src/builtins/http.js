@@ -11,8 +11,10 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {string} host
  * @param  {...string} keys
  */
-export default async function https(host, ...keys) {
+export default async function http(host, ...keys) {
   assertTreeIsDefined(this, "http:");
   const href = constructHref("http:", host, ...keys);
   return fetchAndHandleExtension.call(this, href);
 }
+
+http.description = "Web resources via HTTP";

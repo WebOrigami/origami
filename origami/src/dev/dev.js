@@ -1,9 +1,28 @@
-export { default as breakpoint } from "./breakpoint.js";
-export { default as changes } from "./changes.js";
-export { default as code } from "./code.js";
-export { default as debug } from "./debug.js";
-export { default as explore } from "./explore.js";
-export { default as log } from "./log.js";
-export { default as serve } from "./serve.js";
-export { default as svg } from "./svg.js";
-export { default as watch } from "./watch.js";
+import breakpoint from "./breakpoint.js";
+import changes from "./changes.js";
+import code from "./code.js";
+import debug from "./debug.js";
+import explore from "./explore.js";
+import log from "./log.js";
+import serve from "./serve.js";
+import svg from "./svg.js";
+import watch from "./watch.js";
+
+const commands = {
+  breakpoint,
+  changes,
+  code,
+  debug,
+  explore,
+  log,
+  serve,
+  svg,
+  watch,
+};
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "Development tools",
+});
+
+export default commands;

@@ -17,3 +17,5 @@ export default function treehttp(host, ...keys) {
   assertTreeIsDefined(this, "treehttp:");
   return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }
+
+treehttp.description = "A website tree via HTTP";

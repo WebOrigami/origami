@@ -1,4 +1,4 @@
-import { symbols, Tree } from "@weborigami/async-tree";
+import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import { builtins } from "../builtins/internal.js";
 
 /**
@@ -16,7 +16,7 @@ export default function processUnpackedContent(content, parent, attachedData) {
   if (typeof content === "function") {
     // Bind the function to a target that's the attached data (if it exists) or
     // the parent.
-    const base = parent ?? builtins;
+    const base = parent ?? new ObjectTree(builtins);
     let target;
     if (attachedData) {
       target = Tree.from(attachedData);

@@ -17,3 +17,5 @@ export default function treehttps(host, ...keys) {
   assertTreeIsDefined(this, "treehttps:");
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
+
+treehttps.description = "A website tree via HTTPS";

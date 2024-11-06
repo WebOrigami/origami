@@ -3,7 +3,7 @@ async function fetchWrapper(resource, options) {
   return response.ok ? await response.arrayBuffer() : undefined;
 }
 
-export default {
+const commands = {
   Array,
   Boolean,
   Date,
@@ -34,3 +34,10 @@ export default {
   true: true,
   undefined: undefined,
 };
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "JavaScript classes and functions",
+});
+
+export default commands;

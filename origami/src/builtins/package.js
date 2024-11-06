@@ -46,3 +46,5 @@ export default async function packageNamespace(...keys) {
       : packageExports;
   return result;
 }
+
+packageNamespace.description = "Packages installed in node_modules";

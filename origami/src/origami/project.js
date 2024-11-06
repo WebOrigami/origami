@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import { builtins, oriHandler } from "../builtins/internal.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
@@ -26,7 +26,7 @@ export default async function project(key) {
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
-  currentTree.parent = builtins;
+  currentTree.parent = new ObjectTree(builtins);
 
   // Search up the tree for the configuration file or package.json to determine
   // the project root.
@@ -65,7 +65,7 @@ export default async function project(key) {
       projectRoot = new OrigamiFiles(configContainer.path);
       projectRoot.parent = configTree;
       configTree.parent = configContainer;
-      configContainer.parent = builtins;
+      configContainer.parent = new ObjectTree(builtins);
     }
   }
 
@@ -82,7 +82,7 @@ async function findAncestorFile(start, fileName) {
       // Found the desired file; its container is the project root. Set the
       // parent to the builtins; in the context of this project, there's nothing
       // higher up.
-      current.parent = builtins;
+      current.parent = new ObjectTree(builtins);
       return current;
     }
     // Not found; try the parent.

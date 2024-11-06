@@ -32,7 +32,7 @@ import sort from "./sort.js";
 import take from "./take.js";
 import values from "./values.js";
 
-export default {
+const commands = {
   ...Tree,
   addNextPrevious,
   cache,
@@ -67,3 +67,10 @@ export default {
   take,
   values,
 };
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "Functions for working with trees",
+});
+
+export default commands;

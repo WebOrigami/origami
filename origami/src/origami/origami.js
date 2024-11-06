@@ -1,6 +1,6 @@
+import help from "../builtins/help.js";
 import basename from "./basename.js";
 import config from "./config.js";
-import help from "./help.js";
 import json from "./json.js";
 import jsonParse from "./jsonParse.js";
 import naturalOrder from "./naturalOrder.js";
@@ -20,7 +20,7 @@ import version from "./version.js";
 import yaml from "./yaml.js";
 import yamlParse from "./yamlParse.js";
 
-export default {
+const commands = {
   basename,
 
   // Use a dynamic import to avoid circular dependencies
@@ -49,3 +49,10 @@ export default {
   yaml,
   yamlParse,
 };
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "Origami language features",
+});
+
+export default commands;

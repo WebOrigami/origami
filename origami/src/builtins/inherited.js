@@ -13,3 +13,5 @@ export default async function inherited(key) {
   assertTreeIsDefined(this, "inherited:");
   return ops.inherited.call(this, key);
 }
+
+inherited.description = "Retrieve an inherited value instead of a local one";

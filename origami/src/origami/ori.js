@@ -1,4 +1,5 @@
 import {
+  ObjectTree,
   Tree,
   getRealmObjectPrototype,
   toString,
@@ -29,7 +30,7 @@ export default async function ori(
   expression = toString(expression);
 
   // Run in the context of `this` if defined, otherwise use the builtins.
-  const tree = this ?? builtins;
+  const tree = this ?? new ObjectTree(builtins);
 
   // Parse
   const fn = compile.expression(expression);

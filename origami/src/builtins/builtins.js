@@ -1,42 +1,44 @@
-import { ObjectTree } from "@weborigami/async-tree";
 import calc from "../calc/calc.js";
-import * as dev from "../dev/dev.js";
+import dev from "../dev/dev.js";
 import * as handlers from "../handlers/handlers.js";
-import * as image from "../image/image.js";
-import * as origami from "../origami/origami.js";
-import * as site from "../site/site.js";
-import * as text from "../text/text.js";
-import * as tree from "../tree/tree.js";
+import image from "../image/image.js";
+import origami from "../origami/origami.js";
+import site from "../site/site.js";
+import text from "../text/text.js";
+import tree from "../tree/tree.js";
 import deprecated from "./deprecated.js";
 import explore from "./explore.js";
 import files from "./files.js";
+import help from "./help.js";
 import http from "./http.js";
 import https from "./https.js";
 import inherited from "./inherited.js";
-import * as js from "./js.js";
+import js from "./js.js";
 import instantiate from "./new.js";
-import * as node from "./node.js";
+import node from "./node.js";
 import packageNamespace from "./package.js";
 import treehttp from "./treehttp.js";
 import treehttps from "./treehttps.js";
 
-export default new ObjectTree({
+/** @type {any} */
+const builtins = {
   "calc:": calc,
   "dev:": dev,
   "explore:": explore,
   "files:": files,
+  "help:": help,
   "http:": http,
   "https:": https,
   "image:": image,
   "inherited:": inherited,
-  "js:": js.default,
+  "js:": js,
   "new:": instantiate,
-  "node:": node.default,
-  "origami:": origami.default,
+  "node:": node,
+  "origami:": origami,
   "package:": packageNamespace,
   "site:": site,
   "text:": text,
-  "tree:": tree.default,
+  "tree:": tree,
   "treehttp:": treehttp,
   "treehttps:": treehttps,
 
@@ -45,4 +47,6 @@ export default new ObjectTree({
 
   // Deprecated builtins
   ...deprecated,
-});
+};
+
+export default builtins;

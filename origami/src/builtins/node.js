@@ -14,9 +14,16 @@ const patchedProcess = Object.create(null, {
   },
 });
 
-export default {
+const commands = {
   Buffer,
   path,
   process: patchedProcess,
   url,
 };
+
+Object.defineProperty(commands, "description", {
+  enumerable: false,
+  value: "Node.js classes and modules",
+});
+
+export default commands;

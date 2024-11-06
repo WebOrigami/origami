@@ -16,3 +16,5 @@ export default async function https(host, ...keys) {
   const href = constructHref("https:", host, ...keys);
   return fetchAndHandleExtension.call(this, href);
 }
+
+https.description = "Web resources via HTTPS";

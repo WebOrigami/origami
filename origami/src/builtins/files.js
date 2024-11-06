@@ -29,5 +29,6 @@ export default async function files(...keys) {
   return result;
 }
 
+files.description = "File system folders and files";
 files.usage = `@files [path]\tTree of files at the given path`;
 files.documentation = "https://weborigami.org/language/@files.html";

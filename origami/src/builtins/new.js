@@ -11,3 +11,5 @@ export default async function instantiate(constructor) {
       ? new constructor()
       : new constructor(...args);
 }
+
+instantiate.description = `Create an instance of a JavaScript class`;
