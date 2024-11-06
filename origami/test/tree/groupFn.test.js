@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import groupFn from "../../src/builtins/@groupFn.js";
+import groupFn from "../../src/tree/groupFn.js";
 
 describe("@groupFn", () => {
   test("groups using a group key function", async () => {

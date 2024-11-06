@@ -4,8 +4,8 @@ import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
-import ori from "../builtins/@ori.js";
-import project from "../builtins/@project.js";
+import ori from "../origami/ori.js";
+import project from "../origami/project.js";
 import showUsage from "./showUsage.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);

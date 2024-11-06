@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import paginateFn from "../../src/builtins/@paginateFn.js";
+import paginateFn from "../../src/tree/paginateFn.js";
 
 describe("@paginateFn", () => {
   test("divides tree keys into fixed-length chunks", async () => {

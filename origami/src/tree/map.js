@@ -1,5 +1,5 @@
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import mapFn from "./@mapFn.js";
+import mapFn from "./mapFn.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
@@ -7,7 +7,7 @@ import mapFn from "./@mapFn.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("./map.d.ts").TreeMapOptions} TreeMapOptions
+ * @typedef {import("./map.js").TreeMapOptions} TreeMapOptions
  *
  * @this {AsyncTree|null}
  * @param {Treelike} source

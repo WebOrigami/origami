@@ -1,7 +1,7 @@
 import { DeepObjectTree, ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import mapFn from "../../src/builtins/@mapFn.js";
+import mapFn from "../../src/tree/mapFn.js";
 
 describe("@mapFn", () => {
   test("puts value and key in scope", async () => {

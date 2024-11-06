@@ -3,6 +3,7 @@ import calc from "../calc/calc.js";
 import * as dev from "../dev/dev.js";
 import * as handlers from "../handlers/handlers.js";
 import * as origami from "../origami/origami.js";
+import * as tree from "../tree/tree.js";
 import deprecated from "./deprecated.js";
 import explore from "./explore.js";
 import files from "./files.js";
@@ -15,7 +16,6 @@ import * as node from "./node.js";
 import packageNamespace from "./package.js";
 import * as site from "./site.js";
 import * as text from "./text.js";
-import * as tree from "./tree.js";
 import treehttp from "./treehttp.js";
 import treehttps from "./treehttps.js";
 

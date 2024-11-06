@@ -1,5 +1,5 @@
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import deepMapFn from "./@deepMapFn.js";
+import deepMapFn from "./deepMapFn.js";
 
 /**
  * Shorthand for calling `@map` with `deep: true` option.

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import sort from "../../src/builtins/@sort.js";
+import sort from "../../src/tree/sort.js";
 
 describe("@sort", () => {
   test("sorts keys", async () => {

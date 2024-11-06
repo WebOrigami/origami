@@ -1,5 +1,5 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
-import deepTakeFn from "./@deepTakeFn.js";
+import deepTakeFn from "./deepTakeFn.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the

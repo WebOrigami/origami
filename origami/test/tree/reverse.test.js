@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import reverse from "../../src/builtins/@reverse.js";
+import reverse from "../../src/tree/reverse.js";
 
 describe("@reverse", () => {
   test("reverses a tree's top-level keys", async () => {

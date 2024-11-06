@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import map from "../../src/builtins/@map.js";
+import map from "../../src/tree/map.js";
 
 describe("@map", () => {
   test("applies a transform to a tree", async () => {

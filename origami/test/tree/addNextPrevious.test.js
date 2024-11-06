@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import sequence from "../../src/builtins/@addNextPrevious.js";
+import addNextPrevious from "../../src/tree/addNextPrevious.js";
 
 describe("@addNextPrevious", () => {
   test("adds next/previous properties to values", async () => {
@@ -16,7 +16,7 @@ describe("@addNextPrevious", () => {
         name: "Carol",
       },
     };
-    const result = await sequence.call(null, tree);
+    const result = await addNextPrevious.call(null, tree);
     assert.deepEqual(await Tree.plain(result), {
       alice: {
         name: "Alice",

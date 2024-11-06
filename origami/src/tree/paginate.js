@@ -1,5 +1,5 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
-import paginateFn from "./@paginateFn.js";
+import paginateFn from "./paginateFn.js";
 
 /**
  * Return a new grouping of the treelike's values into chunks of the specified

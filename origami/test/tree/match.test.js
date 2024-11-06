@@ -2,7 +2,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import match from "../../src/builtins/@match.js";
+import match from "../../src/tree/match.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {

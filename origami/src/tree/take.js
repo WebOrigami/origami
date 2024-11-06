@@ -1,5 +1,5 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
-import takeFn from "./@takeFn.js";
+import takeFn from "./takeFn.js";
 
 /**
  * Given a tree, take the first n items from it.

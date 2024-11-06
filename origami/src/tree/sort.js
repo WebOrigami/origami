@@ -1,5 +1,5 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
-import sortFn from "./@sortFn.js";
+import sortFn from "./sortFn.js";
 
 /**
  * Return a new tree with the original's keys sorted.

@@ -12,7 +12,6 @@ import post from "./post.js";
 import project from "./project.js";
 import regexMatch from "./regexMatch.js";
 import repeat from "./repeat.js";
-import setDeep from "./setDeep.js";
 import shell from "./shell.js";
 import slash from "./slash.js";
 import stdin from "./stdin.js";
@@ -44,7 +43,6 @@ export default {
   regexMatch,
   repeat,
   slash,
-  setDeep,
   shell,
   stdin,
   string,

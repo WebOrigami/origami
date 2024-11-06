@@ -1,6 +1,6 @@
 import { isPlainObject } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import mapFn from "./@mapFn.js";
+import mapFn from "./mapFn.js";
 
 /**
  * Shorthand for calling `@mapFn` with `deep: true` option.

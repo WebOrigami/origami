@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import sortFn from "../../src/builtins/@sortFn.js";
+import sortFn from "../../src/tree/sortFn.js";
 
 describe("@sortFn", () => {
   test("invokes a sortKey function", async () => {

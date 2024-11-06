@@ -1,5 +1,5 @@
 import getTreeArgument from "../misc/getTreeArgument.js";
-import groupFn from "./@groupFn.js";
+import groupFn from "./groupFn.js";
 
 /**
  * Map a tree to a new tree with the values from the original tree grouped by
