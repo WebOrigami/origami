@@ -21,4 +21,4 @@ export { default as wasmHandler } from "../handlers/wasm.handler.js";
 
 export { default as yamlHandler } from "../handlers/yaml.handler.js";
 
-export { default as builtins } from "./@builtins.js";
+export { default as builtins } from "./builtins.js";

@@ -6,8 +6,8 @@ import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import { requestListener } from "../server/server.js";
-import debug from "./@debug.js";
-import watch from "./@watch.js";
+import debug from "./debug.js";
+import watch from "./watch.js";
 
 const defaultPort = 5000;
 

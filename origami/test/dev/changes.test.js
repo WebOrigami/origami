@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import changes from "../../src/builtins/@changes.js";
+import changes from "../../src/dev/changes.js";
 
 describe("@changes", () => {
   test("finds changes in two trees", async () => {
