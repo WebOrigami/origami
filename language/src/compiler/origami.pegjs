@@ -181,6 +181,11 @@ guillemetString "guillemet string"
 guillemetStringChar
   = !('»' / newLine) @textChar
 
+homeDirectory
+  = "~" {
+      return annotate([ops.homeTree], location());
+    }
+
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
@@ -434,6 +439,7 @@ step
   / string
   / group
   / builtin
+  / homeDirectory
   // Things that have a distinctive character, but not at the start
   / scopeTraverse
   / namespace

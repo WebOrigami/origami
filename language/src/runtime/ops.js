@@ -10,6 +10,7 @@ import {
   scope as scopeFn,
   concat as treeConcat,
 } from "@weborigami/async-tree";
+import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -133,19 +134,25 @@ addOpLabel(constructor, "«ops.constructor»");
 export const getter = new String("«ops.getter»");
 
 /**
- * Construct a files tree for the filesystem root.
+ * Files tree for the filesystem root.
  *
  * @this {AsyncTree|null}
  */
 export async function filesRoot() {
-  let root = new OrigamiFiles("/");
+  let tree = new OrigamiFiles("/");
+  tree.parent = root(this);
+  return tree;
+}
 
-  // The root itself needs a parent so that expressions evaluated within it
-  // (e.g., Origami expressions loaded from .ori files) will have access to
-  // things like the built-in functions.
-  root.parent = this;
-
-  return root;
+/**
+ * Files tree for the user's home directory.
+ *
+ * @this {AsyncTree|null}
+ */
+export async function homeTree() {
+  const tree = new OrigamiFiles(os.homedir());
+  tree.parent = root(this);
+  return tree;
 }
 
 /**
@@ -249,6 +256,16 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
+
+// Return the root of the given tree. For an Origami tree, this gives us
+// a way of acessing the builtins.
+function root(tree) {
+  let current = tree;
+  while (current.parent) {
+    current = current.parent;
+  }
+  return current;
+}
 
 /**
  * Look up the given key in the scope for the current tree.

@@ -292,6 +292,10 @@ describe("Origami parser", () => {
     assertParse("group", "(fn())", [[ops.scope, "fn"], undefined]);
   });
 
+  test("homeDirectory", () => {
+    assertParse("homeDirectory", "~", [ops.homeTree]);
+  });
+
   test("host", () => {
     assertParse("host", "abc", [ops.literal, "abc"]);
     assertParse("host", "abc:123", [ops.literal, "abc:123"]);
