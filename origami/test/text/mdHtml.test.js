@@ -1,7 +1,7 @@
 import { ObjectTree, Tree, map } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import mdHtml from "../../src/builtins/@mdHtml.js";
+import mdHtml from "../../src/text/mdHtml.js";
 
 describe("mdHtml", () => {
   test("transforms markdown text to HTML text", async () => {

@@ -1,4 +1,4 @@
-import assertTreeIsDefined from "../../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import imageResizeFn from "./resizeFn.js";
 
 /**

@@ -1,9 +1,9 @@
 import { isUnpackable, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
+import { oriHandler } from "../builtins/internal.js";
 import documentObject from "../common/documentObject.js";
 import { toString } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import { oriHandler } from "./internal.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input

@@ -1,4 +1,4 @@
-import fetchBuiltin from "./@fetch.js";
+import fetchBuiltin from "./fetch.js";
 
 export default {
   Array,
