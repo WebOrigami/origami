@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/monorepo",
-  "version": "0.0.72",
+  "version": "0.0.73",
   "workspaces": [
     "async-tree",
     "language",
