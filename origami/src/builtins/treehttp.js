@@ -18,4 +18,4 @@ export default function treehttp(host, ...keys) {
   return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }
 
-treehttp.description = "A website tree via HTTP";
+treehttp.description = "URL protocol for a website tree via HTTP";

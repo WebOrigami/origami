@@ -17,4 +17,4 @@ export default async function http(host, ...keys) {
   return fetchAndHandleExtension.call(this, href);
 }
 
-http.description = "Web resources via HTTP";
+http.description = "URL protocol for web resources via HTTP";

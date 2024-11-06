@@ -62,3 +62,4 @@ export default async function changes(oldTreelike, newTreelike) {
 
   return result;
 }
+changes.description = "changes(old, new) - Return a tree of changes";

@@ -18,4 +18,5 @@ export default function explore(host, ...keys) {
   return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
 }
 
-explore.description = "Treat a website with JSON keys as a tree";
+explore.description =
+  "URL protocol to treat a website with JSON keys as a tree";

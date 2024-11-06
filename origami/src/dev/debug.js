@@ -27,6 +27,7 @@ export default async function debug(treelike) {
 
   return tree;
 }
+debug.description = "debug(tree) - Add debug features to the tree";
 
 /**
  * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor

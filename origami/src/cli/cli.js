@@ -4,9 +4,9 @@ import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
+import help from "../builtins/help.js";
 import ori from "../origami/ori.js";
 import project from "../origami/project.js";
-import showUsage from "./showUsage.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -20,7 +20,8 @@ async function main(...args) {
   if (!expression) {
     // HACK: the config is the parent of the project tree.
     const config = projectTree.parent;
-    await showUsage(config);
+    const usage = await help.call(config);
+    console.log(usage);
     return;
   }
 

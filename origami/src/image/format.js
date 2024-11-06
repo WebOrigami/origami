@@ -16,3 +16,5 @@ export default async function imageFormat(input, format, options) {
   assertTreeIsDefined(this, "image:format");
   return imageFormatFn.call(this, format, options)(input);
 }
+imageFormat.description =
+  "format(image, format, options) - Return the image in a different format";

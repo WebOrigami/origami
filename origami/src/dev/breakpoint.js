@@ -10,3 +10,5 @@ export default function breakpoint(arg) {
   debugger;
   return arg;
 }
+breakpoint.description =
+  "breakpoint(a) - Break into the JavaScript debugger, then return a";

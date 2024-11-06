@@ -38,6 +38,4 @@ export default async function svg(treelike, options = {}) {
   result.unpack = () => tree;
   return result;
 }
-
-svg.usage = `@svg <tree>\tRender a tree visually as in SVG format`;
-svg.documentation = "https://weborigami.org/language/@svg.html";
+svg.description = "svg(tree, options) - Render a tree visually in SVG format";

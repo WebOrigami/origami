@@ -27,15 +27,25 @@ async function commandDescriptions(builtins, namespace) {
     return `Namespace "${namespace}" not found`;
   }
 
-  const text = [`Commands in the "${namespace}:" namespace:\n`];
+  const text = [];
   for (const key in commands) {
     const command = commands[key];
     if (command?.description) {
       text.push(`  ${namespace}:${command.description}`);
     }
   }
+
+  if (text.length === 0) {
+    text.push(
+      `"${namespace}" works like a URL protocol and does not contain commands.`
+    );
+  } else {
+    text.unshift(`Commands in the "${namespace}:" namespace:\n`);
+    text.push("\n");
+  }
+
   text.push(
-    `\nFor more information visit https://weborigami.org/builtins/${namespace}`
+    `For more information visit https://weborigami.org/builtins/${namespace}`
   );
   return text.join("\n");
 }

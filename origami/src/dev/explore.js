@@ -52,6 +52,8 @@ export default async function explore(...keys) {
 
   return result;
 }
+explore.description =
+  "explore() - Explore the current scope [when run in browser]";
 
 // To test if a given tree represents the builtins, we walk up the chain to see
 // if any of its prototypes are the builtins tree.

@@ -12,3 +12,4 @@ export default async function resize(input, options) {
   assertTreeIsDefined(this, "image:resize");
   return imageResizeFn.call(this, options)(input);
 }
+resize.description = "resize(image, options) - Resize the image";

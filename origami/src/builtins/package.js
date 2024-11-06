@@ -47,4 +47,5 @@ export default async function packageNamespace(...keys) {
   return result;
 }
 
-packageNamespace.description = "Packages installed in node_modules";
+packageNamespace.description =
+  "URL protocol for packages installed in node_modules";

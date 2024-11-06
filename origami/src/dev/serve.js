@@ -52,6 +52,7 @@ export default async function serve(treelike, port) {
     );
   });
 }
+serve.description = "serve(tree, port) - Start a web server for the tree";
 
 // Return the first open port number on or after the given port number.
 // From https://gist.github.com/mikeal/1840641?permalink_comment_id=2896667#gistcomment-2896667

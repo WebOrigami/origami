@@ -18,4 +18,4 @@ export default function treehttps(host, ...keys) {
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
 
-treehttps.description = "A website tree via HTTPS";
+treehttps.description = "URL protocol for a website tree via HTTPS";

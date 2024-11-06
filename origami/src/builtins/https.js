@@ -17,4 +17,4 @@ export default async function https(host, ...keys) {
   return fetchAndHandleExtension.call(this, href);
 }
 
-https.description = "Web resources via HTTPS";
+https.description = "URL protocol for web resources via HTTPS";

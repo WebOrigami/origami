@@ -14,4 +14,5 @@ export default async function inherited(key) {
   return ops.inherited.call(this, key);
 }
 
-inherited.description = "Retrieve an inherited value instead of a local one";
+inherited.description =
+  "URL protocol to get an inherited value instead of a local one";

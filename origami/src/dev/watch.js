@@ -47,6 +47,7 @@ export default async function watch(treelike, fn) {
 
   return handle;
 }
+watch.description = "watch(tree, fn) - Reevaluate fn when tree changes";
 
 async function evaluateTree(parent, fn) {
   let tree;

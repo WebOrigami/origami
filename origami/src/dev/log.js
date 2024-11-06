@@ -14,3 +14,4 @@ export default async function log(result, object = result) {
   console.log(text);
   return result;
 }
+log.description = "log(a, message) - Log message to the console and return a";
