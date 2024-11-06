@@ -1,7 +1,7 @@
 import { DeepObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import sitemap from "../../src/builtins/@sitemap.js";
+import sitemap from "../../src/site/sitemap.js";
 
 describe("@sitemap", () => {
   test("returns a sitemap for a tree", async () => {

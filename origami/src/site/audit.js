@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import getTreeArgument from "../misc/getTreeArgument.js";
-import crawl from "./@crawl.js";
+import crawl from "./crawl.js";
 
 /**
  * @this {import("@weborigami/types").AsyncTree|null}

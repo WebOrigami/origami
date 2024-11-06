@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import naturalOrder from "../../src/builtins/@naturalOrder.js";
+import naturalOrder from "../../src/origami/naturalOrder.js";
 import sort from "../../src/tree/sort.js";
 
 describe("@naturalOrder", () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import slug from "../../src/builtins/@slug.js";
+import slug from "../../src/site/slug.js";
 
 describe("@slug", () => {
   test("converts file names to slugs for URLs", async () => {

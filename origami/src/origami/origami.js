@@ -1,10 +1,10 @@
-import { naturalOrder } from "@weborigami/async-tree";
 import basename from "./basename.js";
 import config from "./config.js";
 import help from "./help.js";
 import inherited from "./inherited.js";
 import json from "./json.js";
 import jsonParse from "./jsonParse.js";
+import naturalOrder from "./naturalOrder.js";
 import once from "./once.js";
 import ori from "./ori.js";
 import pack from "./pack.js";
