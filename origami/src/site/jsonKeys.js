@@ -15,13 +15,13 @@ export default async function jsonKeysBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "@keysJson",
+    "site:jsonKeys",
     true
   );
-  return transformObject(KeysJsonTransform, tree);
+  return transformObject(JsonKeysTransform, tree);
 }
 
-function KeysJsonTransform(Base) {
+function JsonKeysTransform(Base) {
   return class Static extends Base {
     async get(key) {
       let value = await super.get(key);
@@ -29,7 +29,7 @@ function KeysJsonTransform(Base) {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
         const tree = Tree.from(value, { deep: true, parent: this });
-        value = transformObject(KeysJsonTransform, tree);
+        value = transformObject(JsonKeysTransform, tree);
       }
       return value;
     }

@@ -11,10 +11,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function reverseBuiltin(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@reverse");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:reverse");
   const reversed = reverse(tree);
   return reversed;
 }
-
-reverseBuiltin.usage = `@reverse <tree>\tReverses the order of the tree's top-level keys`;
-reverseBuiltin.documentation = "https://weborigami.org/builtins/@reverse.html";

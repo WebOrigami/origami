@@ -9,6 +9,7 @@ import deepMap from "./deepMap.js";
 import deepMerge from "./deepMerge.js";
 import deepReverse from "./deepReverse.js";
 import deepTake from "./deepTake.js";
+import deepValues from "./deepValues.js";
 import defineds from "./defineds.js";
 import filter from "./filter.js";
 import first from "./first.js";
@@ -43,6 +44,7 @@ export default {
   deepMerge,
   deepReverse,
   deepTake,
+  deepValues,
   defineds,
   filter,
   first,

@@ -21,7 +21,7 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  */
 export default async function sitemap(treelike, baseHref = "") {
   assertTreeIsDefined(this, "sitemap");
-  const tree = await getTreeArgument(this, arguments, treelike, "@sitemap");
+  const tree = await getTreeArgument(this, arguments, treelike, "site:sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

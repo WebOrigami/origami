@@ -10,7 +10,12 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {import("@weborigami/async-tree").Treelike} treelike
  */
 export default async function addNextPrevious(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@sequence");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:addNextPrevious"
+  );
   let keys;
   return Object.create(tree, {
     get: {

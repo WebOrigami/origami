@@ -26,6 +26,3 @@ export default async function json(obj) {
   const value = await toPlainValue(obj);
   return JSON.stringify(value, null, 2);
 }
-
-json.usage = "@json <obj>\tRender the object as text in JSON format";
-json.documentation = "https://weborigami.org/builtins/@json.html";

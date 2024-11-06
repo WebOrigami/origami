@@ -13,6 +13,6 @@ import paginateFn from "./paginateFn.js";
  * @param {number} [size=10]
  */
 export default async function paginate(treelike, size = 10) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@count");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:count");
   return paginateFn.call(this, size)(tree);
 }

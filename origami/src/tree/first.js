@@ -9,7 +9,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function first(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@first");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:first");
   for (const key of await tree.keys()) {
     // Just return first value immediately.
     const value = await tree.get(key);
@@ -17,6 +17,3 @@ export default async function first(treelike) {
   }
   return undefined;
 }
-
-first.usage = `@first <tree>\tReturns the first value in the tree.`;
-first.documentation = "https://weborigami.org/cli/builtins.html#first";

@@ -14,14 +14,9 @@ const patchedProcess = Object.create(null, {
   },
 });
 
-const node = {
+export default {
   Buffer,
   path,
   process: patchedProcess,
   url,
 };
-
-node.usage = "@node\tAccess Node classes and utility functions";
-node.documentation = "https://weborigami.org/language/@node.html";
-
-export default node;

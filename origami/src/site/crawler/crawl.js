@@ -26,7 +26,7 @@ import crawlResources from "./crawlResources.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawlBuiltin(treelike, baseHref) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@crawl");
+  const tree = await getTreeArgument(this, arguments, treelike, "site:crawl");
 
   if (baseHref === undefined) {
     // Ask tree or original treelike if it has an `href` property we can use as

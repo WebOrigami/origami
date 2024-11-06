@@ -9,10 +9,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function keys(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@keys");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:keys");
   const keys = await tree.keys();
   return Array.from(keys);
 }
-
-keys.usage = `@keys <tree>\tThe top-level keys in the tree`;
-keys.documentation = "https://weborigami.org/cli/builtins.html#keys";

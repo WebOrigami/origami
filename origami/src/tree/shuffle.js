@@ -26,9 +26,6 @@ export default async function shuffleTree(treelike) {
     shuffle(array);
     return array;
   }
-  const tree = await getTreeArgument(this, arguments, treelike, "@shuffle");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:shuffle");
   return transformObject(ShuffleTransform, tree);
 }
-
-shuffleTree.usage = `@shuffle <tree>\tReturn a new tree with the original's keys shuffled`;
-shuffleTree.documentation = "https://weborigami.org/cli/builtins.html#shuffle";

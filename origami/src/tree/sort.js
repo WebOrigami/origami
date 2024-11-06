@@ -15,9 +15,6 @@ import sortFn from "./sortFn.js";
  * @param {ValueKeyFn|SortOptions} [options]
  */
 export default async function sortBuiltin(treelike, options) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@sort");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
   return sortFn.call(this, options)(tree);
 }
-
-sortBuiltin.usage = `@sort <tree>, [options]\tReturn a new tree with the original's keys sorted`;
-sortBuiltin.documentation = "https://weborigami.org/builtins/@sort.html";

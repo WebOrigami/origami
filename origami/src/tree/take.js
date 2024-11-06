@@ -12,9 +12,6 @@ import takeFn from "./takeFn.js";
  * @param {number} n
  */
 export default async function take(treelike, n) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@take");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:take");
   return takeFn.call(this, n)(tree);
 }
-
-take.usage = `@take tree, n\tReturn the first n items from tree`;
-take.documentation = "https://weborigami.org/cli/builtins.html#take";

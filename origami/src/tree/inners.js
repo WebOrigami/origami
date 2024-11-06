@@ -11,7 +11,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function inners(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@inners");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:inners");
 
   const result = {
     async get(key) {
@@ -28,6 +28,3 @@ export default async function inners(treelike) {
 
   return result;
 }
-
-inners.usage = `@inners <tree>\tThe interior nodes of the tree`;
-inners.documentation = "https://weborigami.org/cli/builtins.html#inners";

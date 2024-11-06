@@ -13,7 +13,12 @@ import deepTakeFn from "./deepTakeFn.js";
  * @param {number} n
  */
 export default async function deepTake(treelike, n) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@deepTake");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:deepTake"
+  );
   return deepTakeFn.call(this, n)(tree);
 }
 

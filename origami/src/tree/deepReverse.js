@@ -11,7 +11,12 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function deepReverseBuiltin(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@deepReverse");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:deepReverse"
+  );
   const reversed = deepReverse(tree);
   return reversed;
 }

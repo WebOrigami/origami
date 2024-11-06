@@ -10,9 +10,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function values(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@values");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:values");
   return Tree.values(tree);
 }
-
-values.usage = `@values <tree>\tThe top-level values in the tree`;
-values.documentation = "https://weborigami.org/cli/builtins.html#values";

@@ -10,9 +10,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function parent(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@parent");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:parent");
   return tree.parent;
 }
-
-parent.usage = `@parent\tThe parent of the current tree`;
-parent.documentation = "https://weborigami.org/cli/builtins.html#parent";

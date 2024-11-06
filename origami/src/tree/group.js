@@ -12,9 +12,6 @@ import groupFn from "./groupFn.js";
  * @param {import("../../index.ts").Invocable} groupKey
  */
 export default async function groupBuiltin(treelike, groupKey) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@sort");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
   return groupFn.call(this, groupKey)(tree);
 }
-
-groupBuiltin.usage = `@group <tree>, <fn>\tGroup a tree's values using the given function`;
-groupBuiltin.documentation = "https://weborigami.org/builtins/@group.html";

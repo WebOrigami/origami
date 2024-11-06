@@ -10,9 +10,6 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function plain(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "@plain");
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:plain");
   return Tree.plain(tree);
 }
-
-plain.usage = `@plain <tree>\tA plain JavaScript object representation of the tree`;
-plain.documentation = "https://weborigami.org/cli/builtins.html#plain";

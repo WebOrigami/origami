@@ -15,12 +15,8 @@ export default async function deepValuesBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "@valuesDeep",
+    "tree:deepValues",
     true
   );
   return deepValues(tree);
 }
-
-deepValuesBuiltin.usage = `@valuesDeep <tree>\tThe in-order tree values as a flat array`;
-deepValuesBuiltin.documentation =
-  "https://weborigami.org/cli/builtins.html#valuesDeep";
