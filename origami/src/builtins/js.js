@@ -1,4 +1,7 @@
-import fetchBuiltin from "./fetch.js";
+async function fetchWrapper(resource, options) {
+  const response = await fetch(resource, options);
+  return response.ok ? await response.arrayBuffer() : undefined;
+}
 
 export default {
   Array,
@@ -22,7 +25,7 @@ export default {
   encodeURI,
   encodeURIComponent,
   false: false,
-  fetch: fetchBuiltin,
+  fetch: fetchWrapper,
   isFinite,
   isNaN,
   null: null,

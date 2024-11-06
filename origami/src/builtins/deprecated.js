@@ -40,6 +40,7 @@ export default {
     subtract: calc.subtract,
   }),
   ...commands("dev:", dev),
+  "@fetch": command("js:", "fetch", "@fetch", js.fetch),
   "@files": command("files:", null, "@files/", files),
   "@image": command("image:", null, "@image/", files),
   "@js": command("js:", null, "@js/", js),
