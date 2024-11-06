@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import fs from "node:fs/promises";
 import { describe, test } from "node:test";
-import jpegHandler from "../../../src/builtins/jpeg.handler.js";
+import jpegHandler from "../../src/handlers/jpeg.handler.js";
 
 describe(".jpeg handler", () => {
   test("loads Exif metadata", async () => {

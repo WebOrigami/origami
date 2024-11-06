@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import txtHandler from "../../../src/builtins/txt.handler.js";
+import txtHandler from "../../src/handlers/txt.handler.js";
 
 describe("text handler", () => {
   test("packs an object as YAML with front matter", async () => {

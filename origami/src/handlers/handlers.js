@@ -1,13 +1,13 @@
-import cssHandler from "./css.handler.js";
-import htmHandler from "./htm.handler.js";
-import htmlHandler from "./html.handler.js";
 import {
   jsHandler,
   oriHandler,
   oridocumentHandler,
   wasmHandler,
   yamlHandler,
-} from "./internal.js";
+} from "../builtins/internal.js";
+import cssHandler from "./css.handler.js";
+import htmHandler from "./htm.handler.js";
+import htmlHandler from "./html.handler.js";
 import jpegHandler from "./jpeg.handler.js";
 import jpgHandler from "./jpg.handler.js";
 import jsonHandler from "./json.handler.js";

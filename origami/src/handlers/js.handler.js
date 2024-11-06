@@ -1,4 +1,4 @@
-import { processUnpackedContent } from "./internal.js";
+import { processUnpackedContent } from "../builtins/internal.js";
 
 /**
  * A JavaScript file

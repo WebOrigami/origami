@@ -9,16 +9,16 @@
 //
 // Note: to avoid having VS Code auto-sort the imports, keep lines between them.
 
-export { default as jsHandler } from "./js.handler.js";
+export { default as jsHandler } from "../handlers/js.handler.js";
 
-export { default as oriHandler } from "./ori.handler.js";
+export { default as oriHandler } from "../handlers/ori.handler.js";
 
-export { default as oridocumentHandler } from "./oridocument.handler.js";
+export { default as oridocumentHandler } from "../handlers/oridocument.handler.js";
 
 export { default as processUnpackedContent } from "../common/processUnpackedContent.js";
 
-export { default as wasmHandler } from "./wasm.handler.js";
+export { default as wasmHandler } from "../handlers/wasm.handler.js";
 
-export { default as yamlHandler } from "./yaml.handler.js";
+export { default as yamlHandler } from "../handlers/yaml.handler.js";
 
 export { default as builtins } from "./@builtins.js";
