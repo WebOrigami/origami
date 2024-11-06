@@ -18,7 +18,6 @@ import * as node from "./node.js";
 import packageNamespace from "./package.js";
 import treehttp from "./treehttp.js";
 import treehttps from "./treehttps.js";
-// import home from "./~.js";
 
 export default new ObjectTree({
   "calc:": calc,
@@ -41,7 +40,6 @@ export default new ObjectTree({
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
-  // "~": home,
 
   // Deprecated builtins
   ...deprecated,

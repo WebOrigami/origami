@@ -1,7 +1,7 @@
 import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import crawl from "../../src/site/crawl.js";
+import crawl from "../../src/site/crawler/crawl.js";
 
 // Test version of DeepObjectTree that doesn't return keys so we can confirm
 // that the crawler is able to find linked resources without them.

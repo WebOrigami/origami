@@ -7,8 +7,8 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
-import crawlResources from "../crawler/crawlResources.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../../misc/getTreeArgument.js";
+import crawlResources from "./crawlResources.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to
