@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import * as math from "./@math.js";
+import calc from "../calc/calc.js";
 import * as dev from "./dev.js";
 import files from "./files.js";
 import js from "./js.js";
@@ -33,7 +33,12 @@ export function commands(namespace, object) {
 }
 
 export default {
-  ...commands("calc:", math),
+  ...commands("calc:", {
+    add: calc.add,
+    divide: calc.divide,
+    multiple: calc.multiply,
+    subtract: calc.subtract,
+  }),
   ...commands("dev:", dev),
   "@files": command("files:", null, "@files/", files),
   "@image": command("image:", null, "@image/", files),

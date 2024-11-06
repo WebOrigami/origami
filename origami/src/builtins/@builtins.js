@@ -1,6 +1,6 @@
 import { ObjectTree } from "@weborigami/async-tree";
+import calc from "../calc/calc.js";
 import * as handlers from "../handlers/handlers.js";
-import * as calc from "./calc.js";
 import deprecated from "./deprecated.js";
 import * as dev from "./dev.js";
 import explore from "./explore.js";
