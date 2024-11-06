@@ -1,4 +1,4 @@
-import project from "./@project.js";
+import project from "./project.js";
 
 /**
  * Return the configuration for the current project.

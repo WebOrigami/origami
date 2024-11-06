@@ -3,7 +3,7 @@ import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import setDeep from "./@setDeep.js";
+import setDeep from "../origami/setDeep.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

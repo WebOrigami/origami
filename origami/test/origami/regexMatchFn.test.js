@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import regexMatchFn from "../../src/builtins/@regexMatchFn.js";
+import regexMatchFn from "../../src/origami/regexMatchFn.js";
 
 describe("@regexMatchFn", () => {
   test("returns parsed groups", async () => {

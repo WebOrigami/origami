@@ -1,4 +1,4 @@
-import yaml from "../builtins/@yaml.js";
+import yaml from "../origami/yaml.js";
 
 /**
  * Log the first argument to the console as a side effect and return the second

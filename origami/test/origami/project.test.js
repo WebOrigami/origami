@@ -3,7 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import project from "../../src/builtins/@project.js";
+import project from "../../src/origami/project.js";
 
 describe("@project", () => {
   test("finds Origami configuration file", async () => {

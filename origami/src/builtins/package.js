@@ -1,5 +1,5 @@
 import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
-import project from "./@project.js";
+import project from "../origami/project.js";
 
 /**
  * @this {import("@weborigami/types").AsyncTree|null}

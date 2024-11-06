@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import ori from "../builtins/@ori.js";
+import ori from "../origami/ori.js";
 
 /**
  * Add support for commands prefixed with `!`.

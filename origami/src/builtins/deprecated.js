@@ -1,10 +1,10 @@
 import { Tree } from "@weborigami/async-tree";
 import calc from "../calc/calc.js";
 import * as dev from "../dev/dev.js";
+import * as origami from "../origami/origami.js";
 import files from "./files.js";
 import js from "./js.js";
 import node from "./node.js";
-import * as origami from "./origami.js";
 import * as site from "./site.js";
 import * as text from "./text.js";
 import tree from "./tree.js";
