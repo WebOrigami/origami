@@ -8,6 +8,6 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @returns
  */
 export default function pack(obj) {
-  assertTreeIsDefined(this, "pack");
+  assertTreeIsDefined(this, "origami:pack");
   return obj?.pack?.();
 }

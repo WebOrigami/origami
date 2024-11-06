@@ -25,7 +25,7 @@ const months = [
  * @param {any} options
  */
 export default async function rss(jsonFeedTree, options = {}) {
-  assertTreeIsDefined(this, "rss");
+  assertTreeIsDefined(this, "site:rss");
   const jsonFeed = await Tree.plain(jsonFeedTree);
   const { description, home_page_url, items, title } = jsonFeed;
 

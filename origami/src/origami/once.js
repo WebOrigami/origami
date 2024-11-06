@@ -10,7 +10,7 @@ const fnPromiseMap = new WeakMap();
  * @param {Function} fn
  */
 export default async function once(fn) {
-  assertTreeIsDefined(this, "once");
+  assertTreeIsDefined(this, "origami:once");
   if (!fnPromiseMap.has(fn)) {
     fnPromiseMap.set(fn, fn.call(this));
   }

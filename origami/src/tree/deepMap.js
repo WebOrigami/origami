@@ -14,6 +14,6 @@ import deepMapFn from "./deepMapFn.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function deepMap(source, operation) {
-  assertTreeIsDefined(this, "deepMap");
+  assertTreeIsDefined(this, "tree:deepMap");
   return deepMapFn.call(this, operation)(source);
 }

@@ -16,7 +16,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {StringLike} input
  */
 export default async function inline(input) {
-  assertTreeIsDefined(this, "inline");
+  assertTreeIsDefined(this, "text:inline");
 
   // Get the input text and any attached front matter.
   if (isUnpackable(input)) {

@@ -10,7 +10,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function toYaml(obj) {
-  assertTreeIsDefined(this, "yaml");
+  assertTreeIsDefined(this, "origami:yaml");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(

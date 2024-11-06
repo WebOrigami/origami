@@ -14,6 +14,6 @@ import mapFn from "./mapFn.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default function map(source, operation) {
-  assertTreeIsDefined(this, "map");
+  assertTreeIsDefined(this, "tree:map");
   return mapFn.call(this, operation)(source);
 }

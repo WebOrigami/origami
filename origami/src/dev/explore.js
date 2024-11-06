@@ -12,7 +12,7 @@ const miscUrl = new URL("../misc", import.meta.url);
  * @this {AsyncTree|null}
  */
 export default async function explore(...keys) {
-  assertTreeIsDefined(this, "explore");
+  assertTreeIsDefined(this, "origami:explore");
   if (!this) {
     return undefined;
   }

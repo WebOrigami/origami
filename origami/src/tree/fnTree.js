@@ -12,8 +12,8 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {Invocable} [invocable]
  */
-export default async function fnTree(invocable, keys = []) {
-  assertTreeIsDefined(this, "fnTree");
+export default async function fromFn(invocable, keys = []) {
+  assertTreeIsDefined(this, "tree:fromFn");
   if (invocable === undefined) {
     throw new Error(
       "An Origami function was called with an initial argument, but its value is undefined."
@@ -25,5 +25,5 @@ export default async function fnTree(invocable, keys = []) {
   return tree;
 }
 
-fnTree.usage = `@fnTree <fn>, [<keys>]\tCreate a tree from a function and a set of keys`;
-fnTree.documentation = "https://weborigami.org/cli/tree.html#fn";
+fromFn.usage = `@fnTree <fn>, [<keys>]\tCreate a tree from a function and a set of keys`;
+fromFn.documentation = "https://weborigami.org/cli/tree.html#fn";

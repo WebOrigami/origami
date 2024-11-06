@@ -23,7 +23,7 @@ export default async function ori(
   expression,
   options = { formatResult: true }
 ) {
-  assertTreeIsDefined(this, "ori");
+  assertTreeIsDefined(this, "origami:ori");
 
   // In case expression has come from a file, cast it to a string.
   expression = toString(expression);

@@ -11,7 +11,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {string[]} keys
  */
 export default async function files(...keys) {
-  assertTreeIsDefined(this, "files");
+  assertTreeIsDefined(this, "files:");
 
   // If path begins with `~`, treat it relative to the home directory.
   // Otherwise, treat it relative to the current working directory.

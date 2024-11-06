@@ -9,6 +9,6 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {any} obj
  */
 export default function unpack(obj) {
-  assertTreeIsDefined(this, "unpack");
+  assertTreeIsDefined(this, "origami:unpack");
   return obj?.unpack?.() ?? obj;
 }

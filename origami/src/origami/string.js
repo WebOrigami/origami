@@ -9,6 +9,6 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {any} object
  */
 export default function stringBuiltin(object) {
-  assertTreeIsDefined(this, "string");
+  assertTreeIsDefined(this, "origami:string");
   return toString(object);
 }

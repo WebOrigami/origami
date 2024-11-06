@@ -9,8 +9,8 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  * @param {Treelike[]} trees
  */
-export default async function treedeepMerge(...trees) {
-  assertTreeIsDefined(this, "deepMerge");
+export default async function treeDeepMerge(...trees) {
+  assertTreeIsDefined(this, "tree:deepMerge");
   // Filter out null or undefined trees.
   const filtered = trees.filter((tree) => tree);
 
@@ -24,6 +24,6 @@ export default async function treedeepMerge(...trees) {
   return result;
 }
 
-treedeepMerge.usage = `@deepMerge <...trees>\tMerge the given trees deeply`;
-treedeepMerge.documentation =
+treeDeepMerge.usage = `@deepMerge <...trees>\tMerge the given trees deeply`;
+treeDeepMerge.documentation =
   "https://weborigami.org/cli/builtins.html#deepMerge";

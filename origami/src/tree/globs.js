@@ -11,7 +11,7 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function globs(tree) {
-  assertTreeIsDefined(this, "globs");
+  assertTreeIsDefined(this, "tree:globs");
   const result = new GlobTree(tree);
   return result;
 }

@@ -17,7 +17,7 @@ export default async function cacheBuiltin(
   cacheTreelike,
   filterTreelike
 ) {
-  assertTreeIsDefined(this, "cache");
+  assertTreeIsDefined(this, "tree:cache");
   /** @type {any} */
   const cacheTree = cacheTreelike
     ? Tree.from(cacheTreelike, { parent: this })

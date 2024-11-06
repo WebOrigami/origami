@@ -22,7 +22,7 @@ const configFileName = "config.ori";
  * @param {any} [key]
  */
 export default async function project(key) {
-  assertTreeIsDefined(this, "project");
+  assertTreeIsDefined(this, "origami:project");
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
