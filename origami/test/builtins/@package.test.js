@@ -2,8 +2,8 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import packageBuiltin from "../../src/builtins/@package.js";
 import { builtins } from "../../src/builtins/internal.js";
+import packageNamespace from "../../src/builtins/package.js";
 
 describe("@package", () => {
   test("imports a package from node_modules", async () => {
@@ -15,7 +15,7 @@ describe("@package", () => {
     const tree = new ObjectTree({
       node_modules: nodeModulesTree,
     });
-    const packageExports = await packageBuiltin.call(
+    const packageExports = await packageNamespace.call(
       tree,
       "@weborigami",
       "async-tree"

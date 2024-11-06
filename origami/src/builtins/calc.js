@@ -1,13 +1,5 @@
-import equals from "./@equals.js";
-import ifBuiltin from "./@if.js";
-import * as math from "./@math.js";
-import not from "./@not.js";
-import or from "./@or.js";
-
-export default {
-  ...math,
-  equals,
-  if: ifBuiltin,
-  not,
-  or,
-};
+export { default as equals } from "./@equals.js";
+export { default as if } from "./@if.js";
+export * from "./@math.js";
+export { default as not } from "./@not.js";
+export { default as or } from "./@or.js";

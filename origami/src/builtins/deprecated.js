@@ -1,12 +1,12 @@
 import { Tree } from "@weborigami/async-tree";
 import * as math from "./@math.js";
-import dev from "./dev.js";
+import * as dev from "./dev.js";
 import files from "./files.js";
 import js from "./js.js";
 import node from "./node.js";
-import origami from "./origami.js";
-import site from "./site.js";
-import text from "./text.js";
+import * as origami from "./origami.js";
+import * as site from "./site.js";
+import * as text from "./text.js";
 import tree from "./tree.js";
 
 export function command(namespace, newKey, oldKey, fn) {
@@ -18,7 +18,8 @@ export function command(namespace, newKey, oldKey, fn) {
       `ori: Warning: "${oldKey}" is deprecated. Use ${keys} instead.`
     );
     return fn instanceof Function
-      ? fn.call(this, ...args)
+      ? // @ts-ignore
+        fn.call(this, ...args)
       : Tree.traverseOrThrow(fn, ...args);
   };
 }

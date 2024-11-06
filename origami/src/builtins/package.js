@@ -5,7 +5,7 @@ import project from "./@project.js";
  * @this {import("@weborigami/types").AsyncTree|null}
  * @param {string[]} keys
  */
-export default async function packageBuiltin(...keys) {
+export default async function packageNamespace(...keys) {
   const parent = this ?? (await project.call(null));
   const parentScope = scope(parent);
 

@@ -1,7 +1,2 @@
-import format from "./@image/format.js";
-import resize from "./@image/resize.js";
-
-export default {
-  format,
-  resize,
-};
+export { default as format } from "./@image/format.js";
+export { default as resize } from "./@image/resize.js";
