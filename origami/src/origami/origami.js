@@ -1,7 +1,6 @@
 import basename from "./basename.js";
 import config from "./config.js";
 import help from "./help.js";
-import inherited from "./inherited.js";
 import json from "./json.js";
 import jsonParse from "./jsonParse.js";
 import naturalOrder from "./naturalOrder.js";
@@ -31,7 +30,6 @@ export default {
 
   config,
   help,
-  inherited,
   json,
   jsonParse,
   naturalOrder,

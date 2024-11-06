@@ -12,6 +12,7 @@ import explore from "./explore.js";
 import files from "./files.js";
 import http from "./http.js";
 import https from "./https.js";
+import inherited from "./inherited.js";
 import * as js from "./js.js";
 import instantiate from "./new.js";
 import * as node from "./node.js";
@@ -27,6 +28,7 @@ export default new ObjectTree({
   "http:": http,
   "https:": https,
   "image:": image,
+  "inherited:": inherited,
   "js:": js.default,
   "new:": instantiate,
   "node:": node.default,
