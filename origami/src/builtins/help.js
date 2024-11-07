@@ -59,8 +59,12 @@ async function namespaceDescriptions(builtins) {
     `Origami ${version} has commands grouped into the following namespaces:\n`,
   ];
   for (const key in builtins) {
-    const builtin = builtins[key];
+    if (key.startsWith(":")) {
+      // Skip shorthand keys like ":json".
+      continue;
+    }
     const withoutColon = key.replace(/:$/, "");
+    const builtin = builtins[key];
     if (builtin?.description) {
       text.push(`  ${withoutColon} - ${builtin.description}`);
     }

@@ -8,7 +8,15 @@ for (const [key, value] of Object.entries(expanded)) {
   const isNamespace = key.endsWith(":");
   if (isNamespace) {
     for (const [subkey, subvalue] of Object.entries(value)) {
-      expanded[`:${subkey}`] = subvalue;
+      // HACK: Skip description keys until we can make them all non-enumerable.
+      if (subkey === "description") {
+        continue;
+      }
+      const colonKey = `:${subkey}`;
+      if (colonKey in expanded) {
+        throw new Error(`Internal Origami error: Duplicate key: ${colonKey}`);
+      }
+      expanded[colonKey] = subvalue;
     }
   }
 }
