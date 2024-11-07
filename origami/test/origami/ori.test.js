@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { builtins } from "../../src/builtins/internal.js";
+import { builtinsTree } from "../../src/builtins/internal.js";
 import ori from "../../src/origami/ori.js";
 
 describe("ori builtin", () => {
@@ -11,7 +11,7 @@ describe("ori builtin", () => {
       b: 2,
       c: 3,
     });
-    tree.parent = new ObjectTree(builtins);
+    tree.parent = builtinsTree;
     const result = await ori.call(tree, `@keys`);
     assert.equal(
       String(result),

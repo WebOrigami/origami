@@ -58,13 +58,24 @@ export async function formatScopeTypos(scope, key) {
   if (keys.length === 0) {
     return "";
   }
-  const quoted = keys.map((key) => `"${key}"`);
+  // Don't match deprecated keys
+  const filtered = keys.filter((key) => !key.startsWith("@"));
+  const quoted = filtered.map((key) => `"${key}"`);
   const list = quoted.join(", ");
-  return `Did you mean ${list}?`;
+  return `Maybe you meant ${list}?`;
 }
 
 export function maybeOrigamiSourceCode(text) {
   return origamiSourceSignals.some((signal) => text.includes(signal));
+}
+
+export async function scopeReferenceError(scope, key) {
+  const messages = [
+    `"${key}" is not in scope.`,
+    await formatScopeTypos(scope, key),
+  ];
+  const message = messages.join(" ");
+  return new ReferenceError(message);
 }
 
 // Return all possible typos for `key` in scope

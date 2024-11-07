@@ -1,11 +1,10 @@
 import {
-  ObjectTree,
   Tree,
   getRealmObjectPrototype,
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import { builtins } from "../builtins/internal.js";
+import builtinsTree from "../builtins/builtinsTree.js";
 import { toYaml } from "../common/serialize.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
@@ -30,7 +29,7 @@ export default async function ori(
   expression = toString(expression);
 
   // Run in the context of `this` if defined, otherwise use the builtins.
-  const tree = this ?? new ObjectTree(builtins);
+  const tree = this ?? builtinsTree;
 
   // Compile the expression. Avoid caching scope references so that, e.g.,
   // passing a function to the `watch` builtin will always look the current

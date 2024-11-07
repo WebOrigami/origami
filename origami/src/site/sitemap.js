@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import { builtins, oriHandler } from "../builtins/internal.js";
+import { builtinsTree, oriHandler } from "../builtins/internal.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -48,7 +48,7 @@ export default async function sitemap(treelike, baseHref = "") {
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
   const templateFn = await oriHandler.unpack(templateText);
-  const target = this ?? builtins;
+  const target = this ?? builtinsTree;
   const templateResult = await templateFn.call(target, htmlPaths);
   return String(templateResult);
 }

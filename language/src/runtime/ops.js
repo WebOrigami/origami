@@ -11,7 +11,7 @@ import {
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
-import { formatScopeTypos } from "./errors.js";
+import { scopeReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -54,31 +54,9 @@ export async function builtin(key) {
     current = current.parent;
   }
 
-  let value;
-  if (key?.startsWith(":")) {
-    // Shorthand, look in all top-level values for the given key.
-    key = key.slice(1);
-    for (const namespaces of await current.keys()) {
-      const namespace = await current.get(namespaces);
-      if (namespace instanceof Function) {
-        // Namespace like files:, http:, etc.; skip
-        continue;
-      }
-      const tree = Tree.from(namespace);
-      value = await tree.get(key);
-      if (value !== undefined) {
-        break;
-      }
-    }
-  } else {
-    // Namespace reference
-    value = await current.get(key);
-  }
-
+  const value = await current.get(key);
   if (value === undefined) {
-    const error = new ReferenceError(`Origami has no builtin "${key}"`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
+    throw await scopeReferenceError(current, key);
   }
 
   return value;
@@ -289,11 +267,7 @@ export async function scope(key) {
   const scope = scopeFn(this);
   const value = await scope.get(key);
   if (value === undefined) {
-    const messages = [
-      `${key} is not in scope.`,
-      await formatScopeTypos(scope, key),
-    ];
-    console.warn(messages.join(" "));
+    throw await scopeReferenceError(scope, key);
   }
   return value;
 }

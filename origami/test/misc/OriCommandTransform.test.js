@@ -1,7 +1,7 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { builtins } from "../../src/builtins/internal.js";
+import { builtinsTree } from "../../src/builtins/internal.js";
 import OriCommandTransform from "../../src/misc/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {
@@ -18,7 +18,7 @@ describe("OriCommandTransform", () => {
       a: 1,
       b: 2,
     });
-    tree.parent = new ObjectTree(builtins);
+    tree.parent = builtinsTree;
     const value = await tree.get("!tree:keys");
     assert.deepEqual(await Tree.plain(value), ["a", "b"]);
   });
