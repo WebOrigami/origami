@@ -3,6 +3,4 @@ export default async function repeat(count, content) {
   array.fill(content);
   return array;
 }
-
-repeat.usage = `@repeat <count>, <content>\tRepeats the content the given number of times`;
-repeat.documentation = "https://weborigami.org/language/@repeat.html";
+repeat.description = "repeat(n, obj) - An array of n copies of the object";

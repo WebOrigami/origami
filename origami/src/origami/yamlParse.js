@@ -5,6 +5,4 @@ export default async function yamlParse(input) {
   const text = toString(input);
   return text ? serialize.parseYaml(text) : undefined;
 }
-
-yamlParse.usage = `@yamlParse <text>\tParse text as YAML`;
-yamlParse.documentation = "https://weborigami.org/builtins/@yamlParse.html";
+yamlParse.description = "yamlParse(text) - Parse text as YAML";

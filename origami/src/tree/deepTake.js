@@ -21,6 +21,5 @@ export default async function deepTake(treelike, n) {
   );
   return deepTakeFn.call(this, n)(tree);
 }
-
-deepTake.usage = `@deepTake tree, n\tReturn the first n values from the deep tree`;
-deepTake.documentation = "https://weborigami.org/builtins/deepTake.html";
+deepTake.description =
+  "deepTake(tree, n) - The first n values from the deep tree";

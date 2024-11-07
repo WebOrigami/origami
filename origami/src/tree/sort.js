@@ -18,3 +18,5 @@ export default async function sortBuiltin(treelike, options) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
   return sortFn.call(this, options)(tree);
 }
+sortBuiltin.description =
+  "sort(tree, options) - \tA new tree with its keys sorted";

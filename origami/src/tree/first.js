@@ -17,3 +17,4 @@ export default async function first(treelike) {
   }
   return undefined;
 }
+first.description = "first(tree) - The first value in the tree";

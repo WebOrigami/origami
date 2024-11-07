@@ -3,6 +3,7 @@ import process from "node:process";
 export default async function stdin() {
   return readAll(process.stdin);
 }
+stdin.description = "stdin - Returns the content of the standard input stream";
 
 function readAll(readable) {
   return new Promise((resolve) => {
@@ -27,6 +28,3 @@ function readAll(readable) {
     });
   });
 }
-
-stdin.usage = `@stdin\tReturns the contents of the standard input stream`;
-stdin.documentation = "https://weborigami.org/language/@stdin.html";

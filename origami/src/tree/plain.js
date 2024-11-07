@@ -13,3 +13,5 @@ export default async function plain(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:plain");
   return Tree.plain(tree);
 }
+plain.description =
+  "plain(tree) - Render the tree as a plain JavaScript object";

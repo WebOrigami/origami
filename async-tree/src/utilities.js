@@ -209,6 +209,8 @@ export function keysFromPath(pathname) {
 export const naturalOrder = new Intl.Collator(undefined, {
   numeric: true,
 }).compare;
+/** @type {any} */ (naturalOrder).description =
+  "naturalOrder - A comparison function for natural sort order";
 
 /**
  * Return a slash-separated path for the given keys.

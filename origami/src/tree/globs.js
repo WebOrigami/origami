@@ -15,6 +15,5 @@ export default async function globs(tree) {
   const result = new GlobTree(tree);
   return result;
 }
-
-globs.usage = `@globs <patterns>\tDefine a tree whose keys can include wildcard globs`;
-globs.documentation = "https://weborigami.org/language/@globs.html";
+globs.description =
+  "globs(patterns) - A tree whose keys can include wildcard patterns";

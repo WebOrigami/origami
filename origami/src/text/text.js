@@ -12,7 +12,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Text manipulation",
+  value: "Manipulate text",
 });
 
 export default commands;

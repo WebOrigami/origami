@@ -15,6 +15,4 @@ export default async function concat(...args) {
   const tree = args.length === 0 ? this : Tree.from(args, { parent: this });
   return ops.concat.call(this, tree);
 }
-
-concat.usage = `@concat <...objs>\tConcatenate text and/or trees of text`;
-concat.documentation = "https://weborigami.org/cli/@tree.html#concat";
+concat.description = "concat(...objs) - Concatenate text and/or trees of text";

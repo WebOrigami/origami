@@ -77,6 +77,5 @@ export default function match(pattern, resultFn, keys = []) {
 
   return result;
 }
-
-match.usage = `@match <pattern>, <fn>, [<keys>]\tMatches simple patterns or regular expressions`;
-match.documentation = "https://weborigami.org/language/@match.html";
+match.description =
+  "match(pattern, fn, [keys]) - Matches simple patterns or regular expressions";

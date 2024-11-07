@@ -15,7 +15,6 @@ import setDeep from "./setDeep.js";
  */
 export default async function copy(source, target) {
   assertTreeIsDefined(this, "tree:copy");
-  // const start = performance.now();
   const sourceTree = Tree.from(source, { parent: this });
   /** @type {any} */ let targetTree = Tree.from(target, { parent: this });
 
@@ -35,10 +34,8 @@ export default async function copy(source, target) {
     countFiles = null;
     countCopied = null;
   }
-
-  // const end = performance.now();
-  // console.log(`copy time in ms: ${end - start}`);
 }
+copy.description = "copy(source, target) - Copy the source tree to the target";
 
 let countFiles;
 let countCopied;
@@ -67,6 +64,3 @@ function ProgressTransform(Base) {
     }
   };
 }
-
-copy.usage = `@copy <source>, <target>\tCopies the source tree to the target`;
-copy.documentation = "https://weborigami.org/language/@copy.html";

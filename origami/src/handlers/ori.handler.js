@@ -1,4 +1,4 @@
-import { symbols } from "@weborigami/async-tree";
+import { ObjectTree, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import { builtins, processUnpackedContent } from "../builtins/internal.js";
 import * as utilities from "../common/utilities.js";
@@ -39,7 +39,7 @@ export default {
     // Compile the source code as an Origami expression and evaluate it.
     const compiler = options.compiler ?? compile.expression;
     const fn = compiler(source);
-    const target = parent ?? builtins;
+    const target = parent ?? new ObjectTree(builtins);
     let content = await fn.call(target);
 
     return processUnpackedContent(content, parent, attachedData);

@@ -5,20 +5,20 @@ import version from "../origami/version.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {string?} namespace
- * @param {string?} key
+ * @param {string} [namespace]
  */
-export default async function help(namespace, key) {
+export default async function help(namespace) {
   assertTreeIsDefined(this, "help:");
   const builtinsTree = root(this);
   const builtins = builtinsTree.object;
   if (namespace === undefined) {
     return namespaceDescriptions(builtins);
-  } else if (key === undefined) {
+  } else {
     return commandDescriptions(builtins, namespace);
   }
 }
-help.description = "Help on builtin namespaces and commands";
+help.description =
+  "help([namespace]) - Get help on builtin namespaces and commands";
 
 async function commandDescriptions(builtins, namespace) {
   const withColon = `${namespace}:`;
@@ -36,13 +36,17 @@ async function commandDescriptions(builtins, namespace) {
   }
 
   if (text.length === 0) {
-    text.push(
-      `"${namespace}" works like a URL protocol and does not contain commands.`
-    );
+    text.push(`"${namespace}:" works like a URL protocol.`);
   } else {
-    text.unshift(`Commands in the "${namespace}:" namespace:\n`);
-    text.push("\n");
+    text.unshift("");
+    text.push("");
   }
+
+  const description =
+    commands.description[0].toLowerCase() + commands.description.slice(1);
+  text.unshift(
+    `The "${namespace}:" namespace contains commands to ${description}.`
+  );
 
   text.push(
     `For more information visit https://weborigami.org/builtins/${namespace}`
@@ -51,7 +55,9 @@ async function commandDescriptions(builtins, namespace) {
 }
 
 async function namespaceDescriptions(builtins) {
-  const text = [`Available namespaces in Origami ${version}:\n`];
+  const text = [
+    `Origami ${version} has commands grouped into the following namespaces:\n`,
+  ];
   for (const key in builtins) {
     const builtin = builtins[key];
     const withoutColon = key.replace(/:$/, "");
@@ -60,7 +66,7 @@ async function namespaceDescriptions(builtins) {
     }
   }
   text.push(
-    `\nType "help:<namespace>" for more information or visit https://weborigami.org/builtins`
+    `\nType "ori help:<namespace>" for more information or visit https://weborigami.org/builtins`
   );
   return text.join("\n");
 }

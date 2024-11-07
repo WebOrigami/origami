@@ -17,3 +17,5 @@ export default function map(source, operation) {
   assertTreeIsDefined(this, "tree:map");
   return mapFn.call(this, operation)(source);
 }
+map.description =
+  "map(tree, options) - Create a new tree by mapping keys and/or values";

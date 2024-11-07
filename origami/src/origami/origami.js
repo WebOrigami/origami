@@ -52,7 +52,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Origami language features",
+  value: "Perform general Origami language functions",
 });
 
 export default commands;

@@ -12,3 +12,4 @@ export default function stringBuiltin(object) {
   assertTreeIsDefined(this, "origami:string");
   return toString(object);
 }
+stringBuiltin.description = "string(obj) - Coerce the object to a string";

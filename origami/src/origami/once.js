@@ -16,3 +16,5 @@ export default async function once(fn) {
   }
   return fnPromiseMap.get(fn);
 }
+once.description =
+  "once(fn) - Run the function only once, return the same result";

@@ -27,7 +27,3 @@ export default function groupFnBuiltin(groupKey) {
     return grouped;
   };
 }
-
-groupFnBuiltin.usage = `@groupBy <tree>, [groupKeyFn]\tReturn a new tree with the original's values grouped`;
-groupFnBuiltin.documentation =
-  "https://weborigami.org/cli/builtins.html#@group";

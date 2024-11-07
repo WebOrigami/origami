@@ -13,3 +13,4 @@ export default async function parent(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:parent");
   return tree.parent;
 }
+parent.description = "parent(tree) - The parent of the given tree node";

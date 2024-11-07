@@ -47,6 +47,7 @@ export default async function ori(
 
   return options.formatResult ? await formatResult(result) : result;
 }
+ori.description = "ori(text) - Evaluate the text as an Origami expression";
 
 async function formatResult(result) {
   if (
@@ -92,6 +93,3 @@ async function formatResult(result) {
 
   return text;
 }
-
-ori.usage = `@ori <text>\tEvaluates the text as an Origami expression`;
-ori.documentation = "https://weborigami.org/language/@ori.html";

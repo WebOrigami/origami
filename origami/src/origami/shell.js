@@ -11,6 +11,5 @@ export default async function shell(command) {
     return undefined;
   }
 }
-
-shell.usage = `@shell <command>\tExecutes the shell command and returns the output`;
-shell.documentation = "https://weborigami.org/language/@shell.html";
+shell.description =
+  "shell(text) - Run the text as a shell command, return the output";

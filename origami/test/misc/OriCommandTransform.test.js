@@ -18,8 +18,8 @@ describe("OriCommandTransform", () => {
       a: 1,
       b: 2,
     });
-    tree.parent = builtins;
-    const value = await tree.get("!@keys");
+    tree.parent = new ObjectTree(builtins);
+    const value = await tree.get("!tree:keys");
     assert.deepEqual(await Tree.plain(value), ["a", "b"]);
   });
 });

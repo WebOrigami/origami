@@ -17,3 +17,4 @@ export default async function clean(treelike) {
   await Promise.all(promises);
   return tree;
 }
+clean.description = "clean(tree) - Remove all values from the tree";

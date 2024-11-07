@@ -98,6 +98,8 @@ export default async function crawlBuiltin(treelike, baseHref) {
   );
   return result;
 }
+crawlBuiltin.description =
+  "crawl(tree, base) - A tree of a site's discoverable resources";
 
 function addValueToObject(object, keys, value) {
   for (let i = 0, current = object; i < keys.length; i++) {
@@ -124,6 +126,3 @@ function addValueToObject(object, keys, value) {
     }
   }
 }
-
-crawlBuiltin.usage = `@crawl <tree>\tCrawl a tree`;
-crawlBuiltin.documentation = "https://weborigami.org/language/@crawl.html";

@@ -13,3 +13,4 @@ export default async function keys(treelike) {
   const keys = await tree.keys();
   return Array.from(keys);
 }
+keys.description = "keys(tree) - The keys of the tree";

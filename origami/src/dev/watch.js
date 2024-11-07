@@ -88,6 +88,3 @@ function updateIndirectPointer(indirect, target) {
 
   Object.setPrototypeOf(indirect, target);
 }
-
-watch.usage = `@watch <folder>, [expr]\tLet a folder tree respond to changes`;
-watch.documentation = "https://weborigami.org/language/@watch.html";

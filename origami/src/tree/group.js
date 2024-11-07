@@ -15,3 +15,5 @@ export default async function groupBuiltin(treelike, groupKey) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
   return groupFn.call(this, groupKey)(tree);
 }
+groupBuiltin.description =
+  "group(tree, fn) - A new tree with values grouped by the function";

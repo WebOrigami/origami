@@ -191,6 +191,3 @@ function stringDiff(first, second) {
   }
   return second.slice(i);
 }
-
-dot.usage = `dot <tree>\tRender a tree visually in dot language`;
-dot.documentation = "https://weborigami.org/cli/builtins.html#dot";

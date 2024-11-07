@@ -61,3 +61,5 @@ export default async function addNextPrevious(treelike) {
     },
   });
 }
+addNextPrevious.description =
+  "addNextPrevious(tree) - Add next/previous fields to the tree's values";

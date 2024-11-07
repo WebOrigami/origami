@@ -20,3 +20,5 @@ export default async function deepReverseBuiltin(treelike) {
   const reversed = deepReverse(tree);
   return reversed;
 }
+deepReverseBuiltin.description =
+  "deepReverse(tree) - Reverse order of keys at all levels of the tree";

@@ -15,3 +15,4 @@ export default function redirect(url, options = { permanent: false }) {
 `;
   return response;
 }
+redirect.description = "redirect(url, options) - Redirect to the given URL";

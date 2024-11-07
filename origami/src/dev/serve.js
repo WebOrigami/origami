@@ -67,6 +67,3 @@ function findOpenPort(port) {
       .listen(port)
   );
 }
-
-serve.usage = `@serve <tree>, [port]\tStart a web server for the tree`;
-serve.documentation = "https://weborigami.org/language/@serve.html";

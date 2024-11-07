@@ -22,7 +22,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Common website features",
+  value: "Add common website features",
 });
 
 export default commands;

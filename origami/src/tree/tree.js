@@ -70,7 +70,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Functions for working with trees",
+  value: "Work with trees",
 });
 
 export default commands;

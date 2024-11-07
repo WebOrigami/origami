@@ -18,6 +18,4 @@ export default async function config(key) {
   const parent = projectTree.parent;
   return key === undefined ? parent : parent.get(key);
 }
-
-config.usage = `@config\tThe current project's configuration tree`;
-config.documentation = "https://weborigami.org/language/@config.html";
+config.description = "config - The current project's configuration";

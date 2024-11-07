@@ -19,6 +19,4 @@ export default async function filter(sourceTreelike, filterTreelike) {
   result.parent = this;
   return result;
 }
-
-filter.usage = `@filter <tree>, <filter>\tOnly returns values whose keys match the filter`;
-filter.documentation = "https://weborigami.org/language/@filter.html";
+// filter.description = `filter(tree, filter) - Only values whose keys match the filter`;

@@ -10,7 +10,7 @@ describe("@package", () => {
     // Create a tree whose scope includes the monorepo's node_modules.
     const nodeModulesUrl = new URL("../../../node_modules", import.meta.url);
     const nodeModulesTree = new OrigamiFiles(nodeModulesUrl);
-    nodeModulesTree.parent = builtins;
+    nodeModulesTree.parent = new ObjectTree(builtins);
 
     const tree = new ObjectTree({
       node_modules: nodeModulesTree,

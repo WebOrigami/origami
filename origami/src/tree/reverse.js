@@ -15,3 +15,5 @@ export default async function reverseBuiltin(treelike) {
   const reversed = reverse(tree);
   return reversed;
 }
+reverseBuiltin.description =
+  "reverse(tree) - Reverse the order of the tree's keys";

@@ -59,6 +59,4 @@ ${list}
   result.unpack = () => tree;
   return result;
 }
-
-index.usage = `@index\tReturn a default index.html page for the current tree`;
-index.documentation = "https://weborigami.org/language/@index.html";
+index.description = "index(tree) - A default index.html page for the tree";

@@ -17,3 +17,5 @@ export default function deepMap(source, operation) {
   assertTreeIsDefined(this, "tree:deepMap");
   return deepMapFn.call(this, operation)(source);
 }
+deepMap.description =
+  "deepMap(tree, options) - Map the keys and values of a deep tree";

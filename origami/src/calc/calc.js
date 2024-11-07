@@ -76,7 +76,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Math and logical operations",
+  value: "Perform math and logical operations",
 });
 
 export default commands;

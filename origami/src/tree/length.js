@@ -13,3 +13,4 @@ export default async function length(treelike) {
   const keys = Array.from(await tree.keys());
   return keys.length;
 }
+length.description = "length(tree) - The tree's size (number of keys)";

@@ -71,6 +71,8 @@ export default async function project(key) {
 
   return key === undefined ? projectRoot : projectRoot.get(key);
 }
+project.description =
+  "project - The root folder for the current Origami project";
 
 // Return the first ancestor of the given tree that contains a file with the
 // given name.
@@ -97,6 +99,3 @@ async function findAncestorFile(start, fileName) {
   }
   return undefined;
 }
-
-project.usage = `@project\tThe root of the current Origami project`;
-project.documentation = "https://weborigami.org/language/@project.html";

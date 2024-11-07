@@ -60,6 +60,7 @@ export default async function rss(jsonFeedTree, options = {}) {
 ${titleElement}${descriptionElement}${linkElement}${languageElement}${feedLinkElement}${itemsRss}  </channel>
 </rss>`;
 }
+rss.description = "rss(feed) - Transforms a JSON Feed tree to RSS XML";
 
 function itemRss(jsonFeedItem) {
   const { content_html, id, summary, title, url } = jsonFeedItem;
@@ -114,6 +115,3 @@ function toRFC822Date(date) {
   const seconds = date.getUTCSeconds().toString().padStart(2, "0");
   return `${day}, ${dayOfMonth} ${month} ${year} ${hours}:${minutes}:${seconds} GMT`;
 }
-
-rss.usage = `@rss <feed>\tTransforms a JSON Feed tree to RSS XML`;
-rss.documentation = "https://weborigami.org/language/@rss.html";

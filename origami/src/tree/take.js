@@ -15,3 +15,4 @@ export default async function take(treelike, n) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:take");
   return takeFn.call(this, n)(tree);
 }
+take.description = "take(tree, n) - The first n values in the tree";

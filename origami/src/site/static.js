@@ -17,6 +17,8 @@ export default async function staticTree(treelike) {
   result.parent = this;
   return result;
 }
+staticTree.description =
+  "static(tree) - Define common static files for the tree";
 
 function StaticTransform(Base) {
   return class Static extends Base {
@@ -41,6 +43,3 @@ function StaticTransform(Base) {
     }
   };
 }
-
-staticTree.usage = `@static <tree>\tAdd keys for generating common static files`;
-staticTree.documentation = "https://weborigami.org/cli/builtins.html#static";

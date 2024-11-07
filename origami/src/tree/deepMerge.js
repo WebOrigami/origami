@@ -23,7 +23,4 @@ export default async function treeDeepMerge(...trees) {
   const result = deepMerge(...filtered);
   return result;
 }
-
-treeDeepMerge.usage = `@deepMerge <...trees>\tMerge the given trees deeply`;
-treeDeepMerge.documentation =
-  "https://weborigami.org/cli/builtins.html#deepMerge";
+treeDeepMerge.description = "deepMerge(...trees) - Return a deeply-merged tree";

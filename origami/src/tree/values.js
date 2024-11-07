@@ -13,3 +13,4 @@ export default async function values(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:values");
   return Tree.values(tree);
 }
+values.description = "values(tree) - The tree's values";

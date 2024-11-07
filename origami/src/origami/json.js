@@ -26,3 +26,4 @@ export default async function json(obj) {
   const value = await toPlainValue(obj);
   return JSON.stringify(value, null, 2);
 }
+json.description = "json(obj) - Render the object in JSON format";

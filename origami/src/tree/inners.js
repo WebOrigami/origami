@@ -28,3 +28,4 @@ export default async function inners(treelike) {
 
   return result;
 }
+inners.description = "inners(tree) - The tree's interior nodes";

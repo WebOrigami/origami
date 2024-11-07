@@ -31,7 +31,16 @@ async function main(...args) {
   const tree = await Tree.traversePath(projectTree, relative);
 
   const result = await ori.call(tree, expression);
-  if (result !== undefined) {
+
+  if (result === undefined) {
+    if (expression === "help") {
+      // Special case
+      const config = projectTree.parent;
+      const usage = await help.call(config);
+      console.log(usage);
+      return;
+    }
+  } else {
     const output =
       result instanceof ArrayBuffer
         ? new Uint8Array(result)

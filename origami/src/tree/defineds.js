@@ -33,3 +33,4 @@ export default async function defineds(treelike) {
 
   return result;
 }
+defineds.description = "defineds(tree) - Only the defined values of the tree";

@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import calendarTree from "../src/calendarTree.js";
+import calendar from "../src/calendarTree.js";
 import { toPlainValue } from "../src/utilities.js";
 
 describe("calendarTree", () => {
   test("without a start or end, returns a tree for today", async () => {
-    const tree = calendarTree({
+    const tree = calendar({
       value: (year, month, day) => `${year}-${month}-${day}`,
     });
     const plain = await toPlainValue(tree);
@@ -23,7 +23,7 @@ describe("calendarTree", () => {
   });
 
   test("returns a tree for a month range", async () => {
-    const tree = calendarTree({
+    const tree = calendar({
       start: "2025-01",
       end: "2025-02",
       value: (year, month, day) => `${year}-${month}-${day}`,
@@ -99,7 +99,7 @@ describe("calendarTree", () => {
   });
 
   test("returns a tree for a day range", async () => {
-    const tree = calendarTree({
+    const tree = calendar({
       start: "2025-02-27",
       end: "2025-03-02",
       value: (year, month, day) => `${year}-${month}-${day}`,

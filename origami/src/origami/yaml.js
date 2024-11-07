@@ -27,6 +27,4 @@ export default async function toYaml(obj) {
   const value = await toPlainValue(obj);
   return YAML.stringify(value);
 }
-
-toYaml.usage = `@yaml <obj>\tRender the object as text in YAML format`;
-toYaml.documentation = "https://weborigami.org/language/@yaml.html";
+toYaml.description = "yaml(obj) - Render the object in YAML format";

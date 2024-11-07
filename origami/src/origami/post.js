@@ -43,3 +43,4 @@ export default async function post(url, data) {
   }
   return response.arrayBuffer();
 }
+post.description = "post(url, data) - POST the given data to the URL";

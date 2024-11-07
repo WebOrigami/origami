@@ -12,3 +12,4 @@ export default function unpack(obj) {
   assertTreeIsDefined(this, "origami:unpack");
   return obj?.unpack?.() ?? obj;
 }
+unpack.description = "unpack(buffer) - Unpack the buffer into a usable form";

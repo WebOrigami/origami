@@ -6,7 +6,7 @@ import { builtins, oriHandler } from "../../src/builtins/internal.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFiles(fixturesUrl);
-fixtures.parent = builtins;
+fixtures.parent = new ObjectTree(builtins);
 
 describe(".ori handler", () => {
   test("loads a string expression", async () => {

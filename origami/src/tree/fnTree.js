@@ -24,6 +24,4 @@ export default async function fromFn(invocable, keys = []) {
   tree.parent = this;
   return tree;
 }
-
-fromFn.usage = `@fnTree <fn>, [<keys>]\tCreate a tree from a function and a set of keys`;
-fromFn.documentation = "https://weborigami.org/cli/tree.html#fn";
+fromFn.description = "fnTree(fn, [keys]) - A tree defined by a value function";

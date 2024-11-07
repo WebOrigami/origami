@@ -47,6 +47,5 @@ async function applyUpdateForKey(source, target, key) {
   // Copy the value from the source to the target.
   await target.set(key, sourceValue);
 }
-
-setDeep.usage = `@setDeep <target>, <source>\tApplies the source tree to the target`;
-setDeep.documentation = "https://weborigami.org/cli/builtins.html#setDeep";
+setDeep.description =
+  "setDeep(target, source) - Applies the source tree to the target";

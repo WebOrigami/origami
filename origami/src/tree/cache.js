@@ -25,6 +25,5 @@ export default async function cacheBuiltin(
   const result = cache(sourceTreelike, cacheTree, filterTreelike);
   return result;
 }
-
-cacheBuiltin.usage = `@cache/tree tree, [cache], [filter]\tCaches tree values`;
-cacheBuiltin.documentation = "https://weborigami.org/cli/builtins.html#@cache";
+cacheBuiltin.description =
+  "cache(tree, [cache], [filter]) - Caches values from the tree";

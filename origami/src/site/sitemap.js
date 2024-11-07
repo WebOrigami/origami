@@ -52,6 +52,4 @@ export default async function sitemap(treelike, baseHref = "") {
   const templateResult = await templateFn.call(target, htmlPaths);
   return String(templateResult);
 }
-
-sitemap.usage = `@sitemap <tree>\tGenerate a sitemap for a tree`;
-sitemap.documentation = "https://weborigami.org/cli/builtins.html#@sitemap";
+sitemap.description = "sitemap(tree) - Generate a sitemap for the tree";

@@ -22,7 +22,7 @@ const commands = {
 
 Object.defineProperty(commands, "description", {
   enumerable: false,
-  value: "Development tools",
+  value: "Develop and debug Origami projects",
 });
 
 export default commands;

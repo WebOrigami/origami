@@ -16,3 +16,5 @@ export default async function paginate(treelike, size = 10) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:count");
   return paginateFn.call(this, size)(tree);
 }
+paginate.description =
+  "paginate(tree, [n]) - Group the tree's values into fixed-size sets";

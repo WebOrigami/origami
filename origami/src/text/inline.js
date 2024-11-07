@@ -42,6 +42,5 @@ export default async function inline(input) {
     ? documentObject(templateResult, inputData)
     : templateResult;
 }
-
-inline.usage = `@inline <text>\tInline Origami expressions found in the text`;
-inline.documentation = "https://weborigami.org/language/@inline.html";
+inline.description =
+  "inline(text) - Inline Origami expressions found in the text";

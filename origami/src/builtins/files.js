@@ -28,7 +28,4 @@ export default async function files(...keys) {
   const result = new OrigamiFiles(resolved);
   return result;
 }
-
 files.description = "URL protocol for file system folders and files";
-files.usage = `@files [path]\tTree of files at the given path`;
-files.documentation = "https://weborigami.org/language/@files.html";

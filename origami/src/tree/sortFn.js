@@ -52,6 +52,3 @@ export default function sortFnBuiltin(options) {
     return sorted;
   };
 }
-
-sortFnBuiltin.usage = `@sortFn [sortFn]\tReturn a function that sorts a tree`;
-sortFnBuiltin.documentation = "https://weborigami.org/builtins/@sortFn.html";

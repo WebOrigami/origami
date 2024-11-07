@@ -55,8 +55,6 @@ export default async function mdHtml(input) {
   return inputIsDocument ? documentObject(html, input) : html;
 }
 
+mdHtml.description = "mdHtml(markdown) - Render the markdown as HTML";
 mdHtml.key = (sourceKey) => replaceExtension(sourceKey, ".md", ".html");
 mdHtml.inverseKey = (resultKey) => replaceExtension(resultKey, ".html", ".md");
-
-mdHtml.usage = `@mdHtml <markdown>\tRender the markdown text as HTML`;
-mdHtml.documentation = "https://weborigami.org/language/@mdHtml.html";

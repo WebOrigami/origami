@@ -39,6 +39,5 @@ export default async function treeMerge(...trees) {
   const result = merge(...unpacked);
   return result;
 }
-
-treeMerge.usage = `@merge <...trees>\tMerge the given trees`;
-treeMerge.documentation = "https://weborigami.org/cli/builtins.html#@merge";
+treeMerge.description =
+  "merge(...trees) - Return a new tree merging the given trees";

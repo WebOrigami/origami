@@ -20,3 +20,5 @@ export default async function deepValuesBuiltin(treelike) {
   );
   return deepValues(tree);
 }
+deepValuesBuiltin.description =
+  "deepValues(tree) - The in-order leaf values of the tree";
