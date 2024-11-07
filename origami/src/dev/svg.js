@@ -1,4 +1,5 @@
 import graphviz from "graphviz-wasm";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import dot from "../misc/treeDot.js";
 
@@ -38,4 +39,8 @@ export default async function svg(treelike, options = {}) {
   result.unpack = () => tree;
   return result;
 }
-svg.description = "svg(tree, options) - Render a tree visually in SVG format";
+
+helpRegistry.set(
+  "dev:svg",
+  "(tree, options) - Render a tree visually in SVG format"
+);

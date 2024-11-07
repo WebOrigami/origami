@@ -1,4 +1,5 @@
 import { isPlainObject, isUnpackable, merge } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -39,5 +40,8 @@ export default async function treeMerge(...trees) {
   const result = merge(...unpacked);
   return result;
 }
-treeMerge.description =
-  "merge(...trees) - Return a new tree merging the given trees";
+
+helpRegistry.set(
+  "tree:merge",
+  "(...trees) - Return a new tree merging the given trees"
+);

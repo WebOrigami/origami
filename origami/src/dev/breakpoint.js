@@ -1,3 +1,5 @@
+import helpRegistry from "../common/helpRegistry.js";
+
 /**
  * Break into the JavaScript debugger.
  *
@@ -10,5 +12,8 @@ export default function breakpoint(arg) {
   debugger;
   return arg;
 }
-breakpoint.description =
-  "breakpoint(a) - Break into the JavaScript debugger, then return a";
+
+helpRegistry.set(
+  "dev:breakpoint",
+  "(a) - Break into the JavaScript debugger, then return a"
+);

@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import { keySymbol } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -59,4 +60,8 @@ ${list}
   result.unpack = () => tree;
   return result;
 }
-index.description = "index(tree) - A default index.html page for the tree";
+
+helpRegistry.set(
+  "site:index",
+  "(tree) - A default index.html page for the tree"
+);

@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -60,7 +61,8 @@ export default async function rss(jsonFeedTree, options = {}) {
 ${titleElement}${descriptionElement}${linkElement}${languageElement}${feedLinkElement}${itemsRss}  </channel>
 </rss>`;
 }
-rss.description = "rss(feed) - Transforms a JSON Feed tree to RSS XML";
+
+helpRegistry.set("site:rss", "(feed) - Transforms a JSON Feed tree to RSS XML");
 
 function itemRss(jsonFeedItem) {
   const { content_html, id, summary, title, url } = jsonFeedItem;

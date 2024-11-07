@@ -1,5 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { builtinsTree, oriHandler } from "../builtins/internal.js";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -52,4 +53,5 @@ export default async function sitemap(treelike, baseHref = "") {
   const templateResult = await templateFn.call(target, htmlPaths);
   return String(templateResult);
 }
-sitemap.description = "sitemap(tree) - Generate a sitemap for the tree";
+
+helpRegistry.set("site:sitemap", "(tree) - Generate a sitemap for the tree");

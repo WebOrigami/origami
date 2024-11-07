@@ -1,4 +1,5 @@
 import GlobTree from "../common/GlobTree.js";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -15,5 +16,8 @@ export default async function globs(tree) {
   const result = new GlobTree(tree);
   return result;
 }
-globs.description =
-  "globs(patterns) - A tree whose keys can include wildcard patterns";
+
+helpRegistry.set(
+  "tree:globs",
+  "(patterns) - A tree whose keys can include wildcard patterns"
+);

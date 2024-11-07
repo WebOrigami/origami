@@ -1,6 +1,7 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 import YAML from "yaml";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -27,4 +28,5 @@ export default async function toYaml(obj) {
   const value = await toPlainValue(obj);
   return YAML.stringify(value);
 }
-toYaml.description = "yaml(obj) - Render the object in YAML format";
+
+helpRegistry.set("origami:yaml", "(obj) - Render the object in YAML format");

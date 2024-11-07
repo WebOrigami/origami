@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -13,4 +14,5 @@ export default async function values(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:values");
   return Tree.values(tree);
 }
-values.description = "values(tree) - The tree's values";
+
+helpRegistry.set("tree:values", "(tree) - The tree's values");

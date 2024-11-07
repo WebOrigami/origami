@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import takeFn from "./takeFn.js";
 
@@ -15,4 +16,5 @@ export default async function take(treelike, n) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:take");
   return takeFn.call(this, n)(tree);
 }
-take.description = "take(tree, n) - The first n values in the tree";
+
+helpRegistry.set("tree:take", "(tree, n) - The first n values in the tree");

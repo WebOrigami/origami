@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -12,4 +13,8 @@ export default function unpack(obj) {
   assertTreeIsDefined(this, "origami:unpack");
   return obj?.unpack?.() ?? obj;
 }
-unpack.description = "unpack(buffer) - Unpack the buffer into a usable form";
+
+helpRegistry.set(
+  "origami:unpack",
+  "(buffer) - Unpack the buffer into a usable form"
+);

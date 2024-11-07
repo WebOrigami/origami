@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import project from "./project.js";
 
 /**
@@ -18,4 +19,5 @@ export default async function config(key) {
   const parent = projectTree.parent;
   return key === undefined ? parent : parent.get(key);
 }
-config.description = "config - The current project's configuration";
+
+helpRegistry.set("origami:config", " - The current project's configuration");

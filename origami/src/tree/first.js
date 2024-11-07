@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -17,4 +18,5 @@ export default async function first(treelike) {
   }
   return undefined;
 }
-first.description = "first(tree) - The first value in the tree";
+
+helpRegistry.set("tree:first", "(tree) - The first value in the tree");

@@ -1,3 +1,5 @@
+import helpRegistry from "../common/helpRegistry.js";
+
 export default function redirect(url, options = { permanent: false }) {
   const response = new Response("ok", {
     headers: {
@@ -15,4 +17,5 @@ export default function redirect(url, options = { permanent: false }) {
 `;
   return response;
 }
-redirect.description = "redirect(url, options) - Redirect to the given URL";
+
+helpRegistry.set("site:redirect", "(url, options) - Redirect to the given URL");

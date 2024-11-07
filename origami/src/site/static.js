@@ -1,4 +1,5 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import { transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import index from "./index.js";
@@ -17,8 +18,11 @@ export default async function staticBuiltin(treelike) {
   result.parent = this;
   return result;
 }
-staticBuiltin.description =
-  "static(tree) - Define common static files for the tree";
+
+helpRegistry.set(
+  "site:static",
+  "(tree) - Define common static files for the tree"
+);
 staticBuiltin.key = "static";
 
 function StaticTransform(Base) {

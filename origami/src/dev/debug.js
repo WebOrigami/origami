@@ -1,5 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
+import helpRegistry from "../common/helpRegistry.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import OriCommandTransform from "../misc/OriCommandTransform.js";
@@ -27,7 +28,8 @@ export default async function debug(treelike) {
 
   return tree;
 }
-debug.description = "debug(tree) - Add debug features to the tree";
+
+helpRegistry.set("dev:debug", "(tree) - Add debug features to the tree");
 
 /**
  * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor

@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 
 /**
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -47,5 +48,8 @@ async function applyUpdateForKey(source, target, key) {
   // Copy the value from the source to the target.
   await target.set(key, sourceValue);
 }
-setDeep.description =
-  "setDeep(target, source) - Applies the source tree to the target";
+
+helpRegistry.set(
+  "tree:setDeep",
+  "(target, source) - Applies the source tree to the target"
+);

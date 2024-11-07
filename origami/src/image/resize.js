@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import imageResizeFn from "./resizeFn.js";
 
@@ -12,4 +13,5 @@ export default async function resize(input, options) {
   assertTreeIsDefined(this, "image:resize");
   return imageResizeFn.call(this, options)(input);
 }
-resize.description = "resize(image, options) - Resize the image";
+
+helpRegistry.set("image:resize", "(image, options) - Resize the image");

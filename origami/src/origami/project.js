@@ -2,6 +2,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import { builtinsTree, oriHandler } from "../builtins/internal.js";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const configFileName = "config.ori";
@@ -71,8 +72,11 @@ export default async function project(key) {
 
   return key === undefined ? projectRoot : projectRoot.get(key);
 }
-project.description =
-  "project - The root folder for the current Origami project";
+
+helpRegistry.set(
+  "origami:project",
+  " - The root folder for the current Origami project"
+);
 
 // Return the first ancestor of the given tree that contains a file with the
 // given name.

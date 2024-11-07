@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -13,5 +14,8 @@ export default async function plain(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:plain");
   return Tree.plain(tree);
 }
-plain.description =
-  "plain(tree) - Render the tree as a plain JavaScript object";
+
+helpRegistry.set(
+  "tree:plain",
+  "(tree) - Render the tree as a plain JavaScript object"
+);

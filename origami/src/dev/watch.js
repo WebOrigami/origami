@@ -1,6 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -47,7 +48,8 @@ export default async function watch(treelike, fn) {
 
   return handle;
 }
-watch.description = "watch(tree, fn) - Reevaluate fn when tree changes";
+
+helpRegistry.set("dev:watch", "(tree, fn) - Reevaluate fn when tree changes");
 
 async function evaluateTree(parent, fn) {
   let tree;

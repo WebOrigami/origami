@@ -2,6 +2,7 @@
 import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import { builtinsTree } from "../builtins/internal.js";
+import helpRegistry from "../common/helpRegistry.js";
 import { keySymbol } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import debug from "./debug.js";
@@ -52,8 +53,11 @@ export default async function explore(...keys) {
 
   return result;
 }
-explore.description =
-  "explore() - Explore the current scope [when run in browser]";
+
+helpRegistry.set(
+  "dev:explore",
+  "() - Explore the current scope [when run in browser]"
+);
 
 // To test if a given tree represents the builtins, we walk up the chain to see
 // if any of its prototypes are the builtins tree.

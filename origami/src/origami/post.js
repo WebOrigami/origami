@@ -5,6 +5,7 @@ import {
   toString,
   Tree,
 } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 
 /**
  * @this {import("@weborigami/types").AsyncTree|null}
@@ -43,4 +44,8 @@ export default async function post(url, data) {
   }
   return response.arrayBuffer();
 }
-post.description = "post(url, data) - POST the given data to the URL";
+
+helpRegistry.set(
+  "origami:post",
+  "(url, data) - POST the given data to the URL"
+);

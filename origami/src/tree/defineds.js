@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -33,4 +34,8 @@ export default async function defineds(treelike) {
 
   return result;
 }
-defineds.description = "defineds(tree) - Only the defined values of the tree";
+
+helpRegistry.set(
+  "tree:defineds",
+  "(tree) - Only the defined values of the tree"
+);

@@ -1,3 +1,5 @@
+import helpRegistry from "../common/helpRegistry.js";
+
 export default function slug(filename) {
   let slug = filename.toLowerCase();
 
@@ -16,5 +18,8 @@ export default function slug(filename) {
 
   return slug;
 }
-slug.description =
-  "slug(text) - A version of the text suitable for use in URLs";
+
+helpRegistry.set(
+  "site:slug",
+  "(text) - A version of the text suitable for use in URLs"
+);

@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import sortFn from "./sortFn.js";
 
@@ -18,5 +19,8 @@ export default async function sortBuiltin(treelike, options) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
   return sortFn.call(this, options)(tree);
 }
-sortBuiltin.description =
-  "sort(tree, options) - \tA new tree with its keys sorted";
+
+helpRegistry.set(
+  "tree:sort",
+  "(tree, options) - \tA new tree with its keys sorted"
+);

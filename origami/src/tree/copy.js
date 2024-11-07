@@ -1,6 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
+import helpRegistry from "../common/helpRegistry.js";
 import { transformObject } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import setDeep from "./setDeep.js";
@@ -35,7 +36,11 @@ export default async function copy(source, target) {
     countCopied = null;
   }
 }
-copy.description = "copy(source, target) - Copy the source tree to the target";
+
+helpRegistry.set(
+  "tree:copy",
+  "(source, target) - Copy the source tree to the target"
+);
 
 let countFiles;
 let countCopied;

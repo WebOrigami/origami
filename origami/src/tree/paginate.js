@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import paginateFn from "./paginateFn.js";
 
@@ -16,5 +17,8 @@ export default async function paginate(treelike, size = 10) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:count");
   return paginateFn.call(this, size)(tree);
 }
-paginate.description =
-  "paginate(tree, [n]) - Group the tree's values into fixed-size sets";
+
+helpRegistry.set(
+  "tree:paginate",
+  "(tree, [n]) - Group the tree's values into fixed-size sets"
+);

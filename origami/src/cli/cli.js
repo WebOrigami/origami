@@ -32,16 +32,7 @@ async function main(...args) {
 
   const result = await ori.call(tree, expression);
 
-  if (result === undefined) {
-    if (expression === "help") {
-      // Special case: the actual command is ":help" or "origami:help", but new
-      // users won't know that, so we accept "help" as a synonym.
-      const config = projectTree.parent;
-      const usage = await help.call(config);
-      console.log(usage);
-      return;
-    }
-  } else {
+  if (result !== undefined) {
     const output =
       result instanceof ArrayBuffer
         ? new Uint8Array(result)

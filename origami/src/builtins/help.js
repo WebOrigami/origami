@@ -15,39 +15,39 @@ export default async function help(namespace) {
   if (namespace === undefined) {
     return namespaceDescriptions(builtins);
   } else {
-    return commandDescriptions(builtins, namespace);
+    return commandDescriptions(builtins, `${namespace}:`);
   }
 }
 
 helpRegistry.set("help:", "Get help on builtin namespaces and commands");
 
 async function commandDescriptions(builtins, namespace) {
-  const withColon = `${namespace}:`;
-  const commands = builtins[withColon];
+  const commands = builtins[namespace];
   if (!commands) {
     return `Namespace "${namespace}" not found`;
   }
 
   const text = [];
   for (const key in commands) {
-    const command = commands[key];
-    if (command?.description) {
-      text.push(`  ${namespace}:${command.description}`);
+    const description = helpRegistry.get(`${namespace}${key}`);
+    if (description) {
+      text.push(`  ${namespace}${key}${description}`);
     }
   }
 
   if (text.length === 0) {
-    text.push(`"${namespace}:" works like a URL protocol.`);
+    text.push(`"${namespace}" works like a URL protocol.`);
   } else {
     text.unshift("");
     text.push("");
+    const description = helpRegistry.get(namespace);
+    if (description) {
+      const lowercase = description[0].toLowerCase() + description.slice(1);
+      text.unshift(
+        `The "${namespace}" namespace contains commands to ${lowercase}.`
+      );
+    }
   }
-
-  const description =
-    commands.description[0].toLowerCase() + commands.description.slice(1);
-  text.unshift(
-    `The "${namespace}:" namespace contains commands to ${description}.`
-  );
 
   text.push(
     `For more information visit https://weborigami.org/builtins/${namespace}`

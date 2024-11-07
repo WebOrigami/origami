@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import mapFn from "./mapFn.js";
 
@@ -17,5 +18,8 @@ export default function map(source, operation) {
   assertTreeIsDefined(this, "tree:map");
   return mapFn.call(this, operation)(source);
 }
-map.description =
-  "map(tree, options) - Create a new tree by mapping keys and/or values";
+
+helpRegistry.set(
+  "tree:map",
+  "(tree, options) - Create a new tree by mapping keys and/or values"
+);

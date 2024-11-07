@@ -1,4 +1,5 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -28,4 +29,5 @@ export default async function inners(treelike) {
 
   return result;
 }
-inners.description = "inners(tree) - The tree's interior nodes";
+
+helpRegistry.set("tree:inners", "(tree) - The tree's interior nodes");

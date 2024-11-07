@@ -1,4 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -77,5 +78,8 @@ export default function match(pattern, resultFn, keys = []) {
 
   return result;
 }
-match.description =
-  "match(pattern, fn, [keys]) - Matches simple patterns or regular expressions";
+
+helpRegistry.set(
+  "tree:match",
+  "(pattern, fn, [keys]) - Matches simple patterns or regular expressions"
+);

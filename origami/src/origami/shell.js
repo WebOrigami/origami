@@ -1,5 +1,6 @@
 import { exec as callbackExec } from "node:child_process";
 import util from "node:util";
+import helpRegistry from "../common/helpRegistry.js";
 const exec = util.promisify(callbackExec);
 
 export default async function shell(command) {
@@ -11,5 +12,8 @@ export default async function shell(command) {
     return undefined;
   }
 }
-shell.description =
-  "shell(text) - Run the text as a shell command, return the output";
+
+helpRegistry.set(
+  "origami:shell",
+  "(text) - Run the text as a shell command, return the output"
+);

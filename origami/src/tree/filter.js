@@ -19,4 +19,3 @@ export default async function filter(sourceTreelike, filterTreelike) {
   result.parent = this;
   return result;
 }
-// filter.description = `filter(tree, filter) - Only values whose keys match the filter`;

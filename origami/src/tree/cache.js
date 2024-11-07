@@ -1,4 +1,5 @@
 import { Tree, cache } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -25,5 +26,8 @@ export default async function cacheBuiltin(
   const result = cache(sourceTreelike, cacheTree, filterTreelike);
   return result;
 }
-cacheBuiltin.description =
-  "cache(tree, [cache], [filter]) - Caches values from the tree";
+
+helpRegistry.set(
+  "tree:cache",
+  "(tree, [cache], [filter]) - Caches values from the tree"
+);

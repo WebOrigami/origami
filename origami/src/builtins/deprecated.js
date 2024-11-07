@@ -32,19 +32,14 @@ export function command(namespace, newKey, oldKey, fn) {
 
 export function commands(namespace, object) {
   const deprecatedEntries = Object.entries(object).map(([key, fn]) => [
-    `@${key}`,
-    command(namespace, key, `@${key}`, fn),
+    `@${fn.key ?? key}`,
+    command(namespace, fn.key ?? key, `@${fn.key ?? key}`, fn),
   ]);
   return Object.fromEntries(deprecatedEntries);
 }
 
 export default {
-  ...commands("calc:", {
-    add: calc.add,
-    divide: calc.divide,
-    multiple: calc.multiply,
-    subtract: calc.subtract,
-  }),
+  ...commands("calc:", calc),
   ...commands("dev:", dev),
   "@fetch": command("js:", "fetch", "@fetch", js.fetch),
   "@files": command("files:", null, "@files/", files),
