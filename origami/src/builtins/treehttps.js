@@ -1,5 +1,6 @@
 import { SiteTree } from "@weborigami/async-tree";
 import constructSiteTree from "../common/constructSiteTree.js";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -18,4 +19,4 @@ export default function treehttps(host, ...keys) {
   return constructSiteTree("https:", SiteTree, this, host, ...keys);
 }
 
-treehttps.description = "URL protocol for a website tree via HTTPS";
+helpRegistry.set("treehttps:", "URL protocol for a website tree via HTTPS");

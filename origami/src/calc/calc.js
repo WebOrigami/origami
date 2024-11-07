@@ -1,18 +1,19 @@
 import { Tree } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
-function add(...args) {
+export function add(...args) {
   const numbers = args.map((arg) => Number(arg));
   return numbers.reduce((acc, val) => acc + val, 0);
 }
 add.description = "add(a, b, ...) - Add the numbers";
 
-function divide(a, b) {
+export function divide(a, b) {
   return Number(a) / Number(b);
 }
 divide.description = "divide(a, b) - Divide a by b";
 
-function equals(a, b) {
+export function equals(a, b) {
   return a === b;
 }
 equals.description = "equals(a, b) - Return true if a equals b";
@@ -25,7 +26,7 @@ equals.description = "equals(a, b) - Return true if a equals b";
  * @param {any} trueResult
  * @param {any} [falseResult]
  */
-async function ifCommand(value, trueResult, falseResult) {
+export async function ifBuiltin(value, trueResult, falseResult) {
   assertTreeIsDefined(this, "calc:if");
   let condition = await value;
   if (Tree.isAsyncTree(condition)) {
@@ -40,43 +41,28 @@ async function ifCommand(value, trueResult, falseResult) {
   }
   return result;
 }
-ifCommand.description = "if(a, b, c) - If a is true return b, otherwise c";
+ifBuiltin.key = "if";
+ifBuiltin.description = "if(a, b, c) - If a is true return b, otherwise c";
 
-function multiply(...args) {
+export function multiply(...args) {
   const numbers = args.map((arg) => Number(arg));
   return numbers.reduce((acc, val) => acc * val, 1);
 }
 multiply.description = "multiply(a, b, ...) - Multiply the numbers";
 
-function not(value) {
+export function not(value) {
   return !value;
 }
 not.description = "not(a) - Return true if a is false and vice versa";
 
-function or(...args) {
+export function or(...args) {
   return args.find((arg) => arg);
 }
 or.description = "or(a, b, ...) - Return true if any of the arguments are true";
 
-function subtract(a, b) {
+export function subtract(a, b) {
   return Number(a) - Number(b);
 }
 subtract.description = "subtract(a, b) - Subtract b from a";
 
-const commands = {
-  add,
-  divide,
-  equals,
-  if: ifCommand,
-  multiply,
-  not,
-  or,
-  subtract,
-};
-
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "Perform math and logical operations",
-});
-
-export default commands;
+helpRegistry.set("calc:", "Perform math and logical operations");

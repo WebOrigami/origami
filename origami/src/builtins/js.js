@@ -1,9 +1,11 @@
+import helpRegistry from "../common/helpRegistry.js";
+
 async function fetchWrapper(resource, options) {
   const response = await fetch(resource, options);
   return response.ok ? await response.arrayBuffer() : undefined;
 }
 
-const commands = {
+export default {
   Array,
   Boolean,
   Date,
@@ -35,9 +37,4 @@ const commands = {
   undefined: undefined,
 };
 
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "JavaScript classes and functions",
-});
-
-export default commands;
+helpRegistry.set("js:", "JavaScript classes and functions");

@@ -1,3 +1,4 @@
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import version from "../origami/version.js";
 
@@ -17,8 +18,8 @@ export default async function help(namespace) {
     return commandDescriptions(builtins, namespace);
   }
 }
-help.description =
-  "help([namespace]) - Get help on builtin namespaces and commands";
+
+helpRegistry.set("help:", "Get help on builtin namespaces and commands");
 
 async function commandDescriptions(builtins, namespace) {
   const withColon = `${namespace}:`;
@@ -64,9 +65,9 @@ async function namespaceDescriptions(builtins) {
       continue;
     }
     const withoutColon = key.replace(/:$/, "");
-    const builtin = builtins[key];
-    if (builtin?.description) {
-      text.push(`  ${withoutColon} - ${builtin.description}`);
+    const description = helpRegistry.get(key);
+    if (description) {
+      text.push(`  ${withoutColon} - ${description}`);
     }
   }
   text.push(

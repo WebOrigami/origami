@@ -1,18 +1,8 @@
-import document from "./document.js";
-import indent from "./indent.js";
-import inline from "./inline.js";
-import mdHtml from "./mdHtml.js";
+import helpRegistry from "../common/helpRegistry.js";
 
-const commands = {
-  document,
-  indent,
-  inline,
-  mdHtml,
-};
+export { default as document } from "./document.js";
+export { default as indent } from "./indent.js";
+export { default as inline } from "./inline.js";
+export { default as mdHtml } from "./mdHtml.js";
 
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "Manipulate text",
-});
-
-export default commands;
+helpRegistry.set("text:", "Manipulate text");

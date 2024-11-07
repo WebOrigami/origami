@@ -11,14 +11,15 @@ import index from "./index.js";
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
-export default async function staticTree(treelike) {
+export default async function staticBuiltin(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "site:static");
   const result = transformObject(StaticTransform, tree);
   result.parent = this;
   return result;
 }
-staticTree.description =
+staticBuiltin.description =
   "static(tree) - Define common static files for the tree";
+staticBuiltin.key = "static";
 
 function StaticTransform(Base) {
   return class Static extends Base {

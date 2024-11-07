@@ -1,4 +1,5 @@
 import { ops } from "@weborigami/language";
+import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -14,5 +15,7 @@ export default async function inherited(key) {
   return ops.inherited.call(this, key);
 }
 
-inherited.description =
-  "URL protocol to get an inherited value instead of a local one";
+helpRegistry.set(
+  "inherited:",
+  "URL protocol to get an inherited value instead of a local one"
+);

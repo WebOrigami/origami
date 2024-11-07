@@ -1,4 +1,5 @@
 import { isUnpackable } from "@weborigami/async-tree";
+import helpRegistry from "../common/helpRegistry.js";
 
 export default async function instantiate(constructor) {
   if (isUnpackable(constructor)) {
@@ -11,4 +12,5 @@ export default async function instantiate(constructor) {
       ? new constructor()
       : new constructor(...args);
 }
-instantiate.description = `Create instances of JavaScript classes`;
+
+helpRegistry.set("new:", "Create instances of JavaScript classes");

@@ -10,7 +10,7 @@
   "bin": {
     "ori": "src/cli/cli.js"
   },
-  "main": "./exports/exports.js",
+  "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
     "@types/node": "22.7.4",

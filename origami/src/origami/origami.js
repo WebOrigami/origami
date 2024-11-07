@@ -1,4 +1,5 @@
 import help from "../builtins/help.js";
+import helpRegistry from "../common/helpRegistry.js";
 import basename from "./basename.js";
 import config from "./config.js";
 import json from "./json.js";
@@ -20,7 +21,7 @@ import version from "./version.js";
 import yaml from "./yaml.js";
 import yamlParse from "./yamlParse.js";
 
-const commands = {
+export default {
   basename,
 
   // Use a dynamic import to avoid circular dependencies
@@ -50,9 +51,4 @@ const commands = {
   yamlParse,
 };
 
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "Perform general Origami language functions",
-});
-
-export default commands;
+helpRegistry.set("origami:", "Perform general Origami language functions");

@@ -1,6 +1,7 @@
 import path from "node:path";
 import process from "node:process";
 import url from "node:url";
+import helpRegistry from "../common/helpRegistry.js";
 
 // Patch process.env to be a plain object. Among other things, this lets us dump
 // the complete environment to the terminal with `ori @node/process/env`.
@@ -14,16 +15,11 @@ const patchedProcess = Object.create(null, {
   },
 });
 
-const commands = {
+export default {
   Buffer,
   path,
   process: patchedProcess,
   url,
 };
 
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "Node.js classes and modules",
-});
-
-export default commands;
+helpRegistry.set("node:", "Node.js classes and modules");

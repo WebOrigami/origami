@@ -1,76 +1,54 @@
 import { Tree } from "@weborigami/async-tree";
-import addNextPrevious from "./addNextPrevious.js";
-import cache from "./cache.js";
-import calendar from "./calendar.js";
-import clean from "./clean.js";
-import concat from "./concat.js";
-import copy from "./copy.js";
-import deepMap from "./deepMap.js";
-import deepMerge from "./deepMerge.js";
-import deepReverse from "./deepReverse.js";
-import deepTake from "./deepTake.js";
-import deepValues from "./deepValues.js";
-import defineds from "./defineds.js";
-import filter from "./filter.js";
-import first from "./first.js";
-import fromFn from "./fnTree.js";
-import globs from "./globs.js";
-import group from "./group.js";
-import inners from "./inners.js";
-import keys from "./keys.js";
-import length from "./length.js";
-import map from "./map.js";
-import match from "./match.js";
-import merge from "./merge.js";
-import paginate from "./paginate.js";
-import parent from "./parent.js";
-import plain from "./plain.js";
-import reverse from "./reverse.js";
-import setDeep from "./setDeep.js";
-import shuffle from "./shuffle.js";
-import sort from "./sort.js";
-import take from "./take.js";
-import values from "./values.js";
+import helpRegistry from "../common/helpRegistry.js";
+export { default as addNextPrevious } from "./addNextPrevious.js";
+export { default as cache } from "./cache.js";
+export { default as calendar } from "./calendar.js";
+export { default as clean } from "./clean.js";
+export { default as concat } from "./concat.js";
+export { default as copy } from "./copy.js";
+export { default as deepMap } from "./deepMap.js";
+export { default as deepMerge } from "./deepMerge.js";
+export { default as deepReverse } from "./deepReverse.js";
+export { default as deepTake } from "./deepTake.js";
+export { default as deepValues } from "./deepValues.js";
+export { default as defineds } from "./defineds.js";
+export { default as filter } from "./filter.js";
+export { default as first } from "./first.js";
+export { default as fromFn } from "./fnTree.js";
+export { default as globs } from "./globs.js";
+export { default as group } from "./group.js";
+export { default as inners } from "./inners.js";
+export { default as keys } from "./keys.js";
+export { default as length } from "./length.js";
+export { default as map } from "./map.js";
+export { default as match } from "./match.js";
+export { default as merge } from "./merge.js";
+export { default as paginate } from "./paginate.js";
+export { default as parent } from "./parent.js";
+export { default as plain } from "./plain.js";
+export { default as reverse } from "./reverse.js";
+export { default as setDeep } from "./setDeep.js";
+export { default as shuffle } from "./shuffle.js";
+export { default as sort } from "./sort.js";
+export { default as take } from "./take.js";
+export { default as values } from "./values.js";
 
-const commands = {
-  ...Tree,
-  addNextPrevious,
-  cache,
-  calendar,
-  clean,
-  concat,
-  copy,
-  deepMap,
-  deepMerge,
-  deepReverse,
-  deepTake,
-  deepValues,
-  defineds,
-  filter,
-  first,
-  fromFn,
-  globs,
-  group,
-  inners,
-  keys,
-  length,
-  map,
-  match,
-  merge,
-  paginate,
-  parent,
-  plain,
-  reverse,
-  setDeep,
-  shuffle,
-  sort,
-  take,
-  values,
-};
+export const assign = Tree.assign;
+export const clear = Tree.clear;
+export const entries = Tree.entries;
+export const forEach = Tree.forEach;
+export const from = Tree.from;
+export const has = Tree.has;
+export const isAsyncMutableTree = Tree.isAsyncMutableTree;
+export const isAsyncTree = Tree.isAsyncTree;
+export const isTraversable = Tree.isTraversable;
+export const isTreelike = Tree.isTreelike;
+export const mapReduce = Tree.mapReduce;
+export const paths = Tree.paths;
+export const remove = Tree.remove;
+export const toFunction = Tree.toFunction;
+export const traverse = Tree.traverse;
+export const traverseOrThrow = Tree.traverseOrThrow;
+export const traversePath = Tree.traversePath;
 
-Object.defineProperty(commands, "description", {
-  enumerable: false,
-  value: "Work with trees",
-});
-
-export default commands;
+helpRegistry.set("tree:", "Work with trees");
