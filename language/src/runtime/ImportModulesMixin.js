@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { maybeOrigamiSourceCode } from "./formatError.js";
+import { maybeOrigamiSourceCode } from "./errors.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

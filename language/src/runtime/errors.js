@@ -1,6 +1,8 @@
 // Text we look for in an error stack to guess whether a given line represents a
 
+import { trailingSlash } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
+import { typos } from "./typos.js";
 
 // function in the Origami source code.
 const origamiSourceSignals = [
@@ -15,7 +17,7 @@ const origamiSourceSignals = [
  *
  * @param {Error} error
  */
-export default function formatError(error) {
+export function formatError(error) {
   let message;
   if (error.stack) {
     // Display the stack only until we reach the Origami source code.
@@ -51,6 +53,24 @@ export default function formatError(error) {
   return message;
 }
 
+export async function formatScopeTypos(scope, key) {
+  const keys = await scopeTypos(scope, key);
+  if (keys.length === 0) {
+    return "";
+  }
+  const quoted = keys.map((key) => `"${key}"`);
+  const list = quoted.join(", ");
+  return `Did you mean ${list}?`;
+}
+
 export function maybeOrigamiSourceCode(text) {
   return origamiSourceSignals.some((signal) => text.includes(signal));
+}
+
+// Return all possible typos for `key` in scope
+async function scopeTypos(scope, key) {
+  const scopeKeys = [...(await scope.keys())];
+  const normalizedScopeKeys = scopeKeys.map((key) => trailingSlash.remove(key));
+  const normalizedKey = trailingSlash.remove(key);
+  return typos(normalizedKey, normalizedScopeKeys);
 }

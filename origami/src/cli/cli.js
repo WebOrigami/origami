@@ -34,7 +34,8 @@ async function main(...args) {
 
   if (result === undefined) {
     if (expression === "help") {
-      // Special case
+      // Special case: the actual command is ":help" or "origami:help", but new
+      // users won't know that, so we accept "help" as a synonym.
       const config = projectTree.parent;
       const usage = await help.call(config);
       console.log(usage);

@@ -1,11 +1,11 @@
 export * from "./src/runtime/internal.js";
 
 export * as compile from "./src/compiler/compile.js";
+export * from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export * from "./src/runtime/extensions.js";
-export { default as formatError } from "./src/runtime/formatError.js";
 export { default as functionResultsMap } from "./src/runtime/functionResultsMap.js";
 export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtensionsTransform.js";
 export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.js";

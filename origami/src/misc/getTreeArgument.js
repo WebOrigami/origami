@@ -43,7 +43,7 @@ export default async function getTreeArgument(
       return tree;
     }
     throw new Error(
-      `${methodName}: The first argument must be a tree, like an array, object, or files.`
+      `The first argument to ${methodName} must be a tree, like an array, object, or files.`
     );
   }
 
@@ -57,5 +57,5 @@ export default async function getTreeArgument(
     return parent;
   }
 
-  throw new Error(`${methodName}: The first argument was undefined.`);
+  throw new Error(`The first argument to ${methodName} was undefined.`);
 }

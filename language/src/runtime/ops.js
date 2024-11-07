@@ -11,6 +11,7 @@ import {
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
+import { formatScopeTypos } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -65,6 +66,9 @@ export async function builtin(key) {
       }
       const tree = Tree.from(namespace);
       value = await tree.get(key);
+      if (value !== undefined) {
+        break;
+      }
     }
   } else {
     // Namespace reference
@@ -285,7 +289,11 @@ export async function scope(key) {
   const scope = scopeFn(this);
   const value = await scope.get(key);
   if (value === undefined) {
-    console.warn(`${key} is not defined in scope`);
+    const messages = [
+      `${key} is not in scope.`,
+      await formatScopeTypos(scope, key),
+    ];
+    console.warn(messages.join(" "));
   }
   return value;
 }
