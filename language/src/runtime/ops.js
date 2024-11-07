@@ -283,7 +283,11 @@ export async function scope(key) {
     throw new Error("Tried to get the scope of a null or undefined tree.");
   }
   const scope = scopeFn(this);
-  return scope.get(key);
+  const value = await scope.get(key);
+  if (value === undefined) {
+    console.warn(`${key} is not defined in scope`);
+  }
+  return value;
 }
 addOpLabel(scope, "«ops.scope»");
 
