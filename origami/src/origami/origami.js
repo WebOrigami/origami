@@ -7,6 +7,7 @@ export const builtins = import("../builtins/internal.js").then(
   (internal) => internal.builtinsTree
 );
 
+export { default as help } from "../builtins/help.js"; // Alias
 export { default as config } from "./config.js";
 export { default as json } from "./json.js";
 export { default as jsonParse } from "./jsonParse.js";

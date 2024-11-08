@@ -52,28 +52,18 @@ arrayEntries
 
 arrayEntry
   = spread
-  / expr
+  / value
 
-// A shorthand reference to a builtin function: `:map`
-builtin
-  = ":" identifier:identifier {
-      return annotate([ops.builtin, ":" + identifier], location());
-    }
-
-// Something that can be called. This is more restrictive than the `expr`
+// Something that can be called. This is more restrictive than the `value`
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
   = absoluteFilePath
+  / scopeTraverse
   / array
   / object
-  / lambda
-  / parameterizedLambda
   / group
-  / builtin
-  / scopeTraverse
-  / namespacePath
   / namespace
-  / scopeReference
+  / functionReference
 
 // Required closing curly brace. We use this for the `object` term: if the
 // parser sees a left curly brace, here we must see a right curly brace.
@@ -135,14 +125,9 @@ escapedChar "backslash-escaped character"
   / "\\v" { return "\v"; }
   / "\\" @.
 
-// An Origami expression, no leading/trailing whitespace
-expr
-  = pipeline
-
-// Top-level Origami expression, possible shebang directive and leading/trailing
-// whitepsace.
-expression "Origami expression"
-  = shebang? __ @expr __
+// A top-level expression, possibly with leading/trailing whitespace
+expression
+  = __ @pipeline __
 
 float "floating-point number"
   = sign? digits? "." digits {
@@ -167,11 +152,23 @@ functionComposition "function composition"
       return annotate(makeFunctionCall(target, chain, location()), location());
     }
 
+// A reference to a function in scope: `fn` or `fn.js`.
+functionReference
+  = ref:scopeReference {
+    // If the reference looks like a builtin name, we treat it as a builtin
+    // reference, otherwise it's a regular scope reference. We can't make this
+    // distinction in the grammar.
+    const name = ref[1];
+      const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+      const op = builtinRegex.test(name) ? ops.builtin : ops.scope;
+      return annotate([op, name], location());
+    }
+
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" __ expr:expr __ closingParen {
-      return annotate(expr, location());
-    }
+  = "(" __ pipeline:pipeline __ closingParen {
+    return annotate(pipeline, location());
+  }
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* '»' {
@@ -181,7 +178,7 @@ guillemetString "guillemet string"
 guillemetStringChar
   = !('»' / newLine) @textChar
 
-homeDirectory
+homeTree
   = "~" {
       return annotate([ops.homeTree], location());
     }
@@ -211,12 +208,7 @@ identifierList
     }
 
 implicitParensArgs "arguments with implicit parentheses"
-  // Implicit parens args are a separate list of `step`, not `expr`, because
-  // they can't contain a pipeline.
-  = inlineSpace+ args:step|1.., separator| separator? {
-      /* Stuff */
-      return annotate(args, location());
-    }
+  = inlineSpace+ @list
 
 inlineSpace
   = [ \t]
@@ -228,8 +220,8 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ expr:expr {
-      return annotate([ops.lambda, ["_"], expr], location());
+  = "=" __ value:value {
+      return annotate([ops.lambda, ["_"], value], location());
     }
 
 // A path that begins with a slash: `/foo/bar`
@@ -238,10 +230,10 @@ leadingSlashPath "path with a leading slash"
       return annotate(path ?? [], location());
     }
 
-// A separated list of expressions
+// A separated list of values
 list "list"
-  = list:expr|1.., separator| separator? {
-      return annotate(list, location());
+  = values:value|1.., separator| separator? {
+      return annotate(values, location());
     }
 
 multiLineComment
@@ -292,7 +284,7 @@ objectEntry
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
-  = key:objectKey __ "=" __ value:expr {
+  = key:objectKey __ "=" __ value:value {
       return annotate(makeProperty(key, [ops.getter, value]), location());
     }
 
@@ -305,7 +297,7 @@ objectKey "object key"
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = key:objectKey __ ":" __ value:expr {
+  = key:objectKey __ ":" __ value:value {
       return annotate(makeProperty(key, value), location());
     }
 
@@ -325,19 +317,14 @@ objectPublicKey
   }
 
 parameterizedLambda
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expr:expr {
-      return annotate([ops.lambda, parameters ?? [], expr], location());
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ value:value {
+      return annotate([ops.lambda, parameters ?? [], value], location());
     }
 
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
       return annotate(list ?? [undefined], location());
-    }
-
-pipeline
-  = steps:(@step|1.., __ singleArrow __ |) {
-      return annotate(makePipeline(steps), location());
     }
 
 // A slash-separated path of keys
@@ -376,13 +363,35 @@ pathTail
     return annotate([ops.literal, chars.join("")], location());
   }
 
+// A pipeline that starts with a value and optionally applies a series of
+// functions to it.
+pipeline
+  = head:value tail:(__ singleArrow __ @pipelineStep)* {
+      return tail.length === 0
+        ? head
+        : annotate(makePipeline([head, ...tail]), location());
+    }
+
+// A step in a pipeline
+pipelineStep
+  = lambda
+  / parameterizedLambda
+  / callTarget
+
+// Top-level Origami progam with possible shebang directive (which is ignored)
+program "Origami program"
+  = shebang? @expression
+
 scopeReference "scope reference"
   = key:identifier {
       return annotate([ops.scope, key], location());
     }
 
 scopeTraverse
-  = ref:namespace "/" path:path? {
+  = ref:namespace path:path {
+      return annotate([ops.traverse, ref, ...path], location());
+    }
+  / ref:namespace "/" path:path? {
       return annotate([ops.traverse, ref, ...(path ?? [])], location());
     }
   / ref:scopeReference "/" path:path? {
@@ -401,7 +410,9 @@ shebang
 sign
   = [+\-]
 
-singleArrow = "→" / "->"
+singleArrow
+  = "→"
+  / "->"
 
 singleLineComment
   = "//" [^\n\r]* { return null; }
@@ -415,36 +426,9 @@ singleQuoteStringChar
   = !("'" / newLine) @textChar
 
 spread
-  = ellipsis expr:expr {
-      return annotate([ops.spread, expr], location());
+  = ellipsis value:value {
+      return annotate([ops.spread, value], location());
     }
-
-// A single step in a pipeline, or a top-level expression
-step
-  // Literals that can't start a function call
-  = number
-  // Try functions next; they can start with expression types that follow
-  // (array, object, etc.), and we want to parse the larger thing first.
-  / functionComposition
-  / taggedTemplate
-  / namespacePath
-  // Then try parsers that look for a distinctive token at the start: an opening
-  // slash, bracket, curly brace, etc.
-  / absoluteFilePath
-  / array
-  / object
-  / lambda
-  / parameterizedLambda
-  / templateLiteral
-  / string
-  / group
-  / builtin
-  / homeDirectory
-  // Things that have a distinctive character, but not at the start
-  / scopeTraverse
-  / namespace
-  // Least distinctive option is a simple scope reference, so it comes last.
-  / scopeReference
 
 start
   = number
@@ -502,11 +486,37 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" __ @expr __ "}"
+  = "${" __ @value __ "}"
 
 textChar
   = escapedChar
   / .
+
+// An Origami expression that produces a value, no leading/trailing whitespace
+value
+  // Literals that can't start a function call
+  = number
+  // Try functions next; they can start with expression types that follow
+  // (array, object, etc.), and we want to parse the larger thing first.
+  / functionComposition
+  / taggedTemplate
+  / namespacePath
+  // Then try parsers that look for a distinctive token at the start: an opening
+  // slash, bracket, curly brace, etc.
+  / absoluteFilePath
+  / array
+  / object
+  / lambda
+  / parameterizedLambda
+  / templateLiteral
+  / string
+  / group
+  / homeTree
+  // Things that have a distinctive character, but not at the start
+  / scopeTraverse
+  / namespace
+  // Least distinctive option is a simple scope reference, so it comes last.
+  / scopeReference
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

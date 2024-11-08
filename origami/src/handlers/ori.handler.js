@@ -36,8 +36,8 @@ export default {
       url,
     };
 
-    // Compile the source code as an Origami expression and evaluate it.
-    const compiler = options.compiler ?? compile.expression;
+    // Compile the source code as an Origami program and evaluate it.
+    const compiler = options.compiler ?? compile.program;
     const fn = compiler(source);
     const target = parent ?? builtinsTree;
     let content = await fn.call(target);

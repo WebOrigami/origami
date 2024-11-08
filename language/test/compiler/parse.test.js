@@ -34,10 +34,6 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("builtin", () => {
-    assertParse("builtin", ":map", [ops.builtin, ":map"]);
-  });
-
   test("doubleSlashPath", () => {
     assertParse("doubleSlashPath", "//example.com", [
       [ops.literal, "example.com"],
@@ -49,75 +45,6 @@ describe("Origami parser", () => {
     assertParse("doubleSlashPath", "//localhost:5000/foo", [
       [ops.literal, "localhost:5000/"],
       [ops.literal, "foo"],
-    ]);
-  });
-
-  test("expr", () => {
-    assertParse("expr", "obj.json", [ops.scope, "obj.json"]);
-    assertParse("expr", "(fn a, b, c)", [
-      [ops.scope, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse("expr", "foo.bar('hello', 'world')", [
-      [ops.scope, "foo.bar"],
-      [ops.literal, "hello"],
-      [ops.literal, "world"],
-    ]);
-    assertParse("expr", "(fn)('a')", [
-      [ops.scope, "fn"],
-      [ops.literal, "a"],
-    ]);
-    assertParse("expr", "1", [ops.literal, 1]);
-    assertParse("expr", "{ a: 1, b: 2 }", [
-      ops.object,
-      ["a", [ops.literal, 1]],
-      ["b", [ops.literal, 2]],
-    ]);
-    assertParse("expr", "serve { index.html: 'hello' }", [
-      [ops.scope, "serve"],
-      [ops.object, ["index.html", [ops.literal, "hello"]]],
-    ]);
-    assertParse("expr", "fn =`x`", [
-      [ops.scope, "fn"],
-      [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
-    ]);
-    assertParse("expr", "copy app(formulas), files 'snapshot'", [
-      [ops.scope, "copy"],
-      [
-        [ops.scope, "app"],
-        [ops.scope, "formulas"],
-      ],
-      [
-        [ops.scope, "files"],
-        [ops.literal, "snapshot"],
-      ],
-    ]);
-    assertParse("expr", "@map =`<li>${_}</li>`", [
-      [ops.scope, "@map"],
-      [
-        ops.lambda,
-        ["_"],
-        [
-          ops.template,
-          [ops.literal, ["<li>", "</li>"]],
-          [ops.concat, [ops.scope, "_"]],
-        ],
-      ],
-    ]);
-    assertParse("expr", `"https://example.com"`, [
-      ops.literal,
-      "https://example.com",
-    ]);
-    assertParse("expr", "'Hello' -> test.orit", [
-      [ops.scope, "test.orit"],
-      [ops.literal, "Hello"],
-    ]);
-    assertParse("expr", "tag`Hello, ${name}!`", [
-      [ops.scope, "tag"],
-      [ops.literal, ["Hello, ", "!"]],
-      [ops.concat, [ops.scope, "name"]],
     ]);
   });
 
@@ -165,11 +92,13 @@ describe("Origami parser", () => {
       [ops.scope, "path/"],
       [ops.literal, "key"],
     ]);
+
     // Single slash at start of something = absolute file path
     assertParse("expression", "/path", [
       [ops.filesRoot],
       [ops.literal, "path"],
     ]);
+
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
     assertParse("expression", "page.ori(mdHtml:(about.md))", [
@@ -179,31 +108,39 @@ describe("Origami parser", () => {
         [ops.scope, "about.md"],
       ],
     ]);
+
+    assertParse("expression", "'Hello' -> test.orit", [
+      [ops.scope, "test.orit"],
+      [ops.literal, "Hello"],
+    ]);
   });
 
   test("functionComposition", () => {
-    assertParse("functionComposition", "fn()", [[ops.scope, "fn"], undefined]);
-    assertParse("functionComposition", "fn(arg)", [
-      [ops.scope, "fn"],
+    assertParse("functionComposition", "fn()", [
+      [ops.builtin, "fn"],
+      undefined,
+    ]);
+    assertParse("functionComposition", "foo.js(arg)", [
+      [ops.scope, "foo.js"],
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "fn(a, b)", [
-      [ops.scope, "fn"],
+      [ops.builtin, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assertParse("functionComposition", "fn( a , b )", [
-      [ops.scope, "fn"],
+    assertParse("functionComposition", "foo.js( a , b )", [
+      [ops.scope, "foo.js"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
     assertParse("functionComposition", "fn()(arg)", [
-      [[ops.scope, "fn"], undefined],
+      [[ops.builtin, "fn"], undefined],
       [ops.scope, "arg"],
     ]);
-    assertParse("functionComposition", "fn()/key", [
+    assertParse("functionComposition", "foo.js()/key", [
       ops.traverse,
-      [[ops.scope, "fn"], undefined],
+      [[ops.scope, "foo.js"], undefined],
       [ops.literal, "key"],
     ]);
     assertParse("functionComposition", "tree/key()", [
@@ -215,22 +152,22 @@ describe("Origami parser", () => {
       [ops.scope, "tree"],
     ]);
     assertParse("functionComposition", "fn()/key()", [
-      [ops.traverse, [[ops.scope, "fn"], undefined], [ops.literal, "key"]],
+      [ops.traverse, [[ops.builtin, "fn"], undefined], [ops.literal, "key"]],
       undefined,
     ]);
-    assertParse("functionComposition", "(fn())('arg')", [
-      [[ops.scope, "fn"], undefined],
+    assertParse("functionComposition", "(foo.js())('arg')", [
+      [[ops.scope, "foo.js"], undefined],
       [ops.literal, "arg"],
     ]);
     assertParse("functionComposition", "fn('a')('b')", [
       [
-        [ops.scope, "fn"],
+        [ops.builtin, "fn"],
         [ops.literal, "a"],
       ],
       [ops.literal, "b"],
     ]);
-    assertParse("functionComposition", "(fn())(a, b)", [
-      [[ops.scope, "fn"], undefined],
+    assertParse("functionComposition", "(foo.js())(a, b)", [
+      [[ops.scope, "foo.js"], undefined],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
@@ -240,31 +177,31 @@ describe("Origami parser", () => {
       [ops.literal, "b"],
     ]);
     assertParse("functionComposition", "fn arg", [
-      [ops.scope, "fn"],
+      [ops.builtin, "fn"],
       [ops.scope, "arg"],
     ]);
-    assertParse("functionComposition", "fn 'a', 'b'", [
-      [ops.scope, "fn"],
+    assertParse("functionComposition", "page.ori 'a', 'b'", [
+      [ops.scope, "page.ori"],
       [ops.literal, "a"],
       [ops.literal, "b"],
     ]);
     assertParse("functionComposition", "fn a(b), c", [
-      [ops.scope, "fn"],
+      [ops.builtin, "fn"],
       [
-        [ops.scope, "a"],
+        [ops.builtin, "a"],
         [ops.scope, "b"],
       ],
       [ops.scope, "c"],
     ]);
-    assertParse("functionComposition", "fn1 fn2 'arg'", [
-      [ops.scope, "fn1"],
+    assertParse("functionComposition", "foo.js bar.ori 'arg'", [
+      [ops.scope, "foo.js"],
       [
-        [ops.scope, "fn2"],
+        [ops.scope, "bar.ori"],
         [ops.literal, "arg"],
       ],
     ]);
     assertParse("functionComposition", "(fn()) 'arg'", [
-      [[ops.scope, "fn"], undefined],
+      [[ops.builtin, "fn"], undefined],
       [ops.literal, "arg"],
     ]);
     assertParse("functionComposition", "tree/key arg", [
@@ -279,21 +216,30 @@ describe("Origami parser", () => {
       ],
       [ops.literal, "2025-01-01"],
     ]);
-    assertParse("functionComposition", ":map(markdown, :mdHtml)", [
-      [ops.builtin, ":map"],
+    assertParse("functionComposition", "map(markdown, mdHtml)", [
+      [ops.builtin, "map"],
       [ops.scope, "markdown"],
-      [ops.builtin, ":mdHtml"],
+      [ops.scope, "mdHtml"],
     ]);
+  });
+
+  test("functionReference", () => {
+    assertParse("functionReference", "json", [ops.builtin, "json"]);
+    assertParse("functionReference", "greet.js", [ops.scope, "greet.js"]);
   });
 
   test("group", () => {
     assertParse("group", "(hello)", [ops.scope, "hello"]);
     assertParse("group", "(((nested)))", [ops.scope, "nested"]);
-    assertParse("group", "(fn())", [[ops.scope, "fn"], undefined]);
+    assertParse("group", "(fn())", [[ops.builtin, "fn"], undefined]);
+    assertParse("group", "(a -> b)", [
+      [ops.builtin, "b"],
+      [ops.scope, "a"],
+    ]);
   });
 
-  test("homeDirectory", () => {
-    assertParse("homeDirectory", "~", [ops.homeTree]);
+  test("homeTree", () => {
+    assertParse("homeTree", "~", [ops.homeTree]);
   });
 
   test("host", () => {
@@ -325,11 +271,11 @@ describe("Origami parser", () => {
         [ops.concat, [ops.scope, "name"]],
       ],
     ]);
-    assertParse("lambda", "=:indent`hello`", [
+    assertParse("lambda", "=indent`hello`", [
       ops.lambda,
       ["_"],
       [
-        [ops.builtin, ":indent"],
+        [ops.builtin, "indent"],
         [ops.literal, ["hello"]],
       ],
     ]);
@@ -448,16 +394,19 @@ describe("Origami parser", () => {
     ]);
     assertParse("object", "{ a: { b = fn() } }", [
       ops.object,
-      ["a/", [ops.object, ["b", [ops.getter, [[ops.scope, "fn"], undefined]]]]],
+      [
+        "a/",
+        [ops.object, ["b", [ops.getter, [[ops.builtin, "fn"], undefined]]]],
+      ],
     ]);
-    assertParse("object", "{ x = fn('a') }", [
+    assertParse("object", "{ x = fn.js('a') }", [
       ops.object,
       [
         "x",
         [
           ops.getter,
           [
-            [ops.scope, "fn"],
+            [ops.scope, "fn.js"],
             [ops.literal, "a"],
           ],
         ],
@@ -497,12 +446,12 @@ describe("Origami parser", () => {
       "data",
       [ops.getter, [ops.scope, "obj.json"]],
     ]);
-    assertParse("objectGetter", "foo = fn 'bar'", [
+    assertParse("objectGetter", "foo = page.ori 'bar'", [
       "foo",
       [
         ops.getter,
         [
-          [ops.scope, "fn"],
+          [ops.scope, "page.ori"],
           [ops.literal, "bar"],
         ],
       ],
@@ -518,7 +467,7 @@ describe("Origami parser", () => {
     assertParse("objectProperty", "x: fn('a')", [
       "x",
       [
-        [ops.scope, "fn"],
+        [ops.builtin, "fn"],
         [ops.literal, "a"],
       ],
     ]);
@@ -540,7 +489,7 @@ describe("Origami parser", () => {
       ops.lambda,
       ["a", "b", "c"],
       [
-        [ops.scope, "fn"],
+        [ops.builtin, "fn"],
         [ops.scope, "a"],
         [ops.scope, "b"],
         [ops.scope, "c"],
@@ -553,7 +502,7 @@ describe("Origami parser", () => {
         ops.lambda,
         ["b"],
         [
-          [ops.scope, "fn"],
+          [ops.builtin, "fn"],
           [ops.scope, "a"],
           [ops.scope, "b"],
         ],
@@ -587,9 +536,20 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("callTarget", () => {
+    assertParse("callTarget", "foo", [ops.builtin, "foo"]);
+    assertParse("callTarget", "foo.js", [ops.scope, "foo.js"]);
+    assertParse("callTarget", "[1, 2]", [
+      ops.array,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
+  });
+
   test("pipeline", () => {
+    assertParse("pipeline", "foo", [ops.scope, "foo"]);
     assertParse("pipeline", "a -> b", [
-      [ops.scope, "b"],
+      [ops.builtin, "b"],
       [ops.scope, "a"],
     ]);
     assertParse("pipeline", "input → one.js → two.js", [
@@ -600,12 +560,28 @@ describe("Origami parser", () => {
       ],
     ]);
     assertParse("pipeline", "fn a -> b", [
-      [ops.scope, "b"],
+      [ops.builtin, "b"],
       [
-        [ops.scope, "fn"],
+        [ops.builtin, "fn"],
         [ops.scope, "a"],
       ],
     ]);
+  });
+
+  test("pipelineStep", () => {
+    assertParse("pipelineStep", "foo", [ops.builtin, "foo"]);
+    assertParse("pipelineStep", "=_", [ops.lambda, ["_"], [ops.scope, "_"]]);
+  });
+
+  test("program", () => {
+    assertParse(
+      "program",
+      `#!/usr/bin/env ori invoke
+'Hello'
+`,
+      [ops.literal, "Hello"],
+      false
+    );
   });
 
   test("scopeReference", () => {
@@ -626,23 +602,17 @@ describe("Origami parser", () => {
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
     ]);
+    assertParse("scopeTraverse", "origami:json", [
+      ops.traverse,
+      [ops.builtin, "origami:"],
+      [ops.literal, "json"],
+    ]);
     assertParse("scopeTraverse", "files:/etc/private", [
       ops.traverse,
       [ops.builtin, "files:"],
       [ops.literal, "etc/"],
       [ops.literal, "private"],
     ]);
-  });
-
-  test("shebang", () => {
-    assertParse(
-      "expression",
-      `#!/usr/bin/env ori @invoke
-'Hello'
-`,
-      [ops.literal, "Hello"],
-      false
-    );
   });
 
   test("singleLineComment", () => {
@@ -669,13 +639,13 @@ describe("Origami parser", () => {
   });
 
   test("taggedTemplate", () => {
-    assertParse("taggedTemplate", "tag`Hello, world.`", [
-      [ops.scope, "tag"],
-      [ops.literal, ["Hello, world."]],
-    ]);
-    assertParse("taggedTemplate", ":indent`hello`", [
-      [ops.builtin, ":indent"],
+    assertParse("taggedTemplate", "indent`hello`", [
+      [ops.builtin, "indent"],
       [ops.literal, ["hello"]],
+    ]);
+    assertParse("taggedTemplate", "fn.js`Hello, world.`", [
+      [ops.scope, "fn.js"],
+      [ops.literal, ["Hello, world."]],
     ]);
   });
 
@@ -748,6 +718,71 @@ describe("Origami parser", () => {
       false
     );
   });
+});
+
+test("value", () => {
+  assertParse("value", "obj.json", [ops.scope, "obj.json"]);
+  assertParse("value", "(fn a, b, c)", [
+    [ops.builtin, "fn"],
+    [ops.scope, "a"],
+    [ops.scope, "b"],
+    [ops.scope, "c"],
+  ]);
+  assertParse("value", "foo.bar('hello', 'world')", [
+    [ops.scope, "foo.bar"],
+    [ops.literal, "hello"],
+    [ops.literal, "world"],
+  ]);
+  assertParse("value", "(key)('a')", [
+    [ops.scope, "key"],
+    [ops.literal, "a"],
+  ]);
+  assertParse("value", "1", [ops.literal, 1]);
+  assertParse("value", "{ a: 1, b: 2 }", [
+    ops.object,
+    ["a", [ops.literal, 1]],
+    ["b", [ops.literal, 2]],
+  ]);
+  assertParse("value", "serve { index.html: 'hello' }", [
+    [ops.builtin, "serve"],
+    [ops.object, ["index.html", [ops.literal, "hello"]]],
+  ]);
+  assertParse("value", "fn =`x`", [
+    [ops.builtin, "fn"],
+    [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
+  ]);
+  assertParse("value", "copy app.js(formulas), files:snapshot", [
+    [ops.builtin, "copy"],
+    [
+      [ops.scope, "app.js"],
+      [ops.scope, "formulas"],
+    ],
+    [
+      [ops.builtin, "files:"],
+      [ops.literal, "snapshot"],
+    ],
+  ]);
+  assertParse("value", "@map =`<li>${_}</li>`", [
+    [ops.scope, "@map"],
+    [
+      ops.lambda,
+      ["_"],
+      [
+        ops.template,
+        [ops.literal, ["<li>", "</li>"]],
+        [ops.concat, [ops.scope, "_"]],
+      ],
+    ],
+  ]);
+  assertParse("value", `"https://example.com"`, [
+    ops.literal,
+    "https://example.com",
+  ]);
+  assertParse("value", "tag`Hello, ${name}!`", [
+    [ops.builtin, "tag"],
+    [ops.literal, ["Hello, ", "!"]],
+    [ops.concat, [ops.scope, "name"]],
+  ]);
 });
 
 function assertParse(startRule, source, expected, checkLocation = true) {

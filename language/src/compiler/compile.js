@@ -86,6 +86,13 @@ export function cacheExternalScopeReferences(code, cache, locals = {}) {
   return modified;
 }
 
+export function program(source, options = {}) {
+  return compile(source, {
+    ...options,
+    startRule: "program",
+  });
+}
+
 export function templateDocument(source, options = {}) {
   return compile(source, {
     ...options,
