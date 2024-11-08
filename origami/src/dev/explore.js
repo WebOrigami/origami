@@ -63,7 +63,7 @@ helpRegistry.set(
 // if any of its prototypes are the builtins tree.
 function isBuiltins(tree) {
   while (tree) {
-    if (tree === builtins) {
+    if (tree === builtinsTree) {
       return true;
     }
     tree = Object.getPrototypeOf(tree);

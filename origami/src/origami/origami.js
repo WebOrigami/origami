@@ -4,7 +4,7 @@ export { default as basename } from "./basename.js";
 
 // Use a dynamic import to avoid circular dependencies
 export const builtins = import("../builtins/internal.js").then(
-  (internal) => internal.builtins
+  (internal) => internal.builtinsTree
 );
 
 export { default as config } from "./config.js";
