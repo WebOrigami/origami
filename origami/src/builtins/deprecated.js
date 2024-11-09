@@ -15,7 +15,7 @@ const warningsDisplayedForKeys = new Set();
 export function command(namespace, newKey, oldKey, fn) {
   return function (...args) {
     const keys = newKey
-      ? `"${namespace}${newKey}" or ":${newKey}"`
+      ? `"${namespace}${newKey}" or just "${newKey}"`
       : `"${namespace}"`;
     if (!warningsDisplayedForKeys.has(oldKey)) {
       console.warn(
