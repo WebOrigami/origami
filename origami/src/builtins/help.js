@@ -6,27 +6,55 @@ import version from "../origami/version.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {string} [namespace]
+ * @param {string} [key]
  */
-export default async function help(namespace) {
+export default async function help(key) {
   assertTreeIsDefined(this, "help:");
   const builtinsTree = root(this);
   const builtins = builtinsTree.object;
-  if (namespace === undefined) {
+
+  if (key === undefined) {
+    // Show all namespace descriptions
     return namespaceDescriptions(builtins);
-  } else {
-    return commandDescriptions(builtins, `${namespace}:`);
   }
+
+  // Try treating key as a namespace.
+  const namespaceKey = `${key}:`;
+  const commands = builtins[namespaceKey];
+  if (commands) {
+    return namespaceCommands(commands, namespaceKey);
+  }
+
+  // Try treating key as a builtin command.
+  for (const namespace in builtins) {
+    const commands = builtins[namespace];
+    const command = commands[key];
+    if (command) {
+      return commandDescription(namespace, key);
+    }
+  }
+
+  return `"${key}" not found`;
 }
 
 helpRegistry.set("help:", "Get help on builtin namespaces and commands");
 
-async function commandDescriptions(builtins, namespace) {
-  const commands = builtins[namespace];
-  if (!commands) {
-    return `Namespace "${namespace}" not found`;
+async function commandDescription(namespace, key) {
+  const description = helpRegistry.get(`${namespace}${key}`);
+  if (description) {
+    const withoutColon = namespace.replace(/:$/, "");
+    const text = [
+      "",
+      `  ${namespace}${key}${description}`,
+      "",
+      `For more information: https://weborigami.org/builtins/${withoutColon}/${key}`,
+    ];
+    return text.join("\n");
   }
+  return `No help available for "${namespace}${key}"`;
+}
 
+async function namespaceCommands(commands, namespace) {
   const text = [];
   for (const key in commands) {
     const description = helpRegistry.get(`${namespace}${key}`);
@@ -50,7 +78,7 @@ async function commandDescriptions(builtins, namespace) {
   }
 
   text.push(
-    `For more information visit https://weborigami.org/builtins/${namespace}`
+    `For more information: https://weborigami.org/builtins/${namespace}`
   );
   return text.join("\n");
 }
