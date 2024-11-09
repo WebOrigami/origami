@@ -52,7 +52,7 @@ arrayEntries
 
 arrayEntry
   = spread
-  / value
+  / pipeline
 
 // Something that can be called. This is more restrictive than the `value`
 // parser; it doesn't accept regular function calls.
@@ -220,8 +220,8 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ expression:expression {
-      return annotate([ops.lambda, ["_"], expression], location());
+  = "=" __ pipeline:pipeline {
+      return annotate([ops.lambda, ["_"], pipeline], location());
     }
 
 // A path that begins with a slash: `/foo/bar`
@@ -284,8 +284,8 @@ objectEntry
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
-  = key:objectKey __ "=" __ value:value {
-      return annotate(makeProperty(key, [ops.getter, value]), location());
+  = key:objectKey __ "=" __ pipeline:pipeline {
+      return annotate(makeProperty(key, [ops.getter, pipeline]), location());
     }
 
 objectHiddenKey
@@ -297,8 +297,8 @@ objectKey "object key"
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = key:objectKey __ ":" __ value:value {
-      return annotate(makeProperty(key, value), location());
+  = key:objectKey __ ":" __ pipeline:pipeline {
+      return annotate(makeProperty(key, pipeline), location());
     }
 
 // A shorthand reference inside an object literal: `foo`
@@ -317,8 +317,8 @@ objectPublicKey
   }
 
 parameterizedLambda
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expression:expression {
-      return annotate([ops.lambda, parameters ?? [], expression], location());
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipeline {
+      return annotate([ops.lambda, parameters ?? [], pipeline], location());
     }
 
 // Function arguments in parentheses
@@ -486,7 +486,7 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" __ @value __ "}"
+  = "${" @expression "}"
 
 textChar
   = escapedChar

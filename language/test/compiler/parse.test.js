@@ -32,6 +32,15 @@ describe("Origami parser", () => {
       [ops.array, [ops.literal, 1]],
       [ops.array, [ops.literal, 2], [ops.literal, 3]],
     ]);
+    assertParse(
+      "array",
+      `[
+        1
+        2
+        3
+      ]`,
+      [ops.array, [ops.literal, 1], [ops.literal, 2], [ops.literal, 3]]
+    );
   });
 
   test("doubleSlashPath", () => {
@@ -54,7 +63,7 @@ describe("Origami parser", () => {
       `
         {
           index.html = index.ori(teamData.yaml)
-          thumbnails = @map(images, { value: thumbnail.js })
+          thumbnails = map(images, { value: thumbnail.js })
         }
       `,
       [
@@ -74,7 +83,7 @@ describe("Origami parser", () => {
           [
             ops.getter,
             [
-              [ops.scope, "@map"],
+              [ops.builtin, "map"],
               [ops.scope, "images"],
               [ops.object, ["value", [ops.scope, "thumbnail.js"]]],
             ],
@@ -384,6 +393,18 @@ describe("Origami parser", () => {
       ["a", [ops.getter, [ops.scope, "b"]]],
       ["b", [ops.literal, 2]],
     ]);
+    assertParse(
+      "object",
+      `{
+        a = b
+        b = 2
+      }`,
+      [
+        ops.object,
+        ["a", [ops.getter, [ops.scope, "b"]]],
+        ["b", [ops.literal, 2]],
+      ]
+    );
     assertParse("object", "{ a: { b: 1 } }", [
       ops.object,
       ["a", [ops.object, ["b", [ops.literal, 1]]]],

@@ -412,8 +412,8 @@ function peg$parse(input, options) {
   var peg$f27 = function() {
       return annotate([ops.literal, parseInt(text())], location());
     };
-  var peg$f28 = function(expression) {
-      return annotate([ops.lambda, ["_"], expression], location());
+  var peg$f28 = function(pipeline) {
+      return annotate([ops.lambda, ["_"], pipeline], location());
     };
   var peg$f29 = function(path) {
       return annotate(path ?? [], location());
@@ -437,12 +437,12 @@ function peg$parse(input, options) {
   var peg$f36 = function(entries) {
       return annotate(entries, location());
     };
-  var peg$f37 = function(key, value) {
-      return annotate(makeProperty(key, [ops.getter, value]), location());
+  var peg$f37 = function(key, pipeline) {
+      return annotate(makeProperty(key, [ops.getter, pipeline]), location());
     };
   var peg$f38 = function(hiddenKey) { return hiddenKey.join(""); };
-  var peg$f39 = function(key, value) {
-      return annotate(makeProperty(key, value), location());
+  var peg$f39 = function(key, pipeline) {
+      return annotate(makeProperty(key, pipeline), location());
     };
   var peg$f40 = function(key) {
       return annotate([key, [ops.inherited, key]], location());
@@ -454,8 +454,8 @@ function peg$parse(input, options) {
     // Remove `ops.literal` from the string code
     return string[1];
   };
-  var peg$f43 = function(parameters, expression) {
-      return annotate([ops.lambda, parameters ?? [], expression], location());
+  var peg$f43 = function(parameters, pipeline) {
+      return annotate([ops.lambda, parameters ?? [], pipeline], location());
     };
   var peg$f44 = function(list) {
       return annotate(list ?? [undefined], location());
@@ -869,7 +869,7 @@ function peg$parse(input, options) {
 
     s0 = peg$parsespread();
     if (s0 === peg$FAILED) {
-      s0 = peg$parsevalue();
+      s0 = peg$parsepipeline();
     }
 
     return s0;
@@ -1913,7 +1913,7 @@ function peg$parse(input, options) {
     }
     if (s1 !== peg$FAILED) {
       s2 = peg$parse__();
-      s3 = peg$parseexpression();
+      s3 = peg$parsepipeline();
       if (s3 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f28(s3);
@@ -2381,7 +2381,7 @@ function peg$parse(input, options) {
       }
       if (s3 !== peg$FAILED) {
         s4 = peg$parse__();
-        s5 = peg$parsevalue();
+        s5 = peg$parsepipeline();
         if (s5 !== peg$FAILED) {
           peg$savedPos = s0;
           s0 = peg$f37(s1, s5);
@@ -2486,7 +2486,7 @@ function peg$parse(input, options) {
       }
       if (s3 !== peg$FAILED) {
         s4 = peg$parse__();
-        s5 = peg$parsevalue();
+        s5 = peg$parsepipeline();
         if (s5 !== peg$FAILED) {
           peg$savedPos = s0;
           s0 = peg$f39(s1, s5);
@@ -2596,7 +2596,7 @@ function peg$parse(input, options) {
         s7 = peg$parsedoubleArrow();
         if (s7 !== peg$FAILED) {
           s8 = peg$parse__();
-          s9 = peg$parseexpression();
+          s9 = peg$parsepipeline();
           if (s9 !== peg$FAILED) {
             peg$savedPos = s0;
             s0 = peg$f43(s3, s9);
@@ -3543,7 +3543,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsetemplateSubstitution() {
-    var s0, s1, s2, s3, s4, s5;
+    var s0, s1, s2, s3;
 
     peg$silentFails++;
     s0 = peg$currPos;
@@ -3555,19 +3555,17 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e79); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parse__();
-      s3 = peg$parsevalue();
-      if (s3 !== peg$FAILED) {
-        s4 = peg$parse__();
+      s2 = peg$parseexpression();
+      if (s2 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 125) {
-          s5 = peg$c2;
+          s3 = peg$c2;
           peg$currPos++;
         } else {
-          s5 = peg$FAILED;
+          s3 = peg$FAILED;
           if (peg$silentFails === 0) { peg$fail(peg$e6); }
         }
-        if (s5 !== peg$FAILED) {
-          s0 = s3;
+        if (s3 !== peg$FAILED) {
+          s0 = s2;
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
