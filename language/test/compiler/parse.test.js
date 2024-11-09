@@ -783,6 +783,15 @@ test("value", () => {
     [ops.literal, ["Hello, ", "!"]],
     [ops.concat, [ops.scope, "name"]],
   ]);
+  assertParse("value", "(post, slug) => fn.js(post, slug)", [
+    ops.lambda,
+    ["post", "slug"],
+    [
+      [ops.scope, "fn.js"],
+      [ops.scope, "post"],
+      [ops.scope, "slug"],
+    ],
+  ]);
 });
 
 function assertParse(startRule, source, expected, checkLocation = true) {

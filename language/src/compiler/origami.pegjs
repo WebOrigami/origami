@@ -220,8 +220,8 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ value:value {
-      return annotate([ops.lambda, ["_"], value], location());
+  = "=" __ expression:expression {
+      return annotate([ops.lambda, ["_"], expression], location());
     }
 
 // A path that begins with a slash: `/foo/bar`
@@ -317,8 +317,8 @@ objectPublicKey
   }
 
 parameterizedLambda
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ value:value {
-      return annotate([ops.lambda, parameters ?? [], value], location());
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ expression:expression {
+      return annotate([ops.lambda, parameters ?? [], expression], location());
     }
 
 // Function arguments in parentheses
@@ -498,6 +498,7 @@ value
   = number
   // Try functions next; they can start with expression types that follow
   // (array, object, etc.), and we want to parse the larger thing first.
+  / parameterizedLambda
   / functionComposition
   / taggedTemplate
   / namespacePath
@@ -507,7 +508,6 @@ value
   / array
   / object
   / lambda
-  / parameterizedLambda
   / templateLiteral
   / string
   / group

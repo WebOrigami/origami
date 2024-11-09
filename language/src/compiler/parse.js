@@ -412,8 +412,8 @@ function peg$parse(input, options) {
   var peg$f27 = function() {
       return annotate([ops.literal, parseInt(text())], location());
     };
-  var peg$f28 = function(value) {
-      return annotate([ops.lambda, ["_"], value], location());
+  var peg$f28 = function(expression) {
+      return annotate([ops.lambda, ["_"], expression], location());
     };
   var peg$f29 = function(path) {
       return annotate(path ?? [], location());
@@ -454,8 +454,8 @@ function peg$parse(input, options) {
     // Remove `ops.literal` from the string code
     return string[1];
   };
-  var peg$f43 = function(parameters, value) {
-      return annotate([ops.lambda, parameters ?? [], value], location());
+  var peg$f43 = function(parameters, expression) {
+      return annotate([ops.lambda, parameters ?? [], expression], location());
     };
   var peg$f44 = function(list) {
       return annotate(list ?? [undefined], location());
@@ -1913,7 +1913,7 @@ function peg$parse(input, options) {
     }
     if (s1 !== peg$FAILED) {
       s2 = peg$parse__();
-      s3 = peg$parsevalue();
+      s3 = peg$parseexpression();
       if (s3 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f28(s3);
@@ -2596,7 +2596,7 @@ function peg$parse(input, options) {
         s7 = peg$parsedoubleArrow();
         if (s7 !== peg$FAILED) {
           s8 = peg$parse__();
-          s9 = peg$parsevalue();
+          s9 = peg$parseexpression();
           if (s9 !== peg$FAILED) {
             peg$savedPos = s0;
             s0 = peg$f43(s3, s9);
@@ -3611,21 +3611,21 @@ function peg$parse(input, options) {
 
     s0 = peg$parsenumber();
     if (s0 === peg$FAILED) {
-      s0 = peg$parsefunctionComposition();
+      s0 = peg$parseparameterizedLambda();
       if (s0 === peg$FAILED) {
-        s0 = peg$parsetaggedTemplate();
+        s0 = peg$parsefunctionComposition();
         if (s0 === peg$FAILED) {
-          s0 = peg$parsenamespacePath();
+          s0 = peg$parsetaggedTemplate();
           if (s0 === peg$FAILED) {
-            s0 = peg$parseabsoluteFilePath();
+            s0 = peg$parsenamespacePath();
             if (s0 === peg$FAILED) {
-              s0 = peg$parsearray();
+              s0 = peg$parseabsoluteFilePath();
               if (s0 === peg$FAILED) {
-                s0 = peg$parseobject();
+                s0 = peg$parsearray();
                 if (s0 === peg$FAILED) {
-                  s0 = peg$parselambda();
+                  s0 = peg$parseobject();
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parseparameterizedLambda();
+                    s0 = peg$parselambda();
                     if (s0 === peg$FAILED) {
                       s0 = peg$parsetemplateLiteral();
                       if (s0 === peg$FAILED) {
