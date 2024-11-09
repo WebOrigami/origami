@@ -17,6 +17,7 @@ import js from "./js.js";
 import instantiate from "./new.js";
 import node from "./node.js";
 import packageNamespace from "./package.js";
+import scope from "./scope.js";
 import treehttp from "./treehttp.js";
 import treehttps from "./treehttps.js";
 
@@ -36,6 +37,7 @@ export default {
   "node:": node,
   "origami:": origami,
   "package:": packageNamespace,
+  "scope:": scope,
   "site:": adjustReservedWords(site),
   "text:": text,
   "tree:": tree,
