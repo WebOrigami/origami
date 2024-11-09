@@ -99,7 +99,7 @@ async function namespaceDescriptions(builtins) {
     }
   }
   text.push(
-    `\nType "ori help:<namespace>" for more information or visit https://weborigami.org/builtins`
+    `\nType "ori help:<namespace>" for more or visit https://weborigami.org/builtins`
   );
   return text.join("\n");
 }
