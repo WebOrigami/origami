@@ -22,4 +22,9 @@ export default {
   url,
 };
 
+helpRegistry.set("node:Buffer", " - Node.js Buffer class");
+helpRegistry.set("node:path", " - Node.js path module");
+helpRegistry.set("node:process", " - Node.js process object");
+helpRegistry.set("node:url", " - Node.js URL module");
+
 helpRegistry.set("node:", "Node.js classes and modules");
