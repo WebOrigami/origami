@@ -11,7 +11,7 @@ import {
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
-import { scopeReferenceError } from "./errors.js";
+import { builtinReferenceError, scopeReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -56,7 +56,7 @@ export async function builtin(key) {
 
   const value = await current.get(key);
   if (value === undefined) {
-    throw await scopeReferenceError(current, key);
+    throw await builtinReferenceError(this, current, key);
   }
 
   return value;

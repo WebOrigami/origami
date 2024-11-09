@@ -1,6 +1,6 @@
 // Text we look for in an error stack to guess whether a given line represents a
 
-import { trailingSlash } from "@weborigami/async-tree";
+import { scope as scopeFn, trailingSlash } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { typos } from "./typos.js";
 
@@ -11,6 +11,25 @@ const origamiSourceSignals = [
   "origami/src/",
   "at Scope.evaluate",
 ];
+
+export async function builtinReferenceError(tree, builtins, key) {
+  const messages = [
+    `"${key}" is being called like a builtin function but no such builtin exists.`,
+  ];
+  // See if the key is in scope (but not as a builtin)
+  const scope = scopeFn(tree);
+  const value = await scope.get(key);
+  if (value === undefined) {
+    const typos = await formatScopeTypos(builtins, key);
+    messages.push(typos);
+  } else {
+    messages.push(
+      `If you want to reference the key "${key}" that's in scope, use "scope:${key}".`
+    );
+  }
+  const message = messages.join(" ");
+  return new ReferenceError(message);
+}
 
 /**
  * Format an error for display in the console.
