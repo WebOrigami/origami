@@ -14,4 +14,7 @@ export default function stringBuiltin(object) {
   return toString(object);
 }
 
-helpRegistry.set("origami:string", "(obj) - Coerce the object to a string");
+helpRegistry.set(
+  "origami:string",
+  "(obj) - Coerce a buffer or document to a string"
+);

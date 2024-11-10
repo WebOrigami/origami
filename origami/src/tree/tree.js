@@ -45,7 +45,6 @@ export const isTreelike = Tree.isTreelike;
 export const mapReduce = Tree.mapReduce;
 export const paths = Tree.paths;
 export const remove = Tree.remove;
-export const toFunction = Tree.toFunction;
 export const traverse = Tree.traverse;
 export const traverseOrThrow = Tree.traverseOrThrow;
 export const traversePath = Tree.traversePath;
@@ -88,10 +87,6 @@ helpRegistry.set(
 helpRegistry.set(
   "tree:remove",
   "(tree, key) - Remove the value for the key from tree"
-);
-helpRegistry.set(
-  "tree:toFunction",
-  "(tree) - The tree's get() method as a function"
 );
 helpRegistry.set(
   "tree:traverse",

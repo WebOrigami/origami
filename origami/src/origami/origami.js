@@ -1,13 +1,19 @@
 import helpRegistry from "../common/helpRegistry.js";
 
-export { default as basename } from "./basename.js";
-
 // Use a dynamic import to avoid circular dependencies
 export const builtins = import("../builtins/internal.js").then(
   (internal) => internal.builtinsTree
 );
 
+helpRegistry.set(
+  "origami:builtins",
+  " - The set of installed builtin functions"
+);
+
+export { replaceExtension, toFunction } from "../common/utilities.js";
+
 export { default as help } from "../builtins/help.js"; // Alias
+export { default as basename } from "./basename.js";
 export { default as config } from "./config.js";
 export { default as json } from "./json.js";
 export { default as jsonParse } from "./jsonParse.js";
@@ -28,16 +34,4 @@ export { default as version } from "./version.js";
 export { default as yaml } from "./yaml.js";
 export { default as yamlParse } from "./yamlParse.js";
 
-helpRegistry.set(
-  "origami:builtins",
-  " - The set of installed builtin functions"
-);
-helpRegistry.set(
-  "origami:naturalOrder",
-  " - A comparison function for natural sort order"
-);
-helpRegistry.set(
-  "origami:slash",
-  " - Helpers for working with trailing slashes"
-);
 helpRegistry.set("origami:", "Perform general Origami language functions");
