@@ -18,11 +18,13 @@ export default async function explore(...keys) {
     return undefined;
   }
 
+  const tree = Tree.from(this);
+
   /** @type {any} */
   let result;
   if (keys.length > 0) {
     // Traverse the scope using the given keys.
-    const debugTree = await debug.call(this, this);
+    const debugTree = await debug.call(tree, this);
     if (!debugTree) {
       return undefined;
     }
@@ -43,11 +45,10 @@ export default async function explore(...keys) {
     const templateFile = await miscFiles.get("explore.ori");
     const template = await templateFile.unpack();
 
-    const data = await getScopeData(scope(this));
+    const data = await getScopeData(scope(tree));
     const text = await template(data);
 
     result = new String(text);
-    const tree = this;
     result.unpack = () => debug.call(tree, tree);
   }
 
@@ -59,23 +60,11 @@ helpRegistry.set(
   "() - Explore the current scope [when run in browser]"
 );
 
-// To test if a given tree represents the builtins, we walk up the chain to see
-// if any of its prototypes are the builtins tree.
-function isBuiltins(tree) {
-  while (tree) {
-    if (tree === builtinsTree) {
-      return true;
-    }
-    tree = Object.getPrototypeOf(tree);
-  }
-  return false;
-}
-
 async function getScopeData(scope) {
   const trees = scope.trees ?? [scope];
   const data = [];
   for (const tree of trees) {
-    if (isBuiltins(tree)) {
+    if (tree.parent?.parent === undefined) {
       // Skip builtins.
       continue;
     }

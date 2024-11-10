@@ -3,9 +3,9 @@ let frame;
 
 const modes = {
   Content: "",
-  Index: "!@index",
-  YAML: "!@yaml",
-  SVG: "!@svg",
+  Index: "!index",
+  YAML: "!yaml",
+  SVG: "!svg",
 };
 
 // Extract the path from the URL hash.
