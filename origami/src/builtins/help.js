@@ -1,6 +1,7 @@
 import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import version from "../origami/version.js";
+import { builtinsTree } from "./internal.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -10,7 +11,6 @@ import version from "../origami/version.js";
  */
 export default async function help(key) {
   assertTreeIsDefined(this, "help:");
-  const builtinsTree = root(this);
   const builtins = builtinsTree.object;
 
   if (key === undefined) {
@@ -102,12 +102,4 @@ async function namespaceDescriptions(builtins) {
     `\nType "ori help:<namespace>" for more or visit https://weborigami.org/builtins`
   );
   return text.join("\n");
-}
-
-function root(tree) {
-  let current = tree;
-  while (current.parent) {
-    current = current.parent;
-  }
-  return current;
 }
