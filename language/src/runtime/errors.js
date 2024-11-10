@@ -14,7 +14,7 @@ const origamiSourceSignals = [
 
 export async function builtinReferenceError(tree, builtins, key) {
   const messages = [
-    `"${key}" is being called like a builtin function but no such builtin exists.`,
+    `"${key}" is being called as if it were a builtin function, but it's not.`,
   ];
   // See if the key is in scope (but not as a builtin)
   const scope = scopeFn(tree);
@@ -23,9 +23,7 @@ export async function builtinReferenceError(tree, builtins, key) {
     const typos = await formatScopeTypos(builtins, key);
     messages.push(typos);
   } else {
-    messages.push(
-      `If you want to reference the key "${key}" that's in scope, use "scope:${key}".`
-    );
+    messages.push(`Use "${key}/" instead.`);
   }
   const message = messages.join(" ");
   return new ReferenceError(message);
