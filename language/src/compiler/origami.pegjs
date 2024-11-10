@@ -62,6 +62,7 @@ callTarget "function call"
   / array
   / object
   / group
+  / namespacePath
   / namespace
   / functionReference
 
@@ -388,13 +389,7 @@ scopeReference "scope reference"
     }
 
 scopeTraverse
-  = ref:namespace path:path {
-      return annotate([ops.traverse, ref, ...path], location());
-    }
-  / ref:namespace "/" path:path? {
-      return annotate([ops.traverse, ref, ...(path ?? [])], location());
-    }
-  / ref:scopeReference "/" path:path? {
+  = ref:scopeReference "/" path:path? {
       const head = [ops.scope, `${ ref[1] }/`];
       head.location = ref.location;
       return annotate([ops.traverse, head, ...(path ?? [])], location());

@@ -43,6 +43,16 @@ describe("Origami parser", () => {
     );
   });
 
+  test("callTarget", () => {
+    assertParse("callTarget", "foo", [ops.builtin, "foo"]);
+    assertParse("callTarget", "foo.js", [ops.scope, "foo.js"]);
+    assertParse("callTarget", "[1, 2]", [
+      ops.array,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
+  });
+
   test("doubleSlashPath", () => {
     assertParse("doubleSlashPath", "//example.com", [
       [ops.literal, "example.com"],
@@ -230,6 +240,19 @@ describe("Origami parser", () => {
       [ops.scope, "markdown"],
       [ops.scope, "mdHtml"],
     ]);
+    assertParse(
+      "functionComposition",
+      "package:@weborigami/dropbox/auth(creds)",
+      [
+        [
+          [ops.builtin, "package:"],
+          [ops.literal, "@weborigami/"],
+          [ops.literal, "dropbox/"],
+          [ops.literal, "auth"],
+        ],
+        [ops.scope, "creds"],
+      ]
+    );
   });
 
   test("functionReference", () => {
@@ -557,16 +580,6 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("callTarget", () => {
-    assertParse("callTarget", "foo", [ops.builtin, "foo"]);
-    assertParse("callTarget", "foo.js", [ops.scope, "foo.js"]);
-    assertParse("callTarget", "[1, 2]", [
-      ops.array,
-      [ops.literal, 1],
-      [ops.literal, 2],
-    ]);
-  });
-
   test("pipeline", () => {
     assertParse("pipeline", "foo", [ops.scope, "foo"]);
     assertParse("pipeline", "a -> b", [
@@ -622,17 +635,6 @@ describe("Origami parser", () => {
       [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
-    ]);
-    assertParse("scopeTraverse", "origami:json", [
-      ops.traverse,
-      [ops.builtin, "origami:"],
-      [ops.literal, "json"],
-    ]);
-    assertParse("scopeTraverse", "files:/etc/private", [
-      ops.traverse,
-      [ops.builtin, "files:"],
-      [ops.literal, "etc/"],
-      [ops.literal, "private"],
     ]);
   });
 
