@@ -1,3 +1,4 @@
+export { default as builtinsTree } from "./src/builtins/builtinsTree.js";
 export * from "./src/calc/calc.js";
 export * from "./src/dev/dev.js";
 export * from "./src/handlers/handlerExports.js";
