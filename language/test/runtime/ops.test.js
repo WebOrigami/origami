@@ -47,18 +47,6 @@ describe("ops", () => {
     assert.equal(result, "Hello, world.");
   });
 
-  test("ops.constructor returns a constructor", async () => {
-    const scope = new ObjectTree({
-      "@js": {
-        Number: Number,
-      },
-    });
-    const fn = await ops.constructor.call(scope, "@js", "Number");
-    const number = fn("1");
-    assert(number instanceof Number);
-    assert.equal(number, 1);
-  });
-
   test("ops.inherited searches inherited scope", async () => {
     const parent = new ObjectTree({
       a: 1, // This is the inherited value we want

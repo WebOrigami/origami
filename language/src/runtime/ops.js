@@ -94,29 +94,6 @@ export async function concat(...args) {
 addOpLabel(concat, "«ops.concat»");
 
 /**
- * Find the indicated constructor in scope, then return a function which invokes
- * it with `new`.
- *
- * @this {AsyncTree}
- * @param  {...any} keys
- */
-export async function constructor(...keys) {
-  const tree = this;
-  const scope = scopeFn(tree);
-  let constructor = await Tree.traverseOrThrow(scope, ...keys);
-  if (isUnpackable(constructor)) {
-    constructor = await constructor.unpack();
-  }
-  // Origami may pass `undefined` as the first argument to the constructor. We
-  // don't pass that along, because constructors like `Date` don't like it.
-  return (...args) =>
-    args.length === 1 && args[0] === undefined
-      ? new constructor()
-      : new constructor(...args);
-}
-addOpLabel(constructor, "«ops.constructor»");
-
-/**
  * This op is only used during parsing. It signals to ops.object that the
  * "arguments" of the expression should be used to define a property getter.
  */

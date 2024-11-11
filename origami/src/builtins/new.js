@@ -1,16 +1,43 @@
-import { isUnpackable } from "@weborigami/async-tree";
+import { isUnpackable, scope as scopeFn, Tree } from "@weborigami/async-tree";
 import helpRegistry from "../common/helpRegistry.js";
+import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
-export default async function instantiate(constructor) {
+/**
+ * Find the indicated class constructor in scope, then return a function which
+ * invokes it with `new`.
+ *
+ * This can also take a single argument that is a class.
+ *
+ * @this {import("@weborigami/types").AsyncTree|null}
+ * @param  {...any} keys
+ */
+export default async function instantiate(...keys) {
+  assertTreeIsDefined(this, "new:");
+  let constructor;
+  const scope = scopeFn(this);
+  if (
+    keys.length === 1 &&
+    (typeof keys[0] === "object" || typeof keys[0] === "function")
+  ) {
+    constructor = keys[0];
+  } else {
+    constructor = await Tree.traverseOrThrow(scope, ...keys);
+  }
   if (isUnpackable(constructor)) {
     constructor = await constructor.unpack();
   }
   // Origami may pass `undefined` as the first argument to the constructor. We
   // don't pass that along, because constructors like `Date` don't like it.
-  return (...args) =>
-    args.length === 1 && args[0] === undefined
-      ? new constructor()
-      : new constructor(...args);
+  return (...args) => {
+    const object =
+      args.length === 1 && args[0] === undefined
+        ? new constructor()
+        : new constructor(...args);
+    if (Tree.isAsyncTree(object)) {
+      object.parent = scope;
+    }
+    return object;
+  };
 }
 
 helpRegistry.set("new:", "Create instances of JavaScript classes");
