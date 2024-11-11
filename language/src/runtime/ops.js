@@ -1,6 +1,7 @@
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  */
 
 import {
@@ -173,7 +174,7 @@ export function lambda(parameters, code) {
     return lambdaFnMap.get(code);
   }
 
-  /** @this {AsyncTree|null} */
+  /** @this {Treelike|null} */
   async function invoke(...args) {
     // Add arguments to scope.
     const ambients = {};
@@ -181,7 +182,10 @@ export function lambda(parameters, code) {
       ambients[parameter] = args.shift();
     }
     const ambientTree = new ObjectTree(ambients);
-    ambientTree.parent = this;
+    // Origami ops should be called with a Tree as `this`, but functions defined
+    // on Origami objects (e.g., in .ori files) will end up being bound to a
+    // plain object. So we need to coerce `this` to a Tree.
+    ambientTree.parent = Tree.from(this);
 
     let result = await evaluate.call(ambientTree, code);
 
