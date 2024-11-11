@@ -162,7 +162,7 @@ export function lambda(parameters, code) {
     // Origami ops should be called with a Tree as `this`, but functions defined
     // on Origami objects (e.g., in .ori files) will end up being bound to a
     // plain object. So we need to coerce `this` to a Tree.
-    ambientTree.parent = Tree.from(this);
+    ambientTree.parent = this ? Tree.from(this) : null;
 
     let result = await evaluate.call(ambientTree, code);
 
