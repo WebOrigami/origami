@@ -24,6 +24,9 @@ export default async function inline(input) {
   }
   const inputIsDocument = input["@text"] !== undefined;
   const origami = inputIsDocument ? input["@text"] : toString(input);
+  if (origami === null) {
+    return undefined;
+  }
 
   const parent =
     /** @type {any} */ (input).parent ?? input[symbols.parent] ?? this;
