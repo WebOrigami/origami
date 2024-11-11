@@ -72,11 +72,11 @@ export function formatError(error) {
 
 export async function formatScopeTypos(scope, key) {
   const keys = await scopeTypos(scope, key);
-  if (keys.length === 0) {
-    return "";
-  }
   // Don't match deprecated keys
   const filtered = keys.filter((key) => !key.startsWith("@"));
+  if (filtered.length === 0) {
+    return "";
+  }
   const quoted = filtered.map((key) => `"${key}"`);
   const list = quoted.join(", ");
   return `Maybe you meant ${list}?`;
