@@ -1,4 +1,4 @@
-import { ObjectTree, symbols } from "@weborigami/async-tree";
+import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import { extname, handleExtension } from "./extensions.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -22,6 +22,9 @@ import { evaluate, ops } from "./internal.js";
 export default async function expressionObject(entries, parent) {
   // Create the object and set its parent
   const object = {};
+  if (parent !== null && !Tree.isAsyncTree(parent)) {
+    throw new TypeError(`Parent must be an AsyncTree or null`);
+  }
   Object.defineProperty(object, symbols.parent, {
     configurable: true,
     enumerable: false,

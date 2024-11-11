@@ -37,7 +37,12 @@ export default async function getTreeArgument(
       let tree = Tree.from(treelike, { deep });
       // If the tree was created from a treelike object and does not yet have a
       // parent, make the current tree its parent.
-      if (!tree.parent) {
+      if (!tree.parent && parent !== undefined) {
+        if (parent !== null && !Tree.isAsyncTree(parent)) {
+          throw new Error(
+            `The parent argument passed to ${methodName} must be a tree.`
+          );
+        }
         tree.parent = parent;
       }
       return tree;
