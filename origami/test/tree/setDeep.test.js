@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import setDeep from "../../src/tree/setDeep.js";
 
-describe("@tree/setDeep", () => {
+describe("tree/setDeep", () => {
   test("can apply updates with a single argument to set", async () => {
     const tree = new DeepObjectTree({
       a: 1,

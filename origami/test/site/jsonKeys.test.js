@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import jsonKeys from "../../src/site/jsonKeys.js";
 
-describe("@jsonKeys", () => {
+describe("jsonKeys", () => {
   test("adds .keys.json entries to tree", async () => {
     const tree = new DeepObjectTree({
       about: {

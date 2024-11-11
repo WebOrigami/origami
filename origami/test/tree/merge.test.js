@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import merge from "../../src/tree/merge.js";
 
-describe("@merge", () => {
+describe("merge", () => {
   test("merges trees", async () => {
     const tree = await merge.call(
       null,

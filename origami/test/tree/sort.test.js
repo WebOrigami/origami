@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import sort from "../../src/tree/sort.js";
 
-describe("@sort", () => {
+describe("sort", () => {
   test("sorts keys", async () => {
     const tree = {
       b: 2,

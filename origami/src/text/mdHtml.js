@@ -39,7 +39,7 @@ marked.use(
  */
 export default async function mdHtml(input) {
   if (input == null) {
-    const error = new TypeError("@mdHtml: The input is not defined.");
+    const error = new TypeError("mdHtml: The input is not defined.");
     /** @type {any} */ (error).position = 0;
     throw error;
   }
@@ -49,7 +49,7 @@ export default async function mdHtml(input) {
   const inputIsDocument = input["@text"] !== undefined;
   const markdown = toString(input);
   if (markdown === null) {
-    throw new Error("@mdHtml: The provided input couldn't be treated as text.");
+    throw new Error("mdHtml: The provided input couldn't be treated as text.");
   }
   const html = marked(markdown);
   return inputIsDocument ? documentObject(html, input) : html;

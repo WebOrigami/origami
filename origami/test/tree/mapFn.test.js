@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import mapFn from "../../src/tree/mapFn.js";
 
-describe("@mapFn", () => {
+describe("mapFn", () => {
   test("puts value and key in scope", async () => {
     const treelike = new ObjectTree([
       { name: "Alice", age: 1 },

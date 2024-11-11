@@ -11,7 +11,7 @@ class DeepObjectTreeWithoutKeys extends DeepObjectTree {
   }
 }
 
-describe("@crawl", () => {
+describe("crawl", () => {
   test("finds linked pages", async () => {
     const tree = {
       "index.html": `

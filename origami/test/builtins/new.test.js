@@ -6,11 +6,11 @@ import instantiate from "../../src/builtins/new.js";
 describe("new:", () => {
   test("finds class in scope and returns a constructor", async () => {
     const scope = new ObjectTree({
-      "@js": {
+      "js:": {
         Number: Number,
       },
     });
-    const fn = await instantiate.call(scope, "@js", "Number");
+    const fn = await instantiate.call(scope, "js:", "Number");
     const number = fn("1");
     assert(number instanceof Number);
     assert.equal(number, 1);

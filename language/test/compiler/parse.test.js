@@ -475,10 +475,10 @@ describe("Origami parser", () => {
       "a",
       [ops.lambda, ["a"], [ops.scope, "a"]],
     ]);
-    assertParse("objectEntry", "posts/: @map(posts, post.ori)", [
+    assertParse("objectEntry", "posts/: map(posts, post.ori)", [
       "posts/",
       [
-        [ops.scope, "@map"],
+        [ops.builtin, "map"],
         [ops.inherited, "posts"],
         [ops.scope, "post.ori"],
       ],
@@ -785,8 +785,8 @@ test("value", () => {
       [ops.literal, "snapshot"],
     ],
   ]);
-  assertParse("value", "@map =`<li>${_}</li>`", [
-    [ops.scope, "@map"],
+  assertParse("value", "map =`<li>${_}</li>`", [
+    [ops.builtin, "map"],
     [
       ops.lambda,
       ["_"],

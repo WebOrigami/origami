@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import sitemap from "../../src/site/sitemap.js";
 
-describe("@sitemap", () => {
+describe("sitemap", () => {
   test("returns a sitemap for a tree", async () => {
     const tree = new DeepObjectTree({
       "a.html": "A",

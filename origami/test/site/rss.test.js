@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import rss from "../../src/site/rss.js"; // Adjust the import path according to your project structure
 
-describe("@rss", () => {
+describe("rss", () => {
   test("converts a simple JSON Feed entry with one item to RSS format", async () => {
     const jsonFeed = {
       title: "Test Feed",

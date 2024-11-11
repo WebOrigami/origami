@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import map from "../../src/tree/map.js";
 
-describe("@map", () => {
+describe("map", () => {
   test("applies a transform to a tree", async () => {
     const treelike = new ObjectTree([
       { name: "Alice", age: 1 },

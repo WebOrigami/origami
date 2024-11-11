@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import once from "../../src/origami/once.js";
 
-describe("@once", () => {
+describe("once", () => {
   test("evaluates a function only once", async () => {
     let counter = 0;
     const promise = once.call(null, () => ++counter);

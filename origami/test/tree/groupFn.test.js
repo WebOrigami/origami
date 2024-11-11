@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import groupFn from "../../src/tree/groupFn.js";
 
-describe("@groupFn", () => {
+describe("groupFn", () => {
   test("groups using a group key function", async () => {
     const fonts = [
       { name: "Aboreto", tags: ["Sans Serif"] },

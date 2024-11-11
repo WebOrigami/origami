@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import addNextPrevious from "../../src/tree/addNextPrevious.js";
 
-describe("@addNextPrevious", () => {
+describe("addNextPrevious", () => {
   test("adds next/previous properties to values", async () => {
     const tree = {
       alice: {

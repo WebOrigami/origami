@@ -14,14 +14,16 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 export default async function instantiate(...keys) {
   assertTreeIsDefined(this, "new:");
   let constructor;
-  const scope = scopeFn(this);
+  const scope = this ? scopeFn(this) : null;
   if (
     keys.length === 1 &&
     (typeof keys[0] === "object" || typeof keys[0] === "function")
   ) {
     constructor = keys[0];
-  } else {
+  } else if (scope) {
     constructor = await Tree.traverseOrThrow(scope, ...keys);
+  } else {
+    throw new TypeError(`new: The scope isn't defined.`);
   }
   if (isUnpackable(constructor)) {
     constructor = await constructor.unpack();

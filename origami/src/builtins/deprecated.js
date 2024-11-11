@@ -48,10 +48,12 @@ export function commands(namespace, object) {
 export default {
   ...commands("calc:", calc),
   ...commands("dev:", dev),
+  "@false": command("js:", "false", "@false", js.false),
   "@fetch": command("js:", "fetch", "@fetch", js.fetch),
   "@files": command("files:", null, "@files/", files),
   "@image": command("image:", null, "@image/", image),
   "@js": command("js:", null, "@js/", js),
+  "@math": command("calc:", null, "@math/", calc),
   "@mdHtml": command("text:", "mdHtml", "@mdHtml", text.mdHtml),
   "@node": command("node:", null, "@node/", node),
   ...commands("origami:", origami),
@@ -59,4 +61,5 @@ export default {
   ...commands("text:", text),
   ...commands("tree:", tree),
   "@tree": command("tree:", null, "@tree/", Tree),
+  "@true": command("js:", "true", "@true", js.true),
 };

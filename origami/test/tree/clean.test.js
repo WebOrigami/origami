@@ -9,7 +9,7 @@ import clean from "../../src/tree/clean.js";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("@clean", () => {
+describe("clean", () => {
   test("unsets all public keys in an object tree", async () => {
     const tree = new ObjectTree({ a: 1, b: 2, c: 3 });
     await clean.call(null, tree);

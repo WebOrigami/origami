@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import paginateFn from "../../src/tree/paginateFn.js";
 
-describe("@paginateFn", () => {
+describe("paginateFn", () => {
   test("divides tree keys into fixed-length chunks", async () => {
     const treelike = {
       a: 1,

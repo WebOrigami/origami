@@ -5,7 +5,7 @@ import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import project from "../../src/origami/project.js";
 
-describe("@project", () => {
+describe("project", () => {
   test("finds Origami configuration file", async () => {
     // Find the folder that represents a project root.
     const projectUrl = new URL("fixtures/config/", import.meta.url);
