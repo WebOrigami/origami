@@ -13,7 +13,7 @@ import node from "./node.js";
 const warningsDisplayedForKeys = new Set();
 
 export function command(namespace, newKey, oldKey, fn) {
-  return function (...args) {
+  const wrappedFn = function (...args) {
     const keys = newKey
       ? `"${namespace}${newKey}" or just "${newKey}"`
       : `"${namespace}"`;
@@ -28,6 +28,13 @@ export function command(namespace, newKey, oldKey, fn) {
         fn.call(this, ...args)
       : Tree.traverseOrThrow(fn, ...args);
   };
+  if (fn.key) {
+    wrappedFn.key = fn.key;
+  }
+  if (fn.inverseKey) {
+    wrappedFn.inverseKey = fn.inverseKey;
+  }
+  return wrappedFn;
 }
 
 export function commands(namespace, object) {
