@@ -28,13 +28,12 @@ export default async function help(key) {
   // Try treating key as a builtin command.
   for (const namespace in builtins) {
     const commands = builtins[namespace];
-    const command = commands[key];
-    if (command) {
+    if (commands && Object.hasOwn(commands, key)) {
       return commandDescription(namespace, key);
     }
   }
 
-  return `"${key}" not found`;
+  return `help: "${key}" not found`;
 }
 
 helpRegistry.set("help:", "Get help on builtin namespaces and commands");
