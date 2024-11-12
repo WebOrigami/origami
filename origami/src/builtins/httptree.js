@@ -4,7 +4,7 @@ import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
- * Return a website tree via HTTPS.
+ * Return a website tree via HTTP.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -14,9 +14,9 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  * @param {string} host
  * @param  {...string} keys
  */
-export default function treehttps(host, ...keys) {
-  assertTreeIsDefined(this, "treehttps:");
-  return constructSiteTree("https:", SiteTree, this, host, ...keys);
+export default function httptree(host, ...keys) {
+  assertTreeIsDefined(this, "httptree:");
+  return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }
 
-helpRegistry.set("treehttps:", "URL protocol for a website tree via HTTPS");
+helpRegistry.set("httptree:", "URL protocol for a website tree via HTTP");

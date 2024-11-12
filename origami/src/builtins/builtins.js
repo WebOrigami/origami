@@ -12,14 +12,14 @@ import files from "./files.js";
 import help from "./help.js";
 import http from "./http.js";
 import https from "./https.js";
+import httpstree from "./httpstree.js";
+import httptree from "./httptree.js";
 import inherited from "./inherited.js";
 import js from "./js.js";
 import instantiate from "./new.js";
 import node from "./node.js";
 import packageNamespace from "./package.js";
 import scope from "./scope.js";
-import treehttp from "./treehttp.js";
-import treehttps from "./treehttps.js";
 
 /** @type {any} */
 export default {
@@ -30,6 +30,8 @@ export default {
   "help:": help,
   "http:": http,
   "https:": https,
+  "httpstree:": httpstree,
+  "httptree:": httptree,
   "image:": image,
   "inherited:": inherited,
   "js:": js,
@@ -41,8 +43,6 @@ export default {
   "site:": adjustReservedWords(site),
   "text:": text,
   "tree:": tree,
-  "treehttp:": treehttp,
-  "treehttps:": treehttps,
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
