@@ -43,11 +43,14 @@ export default async function help(key) {
 }
 
 async function commandDescription(commandHelp, namespace, command) {
+  const url = commandHelp.collection
+    ? `${namespace}.html`
+    : `${namespace}/${command}.html`;
   const text = [
     "",
     formatCommandDescription(commandHelp, namespace, command),
     "",
-    `For more information: https://weborigami.org/builtins/${namespace}/${command}`,
+    `For more information: https://weborigami.org/builtins/${url}`,
   ];
   return text.join("\n");
 }
@@ -78,9 +81,8 @@ async function namespaceCommands(namespaceHelp, namespace) {
     text.push("");
   }
 
-  text.push(
-    `For more information: https://weborigami.org/builtins/${namespace}`
-  );
+  const url = namespaceHelp.collection ? `${namespace}.html` : `${namespace}/`;
+  text.push(`For more information: https://weborigami.org/builtins/${url}`);
   return text.join("\n");
 }
 
