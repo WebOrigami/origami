@@ -1,7 +1,7 @@
+import { builtinsTree } from "../builtins/internal.js";
 import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import version from "../origami/version.js";
-import { builtinsTree } from "./internal.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

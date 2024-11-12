@@ -12,7 +12,7 @@ helpRegistry.set(
 
 export { replaceExtension, toFunction } from "../common/utilities.js";
 
-export { default as help } from "../builtins/help.js"; // Alias
+export { default as help } from "../help/help.js"; // Alias
 export { default as basename } from "./basename.js";
 export { default as config } from "./config.js";
 export { default as json } from "./json.js";
