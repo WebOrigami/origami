@@ -1,6 +1,5 @@
 import constructHref from "../common/constructHref.js";
 import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -17,5 +16,3 @@ export default async function http(host, ...keys) {
   const href = constructHref("http:", host, ...keys);
   return fetchAndHandleExtension.call(this, href);
 }
-
-helpRegistry.set("http:", "URL protocol for web resources via HTTP");

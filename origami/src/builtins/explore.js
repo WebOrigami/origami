@@ -1,6 +1,5 @@
 import { ExplorableSiteTree } from "@weborigami/async-tree";
 import constructSiteTree from "../common/constructSiteTree.js";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -18,8 +17,3 @@ export default function explore(host, ...keys) {
   assertTreeIsDefined(this, "explore:");
   return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
 }
-
-helpRegistry.set(
-  "explore:",
-  "URL protocol to treat a website with JSON keys as a tree"
-);

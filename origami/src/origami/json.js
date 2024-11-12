@@ -1,6 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -27,5 +26,3 @@ export default async function json(obj) {
   const value = await toPlainValue(obj);
   return JSON.stringify(value, null, 2);
 }
-
-helpRegistry.set("origami:json", "(obj) - Render the object in JSON format");

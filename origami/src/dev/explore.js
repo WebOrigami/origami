@@ -2,7 +2,6 @@
 import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import { builtinsTree } from "../builtins/internal.js";
-import helpRegistry from "../common/helpRegistry.js";
 import { keySymbol } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import debug from "./debug.js";
@@ -54,11 +53,6 @@ export default async function explore(...keys) {
 
   return result;
 }
-
-helpRegistry.set(
-  "dev:explore",
-  "() - Explore the current scope [when run in browser]"
-);
 
 async function getScopeData(scope) {
   const trees = scope.trees ?? [scope];

@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import deepMapFn from "./deepMapFn.js";
 
@@ -18,8 +17,3 @@ export default function deepMap(source, operation) {
   assertTreeIsDefined(this, "tree:deepMap");
   return deepMapFn.call(this, operation)(source);
 }
-
-helpRegistry.set(
-  "tree:deepMap",
-  "(tree, options) - Map the keys and values of a deep tree"
-);

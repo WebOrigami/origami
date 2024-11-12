@@ -1,5 +1,4 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 
 /**
  * Given an old tree and a new tree, return a tree of changes indicated
@@ -63,5 +62,3 @@ export default async function changes(oldTreelike, newTreelike) {
 
   return result;
 }
-
-helpRegistry.set("dev:changes", "(old, new) - Return a tree of changes");

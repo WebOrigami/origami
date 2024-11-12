@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -14,5 +13,3 @@ export default async function length(treelike) {
   const keys = Array.from(await tree.keys());
   return keys.length;
 }
-
-helpRegistry.set("tree:length", "(tree) - The tree's size (number of keys)");

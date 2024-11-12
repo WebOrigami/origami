@@ -1,5 +1,7 @@
-import { builtinsTree } from "../builtins/internal.js";
-import helpRegistry from "../common/helpRegistry.js";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "url";
+import YAML from "yaml";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import version from "../origami/version.js";
 
@@ -11,69 +13,69 @@ import version from "../origami/version.js";
  */
 export default async function help(key) {
   assertTreeIsDefined(this, "help:");
-  const builtins = builtinsTree.object;
+
+  const helpFilename = path.resolve(
+    fileURLToPath(import.meta.url),
+    "../help.yaml"
+  );
+  const helpYaml = await fs.readFile(helpFilename);
+  const helpData = YAML.parse(String(helpYaml));
 
   if (key === undefined) {
     // Show all namespace descriptions
-    return namespaceDescriptions(builtins);
+    return namespaceDescriptions(helpData);
   }
 
   // Try treating key as a namespace.
-  const namespaceKey = `${key}:`;
-  const commands = builtins[namespaceKey];
-  if (commands) {
-    return namespaceCommands(commands, namespaceKey);
+  const namespace = helpData[key];
+  if (namespace) {
+    return namespaceCommands(namespace, key);
   }
 
   // Try treating key as a builtin command.
-  for (const namespace in builtins) {
-    const commands = builtins[namespace];
+  for (const [namespace, { commands }] of Object.entries(helpData)) {
     if (commands && Object.hasOwn(commands, key)) {
-      return commandDescription(namespace, key);
+      return commandDescription(commands[key], namespace, key);
     }
   }
 
   return `help: "${key}" not found`;
 }
 
-helpRegistry.set("help:", "Get help on builtin namespaces and commands");
-
-async function commandDescription(namespace, key) {
-  const description = helpRegistry.get(`${namespace}${key}`);
-  if (description) {
-    const withoutColon = namespace.replace(/:$/, "");
-    const text = [
-      "",
-      `  ${namespace}${key}${description}`,
-      "",
-      `For more information: https://weborigami.org/builtins/${withoutColon}/${key}`,
-    ];
-    return text.join("\n");
-  }
-  return `No help available for "${namespace}${key}"`;
+async function commandDescription(commandHelp, namespace, command) {
+  const text = [
+    "",
+    formatCommandDescription(commandHelp, namespace, command),
+    "",
+    `For more information: https://weborigami.org/builtins/${namespace}/${command}`,
+  ];
+  return text.join("\n");
 }
 
-async function namespaceCommands(commands, namespace) {
-  const text = [];
-  for (const key in commands) {
-    const description = helpRegistry.get(`${namespace}${key}`);
-    if (description) {
-      text.push(`  ${namespace}${key}${description}`);
-    }
-  }
+function formatCommandDescription(commandHelp, namespace, command) {
+  const { args, description } = commandHelp;
+  return `  ${namespace}:${command}${args ?? ""} - ${description}`;
+}
 
-  if (text.length === 0) {
-    text.push(`"${namespace}" works like a URL protocol.`);
+async function namespaceCommands(namespaceHelp, namespace) {
+  const text = [];
+
+  const commands = namespaceHelp.commands;
+  if (commands === undefined) {
+    text.push(`"${namespace}" works like a protocol at the start of a path.`);
   } else {
-    text.unshift("");
-    text.push("");
-    const description = helpRegistry.get(namespace);
-    if (description) {
+    if (namespaceHelp.description) {
+      const description = namespaceHelp.description;
       const lowercase = description[0].toLowerCase() + description.slice(1);
-      text.unshift(
+      text.push(
         `The "${namespace}" namespace contains commands to ${lowercase}.`
       );
     }
+    text.push("");
+    for (const [command, commandHelp] of Object.entries(commands)) {
+      text.push(formatCommandDescription(commandHelp, namespace, command));
+    }
+    text.push("");
   }
 
   text.push(
@@ -82,19 +84,14 @@ async function namespaceCommands(commands, namespace) {
   return text.join("\n");
 }
 
-async function namespaceDescriptions(builtins) {
+async function namespaceDescriptions(helpData) {
   const text = [
     `Origami ${version} has commands grouped into the following namespaces:\n`,
   ];
-  for (const key in builtins) {
-    if (key.startsWith(":")) {
-      // Skip shorthand keys like ":json".
-      continue;
-    }
-    const withoutColon = key.replace(/:$/, "");
-    const description = helpRegistry.get(key);
+  for (const [key, value] of Object.entries(helpData)) {
+    const description = value.description;
     if (description) {
-      text.push(`  ${withoutColon} - ${description}`);
+      text.push(`  ${key}: ${description}`);
     }
   }
   text.push(

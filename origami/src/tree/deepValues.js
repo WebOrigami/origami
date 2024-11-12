@@ -1,5 +1,4 @@
 import { deepValues } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -21,8 +20,3 @@ export default async function deepValuesBuiltin(treelike) {
   );
   return deepValues(tree);
 }
-
-helpRegistry.set(
-  "tree:deepValues",
-  "(tree) - The in-order leaf values of the tree"
-);

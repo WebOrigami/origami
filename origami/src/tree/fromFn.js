@@ -1,5 +1,4 @@
 import { FunctionTree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import { toFunction } from "../common/utilities.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
@@ -25,8 +24,3 @@ export default async function fromFn(invocable, keys = []) {
   tree.parent = this;
   return tree;
 }
-
-helpRegistry.set(
-  "tree:fromFn",
-  "(fn, [keys]) - A tree defined by a value function"
-);

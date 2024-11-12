@@ -1,14 +1,8 @@
 import process from "node:process";
-import helpRegistry from "../common/helpRegistry.js";
 
 export default async function stdin() {
   return readAll(process.stdin);
 }
-
-helpRegistry.set(
-  "origami:stdin",
-  " - Returns the content of the standard input stream"
-);
 
 function readAll(readable) {
   return new Promise((resolve) => {

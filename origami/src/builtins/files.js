@@ -2,7 +2,6 @@ import { OrigamiFiles } from "@weborigami/language";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -29,5 +28,3 @@ export default async function files(...keys) {
   const result = new OrigamiFiles(resolved);
   return result;
 }
-
-helpRegistry.set("files:", "URL protocol for file system folders and files");

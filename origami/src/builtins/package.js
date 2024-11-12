@@ -1,5 +1,4 @@
 import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import project from "../origami/project.js";
 
 /**
@@ -47,8 +46,3 @@ export default async function packageNamespace(...keys) {
       : packageExports;
   return result;
 }
-
-helpRegistry.set(
-  "package:",
-  "URL protocol for packages installed in node_modules"
-);

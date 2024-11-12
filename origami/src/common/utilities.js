@@ -6,8 +6,6 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 
-import helpRegistry from "./helpRegistry.js";
-
 // Return true if the text appears to contain non-printable binary characters;
 // used to infer whether a file is binary or text.
 export function hasNonPrintableCharacters(text) {
@@ -61,11 +59,6 @@ export function replaceExtension(key, sourceExtension, resultExtension) {
   return trailingSlash.toggle(replaced, trailingSlash.has(key));
 }
 
-helpRegistry.set(
-  "origami:replaceExtension",
-  "(filename, ext1, ext2) - Return filename with ext1 replaced by ext2"
-);
-
 /**
  * Convert the given object to a function.
  *
@@ -99,11 +92,6 @@ export function toFunction(obj) {
     return () => obj;
   }
 }
-
-helpRegistry.set(
-  "origami:toFunction",
-  "(obj) - Coerce a tree or packed function definition to a function"
-);
 
 /**
  * Extend the async-tree toString method: objects that have a `@text` property

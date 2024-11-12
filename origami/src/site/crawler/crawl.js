@@ -7,7 +7,6 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
-import helpRegistry from "../../common/helpRegistry.js";
 import getTreeArgument from "../../misc/getTreeArgument.js";
 import crawlResources from "./crawlResources.js";
 
@@ -99,11 +98,6 @@ export default async function crawlBuiltin(treelike, baseHref) {
   );
   return result;
 }
-
-helpRegistry.set(
-  "site:crawl",
-  "(tree, base) - A tree of a site's discoverable resources"
-);
 
 function addValueToObject(object, keys, value) {
   for (let i = 0, current = object; i < keys.length; i++) {

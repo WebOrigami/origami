@@ -1,5 +1,4 @@
 import { isUnpackable, scope as scopeFn, Tree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -41,5 +40,3 @@ export default async function instantiate(...keys) {
     return object;
   };
 }
-
-helpRegistry.set("new:", "Create instances of JavaScript classes");

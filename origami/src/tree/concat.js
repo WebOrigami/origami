@@ -1,6 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
 import { ops } from "@weborigami/language";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -16,8 +15,3 @@ export default async function concat(...args) {
   const tree = args.length === 0 ? this : Tree.from(args, { parent: this });
   return ops.concat.call(this, tree);
 }
-
-helpRegistry.set(
-  "tree:concat",
-  "(...objs) - Concatenate text and/or trees of text"
-);

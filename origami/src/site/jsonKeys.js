@@ -1,5 +1,4 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import { transformObject } from "../common/utilities.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
@@ -21,8 +20,6 @@ export default async function jsonKeysBuiltin(treelike) {
   );
   return transformObject(JsonKeysTransform, tree);
 }
-
-helpRegistry.set("site:jsonKeys", "(tree) - Add .keys.json files to a tree");
 
 function JsonKeysTransform(Base) {
   return class Static extends Base {

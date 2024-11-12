@@ -1,5 +1,4 @@
 import { deepMerge } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
@@ -24,5 +23,3 @@ export default async function treeDeepMerge(...trees) {
   const result = deepMerge(...filtered);
   return result;
 }
-
-helpRegistry.set("tree:deepMerge", "(...trees) - Return a deeply-merged tree");

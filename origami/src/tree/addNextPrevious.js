@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -62,8 +61,3 @@ export default async function addNextPrevious(treelike) {
     },
   });
 }
-
-helpRegistry.set(
-  "tree:addNextPrevious",
-  "(tree) - Add next/previous fields to the tree's values"
-);

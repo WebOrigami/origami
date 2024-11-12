@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import {
   default as ShuffleTransform,
   shuffle,
@@ -30,5 +29,3 @@ export default async function shuffleTree(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:shuffle");
   return transformObject(ShuffleTransform, tree);
 }
-
-helpRegistry.set("tree:shuffle", "(tree) - Shuffle the keys of the tree");

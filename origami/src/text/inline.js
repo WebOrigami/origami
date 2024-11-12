@@ -45,5 +45,3 @@ export default async function inline(input) {
     ? documentObject(templateResult, inputData)
     : templateResult;
 }
-inline.description =
-  "inline(text) - Inline Origami expressions found in the text";

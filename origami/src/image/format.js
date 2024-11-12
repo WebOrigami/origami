@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import imageFormatFn from "./formatFn.js";
 
@@ -17,8 +16,3 @@ export default async function imageFormat(input, format, options) {
   assertTreeIsDefined(this, "image:format");
   return imageFormatFn.call(this, format, options)(input);
 }
-
-helpRegistry.set(
-  "image:format",
-  "(image, format, options) - Return the image in a different format"
-);

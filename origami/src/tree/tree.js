@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 export { default as addNextPrevious } from "./addNextPrevious.js";
 export { default as cache } from "./cache.js";
 export { default as calendar } from "./calendar.js";
@@ -48,57 +47,3 @@ export const remove = Tree.remove;
 export const traverse = Tree.traverse;
 export const traverseOrThrow = Tree.traverseOrThrow;
 export const traversePath = Tree.traversePath;
-
-helpRegistry.set(
-  "tree:assign",
-  "(target, source) - Apply key/values from source to target"
-);
-helpRegistry.set("tree:entries", "(tree) - The tree's [key, value] pairs");
-helpRegistry.set("tree:forEach", "(tree, fn) - Apply fn to each (value, key)");
-helpRegistry.set(
-  "tree:from",
-  "(object, options) - Create a tree from an object"
-);
-helpRegistry.set("tree:has", "(tree, key) - True if key exists in tree");
-helpRegistry.set(
-  "tree:isAsyncMutableTree",
-  "(object) - True if object is an async mutable tree"
-);
-helpRegistry.set(
-  "tree:isAsyncTree",
-  "(object) - True if object is an async tree"
-);
-helpRegistry.set(
-  "tree:isTraversable",
-  "(object) - True if object is traversable"
-);
-helpRegistry.set(
-  "tree:isTreelike",
-  "(object) - True if object can be coerced to a tree"
-);
-helpRegistry.set(
-  "tree:mapReduce",
-  "(tree, valueFn, reduceFn) - Map values and reduce them"
-);
-helpRegistry.set(
-  "tree:paths",
-  "(tree) - Slash-separated paths for the tree's values"
-);
-helpRegistry.set(
-  "tree:remove",
-  "(tree, key) - Remove the value for the key from tree"
-);
-helpRegistry.set(
-  "tree:traverse",
-  "(tree, ...keys) - Return the value at the path of keys"
-);
-helpRegistry.set(
-  "tree:traverseOrThrow",
-  "(tree, ...keys) - Return the value at the path of keys or throw"
-);
-helpRegistry.set(
-  "tree:traversePath",
-  "(tree, path) - Traverse a slash-separated path"
-);
-
-helpRegistry.set("tree:", "Work with trees");

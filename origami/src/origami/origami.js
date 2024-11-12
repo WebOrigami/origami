@@ -1,13 +1,6 @@
-import helpRegistry from "../common/helpRegistry.js";
-
 // Use a dynamic import to avoid circular dependencies
 export const builtins = import("../builtins/internal.js").then(
   (internal) => internal.builtinsTree
-);
-
-helpRegistry.set(
-  "origami:builtins",
-  " - The set of installed builtin functions"
 );
 
 export { replaceExtension, toFunction } from "../common/utilities.js";
@@ -33,5 +26,3 @@ export { default as unpack } from "./unpack.js";
 export { default as version } from "./version.js";
 export { default as yaml } from "./yaml.js";
 export { default as yamlParse } from "./yamlParse.js";
-
-helpRegistry.set("origami:", "Perform general Origami language functions");

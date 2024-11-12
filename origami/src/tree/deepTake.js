@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import deepTakeFn from "./deepTakeFn.js";
 
@@ -22,8 +21,3 @@ export default async function deepTake(treelike, n) {
   );
   return deepTakeFn.call(this, n)(tree);
 }
-
-helpRegistry.set(
-  "tree:deepTake",
-  "(tree, n) - The first n values from the deep tree"
-);

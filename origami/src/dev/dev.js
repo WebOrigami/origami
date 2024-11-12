@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
 export { default as code } from "./code.js";
@@ -8,5 +7,3 @@ export { default as log } from "./log.js";
 export { default as serve } from "./serve.js";
 export { default as svg } from "./svg.js";
 export { default as watch } from "./watch.js";
-
-helpRegistry.set("dev:", "Develop and debug Origami projects");

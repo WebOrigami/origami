@@ -1,5 +1,4 @@
 import { deepReverse } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -21,8 +20,3 @@ export default async function deepReverseBuiltin(treelike) {
   const reversed = deepReverse(tree);
   return reversed;
 }
-
-helpRegistry.set(
-  "tree:deepReverse",
-  "(tree) - Reverse order of keys at all levels of the tree"
-);

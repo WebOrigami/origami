@@ -18,8 +18,6 @@ export default function indent(strings, ...values) {
   const { blockIndentations, strings: modifiedStrings } = modified;
   return joinBlocks(modifiedStrings, values, blockIndentations);
 }
-indent.description =
-  "indent - Tagged template literal for normalizing indentation";
 
 // Join strings and values, applying the given block indentation to the lines of
 // values for block placholders.

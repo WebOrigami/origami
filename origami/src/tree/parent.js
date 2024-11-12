@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
@@ -14,5 +13,3 @@ export default async function parent(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:parent");
   return tree.parent;
 }
-
-helpRegistry.set("tree:parent", "(tree) - The parent of the given tree node");

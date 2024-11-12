@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const fnPromiseMap = new WeakMap();
@@ -17,8 +16,3 @@ export default async function once(fn) {
   }
   return fnPromiseMap.get(fn);
 }
-
-helpRegistry.set(
-  "origami:once",
-  "(fn) - Run the function only once, return the same result"
-);

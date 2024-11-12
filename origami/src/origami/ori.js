@@ -5,7 +5,6 @@ import {
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtinsTree from "../builtins/builtinsTree.js";
-import helpRegistry from "../common/helpRegistry.js";
 import { toYaml } from "../common/serialize.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
@@ -47,11 +46,6 @@ export default async function ori(
 
   return options.formatResult ? await formatResult(result) : result;
 }
-
-helpRegistry.set(
-  "origami:ori",
-  "(text) - Evaluate the text as an Origami expression"
-);
 
 async function formatResult(result) {
   if (

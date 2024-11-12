@@ -13,5 +13,3 @@ export default async function documentBuiltin(text, data) {
   assertTreeIsDefined(this, "text:document");
   return documentObject(text, data);
 }
-documentBuiltin.description =
-  "document(text, [data]) - Create a document object with the text and data";

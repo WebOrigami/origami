@@ -1,3 +1,0 @@
-@sort(flatMap.js(help.yaml, (help, namespace) =>
-  help/commands
-))

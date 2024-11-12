@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import helpRegistry from "../common/helpRegistry.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 import crawl from "./crawler/crawl.js";
 
@@ -18,8 +17,3 @@ export default async function audit(treelike) {
   errors.parent = this;
   return errors;
 }
-
-helpRegistry.set(
-  "site:audit",
-  "(tree) - Identify broken internal links and references"
-);

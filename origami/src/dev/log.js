@@ -1,4 +1,3 @@
-import helpRegistry from "../common/helpRegistry.js";
 import yaml from "../origami/yaml.js";
 
 /**
@@ -15,8 +14,3 @@ export default async function log(result, object = result) {
   console.log(text);
   return result;
 }
-
-helpRegistry.set(
-  "dev:log",
-  "(a, message) - Log message to the console and return a"
-);
