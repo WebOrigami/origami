@@ -2,7 +2,7 @@ import { Tree } from "@weborigami/async-tree";
 export { default as addNextPrevious } from "./addNextPrevious.js";
 export { default as cache } from "./cache.js";
 export { default as calendar } from "./calendar.js";
-export { default as clean } from "./clean.js";
+export { default as clear } from "./clear.js";
 export { default as concat } from "./concat.js";
 export { default as copy } from "./copy.js";
 export { default as deepMap } from "./deepMap.js";

@@ -62,4 +62,7 @@ export default {
   ...commands("tree:", tree),
   "@tree": command("tree:", null, "@tree/", Tree),
   "@true": command("js:", "true", "@true", js.true),
+
+  // Renamed command
+  "@clean": command("tree:", "clear", "@clean", tree.clear),
 };

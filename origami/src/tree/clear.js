@@ -7,7 +7,7 @@ import getTreeArgument from "../misc/getTreeArgument.js";
  * @this {AsyncTree|null}
  * @param {import("@weborigami/async-tree").Treelike} treelike
  */
-export default async function clean(treelike) {
+export default async function clear(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:clean");
   if (!Tree.isAsyncMutableTree(tree)) {
     throw new TypeError("clean: the given tree is read-only.");

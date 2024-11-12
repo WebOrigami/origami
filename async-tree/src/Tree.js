@@ -67,10 +67,9 @@ export async function assign(target, source) {
  * @param {AsyncMutableTree} tree
  */
 export async function clear(tree) {
-  // @ts-ignore
-  for (const key of await tree.keys()) {
-    await tree.set(key, undefined);
-  }
+  const keys = Array.from(await tree.keys());
+  const promises = keys.map((key) => tree.set(key, undefined));
+  await Promise.all(promises);
 }
 
 /**

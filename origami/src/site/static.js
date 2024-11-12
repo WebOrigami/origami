@@ -18,6 +18,9 @@ export default async function staticBuiltin(treelike) {
   return result;
 }
 
+// The name we'll register as a builtin
+staticBuiltin.key = "static";
+
 function StaticTransform(Base) {
   return class Static extends Base {
     async get(key) {
