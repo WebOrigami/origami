@@ -17,7 +17,7 @@ calc:
       args: (a, b, ...)
       description: Multiply the numbers
     not:
-      args: (a)
+      args: (value)
       description: Return true if a is false and vice versa
     or:
       args: (a, b, ...)
@@ -295,7 +295,7 @@ tree:
     cache:
       args: (tree, [cache], [filter])
       description: Caches values from the tree
-    clean:
+    clear:
       args: (tree)
       description: Remove all values from the tree
     concat:

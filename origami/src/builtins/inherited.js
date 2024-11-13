@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import { ops } from "@weborigami/language";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
@@ -6,10 +7,12 @@ import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {any} key
  * @this {AsyncTree|null}
+ * @param {string[]} keys
  */
-export default async function inherited(key) {
+export default async function inherited(...keys) {
   assertTreeIsDefined(this, "inherited:");
-  return ops.inherited.call(this, key);
+  const key = keys.shift();
+  const value = await ops.inherited.call(this, key);
+  return keys.length > 0 ? await Tree.traverse(value, ...keys) : value;
 }
