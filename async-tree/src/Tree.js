@@ -11,6 +11,7 @@ import {
   isPacked,
   isPlainObject,
   isUnpackable,
+  toPlainValue,
 } from "./utilities.js";
 
 /**
@@ -326,7 +327,7 @@ export async function paths(treelike, base = "") {
  * @returns {Promise<PlainObject|Array>}
  */
 export async function plain(treelike) {
-  return mapReduce(treelike, null, (values, keys, tree) => {
+  return mapReduce(treelike, toPlainValue, (values, keys, tree) => {
     // Special case for an empty tree: if based on array, return array.
     if (tree instanceof ObjectTree && keys.length === 0) {
       return tree.object instanceof Array ? [] : {};

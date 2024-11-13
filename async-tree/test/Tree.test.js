@@ -275,6 +275,14 @@ describe("Tree", () => {
     assert.deepEqual(await Tree.plain(object), { name: "Alice" });
   });
 
+  test("plain() coerces TypedArray values to strings", async () => {
+    const tree = new ObjectTree({
+      a: new TextEncoder().encode("Hello, world."),
+    });
+    const plain = await Tree.plain(tree);
+    assert.equal(plain.a, "Hello, world.");
+  });
+
   test("remove method removes a value", async () => {
     const fixture = createFixture();
     await Tree.remove(fixture, "Alice.md");
