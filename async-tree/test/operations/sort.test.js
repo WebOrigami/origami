@@ -1,16 +1,16 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import sortFn from "../../src/operations/sortFn.js";
+import sort from "../../src/operations/sort.js";
 
-describe("sortFn", () => {
+describe("sort", () => {
   test("sorts keys using default sort order", async () => {
     const tree = Tree.from({
       file10: null,
       file1: null,
       file9: null,
     });
-    const sorted = sortFn()(tree);
+    const sorted = sort(tree);
     assert.deepEqual(Array.from(await sorted.keys()), [
       "file1",
       "file10",
@@ -26,7 +26,7 @@ describe("sortFn", () => {
     });
     // Reverse order
     const compare = (a, b) => (a > b ? -1 : a < b ? 1 : 0);
-    const sorted = sortFn({ compare })(tree);
+    const sorted = sort(tree, { compare });
     assert.deepEqual(Array.from(await sorted.keys()), ["c", "b", "a"]);
   });
 
@@ -36,11 +36,10 @@ describe("sortFn", () => {
       Bob: { age: 36 },
       Carol: { age: 42 },
     };
-    const transform = await sortFn({
+    const sorted = await sort(tree, {
       sortKey: async (key, tree) => Tree.traverse(tree, key, "age"),
     });
-    const result = transform(tree);
-    assert.deepEqual(Array.from(await result.keys()), [
+    assert.deepEqual(Array.from(await sorted.keys()), [
       "Bob",
       "Carol",
       "Alice",
