@@ -4,6 +4,9 @@ calc:
     add:
       args: (a, b, ...)
       description: Add the numbers
+    and:
+      args: (a, b, ...)
+      description: Return true if all the arguments are true
     divide:
       args: (a, b)
       description: Divide a by b

@@ -6,6 +6,10 @@ export function add(...args) {
   return numbers.reduce((acc, val) => acc + val, 0);
 }
 
+export function and(...args) {
+  return args.every((arg) => arg);
+}
+
 export function divide(a, b) {
   return Number(a) / Number(b);
 }
