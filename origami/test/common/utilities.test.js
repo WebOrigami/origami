@@ -52,9 +52,9 @@ describe("utilities", () => {
     assert.equal(await fn(), "result");
   });
 
-  test("toFunction returns a constant function for a constant", () => {
-    const fn = utilities.toFunction("constant");
-    assert.equal(fn(), "constant");
+  test("toFunction returns null for something that's not a function", () => {
+    const result = utilities.toFunction("this is not a function");
+    assert.equal(result, null);
   });
 
   test("toString returns the value of an object's `@text` property", () => {

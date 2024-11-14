@@ -64,7 +64,7 @@ export function replaceExtension(key, sourceExtension, resultExtension) {
  *
  * @typedef {import("../../index.ts").Invocable} Invocable
  * @param {any} obj
- * @returns {Function}
+ * @returns {Function|null}
  */
 export function toFunction(obj) {
   if (typeof obj === "function") {
@@ -88,8 +88,8 @@ export function toFunction(obj) {
     // Return a function that invokes the tree's getter.
     return Tree.toFunction(obj);
   } else {
-    // Return a constant function.
-    return () => obj;
+    // Not a function
+    return null;
   }
 }
 
