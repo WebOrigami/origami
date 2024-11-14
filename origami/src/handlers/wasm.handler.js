@@ -1,4 +1,4 @@
-import { processUnpackedContent } from "../builtins/internal.js";
+import { processUnpackedContent } from "../internal.js";
 
 /**
  * A WebAssembly module

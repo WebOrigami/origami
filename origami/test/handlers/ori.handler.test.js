@@ -2,7 +2,7 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { builtinsTree, oriHandler } from "../../src/builtins/internal.js";
+import { builtinsTree, oriHandler } from "../../src/internal.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFiles(fixturesUrl);

@@ -1,7 +1,7 @@
 import { symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import { builtinsTree, processUnpackedContent } from "../builtins/internal.js";
 import * as utilities from "../common/utilities.js";
+import { builtinsTree, processUnpackedContent } from "../internal.js";
 
 /**
  * An Origami expression file

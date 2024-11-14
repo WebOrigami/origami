@@ -2,8 +2,8 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { builtinsTree } from "../../src/builtins/internal.js";
-import packageNamespace from "../../src/builtins/package.js";
+import { builtinsTree } from "../../src/internal.js";
+import packageNamespace from "../../src/protocols/package.js";
 
 describe("@package", () => {
   test("imports a package from node_modules", async () => {

@@ -1,5 +1,5 @@
 import { symbols, Tree } from "@weborigami/async-tree";
-import { builtinsTree } from "../builtins/internal.js";
+import { builtinsTree } from "../internal.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This

@@ -1,4 +1,3 @@
-export { builtinsTree } from "./src/builtins/internal.js";
 export * from "./src/calc/calc.js";
 export { default as documentObject } from "./src/common/documentObject.js";
 export { toString } from "./src/common/utilities.js";
@@ -6,6 +5,7 @@ export * from "./src/dev/dev.js";
 export * from "./src/handlers/handlerExports.js";
 export * from "./src/handlers/handlers.js";
 export * from "./src/image/image.js";
+export { builtinsTree } from "./src/internal.js";
 export * from "./src/origami/origami.js";
 export * from "./src/site/site.js";
 export * from "./src/text/text.js";

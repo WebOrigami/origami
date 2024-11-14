@@ -4,7 +4,7 @@ import {
   oridocumentHandler,
   wasmHandler,
   yamlHandler,
-} from "../builtins/internal.js";
+} from "../internal.js";
 import cssHandler from "./css.handler.js";
 import htmHandler from "./htm.handler.js";
 import htmlHandler from "./html.handler.js";

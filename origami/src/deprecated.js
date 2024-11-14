@@ -1,14 +1,14 @@
 import { Tree } from "@weborigami/async-tree";
-import * as calc from "../calc/calc.js";
-import * as dev from "../dev/dev.js";
-import * as image from "../image/image.js";
-import * as origami from "../origami/origami.js";
-import * as site from "../site/site.js";
-import * as text from "../text/text.js";
-import * as tree from "../tree/tree.js";
-import files from "./files.js";
+import * as calc from "./calc/calc.js";
+import * as dev from "./dev/dev.js";
+import * as image from "./image/image.js";
 import js from "./js.js";
 import node from "./node.js";
+import * as origami from "./origami/origami.js";
+import files from "./protocols/files.js";
+import * as site from "./site/site.js";
+import * as text from "./text/text.js";
+import * as tree from "./tree/tree.js";
 
 const warningsDisplayedForKeys = new Set();
 

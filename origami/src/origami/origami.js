@@ -1,5 +1,5 @@
 // Use a dynamic import to avoid circular dependencies
-export const builtins = import("../builtins/internal.js").then(
+export const builtins = import("../internal.js").then(
   (internal) => internal.builtinsTree
 );
 

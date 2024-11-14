@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import { builtinsTree, oriHandler } from "../builtins/internal.js";
+import { builtinsTree, oriHandler } from "../internal.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import getTreeArgument from "../misc/getTreeArgument.js";
 

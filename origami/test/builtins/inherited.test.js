@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import inherited from "../../src/builtins/inherited.js";
+import inherited from "../../src/protocols/inherited.js";
 
 describe("inherited", () => {
   test("searches inherited scope", async () => {

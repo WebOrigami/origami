@@ -1,7 +1,7 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
-import { builtinsTree, oriHandler } from "../builtins/internal.js";
+import { builtinsTree, oriHandler } from "../internal.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const configFileName = "config.ori";

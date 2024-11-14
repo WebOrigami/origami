@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { builtinsTree } from "../../src/builtins/internal.js";
+import { builtinsTree } from "../../src/internal.js";
 import ori from "../../src/origami/ori.js";
 
 describe("ori builtin", () => {

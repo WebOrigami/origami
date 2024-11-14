@@ -1,8 +1,8 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
-import { builtinsTree } from "../builtins/internal.js";
 import { keySymbol } from "../common/utilities.js";
+import { builtinsTree } from "../internal.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import debug from "./debug.js";
 

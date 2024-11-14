@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import instantiate from "../../src/builtins/new.js";
+import instantiate from "../../src/protocols/new.js";
 
 describe("new:", () => {
   test("finds class in scope and returns a constructor", async () => {

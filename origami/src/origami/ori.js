@@ -4,7 +4,7 @@ import {
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import builtinsTree from "../builtins/builtinsTree.js";
+import builtinsTree from "../builtinsTree.js";
 import { toYaml } from "../common/serialize.js";
 import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
