@@ -241,9 +241,10 @@ multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
 // A namespace reference is a string of letters only, followed by a colon.
+// For the time being, we also allow a leading `@`, which is deprecated.
 namespace
-  = chars:[A-Za-z]+ ":" {
-    return annotate([ops.builtin, chars.join("") + ":"], location());
+  = at:"@"? chars:[A-Za-z]+ ":" {
+    return annotate([ops.builtin, (at ?? "") + chars.join("") + ":"], location());
   }
 
 // A namespace followed by a path: `fn:a/b/c`
