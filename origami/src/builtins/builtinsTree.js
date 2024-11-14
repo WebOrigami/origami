@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { trailingSlash } from "@weborigami/async-tree";
 import builtins from "./builtins.js";
 
 const expanded = { ...builtins };
@@ -20,4 +20,17 @@ for (const [key, value] of Object.entries(expanded)) {
   }
 }
 
-export default new ObjectTree(expanded);
+// We create our own tree instead of using ObjectTree, since that binds the
+// functions would be bound to the object. We want to leave them unbound.
+class BuiltinsTree {
+  async get(key) {
+    const normalizedKey = trailingSlash.remove(key);
+    return expanded[normalizedKey];
+  }
+
+  async keys() {
+    return Object.keys(expanded);
+  }
+}
+
+export default new BuiltinsTree();
