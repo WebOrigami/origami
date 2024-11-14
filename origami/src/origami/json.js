@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Render the given object in JSON format.

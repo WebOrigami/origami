@@ -1,8 +1,8 @@
 import { Tree } from "@weborigami/async-tree";
-import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
-import OriCommandTransform from "../misc/OriCommandTransform.js";
+import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
+import OriCommandTransform from "./OriCommandTransform.js";
 
 /**
  * Add debugging features to the indicated tree.

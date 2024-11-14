@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { ops } from "@weborigami/language";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Return the inherited value (if any) for the indicated key.

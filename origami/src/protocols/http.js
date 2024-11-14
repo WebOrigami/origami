@@ -1,6 +1,6 @@
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import constructHref from "../common/constructHref.js";
 import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Retrieve the indicated web resource via HTTP.

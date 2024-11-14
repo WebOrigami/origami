@@ -1,5 +1,5 @@
 import { Tree, cache } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Caches tree values in a storable cache.

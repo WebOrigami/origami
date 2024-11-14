@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 export function add(...args) {
   const numbers = args.map((arg) => Number(arg));

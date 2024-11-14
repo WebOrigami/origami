@@ -1,5 +1,5 @@
 import { deepReverse } from "@weborigami/async-tree";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Reverse the order of keys at all levels of the tree.

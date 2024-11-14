@@ -1,5 +1,5 @@
 import { isPlainObject, isUnpackable, merge } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Create a tree that's the result of merging the given trees.

@@ -1,6 +1,6 @@
 import { SiteTree } from "@weborigami/async-tree";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import constructSiteTree from "../common/constructSiteTree.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return a website tree via HTTP.

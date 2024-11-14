@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Let a tree (e.g., of files) respond to changes.

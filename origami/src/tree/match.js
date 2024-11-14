@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Return a tree with the indicated keys (if provided).

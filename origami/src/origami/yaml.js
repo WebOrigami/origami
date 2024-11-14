@@ -1,7 +1,7 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
 import YAML from "yaml";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Render the object as text in YAML format.

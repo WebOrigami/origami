@@ -1,5 +1,5 @@
 import { isPlainObject } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import mapFn from "./mapFn.js";
 
 /**

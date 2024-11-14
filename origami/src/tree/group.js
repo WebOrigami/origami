@@ -1,4 +1,4 @@
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 import groupFn from "./groupFn.js";
 
 /**

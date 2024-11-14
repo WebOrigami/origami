@@ -1,5 +1,5 @@
 import { deepValues } from "@weborigami/async-tree";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Return the in-order exterior values of a tree as a flat array.

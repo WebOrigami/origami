@@ -1,6 +1,6 @@
 import { FunctionTree } from "@weborigami/async-tree";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Create a tree from a function and a set of keys.

@@ -1,5 +1,5 @@
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toString } from "../common/utilities.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Convert an object to a string.

@@ -5,8 +5,8 @@ import {
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtinsTree from "../builtinsTree.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toYaml } from "../common/serialize.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 

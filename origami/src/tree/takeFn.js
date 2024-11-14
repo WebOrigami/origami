@@ -1,5 +1,5 @@
 import { takeFn } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Limit the number of keys to the indicated count.

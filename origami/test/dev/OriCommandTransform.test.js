@@ -1,8 +1,8 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import OriCommandTransform from "../../src/dev/OriCommandTransform.js";
 import { builtinsTree } from "../../src/internal.js";
-import OriCommandTransform from "../../src/misc/OriCommandTransform.js";
 
 describe("OriCommandTransform", () => {
   test("prefers value defined by base tree even if it starts with '!'", async () => {

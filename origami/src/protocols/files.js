@@ -2,7 +2,7 @@ import { OrigamiFiles } from "@weborigami/language";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree

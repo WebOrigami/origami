@@ -2,11 +2,11 @@ import { Tree } from "@weborigami/async-tree";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
-import ExplorableSiteTransform from "../common/ExplorableSiteTransform.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import { requestListener } from "../server/server.js";
 import debug from "./debug.js";
+import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
 import watch from "./watch.js";
 
 const defaultPort = 5000;

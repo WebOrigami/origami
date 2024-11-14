@@ -1,7 +1,7 @@
 import { Tree } from "@weborigami/async-tree";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 import { builtinsTree, oriHandler } from "../internal.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

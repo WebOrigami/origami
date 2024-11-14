@@ -7,7 +7,7 @@ import ori from "../origami/ori.js";
  * E.g., asking this tree for `!yaml` will invoke the yaml() builtin function
  * in the context of this tree.
  *
- * @typedef {import("../../index.js").Constructor<AsyncTree>} AsyncTreeConstructor
+ * @typedef {import("../../index.ts").Constructor<AsyncTree>} AsyncTreeConstructor
  * @param {AsyncTreeConstructor} Base
  */
 export default function OriCommandTransform(Base) {

@@ -1,5 +1,5 @@
 import { reverse } from "@weborigami/async-tree";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.

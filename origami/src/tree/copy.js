@@ -1,8 +1,8 @@
 import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { transformObject } from "../common/utilities.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 import setDeep from "./setDeep.js";
 
 /**

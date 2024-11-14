@@ -1,9 +1,6 @@
-import {
-  default as ShuffleTransform,
-  shuffle,
-} from "../common/ShuffleTransform.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 import { transformObject } from "../common/utilities.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import { default as ShuffleTransform, shuffle } from "./ShuffleTransform.js";
 
 /**
  * Return a new tree with the original's keys shuffled

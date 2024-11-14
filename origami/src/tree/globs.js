@@ -1,5 +1,5 @@
-import GlobTree from "../common/GlobTree.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
+import GlobTree from "./GlobTree.js";
 
 /**
  * Define a tree whose keys are globs.

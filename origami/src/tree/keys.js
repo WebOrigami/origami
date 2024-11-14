@@ -1,4 +1,4 @@
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Return the top-level keys in the tree as an array.

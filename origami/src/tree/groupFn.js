@@ -1,6 +1,6 @@
 import { groupFn } from "@weborigami/async-tree";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * Return a function that maps a tree to a new tree with the values from the

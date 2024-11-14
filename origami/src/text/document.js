@@ -1,5 +1,5 @@
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import documentObject from "../common/documentObject.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

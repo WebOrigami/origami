@@ -1,5 +1,5 @@
 import { symbols } from "@weborigami/language";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

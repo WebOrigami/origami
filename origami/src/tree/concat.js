@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import { ops } from "@weborigami/language";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Concatenate the text content of objects or trees.

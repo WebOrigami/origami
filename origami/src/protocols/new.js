@@ -1,5 +1,5 @@
 import { isUnpackable, scope as scopeFn, Tree } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Find the indicated class constructor in scope, then return a function which

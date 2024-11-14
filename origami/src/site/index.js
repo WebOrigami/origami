@@ -1,5 +1,5 @@
+import getTreeArgument from "../common/getTreeArgument.js";
 import { keySymbol } from "../common/utilities.js";
-import getTreeArgument from "../misc/getTreeArgument.js";
 
 /**
  * Return a default index.html page for the current tree.

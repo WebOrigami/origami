@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "url";
 import YAML from "yaml";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import version from "../origami/version.js";
 
 /**

@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
-import FilterTree from "../common/FilterTree.js";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
+import FilterTree from "./FilterTree.js";
 
 /**
  * Apply a filter to a tree.

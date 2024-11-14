@@ -1,5 +1,5 @@
 import { deepTakeFn } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the

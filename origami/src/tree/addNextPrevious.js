@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import getTreeArgument from "../misc/getTreeArgument.js";
+import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Add nextKey/previousKey properties to values.

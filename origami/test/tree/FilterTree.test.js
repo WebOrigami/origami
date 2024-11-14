@@ -1,8 +1,8 @@
 import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FilterTree from "../../src/common/FilterTree.js";
-import GlobTree from "../../src/common/GlobTree.js";
+import FilterTree from "../../src/tree/FilterTree.js";
+import GlobTree from "../../src/tree/GlobTree.js";
 
 describe("FilterTree", () => {
   test("uses keys from filter, values from tree", async () => {

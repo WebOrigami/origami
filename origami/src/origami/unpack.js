@@ -1,4 +1,4 @@
-import assertTreeIsDefined from "../misc/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Unpack a packed format like a Uint8Array or ArrayBuffer to a usable form like
