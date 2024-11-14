@@ -25,7 +25,7 @@ export default async function getTreeArgument(
   args,
   treelike,
   methodName,
-  deep = false
+  deep
 ) {
   assertTreeIsDefined(parent, methodName);
 
@@ -34,7 +34,8 @@ export default async function getTreeArgument(
       treelike = await treelike.unpack();
     }
     if (Tree.isTreelike(treelike)) {
-      let tree = Tree.from(treelike, { deep });
+      const options = deep !== undefined ? { deep } : undefined;
+      let tree = Tree.from(treelike, options);
       // If the tree was created from a treelike object and does not yet have a
       // parent, make the current tree its parent.
       if (!tree.parent && parent !== undefined) {

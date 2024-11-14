@@ -1,3 +1,4 @@
+import { symbols } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import { processUnpackedContent } from "../builtins/internal.js";
 import { parseYaml } from "../common/serialize.js";
@@ -24,6 +25,12 @@ export default {
       throw new Error("Tried to parse something as YAML but it wasn't text.");
     }
     const data = parseYaml(yaml);
+    if (data && typeof data === "object" && Object.isExtensible(data)) {
+      Object.defineProperty(data, symbols.deep, {
+        enumerable: false,
+        value: true,
+      });
+    }
     return processUnpackedContent(data, parent);
   },
 };

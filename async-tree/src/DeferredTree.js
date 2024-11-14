@@ -21,7 +21,7 @@ export default class DeferredTree {
     this.treePromise = null;
     this._tree = null;
     this._parentUntilLoaded = null;
-    this._deep = options?.deep ?? false;
+    this._deep = options?.deep;
   }
 
   async get(key) {
@@ -62,7 +62,9 @@ export default class DeferredTree {
 
     // Use a promise to ensure the treelike is only converted to a tree once.
     this.treePromise ??= this.loadResult().then((treelike) => {
-      this._tree = Tree.from(treelike, { deep: this._deep });
+      const options =
+        this._deep !== undefined ? { deep: this._deep } : undefined;
+      this._tree = Tree.from(treelike, options);
       if (this._parentUntilLoaded) {
         // Now that the tree has been loaded, we can set its parent if it hasn't
         // already been set.

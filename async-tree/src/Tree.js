@@ -3,6 +3,7 @@ import FunctionTree from "./FunctionTree.js";
 import MapTree from "./MapTree.js";
 import SetTree from "./SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
+import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
 import mapTransform from "./transforms/mapFn.js";
 import * as utilities from "./utilities.js";
@@ -114,7 +115,7 @@ export async function forEach(tree, callbackFn) {
  * @returns {AsyncTree}
  */
 export function from(object, options = {}) {
-  const deep = options.deep ?? false;
+  const deep = options.deep ?? object[symbols.deep];
   let tree;
   if (isAsyncTree(object)) {
     // Argument already supports the tree interface.

@@ -1,3 +1,4 @@
+import { symbols } from "@weborigami/async-tree";
 import * as utilities from "../common/utilities.js";
 
 /**
@@ -14,6 +15,13 @@ export default {
     if (!json) {
       throw new Error("Tried to parse something as JSON but it wasn't text.");
     }
-    return JSON.parse(json);
+    const data = JSON.parse(json);
+    if (data && typeof data === "object" && Object.isExtensible(data)) {
+      Object.defineProperty(data, symbols.deep, {
+        enumerable: false,
+        value: true,
+      });
+    }
+    return data;
   },
 };

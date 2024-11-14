@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapTree from "../src/MapTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../src/internal.js";
+import * as symbols from "../src/symbols.js";
 
 describe("Tree", () => {
   test("assign applies one tree to another", async () => {
@@ -105,6 +106,17 @@ describe("Tree", () => {
       },
     };
     const tree = Tree.from(obj, { deep: true });
+    assert(tree instanceof DeepObjectTree);
+  });
+
+  test("from returns a deep object tree if object has [deep] symbol set", async () => {
+    const obj = {
+      sub: {
+        a: 1,
+      },
+    };
+    Object.defineProperty(obj, symbols.deep, { value: true });
+    const tree = Tree.from(obj);
     assert(tree instanceof DeepObjectTree);
   });
 
