@@ -1,5 +1,6 @@
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import deepMapFn from "./deepMapFn.js";
+import { isPlainObject } from "@weborigami/async-tree";
+import getTreeArgument from "../common/getTreeArgument.js";
+import map from "./map.js";
 
 /**
  * Shorthand for calling `map` with `deep: true` option.
@@ -10,10 +11,16 @@ import deepMapFn from "./deepMapFn.js";
  * @typedef {import("./map.d.ts").TreeMapOptions} TreeMapOptions
  *
  * @this {AsyncTree|null}
- * @param {Treelike} source
+ * @param {Treelike} treelike
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
-export default function deepMap(source, operation) {
-  assertTreeIsDefined(this, "tree:deepMap");
-  return deepMapFn.call(this, operation)(source);
+export default async function deepMap(treelike, operation) {
+  const tree = await getTreeArgument(this, arguments, treelike, "tree:map");
+  /** @type {TreeMapOptions} */
+  const options = isPlainObject(operation)
+    ? // Dictionary
+      { ...operation, deep: true }
+    : // Function
+      { deep: true, value: operation };
+  return map.call(this, tree, options);
 }
