@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import reverse from "../../src/transforms/reverse.js";
+import reverse from "../../src/operations/reverse.js";
 
 describe("reverse", () => {
   test("reverses a tree's top-level keys", async () => {

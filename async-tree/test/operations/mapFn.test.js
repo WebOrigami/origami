@@ -2,8 +2,8 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionTree from "../../src/drivers/FunctionTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import mapFn from "../../src/operations/mapFn.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
-import mapFn from "../../src/transforms/mapFn.js";
 
 describe("mapFn", () => {
   test("returns identity graph if no key or value", async () => {

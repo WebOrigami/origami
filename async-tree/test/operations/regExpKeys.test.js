@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { DeepObjectTree, Tree } from "../../src/internal.js";
-import regExpKeys from "../../src/transforms/regExpKeys.js";
+import regExpKeys from "../../src/operations/regExpKeys.js";
 
 describe("regExpKeys", () => {
   test("matches keys using regular expressions", async () => {

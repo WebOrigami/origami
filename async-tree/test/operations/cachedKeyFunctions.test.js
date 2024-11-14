@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { DeepObjectTree, ObjectTree } from "../../src/internal.js";
-import cachedKeyFunctions from "../../src/transforms/cachedKeyFunctions.js";
+import cachedKeyFunctions from "../../src/operations/cachedKeyFunctions.js";
 
 describe("cachedKeyFunctions", () => {
   test("maps keys with caching", async () => {

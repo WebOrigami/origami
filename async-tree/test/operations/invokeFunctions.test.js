@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import invokeFunctions from "../../src/transforms/invokeFunctions.js";
+import invokeFunctions from "../../src/operations/invokeFunctions.js";
 
 describe("invokeFunctions", () => {
   test("invokes function values, leaves other values as is", async () => {

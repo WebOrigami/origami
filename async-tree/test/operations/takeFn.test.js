@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import takeFn from "../../src/transforms/takeFn.js";
+import takeFn from "../../src/operations/takeFn.js";
 
 describe("takeFn", () => {
   test("limits the number of keys to the indicated count", async () => {

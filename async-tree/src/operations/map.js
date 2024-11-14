@@ -1,4 +1,4 @@
-import mapFn from "../transforms/mapFn.js";
+import mapFn from "./mapFn.js";
 
 /**
  * Transform the keys and/or values of a tree.

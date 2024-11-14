@@ -3,9 +3,9 @@ import FunctionTree from "./drivers/FunctionTree.js";
 import MapTree from "./drivers/MapTree.js";
 import SetTree from "./drivers/SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
+import mapTransform from "./operations/mapFn.js";
 import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
-import mapTransform from "./transforms/mapFn.js";
 import * as utilities from "./utilities.js";
 import {
   castArrayLike,

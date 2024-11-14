@@ -1,4 +1,4 @@
-import takeFn from "../transforms/takeFn.js";
+import takeFn from "./takeFn.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.

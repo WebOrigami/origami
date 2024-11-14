@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import sortFn from "../../src/transforms/sortFn.js";
+import sortFn from "../../src/operations/sortFn.js";
 
 describe("sortFn", () => {
   test("sorts keys using default sort order", async () => {

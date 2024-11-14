@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { ObjectTree, Tree } from "../../src/internal.js";
-import keyFunctionsForExtensions from "../../src/transforms/keyFunctionsForExtensions.js";
-import map from "../../src/transforms/mapFn.js";
+import keyFunctionsForExtensions from "../../src/operations/keyFunctionsForExtensions.js";
+import map from "../../src/operations/mapFn.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
