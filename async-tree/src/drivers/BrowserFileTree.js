@@ -1,11 +1,11 @@
-import * as trailingSlash from "../src/trailingSlash.js";
-import { Tree } from "./internal.js";
+import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 import {
   hiddenFileNames,
   isStringLike,
   naturalOrder,
   setParent,
-} from "./utilities.js";
+} from "../utilities.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 

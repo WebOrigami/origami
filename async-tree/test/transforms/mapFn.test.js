@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FunctionTree from "../../src/FunctionTree.js";
+import FunctionTree from "../../src/drivers/FunctionTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 import mapFn from "../../src/transforms/mapFn.js";

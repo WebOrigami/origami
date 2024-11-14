@@ -1,7 +1,7 @@
-import { Tree } from "./internal.js";
-import * as symbols from "./symbols.js";
-import * as trailingSlash from "./trailingSlash.js";
-import { getRealmObjectPrototype, setParent } from "./utilities.js";
+import { Tree } from "../internal.js";
+import * as symbols from "../symbols.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { getRealmObjectPrototype, setParent } from "../utilities.js";
 
 /**
  * A tree defined by a plain object or array.

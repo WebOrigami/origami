@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
-import SiteTree from "../src/SiteTree.js";
+import SiteTree from "../../src/drivers/SiteTree.js";
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();

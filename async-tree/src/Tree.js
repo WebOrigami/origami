@@ -1,7 +1,7 @@
-import DeferredTree from "./DeferredTree.js";
-import FunctionTree from "./FunctionTree.js";
-import MapTree from "./MapTree.js";
-import SetTree from "./SetTree.js";
+import DeferredTree from "./drivers/DeferredTree.js";
+import FunctionTree from "./drivers/FunctionTree.js";
+import MapTree from "./drivers/MapTree.js";
+import SetTree from "./drivers/SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
 import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
@@ -331,7 +331,7 @@ export async function plain(treelike) {
   return mapReduce(treelike, toPlainValue, (values, keys, tree) => {
     // Special case for an empty tree: if based on array, return array.
     if (tree instanceof ObjectTree && keys.length === 0) {
-      return tree.object instanceof Array ? [] : {};
+      return /** @type {any} */ (tree).object instanceof Array ? [] : {};
     }
     // Normalize slashes in keys.
     keys = keys.map(trailingSlash.remove);

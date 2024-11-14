@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
-import ExplorableSiteTree from "../src/ExplorableSiteTree.js";
-import { Tree } from "../src/internal.js";
+import ExplorableSiteTree from "../../src/drivers/ExplorableSiteTree.js";
+import { Tree } from "../../src/internal.js";
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();

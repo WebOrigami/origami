@@ -1,4 +1,4 @@
-import { Tree } from "./internal.js";
+import { Tree } from "../internal.js";
 
 /**
  * A tree that is loaded lazily.

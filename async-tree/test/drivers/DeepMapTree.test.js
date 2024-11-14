@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepMapTree from "../src/DeepMapTree.js";
-import { Tree } from "../src/internal.js";
+import DeepMapTree from "../../src/drivers/DeepMapTree.js";
+import { Tree } from "../../src/internal.js";
 
 describe("DeepMapTree", () => {
   test("returns a DeepMapTree for value that's a Map", async () => {

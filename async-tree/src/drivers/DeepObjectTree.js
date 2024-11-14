@@ -1,5 +1,5 @@
-import { ObjectTree, Tree } from "./internal.js";
-import { isPlainObject } from "./utilities.js";
+import { ObjectTree, Tree } from "../internal.js";
+import { isPlainObject } from "../utilities.js";
 
 export default class DeepObjectTree extends ObjectTree {
   async get(key) {

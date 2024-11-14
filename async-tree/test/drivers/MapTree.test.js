@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import MapTree from "../src/MapTree.js";
-import * as symbols from "../src/symbols.js";
+import MapTree from "../../src/drivers/MapTree.js";
+import * as symbols from "../../src/symbols.js";
 
 describe("MapTree", () => {
   test("can get the keys of the tree", async () => {

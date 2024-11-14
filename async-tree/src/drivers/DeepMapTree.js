@@ -1,4 +1,4 @@
-import { Tree } from "./internal.js";
+import { Tree } from "../internal.js";
 import MapTree from "./MapTree.js";
 
 export default class DeepMapTree extends MapTree {

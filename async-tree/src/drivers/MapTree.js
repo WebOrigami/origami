@@ -1,6 +1,6 @@
-import { Tree } from "./internal.js";
-import * as trailingSlash from "./trailingSlash.js";
-import { setParent } from "./utilities.js";
+import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { setParent } from "../utilities.js";
 
 /**
  * A tree backed by a JavaScript `Map` object.

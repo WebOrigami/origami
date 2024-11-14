@@ -1,5 +1,5 @@
-import * as trailingSlash from "./trailingSlash.js";
-import { setParent } from "./utilities.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { setParent } from "../utilities.js";
 
 /**
  * A tree of values obtained via HTTP/HTTPS calls. These values will be strings

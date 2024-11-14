@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeferredTree from "../src/DeferredTree.js";
-import { ObjectTree, Tree } from "../src/internal.js";
+import DeferredTree from "../../src/drivers/DeferredTree.js";
+import { ObjectTree, Tree } from "../../src/internal.js";
 
 describe("DeferredTree", () => {
   test("lazy-loads a treelike object", async () => {

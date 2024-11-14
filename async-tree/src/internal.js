@@ -11,6 +11,6 @@
 
 export * as Tree from "./Tree.js";
 
-export { default as ObjectTree } from "./ObjectTree.js";
+export { default as ObjectTree } from "./drivers/ObjectTree.js";
 
-export { default as DeepObjectTree } from "./DeepObjectTree.js";
+export { default as DeepObjectTree } from "./drivers/DeepObjectTree.js";

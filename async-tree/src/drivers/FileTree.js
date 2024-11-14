@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { Tree } from "./internal.js";
-import * as trailingSlash from "./trailingSlash.js";
+import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 import {
   getRealmObjectPrototype,
   hiddenFileNames,
@@ -10,7 +10,7 @@ import {
   isPlainObject,
   naturalOrder,
   setParent,
-} from "./utilities.js";
+} from "../utilities.js";
 
 /**
  * A file system tree via the Node file system API.
