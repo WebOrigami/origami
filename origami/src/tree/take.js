@@ -1,5 +1,5 @@
+import { take as takeTransform } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
-import takeFn from "./takeFn.js";
 
 /**
  * Given a tree, take the first n items from it.
@@ -9,9 +9,11 @@ import takeFn from "./takeFn.js";
  *
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
- * @param {number} n
+ * @param {number} count
  */
-export default async function take(treelike, n) {
+export default async function take(treelike, count) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:take");
-  return takeFn.call(this, n)(tree);
+  const taken = await takeTransform(tree, count);
+  taken.parent = this;
+  return taken;
 }

@@ -1,5 +1,5 @@
+import { deepTake as deepTakeTransform } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
-import deepTakeFn from "./deepTakeFn.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -10,14 +10,16 @@ import deepTakeFn from "./deepTakeFn.js";
  *
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
- * @param {number} n
+ * @param {number} count
  */
-export default async function deepTake(treelike, n) {
+export default async function deepTake(treelike, count) {
   const tree = await getTreeArgument(
     this,
     arguments,
     treelike,
     "tree:deepTake"
   );
-  return deepTakeFn.call(this, n)(tree);
+  const taken = await deepTakeTransform(tree, count);
+  taken.parent = this;
+  return taken;
 }

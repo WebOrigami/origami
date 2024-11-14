@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
-import deepTakeFn from "../../src/operations/deepTakeFn.js";
+import deepTake from "../../src/operations/deepTake.js";
 
-describe("deepTakeFn", () => {
+describe("deepTake", () => {
   test("traverses deeply and returns a limited number of items", async () => {
     const tree = {
       a: 1,
@@ -16,7 +16,7 @@ describe("deepTakeFn", () => {
       },
       g: 5,
     };
-    const result = await deepTakeFn(4)(tree);
+    const result = await deepTake(tree, 4);
     assert.deepEqual(await Tree.plain(result), [1, 2, 3, 4]);
   });
 });
