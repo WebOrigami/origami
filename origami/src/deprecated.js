@@ -63,6 +63,78 @@ export default {
   "@tree": command("tree:", null, "@tree/", Tree),
   "@true": command("js:", "true", "@true", js.true),
 
-  // Renamed command
+  // Renamed commands
   "@clean": command("tree:", "clear", "@clean", tree.clear),
+
+  // Deprecated commands
+  "@deepTakeFn": command(
+    "tree:",
+    "deepTake",
+    "@deepTakeFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.deepTake.call(this, treelike, options);
+      }
+  ),
+  "@deepMapFn": command(
+    "tree:",
+    "deepMap",
+    "@deepMapFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.deepMap.call(this, treelike, options);
+      }
+  ),
+  "@groupFn": command(
+    "tree:",
+    "group",
+    "@groupFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.group.call(this, treelike, options);
+      }
+  ),
+  "@mapFn": command(
+    "tree:",
+    "map",
+    "@mapFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.map.call(this, treelike, options);
+      }
+  ),
+  "@paginateFn": command(
+    "tree:",
+    "paginate",
+    "@paginateFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.paginate.call(this, treelike, options);
+      }
+  ),
+  "@sortFn": command(
+    "tree:",
+    "sort",
+    "@sortFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.sort.call(this, treelike, options);
+      }
+  ),
+  "@takeFn": command(
+    "tree:",
+    "take",
+    "@takeFn",
+    (options) =>
+      /** @this {any} */
+      function (treelike) {
+        return tree.take.call(this, treelike, options);
+      }
+  ),
 };
