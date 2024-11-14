@@ -18,7 +18,7 @@ export default function deepReverse(treelike) {
     throw error;
   }
 
-  const tree = Tree.from(treelike);
+  const tree = Tree.from(treelike, { deep: true });
   return {
     async get(key) {
       let value = await tree.get(key);

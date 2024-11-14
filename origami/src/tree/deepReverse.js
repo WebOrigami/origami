@@ -15,7 +15,8 @@ export default async function deepReverseBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "tree:deepReverse"
+    "tree:deepReverse",
+    true
   );
   const reversed = deepReverse(tree);
   return reversed;

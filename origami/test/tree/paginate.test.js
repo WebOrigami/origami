@@ -1,9 +1,9 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import paginateFn from "../../src/tree/paginateFn.js";
+import paginate from "../../src/tree/paginate.js";
 
-describe("paginateFn", () => {
+describe("paginate", () => {
   test("divides tree keys into fixed-length chunks", async () => {
     const treelike = {
       a: 1,
@@ -12,7 +12,7 @@ describe("paginateFn", () => {
       d: 4,
       e: 5,
     };
-    const paginated = await paginateFn.call(null, 2)(treelike);
+    const paginated = await paginate.call(null, treelike, 2);
     assert.deepEqual(await Tree.plain(paginated), {
       1: {
         items: { a: 1, b: 2 },

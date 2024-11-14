@@ -17,7 +17,8 @@ export default async function deepTake(treelike, count) {
     this,
     arguments,
     treelike,
-    "tree:deepTake"
+    "tree:deepTake",
+    true
   );
   const taken = await deepTakeTransform(tree, count);
   taken.parent = this;

@@ -15,7 +15,13 @@ import map from "./map.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default async function deepMap(treelike, operation) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:map");
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:map",
+    true
+  );
   /** @type {TreeMapOptions} */
   const options = isPlainObject(operation)
     ? // Dictionary
