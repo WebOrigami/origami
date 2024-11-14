@@ -27,9 +27,26 @@ export default function origamiHighlightDefinition(hljs) {
         ],
       },
       {
-        // Treat all `@` builtins as keywords.
+        // Treat namespaces as keywords
         className: "keyword",
-        begin: /@\w+\b/,
+        begin:
+          /\b(calc|dev|explore|files|http|https|httpstree|httptree|image|inherited|js|new|node|origami|package|scope|site|text|tree):\b/,
+      },
+      {
+        // Treat identifier containing a period before an open paren or backtick as a variable
+        className: "variable",
+        begin:
+          /\b[^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r]+\.[^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r]+(?=(\(|\`))\b/,
+      },
+      {
+        className: "built_in",
+        // Treat shorthands before open paren or backtick as a builtin
+        begin: /\b[A-Za-z][A-Za-z0-9]*(?=(\(|\`))\b/,
+      },
+      {
+        // Treat remaining identifiers as variables
+        className: "variable",
+        begin: /\b[^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r]+\b/,
       },
     ],
   };
