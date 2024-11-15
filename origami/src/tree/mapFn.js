@@ -2,7 +2,7 @@ import {
   cachedKeyFunctions,
   isPlainObject,
   keyFunctionsForExtensions,
-  mapFn,
+  map,
 } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
@@ -100,17 +100,25 @@ export default function mapFnBuiltin(operation) {
     extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
   }
 
-  const fn = mapFn({
+  // const fn = mapFn({
+  //   deep,
+  //   description,
+  //   inverseKey: extendedInverseKeyFn,
+  //   key: extendedKeyFn,
+  //   needsSourceValue,
+  //   value: extendedValueFn,
+  // });
+  const temp = {
     deep,
     description,
     inverseKey: extendedInverseKeyFn,
     key: extendedKeyFn,
     needsSourceValue,
     value: extendedValueFn,
-  });
+  };
 
   return (treelike) => {
-    const mapped = fn(treelike);
+    const mapped = map(treelike, temp);
     mapped.parent = tree;
     return mapped;
   };
