@@ -17,7 +17,6 @@ function compile(source, options) {
   const modified = scopeCaching
     ? cacheExternalScopeReferences(code, cache)
     : code;
-  // const modified = code;
   const fn = createExpressionFunction(modified);
   return fn;
 }

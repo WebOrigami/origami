@@ -85,7 +85,7 @@ export default async function evaluate(code) {
   }
 
   // To aid debugging, add the code to the result.
-  if (Object.isExtensible(result) /* && !isPlainObject(result) */) {
+  if (Object.isExtensible(result)) {
     try {
       if (code.location && !result[sourceSymbol]) {
         Object.defineProperty(result, sourceSymbol, {
