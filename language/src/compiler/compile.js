@@ -2,6 +2,7 @@ import { trailingSlash } from "@weborigami/async-tree";
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
 import { ops } from "../runtime/internal.js";
 import { parse } from "./parse.js";
+import { annotate } from "./parserHelpers.js";
 
 function compile(source, options) {
   const { startRule } = options;
@@ -44,7 +45,7 @@ export function cacheExternalScopeReferences(code, cache, locals = {}) {
       } else {
         // Upgrade to cached scope lookup
         const modified = [ops.cache, key, cache];
-        /** @type {any} */ (modified).location = code.location;
+        annotate(modified, code.location);
         return modified;
       }
 
@@ -80,7 +81,7 @@ export function cacheExternalScopeReferences(code, cache, locals = {}) {
   });
 
   if (code.location) {
-    modified.location = code.location;
+    annotate(modified, code.location);
   }
   return modified;
 }

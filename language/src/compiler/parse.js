@@ -440,7 +440,10 @@ function peg$parse(input, options) {
       return annotate(entries, location());
     };
   var peg$f37 = function(key, pipeline) {
-      return annotate(makeProperty(key, [ops.getter, pipeline]), location());
+      return annotate(
+        makeProperty(key, annotate([ops.getter, pipeline], location())),
+        location()
+      );
     };
   var peg$f38 = function(hiddenKey) { return hiddenKey.join(""); };
   var peg$f39 = function(key, pipeline) {

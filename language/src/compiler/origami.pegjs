@@ -287,7 +287,10 @@ objectEntry
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
   = key:objectKey __ "=" __ pipeline:pipeline {
-      return annotate(makeProperty(key, [ops.getter, pipeline]), location());
+      return annotate(
+        makeProperty(key, annotate([ops.getter, pipeline], location())),
+        location()
+      );
     }
 
 objectHiddenKey

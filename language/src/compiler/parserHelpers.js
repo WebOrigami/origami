@@ -1,4 +1,5 @@
 import { trailingSlash } from "@weborigami/async-tree";
+import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
 
 // Parser helpers
@@ -8,15 +9,21 @@ import * as ops from "../runtime/ops.js";
  * location of the source code that produced it for debugging and error messages.
  */
 export function annotate(parseResult, location) {
-  if (typeof parseResult === "object" && parseResult !== null) {
+  if (typeof parseResult === "object" && parseResult !== null && location) {
     parseResult.location = location;
+    parseResult.source = codeFragment(location);
   }
   return parseResult;
 }
 
-// The indicated code is being used to define a property named by the given key.
-// Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
-// infinite recursion.
+/**
+ * The indicated code is being used to define a property named by the given key.
+ * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
+ * infinite recursion.
+ *
+ * @param {import("../../index.ts").Code} code
+ * @param {string} key
+ */
 function avoidRecursivePropertyCalls(code, key) {
   if (!(code instanceof Array)) {
     return code;
@@ -35,8 +42,7 @@ function avoidRecursivePropertyCalls(code, key) {
     // Process any nested code
     modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
   }
-  // @ts-ignore
-  modified.location = code.location;
+  annotate(modified, code.location);
   return modified;
 }
 
@@ -133,7 +139,7 @@ export function makeFunctionCall(target, chain, location) {
       }
     }
 
-    fnCall.location = { start, source, end };
+    annotate(fnCall, { start, source, end });
 
     value = fnCall;
   }
