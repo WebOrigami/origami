@@ -3,7 +3,6 @@ import FunctionTree from "./drivers/FunctionTree.js";
 import MapTree from "./drivers/MapTree.js";
 import SetTree from "./drivers/SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
-import mapTransform from "./operations/mapFn.js";
 import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
 import * as utilities from "./utilities.js";
@@ -248,10 +247,7 @@ export function isTreelike(obj) {
  * @param {Treelike} treelike
  * @param {ValueKeyFn} valueFn
  */
-export function map(treelike, valueFn) {
-  const tree = from(treelike);
-  return mapTransform({ deep: true, value: valueFn })(tree);
-}
+export { default as map } from "./operations/map.js";
 
 /**
  * Map and reduce a tree.

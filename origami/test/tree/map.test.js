@@ -10,7 +10,7 @@ describe("map", () => {
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
     ]);
-    const result = map.call(null, treelike, {
+    const result = await map.call(null, treelike, {
       key: (value, key, tree) => value.name,
       value: (value, key, tree) => value.age,
     });

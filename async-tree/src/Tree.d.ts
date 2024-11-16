@@ -1,5 +1,5 @@
 import type { AsyncMutableTree, AsyncTree } from "@weborigami/types";
-import { PlainObject, ReduceFn, Treelike, ValueKeyFn } from "../index.ts";
+import { PlainObject, ReduceFn, Treelike, TreeMapOptions, ValueKeyFn } from "../index.ts";
 
 export function assign(target: Treelike, source: Treelike): Promise<AsyncTree>;
 export function clear(AsyncTree: AsyncMutableTree): Promise<void>;
@@ -11,7 +11,7 @@ export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;
 export function isTraversable(obj: any): boolean;
 export function isTreelike(obj: any): obj is Treelike;
-export function map(tree: Treelike, valueFn: ValueKeyFn): AsyncTree;
+export function map(tree: Treelike, options: TreeMapOptions|ValueKeyFn): AsyncTree;
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn | null, reduceFn: ReduceFn): Promise<any>;
 export function paths(tree: Treelike, base?: string): string[];
 export function plain(tree: Treelike): Promise<PlainObject>;

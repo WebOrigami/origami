@@ -12,7 +12,7 @@ describe("ori builtin", () => {
       c: 3,
     });
     tree.parent = builtinsTree;
-    const result = await ori.call(tree, `@keys`);
+    const result = await ori.call(tree, `keys`);
     assert.equal(
       String(result),
       `- a

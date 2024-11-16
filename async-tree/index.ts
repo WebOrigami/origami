@@ -43,6 +43,15 @@ export type Treelike =
   NativeTreelike |
   Unpackable<NativeTreelike>;
 
+export type TreeMapOptions = {
+  deep?: boolean;
+  description?: string;
+  needsSourceValue?: boolean;
+  inverseKey?: KeyFn;
+  key?: KeyFn;
+  value?: ValueKeyFn;
+};
+  
 export type TreeTransform = (treelike: Treelike) => AsyncTree;
 
 export type TypedArray =

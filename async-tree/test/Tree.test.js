@@ -191,7 +191,10 @@ describe("Tree", () => {
         b: "Bob",
       },
     });
-    const mapped = Tree.map(tree, (value) => value.toUpperCase());
+    const mapped = Tree.map(tree, {
+      deep: true,
+      value: (value) => value.toUpperCase(),
+    });
     assert.deepEqual(await Tree.plain(mapped), {
       a: "ALICE",
       more: {

@@ -132,9 +132,10 @@ describe("FileTree", async () => {
 
     // Read them back in.
     const actualFiles = await tempFiles.get("folder");
-    const strings = Tree.map(actualFiles, (buffer) =>
-      textDecoder.decode(buffer)
-    );
+    const strings = Tree.map(actualFiles, {
+      deep: true,
+      value: (buffer) => textDecoder.decode(buffer),
+    });
     const plain = await Tree.plain(strings);
     assert.deepEqual(plain, obj);
 

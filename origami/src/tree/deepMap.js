@@ -2,7 +2,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import deepMapFn from "./deepMapFn.js";
 
 /**
- * Shorthand for calling `@map` with `deep: true` option.
+ * Shorthand for calling `map` with `deep: true` option.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike

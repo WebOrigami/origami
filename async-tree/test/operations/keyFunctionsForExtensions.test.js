@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { ObjectTree, Tree } from "../../src/internal.js";
 import keyFunctionsForExtensions from "../../src/operations/keyFunctionsForExtensions.js";
-import map from "../../src/operations/mapFn.js";
+import map from "../../src/operations/map.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
@@ -39,12 +39,11 @@ describe("keyMapsForExtensions", () => {
     const { inverseKey, key } = keyFunctionsForExtensions({
       sourceExtension: "txt",
     });
-    const transform = map({
+    const fixture = map(files, {
       inverseKey,
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    const fixture = transform(files);
     assert.deepEqual(await Tree.plain(fixture), {
       "file1.txt": "WILL BE MAPPED",
     });
@@ -60,12 +59,11 @@ describe("keyMapsForExtensions", () => {
       resultExtension: "upper",
       sourceExtension: "txt",
     });
-    const transform = map({
+    const fixture = map(files, {
       inverseKey,
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    const fixture = transform(files);
     assert.deepEqual(await Tree.plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
     });
