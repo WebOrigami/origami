@@ -52,11 +52,9 @@ export default function map(treelike, options = {}) {
   }
 
   /**
-   * @type {import("../../index.ts").TreeTransform}
+   * @param {import("@weborigami/types").AsyncTree} tree
    */
-  function mapFn(treelike) {
-    const tree = Tree.from(treelike, { deep });
-
+  function mapFn(tree) {
     // The transformed tree is actually an extension of the original tree's
     // prototype chain. This allows the transformed tree to inherit any
     // properties/methods. For example, the `parent` of the transformed tree is
@@ -126,5 +124,6 @@ export default function map(treelike, options = {}) {
     return transformed;
   }
 
-  return mapFn(treelike);
+  const tree = Tree.from(treelike, { deep });
+  return mapFn(tree);
 }
