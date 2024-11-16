@@ -13,7 +13,6 @@ export default {
 
   /** @type {import("@weborigami/language").UnpackFunction} */
   async unpack(packed, options = {}) {
-    const attachedData = options.attachedData;
     const parent =
       options.parent ??
       /** @type {any} */ (packed).parent ??
@@ -42,6 +41,6 @@ export default {
     const target = parent ?? builtinsTree;
     let content = await fn.call(target);
 
-    return processUnpackedContent(content, parent, attachedData);
+    return processUnpackedContent(content, parent);
   },
 };
