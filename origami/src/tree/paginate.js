@@ -12,8 +12,12 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {number} [size=10]
  */
 export default async function paginate(treelike, size = 10) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:count");
-  const parent = this;
+  const tree = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:paginate"
+  );
 
   const keys = Array.from(await tree.keys());
   const pageCount = Math.ceil(keys.length / size);
@@ -52,6 +56,6 @@ export default async function paginate(treelike, size = 10) {
     },
   };
 
-  paginated.parent = parent;
+  paginated.parent = this;
   return paginated;
 }

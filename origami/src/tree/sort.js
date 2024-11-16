@@ -24,7 +24,6 @@ import { toFunction } from "../common/utilities.js";
  */
 export default async function sortBuiltin(treelike, options) {
   const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
-  const parent = this;
 
   if (typeof options === "function") {
     // Take the function as the `sortKey` option
@@ -35,6 +34,7 @@ export default async function sortBuiltin(treelike, options) {
   let extendedSortKeyFn;
   if (options?.sortKey) {
     const originalSortKey = toFunction(options?.sortKey);
+    const parent = this;
     extendedSortKeyFn = async (key, tree) => {
       const value = await tree.get(key);
       const sortKey = await originalSortKey.call(parent, value, key);
@@ -47,6 +47,6 @@ export default async function sortBuiltin(treelike, options) {
     sortKey: extendedSortKeyFn,
   });
 
-  sorted.parent = parent;
+  sorted.parent = this;
   return sorted;
 }
