@@ -30,17 +30,14 @@ export default async function inline(input) {
 
   const parent =
     /** @type {any} */ (input).parent ?? input[symbols.parent] ?? this;
-
-  // If the input document is a plain object, include it in scope for the
-  // evaluated expression.
-  const inputData = inputIsDocument ? input : null;
-
   const templateFn = await oriHandler.unpack(origami, {
-    attachedData: inputData,
     compiler: compile.templateDocument,
     parent,
   });
+
+  const inputData = inputIsDocument ? input : null;
   const templateResult = await templateFn(inputData);
+
   return inputIsDocument
     ? documentObject(templateResult, inputData)
     : templateResult;

@@ -9,21 +9,12 @@ import { builtinsTree } from "../internal.js";
  *
  * @param {any} content
  * @param {AsyncTree|null} parent
- * @param {any} [attachedData]
  * @returns
  */
-export default function processUnpackedContent(content, parent, attachedData) {
+export default function processUnpackedContent(content, parent) {
   if (typeof content === "function") {
-    // Bind the function to a target that's the attached data (if it exists) or
-    // the parent.
-    const base = parent ?? builtinsTree;
-    let target;
-    if (attachedData) {
-      target = Tree.from(attachedData);
-      target.parent = base;
-    } else {
-      target = base;
-    }
+    // Bind the function to the parent as the `this` context.
+    const target = parent ?? builtinsTree;
     const result = content.bind(target);
     if (content.code) {
       result.code = content.code;
