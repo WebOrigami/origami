@@ -39,6 +39,8 @@ export const keySymbol = Symbol("key");
  * generally include a period). Otherwise, return the key as is.
  *
  * If the key ends in a trailing slash, that will be preserved in the result.
+ * Exception: if the source extension is empty, and the key doesn't have an
+ * extension, the result extension will be appended to the key without a slash.
  *
  * @param {string} key
  * @param {string} sourceExtension
@@ -54,8 +56,17 @@ export function replaceExtension(key, sourceExtension, resultExtension) {
     return normalizedKey;
   }
 
-  const replaced =
-    normalizedKey.slice(0, -sourceExtension.length) + resultExtension;
+  let replaced;
+  if (sourceExtension === "") {
+    replaced = normalizedKey + resultExtension;
+    if (!normalizedKey.includes(".")) {
+      return replaced;
+    }
+  } else {
+    replaced =
+      normalizedKey.slice(0, -sourceExtension.length) + resultExtension;
+  }
+
   return trailingSlash.toggle(replaced, trailingSlash.has(key));
 }
 

@@ -30,6 +30,10 @@ describe("utilities", () => {
       utilities.replaceExtension("file.md/", ".md", ".html"),
       "file.html/"
     );
+    assert.equal(
+      utilities.replaceExtension("folder/", "", ".html"),
+      "folder.html"
+    );
   });
 
   test("toFunction returns a plain function as is", () => {
