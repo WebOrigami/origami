@@ -20,9 +20,6 @@ import OrigamiFiles from "./OrigamiFiles.js";
 import { codeSymbol } from "./symbols.js";
 import taggedTemplate from "./taggedTemplate.js";
 
-// For memoizing lambda functions
-const lambdaFnMap = new Map();
-
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
     value: () => label,
@@ -148,9 +145,7 @@ addOpLabel(inherited, "«ops.inherited»");
  */
 
 export function lambda(parameters, code) {
-  if (lambdaFnMap.has(code)) {
-    return lambdaFnMap.get(code);
-  }
+  const context = this;
 
   /** @this {Treelike|null} */
   async function invoke(...args) {
@@ -164,10 +159,7 @@ export function lambda(parameters, code) {
       enumerable: false,
     });
     const ambientTree = new ObjectTree(ambients);
-    // Origami ops should be called with a Tree as `this`, but functions defined
-    // on Origami objects (e.g., in .ori files) will end up being bound to a
-    // plain object. So we need to coerce `this` to a Tree.
-    ambientTree.parent = this ? Tree.from(this) : null;
+    ambientTree.parent = context;
 
     let result = await evaluate.call(ambientTree, code);
 
@@ -194,7 +186,6 @@ export function lambda(parameters, code) {
   });
 
   invoke.code = code;
-  lambdaFnMap.set(code, invoke);
   return invoke;
 }
 addOpLabel(lambda, "«ops.lambda");

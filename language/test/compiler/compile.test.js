@@ -77,11 +77,11 @@ describe("compile", () => {
         return strings[0] + values[0] + strings[1];
       },
     });
-    const fn = compile.expression("=tag`Hello, ${_}!`");
-    const templateFn = await fn.call(null);
-    const alice = await templateFn.call(scope, "Alice");
+    const program = compile.expression("=tag`Hello, ${_}!`");
+    const lambda = await program.call(scope);
+    const alice = await lambda("Alice");
     assert.equal(alice, "Hello, Alice!");
-    const bob = await templateFn.call(scope, "Bob");
+    const bob = await lambda("Bob");
     assert.equal(bob, "Hello, Bob!");
   });
 

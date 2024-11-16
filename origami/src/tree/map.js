@@ -95,19 +95,12 @@ function extendedOptions(context, operation) {
     extendedInverseKeyFn = keyFns.inverseKey;
   } else if (keyFn) {
     const resolvedKeyFn = toFunction(keyFn);
-    async function scopedKeyFn(sourceKey, sourceTree) {
+    async function keyWithValueFn(sourceKey, sourceTree) {
       const sourceValue = await sourceTree.get(sourceKey);
-      // The key function will be given the source tree, but will run with the
-      // scope of this tree.
-      const resultKey = await resolvedKeyFn.call(
-        context,
-        sourceValue,
-        sourceKey,
-        sourceTree
-      );
+      const resultKey = await resolvedKeyFn(sourceValue, sourceKey, sourceTree);
       return resultKey;
     }
-    const keyFns = cachedKeyFunctions(scopedKeyFn, deep);
+    const keyFns = cachedKeyFunctions(keyWithValueFn, deep);
     extendedKeyFn = keyFns.key;
     extendedInverseKeyFn = keyFns.inverseKey;
   } else {
