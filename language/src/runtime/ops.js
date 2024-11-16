@@ -17,6 +17,7 @@ import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
+import { codeSymbol } from "./symbols.js";
 import taggedTemplate from "./taggedTemplate.js";
 
 // For memoizing lambda functions
@@ -158,6 +159,10 @@ export function lambda(parameters, code) {
     for (const parameter of parameters) {
       ambients[parameter] = args.shift();
     }
+    Object.defineProperty(ambients, codeSymbol, {
+      value: code,
+      enumerable: false,
+    });
     const ambientTree = new ObjectTree(ambients);
     // Origami ops should be called with a Tree as `this`, but functions defined
     // on Origami objects (e.g., in .ori files) will end up being bound to a
