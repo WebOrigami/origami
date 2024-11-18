@@ -3,7 +3,8 @@ export const builtins = import("../internal.js").then(
   (internal) => internal.builtinsTree
 );
 
-export { replaceExtension, toFunction } from "../common/utilities.js";
+export { replaceExtension } from "@weborigami/async-tree";
+export { toFunction } from "../common/utilities.js";
 
 export { default as help } from "../help/help.js"; // Alias
 export { default as basename } from "./basename.js";

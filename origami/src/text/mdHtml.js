@@ -1,11 +1,11 @@
-import { isUnpackable } from "@weborigami/async-tree";
+import { isUnpackable, replaceExtension } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
 import documentObject from "../common/documentObject.js";
-import { replaceExtension, toString } from "../common/utilities.js";
+import { toString } from "../common/utilities.js";
 import origamiHighlightDefinition from "./origamiHighlightDefinition.js";
 
 highlight.registerLanguage("ori", origamiHighlightDefinition);
