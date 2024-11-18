@@ -1,4 +1,4 @@
-import { extname } from "@weborigami/language";
+import { extname } from "@weborigami/async-tree";
 
 export default function basename(key) {
   const ext = extname(key);

@@ -1,5 +1,4 @@
-import { trailingSlash } from "@weborigami/async-tree";
-import { extname } from "@weborigami/language";
+import { extname, trailingSlash } from "@weborigami/async-tree";
 
 // A fake base URL used to handle cases where an href is relative and must be
 // treated relative to some base URL.

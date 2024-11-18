@@ -1,5 +1,4 @@
-import { toString } from "@weborigami/async-tree";
-import { extname } from "@weborigami/language";
+import { extname, toString } from "@weborigami/async-tree";
 import { isCrawlableHref, normalizeHref } from "./utilities.js";
 
 // Filter the paths to those that are local to the site.

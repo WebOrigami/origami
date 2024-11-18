@@ -1,11 +1,11 @@
 import {
-  SiteTree,
-  Tree,
+  extname,
   isPacked,
   isPlainObject,
   isStringLike,
+  SiteTree,
+  Tree,
 } from "@weborigami/async-tree";
-import { extname } from "@weborigami/language";
 import * as serialize from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { mediaTypeForExtension } from "./mediaTypes.js";
