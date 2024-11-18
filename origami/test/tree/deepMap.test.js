@@ -16,7 +16,7 @@ describe("deepMap", () => {
     });
     const fixture = await deepMap.call(null, treelike, {
       deep: true,
-      extension: "txt->upper",
+      extension: ".txt->.upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     assert.deepEqual(await Tree.plain(fixture), {

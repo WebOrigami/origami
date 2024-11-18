@@ -20,6 +20,9 @@ export default function keyFunctionsForExtensions({
     resultExtension = sourceExtension;
   }
 
+  checkDeprecatedExtensionWithoutDot(resultExtension);
+  checkDeprecatedExtensionWithoutDot(sourceExtension);
+
   return {
     async inverseKey(resultKey, tree) {
       // Remove trailing slash so that mapFn won't inadvertently unpack files.
@@ -34,4 +37,12 @@ export default function keyFunctionsForExtensions({
         : undefined;
     },
   };
+}
+
+function checkDeprecatedExtensionWithoutDot(extension) {
+  if (extension && extension !== "/" && !extension.startsWith(".")) {
+    throw new RangeError(
+      `map: Warning: the extension "${extension}" should start with a period.`
+    );
+  }
 }

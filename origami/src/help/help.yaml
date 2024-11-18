@@ -180,6 +180,8 @@ origami:
       description: The set of installed builtin functions
     config:
       description: The current project's configuration
+    extension:
+      description: Helpers for working with file extensions
     json:
       args: (obj)
       description: Render the object in JSON format
@@ -205,8 +207,6 @@ origami:
     repeat:
       args: (n, obj)
       description: An array of n copies of the object
-    extension:
-      description: Helpers for working with file extensions
     shell:
       args: (text)
       description: Run the text as a shell command, return the output

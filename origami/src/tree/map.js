@@ -133,35 +133,22 @@ function extendedOptions(context, operation) {
 function parseExtensions(specifier) {
   const lowercase = specifier?.toLowerCase() ?? "";
   const extensionRegex =
-    /^((?<sourceExtension>\.?\S*)\s*(→|->)\s*(?<resultExtension>\.?\S*))|(\.?(?<extension>\S*))$/;
+    /^((?<sourceExtension>\.?\S*)\s*(→|->)\s*(?<resultExtension>\.?\S*))|(?<extension>\.?\S*)$/;
   const match = lowercase.match(extensionRegex);
   if (!match) {
     // Shouldn't happen because the regex is exhaustive.
     throw new Error(`map: Invalid extension specifier "${specifier}".`);
   }
   // @ts-ignore
-  let { extension, resultExtension, sourceExtension } = match.groups;
-  extension = checkDeprecatedExtensionWithoutDot(extension);
+  const { extension, resultExtension, sourceExtension } = match.groups;
   if (extension) {
     // foo
     return {
       resultExtension: extension,
       sourceExtension: extension,
     };
+  } else {
+    // foo→bar
+    return { resultExtension, sourceExtension };
   }
-
-  // foo→bar
-  sourceExtension = checkDeprecatedExtensionWithoutDot(sourceExtension);
-  resultExtension = checkDeprecatedExtensionWithoutDot(resultExtension);
-  return { resultExtension, sourceExtension };
-}
-
-function checkDeprecatedExtensionWithoutDot(extension) {
-  if (extension && extension !== "/" && !extension.startsWith(".")) {
-    console.warn(
-      `@map: Warning: the extension "${extension}" should start with a period.`
-    );
-    return `.${extension}`;
-  }
-  return extension;
 }
