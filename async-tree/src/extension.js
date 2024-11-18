@@ -1,15 +1,6 @@
 import * as trailingSlash from "./trailingSlash.js";
 
 /**
- * Add a dot prefix to the result extension if it's not empty.
- *
- * @param {string} resultExtension
- */
-export function dotPrefix(resultExtension) {
-  return resultExtension ? `.${resultExtension}` : "";
-}
-
-/**
  * Replicate the logic of Node POSIX path.extname at
  * https://github.com/nodejs/node/blob/main/lib/path.js so that we can use this
  * in the browser.
@@ -75,9 +66,10 @@ export function extname(path) {
  *
  * If the resultExtension is empty, the key must not have an extension to match.
  *
- * A trailing slash in the key is ignored for purposes of comparison to comply
- * with the way Origami can unpack files. Example: the keys "data.json" and
- * "data.json/" are treated equally.
+ * If the resultExtension is a slash, then the key must end with a slash
+ * for the match to succeed. Otherwise, a trailing slash in the key is ignored
+ * for purposes of comparison to comply with the way Origami can unpack files.
+ * Example: the keys "data.json" and "data.json/" are treated equally.
  *
  * This uses a different, more general interpretation of "resultExtension" to
  * mean any suffix, rather than Node's interpretation `path.extname`. In
@@ -85,8 +77,16 @@ export function extname(path) {
  * contains more than one dot.
  */
 export function match(key, resultExtension) {
+  if (typeof key !== "string") {
+    return null;
+  }
+
+  if (resultExtension === "/") {
+    return trailingSlash.has(key) ? trailingSlash.remove(key) : null;
+  }
+
   // Key matches if it ends with the same resultExtension
-  const extension = extname(key);
+  const extension = extname(String(key));
   if (extension === resultExtension) {
     const normalized = trailingSlash.remove(key);
     const removed =
@@ -118,17 +118,19 @@ export function replace(key, sourceExtension, resultExtension) {
     return undefined;
   }
 
-  const normalizedKey = trailingSlash.remove(key);
-  if (!match(normalizedKey, sourceExtension)) {
-    return normalizedKey;
+  if (!match(key, sourceExtension)) {
+    return key;
   }
 
   let replaced;
+  const normalizedKey = trailingSlash.remove(key);
   if (sourceExtension === "") {
     replaced = normalizedKey + resultExtension;
     if (!normalizedKey.includes(".")) {
       return replaced;
     }
+  } else if (sourceExtension === "/") {
+    return trailingSlash.remove(key) + resultExtension;
   } else {
     replaced =
       normalizedKey.slice(0, -sourceExtension.length) + resultExtension;

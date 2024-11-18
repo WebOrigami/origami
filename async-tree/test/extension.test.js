@@ -19,6 +19,8 @@ describe("extension", () => {
     assert.equal(match("file.md", ".txt"), null);
     assert.equal(match("file.md/", ".md"), "file/");
     assert.equal(match("file", ""), "file");
+    assert.equal(match("file", "/"), null);
+    assert.equal(match("file/", "/"), "file");
   });
 
   test("replace", () => {
@@ -26,5 +28,7 @@ describe("extension", () => {
     assert.equal(replace("file.md", ".txt", ".html"), "file.md");
     assert.equal(replace("file.md/", ".md", ".html"), "file.html/");
     assert.equal(replace("folder/", "", ".html"), "folder.html");
+    assert.equal(replace("folder", "/", ".html"), "folder");
+    assert.equal(replace("folder/", "/", ".html"), "folder.html");
   });
 });
