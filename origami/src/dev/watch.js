@@ -53,7 +53,7 @@ async function evaluateTree(parent, fn) {
   let message;
   let result;
   try {
-    result = await fn.call(parent);
+    result = await fn();
   } catch (/** @type {any} */ error) {
     message = formatError(error);
   }
