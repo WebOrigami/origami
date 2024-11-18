@@ -205,9 +205,8 @@ origami:
     repeat:
       args: (n, obj)
       description: An array of n copies of the object
-    replaceExtension:
-      args: (filename, ext1, ext2)
-      description: Return filename with ext1 replaced by ext2
+    extension:
+      description: Helpers for working with file extensions
     shell:
       args: (text)
       description: Run the text as a shell command, return the output
