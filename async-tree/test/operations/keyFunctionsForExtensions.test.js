@@ -30,6 +30,17 @@ describe("keyMapsForExtensions", () => {
     assert.equal(await key("file.foo"), undefined);
   });
 
+  test("key functions can handle a slash as an explicit extension", async () => {
+    const { inverseKey, key } = keyFunctionsForExtensions({
+      resultExtension: ".html",
+      sourceExtension: "/",
+    });
+    assert.equal(await inverseKey("file.html"), "file/");
+    assert.equal(await inverseKey("file.html/"), "file/");
+    assert.equal(await key("file"), undefined);
+    assert.equal(await key("file/"), "file.html");
+  });
+
   test("works with map to handle keys that end in a given resultExtension", async () => {
     const files = new ObjectTree({
       "file1.txt": "will be mapped",

@@ -114,8 +114,8 @@ export function match(key, resultExtension) {
  * @param {string} resultExtension
  */
 export function replace(key, sourceExtension, resultExtension) {
-  if (!key) {
-    return undefined;
+  if (typeof key !== "string") {
+    return null;
   }
 
   if (!match(key, sourceExtension)) {

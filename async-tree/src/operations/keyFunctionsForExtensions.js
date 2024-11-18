@@ -29,12 +29,8 @@ export default function keyFunctionsForExtensions({
     },
 
     async key(sourceKey, tree) {
-      const hasSlash = trailingSlash.has(sourceKey);
-      const baseKey = trailingSlash.remove(sourceKey);
-      const basename = extension.match(baseKey, sourceExtension);
-      return basename
-        ? // Preserve trailing slash
-          trailingSlash.toggle(`${basename}${resultExtension}`, hasSlash)
+      return extension.match(sourceKey, sourceExtension)
+        ? extension.replace(sourceKey, sourceExtension, resultExtension)
         : undefined;
     },
   };
