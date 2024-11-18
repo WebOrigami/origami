@@ -1,4 +1,4 @@
-import { extname, toString } from "@weborigami/async-tree";
+import { extension, toString } from "@weborigami/async-tree";
 import { isCrawlableHref, normalizeHref } from "./utilities.js";
 
 // Filter the paths to those that are local to the site.
@@ -41,7 +41,7 @@ export default function findPaths(value, key, baseUrl, localPath) {
 
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.
-  const ext = key ? extname(key).toLowerCase() : "";
+  const ext = key ? extension.extname(key).toLowerCase() : "";
   let foundPaths;
   if (ext === ".html" || ext === ".htm" || ext === ".xhtml") {
     foundPaths = findPathsInHtml(text);

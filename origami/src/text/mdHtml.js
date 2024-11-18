@@ -1,4 +1,4 @@
-import { isUnpackable, replace } from "@weborigami/async-tree";
+import { extension, isUnpackable } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
@@ -55,5 +55,5 @@ export default async function mdHtml(input) {
   return inputIsDocument ? documentObject(html, input) : html;
 }
 
-mdHtml.key = (sourceKey) => replace(sourceKey, ".md", ".html");
-mdHtml.inverseKey = (resultKey) => replace(resultKey, ".html", ".md");
+mdHtml.key = (sourceKey) => extension.replace(sourceKey, ".md", ".html");
+mdHtml.inverseKey = (resultKey) => extension.replace(resultKey, ".html", ".md");

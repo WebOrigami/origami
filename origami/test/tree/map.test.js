@@ -45,7 +45,7 @@ describe("map", () => {
       "file3.foo": "won't be mapped",
     };
     const fixture = await map.call(null, treelike, {
-      extension: "txt->upper",
+      extension: ".txt->.upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
     assert.deepEqual(await Tree.plain(fixture), {
@@ -59,7 +59,7 @@ describe("map", () => {
       "file2.txt": 2,
     };
     const fixture = await map.call(null, treelike, {
-      extension: "txt->",
+      extension: ".txt->",
     });
     assert.deepEqual(await Tree.plain(fixture), {
       file1: 1,

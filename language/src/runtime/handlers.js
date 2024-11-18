@@ -1,6 +1,6 @@
 import {
   box,
-  extname,
+  extension,
   isPacked,
   isStringLike,
   isUnpackable,
@@ -75,9 +75,11 @@ export async function handleExtension(parent, value, key) {
     }
 
     // Special case: `.ori.<ext>` extensions are Origami documents.
-    const extension = key.match(/\.ori\.\S+$/) ? ".oridocument" : extname(key);
-    if (extension) {
-      const handler = await getExtensionHandler(parent, extension);
+    const extname = key.match(/\.ori\.\S+$/)
+      ? ".oridocument"
+      : extension.extname(key);
+    if (extname) {
+      const handler = await getExtensionHandler(parent, extname);
       if (handler) {
         if (hasSlash && handler.unpack) {
           // Key like `data.json/` ends in slash -- unpack immediately

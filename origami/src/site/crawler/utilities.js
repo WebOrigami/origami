@@ -1,4 +1,4 @@
-import { extname, trailingSlash } from "@weborigami/async-tree";
+import { extension, trailingSlash } from "@weborigami/async-tree";
 
 // A fake base URL used to handle cases where an href is relative and must be
 // treated relative to some base URL.
@@ -12,7 +12,7 @@ export function isCrawlableHref(href) {
   if (lastKey === "robots.txt" || lastKey === "sitemap.xml") {
     return true;
   }
-  const ext = extname(lastKey);
+  const ext = extension.extname(lastKey);
   // We assume an empty extension is HTML.
   const crawlableExtensions = [".html", ".css", ".js", ".map", ".xhtml", ""];
   return crawlableExtensions.includes(ext);

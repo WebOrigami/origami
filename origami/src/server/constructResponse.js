@@ -1,5 +1,5 @@
 import {
-  extname,
+  extension,
   isPacked,
   isPlainObject,
   isStringLike,
@@ -51,8 +51,8 @@ export default async function constructResponse(request, resource) {
     mediaType = resource.mediaType;
   } else {
     // Infer expected media type from file extension on request URL.
-    const extension = extname(url.pathname).toLowerCase();
-    mediaType = extension ? mediaTypeForExtension[extension] : undefined;
+    const ext = extension.extname(url.pathname).toLowerCase();
+    mediaType = ext ? mediaTypeForExtension[ext] : undefined;
   }
 
   if (

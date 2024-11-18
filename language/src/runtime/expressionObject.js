@@ -1,4 +1,4 @@
-import { extname, ObjectTree, symbols, Tree } from "@weborigami/async-tree";
+import { extension, ObjectTree, symbols, Tree } from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -40,8 +40,8 @@ export default async function expressionObject(entries, parent) {
     // array), we need to define a getter -- but if that code takes the form
     // [ops.getter, <primitive>], we can define a regular property.
     let defineProperty;
-    const extension = extname(key);
-    if (extension) {
+    const extname = extension.extname(key);
+    if (extname) {
       defineProperty = false;
     } else if (!(value instanceof Array)) {
       defineProperty = true;
@@ -79,7 +79,7 @@ export default async function expressionObject(entries, parent) {
       }
 
       let get;
-      if (extension) {
+      if (extname) {
         // Key has extension, getter will invoke code then attach unpack method
         get = async () => {
           tree ??= new ObjectTree(object);
