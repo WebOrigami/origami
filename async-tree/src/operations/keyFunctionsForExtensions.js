@@ -25,9 +25,7 @@ export default function keyFunctionsForExtensions({
       // Remove trailing slash so that mapFn won't inadvertently unpack files.
       const baseKey = trailingSlash.remove(resultKey);
       const basename = extension.match(baseKey, resultExtension);
-      return basename
-        ? `${basename}${extension.dotPrefix(sourceExtension)}`
-        : undefined;
+      return basename ? `${basename}${sourceExtension}` : undefined;
     },
 
     async key(sourceKey, tree) {
@@ -36,10 +34,7 @@ export default function keyFunctionsForExtensions({
       const basename = extension.match(baseKey, sourceExtension);
       return basename
         ? // Preserve trailing slash
-          trailingSlash.toggle(
-            `${basename}${extension.dotPrefix(resultExtension)}`,
-            hasSlash
-          )
+          trailingSlash.toggle(`${basename}${resultExtension}`, hasSlash)
         : undefined;
     },
   };

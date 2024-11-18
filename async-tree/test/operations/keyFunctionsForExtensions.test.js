@@ -7,7 +7,7 @@ import map from "../../src/operations/map.js";
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
     const { inverseKey, key } = keyFunctionsForExtensions({
-      sourceExtension: "txt",
+      sourceExtension: ".txt",
     });
     assert.equal(await inverseKey("file.txt"), "file.txt");
     assert.equal(await inverseKey("file.txt/"), "file.txt");
@@ -19,8 +19,8 @@ describe("keyMapsForExtensions", () => {
 
   test("returns key functions that can map extensions", async () => {
     const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: "json",
-      sourceExtension: "md",
+      resultExtension: ".json",
+      sourceExtension: ".md",
     });
     assert.equal(await inverseKey("file.json"), "file.md");
     assert.equal(await inverseKey("file.json/"), "file.md");
@@ -37,7 +37,7 @@ describe("keyMapsForExtensions", () => {
       "file3.foo": "won't be mapped",
     });
     const { inverseKey, key } = keyFunctionsForExtensions({
-      sourceExtension: "txt",
+      sourceExtension: ".txt",
     });
     const fixture = map(files, {
       inverseKey,
@@ -56,8 +56,8 @@ describe("keyMapsForExtensions", () => {
       "file3.foo": "won't be mapped",
     });
     const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: "upper",
-      sourceExtension: "txt",
+      resultExtension: ".upper",
+      sourceExtension: ".txt",
     });
     const fixture = map(files, {
       inverseKey,
