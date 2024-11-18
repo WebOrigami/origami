@@ -1,4 +1,4 @@
-import { handleExtension } from "./extensions.js";
+import { handleExtension } from "./handlers.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree

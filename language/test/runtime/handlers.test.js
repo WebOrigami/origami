@@ -1,9 +1,9 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { handleExtension } from "../../src/runtime/extensions.js";
+import { handleExtension } from "../../src/runtime/handlers.js";
 
-describe("extensions", () => {
+describe("handlers", () => {
   test("attaches an unpack method to a value with an extension", async () => {
     const fixture = createFixture();
     const numberValue = await fixture.get("foo");

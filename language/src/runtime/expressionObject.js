@@ -1,5 +1,5 @@
 import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
-import { extname, handleExtension } from "./extensions.js";
+import { extname, handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
 
 /**
