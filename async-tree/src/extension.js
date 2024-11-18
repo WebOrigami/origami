@@ -1,4 +1,5 @@
 import * as trailingSlash from "./trailingSlash.js";
+import { isStringLike, toString } from "./utilities.js";
 
 /**
  * Replicate the logic of Node POSIX path.extname at
@@ -77,9 +78,10 @@ export function extname(path) {
  * contains more than one dot.
  */
 export function match(key, resultExtension) {
-  if (typeof key !== "string") {
+  if (!isStringLike(key)) {
     return null;
   }
+  key = toString(key);
 
   if (resultExtension === "/") {
     return trailingSlash.has(key) ? trailingSlash.remove(key) : null;
@@ -114,9 +116,10 @@ export function match(key, resultExtension) {
  * @param {string} resultExtension
  */
 export function replace(key, sourceExtension, resultExtension) {
-  if (typeof key !== "string") {
+  if (!isStringLike(key)) {
     return null;
   }
+  key = toString(key);
 
   if (!match(key, sourceExtension)) {
     return key;

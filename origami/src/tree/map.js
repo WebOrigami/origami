@@ -49,7 +49,7 @@ function extendedOptions(context, operation) {
     // @ts-ignore
     options = operation;
     if (`value` in options && !options.value) {
-      throw new TypeError(`@mapFn: The value function is not defined.`);
+      throw new TypeError(`map: The value function is not defined.`);
     }
     valueFn = options?.value;
   } else if (
@@ -60,18 +60,18 @@ function extendedOptions(context, operation) {
     options = {};
   } else {
     throw new TypeError(
-      `@mapFn: You must specify a value function or options dictionary as the first parameter.`
+      `map: You must specify a value function or options dictionary as the first parameter.`
     );
   }
 
   const { deep, extension, needsSourceValue } = options;
-  const description = options.description ?? `@mapFn ${extension ?? ""}`;
+  const description = options.description ?? `map ${extension ?? ""}`;
   const keyFn = options.key;
   const inverseKeyFn = options.inverseKey;
 
   if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
-      `@mapFn: You can't specify extensions and also a key or inverseKey function`
+      `map: You can't specify extensions and also a key or inverseKey function`
     );
   }
 
@@ -137,22 +137,23 @@ function parseExtensions(specifier) {
   const match = lowercase.match(extensionRegex);
   if (!match) {
     // Shouldn't happen because the regex is exhaustive.
-    throw new Error(`@mapFn: Invalid extension specifier "${specifier}".`);
+    throw new Error(`map: Invalid extension specifier "${specifier}".`);
   }
   // @ts-ignore
   let { extension, resultExtension, sourceExtension } = match.groups;
-  sourceExtension = checkDeprecatedExtensionWithoutDot(sourceExtension);
-  resultExtension = checkDeprecatedExtensionWithoutDot(resultExtension);
-  if (sourceExtension || resultExtension) {
-    // foo→bar
-    return { resultExtension, sourceExtension };
-  } else {
+  extension = checkDeprecatedExtensionWithoutDot(extension);
+  if (extension) {
     // foo
     return {
-      resultExtension: specifier,
-      sourceExtension: specifier,
+      resultExtension: extension,
+      sourceExtension: extension,
     };
   }
+
+  // foo→bar
+  sourceExtension = checkDeprecatedExtensionWithoutDot(sourceExtension);
+  resultExtension = checkDeprecatedExtensionWithoutDot(resultExtension);
+  return { resultExtension, sourceExtension };
 }
 
 function checkDeprecatedExtensionWithoutDot(extension) {
