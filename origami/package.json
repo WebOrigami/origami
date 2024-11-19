@@ -31,8 +31,6 @@
     "yaml": "2.5.1"
   },
   "scripts": {
-    "build": "ori exports/buildExports.js src > exports/exports.js",
-    "prepublishOnly": "npm run build",
     "test": "node --test --test-reporter=spec",
     "typecheck": "node node_modules/typescript/bin/tsc"
   }
