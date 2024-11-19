@@ -62,39 +62,36 @@ export function extname(path) {
 }
 
 /**
- * See if the key ends with the given resultExtension. If it does, return the
- * base name without the resultExtension; if it doesn't return null.
+ * See if the key ends with the given extension. If it does, return the base
+ * name without the extension; if it doesn't return null.
  *
- * If the resultExtension is empty, the key must not have an extension to match.
+ * If the extension is empty, the key must not have an extension to match.
  *
- * If the resultExtension is a slash, then the key must end with a slash
- * for the match to succeed. Otherwise, a trailing slash in the key is ignored
- * for purposes of comparison to comply with the way Origami can unpack files.
- * Example: the keys "data.json" and "data.json/" are treated equally.
+ * If the extension is a slash, then the key must end with a slash for the match
+ * to succeed. Otherwise, a trailing slash in the key is ignored for purposes of
+ * comparison to comply with the way Origami can unpack files. Example: the keys
+ * "data.json" and "data.json/" are treated equally.
  *
- * This uses a different, more general interpretation of "resultExtension" to
- * mean any suffix, rather than Node's interpretation `path.extname`. In
- * particular, this will match an "resultExtension" like ".foo.bar" that
- * contains more than one dot.
+ * This uses a different, more general interpretation of "extension" to mean any
+ * suffix, rather than Node's interpretation in `extname`. In particular, this
+ * will match a multi-part extension like ".foo.bar" that contains more than one
+ * dot.
  */
-export function match(key, resultExtension) {
+export function match(key, ext) {
   if (!isStringLike(key)) {
     return null;
   }
   key = toString(key);
 
-  if (resultExtension === "/") {
+  if (ext === "/") {
     return trailingSlash.has(key) ? trailingSlash.remove(key) : null;
   }
 
-  // Key matches if it ends with the same resultExtension
-  const extension = extname(String(key));
-  if (extension === resultExtension) {
-    const normalized = trailingSlash.remove(key);
+  // Key matches if it ends with the same extension
+  const normalized = trailingSlash.remove(key);
+  if (normalized.endsWith(ext)) {
     const removed =
-      extension.length > 0
-        ? normalized.slice(0, -extension.length)
-        : normalized;
+      ext.length > 0 ? normalized.slice(0, -ext.length) : normalized;
     return trailingSlash.toggle(removed, trailingSlash.has(key));
   }
 

@@ -23,6 +23,13 @@ describe("extension", () => {
     assert.equal(match("file/", "/"), "file");
   });
 
+  test("match can handle multi-part extensions", () => {
+    assert.equal(match("foo.ori.html", ".ori.html"), "foo");
+    assert.equal(match("foo.ori.html", ".html"), "foo.ori");
+    assert.equal(match("foo.ori.html", ".txt"), null);
+    assert.equal(match("foo.ori.html/", ".ori.html"), "foo/");
+  });
+
   test("replace", () => {
     assert.equal(replace("file.md", ".md", ".html"), "file.html");
     assert.equal(replace("file.md", ".txt", ".html"), "file.md");
