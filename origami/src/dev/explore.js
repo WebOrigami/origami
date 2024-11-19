@@ -57,7 +57,7 @@ async function getScopeData(scope) {
   const trees = scope.trees ?? [scope];
   const data = [];
   for (const tree of trees) {
-    if (tree.parent?.parent === undefined) {
+    if (tree.parent === undefined) {
       // Skip builtins.
       continue;
     }
