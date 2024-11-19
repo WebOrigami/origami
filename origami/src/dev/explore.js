@@ -1,10 +1,14 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree, scope } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { keySymbol } from "../common/utilities.js";
 import { builtinsTree } from "../internal.js";
 import debug from "./debug.js";
+
+let templatePromise;
 
 /**
  * @this {AsyncTree|null}
@@ -37,12 +41,9 @@ export default async function explore(...keys) {
     result = await Tree.traverse(debugScope, ...keys);
   } else {
     // Return the Explore page for the current scope.
-    const miscFiles = new OrigamiFiles(import.meta.url);
-    miscFiles.parent = builtinsTree;
-    const templateFile = await miscFiles.get("explore.ori");
-    const template = await templateFile.unpack();
-
     const data = await getScopeData(scope(tree));
+    templatePromise ??= loadTemplate();
+    const template = await templatePromise;
     const text = await template(data);
 
     result = new String(text);
@@ -67,4 +68,13 @@ async function getScopeData(scope) {
     data.push({ name, keys });
   }
   return data;
+}
+
+async function loadTemplate() {
+  const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
+  const folder = new OrigamiFiles(folderPath);
+  folder.parent = builtinsTree;
+  const templateFile = await folder.get("explore.ori");
+  const template = await templateFile.unpack();
+  return template;
 }
