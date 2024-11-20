@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
-describe("ops", () => {
+describe.only("ops", () => {
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
     const result = await evaluate.call(null, code);
@@ -120,6 +120,28 @@ describe("ops", () => {
     const result = await ops.unpack.call(null, fixture);
     assert.equal(result, "unpacked");
   });
+
+  describe.only("calc", async () => {
+    test("ops.logicalAnd", async () => {
+      assert.equal(await ops.logicalAnd(true, trueFn), true);
+      assert.equal(await ops.logicalAnd(true, falseFn), false);
+      assert.equal(await ops.logicalAnd(false, trueFn), false);
+      assert.equal(await ops.logicalAnd(false, falseFn), false);
+
+      // Short-circuiting
+      assert.equal(await ops.logicalAnd(false, errorFn), false);
+    });
+
+    test("ops.logicalOr", async () => {
+      assert.equal(await ops.logicalOr(true, trueFn), true);
+      assert.equal(await ops.logicalOr(true, falseFn), true);
+      assert.equal(await ops.logicalOr(false, trueFn), true);
+      assert.equal(await ops.logicalOr(false, falseFn), false);
+
+      // Short-circuiting
+      assert.equal(await ops.logicalOr(true, errorFn), true);
+    });
+  });
 });
 
 /**
@@ -133,4 +155,16 @@ function createCode(array) {
     },
   };
   return code;
+}
+
+function errorFn() {
+  throw new Error("This should not be called");
+}
+
+function falseFn() {
+  return false;
+}
+
+function trueFn() {
+  return true;
 }

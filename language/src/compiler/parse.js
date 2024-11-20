@@ -15,6 +15,7 @@ import * as ops from "../runtime/ops.js";
 import {
   annotate,
   makeArray,
+  makeDeferredArguments,
   makeFunctionCall,
   makeObject,
   makePipeline,
@@ -533,12 +534,18 @@ function peg$parse(input, options) {
   var peg$f62 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate([ops.logicalAnd, head, ...tail], location());
+        : annotate(
+          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
+          location()
+        );
     };
   var peg$f63 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate([ops.logicalOr, head, ...tail], location());
+        : annotate(
+          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
+          location()
+        );
     };
   var peg$f64 = function(condition, truthy, falsy) {
       return annotate([

@@ -832,7 +832,7 @@ describe.only("Origami parser", () => {
       assertParse("logicalAnd", "true && false", [
         ops.logicalAnd,
         [ops.scope, "true"],
-        [ops.scope, "false"],
+        [ops.lambda, [], [ops.scope, "false"]],
       ]);
     });
 
@@ -845,13 +845,13 @@ describe.only("Origami parser", () => {
       assertParse("logicalOr", "false || false || true", [
         ops.logicalOr,
         [ops.scope, "false"],
-        [ops.scope, "false"],
-        [ops.scope, "true"],
+        [ops.lambda, [], [ops.scope, "false"]],
+        [ops.lambda, [], [ops.scope, "true"]],
       ]);
       assertParse("logicalOr", "1 || 2 && 0", [
         ops.logicalOr,
         [ops.literal, 1],
-        [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]],
+        [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
       ]);
     });
   });

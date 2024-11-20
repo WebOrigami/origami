@@ -10,6 +10,7 @@ import * as ops from "../runtime/ops.js";
 import {
   annotate,
   makeArray,
+  makeDeferredArguments,
   makeFunctionCall,
   makeObject,
   makePipeline,
@@ -532,14 +533,20 @@ logicalAnd
   = head:literal tail:(__ "&&" __ @literal)* {
       return tail.length === 0
         ? head
-        : annotate([ops.logicalAnd, head, ...tail], location());
+        : annotate(
+          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
+          location()
+        );
     }
 
 logicalOr
   = head:logicalAnd tail:(__ "||" __ @logicalAnd)* {
       return tail.length === 0
         ? head
-        : annotate([ops.logicalOr, head, ...tail], location());
+        : annotate(
+          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
+          location()
+        );
     }
 
 conditional

@@ -95,6 +95,24 @@ export function makeArray(entries) {
 }
 
 /**
+ * For functions that short-circuit arguments, we need to defer evaluation of
+ * the arguments until the function is called. Exception: if the argument is a
+ * literal, we leave it alone.
+ *
+ * @param {any[]} args
+ */
+export function makeDeferredArguments(args) {
+  return args.map((arg) => {
+    if (arg instanceof Array && arg[0] === ops.literal) {
+      return arg;
+    }
+    const fn = [ops.lambda, [], arg];
+    annotate(fn, arg.location);
+    return fn;
+  });
+}
+
+/**
  * @typedef {import("../../index.ts").Code} Code
  *
  * @param {Code} target

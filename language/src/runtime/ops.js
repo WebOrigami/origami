@@ -286,14 +286,32 @@ export async function unpack(value) {
 
 // Calc work
 
-export function conditional(condition, truthy, falsy) {
+export async function conditional(condition, truthy, falsy) {
   return condition ? truthy() : falsy();
 }
 
-export function logicalAnd(...args) {
-  return args.every(Boolean);
+export async function logicalAnd(head, ...tail) {
+  if (!head) {
+    return false;
+  }
+  // Evaluate the tail arguments in order, short-circuiting if any are falsy.
+  for (const fn of tail) {
+    if (!(await fn())) {
+      return false;
+    }
+  }
+  return true;
 }
 
-export function logicalOr(...args) {
-  return args.some(Boolean);
+export async function logicalOr(head, ...tail) {
+  if (head) {
+    return true;
+  }
+  // Evaluate the tail arguments in order, short-circuiting if any are truthy.
+  for (const fn of tail) {
+    if (await fn()) {
+      return true;
+    }
+  }
+  return false;
 }
