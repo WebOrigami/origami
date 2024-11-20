@@ -283,3 +283,17 @@ export const traverse = Tree.traverseOrThrow;
 export async function unpack(value) {
   return isUnpackable(value) ? value.unpack() : value;
 }
+
+// Calc work
+
+export function conditional(condition, truthy, falsy) {
+  return condition ? truthy() : falsy();
+}
+
+export function logicalAnd(...args) {
+  return args.every(Boolean);
+}
+
+export function logicalOr(...args) {
+  return args.some(Boolean);
+}

@@ -128,7 +128,8 @@ escapedChar "backslash-escaped character"
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression
-  = __ @pipeline __
+  = "$" __ @conditional __
+  / __ @pipeline __
 
 float "floating-point number"
   = sign? digits? "." digits {
@@ -519,3 +520,39 @@ value
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
+
+
+// New calc work below
+
+literal
+  = number
+  / scopeReference
+
+logicalAnd
+  = head:literal tail:(__ "&&" __ @literal)* {
+      return tail.length === 0
+        ? head
+        : annotate([ops.logicalAnd, head, ...tail], location());
+    }
+
+logicalOr
+  = head:logicalAnd tail:(__ "||" __ @logicalAnd)* {
+      return tail.length === 0
+        ? head
+        : annotate([ops.logicalOr, head, ...tail], location());
+    }
+
+conditional
+  = condition:logicalOr __
+    "?" __ truthy:logicalOr __
+    ":" __ falsy:logicalOr
+    {
+      return annotate([
+        ops.conditional,
+        condition,
+        [ops.lambda, [], truthy],
+        [ops.lambda, [], falsy]
+      ], location());
+    }
+  / logicalOr
+  
