@@ -525,12 +525,23 @@ whitespaceWithNewLine
 
 // New calc work below
 
-literal
+newValue
   = number
+  / absoluteFilePath
+  / array
+  / object
+  / lambda
+  / templateLiteral
+  / string
+  / group
+  / homeTree
+  / scopeTraverse
+  / namespacePath
+  / namespace
   / scopeReference
 
 logicalAnd
-  = head:literal tail:(__ "&&" __ @literal)* {
+  = head:newValue tail:(__ "&&" __ @newValue)* {
       return tail.length === 0
         ? head
         : annotate(
@@ -539,8 +550,18 @@ logicalAnd
         );
     }
 
+nullishCoalescing
+  = head:logicalAnd tail:(__ "??" __ @logicalAnd)* {
+      return tail.length === 0
+        ? head
+        : annotate(
+          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
+          location()
+        );
+    }
+
 logicalOr
-  = head:logicalAnd tail:(__ "||" __ @logicalAnd)* {
+  = head:nullishCoalescing tail:(__ "||" __ @nullishCoalescing)* {
       return tail.length === 0
         ? head
         : annotate(

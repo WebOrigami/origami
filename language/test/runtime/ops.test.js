@@ -122,6 +122,16 @@ describe.only("ops", () => {
   });
 
   describe.only("calc", async () => {
+    test("ops.conditional", async () => {
+      assert.equal(await ops.conditional(true, trueFn, falseFn), true);
+      assert.equal(await ops.conditional(true, falseFn, trueFn), false);
+      assert.equal(await ops.conditional(false, trueFn, falseFn), false);
+      assert.equal(await ops.conditional(false, falseFn, trueFn), true);
+
+      // Short-circuiting
+      assert.equal(await ops.conditional(false, errorFn, trueFn), true);
+    });
+
     test("ops.logicalAnd", async () => {
       assert.equal(await ops.logicalAnd(true, trueFn), true);
       assert.equal(await ops.logicalAnd(true, falseFn), false);
@@ -140,6 +150,15 @@ describe.only("ops", () => {
 
       // Short-circuiting
       assert.equal(await ops.logicalOr(true, errorFn), true);
+    });
+
+    test("ops.nullishCoalescing", async () => {
+      assert.equal(await ops.nullishCoalescing(1, falseFn), 1);
+      assert.equal(await ops.nullishCoalescing(null, trueFn), true);
+      assert.equal(await ops.nullishCoalescing(undefined, trueFn), true);
+
+      // Short-circuiting
+      assert.equal(await ops.nullishCoalescing(1, errorFn), 1);
     });
   });
 });

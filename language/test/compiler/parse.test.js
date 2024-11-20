@@ -854,6 +854,20 @@ describe.only("Origami parser", () => {
         [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
       ]);
     });
+
+    test("nullishCoalescing", () => {
+      assertParse("nullishCoalescing", "a ?? b", [
+        ops.nullishCoalescing,
+        [ops.scope, "a"],
+        [ops.lambda, [], [ops.scope, "b"]],
+      ]);
+      assertParse("nullishCoalescing", "a ?? b ?? c", [
+        ops.nullishCoalescing,
+        [ops.scope, "a"],
+        [ops.lambda, [], [ops.scope, "b"]],
+        [ops.lambda, [], [ops.scope, "c"]],
+      ]);
+    });
   });
 });
 

@@ -243,7 +243,7 @@ export async function scope(key) {
   }
   const scope = scopeFn(this);
   const value = await scope.get(key);
-  if (value === undefined) {
+  if (value === undefined && key !== "undefined") {
     throw await scopeReferenceError(scope, key);
   }
   return value;
@@ -295,8 +295,9 @@ export async function logicalAnd(head, ...tail) {
     return false;
   }
   // Evaluate the tail arguments in order, short-circuiting if any are falsy.
-  for (const fn of tail) {
-    if (!(await fn())) {
+  for (const arg of tail) {
+    const value = arg instanceof Function ? await arg() : arg;
+    if (!value) {
       return false;
     }
   }
@@ -308,10 +309,24 @@ export async function logicalOr(head, ...tail) {
     return true;
   }
   // Evaluate the tail arguments in order, short-circuiting if any are truthy.
-  for (const fn of tail) {
-    if (await fn()) {
+  for (const arg of tail) {
+    const value = arg instanceof Function ? await arg() : arg;
+    if (!value) {
       return true;
     }
   }
   return false;
+}
+
+export async function nullishCoalescing(head, ...tail) {
+  if (head != null) {
+    return head;
+  }
+  for (const arg of tail) {
+    const value = arg instanceof Function ? await arg() : arg;
+    if (value != null) {
+      return value;
+    }
+  }
+  return null;
 }
