@@ -103,8 +103,11 @@ export default class FileTree {
       entries = [];
     }
 
-    let names = entries.map((entry) =>
-      trailingSlash.toggle(entry.name, entry.isDirectory())
+    // Add slashes to directory names.
+    let names = await Promise.all(
+      entries.map(async (entry) =>
+        trailingSlash.toggle(entry.name, await isDirectory(entry, this.dirname))
+      )
     );
 
     // Filter out unhelpful file names.
@@ -209,6 +212,17 @@ export default class FileTree {
   get url() {
     return pathToFileURL(this.dirname);
   }
+}
+
+/**
+ * Return true if the entry is a directory or is a symbolic link to a directory.
+ */
+async function isDirectory(entry, dirname) {
+  if (entry.isSymbolicLink()) {
+    const realPath = await fs.realpath(path.resolve(dirname, entry.name));
+    entry = await fs.stat(realPath);
+  }
+  return entry.isDirectory();
 }
 
 /**
