@@ -64,7 +64,7 @@ callTarget "function call"
   / array
   / object
   / group
-  / namespacePath
+  / qualifiedReference
   / namespace
   / functionReference
 
@@ -109,12 +109,6 @@ doubleQuoteString "double quote string"
 
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
-
-// Path that follows a builtin reference in a URL: `//example.com/index.html`
-doubleSlashPath
-  = "//" host:host path:path? {
-      return annotate([host, ...(path ?? [])], location());
-    }
 
 ellipsis = "..." / "…" // Unicode ellipsis
 
@@ -249,15 +243,6 @@ namespace
     return annotate([ops.builtin, (at ?? "") + chars.join("") + ":"], location());
   }
 
-// A namespace followed by a path: `fn:a/b/c`
-namespacePath
-  = fn:namespace path:doubleSlashPath {
-      return annotate(makeFunctionCall(fn, [path], location()), location());
-    }
-  / fn:namespace path:path {
-      return annotate(makeFunctionCall(fn, [path], location()), location());
-    }
-
 newLine
   = "\n"
   / "\r\n"
@@ -390,6 +375,24 @@ pipelineStep
 program "Origami program"
   = shebang? @expression
 
+// A namespace with a double-slash path: `https://example.com/index.html`
+protocolPath
+  = fn:namespace "//" host:host path:path? {
+      return annotate(
+        makeFunctionCall(fn, [
+          annotate([host, ...(path ?? [])], location())
+        ], location()),
+      location());
+    }
+
+// A namespace followed by a key: `foo:x`
+qualifiedReference
+  = fn:namespace head:pathTail {
+      return annotate(makeFunctionCall(fn, [
+        annotate([head], head.location)
+      ], location()), location());
+    }
+
 scopeReference "scope reference"
   = key:identifier {
       return annotate([ops.scope, key], location());
@@ -503,7 +506,7 @@ value
   / parameterizedLambda
   / functionComposition
   / taggedTemplate
-  / namespacePath
+  / protocolPath
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
   / absoluteFilePath
@@ -516,6 +519,7 @@ value
   / homeTree
   // Things that have a distinctive character, but not at the start
   / scopeTraverse
+  / qualifiedReference
   / namespace
   // Least distinctive option is a simple scope reference, so it comes last.
   / scopeReference
@@ -537,7 +541,8 @@ newValue
   / group
   / homeTree
   / scopeTraverse
-  / namespacePath
+  / protocolPath
+  / qualifiedReference
   / namespace
   / scopeReference
 

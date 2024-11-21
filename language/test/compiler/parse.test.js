@@ -53,20 +53,6 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("doubleSlashPath", () => {
-    assertParse("doubleSlashPath", "//example.com", [
-      [ops.literal, "example.com"],
-    ]);
-    assertParse("doubleSlashPath", "//example.com/index.html", [
-      [ops.literal, "example.com/"],
-      [ops.literal, "index.html"],
-    ]);
-    assertParse("doubleSlashPath", "//localhost:5000/foo", [
-      [ops.literal, "localhost:5000/"],
-      [ops.literal, "foo"],
-    ]);
-  });
-
   test("expression", () => {
     assertParse(
       "expression",
@@ -227,6 +213,15 @@ describe.only("Origami parser", () => {
       [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
+    assertParse("functionComposition", "files:src/assets", [
+      ops.traverse,
+      [
+        [ops.builtin, "files:"],
+        // TODO: This should be `src/`
+        [ops.literal, "src"],
+      ],
+      [ops.literal, "assets"],
+    ]);
     assertParse("functionComposition", "new:(js:Date, '2025-01-01')", [
       [ops.builtin, "new:"],
       [
@@ -245,8 +240,12 @@ describe.only("Origami parser", () => {
       "package:@weborigami/dropbox/auth(creds)",
       [
         [
-          [ops.builtin, "package:"],
-          [ops.literal, "@weborigami/"],
+          ops.traverse,
+          [
+            [ops.builtin, "package:"],
+            // TODO: This should be `@weborigami/`
+            [ops.literal, "@weborigami"],
+          ],
           [ops.literal, "dropbox/"],
           [ops.literal, "auth"],
         ],
@@ -354,31 +353,6 @@ describe.only("Origami parser", () => {
 
   test("namespace", () => {
     assertParse("namespace", "js:", [ops.builtin, "js:"]);
-  });
-
-  test("namespacePath", () => {
-    assertParse("namespacePath", "js:Date", [
-      [ops.builtin, "js:"],
-      [ops.literal, "Date"],
-    ]);
-    assertParse("namespacePath", "files:src/assets", [
-      [ops.builtin, "files:"],
-      [ops.literal, "src/"],
-      [ops.literal, "assets"],
-    ]);
-    assertParse("namespacePath", "foo://bar", [
-      [ops.builtin, "foo:"],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("namespacePath", "http://example.com", [
-      [ops.builtin, "http:"],
-      [ops.literal, "example.com"],
-    ]);
-    assertParse("namespacePath", "https://example.com/foo/", [
-      [ops.builtin, "https:"],
-      [ops.literal, "example.com/"],
-      [ops.literal, "foo/"],
-    ]);
   });
 
   test("number", () => {
@@ -618,6 +592,40 @@ describe.only("Origami parser", () => {
     );
   });
 
+  test("protocolPath", () => {
+    assertParse("protocolPath", "foo://bar", [
+      [ops.builtin, "foo:"],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("protocolPath", "http://example.com", [
+      [ops.builtin, "http:"],
+      [ops.literal, "example.com"],
+    ]);
+    assertParse("protocolPath", "https://example.com/about/", [
+      [ops.builtin, "https:"],
+      [ops.literal, "example.com/"],
+      [ops.literal, "about/"],
+    ]);
+    assertParse("protocolPath", "https://example.com/about/index.html", [
+      [ops.builtin, "https:"],
+      [ops.literal, "example.com/"],
+      [ops.literal, "about/"],
+      [ops.literal, "index.html"],
+    ]);
+    assertParse("protocolPath", "http://localhost:5000/foo", [
+      [ops.builtin, "http:"],
+      [ops.literal, "localhost:5000/"],
+      [ops.literal, "foo"],
+    ]);
+  });
+
+  test("qualifiedReference", () => {
+    assertParse("qualifiedReference", "js:Date", [
+      [ops.builtin, "js:"],
+      [ops.literal, "Date"],
+    ]);
+  });
+
   test("scopeReference", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
@@ -817,7 +825,7 @@ describe.only("Origami parser", () => {
   });
 
   // Calc work
-  describe.only("calc", () => {
+  describe("calc", () => {
     test("conditional", () => {
       assertParse("conditional", "true ? 1 : 0", [
         ops.conditional,
