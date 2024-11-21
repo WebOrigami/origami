@@ -290,6 +290,10 @@ export async function conditional(condition, truthy, falsy) {
   return condition ? truthy() : falsy();
 }
 
+export async function equal(a, b) {
+  return a == b;
+}
+
 export async function logicalAnd(head, ...tail) {
   if (!head) {
     return false;
@@ -311,11 +315,19 @@ export async function logicalOr(head, ...tail) {
   // Evaluate the tail arguments in order, short-circuiting if any are truthy.
   for (const arg of tail) {
     const value = arg instanceof Function ? await arg() : arg;
-    if (!value) {
+    if (value) {
       return true;
     }
   }
   return false;
+}
+
+export async function notEqual(a, b) {
+  return a != b;
+}
+
+export async function notStrictEqual(a, b) {
+  return a !== b;
 }
 
 export async function nullishCoalescing(head, ...tail) {
@@ -329,4 +341,8 @@ export async function nullishCoalescing(head, ...tail) {
     }
   }
   return null;
+}
+
+export async function strictEqual(a, b) {
+  return a === b;
 }

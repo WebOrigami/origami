@@ -132,6 +132,40 @@ describe.only("ops", () => {
       assert.equal(await ops.conditional(false, errorFn, trueFn), true);
     });
 
+    test("ops.equal", async () => {
+      assert.equal(await ops.equal(1, 1), true);
+      assert.equal(await ops.equal(1, 2), false);
+      assert.equal(await ops.equal("1", 1), true);
+      assert.equal(await ops.equal("1", "1"), true);
+      assert.equal(await ops.equal(null, undefined), true);
+    });
+
+    test("ops.notEqual", async () => {
+      assert.equal(await ops.notEqual(1, 1), false);
+      assert.equal(await ops.notEqual(1, 2), true);
+      assert.equal(await ops.notEqual("1", 1), false);
+      assert.equal(await ops.notEqual("1", "1"), false);
+      assert.equal(await ops.notEqual(null, undefined), false);
+    });
+
+    test("ops.notStrictEqual", async () => {
+      assert.equal(await ops.notStrictEqual(1, 1), false);
+      assert.equal(await ops.notStrictEqual(1, 2), true);
+      assert.equal(await ops.notStrictEqual("1", 1), true);
+      assert.equal(await ops.notStrictEqual("1", "1"), false);
+      assert.equal(await ops.notStrictEqual(null, undefined), true);
+    });
+
+    test("ops.strictEqual", async () => {
+      assert.equal(await ops.strictEqual(1, 1), true);
+      assert.equal(await ops.strictEqual(1, 2), false);
+      assert.equal(await ops.strictEqual("1", 1), false);
+      assert.equal(await ops.strictEqual("1", "1"), true);
+      assert.equal(await ops.strictEqual(null, undefined), false);
+      assert.equal(await ops.strictEqual(null, null), true);
+      assert.equal(await ops.strictEqual(undefined, undefined), true);
+    });
+
     test("ops.logicalAnd", async () => {
       assert.equal(await ops.logicalAnd(true, trueFn), true);
       assert.equal(await ops.logicalAnd(true, falseFn), false);

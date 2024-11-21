@@ -868,6 +868,24 @@ describe.only("Origami parser", () => {
         [ops.lambda, [], [ops.scope, "c"]],
       ]);
     });
+
+    test("equality", () => {
+      assertParse("equality", "1 === 1", [
+        ops.strictEqual,
+        [ops.literal, 1],
+        [ops.literal, 1],
+      ]);
+      assertParse("equality", "a === b === c", [
+        ops.strictEqual,
+        [ops.strictEqual, [ops.scope, "a"], [ops.scope, "b"]],
+        [ops.scope, "c"],
+      ]);
+      assertParse("equality", "1 !== 1", [
+        ops.notStrictEqual,
+        [ops.literal, 1],
+        [ops.literal, 1],
+      ]);
+    });
   });
 });
 

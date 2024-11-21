@@ -10,6 +10,7 @@ import * as ops from "../runtime/ops.js";
 import {
   annotate,
   makeArray,
+  makeBinaryOperatorChain,
   makeDeferredArguments,
   makeFunctionCall,
   makeObject,
@@ -540,8 +541,21 @@ newValue
   / namespace
   / scopeReference
 
+equality
+  = head:newValue tail:(__ @equalityOperator __ @newValue)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+equalityOperator
+  = "==="
+  / "!=="
+  / "=="
+  / "!="
+
 logicalAnd
-  = head:newValue tail:(__ "&&" __ @newValue)* {
+  = head:equality tail:(__ "&&" __ @equality)* {
       return tail.length === 0
         ? head
         : annotate(

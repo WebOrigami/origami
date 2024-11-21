@@ -4,6 +4,8 @@ import * as ops from "../runtime/ops.js";
 
 // Parser helpers
 
+/** @typedef {import("../../index.ts").Code} Code */
+
 /**
  * If a parse result is an object that will be evaluated at runtime, attach the
  * location of the source code that produced it for debugging and error messages.
@@ -21,7 +23,7 @@ export function annotate(parseResult, location) {
  * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
  * infinite recursion.
  *
- * @param {import("../../index.ts").Code} code
+ * @param {} code
  * @param {string} key
  */
 function avoidRecursivePropertyCalls(code, key) {
@@ -95,6 +97,36 @@ export function makeArray(entries) {
 }
 
 /**
+ * Create a chain of binary operators. The head is the first value, and the tail
+ * is an array of [operator, value] pairs.
+ *
+ * @param {Code} head
+ * @param {[any, Code][]} tail
+ */
+export function makeBinaryOperatorChain(head, tail) {
+  /** @type {Code} */
+  let value = head;
+  for (const [operatorToken, right] of tail) {
+    const left = value;
+    const operators = {
+      "===": ops.strictEqual,
+      "!==": ops.notStrictEqual,
+      "==": ops.equal,
+      "!=": ops.notEqual,
+    };
+    const op = operators[operatorToken];
+    // @ts-ignore
+    value = [op, left, right];
+    value.location = {
+      source: left.location.source,
+      start: left.location.start,
+      end: right.location.end,
+    };
+  }
+  return value;
+}
+
+/**
  * For functions that short-circuit arguments, we need to defer evaluation of
  * the arguments until the function is called. Exception: if the argument is a
  * literal, we leave it alone.
@@ -113,11 +145,8 @@ export function makeDeferredArguments(args) {
 }
 
 /**
- * @typedef {import("../../index.ts").Code} Code
- *
  * @param {Code} target
  * @param {Code[]} chain
- * @returns
  */
 export function makeFunctionCall(target, chain, location) {
   if (!(target instanceof Array)) {
