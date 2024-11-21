@@ -130,8 +130,7 @@ escapedChar "backslash-escaped character"
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression
-  = "$" __ @conditional __
-  / __ @pipeline __
+  = __ @pipeline __
 
 float "floating-point number"
   = sign? digits? "." digits {
@@ -374,7 +373,8 @@ pathTail
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
 pipeline
-  = head:value tail:(__ singleArrow __ @pipelineStep)* {
+  = "$" __ @conditional
+  / head:value tail:(__ singleArrow __ @pipelineStep)* {
       return tail.length === 0
         ? head
         : annotate(makePipeline([head, ...tail]), location());
