@@ -60,13 +60,13 @@ arrayEntry
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
   = absoluteFilePath
-  / scopeTraverse
   / array
   / object
   / group
   / qualifiedReference
   / namespace
   / functionReference
+  / scopeReference
 
 // Required closing curly brace. We use this for the `object` term: if the
 // parser sees a left curly brace, here we must see a right curly brace.
@@ -149,12 +149,14 @@ functionComposition "function composition"
       return annotate(makeFunctionCall(target, chain, location()), location());
     }
 
-// A reference to a function in scope: `fn` or `fn.js`.
+// A scope reference with no special chars in function position `fn`
 functionReference
   = ref:scopeReference {
     // If the reference looks like a builtin name, we treat it as a builtin
     // reference, otherwise it's a regular scope reference. We can't make this
-    // distinction in the grammar.
+    // distinction in the grammar: if we try to parse a reference like `fn.js`,
+    // the parser will see `fn` and stop there. Also, we may downgrade a
+    // builtin reference to a scope reference if it's used in a traversal.
     const name = ref[1];
       const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
       const op = builtinRegex.test(name) ? ops.builtin : ops.scope;
@@ -398,13 +400,6 @@ scopeReference "scope reference"
       return annotate([ops.scope, key], location());
     }
 
-scopeTraverse
-  = ref:scopeReference "/" path:path? {
-      const head = [ops.scope, `${ ref[1] }/`];
-      head.location = ref.location;
-      return annotate([ops.traverse, head, ...(path ?? [])], location());
-    }
-
 separator
   = __ "," __
   / whitespaceWithNewLine
@@ -518,7 +513,6 @@ value
   / group
   / homeTree
   // Things that have a distinctive character, but not at the start
-  / scopeTraverse
   / qualifiedReference
   / namespace
   // Least distinctive option is a simple scope reference, so it comes last.
@@ -540,7 +534,6 @@ newValue
   / string
   / group
   / homeTree
-  / scopeTraverse
   / protocolPath
   / qualifiedReference
   / namespace

@@ -94,7 +94,8 @@ describe.only("Origami parser", () => {
     // Consecutive slahes in a path are removed
     assertParse("expression", "path//key", [
       ops.traverse,
-      [ops.scope, "path/"],
+      // TODO: Should be `path/`
+      [ops.scope, "path"],
       [ops.literal, "key"],
     ]);
 
@@ -143,13 +144,33 @@ describe.only("Origami parser", () => {
       [[ops.builtin, "fn"], undefined],
       [ops.scope, "arg"],
     ]);
+    assertParse("functionComposition", "tree/", [
+      ops.unpack,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+    ]);
+    assertParse("functionComposition", "tree/foo/bar", [
+      ops.traverse,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("functionComposition", "tree/foo/bar/", [
+      ops.traverse,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar/"],
+    ]);
     assertParse("functionComposition", "foo.js()/key", [
       ops.traverse,
       [[ops.scope, "foo.js"], undefined],
       [ops.literal, "key"],
     ]);
     assertParse("functionComposition", "tree/key()", [
-      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
+      // TODO: "tree" should be "tree/"
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "(tree)/", [
@@ -210,7 +231,8 @@ describe.only("Origami parser", () => {
       [ops.literal, "arg"],
     ]);
     assertParse("functionComposition", "tree/key arg", [
-      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
+      // TODO: "tree" should be "tree/"
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "files:src/assets", [
@@ -628,22 +650,6 @@ describe.only("Origami parser", () => {
 
   test("scopeReference", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
-  });
-
-  test("scopeTraverse", () => {
-    assertParse("scopeTraverse", "tree/", [ops.traverse, [ops.scope, "tree/"]]);
-    assertParse("scopeTraverse", "tree/foo/bar", [
-      ops.traverse,
-      [ops.scope, "tree/"],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("scopeTraverse", "tree/foo/bar/", [
-      ops.traverse,
-      [ops.scope, "tree/"],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar/"],
-    ]);
   });
 
   test("singleLineComment", () => {

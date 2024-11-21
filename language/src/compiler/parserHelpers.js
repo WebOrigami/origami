@@ -163,19 +163,34 @@ export function makeFunctionCall(target, chain, location) {
   let start = target.location.start;
   let end = target.location.end;
   for (const args of chain) {
-    /** @type {Code} */
     let fnCall;
 
-    // @ts-ignore
-    fnCall =
-      args[0] !== ops.traverse
-        ? // Function call
-          [value, ...args]
-        : args.length > 1
-        ? // Traverse
-          [ops.traverse, value, ...args.slice(1)]
-        : // Traverse without arguments equates to unpack
-          [ops.unpack, value];
+    if (args[0] === ops.traverse) {
+      // Some flavor of traverse
+
+      // In a traversal, downgrade ops.builtin references to ops.scope
+      let tree = value;
+      if (
+        tree.length === 2 &&
+        tree[0] === ops.builtin &&
+        typeof tree[1] === "string"
+      ) {
+        // @ts-ignore
+        tree = [ops.scope, tree[1]];
+        annotate(tree, value.location);
+      }
+
+      if (args.length > 1) {
+        // Regular traverse
+        fnCall = [ops.traverse, tree, ...args.slice(1)];
+      } else {
+        // Traverse without arguments equates to unpack
+        fnCall = [ops.unpack, tree];
+      }
+    } else {
+      // Function call
+      fnCall = [value, ...args];
+    }
 
     // Create a location spanning the newly-constructed function call.
     if (args instanceof Array) {
@@ -188,6 +203,7 @@ export function makeFunctionCall(target, chain, location) {
 
     annotate(fnCall, { start, source, end });
 
+    // @ts-ignore
     value = fnCall;
   }
 
