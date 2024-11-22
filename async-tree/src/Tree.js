@@ -355,6 +355,19 @@ export async function remove(tree, key) {
 }
 
 /**
+ * Walk up the `parent` chain to find the root of the tree.
+ *
+ * @param {AsyncTree} tree
+ */
+export function root(tree) {
+  let current = from(tree);
+  while (current.parent) {
+    current = current.parent;
+  }
+  return current;
+}
+
+/**
  * Returns a function that invokes the tree's `get` method.
  *
  * @param {Treelike} treelike

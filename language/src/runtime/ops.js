@@ -6,6 +6,7 @@
 
 import {
   ObjectTree,
+  Tree,
   isUnpackable,
   scope as scopeFn,
   concat as treeConcat,
@@ -47,14 +48,11 @@ export async function builtin(key) {
   if (!this) {
     throw new Error("Tried to get the scope of a null or undefined tree.");
   }
-  let current = this;
-  while (current.parent) {
-    current = current.parent;
-  }
 
-  const value = await current.get(key);
+  const builtins = Tree.root(this);
+  const value = await builtins.get(key);
   if (value === undefined) {
-    throw await builtinReferenceError(this, current, key);
+    throw await builtinReferenceError(this, builtins, key);
   }
 
   return value;
@@ -103,7 +101,7 @@ export const getter = new String("«ops.getter»");
  */
 export async function filesRoot() {
   let tree = new OrigamiFiles("/");
-  tree.parent = root(this);
+  tree.parent = this ? Tree.root(this) : null;
   return tree;
 }
 
@@ -114,7 +112,7 @@ export async function filesRoot() {
  */
 export async function homeTree() {
   const tree = new OrigamiFiles(os.homedir());
-  tree.parent = root(this);
+  tree.parent = this ? Tree.root(this) : null;
   return tree;
 }
 
@@ -220,16 +218,6 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
-
-// Return the root of the given tree. For an Origami tree, this gives us
-// a way of acessing the builtins.
-function root(tree) {
-  let current = tree;
-  while (current.parent) {
-    current = current.parent;
-  }
-  return current;
-}
 
 /**
  * Look up the given key in the scope for the current tree.

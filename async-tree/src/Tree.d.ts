@@ -15,6 +15,7 @@ export function map(tree: Treelike, options: TreeMapOptions|ValueKeyFn): AsyncTr
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn | null, reduceFn: ReduceFn): Promise<any>;
 export function paths(tree: Treelike, base?: string): string[];
 export function plain(tree: Treelike): Promise<PlainObject>;
+export function root(tree: Treelike): AsyncTree;
 export function remove(AsyncTree: AsyncMutableTree, key: any): Promise<boolean>;
 export function toFunction(tree: Treelike): Function;
 export function traverse(tree: Treelike, ...keys: any[]): Promise<any>;
