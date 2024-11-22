@@ -9,12 +9,13 @@
 import * as ops from "../runtime/ops.js";
 import {
   annotate,
-  downgradeScopeReference,
+  downgradeReference,
   makeArray,
   makeBinaryOperatorChain,
   makeDeferredArguments,
   makeFunctionCall,
   makeObject,
+  makeReference,
   makePipeline,
   makeProperty,
   makeTemplate
@@ -31,6 +32,7 @@ __
 args "function arguments"
   = parensArgs
   / slashArgs
+  / templateLiteral
 
 array "array"
   = "[" __ entries:arrayEntries? __ closingBracket {
@@ -47,16 +49,19 @@ arrayEntry
   = spread
   / pipeline
 
+arrowFunction
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipeline {
+      return annotate([ops.lambda, parameters ?? [], pipeline], location());
+    }
+  / conditional
+
 // A function call: `fn(arg)`, possibly part of a chain of function calls, like
 // `fn(arg1)(arg2)(arg3)`.
 call "function call"
-  = target:primary chain:args* end:implicitParensArgs? {
-      if (end) {
-        chain.push(end);
-      } else if (chain.length === 0) {
-        return downgradeScopeReference(target);
-      }
-      return annotate(chain.reduce(makeFunctionCall, target), location());
+  = head:primary tail:args* {
+      return tail.length === 0
+        ? head
+        : annotate(tail.reduce(makeFunctionCall, head), location());
     }
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -95,9 +100,9 @@ conditional
     {
       return annotate([
         ops.conditional,
-        condition,
-        [ops.lambda, [], truthy],
-        [ops.lambda, [], falsy]
+        downgradeReference(condition),
+        [ops.lambda, [], downgradeReference(truthy)],
+        [ops.lambda, [], downgradeReference(falsy)]
       ], location());
     }
   / logicalOr
@@ -156,7 +161,9 @@ float "floating-point number"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" @expression closingParen
+  = "(" expression:expression closingParen {
+      return annotate(downgradeReference(expression), location());
+    }
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* '»' {
@@ -186,7 +193,7 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]<>\?!&\|\-=,/:\`"'«»\\ →⇒\t\n\r] // No unescaped whitespace or special chars
   / @'-' !'>' // Accept a hyphen but not in a single arrow combination
   / escapedChar
 
@@ -195,8 +202,18 @@ identifierList
       return annotate(list, location());
     }
 
-implicitParensArgs "arguments with implicit parentheses"
-  = inlineSpace+ @list
+implicitParens "function call with implicit parentheses"
+  = head:lambda args:(inlineSpace+ @list)? {
+      return args ? makeFunctionCall(head, args) : head;
+    }
+    
+// A separated list of values for an implicit parens call. This differs from
+// `list` in that the value term must have higher precedence than implicit
+// parens call (i.e., must be a lambda or more specific).
+implicitParensArgs
+  = values:lambda|1.., separator| separator? {
+      return annotate(values, location());
+    }
 
 inlineSpace
   = [ \t]
@@ -206,15 +223,17 @@ integer "integer"
       return annotate([ops.literal, parseInt(text())], location());
     }
 
-// A lambda expression: `=foo()`
+// A lambda expression: `=foo(_)`
 lambda "lambda function"
-  = "=" __ definition:conditional {
+  // Avoid a following equal sign (for an equality)
+  = "=" !"=" __ definition:pipeline {
       return annotate([ops.lambda, ["_"], definition], location());
     }
+  / arrowFunction
     
 // A separated list of values
 list "list"
-  = values:conditional|1.., separator| separator? {
+  = values:pipeline|1.., separator| separator? {
       return annotate(values, location());
     }
 
@@ -227,7 +246,7 @@ logicalAnd
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
+          [ops.logicalAnd, downgradeReference(head), ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -237,7 +256,7 @@ logicalOr
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
+          [ops.logicalOr, downgradeReference(head), ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -267,7 +286,7 @@ nullishCoalescing
       return tail.length === 0
         ? head
         : annotate(
-          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
+          [ops.nullishCoalescing, downgradeReference(head), ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -327,11 +346,6 @@ objectPublicKey
     return string[1];
   }
 
-parameterizedLambda
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipeline {
-      return annotate([ops.lambda, parameters ?? [], pipeline], location());
-    }
-
 // Function arguments in parentheses
 parensArgs "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
@@ -377,15 +391,16 @@ pathTail
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
 pipeline
-  = head:conditional tail:(__ singleArrow __ @conditional)* {
-      return tail.reduce(makePipeline, head);
+  = head:implicitParens tail:(__ singleArrow __ @implicitParens)* {
+      return tail.reduce(makePipeline, downgradeReference(head));
     }
 
 primary
-  = array
+  = literal
+  / array
   / object
   / group
-  / literal
+  / templateLiteral
   / reference
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
@@ -417,15 +432,7 @@ reference
 
 scopeReference "scope reference"
   = identifier:identifier {
-      // If the reference looks like a builtin name, we treat it as a builtin
-      // reference, otherwise it's a regular scope reference. We can't make this
-      // distinction in the grammar: if we try to parse a reference like
-      // `fn.js`, the parser will see `fn` and stop there. Also, we may
-      // downgrade a builtin reference to a scope reference if it's used in a
-      // traversal.
-      const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
-      const op = builtinRegex.test(identifier) ? ops.builtin : ops.scope;
-      return annotate([op, identifier], location());
+      return annotate(makeReference(identifier), location());
     }
 
 separator
@@ -472,11 +479,6 @@ string "string"
   / singleQuoteString
   / guillemetString
 
-taggedTemplate
-  = tag:primary "`" contents:templateLiteralContents "`" {
-      return annotate(makeTemplate(tag, contents[0], contents[1]), location());
-    }
-
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
 templateDocument "template"
@@ -520,7 +522,9 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" @expression "}"
+  = "${" expression:expression "}" {
+      return annotate(expression, location());
+    }
 
 textChar
   = escapedChar

@@ -6,16 +6,22 @@ import * as ops from "../runtime/ops.js";
 
 /** @typedef {import("../../index.ts").Code} Code */
 
+const provisionalScope = Symbol("provisionalScope");
+const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+
 /**
  * If a parse result is an object that will be evaluated at runtime, attach the
  * location of the source code that produced it for debugging and error messages.
+ *
+ * @param {Code} code
+ * @param {any} location
  */
-export function annotate(parseResult, location) {
-  if (typeof parseResult === "object" && parseResult !== null && location) {
-    parseResult.location = location;
-    parseResult.source = codeFragment(location);
+export function annotate(code, location) {
+  if (typeof code === "object" && code !== null && location) {
+    code.location = location;
+    code.source = codeFragment(location);
   }
-  return parseResult;
+  return code;
 }
 
 /**
@@ -49,19 +55,13 @@ function avoidRecursivePropertyCalls(code, key) {
 }
 
 /**
- * Scope references are parsed as ops.builtin, but when used as a value or
- * the head of a traversal, the reference operation should be ops.scope.
+ * Downgrade a potential builtin reference to a scope reference.
  *
  * @param {Code} code
+ * @returns {Code}
  */
-export function downgradeScopeReference(code) {
-  if (
-    code.length === 2 &&
-    code[0] === ops.builtin &&
-    typeof code[1] === "string" &&
-    !code[1].endsWith(":") // namespace is always builtin
-  ) {
-    // @ts-ignore
+export function downgradeReference(code) {
+  if (code && code.length === 2 && code[0] === provisionalScope) {
     const result = [ops.scope, code[1]];
     annotate(result, code.location);
     return result;
@@ -96,9 +96,10 @@ export function makeArray(entries) {
         spreads.push([ops.array, ...currentEntries]);
         currentEntries = [];
       }
-      spreads.push(...value.slice(1));
+      const values = value.slice(1).map((x) => downgradeReference(x));
+      spreads.push(...values);
     } else {
-      currentEntries.push(value);
+      currentEntries.push(downgradeReference(value));
     }
   }
 
@@ -127,7 +128,7 @@ export function makeArray(entries) {
  */
 export function makeBinaryOperatorChain(head, tail) {
   /** @type {Code} */
-  let value = head;
+  let value = downgradeReference(head);
   for (const [operatorToken, right] of tail) {
     const left = value;
     const operators = {
@@ -138,7 +139,7 @@ export function makeBinaryOperatorChain(head, tail) {
     };
     const op = operators[operatorToken];
     // @ts-ignore
-    value = [op, left, right];
+    value = [op, left, downgradeReference(right)];
     value.location = {
       source: left.location.source,
       start: left.location.start,
@@ -160,6 +161,7 @@ export function makeDeferredArguments(args) {
     if (arg instanceof Array && arg[0] === ops.literal) {
       return arg;
     }
+    arg = downgradeReference(arg);
     const fn = [ops.lambda, [], arg];
     annotate(fn, arg.location);
     return fn;
@@ -181,13 +183,15 @@ export function makeFunctionCall(target, args) {
   let start = target.location.start;
   let end = target.location.end;
 
+  args = annotate(
+    args.map((arg) => downgradeReference(arg)),
+    args.location
+  );
+
   let fnCall;
   if (args[0] === ops.traverse) {
-    // Some flavor of traverse
-
     // In a traversal, downgrade ops.builtin references to ops.scope
-    let tree = downgradeScopeReference(target);
-
+    let tree = downgradeReference(target);
     if (args.length > 1) {
       // Regular traverse
       fnCall = [ops.traverse, tree, ...args.slice(1)];
@@ -195,14 +199,17 @@ export function makeFunctionCall(target, args) {
       // Traverse without arguments equates to unpack
       fnCall = [ops.unpack, tree];
     }
+  } else if (args[0] === ops.template) {
+    // Tagged template
+    fnCall = [upgradeReference(target), ...args.slice(1)];
   } else {
-    // Function call
-    fnCall = [target, ...args];
+    // Function call with explicit or implicit parentheses
+    fnCall = [upgradeReference(target), ...args];
   }
 
   // Create a location spanning the newly-constructed function call.
   if (args instanceof Array) {
-    end = args.location?.end ?? args.at(-1).location?.end;
+    end = args.location?.end ?? args.at(-1)?.location?.end;
     if (end === undefined) {
       throw "Internal parser error: no location for function call argument";
     }
@@ -218,6 +225,7 @@ export function makeObject(entries, op) {
   const spreads = [];
 
   for (let [key, value] of entries) {
+    value = downgradeReference(value);
     if (key === ops.spread) {
       // Spread entry; accumulate
       if (currentEntries.length > 0) {
@@ -262,8 +270,8 @@ export function makeObject(entries, op) {
 
 // Similar to a function call, but the order is reversed.
 export function makePipeline(arg, fn) {
-  const possiblyUpgraded = upgradeScopeReference(fn);
-  const result = makeFunctionCall(possiblyUpgraded, [arg]);
+  const upgraded = upgradeReference(fn);
+  const result = makeFunctionCall(upgraded, [arg]);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
@@ -277,31 +285,39 @@ export function makeProperty(key, value) {
   return [key, modified];
 }
 
+export function makeReference(identifier) {
+  // We can't know for sure that an identifier is a builtin reference until we
+  // see whether it's being called as a function.
+  let op;
+  if (builtinRegex.test(identifier)) {
+    op = identifier.endsWith(":")
+      ? // Namespace is always a builtin reference
+        ops.builtin
+      : provisionalScope;
+  } else {
+    op = ops.scope;
+  }
+  return [op, identifier];
+}
+
 export function makeTemplate(op, head, tail) {
   const strings = [head];
   const values = [];
   for (const [value, string] of tail) {
-    values.push([ops.concat, value]);
+    values.push([ops.concat, downgradeReference(value)]);
     strings.push(string);
   }
   return [op, [ops.literal, strings], ...values];
 }
 
 /**
- * Upgrade an ops.scope reference to a builtin reference.
+ * Upgrade a potential builtin reference to an actual builtin reference.
  *
  * @param {Code} code
+ * @returns {Code}
  */
-export function upgradeScopeReference(code) {
-  const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
-  if (
-    code.length === 2 &&
-    code[0] === ops.scope &&
-    typeof code[1] === "string" &&
-    (code[1].endsWith(":") || // namespace is always builtin
-      builtinRegex.test(code[1]))
-  ) {
-    // @ts-ignore
+export function upgradeReference(code) {
+  if (code.length === 2 && code[0] === provisionalScope) {
     const result = [ops.builtin, code[1]];
     annotate(result, code.location);
     return result;

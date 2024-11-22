@@ -12,6 +12,7 @@ export type Code = Array<any> & {
     start: Position;
     end: Position;
   };
+  source: string;
 };
 
 /**
