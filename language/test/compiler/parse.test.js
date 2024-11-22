@@ -85,6 +85,7 @@ describe.only("Origami parser", () => {
 
     // Consecutive slahes in a path are removed
     assertParse("expression", "path//key", [
+      ops.traverse,
       // TODO: Should be `path/`
       [ops.scope, "path"],
       [ops.literal, "key"],
@@ -138,32 +139,33 @@ describe.only("Origami parser", () => {
       [ops.scope, "tree"],
     ]);
     assertParse("functionComposition", "tree/foo/bar", [
+      ops.traverse,
       // TODO: Should be `tree/`
       [ops.scope, "tree"],
       [ops.literal, "foo/"],
       [ops.literal, "bar"],
     ]);
     assertParse("functionComposition", "tree/foo/bar/", [
+      ops.traverse,
       // TODO: Should be `tree/`
       [ops.scope, "tree"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
     ]);
     assertParse("functionComposition", "/foo/bar", [
+      ops.traverse,
       // TODO: Should be `foo/`
       [ops.filesRoot, [ops.literal, "foo"]],
       [ops.literal, "bar"],
     ]);
     assertParse("functionComposition", "foo.js()/key", [
+      ops.traverse,
       [[ops.scope, "foo.js"], undefined],
       [ops.literal, "key"],
     ]);
     assertParse("functionComposition", "tree/key()", [
       // TODO: "tree" should be "tree/"
-      [
-        [ops.scope, "tree"],
-        [ops.literal, "key"],
-      ],
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "(tree)/", [
@@ -171,10 +173,7 @@ describe.only("Origami parser", () => {
       [ops.scope, "tree"],
     ]);
     assertParse("functionComposition", "fn()/key()", [
-      [
-        [[ops.builtin, "fn"], undefined],
-        [ops.literal, "key"],
-      ],
+      [ops.traverse, [[ops.builtin, "fn"], undefined], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("functionComposition", "(foo.js())('arg')", [
@@ -194,6 +193,7 @@ describe.only("Origami parser", () => {
       [ops.scope, "b"],
     ]);
     assertParse("functionComposition", "{ a: 1, b: 2}/b", [
+      ops.traverse,
       [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
       [ops.literal, "b"],
     ]);
@@ -227,13 +227,11 @@ describe.only("Origami parser", () => {
     ]);
     assertParse("functionComposition", "tree/key arg", [
       // TODO: "tree" should be "tree/"
-      [
-        [ops.scope, "tree"],
-        [ops.literal, "key"],
-      ],
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
       [ops.scope, "arg"],
     ]);
     assertParse("functionComposition", "files:src/assets", [
+      ops.traverse,
       [
         [ops.builtin, "files:"],
         // TODO: This should be `src/`
@@ -259,6 +257,7 @@ describe.only("Origami parser", () => {
       "package:@weborigami/dropbox/auth(creds)",
       [
         [
+          ops.traverse,
           [
             [ops.builtin, "package:"],
             // TODO: This should be `@weborigami/`

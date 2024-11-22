@@ -182,7 +182,7 @@ export function makeFunctionCall(target, chain, location) {
 
       if (args.length > 1) {
         // Regular traverse
-        fnCall = [tree, ...args.slice(1)];
+        fnCall = [ops.traverse, tree, ...args.slice(1)];
       } else {
         // Traverse without arguments equates to unpack
         fnCall = [ops.unpack, tree];

@@ -101,6 +101,9 @@ export const getter = new String("«ops.getter»");
  */
 export async function filesRoot() {
   let tree = new OrigamiFiles("/");
+  // We set the builtins as the parent because logically the filesystem root is
+  // outside the project. This ignores the edge case where the project itself is
+  // the root of the filesystem and has a config file.
   tree.parent = this ? Tree.root(this) : null;
   return tree;
 }
@@ -258,16 +261,8 @@ addOpLabel(template, "«ops.template»");
 
 /**
  * Traverse a path of keys through a tree.
- *
- * This is a placeholder used during parsing and should not appear in compiled
- * code.
  */
-export function traverse(...args) {
-  throw new Error(
-    "Internal error: a traverse operation wasn't compiled correctly."
-  );
-}
-addOpLabel(traverse, "«ops.traverse");
+export const traverse = Tree.traverseOrThrow;
 
 /**
  * If the value is packed but has an unpack method, call it and return that as
