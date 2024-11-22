@@ -99,13 +99,13 @@ export const getter = new String("«ops.getter»");
  *
  * @this {AsyncTree|null}
  */
-export async function filesRoot() {
+export async function filesRoot(key) {
   let tree = new OrigamiFiles("/");
   // We set the builtins as the parent because logically the filesystem root is
   // outside the project. This ignores the edge case where the project itself is
   // the root of the filesystem and has a config file.
   tree.parent = this ? Tree.root(this) : null;
-  return tree;
+  return key ? tree.get(key) : tree;
 }
 
 /**

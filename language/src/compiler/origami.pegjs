@@ -52,6 +52,7 @@ arrayEntry
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
   = rootFolder
+  / filesRoot
   / array
   / object
   / group
@@ -118,9 +119,9 @@ escapedChar "backslash-escaped character"
 expression
   = __ @pipeline __
 
-rootFolder
-  = "/" key:pathTail {
-      return annotate([ops.filesRoot, key], location());
+filesRoot
+  = "/" !"/" {
+      return annotate([ops.filesRoot], location());
     }
 
 float "floating-point number"
@@ -383,6 +384,11 @@ protocolPath
         ], location()),
       location());
     }
+ 
+rootFolder
+  = "/" key:pathTail {
+      return annotate([ops.filesRoot, key], location());
+    }
 
 // A namespace followed by a key: `foo:x`
 qualifiedReference
@@ -502,6 +508,7 @@ value
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
   / rootFolder
+  / filesRoot
   / array
   / object
   / lambda

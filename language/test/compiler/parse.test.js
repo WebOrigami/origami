@@ -104,10 +104,20 @@ describe.only("Origami parser", () => {
       ],
     ]);
 
+    // Slash on its own is the root folder
+    assertParse("expression", "keys /", [
+      [ops.builtin, "keys"],
+      [ops.filesRoot],
+    ]);
+
     assertParse("expression", "'Hello' -> test.orit", [
       [ops.scope, "test.orit"],
       [ops.literal, "Hello"],
     ]);
+  });
+
+  test("filesRoot", () => {
+    assertParse("filesRoot", "/", [ops.filesRoot]);
   });
 
   test("functionComposition", () => {
