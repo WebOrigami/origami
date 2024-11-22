@@ -186,13 +186,31 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("callTarget", () => {
-    assertParse("callTarget", "foo", [ops.builtin, "foo"]);
-    assertParse("callTarget", "foo.js", [ops.scope, "foo.js"]);
-    assertParse("callTarget", "[1, 2]", [
-      ops.array,
+  test("conditional", () => {
+    assertParse("conditional", "true ? 1 : 0", [
+      ops.conditional,
+      [ops.scope, "true"],
+      [ops.lambda, [], [ops.literal, "1"]],
+      [ops.lambda, [], [ops.literal, "0"]],
+    ]);
+    assertParse("conditional", "1", [ops.literal, 1]);
+  });
+
+  test("equality", () => {
+    assertParse("equality", "1 === 1", [
+      ops.strictEqual,
       [ops.literal, 1],
-      [ops.literal, 2],
+      [ops.literal, 1],
+    ]);
+    assertParse("equality", "a === b === c", [
+      ops.strictEqual,
+      [ops.strictEqual, [ops.scope, "a"], [ops.scope, "b"]],
+      [ops.scope, "c"],
+    ]);
+    assertParse("equality", "1 !== 1", [
+      ops.notStrictEqual,
+      [ops.literal, 1],
+      [ops.literal, 1],
     ]);
   });
 
@@ -268,11 +286,77 @@ describe.only("Origami parser", () => {
       [ops.scope, "test.orit"],
       [ops.literal, "Hello"],
     ]);
-  });
-
-  test("functionReference", () => {
-    assertParse("functionReference", "json", [ops.builtin, "json"]);
-    assertParse("functionReference", "greet.js", [ops.scope, "greet.js"]);
+    assertParse("expression", "obj.json", [ops.scope, "obj.json"]);
+    assertParse("expression", "(fn a, b, c)", [
+      [ops.builtin, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+    ]);
+    assertParse("expression", "foo.bar('hello', 'world')", [
+      [ops.scope, "foo.bar"],
+      [ops.literal, "hello"],
+      [ops.literal, "world"],
+    ]);
+    assertParse("expression", "(key)('a')", [
+      [ops.scope, "key"],
+      [ops.literal, "a"],
+    ]);
+    assertParse("expression", "1", [ops.literal, 1]);
+    assertParse("expression", "{ a: 1, b: 2 }", [
+      ops.object,
+      ["a", [ops.literal, 1]],
+      ["b", [ops.literal, 2]],
+    ]);
+    assertParse("expression", "serve { index.html: 'hello' }", [
+      [ops.builtin, "serve"],
+      [ops.object, ["index.html", [ops.literal, "hello"]]],
+    ]);
+    assertParse("expression", "fn =`x`", [
+      [ops.builtin, "fn"],
+      [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
+    ]);
+    assertParse("expression", "copy app.js(formulas), files:snapshot", [
+      [ops.builtin, "copy"],
+      [
+        [ops.scope, "app.js"],
+        [ops.scope, "formulas"],
+      ],
+      [
+        [ops.builtin, "files:"],
+        [ops.literal, "snapshot"],
+      ],
+    ]);
+    assertParse("expression", "map =`<li>${_}</li>`", [
+      [ops.builtin, "map"],
+      [
+        ops.lambda,
+        ["_"],
+        [
+          ops.template,
+          [ops.literal, ["<li>", "</li>"]],
+          [ops.concat, [ops.scope, "_"]],
+        ],
+      ],
+    ]);
+    assertParse("expression", `"https://example.com"`, [
+      ops.literal,
+      "https://example.com",
+    ]);
+    assertParse("expression", "tag`Hello, ${name}!`", [
+      [ops.builtin, "tag"],
+      [ops.literal, ["Hello, ", "!"]],
+      [ops.concat, [ops.scope, "name"]],
+    ]);
+    assertParse("expression", "(post, slug) => fn.js(post, slug)", [
+      ops.lambda,
+      ["post", "slug"],
+      [
+        [ops.scope, "fn.js"],
+        [ops.scope, "post"],
+        [ops.scope, "slug"],
+      ],
+    ]);
   });
 
   test("group", () => {
@@ -357,12 +441,53 @@ describe.only("Origami parser", () => {
     ]);
   });
 
+  test("logicalAnd", () => {
+    assertParse("logicalAnd", "true && false", [
+      ops.logicalAnd,
+      [ops.scope, "true"],
+      [ops.lambda, [], [ops.scope, "false"]],
+    ]);
+  });
+
+  test("logicalOr", () => {
+    assertParse("logicalOr", "1 || 0", [
+      ops.logicalOr,
+      [ops.literal, 1],
+      [ops.literal, 0],
+    ]);
+    assertParse("logicalOr", "false || false || true", [
+      ops.logicalOr,
+      [ops.scope, "false"],
+      [ops.lambda, [], [ops.scope, "false"]],
+      [ops.lambda, [], [ops.scope, "true"]],
+    ]);
+    assertParse("logicalOr", "1 || 2 && 0", [
+      ops.logicalOr,
+      [ops.literal, 1],
+      [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
+    ]);
+  });
+
   test("multiLineComment", () => {
     assertParse("multiLineComment", "/*\nHello, world!\n*/", null, false);
   });
 
   test("namespace", () => {
     assertParse("namespace", "js:", [ops.builtin, "js:"]);
+  });
+
+  test("nullishCoalescing", () => {
+    assertParse("nullishCoalescing", "a ?? b", [
+      ops.nullishCoalescing,
+      [ops.scope, "a"],
+      [ops.lambda, [], [ops.scope, "b"]],
+    ]);
+    assertParse("nullishCoalescing", "a ?? b ?? c", [
+      ops.nullishCoalescing,
+      [ops.scope, "a"],
+      [ops.lambda, [], [ops.scope, "b"]],
+      [ops.lambda, [], [ops.scope, "c"]],
+    ]);
   });
 
   test("number", () => {
@@ -586,9 +711,14 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("pipelineStep", () => {
-    assertParse("pipelineStep", "foo", [ops.builtin, "foo"]);
-    assertParse("pipelineStep", "=_", [ops.lambda, ["_"], [ops.scope, "_"]]);
+  test("primary", () => {
+    assertParse("primary", "foo", [ops.builtin, "foo"]);
+    assertParse("primary", "foo.js", [ops.scope, "foo.js"]);
+    assertParse("primary", "[1, 2]", [
+      ops.array,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
   });
 
   test("program", () => {
@@ -641,7 +771,8 @@ describe.only("Origami parser", () => {
   });
 
   test("scopeReference", () => {
-    assertParse("scopeReference", "x", [ops.scope, "x"]);
+    assertParse("scopeReference", "json", [ops.builtin, "json"]);
+    assertParse("scopeReference", "greet.js", [ops.scope, "greet.js"]);
   });
 
   test("singleLineComment", () => {
@@ -752,152 +883,6 @@ describe.only("Origami parser", () => {
       null,
       false
     );
-  });
-
-  test("value", () => {
-    assertParse("value", "obj.json", [ops.scope, "obj.json"]);
-    assertParse("value", "(fn a, b, c)", [
-      [ops.builtin, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
-    ]);
-    assertParse("value", "foo.bar('hello', 'world')", [
-      [ops.scope, "foo.bar"],
-      [ops.literal, "hello"],
-      [ops.literal, "world"],
-    ]);
-    assertParse("value", "(key)('a')", [
-      [ops.scope, "key"],
-      [ops.literal, "a"],
-    ]);
-    assertParse("value", "1", [ops.literal, 1]);
-    assertParse("value", "{ a: 1, b: 2 }", [
-      ops.object,
-      ["a", [ops.literal, 1]],
-      ["b", [ops.literal, 2]],
-    ]);
-    assertParse("value", "serve { index.html: 'hello' }", [
-      [ops.builtin, "serve"],
-      [ops.object, ["index.html", [ops.literal, "hello"]]],
-    ]);
-    assertParse("value", "fn =`x`", [
-      [ops.builtin, "fn"],
-      [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
-    ]);
-    assertParse("value", "copy app.js(formulas), files:snapshot", [
-      [ops.builtin, "copy"],
-      [
-        [ops.scope, "app.js"],
-        [ops.scope, "formulas"],
-      ],
-      [
-        [ops.builtin, "files:"],
-        [ops.literal, "snapshot"],
-      ],
-    ]);
-    assertParse("value", "map =`<li>${_}</li>`", [
-      [ops.builtin, "map"],
-      [
-        ops.lambda,
-        ["_"],
-        [
-          ops.template,
-          [ops.literal, ["<li>", "</li>"]],
-          [ops.concat, [ops.scope, "_"]],
-        ],
-      ],
-    ]);
-    assertParse("value", `"https://example.com"`, [
-      ops.literal,
-      "https://example.com",
-    ]);
-    assertParse("value", "tag`Hello, ${name}!`", [
-      [ops.builtin, "tag"],
-      [ops.literal, ["Hello, ", "!"]],
-      [ops.concat, [ops.scope, "name"]],
-    ]);
-    assertParse("value", "(post, slug) => fn.js(post, slug)", [
-      ops.lambda,
-      ["post", "slug"],
-      [
-        [ops.scope, "fn.js"],
-        [ops.scope, "post"],
-        [ops.scope, "slug"],
-      ],
-    ]);
-  });
-
-  // Calc work
-  describe("calc", () => {
-    test("conditional", () => {
-      assertParse("conditional", "true ? 1 : 0", [
-        ops.conditional,
-        [ops.scope, "true"],
-        [ops.lambda, [], [ops.literal, "1"]],
-        [ops.lambda, [], [ops.literal, "0"]],
-      ]);
-      assertParse("conditional", "1", [ops.literal, 1]);
-    });
-
-    test("logicalAnd", () => {
-      assertParse("logicalAnd", "true && false", [
-        ops.logicalAnd,
-        [ops.scope, "true"],
-        [ops.lambda, [], [ops.scope, "false"]],
-      ]);
-    });
-
-    test("logicalOr", () => {
-      assertParse("logicalOr", "1 || 0", [
-        ops.logicalOr,
-        [ops.literal, 1],
-        [ops.literal, 0],
-      ]);
-      assertParse("logicalOr", "false || false || true", [
-        ops.logicalOr,
-        [ops.scope, "false"],
-        [ops.lambda, [], [ops.scope, "false"]],
-        [ops.lambda, [], [ops.scope, "true"]],
-      ]);
-      assertParse("logicalOr", "1 || 2 && 0", [
-        ops.logicalOr,
-        [ops.literal, 1],
-        [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
-      ]);
-    });
-
-    test("nullishCoalescing", () => {
-      assertParse("nullishCoalescing", "a ?? b", [
-        ops.nullishCoalescing,
-        [ops.scope, "a"],
-        [ops.lambda, [], [ops.scope, "b"]],
-      ]);
-      assertParse("nullishCoalescing", "a ?? b ?? c", [
-        ops.nullishCoalescing,
-        [ops.scope, "a"],
-        [ops.lambda, [], [ops.scope, "b"]],
-        [ops.lambda, [], [ops.scope, "c"]],
-      ]);
-    });
-
-    test("equality", () => {
-      assertParse("equality", "1 === 1", [
-        ops.strictEqual,
-        [ops.literal, 1],
-        [ops.literal, 1],
-      ]);
-      assertParse("equality", "a === b === c", [
-        ops.strictEqual,
-        [ops.strictEqual, [ops.scope, "a"], [ops.scope, "b"]],
-        [ops.scope, "c"],
-      ]);
-      assertParse("equality", "1 !== 1", [
-        ops.notStrictEqual,
-        [ops.literal, 1],
-        [ops.literal, 1],
-      ]);
-    });
   });
 });
 

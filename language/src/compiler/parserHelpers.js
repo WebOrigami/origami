@@ -55,18 +55,19 @@ function avoidRecursivePropertyCalls(code, key) {
  * @param {Code} code
  */
 export function downgradeScopeReference(code) {
-  let tree = code;
   if (
-    tree.length === 2 &&
-    tree[0] === ops.builtin &&
-    typeof tree[1] === "string" &&
-    !tree[1].endsWith(":") // namespace is always builtin
+    code.length === 2 &&
+    code[0] === ops.builtin &&
+    typeof code[1] === "string" &&
+    !code[1].endsWith(":") // namespace is always builtin
   ) {
     // @ts-ignore
-    tree = [ops.scope, tree[1]];
-    annotate(tree, code.location);
+    const result = [ops.scope, code[1]];
+    annotate(result, code.location);
+    return result;
+  } else {
+    return code;
   }
-  return tree;
 }
 
 // Return true if the code will generate an async object.
@@ -172,7 +173,7 @@ export function makeDeferredArguments(args) {
 export function makeFunctionCall(target, args) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
-    /** @type {any} */ (error).location = location;
+    /** @type {any} */ (error).location = target.location;
     throw error;
   }
 
@@ -260,13 +261,14 @@ export function makeObject(entries, op) {
 }
 
 // Similar to a function call, but the order is reversed.
-export function makePipeline(steps) {
-  const [first, ...rest] = steps;
-  let value = first;
-  for (const args of rest) {
-    value = [args, value];
-  }
-  return value;
+export function makePipeline(arg, fn) {
+  const possiblyUpgraded = upgradeScopeReference(fn);
+  const result = makeFunctionCall(possiblyUpgraded, [arg]);
+  const source = fn.location.source;
+  let start = arg.location.start;
+  let end = fn.location.end;
+  annotate(result, { start, source, end });
+  return result;
 }
 
 // Define a property on an object.
@@ -283,4 +285,27 @@ export function makeTemplate(op, head, tail) {
     strings.push(string);
   }
   return [op, [ops.literal, strings], ...values];
+}
+
+/**
+ * Upgrade an ops.scope reference to a builtin reference.
+ *
+ * @param {Code} code
+ */
+export function upgradeScopeReference(code) {
+  const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+  if (
+    code.length === 2 &&
+    code[0] === ops.scope &&
+    typeof code[1] === "string" &&
+    (code[1].endsWith(":") || // namespace is always builtin
+      builtinRegex.test(code[1]))
+  ) {
+    // @ts-ignore
+    const result = [ops.builtin, code[1]];
+    annotate(result, code.location);
+    return result;
+  } else {
+    return code;
+  }
 }

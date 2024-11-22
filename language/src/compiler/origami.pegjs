@@ -47,10 +47,10 @@ arrayEntry
   = spread
   / pipeline
 
-// Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
-// of function calls, like `fn(arg1)(arg2)(arg3)`.
-call "function composition"
-  = target:callTarget chain:args* end:implicitParensArgs? {
+// A function call: `fn(arg)`, possibly part of a chain of function calls, like
+// `fn(arg1)(arg2)(arg3)`.
+call "function call"
+  = target:primary chain:args* end:implicitParensArgs? {
       if (end) {
         chain.push(end);
       } else if (chain.length === 0) {
@@ -58,34 +58,6 @@ call "function composition"
       }
       return annotate(chain.reduce(makeFunctionCall, target), location());
     }
-
-// Something that can be called. This is more restrictive than the `value`
-// parser; it doesn't accept regular function calls.
-callTarget "function call"
-  = array
-  / object
-  / group
-  / reference
-
-primary
-  = array
-  / object
-  / group
-  / literal
-  / reference
-
-literal
-  = number
-  / string
-
-reference
-  = topDirectory
-  / rootDirectory
-  / homeDirectory
-  / qualifiedReference
-  / namespace
-  / functionReference
-  / scopeReference
 
 // Required closing curly brace. We use this for the `object` term: if the
 // parser sees a left curly brace, here we must see a right curly brace.
@@ -116,6 +88,20 @@ comment "comment"
   = multiLineComment
   / singleLineComment
 
+conditional
+  = condition:logicalOr __
+    "?" __ truthy:logicalOr __
+    ":" __ falsy:logicalOr
+    {
+      return annotate([
+        ops.conditional,
+        condition,
+        [ops.lambda, [], truthy],
+        [ops.lambda, [], falsy]
+      ], location());
+    }
+  / logicalOr
+  
 digits
   = @[0-9]+
 
@@ -130,6 +116,19 @@ doubleQuoteStringChar
   = !('"' / newLine) @textChar
 
 ellipsis = "..." / "…" // Unicode ellipsis
+
+equality
+  = head:call tail:(__ @equalityOperator __ @call)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+equalityOperator
+  = "==="
+  / "!=="
+  / "=="
+  / "!="
 
 escapedChar "backslash-escaped character"
   = "\\0" { return "\0"; }
@@ -155,25 +154,9 @@ float "floating-point number"
       return annotate([ops.literal, parseFloat(text())], location());
     }
 
-// A scope reference with no special chars in function position `fn`
-functionReference
-  = ref:scopeReference {
-    // If the reference looks like a builtin name, we treat it as a builtin
-    // reference, otherwise it's a regular scope reference. We can't make this
-    // distinction in the grammar: if we try to parse a reference like `fn.js`,
-    // the parser will see `fn` and stop there. Also, we may downgrade a
-    // builtin reference to a scope reference if it's used in a traversal.
-    const name = ref[1];
-      const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
-      const op = builtinRegex.test(name) ? ops.builtin : ops.scope;
-      return annotate([op, name], location());
-    }
-
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" __ pipeline:pipeline __ closingParen {
-    return annotate(pipeline, location());
-  }
+  = "(" @expression closingParen
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* '»' {
@@ -225,14 +208,38 @@ integer "integer"
 
 // A lambda expression: `=foo()`
 lambda "lambda function"
-  = "=" __ pipeline:pipeline {
-      return annotate([ops.lambda, ["_"], pipeline], location());
+  = "=" __ definition:conditional {
+      return annotate([ops.lambda, ["_"], definition], location());
     }
     
 // A separated list of values
 list "list"
-  = values:value|1.., separator| separator? {
+  = values:conditional|1.., separator| separator? {
       return annotate(values, location());
+    }
+
+literal
+  = number
+  / string
+
+logicalAnd
+  = head:equality tail:(__ "&&" __ @equality)* {
+      return tail.length === 0
+        ? head
+        : annotate(
+          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
+          location()
+        );
+    }
+
+logicalOr
+  = head:nullishCoalescing tail:(__ "||" __ @nullishCoalescing)* {
+      return tail.length === 0
+        ? head
+        : annotate(
+          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
+          location()
+        );
     }
 
 multiLineComment
@@ -254,6 +261,16 @@ newLine
 number "number"
   = float
   / integer
+
+nullishCoalescing
+  = head:logicalAnd tail:(__ "??" __ @logicalAnd)* {
+      return tail.length === 0
+        ? head
+        : annotate(
+          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
+          location()
+        );
+    }
 
 // An object literal: `{foo: 1, bar: 2}`
 object "object literal"
@@ -360,18 +377,16 @@ pathTail
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
 pipeline
-  = "$" __ @conditional
-  / head:value tail:(__ singleArrow __ @pipelineStep)* {
-      return tail.length === 0
-        ? head
-        : annotate(makePipeline([head, ...tail]), location());
+  = head:conditional tail:(__ singleArrow __ @conditional)* {
+      return tail.reduce(makePipeline, head);
     }
 
-// A step in a pipeline
-pipelineStep
-  = lambda
-  / parameterizedLambda
-  / callTarget
+primary
+  = array
+  / object
+  / group
+  / literal
+  / reference
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
@@ -392,9 +407,25 @@ qualifiedReference
       return annotate(makeFunctionCall(fn, [head]), location());
     }
 
+reference
+  = topDirectory
+  / rootDirectory
+  / homeDirectory
+  / qualifiedReference
+  / namespace
+  / scopeReference
+
 scopeReference "scope reference"
-  = key:identifier {
-      return annotate([ops.scope, key], location());
+  = identifier:identifier {
+      // If the reference looks like a builtin name, we treat it as a builtin
+      // reference, otherwise it's a regular scope reference. We can't make this
+      // distinction in the grammar: if we try to parse a reference like
+      // `fn.js`, the parser will see `fn` and stop there. Also, we may
+      // downgrade a builtin reference to a scope reference if it's used in a
+      // traversal.
+      const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+      const op = builtinRegex.test(identifier) ? ops.builtin : ops.scope;
+      return annotate([op, identifier], location());
     }
 
 separator
@@ -429,7 +460,7 @@ slashArgs "path with a leading slash"
     }
 
 spread
-  = ellipsis value:value {
+  = ellipsis value:conditional {
       return annotate([ops.spread, value], location());
     }
 
@@ -442,7 +473,7 @@ string "string"
   / guillemetString
 
 taggedTemplate
-  = tag:callTarget "`" contents:templateLiteralContents "`" {
+  = tag:primary "`" contents:templateLiteralContents "`" {
       return annotate(makeTemplate(tag, contents[0], contents[1]), location());
     }
 
@@ -501,108 +532,5 @@ topDirectory
       return annotate([ops.rootDirectory, key], location());
     }
 
-// An Origami expression that produces a value, no leading/trailing whitespace
-value
-  // Literals that can't start a function call
-  = number
-  // Try functions next; they can start with expression types that follow
-  // (array, object, etc.), and we want to parse the larger thing first.
-  / parameterizedLambda
-  / taggedTemplate
-  / call
-  / protocolPath
-  // Then try parsers that look for a distinctive token at the start: an opening
-  // slash, bracket, curly brace, etc.
-  / topDirectory
-  / rootDirectory
-  / array
-  / object
-  / lambda
-  / templateLiteral
-  / string
-  / group
-  / homeDirectory
-  // Things that have a distinctive character, but not at the start
-  / qualifiedReference
-  / namespace
-  // Least distinctive option is a simple scope reference, so it comes last.
-  / scopeReference
-
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
-
-
-// New calc work below
-
-newValue
-  = number
-  / topDirectory
-  / array
-  / object
-  / lambda
-  / templateLiteral
-  / string
-  / group
-  / homeDirectory
-  / protocolPath
-  / qualifiedReference
-  / namespace
-  / scopeReference
-
-equality
-  = head:newValue tail:(__ @equalityOperator __ @newValue)* {
-      return tail.length === 0
-        ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
-    }
-
-equalityOperator
-  = "==="
-  / "!=="
-  / "=="
-  / "!="
-
-logicalAnd
-  = head:equality tail:(__ "&&" __ @equality)* {
-      return tail.length === 0
-        ? head
-        : annotate(
-          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
-          location()
-        );
-    }
-
-nullishCoalescing
-  = head:logicalAnd tail:(__ "??" __ @logicalAnd)* {
-      return tail.length === 0
-        ? head
-        : annotate(
-          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
-          location()
-        );
-    }
-
-logicalOr
-  = head:nullishCoalescing tail:(__ "||" __ @nullishCoalescing)* {
-      return tail.length === 0
-        ? head
-        : annotate(
-          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
-          location()
-        );
-    }
-
-conditional
-  = condition:logicalOr __
-    "?" __ truthy:logicalOr __
-    ":" __ falsy:logicalOr
-    {
-      return annotate([
-        ops.conditional,
-        condition,
-        [ops.lambda, [], truthy],
-        [ops.lambda, [], falsy]
-      ], location());
-    }
-  / logicalOr
-  
