@@ -35,6 +35,157 @@ describe.only("Origami parser", () => {
     );
   });
 
+  test("call", () => {
+    assertParse("call", "fn()", [[ops.builtin, "fn"], undefined]);
+    assertParse("call", "foo.js(arg)", [
+      [ops.scope, "foo.js"],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("call", "fn(a, b)", [
+      [ops.builtin, "fn"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse("call", "foo.js( a , b )", [
+      [ops.scope, "foo.js"],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse("call", "fn()(arg)", [
+      [[ops.builtin, "fn"], undefined],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("call", "tree/", [
+      ops.unpack,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+    ]);
+    assertParse("call", "tree/foo/bar", [
+      ops.traverse,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("call", "tree/foo/bar/", [
+      ops.traverse,
+      // TODO: Should be `tree/`
+      [ops.scope, "tree"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar/"],
+    ]);
+    assertParse("call", "/foo/bar", [
+      ops.traverse,
+      // TODO: Should be `foo/`
+      [ops.rootDirectory, [ops.literal, "foo"]],
+      [ops.literal, "bar"],
+    ]);
+    assertParse("call", "foo.js()/key", [
+      ops.traverse,
+      [[ops.scope, "foo.js"], undefined],
+      [ops.literal, "key"],
+    ]);
+    assertParse("call", "tree/key()", [
+      // TODO: "tree" should be "tree/"
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
+      undefined,
+    ]);
+    assertParse("call", "(tree)/", [ops.unpack, [ops.scope, "tree"]]);
+    assertParse("call", "fn()/key()", [
+      [ops.traverse, [[ops.builtin, "fn"], undefined], [ops.literal, "key"]],
+      undefined,
+    ]);
+    assertParse("call", "(foo.js())('arg')", [
+      [[ops.scope, "foo.js"], undefined],
+      [ops.literal, "arg"],
+    ]);
+    assertParse("call", "fn('a')('b')", [
+      [
+        [ops.builtin, "fn"],
+        [ops.literal, "a"],
+      ],
+      [ops.literal, "b"],
+    ]);
+    assertParse("call", "(foo.js())(a, b)", [
+      [[ops.scope, "foo.js"], undefined],
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+    ]);
+    assertParse("call", "{ a: 1, b: 2}/b", [
+      ops.traverse,
+      [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
+      [ops.literal, "b"],
+    ]);
+    assertParse("call", "fn arg", [
+      [ops.builtin, "fn"],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("call", "page.ori 'a', 'b'", [
+      [ops.scope, "page.ori"],
+      [ops.literal, "a"],
+      [ops.literal, "b"],
+    ]);
+    assertParse("call", "fn a(b), c", [
+      [ops.builtin, "fn"],
+      [
+        [ops.builtin, "a"],
+        [ops.scope, "b"],
+      ],
+      [ops.scope, "c"],
+    ]);
+    assertParse("call", "foo.js bar.ori 'arg'", [
+      [ops.scope, "foo.js"],
+      [
+        [ops.scope, "bar.ori"],
+        [ops.literal, "arg"],
+      ],
+    ]);
+    assertParse("call", "(fn()) 'arg'", [
+      [[ops.builtin, "fn"], undefined],
+      [ops.literal, "arg"],
+    ]);
+    assertParse("call", "tree/key arg", [
+      // TODO: "tree" should be "tree/"
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("call", "files:src/assets", [
+      ops.traverse,
+      [
+        [ops.builtin, "files:"],
+        // TODO: This should be `src/`
+        [ops.literal, "src"],
+      ],
+      [ops.literal, "assets"],
+    ]);
+    assertParse("call", "new:(js:Date, '2025-01-01')", [
+      [ops.builtin, "new:"],
+      [
+        [ops.builtin, "js:"],
+        [ops.literal, "Date"],
+      ],
+      [ops.literal, "2025-01-01"],
+    ]);
+    assertParse("call", "map(markdown, mdHtml)", [
+      [ops.builtin, "map"],
+      [ops.scope, "markdown"],
+      [ops.scope, "mdHtml"],
+    ]);
+    assertParse("call", "package:@weborigami/dropbox/auth(creds)", [
+      [
+        ops.traverse,
+        [
+          [ops.builtin, "package:"],
+          // TODO: This should be `@weborigami/`
+          [ops.literal, "@weborigami"],
+        ],
+        [ops.literal, "dropbox/"],
+        [ops.literal, "auth"],
+      ],
+      [ops.scope, "creds"],
+    ]);
+  });
+
   test("callTarget", () => {
     assertParse("callTarget", "foo", [ops.builtin, "foo"]);
     assertParse("callTarget", "foo.js", [ops.scope, "foo.js"]);
@@ -92,7 +243,10 @@ describe.only("Origami parser", () => {
     ]);
 
     // Single slash at start of something = absolute file path
-    assertParse("expression", "/path", [ops.filesRoot, [ops.literal, "path"]]);
+    assertParse("expression", "/path", [
+      ops.rootDirectory,
+      [ops.literal, "path"],
+    ]);
 
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
@@ -107,178 +261,13 @@ describe.only("Origami parser", () => {
     // Slash on its own is the root folder
     assertParse("expression", "keys /", [
       [ops.builtin, "keys"],
-      [ops.filesRoot],
+      [ops.rootDirectory],
     ]);
 
     assertParse("expression", "'Hello' -> test.orit", [
       [ops.scope, "test.orit"],
       [ops.literal, "Hello"],
     ]);
-  });
-
-  test("filesRoot", () => {
-    assertParse("filesRoot", "/", [ops.filesRoot]);
-  });
-
-  test("functionComposition", () => {
-    assertParse("functionComposition", "fn()", [
-      [ops.builtin, "fn"],
-      undefined,
-    ]);
-    assertParse("functionComposition", "foo.js(arg)", [
-      [ops.scope, "foo.js"],
-      [ops.scope, "arg"],
-    ]);
-    assertParse("functionComposition", "fn(a, b)", [
-      [ops.builtin, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse("functionComposition", "foo.js( a , b )", [
-      [ops.scope, "foo.js"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse("functionComposition", "fn()(arg)", [
-      [[ops.builtin, "fn"], undefined],
-      [ops.scope, "arg"],
-    ]);
-    assertParse("functionComposition", "tree/", [
-      ops.unpack,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
-    ]);
-    assertParse("functionComposition", "tree/foo/bar", [
-      ops.traverse,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("functionComposition", "tree/foo/bar/", [
-      ops.traverse,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar/"],
-    ]);
-    assertParse("functionComposition", "/foo/bar", [
-      ops.traverse,
-      // TODO: Should be `foo/`
-      [ops.filesRoot, [ops.literal, "foo"]],
-      [ops.literal, "bar"],
-    ]);
-    assertParse("functionComposition", "foo.js()/key", [
-      ops.traverse,
-      [[ops.scope, "foo.js"], undefined],
-      [ops.literal, "key"],
-    ]);
-    assertParse("functionComposition", "tree/key()", [
-      // TODO: "tree" should be "tree/"
-      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
-      undefined,
-    ]);
-    assertParse("functionComposition", "(tree)/", [
-      ops.unpack,
-      [ops.scope, "tree"],
-    ]);
-    assertParse("functionComposition", "fn()/key()", [
-      [ops.traverse, [[ops.builtin, "fn"], undefined], [ops.literal, "key"]],
-      undefined,
-    ]);
-    assertParse("functionComposition", "(foo.js())('arg')", [
-      [[ops.scope, "foo.js"], undefined],
-      [ops.literal, "arg"],
-    ]);
-    assertParse("functionComposition", "fn('a')('b')", [
-      [
-        [ops.builtin, "fn"],
-        [ops.literal, "a"],
-      ],
-      [ops.literal, "b"],
-    ]);
-    assertParse("functionComposition", "(foo.js())(a, b)", [
-      [[ops.scope, "foo.js"], undefined],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-    ]);
-    assertParse("functionComposition", "{ a: 1, b: 2}/b", [
-      ops.traverse,
-      [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
-      [ops.literal, "b"],
-    ]);
-    assertParse("functionComposition", "fn arg", [
-      [ops.builtin, "fn"],
-      [ops.scope, "arg"],
-    ]);
-    assertParse("functionComposition", "page.ori 'a', 'b'", [
-      [ops.scope, "page.ori"],
-      [ops.literal, "a"],
-      [ops.literal, "b"],
-    ]);
-    assertParse("functionComposition", "fn a(b), c", [
-      [ops.builtin, "fn"],
-      [
-        [ops.builtin, "a"],
-        [ops.scope, "b"],
-      ],
-      [ops.scope, "c"],
-    ]);
-    assertParse("functionComposition", "foo.js bar.ori 'arg'", [
-      [ops.scope, "foo.js"],
-      [
-        [ops.scope, "bar.ori"],
-        [ops.literal, "arg"],
-      ],
-    ]);
-    assertParse("functionComposition", "(fn()) 'arg'", [
-      [[ops.builtin, "fn"], undefined],
-      [ops.literal, "arg"],
-    ]);
-    assertParse("functionComposition", "tree/key arg", [
-      // TODO: "tree" should be "tree/"
-      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
-      [ops.scope, "arg"],
-    ]);
-    assertParse("functionComposition", "files:src/assets", [
-      ops.traverse,
-      [
-        [ops.builtin, "files:"],
-        // TODO: This should be `src/`
-        [ops.literal, "src"],
-      ],
-      [ops.literal, "assets"],
-    ]);
-    assertParse("functionComposition", "new:(js:Date, '2025-01-01')", [
-      [ops.builtin, "new:"],
-      [
-        [ops.builtin, "js:"],
-        [ops.literal, "Date"],
-      ],
-      [ops.literal, "2025-01-01"],
-    ]);
-    assertParse("functionComposition", "map(markdown, mdHtml)", [
-      [ops.builtin, "map"],
-      [ops.scope, "markdown"],
-      [ops.scope, "mdHtml"],
-    ]);
-    assertParse(
-      "functionComposition",
-      "package:@weborigami/dropbox/auth(creds)",
-      [
-        [
-          ops.traverse,
-          [
-            [ops.builtin, "package:"],
-            // TODO: This should be `@weborigami/`
-            [ops.literal, "@weborigami"],
-          ],
-          [ops.literal, "dropbox/"],
-          [ops.literal, "auth"],
-        ],
-        [ops.scope, "creds"],
-      ]
-    );
   });
 
   test("functionReference", () => {
@@ -296,8 +285,8 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("homeTree", () => {
-    assertParse("homeTree", "~", [ops.homeTree]);
+  test("homeDirectory", () => {
+    assertParse("homeDirectory", "~", [ops.homeDirectory]);
   });
 
   test("host", () => {
@@ -337,12 +326,6 @@ describe.only("Origami parser", () => {
         [ops.literal, ["hello"]],
       ],
     ]);
-  });
-
-  test("leadingSlashPath", () => {
-    assertParse("leadingSlashPath", "/", []);
-    assertParse("leadingSlashPath", "/tree", [[ops.literal, "tree"]]);
-    assertParse("leadingSlashPath", "/tree/", [[ops.literal, "tree/"]]);
   });
 
   test("list", () => {
@@ -653,12 +636,22 @@ describe.only("Origami parser", () => {
     ]);
   });
 
+  test("rootDirectory", () => {
+    assertParse("rootDirectory", "/", [ops.rootDirectory]);
+  });
+
   test("scopeReference", () => {
     assertParse("scopeReference", "x", [ops.scope, "x"]);
   });
 
   test("singleLineComment", () => {
     assertParse("singleLineComment", "// Hello, world!", null, false);
+  });
+
+  test("slashArgs", () => {
+    assertParse("slashArgs", "/", [ops.traverse]);
+    assertParse("slashArgs", "/tree", [ops.traverse, [ops.literal, "tree"]]);
+    assertParse("slashArgs", "/tree/", [ops.traverse, [ops.literal, "tree/"]]);
   });
 
   test("spread", () => {

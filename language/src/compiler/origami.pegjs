@@ -29,9 +29,7 @@ __
 
 args "function arguments"
   = parensArgs
-  / path:leadingSlashPath {
-      return annotate([ops.traverse, ...path], location());
-    }
+  / slashArgs
 
 array "array"
   = "[" __ entries:arrayEntries? __ closingBracket {
@@ -48,14 +46,47 @@ arrayEntry
   = spread
   / pipeline
 
+// Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
+// of function calls, like `fn(arg1)(arg2)(arg3)`.
+call "function composition"
+  // Function with at least one argument and maybe implicit parens arguments
+  = target:callTarget chain:args+ end:implicitParensArgs? {
+      if (end) {
+        chain.push(end);
+      }
+      return annotate(chain.reduce(makeFunctionCall, target), location());
+    }
+  // Function with implicit parens arguments after maybe other arguments
+  / target:callTarget chain:args* end:implicitParensArgs {
+      if (end) {
+        chain.push(end);
+      }
+      return annotate(chain.reduce(makeFunctionCall, target), location());
+    }
+
 // Something that can be called. This is more restrictive than the `value`
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
-  = rootFolder
-  / filesRoot
-  / array
+  = array
   / object
   / group
+  / reference
+
+primary
+  = array
+  / object
+  / group
+  / literal
+  / reference
+
+literal
+  = number
+  / string
+
+reference
+  = topDirectory
+  / rootDirectory
+  / homeDirectory
   / qualifiedReference
   / namespace
   / functionReference
@@ -119,32 +150,14 @@ escapedChar "backslash-escaped character"
 expression
   = __ @pipeline __
 
-filesRoot
+rootDirectory
   = "/" !"/" {
-      return annotate([ops.filesRoot], location());
+      return annotate([ops.rootDirectory], location());
     }
 
 float "floating-point number"
   = sign? digits? "." digits {
       return annotate([ops.literal, parseFloat(text())], location());
-    }
-
-// Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
-// of function calls, like `fn(arg1)(arg2)(arg3)`.
-functionComposition "function composition"
-  // Function with at least one argument and maybe implicit parens arguments
-  = target:callTarget chain:args+ end:implicitParensArgs? {
-      if (end) {
-        chain.push(end);
-      }
-      return annotate(makeFunctionCall(target, chain, location()), location());
-    }
-  // Function with implicit parens arguments after maybe other arguments
-  / target:callTarget chain:args* end:implicitParensArgs {
-      if (end) {
-        chain.push(end);
-      }
-      return annotate(makeFunctionCall(target, chain, location()), location());
     }
 
 // A scope reference with no special chars in function position `fn`
@@ -175,9 +188,9 @@ guillemetString "guillemet string"
 guillemetStringChar
   = !('»' / newLine) @textChar
 
-homeTree
+homeDirectory
   = "~" {
-      return annotate([ops.homeTree], location());
+      return annotate([ops.homeDirectory], location());
     }
 
 // A host identifier that may include a colon and port number: `example.com:80`.
@@ -220,13 +233,7 @@ lambda "lambda function"
   = "=" __ pipeline:pipeline {
       return annotate([ops.lambda, ["_"], pipeline], location());
     }
-
-// A path that begins with a slash: `/foo/bar`
-leadingSlashPath "path with a leading slash"
-  = "/" path:path? {
-      return annotate(path ?? [], location());
-    }
-
+    
 // A separated list of values
 list "list"
   = values:value|1.., separator| separator? {
@@ -379,23 +386,15 @@ program "Origami program"
 protocolPath
   = fn:namespace "//" host:host path:path? {
       return annotate(
-        makeFunctionCall(fn, [
-          annotate([host, ...(path ?? [])], location())
-        ], location()),
-      location());
-    }
- 
-rootFolder
-  = "/" key:pathTail {
-      return annotate([ops.filesRoot, key], location());
+        makeFunctionCall(fn, [host, ...(path ?? [])]),
+        location()
+      );
     }
 
 // A namespace followed by a key: `foo:x`
 qualifiedReference
   = fn:namespace head:pathTail {
-      return annotate(makeFunctionCall(fn, [
-        annotate([head], head.location)
-      ], location()), location());
+      return annotate(makeFunctionCall(fn, [head]), location());
     }
 
 scopeReference "scope reference"
@@ -427,6 +426,12 @@ singleQuoteString "single quote string"
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
+
+// A path that begins with a slash: `/foo/bar`
+slashArgs "path with a leading slash"
+  = "/" path:path? {
+      return annotate([ops.traverse, ...(path ?? [])], location());
+    }
 
 spread
   = ellipsis value:value {
@@ -494,6 +499,12 @@ templateSubstitution "template substitution"
 textChar
   = escapedChar
   / .
+ 
+// A folder at the root of the filesystem
+topDirectory
+  = "/" key:pathTail {
+      return annotate([ops.rootDirectory, key], location());
+    }
 
 // An Origami expression that produces a value, no leading/trailing whitespace
 value
@@ -502,20 +513,20 @@ value
   // Try functions next; they can start with expression types that follow
   // (array, object, etc.), and we want to parse the larger thing first.
   / parameterizedLambda
-  / functionComposition
+  / call
   / taggedTemplate
   / protocolPath
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
-  / rootFolder
-  / filesRoot
+  / topDirectory
+  / rootDirectory
   / array
   / object
   / lambda
   / templateLiteral
   / string
   / group
-  / homeTree
+  / homeDirectory
   // Things that have a distinctive character, but not at the start
   / qualifiedReference
   / namespace
@@ -530,14 +541,14 @@ whitespaceWithNewLine
 
 newValue
   = number
-  / rootFolder
+  / topDirectory
   / array
   / object
   / lambda
   / templateLiteral
   / string
   / group
-  / homeTree
+  / homeDirectory
   / protocolPath
   / qualifiedReference
   / namespace

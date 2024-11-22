@@ -95,25 +95,11 @@ addOpLabel(concat, "«ops.concat»");
 export const getter = new String("«ops.getter»");
 
 /**
- * Files tree for the filesystem root.
- *
- * @this {AsyncTree|null}
- */
-export async function filesRoot(key) {
-  let tree = new OrigamiFiles("/");
-  // We set the builtins as the parent because logically the filesystem root is
-  // outside the project. This ignores the edge case where the project itself is
-  // the root of the filesystem and has a config file.
-  tree.parent = this ? Tree.root(this) : null;
-  return key ? tree.get(key) : tree;
-}
-
-/**
  * Files tree for the user's home directory.
  *
  * @this {AsyncTree|null}
  */
-export async function homeTree() {
+export async function homeDirectory() {
   const tree = new OrigamiFiles(os.homedir());
   tree.parent = this ? Tree.root(this) : null;
   return tree;
@@ -221,6 +207,20 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
+
+/**
+ * Files tree for the filesystem root.
+ *
+ * @this {AsyncTree|null}
+ */
+export async function rootDirectory(key) {
+  let tree = new OrigamiFiles("/");
+  // We set the builtins as the parent because logically the filesystem root is
+  // outside the project. This ignores the edge case where the project itself is
+  // the root of the filesystem and has a config file.
+  tree.parent = this ? Tree.root(this) : null;
+  return key ? tree.get(key) : tree;
+}
 
 /**
  * Look up the given key in the scope for the current tree.

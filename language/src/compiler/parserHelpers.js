@@ -146,68 +146,58 @@ export function makeDeferredArguments(args) {
 
 /**
  * @param {Code} target
- * @param {Code[]} chain
+ * @param {any[]} args
  */
-export function makeFunctionCall(target, chain, location) {
+export function makeFunctionCall(target, args) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = location;
     throw error;
   }
 
-  let value = target;
   const source = target.location.source;
-  // The chain is an array of arguments (which are themselves arrays). We
-  // successively apply the top-level elements of that chain to build up the
-  // function composition.
   let start = target.location.start;
   let end = target.location.end;
-  for (const args of chain) {
-    let fnCall;
 
-    if (args[0] === ops.traverse) {
-      // Some flavor of traverse
+  let fnCall;
+  if (args[0] === ops.traverse) {
+    // Some flavor of traverse
 
-      // In a traversal, downgrade ops.builtin references to ops.scope
-      let tree = value;
-      if (
-        tree.length === 2 &&
-        tree[0] === ops.builtin &&
-        typeof tree[1] === "string"
-      ) {
-        // @ts-ignore
-        tree = [ops.scope, tree[1]];
-        annotate(tree, value.location);
-      }
+    // In a traversal, downgrade ops.builtin references to ops.scope
+    let tree = target;
+    if (
+      tree.length === 2 &&
+      tree[0] === ops.builtin &&
+      typeof tree[1] === "string"
+    ) {
+      // @ts-ignore
+      tree = [ops.scope, tree[1]];
+      annotate(tree, target.location);
+    }
 
-      if (args.length > 1) {
-        // Regular traverse
-        fnCall = [ops.traverse, tree, ...args.slice(1)];
-      } else {
-        // Traverse without arguments equates to unpack
-        fnCall = [ops.unpack, tree];
-      }
+    if (args.length > 1) {
+      // Regular traverse
+      fnCall = [ops.traverse, tree, ...args.slice(1)];
     } else {
-      // Function call
-      fnCall = [value, ...args];
+      // Traverse without arguments equates to unpack
+      fnCall = [ops.unpack, tree];
     }
-
-    // Create a location spanning the newly-constructed function call.
-    if (args instanceof Array) {
-      if (args.location) {
-        end = args.location.end;
-      } else {
-        throw "Internal parser error: no location for function call argument";
-      }
-    }
-
-    annotate(fnCall, { start, source, end });
-
-    // @ts-ignore
-    value = fnCall;
+  } else {
+    // Function call
+    fnCall = [target, ...args];
   }
 
-  return value;
+  // Create a location spanning the newly-constructed function call.
+  if (args instanceof Array) {
+    end = args.location?.end ?? args.at(-1).location?.end;
+    if (end === undefined) {
+      throw "Internal parser error: no location for function call argument";
+    }
+  }
+
+  annotate(fnCall, { start, source, end });
+
+  return fnCall;
 }
 
 export function makeObject(entries, op) {
