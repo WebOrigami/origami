@@ -27,14 +27,6 @@ __
     return null;
   }
 
-// A filesystem path that begins with a slash: `/foo/bar`
-// We take care to avoid treating two consecutive leading slashes as a path;
-// that starts a comment.
-absoluteFilePath "absolute file path"
-  = !"//" path:leadingSlashPath {
-      return annotate([[ops.filesRoot], ...path], location());
-    }
-
 args "function arguments"
   = parensArgs
   / path:leadingSlashPath {
@@ -59,7 +51,7 @@ arrayEntry
 // Something that can be called. This is more restrictive than the `value`
 // parser; it doesn't accept regular function calls.
 callTarget "function call"
-  = absoluteFilePath
+  = rootFolder
   / array
   / object
   / group
@@ -125,6 +117,11 @@ escapedChar "backslash-escaped character"
 // A top-level expression, possibly with leading/trailing whitespace
 expression
   = __ @pipeline __
+
+rootFolder
+  = "/" key:pathTail {
+      return annotate([ops.filesRoot, key], location());
+    }
 
 float "floating-point number"
   = sign? digits? "." digits {
@@ -504,7 +501,7 @@ value
   / protocolPath
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
-  / absoluteFilePath
+  / rootFolder
   / array
   / object
   / lambda
@@ -526,7 +523,7 @@ whitespaceWithNewLine
 
 newValue
   = number
-  / absoluteFilePath
+  / rootFolder
   / array
   / object
   / lambda

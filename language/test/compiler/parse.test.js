@@ -5,14 +5,6 @@ import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
 describe.only("Origami parser", () => {
-  test("absoluteFilePath", () => {
-    assertParse("absoluteFilePath", "/foo/bar", [
-      [ops.filesRoot],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar"],
-    ]);
-  });
-
   test("array", () => {
     assertParse("array", "[]", [ops.array]);
     assertParse("array", "[1, 2, 3]", [
@@ -99,10 +91,7 @@ describe.only("Origami parser", () => {
     ]);
 
     // Single slash at start of something = absolute file path
-    assertParse("expression", "/path", [
-      [ops.filesRoot],
-      [ops.literal, "path"],
-    ]);
+    assertParse("expression", "/path", [ops.filesRoot, [ops.literal, "path"]]);
 
     // Consecutive slashes at start of something = comment
     assertParse("expression", "path //comment", [ops.scope, "path"], false);
@@ -159,6 +148,11 @@ describe.only("Origami parser", () => {
       [ops.scope, "tree"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
+    ]);
+    assertParse("functionComposition", "/foo/bar", [
+      // TODO: Should be `foo/`
+      [ops.filesRoot, [ops.literal, "foo"]],
+      [ops.literal, "bar"],
     ]);
     assertParse("functionComposition", "foo.js()/key", [
       [[ops.scope, "foo.js"], undefined],
