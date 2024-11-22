@@ -48,6 +48,27 @@ function avoidRecursivePropertyCalls(code, key) {
   return modified;
 }
 
+/**
+ * Scope references are parsed as ops.builtin, but when used as a value or
+ * the head of a traversal, the reference operation should be ops.scope.
+ *
+ * @param {Code} code
+ */
+export function downgradeScopeReference(code) {
+  let tree = code;
+  if (
+    tree.length === 2 &&
+    tree[0] === ops.builtin &&
+    typeof tree[1] === "string" &&
+    !tree[1].endsWith(":") // namespace is always builtin
+  ) {
+    // @ts-ignore
+    tree = [ops.scope, tree[1]];
+    annotate(tree, code.location);
+  }
+  return tree;
+}
+
 // Return true if the code will generate an async object.
 function isCodeForAsyncObject(code) {
   if (!(code instanceof Array)) {
@@ -164,16 +185,7 @@ export function makeFunctionCall(target, args) {
     // Some flavor of traverse
 
     // In a traversal, downgrade ops.builtin references to ops.scope
-    let tree = target;
-    if (
-      tree.length === 2 &&
-      tree[0] === ops.builtin &&
-      typeof tree[1] === "string"
-    ) {
-      // @ts-ignore
-      tree = [ops.scope, tree[1]];
-      annotate(tree, target.location);
-    }
+    let tree = downgradeScopeReference(target);
 
     if (args.length > 1) {
       // Regular traverse

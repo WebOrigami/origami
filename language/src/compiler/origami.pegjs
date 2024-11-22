@@ -9,6 +9,7 @@
 import * as ops from "../runtime/ops.js";
 import {
   annotate,
+  downgradeScopeReference,
   makeArray,
   makeBinaryOperatorChain,
   makeDeferredArguments,
@@ -49,17 +50,11 @@ arrayEntry
 // Parse a function and its arguments, e.g. `fn(arg)`, possibly part of a chain
 // of function calls, like `fn(arg1)(arg2)(arg3)`.
 call "function composition"
-  // Function with at least one argument and maybe implicit parens arguments
-  = target:callTarget chain:args+ end:implicitParensArgs? {
+  = target:callTarget chain:args* end:implicitParensArgs? {
       if (end) {
         chain.push(end);
-      }
-      return annotate(chain.reduce(makeFunctionCall, target), location());
-    }
-  // Function with implicit parens arguments after maybe other arguments
-  / target:callTarget chain:args* end:implicitParensArgs {
-      if (end) {
-        chain.push(end);
+      } else if (chain.length === 0) {
+        return downgradeScopeReference(target);
       }
       return annotate(chain.reduce(makeFunctionCall, target), location());
     }
@@ -513,8 +508,8 @@ value
   // Try functions next; they can start with expression types that follow
   // (array, object, etc.), and we want to parse the larger thing first.
   / parameterizedLambda
-  / call
   / taggedTemplate
+  / call
   / protocolPath
   // Then try parsers that look for a distinctive token at the start: an opening
   // slash, bracket, curly brace, etc.
