@@ -219,8 +219,14 @@ export default class FileTree {
  */
 async function isDirectory(entry, dirname) {
   if (entry.isSymbolicLink()) {
-    const realPath = await fs.realpath(path.resolve(dirname, entry.name));
-    entry = await fs.stat(realPath);
+    const entryPath = path.resolve(dirname, entry.name);
+    try {
+      const realPath = await fs.realpath(entryPath);
+      entry = await fs.stat(realPath);
+    } catch (error) {
+      // The slash isn't crucial, so if link doesn't work that's okay
+      return false;
+    }
   }
   return entry.isDirectory();
 }
