@@ -6,7 +6,6 @@
 
 import {
   ObjectTree,
-  Tree,
   isUnpackable,
   scope as scopeFn,
   concat as treeConcat,
@@ -256,7 +255,7 @@ addOpLabel(scope, "«ops.scope»");
  */
 export function spread(...args) {
   throw new Error(
-    "A compile-time spread operator wasn't converted to an object merge."
+    "Internal error: a spread operation wasn't compiled correctly."
   );
 }
 addOpLabel(spread, "«ops.spread»");
@@ -271,8 +270,16 @@ addOpLabel(template, "«ops.template»");
 
 /**
  * Traverse a path of keys through a tree.
+ *
+ * This is a placeholder used during parsing and should not appear in compiled
+ * code.
  */
-export const traverse = Tree.traverseOrThrow;
+export function traverse(...args) {
+  throw new Error(
+    "Internal error: a traverse operation wasn't compiled correctly."
+  );
+}
+addOpLabel(traverse, "«ops.traverse");
 
 /**
  * If the value is packed but has an unpack method, call it and return that as
