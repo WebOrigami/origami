@@ -172,6 +172,8 @@ describe.only("ops", () => {
       assert.equal(await ops.logicalAnd(false, trueFn), false);
       assert.equal(await ops.logicalAnd(false, falseFn), false);
 
+      assert.equal(await ops.logicalAnd(true, "hi"), "hi");
+
       // Short-circuiting
       assert.equal(await ops.logicalAnd(false, errorFn), false);
     });
@@ -181,6 +183,8 @@ describe.only("ops", () => {
       assert.equal(await ops.logicalOr(true, falseFn), true);
       assert.equal(await ops.logicalOr(false, trueFn), true);
       assert.equal(await ops.logicalOr(false, falseFn), false);
+
+      assert.equal(await ops.logicalOr(false, "hi"), "hi");
 
       // Short-circuiting
       assert.equal(await ops.logicalOr(true, errorFn), true);
