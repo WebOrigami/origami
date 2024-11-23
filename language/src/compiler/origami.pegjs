@@ -95,8 +95,8 @@ comment "comment"
 
 conditional
   = condition:logicalOr __
-    "?" __ truthy:logicalOr __
-    ":" __ falsy:logicalOr
+    "?" __ truthy:pipeline __
+    ":" __ falsy:pipeline
     {
       return annotate([
         ops.conditional,
@@ -226,7 +226,7 @@ integer "integer"
 // A lambda expression: `=foo(_)`
 lambda "lambda function"
   // Avoid a following equal sign (for an equality)
-  = "=" !"=" __ definition:pipeline {
+  = "=" !"=" __ definition:arrowFunction {
       return annotate([ops.lambda, ["_"], definition], location());
     }
   / arrowFunction

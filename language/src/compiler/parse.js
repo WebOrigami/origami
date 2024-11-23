@@ -1074,7 +1074,7 @@ function peg$parse(input, options) {
       }
       if (s3 !== peg$FAILED) {
         s4 = peg$parse__();
-        s5 = peg$parselogicalOr();
+        s5 = peg$parsepipeline();
         if (s5 !== peg$FAILED) {
           s6 = peg$parse__();
           if (input.charCodeAt(peg$currPos) === 58) {
@@ -1086,7 +1086,7 @@ function peg$parse(input, options) {
           }
           if (s7 !== peg$FAILED) {
             s8 = peg$parse__();
-            s9 = peg$parselogicalOr();
+            s9 = peg$parsepipeline();
             if (s9 !== peg$FAILED) {
               peg$savedPos = s0;
               s0 = peg$f8(s1, s5, s9);
@@ -2113,7 +2113,7 @@ function peg$parse(input, options) {
       }
       if (s2 !== peg$FAILED) {
         s3 = peg$parse__();
-        s4 = peg$parsepipeline();
+        s4 = peg$parsearrowFunction();
         if (s4 !== peg$FAILED) {
           peg$savedPos = s0;
           s0 = peg$f29(s4);

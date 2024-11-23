@@ -194,13 +194,25 @@ describe.only("Origami parser", () => {
   });
 
   test("conditional", () => {
+    assertParse("conditional", "1", [ops.literal, 1]);
     assertParse("conditional", "true ? 1 : 0", [
       ops.conditional,
       [ops.scope, "true"],
       [ops.lambda, [], [ops.literal, "1"]],
       [ops.lambda, [], [ops.literal, "0"]],
     ]);
-    assertParse("conditional", "1", [ops.literal, 1]);
+    assertParse("conditional", "false ? () => 1 : 0", [
+      ops.conditional,
+      [ops.scope, "false"],
+      [ops.lambda, [], [ops.lambda, [], [ops.literal, "1"]]],
+      [ops.lambda, [], [ops.literal, "0"]],
+    ]);
+    assertParse("conditional", "false ? =1 : 0", [
+      ops.conditional,
+      [ops.scope, "false"],
+      [ops.lambda, [], [ops.lambda, ["_"], [ops.literal, "1"]]],
+      [ops.lambda, [], [ops.literal, "0"]],
+    ]);
   });
 
   test("equality", () => {
@@ -434,7 +446,7 @@ describe.only("Origami parser", () => {
     assertParse("lambda", "=message", [
       ops.lambda,
       ["_"],
-      [ops.scope, "message"],
+      [provisionalScope, "message"],
     ]);
     assertParse("lambda", "=`Hello, ${name}.`", [
       ops.lambda,
