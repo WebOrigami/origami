@@ -203,7 +203,7 @@ identifierList
     }
 
 implicitParens "function call with implicit parentheses"
-  = head:lambda args:(inlineSpace+ @list)? {
+  = head:lambda args:(inlineSpace+ @implicitParensArgs)? {
       return args ? makeFunctionCall(head, args) : head;
     }
     

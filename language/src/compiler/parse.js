@@ -1969,7 +1969,7 @@ function peg$parse(input, options) {
         s3 = peg$FAILED;
       }
       if (s3 !== peg$FAILED) {
-        s4 = peg$parselist();
+        s4 = peg$parseimplicitParensArgs();
         if (s4 !== peg$FAILED) {
           s2 = s4;
         } else {

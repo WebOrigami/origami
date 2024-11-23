@@ -713,13 +713,13 @@ describe.only("Origami parser", () => {
         [ops.scope, "input"],
       ],
     ]);
-    // assertParse("pipeline", "fn a -> b", [
-    //   [ops.builtin, "b"],
-    //   [
-    //     [ops.builtin, "fn"],
-    //     [ops.scope, "a"],
-    //   ],
-    // ]);
+    assertParse("pipeline", "fn a -> b", [
+      [ops.builtin, "b"],
+      [
+        [ops.builtin, "fn"],
+        [ops.scope, "a"],
+      ],
+    ]);
   });
 
   test("primary", () => {
