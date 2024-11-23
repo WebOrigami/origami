@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
+import { provisionalScope } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
@@ -398,35 +399,35 @@ describe.only("Origami parser", () => {
       [ops.builtin, "fn"],
       [ops.scope, "arg"],
     ]);
-    // assertParse("implicitParens", "page.ori 'a', 'b'", [
-    //   [ops.scope, "page.ori"],
-    //   [ops.literal, "a"],
-    //   [ops.literal, "b"],
-    // ]);
-    // assertParse("implicitParens", "fn a(b), c", [
-    //   [ops.builtin, "fn"],
-    //   [
-    //     [ops.builtin, "a"],
-    //     [ops.scope, "b"],
-    //   ],
-    //   [ops.scope, "c"],
-    // ]);
-    // assertParse("implicitParens", "(fn()) 'arg'", [
-    //   [[ops.builtin, "fn"], undefined],
-    //   [ops.literal, "arg"],
-    // ]);
-    // assertParse("implicitParens", "tree/key arg", [
-    //   // TODO: "tree" should be "tree/"
-    //   [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
-    //   [ops.scope, "arg"],
-    // ]);
-    // assertParse("implicitParens", "foo.js bar.ori 'arg'", [
-    //   [ops.scope, "foo.js"],
-    //   [
-    //     [ops.scope, "bar.ori"],
-    //     [ops.literal, "arg"],
-    //   ],
-    // ]);
+    assertParse("implicitParens", "page.ori 'a', 'b'", [
+      [ops.scope, "page.ori"],
+      [ops.literal, "a"],
+      [ops.literal, "b"],
+    ]);
+    assertParse("implicitParens", "fn a(b), c", [
+      [ops.builtin, "fn"],
+      [
+        [ops.builtin, "a"],
+        [ops.scope, "b"],
+      ],
+      [ops.scope, "c"],
+    ]);
+    assertParse("implicitParens", "(fn()) 'arg'", [
+      [[ops.builtin, "fn"], undefined],
+      [ops.literal, "arg"],
+    ]);
+    assertParse("implicitParens", "tree/key arg", [
+      // TODO: "tree" should be "tree/"
+      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
+      [ops.scope, "arg"],
+    ]);
+    assertParse("implicitParens", "foo.js bar.ori 'arg'", [
+      [ops.scope, "foo.js"],
+      [
+        [ops.scope, "bar.ori"],
+        [ops.literal, "arg"],
+      ],
+    ]);
   });
 
   test("lambda", () => {
@@ -794,9 +795,9 @@ describe.only("Origami parser", () => {
     assertParse("slashArgs", "/tree/", [ops.traverse, [ops.literal, "tree/"]]);
   });
 
-  test.skip("spread", () => {
-    assertParse("spread", "...a", [ops.spread, [ops.scope, "a"]]);
-    assertParse("spread", "…a", [ops.spread, [ops.scope, "a"]]);
+  test("spread", () => {
+    assertParse("spread", "...a", [ops.spread, [provisionalScope, "a"]]);
+    assertParse("spread", "…a", [ops.spread, [provisionalScope, "a"]]);
   });
 
   test("string", () => {

@@ -2004,13 +2004,13 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$currPos;
     s2 = [];
-    s3 = peg$parselambda();
+    s3 = peg$parseimplicitParens();
     while (s3 !== peg$FAILED) {
       s2.push(s3);
       s3 = peg$currPos;
       s4 = peg$parseseparator();
       if (s4 !== peg$FAILED) {
-        s4 = peg$parselambda();
+        s4 = peg$parseimplicitParens();
         if (s4 === peg$FAILED) {
           peg$currPos = s3;
           s3 = peg$FAILED;

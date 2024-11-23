@@ -6,7 +6,7 @@ import * as ops from "../runtime/ops.js";
 
 /** @typedef {import("../../index.ts").Code} Code */
 
-const provisionalScope = Symbol("provisionalScope");
+export const provisionalScope = Symbol("provisionalScope");
 const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
 /**

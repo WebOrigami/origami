@@ -208,10 +208,10 @@ implicitParens "function call with implicit parentheses"
     }
     
 // A separated list of values for an implicit parens call. This differs from
-// `list` in that the value term must have higher precedence than implicit
-// parens call (i.e., must be a lambda or more specific).
+// `list` in that the value term must have equal or higher precedence than
+// implicit parens call -- i.e., can't be a pipeline.
 implicitParensArgs
-  = values:lambda|1.., separator| separator? {
+  = values:implicitParens|1.., separator| separator? {
       return annotate(values, location());
     }
 
