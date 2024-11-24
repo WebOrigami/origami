@@ -467,7 +467,7 @@ slashArgs "path with a leading slash"
     }
 
 spread
-  = ellipsis value:conditional {
+  = ellipsis __ value:conditional {
       return annotate([ops.spread, value], location());
     }
 
