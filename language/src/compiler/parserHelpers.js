@@ -6,7 +6,9 @@ import * as ops from "../runtime/ops.js";
 
 /** @typedef {import("../../index.ts").Code} Code */
 
-export const provisionalScope = Symbol("provisionalScope");
+// Marker for a reference that may be a builtin or a scope reference
+export const undetermined = Symbol("undetermined");
+
 const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
 /**
@@ -61,7 +63,7 @@ function avoidRecursivePropertyCalls(code, key) {
  * @returns {Code}
  */
 export function downgradeReference(code) {
-  if (code && code.length === 2 && code[0] === provisionalScope) {
+  if (code && code.length === 2 && code[0] === undetermined) {
     const result = [ops.scope, code[1]];
     annotate(result, code.location);
     return result;
@@ -96,10 +98,9 @@ export function makeArray(entries) {
         spreads.push([ops.array, ...currentEntries]);
         currentEntries = [];
       }
-      const values = value.slice(1).map((x) => downgradeReference(x));
-      spreads.push(...values);
+      spreads.push(...value.slice(1));
     } else {
-      currentEntries.push(downgradeReference(value));
+      currentEntries.push(value);
     }
   }
 
@@ -128,7 +129,7 @@ export function makeArray(entries) {
  */
 export function makeBinaryOperatorChain(head, tail) {
   /** @type {Code} */
-  let value = downgradeReference(head);
+  let value = head;
   for (const [operatorToken, right] of tail) {
     const left = value;
     const operators = {
@@ -139,7 +140,7 @@ export function makeBinaryOperatorChain(head, tail) {
     };
     const op = operators[operatorToken];
     // @ts-ignore
-    value = [op, left, downgradeReference(right)];
+    value = [op, left, right];
     value.location = {
       source: left.location.source,
       start: left.location.start,
@@ -161,7 +162,6 @@ export function makeDeferredArguments(args) {
     if (arg instanceof Array && arg[0] === ops.literal) {
       return arg;
     }
-    arg = downgradeReference(arg);
     const fn = [ops.lambda, [], arg];
     annotate(fn, arg.location);
     return fn;
@@ -182,11 +182,6 @@ export function makeFunctionCall(target, args) {
   const source = target.location.source;
   let start = target.location.start;
   let end = target.location.end;
-
-  args = annotate(
-    args.map((arg) => downgradeReference(arg)),
-    args.location
-  );
 
   let fnCall;
   if (args[0] === ops.traverse) {
@@ -225,7 +220,6 @@ export function makeObject(entries, op) {
   const spreads = [];
 
   for (let [key, value] of entries) {
-    value = downgradeReference(value);
     if (key === ops.spread) {
       // Spread entry; accumulate
       if (currentEntries.length > 0) {
@@ -293,7 +287,7 @@ export function makeReference(identifier) {
     op = identifier.endsWith(":")
       ? // Namespace is always a builtin reference
         ops.builtin
-      : provisionalScope;
+      : undetermined;
   } else {
     op = ops.scope;
   }
@@ -304,7 +298,7 @@ export function makeTemplate(op, head, tail) {
   const strings = [head];
   const values = [];
   for (const [value, string] of tail) {
-    values.push([ops.concat, downgradeReference(value)]);
+    values.push([ops.concat, value]);
     strings.push(string);
   }
   return [op, [ops.literal, strings], ...values];
@@ -317,7 +311,7 @@ export function makeTemplate(op, head, tail) {
  * @returns {Code}
  */
 export function upgradeReference(code) {
-  if (code.length === 2 && code[0] === provisionalScope) {
+  if (code.length === 2 && code[0] === undetermined) {
     const result = [ops.builtin, code[1]];
     annotate(result, code.location);
     return result;

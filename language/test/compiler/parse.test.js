@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
-import { provisionalScope } from "../../src/compiler/parserHelpers.js";
+import { undetermined } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
@@ -223,8 +223,8 @@ describe.only("Origami parser", () => {
     ]);
     assertParse("equality", "a === b === c", [
       ops.strictEqual,
-      [ops.strictEqual, [ops.scope, "a"], [ops.scope, "b"]],
-      [ops.scope, "c"],
+      [ops.strictEqual, [undetermined, "a"], [undetermined, "b"]],
+      [undetermined, "c"],
     ]);
     assertParse("equality", "1 !== 1", [
       ops.notStrictEqual,
@@ -308,9 +308,9 @@ describe.only("Origami parser", () => {
     assertParse("expression", "obj.json", [ops.scope, "obj.json"]);
     assertParse("expression", "(fn a, b, c)", [
       [ops.builtin, "fn"],
-      [ops.scope, "a"],
-      [ops.scope, "b"],
-      [ops.scope, "c"],
+      [undetermined, "a"],
+      [undetermined, "b"],
+      [undetermined, "c"],
     ]);
     assertParse("expression", "foo.bar('hello', 'world')", [
       [ops.scope, "foo.bar"],
@@ -409,7 +409,7 @@ describe.only("Origami parser", () => {
   test("implicitParens", () => {
     assertParse("implicitParens", "fn arg", [
       [ops.builtin, "fn"],
-      [ops.scope, "arg"],
+      [undetermined, "arg"],
     ]);
     assertParse("implicitParens", "page.ori 'a', 'b'", [
       [ops.scope, "page.ori"],
@@ -422,7 +422,7 @@ describe.only("Origami parser", () => {
         [ops.builtin, "a"],
         [ops.scope, "b"],
       ],
-      [ops.scope, "c"],
+      [undetermined, "c"],
     ]);
     assertParse("implicitParens", "(fn()) 'arg'", [
       [[ops.builtin, "fn"], undefined],
@@ -431,7 +431,7 @@ describe.only("Origami parser", () => {
     assertParse("implicitParens", "tree/key arg", [
       // TODO: "tree" should be "tree/"
       [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
-      [ops.scope, "arg"],
+      [undetermined, "arg"],
     ]);
     assertParse("implicitParens", "foo.js bar.ori 'arg'", [
       [ops.scope, "foo.js"],
@@ -446,7 +446,7 @@ describe.only("Origami parser", () => {
     assertParse("lambda", "=message", [
       ops.lambda,
       ["_"],
-      [provisionalScope, "message"],
+      [undetermined, "message"],
     ]);
     assertParse("lambda", "=`Hello, ${name}.`", [
       ops.lambda,
@@ -500,7 +500,7 @@ describe.only("Origami parser", () => {
     assertParse("logicalAnd", "true && false", [
       ops.logicalAnd,
       [ops.scope, "true"],
-      [ops.lambda, [], [ops.scope, "false"]],
+      [ops.lambda, [], [undetermined, "false"]],
     ]);
   });
 
@@ -513,8 +513,8 @@ describe.only("Origami parser", () => {
     assertParse("logicalOr", "false || false || true", [
       ops.logicalOr,
       [ops.scope, "false"],
-      [ops.lambda, [], [ops.scope, "false"]],
-      [ops.lambda, [], [ops.scope, "true"]],
+      [ops.lambda, [], [undetermined, "false"]],
+      [ops.lambda, [], [undetermined, "true"]],
     ]);
     assertParse("logicalOr", "1 || 2 && 0", [
       ops.logicalOr,
@@ -535,13 +535,13 @@ describe.only("Origami parser", () => {
     assertParse("nullishCoalescing", "a ?? b", [
       ops.nullishCoalescing,
       [ops.scope, "a"],
-      [ops.lambda, [], [ops.scope, "b"]],
+      [ops.lambda, [], [undetermined, "b"]],
     ]);
     assertParse("nullishCoalescing", "a ?? b ?? c", [
       ops.nullishCoalescing,
       [ops.scope, "a"],
-      [ops.lambda, [], [ops.scope, "b"]],
-      [ops.lambda, [], [ops.scope, "c"]],
+      [ops.lambda, [], [undetermined, "b"]],
+      [ops.lambda, [], [undetermined, "c"]],
     ]);
   });
 
@@ -623,7 +623,7 @@ describe.only("Origami parser", () => {
     assertParse("object", "{ a: 1, ...b }", [
       ops.merge,
       [ops.object, ["a", [ops.literal, 1]]],
-      [ops.scope, "b"],
+      [undetermined, "b"],
     ]);
     assertParse("object", "{ (a): 1 }", [
       ops.object,
@@ -730,7 +730,7 @@ describe.only("Origami parser", () => {
       [ops.builtin, "b"],
       [
         [ops.builtin, "fn"],
-        [ops.scope, "a"],
+        [undetermined, "a"],
       ],
     ]);
   });
@@ -808,8 +808,8 @@ describe.only("Origami parser", () => {
   });
 
   test("spread", () => {
-    assertParse("spread", "...a", [ops.spread, [provisionalScope, "a"]]);
-    assertParse("spread", "…a", [ops.spread, [provisionalScope, "a"]]);
+    assertParse("spread", "...a", [ops.spread, [undetermined, "a"]]);
+    assertParse("spread", "…a", [ops.spread, [undetermined, "a"]]);
   });
 
   test("string", () => {
