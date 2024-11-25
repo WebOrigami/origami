@@ -28,9 +28,9 @@ export function expression(source, options = {}) {
 }
 
 // Transform any remaining undetermined references to scope references. At the
-// same time, transform those or explicit ops.scope calls to ops.cache calls
-// unless they refer to local variables: variables defined by object literals or
-// lambda parameters.
+// same time, transform those or explicit ops.scope calls to ops.external calls
+// unless they refer to local variables (variables defined by object literals or
+// lambda parameters).
 export function transformScopeReferences(code, cache, locals = {}) {
   const [fn, ...args] = code;
 
@@ -41,8 +41,8 @@ export function transformScopeReferences(code, cache, locals = {}) {
       const key = args[0];
       const normalizedKey = trailingSlash.remove(key);
       if (!locals[normalizedKey]) {
-        // Upgrade to cached scope lookup
-        const modified = [ops.cache, key, cache];
+        // Upgrade to cached external reference
+        const modified = [ops.external, key, cache];
         annotate(modified, code.location);
         return modified;
       } else if (fn === undetermined) {
@@ -51,7 +51,7 @@ export function transformScopeReferences(code, cache, locals = {}) {
         annotate(modified, code.location);
         return modified;
       } else {
-        // Leave ops.scope as is
+        // Internal ops.scope call; leave as is
         return code;
       }
 

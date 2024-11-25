@@ -29,7 +29,7 @@ describe.only("ops", () => {
         return ++count;
       },
     });
-    const code = createCode([ops.cache, "count", {}]);
+    const code = createCode([ops.external, "count", {}]);
     const result = await evaluate.call(tree, code);
     assert.equal(result, 1);
     const result2 = await evaluate.call(tree, code);

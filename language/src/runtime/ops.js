@@ -59,12 +59,23 @@ export async function builtin(key) {
 }
 
 /**
- * Look up the given key in the scope for the current tree the first time
- * the key is requested, holding on to the value for future requests.
+ * Concatenate the given arguments.
+ *
+ * @this {AsyncTree|null}
+ * @param {any[]} args
+ */
+export async function concat(...args) {
+  return treeConcat.call(this, args);
+}
+addOpLabel(concat, "«ops.concat»");
+
+/**
+ * Look up the given key as an external reference and cache the value for future
+ * requests.
  *
  * @this {AsyncTree|null}
  */
-export async function cache(key, cache) {
+export async function external(key, cache) {
   if (key in cache) {
     return cache[key];
   }
@@ -76,17 +87,6 @@ export async function cache(key, cache) {
   cache[key] = value;
   return value;
 }
-
-/**
- * Concatenate the given arguments.
- *
- * @this {AsyncTree|null}
- * @param {any[]} args
- */
-export async function concat(...args) {
-  return treeConcat.call(this, args);
-}
-addOpLabel(concat, "«ops.concat»");
 
 /**
  * This op is only used during parsing. It signals to ops.object that the
