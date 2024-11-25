@@ -6,27 +6,27 @@ import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
 describe.only("Origami parser", () => {
-  test("array", () => {
-    assertParse("array", "[]", [ops.array]);
-    assertParse("array", "[1, 2, 3]", [
+  test("arrayLiteral", () => {
+    assertParse("arrayLiteral", "[]", [ops.array]);
+    assertParse("arrayLiteral", "[1, 2, 3]", [
       ops.array,
       [ops.literal, 1],
       [ops.literal, 2],
       [ops.literal, 3],
     ]);
-    assertParse("array", "[ 1 , 2 , 3 ]", [
+    assertParse("arrayLiteral", "[ 1 , 2 , 3 ]", [
       ops.array,
       [ops.literal, 1],
       [ops.literal, 2],
       [ops.literal, 3],
     ]);
-    assertParse("array", "[ 1, ...[2, 3]]", [
+    assertParse("arrayLiteral", "[ 1, ...[2, 3]]", [
       ops.merge,
       [ops.array, [ops.literal, 1]],
       [ops.array, [ops.literal, 2], [ops.literal, 3]],
     ]);
     assertParse(
-      "array",
+      "arrayLiteral",
       `[
         1
         2
@@ -67,88 +67,88 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("call", () => {
-    assertParse("call", "fn()", [[ops.builtin, "fn"], undefined]);
-    assertParse("call", "foo.js(arg)", [
+  test("callExpression", () => {
+    assertParse("callExpression", "fn()", [[ops.builtin, "fn"], undefined]);
+    assertParse("callExpression", "foo.js(arg)", [
       [ops.scope, "foo.js"],
       [ops.scope, "arg"],
     ]);
-    assertParse("call", "fn(a, b)", [
+    assertParse("callExpression", "fn(a, b)", [
       [ops.builtin, "fn"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assertParse("call", "foo.js( a , b )", [
+    assertParse("callExpression", "foo.js( a , b )", [
       [ops.scope, "foo.js"],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assertParse("call", "fn()(arg)", [
+    assertParse("callExpression", "fn()(arg)", [
       [[ops.builtin, "fn"], undefined],
       [ops.scope, "arg"],
     ]);
-    assertParse("call", "tree/", [ops.unpack, [ops.scope, "tree/"]]);
-    assertParse("call", "tree/foo/bar", [
+    assertParse("callExpression", "tree/", [ops.unpack, [ops.scope, "tree/"]]);
+    assertParse("callExpression", "tree/foo/bar", [
       ops.traverse,
       [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar"],
     ]);
-    assertParse("call", "tree/foo/bar/", [
+    assertParse("callExpression", "tree/foo/bar/", [
       ops.traverse,
       [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
     ]);
-    assertParse("call", "/foo/bar", [
+    assertParse("callExpression", "/foo/bar", [
       ops.traverse,
       [ops.rootDirectory, [ops.literal, "foo/"]],
       [ops.literal, "bar"],
     ]);
-    assertParse("call", "foo.js()/key", [
+    assertParse("callExpression", "foo.js()/key", [
       ops.traverse,
       [[ops.scope, "foo.js"], undefined],
       [ops.literal, "key"],
     ]);
-    assertParse("call", "tree/key()", [
+    assertParse("callExpression", "tree/key()", [
       [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       undefined,
     ]);
-    assertParse("call", "(tree)/", [ops.unpack, [ops.scope, "tree"]]);
-    assertParse("call", "fn()/key()", [
+    assertParse("callExpression", "(tree)/", [ops.unpack, [ops.scope, "tree"]]);
+    assertParse("callExpression", "fn()/key()", [
       [ops.traverse, [[ops.builtin, "fn"], undefined], [ops.literal, "key"]],
       undefined,
     ]);
-    assertParse("call", "(foo.js())('arg')", [
+    assertParse("callExpression", "(foo.js())('arg')", [
       [[ops.scope, "foo.js"], undefined],
       [ops.literal, "arg"],
     ]);
-    assertParse("call", "fn('a')('b')", [
+    assertParse("callExpression", "fn('a')('b')", [
       [
         [ops.builtin, "fn"],
         [ops.literal, "a"],
       ],
       [ops.literal, "b"],
     ]);
-    assertParse("call", "(foo.js())(a, b)", [
+    assertParse("callExpression", "(foo.js())(a, b)", [
       [[ops.scope, "foo.js"], undefined],
       [ops.scope, "a"],
       [ops.scope, "b"],
     ]);
-    assertParse("call", "{ a: 1, b: 2}/b", [
+    assertParse("callExpression", "{ a: 1, b: 2}/b", [
       ops.traverse,
       [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
       [ops.literal, "b"],
     ]);
-    assertParse("call", "indent`hello`", [
+    assertParse("callExpression", "indent`hello`", [
       [ops.builtin, "indent"],
       [ops.literal, ["hello"]],
     ]);
-    assertParse("call", "fn.js`Hello, world.`", [
+    assertParse("callExpression", "fn.js`Hello, world.`", [
       [ops.scope, "fn.js"],
       [ops.literal, ["Hello, world."]],
     ]);
-    assertParse("call", "files:src/assets", [
+    assertParse("callExpression", "files:src/assets", [
       ops.traverse,
       [
         [ops.builtin, "files:"],
@@ -156,7 +156,7 @@ describe.only("Origami parser", () => {
       ],
       [ops.literal, "assets"],
     ]);
-    assertParse("call", "new:(js:Date, '2025-01-01')", [
+    assertParse("callExpression", "new:(js:Date, '2025-01-01')", [
       [ops.builtin, "new:"],
       [
         [ops.builtin, "js:"],
@@ -164,12 +164,12 @@ describe.only("Origami parser", () => {
       ],
       [ops.literal, "2025-01-01"],
     ]);
-    assertParse("call", "map(markdown, mdHtml)", [
+    assertParse("callExpression", "map(markdown, mdHtml)", [
       [ops.builtin, "map"],
       [ops.scope, "markdown"],
       [ops.scope, "mdHtml"],
     ]);
-    assertParse("call", "package:@weborigami/dropbox/auth(creds)", [
+    assertParse("callExpression", "package:@weborigami/dropbox/auth(creds)", [
       [
         ops.traverse,
         [
@@ -183,21 +183,21 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("conditional", () => {
-    assertParse("conditional", "1", [ops.literal, 1]);
-    assertParse("conditional", "true ? 1 : 0", [
+  test("conditionalExpression", () => {
+    assertParse("conditionalExpression", "1", [ops.literal, 1]);
+    assertParse("conditionalExpression", "true ? 1 : 0", [
       ops.conditional,
       [ops.scope, "true"],
       [ops.lambda, [], [ops.literal, "1"]],
       [ops.lambda, [], [ops.literal, "0"]],
     ]);
-    assertParse("conditional", "false ? () => 1 : 0", [
+    assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
       [ops.lambda, [], [ops.lambda, [], [ops.literal, "1"]]],
       [ops.lambda, [], [ops.literal, "0"]],
     ]);
-    assertParse("conditional", "false ? =1 : 0", [
+    assertParse("conditionalExpression", "false ? =1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
       [ops.lambda, [], [ops.lambda, ["_"], [ops.literal, "1"]]],
@@ -205,18 +205,18 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("equality", () => {
-    assertParse("equality", "1 === 1", [
+  test("equalityExpression", () => {
+    assertParse("equalityExpression", "1 === 1", [
       ops.strictEqual,
       [ops.literal, 1],
       [ops.literal, 1],
     ]);
-    assertParse("equality", "a === b === c", [
+    assertParse("equalityExpression", "a === b === c", [
       ops.strictEqual,
       [ops.strictEqual, [undetermined, "a"], [undetermined, "b"]],
       [undetermined, "c"],
     ]);
-    assertParse("equality", "1 !== 1", [
+    assertParse("equalityExpression", "1 !== 1", [
       ops.notStrictEqual,
       [ops.literal, 1],
       [ops.literal, 1],
@@ -394,17 +394,17 @@ describe.only("Origami parser", () => {
     assertParse("identifier", "x-y-z", "x-y-z", false);
   });
 
-  test("implicitParens", () => {
-    assertParse("implicitParens", "fn arg", [
+  test("implicitParenthesesCallExpression", () => {
+    assertParse("implicitParenthesesCallExpression", "fn arg", [
       [ops.builtin, "fn"],
       [undetermined, "arg"],
     ]);
-    assertParse("implicitParens", "page.ori 'a', 'b'", [
+    assertParse("implicitParenthesesCallExpression", "page.ori 'a', 'b'", [
       [ops.scope, "page.ori"],
       [ops.literal, "a"],
       [ops.literal, "b"],
     ]);
-    assertParse("implicitParens", "fn a(b), c", [
+    assertParse("implicitParenthesesCallExpression", "fn a(b), c", [
       [ops.builtin, "fn"],
       [
         [ops.builtin, "a"],
@@ -412,44 +412,19 @@ describe.only("Origami parser", () => {
       ],
       [undetermined, "c"],
     ]);
-    assertParse("implicitParens", "(fn()) 'arg'", [
+    assertParse("implicitParenthesesCallExpression", "(fn()) 'arg'", [
       [[ops.builtin, "fn"], undefined],
       [ops.literal, "arg"],
     ]);
-    assertParse("implicitParens", "tree/key arg", [
+    assertParse("implicitParenthesesCallExpression", "tree/key arg", [
       [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [undetermined, "arg"],
     ]);
-    assertParse("implicitParens", "foo.js bar.ori 'arg'", [
+    assertParse("implicitParenthesesCallExpression", "foo.js bar.ori 'arg'", [
       [ops.scope, "foo.js"],
       [
         [ops.scope, "bar.ori"],
         [ops.literal, "arg"],
-      ],
-    ]);
-  });
-
-  test("lambda", () => {
-    assertParse("lambda", "=message", [
-      ops.lambda,
-      ["_"],
-      [undetermined, "message"],
-    ]);
-    assertParse("lambda", "=`Hello, ${name}.`", [
-      ops.lambda,
-      ["_"],
-      [
-        ops.template,
-        [ops.literal, ["Hello, ", "."]],
-        [ops.concat, [ops.scope, "name"]],
-      ],
-    ]);
-    assertParse("lambda", "=indent`hello`", [
-      ops.lambda,
-      ["_"],
-      [
-        [ops.builtin, "indent"],
-        [ops.literal, ["hello"]],
       ],
     ]);
   });
@@ -483,27 +458,27 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("logicalAnd", () => {
-    assertParse("logicalAnd", "true && false", [
+  test("logicalAndExpression", () => {
+    assertParse("logicalAndExpression", "true && false", [
       ops.logicalAnd,
       [ops.scope, "true"],
       [ops.lambda, [], [undetermined, "false"]],
     ]);
   });
 
-  test("logicalOr", () => {
-    assertParse("logicalOr", "1 || 0", [
+  test("logicalOrExpression", () => {
+    assertParse("logicalOrExpression", "1 || 0", [
       ops.logicalOr,
       [ops.literal, 1],
       [ops.literal, 0],
     ]);
-    assertParse("logicalOr", "false || false || true", [
+    assertParse("logicalOrExpression", "false || false || true", [
       ops.logicalOr,
       [ops.scope, "false"],
       [ops.lambda, [], [undetermined, "false"]],
       [ops.lambda, [], [undetermined, "true"]],
     ]);
-    assertParse("logicalOr", "1 || 2 && 0", [
+    assertParse("logicalOrExpression", "1 || 2 && 0", [
       ops.logicalOr,
       [ops.literal, 1],
       [ops.lambda, [], [ops.logicalAnd, [ops.literal, 2], [ops.literal, 0]]],
@@ -518,13 +493,13 @@ describe.only("Origami parser", () => {
     assertParse("namespace", "js:", [ops.builtin, "js:"]);
   });
 
-  test("nullishCoalescing", () => {
-    assertParse("nullishCoalescing", "a ?? b", [
+  test("nullishCoalescingExpression", () => {
+    assertParse("nullishCoalescingExpression", "a ?? b", [
       ops.nullishCoalescing,
       [ops.scope, "a"],
       [ops.lambda, [], [undetermined, "b"]],
     ]);
-    assertParse("nullishCoalescing", "a ?? b ?? c", [
+    assertParse("nullishCoalescingExpression", "a ?? b ?? c", [
       ops.nullishCoalescing,
       [ops.scope, "a"],
       [ops.lambda, [], [undetermined, "b"]],
@@ -532,43 +507,43 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("number", () => {
-    assertParse("number", "123", [ops.literal, 123]);
-    assertParse("number", "-456", [ops.literal, -456]);
-    assertParse("number", ".5", [ops.literal, 0.5]);
-    assertParse("number", "123.45", [ops.literal, 123.45]);
-    assertParse("number", "-678.90", [ops.literal, -678.9]);
-    assertParse("number", "+123", [ops.literal, 123]);
-    assertParse("number", "+456.78", [ops.literal, 456.78]);
+  test("numericLiteral", () => {
+    assertParse("numericLiteral", "123", [ops.literal, 123]);
+    assertParse("numericLiteral", "-456", [ops.literal, -456]);
+    assertParse("numericLiteral", ".5", [ops.literal, 0.5]);
+    assertParse("numericLiteral", "123.45", [ops.literal, 123.45]);
+    assertParse("numericLiteral", "-678.90", [ops.literal, -678.9]);
+    assertParse("numericLiteral", "+123", [ops.literal, 123]);
+    assertParse("numericLiteral", "+456.78", [ops.literal, 456.78]);
   });
 
-  test("object", () => {
-    assertParse("object", "{}", [ops.object]);
-    assertParse("object", "{ a: 1, b }", [
+  test("objectLiteral", () => {
+    assertParse("objectLiteral", "{}", [ops.object]);
+    assertParse("objectLiteral", "{ a: 1, b }", [
       ops.object,
       ["a", [ops.literal, 1]],
       ["b", [ops.inherited, "b"]],
     ]);
-    assertParse("object", "{ sub: { a: 1 } }", [
+    assertParse("objectLiteral", "{ sub: { a: 1 } }", [
       ops.object,
       ["sub", [ops.object, ["a", [ops.literal, 1]]]],
     ]);
-    assertParse("object", "{ sub: { a/: 1 } }", [
+    assertParse("objectLiteral", "{ sub: { a/: 1 } }", [
       ops.object,
       ["sub", [ops.object, ["a/", [ops.literal, 1]]]],
     ]);
-    assertParse("object", `{ "a": 1, "b": 2 }`, [
+    assertParse("objectLiteral", `{ "a": 1, "b": 2 }`, [
       ops.object,
       ["a", [ops.literal, 1]],
       ["b", [ops.literal, 2]],
     ]);
-    assertParse("object", "{ a = b, b = 2 }", [
+    assertParse("objectLiteral", "{ a = b, b = 2 }", [
       ops.object,
       ["a", [ops.getter, [ops.scope, "b"]]],
       ["b", [ops.literal, 2]],
     ]);
     assertParse(
-      "object",
+      "objectLiteral",
       `{
         a = b
         b = 2
@@ -579,22 +554,22 @@ describe.only("Origami parser", () => {
         ["b", [ops.literal, 2]],
       ]
     );
-    assertParse("object", "{ a: { b: 1 } }", [
+    assertParse("objectLiteral", "{ a: { b: 1 } }", [
       ops.object,
       ["a", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
-    assertParse("object", "{ a: { b = 1 } }", [
+    assertParse("objectLiteral", "{ a: { b = 1 } }", [
       ops.object,
       ["a", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
-    assertParse("object", "{ a: { b = fn() } }", [
+    assertParse("objectLiteral", "{ a: { b = fn() } }", [
       ops.object,
       [
         "a/",
         [ops.object, ["b", [ops.getter, [[ops.builtin, "fn"], undefined]]]],
       ],
     ]);
-    assertParse("object", "{ x = fn.js('a') }", [
+    assertParse("objectLiteral", "{ x = fn.js('a') }", [
       ops.object,
       [
         "x",
@@ -607,12 +582,12 @@ describe.only("Origami parser", () => {
         ],
       ],
     ]);
-    assertParse("object", "{ a: 1, ...b }", [
+    assertParse("objectLiteral", "{ a: 1, ...b }", [
       ops.merge,
       [ops.object, ["a", [ops.literal, 1]]],
       [undetermined, "b"],
     ]);
-    assertParse("object", "{ (a): 1 }", [
+    assertParse("objectLiteral", "{ (a): 1 }", [
       ops.object,
       ["(a)", [ops.literal, 1]],
     ]);
@@ -674,9 +649,9 @@ describe.only("Origami parser", () => {
     assertParse("objectPublicKey", "foo\\ bar", "foo bar", false);
   });
 
-  test("parensArgs", () => {
-    assertParse("parensArgs", "()", [undefined]);
-    assertParse("parensArgs", "(a, b, c)", [
+  test("parenthesesArguments", () => {
+    assertParse("parenthesesArguments", "()", [undefined]);
+    assertParse("parenthesesArguments", "(a, b, c)", [
       [ops.scope, "a"],
       [ops.scope, "b"],
       [ops.scope, "c"],
@@ -700,26 +675,32 @@ describe.only("Origami parser", () => {
     ]);
   });
 
-  test("pathArgs", () => {
-    assertParse("pathArgs", "/", [ops.traverse]);
-    assertParse("pathArgs", "/tree", [ops.traverse, [ops.literal, "tree"]]);
-    assertParse("pathArgs", "/tree/", [ops.traverse, [ops.literal, "tree/"]]);
+  test("pathArguments", () => {
+    assertParse("pathArguments", "/", [ops.traverse]);
+    assertParse("pathArguments", "/tree", [
+      ops.traverse,
+      [ops.literal, "tree"],
+    ]);
+    assertParse("pathArguments", "/tree/", [
+      ops.traverse,
+      [ops.literal, "tree/"],
+    ]);
   });
 
-  test("pipeline", () => {
-    assertParse("pipeline", "foo", [ops.scope, "foo"]);
-    assertParse("pipeline", "a -> b", [
+  test("pipelineExpression", () => {
+    assertParse("pipelineExpression", "foo", [ops.scope, "foo"]);
+    assertParse("pipelineExpression", "a -> b", [
       [ops.builtin, "b"],
       [ops.scope, "a"],
     ]);
-    assertParse("pipeline", "input → one.js → two.js", [
+    assertParse("pipelineExpression", "input → one.js → two.js", [
       [ops.scope, "two.js"],
       [
         [ops.scope, "one.js"],
         [ops.scope, "input"],
       ],
     ]);
-    assertParse("pipeline", "fn a -> b", [
+    assertParse("pipelineExpression", "fn a -> b", [
       [ops.builtin, "b"],
       [
         [ops.builtin, "fn"],
@@ -793,6 +774,31 @@ describe.only("Origami parser", () => {
     // assertParse("scopeReference", "markdown/", [ops.scope, "markdown"]);
   });
 
+  test("shorthandFunction", () => {
+    assertParse("shorthandFunction", "=message", [
+      ops.lambda,
+      ["_"],
+      [undetermined, "message"],
+    ]);
+    assertParse("shorthandFunction", "=`Hello, ${name}.`", [
+      ops.lambda,
+      ["_"],
+      [
+        ops.template,
+        [ops.literal, ["Hello, ", "."]],
+        [ops.concat, [ops.scope, "name"]],
+      ],
+    ]);
+    assertParse("shorthandFunction", "=indent`hello`", [
+      ops.lambda,
+      ["_"],
+      [
+        [ops.builtin, "indent"],
+        [ops.literal, ["hello"]],
+      ],
+    ]);
+  });
+
   test("singleLineComment", () => {
     assertParse("singleLineComment", "// Hello, world!", null, false);
   });
@@ -802,15 +808,15 @@ describe.only("Origami parser", () => {
     assertParse("spread", "…a", [ops.spread, [undetermined, "a"]]);
   });
 
-  test("string", () => {
-    assertParse("string", '"foo"', [ops.literal, "foo"]);
-    assertParse("string", "'bar'", [ops.literal, "bar"]);
-    assertParse("string", '"foo bar"', [ops.literal, "foo bar"]);
-    assertParse("string", "'bar baz'", [ops.literal, "bar baz"]);
-    assertParse("string", `"foo\\"s bar"`, [ops.literal, `foo"s bar`]);
-    assertParse("string", `'bar\\'s baz'`, [ops.literal, `bar's baz`]);
-    assertParse("string", `«string»`, [ops.literal, "string"]);
-    assertParse("string", `"\\0\\b\\f\\n\\r\\t\\v"`, [
+  test("stringLiteral", () => {
+    assertParse("stringLiteral", '"foo"', [ops.literal, "foo"]);
+    assertParse("stringLiteral", "'bar'", [ops.literal, "bar"]);
+    assertParse("stringLiteral", '"foo bar"', [ops.literal, "foo bar"]);
+    assertParse("stringLiteral", "'bar baz'", [ops.literal, "bar baz"]);
+    assertParse("stringLiteral", `"foo\\"s bar"`, [ops.literal, `foo"s bar`]);
+    assertParse("stringLiteral", `'bar\\'s baz'`, [ops.literal, `bar's baz`]);
+    assertParse("stringLiteral", `«string»`, [ops.literal, "string"]);
+    assertParse("stringLiteral", `"\\0\\b\\f\\n\\r\\t\\v"`, [
       ops.literal,
       "\0\b\f\n\r\t\v",
     ]);

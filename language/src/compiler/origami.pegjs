@@ -2,8 +2,11 @@
 //
 // Origami language parser
 //
-// Generate the parser via `npm build`.
-// @ts-nocheck
+// This generally follows the pattern of the JavaScript expression grammar at
+// https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs. Like
+// that parser, this one uses the ECMAScript grammar terms where relevant.
+//
+// Generate the parser via `npm build`. @ts-nocheck
 //
 
 import * as ops from "../runtime/ops.js";
@@ -29,12 +32,12 @@ __
     return null;
   }
 
-args "function arguments"
-  = parensArgs
-  / pathArgs
+arguments "function arguments"
+  = parenthesesArguments
+  / pathArguments
   / templateLiteral
 
-array "array"
+arrayLiteral "array"
   = "[" __ entries:arrayEntries? __ closingBracket {
       return annotate(makeArray(entries ?? []), location());
     }
@@ -47,18 +50,18 @@ arrayEntries
 
 arrayEntry
   = spread
-  / pipeline
+  / pipelineExpression
 
 arrowFunction
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipeline {
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipelineExpression {
       return annotate([ops.lambda, parameters ?? [], pipeline], location());
     }
-  / conditional
+  / conditionalExpression
 
 // A function call: `fn(arg)`, possibly part of a chain of function calls, like
 // `fn(arg1)(arg2)(arg3)`.
-call "function call"
-  = head:primary tail:args* {
+callExpression "function call"
+  = head:primary tail:arguments* {
       return tail.length === 0
         ? head
         : annotate(tail.reduce(makeCall, head), location());
@@ -82,7 +85,7 @@ closingBracket
 // Required closing parenthesis. We use this for the `group` term: it's the last
 // term in the `step` parser that starts with a parenthesis, so if that parser
 // sees a left parenthesis, here we must see a right parenthesis.
-closingParen
+closingParenthesis
   = ")"
   / .? {
       error("Expected right parenthesis");
@@ -93,10 +96,10 @@ comment "comment"
   = multiLineComment
   / singleLineComment
 
-conditional
-  = condition:logicalOr __
-    "?" __ truthy:pipeline __
-    ":" __ falsy:pipeline
+conditionalExpression
+  = condition:logicalOrExpression __
+    "?" __ truthy:pipelineExpression __
+    ":" __ falsy:pipelineExpression
     {
       return annotate([
         ops.conditional,
@@ -105,7 +108,7 @@ conditional
         [ops.lambda, [], downgradeReference(falsy)]
       ], location());
     }
-  / logicalOr
+  / logicalOrExpression
   
 digits
   = @[0-9]+
@@ -122,8 +125,8 @@ doubleQuoteStringChar
 
 ellipsis = "..." / "…" // Unicode ellipsis
 
-equality
-  = head:call tail:(__ @equalityOperator __ @call)* {
+equalityExpression
+  = head:callExpression tail:(__ @equalityOperator __ @callExpression)* {
       return tail.length === 0
         ? head
         : annotate(makeBinaryOperatorChain(head, tail), location());
@@ -147,16 +150,16 @@ escapedChar "backslash-escaped character"
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression
-  = __ @pipeline __
+  = __ @pipelineExpression __
 
-float "floating-point number"
+floatLiteral "floating-point number"
   = sign? digits? "." digits {
       return annotate([ops.literal, parseFloat(text())], location());
     }
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" expression:expression closingParen {
+  = "(" expression:expression closingParenthesis {
       return annotate(downgradeReference(expression), location());
     }
 
@@ -168,6 +171,7 @@ guillemetString "guillemet string"
 guillemetStringChar
   = !('»' / newLine) @textChar
 
+// The user's home directory: `~`
 homeDirectory
   = "~" {
       return annotate([ops.homeDirectory], location());
@@ -177,7 +181,7 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier:identifier port:(":" @number)? slashFollows:slashFollows? {
+  = identifier:identifier port:(":" @integerLiteral)? slashFollows:slashFollows? {
     const portText = port ? `:${port[1]}` : "";
     const slashText = slashFollows ? "/" : "";
     const hostText = identifier + portText + slashText;
@@ -197,47 +201,39 @@ identifierList
       return annotate(list, location());
     }
 
-implicitParens "function call with implicit parentheses"
-  = head:lambda args:(inlineSpace+ @implicitParensArgs)? {
+implicitParenthesesCallExpression "function call with implicit parentheses"
+  = head:shorthandFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
       return args ? makeCall(head, args) : head;
     }
     
 // A separated list of values for an implicit parens call. This differs from
 // `list` in that the value term must have equal or higher precedence than
 // implicit parens call -- i.e., can't be a pipeline.
-implicitParensArgs
-  = values:implicitParens|1.., separator| separator? {
+implicitParensthesesArguments
+  = values:implicitParenthesesCallExpression|1.., separator| separator? {
       return annotate(values, location());
     }
 
 inlineSpace
   = [ \t]
 
-integer "integer"
+integerLiteral "integer"
   = sign? digits {
       return annotate([ops.literal, parseInt(text())], location());
     }
-
-// A lambda expression: `=foo(_)`
-lambda "lambda function"
-  // Avoid a following equal sign (for an equality)
-  = "=" !"=" __ definition:arrowFunction {
-      return annotate([ops.lambda, ["_"], definition], location());
-    }
-  / arrowFunction
     
 // A separated list of values
 list "list"
-  = values:pipeline|1.., separator| separator? {
+  = values:pipelineExpression|1.., separator| separator? {
       return annotate(values, location());
     }
 
 literal
-  = number
-  / string
+  = numericLiteral
+  / stringLiteral
 
-logicalAnd
-  = head:equality tail:(__ "&&" __ @equality)* {
+logicalAndExpression
+  = head:equalityExpression tail:(__ "&&" __ @equalityExpression)* {
       return tail.length === 0
         ? head
         : annotate(
@@ -246,8 +242,8 @@ logicalAnd
         );
     }
 
-logicalOr
-  = head:nullishCoalescing tail:(__ "||" __ @nullishCoalescing)* {
+logicalOrExpression
+  = head:nullishCoalescingExpression tail:(__ "||" __ @nullishCoalescingExpression)* {
       return tail.length === 0
         ? head
         : annotate(
@@ -272,12 +268,12 @@ newLine
   / "\r"
 
 // A number
-number "number"
-  = float
-  / integer
+numericLiteral "number"
+  = floatLiteral
+  / integerLiteral
 
-nullishCoalescing
-  = head:logicalAnd tail:(__ "??" __ @logicalAnd)* {
+nullishCoalescingExpression
+  = head:logicalAndExpression tail:(__ "??" __ @logicalAndExpression)* {
       return tail.length === 0
         ? head
         : annotate(
@@ -287,7 +283,7 @@ nullishCoalescing
     }
 
 // An object literal: `{foo: 1, bar: 2}`
-object "object literal"
+objectLiteral "object literal"
   = "{" __ entries:objectEntries? __ closingBrace {
       return annotate(makeObject(entries ?? [], ops.object), location());
     }
@@ -306,7 +302,7 @@ objectEntry
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
-  = key:objectKey __ "=" __ pipeline:pipeline {
+  = key:objectKey __ "=" __ pipeline:pipelineExpression {
       return annotate(
         makeProperty(key, annotate([ops.getter, pipeline], location())),
         location()
@@ -322,7 +318,7 @@ objectKey "object key"
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = key:objectKey __ ":" __ pipeline:pipeline {
+  = key:objectKey __ ":" __ pipeline:pipelineExpression {
       return annotate(makeProperty(key, pipeline), location());
     }
 
@@ -336,13 +332,13 @@ objectPublicKey
   = identifier:identifier slash:"/"? {
     return identifier + (slash ?? "");
   }
-  / string:string {
+  / string:stringLiteral {
     // Remove `ops.literal` from the string code
     return string[1];
   }
 
 // Function arguments in parentheses
-parensArgs "function arguments in parentheses"
+parenthesesArguments "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
       return annotate(list ?? [undefined], location());
     }
@@ -357,7 +353,7 @@ path "slash-separated path"
     }
 
 // A slash-separated path of keys that follows a call target
-pathArgs
+pathArguments
   = path:path {
       return annotate([ops.traverse, ...path], location());
     }
@@ -382,15 +378,15 @@ pathSegmentChar
 
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
-pipeline
-  = head:implicitParens tail:(__ singleArrow __ @implicitParens)* {
+pipelineExpression
+  = head:implicitParenthesesCallExpression tail:(__ singleArrow __ @implicitParenthesesCallExpression)* {
       return tail.reduce(makePipeline, downgradeReference(head));
     }
 
 primary
   = literal
-  / array
-  / object
+  / arrayLiteral
+  / objectLiteral
   / group
   / templateLiteral
   / reference
@@ -452,6 +448,14 @@ slashFollows
 shebang
   = "#!" [^\n\r]* { return null; }
 
+// A shorthand lambda expression: `=foo(_)`
+shorthandFunction "lambda function"
+  // Avoid a following equal sign (for an equality)
+  = "=" !"=" __ definition:arrowFunction {
+      return annotate([ops.lambda, ["_"], definition], location());
+    }
+  / arrowFunction
+
 sign
   = [+\-]
 
@@ -471,14 +475,11 @@ singleQuoteStringChar
   = !("'" / newLine) @textChar
 
 spread
-  = ellipsis __ value:conditional {
+  = ellipsis __ value:conditionalExpression {
       return annotate([ops.spread, value], location());
     }
 
-start
-  = number
-
-string "string"
+stringLiteral "string"
   = doubleQuoteString
   / singleQuoteString
   / guillemetString
