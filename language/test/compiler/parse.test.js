@@ -87,29 +87,22 @@ describe.only("Origami parser", () => {
       [[ops.builtin, "fn"], undefined],
       [ops.scope, "arg"],
     ]);
-    assertParse("call", "tree/", [
-      ops.unpack,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
-    ]);
+    assertParse("call", "tree/", [ops.unpack, [ops.scope, "tree/"]]);
     assertParse("call", "tree/foo/bar", [
       ops.traverse,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
+      [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar"],
     ]);
     assertParse("call", "tree/foo/bar/", [
       ops.traverse,
-      // TODO: Should be `tree/`
-      [ops.scope, "tree"],
+      [ops.scope, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar/"],
     ]);
     assertParse("call", "/foo/bar", [
       ops.traverse,
-      // TODO: Should be `foo/`
-      [ops.rootDirectory, [ops.literal, "foo"]],
+      [ops.rootDirectory, [ops.literal, "foo/"]],
       [ops.literal, "bar"],
     ]);
     assertParse("call", "foo.js()/key", [
@@ -118,8 +111,7 @@ describe.only("Origami parser", () => {
       [ops.literal, "key"],
     ]);
     assertParse("call", "tree/key()", [
-      // TODO: "tree" should be "tree/"
-      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       undefined,
     ]);
     assertParse("call", "(tree)/", [ops.unpack, [ops.scope, "tree"]]);
@@ -160,8 +152,7 @@ describe.only("Origami parser", () => {
       ops.traverse,
       [
         [ops.builtin, "files:"],
-        // TODO: This should be `src/`
-        [ops.literal, "src"],
+        [ops.literal, "src/"],
       ],
       [ops.literal, "assets"],
     ]);
@@ -183,8 +174,7 @@ describe.only("Origami parser", () => {
         ops.traverse,
         [
           [ops.builtin, "package:"],
-          // TODO: This should be `@weborigami/`
-          [ops.literal, "@weborigami"],
+          [ops.literal, "@weborigami/"],
         ],
         [ops.literal, "dropbox/"],
         [ops.literal, "auth"],
@@ -274,8 +264,7 @@ describe.only("Origami parser", () => {
     // Consecutive slahes in a path are removed
     assertParse("expression", "path//key", [
       ops.traverse,
-      // TODO: Should be `path/`
-      [ops.scope, "path"],
+      [ops.scope, "path/"],
       [ops.literal, "key"],
     ]);
 
@@ -396,7 +385,6 @@ describe.only("Origami parser", () => {
     assertParse("host", "abc", [ops.literal, "abc"]);
     assertParse("host", "abc:123", [ops.literal, "abc:123"]);
     assertParse("host", "foo\\ bar", [ops.literal, "foo bar"]);
-    assertParse("host", "example.com/", [ops.literal, "example.com/"]);
   });
 
   test("identifier", () => {
@@ -429,8 +417,7 @@ describe.only("Origami parser", () => {
       [ops.literal, "arg"],
     ]);
     assertParse("implicitParens", "tree/key arg", [
-      // TODO: "tree" should be "tree/"
-      [ops.traverse, [ops.scope, "tree"], [ops.literal, "key"]],
+      [ops.traverse, [ops.scope, "tree/"], [ops.literal, "key"]],
       [undetermined, "arg"],
     ]);
     assertParse("implicitParens", "foo.js bar.ori 'arg'", [
@@ -697,20 +684,26 @@ describe.only("Origami parser", () => {
   });
 
   test("path", () => {
-    assertParse("path", "tree/", [[ops.literal, "tree/"]]);
-    assertParse("path", "month/12", [
+    assertParse("path", "/tree/", [[ops.literal, "tree/"]]);
+    assertParse("path", "/month/12", [
       [ops.literal, "month/"],
       [ops.literal, "12"],
     ]);
-    assertParse("path", "tree/foo/bar", [
+    assertParse("path", "/tree/foo/bar", [
       [ops.literal, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar"],
     ]);
-    assertParse("path", "a///b", [
+    assertParse("path", "/a///b", [
       [ops.literal, "a/"],
       [ops.literal, "b"],
     ]);
+  });
+
+  test("pathArgs", () => {
+    assertParse("pathArgs", "/", [ops.traverse]);
+    assertParse("pathArgs", "/tree", [ops.traverse, [ops.literal, "tree"]]);
+    assertParse("pathArgs", "/tree/", [ops.traverse, [ops.literal, "tree/"]]);
   });
 
   test("pipeline", () => {
@@ -794,17 +787,14 @@ describe.only("Origami parser", () => {
   });
 
   test("scopeReference", () => {
+    assertParse("scopeReference", "keys", [undetermined, "keys"]);
     assertParse("scopeReference", "greet.js", [ops.scope, "greet.js"]);
+    // scopeReference checks whether a slash follows; hard to test in isolation
+    // assertParse("scopeReference", "markdown/", [ops.scope, "markdown"]);
   });
 
   test("singleLineComment", () => {
     assertParse("singleLineComment", "// Hello, world!", null, false);
-  });
-
-  test("slashArgs", () => {
-    assertParse("slashArgs", "/", [ops.traverse]);
-    assertParse("slashArgs", "/tree", [ops.traverse, [ops.literal, "tree"]]);
-    assertParse("slashArgs", "/tree/", [ops.traverse, [ops.literal, "tree/"]]);
   });
 
   test("spread", () => {

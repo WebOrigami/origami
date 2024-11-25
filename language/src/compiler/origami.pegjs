@@ -12,12 +12,12 @@ import {
   downgradeReference,
   makeArray,
   makeBinaryOperatorChain,
+  makeCall,
   makeDeferredArguments,
-  makeFunctionCall,
   makeObject,
-  makeReference,
   makePipeline,
   makeProperty,
+  makeReference,
   makeTemplate
 } from "./parserHelpers.js";
 
@@ -31,7 +31,7 @@ __
 
 args "function arguments"
   = parensArgs
-  / slashArgs
+  / pathArgs
   / templateLiteral
 
 array "array"
@@ -61,7 +61,7 @@ call "function call"
   = head:primary tail:args* {
       return tail.length === 0
         ? head
-        : annotate(tail.reduce(makeFunctionCall, head), location());
+        : annotate(tail.reduce(makeCall, head), location());
     }
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -149,11 +149,6 @@ escapedChar "backslash-escaped character"
 expression
   = __ @pipeline __
 
-rootDirectory
-  = "/" !"/" {
-      return annotate([ops.rootDirectory], location());
-    }
-
 float "floating-point number"
   = sign? digits? "." digits {
       return annotate([ops.literal, parseFloat(text())], location());
@@ -182,9 +177,9 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier:identifier port:(":" @number)? slash:"/"? {
+  = identifier:identifier port:(":" @number)? slashFollows:slashFollows? {
     const portText = port ? `:${port[1]}` : "";
-    const slashText = slash ? "/" : "";
+    const slashText = slashFollows ? "/" : "";
     const hostText = identifier + portText + slashText;
     return annotate([ops.literal, hostText], location());
   }
@@ -204,7 +199,7 @@ identifierList
 
 implicitParens "function call with implicit parentheses"
   = head:lambda args:(inlineSpace+ @implicitParensArgs)? {
-      return args ? makeFunctionCall(head, args) : head;
+      return args ? makeCall(head, args) : head;
     }
     
 // A separated list of values for an implicit parens call. This differs from
@@ -352,41 +347,38 @@ parensArgs "function arguments in parentheses"
       return annotate(list ?? [undefined], location());
     }
 
-// A slash-separated path of keys
+// A slash-separated path of keys: `a/b/c`
 path "slash-separated path"
   // Path with at least a tail
-  = head:pathElement|0..| tail:pathTail {
-      let path = tail ? [...head, tail] : head;
-      // Remove parts for consecutive slashes
-      path = path.filter((part) => part[1] !== "/");
-      return annotate(path, location());
+  = segments:pathSegment|1..| {
+      // Drop empty segments that represent consecutive or final slashes
+      segments = segments.filter(segment => segment);
+      return annotate(segments, location());
     }
-  // Path with slashes, maybe no tail
-  / head:pathElement|1..| tail:pathTail? {
-      let path = tail ? [...head, tail] : head;
-      // Remove parts for consecutive slashes
-      path = path.filter((part) => part[1] !== "/");
-      return annotate(path, location());
+
+// A slash-separated path of keys that follows a call target
+pathArgs
+  = path:path {
+      return annotate([ops.traverse, ...path], location());
+    }
+
+// A single key in a slash-separated path: `/a`
+pathKey
+  = chars:pathSegmentChar+ slashFollows:slashFollows? {
+    // Append a trailing slash if one follows (but don't consume it)
+    const key = chars.join("") + (slashFollows ? "/" : "");
+    return annotate([ops.literal, key], location());
   }
 
-// A path key followed by a slash
-pathElement
-  = chars:pathKeyChar* "/" {
-    return annotate([ops.literal, chars.join("") + "/"], location());
-  }
+pathSegment
+  = "/" @pathKey?
 
-// A single character in a slash-separated path.
-pathKeyChar
+// A single character in a slash-separated path segment
+pathSegmentChar
   // This is more permissive than an identifier. It allows some characters like
   // brackets or quotes that are not allowed in identifiers.
   = [^(){}\[\],:/\\ \t\n\r]
   / escapedChar
-
-// A path key without a slash
-pathTail
-  = chars:pathKeyChar+ {
-    return annotate([ops.literal, chars.join("")], location());
-  }
 
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
@@ -411,33 +403,51 @@ program "Origami program"
 protocolPath
   = fn:namespace "//" host:host path:path? {
       return annotate(
-        makeFunctionCall(fn, [host, ...(path ?? [])]),
+        makeCall(fn, [host, ...(path ?? [])]),
         location()
       );
     }
 
 // A namespace followed by a key: `foo:x`
 qualifiedReference
-  = fn:namespace head:pathTail {
-      return annotate(makeFunctionCall(fn, [head]), location());
+  = fn:namespace reference:scopeReference {
+      const literal = annotate([ops.literal, reference[1]], reference.location);
+      return annotate(makeCall(fn, [literal]), location());
     }
 
 reference
-  = topDirectory
-  / rootDirectory
+  = rootDirectory
   / homeDirectory
   / qualifiedReference
   / namespace
   / scopeReference
 
+// A top-level folder below the root: `/foo`
+// or the root folder itself: `/`
+rootDirectory
+  = "/" key:pathKey {
+      return annotate([ops.rootDirectory, key], location());
+    }
+  / "/" !"/" {
+      return annotate([ops.rootDirectory], location());
+    }
+
 scopeReference "scope reference"
-  = identifier:identifier {
-      return annotate(makeReference(identifier), location());
+  = identifier:identifier slashFollows:slashFollows? {
+      const id = identifier + (slashFollows ? "/" : "");
+      return annotate(makeReference(id), location());
     }
 
 separator
   = __ "," __
   / whitespaceWithNewLine
+
+// Check whether next character is a slash without consuming input
+slashFollows
+  // This expression returned `undefined` if successful; we convert to `true`
+  = &"/" {
+      return true;
+    }
 
 shebang
   = "#!" [^\n\r]* { return null; }
@@ -459,12 +469,6 @@ singleQuoteString "single quote string"
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
-
-// A path that begins with a slash: `/foo/bar`
-slashArgs "path with a leading slash"
-  = "/" path:path? {
-      return annotate([ops.traverse, ...(path ?? [])], location());
-    }
 
 spread
   = ellipsis __ value:conditional {
@@ -529,12 +533,6 @@ templateSubstitution "template substitution"
 textChar
   = escapedChar
   / .
- 
-// A folder at the root of the filesystem
-topDirectory
-  = "/" key:pathTail {
-      return annotate([ops.rootDirectory, key], location());
-    }
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

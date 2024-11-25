@@ -151,28 +151,10 @@ export function makeBinaryOperatorChain(head, tail) {
 }
 
 /**
- * For functions that short-circuit arguments, we need to defer evaluation of
- * the arguments until the function is called. Exception: if the argument is a
- * literal, we leave it alone.
- *
- * @param {any[]} args
- */
-export function makeDeferredArguments(args) {
-  return args.map((arg) => {
-    if (arg instanceof Array && arg[0] === ops.literal) {
-      return arg;
-    }
-    const fn = [ops.lambda, [], arg];
-    annotate(fn, arg.location);
-    return fn;
-  });
-}
-
-/**
  * @param {Code} target
  * @param {any[]} args
  */
-export function makeFunctionCall(target, args) {
+export function makeCall(target, args) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = target.location;
@@ -185,11 +167,21 @@ export function makeFunctionCall(target, args) {
 
   let fnCall;
   if (args[0] === ops.traverse) {
-    // In a traversal, downgrade ops.builtin references to ops.scope
-    let tree = downgradeReference(target);
+    let tree = target;
+
+    if (tree[0] === undetermined) {
+      // In a traversal, downgrade ops.builtin references to ops.scope
+      tree = downgradeReference(tree);
+      if (tree[0] === ops.scope && !trailingSlash.has(tree[1])) {
+        // Target didn't parse with a trailing slash; add one
+        tree[1] = trailingSlash.add(tree[1]);
+      }
+    }
+
     if (args.length > 1) {
       // Regular traverse
-      fnCall = [ops.traverse, tree, ...args.slice(1)];
+      const keys = args.slice(1);
+      fnCall = [ops.traverse, tree, ...keys];
     } else {
       // Traverse without arguments equates to unpack
       fnCall = [ops.unpack, tree];
@@ -213,6 +205,24 @@ export function makeFunctionCall(target, args) {
   annotate(fnCall, { start, source, end });
 
   return fnCall;
+}
+
+/**
+ * For functions that short-circuit arguments, we need to defer evaluation of
+ * the arguments until the function is called. Exception: if the argument is a
+ * literal, we leave it alone.
+ *
+ * @param {any[]} args
+ */
+export function makeDeferredArguments(args) {
+  return args.map((arg) => {
+    if (arg instanceof Array && arg[0] === ops.literal) {
+      return arg;
+    }
+    const fn = [ops.lambda, [], arg];
+    annotate(fn, arg.location);
+    return fn;
+  });
 }
 
 export function makeObject(entries, op) {
@@ -265,7 +275,7 @@ export function makeObject(entries, op) {
 // Similar to a function call, but the order is reversed.
 export function makePipeline(arg, fn) {
   const upgraded = upgradeReference(fn);
-  const result = makeFunctionCall(upgraded, [arg]);
+  const result = makeCall(upgraded, [arg]);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
