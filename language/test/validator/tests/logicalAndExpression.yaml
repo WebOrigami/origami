@@ -1,0 +1,145 @@
+# Logical AND expression tests
+
+- source: "true && true"
+  expected: true
+  description: "Both operands are true"
+
+- source: "true && false"
+  expected: false
+  description: "First operand is true, second is false"
+
+- source: "false && true"
+  expected: false
+  description: "First operand is false, second is true"
+
+- source: "false && false"
+  expected: false
+  description: "Both operands are false"
+
+- source: "false && (1 / 0)"
+  expected: false
+  description: "Short-circuit evaluation: first operand false, second not evaluated"
+
+- source: "true && 42"
+  expected: 42
+  description: "Short-circuit evaluation: first operand true, evaluates second"
+
+- source: "0 && true"
+  expected: 0
+  description: "Short-circuiting with falsy value (0)"
+
+- source: "true && 'string'"
+  expected: "string"
+  description: "Truthy value with string"
+
+- source: "false && 'string'"
+  expected: false
+  description: "Falsy value with string"
+
+- source: "1 && 0"
+  expected: 0
+  description: "Truthy numeric value with falsy numeric value"
+
+- source: "0 && 1"
+  expected: 0
+  description: "Falsy numeric value with truthy numeric value"
+
+- source: "'' && 'non-empty string'"
+  expected: ""
+  description: "Falsy string value with truthy string"
+
+- source: "'non-empty string' && ''"
+  expected: ""
+  description: "Truthy string with falsy string"
+
+- source: "{} && true"
+  expected: true
+  description: "Empty object as first operand"
+
+- source: "true && {}"
+  expected: {}
+  description: "Empty object as second operand"
+
+- source: "[] && true"
+  expected: true
+  description: "Array as first operand"
+
+- source: "true && []"
+  expected: []
+  description: "Array as second operand"
+
+- source: "null && true"
+  expected: null
+  description: "Null as first operand"
+
+- source: "true && null"
+  expected: null
+  description: "Null as second operand"
+
+- source: "undefined && true"
+  expected: __undefined__
+  description: "Undefined as first operand"
+
+- source: "true && undefined"
+  expected: __undefined__
+  description: "Undefined as second operand"
+
+- source: "NaN && true"
+  expected: __NaN__
+  description: "NaN as first operand"
+
+- source: "true && NaN"
+  expected: __NaN__
+  description: "NaN as second operand"
+
+- source: "(true && false) && true"
+  expected: false
+  description: "Nested logical ANDs with a false in the middle"
+
+- source: "(true && true) && true"
+  expected: true
+  description: "Nested logical ANDs with all true"
+
+- source: "true && (true && false)"
+  expected: false
+  description: "Nested logical ANDs with false in inner"
+
+- source: "(true && (false && true))"
+  expected: false
+  description: "Complex nesting with false at inner-most"
+
+- source: "true && (1 + 1 === 2)"
+  expected: true
+  description: "Combines logical AND with equality comparison"
+
+- source: "false && (5 > 2)"
+  expected: false
+  description: "Logical AND with greater-than comparison"
+
+- source: "true && (3 || 0)"
+  expected: 3
+  description: "Logical AND with logical OR"
+
+- source: "true && (0 || 3)"
+  expected: 3
+  description: "Logical AND with logical OR and falsy values"
+
+- source: "'' && false"
+  expected: ""
+  description: "Falsy string and false"
+
+- source: "false && ''"
+  expected: false
+  description: "False and falsy string"
+
+- source: "undefined && null"
+  expected: __undefined__
+  description: "Undefined and null"
+
+- source: "null && undefined"
+  expected: null
+  description: "Null and undefined"
+
+- source: "(false && true) && undefined"
+  expected: false
+  description: "Short-circuiting nested AND with undefined"
