@@ -18,9 +18,10 @@ export default async function concatTreeValues(treelike) {
 
   const strings = [];
   for await (const value of deepValuesIterator(treelike, { expand: true })) {
-    if (value) {
-      strings.push(toString(value));
+    if (value == null) {
+      console.warn("warning: template encountered a null or undefined value");
     }
+    strings.push(toString(value));
   }
   return strings.join("");
 }
