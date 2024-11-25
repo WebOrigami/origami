@@ -22,7 +22,18 @@ describe.only("ops", () => {
     assert.equal(result, 1);
   });
 
-  test("ops.cache looks up a value in scope and memoizes it", async () => {
+  test("ops.concat concatenates tree value text", async () => {
+    const scope = new ObjectTree({
+      name: "world",
+    });
+
+    const code = createCode([ops.concat, "Hello, ", [ops.scope, "name"], "."]);
+
+    const result = await evaluate.call(scope, code);
+    assert.equal(result, "Hello, world.");
+  });
+
+  test("ops.external looks up a value in scope and memoizes it", async () => {
     let count = 0;
     const tree = new ObjectTree({
       get count() {
@@ -34,17 +45,6 @@ describe.only("ops", () => {
     assert.equal(result, 1);
     const result2 = await evaluate.call(tree, code);
     assert.equal(result2, 1);
-  });
-
-  test("ops.concat concatenates tree value text", async () => {
-    const scope = new ObjectTree({
-      name: "world",
-    });
-
-    const code = createCode([ops.concat, "Hello, ", [ops.scope, "name"], "."]);
-
-    const result = await evaluate.call(scope, code);
-    assert.equal(result, "Hello, world.");
   });
 
   test("ops.inherited searches inherited scope", async () => {
@@ -61,7 +61,14 @@ describe.only("ops", () => {
     assert.equal(result, 1);
   });
 
-  test("ops.lambda defines a function", async () => {
+  test("ops.lambda defines a function with no inputs", async () => {
+    const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
+    const fn = await evaluate.call(null, code);
+    const result = await fn.call();
+    assert.equal(result, "result");
+  });
+
+  test("ops.lambda defines a function with underscore input", async () => {
     const scope = new ObjectTree({
       message: "Hello",
     });
@@ -121,7 +128,7 @@ describe.only("ops", () => {
     assert.equal(result, "unpacked");
   });
 
-  describe.only("calc", async () => {
+  describe("calc", async () => {
     test("ops.conditional", async () => {
       assert.equal(await ops.conditional(true, trueFn, falseFn), true);
       assert.equal(await ops.conditional(true, falseFn, trueFn), false);

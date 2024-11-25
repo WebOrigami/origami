@@ -5,7 +5,7 @@ import { undetermined } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
-describe.only("Origami parser", () => {
+describe("Origami parser", () => {
   test("arrayLiteral", () => {
     assertParse("arrayLiteral", "[]", [ops.array]);
     assertParse("arrayLiteral", "[1, 2, 3]", [

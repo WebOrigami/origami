@@ -135,25 +135,32 @@ export function lambda(parameters, code) {
 
   /** @this {Treelike|null} */
   async function invoke(...args) {
-    // Add arguments to scope.
-    const ambients = {};
-    for (const parameter of parameters) {
-      ambients[parameter] = args.shift();
+    let target;
+    if (parameters.length === 0) {
+      // No parameters
+      target = context;
+    } else {
+      // Add arguments to scope.
+      const ambients = {};
+      for (const parameter of parameters) {
+        ambients[parameter] = args.shift();
+      }
+      Object.defineProperty(ambients, codeSymbol, {
+        value: code,
+        enumerable: false,
+      });
+      const ambientTree = new ObjectTree(ambients);
+      ambientTree.parent = context;
+      target = ambientTree;
     }
-    Object.defineProperty(ambients, codeSymbol, {
-      value: code,
-      enumerable: false,
-    });
-    const ambientTree = new ObjectTree(ambients);
-    ambientTree.parent = context;
 
-    let result = await evaluate.call(ambientTree, code);
+    let result = await evaluate.call(target, code);
 
     // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
     if (result instanceof Function) {
       const resultCode = result.code;
-      result = result.bind(ambientTree);
+      result = result.bind(target);
       if (code) {
         // Copy over Origami code
         result.code = resultCode;
