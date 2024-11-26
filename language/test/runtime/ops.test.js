@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
-describe.only("ops", () => {
+describe("ops", () => {
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
     const result = await evaluate.call(null, code);

@@ -11,7 +11,9 @@
 // https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs. Like
 // that parser, this one uses the ECMAScript grammar terms where relevant.
 //
-// Generate the parser via `npm build`. @ts-nocheck
+// Generate the parser via `npm build`.
+//
+// @ts-nocheck
 //
 
 import * as ops from "../runtime/ops.js";
