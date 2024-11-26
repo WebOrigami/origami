@@ -205,15 +205,14 @@ identifierList
     }
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
-  = head:shorthandFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
+  = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
       return args ? makeCall(head, args) : head;
     }
     
 // A separated list of values for an implicit parens call. This differs from
-// `list` in that the value term must have equal or higher precedence than
-// implicit parens call -- i.e., can't be a pipeline.
+// `list` in that the value term can't be a pipeline.
 implicitParensthesesArguments
-  = values:implicitParenthesesCallExpression|1.., separator| separator? {
+  = values:shorthandFunction|1.., separator| separator? {
       return annotate(values, location());
     }
 
@@ -382,7 +381,7 @@ pathSegmentChar
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
 pipelineExpression
-  = head:implicitParenthesesCallExpression tail:(__ singleArrow __ @implicitParenthesesCallExpression)* {
+  = head:shorthandFunction tail:(__ singleArrow __ @shorthandFunction)* {
       return tail.reduce(makePipeline, downgradeReference(head));
     }
 
@@ -453,10 +452,10 @@ shebang
 // A shorthand lambda expression: `=foo(_)`
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
-  = "=" !"=" __ definition:arrowFunction {
+  = "=" !"=" __ definition:implicitParenthesesCallExpression {
       return annotate([ops.lambda, ["_"], definition], location());
     }
-  / arrowFunction
+  / implicitParenthesesCallExpression
 
 sign
   = [+\-]
