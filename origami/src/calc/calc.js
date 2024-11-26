@@ -27,6 +27,10 @@ export function equals(a, b) {
  * @param {any} [falseResult]
  */
 export async function ifBuiltin(value, trueResult, falseResult) {
+  console.warn(
+    `warning: "if" is deprecated. Use the conditional "a ? b : c" operator instead.`
+  );
+
   assertTreeIsDefined(this, "calc:if");
   let condition = await value;
   if (Tree.isAsyncTree(condition)) {
