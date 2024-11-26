@@ -399,6 +399,9 @@ tree:
     reverse:
       args: (tree)
       description: Reverse the order of the tree's keys
+    root:
+      args: (tree)
+      description: The root node of the given tree
     setDeep:
       args: (target, source)
       description: Applies the source tree to the target

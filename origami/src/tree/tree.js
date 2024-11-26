@@ -44,6 +44,7 @@ export const isTreelike = Tree.isTreelike;
 export const mapReduce = Tree.mapReduce;
 export const paths = Tree.paths;
 export const remove = Tree.remove;
+export const root = Tree.root;
 export const traverse = Tree.traverse;
 export const traverseOrThrow = Tree.traverseOrThrow;
 export const traversePath = Tree.traversePath;
