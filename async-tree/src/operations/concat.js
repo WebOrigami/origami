@@ -18,10 +18,17 @@ export default async function concatTreeValues(treelike) {
 
   const strings = [];
   for await (const value of deepValuesIterator(treelike, { expand: true })) {
-    if (value == null) {
-      console.warn("warning: template encountered a null or undefined value");
+    let string;
+    if (value === null) {
+      console.warn("Warning: Origami template encountered a null value");
+      string = "null";
+    } else if (value === undefined) {
+      console.warn("Warning: Origami template encountered an undefined value");
+      string = "undefined";
+    } else {
+      string = toString(value);
     }
-    strings.push(toString(value));
+    strings.push(string);
   }
   return strings.join("");
 }
