@@ -17,8 +17,7 @@
     "watcher": "2.3.1"
   },
   "scripts": {
-    "build": "npm run buildParser; npm run buildTests",
-    "buildParser": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
+    "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
     "buildTests": "node ./test/generator/generateTests.js",
     "prepublishOnly": "npm run build",
     "test": "node --test --test-reporter=spec",

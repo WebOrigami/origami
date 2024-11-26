@@ -69,6 +69,14 @@ export async function concat(...args) {
 }
 addOpLabel(concat, "«ops.concat»");
 
+export async function conditional(condition, truthy, falsy) {
+  return condition ? truthy() : falsy();
+}
+
+export async function equal(a, b) {
+  return a == b;
+}
+
 /**
  * Look up the given key as an external reference and cache the value for future
  * requests.
@@ -129,7 +137,6 @@ addOpLabel(inherited, "«ops.inherited»");
  * @param {string[]} parameters
  * @param {Code} code
  */
-
 export function lambda(parameters, code) {
   const context = this;
 
@@ -192,6 +199,53 @@ export async function literal(value) {
 addOpLabel(literal, "«ops.literal»");
 
 /**
+ * Logical AND operator
+ */
+export async function logicalAnd(head, ...tail) {
+  if (!head) {
+    return head;
+  }
+  // Evaluate the tail arguments in order, short-circuiting if any are falsy.
+  let lastValue;
+  for (const arg of tail) {
+    lastValue = arg instanceof Function ? await arg() : arg;
+    if (!lastValue) {
+      return lastValue;
+    }
+  }
+
+  // Return the last value (not `true`)
+  return lastValue;
+}
+
+/**
+ * Logical NOT operator
+ */
+export async function logicalNot(value) {
+  return !value;
+}
+
+/**
+ * Logical OR operator
+ */
+export async function logicalOr(head, ...tail) {
+  if (head) {
+    return head;
+  }
+
+  // Evaluate the tail arguments in order, short-circuiting if any are truthy.
+  let lastValue;
+  for (const arg of tail) {
+    lastValue = arg instanceof Function ? await arg() : arg;
+    if (lastValue) {
+      return lastValue;
+    }
+  }
+
+  return lastValue;
+}
+
+/**
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
  * @this {AsyncTree|null}
@@ -214,6 +268,33 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
+
+export async function notEqual(a, b) {
+  return a != b;
+}
+
+export async function notStrictEqual(a, b) {
+  return a !== b;
+}
+
+/**
+ * Nullish coalescing operator
+ */
+export async function nullishCoalescing(head, ...tail) {
+  if (head != null) {
+    return head;
+  }
+
+  let lastValue;
+  for (const arg of tail) {
+    lastValue = arg instanceof Function ? await arg() : arg;
+    if (lastValue != null) {
+      return lastValue;
+    }
+  }
+
+  return lastValue;
+}
 
 /**
  * Files tree for the filesystem root.
@@ -258,6 +339,10 @@ export function spread(...args) {
 }
 addOpLabel(spread, "«ops.spread»");
 
+export async function strictEqual(a, b) {
+  return a === b;
+}
+
 /**
  * Apply the default tagged template function.
  */
@@ -279,76 +364,4 @@ export const traverse = Tree.traverseOrThrow;
  */
 export async function unpack(value) {
   return isUnpackable(value) ? value.unpack() : value;
-}
-
-// Calc work
-
-export async function conditional(condition, truthy, falsy) {
-  return condition ? truthy() : falsy();
-}
-
-export async function equal(a, b) {
-  return a == b;
-}
-
-export async function logicalAnd(head, ...tail) {
-  if (!head) {
-    return head;
-  }
-  // Evaluate the tail arguments in order, short-circuiting if any are falsy.
-  let lastValue;
-  for (const arg of tail) {
-    lastValue = arg instanceof Function ? await arg() : arg;
-    if (!lastValue) {
-      return lastValue;
-    }
-  }
-
-  // Return the last value (not `true`)
-  return lastValue;
-}
-
-export async function logicalOr(head, ...tail) {
-  if (head) {
-    return head;
-  }
-
-  // Evaluate the tail arguments in order, short-circuiting if any are truthy.
-  let lastValue;
-  for (const arg of tail) {
-    lastValue = arg instanceof Function ? await arg() : arg;
-    if (lastValue) {
-      return lastValue;
-    }
-  }
-
-  return lastValue;
-}
-
-export async function notEqual(a, b) {
-  return a != b;
-}
-
-export async function notStrictEqual(a, b) {
-  return a !== b;
-}
-
-export async function nullishCoalescing(head, ...tail) {
-  if (head != null) {
-    return head;
-  }
-
-  let lastValue;
-  for (const arg of tail) {
-    lastValue = arg instanceof Function ? await arg() : arg;
-    if (lastValue != null) {
-      return lastValue;
-    }
-  }
-
-  return lastValue;
-}
-
-export async function strictEqual(a, b) {
-  return a === b;
 }

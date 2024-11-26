@@ -122,6 +122,13 @@ describe("ops", () => {
     assert.strictEqual(await ops.logicalAnd(0, true), 0);
   });
 
+  test("ops.logicalNot", async () => {
+    assert.strictEqual(await ops.logicalNot(true), false);
+    assert.strictEqual(await ops.logicalNot(false), true);
+    assert.strictEqual(await ops.logicalNot(0), true);
+    assert.strictEqual(await ops.logicalNot(1), false);
+  });
+
   test("ops.logicalOr", async () => {
     assert.strictEqual(await ops.logicalOr(true, trueFn), true);
     assert.strictEqual(await ops.logicalOr(true, falseFn), true);

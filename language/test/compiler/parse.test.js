@@ -891,6 +891,13 @@ describe("Origami parser", () => {
       false
     );
   });
+
+  test("unaryExpression", () => {
+    assertParse("unaryExpression", "!true", [
+      ops.logicalNot,
+      [undetermined, "true"],
+    ]);
+  });
 });
 
 function assertParse(startRule, source, expected, checkLocation = true) {

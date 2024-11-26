@@ -314,6 +314,13 @@ export function makeTemplate(op, head, tail) {
   return [op, [ops.literal, strings], ...values];
 }
 
+export function makeUnaryOperatorCall(operator, value) {
+  const operators = {
+    "!": ops.logicalNot,
+  };
+  return [operators[operator], value];
+}
+
 /**
  * Upgrade a potential builtin reference to an actual builtin reference.
  *

@@ -23,7 +23,8 @@ import {
   makePipeline,
   makeProperty,
   makeReference,
-  makeTemplate
+  makeTemplate,
+  makeUnaryOperatorCall
 } from "./parserHelpers.js";
 
 }}
@@ -128,7 +129,7 @@ doubleQuoteStringChar
 ellipsis = "..." / "…" // Unicode ellipsis
 
 equalityExpression
-  = head:callExpression tail:(__ @equalityOperator __ @callExpression)* {
+  = head:unaryExpression tail:(__ @equalityOperator __ @unaryExpression)* {
       return tail.length === 0
         ? head
         : annotate(makeBinaryOperatorChain(head, tail), location());
@@ -536,6 +537,16 @@ templateSubstitution "template substitution"
 textChar
   = escapedChar
   / .
+
+// A unary prefix operator: `!x`
+unaryExpression
+  = operator:unaryOperator __ expression:unaryExpression {
+      return annotate(makeUnaryOperatorCall(operator, expression), location());
+    }
+  / callExpression
+
+unaryOperator
+  = "!"
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
