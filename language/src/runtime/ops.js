@@ -312,15 +312,17 @@ export async function logicalOr(head, ...tail) {
   if (head) {
     return head;
   }
+
   // Evaluate the tail arguments in order, short-circuiting if any are truthy.
+  let lastValue;
   for (const arg of tail) {
-    const value = arg instanceof Function ? await arg() : arg;
-    if (value) {
-      return value;
+    lastValue = arg instanceof Function ? await arg() : arg;
+    if (lastValue) {
+      return lastValue;
     }
   }
 
-  return false;
+  return lastValue;
 }
 
 export async function notEqual(a, b) {

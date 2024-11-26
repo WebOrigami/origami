@@ -1,0 +1,143 @@
+- source: "true || true"
+  expected: true
+  description: "Both operands are true"
+
+- source: "true || false"
+  expected: true
+  description: "First operand is true, second is false"
+
+- source: "false || true"
+  expected: true
+  description: "First operand is false, second is true"
+
+- source: "false || false"
+  expected: false
+  description: "Both operands are false"
+
+# - source: "true || (1 / 0)"
+#   expected: true
+#   description: "Short-circuit evaluation: first operand true, second not evaluated"
+
+- source: "false || 42"
+  expected: 42
+  description: "Short-circuit evaluation: first operand false, evaluates second"
+
+- source: "0 || true"
+  expected: true
+  description: "Falsy value (0) with truthy second operand"
+
+- source: "true || 'string'"
+  expected: true
+  description: "Truthy first operand, string second operand not evaluated"
+
+- source: "false || 'string'"
+  expected: "string"
+  description: "Falsy first operand, evaluates string second operand"
+
+- source: "1 || 0"
+  expected: 1
+  description: "Truthy numeric value with falsy numeric value"
+
+- source: "0 || 1"
+  expected: 1
+  description: "Falsy numeric value with truthy numeric value"
+
+- source: "'' || 'non-empty string'"
+  expected: "non-empty string"
+  description: "Falsy string value with truthy string"
+
+- source: "'non-empty string' || ''"
+  expected: "non-empty string"
+  description: "Truthy string with falsy string"
+
+- source: "{} || true"
+  expected: {}
+  description: "Empty object as first operand"
+
+- source: "true || {}"
+  expected: true
+  description: "True as first operand, object not evaluated"
+
+- source: "[] || true"
+  expected: []
+  description: "Array as first operand"
+
+- source: "true || []"
+  expected: true
+  description: "True as first operand, array not evaluated"
+
+- source: "null || true"
+  expected: true
+  description: "Null as first operand"
+
+- source: "true || null"
+  expected: true
+  description: "True as first operand, null not evaluated"
+
+- source: "undefined || true"
+  expected: true
+  description: "Undefined as first operand"
+
+- source: "true || undefined"
+  expected: true
+  description: "True as first operand, undefined not evaluated"
+
+- source: "NaN || true"
+  expected: true
+  description: "NaN as first operand"
+
+- source: "true || NaN"
+  expected: true
+  description: "True as first operand, NaN not evaluated"
+
+- source: "(false || true) || false"
+  expected: true
+  description: "Nested logical ORs with a true in the middle"
+
+- source: "(false || false) || true"
+  expected: true
+  description: "Nested logical ORs with a true at the end"
+
+- source: "false || (false || true)"
+  expected: true
+  description: "Nested logical ORs with true in inner"
+
+- source: "(false || (true || false))"
+  expected: true
+  description: "Complex nesting with true at inner-most"
+
+# - source: "true || (1 + 1 === 2)"
+#   expected: true
+#   description: "Combines logical OR with equality comparison"
+
+# - source: "false || (5 > 2)"
+#   expected: true
+#   description: "Logical OR with greater-than comparison"
+
+- source: "false || (3 && 0)"
+  expected: 0
+  description: "Logical OR with logical AND and falsy result"
+
+- source: "false || (0 && 3)"
+  expected: 0
+  description: "Logical OR with logical AND and falsy first operand"
+
+- source: "'' || false"
+  expected: false
+  description: "Falsy string and false"
+
+- source: "false || ''"
+  expected: ""
+  description: "False and falsy string"
+
+- source: "undefined || null"
+  expected: __null__
+  description: "Undefined and null"
+
+- source: "null || undefined"
+  expected: __undefined__
+  description: "Null and undefined"
+
+- source: "(true || false) || undefined"
+  expected: true
+  description: "Short-circuiting nested OR with undefined"

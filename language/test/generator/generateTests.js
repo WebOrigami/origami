@@ -17,13 +17,15 @@ export default async function generateTests(inputDirectory, outputDirectory) {
   );
   for (const yamlFilename of yamlFilenames) {
     const basename = path.basename(yamlFilename, ".yaml");
+
     const casesPath = path.join(inputDirectory, yamlFilename);
     const text = String(await fs.readFile(casesPath));
     const cases = YAML.parse(text);
     const transformed = cases.map(transformCase);
     const result = tests(basename, transformed);
-    const outputName = yamlFilename.replace(/\.yaml$/, ".test.js");
-    const outputPath = path.join(generatedDirectory, outputName);
+
+    const outputName = basename + ".test.js";
+    const outputPath = path.join(outputDirectory, outputName);
     await fs.writeFile(outputPath, result);
   }
 }
@@ -54,10 +56,13 @@ ${cases.map(origamiTest).join("\n")}
 }
 // Transform parsed YAML values into values suitable for testing
 function transformCase({ description, expected, source }) {
-  if (expected === "__undefined__") {
-    expected = undefined;
-  } else if (expected === "__NaN__") {
-    expected = NaN;
+  const markers = {
+    __null__: null,
+    __undefined__: undefined,
+    __NaN__: NaN,
+  };
+  if (expected in markers) {
+    expected = markers[expected];
   }
   const assertType = typeof expected === "object" ? "deepEqual" : "strictEqual";
   const expectedJs =
