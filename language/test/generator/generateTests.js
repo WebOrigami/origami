@@ -68,7 +68,7 @@ function transformCase({ description, expected, source }) {
   const expectedJs =
     typeof expected === "string"
       ? `"${expected}"`
-      : typeof expected === "object"
+      : typeof expected === "object" && expected !== null
       ? JSON.stringify(expected)
       : expected;
   return { assertType, description, expected, expectedJs, source };

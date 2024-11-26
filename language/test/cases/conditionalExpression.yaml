@@ -1,0 +1,101 @@
+# Conditional (ternary) expression tests
+
+- source: "true ? 42 : 0"
+  expected: 42
+  description: "Condition is true, evaluates and returns the first operand"
+
+- source: "false ? 42 : 0"
+  expected: 0
+  description: "Condition is false, evaluates and returns the second operand"
+
+- source: "1 ? 'yes' : 'no'"
+  expected: "yes"
+  description: "Truthy condition with string operands"
+
+- source: "0 ? 'yes' : 'no'"
+  expected: "no"
+  description: "Falsy condition with string operands"
+
+- source: "'non-empty' ? 1 : 2"
+  expected: 1
+  description: "Truthy string condition with numeric operands"
+
+- source: "'' ? 1 : 2"
+  expected: 2
+  description: "Falsy string condition with numeric operands"
+
+- source: "null ? 'a' : 'b'"
+  expected: "b"
+  description: "Falsy null condition"
+
+- source: "undefined ? 'a' : 'b'"
+  expected: "b"
+  description: "Falsy undefined condition"
+
+- source: "NaN ? 'a' : 'b'"
+  expected: "b"
+  description: "Falsy NaN condition"
+
+- source: "42 ? true : false"
+  expected: true
+  description: "Truthy numeric condition with boolean operands"
+
+- source: "0 ? true : false"
+  expected: false
+  description: "Falsy numeric condition with boolean operands"
+
+- source: "[] ? 'array' : 'no array'"
+  expected: "array"
+  description: "Truthy array condition"
+
+- source: "{} ? 'object' : 'no object'"
+  expected: "object"
+  description: "Truthy object condition"
+
+- source: "false ? null : undefined"
+  expected: __undefined__
+  description: "Condition is false, returns undefined"
+
+- source: "null ? null : null"
+  expected: __null__
+  description: "Condition is falsy, returns null"
+
+- source: "true ? NaN : 42"
+  expected: __NaN__
+  description: "Condition is true, evaluates and returns NaN"
+
+- source: "(true ? 1 : 2) ? 3 : 4"
+  expected: 3
+  description: "Nested ternary where first expression evaluates to 1, which is truthy"
+
+- source: "(false ? 1 : 2) ? 3 : 4"
+  expected: 3
+  description: "Nested ternary where first expression evaluates to 2, which is truthy"
+
+- source: "(false ? 1 : 0) ? 3 : 4"
+  expected: 4
+  description: "Nested ternary where first expression evaluates to 0, which is falsy"
+
+- source: "true ? (false ? 10 : 20) : 30"
+  expected: 20
+  description: "Nested ternary in the true branch of outer ternary"
+
+- source: "false ? (false ? 10 : 20) : 30"
+  expected: 30
+  description: "Nested ternary in the false branch of outer ternary"
+
+# - source: "'truthy' ? 1 + 2 : 3 + 4"
+#   expected: 3
+#   description: "Evaluates and returns the true branch with an arithmetic expression"
+
+# - source: "'' ? 1 + 2 : 3 + 4"
+#   expected: 7
+#   description: "Evaluates and returns the false branch with an arithmetic expression"
+
+- source: "undefined ? undefined : null"
+  expected: __null__
+  description: "Condition is falsy, returns null"
+
+- source: "null ? undefined : undefined"
+  expected: __undefined__
+  description: "Condition is falsy, returns undefined"

@@ -337,13 +337,16 @@ export async function nullishCoalescing(head, ...tail) {
   if (head != null) {
     return head;
   }
+
+  let lastValue;
   for (const arg of tail) {
-    const value = arg instanceof Function ? await arg() : arg;
-    if (value != null) {
-      return value;
+    lastValue = arg instanceof Function ? await arg() : arg;
+    if (lastValue != null) {
+      return lastValue;
     }
   }
-  return null;
+
+  return lastValue;
 }
 
 export async function strictEqual(a, b) {

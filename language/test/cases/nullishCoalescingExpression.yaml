@@ -1,0 +1,105 @@
+# Nullish coalescing expression tests
+
+- source: "null ?? 42"
+  expected: 42
+  description: "Left operand is null, returns right operand"
+
+- source: "undefined ?? 42"
+  expected: 42
+  description: "Left operand is undefined, returns right operand"
+
+- source: "0 ?? 42"
+  expected: 0
+  description: "Left operand is 0 (falsy but not nullish), returns left operand"
+
+- source: "'' ?? 'default'"
+  expected: ""
+  description: "Left operand is an empty string (falsy but not nullish), returns left operand"
+
+- source: "false ?? true"
+  expected: false
+  description: "Left operand is false (falsy but not nullish), returns left operand"
+
+- source: "42 ?? 0"
+  expected: 42
+  description: "Left operand is a non-nullish truthy value, returns left operand"
+
+- source: "null ?? undefined"
+  expected: __undefined__
+  description: "Left operand is null, returns right operand which is undefined"
+
+- source: "undefined ?? null"
+  expected: __null__
+  description: "Left operand is undefined, returns right operand which is null"
+
+- source: "NaN ?? 42"
+  expected: __NaN__
+  description: "Left operand is NaN (not nullish), returns left operand"
+
+- source: "[] ?? 'default'"
+  expected: []
+  description: "Left operand is an empty array (not nullish), returns left operand"
+
+- source: "{} ?? 'default'"
+  expected: {}
+  description: "Left operand is an empty object (not nullish), returns left operand"
+
+- source: "(null ?? 42) ?? 50"
+  expected: 42
+  description: "Nested nullish coalescing, first nullish operand replaced, second ignored"
+
+- source: "(undefined ?? null) ?? 'fallback'"
+  expected: fallback
+  description: "Nested nullish coalescing"
+
+- source: "(0 ?? null) ?? 'fallback'"
+  expected: 0
+  description: "Nested nullish coalescing with falsy but non-nullish value"
+
+- source: "null ?? (undefined ?? 42)"
+  expected: 42
+  description: "Nullish coalescing in the right operand"
+
+- source: "null ?? null ?? null ?? 'fallback'"
+  expected: "fallback"
+  description: "Chained nullish coalescing, resolves to the last non-nullish value"
+
+- source: "null ?? (false ?? 'default')"
+  expected: false
+  description: "Right operand evaluates to non-nullish falsy value"
+
+- source: "null ?? (true ?? 'default')"
+  expected: true
+  description: "Right operand evaluates to truthy value"
+
+- source: "42 ?? (null ?? 0)"
+  expected: 42
+  description: "Left operand is not nullish, ignores right operand"
+
+- source: "undefined ?? null ?? 'value'"
+  expected: "value"
+  description: "Chained nullish coalescing with undefined and null"
+
+- source: "(NaN ?? null) ?? 42"
+  expected: __NaN__
+  description: "Left operand is NaN, not nullish, returns NaN"
+
+- source: "(undefined ?? NaN) ?? 42"
+  expected: __NaN__
+  description: "Right operand resolves to NaN"
+
+- source: "null ?? 'default' ?? 42"
+  expected: "default"
+  description: "Chained nullish coalescing, resolves to first non-nullish value"
+
+- source: "'' ?? 'default' ?? 42"
+  expected: ""
+  description: "Falsy but non-nullish value, returns left operand"
+
+- source: "null ?? undefined ?? NaN"
+  expected: __NaN__
+  description: "Chained nullish coalescing, resolves to NaN as the first non-nullish value"
+
+- source: "(null ?? null) ?? undefined"
+  expected: __undefined__
+  description: "Nested nullish coalescing resolves to undefined"

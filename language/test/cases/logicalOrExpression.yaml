@@ -1,3 +1,5 @@
+# Logical OR expression tests
+
 - source: "true || true"
   expected: true
   description: "Both operands are true"
