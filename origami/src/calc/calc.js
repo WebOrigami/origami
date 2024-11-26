@@ -7,6 +7,7 @@ export function add(...args) {
 }
 
 export function and(...args) {
+  console.warn(`Warning: "and" is deprecated. Use the "&&" operator instead.`);
   return args.every((arg) => arg);
 }
 
@@ -15,6 +16,9 @@ export function divide(a, b) {
 }
 
 export function equals(a, b) {
+  console.warn(
+    `Warning: "equals" is deprecated. Use the "===" operator instead.`
+  );
   return a === b;
 }
 
@@ -28,7 +32,7 @@ export function equals(a, b) {
  */
 export async function ifBuiltin(value, trueResult, falseResult) {
   console.warn(
-    `warning: "if" is deprecated. Use the conditional "a ? b : c" operator instead.`
+    `Warning: "if" is deprecated. Use the conditional "a ? b : c" operator instead.`
   );
 
   assertTreeIsDefined(this, "calc:if");
@@ -53,10 +57,12 @@ export function multiply(...args) {
 }
 
 export function not(value) {
+  console.warn(`Warning: "not" is deprecated. Use the "!" operator instead.`);
   return !value;
 }
 
 export function or(...args) {
+  console.warn(`Warning: "or" is deprecated. Use the "||" operator instead.`);
   return args.find((arg) => arg);
 }
 
