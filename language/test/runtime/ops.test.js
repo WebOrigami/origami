@@ -19,7 +19,7 @@ describe.only("ops", () => {
     tree.parent = root;
     const code = createCode([ops.builtin, "a"]);
     const result = await evaluate.call(tree, code);
-    assert.equal(result, 1);
+    assert.strictEqual(result, 1);
   });
 
   test("ops.concat concatenates tree value text", async () => {
@@ -30,7 +30,25 @@ describe.only("ops", () => {
     const code = createCode([ops.concat, "Hello, ", [ops.scope, "name"], "."]);
 
     const result = await evaluate.call(scope, code);
-    assert.equal(result, "Hello, world.");
+    assert.strictEqual(result, "Hello, world.");
+  });
+
+  test("ops.conditional", async () => {
+    assert.strictEqual(await ops.conditional(true, trueFn, falseFn), true);
+    assert.strictEqual(await ops.conditional(true, falseFn, trueFn), false);
+    assert.strictEqual(await ops.conditional(false, trueFn, falseFn), false);
+    assert.strictEqual(await ops.conditional(false, falseFn, trueFn), true);
+
+    // Short-circuiting
+    assert.strictEqual(await ops.conditional(false, errorFn, trueFn), true);
+  });
+
+  test("ops.equal", async () => {
+    assert.strictEqual(await ops.equal(1, 1), true);
+    assert.strictEqual(await ops.equal(1, 2), false);
+    assert.strictEqual(await ops.equal("1", 1), true);
+    assert.strictEqual(await ops.equal("1", "1"), true);
+    assert.strictEqual(await ops.equal(null, undefined), true);
   });
 
   test("ops.external looks up a value in scope and memoizes it", async () => {
@@ -42,9 +60,9 @@ describe.only("ops", () => {
     });
     const code = createCode([ops.external, "count", {}]);
     const result = await evaluate.call(tree, code);
-    assert.equal(result, 1);
+    assert.strictEqual(result, 1);
     const result2 = await evaluate.call(tree, code);
-    assert.equal(result2, 1);
+    assert.strictEqual(result2, 1);
   });
 
   test("ops.inherited searches inherited scope", async () => {
@@ -58,14 +76,14 @@ describe.only("ops", () => {
     child.parent = parent;
     const code = createCode([ops.inherited, "a"]);
     const result = await evaluate.call(child, code);
-    assert.equal(result, 1);
+    assert.strictEqual(result, 1);
   });
 
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
     const fn = await evaluate.call(null, code);
     const result = await fn.call();
-    assert.equal(result, "result");
+    assert.strictEqual(result, "result");
   });
 
   test("ops.lambda defines a function with underscore input", async () => {
@@ -77,7 +95,7 @@ describe.only("ops", () => {
 
     const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
-    assert.equal(result, "Hello");
+    assert.strictEqual(result, "Hello");
   });
 
   test("ops.lambda adds input parameters to scope", async () => {
@@ -88,7 +106,57 @@ describe.only("ops", () => {
     ]);
     const fn = await evaluate.call(null, code);
     const result = await fn("x", "y");
-    assert.equal(result, "yx");
+    assert.strictEqual(result, "yx");
+  });
+
+  test("ops.logicalAnd", async () => {
+    assert.strictEqual(await ops.logicalAnd(true, trueFn), true);
+    assert.strictEqual(await ops.logicalAnd(true, falseFn), false);
+    assert.strictEqual(await ops.logicalAnd(false, trueFn), false);
+    assert.strictEqual(await ops.logicalAnd(false, falseFn), false);
+
+    assert.strictEqual(await ops.logicalAnd(true, "hi"), "hi");
+
+    // Short-circuiting
+    assert.strictEqual(await ops.logicalAnd(false, errorFn), false);
+    assert.strictEqual(await ops.logicalAnd(0, true), 0);
+  });
+
+  test("ops.logicalOr", async () => {
+    assert.strictEqual(await ops.logicalOr(true, trueFn), true);
+    assert.strictEqual(await ops.logicalOr(true, falseFn), true);
+    assert.strictEqual(await ops.logicalOr(false, trueFn), true);
+    assert.strictEqual(await ops.logicalOr(false, falseFn), false);
+
+    assert.strictEqual(await ops.logicalOr(false, "hi"), "hi");
+
+    // Short-circuiting
+    assert.strictEqual(await ops.logicalOr(true, errorFn), true);
+  });
+
+  test("ops.notEqual", async () => {
+    assert.strictEqual(await ops.notEqual(1, 1), false);
+    assert.strictEqual(await ops.notEqual(1, 2), true);
+    assert.strictEqual(await ops.notEqual("1", 1), false);
+    assert.strictEqual(await ops.notEqual("1", "1"), false);
+    assert.strictEqual(await ops.notEqual(null, undefined), false);
+  });
+
+  test("ops.notStrictEqual", async () => {
+    assert.strictEqual(await ops.notStrictEqual(1, 1), false);
+    assert.strictEqual(await ops.notStrictEqual(1, 2), true);
+    assert.strictEqual(await ops.notStrictEqual("1", 1), true);
+    assert.strictEqual(await ops.notStrictEqual("1", "1"), false);
+    assert.strictEqual(await ops.notStrictEqual(null, undefined), true);
+  });
+
+  test("ops.nullishCoalescing", async () => {
+    assert.strictEqual(await ops.nullishCoalescing(1, falseFn), 1);
+    assert.strictEqual(await ops.nullishCoalescing(null, trueFn), true);
+    assert.strictEqual(await ops.nullishCoalescing(undefined, trueFn), true);
+
+    // Short-circuiting
+    assert.strictEqual(await ops.nullishCoalescing(1, errorFn), 1);
   });
 
   test("ops.object instantiates an object", async () => {
@@ -103,8 +171,8 @@ describe.only("ops", () => {
     ]);
 
     const result = await evaluate.call(scope, code);
-    assert.equal(result.hello, "HELLO");
-    assert.equal(result.world, "WORLD");
+    assert.strictEqual(result.hello, "HELLO");
+    assert.strictEqual(result.world, "WORLD");
   });
 
   test("ops.object instantiates an array", async () => {
@@ -121,90 +189,21 @@ describe.only("ops", () => {
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
+  test("ops.strictEqual", async () => {
+    assert.strictEqual(await ops.strictEqual(1, 1), true);
+    assert.strictEqual(await ops.strictEqual(1, 2), false);
+    assert.strictEqual(await ops.strictEqual("1", 1), false);
+    assert.strictEqual(await ops.strictEqual("1", "1"), true);
+    assert.strictEqual(await ops.strictEqual(null, undefined), false);
+    assert.strictEqual(await ops.strictEqual(null, null), true);
+    assert.strictEqual(await ops.strictEqual(undefined, undefined), true);
+  });
+
   test("ops.unpack unpacks a value", async () => {
     const fixture = new String("packed");
     /** @type {any} */ (fixture).unpack = async () => "unpacked";
     const result = await ops.unpack.call(null, fixture);
-    assert.equal(result, "unpacked");
-  });
-
-  describe("calc", async () => {
-    test("ops.conditional", async () => {
-      assert.equal(await ops.conditional(true, trueFn, falseFn), true);
-      assert.equal(await ops.conditional(true, falseFn, trueFn), false);
-      assert.equal(await ops.conditional(false, trueFn, falseFn), false);
-      assert.equal(await ops.conditional(false, falseFn, trueFn), true);
-
-      // Short-circuiting
-      assert.equal(await ops.conditional(false, errorFn, trueFn), true);
-    });
-
-    test("ops.equal", async () => {
-      assert.equal(await ops.equal(1, 1), true);
-      assert.equal(await ops.equal(1, 2), false);
-      assert.equal(await ops.equal("1", 1), true);
-      assert.equal(await ops.equal("1", "1"), true);
-      assert.equal(await ops.equal(null, undefined), true);
-    });
-
-    test("ops.notEqual", async () => {
-      assert.equal(await ops.notEqual(1, 1), false);
-      assert.equal(await ops.notEqual(1, 2), true);
-      assert.equal(await ops.notEqual("1", 1), false);
-      assert.equal(await ops.notEqual("1", "1"), false);
-      assert.equal(await ops.notEqual(null, undefined), false);
-    });
-
-    test("ops.notStrictEqual", async () => {
-      assert.equal(await ops.notStrictEqual(1, 1), false);
-      assert.equal(await ops.notStrictEqual(1, 2), true);
-      assert.equal(await ops.notStrictEqual("1", 1), true);
-      assert.equal(await ops.notStrictEqual("1", "1"), false);
-      assert.equal(await ops.notStrictEqual(null, undefined), true);
-    });
-
-    test("ops.strictEqual", async () => {
-      assert.equal(await ops.strictEqual(1, 1), true);
-      assert.equal(await ops.strictEqual(1, 2), false);
-      assert.equal(await ops.strictEqual("1", 1), false);
-      assert.equal(await ops.strictEqual("1", "1"), true);
-      assert.equal(await ops.strictEqual(null, undefined), false);
-      assert.equal(await ops.strictEqual(null, null), true);
-      assert.equal(await ops.strictEqual(undefined, undefined), true);
-    });
-
-    test("ops.logicalAnd", async () => {
-      assert.equal(await ops.logicalAnd(true, trueFn), true);
-      assert.equal(await ops.logicalAnd(true, falseFn), false);
-      assert.equal(await ops.logicalAnd(false, trueFn), false);
-      assert.equal(await ops.logicalAnd(false, falseFn), false);
-
-      assert.equal(await ops.logicalAnd(true, "hi"), "hi");
-
-      // Short-circuiting
-      assert.equal(await ops.logicalAnd(false, errorFn), false);
-    });
-
-    test("ops.logicalOr", async () => {
-      assert.equal(await ops.logicalOr(true, trueFn), true);
-      assert.equal(await ops.logicalOr(true, falseFn), true);
-      assert.equal(await ops.logicalOr(false, trueFn), true);
-      assert.equal(await ops.logicalOr(false, falseFn), false);
-
-      assert.equal(await ops.logicalOr(false, "hi"), "hi");
-
-      // Short-circuiting
-      assert.equal(await ops.logicalOr(true, errorFn), true);
-    });
-
-    test("ops.nullishCoalescing", async () => {
-      assert.equal(await ops.nullishCoalescing(1, falseFn), 1);
-      assert.equal(await ops.nullishCoalescing(null, trueFn), true);
-      assert.equal(await ops.nullishCoalescing(undefined, trueFn), true);
-
-      // Short-circuiting
-      assert.equal(await ops.nullishCoalescing(1, errorFn), 1);
-    });
+    assert.strictEqual(result, "unpacked");
   });
 });
 

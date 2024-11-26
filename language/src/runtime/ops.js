@@ -293,14 +293,14 @@ export async function equal(a, b) {
 
 export async function logicalAnd(head, ...tail) {
   if (!head) {
-    return false;
+    return head;
   }
   // Evaluate the tail arguments in order, short-circuiting if any are falsy.
   let lastValue;
   for (const arg of tail) {
     lastValue = arg instanceof Function ? await arg() : arg;
     if (!lastValue) {
-      return false;
+      return lastValue;
     }
   }
 
@@ -310,7 +310,7 @@ export async function logicalAnd(head, ...tail) {
 
 export async function logicalOr(head, ...tail) {
   if (head) {
-    return true;
+    return head;
   }
   // Evaluate the tail arguments in order, short-circuiting if any are truthy.
   for (const arg of tail) {
