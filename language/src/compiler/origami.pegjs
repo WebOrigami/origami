@@ -64,7 +64,7 @@ arrowFunction
 // A function call: `fn(arg)`, possibly part of a chain of function calls, like
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
-  = head:primary tail:arguments* {
+  = head:protocolExpression tail:arguments* {
       return tail.length === 0
         ? head
         : annotate(tail.reduce(makeCall, head), location());
@@ -398,14 +398,13 @@ primary
 program "Origami program"
   = shebang? @expression
 
-// A namespace with a double-slash path: `https://example.com/index.html`
-protocolPath
+// Protocol with double-slash path: `https://example.com/index.html`
+protocolExpression
   = fn:namespace "//" host:host path:path? {
-      return annotate(
-        makeCall(fn, [host, ...(path ?? [])]),
-        location()
-      );
+      const keys = annotate([host, ...(path ?? [])], location());
+      return annotate(makeCall(fn, keys), location());
     }
+  / primary
 
 // A namespace followed by a key: `foo:x`
 qualifiedReference

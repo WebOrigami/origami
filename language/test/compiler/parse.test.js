@@ -347,9 +347,10 @@ describe("Origami parser", () => {
         ],
       ],
     ]);
-    assertParse("expression", `"https://example.com"`, [
-      ops.literal,
-      "https://example.com",
+    assertParse("expression", `https://example.com/about/`, [
+      [ops.builtin, "https:"],
+      [ops.literal, "example.com/"],
+      [ops.literal, "about/"],
     ]);
     assertParse("expression", "tag`Hello, ${name}!`", [
       [ops.builtin, "tag"],
@@ -729,27 +730,27 @@ describe("Origami parser", () => {
     );
   });
 
-  test("protocolPath", () => {
-    assertParse("protocolPath", "foo://bar", [
+  test("protocolExpression", () => {
+    assertParse("protocolExpression", "foo://bar", [
       [ops.builtin, "foo:"],
       [ops.literal, "bar"],
     ]);
-    assertParse("protocolPath", "http://example.com", [
+    assertParse("protocolExpression", "http://example.com", [
       [ops.builtin, "http:"],
       [ops.literal, "example.com"],
     ]);
-    assertParse("protocolPath", "https://example.com/about/", [
+    assertParse("protocolExpression", "https://example.com/about/", [
       [ops.builtin, "https:"],
       [ops.literal, "example.com/"],
       [ops.literal, "about/"],
     ]);
-    assertParse("protocolPath", "https://example.com/about/index.html", [
+    assertParse("protocolExpression", "https://example.com/about/index.html", [
       [ops.builtin, "https:"],
       [ops.literal, "example.com/"],
       [ops.literal, "about/"],
       [ops.literal, "index.html"],
     ]);
-    assertParse("protocolPath", "http://localhost:5000/foo", [
+    assertParse("protocolExpression", "http://localhost:5000/foo", [
       [ops.builtin, "http:"],
       [ops.literal, "localhost:5000/"],
       [ops.literal, "foo"],
