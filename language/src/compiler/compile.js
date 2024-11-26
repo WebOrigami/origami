@@ -6,7 +6,7 @@ import { annotate, undetermined } from "./parserHelpers.js";
 
 function compile(source, options) {
   const { startRule } = options;
-  const scopeCaching = options.scopeCaching ?? true;
+  const enableCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }
@@ -15,7 +15,7 @@ function compile(source, options) {
     startRule,
   });
   const cache = {};
-  const modified = scopeCaching ? transformScopeReferences(code, cache) : code;
+  const modified = transformScopeReferences(code, cache, enableCaching);
   const fn = createExpressionFunction(modified);
   return fn;
 }
@@ -31,7 +31,12 @@ export function expression(source, options = {}) {
 // same time, transform those or explicit ops.scope calls to ops.external calls
 // unless they refer to local variables (variables defined by object literals or
 // lambda parameters).
-export function transformScopeReferences(code, cache, locals = {}) {
+export function transformScopeReferences(
+  code,
+  cache,
+  enableCaching,
+  locals = {}
+) {
   const [fn, ...args] = code;
 
   let additionalLocalNames;
@@ -40,7 +45,7 @@ export function transformScopeReferences(code, cache, locals = {}) {
     case ops.scope:
       const key = args[0];
       const normalizedKey = trailingSlash.remove(key);
-      if (!locals[normalizedKey]) {
+      if (enableCaching && !locals[normalizedKey]) {
         // Upgrade to cached external reference
         const modified = [ops.external, key, cache];
         annotate(modified, code.location);
@@ -80,7 +85,12 @@ export function transformScopeReferences(code, cache, locals = {}) {
       // be preferable to only descend into instructions. This would require
       // surrounding ops.lambda parameters with ops.literal, and ops.object
       // entries with ops.array.
-      return transformScopeReferences(child, cache, updatedLocals);
+      return transformScopeReferences(
+        child,
+        cache,
+        enableCaching,
+        updatedLocals
+      );
     } else {
       return child;
     }

@@ -10,7 +10,7 @@ const shared = new ObjectTree({
   name: "Alice",
 });
 
-describe("compile", () => {
+describe.only("compile", () => {
   test("array", async () => {
     await assertCompile("[]", []);
     await assertCompile("[ 1, 2, 3, ]", [1, 2, 3]);
@@ -85,7 +85,7 @@ describe("compile", () => {
     assert.equal(bob, "Hello, Bob!");
   });
 
-  test("converts non-local ops.scope calls to ops.cache", async () => {
+  test.only("converts non-local ops.scope calls to ops.external", async () => {
     const expression = `
       (name) => {
         a: 1
