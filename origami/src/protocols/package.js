@@ -7,22 +7,39 @@ import project from "../origami/project.js";
  */
 export default async function packageNamespace(...keys) {
   const parent = this ?? (await project.call(null));
-  const parentScope = scope(parent);
 
-  const packageKeys = [keys.shift()];
-  if (packageKeys[0]?.startsWith("@")) {
-    // First key is an npm organization, get the next key too.
-    packageKeys.push(keys.shift());
+  let name = keys.shift();
+  let organization;
+  if (name?.startsWith("@")) {
+    // First key is an npm organization
+    organization = name;
+    if (keys.length === 0) {
+      // Return a function that will process the next key
+      return async (name, ...keys) =>
+        getPackage(parent, organization, name, keys);
+    }
+    name = keys.shift();
   }
 
+  return getPackage(parent, organization, name, keys);
+}
+
+async function getPackage(parent, organization, name, keys) {
+  const packagePath = ["node_modules"];
+  if (organization) {
+    packagePath.push(organization);
+  }
+  packagePath.push(name);
+
+  const parentScope = scope(parent);
   const packageRoot = await Tree.traverse(
     // @ts-ignore
     parentScope,
-    "node_modules",
-    ...packageKeys
+    ...packagePath
   );
+
   if (!packageRoot) {
-    throw new Error(`Can't find node_modules/${packageKeys.join("/")}`);
+    throw new Error(`Can't find ${packagePath.join("/")}`);
   }
 
   const mainPath = await Tree.traverse(packageRoot, "package.json", "main");
@@ -44,5 +61,10 @@ export default async function packageNamespace(...keys) {
     keys.length > 0
       ? await Tree.traverse(packageExports, ...keys)
       : packageExports;
+
+  if (Tree.isAsyncTree(result)) {
+    result.parent = parent;
+  }
+
   return result;
 }
