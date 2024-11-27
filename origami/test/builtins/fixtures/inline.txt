@@ -1,3 +1,0 @@
-This document's substitutions can be inlined with `ori @inline inline.txt`.
-
-${ plain.txt }
