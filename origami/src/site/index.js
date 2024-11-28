@@ -1,5 +1,5 @@
 import getTreeArgument from "../common/getTreeArgument.js";
-import { keySymbol } from "../common/utilities.js";
+import { getDescriptor } from "../common/utilities.js";
 
 /**
  * Return a default index.html page for the current tree.
@@ -26,7 +26,7 @@ export default async function index(treelike) {
     links.push(link);
   }
 
-  const heading = tree[keySymbol] ?? "Index";
+  const heading = getDescriptor(tree) ?? "Index";
   const list = `    <ul>\n${links.join("\n")}\n    </ul>`;
 
   const html = `<!DOCTYPE html>

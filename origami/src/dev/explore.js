@@ -4,7 +4,7 @@ import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import { keySymbol } from "../common/utilities.js";
+import { getDescriptor } from "../common/utilities.js";
 import { builtinsTree } from "../internal.js";
 import debug from "./debug.js";
 
@@ -61,7 +61,7 @@ async function getScopeData(scope) {
       // Skip builtins.
       continue;
     }
-    const name = tree[keySymbol];
+    const name = getDescriptor(tree);
     const treeKeys = Array.from(await tree.keys());
     // Skip system-ish files that start with a period.
     const keys = treeKeys.filter((key) => !key.startsWith?.("."));

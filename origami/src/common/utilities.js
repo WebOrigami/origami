@@ -3,7 +3,29 @@ import {
   toString as asyncTreeToString,
   isPlainObject,
   isUnpackable,
+  trailingSlash,
 } from "@weborigami/async-tree";
+import { symbols } from "@weborigami/language";
+import { basename } from "node:path";
+
+// For a given tree, return some user-friendly descriptor
+export function getDescriptor(tree) {
+  if ("path" in tree) {
+    return trailingSlash.add(basename(tree.path));
+  }
+
+  const source = tree[symbols.sourceSymbol];
+  if (source) {
+    // If the source looks like an identifier, use that.
+    // TODO: Use real identifier parsing.
+    const identifierRegex = /^[A-Za-z0-9_\-\.]+\/?$/;
+    if (identifierRegex.test(source)) {
+      return trailingSlash.add(source);
+    }
+  }
+
+  return null;
+}
 
 // Return true if the text appears to contain non-printable binary characters;
 // used to infer whether a file is binary or text.
@@ -29,8 +51,6 @@ export function isTransformApplied(Transform, obj) {
   }
   return false;
 }
-
-export const keySymbol = Symbol("key");
 
 /**
  * Convert the given object to a function.

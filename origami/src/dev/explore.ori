@@ -18,7 +18,7 @@
     </div>
     ${ map(scope, (scopeTree) => `
       <ul>
-        <h2>${ scopeTree/name }</h2>
+        <h2>${ scopeTree/name ?? "" }</h2>
         ${ map(scopeTree/keys, (key) => `
         <li>
           <a href="./!explore/${ key }" target="frame">${ key }</a>
