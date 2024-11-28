@@ -48,11 +48,13 @@ export function transformScopeReferences(
       if (enableCaching && !locals[normalizedKey]) {
         // Upgrade to cached external reference
         const modified = [ops.external, key, cache];
+        // @ts-ignore
         annotate(modified, code.location);
         return modified;
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
         const modified = [ops.scope, key];
+        // @ts-ignore
         annotate(modified, code.location);
         return modified;
       } else {

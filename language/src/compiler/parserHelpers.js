@@ -31,25 +31,28 @@ export function annotate(code, location) {
  * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
  * infinite recursion.
  *
- * @param {} code
+ * @param {Code} code
  * @param {string} key
  */
 function avoidRecursivePropertyCalls(code, key) {
   if (!(code instanceof Array)) {
     return code;
   }
+  /** @type {Code} */
   let modified;
   if (
     code[0] === ops.scope &&
     trailingSlash.remove(code[1]) === trailingSlash.remove(key)
   ) {
     // Rewrite to avoid recursion
+    // @ts-ignore
     modified = [ops.inherited, code[1]];
   } else if (code[0] === ops.lambda && code[1].includes(key)) {
     // Lambda that defines the key; don't rewrite
     return code;
   } else {
     // Process any nested code
+    // @ts-ignore
     modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
   }
   annotate(modified, code.location);
@@ -60,10 +63,11 @@ function avoidRecursivePropertyCalls(code, key) {
  * Downgrade a potential builtin reference to a scope reference.
  *
  * @param {Code} code
- * @returns {Code}
  */
 export function downgradeReference(code) {
   if (code && code.length === 2 && code[0] === undetermined) {
+    /** @type {Code} */
+    // @ts-ignore
     const result = [ops.scope, code[1]];
     annotate(result, code.location);
     return result;
@@ -157,7 +161,7 @@ export function makeBinaryOperatorChain(head, tail) {
 export function makeCall(target, args) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
-    /** @type {any} */ (error).location = target.location;
+    /** @type {any} */ (error).location = /** @type {any} */ (target).location;
     throw error;
   }
 
@@ -196,12 +200,14 @@ export function makeCall(target, args) {
 
   // Create a location spanning the newly-constructed function call.
   if (args instanceof Array) {
+    // @ts-ignore
     end = args.location?.end ?? args.at(-1)?.location?.end;
     if (end === undefined) {
       throw "Internal parser error: no location for function call argument";
     }
   }
 
+  // @ts-ignore
   annotate(fnCall, { start, source, end });
 
   return fnCall;
@@ -220,6 +226,7 @@ export function makeDeferredArguments(args) {
       return arg;
     }
     const fn = [ops.lambda, [], arg];
+    // @ts-ignore
     annotate(fn, arg.location);
     return fn;
   });
@@ -279,6 +286,7 @@ export function makePipeline(arg, fn) {
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
+  // @ts-ignore
   annotate(result, { start, source, end });
   return result;
 }
@@ -325,10 +333,11 @@ export function makeUnaryOperatorCall(operator, value) {
  * Upgrade a potential builtin reference to an actual builtin reference.
  *
  * @param {Code} code
- * @returns {Code}
  */
 export function upgradeReference(code) {
   if (code.length === 2 && code[0] === undetermined) {
+    /** @type {Code} */
+    // @ts-ignore
     const result = [ops.builtin, code[1]];
     annotate(result, code.location);
     return result;
