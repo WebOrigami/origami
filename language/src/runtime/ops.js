@@ -27,6 +27,11 @@ function addOpLabel(op, label) {
   });
 }
 
+export function addition(a, b) {
+  return a + b;
+}
+addOpLabel(addition, "«ops.addition»");
+
 /**
  * Construct an array.
  *
@@ -72,6 +77,11 @@ addOpLabel(concat, "«ops.concat»");
 export async function conditional(condition, truthy, falsy) {
   return condition ? truthy() : falsy();
 }
+
+export function division(a, b) {
+  return a / b;
+}
+addOpLabel(division, "«ops.division»");
 
 export async function equal(a, b) {
   return a == b;
@@ -256,18 +266,10 @@ export async function merge(...trees) {
 }
 addOpLabel(merge, "«ops.merge»");
 
-/**
- * Construct an object. The keys will be the same as the given `obj`
- * parameter's, and the values will be the results of evaluating the
- * corresponding code values in `obj`.
- *
- * @this {AsyncTree|null}
- * @param {any[]} entries
- */
-export async function object(...entries) {
-  return expressionObject(entries, this);
+export function multiplication(a, b) {
+  return a * b;
 }
-addOpLabel(object, "«ops.object»");
+addOpLabel(multiplication, "«ops.multiplication»");
 
 export async function notEqual(a, b) {
   return a != b;
@@ -295,6 +297,24 @@ export async function nullishCoalescing(head, ...tail) {
 
   return lastValue;
 }
+
+/**
+ * Construct an object. The keys will be the same as the given `obj`
+ * parameter's, and the values will be the results of evaluating the
+ * corresponding code values in `obj`.
+ *
+ * @this {AsyncTree|null}
+ * @param {any[]} entries
+ */
+export async function object(...entries) {
+  return expressionObject(entries, this);
+}
+addOpLabel(object, "«ops.object»");
+
+export function remainder(a, b) {
+  return a % b;
+}
+addOpLabel(remainder, "«ops.remainder»");
 
 /**
  * Files tree for the filesystem root.
@@ -342,6 +362,11 @@ addOpLabel(spread, "«ops.spread»");
 export async function strictEqual(a, b) {
   return a === b;
 }
+
+export function subtraction(a, b) {
+  return a - b;
+}
+addOpLabel(subtraction, "«ops.subtraction»");
 
 /**
  * Apply the default tagged template function.

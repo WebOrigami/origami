@@ -5,6 +5,19 @@ import { describe, test } from "node:test";
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
 describe("ops", () => {
+  test("ops.addition adds two numbers", async () => {
+    assert.strictEqual(ops.addition(2, 2), 4);
+    assert.strictEqual(ops.addition(2, true), 3);
+  });
+
+  test("ops.addition concatenates two strings", async () => {
+    assert.strictEqual(ops.addition("hello ", "everyone"), "hello everyone");
+    assert.strictEqual(
+      ops.addition("2001", ": A Space Odyssey"),
+      "2001: A Space Odyssey"
+    );
+  });
+
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
     const result = await evaluate.call(null, code);
@@ -41,6 +54,13 @@ describe("ops", () => {
 
     // Short-circuiting
     assert.strictEqual(await ops.conditional(false, errorFn, trueFn), true);
+  });
+
+  test("ops.division divides two numbers", async () => {
+    assert.strictEqual(ops.division(12, 2), 6);
+    assert.strictEqual(ops.division(3, 2), 1.5);
+    assert.strictEqual(ops.division(6, "3"), 2);
+    assert.strictEqual(ops.division(2, 0), Infinity);
   });
 
   test("ops.equal", async () => {
@@ -141,6 +161,13 @@ describe("ops", () => {
     assert.strictEqual(await ops.logicalOr(true, errorFn), true);
   });
 
+  test("ops.multiplication multiplies two numbers", async () => {
+    assert.strictEqual(ops.multiplication(3, 4), 12);
+    assert.strictEqual(ops.multiplication(-3, 4), -12);
+    assert.strictEqual(ops.multiplication("3", 2), 6);
+    assert.strictEqual(ops.multiplication("foo", 2), NaN);
+  });
+
   test("ops.notEqual", async () => {
     assert.strictEqual(await ops.notEqual(1, 1), false);
     assert.strictEqual(await ops.notEqual(1, 2), true);
@@ -196,6 +223,13 @@ describe("ops", () => {
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
+  test("ops.remainder calculates the remainder of two numbers", async () => {
+    assert.strictEqual(ops.remainder(13, 5), 3);
+    assert.strictEqual(ops.remainder(-13, 5), -3);
+    assert.strictEqual(ops.remainder(4, 2), 0);
+    assert.strictEqual(ops.remainder(-4, 2), -0);
+  });
+
   test("ops.strictEqual", async () => {
     assert.strictEqual(await ops.strictEqual(1, 1), true);
     assert.strictEqual(await ops.strictEqual(1, 2), false);
@@ -204,6 +238,13 @@ describe("ops", () => {
     assert.strictEqual(await ops.strictEqual(null, undefined), false);
     assert.strictEqual(await ops.strictEqual(null, null), true);
     assert.strictEqual(await ops.strictEqual(undefined, undefined), true);
+  });
+
+  test("ops.subtraction subtracts two numbers", async () => {
+    assert.strictEqual(ops.subtraction(5, 3), 2);
+    assert.strictEqual(ops.subtraction(3.5, 5), -1.5);
+    assert.strictEqual(ops.subtraction(5, "hello"), NaN);
+    assert.strictEqual(ops.subtraction(5, true), 4);
   });
 
   test("ops.unpack unpacks a value", async () => {

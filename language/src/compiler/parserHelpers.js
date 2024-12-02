@@ -137,10 +137,15 @@ export function makeBinaryOperatorChain(head, tail) {
   for (const [operatorToken, right] of tail) {
     const left = value;
     const operators = {
-      "===": ops.strictEqual,
-      "!==": ops.notStrictEqual,
-      "==": ops.equal,
       "!=": ops.notEqual,
+      "!==": ops.notStrictEqual,
+      "%": ops.remainder,
+      "*": ops.multiplication,
+      "+": ops.addition,
+      "-": ops.subtraction,
+      "/": ops.division,
+      "==": ops.equal,
+      "===": ops.strictEqual,
     };
     const op = operators[operatorToken];
     // @ts-ignore

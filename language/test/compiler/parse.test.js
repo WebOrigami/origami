@@ -6,6 +6,19 @@ import * as ops from "../../src/runtime/ops.js";
 import { stripCodeLocations } from "./stripCodeLocations.js";
 
 describe("Origami parser", () => {
+  test("additiveExpression", () => {
+    assertParse("additiveExpression", "1 + 2", [
+      ops.addition,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
+    assertParse("additiveExpression", "5 - 4", [
+      ops.subtraction,
+      [ops.literal, 5],
+      [ops.literal, 4],
+    ]);
+  });
+
   test("arrayLiteral", () => {
     assertParse("arrayLiteral", "[]", [ops.array]);
     assertParse("arrayLiteral", "[1, 2, 3]", [
@@ -488,6 +501,24 @@ describe("Origami parser", () => {
 
   test("multiLineComment", () => {
     assertParse("multiLineComment", "/*\nHello, world!\n*/", null, false);
+  });
+
+  test("multiplicativeExpression", () => {
+    assertParse("multiplicativeExpression", "3 * 4", [
+      ops.multiplication,
+      [ops.literal, 3],
+      [ops.literal, 4],
+    ]);
+    assertParse("multiplicativeExpression", "5 / 2", [
+      ops.division,
+      [ops.literal, 5],
+      [ops.literal, 2],
+    ]);
+    assertParse("multiplicativeExpression", "6 % 5", [
+      ops.remainder,
+      [ops.literal, 6],
+      [ops.literal, 5],
+    ]);
   });
 
   test("namespace", () => {

@@ -35,6 +35,17 @@ __
     return null;
   }
 
+additiveExpression
+  = head:multiplicativeExpression tail:(__ @additiveOperator __ @multiplicativeExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+additiveOperator
+  = "+"
+  / "-"
+
 arguments "function arguments"
   = parenthesesArguments
   / pathArguments
@@ -129,7 +140,7 @@ doubleQuoteStringChar
 ellipsis = "..." / "…" // Unicode ellipsis
 
 equalityExpression
-  = head:unaryExpression tail:(__ @equalityOperator __ @unaryExpression)* {
+  = head:additiveExpression tail:(__ @equalityOperator __ @additiveExpression)* {
       return tail.length === 0
         ? head
         : annotate(makeBinaryOperatorChain(head, tail), location());
@@ -256,6 +267,18 @@ logicalOrExpression
 
 multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
+
+multiplicativeExpression
+  = head:unaryExpression tail:(__ @multiplicativeOperator __ @unaryExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+multiplicativeOperator
+  = "*"
+  / "/"
+  / "%"
 
 // A namespace reference is a string of letters only, followed by a colon.
 // For the time being, we also allow a leading `@`, which is deprecated.
