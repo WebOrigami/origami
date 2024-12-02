@@ -16,7 +16,7 @@ import {
   annotate,
   downgradeReference,
   makeArray,
-  makeBinaryOperatorChain,
+  makeBinaryOperation,
   makeCall,
   makeDeferredArguments,
   makeObject,
@@ -39,7 +39,7 @@ additiveExpression
   = head:multiplicativeExpression tail:(__ @additiveOperator __ @multiplicativeExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 additiveOperator
@@ -76,7 +76,7 @@ bitwiseAndExpression
   = head:equalityExpression tail:(__ @bitwiseAndOperator __ @equalityExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseAndOperator
@@ -86,7 +86,7 @@ bitwiseOrExpression
   = head:bitwiseXorExpression tail:(__ @bitwiseOrOperator __ @bitwiseXorExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseOrOperator
@@ -96,7 +96,7 @@ bitwiseXorExpression
   = head:bitwiseAndExpression tail:(__ @bitwiseXorOperator __ @bitwiseAndExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseXorOperator
@@ -173,7 +173,7 @@ equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 equalityOperator
@@ -302,7 +302,7 @@ multiplicativeExpression
   = head:unaryExpression tail:(__ @multiplicativeOperator __ @unaryExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 multiplicativeOperator
@@ -396,7 +396,7 @@ relationalExpression
   = head:additiveExpression tail:(__ @relationalOperator __ @additiveExpression)* {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 relationalOperator

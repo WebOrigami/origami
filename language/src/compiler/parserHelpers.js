@@ -128,41 +128,38 @@ export function makeArray(entries) {
  * Create a chain of binary operators. The head is the first value, and the tail
  * is an array of [operator, value] pairs.
  *
- * @param {Code} head
- * @param {[any, Code][]} tail
+ * @param {Code} left
  */
-export function makeBinaryOperatorChain(head, tail) {
+export function makeBinaryOperation(left, [operatorToken, right]) {
+  const operators = {
+    "!=": ops.notEqual,
+    "!==": ops.notStrictEqual,
+    "%": ops.remainder,
+    "&": ops.bitwiseAnd,
+    "*": ops.multiplication,
+    "+": ops.addition,
+    "-": ops.subtraction,
+    "/": ops.division,
+    "<": ops.lessThan,
+    "<=": ops.lessThanOrEqual,
+    "==": ops.equal,
+    "===": ops.strictEqual,
+    ">": ops.greaterThan,
+    ">=": ops.greaterThanOrEqual,
+    "^": ops.bitwiseXor,
+    "|": ops.bitwiseOr,
+  };
+  const op = operators[operatorToken];
+
   /** @type {Code} */
-  let value = head;
-  for (const [operatorToken, right] of tail) {
-    const left = value;
-    const operators = {
-      "!=": ops.notEqual,
-      "!==": ops.notStrictEqual,
-      "%": ops.remainder,
-      "&": ops.bitwiseAnd,
-      "*": ops.multiplication,
-      "+": ops.addition,
-      "-": ops.subtraction,
-      "/": ops.division,
-      "<": ops.lessThan,
-      "<=": ops.lessThanOrEqual,
-      "==": ops.equal,
-      "===": ops.strictEqual,
-      ">": ops.greaterThan,
-      ">=": ops.greaterThanOrEqual,
-      "^": ops.bitwiseXor,
-      "|": ops.bitwiseOr,
-    };
-    const op = operators[operatorToken];
-    // @ts-ignore
-    value = [op, left, right];
-    value.location = {
-      source: left.location.source,
-      start: left.location.start,
-      end: right.location.end,
-    };
-  }
+  // @ts-ignore
+  const value = [op, left, right];
+  value.location = {
+    source: left.location.source,
+    start: left.location.start,
+    end: right.location.end,
+  };
+
   return value;
 }
 

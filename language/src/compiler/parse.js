@@ -21,7 +21,7 @@ import {
   annotate,
   downgradeReference,
   makeArray,
-  makeBinaryOperatorChain,
+  makeBinaryOperation,
   makeCall,
   makeDeferredArguments,
   makeObject,
@@ -376,7 +376,7 @@ function peg$parse(input, options) {
   var peg$f1 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f2 = function(entries) {
       return annotate(makeArray(entries ?? []), location());
@@ -390,17 +390,17 @@ function peg$parse(input, options) {
   var peg$f5 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f6 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f7 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f8 = function(head, tail) {
       return tail.length === 0
@@ -430,7 +430,7 @@ function peg$parse(input, options) {
   var peg$f14 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f15 = function() { return "\0"; };
   var peg$f16 = function() { return "\b"; };
@@ -493,7 +493,7 @@ function peg$parse(input, options) {
   var peg$f36 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f37 = function(at, chars) {
     return annotate([ops.builtin, (at ?? "") + chars.join("") + ":"], location());
@@ -535,7 +535,7 @@ function peg$parse(input, options) {
   var peg$f47 = function(head, tail) {
       return tail.length === 0
         ? head
-        : annotate(makeBinaryOperatorChain(head, tail), location());
+        : annotate(tail.reduce(makeBinaryOperation, head), location());
     };
   var peg$f48 = function(list) {
       return annotate(list ?? [undefined], location());
