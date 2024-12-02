@@ -795,6 +795,29 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("relationalExpression", () => {
+    assertParse("relationalExpression", "1 < 2", [
+      ops.lessThan,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
+    assertParse("relationalExpression", "3 > 4", [
+      ops.greaterThan,
+      [ops.literal, 3],
+      [ops.literal, 4],
+    ]);
+    assertParse("relationalExpression", "5 <= 6", [
+      ops.lessThanOrEqual,
+      [ops.literal, 5],
+      [ops.literal, 6],
+    ]);
+    assertParse("relationalExpression", "7 >= 8", [
+      ops.greaterThanOrEqual,
+      [ops.literal, 7],
+      [ops.literal, 8],
+    ]);
+  });
+
   test("rootDirectory", () => {
     assertParse("rootDirectory", "/", [ops.rootDirectory]);
   });

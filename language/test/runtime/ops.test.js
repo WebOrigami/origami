@@ -63,12 +63,12 @@ describe("ops", () => {
     assert.strictEqual(ops.division(2, 0), Infinity);
   });
 
-  test("ops.equal", async () => {
-    assert.strictEqual(await ops.equal(1, 1), true);
-    assert.strictEqual(await ops.equal(1, 2), false);
-    assert.strictEqual(await ops.equal("1", 1), true);
-    assert.strictEqual(await ops.equal("1", "1"), true);
-    assert.strictEqual(await ops.equal(null, undefined), true);
+  test("ops.equal", () => {
+    assert(ops.equal(1, 1));
+    assert(!ops.equal(1, 2));
+    assert(ops.equal("1", 1));
+    assert(ops.equal("1", "1"));
+    assert(ops.equal(null, undefined));
   });
 
   test("ops.external looks up a value in scope and memoizes it", async () => {
@@ -83,6 +83,18 @@ describe("ops", () => {
     assert.strictEqual(result, 1);
     const result2 = await evaluate.call(tree, code);
     assert.strictEqual(result2, 1);
+  });
+
+  test("ops.greaterThan", () => {
+    assert(ops.greaterThan(5, 3));
+    assert(!ops.greaterThan(3, 3));
+    assert(ops.greaterThan("ab", "aa"));
+  });
+
+  test("ops.greaterThanOrEqual", () => {
+    assert(ops.greaterThanOrEqual(5, 3));
+    assert(ops.greaterThanOrEqual(3, 3));
+    assert(ops.greaterThanOrEqual("ab", "aa"));
   });
 
   test("ops.inherited searches inherited scope", async () => {
@@ -129,6 +141,18 @@ describe("ops", () => {
     assert.strictEqual(result, "yx");
   });
 
+  test("ops.lessThan", () => {
+    assert(!ops.lessThan(5, 3));
+    assert(!ops.lessThan(3, 3));
+    assert(ops.lessThan("aa", "ab"));
+  });
+
+  test("ops.lessThanOrEqual", () => {
+    assert(!ops.lessThanOrEqual(5, 3));
+    assert(ops.lessThanOrEqual(3, 3));
+    assert(ops.lessThanOrEqual("aa", "ab"));
+  });
+
   test("ops.logicalAnd", async () => {
     assert.strictEqual(await ops.logicalAnd(true, trueFn), true);
     assert.strictEqual(await ops.logicalAnd(true, falseFn), false);
@@ -168,20 +192,20 @@ describe("ops", () => {
     assert.strictEqual(ops.multiplication("foo", 2), NaN);
   });
 
-  test("ops.notEqual", async () => {
-    assert.strictEqual(await ops.notEqual(1, 1), false);
-    assert.strictEqual(await ops.notEqual(1, 2), true);
-    assert.strictEqual(await ops.notEqual("1", 1), false);
-    assert.strictEqual(await ops.notEqual("1", "1"), false);
-    assert.strictEqual(await ops.notEqual(null, undefined), false);
+  test("ops.notEqual", () => {
+    assert(!ops.notEqual(1, 1));
+    assert(ops.notEqual(1, 2));
+    assert(!ops.notEqual("1", 1));
+    assert(!ops.notEqual("1", "1"));
+    assert(!ops.notEqual(null, undefined));
   });
 
-  test("ops.notStrictEqual", async () => {
-    assert.strictEqual(await ops.notStrictEqual(1, 1), false);
-    assert.strictEqual(await ops.notStrictEqual(1, 2), true);
-    assert.strictEqual(await ops.notStrictEqual("1", 1), true);
-    assert.strictEqual(await ops.notStrictEqual("1", "1"), false);
-    assert.strictEqual(await ops.notStrictEqual(null, undefined), true);
+  test("ops.notStrictEqual", () => {
+    assert(!ops.notStrictEqual(1, 1));
+    assert(ops.notStrictEqual(1, 2));
+    assert(ops.notStrictEqual("1", 1));
+    assert(!ops.notStrictEqual("1", "1"));
+    assert(ops.notStrictEqual(null, undefined));
   });
 
   test("ops.nullishCoalescing", async () => {
@@ -230,14 +254,14 @@ describe("ops", () => {
     assert.strictEqual(ops.remainder(-4, 2), -0);
   });
 
-  test("ops.strictEqual", async () => {
-    assert.strictEqual(await ops.strictEqual(1, 1), true);
-    assert.strictEqual(await ops.strictEqual(1, 2), false);
-    assert.strictEqual(await ops.strictEqual("1", 1), false);
-    assert.strictEqual(await ops.strictEqual("1", "1"), true);
-    assert.strictEqual(await ops.strictEqual(null, undefined), false);
-    assert.strictEqual(await ops.strictEqual(null, null), true);
-    assert.strictEqual(await ops.strictEqual(undefined, undefined), true);
+  test("ops.strictEqual", () => {
+    assert(ops.strictEqual(1, 1));
+    assert(!ops.strictEqual(1, 2));
+    assert(!ops.strictEqual("1", 1));
+    assert(ops.strictEqual("1", "1"));
+    assert(!ops.strictEqual(null, undefined));
+    assert(ops.strictEqual(null, null));
+    assert(ops.strictEqual(undefined, undefined));
   });
 
   test("ops.subtraction subtracts two numbers", async () => {

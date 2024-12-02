@@ -83,9 +83,10 @@ export function division(a, b) {
 }
 addOpLabel(division, "«ops.division»");
 
-export async function equal(a, b) {
+export function equal(a, b) {
   return a == b;
 }
+addOpLabel(equal, "«ops.equal»");
 
 /**
  * Look up the given key as an external reference and cache the value for future
@@ -111,6 +112,16 @@ export async function external(key, cache) {
  * "arguments" of the expression should be used to define a property getter.
  */
 export const getter = new String("«ops.getter»");
+
+export function greaterThan(a, b) {
+  return a > b;
+}
+addOpLabel(greaterThan, "«ops.greaterThan»");
+
+export function greaterThanOrEqual(a, b) {
+  return a >= b;
+}
+addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
 
 /**
  * Files tree for the user's home directory.
@@ -200,6 +211,16 @@ export function lambda(parameters, code) {
 }
 addOpLabel(lambda, "«ops.lambda");
 
+export function lessThan(a, b) {
+  return a < b;
+}
+addOpLabel(lessThan, "«ops.lessThan»");
+
+export function lessThanOrEqual(a, b) {
+  return a <= b;
+}
+addOpLabel(lessThanOrEqual, "«ops.lessThanOrEqual»");
+
 /**
  * Return a primitive value
  */
@@ -271,13 +292,15 @@ export function multiplication(a, b) {
 }
 addOpLabel(multiplication, "«ops.multiplication»");
 
-export async function notEqual(a, b) {
+export function notEqual(a, b) {
   return a != b;
 }
+addOpLabel(notEqual, "«ops.notEqual»");
 
-export async function notStrictEqual(a, b) {
+export function notStrictEqual(a, b) {
   return a !== b;
 }
+addOpLabel(notStrictEqual, "«ops.notStrictEqual»");
 
 /**
  * Nullish coalescing operator
@@ -359,9 +382,10 @@ export function spread(...args) {
 }
 addOpLabel(spread, "«ops.spread»");
 
-export async function strictEqual(a, b) {
+export function strictEqual(a, b) {
   return a === b;
 }
+addOpLabel(strictEqual, "«ops.strictEqual»");
 
 export function subtraction(a, b) {
   return a - b;

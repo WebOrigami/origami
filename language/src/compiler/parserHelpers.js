@@ -144,8 +144,12 @@ export function makeBinaryOperatorChain(head, tail) {
       "+": ops.addition,
       "-": ops.subtraction,
       "/": ops.division,
+      "<": ops.lessThan,
+      "<=": ops.lessThanOrEqual,
       "==": ops.equal,
       "===": ops.strictEqual,
+      ">": ops.greaterThan,
+      ">=": ops.greaterThanOrEqual,
     };
     const op = operators[operatorToken];
     // @ts-ignore

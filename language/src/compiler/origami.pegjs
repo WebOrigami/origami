@@ -140,7 +140,7 @@ doubleQuoteStringChar
 ellipsis = "..." / "…" // Unicode ellipsis
 
 equalityExpression
-  = head:additiveExpression tail:(__ @equalityOperator __ @additiveExpression)* {
+  = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
       return tail.length === 0
         ? head
         : annotate(makeBinaryOperatorChain(head, tail), location());
@@ -362,6 +362,19 @@ objectPublicKey
     return string[1];
   }
 
+relationalExpression
+  = head:additiveExpression tail:(__ @relationalOperator __ @additiveExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+relationalOperator
+  = "<="
+  / "<"
+  / ">="
+  / ">"
+  
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
