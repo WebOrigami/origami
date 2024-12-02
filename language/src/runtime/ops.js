@@ -32,6 +32,21 @@ export function addition(a, b) {
 }
 addOpLabel(addition, "«ops.addition»");
 
+export function bitwiseAnd(a, b) {
+  return a & b;
+}
+addOpLabel(bitwiseAnd, "«ops.bitwiseAnd»");
+
+export function bitwiseOr(a, b) {
+  return a | b;
+}
+addOpLabel(bitwiseOr, "«ops.bitwiseOr»");
+
+export function bitwiseXor(a, b) {
+  return a ^ b;
+}
+addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
+
 /**
  * Construct an array.
  *

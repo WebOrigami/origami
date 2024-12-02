@@ -72,6 +72,36 @@ arrowFunction
     }
   / conditionalExpression
 
+bitwiseAndExpression
+  = head:equalityExpression tail:(__ @bitwiseAndOperator __ @equalityExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+bitwiseAndOperator
+  = @"&" !"&"
+
+bitwiseOrExpression
+  = head:bitwiseXorExpression tail:(__ @bitwiseOrOperator __ @bitwiseXorExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+bitwiseOrOperator
+  = @"|" !"|"
+
+bitwiseXorExpression
+  = head:bitwiseAndExpression tail:(__ @bitwiseXorOperator __ @bitwiseAndExpression)* {
+      return tail.length === 0
+        ? head
+        : annotate(makeBinaryOperatorChain(head, tail), location());
+    }
+
+bitwiseXorOperator
+  = "^"
+
 // A function call: `fn(arg)`, possibly part of a chain of function calls, like
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
@@ -246,7 +276,7 @@ literal
   / stringLiteral
 
 logicalAndExpression
-  = head:equalityExpression tail:(__ "&&" __ @equalityExpression)* {
+  = head:bitwiseOrExpression tail:(__ "&&" __ @bitwiseOrExpression)* {
       return tail.length === 0
         ? head
         : annotate(
@@ -374,7 +404,7 @@ relationalOperator
   / "<"
   / ">="
   / ">"
-  
+
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
   = "(" __ list:list? __ ")" {

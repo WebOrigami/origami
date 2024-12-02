@@ -24,6 +24,18 @@ describe("ops", () => {
     assert.deepEqual(result, [1, 2, 3]);
   });
 
+  test("ops.bitwiseAnd", () => {
+    assert.strictEqual(ops.bitwiseAnd(5, 3), 1);
+  });
+
+  test("ops.bitwiseOr", () => {
+    assert.strictEqual(ops.bitwiseOr(5, 3), 7);
+  });
+
+  test("ops.bitwiseXor", () => {
+    assert.strictEqual(ops.bitwiseXor(5, 3), 6);
+  });
+
   test("ops.builtin gets a value from the top of the scope chain", async () => {
     const root = new ObjectTree({
       a: 1,

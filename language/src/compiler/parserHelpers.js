@@ -140,6 +140,7 @@ export function makeBinaryOperatorChain(head, tail) {
       "!=": ops.notEqual,
       "!==": ops.notStrictEqual,
       "%": ops.remainder,
+      "&": ops.bitwiseAnd,
       "*": ops.multiplication,
       "+": ops.addition,
       "-": ops.subtraction,
@@ -150,6 +151,8 @@ export function makeBinaryOperatorChain(head, tail) {
       "===": ops.strictEqual,
       ">": ops.greaterThan,
       ">=": ops.greaterThanOrEqual,
+      "^": ops.bitwiseXor,
+      "|": ops.bitwiseOr,
     };
     const op = operators[operatorToken];
     // @ts-ignore

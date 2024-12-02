@@ -80,6 +80,30 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("bitwiseAndExpression", () => {
+    assertParse("bitwiseAndExpression", "5 & 3", [
+      ops.bitwiseAnd,
+      [ops.literal, 5],
+      [ops.literal, 3],
+    ]);
+  });
+
+  test("bitwiseOrExpression", () => {
+    assertParse("bitwiseOrExpression", "5 | 3", [
+      ops.bitwiseOr,
+      [ops.literal, 5],
+      [ops.literal, 3],
+    ]);
+  });
+
+  test("bitwiseXorExpression", () => {
+    assertParse("bitwiseXorExpression", "5 ^ 3", [
+      ops.bitwiseXor,
+      [ops.literal, 5],
+      [ops.literal, 3],
+    ]);
+  });
+
   test("callExpression", () => {
     assertParse("callExpression", "fn()", [[ops.builtin, "fn"], undefined]);
     assertParse("callExpression", "foo.js(arg)", [
