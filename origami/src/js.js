@@ -5,6 +5,7 @@ async function fetchWrapper(resource, options) {
 
 export default {
   Array,
+  BigInt,
   Boolean,
   Date,
   Error,

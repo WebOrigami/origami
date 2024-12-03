@@ -97,6 +97,8 @@ js:
   commands:
     Array:
       description: JavaScript Array class
+    BigInt:
+      description: JavaScript BigInt class
     Boolean:
       description: JavaScript Boolean class
     Date:
