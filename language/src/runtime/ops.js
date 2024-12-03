@@ -37,6 +37,11 @@ export function bitwiseAnd(a, b) {
 }
 addOpLabel(bitwiseAnd, "«ops.bitwiseAnd»");
 
+export function bitwiseNot(a) {
+  return ~a;
+}
+addOpLabel(bitwiseNot, "«ops.bitwiseNot»");
+
 export function bitwiseOr(a, b) {
   return a | b;
 }
@@ -419,6 +424,16 @@ addOpLabel(template, "«ops.template»");
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
+
+export function unaryMinus(a) {
+  return -a;
+}
+addOpLabel(unaryMinus, "«ops.unaryMinus»");
+
+export function unaryPlus(a) {
+  return +a;
+}
+addOpLabel(unaryPlus, "«ops.unaryPlus»");
 
 /**
  * If the value is packed but has an unpack method, call it and return that as

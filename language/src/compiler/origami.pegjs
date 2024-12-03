@@ -24,7 +24,7 @@ import {
   makeProperty,
   makeReference,
   makeTemplate,
-  makeUnaryOperatorCall
+  makeUnaryOperation
 } from "./parserHelpers.js";
 
 }}
@@ -37,9 +37,7 @@ __
 
 additiveExpression
   = head:multiplicativeExpression tail:(__ @additiveOperator __ @multiplicativeExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 additiveOperator
@@ -74,9 +72,7 @@ arrowFunction
 
 bitwiseAndExpression
   = head:equalityExpression tail:(__ @bitwiseAndOperator __ @equalityExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseAndOperator
@@ -84,9 +80,7 @@ bitwiseAndOperator
 
 bitwiseOrExpression
   = head:bitwiseXorExpression tail:(__ @bitwiseOrOperator __ @bitwiseXorExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseOrOperator
@@ -94,9 +88,7 @@ bitwiseOrOperator
 
 bitwiseXorExpression
   = head:bitwiseAndExpression tail:(__ @bitwiseXorOperator __ @bitwiseAndExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 bitwiseXorOperator
@@ -106,9 +98,7 @@ bitwiseXorOperator
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
   = head:protocolExpression tail:arguments* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeCall, head), location());
+      return annotate(tail.reduce(makeCall, head), location());
     }
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -171,9 +161,7 @@ ellipsis = "..." / "…" // Unicode ellipsis
 
 equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 equalityOperator
@@ -192,12 +180,17 @@ escapedChar "backslash-escaped character"
   / "\\v" { return "\v"; }
   / "\\" @.
 
+exponentiationExpression
+  = head:unaryExpression tail:(__ @"**" __ @unaryExpression)* {
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
+    }
+
 // A top-level expression, possibly with leading/trailing whitespace
 expression
   = __ @pipelineExpression __
 
 floatLiteral "floating-point number"
-  = sign? digits? "." digits {
+  = digits? "." digits {
       return annotate([ops.literal, parseFloat(text())], location());
     }
 
@@ -261,7 +254,7 @@ inlineSpace
   = [ \t]
 
 integerLiteral "integer"
-  = sign? digits {
+  = digits {
       return annotate([ops.literal, parseInt(text())], location());
     }
     
@@ -299,10 +292,8 @@ multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
 multiplicativeExpression
-  = head:unaryExpression tail:(__ @multiplicativeOperator __ @unaryExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+  = head:exponentiationExpression tail:(__ @multiplicativeOperator __ @exponentiationExpression)* {
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 multiplicativeOperator
@@ -394,9 +385,7 @@ objectPublicKey
 
 relationalExpression
   = head:additiveExpression tail:(__ @relationalOperator __ @additiveExpression)* {
-      return tail.length === 0
-        ? head
-        : annotate(tail.reduce(makeBinaryOperation, head), location());
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
 relationalOperator
@@ -448,7 +437,10 @@ pathSegmentChar
 // functions to it.
 pipelineExpression
   = head:shorthandFunction tail:(__ singleArrow __ @shorthandFunction)* {
-      return tail.reduce(makePipeline, downgradeReference(head));
+      return annotate(
+        tail.reduce(makePipeline, downgradeReference(head)),
+        location()
+      );
     }
 
 primary
@@ -522,9 +514,6 @@ shorthandFunction "lambda function"
       return annotate([ops.lambda, ["_"], definition], location());
     }
   / implicitParenthesesCallExpression
-
-sign
-  = [+\-]
 
 singleArrow
   = "→"
@@ -605,12 +594,15 @@ textChar
 // A unary prefix operator: `!x`
 unaryExpression
   = operator:unaryOperator __ expression:unaryExpression {
-      return annotate(makeUnaryOperatorCall(operator, expression), location());
+      return annotate(makeUnaryOperation(operator, expression), location());
     }
   / callExpression
 
 unaryOperator
   = "!"
+  / "+"
+  / "-"
+  / "~"
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

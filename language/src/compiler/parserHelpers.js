@@ -331,9 +331,12 @@ export function makeTemplate(op, head, tail) {
   return [op, [ops.literal, strings], ...values];
 }
 
-export function makeUnaryOperatorCall(operator, value) {
+export function makeUnaryOperation(operator, value) {
   const operators = {
     "!": ops.logicalNot,
+    "+": ops.unaryPlus,
+    "-": ops.unaryMinus,
+    "~": ops.bitwiseNot,
   };
   return [operators[operator], value];
 }

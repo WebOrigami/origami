@@ -28,6 +28,11 @@ describe("ops", () => {
     assert.strictEqual(ops.bitwiseAnd(5, 3), 1);
   });
 
+  test("ops.bitwiseNot", () => {
+    assert.strictEqual(ops.bitwiseNot(5), -6);
+    assert.strictEqual(ops.bitwiseNot(-3), 2);
+  });
+
   test("ops.bitwiseOr", () => {
     assert.strictEqual(ops.bitwiseOr(5, 3), 7);
   });
@@ -281,6 +286,17 @@ describe("ops", () => {
     assert.strictEqual(ops.subtraction(3.5, 5), -1.5);
     assert.strictEqual(ops.subtraction(5, "hello"), NaN);
     assert.strictEqual(ops.subtraction(5, true), 4);
+  });
+
+  test("ops.unaryMinus", () => {
+    assert.strictEqual(ops.unaryMinus(4), -4);
+    assert.strictEqual(ops.unaryMinus(-4), 4);
+  });
+
+  test("ops.unaryPlus", () => {
+    assert.strictEqual(ops.unaryPlus(1), 1);
+    assert.strictEqual(ops.unaryPlus(-1), -1);
+    assert.strictEqual(ops.unaryPlus(""), 0);
   });
 
   test("ops.unpack unpacks a value", async () => {

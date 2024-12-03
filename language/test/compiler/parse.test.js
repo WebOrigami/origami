@@ -565,12 +565,8 @@ describe("Origami parser", () => {
 
   test("numericLiteral", () => {
     assertParse("numericLiteral", "123", [ops.literal, 123]);
-    assertParse("numericLiteral", "-456", [ops.literal, -456]);
     assertParse("numericLiteral", ".5", [ops.literal, 0.5]);
     assertParse("numericLiteral", "123.45", [ops.literal, 123.45]);
-    assertParse("numericLiteral", "-678.90", [ops.literal, -678.9]);
-    assertParse("numericLiteral", "+123", [ops.literal, 123]);
-    assertParse("numericLiteral", "+456.78", [ops.literal, 456.78]);
   });
 
   test("objectLiteral", () => {
@@ -976,6 +972,9 @@ describe("Origami parser", () => {
       ops.logicalNot,
       [undetermined, "true"],
     ]);
+    assertParse("unaryExpression", "+1", [ops.unaryPlus, [ops.literal, 1]]);
+    assertParse("unaryExpression", "-2", [ops.unaryMinus, [ops.literal, 2]]);
+    assertParse("unaryExpression", "~3", [ops.bitwiseNot, [ops.literal, 3]]);
   });
 });
 
