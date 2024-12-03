@@ -1,34 +1,3 @@
-calc:
-  description: Perform math operations
-  commands:
-    add:
-      args: (a, b, ...)
-      description: Add the numbers
-    # and:
-    #   args: (a, b, ...)
-    #   description: Return true if all the arguments are true
-    divide:
-      args: (a, b)
-      description: Divide a by b
-    # equals:
-    #   args: (a, b)
-    #   description: Return true if a equals b
-    # if:
-    #   args: (a, b, c)
-    #   description: If a is true return b, otherwise c
-    multiply:
-      args: (a, b, ...)
-      description: Multiply the numbers
-    # not:
-    #   args: (value)
-    #   description: Return true if a is false and vice versa
-    # or:
-    #   args: (a, b, ...)
-    #   description: Return true if any of the arguments are true
-    subtract:
-      args: (a, b)
-      description: Subtract b from a
-
 dev:
   description: Develop and debug Origami projects
   commands:
