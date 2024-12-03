@@ -857,6 +857,24 @@ describe("Origami parser", () => {
     // assertParse("scopeReference", "markdown/", [ops.scope, "markdown"]);
   });
 
+  test("shiftExpression", () => {
+    assertParse("shiftExpression", "1 << 2", [
+      ops.shiftLeft,
+      [ops.literal, 1],
+      [ops.literal, 2],
+    ]);
+    assertParse("shiftExpression", "3 >> 4", [
+      ops.shiftRightSigned,
+      [ops.literal, 3],
+      [ops.literal, 4],
+    ]);
+    assertParse("shiftExpression", "5 >>> 6", [
+      ops.shiftRightUnsigned,
+      [ops.literal, 5],
+      [ops.literal, 6],
+    ]);
+  });
+
   test("shorthandFunction", () => {
     assertParse("shorthandFunction", "=message", [
       ops.lambda,

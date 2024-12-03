@@ -276,6 +276,20 @@ describe("ops", () => {
     assert.strictEqual(ops.remainder(-4, 2), -0);
   });
 
+  test("ops.shiftLeft", () => {
+    assert.strictEqual(ops.shiftLeft(5, 2), 20);
+  });
+
+  test("ops.shiftRightSigned", () => {
+    assert.strictEqual(ops.shiftRightSigned(20, 2), 5);
+    assert.strictEqual(ops.shiftRightSigned(-20, 2), -5);
+  });
+
+  test("ops.shiftRightUnsigned", () => {
+    assert.strictEqual(ops.shiftRightUnsigned(20, 2), 5);
+    assert.strictEqual(ops.shiftRightUnsigned(-5, 2), 1073741822);
+  });
+
   test("ops.strictEqual", () => {
     assert(ops.strictEqual(1, 1));
     assert(!ops.strictEqual(1, 2));

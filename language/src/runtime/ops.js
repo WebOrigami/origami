@@ -396,6 +396,21 @@ export async function scope(key) {
 }
 addOpLabel(scope, "«ops.scope»");
 
+export function shiftLeft(a, b) {
+  return a << b;
+}
+addOpLabel(shiftLeft, "«ops.shiftLeft»");
+
+export function shiftRightSigned(a, b) {
+  return a >> b;
+}
+addOpLabel(shiftRightSigned, "«ops.shiftRightSigned»");
+
+export function shiftRightUnsigned(a, b) {
+  return a >>> b;
+}
+addOpLabel(shiftRightUnsigned, "«ops.shiftRightUnsigned»");
+
 /**
  * The spread operator is a placeholder during parsing. It should be replaced
  * with an object merge.

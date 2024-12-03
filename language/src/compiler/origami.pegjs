@@ -384,17 +384,6 @@ objectPublicKey
     return string[1];
   }
 
-relationalExpression
-  = head:additiveExpression tail:(__ @relationalOperator __ @additiveExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
-    }
-
-relationalOperator
-  = "<="
-  / "<"
-  / ">="
-  / ">"
-
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
   = "(" __ list:list? __ ")" {
@@ -478,6 +467,17 @@ reference
   / namespace
   / scopeReference
 
+relationalExpression
+  = head:shiftExpression tail:(__ @relationalOperator __ @shiftExpression)* {
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
+    }
+
+relationalOperator
+  = "<="
+  / "<"
+  / ">="
+  / ">"
+
 // A top-level folder below the root: `/foo`
 // or the root folder itself: `/`
 rootDirectory
@@ -507,6 +507,16 @@ slashFollows
 
 shebang
   = "#!" [^\n\r]* { return null; }
+
+shiftExpression
+  = head:additiveExpression tail:(__ @shiftOperator __ @additiveExpression)* {
+      return annotate(tail.reduce(makeBinaryOperation, head), location());
+    }
+
+shiftOperator
+  = "<<"
+  / ">>>"
+  / ">>"
 
 // A shorthand lambda expression: `=foo(_)`
 shorthandFunction "lambda function"
