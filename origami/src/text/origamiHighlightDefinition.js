@@ -36,7 +36,7 @@ export default function origamiHighlightDefinition(hljs) {
         // Treat identifier containing a period before an open paren or backtick as a variable
         className: "variable",
         begin:
-          /\b[^(){}\[\]<>\-=,/:\`"'«»\\ →⇒\t\n\r]+\.[^(){}\[\]<>\?!&\|\-=,/:\`"'«»\\ →⇒\t\n\r]+(?=(\(|\`))\b/,
+          /\b[^(){}\[\]<>=,/:\`"'«»\\ →⇒\t\n\r]+\.[^(){}\[\]<>\?!&\|=,/:\`"'«»\\ →⇒\t\n\r]+(?=(\(|\`))\b/,
       },
       {
         className: "built_in",
@@ -44,13 +44,14 @@ export default function origamiHighlightDefinition(hljs) {
         begin: /\b[A-Za-z][A-Za-z0-9]*(?=(\(|\`))\b/,
       },
       {
-        // Treat remaining identifiers as variables
-        className: "variable",
-        begin: /\b[^(){}\[\]<>\?!&\|\-=,/:\`"'«»\\ →⇒\t\n\r]+\b/,
+        className: "operator",
+        begin:
+          /===|!==|==|!=|<=|<|>=|>|\*|\*\*|\/|%|\+|-|=>|⇒|->|→|=|\.\.\.|…|&&|&|\|\||\||!|\^|~|\?\?|\?|:|#!/,
       },
       {
-        className: "operator",
-        begin: /===|!==|==|!=|=>|⇒|->|→|=|\.\.\.|…|&&|\|\||!|\?\?/,
+        // Treat remaining identifiers as variables
+        className: "variable",
+        begin: /\b[^(){}\[\]<>\?!\|=,/:\`"'«»\\ →⇒\t\n\r]+\b/,
       },
     ],
   };
