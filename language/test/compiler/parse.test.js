@@ -433,6 +433,26 @@ describe("Origami parser", () => {
         [ops.scope, "slug"],
       ],
     ]);
+
+    // Verify parser treatment of identifiers containing operators
+    assertParse("expression", "a + b", [
+      ops.addition,
+      [undetermined, "a"],
+      [undetermined, "b"],
+    ]);
+    assertParse("expression", "a+b", [ops.scope, "a+b"]);
+    assertParse("expression", "a - b", [
+      ops.subtraction,
+      [undetermined, "a"],
+      [undetermined, "b"],
+    ]);
+    assertParse("expression", "a-b", [ops.scope, "a-b"]);
+    assertParse("expression", "a&b", [ops.scope, "a&b"]);
+    assertParse("expression", "a & b", [
+      ops.bitwiseAnd,
+      [undetermined, "a"],
+      [undetermined, "b"],
+    ]);
   });
 
   test("group", () => {

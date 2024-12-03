@@ -268,7 +268,7 @@ function peg$parse(input, options) {
 
   var peg$r0 = /^[+\-]/;
   var peg$r1 = /^[0-9]/;
-  var peg$r2 = /^[^(){}[\]<>?!&|\-=,\/:`"'\xAB\xBB\\ \u2192\u21D2\t\n\r]/;
+  var peg$r2 = /^[^(){}[\]<>?!|\-=,\/:`"'\xAB\xBB\\ \u2192\u21D2\t\n\r]/;
   var peg$r3 = /^[ \t]/;
   var peg$r4 = /^[%*\/]/;
   var peg$r5 = /^[A-Za-z]/;
@@ -323,7 +323,7 @@ function peg$parse(input, options) {
   var peg$e44 = peg$literalExpectation("~", false);
   var peg$e45 = peg$otherExpectation("HTTP/HTTPS host");
   var peg$e46 = peg$otherExpectation("identifier");
-  var peg$e47 = peg$classExpectation(["(", ")", "{", "}", "[", "]", "<", ">", "?", "!", "&", "|", "-", "=", ",", "/", ":", "`", "\"", "'", "\xAB", "\xBB", "\\", " ", "\u2192", "\u21D2", "\t", "\n", "\r"], true, false);
+  var peg$e47 = peg$classExpectation(["(", ")", "{", "}", "[", "]", "<", ">", "?", "!", "|", "-", "=", ",", "/", ":", "`", "\"", "'", "\xAB", "\xBB", "\\", " ", "\u2192", "\u21D2", "\t", "\n", "\r"], true, false);
   var peg$e48 = peg$literalExpectation("-", false);
   var peg$e49 = peg$literalExpectation(">", false);
   var peg$e50 = peg$otherExpectation("function call with implicit parentheses");
