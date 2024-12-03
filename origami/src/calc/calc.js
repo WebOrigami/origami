@@ -2,6 +2,7 @@ import { Tree } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 export function add(...args) {
+  console.warn(`Warning: "add" is deprecated. Use the "+" operator instead.`);
   const numbers = args.map((arg) => Number(arg));
   return numbers.reduce((acc, val) => acc + val, 0);
 }
@@ -12,6 +13,9 @@ export function and(...args) {
 }
 
 export function divide(a, b) {
+  console.warn(
+    `Warning: "divide" is deprecated. Use the "/" operator instead.`
+  );
   return Number(a) / Number(b);
 }
 
@@ -52,6 +56,9 @@ export async function ifBuiltin(value, trueResult, falseResult) {
 ifBuiltin.key = "if";
 
 export function multiply(...args) {
+  console.warn(
+    `Warning: "multiply" is deprecated. Use the "*" operator instead.`
+  );
   const numbers = args.map((arg) => Number(arg));
   return numbers.reduce((acc, val) => acc * val, 1);
 }
@@ -67,5 +74,8 @@ export function or(...args) {
 }
 
 export function subtract(a, b) {
+  console.warn(
+    `Warning: "subtract" is deprecated. Use the "-" operator instead.`
+  );
   return Number(a) - Number(b);
 }
