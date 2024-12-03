@@ -84,6 +84,17 @@ export async function builtin(key) {
 }
 
 /**
+ * JavaScript comma operator, returns the last argument.
+ *
+ * @param  {...any} args
+ * @returns
+ */
+export function comma(...args) {
+  return args.at(-1);
+}
+addOpLabel(comma, "«ops.comma»");
+
+/**
  * Concatenate the given arguments.
  *
  * @this {AsyncTree|null}

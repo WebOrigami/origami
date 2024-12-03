@@ -132,6 +132,15 @@ closingParenthesis
       error("Expected right parenthesis");
     }
 
+// A comma-separated list of expressions: `x, y, z`
+commaExpression
+  // The commas are required, but the list can have a single item.
+  = list:pipelineExpression|1.., __ "," __ | {
+      return list.length === 1
+        ? list[0]
+        : annotate([ops.comma, ...list], location());
+    }
+
 // A single line comment
 comment "comment"
   = multiLineComment
@@ -195,7 +204,7 @@ exponentiationExpression
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression
-  = __ @pipelineExpression __
+  = __ @commaExpression __
 
 floatLiteral "floating-point number"
   = digits? "." digits {

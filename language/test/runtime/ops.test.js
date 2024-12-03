@@ -52,6 +52,12 @@ describe("ops", () => {
     assert.strictEqual(result, 1);
   });
 
+  test("ops.comma returns the last value", async () => {
+    const code = createCode([ops.comma, 1, 2, 3]);
+    const result = await evaluate.call(null, code);
+    assert.strictEqual(result, 3);
+  });
+
   test("ops.concat concatenates tree value text", async () => {
     const scope = new ObjectTree({
       name: "world",

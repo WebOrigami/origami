@@ -232,6 +232,16 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("commaExpression", () => {
+    assertParse("commaExpression", "1", [ops.literal, 1]);
+    assertParse("commaExpression", "a, b, c", [
+      ops.comma,
+      [ops.scope, "a"],
+      [ops.scope, "b"],
+      [ops.scope, "c"],
+    ]);
+  });
+
   test("conditionalExpression", () => {
     assertParse("conditionalExpression", "1", [ops.literal, 1]);
     assertParse("conditionalExpression", "true ? 1 : 0", [
