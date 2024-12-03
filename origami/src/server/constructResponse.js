@@ -43,6 +43,9 @@ export default async function constructResponse(request, resource) {
 
   if (!isPacked(resource) && typeof resource.pack === "function") {
     resource = await resource.pack();
+    if (typeof resource === "function") {
+      resource = await resource();
+    }
   }
 
   let mediaType;
