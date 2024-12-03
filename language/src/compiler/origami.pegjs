@@ -63,6 +63,10 @@ arrayEntries
 arrayEntry
   = spread
   / pipelineExpression
+  // JavaScript treats a missing value as `undefined`
+  / __ !"]" {
+      return annotate([ops.literal, undefined], location());
+    }
 
 arrowFunction
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipelineExpression {
