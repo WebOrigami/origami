@@ -181,9 +181,10 @@ escapedChar "backslash-escaped character"
   / "\\" @.
 
 exponentiationExpression
-  = head:unaryExpression tail:(__ @"**" __ @unaryExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+  = left:unaryExpression __ "**" __ right:exponentiationExpression {
+      return annotate([ops.exponentiation, left, right], location());
     }
+  / unaryExpression
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression

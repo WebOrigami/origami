@@ -137,6 +137,7 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
     "%": ops.remainder,
     "&": ops.bitwiseAnd,
     "*": ops.multiplication,
+    "**": ops.exponentiation,
     "+": ops.addition,
     "-": ops.subtraction,
     "/": ops.division,

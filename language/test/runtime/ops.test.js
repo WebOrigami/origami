@@ -88,6 +88,11 @@ describe("ops", () => {
     assert(ops.equal(null, undefined));
   });
 
+  test("ops.exponentiation", () => {
+    assert.strictEqual(ops.exponentiation(2, 3), 8);
+    assert.strictEqual(ops.exponentiation(2, 0), 1);
+  });
+
   test("ops.external looks up a value in scope and memoizes it", async () => {
     let count = 0;
     const tree = new ObjectTree({

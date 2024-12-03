@@ -108,6 +108,11 @@ export function equal(a, b) {
 }
 addOpLabel(equal, "«ops.equal»");
 
+export function exponentiation(a, b) {
+  return a ** b;
+}
+addOpLabel(exponentiation, "«ops.exponentiation»");
+
 /**
  * Look up the given key as an external reference and cache the value for future
  * requests.

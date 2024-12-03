@@ -260,6 +260,14 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("exponentiationExpression", () => {
+    assertParse("exponentiationExpression", "2 ** 2 ** 3", [
+      ops.exponentiation,
+      [ops.literal, 2],
+      [ops.exponentiation, [ops.literal, 2], [ops.literal, 3]],
+    ]);
+  });
+
   test("expression", () => {
     assertParse(
       "expression",
