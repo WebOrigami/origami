@@ -246,7 +246,7 @@ identifier "identifier"
   = chars:identifierChar+ { return chars.join(""); }
 
 identifierChar
-  = [^(){}\[\]<>\?!\|\-=,/:\`"'«»\\ →⇒\t\n\r] // No unescaped whitespace or special chars
+  = [^(){}\[\]<>\?!\|\-=,/:\`"'«»\\→⇒… \t\n\r] // No unescaped whitespace or special chars
   / @'-' !'>' // Accept a hyphen but not in a single arrow combination
   / escapedChar
 
