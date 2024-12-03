@@ -55,6 +55,11 @@ describe("Origami parser", () => {
       [],
       [ops.scope, "foo"],
     ]);
+    assertParse("arrowFunction", "x => y", [
+      ops.lambda,
+      ["x"],
+      [ops.scope, "y"],
+    ]);
     assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
       ops.lambda,
       ["a", "b", "c"],
@@ -65,7 +70,7 @@ describe("Origami parser", () => {
         [ops.scope, "c"],
       ],
     ]);
-    assertParse("arrowFunction", "(a) => (b) => fn(a, b)", [
+    assertParse("arrowFunction", "a => b => fn(a, b)", [
       ops.lambda,
       ["a"],
       [

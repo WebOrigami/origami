@@ -68,6 +68,9 @@ arrowFunction
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipelineExpression {
       return annotate([ops.lambda, parameters ?? [], pipeline], location());
     }
+  / identifier:identifier __ doubleArrow __ pipeline:pipelineExpression {
+      return annotate([ops.lambda, [identifier], pipeline], location());
+    }
   / conditionalExpression
 
 bitwiseAndExpression
