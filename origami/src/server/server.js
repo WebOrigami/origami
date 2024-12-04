@@ -87,26 +87,28 @@ export async function handleRequest(request, response, tree) {
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Tree.traverse(extendedTree, ...keys);
+    resource = await Tree.traverseOrThrow(extendedTree, ...keys);
+
     // If resource is a function, invoke to get the object we want to return.
     // For a POST request, pass the data to the function.
     if (typeof resource === "function") {
       resource = data ? await resource(data) : await resource();
     }
+
+    // Construct the response.
+    const constructed = await constructResponse(request, resource);
+    if (!constructed) {
+      return false;
+    }
+
+    // Copy the construct response to the ServerResponse and return true if
+    // the response was valid.
+    return copyResponse(constructed, response);
   } catch (/** @type {any} */ error) {
+    // Display an error
     respondWithError(response, error);
     return true;
   }
-
-  // Construct the response.
-  const constructed = await constructResponse(request, resource);
-  if (!constructed) {
-    return false;
-  }
-
-  // Copy the construct response to the ServerResponse and return true if
-  // the response was valid.
-  return copyResponse(constructed, response);
 }
 
 function keysFromUrl(url) {
