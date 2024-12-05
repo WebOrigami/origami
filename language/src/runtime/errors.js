@@ -1,6 +1,10 @@
 // Text we look for in an error stack to guess whether a given line represents a
 
-import { scope as scopeFn, trailingSlash } from "@weborigami/async-tree";
+import {
+  scope as scopeFn,
+  trailingSlash,
+  TraverseError,
+} from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { typos } from "./typos.js";
 
@@ -36,37 +40,50 @@ export async function builtinReferenceError(tree, builtins, key) {
  */
 export function formatError(error) {
   let message;
+
+  let location = /** @type {any} */ (error).location;
+  const fragment = location ? codeFragment(location) : null;
+  let fragmentInMessage = false;
+
   if (error.stack) {
     // Display the stack only until we reach the Origami source code.
     message = "";
     let lines = error.stack.split("\n");
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      let line = lines[i];
       if (maybeOrigamiSourceCode(line)) {
         break;
+      }
+      if (
+        error instanceof TraverseError &&
+        error.message === "A null or undefined value can't be traversed"
+      ) {
+        // Provide more meaningful message for TraverseError
+        line = `TraverseError: This part of the path is null or undefined: ${fragment}`;
+        fragmentInMessage = true;
       }
       if (message) {
         message += "\n";
       }
-      message += lines[i];
+      message += line;
     }
   } else {
     message = error.toString();
   }
 
   // Add location
-  let location = /** @type {any} */ (error).location;
   if (location) {
-    const fragment = codeFragment(location);
     let { source, start } = location;
-
-    message += `\nevaluating: ${fragment}`;
+    if (!fragmentInMessage) {
+      message += `\nevaluating: ${fragment}`;
+    }
     if (typeof source === "object" && source.url) {
       message += `\n    at ${source.url.href}:${start.line}:${start.column}`;
     } else if (source.text.includes("\n")) {
       message += `\n    at line ${start.line}, column ${start.column}`;
     }
   }
+
   return message;
 }
 
