@@ -29,4 +29,5 @@ export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export * as symbols from "./src/symbols.js";
 export * as trailingSlash from "./src/trailingSlash.js";
+export { default as TraverseError } from "./src/TraverseError.js";
 export * from "./src/utilities.js";

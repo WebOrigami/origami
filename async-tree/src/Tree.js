@@ -5,6 +5,7 @@ import SetTree from "./drivers/SetTree.js";
 import { DeepObjectTree, ObjectTree } from "./internal.js";
 import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
+import TraverseError from "./TraverseError.js";
 import * as utilities from "./utilities.js";
 import {
   castArrayLike,
@@ -474,15 +475,6 @@ export async function traverseOrThrow(treelike, ...keys) {
 export async function traversePath(tree, path) {
   const keys = utilities.keysFromPath(path);
   return traverse(tree, ...keys);
-}
-
-// Error class thrown by traverseOrThrow()
-class TraverseError extends ReferenceError {
-  constructor(message, options) {
-    super(message);
-    this.name = "TraverseError";
-    Object.assign(this, options);
-  }
 }
 
 /**
