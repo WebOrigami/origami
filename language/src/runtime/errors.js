@@ -17,19 +17,24 @@ const origamiSourceSignals = [
 ];
 
 export async function builtinReferenceError(tree, builtins, key) {
-  const messages = [
-    `"${key}" is being called as if it were a builtin function, but it's not.`,
-  ];
   // See if the key is in scope (but not as a builtin)
   const scope = scopeFn(tree);
   const value = await scope.get(key);
+  let message;
   if (value === undefined) {
+    const messages = [
+      `"${key}" is being called as if it were a builtin function, but it's not.`,
+    ];
     const typos = await formatScopeTypos(builtins, key);
     messages.push(typos);
+    message = messages.join(" ");
   } else {
-    messages.push(`Use "${key}/" instead.`);
+    const messages = [
+      `To call a function like "${key}" that's not a builtin, include a slash: ${key}/( )`,
+      `Details: https://weborigami.org/language/syntax.html#shorthand-for-builtin-functions`,
+    ];
+    message = messages.join("\n");
   }
-  const message = messages.join(" ");
   return new ReferenceError(message);
 }
 
