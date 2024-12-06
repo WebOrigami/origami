@@ -51,7 +51,8 @@ async function statements(tree, nodePath, nodeLabel, options) {
   let nodes = new Map();
   for (const key of await tree.keys()) {
     const destPath = nodePath ? `${trailingSlash.add(nodePath)}${key}` : key;
-    const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"; labelURL="${destPath}"];`;
+    const labelUrl = createLinks ? `; labelURL="${destPath}"` : "";
+    const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"${labelUrl}];`;
     result.push(arc);
 
     let isError = false;
