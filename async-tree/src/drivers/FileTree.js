@@ -180,15 +180,7 @@ export default class FileTree {
     }
 
     if (packed) {
-      // Single writeable value.
-      if (value instanceof ArrayBuffer) {
-        // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
-        value = new Uint8Array(value);
-      }
-      // Ensure this directory exists.
-      await fs.mkdir(this.dirname, { recursive: true });
-      // Write out the value as the contents of a file.
-      await fs.writeFile(destPath, value);
+      await writeFile(value, destPath);
     } else if (isPlainObject(value) && Object.keys(value).length === 0) {
       // Special case: empty object means create an empty directory.
       await fs.mkdir(destPath, { recursive: true });
@@ -264,5 +256,28 @@ async function stat(filePath) {
       return undefined;
     }
     throw error;
+  }
+}
+
+// Write a value to a file.
+async function writeFile(value, destPath) {
+  // Single writeable value.
+  if (value instanceof ArrayBuffer) {
+    // Convert ArrayBuffer to Uint8Array, which Node.js can write directly.
+    value = new Uint8Array(value);
+  }
+  // Ensure this directory exists.
+  const dirname = path.dirname(destPath);
+  await fs.mkdir(dirname, { recursive: true });
+
+  // Write out the value as the contents of a file.
+  try {
+    await fs.writeFile(destPath, value);
+  } catch (/** @type {any} */ error) {
+    if (error.code === "EISDIR" /* Is a directory */) {
+      throw new Error(
+        `Tried to overwrite a directory with a single file: ${destPath}`
+      );
+    }
   }
 }
