@@ -52,7 +52,6 @@ export default async function rss(jsonFeedTree, options = {}) {
     ? `    <language>${language}</language>\n`
     : "";
   const feedLinkElement = `    <atom:link href="${feed_url}" rel="self" type="application/rss+xml"/>\n`;
-  // const feedLinkElement = `    <link rel="self" type="application/atom+xml" href="${feed_url}"/>\n`;
 
   return `<?xml version="1.0" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
