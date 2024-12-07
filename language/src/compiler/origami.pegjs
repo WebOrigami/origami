@@ -113,7 +113,7 @@ callExpression "function call"
 closingBrace
   = "}"
   / .? {
-      error("Expected right curly brace");
+      error(`An object ended without a closing brace, or contained something that wasn't expected.\nThe top level of an object can only contain definitions ("a: b" or "a = b") or spreads ("...a").`);
     }
 
 // Required closing bracket

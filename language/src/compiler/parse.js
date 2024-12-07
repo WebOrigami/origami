@@ -412,7 +412,7 @@ function peg$parse(input, options) {
       return annotate(tail.reduce(makeCall, head), location());
     };
   var peg$f11 = function() {
-      error("Expected right curly brace");
+      error(`An object ended without a closing brace, or contained something that wasn't expected.\nThe top level of an object can only contain definitions ("a: b" or "a = b") or spreads ("...a").`);
     };
   var peg$f12 = function() {
       error("Expected right bracket");
