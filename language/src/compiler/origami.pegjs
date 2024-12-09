@@ -147,18 +147,20 @@ comment "comment"
   / singleLineComment
 
 conditionalExpression
-  = condition:logicalOrExpression __
-    "?" __ truthy:pipelineExpression __
-    ":" __ falsy:pipelineExpression
+  = condition:logicalOrExpression tail:(__
+    "?" __ @pipelineExpression __
+    ":" __ @pipelineExpression)?
     {
+      if (!tail) {
+        return condition;
+      }
       return annotate([
         ops.conditional,
         downgradeReference(condition),
-        [ops.lambda, [], downgradeReference(truthy)],
-        [ops.lambda, [], downgradeReference(falsy)]
+        [ops.lambda, [], downgradeReference(tail[0])],
+        [ops.lambda, [], downgradeReference(tail[1])]
       ], location());
     }
-  / logicalOrExpression
   
 digits
   = @[0-9]+

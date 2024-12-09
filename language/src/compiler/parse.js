@@ -425,12 +425,15 @@ function peg$parse(input, options) {
         ? list[0]
         : annotate([ops.comma, ...list], location());
     };
-  var peg$f15 = function(condition, truthy, falsy) {
+  var peg$f15 = function(condition, tail) {
+      if (!tail) {
+        return condition;
+      }
       return annotate([
         ops.conditional,
         downgradeReference(condition),
-        [ops.lambda, [], downgradeReference(truthy)],
-        [ops.lambda, [], downgradeReference(falsy)]
+        [ops.lambda, [], downgradeReference(tail[0])],
+        [ops.lambda, [], downgradeReference(tail[1])]
       ], location());
     };
   var peg$f16 = function(chars) {
@@ -1546,59 +1549,61 @@ function peg$parse(input, options) {
   }
 
   function peg$parseconditionalExpression() {
-    var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
+    var s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
 
     s0 = peg$currPos;
     s1 = peg$parselogicalOrExpression();
     if (s1 !== peg$FAILED) {
-      s2 = peg$parse__();
+      s2 = peg$currPos;
+      s3 = peg$parse__();
       if (input.charCodeAt(peg$currPos) === 63) {
-        s3 = peg$c9;
+        s4 = peg$c9;
         peg$currPos++;
       } else {
-        s3 = peg$FAILED;
+        s4 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$e15); }
       }
-      if (s3 !== peg$FAILED) {
-        s4 = peg$parse__();
-        s5 = peg$parsepipelineExpression();
-        if (s5 !== peg$FAILED) {
-          s6 = peg$parse__();
+      if (s4 !== peg$FAILED) {
+        s5 = peg$parse__();
+        s6 = peg$parsepipelineExpression();
+        if (s6 !== peg$FAILED) {
+          s7 = peg$parse__();
           if (input.charCodeAt(peg$currPos) === 58) {
-            s7 = peg$c10;
+            s8 = peg$c10;
             peg$currPos++;
           } else {
-            s7 = peg$FAILED;
+            s8 = peg$FAILED;
             if (peg$silentFails === 0) { peg$fail(peg$e16); }
           }
-          if (s7 !== peg$FAILED) {
-            s8 = peg$parse__();
-            s9 = peg$parsepipelineExpression();
-            if (s9 !== peg$FAILED) {
-              peg$savedPos = s0;
-              s0 = peg$f15(s1, s5, s9);
+          if (s8 !== peg$FAILED) {
+            s9 = peg$parse__();
+            s10 = peg$parsepipelineExpression();
+            if (s10 !== peg$FAILED) {
+              s2 = [ s6, s10 ];
             } else {
-              peg$currPos = s0;
-              s0 = peg$FAILED;
+              peg$currPos = s2;
+              s2 = peg$FAILED;
             }
           } else {
-            peg$currPos = s0;
-            s0 = peg$FAILED;
+            peg$currPos = s2;
+            s2 = peg$FAILED;
           }
         } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
+          peg$currPos = s2;
+          s2 = peg$FAILED;
         }
       } else {
-        peg$currPos = s0;
-        s0 = peg$FAILED;
+        peg$currPos = s2;
+        s2 = peg$FAILED;
       }
+      if (s2 === peg$FAILED) {
+        s2 = null;
+      }
+      peg$savedPos = s0;
+      s0 = peg$f15(s1, s2);
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;
-    }
-    if (s0 === peg$FAILED) {
-      s0 = peg$parselogicalOrExpression();
     }
 
     return s0;
