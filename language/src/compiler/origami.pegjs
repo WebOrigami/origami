@@ -197,10 +197,9 @@ escapedChar "backslash-escaped character"
   / "\\" @.
 
 exponentiationExpression
-  = left:unaryExpression __ "**" __ right:exponentiationExpression {
-      return annotate([ops.exponentiation, left, right], location());
+  = left:unaryExpression right:(__ "**" __ @exponentiationExpression)? {
+      return right ? annotate([ops.exponentiation, left, right], location()) : left;
     }
-  / unaryExpression
 
 // A top-level expression, possibly with leading/trailing whitespace
 expression

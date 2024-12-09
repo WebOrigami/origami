@@ -447,7 +447,7 @@ function peg$parse(input, options) {
   var peg$f23 = function() { return "\t"; };
   var peg$f24 = function() { return "\v"; };
   var peg$f25 = function(left, right) {
-      return annotate([ops.exponentiation, left, right], location());
+      return right ? annotate([ops.exponentiation, left, right], location()) : left;
     };
   var peg$f26 = function() {
       return annotate([ops.literal, parseFloat(text())], location());
@@ -2009,39 +2009,41 @@ function peg$parse(input, options) {
   }
 
   function peg$parseexponentiationExpression() {
-    var s0, s1, s2, s3, s4, s5;
+    var s0, s1, s2, s3, s4, s5, s6;
 
     s0 = peg$currPos;
     s1 = peg$parseunaryExpression();
     if (s1 !== peg$FAILED) {
-      s2 = peg$parse__();
+      s2 = peg$currPos;
+      s3 = peg$parse__();
       if (input.substr(peg$currPos, 2) === peg$c28) {
-        s3 = peg$c28;
+        s4 = peg$c28;
         peg$currPos += 2;
       } else {
-        s3 = peg$FAILED;
+        s4 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$e37); }
       }
-      if (s3 !== peg$FAILED) {
-        s4 = peg$parse__();
-        s5 = peg$parseexponentiationExpression();
-        if (s5 !== peg$FAILED) {
-          peg$savedPos = s0;
-          s0 = peg$f25(s1, s5);
+      if (s4 !== peg$FAILED) {
+        s5 = peg$parse__();
+        s6 = peg$parseexponentiationExpression();
+        if (s6 !== peg$FAILED) {
+          s2 = s6;
         } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
+          peg$currPos = s2;
+          s2 = peg$FAILED;
         }
       } else {
-        peg$currPos = s0;
-        s0 = peg$FAILED;
+        peg$currPos = s2;
+        s2 = peg$FAILED;
       }
+      if (s2 === peg$FAILED) {
+        s2 = null;
+      }
+      peg$savedPos = s0;
+      s0 = peg$f25(s1, s2);
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;
-    }
-    if (s0 === peg$FAILED) {
-      s0 = peg$parseunaryExpression();
     }
 
     return s0;
