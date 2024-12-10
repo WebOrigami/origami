@@ -687,7 +687,7 @@ describe("Origami parser", () => {
     assertParse("objectLiteral", "{ a: 1, ...b }", [
       ops.merge,
       [ops.object, ["a", [ops.literal, 1]]],
-      [undetermined, "b"],
+      [ops.scope, "b"],
     ]);
     assertParse("objectLiteral", "{ (a): 1 }", [
       ops.object,
@@ -946,9 +946,9 @@ describe("Origami parser", () => {
     assertParse("singleLineComment", "// Hello, world!", null, false);
   });
 
-  test("spread", () => {
-    assertParse("spread", "...a", [ops.spread, [undetermined, "a"]]);
-    assertParse("spread", "…a", [ops.spread, [undetermined, "a"]]);
+  test("spreadElement", () => {
+    assertParse("spreadElement", "...a", [ops.spread, [ops.scope, "a"]]);
+    assertParse("spreadElement", "…a", [ops.spread, [ops.scope, "a"]]);
   });
 
   test("stringLiteral", () => {

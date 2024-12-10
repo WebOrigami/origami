@@ -61,7 +61,7 @@ arrayEntries
     }
 
 arrayEntry
-  = spread
+  = spreadElement
   / pipelineExpression
   // JavaScript treats a missing value as `undefined`
   / __ !"]" {
@@ -359,7 +359,7 @@ objectEntries
     }
 
 objectEntry
-  = spread
+  = spreadElement
   / objectProperty
   / objectGetter
   / objectShorthandProperty
@@ -558,8 +558,8 @@ singleQuoteString "single quote string"
 singleQuoteStringChar
   = !("'" / newLine) @textChar
 
-spread
-  = ellipsis __ value:conditionalExpression {
+spreadElement
+  = ellipsis __ value:pipelineExpression {
       return annotate([ops.spread, value], location());
     }
 
