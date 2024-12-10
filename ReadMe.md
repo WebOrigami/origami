@@ -34,7 +34,7 @@ To be clear then, here is the relationship that I (Jan, the person who initiated
 
 If you can't accept this relationship, please don't use this project.
 
-For practical aspects of contributing the proejct,
+For practical aspects of contributing to the project, see [Contributing](Contributing.md).
 
 # Discussion
 
