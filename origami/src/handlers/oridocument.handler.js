@@ -1,5 +1,5 @@
 import { ObjectTree, symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
+import { compile, ops } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
@@ -23,16 +23,34 @@ export default {
     const unpacked = toString(packed);
     const parsed = parseFrontMatter(unpacked);
 
+    // See if we can construct a URL to use in error messages
+    const name = options.key;
+    let url;
+    if (name && parent?.url) {
+      let parentHref = parent.url.href;
+      if (!parentHref.endsWith("/")) {
+        parentHref += "/";
+      }
+      url = new URL(name, parentHref);
+    }
+
     // Determine the data (if present) and text content
     let text;
-    let frontData;
+    let frontData = null;
     if (!parsed) {
       text = unpacked;
     } else {
       const { body, frontText, isOrigami } = parsed;
       if (isOrigami) {
-        // Origami front matter
-        const compiled = compile.expression(frontText.trim());
+        // Origami front matter, replace `@template` with body as a function
+        const bodyFn = `((_) => \`${body}\`)`;
+        const replaced = frontText.trim().replace(/@template/g, bodyFn);
+        const source = { name, text: replaced, url };
+        const compiled = compile.expression(source);
+        if (compiled.code[0] === ops.lambda) {
+          const templateFn = await compiled.call(parent ?? null);
+          return processUnpackedContent(templateFn, parent);
+        }
         frontData = await compiled.call(parent ?? null);
       } else {
         // YAML front matter
@@ -40,24 +58,6 @@ export default {
       }
       text = body;
     }
-
-    // See if we can construct a URL to use in error messages
-    const sourceName = options.key;
-    let url;
-    if (sourceName && parent?.url) {
-      let parentHref = parent.url.href;
-      if (!parentHref.endsWith("/")) {
-        parentHref += "/";
-      }
-      url = new URL(sourceName, parentHref);
-    }
-
-    // Construct an object to represent the source code
-    const source = {
-      text,
-      name: options.key,
-      url,
-    };
 
     // If input is a document, add the front matter to scope
     let extendedParent;
@@ -67,6 +67,9 @@ export default {
     } else {
       extendedParent = parent;
     }
+
+    // Construct an object to represent the source code
+    const source = { name, text, url };
 
     // Compile the source as an Origami template document
     const templateDefineFn = compile.templateDocument(source);
