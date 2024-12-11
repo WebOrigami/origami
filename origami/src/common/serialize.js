@@ -30,7 +30,7 @@ export async function evaluateYaml(text, parent) {
 
 /**
  * @param {string} text
- * @returns {JsonValue|AsyncTree}
+ * @returns {JsonValue}
  */
 export function parseYaml(text) {
   return YAML.parse(text);

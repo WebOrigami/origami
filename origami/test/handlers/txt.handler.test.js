@@ -26,4 +26,16 @@ describe("text handler", () => {
       a: 1,
     });
   });
+
+  test("unpacks a document with Origami front matter", async () => {
+    const text = `---
+{ sum: 1 + 1 }
+---
+Body text`;
+    const document = await txtHandler.unpack(text);
+    assert.deepEqual(document, {
+      sum: 2,
+      "@text": "Body text",
+    });
+  });
 });
