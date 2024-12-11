@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { oridocumentHandler } from "../../src/internal.js";
 
-describe.only("Origami document handler", () => {
+describe("Origami document handler", () => {
   test("unpacks text with Origami expressions", async () => {
     const parent = new ObjectTree({
       name: "world",
@@ -14,7 +14,7 @@ describe.only("Origami document handler", () => {
     assert.equal(result, "Hello, world!");
   });
 
-  test.only("YAML front matter is returned with @text", async () => {
+  test("YAML front matter is returned with @text", async () => {
     const text = `---
 name: world
 ---

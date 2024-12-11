@@ -1,6 +1,7 @@
 import { isPacked, symbols } from "@weborigami/async-tree";
 import { parseYaml, toYaml } from "../common/serialize.js";
-import * as utilities from "../common/utilities.js";
+import { toString } from "../common/utilities.js";
+import parseFrontMatter from "./parseFrontMatter.js";
 
 /**
  * A text file with possible front matter
@@ -53,18 +54,16 @@ export default {
   /** @type {import("@weborigami/language").UnpackFunction} */
   unpack(packed, options = {}) {
     const parent = options.parent ?? null;
-    const text = utilities.toString(packed);
+    const text = toString(packed);
     if (text === null) {
       throw new Error("Tried to treat a file as text but it wasn't text.");
     }
 
-    const regex =
-      /^(---\r?\n(?<frontText>[\s\S]*?\r?\n?)---\r?\n)(?<body>[\s\S]*$)/;
-    const match = regex.exec(text);
+    const parsed = parseFrontMatter(text);
     let unpacked;
-    if (match) {
+    if (parsed) {
       // Document object with front matter
-      const { body, frontText } = /** @type {any} */ (match.groups);
+      const { body, frontText } = parsed;
       const frontData = parseYaml(frontText);
       unpacked = Object.assign({}, frontData, { "@text": body });
     } else {

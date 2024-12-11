@@ -1,8 +1,9 @@
 import { ObjectTree, symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
+import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
-import txtHandler from "./txt.handler.js";
+import parseFrontMatter from "./parseFrontMatter.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -18,10 +19,12 @@ export default {
       /** @type {any} */ (packed).parent ??
       /** @type {any} */ (packed)[symbols.parent];
 
-    // Unpack as a text document
-    const unpacked = txtHandler.unpack(packed, options);
-    const inputIsDocument = unpacked["@text"] !== undefined;
-    const text = inputIsDocument ? unpacked["@text"] : toString(unpacked);
+    // Unpack as a text document and parse front matter
+    const unpacked = toString(packed);
+    const parsed = parseFrontMatter(unpacked);
+
+    const text = parsed?.body ?? unpacked;
+    const frontData = parsed ? parseYaml(parsed.frontText) : null;
 
     // See if we can construct a URL to use in error messages
     const sourceName = options.key;
@@ -43,8 +46,8 @@ export default {
 
     // If input is a document, add the front matter to scope
     let extendedParent;
-    if (inputIsDocument) {
-      extendedParent = new ObjectTree(unpacked);
+    if (frontData) {
+      extendedParent = new ObjectTree(frontData);
       extendedParent.parent = parent;
     } else {
       extendedParent = parent;
@@ -57,11 +60,11 @@ export default {
     // If the input was a document, return a function that updates
     // the document with the template result as @text. Otherwise
     // return the template result.
-    const resultFn = inputIsDocument
+    const resultFn = frontData
       ? async (input) => {
           const text = await templateFn(input);
           const result = {
-            ...unpacked,
+            ...frontData,
             "@text": text,
           };
           result[symbols.parent] = extendedParent;
