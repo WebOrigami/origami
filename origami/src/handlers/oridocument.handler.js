@@ -23,8 +23,23 @@ export default {
     const unpacked = toString(packed);
     const parsed = parseFrontMatter(unpacked);
 
-    const text = parsed?.body ?? unpacked;
-    const frontData = parsed ? parseYaml(parsed.frontText) : null;
+    // Determine the data (if present) and text content
+    let text;
+    let frontData;
+    if (!parsed) {
+      text = unpacked;
+    } else {
+      const { body, frontText, isOrigami } = parsed;
+      if (isOrigami) {
+        // Origami front matter
+        const compiled = compile.expression(frontText.trim());
+        frontData = await compiled.call(parent ?? null);
+      } else {
+        // YAML front matter
+        frontData = parseYaml(frontText);
+      }
+      text = body;
+    }
 
     // See if we can construct a URL to use in error messages
     const sourceName = options.key;

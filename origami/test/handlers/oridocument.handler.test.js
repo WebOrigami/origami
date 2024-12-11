@@ -24,4 +24,17 @@ Hello, \${ name }!`;
     assert.deepEqual(result.name, "world");
     assert.equal(result["@text"], "Hello, world!");
   });
+
+  test("unpacks a document with Origami front matter", async () => {
+    const text = `---
+{ sum: 1 + 1 }
+---
+Body text`;
+    const fn = await oridocumentHandler.unpack(text);
+    const result = await fn();
+    assert.deepEqual(result, {
+      sum: 2,
+      "@text": "Body text",
+    });
+  });
 });
