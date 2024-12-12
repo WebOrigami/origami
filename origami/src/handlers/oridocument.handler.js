@@ -1,5 +1,5 @@
 import { ObjectTree, symbols } from "@weborigami/async-tree";
-import { compile, ops } from "@weborigami/language";
+import { compile } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
@@ -37,21 +37,14 @@ export default {
     // Determine the data (if present) and text content
     let text;
     let frontData = null;
+    let frontSource = null;
     if (!parsed) {
       text = unpacked;
     } else {
       const { body, frontText, isOrigami } = parsed;
       if (isOrigami) {
-        // Origami front matter, replace `@template` with body as a function
-        const bodyFn = `((_) => \`${body}\`)`;
-        const replaced = frontText.trim().replace(/@template/g, bodyFn);
-        const source = { name, text: replaced, url };
-        const compiled = compile.expression(source);
-        if (compiled.code[0] === ops.lambda) {
-          const templateFn = await compiled.call(parent ?? null);
-          return processUnpackedContent(templateFn, parent);
-        }
-        frontData = await compiled.call(parent ?? null);
+        // Origami front matter
+        frontSource = { name, text: frontText, url };
       } else {
         // YAML front matter
         frontData = parseYaml(frontText);
@@ -65,31 +58,44 @@ export default {
       extendedParent = new ObjectTree(frontData);
       extendedParent.parent = parent;
     } else {
-      extendedParent = parent;
+      extendedParent = parent ?? null;
     }
 
     // Construct an object to represent the source code
-    const source = { name, text, url };
+    const bodySource = { name, text, url };
 
     // Compile the source as an Origami template document
-    const templateDefineFn = compile.templateDocument(source);
-    const templateFn = await templateDefineFn.call(extendedParent);
+    const templateDefineFn = compile.templateDocument(bodySource);
 
-    // If the input was a document, return a function that updates
-    // the document with the template result as @text. Otherwise
-    // return the template result.
-    const resultFn = frontData
-      ? async (input) => {
+    // Determine the result of the template
+    let result;
+    if (frontSource) {
+      // Result is the evaluated front source
+      const frontFn = compile.expression(frontSource, {
+        macros: {
+          "@template": templateDefineFn.code,
+        },
+      });
+      result = await frontFn.call(extendedParent);
+    } else {
+      const templateFn = await templateDefineFn.call(extendedParent);
+      if (frontData) {
+        // Result is a function that adds the front data to the template result
+        result = async (input) => {
           const text = await templateFn(input);
-          const result = {
+          const object = {
             ...frontData,
             "@text": text,
           };
-          result[symbols.parent] = extendedParent;
-          return result;
-        }
-      : templateFn;
+          object[symbols.parent] = extendedParent;
+          return object;
+        };
+      } else {
+        // Result is the body template function
+        result = templateFn;
+      }
+    }
 
-    return processUnpackedContent(resultFn, parent);
+    return processUnpackedContent(result, parent);
   },
 };

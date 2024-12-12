@@ -27,11 +27,13 @@ Hello, \${ name }!`;
 
   test("unpacks a document with Origami front matter", async () => {
     const text = `---
-{ sum: 1 + 1 }
+{
+  sum: 1 + 1
+  @text: @template()
+}
 ---
 Body text`;
-    const fn = await oridocumentHandler.unpack(text);
-    const result = await fn();
+    const result = await oridocumentHandler.unpack(text);
     assert.deepEqual(result, {
       sum: 2,
       "@text": "Body text",

@@ -108,6 +108,18 @@ describe("compile", () => {
       ],
     ]);
   });
+
+  test("can apply a macro", async () => {
+    const literal = [ops.literal, 1];
+    const expression = `{ a: literal }`;
+    const fn = compile.expression(expression, {
+      macros: {
+        literal,
+      },
+    });
+    const code = fn.code;
+    assert.deepEqual(stripCodeLocations(code), [ops.object, ["a", literal]]);
+  });
 });
 
 async function assertCompile(text, expected) {
