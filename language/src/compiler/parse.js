@@ -607,7 +607,7 @@ function peg$parse(input, options) {
       return annotate([ops.lambda, ["_"], contents], location());
     };
   var peg$f70 = function(head, tail) {
-      return annotate(makeTemplate(ops.template, head, tail), location());
+      return annotate(makeTemplate([ops.builtin, "indent"], head, tail), location());
     };
   var peg$f71 = function(chars) {
       return chars.join("");

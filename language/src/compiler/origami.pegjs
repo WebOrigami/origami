@@ -582,7 +582,7 @@ templateDocumentChar
 // The contents of a template document containing plain text and substitutions
 templateDocumentContents
   = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
-      return annotate(makeTemplate(ops.template, head, tail), location());
+      return annotate(makeTemplate([ops.builtin, "indent"], head, tail), location());
     }
 
 templateDocumentText "template text"
