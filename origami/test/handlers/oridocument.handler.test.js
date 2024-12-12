@@ -42,9 +42,9 @@ Body text`;
 
   test("Origami front matter can refer to @template as a macro", async () => {
     const text = `---
-(name) => @template(name)
+(name) => @template()
 ---
-Hello, \${ _ }!
+Hello, \${ name }!
 `;
     const fn = await oridocumentHandler.unpack(text);
     const result = await fn("world");

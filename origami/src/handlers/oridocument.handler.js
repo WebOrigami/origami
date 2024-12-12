@@ -65,7 +65,10 @@ export default {
     const bodySource = { name, text, url };
 
     // Compile the source as an Origami template document
-    const templateDefineFn = compile.templateDocument(bodySource);
+    const scopeCaching = frontSource ? false : true;
+    const templateDefineFn = compile.templateDocument(bodySource, {
+      scopeCaching,
+    });
 
     // Determine the result of the template
     let result;
