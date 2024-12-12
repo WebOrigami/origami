@@ -20,9 +20,8 @@ export default {
       /** @type {any} */ (packed)[symbols.parent] ??
       null;
 
-    // Unpack as a text document and parse front matter
+    // Unpack as a text document
     const unpacked = toString(packed);
-    const parsed = parseFrontMatter(unpacked);
 
     // See if we can construct a URL to use in error messages
     const name = options.key;
@@ -40,6 +39,7 @@ export default {
     let frontData = null;
     let frontSource = null;
     let extendedParent = parent;
+    const parsed = parseFrontMatter(unpacked);
     if (!parsed) {
       text = unpacked;
     } else {

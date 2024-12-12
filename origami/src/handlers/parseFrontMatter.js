@@ -15,6 +15,6 @@ export default function parseFrontMatter(text) {
 
 function detectOrigami(text) {
   const trimmed = text.trimStart();
-  const origamiMarkers = ["(", "{", "//", "#!"];
+  const origamiMarkers = ["(", "{", "//", "/*", "#!"];
   return origamiMarkers.some((marker) => trimmed.startsWith(marker));
 }
