@@ -1,9 +1,5 @@
-import { isUnpackable, symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import documentObject from "../common/documentObject.js";
-import { toString } from "../common/utilities.js";
-import { oriHandler } from "../internal.js";
+import { oridocumentHandler } from "../internal.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input
@@ -17,28 +13,7 @@ import { oriHandler } from "../internal.js";
  */
 export default async function inline(input) {
   assertTreeIsDefined(this, "text:inline");
-
-  // Get the input text and any attached front matter.
-  if (isUnpackable(input)) {
-    input = await input.unpack();
-  }
-  const inputIsDocument = input["@text"] !== undefined;
-  const origami = inputIsDocument ? input["@text"] : toString(input);
-  if (origami === null) {
-    return undefined;
-  }
-
-  const parent =
-    /** @type {any} */ (input).parent ?? input[symbols.parent] ?? this;
-  const templateFn = await oriHandler.unpack(origami, {
-    compiler: compile.templateDocument,
-    parent,
-  });
-
-  const inputData = inputIsDocument ? input : null;
-  const templateResult = await templateFn(inputData);
-
-  return inputIsDocument
-    ? documentObject(templateResult, inputData)
-    : templateResult;
+  // @ts-ignore
+  const fn = await oridocumentHandler.unpack(input, { parent: this });
+  return await fn();
 }

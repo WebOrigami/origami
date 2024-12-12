@@ -14,11 +14,11 @@ describe("inline", () => {
     assert(inlined, "Hello, Alice!");
   });
 
-  test("can reference its own front matter via `_` ambient", async () => {
-    const document = await txtHandler.unpack(`---
+  test("can reference its own front matter", async () => {
+    const document = `---
 name: Carol
 ---
-Hello, \${ _/name }!`);
+Hello, \${ name }!`;
     /** @type {any} */
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {
