@@ -1,3 +1,4 @@
+import { symbols } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { oridocumentHandler } from "../internal.js";
 
@@ -13,7 +14,13 @@ import { oridocumentHandler } from "../internal.js";
  */
 export default async function inline(input) {
   assertTreeIsDefined(this, "text:inline");
+
+  const parent =
+    /** @type {any} */ (input).parent ??
+    /** @type {any} */ (input)[symbols.parent] ??
+    this;
+
   // @ts-ignore
-  const fn = await oridocumentHandler.unpack(input, { parent: this });
+  const fn = await oridocumentHandler.unpack(input, { parent });
   return await fn();
 }
