@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import indent from "../../src/text/indent.js";
+import indent from "../../src/runtime/taggedTemplateIndent.js";
 
-describe("indent", () => {
+describe("taggedTemplateIndent", () => {
   test("joins strings and values together if template isn't a block template", () => {
     const result = indent`a ${"b"} c`;
     assert.equal(result, "a b c");

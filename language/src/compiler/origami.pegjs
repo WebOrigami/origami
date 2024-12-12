@@ -571,19 +571,13 @@ stringLiteral "string"
 // A top-level document defining a template. This is the same as a template
 // literal, but can contain backticks at the top level.
 templateDocument "template"
-  = contents:templateDocumentContents {
-      return annotate([ops.lambda, ["_"], contents], location());
+  = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
+      return annotate(makeTemplate(ops.templateIndent, head, tail), location());
     }
 
 // Template documents can contain backticks at the top level.
 templateDocumentChar
   = !("${") @textChar
-
-// The contents of a template document containing plain text and substitutions
-templateDocumentContents
-  = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
-      return annotate(makeTemplate([ops.builtin, "indent"], head, tail), location());
-    }
 
 templateDocumentText "template text"
   = chars:templateDocumentChar* {
@@ -592,16 +586,12 @@ templateDocumentText "template text"
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
-  = "`" contents:templateLiteralContents "`" {
-      return annotate(makeTemplate(ops.template, contents[0], contents[1]), location());
+  = "`" head:templateLiteralText tail:(templateSubstitution templateLiteralText)* "`" {
+      return annotate(makeTemplate(ops.template, head, tail), location());
     }
 
 templateLiteralChar
   = !("`" / "${") @textChar
-
-// The contents of a template literal containing plain text and substitutions
-templateLiteralContents
-  = head:templateLiteralText tail:(templateSubstitution templateLiteralText)*
 
 // Plain text in a template literal
 templateLiteralText

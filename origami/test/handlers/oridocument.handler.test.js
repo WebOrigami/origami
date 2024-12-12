@@ -14,6 +14,13 @@ describe("Origami document handler", () => {
     assert.equal(result, "Hello, world!");
   });
 
+  test("Argument to template document available as underscore", async () => {
+    const text = "<h1>${ _ }</h1>";
+    const fn = await oridocumentHandler.unpack(text);
+    const result = await fn("Home");
+    assert.equal(result, "<h1>Home</h1>");
+  });
+
   test("YAML front matter is returned with @text", async () => {
     const text = `---
 name: world

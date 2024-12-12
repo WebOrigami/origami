@@ -1,5 +1,5 @@
 import { ObjectTree, symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
+import { compile, ops } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
@@ -17,7 +17,8 @@ export default {
     const parent =
       options.parent ??
       /** @type {any} */ (packed).parent ??
-      /** @type {any} */ (packed)[symbols.parent];
+      /** @type {any} */ (packed)[symbols.parent] ??
+      null;
 
     // Unpack as a text document and parse front matter
     const unpacked = toString(packed);
@@ -38,6 +39,7 @@ export default {
     let text;
     let frontData = null;
     let frontSource = null;
+    let extendedParent = parent;
     if (!parsed) {
       text = unpacked;
     } else {
@@ -48,17 +50,13 @@ export default {
       } else {
         // YAML front matter
         frontData = parseYaml(frontText);
+        if (typeof frontData !== "object") {
+          throw new TypeError(`Front matter must be an object`);
+        }
+        extendedParent = new ObjectTree(frontData);
+        extendedParent.parent = parent;
       }
       text = body;
-    }
-
-    // If input is a document, add the front matter to scope
-    let extendedParent;
-    if (frontData) {
-      extendedParent = new ObjectTree(frontData);
-      extendedParent.parent = parent;
-    } else {
-      extendedParent = parent ?? null;
     }
 
     // Construct an object to represent the source code
@@ -66,7 +64,7 @@ export default {
 
     // Compile the source as an Origami template document
     const scopeCaching = frontSource ? false : true;
-    const templateDefineFn = compile.templateDocument(bodySource, {
+    const defineTemplateFn = compile.templateDocument(bodySource, {
       scopeCaching,
     });
 
@@ -74,18 +72,23 @@ export default {
     let result;
     if (frontSource) {
       // Result is the evaluated front source
+      const templateLambda = [ops.lambda, ["_"], defineTemplateFn.code];
       const frontFn = compile.expression(frontSource, {
         macros: {
-          "@template": templateDefineFn.code,
+          "@template": templateLambda,
         },
       });
-      result = await frontFn.call(extendedParent);
+      result = await frontFn.call(parent);
     } else {
-      const templateFn = await templateDefineFn.call(extendedParent);
+      const templateFn = ops.lambda.call(
+        extendedParent,
+        ["_"],
+        defineTemplateFn.code
+      );
       if (frontData) {
         // Result is a function that adds the front data to the template result
         result = async (input) => {
-          const text = await templateFn(input);
+          const text = await templateFn.call(extendedParent, input);
           const object = {
             ...frontData,
             "@text": text,
@@ -94,7 +97,7 @@ export default {
           return object;
         };
       } else {
-        // Result is the body template function
+        // Result is a function that calls the body template
         result = templateFn;
       }
     }

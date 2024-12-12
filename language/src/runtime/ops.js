@@ -12,6 +12,7 @@ import {
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
+import taggedTemplateIndent from "../../src/runtime/taggedTemplateIndent.js";
 import { builtinReferenceError, scopeReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
@@ -447,9 +448,17 @@ addOpLabel(subtraction, "«ops.subtraction»");
  * Apply the default tagged template function.
  */
 export function template(strings, ...values) {
-  return taggedTemplate(strings, values);
+  return taggedTemplate(strings, ...values);
 }
 addOpLabel(template, "«ops.template»");
+
+/**
+ * Apply the tagged template indent function.
+ */
+export function templateIndent(strings, ...values) {
+  return taggedTemplateIndent(strings, ...values);
+}
+addOpLabel(templateIndent, "«ops.templateIndent");
 
 /**
  * Traverse a path of keys through a tree.

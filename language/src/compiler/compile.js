@@ -27,6 +27,20 @@ export function expression(source, options = {}) {
   });
 }
 
+export function program(source, options = {}) {
+  return compile(source, {
+    ...options,
+    startRule: "program",
+  });
+}
+
+export function templateDocument(source, options = {}) {
+  return compile(source, {
+    ...options,
+    startRule: "templateDocument",
+  });
+}
+
 /**
  * Transform any remaining undetermined references to scope references.
  *
@@ -122,18 +136,4 @@ export function transformReferences(
     annotate(modified, code.location);
   }
   return modified;
-}
-
-export function program(source, options = {}) {
-  return compile(source, {
-    ...options,
-    startRule: "program",
-  });
-}
-
-export function templateDocument(source, options = {}) {
-  return compile(source, {
-    ...options,
-    startRule: "templateDocument",
-  });
 }

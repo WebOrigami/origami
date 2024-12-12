@@ -51,8 +51,7 @@ describe("compile", () => {
 
   test("templateDocument", async () => {
     const fn = compile.templateDocument("Documents can contain ` backticks");
-    const templateFn = await fn.call(shared);
-    const value = await templateFn.call(null);
+    const value = await fn.call(null);
     assert.deepEqual(value, "Documents can contain ` backticks");
   });
 
