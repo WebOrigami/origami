@@ -9,9 +9,15 @@ describe("Origami document handler", () => {
       name: "world",
     });
     const text = "Hello, ${ name }!";
-    const fn = await oridocumentHandler.unpack(text, { parent });
+    const fn = await oridocumentHandler.unpack(text, {
+      key: "test.ori.txt",
+      parent,
+    });
     const result = await fn();
     assert.equal(result, "Hello, world!");
+
+    // Test sidecar keyFn
+    assert.equal(fn.key("data.json"), "data.txt");
   });
 
   test("Argument to template document available as underscore", async () => {

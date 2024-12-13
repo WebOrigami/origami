@@ -1,4 +1,9 @@
-import { ObjectTree, symbols } from "@weborigami/async-tree";
+import {
+  extension,
+  ObjectTree,
+  symbols,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
@@ -24,14 +29,14 @@ export default {
     const unpacked = toString(packed);
 
     // See if we can construct a URL to use in error messages
-    const name = options.key;
+    const key = options.key;
     let url;
-    if (name && parent?.url) {
+    if (key && parent?.url) {
       let parentHref = parent.url.href;
       if (!parentHref.endsWith("/")) {
         parentHref += "/";
       }
-      url = new URL(name, parentHref);
+      url = new URL(key, parentHref);
     }
 
     // Determine the data (if present) and text content
@@ -46,7 +51,7 @@ export default {
       const { body, frontText, isOrigami } = parsed;
       if (isOrigami) {
         // Origami front matter
-        frontSource = { name, text: frontText, url };
+        frontSource = { name: key, text: frontText, url };
       } else {
         // YAML front matter
         frontData = parseYaml(frontText);
@@ -60,7 +65,7 @@ export default {
     }
 
     // Construct an object to represent the source code
-    const bodySource = { name, text, url };
+    const bodySource = { name: key, text, url };
 
     // Compile the source as an Origami template document
     const scopeCaching = frontSource ? false : true;
@@ -97,6 +102,30 @@ export default {
       }
     }
 
+    const resultExtension = key ? extension.extname(key) : null;
+    if (resultExtension) {
+      // Add sidecar function so this template can be used in a map.
+      result.key = addExtension(resultExtension);
+    }
+
     return processUnpackedContent(result, parent);
   },
 };
+
+// Return a function that adds the given extension
+function addExtension(resultExtension) {
+  return (sourceKey) => {
+    const normalizedKey = trailingSlash.remove(sourceKey);
+    const sourceExtension = extension.extname(normalizedKey);
+    if (sourceExtension) {
+      const replaced = extension.replace(
+        normalizedKey,
+        sourceExtension,
+        resultExtension
+      );
+      return trailingSlash.toggle(replaced, trailingSlash.has(sourceKey));
+    } else {
+      return sourceKey;
+    }
+  };
+}

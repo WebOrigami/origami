@@ -16,9 +16,8 @@ export default function processUnpackedContent(content, parent) {
     // Bind the function to the parent as the `this` context.
     const target = parent ?? builtinsTree;
     const result = content.bind(target);
-    if (content.code) {
-      result.code = content.code;
-    }
+    // Copy over any properties that were attached to the function
+    Object.assign(result, content);
     return result;
   } else if (Tree.isAsyncTree(content) && !content.parent) {
     const result = Object.create(content);

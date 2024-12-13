@@ -1,6 +1,7 @@
 import {
   cachedKeyFunctions,
   isPlainObject,
+  isUnpackable,
   keyFunctionsForExtensions,
   map as mapTransform,
 } from "@weborigami/async-tree";
@@ -25,7 +26,11 @@ export default async function map(treelike, operation) {
   // The tree in which the map operation happens
   const context = this;
 
+  if (isUnpackable(operation)) {
+    operation = await operation.unpack();
+  }
   const options = extendedOptions(context, operation);
+
   const mapped = mapTransform(source, options);
   mapped.parent = context;
   return mapped;
@@ -95,18 +100,22 @@ function extendedOptions(context, operation) {
     extendedInverseKeyFn = keyFns.inverseKey;
   } else if (keyFn) {
     const resolvedKeyFn = toFunction(keyFn);
-    async function keyWithValueFn(sourceKey, sourceTree) {
+    extendedKeyFn = async function keyWithValueFn(sourceKey, sourceTree) {
       const sourceValue = await sourceTree.get(sourceKey);
       const resultKey = await resolvedKeyFn(sourceValue, sourceKey, sourceTree);
       return resultKey;
-    }
-    const keyFns = cachedKeyFunctions(keyWithValueFn, deep);
-    extendedKeyFn = keyFns.key;
-    extendedInverseKeyFn = keyFns.inverseKey;
+    };
   } else {
     // Use sidecar keyFn/inverseKey functions if the valueFn defines them.
     extendedKeyFn = /** @type {any} */ (valueFn)?.key;
     extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
+  }
+
+  if (extendedKeyFn && !extendedInverseKeyFn) {
+    // Only keyFn was provided, so we need to generate the inverseKeyFn.
+    const keyFns = cachedKeyFunctions(extendedKeyFn, deep);
+    extendedKeyFn = keyFns.key;
+    extendedInverseKeyFn = keyFns.inverseKey;
   }
 
   return {
