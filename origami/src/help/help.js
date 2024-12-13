@@ -50,7 +50,7 @@ async function commandDescription(commandHelp, namespace, command) {
     "",
     formatCommandDescription(commandHelp, namespace, command),
     "",
-    `For more information: https://weborigami.org/builtins/${url}`,
+    `For more information: https://weborigami.org/builtins/${url}\n`,
   ];
   return text.join("\n");
 }
@@ -82,7 +82,7 @@ async function namespaceCommands(namespaceHelp, namespace) {
   }
 
   const url = namespaceHelp.collection ? `${namespace}.html` : `${namespace}/`;
-  text.push(`For more information: https://weborigami.org/builtins/${url}`);
+  text.push(`For more information: https://weborigami.org/builtins/${url}\n`);
   return text.join("\n");
 }
 
@@ -97,7 +97,7 @@ async function namespaceDescriptions(helpData) {
     }
   }
   text.push(
-    `\nType "ori help:<namespace>" for more or visit https://weborigami.org/builtins`
+    `\nType "ori help:<namespace>" for more or visit https://weborigami.org/builtins\n`
   );
   return text.join("\n");
 }
