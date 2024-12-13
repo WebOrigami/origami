@@ -1,5 +1,5 @@
 import { ObjectTree, symbols } from "@weborigami/async-tree";
-import { compile, ops } from "@weborigami/language";
+import { compile } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
@@ -72,19 +72,14 @@ export default {
     let result;
     if (frontSource) {
       // Result is the evaluated front source
-      const templateLambda = [ops.lambda, ["_"], defineTemplateFn.code];
       const frontFn = compile.expression(frontSource, {
         macros: {
-          "@template": templateLambda,
+          "@template": defineTemplateFn.code,
         },
       });
       result = await frontFn.call(parent);
     } else {
-      const templateFn = ops.lambda.call(
-        extendedParent,
-        ["_"],
-        defineTemplateFn.code
-      );
+      const templateFn = await defineTemplateFn.call(extendedParent);
       if (frontData) {
         // Result is a function that adds the front data to the template result
         result = async (input) => {

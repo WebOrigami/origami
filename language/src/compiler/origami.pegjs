@@ -572,7 +572,10 @@ stringLiteral "string"
 // literal, but can contain backticks at the top level.
 templateDocument "template"
   = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
-      return annotate(makeTemplate(ops.templateIndent, head, tail), location());
+      return annotate(
+        [ops.lambda, ["_"], makeTemplate(ops.templateIndent, head, tail)],
+        location()
+      );
     }
 
 // Template documents can contain backticks at the top level.

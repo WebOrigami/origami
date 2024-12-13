@@ -967,13 +967,21 @@ describe("Origami parser", () => {
 
   test("templateDocument", () => {
     assertParse("templateDocument", "hello${foo}world", [
-      ops.templateIndent,
-      [ops.literal, ["hello", "world"]],
-      [ops.concat, [ops.scope, "foo"]],
+      ops.lambda,
+      ["_"],
+      [
+        ops.templateIndent,
+        [ops.literal, ["hello", "world"]],
+        [ops.concat, [ops.scope, "foo"]],
+      ],
     ]);
     assertParse("templateDocument", "Documents can contain ` backticks", [
-      ops.templateIndent,
-      [ops.literal, ["Documents can contain ` backticks"]],
+      ops.lambda,
+      ["_"],
+      [
+        ops.templateIndent,
+        [ops.literal, ["Documents can contain ` backticks"]],
+      ],
     ]);
   });
 

@@ -604,7 +604,10 @@ function peg$parse(input, options) {
       return annotate([ops.spread, value], location());
     };
   var peg$f69 = function(head, tail) {
-      return annotate(makeTemplate(ops.templateIndent, head, tail), location());
+      return annotate(
+        [ops.lambda, ["_"], makeTemplate(ops.templateIndent, head, tail)],
+        location()
+      );
     };
   var peg$f70 = function(chars) {
       return chars.join("");
