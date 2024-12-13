@@ -85,7 +85,11 @@ function extendedOptions(context, operation) {
     valueFn = toFunction(valueFn);
     // By default, run the value function in the context of this tree so that
     // Origami builtins can be used as value functions.
-    valueFn = valueFn?.bind(context);
+    // @ts-ignore
+    const bound = valueFn.bind(context);
+    // @ts-ignore
+    Object.assign(bound, valueFn);
+    valueFn = bound;
   }
 
   if (extension) {
