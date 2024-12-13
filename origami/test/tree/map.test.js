@@ -22,12 +22,12 @@ describe("map", () => {
   });
 
   test("passes value and key to functions", async () => {
-    const treelike = new ObjectTree([
+    const array = [
       { name: "Alice", age: 1 },
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
-    ]);
-    const fixture = await map.call(null, treelike, {
+    ];
+    const fixture = await map.call(null, array, {
       key: (value, key, tree) => value.name,
       value: (value, key, tree) => value.age,
     });
@@ -36,6 +36,7 @@ describe("map", () => {
       Bob: 2,
       Carol: 3,
     });
+    assert.deepEqual(await fixture.get("Alice"), 1);
   });
 
   test("can change a key's extension", async () => {

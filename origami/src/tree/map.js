@@ -71,8 +71,8 @@ function extendedOptions(context, operation) {
 
   const { deep, extension, needsSourceValue } = options;
   const description = options.description ?? `map ${extension ?? ""}`;
-  const keyFn = options.key;
-  const inverseKeyFn = options.inverseKey;
+  let keyFn = options.key;
+  let inverseKeyFn = options.inverseKey;
 
   if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
@@ -80,51 +80,56 @@ function extendedOptions(context, operation) {
     );
   }
 
-  let extendedValueFn;
   if (valueFn) {
-    const resolvedValueFn = toFunction(valueFn);
-    // Have the value function run in this tree.
-    extendedValueFn = resolvedValueFn.bind(context);
+    // @ts-ignore
+    valueFn = toFunction(valueFn);
+    // By default, run the value function in the context of this tree so that
+    // Origami builtins can be used as value functions.
+    valueFn = valueFn?.bind(context);
   }
 
-  // Extend the key functions to run in this tree.
-  let extendedKeyFn;
-  let extendedInverseKeyFn;
   if (extension) {
+    // Generate key/inverseKey functions from the extension
     let { resultExtension, sourceExtension } = parseExtensions(extension);
     const keyFns = keyFunctionsForExtensions({
       resultExtension,
       sourceExtension,
     });
-    extendedKeyFn = keyFns.key;
-    extendedInverseKeyFn = keyFns.inverseKey;
+    keyFn = keyFns.key;
+    inverseKeyFn = keyFns.inverseKey;
   } else if (keyFn) {
-    const resolvedKeyFn = toFunction(keyFn);
-    extendedKeyFn = async function keyWithValueFn(sourceKey, sourceTree) {
-      const sourceValue = await sourceTree.get(sourceKey);
-      const resultKey = await resolvedKeyFn(sourceValue, sourceKey, sourceTree);
-      return resultKey;
-    };
+    // Extend the key function to include a value parameter
+    keyFn = extendKeyFn(keyFn);
   } else {
-    // Use sidecar keyFn/inverseKey functions if the valueFn defines them.
-    extendedKeyFn = /** @type {any} */ (valueFn)?.key;
-    extendedInverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
+    // Use sidecar key/inverseKey functions if the valueFn defines them
+    keyFn = /** @type {any} */ (valueFn)?.key;
+    inverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
   }
 
-  if (extendedKeyFn && !extendedInverseKeyFn) {
-    // Only keyFn was provided, so we need to generate the inverseKeyFn.
-    const keyFns = cachedKeyFunctions(extendedKeyFn, deep);
-    extendedKeyFn = keyFns.key;
-    extendedInverseKeyFn = keyFns.inverseKey;
+  if (keyFn && !inverseKeyFn) {
+    // Only keyFn was provided, so we need to generate the inverseKeyFn
+    const keyFns = cachedKeyFunctions(keyFn, deep);
+    keyFn = keyFns.key;
+    inverseKeyFn = keyFns.inverseKey;
   }
 
   return {
     deep,
     description,
-    inverseKey: extendedInverseKeyFn,
-    key: extendedKeyFn,
+    inverseKey: inverseKeyFn,
+    key: keyFn,
     needsSourceValue,
-    value: extendedValueFn,
+    value: valueFn,
+  };
+}
+
+// Extend the key function to include a value parameter
+function extendKeyFn(keyFn) {
+  keyFn = toFunction(keyFn);
+  return async function keyWithValueFn(sourceKey, sourceTree) {
+    const sourceValue = await sourceTree.get(sourceKey);
+    const resultKey = await keyFn(sourceValue, sourceKey, sourceTree);
+    return resultKey;
   };
 }
 
