@@ -1,4 +1,4 @@
-import { FunctionTree } from "@weborigami/async-tree";
+import { FunctionTree, isUnpackable } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
 
@@ -20,6 +20,9 @@ export default async function fromFn(invocable, keys = []) {
     );
   }
   const fn = toFunction(invocable);
+  if (isUnpackable(keys)) {
+    keys = await keys.unpack();
+  }
   const tree = new FunctionTree(fn, keys);
   tree.parent = this;
   return tree;
