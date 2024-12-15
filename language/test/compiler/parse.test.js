@@ -628,11 +628,11 @@ describe("Origami parser", () => {
     ]);
     assertParse("objectLiteral", "{ sub: { a: 1 } }", [
       ops.object,
-      ["sub", [ops.object, ["a", [ops.literal, 1]]]],
+      ["sub/", [ops.object, ["a", [ops.literal, 1]]]],
     ]);
     assertParse("objectLiteral", "{ sub: { a/: 1 } }", [
       ops.object,
-      ["sub", [ops.object, ["a/", [ops.literal, 1]]]],
+      ["sub/", [ops.object, ["a/", [ops.literal, 1]]]],
     ]);
     assertParse("objectLiteral", `{ "a": 1, "b": 2 }`, [
       ops.object,
@@ -658,11 +658,11 @@ describe("Origami parser", () => {
     );
     assertParse("objectLiteral", "{ a: { b: 1 } }", [
       ops.object,
-      ["a", [ops.object, ["b", [ops.literal, 1]]]],
+      ["a/", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
     assertParse("objectLiteral", "{ a: { b = 1 } }", [
       ops.object,
-      ["a", [ops.object, ["b", [ops.literal, 1]]]],
+      ["a/", [ops.object, ["b", [ops.literal, 1]]]],
     ]);
     assertParse("objectLiteral", "{ a: { b = fn() } }", [
       ops.object,

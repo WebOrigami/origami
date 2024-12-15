@@ -260,17 +260,23 @@ export function makeObject(entries, op) {
       continue;
     }
 
-    if (
-      value instanceof Array &&
-      value[0] === ops.getter &&
-      value[1] instanceof Array &&
-      value[1][0] === ops.literal
-    ) {
-      // Simplify a getter for a primitive value to a regular property
-      value = value[1];
-    } else if (isCodeForAsyncObject(value)) {
-      // Add a trailing slash to key to indicate value is a subtree
-      key = key + "/";
+    if (value instanceof Array) {
+      if (
+        value[0] === ops.getter &&
+        value[1] instanceof Array &&
+        value[1][0] === ops.literal
+      ) {
+        // Optimize a getter for a primitive value to a regular property
+        value = value[1];
+      } else if (
+        value[0] === ops.object ||
+        (value[0] === ops.getter &&
+          value[1] instanceof Array &&
+          (value[1][0] === ops.object || value[1][0] === ops.merge))
+      ) {
+        // Add a trailing slash to key to indicate value is a subtree
+        key = key + "/";
+      }
     }
 
     currentEntries.push([key, value]);
