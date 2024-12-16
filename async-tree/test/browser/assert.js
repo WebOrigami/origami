@@ -44,11 +44,11 @@ assert.deepEqual = (actual, expected) => {
   throw new Error(`Expected ${expected} but got ${actual}`);
 };
 
-assert.rejects = async (promise) => {
+assert.rejects = async (fn) => {
   try {
-    await promise;
-    throw new Error("Expected promise to reject but it resolved");
+    await fn();
   } catch (error) {
     return;
   }
+  throw new Error("Expected promise to reject but it resolved");
 };
