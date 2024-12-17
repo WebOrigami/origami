@@ -252,15 +252,16 @@ export function makeObject(entries, op) {
       ) {
         // Optimize a getter for a primitive value to a regular property
         value = value[1];
-      } else if (
-        value[0] === ops.object ||
-        (value[0] === ops.getter &&
-          value[1] instanceof Array &&
-          (value[1][0] === ops.object || value[1][0] === ops.merge))
-      ) {
-        // Add a trailing slash to key to indicate value is a subtree
-        key = trailingSlash.add(key);
       }
+      // else if (
+      //   value[0] === ops.object ||
+      //   (value[0] === ops.getter &&
+      //     value[1] instanceof Array &&
+      //     (value[1][0] === ops.object || value[1][0] === ops.merge))
+      // ) {
+      //   // Add a trailing slash to key to indicate value is a subtree
+      //   key = trailingSlash.add(key);
+      // }
     }
 
     currentEntries.push([key, value]);
