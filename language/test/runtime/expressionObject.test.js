@@ -76,10 +76,15 @@ describe("expressionObject", () => {
 
   test("provides a symbols.keys method", async () => {
     const entries = [
+      ["hasSlash/", "This isn't really a tree but says it is"],
       ["message", "Hello"],
       ["object", [ops.object, ["a", [ops.literal, 1]]]],
     ];
     const object = await expressionObject(entries, null);
-    assert.deepEqual(object[symbols.keys](), ["message", "object/"]);
+    assert.deepEqual(object[symbols.keys](), [
+      "hasSlash/",
+      "message",
+      "object/",
+    ]);
   });
 });

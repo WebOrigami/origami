@@ -137,6 +137,12 @@ export default async function expressionObject(entries, parent) {
 
 function entryKey(entry) {
   const [key, value] = entry;
+  const hasExplicitSlash = trailingSlash.has(key);
+  if (hasExplicitSlash) {
+    // Return key as is
+    return key;
+  }
+  // If entry will definitely create a subtree, add a trailing slash
   const entryCreatesSubtree =
     value instanceof Array &&
     (value[0] === ops.object ||
