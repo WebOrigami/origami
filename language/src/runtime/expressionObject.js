@@ -1,4 +1,11 @@
-import { extension, ObjectTree, symbols, Tree } from "@weborigami/async-tree";
+import {
+  extension,
+  ObjectTree,
+  setParent,
+  symbols,
+  trailingSlash,
+  Tree,
+} from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -25,12 +32,6 @@ export default async function expressionObject(entries, parent) {
   if (parent !== null && !Tree.isAsyncTree(parent)) {
     throw new TypeError(`Parent must be an AsyncTree or null`);
   }
-  Object.defineProperty(object, symbols.parent, {
-    configurable: true,
-    enumerable: false,
-    value: parent,
-    writable: true,
-  });
 
   let tree;
   const immediateProperties = [];
@@ -116,5 +117,88 @@ export default async function expressionObject(entries, parent) {
     });
   }
 
+  // Attach a get method
+  Object.defineProperty(object, "get", {
+    configurable: true,
+    enumerable: false,
+    value: (key) => get(object, key),
+    writable: true,
+  });
+
+  // Attach a keys method
+  Object.defineProperty(object, "keys", {
+    configurable: true,
+    enumerable: false,
+    value: () => keys(entries),
+    writable: true,
+  });
+
+  // Attach the parent
+  Object.defineProperty(object, symbols.parent, {
+    configurable: true,
+    enumerable: false,
+    value: parent,
+    writable: true,
+  });
+
   return object;
+}
+
+async function get(object, key) {
+  if (key == null) {
+    // Reject nullish key.
+    throw new ReferenceError(`Cannot get a null or undefined key.`);
+  }
+
+  // Does the object have the key with or without a trailing slash?
+
+  const existingKey = findExistingKey(object, key);
+  if (existingKey === null) {
+    // Key doesn't exist
+    return undefined;
+  }
+
+  let value = await object[existingKey];
+
+  if (value === undefined) {
+    // Key exists but value is undefined
+    return undefined;
+  }
+
+  setParent(value, object[symbols.parent]);
+
+  if (typeof value === "function" && !Object.hasOwn(object, key)) {
+    // Value is an inherited method; bind it to the object.
+    value = value.bind(object);
+  }
+
+  return value;
+}
+
+function entryKey(entry) {
+  const [key, value] = entry;
+  const entryCreatesSubtree =
+    value instanceof Array &&
+    (value[0] === ops.object ||
+      (value[0] === ops.getter &&
+        value[1] instanceof Array &&
+        (value[1][0] === ops.object || value[1][0] === ops.merge)));
+  return trailingSlash.toggle(key, entryCreatesSubtree);
+}
+
+function findExistingKey(object, key) {
+  // First try key as is
+  if (key in object) {
+    return key;
+  }
+  // Try alternate form
+  const alternateKey = trailingSlash.toggle(key);
+  if (alternateKey in object) {
+    return alternateKey;
+  }
+  return null;
+}
+
+function keys(entries) {
+  return entries.map(entryKey);
 }

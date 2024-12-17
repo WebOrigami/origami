@@ -73,4 +73,30 @@ describe("expressionObject", () => {
     assert.deepEqual(Object.keys(object), ["visible"]);
     assert.equal(object["hidden"], "shh");
   });
+
+  test("can calculate its own keys()", async () => {
+    const entries = [
+      ["message", "Hello"],
+      ["object", [ops.object, ["a", [ops.literal, 1]]]],
+    ];
+    const object = await expressionObject(entries, null);
+    assert.deepEqual(await object.keys(), ["message", "object/"]);
+  });
+
+  test("can get a value by key", async () => {
+    const entries = [
+      ["name", "world"],
+      ["message", [ops.concat, "Hello, ", [ops.scope, "name"], "!"]],
+    ];
+    const object = await expressionObject(entries, null);
+    assert.equal(await object.get("message"), "Hello, world!");
+  });
+
+  test("is an async tree", async () => {
+    const entries = [];
+    const parent = new ObjectTree({});
+    const object = await expressionObject(entries, parent);
+    assert(Tree.isAsyncTree(object));
+    assert.equal(object.parent, parent);
+  });
 });
