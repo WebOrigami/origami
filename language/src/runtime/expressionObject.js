@@ -17,8 +17,8 @@ import { evaluate, ops } from "./internal.js";
  *
  * 1. A primitive value (string, etc.). This will be defined directly as an
  *    object property.
- * 1. An immediate code entry. This will be evaluated during this call and its
- *    result defined as an object property.
+ * 1. An eager (as opposed to lazy) code entry. This will be evaluated during
+ *    this call and its result defined as an object property.
  * 1. A code entry that starts with ops.getter. This will be defined as a
  *    property getter on the object.
  *
@@ -33,7 +33,7 @@ export default async function expressionObject(entries, parent) {
   }
 
   let tree;
-  const immediateProperties = [];
+  const eagerProperties = [];
   for (let [key, value] of entries) {
     // Determine if we need to define a getter or a regular property. If the key
     // has an extension, we need to define a getter. If the value is code (an
@@ -61,7 +61,6 @@ export default async function expressionObject(entries, parent) {
 
     if (defineProperty) {
       // Define simple property
-      // object[key] = value;
       Object.defineProperty(object, key, {
         configurable: true,
         enumerable,
@@ -74,7 +73,7 @@ export default async function expressionObject(entries, parent) {
       if (value[0] === ops.getter) {
         code = value[1];
       } else {
-        immediateProperties.push(key);
+        eagerProperties.push(key);
         code = value;
       }
 
@@ -106,7 +105,7 @@ export default async function expressionObject(entries, parent) {
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
-    value: () => entries.map(entryKey),
+    value: () => keys(object, eagerProperties, entries),
     writable: true,
   });
 
@@ -120,7 +119,7 @@ export default async function expressionObject(entries, parent) {
 
   // Evaluate any properties that were declared as immediate: get their value
   // and overwrite the property getter with the actual value.
-  for (const key of immediateProperties) {
+  for (const key of eagerProperties) {
     const value = await object[key];
     // @ts-ignore Unclear why TS thinks `object` might be undefined here
     const enumerable = Object.getOwnPropertyDescriptor(object, key).enumerable;
@@ -135,13 +134,20 @@ export default async function expressionObject(entries, parent) {
   return object;
 }
 
-function entryKey(entry) {
+function entryKey(object, eagerProperties, entry) {
   const [key, value] = entry;
+
   const hasExplicitSlash = trailingSlash.has(key);
   if (hasExplicitSlash) {
     // Return key as is
     return key;
   }
+
+  // If eager property value is treelike, add slash to the key
+  if (eagerProperties.includes(key) && Tree.isTreelike(object[key])) {
+    return trailingSlash.add(key);
+  }
+
   // If entry will definitely create a subtree, add a trailing slash
   const entryCreatesSubtree =
     value instanceof Array &&
@@ -150,4 +156,8 @@ function entryKey(entry) {
         value[1] instanceof Array &&
         (value[1][0] === ops.object || value[1][0] === ops.merge)));
   return trailingSlash.toggle(key, entryCreatesSubtree);
+}
+
+function keys(object, eagerProperties, entries) {
+  return entries.map((entry) => entryKey(object, eagerProperties, entry));
 }

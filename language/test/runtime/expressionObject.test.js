@@ -5,7 +5,7 @@ import { describe, test } from "node:test";
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
 
-describe("expressionObject", () => {
+describe.only("expressionObject", () => {
   test("can instantiate an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
@@ -74,14 +74,18 @@ describe("expressionObject", () => {
     assert.equal(object["hidden"], "shh");
   });
 
-  test("provides a symbols.keys method", async () => {
+  test.only("provides a symbols.keys method", async () => {
     const entries = [
+      // Will return a tree, should have a slash
+      ["getter", [ops.getter, [ops.object, ["b", [ops.literal, 2]]]]],
       ["hasSlash/", "This isn't really a tree but says it is"],
       ["message", "Hello"],
-      ["object", [ops.object, ["a", [ops.literal, 1]]]],
+      // Immediate treelike value, should have a slash
+      ["object", [ops.object, ["b", [ops.literal, 2]]]],
     ];
     const object = await expressionObject(entries, null);
     assert.deepEqual(object[symbols.keys](), [
+      "getter/",
       "hasSlash/",
       "message",
       "object/",
