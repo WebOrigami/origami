@@ -145,6 +145,13 @@ describe("ObjectTree", () => {
     const method = await tree.get("toString");
     assert.equal(method(), "123");
   });
+
+  test("defers to symbols.keys for keys if defined", async () => {
+    const tree = new ObjectTree({
+      [symbols.keys]: () => ["a", "b", "c"],
+    });
+    assert.deepEqual(Array.from(await tree.keys()), ["a", "b", "c"]);
+  });
 });
 
 function createFixture() {

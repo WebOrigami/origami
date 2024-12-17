@@ -66,6 +66,11 @@ export default class ObjectTree {
    * Enumerate the object's keys.
    */
   async keys() {
+    // Defer to symbols.keys if defined
+    if (typeof this.object[symbols.keys] === "function") {
+      return this.object[symbols.keys]();
+    }
+
     // Walk up the prototype chain to realm's Object.prototype.
     let obj = this.object;
     const objectPrototype = getRealmObjectPrototype(obj);
