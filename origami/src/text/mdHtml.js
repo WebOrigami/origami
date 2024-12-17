@@ -11,6 +11,7 @@ import origamiHighlightDefinition from "./origamiHighlightDefinition.js";
 highlight.registerLanguage("ori", origamiHighlightDefinition);
 
 marked.use(
+  // @ts-ignore
   markedGfmHeadingId(),
   markedHighlight({
     highlight(code, lang) {

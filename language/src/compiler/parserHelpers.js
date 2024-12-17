@@ -76,22 +76,6 @@ export function downgradeReference(code) {
   }
 }
 
-// Return true if the code will generate an async object.
-function isCodeForAsyncObject(code) {
-  if (!(code instanceof Array)) {
-    return false;
-  }
-  if (code[0] !== ops.object) {
-    return false;
-  }
-  // Are any of the properties getters?
-  const entries = code.slice(1);
-  const hasGetter = entries.some(([key, value]) => {
-    return value instanceof Array && value[0] === ops.getter;
-  });
-  return hasGetter;
-}
-
 export function makeArray(entries) {
   let currentEntries = [];
   const spreads = [];
