@@ -40,13 +40,13 @@ describe("compile", () => {
 
   test("sync object", async () => {
     await assertCompile("{a:1, b:2}", { a: 1, b: 2 });
-    await assertCompile("{ a: { b: { c: 0 } } }", { "a/": { "b/": { c: 0 } } });
+    await assertCompile("{ a: { b: { c: 0 } } }", { a: { b: { c: 0 } } });
   });
 
   test("async object", async () => {
     const fn = compile.expression("{ a: { b = name }}");
     const object = await fn.call(shared);
-    assert.deepEqual(await object["a/"].b, "Alice");
+    assert.deepEqual(await object.a.b, "Alice");
   });
 
   test("templateDocument", async () => {
