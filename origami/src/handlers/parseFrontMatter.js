@@ -14,7 +14,8 @@ export default function parseFrontMatter(text) {
 }
 
 function detectOrigami(text) {
-  const trimmed = text.trimStart();
-  const origamiMarkers = ["(", "{", "//", "/*", "#!"];
-  return origamiMarkers.some((marker) => trimmed.startsWith(marker));
+  // Find first character that's not whitespace, alphanumeric, or underscore
+  const first = text.match(/[^A-Za-z0-9_ \t\n\r]/)?.[0];
+  const origamiMarkers = ["(", ".", "/", "{"];
+  return origamiMarkers.includes(first);
 }

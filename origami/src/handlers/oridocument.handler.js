@@ -56,7 +56,7 @@ export default {
         // YAML front matter
         frontData = parseYaml(frontText);
         if (typeof frontData !== "object") {
-          throw new TypeError(`Front matter must be an object`);
+          throw new TypeError(`YAML or JSON front matter must be an object`);
         }
         extendedParent = new ObjectTree(frontData);
         extendedParent.parent = parent;
@@ -103,7 +103,7 @@ export default {
     }
 
     const resultExtension = key ? extension.extname(key) : null;
-    if (resultExtension) {
+    if (resultExtension && Object.isExtensible(result)) {
       // Add sidecar function so this template can be used in a map.
       result.key = addExtension(resultExtension);
     }
