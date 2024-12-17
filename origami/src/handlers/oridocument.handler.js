@@ -115,17 +115,14 @@ export default {
 // Return a function that adds the given extension
 function addExtension(resultExtension) {
   return (sourceKey) => {
+    if (sourceKey === undefined) {
+      return undefined;
+    }
     const normalizedKey = trailingSlash.remove(sourceKey);
     const sourceExtension = extension.extname(normalizedKey);
-    if (sourceExtension) {
-      const replaced = extension.replace(
-        normalizedKey,
-        sourceExtension,
-        resultExtension
-      );
-      return trailingSlash.toggle(replaced, trailingSlash.has(sourceKey));
-    } else {
-      return sourceKey;
-    }
+    const resultKey = sourceExtension
+      ? extension.replace(normalizedKey, sourceExtension, resultExtension)
+      : normalizedKey + resultExtension;
+    return resultKey;
   };
 }
