@@ -275,7 +275,7 @@ export function makeObject(entries, op) {
           (value[1][0] === ops.object || value[1][0] === ops.merge))
       ) {
         // Add a trailing slash to key to indicate value is a subtree
-        key = key + "/";
+        key = trailingSlash.add(key);
       }
     }
 
