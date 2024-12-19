@@ -31,12 +31,12 @@ import {
 
 // A block of optional whitespace
 __
-  = (inlineSpace / newLine / comment)*  {
+  = whitespace*  {
     return null;
   }
 
 additiveExpression
-  = head:multiplicativeExpression tail:(__ @additiveOperator __ @multiplicativeExpression)* {
+  = head:multiplicativeExpression tail:(whitespace @additiveOperator whitespace @multiplicativeExpression)* {
       return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
@@ -310,7 +310,7 @@ multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
 multiplicativeExpression
-  = head:exponentiationExpression tail:(__ @multiplicativeOperator __ @exponentiationExpression)* {
+  = head:exponentiationExpression tail:(whitespace @multiplicativeOperator whitespace @exponentiationExpression)* {
       return annotate(tail.reduce(makeBinaryOperation, head), location());
     }
 
@@ -624,6 +624,11 @@ unaryOperator
   / "+"
   / "-"
   / "~"
+
+whitespace
+  = inlineSpace
+  / newLine
+  / comment
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

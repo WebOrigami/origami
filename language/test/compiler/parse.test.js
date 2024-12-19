@@ -433,6 +433,18 @@ describe("Origami parser", () => {
         [ops.scope, "slug"],
       ],
     ]);
+    assertParse("expression", "keys ~", [
+      [ops.builtin, "keys"],
+      [ops.homeDirectory],
+    ]);
+    assertParse("expression", "keys /Users/alice", [
+      [ops.builtin, "keys"],
+      [
+        ops.traverse,
+        [ops.rootDirectory, [ops.literal, "Users/"]],
+        [ops.literal, "alice"],
+      ],
+    ]);
 
     // Verify parser treatment of identifiers containing operators
     assertParse("expression", "a + b", [
