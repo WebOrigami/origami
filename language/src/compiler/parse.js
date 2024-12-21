@@ -1573,7 +1573,7 @@ function peg$parse(input, options) {
       }
       if (s4 !== peg$FAILED) {
         s5 = peg$parse__();
-        s6 = peg$parsepipelineExpression();
+        s6 = peg$parseshorthandFunction();
         if (s6 !== peg$FAILED) {
           s7 = peg$parse__();
           if (input.charCodeAt(peg$currPos) === 58) {
@@ -1585,7 +1585,7 @@ function peg$parse(input, options) {
           }
           if (s8 !== peg$FAILED) {
             s9 = peg$parse__();
-            s10 = peg$parsepipelineExpression();
+            s10 = peg$parseshorthandFunction();
             if (s10 !== peg$FAILED) {
               s2 = [ s6, s10 ];
             } else {

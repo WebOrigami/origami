@@ -148,8 +148,8 @@ comment "comment"
 
 conditionalExpression
   = condition:logicalOrExpression tail:(__
-    "?" __ @pipelineExpression __
-    ":" __ @pipelineExpression)?
+    "?" __ @shorthandFunction __
+    ":" __ @shorthandFunction)?
     {
       if (!tail) {
         return condition;
