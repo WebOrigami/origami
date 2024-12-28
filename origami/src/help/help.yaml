@@ -274,6 +274,9 @@ tree:
     concat:
       args: (...objs)
       description: Concatenate text and/or trees of text
+    constant:
+      args: (value)
+      description: Return a deep tree with a single constant value
     copy:
       args: (source, target)
       description: Copy the source tree to the target

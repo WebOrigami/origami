@@ -1,6 +1,7 @@
 // Exports for both Node.js and browser
 
 export { default as calendarTree } from "./src/drivers/calendarTree.js";
+export { default as constantTree } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
 export { default as DeferredTree } from "./src/drivers/DeferredTree.js";
 export { default as ExplorableSiteTree } from "./src/drivers/ExplorableSiteTree.js";
