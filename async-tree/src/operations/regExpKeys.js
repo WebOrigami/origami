@@ -33,7 +33,7 @@ export default async function regExpKeys(treelike) {
       if (key == null) {
         // Reject nullish key.
         throw new ReferenceError(
-          `${this.constructor.name}: Cannot get a null or undefined key.`
+          `regExpKeys: Cannot get a null or undefined key.`
         );
       }
 
