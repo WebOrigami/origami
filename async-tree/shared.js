@@ -19,6 +19,7 @@ export { default as deepReverse } from "./src/operations/deepReverse.js";
 export { default as deepTake } from "./src/operations/deepTake.js";
 export { default as deepValues } from "./src/operations/deepValues.js";
 export { default as deepValuesIterator } from "./src/operations/deepValuesIterator.js";
+export { default as filter } from "./src/operations/filter.js";
 export { default as group } from "./src/operations/group.js";
 export { default as invokeFunctions } from "./src/operations/invokeFunctions.js";
 export { default as keyFunctionsForExtensions } from "./src/operations/keyFunctionsForExtensions.js";
