@@ -1,5 +1,6 @@
+import { setParent } from "@weborigami/async-tree";
+import globKeys from "@weborigami/async-tree/src/operations/globKeys.js";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import GlobTree from "./GlobTree.js";
 
 /**
  * Define a tree whose keys are globs.
@@ -12,6 +13,7 @@ import GlobTree from "./GlobTree.js";
  */
 export default async function globs(tree) {
   assertTreeIsDefined(this, "tree:globs");
-  const result = new GlobTree(tree);
+  const result = globKeys(tree);
+  setParent(this, result);
   return result;
 }
