@@ -21,7 +21,10 @@ export default function deepMerge(...sources) {
       for (let index = trees.length - 1; index >= 0; index--) {
         const tree = trees[index];
         const value = await tree.get(key);
-        if (Tree.isAsyncTree(value)) {
+        if (
+          Tree.isAsyncTree(value) ||
+          (Tree.isTreelike(value) && trailingSlash.has(key))
+        ) {
           if (value.parent === tree) {
             // Merged tree acts as parent instead of the source tree.
             value.parent = this;
