@@ -46,6 +46,9 @@ export default async function constructResponse(request, resource) {
     if (typeof resource === "function") {
       resource = await resource();
     }
+    if (resource instanceof Response) {
+      return resource;
+    }
   }
 
   let mediaType;
