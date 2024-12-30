@@ -422,7 +422,7 @@ export async function traverseOrThrow(treelike, ...keys) {
   const remainingKeys = keys.slice();
   let key;
   while (remainingKeys.length > 0) {
-    if (value === undefined) {
+    if (value == null) {
       throw new TraverseError("A null or undefined value can't be traversed", {
         tree: treelike,
         keys,
@@ -443,20 +443,13 @@ export async function traverseOrThrow(treelike, ...keys) {
       const args = remainingKeys.splice(0, fnKeyCount);
       key = null;
       value = await fn.call(target, ...args);
-    } else if (isTraversable(value) || typeof value === "object") {
-      // Value is some other treelike object: cast it to a tree.
+    } else {
+      // Cast value to a tree.
       const tree = from(value);
       // Get the next key.
       key = remainingKeys.shift();
       // Get the value for the key.
       value = await tree.get(key);
-    } else {
-      // Value can't be traversed
-      throw new TraverseError("Tried to traverse a value that's not treelike", {
-        tree: treelike,
-        keys,
-        position,
-      });
     }
 
     position++;
