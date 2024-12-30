@@ -18,6 +18,7 @@ export default {
   Number,
   Object,
   RegExp,
+  Response,
   Set,
   String,
   Symbol,
