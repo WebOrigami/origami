@@ -28,7 +28,7 @@ export default function globKeys(treelike) {
 function matchGlob(glob, key) {
   const regexText = glob
     // Escape special regex characters
-    .replace(/[+?^${}()|\[\]\\]/g, "\\$&")
+    .replace(/[+?^${}()|\.\[\]\\]/g, "\\$&")
     // Replace the glob wildcards with regex wildcards
     .replace(/\*/g, ".*")
     .replace(/\?/g, ".");
