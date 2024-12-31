@@ -313,9 +313,9 @@ tree:
     fromFn:
       args: (fn, [keys])
       description: A tree defined by a value function
-    globs:
+    globKeys:
       args: (patterns)
-      description: A tree whose keys can include wildcard patterns
+      description: A tree whose keys can include glob wildcard patterns
     group:
       args: (tree, fn)
       description: A new tree with values grouped by the function
@@ -367,6 +367,9 @@ tree:
     plain:
       args: (tree)
       description: Render the tree as a plain JavaScript object
+    regExpKeys:
+      args: (tree)
+      description: A tree whose keys are regular expression strings
     remove:
       args: (tree, key)
       description: Remove the value for the key from tree

@@ -19,7 +19,7 @@ describe("regExpKeys", () => {
     assert(!(await Tree.traverse(fixture, "alice")));
     assert(await Tree.traverse(fixture, "bob"));
     assert(await Tree.traverse(fixture, "brenda"));
-    assert(await Tree.traverse(fixture, "c", "d"));
-    assert(await Tree.traverse(fixture, "c", "eee"));
+    assert(await Tree.traverse(fixture, "c/", "d"));
+    assert(await Tree.traverse(fixture, "c/", "eee"));
   });
 });
