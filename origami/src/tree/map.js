@@ -21,15 +21,21 @@ import { toFunction } from "../common/utilities.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default async function map(treelike, operation) {
-  // The tree we're going to map
-  const source = await getTreeArgument(this, arguments, treelike, "tree:map");
-  // The tree in which the map operation happens
-  const context = this;
-
   if (isUnpackable(operation)) {
     operation = await operation.unpack();
   }
+  // The tree in which the map operation happens
+  const context = this;
   const options = extendedOptions(context, operation);
+
+  // The tree we're going to map
+  const source = await getTreeArgument(
+    this,
+    arguments,
+    treelike,
+    "tree:map",
+    options?.deep
+  );
 
   const mapped = mapTransform(source, options);
   mapped.parent = context;

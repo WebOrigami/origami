@@ -68,6 +68,25 @@ describe("map", () => {
     });
   });
 
+  test("can remove extensions deeply", async () => {
+    const treelike = {
+      "file1.txt": 1,
+      more: {
+        "file2.txt": 2,
+      },
+    };
+    const fixture = await map.call(null, treelike, {
+      deep: true,
+      extension: ".txt->",
+    });
+    assert.deepEqual(await Tree.plain(fixture), {
+      file1: 1,
+      more: {
+        file2: 2,
+      },
+    });
+  });
+
   test("can map keys and values deeply", async () => {
     const treelike = new DeepObjectTree({
       a: 1,

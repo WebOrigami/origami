@@ -65,37 +65,50 @@ export default function map(treelike, options = {}) {
 
     if (keyFn || valueFn) {
       transformed.get = async (resultKey) => {
-        // Step 1: Map the result key to the source key.
+        if (deep && trailingSlash.has(resultKey)) {
+          // Special case: deep tree and value is expected to be a subtree
+          const sourceValue = await tree.get(resultKey);
+          // If we did get a subtree, apply the map to it
+          const resultValue = Tree.isAsyncTree(sourceValue)
+            ? mapFn(sourceValue)
+            : undefined;
+          return resultValue;
+        }
+
+        // Regular path: map a single value
+
+        // Step 1: Map the result key to the source key
         const sourceKey = (await inverseKeyFn?.(resultKey, tree)) ?? resultKey;
 
         if (sourceKey === undefined) {
-          // No source key means no value.
+          // No source key means no value
           return undefined;
         }
 
-        // Step 2: Get the source value.
+        // Step 2: Get the source value
         let sourceValue;
         if (needsSourceValue) {
-          // Normal case: get the value from the source tree.
+          // Normal case: get the value from the source tree
           sourceValue = await tree.get(sourceKey);
-        } else if (deep && trailingSlash.has(sourceKey)) {
-          // Only get the source value if it's expected to be a subtree.
-          sourceValue = tree;
+          if (deep && sourceValue === undefined) {
+            // Key might be for a subtree, see if original key exists
+            sourceValue = await tree.get(resultKey);
+          }
         }
 
-        // Step 3: Map the source value to the result value.
+        // Step 3: Map the source value to the result value
         let resultValue;
         if (needsSourceValue && sourceValue === undefined) {
-          // No source value means no result value.
+          // No source value means no result value
           resultValue = undefined;
         } else if (deep && Tree.isAsyncTree(sourceValue)) {
-          // Map a subtree.
+          // We weren't expecting a subtree but got one; map it
           resultValue = mapFn(sourceValue);
         } else if (valueFn) {
-          // Map a single value.
+          // Map a single value
           resultValue = await valueFn(sourceValue, sourceKey, tree);
         } else {
-          // Return source value as is.
+          // Return source value as is
           resultValue = sourceValue;
         }
 
