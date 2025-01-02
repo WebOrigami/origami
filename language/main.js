@@ -10,6 +10,7 @@ export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtens
 export * from "./src/runtime/handlers.js";
 export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.js";
 export { default as InvokeFunctionsTransform } from "./src/runtime/InvokeFunctionsTransform.js";
+export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFiles } from "./src/runtime/OrigamiFiles.js";
 export * as symbols from "./src/runtime/symbols.js";
 export { default as taggedTemplate } from "./src/runtime/taggedTemplate.js";

@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { maybeOrigamiSourceCode } from "./errors.js";
+import * as moduleCache from "./moduleCache.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -14,7 +15,9 @@ export default function ImportModulesMixin(Base) {
       const filePath = path.join(this.dirname, ...keys);
       // On Windows, absolute paths must be valid file:// URLs.
       const fileUrl = pathToFileURL(filePath);
-      const modulePath = fileUrl.href;
+      // Add cache-busting timestamp
+      const modulePath =
+        fileUrl.href + `?cacheBust=${moduleCache.getTimestamp()}`;
 
       // Try to load the module.
       let obj;

@@ -1,5 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import { formatError } from "@weborigami/language";
+import { formatError, moduleCache } from "@weborigami/language";
 import ConstantTree from "../common/ConstantTree.js";
 import getTreeArgument from "../common/getTreeArgument.js";
 
@@ -42,6 +42,7 @@ export default async function watch(treelike, fn) {
   // Reevaluate the function whenever the tree changes.
   container.addEventListener?.("change", async () => {
     const tree = await evaluateTree(container, fn);
+    moduleCache.resetTimestamp();
     updateIndirectPointer(handle, tree);
   });
 
