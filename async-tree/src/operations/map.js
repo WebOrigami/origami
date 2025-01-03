@@ -65,25 +65,29 @@ export default function map(treelike, options = {}) {
 
     if (keyFn || valueFn) {
       transformed.get = async (resultKey) => {
-        if (deep && trailingSlash.has(resultKey)) {
-          // Special case: deep tree and value is expected to be a subtree
-          const sourceValue = await tree.get(resultKey);
-          // If we did get a subtree, apply the map to it
-          const resultValue = Tree.isAsyncTree(sourceValue)
-            ? mapFn(sourceValue)
-            : undefined;
-          return resultValue;
+        if (resultKey === undefined) {
+          throw new ReferenceError(`map: Cannot get an undefined key.`);
+        }
+
+        // Step 1: Map the result key to the source key
+        let sourceKey = await inverseKeyFn?.(resultKey, tree);
+
+        if (sourceKey === undefined) {
+          if (deep && trailingSlash.has(resultKey)) {
+            // Special case: deep tree and value is expected to be a subtree
+            const sourceValue = await tree.get(resultKey);
+            // If we did get a subtree, apply the map to it
+            const resultValue = Tree.isAsyncTree(sourceValue)
+              ? mapFn(sourceValue)
+              : undefined;
+            return resultValue;
+          } else {
+            // No inverseKeyFn, or it returned undefined; use resultKey
+            sourceKey = resultKey;
+          }
         }
 
         // Regular path: map a single value
-
-        // Step 1: Map the result key to the source key
-        const sourceKey = (await inverseKeyFn?.(resultKey, tree)) ?? resultKey;
-
-        if (sourceKey === undefined) {
-          // No source key means no value
-          return undefined;
-        }
 
         // Step 2: Get the source value
         let sourceValue;
