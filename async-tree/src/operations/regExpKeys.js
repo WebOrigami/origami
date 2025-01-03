@@ -72,14 +72,7 @@ export default async function regExpKeys(treelike) {
       }
     } else {
       // Construct regular expression.
-      let text = key;
-      if (!text.startsWith("^")) {
-        text = "^" + text;
-      }
-      if (!text.endsWith("$")) {
-        text = text + "$";
-      }
-      regExp = new RegExp(text);
+      regExp = new RegExp(key);
     }
     map.set(regExp, value);
   }

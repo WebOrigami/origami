@@ -26,6 +26,7 @@ export { default as merge } from "./merge.js";
 export { default as paginate } from "./paginate.js";
 export { default as parent } from "./parent.js";
 export { default as plain } from "./plain.js";
+export { default as regExpKeys } from "./regExpKeys.js";
 export { default as reverse } from "./reverse.js";
 export { default as setDeep } from "./setDeep.js";
 export { default as shuffle } from "./shuffle.js";

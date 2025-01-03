@@ -7,12 +7,13 @@ describe("regExpKeys", () => {
   test("matches keys using regular expressions", async () => {
     const fixture = await regExpKeys(
       new DeepObjectTree({
-        a: true,
-        "b.*": true,
+        "^a$": true,
+        "^b.*": true,
         c: {
           d: true,
           "e*": true,
         },
+        f: true,
       })
     );
     assert(await Tree.traverse(fixture, "a"));
@@ -21,5 +22,8 @@ describe("regExpKeys", () => {
     assert(await Tree.traverse(fixture, "brenda"));
     assert(await Tree.traverse(fixture, "c/", "d"));
     assert(await Tree.traverse(fixture, "c/", "eee"));
+    assert(await Tree.traverse(fixture, "f"));
+    assert(await Tree.traverse(fixture, "stef")); // contains "f"
+    assert(!(await Tree.traverse(fixture, "gail")));
   });
 });
