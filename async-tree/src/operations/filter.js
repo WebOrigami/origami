@@ -1,17 +1,31 @@
 import { trailingSlash, Tree } from "@weborigami/async-tree";
 
+/**
+ * Given trees `a` and `b`, return a filtered version of `a` where only the keys
+ * that exist in `b` and have truthy values are kept. The filter operation is
+ * deep: if a value from `a` is a subtree, it will be filtered recursively.
+ *
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ *
+ * @param {Treelike} a
+ * @param {Treelike} b
+ * @returns {AsyncTree}
+ */
 export default function filter(a, b) {
   a = Tree.from(a);
   b = Tree.from(b, { deep: true });
 
   return {
     async get(key) {
+      // The key must exist in b and return a truthy value
       const bValue = await b.get(key);
       if (!bValue) {
         return undefined;
       }
       let aValue = await a.get(key);
       if (Tree.isTreelike(aValue)) {
+        // Filter the subtree
         return filter(aValue, bValue);
       } else {
         return aValue;

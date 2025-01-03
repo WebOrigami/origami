@@ -301,6 +301,9 @@ tree:
     entries:
       args: (tree)
       description: The tree's [key, value] pairs
+    filter:
+      args: (source, filter)
+      description: Filter the source tree using the filter tree
     first:
       args: (tree)
       description: The first value in the tree
