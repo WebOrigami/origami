@@ -1,7 +1,7 @@
-import { symbols } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
 import { builtinsTree, processUnpackedContent } from "../internal.js";
+import getParent from "./getParent.js";
 
 /**
  * An Origami expression file
@@ -13,16 +13,13 @@ export default {
 
   /** @type {import("@weborigami/language").UnpackFunction} */
   async unpack(packed, options = {}) {
-    const parent =
-      options.parent ??
-      /** @type {any} */ (packed).parent ??
-      /** @type {any} */ (packed)[symbols.parent];
+    const parent = getParent(packed, options);
 
     // Construct an object to represent the source code.
     const sourceName = options.key;
     let url;
-    if (sourceName && parent?.url) {
-      let parentHref = parent.url.href;
+    if (sourceName && /** @type {any} */ (parent)?.url) {
+      let parentHref = /** @type {any} */ (parent).url.href;
       if (!parentHref.endsWith("/")) {
         parentHref += "/";
       }

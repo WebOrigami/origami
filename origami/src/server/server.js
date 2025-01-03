@@ -194,7 +194,7 @@ ${message}
 
 // Asynchronous tree router as Express middleware.
 export function treeRouter(treelike) {
-  const tree = Tree.from(treelike);
+  const tree = Tree.from(treelike, { deep: true });
   // Return a router for the tree source.
   return async function (request, response, next) {
     const handled = await handleRequest(request, response, tree);

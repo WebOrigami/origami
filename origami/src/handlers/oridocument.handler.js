@@ -8,6 +8,7 @@ import { compile } from "@weborigami/language";
 import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
+import getParent from "./getParent.js";
 import parseFrontMatter from "./parseFrontMatter.js";
 
 /**
@@ -19,11 +20,7 @@ export default {
 
   /** @type {import("@weborigami/language").UnpackFunction} */
   async unpack(packed, options = {}) {
-    const parent =
-      options.parent ??
-      /** @type {any} */ (packed).parent ??
-      /** @type {any} */ (packed)[symbols.parent] ??
-      null;
+    const parent = getParent(packed, options);
 
     // Unpack as a text document
     const unpacked = toString(packed);
@@ -31,8 +28,8 @@ export default {
     // See if we can construct a URL to use in error messages
     const key = options.key;
     let url;
-    if (key && parent?.url) {
-      let parentHref = parent.url.href;
+    if (key && /** @type {any} */ (parent)?.url) {
+      let parentHref = /** @type {any} */ (parent).url.href;
       if (!parentHref.endsWith("/")) {
         parentHref += "/";
       }
