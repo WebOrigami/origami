@@ -25,9 +25,9 @@ export default function deepMerge(...sources) {
           Tree.isAsyncTree(value) ||
           (Tree.isTreelike(value) && trailingSlash.has(key))
         ) {
-          if (value.parent === tree) {
+          if (/** @type {any} */ (value).parent === tree) {
             // Merged tree acts as parent instead of the source tree.
-            value.parent = this;
+            /** @type {any} */ (value).parent = this;
           }
           subtrees.unshift(value);
         } else if (value !== undefined) {
