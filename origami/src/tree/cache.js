@@ -9,19 +9,14 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @param {Treelike} sourceTreelike
  * @param {Treelike} [cacheTreelike]
- * @param {Treelike} [filterTreelike]
  * @this {AsyncTree|null}
  */
-export default async function cacheBuiltin(
-  sourceTreelike,
-  cacheTreelike,
-  filterTreelike
-) {
+export default async function cacheBuiltin(sourceTreelike, cacheTreelike) {
   assertTreeIsDefined(this, "tree:cache");
   /** @type {any} */
   const cacheTree = cacheTreelike
     ? Tree.from(cacheTreelike, { parent: this })
     : undefined;
-  const result = cache(sourceTreelike, cacheTree, filterTreelike);
+  const result = cache(sourceTreelike, cacheTree);
   return result;
 }
