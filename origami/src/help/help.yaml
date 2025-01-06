@@ -266,7 +266,7 @@ tree:
       args: (target, source)
       description: Apply key/values from source to target
     cache:
-      args: (tree, [cache], [filter])
+      args: (tree, [cache])
       description: Caches values from the tree
     clear:
       args: (tree)
