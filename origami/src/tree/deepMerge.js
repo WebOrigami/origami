@@ -11,16 +11,8 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  */
 export default async function treeDeepMerge(...trees) {
   assertTreeIsDefined(this, "tree:deepMerge");
-
-  // Filter out null or undefined trees.
-  const filtered = trees.filter((tree) => tree);
-
-  if (filtered.length === 1) {
-    // Only one tree, no need to merge.
-    return filtered[0];
-  }
-
   // Merge the trees.
-  const result = deepMerge(...filtered);
+  const result = deepMerge(...trees);
+  result.parent = this;
   return result;
 }
