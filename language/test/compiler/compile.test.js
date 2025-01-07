@@ -87,30 +87,6 @@ describe("compile", () => {
     assert.equal(bob, "Hello, Bob!");
   });
 
-  test("converts non-local ops.scope calls to ops.external", async () => {
-    const expression = `
-      (name) => {
-        a: 1
-        b: a            // local, should be left as ops.scope
-        c: external     // external, should be converted to ops.external
-        d: name         // local, should be left as ops.scope
-      }
-    `;
-    const fn = compile.expression(expression);
-    const code = fn.code;
-    assert.deepEqual(stripCodeLocations(code), [
-      ops.lambda,
-      ["name"],
-      [
-        ops.object,
-        ["a", [ops.literal, 1]],
-        ["b", [ops.scope, "a"]],
-        ["c", [ops.external, "external", {}]],
-        ["d", [ops.scope, "name"]],
-      ],
-    ]);
-  });
-
   test("can apply a macro", async () => {
     const literal = [ops.literal, 1];
     const expression = `{ a: literal }`;

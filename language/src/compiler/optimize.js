@@ -1,4 +1,4 @@
-import { trailingSlash } from "@weborigami/async-tree";
+import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import { annotate, undetermined } from "./parserHelpers.js";
 
@@ -13,8 +13,8 @@ import { annotate, undetermined } from "./parserHelpers.js";
  */
 export default function optimize(
   code,
-  enableCaching,
-  macros,
+  enableCaching = true,
+  macros = {},
   cache = {},
   locals = {}
 ) {
@@ -22,6 +22,17 @@ export default function optimize(
   const [fn, ...args] = code;
   let additionalLocalNames;
   switch (fn) {
+    case ops.lambda:
+      const parameters = args[0];
+      additionalLocalNames = parameters;
+      break;
+
+    case ops.object:
+      const entries = args;
+      additionalLocalNames = entries.map(([key]) => trailingSlash.remove(key));
+      break;
+
+    // Both of these are handled the same way
     case undetermined:
     case ops.scope:
       const key = args[0];
@@ -31,30 +42,45 @@ export default function optimize(
         const macro = macros?.[normalizedKey];
         return applyMacro(macro, code, enableCaching, macros, cache, locals);
       } else if (enableCaching && !locals[normalizedKey]) {
-        // Upgrade to cached external reference
-        const modified = [ops.external, key, cache];
+        // Upgrade to cached external scope reference
+        const optimized = [ops.external, key, [ops.scope, key], cache];
         // @ts-ignore
-        annotate(modified, code.location);
-        return modified;
+        annotate(optimized, code.location);
+        return optimized;
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
-        const modified = [ops.scope, key];
+        const optimized = [ops.scope, key];
         // @ts-ignore
-        annotate(modified, code.location);
-        return modified;
+        annotate(optimized, code.location);
+        return optimized;
       } else {
         // Internal ops.scope call; leave as is
         return code;
       }
 
-    case ops.lambda:
-      const parameters = args[0];
-      additionalLocalNames = parameters;
-      break;
-
-    case ops.object:
-      const entries = args;
-      additionalLocalNames = entries.map(([key]) => trailingSlash.remove(key));
+    case ops.traverse:
+      // Is the first argument a nonscope/undetermined reference?
+      const isScopeRef =
+        args[0]?.[0] === ops.scope || args[0]?.[0] === undetermined;
+      if (enableCaching && isScopeRef) {
+        // Is the first argument a nonlocal reference?
+        const normalizedKey = trailingSlash.remove(args[0][1]);
+        if (!locals[normalizedKey]) {
+          // Are the remaining arguments all literals?
+          const allLiterals = args
+            .slice(1)
+            .every((arg) => arg[0] === ops.literal);
+          if (allLiterals) {
+            // Convert to ops.external
+            const keys = args.map((arg) => arg[1]);
+            const path = pathFromKeys(keys);
+            const optimized = [ops.external, path, code, cache];
+            // @ts-ignore
+            annotate(optimized, code.location);
+            return optimized;
+          }
+        }
+      }
       break;
   }
 

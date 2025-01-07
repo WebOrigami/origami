@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { DeepObjectTree, ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
@@ -99,14 +99,21 @@ describe("ops", () => {
     assert.strictEqual(ops.exponentiation(2, 0), 1);
   });
 
-  test("ops.external looks up a value in scope and memoizes it", async () => {
+  test("ops.external evaluates code and cache its result", async () => {
     let count = 0;
-    const tree = new ObjectTree({
-      get count() {
-        return ++count;
+    const tree = new DeepObjectTree({
+      group: {
+        get count() {
+          return ++count;
+        },
       },
     });
-    const code = createCode([ops.external, "count", {}]);
+    const code = createCode([
+      ops.external,
+      "group/count",
+      [ops.traverse, [ops.scope, "group"], [ops.literal, "count"]],
+      {},
+    ]);
     const result = await evaluate.call(tree, code);
     assert.strictEqual(result, 1);
     const result2 = await evaluate.call(tree, code);

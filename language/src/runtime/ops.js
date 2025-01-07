@@ -131,16 +131,27 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
  *
  * @this {AsyncTree|null}
  */
-export async function external(key, cache) {
-  if (key in cache) {
-    return cache[key];
+export async function external(path, code, cache) {
+  if (!this) {
+    throw new Error("Tried to get the scope of a null or undefined tree.");
   }
-  // First save a promise for the value
-  const promise = scope.call(this, key);
-  cache[key] = promise;
+
+  if (path in cache) {
+    // Cache hit
+    return cache[path];
+  }
+
+  // Don't await: might get another request for this before promise resolves
+  const promise = evaluate.call(this, code);
+  // Save promise so another request will get the same promise
+  cache[path] = promise;
+
+  // Now wait for the value
   const value = await promise;
-  // Now update with the actual value
-  cache[key] = value;
+
+  // Update the cache with the actual value
+  cache[path] = value;
+
   return value;
 }
 
