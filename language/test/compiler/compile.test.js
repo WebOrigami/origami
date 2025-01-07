@@ -92,7 +92,7 @@ describe("compile", () => {
       (name) => {
         a: 1
         b: a            // local, should be left as ops.scope
-        c: nonLocal     // non-local, should be converted to ops.cache
+        c: external     // external, should be converted to ops.external
         d: name         // local, should be left as ops.scope
       }
     `;
@@ -105,7 +105,7 @@ describe("compile", () => {
         ops.object,
         ["a", [ops.literal, 1]],
         ["b", [ops.scope, "a"]],
-        ["c", [ops.external, "nonLocal", {}]],
+        ["c", [ops.external, "external", {}]],
         ["d", [ops.scope, "name"]],
       ],
     ]);

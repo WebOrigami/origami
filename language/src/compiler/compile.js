@@ -12,8 +12,7 @@ function compile(source, options) {
     grammarSource: source,
     startRule,
   });
-  const cache = {};
-  const optimized = optimize(code, cache, enableCaching, macros);
+  const optimized = optimize(code, enableCaching, macros);
   const fn = createExpressionFunction(optimized);
   return fn;
 }
