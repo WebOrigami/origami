@@ -219,8 +219,12 @@ export const naturalOrder = new Intl.Collator(undefined, {
  * @param {string[]} keys
  */
 export function pathFromKeys(keys) {
-  const normalized = keys.map((key) => trailingSlash.remove(key));
-  return normalized.join("/");
+  // Ensure there's a slash between all keys. If the last key has a trailing
+  // slash, leave it there.
+  const normalized = keys.map((key, index) =>
+    index < keys.length - 1 ? trailingSlash.add(key) : key
+  );
+  return normalized.join("");
 }
 
 /**

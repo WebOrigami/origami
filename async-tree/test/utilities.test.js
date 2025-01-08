@@ -59,6 +59,7 @@ describe("utilities", () => {
     assert.equal(utilities.pathFromKeys([]), "");
     assert.equal(utilities.pathFromKeys(["a", "b", "c"]), "a/b/c");
     assert.equal(utilities.pathFromKeys(["a/", "b/", "c"]), "a/b/c");
+    assert.equal(utilities.pathFromKeys(["a/", "b/", "c/"]), "a/b/c/");
   });
 
   test("pipeline applies a series of functions to a value", async () => {
