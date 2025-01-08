@@ -20,13 +20,15 @@ export default async function concatTreeValues(treelike) {
   for await (const value of deepValuesIterator(treelike, { expand: true })) {
     let string;
     if (value === null) {
-      console.warn("Warning: Origami template encountered a null value");
       string = "null";
     } else if (value === undefined) {
-      console.warn("Warning: Origami template encountered an undefined value");
       string = "undefined";
     } else {
       string = toString(value);
+    }
+    if (value === null || value === undefined) {
+      const message = `Warning: Origami template encountered a ${string} value. To locate where this happened, build your project and search your build output for the text "${string}".`;
+      console.warn(message);
     }
     strings.push(string);
   }
