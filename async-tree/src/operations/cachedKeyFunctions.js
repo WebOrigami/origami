@@ -1,6 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 
-const treeToCaches = new WeakMap();
+const treeToCaches = new Map();
 
 /**
  * Given a key function, return a new key function and inverse key function that
@@ -111,12 +111,10 @@ function searchKeyMap(keyMap, key) {
   let match;
   if (keyMap.has(key)) {
     match = keyMap.get(key);
-  } else if (!trailingSlash.has(key)) {
-    // Check key without trailing slash
-    const withSlash = trailingSlash.add(key);
-    if (keyMap.has(withSlash)) {
-      match = keyMap.get(withSlash);
-    }
+  } else {
+    // Check alternative with/without slash
+    const alternativeKey = trailingSlash.toggle(key, !trailingSlash.has(key));
+    match = keyMap.get(alternativeKey);
   }
   return match
     ? trailingSlash.toggle(match, trailingSlash.has(key))
