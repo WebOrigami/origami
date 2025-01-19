@@ -12,6 +12,7 @@ describe("typos", () => {
     assert(isTypo("cat", "cta")); // transposition
     assert(isTypo("cat", "act")); // transposition
     assert(!isTypo("cat", "dog")); // more than 1 edit
+    assert(!isTypo("a", "b")); // single character
   });
 
   test("typos", () => {

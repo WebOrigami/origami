@@ -15,6 +15,12 @@ export function isTypo(s1, s2) {
     return false;
   }
 
+  // If strings are both a single character, we don't want to consider them
+  // typos.
+  if (length1 === 1 && length2 === 1) {
+    return false;
+  }
+
   // If length difference is more than 1, distance can't be 1
   if (Math.abs(length1 - length2) > 1) {
     return false;
