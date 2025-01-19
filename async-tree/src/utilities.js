@@ -5,6 +5,8 @@ import * as trailingSlash from "./trailingSlash.js";
 const textDecoder = new TextDecoder();
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
+/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+
 /**
  * Return the value as an object. If the value is already an object it will be
  * returned as is. If the value is a primitive, it will be wrapped in an object:
@@ -244,7 +246,7 @@ export async function pipeline(start, ...fns) {
  * set the `symbols.parent` property.
  *
  * @param {*} child
- * @param {*} parent
+ * @param {AsyncTree|null} parent
  */
 export function setParent(child, parent) {
   if (Tree.isAsyncTree(child)) {

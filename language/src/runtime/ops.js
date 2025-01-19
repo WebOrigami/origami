@@ -330,7 +330,41 @@ export async function logicalOr(head, ...tail) {
  * @this {AsyncTree|null}
  * @param {import("@weborigami/async-tree").Treelike[]} trees
  */
-export async function merge(...trees) {
+export async function merge(...codes) {
+  const trees = new Array(codes.length);
+
+  // First pass: evaluate the direct objects
+  const directObjects = [];
+  await Promise.all(
+    codes.map(async (code, index) => {
+      if (code[0] === object) {
+        const value = await evaluate.call(this, code);
+        directObjects.push(value);
+        trees[index] = value;
+      }
+    })
+  );
+
+  const mergedDirect =
+    directObjects.length > 0
+      ? await mergeTrees.call(this, ...directObjects)
+      : null;
+
+  if (directObjects.length === codes.length) {
+    // No spreads, we're done
+    return mergedDirect;
+  }
+
+  // Evaluate the rest of the arguments with the merged object in scope
+  const mergedTree = Tree.from(mergedDirect);
+  await Promise.all(
+    codes.map(async (code, index) => {
+      if (code[0] !== object) {
+        trees[index] = await evaluate.call(mergedTree, code);
+      }
+    })
+  );
+
   return mergeTrees.call(this, ...trees);
 }
 addOpLabel(merge, "«ops.merge»");

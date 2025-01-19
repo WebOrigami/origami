@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
-describe("ops", () => {
+describe.only("ops", () => {
   test("ops.addition adds two numbers", async () => {
     assert.strictEqual(ops.addition(2, 2), 4);
     assert.strictEqual(ops.addition(2, true), 3);
@@ -218,6 +218,26 @@ describe("ops", () => {
 
     // Short-circuiting
     assert.strictEqual(await ops.logicalOr(true, errorFn), true);
+  });
+
+  test.only("ops.merge", async () => {
+    // {
+    //   a: 1
+    //   …fn(a)
+    // }
+    const scope = new ObjectTree({
+      fn: (a) => ({ b: 2 * a }),
+    });
+    const code = createCode([
+      ops.merge,
+      [ops.object, ["a", 1]],
+      [
+        [ops.builtin, "fn"],
+        [ops.scope, "a"],
+      ],
+    ]);
+    const result = await evaluate.call(scope, code);
+    assert.deepEqual(result, { a: 1, b: 2 });
   });
 
   test("ops.multiplication multiplies two numbers", async () => {
