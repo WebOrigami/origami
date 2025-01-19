@@ -33,6 +33,17 @@ export function addition(a, b) {
 }
 addOpLabel(addition, "«ops.addition»");
 
+/**
+ * Construct an array.
+ *
+ * @this {AsyncTree|null}
+ * @param {any[]} items
+ */
+export async function array(...items) {
+  return items;
+}
+addOpLabel(array, "«ops.array»");
+
 export function bitwiseAnd(a, b) {
   return a & b;
 }
@@ -52,17 +63,6 @@ export function bitwiseXor(a, b) {
   return a ^ b;
 }
 addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
-
-/**
- * Construct an array.
- *
- * @this {AsyncTree|null}
- * @param {any[]} items
- */
-export async function array(...items) {
-  return items;
-}
-addOpLabel(array, "«ops.array»");
 
 /**
  * Like ops.scope, but only searches for a builtin at the top of the scope
@@ -328,7 +328,7 @@ export async function logicalOr(head, ...tail) {
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
  * @this {AsyncTree|null}
- * @param {import("@weborigami/async-tree").Treelike[]} trees
+ * @param {Code[]} codes
  */
 export async function merge(...codes) {
   const trees = new Array(codes.length);
@@ -355,12 +355,20 @@ export async function merge(...codes) {
     return mergedDirect;
   }
 
-  // Evaluate the rest of the arguments with the merged object in scope
-  const mergedTree = Tree.from(mergedDirect);
+  // Seonc pass: evaluate the other trees. If there's a merged tree, include
+  // that in scope.
+  let context;
+  if (mergedDirect) {
+    context = Tree.from(mergedDirect);
+    context.parent = this;
+  } else {
+    context = this;
+  }
+
   await Promise.all(
     codes.map(async (code, index) => {
       if (code[0] !== object) {
-        trees[index] = await evaluate.call(mergedTree, code);
+        trees[index] = await evaluate.call(context, code);
       }
     })
   );
@@ -472,7 +480,7 @@ addOpLabel(shiftRightUnsigned, "«ops.shiftRightUnsigned»");
  * The spread operator is a placeholder during parsing. It should be replaced
  * with an object merge.
  */
-export function spread(...args) {
+export function spread(arg) {
   throw new Error(
     "Internal error: a spread operation wasn't compiled correctly."
   );

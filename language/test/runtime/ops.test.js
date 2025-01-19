@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
 
-describe.only("ops", () => {
+describe("ops", () => {
   test("ops.addition adds two numbers", async () => {
     assert.strictEqual(ops.addition(2, 2), 4);
     assert.strictEqual(ops.addition(2, true), 3);
@@ -220,7 +220,7 @@ describe.only("ops", () => {
     assert.strictEqual(await ops.logicalOr(true, errorFn), true);
   });
 
-  test.only("ops.merge", async () => {
+  test("ops.merge", async () => {
     // {
     //   a: 1
     //   …fn(a)

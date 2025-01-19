@@ -701,6 +701,11 @@ describe("Origami parser", () => {
       [ops.object, ["a", [ops.literal, 1]]],
       [ops.scope, "b"],
     ]);
+    assertParse("objectLiteral", "{ a: 1, ...{ b: 2 } }", [
+      ops.object,
+      ["a", [ops.literal, 1]],
+      ["b", [ops.literal, 2]],
+    ]);
     assertParse("objectLiteral", "{ (a): 1 }", [
       ops.object,
       ["(a)", [ops.literal, 1]],
