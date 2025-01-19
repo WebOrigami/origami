@@ -7,6 +7,7 @@ export * from "./src/handlers/handlers.js";
 export * from "./src/image/image.js";
 export { builtinsTree } from "./src/internal.js";
 export * from "./src/origami/origami.js";
+export { default as packageBuiltin } from "./src/protocols/package.js";
 export * from "./src/server/server.js";
 export * from "./src/site/site.js";
 export * from "./src/text/text.js";
