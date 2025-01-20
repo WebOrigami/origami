@@ -331,46 +331,33 @@ export async function logicalOr(head, ...tail) {
  * @param {Code[]} codes
  */
 export async function merge(...codes) {
-  const trees = new Array(codes.length);
-
-  // First pass: evaluate the direct objects
-  const directObjects = [];
-  await Promise.all(
-    codes.map(async (code, index) => {
-      if (code[0] === object) {
-        const value = await evaluate.call(this, code);
-        directObjects.push(value);
-        trees[index] = value;
-      }
-    })
-  );
-
-  const mergedDirect =
-    directObjects.length > 0
-      ? await mergeTrees.call(this, ...directObjects)
-      : null;
-
-  if (directObjects.length === codes.length) {
-    // No spreads, we're done
-    return mergedDirect;
+  // First pass: evaluate the direct property entries in a single object
+  const directEntries = [];
+  for (const code of codes) {
+    if (code[0] === object) {
+      directEntries.push(...code.slice(1));
+    }
   }
 
-  // Seonc pass: evaluate the other trees. If there's a merged tree, include
-  // that in scope.
+  const directObject = directEntries
+    ? await expressionObject(directEntries, this)
+    : null;
+  if (directEntries.length === codes.length) {
+    // No spreads, we're done
+    return directObject;
+  }
+
+  // Second pass: evaluate the trees with the direct properties object in scope
   let context;
-  if (mergedDirect) {
-    context = Tree.from(mergedDirect);
+  if (directObject) {
+    context = Tree.from(directObject);
     context.parent = this;
   } else {
     context = this;
   }
 
-  await Promise.all(
-    codes.map(async (code, index) => {
-      if (code[0] !== object) {
-        trees[index] = await evaluate.call(context, code);
-      }
-    })
+  const trees = await Promise.all(
+    codes.map(async (code) => evaluate.call(context, code))
   );
 
   return mergeTrees.call(this, ...trees);

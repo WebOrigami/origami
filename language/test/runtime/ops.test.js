@@ -230,7 +230,7 @@ describe("ops", () => {
     });
     const code = createCode([
       ops.merge,
-      [ops.object, ["a", 1]],
+      [ops.object, ["a", [ops.literal, 1]]],
       [
         [ops.builtin, "fn"],
         [ops.scope, "a"],
@@ -238,6 +238,25 @@ describe("ops", () => {
     ]);
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, { a: 1, b: 2 });
+  });
+
+  test("ops.merge lets all direct properties see each other", async () => {
+    // {
+    //   a: 1
+    //   ...more
+    //   c: a
+    // }
+    const scope = new ObjectTree({
+      more: { b: 2 },
+    });
+    const code = createCode([
+      ops.merge,
+      [ops.object, ["a", [ops.literal, 1]]],
+      [ops.scope, "more"],
+      [ops.object, ["c", [ops.scope, "a"]]],
+    ]);
+    const result = await evaluate.call(scope, code);
+    assert.deepEqual(result, { a: 1, b: 2, c: 1 });
   });
 
   test("ops.multiplication multiplies two numbers", async () => {
