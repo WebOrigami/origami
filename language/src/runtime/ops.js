@@ -332,18 +332,21 @@ export async function logicalOr(head, ...tail) {
  */
 export async function merge(...codes) {
   // First pass: evaluate the direct property entries in a single object
+  let treeSpreads = false;
   const directEntries = [];
   for (const code of codes) {
     if (code[0] === object) {
       directEntries.push(...code.slice(1));
+    } else {
+      treeSpreads = true;
     }
   }
 
   const directObject = directEntries
     ? await expressionObject(directEntries, this)
     : null;
-  if (directEntries.length === codes.length) {
-    // No spreads, we're done
+  if (!treeSpreads) {
+    // No tree spreads, we're done
     return directObject;
   }
 
