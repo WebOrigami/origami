@@ -34,6 +34,7 @@ export default async function expressionObject(entries, parent) {
 
   let tree;
   const eagerProperties = [];
+  const propertyIsEnumerable = {};
   for (let [key, value] of entries) {
     // Determine if we need to define a getter or a regular property. If the key
     // has an extension, we need to define a getter. If the value is code (an
@@ -62,6 +63,7 @@ export default async function expressionObject(entries, parent) {
       key = key.slice(1, -1);
       enumerable = false;
     }
+    propertyIsEnumerable[key] = enumerable;
 
     if (defineProperty) {
       // Define simple property
@@ -109,7 +111,7 @@ export default async function expressionObject(entries, parent) {
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
-    value: () => keys(object, eagerProperties, entries),
+    value: () => keys(object, eagerProperties, propertyIsEnumerable, entries),
     writable: true,
   });
 
@@ -162,6 +164,8 @@ function entryKey(object, eagerProperties, entry) {
   return trailingSlash.toggle(key, entryCreatesSubtree);
 }
 
-function keys(object, eagerProperties, entries) {
-  return entries.map((entry) => entryKey(object, eagerProperties, entry));
+function keys(object, eagerProperties, propertyIsEnumerable, entries) {
+  return entries
+    .filter(([key]) => propertyIsEnumerable[key])
+    .map((entry) => entryKey(object, eagerProperties, entry));
 }
