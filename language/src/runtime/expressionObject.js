@@ -38,7 +38,8 @@ export default async function expressionObject(entries, parent) {
     // Determine if we need to define a getter or a regular property. If the key
     // has an extension, we need to define a getter. If the value is code (an
     // array), we need to define a getter -- but if that code takes the form
-    // [ops.getter, <primitive>], we can define a regular property.
+    // [ops.getter, <primitive>] or [ops.literal, <value>], we can define a
+    // regular property.
     let defineProperty;
     const extname = extension.extname(key);
     if (extname) {
@@ -46,6 +47,9 @@ export default async function expressionObject(entries, parent) {
     } else if (!(value instanceof Array)) {
       defineProperty = true;
     } else if (value[0] === ops.getter && !(value[1] instanceof Array)) {
+      defineProperty = true;
+      value = value[1];
+    } else if (value[0] === ops.literal) {
       defineProperty = true;
       value = value[1];
     } else {
