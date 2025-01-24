@@ -40,6 +40,7 @@ export default {
     let text;
     let frontData = null;
     let frontSource = null;
+    let offset = 0;
     let extendedParent = parent;
     const parsed = parseFrontMatter(unpacked);
     if (!parsed) {
@@ -58,11 +59,21 @@ export default {
         extendedParent = new ObjectTree(frontData);
         extendedParent.parent = parent;
       }
+
+      // Determine how many lines the source code is offset by (if any) to
+      // account for front matter, plus 2 lines for `---` separators
+      offset = (frontText.match(/\r?\n/g) ?? []).length + 2;
+
       text = body;
     }
 
     // Construct an object to represent the source code
-    const bodySource = { name: key, text, url };
+    const bodySource = {
+      name: key,
+      offset,
+      text,
+      url,
+    };
 
     // Compile the source as an Origami template document
     const scopeCaching = frontSource ? false : true;

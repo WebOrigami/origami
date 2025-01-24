@@ -79,13 +79,16 @@ export function formatError(error) {
   // Add location
   if (location) {
     let { source, start } = location;
+    // Adjust line number with offset if present (for example, if the code is in
+    // an Origami template document with front matter that was stripped)
+    let line = start.line + (source.offset ?? 0);
     if (!fragmentInMessage) {
       message += `\nevaluating: ${fragment}`;
     }
     if (typeof source === "object" && source.url) {
-      message += `\n    at ${source.url.href}:${start.line}:${start.column}`;
+      message += `\n    at ${source.url.href}:${line}:${start.column}`;
     } else if (source.text.includes("\n")) {
-      message += `\n    at line ${start.line}, column ${start.column}`;
+      message += `\n    at line ${line}, column ${start.column}`;
     }
   }
 
