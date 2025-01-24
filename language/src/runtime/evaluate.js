@@ -1,7 +1,7 @@
-import { Tree, isUnpackable, scope } from "@weborigami/async-tree";
+import { isUnpackable, Tree } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import { codeSymbol, scopeSymbol, sourceSymbol } from "./symbols.js";
+import tracing from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -81,33 +81,8 @@ export default async function evaluate(code) {
     result.parent = tree;
   }
 
-  // To aid debugging, add the code to the result.
-  if (Object.isExtensible(result)) {
-    try {
-      if (code.location && !result[sourceSymbol]) {
-        Object.defineProperty(result, sourceSymbol, {
-          value: codeFragment(code.location),
-          enumerable: false,
-        });
-      }
-      if (!result[codeSymbol]) {
-        Object.defineProperty(result, codeSymbol, {
-          value: code,
-          enumerable: false,
-        });
-      }
-      if (!result[scopeSymbol]) {
-        Object.defineProperty(result, scopeSymbol, {
-          get() {
-            return scope(this).trees;
-          },
-          enumerable: false,
-        });
-      }
-    } catch (/** @type {any} */ error) {
-      // Ignore errors.
-    }
-  }
+  // Add tracing information to aid debugging
+  result = tracing(this, code, evaluated, result);
 
   return result;
 }
