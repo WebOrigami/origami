@@ -22,7 +22,7 @@ describe("optimize", () => {
       ["name"],
       [
         ops.object,
-        ["a", [ops.literal, 1]],
+        ["a", 1],
         ["b", [ops.scope, "a"]],
         ["c", [ops.external, "elsewhere", [ops.scope, "elsewhere"], {}]],
         ["d", [ops.scope, "name"]],

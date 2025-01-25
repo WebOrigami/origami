@@ -27,6 +27,13 @@ export default function optimize(
       additionalLocalNames = parameters;
       break;
 
+    case ops.literal:
+      const value = args[0];
+      if (!(value instanceof Array)) {
+        return value;
+      }
+      break;
+
     case ops.object:
       const entries = args;
       additionalLocalNames = entries.map(([key]) => trailingSlash.remove(key));

@@ -271,6 +271,9 @@ addOpLabel(lessThanOrEqual, "«ops.lessThanOrEqual»");
 
 /**
  * Return a primitive value
+ *
+ * This op is optimized away during compilation, with the exception of array
+ * literals.
  */
 export async function literal(value) {
   return value;

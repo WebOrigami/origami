@@ -96,7 +96,7 @@ describe("compile", () => {
       },
     });
     const code = fn.code;
-    assert.deepEqual(stripCodeLocations(code), [ops.object, ["a", literal]]);
+    assert.deepEqual(stripCodeLocations(code), [ops.object, ["a", 1]]);
   });
 });
 
