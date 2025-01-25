@@ -54,15 +54,6 @@ export default async function evaluate(code) {
     fn = await fn.unpack();
   }
 
-  if (!Tree.isTreelike(fn)) {
-    const text = fn.toString?.() ?? codeFragment(code[0].location);
-    const error = new TypeError(
-      `Not a callable function or tree: ${text.slice(0, 80)}`
-    );
-    /** @type {any} */ (error).location = code.location;
-    throw error;
-  }
-
   // Execute the function or traverse the tree.
   let result;
   try {
