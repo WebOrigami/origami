@@ -1,5 +1,10 @@
-import { box, isStringLike, scope, toString } from "@weborigami/async-tree";
-import { isPrimitive } from "@weborigami/async-tree/src/utilities.js";
+import {
+  box,
+  isPrimitive,
+  isStringLike,
+  scope,
+  toString,
+} from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import {
   codeSymbol,
