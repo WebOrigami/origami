@@ -83,6 +83,7 @@ export async function builtin(key) {
 
   return value;
 }
+addOpLabel(builtin, "«ops.builtin»");
 
 /**
  * JavaScript comma operator, returns the last argument.
@@ -154,6 +155,7 @@ export async function external(path, code, cache) {
 
   return value;
 }
+addOpLabel(external, "«ops.external»");
 
 /**
  * This op is only used during parsing. It signals to ops.object that the
@@ -181,6 +183,7 @@ export async function homeDirectory() {
   tree.parent = this ? Tree.root(this) : null;
   return tree;
 }
+addOpLabel(homeDirectory, "«ops.homeDirectory»");
 
 /**
  * Search the parent's scope -- i.e., exclude the current tree -- for the given
@@ -299,6 +302,7 @@ export async function logicalAnd(head, ...tail) {
   // Return the last value (not `true`)
   return lastValue;
 }
+addOpLabel(logicalAnd, "«ops.logicalAnd»");
 
 /**
  * Logical NOT operator
@@ -306,6 +310,7 @@ export async function logicalAnd(head, ...tail) {
 export async function logicalNot(value) {
   return !value;
 }
+addOpLabel(logicalNot, "«ops.logicalNot»");
 
 /**
  * Logical OR operator
@@ -326,6 +331,7 @@ export async function logicalOr(head, ...tail) {
 
   return lastValue;
 }
+addOpLabel(logicalOr, "«ops.logicalOr»");
 
 /**
  * Merge the given trees. If they are all plain objects, return a plain object.
@@ -403,6 +409,7 @@ export async function nullishCoalescing(head, ...tail) {
 
   return lastValue;
 }
+addOpLabel(nullishCoalescing, "«ops.nullishCoalescing»");
 
 /**
  * Construct an object. The keys will be the same as the given `obj`
@@ -435,6 +442,7 @@ export async function rootDirectory(key) {
   tree.parent = this ? Tree.root(this) : null;
   return key ? tree.get(key) : tree;
 }
+addOpLabel(rootDirectory, "«ops.rootDirectory»");
 
 /**
  * Look up the given key in the scope for the current tree.
@@ -530,3 +538,4 @@ addOpLabel(unaryPlus, "«ops.unaryPlus»");
 export async function unpack(value) {
   return isUnpackable(value) ? value.unpack() : value;
 }
+addOpLabel(unpack, "«ops.unpack»");
