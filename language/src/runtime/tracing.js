@@ -1,5 +1,6 @@
 import {
   box,
+  isPlainObject,
   isPrimitive,
   isStringLike,
   scope,
@@ -7,8 +8,11 @@ import {
   Tree,
 } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
+import { ops } from "./internal.js";
 import {
+  callSymbol,
   codeSymbol,
+  evaluationSymbol,
   scopeSymbol,
   sourceSymbol,
   traceSymbol,
@@ -18,52 +22,50 @@ export default function tracing(context, code, evaluation, result) {
   if (result == null || typeof result === "symbol") {
     return result;
   }
-
-  let call = null;
-  if (result[traceSymbol]) {
-    // Function call
-    call = result[traceSymbol];
+  if (code[0] === ops.literal) {
+    return result;
   }
 
   result = box(result);
   try {
+    if (traceSymbol in result) {
+      // Move trace symbol to call
+      Object.defineProperty(result, callSymbol, {
+        configurable: true,
+        enumerable: false,
+        value: result[traceSymbol],
+      });
+    }
     Object.defineProperty(result, codeSymbol, {
       configurable: true,
-      value: code,
       enumerable: false,
+      value: code,
+    });
+    Object.defineProperty(result, evaluationSymbol, {
+      configurable: true,
+      enumerable: false,
+      value: evaluation,
     });
     Object.defineProperty(result, scopeSymbol, {
       configurable: true,
+      enumerable: false,
       get() {
         return scope(context).trees;
       },
-      enumerable: false,
     });
     Object.defineProperty(result, sourceSymbol, {
       configurable: true,
+      enumerable: false,
       get() {
         return code.location ? codeFragment(code.location) : null;
       },
-      enumerable: false,
     });
     Object.defineProperty(result, traceSymbol, {
       configurable: true,
-      get() {
-        const expression = code.location ? codeFragment(code.location) : null;
-        const url = code.location?.source?.url;
-        return Object.assign(
-          {
-            result: format(result),
-            expression,
-            url,
-            evaluation: evaluation.map(format),
-          },
-          call && {
-            call,
-          }
-        );
-      },
       enumerable: false,
+      get() {
+        return traceInfo(result);
+      },
     });
   } catch (/** @type {any} */ error) {
     // Ignore errors.
@@ -84,11 +86,47 @@ function format(object) {
     return object.valueOf();
   } else if (object instanceof Function) {
     return object.name;
-  } else if (Tree.isTreelike(object)) {
+  } else if (Tree.isAsyncTree(object)) {
     return "...";
-  } else if (object[traceSymbol]) {
-    return object[traceSymbol];
+  } else if (isPlainObject(object)) {
+    return object;
+  } else if (object instanceof Array) {
+    return formatArray(object);
   } else {
     return object;
   }
+}
+
+function formatArray(array) {
+  return array.map((entry) =>
+    typeof entry === "object" &&
+    !Tree.isAsyncTree(entry) &&
+    traceSymbol in entry
+      ? traceInfo(entry)
+      : format(entry)
+  );
+}
+
+function traceInfo(result) {
+  const code = result[codeSymbol];
+  const expression = code?.location ? codeFragment(code.location) : null;
+  const url = code?.location?.source?.url;
+  const evaluation = result[evaluationSymbol]
+    ? formatArray(result[evaluationSymbol])
+    : null;
+  const call = callSymbol in result ? traceInfo(result[callSymbol]) : null;
+
+  return Object.assign(
+    {
+      result: format(result),
+      expression,
+      url,
+    },
+    evaluation && {
+      evaluation,
+    },
+    call && {
+      call,
+    }
+  );
 }
