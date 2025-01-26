@@ -4,6 +4,7 @@ import {
   isStringLike,
   scope,
   toString,
+  Tree,
 } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import {
@@ -48,12 +49,12 @@ export default function tracing(context, code, evaluation, result) {
     Object.defineProperty(result, traceSymbol, {
       configurable: true,
       get() {
-        const source = code.location ? codeFragment(code.location) : null;
+        const expression = code.location ? codeFragment(code.location) : null;
         const url = code.location?.source?.url;
         return Object.assign(
           {
-            value: result.valueOf?.() ?? result,
-            source,
+            result: format(result),
+            expression,
             url,
             evaluation: evaluation.map(format),
           },
@@ -72,19 +73,21 @@ export default function tracing(context, code, evaluation, result) {
 }
 
 function format(object) {
-  if (object[traceSymbol]) {
-    return object[traceSymbol];
+  if (object == null) {
+    return object;
+  } else if (isStringLike(object)) {
+    const text = toString(object);
+    return text.length > 255 ? text.slice(0, 255) + "..." : text;
   } else if (isPrimitive(object)) {
     return object;
   } else if (object instanceof Number || object instanceof String) {
     return object.valueOf();
-  } else if (isStringLike(object)) {
-    return toString(object);
   } else if (object instanceof Function) {
-    // Ops have a toString method for a friendly name
-    return Object.getOwnPropertyNames(object).includes("toString")
-      ? object.toString()
-      : object.name;
+    return object.name;
+  } else if (Tree.isTreelike(object)) {
+    return "...";
+  } else if (object[traceSymbol]) {
+    return object[traceSymbol];
   } else {
     return object;
   }

@@ -517,7 +517,11 @@ addOpLabel(templateIndent, "«ops.templateIndent");
 /**
  * Traverse a path of keys through a tree.
  */
-export const traverse = Tree.traverseOrThrow;
+export function traverse(...keys) {
+  return Tree.traverseOrThrow.call(this, ...keys);
+}
+// export const traverse = Tree.traverseOrThrow;
+addOpLabel(traverse, "«ops.traverse»");
 
 export function unaryMinus(a) {
   return -a;
