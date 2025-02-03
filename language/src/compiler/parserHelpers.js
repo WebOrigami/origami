@@ -83,7 +83,13 @@ export function makeArray(entries) {
   for (const value of entries) {
     if (Array.isArray(value) && value[0] === ops.spread) {
       if (currentEntries.length > 0) {
-        spreads.push([ops.array, ...currentEntries]);
+        const location = { ...currentEntries[0].location };
+        location.end = currentEntries.at(-1).location.end;
+        /** @type {Code} */
+        // @ts-ignore
+        const spread = [ops.array, ...currentEntries];
+        annotate(spread, location);
+        spreads.push(spread);
         currentEntries = [];
       }
       spreads.push(...value.slice(1));
@@ -98,14 +104,17 @@ export function makeArray(entries) {
     currentEntries = [];
   }
 
+  let result;
   if (spreads.length > 1) {
-    return [ops.merge, ...spreads];
-  }
-  if (spreads.length === 1) {
-    return spreads[0];
+    result = [ops.merge, ...spreads];
+  } else if (spreads.length === 1) {
+    result = spreads[0];
   } else {
-    return [ops.array];
+    result = [ops.array];
   }
+
+  annotate(result, entries.location);
+  return result;
 }
 
 /**
@@ -313,13 +322,27 @@ export function makeReference(identifier) {
 }
 
 export function makeTemplate(op, head, tail) {
-  const strings = [head];
+  const location = { ...head.location };
+  const strings = [head[1]];
   const values = [];
-  for (const [value, string] of tail) {
-    values.push([ops.concat, value]);
-    strings.push(string);
+  for (const [value, literal] of tail) {
+    const concat = [ops.concat, value];
+    // @ts-ignore
+    annotate(concat, value.location);
+    values.push(concat);
+    strings.push(literal[1]);
   }
-  return [op, [ops.literal, strings], ...values];
+  if (tail.length > 0) {
+    location.end = tail.at(-1)[1].location.end;
+  }
+  // @ts-ignore
+  annotate(strings, location);
+  /** @type {Code} */
+  // @ts-ignore
+  const literal = [ops.literal, strings];
+  annotate(literal, location);
+  // @ts-ignore
+  return annotate([op, literal, ...values], location);
 }
 
 export function makeUnaryOperation(operator, value) {

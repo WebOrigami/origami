@@ -1076,7 +1076,7 @@ function assertParse(startRule, source, expected, checkLocation = true) {
   // entire source. We skip this check in cases where the source starts or ends
   // with a comment; the parser will strip those.
   if (checkLocation) {
-    assert(code.location, "no location");
+    assertCodeLocations(code);
     const resultSource = code.location.source.text.slice(
       code.location.start.offset,
       code.location.end.offset
@@ -1086,4 +1086,13 @@ function assertParse(startRule, source, expected, checkLocation = true) {
 
   const actual = stripCodeLocations(code);
   assert.deepEqual(actual, expected);
+}
+
+function assertCodeLocations(code) {
+  assert(code.location, "no location");
+  for (const item of code) {
+    if (Array.isArray(item)) {
+      assertCodeLocations(item);
+    }
+  }
 }

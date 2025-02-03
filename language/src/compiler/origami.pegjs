@@ -70,10 +70,12 @@ arrayEntry
 
 arrowFunction
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipelineExpression {
-      return annotate([ops.lambda, parameters ?? [], pipeline], location());
+      const lambdaParameters = annotate(parameters ?? [], location());
+      return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
   / identifier:identifier __ doubleArrow __ pipeline:pipelineExpression {
-      return annotate([ops.lambda, [identifier], pipeline], location());
+      const lambdaParameters = annotate([identifier], location())
+      return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
   / conditionalExpression
 
@@ -389,7 +391,8 @@ objectProperty "object property"
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
   = key:objectPublicKey {
-      return annotate([key, [ops.inherited, key]], location());
+      const inherited = annotate([ops.inherited, key], location());
+      return annotate([key, inherited], location());
     }
 
 objectPublicKey
@@ -456,7 +459,7 @@ primary
   / objectLiteral
   / group
   / templateLiteral
-  / reference
+  / inherited
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
@@ -477,7 +480,7 @@ qualifiedReference
       return annotate(makeCall(fn, [literal]), location());
     }
 
-reference
+inherited
   = rootDirectory
   / homeDirectory
   / qualifiedReference
@@ -539,7 +542,8 @@ shiftOperator
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
   = "=" !"=" __ definition:implicitParenthesesCallExpression {
-      return annotate([ops.lambda, ["_"], definition], location());
+      const lambdaParameters = annotate(["_"], location());
+      return annotate([ops.lambda, lambdaParameters, definition], location());
     }
   / implicitParenthesesCallExpression
 
@@ -599,7 +603,7 @@ templateLiteralChar
 // Plain text in a template literal
 templateLiteralText
   = chars:templateLiteralChar* {
-      return chars.join("");
+      return annotate([ops.literal, chars.join("")], location());
     }
 
 // A substitution in a template literal: `${x}`
