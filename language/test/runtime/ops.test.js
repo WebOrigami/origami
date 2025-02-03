@@ -379,7 +379,7 @@ describe("ops", () => {
 });
 
 /**
- * @returns {import("../../index.ts").Code}
+ * @returns {import("../../index.ts").AnnotatedCode}
  */
 function createCode(array) {
   const code = array;

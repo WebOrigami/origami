@@ -32,7 +32,11 @@ describe("optimize", () => {
 
   test("optimize scope traversals with all literal keys", async () => {
     // Compilation of `x/y.js`
-    const code = [ops.traverse, [ops.scope, "x/"], [ops.literal, "y.js"]];
+    const code = createCode([
+      ops.traverse,
+      [ops.scope, "x/"],
+      [ops.literal, "y.js"],
+    ]);
     const optimized = optimize(code);
     assert.deepEqual(stripCodeLocations(optimized), [
       ops.external,
@@ -42,3 +46,16 @@ describe("optimize", () => {
     ]);
   });
 });
+
+/**
+ * @returns {import("../../index.ts").AnnotatedCode}
+ */
+function createCode(array) {
+  const code = array;
+  /** @type {any} */ (code).location = {
+    source: {
+      text: "",
+    },
+  };
+  return code;
+}

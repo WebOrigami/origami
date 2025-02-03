@@ -382,10 +382,10 @@ function peg$parse(input, options) {
     return null;
   };
   var peg$f1 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f2 = function(entries) {
-      return annotate(makeArray(entries ?? []), location());
+      return makeArray(entries ?? [], location());
     };
   var peg$f3 = function(entries) {
       return annotate(entries, location());
@@ -402,16 +402,16 @@ function peg$parse(input, options) {
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     };
   var peg$f7 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f8 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f9 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f10 = function(head, tail) {
-      return annotate(tail.reduce(makeCall, head), location());
+      return tail.reduce(makeCall, head);
     };
   var peg$f11 = function() {
       error(`An object ended without a closing brace, or contained something that wasn't expected.\nThe top level of an object can only contain definitions ("a: b" or "a = b") or spreads ("...a").`);
@@ -442,7 +442,7 @@ function peg$parse(input, options) {
     return annotate([ops.literal, chars.join("")], location());
   };
   var peg$f17 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f18 = function() { return "\0"; };
   var peg$f19 = function() { return "\b"; };
@@ -506,7 +506,7 @@ function peg$parse(input, options) {
     };
   var peg$f39 = function() { return null; };
   var peg$f40 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f41 = function(at, chars) {
     return annotate([ops.builtin, (at ?? "") + chars.join("") + ":"], location());
@@ -520,7 +520,7 @@ function peg$parse(input, options) {
         );
     };
   var peg$f43 = function(entries) {
-      return annotate(makeObject(entries ?? [], ops.object), location());
+      return makeObject(entries ?? [], ops.object, location());
     };
   var peg$f44 = function(entries) {
       return annotate(entries, location());
@@ -570,14 +570,14 @@ function peg$parse(input, options) {
     };
   var peg$f56 = function(fn, host, path) {
       const keys = annotate([host, ...(path ?? [])], location());
-      return annotate(makeCall(fn, keys), location());
+      return makeCall(fn, keys);
     };
   var peg$f57 = function(fn, reference) {
       const literal = annotate([ops.literal, reference[1]], reference.location);
-      return annotate(makeCall(fn, [literal]), location());
+      return makeCall(fn, [literal]);
     };
   var peg$f58 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f59 = function(key) {
       return annotate([ops.rootDirectory, key], location());
@@ -594,7 +594,7 @@ function peg$parse(input, options) {
     };
   var peg$f63 = function() { return null; };
   var peg$f64 = function(head, tail) {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f65 = function(definition) {
       const lambdaParameters = annotate(["_"], location());
@@ -626,7 +626,7 @@ function peg$parse(input, options) {
       return annotate(expression, location());
     };
   var peg$f74 = function(operator, expression) {
-      return annotate(makeUnaryOperation(operator, expression), location());
+      return makeUnaryOperation(operator, expression);
     };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;

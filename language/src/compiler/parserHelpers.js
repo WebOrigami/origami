@@ -4,6 +4,9 @@ import * as ops from "../runtime/ops.js";
 
 // Parser helpers
 
+/** @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode */
+/** @typedef {import("../../index.ts").AnnotatedCodeItem} AnnotatedCodeItem */
+/** @typedef {import("../../index.ts").CodeLocation} CodeLocation */
 /** @typedef {import("../../index.ts").Code} Code */
 
 // Marker for a reference that may be a builtin or a scope reference
@@ -15,15 +18,16 @@ const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
  * If a parse result is an object that will be evaluated at runtime, attach the
  * location of the source code that produced it for debugging and error messages.
  *
- * @param {Code} code
- * @param {any} location
+ * @param {Code[]} code
+ * @param {CodeLocation} location
  */
 export function annotate(code, location) {
-  if (typeof code === "object" && code !== null && location) {
-    code.location = location;
-    code.source = codeFragment(location);
-  }
-  return code;
+  /** @type {AnnotatedCode} */
+  // @ts-ignore - Need to add annotation below before type is correct
+  const annotated = code.slice();
+  annotated.location = location;
+  annotated.source = codeFragment(location);
+  return annotated;
 }
 
 /**
@@ -31,7 +35,7 @@ export function annotate(code, location) {
  * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
  * infinite recursion.
  *
- * @param {Code} code
+ * @param {AnnotatedCode} code
  * @param {string} key
  */
 function avoidRecursivePropertyCalls(code, key) {
@@ -45,38 +49,37 @@ function avoidRecursivePropertyCalls(code, key) {
     trailingSlash.remove(code[1]) === trailingSlash.remove(key)
   ) {
     // Rewrite to avoid recursion
-    // @ts-ignore
     modified = [ops.inherited, code[1]];
   } else if (code[0] === ops.lambda && code[1].includes(key)) {
     // Lambda that defines the key; don't rewrite
     return code;
   } else {
     // Process any nested code
-    // @ts-ignore
     modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
   }
-  annotate(modified, code.location);
-  return modified;
+  return annotate(modified, code.location);
 }
 
 /**
  * Downgrade a potential builtin reference to a scope reference.
  *
- * @param {Code} code
+ * @param {AnnotatedCode} code
  */
 export function downgradeReference(code) {
   if (code && code.length === 2 && code[0] === undetermined) {
-    /** @type {Code} */
-    // @ts-ignore
-    const result = [ops.scope, code[1]];
-    annotate(result, code.location);
-    return result;
+    return annotate([ops.scope, code[1]], code.location);
   } else {
     return code;
   }
 }
 
-export function makeArray(entries) {
+/**
+ * Create an array
+ *
+ * @param {AnnotatedCode[]} entries
+ * @param {CodeLocation} location
+ */
+export function makeArray(entries, location) {
   let currentEntries = [];
   const spreads = [];
 
@@ -84,11 +87,10 @@ export function makeArray(entries) {
     if (Array.isArray(value) && value[0] === ops.spread) {
       if (currentEntries.length > 0) {
         const location = { ...currentEntries[0].location };
-        location.end = currentEntries.at(-1).location.end;
-        /** @type {Code} */
-        // @ts-ignore
-        const spread = [ops.array, ...currentEntries];
-        annotate(spread, location);
+        location.end = currentEntries[currentEntries.length - 1].location.end;
+        /** @type {AnnotatedCodeItem} */
+        const fn = ops.array;
+        const spread = annotate([fn, ...currentEntries], location);
         spreads.push(spread);
         currentEntries = [];
       }
@@ -113,15 +115,15 @@ export function makeArray(entries) {
     result = [ops.array];
   }
 
-  annotate(result, entries.location);
-  return result;
+  return annotate(result, location);
 }
 
 /**
  * Create a chain of binary operators. The head is the first value, and the tail
- * is an array of [operator, value] pairs.
+ * is a [operator, value] pair as an array.
  *
- * @param {Code} left
+ * @param {AnnotatedCode} left
+ * @param {[token: any, right: AnnotatedCode]} tail
  */
 export function makeBinaryOperation(left, [operatorToken, right]) {
   const operators = {
@@ -148,20 +150,19 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
   };
   const op = operators[operatorToken];
 
-  /** @type {Code} */
-  // @ts-ignore
-  const value = [op, left, right];
-  value.location = {
+  const location = {
     source: left.location.source,
     start: left.location.start,
     end: right.location.end,
   };
 
-  return value;
+  return annotate([op, left, right], location);
 }
 
 /**
- * @param {Code} target
+ * Create a function call.
+ *
+ * @param {AnnotatedCode} target
  * @param {any[]} args
  */
 export function makeCall(target, args) {
@@ -170,10 +171,6 @@ export function makeCall(target, args) {
     /** @type {any} */ (error).location = /** @type {any} */ (target).location;
     throw error;
   }
-
-  const source = target.location.source;
-  let start = target.location.start;
-  let end = target.location.end;
 
   let fnCall;
   if (args[0] === ops.traverse) {
@@ -205,18 +202,21 @@ export function makeCall(target, args) {
   }
 
   // Create a location spanning the newly-constructed function call.
+  const location = { ...target.location };
   if (args instanceof Array) {
-    // @ts-ignore
-    end = args.location?.end ?? args.at(-1)?.location?.end;
+    let end;
+    if ("location" in args) {
+      end = /** @type {any} */ (args).location.end;
+    } else if ("location" in args.at(-1)) {
+      end = args.at(-1).location.end;
+    }
     if (end === undefined) {
       throw "Internal parser error: no location for function call argument";
     }
+    location.end = end;
   }
 
-  // @ts-ignore
-  annotate(fnCall, { start, source, end });
-
-  return fnCall;
+  return annotate(fnCall, location);
 }
 
 /**
@@ -224,21 +224,28 @@ export function makeCall(target, args) {
  * the arguments until the function is called. Exception: if the argument is a
  * literal, we leave it alone.
  *
- * @param {any[]} args
+ * @param {AnnotatedCode[]} args
  */
 export function makeDeferredArguments(args) {
   return args.map((arg) => {
     if (arg instanceof Array && arg[0] === ops.literal) {
       return arg;
     }
-    const fn = [ops.lambda, [], arg];
-    // @ts-ignore
-    annotate(fn, arg.location);
-    return fn;
+    const lambdaParameters = annotate([], arg.location);
+    /** @type {AnnotatedCodeItem} */
+    const fn = [ops.lambda, lambdaParameters, arg];
+    return annotate(fn, arg.location);
   });
 }
 
-export function makeObject(entries, op) {
+/**
+ * Make an object.
+ *
+ * @param {AnnotatedCode[]} entries
+ * @param {any} op
+ * @param {CodeLocation} location
+ */
+export function makeObject(entries, op, location) {
   let currentEntries = [];
   const spreads = [];
 
@@ -278,26 +285,32 @@ export function makeObject(entries, op) {
     currentEntries = [];
   }
 
+  let code;
   if (spreads.length > 1) {
-    return [ops.merge, ...spreads];
+    code = [ops.merge, ...spreads];
   }
   if (spreads.length === 1) {
-    return spreads[0];
+    code = spreads[0];
   } else {
-    return [op];
+    code = [op];
   }
+
+  return annotate(code, location);
 }
 
-// Similar to a function call, but the order is reversed.
+/**
+ * Make a pipline: similar to a function call, but the order is reversed.
+ *
+ * @param {AnnotatedCode} arg
+ * @param {AnnotatedCode} fn
+ */
 export function makePipeline(arg, fn) {
   const upgraded = upgradeReference(fn);
   const result = makeCall(upgraded, [arg]);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
-  // @ts-ignore
-  annotate(result, { start, source, end });
-  return result;
+  return annotate(result, { start, source, end });
 }
 
 // Define a property on an object.
@@ -321,30 +334,39 @@ export function makeReference(identifier) {
   return [op, identifier];
 }
 
+/**
+ * Make a template
+ *
+ * @param {any} op
+ * @param {AnnotatedCode} head
+ * @param {AnnotatedCode} tail
+ * @returns
+ */
 export function makeTemplate(op, head, tail) {
   const location = { ...head.location };
   const strings = [head[1]];
   const values = [];
   for (const [value, literal] of tail) {
-    const concat = [ops.concat, value];
-    // @ts-ignore
-    annotate(concat, value.location);
+    const concat = annotate([ops.concat, value], value.location);
     values.push(concat);
     strings.push(literal[1]);
   }
   if (tail.length > 0) {
     location.end = tail.at(-1)[1].location.end;
   }
-  // @ts-ignore
-  annotate(strings, location);
-  /** @type {Code} */
-  // @ts-ignore
-  const literal = [ops.literal, strings];
-  annotate(literal, location);
-  // @ts-ignore
-  return annotate([op, literal, ...values], location);
+  const stringsCode = annotate(strings, location);
+  /** @type {AnnotatedCodeItem} */
+  const fn = ops.literal;
+  const literalCode = annotate([fn, stringsCode], location);
+  return annotate([op, literalCode, ...values], location);
 }
 
+/**
+ * Make a unary operation.
+ *
+ * @param {AnnotatedCode} operator
+ * @param {AnnotatedCode} value
+ */
 export function makeUnaryOperation(operator, value) {
   const operators = {
     "!": ops.logicalNot,
@@ -352,21 +374,23 @@ export function makeUnaryOperation(operator, value) {
     "-": ops.unaryMinus,
     "~": ops.bitwiseNot,
   };
-  return [operators[operator], value];
+  const location = {
+    source: operator.location.source,
+    start: operator.location.start,
+    end: value.location.end,
+  };
+  return annotate([operators[operator], value], location);
 }
 
 /**
  * Upgrade a potential builtin reference to an actual builtin reference.
  *
- * @param {Code} code
+ * @param {AnnotatedCode} code
  */
 export function upgradeReference(code) {
   if (code.length === 2 && code[0] === undetermined) {
-    /** @type {Code} */
-    // @ts-ignore
     const result = [ops.builtin, code[1]];
-    annotate(result, code.location);
-    return result;
+    return annotate(result, code.location);
   } else {
     return code;
   }

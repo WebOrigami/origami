@@ -58,7 +58,6 @@ describe("mergeTrees", () => {
         c: 4,
       }
     );
-    // @ts-ignore
     assert.deepEqual(await Tree.plain(tree), {
       a: 1,
       b: 3,

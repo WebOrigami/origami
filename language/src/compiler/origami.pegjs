@@ -37,7 +37,7 @@ __
 
 additiveExpression
   = head:multiplicativeExpression tail:(whitespace @additiveOperator whitespace @multiplicativeExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 additiveOperator
@@ -51,7 +51,7 @@ arguments "function arguments"
 
 arrayLiteral "array"
   = "[" __ entries:arrayEntries? __ closingBracket {
-      return annotate(makeArray(entries ?? []), location());
+      return makeArray(entries ?? [], location());
     }
 
 // A separated list of array entries
@@ -81,7 +81,7 @@ arrowFunction
 
 bitwiseAndExpression
   = head:equalityExpression tail:(__ @bitwiseAndOperator __ @equalityExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 bitwiseAndOperator
@@ -89,7 +89,7 @@ bitwiseAndOperator
 
 bitwiseOrExpression
   = head:bitwiseXorExpression tail:(__ @bitwiseOrOperator __ @bitwiseXorExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 bitwiseOrOperator
@@ -97,7 +97,7 @@ bitwiseOrOperator
 
 bitwiseXorExpression
   = head:bitwiseAndExpression tail:(__ @bitwiseXorOperator __ @bitwiseAndExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 bitwiseXorOperator
@@ -107,7 +107,7 @@ bitwiseXorOperator
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
   = head:protocolExpression tail:arguments* {
-      return annotate(tail.reduce(makeCall, head), location());
+      return tail.reduce(makeCall, head);
     }
 
 // Required closing curly brace. We use this for the `object` term: if the
@@ -181,7 +181,7 @@ ellipsis = "..." / "…" // Unicode ellipsis
 
 equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 equalityOperator
@@ -313,7 +313,7 @@ multiLineComment
 
 multiplicativeExpression
   = head:exponentiationExpression tail:(whitespace @multiplicativeOperator whitespace @exponentiationExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 multiplicativeOperator
@@ -351,7 +351,7 @@ nullishCoalescingExpression
 // An object literal: `{foo: 1, bar: 2}`
 objectLiteral "object literal"
   = "{" __ entries:objectEntries? __ closingBrace {
-      return annotate(makeObject(entries ?? [], ops.object), location());
+      return makeObject(entries ?? [], ops.object, location());
     }
 
 // A separated list of object entries
@@ -469,7 +469,7 @@ program "Origami program"
 protocolExpression
   = fn:namespace "//" host:host path:path? {
       const keys = annotate([host, ...(path ?? [])], location());
-      return annotate(makeCall(fn, keys), location());
+      return makeCall(fn, keys);
     }
   / primary
 
@@ -477,7 +477,7 @@ protocolExpression
 qualifiedReference
   = fn:namespace reference:scopeReference {
       const literal = annotate([ops.literal, reference[1]], reference.location);
-      return annotate(makeCall(fn, [literal]), location());
+      return makeCall(fn, [literal]);
     }
 
 inherited
@@ -489,7 +489,7 @@ inherited
 
 relationalExpression
   = head:shiftExpression tail:(__ @relationalOperator __ @shiftExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 relationalOperator
@@ -530,7 +530,7 @@ shebang
 
 shiftExpression
   = head:additiveExpression tail:(__ @shiftOperator __ @additiveExpression)* {
-      return annotate(tail.reduce(makeBinaryOperation, head), location());
+      return tail.reduce(makeBinaryOperation, head);
     }
 
 shiftOperator
@@ -619,7 +619,7 @@ textChar
 // A unary prefix operator: `!x`
 unaryExpression
   = operator:unaryOperator __ expression:unaryExpression {
-      return annotate(makeUnaryOperation(operator, expression), location());
+      return makeUnaryOperation(operator, expression);
     }
   / callExpression
 

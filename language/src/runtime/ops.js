@@ -1,7 +1,8 @@
 /**
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").AnnotatedCode} AnnotatedCode
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
 import {
@@ -204,10 +205,9 @@ addOpLabel(inherited, "«ops.inherited»");
 /**
  * Return a function that will invoke the given code.
  *
- * @typedef {import("../../index.ts").Code} Code
  * @this {AsyncTree|null}
  * @param {string[]} parameters
- * @param {Code} code
+ * @param {AnnotatedCode} code
  */
 export function lambda(parameters, code) {
   const context = this;
@@ -337,7 +337,7 @@ addOpLabel(logicalOr, "«ops.logicalOr»");
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
  * @this {AsyncTree|null}
- * @param {Code[]} codes
+ * @param {AnnotatedCode[]} codes
  */
 export async function merge(...codes) {
   // First pass: evaluate the direct property entries in a single object

@@ -10,6 +10,16 @@ import { annotate, undetermined } from "./parserHelpers.js";
  *   they refer to local variables (variables defined by object literals or
  *   lambda parameters).
  * - Apply any macros to the code.
+ *
+ * @typedef {import("./parserHelpers.js").AnnotatedCode} AnnotatedCode
+ * @typedef {import("./parserHelpers.js").Code} Code
+ *
+ * @param {AnnotatedCode} code
+ * @param {boolean} enableCaching
+ * @param {Record<string, AnnotatedCode>} macros
+ * @param {Record<string, AnnotatedCode>} cache
+ * @param {Record<string, boolean>} locals
+ * @returns {AnnotatedCode}
  */
 export default function optimize(
   code,
@@ -50,16 +60,13 @@ export default function optimize(
         return applyMacro(macro, code, enableCaching, macros, cache, locals);
       } else if (enableCaching && !locals[normalizedKey]) {
         // Upgrade to cached external scope reference
-        const optimized = [ops.external, key, [ops.scope, key], cache];
-        // @ts-ignore
-        annotate(optimized, code.location);
-        return optimized;
+        return annotate(
+          [ops.external, key, [ops.scope, key], cache],
+          code.location
+        );
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
-        const optimized = [ops.scope, key];
-        // @ts-ignore
-        annotate(optimized, code.location);
-        return optimized;
+        return annotate([ops.scope, key], code.location);
       } else {
         // Internal ops.scope call; leave as is
         return code;
@@ -81,10 +88,9 @@ export default function optimize(
             // Convert to ops.external
             const keys = args.map((arg) => arg[1]);
             const path = pathFromKeys(keys);
+            /** @type {Code} */
             const optimized = [ops.external, path, code, cache];
-            // @ts-ignore
-            annotate(optimized, code.location);
-            return optimized;
+            return annotate(optimized, code.location);
           }
         }
       }
@@ -105,27 +111,28 @@ export default function optimize(
 
   // Optimize children
   const optimized = code.map((child) => {
-    if (Array.isArray(child)) {
+    if (Array.isArray(child) && "location" in child) {
       // Review: This currently descends into arrays that are not instructions,
       // such as the parameters of a lambda. This should be harmless, but it'd
       // be preferable to only descend into instructions. This would require
       // surrounding ops.lambda parameters with ops.literal, and ops.object
       // entries with ops.array.
-      return optimize(child, enableCaching, macros, cache, updatedLocals);
+      return optimize(
+        /** @type {AnnotatedCode} */ (child),
+        enableCaching,
+        macros,
+        cache,
+        updatedLocals
+      );
     } else {
       return child;
     }
   });
 
-  if (code.location) {
-    annotate(optimized, code.location);
-  }
-  return optimized;
+  return annotate(optimized, code.location);
 }
 
 function applyMacro(macro, code, enableCaching, macros, cache, locals) {
   const optimized = optimize(macro, enableCaching, macros, cache, locals);
-  // @ts-ignore
-  annotate(optimized, code.location);
-  return optimized;
+  return annotate(optimized, code.location);
 }

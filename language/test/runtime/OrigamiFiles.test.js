@@ -13,11 +13,9 @@ describe("OrigamiFiles", () => {
     await createTempDirectory();
     const tempFiles = new OrigamiFiles(tempDirectory);
     const changedFileName = await new Promise(async (resolve) => {
-      // @ts-ignore
       tempFiles.addEventListener("change", (event) => {
         resolve(/** @type {any} */ (event).options.key);
       });
-      // @ts-ignore
       await tempFiles.set(
         "foo.txt",
         "This file is left over from testing and can be removed."

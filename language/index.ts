@@ -3,16 +3,24 @@ import { Packed } from "@weborigami/async-tree";
 export * from "./main.js";
 
 /**
- * A chunk of compiled Origami code. This is just an array with an additional
- * `location` property.
+ * Code annotated to track the original source that produced the code. If the
+ * code is an array, it must have a `location` property.
  */
-export type Code = Array<any> & {
-  location: {
-    source: Source;
-    start: Position;
-    end: Position;
-  };
-  source: string;
+export type AnnotatedCodeItem<T = any> = T extends any[] ? never : T;
+export type AnnotatedCode = (AnnotatedCode | AnnotatedCodeItem)[] & {
+  location: CodeLocation
+  source?: string;
+};
+
+/**
+ * A chunk of compiled Origami code. This is just an array.
+ */
+export type Code = Array<any>;
+
+export type CodeLocation = {
+  source: Source;
+  start: Position;
+  end: Position;
 };
 
 /**

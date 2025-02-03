@@ -5,7 +5,7 @@ import { evaluate } from "./internal.js";
 /**
  * Given parsed Origami code, return a function that executes that code.
  *
- * @param {import("../../index.js").Code} code - parsed Origami expression
+ * @param {import("../../index.js").AnnotatedCode} code - parsed Origami expression
  * @param {string} [name] - optional name of the function
  */
 export function createExpressionFunction(code, name) {

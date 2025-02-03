@@ -9,7 +9,7 @@ import { codeSymbol, scopeSymbol, sourceSymbol } from "./symbols.js";
  * `this` should be the tree used as the context for the evaluation.
  *
  * @this {import("@weborigami/types").AsyncTree|null}
- * @param {import("../../index.ts").Code} code
+ * @param {import("../../index.ts").AnnotatedCode} code
  */
 export default async function evaluate(code) {
   const tree = this;
