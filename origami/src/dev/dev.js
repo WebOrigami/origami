@@ -6,4 +6,5 @@ export { default as explore } from "./explore.js";
 export { default as log } from "./log.js";
 export { default as serve } from "./serve.js";
 export { default as svg } from "./svg.js";
+export { default as trace } from "./trace.js";
 export { default as watch } from "./watch.js";

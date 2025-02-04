@@ -1,0 +1,29 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#trace {
+  background: #333;
+  color: #eee;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  padding: 1rem;
+}
+
+iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
