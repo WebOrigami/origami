@@ -1,7 +1,13 @@
-import { ObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
+import {
+  ObjectTree,
+  Tree,
+  keysFromPath,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
+import { saveTrace } from "./debug.js";
 import parsePostData from "./parsePostData.js";
 
 /**
@@ -101,6 +107,16 @@ export async function handleRequest(request, response, tree) {
       return false;
     }
 
+    // TODO: Handle root path with no keys
+    if (
+      keys.length > 0 &&
+      trailingSlash.remove(keys[0]) !== ".debug" &&
+      trailingSlash.remove(keys[0]) !== ".trace"
+    ) {
+      // Save trace
+      saveTrace(resource, keys);
+    }
+
     // Copy the construct response to the ServerResponse and return true if
     // the response was valid.
     return copyResponse(constructed, response);
@@ -153,9 +169,14 @@ function keysFromUrl(url) {
  */
 export function requestListener(treelike) {
   const tree = Tree.from(treelike);
+  // const merged = merge(debugTree, tree); // tree has priority
+  // /** @type {any} */ (merged).pack = () => {
+  //   return tree.get("index.html");
+  // };
+  const merged = tree;
   return async function (request, response) {
     console.log(decodeURI(request.url));
-    const handled = await handleRequest(request, response, tree);
+    const handled = await handleRequest(request, response, merged);
     if (!handled) {
       // Ignore exceptions that come up with sending a Not Found response.
       try {
