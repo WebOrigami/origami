@@ -156,11 +156,12 @@ conditionalExpression
       if (!tail) {
         return condition;
       }
+      const deferred = makeDeferredArguments(tail);
       return annotate([
         ops.conditional,
         downgradeReference(condition),
-        [ops.lambda, [], downgradeReference(tail[0])],
-        [ops.lambda, [], downgradeReference(tail[1])]
+        downgradeReference(deferred[0]),
+        downgradeReference(deferred[1])
       ], location());
     }
   
@@ -351,7 +352,7 @@ nullishCoalescingExpression
 // An object literal: `{foo: 1, bar: 2}`
 objectLiteral "object literal"
   = "{" __ entries:objectEntries? __ closingBrace {
-      return makeObject(entries ?? [], ops.object, location());
+      return makeObject(entries ?? [], location());
     }
 
 // A separated list of object entries
@@ -576,8 +577,9 @@ stringLiteral "string"
 // literal, but can contain backticks at the top level.
 templateDocument "template"
   = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
+      const lambdaParameters = annotate(["_"], location());
       return annotate(
-        [ops.lambda, ["_"], makeTemplate(ops.templateIndent, head, tail)],
+        [ops.lambda, lambdaParameters, makeTemplate(ops.templateIndent, head, tail, location())],
         location()
       );
     }
@@ -588,13 +590,13 @@ templateDocumentChar
 
 templateDocumentText "template text"
   = chars:templateDocumentChar* {
-      return chars.join("");
+      return annotate([ops.literal, chars.join("")], location());
     }
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
   = "`" head:templateLiteralText tail:(templateSubstitution templateLiteralText)* "`" {
-      return annotate(makeTemplate(ops.template, head, tail), location());
+      return makeTemplate(ops.template, head, tail, location());
     }
 
 templateLiteralChar
@@ -619,7 +621,7 @@ textChar
 // A unary prefix operator: `!x`
 unaryExpression
   = operator:unaryOperator __ expression:unaryExpression {
-      return makeUnaryOperation(operator, expression);
+      return makeUnaryOperation(operator, expression, location());
     }
   / callExpression
 

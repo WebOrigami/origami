@@ -242,14 +242,14 @@ export function makeDeferredArguments(args) {
  * Make an object.
  *
  * @param {AnnotatedCode[]} entries
- * @param {any} op
  * @param {CodeLocation} location
  */
-export function makeObject(entries, op, location) {
+export function makeObject(entries, location) {
   let currentEntries = [];
   const spreads = [];
 
-  for (let [key, value] of entries) {
+  for (let entry of entries) {
+    const [key, value] = entry;
     if (key === ops.spread) {
       if (value[0] === ops.object) {
         // Spread of an object; fold into current object
@@ -257,7 +257,10 @@ export function makeObject(entries, op, location) {
       } else {
         // Spread of a tree; accumulate
         if (currentEntries.length > 0) {
-          spreads.push([op, ...currentEntries]);
+          const location = { ...currentEntries[0].location };
+          location.end = currentEntries[currentEntries.length - 1].location.end;
+          const spread = annotate([ops.object, ...currentEntries], location);
+          spreads.push(spread);
           currentEntries = [];
         }
         spreads.push(value);
@@ -272,27 +275,32 @@ export function makeObject(entries, op, location) {
         value[1][0] === ops.literal
       ) {
         // Optimize a getter for a primitive value to a regular property
-        value = value[1];
+        entry = annotate([key, value[1]], entry.location);
       }
     }
 
-    currentEntries.push([key, value]);
+    currentEntries.push(entry);
   }
 
   // Finish any current entries.
   if (currentEntries.length > 0) {
-    spreads.push([op, ...currentEntries]);
+    const location = { ...currentEntries[0].location };
+    location.end = currentEntries[currentEntries.length - 1].location.end;
+    const spread = annotate([ops.object, ...currentEntries], location);
+    spreads.push(spread);
     currentEntries = [];
   }
 
   let code;
   if (spreads.length > 1) {
+    // Merge multiple spreads
     code = [ops.merge, ...spreads];
-  }
-  if (spreads.length === 1) {
+  } else if (spreads.length === 1) {
+    // A single spread can just be the object
     code = spreads[0];
   } else {
-    code = [op];
+    // Empty object
+    code = [ops.object];
   }
 
   return annotate(code, location);
@@ -340,19 +348,15 @@ export function makeReference(identifier) {
  * @param {any} op
  * @param {AnnotatedCode} head
  * @param {AnnotatedCode} tail
- * @returns
+ * @param {CodeLocation} location
  */
-export function makeTemplate(op, head, tail) {
-  const location = { ...head.location };
+export function makeTemplate(op, head, tail, location) {
   const strings = [head[1]];
   const values = [];
   for (const [value, literal] of tail) {
     const concat = annotate([ops.concat, value], value.location);
     values.push(concat);
     strings.push(literal[1]);
-  }
-  if (tail.length > 0) {
-    location.end = tail.at(-1)[1].location.end;
   }
   const stringsCode = annotate(strings, location);
   /** @type {AnnotatedCodeItem} */
@@ -366,18 +370,14 @@ export function makeTemplate(op, head, tail) {
  *
  * @param {AnnotatedCode} operator
  * @param {AnnotatedCode} value
+ * @param {CodeLocation} location
  */
-export function makeUnaryOperation(operator, value) {
+export function makeUnaryOperation(operator, value, location) {
   const operators = {
     "!": ops.logicalNot,
     "+": ops.unaryPlus,
     "-": ops.unaryMinus,
     "~": ops.bitwiseNot,
-  };
-  const location = {
-    source: operator.location.source,
-    start: operator.location.start,
-    end: value.location.end,
   };
   return annotate([operators[operator], value], location);
 }

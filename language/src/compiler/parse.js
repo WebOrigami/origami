@@ -431,11 +431,12 @@ function peg$parse(input, options) {
       if (!tail) {
         return condition;
       }
+      const deferred = makeDeferredArguments(tail);
       return annotate([
         ops.conditional,
         downgradeReference(condition),
-        [ops.lambda, [], downgradeReference(tail[0])],
-        [ops.lambda, [], downgradeReference(tail[1])]
+        downgradeReference(deferred[0]),
+        downgradeReference(deferred[1])
       ], location());
     };
   var peg$f16 = function(chars) {
@@ -520,7 +521,7 @@ function peg$parse(input, options) {
         );
     };
   var peg$f43 = function(entries) {
-      return makeObject(entries ?? [], ops.object, location());
+      return makeObject(entries ?? [], location());
     };
   var peg$f44 = function(entries) {
       return annotate(entries, location());
@@ -608,16 +609,17 @@ function peg$parse(input, options) {
       return annotate([ops.spread, value], location());
     };
   var peg$f69 = function(head, tail) {
+      const lambdaParameters = annotate(["_"], location());
       return annotate(
-        [ops.lambda, ["_"], makeTemplate(ops.templateIndent, head, tail)],
+        [ops.lambda, lambdaParameters, makeTemplate(ops.templateIndent, head, tail, location())],
         location()
       );
     };
   var peg$f70 = function(chars) {
-      return chars.join("");
+      return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f71 = function(head, tail) {
-      return annotate(makeTemplate(ops.template, head, tail), location());
+      return makeTemplate(ops.template, head, tail, location());
     };
   var peg$f72 = function(chars) {
       return annotate([ops.literal, chars.join("")], location());
@@ -626,7 +628,7 @@ function peg$parse(input, options) {
       return annotate(expression, location());
     };
   var peg$f74 = function(operator, expression) {
-      return makeUnaryOperation(operator, expression);
+      return makeUnaryOperation(operator, expression, location());
     };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;

@@ -247,20 +247,20 @@ describe("Origami parser", () => {
     assertParse("conditionalExpression", "true ? 1 : 0", [
       ops.conditional,
       [ops.scope, "true"],
-      [ops.lambda, [], [ops.literal, "1"]],
-      [ops.lambda, [], [ops.literal, "0"]],
+      [ops.literal, "1"],
+      [ops.literal, "0"],
     ]);
     assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
       [ops.lambda, [], [ops.lambda, [], [ops.literal, "1"]]],
-      [ops.lambda, [], [ops.literal, "0"]],
+      [ops.literal, "0"],
     ]);
     assertParse("conditionalExpression", "false ? =1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
       [ops.lambda, [], [ops.lambda, ["_"], [ops.literal, "1"]]],
-      [ops.lambda, [], [ops.literal, "0"]],
+      [ops.literal, "0"],
     ]);
   });
 
