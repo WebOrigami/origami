@@ -3,6 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 import { evaluate, ops } from "../../src/runtime/internal.js";
+import { createCode } from "../compiler/codeHelpers.js";
 
 describe("ops", () => {
   test("ops.addition adds two numbers", async () => {
@@ -377,19 +378,6 @@ describe("ops", () => {
     assert.strictEqual(result, "unpacked");
   });
 });
-
-/**
- * @returns {import("../../index.ts").AnnotatedCode}
- */
-function createCode(array) {
-  const code = array;
-  /** @type {any} */ (code).location = {
-    source: {
-      text: "",
-    },
-  };
-  return code;
-}
 
 function errorFn() {
   throw new Error("This should not be called");

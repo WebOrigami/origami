@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
 import { undetermined } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
-import { stripCodeLocations } from "./stripCodeLocations.js";
+import { assertCodeEqual } from "./codeHelpers.js";
 
 describe("Origami parser", () => {
   test("additiveExpression", () => {
@@ -1084,8 +1084,7 @@ function assertParse(startRule, source, expected, checkLocation = true) {
     assert.equal(resultSource, source.trim());
   }
 
-  const actual = stripCodeLocations(code);
-  assert.deepEqual(actual, expected);
+  assertCodeEqual(code, expected);
 }
 
 function assertCodeLocations(code) {

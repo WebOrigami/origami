@@ -1,9 +1,8 @@
-import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import optimize from "../../src/compiler/optimize.js";
 import { ops } from "../../src/runtime/internal.js";
-import { stripCodeLocations } from "./stripCodeLocations.js";
+import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
 describe("optimize", () => {
   test("optimize non-local ops.scope calls to ops.external", async () => {
@@ -17,7 +16,7 @@ describe("optimize", () => {
     `;
     const fn = compile.expression(expression);
     const code = fn.code;
-    assert.deepEqual(stripCodeLocations(code), [
+    assertCodeEqual(code, [
       ops.lambda,
       ["name"],
       [
@@ -38,24 +37,6 @@ describe("optimize", () => {
       [ops.literal, "y.js"],
     ]);
     const optimized = optimize(code);
-    assert.deepEqual(stripCodeLocations(optimized), [
-      ops.external,
-      "x/y.js",
-      code,
-      {},
-    ]);
+    assertCodeEqual(optimized, [ops.external, "x/y.js", code, {}]);
   });
 });
-
-/**
- * @returns {import("../../index.ts").AnnotatedCode}
- */
-function createCode(array) {
-  const code = array;
-  /** @type {any} */ (code).location = {
-    source: {
-      text: "",
-    },
-  };
-  return code;
-}

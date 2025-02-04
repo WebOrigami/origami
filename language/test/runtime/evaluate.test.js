@@ -4,6 +4,7 @@ import { describe, test } from "node:test";
 import * as ops from "../../src/runtime/ops.js";
 
 import evaluate from "../../src/runtime/evaluate.js";
+import { createCode } from "../compiler/codeHelpers.js";
 
 describe("evaluate", () => {
   test("can retrieve values from scope", async () => {
@@ -70,16 +71,3 @@ describe("evaluate", () => {
     assert.equal(result.parent, tree);
   });
 });
-
-/**
- * @returns {import("../../index.ts").AnnotatedCode}
- */
-function createCode(array) {
-  const code = array;
-  /** @type {any} */ (code).location = {
-    source: {
-      text: "",
-    },
-  };
-  return code;
-}

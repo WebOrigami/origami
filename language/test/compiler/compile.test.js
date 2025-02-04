@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import { ops } from "../../src/runtime/internal.js";
-import { stripCodeLocations } from "./stripCodeLocations.js";
+import { assertCodeEqual } from "./codeHelpers.js";
 
 const shared = new ObjectTree({
   greet: (name) => `Hello, ${name}!`,
@@ -70,7 +70,7 @@ describe("compile", () => {
     let saved;
     const scope = new ObjectTree({
       tag: (strings, ...values) => {
-        assert.deepEqual(strings, ["Hello, ", "!"]);
+        assertCodeEqual(strings, ["Hello, ", "!"]);
         if (saved) {
           assert.equal(strings, saved);
         } else {
@@ -96,7 +96,7 @@ describe("compile", () => {
       },
     });
     const code = fn.code;
-    assert.deepEqual(stripCodeLocations(code), [ops.object, ["a", 1]]);
+    assertCodeEqual(code, [ops.object, ["a", 1]]);
   });
 });
 

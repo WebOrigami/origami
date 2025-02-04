@@ -134,5 +134,7 @@ export default function optimize(
 
 function applyMacro(macro, code, enableCaching, macros, cache, locals) {
   const optimized = optimize(macro, enableCaching, macros, cache, locals);
-  return annotate(optimized, code.location);
+  return optimized instanceof Array
+    ? annotate(optimized, code.location)
+    : optimized;
 }

@@ -18,9 +18,9 @@ export type AnnotatedCode = (AnnotatedCode | AnnotatedCodeItem)[] & {
 export type Code = Array<any>;
 
 export type CodeLocation = {
+  end: Position;
   source: Source;
   start: Position;
-  end: Position;
 };
 
 /**

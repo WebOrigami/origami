@@ -109,7 +109,8 @@ export async function concat(...args) {
 addOpLabel(concat, "«ops.concat»");
 
 export async function conditional(condition, truthy, falsy) {
-  return condition ? truthy() : falsy();
+  const value = condition ? truthy : falsy;
+  return value instanceof Function ? await value() : value;
 }
 
 export function division(a, b) {
