@@ -40,11 +40,7 @@ export default function addTrace(context, code, intermediates, result) {
       if (!(traceSymbol in result)) {
         Object.defineProperty(result, traceSymbol, {
           get() {
-            return createTrace(
-              result,
-              code.location.source.text,
-              intermediates
-            );
+            return createTrace(result, code, intermediates);
           },
           enumerable: false,
         });
@@ -57,20 +53,42 @@ export default function addTrace(context, code, intermediates, result) {
   return result;
 }
 
-function createTrace(result, source, intermediateValues) {
+function createTrace(result, code, intermediateValues) {
   const value = format(result);
+  const source = code.location.source;
+
   let intermediateTraces;
   if (intermediateValues) {
     intermediateValues.shift();
     intermediateTraces = intermediateValues.map((intermediate) => {
-      return intermediate[traceSymbol] || createTrace(intermediate, source);
+      const intermediateTrace = intermediate[traceSymbol];
+      if (!intermediateTrace) {
+        return {
+          value: intermediate,
+        };
+      }
+
+      const {
+        value,
+        source: intermediateSource,
+        intermediates,
+      } = intermediateTrace;
+      const sameSourceAsParent = intermediateSource === source;
+
+      return Object.assign(
+        {
+          value,
+        },
+        !sameSourceAsParent && { source: intermediateSource },
+        intermediates && { intermediates }
+      );
     });
   }
   return Object.assign(
     {
       value,
-      // source,
     },
+    source && { source },
     intermediateTraces && { intermediates: intermediateTraces }
   );
 }

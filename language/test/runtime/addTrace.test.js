@@ -18,24 +18,22 @@ describe("addTrace", () => {
     const trace = result[traceSymbol];
     assert.deepStrictEqual(trace, {
       value: 8,
-      // source,
+      source: {
+        text: source,
+      },
       intermediates: [
         {
           value: 2,
-          // source
         },
         {
           value: 4,
-          // source,
           intermediates: [
             {
               value: 3,
-              // source,
               intermediates: [{ value: "x" }],
             },
             {
               value: 1,
-              // source
             },
           ],
         },
