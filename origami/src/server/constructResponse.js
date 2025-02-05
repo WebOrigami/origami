@@ -72,14 +72,17 @@ export default async function constructResponse(request, resource) {
       mediaType === "text/yaml"
         ? await serialize.toYaml(tree)
         : await serialize.toJson(tree);
-  } else if (
-    mediaType === undefined &&
-    (isPlainObject(resource) || resource instanceof Array)
-  ) {
-    // The resource is data, try showing it as YAML.
-    const tree = Tree.from(resource);
-    resource = await serialize.toYaml(tree);
-    mediaType = "text/yaml";
+  } else if (mediaType === undefined) {
+    if (isPlainObject(resource) || resource instanceof Array) {
+      // Try showing data as YAML tree
+      const tree = Tree.from(resource);
+      resource = await serialize.toYaml(tree);
+      mediaType = "text/yaml";
+    } else if (typeof resource === "number" || resource instanceof Number) {
+      // Numbers are sent as plain text
+      resource = String(resource);
+      mediaType = "text/plain";
+    }
   }
 
   // By default, the body will be the resource we got
