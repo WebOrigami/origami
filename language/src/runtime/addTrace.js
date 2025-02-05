@@ -55,6 +55,8 @@ export default function addTrace(context, code, intermediates, result) {
 
 function createTrace(result, code, intermediateValues) {
   const value = format(result);
+  const start = code.location.start.offset;
+  const end = code.location.end.offset;
   const source = code.location.source;
 
   let intermediateTraces;
@@ -72,21 +74,28 @@ function createTrace(result, code, intermediateValues) {
         value,
         source: intermediateSource,
         intermediates,
+        start,
+        end,
       } = intermediateTrace;
       const sameSourceAsParent = intermediateSource === source;
 
       return Object.assign(
         {
           value,
+          start,
+          end,
         },
         !sameSourceAsParent && { source: intermediateSource },
         intermediates && { intermediates }
       );
     });
   }
+
   return Object.assign(
     {
       value,
+      start,
+      end,
     },
     source && { source },
     intermediateTraces && { intermediates: intermediateTraces }
