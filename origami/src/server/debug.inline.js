@@ -1,8 +1,9 @@
 /* This file is inlined into the debug template page */
 
-let trace;
-let sourceFilePath;
 let resultFrame;
+let resultPath;
+let sourceFilePath;
+let trace;
 
 // Escape XML entities for in the text.
 function escapeXml(text) {
@@ -34,12 +35,14 @@ async function refreshTrace() {
   trace.innerHTML = `${escapeXml(prologue)}<mark>${escapeXml(
     fragment
   )}</mark>${escapeXml(epilogue)}`;
+  resultPath.textContent = resultPathname;
 }
 
 window.addEventListener("load", () => {
-  trace = document.getElementById("trace");
-  sourceFilePath = document.getElementById("sourceFilePath");
   resultFrame = document.getElementById("result");
+  resultPath = document.getElementById("resultPath");
+  sourceFilePath = document.getElementById("sourceFilePath");
+  trace = document.getElementById("trace");
 
   if (!resultFrame) {
     console.error("Result frame not found");

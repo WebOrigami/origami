@@ -31,7 +31,7 @@ body {
   #trace {
     font-family: monospace;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 2ch;
 
     mark {
       background: none;
