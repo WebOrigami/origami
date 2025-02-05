@@ -15,14 +15,24 @@ body {
 }
 
 #trace {
-  background: #333;
-  color: #eee;
+  background: #222;
+  color: #999;
+  display: none;
   font-family: monospace;
   font-size: 14px;
   padding: 1rem;
+
+  &:not(:empty) {
+    display: block;
+  }
+
+  mark {
+    background: none;
+    color: #f0f0f0;
+  }
 }
 
-iframe {
+#result {
   border: 0;
   height: 100%;
   width: 100%;

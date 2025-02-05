@@ -7,9 +7,12 @@
     <style>
       ${ debug.css }
     </style>
+    <script type="module">
+      ${ debug.inline.js }
+    </script>
   </head>
   <body>
-    <section id="trace">Trace goes here</section>
-    <iframe src="/index.html"></iframe>
+    <pre id="trace"></pre>
+    <iframe id="result"></iframe>
   </body>
 </html>
