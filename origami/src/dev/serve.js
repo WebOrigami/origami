@@ -3,10 +3,8 @@ import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import { isTransformApplied, transformObject } from "../common/utilities.js";
 import { requestListener } from "../server/server.js";
 import debug from "./debug.js";
-import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
 import watch from "./watch.js";
 
 const defaultPort = 5000;
@@ -26,9 +24,9 @@ export default async function serve(treelike, port) {
   let tree;
   if (treelike) {
     tree = Tree.from(treelike, { parent: this });
-    if (!isTransformApplied(ExplorableSiteTransform, tree)) {
-      tree = transformObject(ExplorableSiteTransform, tree);
-    }
+    // if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+    //   tree = transformObject(ExplorableSiteTransform, tree);
+    // }
   } else {
     // By default, watch the default tree and add default pages.
     const withDefaults = await debug.call(this);

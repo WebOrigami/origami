@@ -2,12 +2,13 @@ import {
   ObjectTree,
   Tree,
   keysFromPath,
+  merge,
   trailingSlash,
 } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
-import { saveTrace } from "./debug.js";
+import { debugTree, saveTrace } from "./debug.js";
 import parsePostData from "./parsePostData.js";
 
 /**
@@ -169,11 +170,10 @@ function keysFromUrl(url) {
  */
 export function requestListener(treelike) {
   const tree = Tree.from(treelike);
-  // const merged = merge(debugTree, tree); // tree has priority
-  // /** @type {any} */ (merged).pack = () => {
-  //   return tree.get("index.html");
-  // };
-  const merged = tree;
+  const merged = merge(debugTree, tree); // tree has priority
+  /** @type {any} */ (merged).pack = () => {
+    return tree.get("index.html");
+  };
   return async function (request, response) {
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, merged);
