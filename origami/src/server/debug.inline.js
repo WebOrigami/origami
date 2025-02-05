@@ -24,12 +24,12 @@ async function refreshTrace() {
   console.log(location);
 
   const { source, start, end } = location;
-  const { text } = source;
+  const { text, url } = source;
   const prologue = text.slice(0, start.offset);
   const fragment = text.slice(start.offset, end.offset);
   const epilogue = text.slice(end.offset);
 
-  const html = `${escapeXml(prologue)}<mark>${escapeXml(
+  const html = `${url}\n\n${escapeXml(prologue)}<mark>${escapeXml(
     fragment
   )}</mark>${escapeXml(epilogue)}`;
   tracePane.innerHTML = html;

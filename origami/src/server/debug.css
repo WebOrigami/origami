@@ -20,6 +20,7 @@ body {
   display: none;
   font-family: monospace;
   font-size: 14px;
+  margin: 0;
   padding: 1rem;
 
   &:not(:empty) {
