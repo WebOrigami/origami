@@ -14,22 +14,33 @@ body {
   padding: 0;
 }
 
-#trace {
+#tracePane {
+  --color-highlight: white;
   background: #222;
   color: #999;
   display: none;
-  font-family: monospace;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  gap: 1rem;
   font-size: 14px;
-  margin: 0;
   padding: 1rem;
 
-  &:not(:empty) {
-    display: block;
+  #sourceFilePath {
+    /* color: var(--color-highlight); */
   }
 
-  mark {
-    background: none;
-    color: #f0f0f0;
+  #trace {
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+
+    mark {
+      background: none;
+      color: var(--color-highlight);
+    }
+  }
+
+  &:has(#trace:not(:empty)) {
+    display: grid;
   }
 }
 

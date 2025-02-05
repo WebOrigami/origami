@@ -1,6 +1,7 @@
 /* This file is inlined into the debug template page */
 
-let tracePane;
+let trace;
+let sourceFilePath;
 let resultFrame;
 
 // Escape XML entities for in the text.
@@ -19,8 +20,8 @@ async function refreshTrace() {
   const resultPathname = resultLocation.pathname;
   const tracePathname = `/.trace${resultPathname}`;
   const traceUrl = new URL(tracePathname, resultLocation.origin);
-  const trace = await fetch(traceUrl);
-  const location = await trace.json();
+  const traceResponse = await fetch(traceUrl);
+  const location = await traceResponse.json();
   console.log(location);
 
   const { source, start, end } = location;
@@ -29,14 +30,15 @@ async function refreshTrace() {
   const fragment = text.slice(start.offset, end.offset);
   const epilogue = text.slice(end.offset);
 
-  const html = `${url}\n\n${escapeXml(prologue)}<mark>${escapeXml(
+  sourceFilePath.textContent = new URL(url).pathname;
+  trace.innerHTML = `${escapeXml(prologue)}<mark>${escapeXml(
     fragment
   )}</mark>${escapeXml(epilogue)}`;
-  tracePane.innerHTML = html;
 }
 
 window.addEventListener("load", () => {
-  tracePane = document.getElementById("trace");
+  trace = document.getElementById("trace");
+  sourceFilePath = document.getElementById("sourceFilePath");
   resultFrame = document.getElementById("result");
 
   if (!resultFrame) {
