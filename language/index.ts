@@ -9,7 +9,7 @@ export * from "./main.js";
 export type AnnotatedCodeItem<T = any> = T extends any[] ? never : T;
 export type AnnotatedCode = (AnnotatedCode | AnnotatedCodeItem)[] & {
   location: CodeLocation
-  source?: string;
+  expression?: string;
 };
 
 /**

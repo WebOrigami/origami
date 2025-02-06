@@ -26,7 +26,7 @@ export function annotate(code, location) {
   // @ts-ignore - Need to add annotation below before type is correct
   const annotated = code.slice();
   annotated.location = location;
-  annotated.source = codeFragment(location);
+  annotated.expression = codeFragment(location);
   return annotated;
 }
 

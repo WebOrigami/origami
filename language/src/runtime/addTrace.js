@@ -2,12 +2,13 @@ import { box, isStringLike, scope, toString } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import {
   codeSymbol,
+  expressionSymbol,
+  inputsSymbol,
   scopeSymbol,
-  sourceSymbol,
   traceSymbol,
 } from "./symbols.js";
 
-export default function addTrace(context, code, intermediates, result) {
+export default function addTrace(context, code, inputs, result) {
   if (typeof result === "symbol") {
     return result;
   }
@@ -15,8 +16,8 @@ export default function addTrace(context, code, intermediates, result) {
   if (result) {
     result = box(result);
     try {
-      if (!(sourceSymbol in result)) {
-        Object.defineProperty(result, sourceSymbol, {
+      if (!(expressionSymbol in result)) {
+        Object.defineProperty(result, expressionSymbol, {
           get() {
             return code.location ? codeFragment(code.location) : null;
           },
@@ -26,6 +27,12 @@ export default function addTrace(context, code, intermediates, result) {
       if (!(codeSymbol in result)) {
         Object.defineProperty(result, codeSymbol, {
           value: code,
+          enumerable: false,
+        });
+      }
+      if (!(inputsSymbol in result)) {
+        Object.defineProperty(result, inputsSymbol, {
+          value: inputs,
           enumerable: false,
         });
       }
@@ -40,7 +47,7 @@ export default function addTrace(context, code, intermediates, result) {
       if (!(traceSymbol in result)) {
         Object.defineProperty(result, traceSymbol, {
           get() {
-            return createTrace(result, code, intermediates);
+            return createTrace(result, true, "");
           },
           enumerable: false,
         });
@@ -53,52 +60,82 @@ export default function addTrace(context, code, intermediates, result) {
   return result;
 }
 
-function createTrace(result, code, intermediateValues) {
-  const value = format(result);
-  const start = code.location.start.offset;
-  const end = code.location.end.offset;
-  const source = code.location.source;
+function collectSourceFragments(code, basePath) {
+  const text = code.location.source.text;
 
-  let intermediateTraces;
-  if (intermediateValues) {
-    intermediateValues.shift();
-    intermediateTraces = intermediateValues.map((intermediate) => {
-      const intermediateTrace = intermediate[traceSymbol];
-      if (!intermediateTrace) {
-        return {
-          value: intermediate,
-        };
-      }
+  const spans = code
+    .filter((entry) => entry instanceof Array)
+    .map((entry, index) => ({
+      end: entry.location.end.offset,
+      index,
+      start: entry.location.start.offset,
+    }));
+  spans.sort((a, b) => a.start - b.start);
 
-      const {
-        value,
-        source: intermediateSource,
-        intermediates,
-        start,
-        end,
-      } = intermediateTrace;
-      const sameSourceAsParent = intermediateSource === source;
-
-      return Object.assign(
-        {
-          value,
-          start,
-          end,
-        },
-        !sameSourceAsParent && { source: intermediateSource },
-        intermediates && { intermediates }
-      );
+  const fragments = [];
+  let i = code.location.start.offset;
+  for (const { end, index, start } of spans) {
+    if (i < start) {
+      fragments.push({
+        text: text.slice(i, start),
+      });
+    }
+    fragments.push({
+      path: `${basePath}/${index}`,
+      text: text.slice(start, end),
     });
+    i = end;
+  }
+  if (i < code.location.end.offset) {
+    fragments.push({
+      text: text.slice(i, code.location.end.offset),
+    });
+  }
+  return fragments;
+}
+
+function createTrace(result, includeSource, basePath) {
+  const resultJsonValue = format(result);
+
+  const code = result[codeSymbol];
+  let source;
+  if (includeSource) {
+    const fragments = collectSourceFragments(code, basePath);
+    source = {
+      fragments,
+    };
+  }
+
+  const location = code.location;
+  const sourceText = location.source.text;
+
+  let inputTraces;
+  const inputs = result[inputsSymbol];
+  if (inputs) {
+    inputs.shift();
+    inputTraces = inputs
+      .filter((input) => typeof input === "object")
+      .map((input, index) => {
+        const inputCode = input[codeSymbol];
+        const inputLocation = inputCode.location;
+        const inputSourceText = inputLocation.source.text;
+        const sourceDiffers =
+          inputSourceText !== sourceText ||
+          inputLocation.start.offset < location.start.offset ||
+          inputLocation.start.offset > location.end.offset ||
+          inputLocation.end.offset < location.start.offset ||
+          inputLocation.end.offset > location.end.offset;
+        const path = `${basePath}/${index}`;
+        return createTrace(input, sourceDiffers, path);
+      });
   }
 
   return Object.assign(
     {
-      value,
-      start,
-      end,
+      result: resultJsonValue,
     },
     source && { source },
-    intermediateTraces && { intermediates: intermediateTraces }
+    inputTraces.length > 0 && { inputs: inputTraces }
   );
 }
 

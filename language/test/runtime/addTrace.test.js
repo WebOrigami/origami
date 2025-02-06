@@ -15,30 +15,35 @@ describe("addTrace", () => {
     assert.strictEqual(result.valueOf(), 8);
     const trace = result[traceSymbol];
     assert.deepEqual(trace, {
-      value: 8,
-      ...offsets(source, "2 * f/(3)"),
+      result: 8,
       source: {
-        text: source,
+        fragments: [
+          {
+            text: "2 * ",
+          },
+          {
+            path: "/0",
+            text: "f/(3)",
+          },
+        ],
       },
-      intermediates: [
+      inputs: [
         {
-          value: 2,
-        },
-        {
-          value: 4,
-          ...offsets(source, "x + 1"),
-          intermediates: [
+          result: 4,
+          source: {
+            fragments: [
+              {
+                path: "/0/0",
+                text: "x",
+              },
+              {
+                text: " + 1",
+              },
+            ],
+          },
+          inputs: [
             {
-              value: 3,
-              ...offsets(source, "x", 2),
-              intermediates: [
-                {
-                  value: "x",
-                },
-              ],
-            },
-            {
-              value: 1,
+              result: 3,
             },
           ],
         },
@@ -46,14 +51,3 @@ describe("addTrace", () => {
     });
   });
 });
-
-// Return the start and end offset of the nth occurrence of the fragment within
-// the text
-function offsets(text, fragment, occurrence = 1) {
-  let start = 0;
-  for (let i = 0; i < occurrence; i++) {
-    start = text.indexOf(fragment, start + 1);
-  }
-  const end = start + fragment.length;
-  return { start, end };
-}
