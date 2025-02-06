@@ -1,5 +1,6 @@
 import { box, isStringLike, scope, toString } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
+import { ops } from "./internal.js";
 import {
   codeSymbol,
   expressionSymbol,
@@ -31,10 +32,14 @@ export default function addTrace(context, code, inputs, result) {
         });
       }
       if (!(inputsSymbol in result)) {
-        Object.defineProperty(result, inputsSymbol, {
-          value: inputs,
-          enumerable: false,
-        });
+        // Skip literals
+        if (code[0] !== ops.literal) {
+          let filtered = inputs.slice(1); // Ignore function for now
+          Object.defineProperty(result, inputsSymbol, {
+            value: filtered,
+            enumerable: false,
+          });
+        }
       }
       if (!(scopeSymbol in result)) {
         Object.defineProperty(result, scopeSymbol, {
@@ -107,14 +112,15 @@ function createTrace(result, includeSource, basePath) {
   }
 
   const location = code.location;
-  const sourceText = location.source.text;
 
   let inputTraces;
-  const inputs = result[inputsSymbol];
-  if (inputs) {
-    inputs.shift();
-    inputTraces = inputs
-      .filter((input) => typeof input === "object")
+  if (result[inputsSymbol]) {
+    const sourceText = location.source.text;
+    inputTraces = result[inputsSymbol]
+      .filter(
+        (input) =>
+          typeof input === "object" && input[inputsSymbol] !== undefined
+      )
       .map((input, index) => {
         const inputCode = input[codeSymbol];
         const inputLocation = inputCode.location;
@@ -135,7 +141,7 @@ function createTrace(result, includeSource, basePath) {
       result: resultJsonValue,
     },
     source && { source },
-    inputTraces.length > 0 && { inputs: inputTraces }
+    inputTraces?.length > 0 && { inputs: inputTraces }
   );
 }
 

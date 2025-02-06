@@ -1,6 +1,5 @@
 import { ObjectTree } from "@weborigami/async-tree";
-import { OrigamiFiles } from "@weborigami/language";
-import { codeSymbol } from "@weborigami/language/src/runtime/symbols.js";
+import { OrigamiFiles, symbols } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
@@ -42,14 +41,6 @@ function addValueToObject(object, keys, value) {
   }
 }
 
-function codeFromLocation(location) {
-  const { source, start, end } = location;
-  return start.offset < end.offset
-    ? source.text.slice(start.offset, end.offset)
-    : // Use entire source
-      source.text;
-}
-
 async function loadDebugTemplate() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
   const folder = new OrigamiFiles(folderPath);
@@ -59,6 +50,6 @@ async function loadDebugTemplate() {
 }
 
 export function saveTrace(result, keys) {
-  const trace = JSON.stringify(result[codeSymbol].location, null, 2);
+  const trace = JSON.stringify(result[symbols.traceSymbol], null, 2);
   addValueToObject(debugInfo[".trace"], keys, trace);
 }
