@@ -1,6 +1,5 @@
 /* Generate trace links and results for debugger */
 
-import { isStringLike, toString } from "@weborigami/async-tree";
 import { symbols } from "@weborigami/language";
 const { codeSymbol, inputsSymbol } = symbols;
 
@@ -72,20 +71,4 @@ export function resultDecomposition(result) {
     value: result,
     ...inputs,
   };
-}
-
-function format(object) {
-  if (typeof object === "number") {
-    return object;
-  } else if (object instanceof Number || object instanceof String) {
-    return object.valueOf();
-  } else if (isStringLike(object)) {
-    return toString(object);
-  } else if (object instanceof Function) {
-    return Object.getOwnPropertyNames(object).includes("toString")
-      ? object.toString()
-      : object.name;
-  } else {
-    return object;
-  }
 }
