@@ -61,7 +61,7 @@ export default function optimize(
       } else if (enableCaching && !locals[normalizedKey]) {
         // Upgrade to cached external scope reference
         return annotate(
-          [ops.external, key, [ops.scope, key], cache],
+          [ops.external, key, annotate([ops.scope, key], code.location), cache],
           code.location
         );
       } else if (fn === undetermined) {

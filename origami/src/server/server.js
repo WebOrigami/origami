@@ -109,11 +109,8 @@ export async function handleRequest(request, response, tree) {
     }
 
     // TODO: Handle root path with no keys
-    if (
-      keys.length > 0 &&
-      trailingSlash.remove(keys[0]) !== ".debug" &&
-      trailingSlash.remove(keys[0]) !== ".trace"
-    ) {
+    const noTrace = [".debug", ".links", ".results"];
+    if (keys.length > 0 && !noTrace.includes(trailingSlash.remove(keys[0]))) {
       // Save trace
       saveTrace(resource, keys);
     }

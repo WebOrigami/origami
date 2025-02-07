@@ -14,12 +14,12 @@ export default function labeledTree(object) {
 
   const value =
     typeof object.value === "object" ? object.value : box(object.value);
-  value.get = (key) => {
+  value.get = async (key) => {
     const normalizedKey = trailingSlash.remove(key);
     const value = object[normalizedKey];
     return isPlainObject(value) ? labeledTree(value) : object[key];
   };
-  value.keys = () => Object.keys(object);
+  value.keys = async () => Object.keys(object);
 
   return value;
 }
