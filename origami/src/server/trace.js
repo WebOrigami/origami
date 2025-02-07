@@ -20,11 +20,20 @@ export function traceLinks(result, basePath = "") {
   spans.sort((a, b) => a.start - b.start);
 
   const fragments = [];
+
+  // Grab initial indentation so that lines after the first line up
+  const codeStart = code.location.start;
+  const startOfLine = text.slice(
+    codeStart.offset - codeStart.column + 1,
+    codeStart.offset
+  );
+  const indentation = startOfLine.match(/^\s*/)[0];
+
   let i = code.location.start.offset;
   for (const { end, index, start } of spans) {
-    if (i < start) {
+    if (i < start || (index === 0 && indentation)) {
       fragments.push({
-        text: text.slice(i, start),
+        text: indentation + text.slice(i, start),
       });
     }
     fragments.push({
