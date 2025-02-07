@@ -56,7 +56,7 @@ export function saveTrace(result, keys) {
   addValueToObject(debugInfo[".links"], keys, () =>
     JSON.stringify(labeledTree(traceLinks(result)), null, 2)
   );
-  addValueToObject(debugInfo[".results"], keys, () =>
-    labeledTree(resultDecomposition(result))
+  addValueToObject(debugInfo[".results"], keys, (key) =>
+    labeledTree(resultDecomposition(result)).get(key)
   );
 }
