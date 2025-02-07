@@ -26,16 +26,19 @@ describe("trace", () => {
         },
       ],
       0: {
-        value: [
-          { text: "  " },
-          {
-            path: "/0/0",
-            text: "x",
+        value: [{ text: "f/(3)" }],
+        call: {
+          value: [
+            { text: "  " },
+            {
+              path: "/0/call/0",
+              text: "x",
+            },
+            { text: " + 1" },
+          ],
+          0: {
+            value: [{ text: "x" }],
           },
-          { text: " + 1" },
-        ],
-        0: {
-          value: [{ text: "x" }],
         },
       },
     });
@@ -44,8 +47,11 @@ describe("trace", () => {
       value: 8,
       0: {
         value: 4,
-        0: {
-          value: 3,
+        call: {
+          value: 4,
+          0: {
+            value: 3,
+          },
         },
       },
     });

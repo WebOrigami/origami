@@ -3,10 +3,37 @@
 import { ops, symbols } from "@weborigami/language";
 const { traceSymbol } = symbols;
 
-export function traceLinks(result, basePath = "") {
-  const { code, inputs } = result[traceSymbol];
+// Return an array of flags indicating whether the input with corresponding
+// index should be used.
+function inputFlags(code, inputs) {
+  return inputs.map((input, index) => {
+    // Ignore primitive or untraced values
+    if (typeof input !== "object" || input[traceSymbol] === undefined) {
+      return false;
+    }
+
+    // Ignore template strings
+    if (
+      index === 0 &&
+      ((code[0]?.[0] === ops.builtin && code[0]?.[1] === "indent") ||
+        code[0]?.[0] === ops.template)
+    ) {
+      return false;
+    }
+
+    // Only use first arg of ops.external
+    if (index === 0 && code[0] === ops.external) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function linksForTrace(trace, basePath = "") {
+  const { call, code, inputs } = trace;
   const text = code.location.source.text;
-  const flags = inputFlags(result);
+  const flags = inputFlags(code, inputs);
 
   // Construct link data for this level of the result
   const spans = code
@@ -48,57 +75,44 @@ export function traceLinks(result, basePath = "") {
     });
   }
 
-  // const inputCode = input[codeSymbol];
-  // const inputLocation = inputCode.location;
-  // const inputSourceText = inputLocation.source.text;
-  // const sourceDiffers =
-  //   inputSourceText !== sourceText ||
-  //   inputLocation.start.offset < location.start.offset ||
-  //   inputLocation.start.offset > location.end.offset ||
-  //   inputLocation.end.offset < location.start.offset ||
-  //   inputLocation.end.offset > location.end.offset;
-  // const path = `${basePath}/${index}`;
-
   // Gather link info for inputs
   const inputLinks = inputs
     .filter((input, index) => flags[index])
-    .map((input, index) => traceLinks(input, `${basePath}/${index}`));
+    .map((input, index) =>
+      linksForTrace(input[traceSymbol], `${basePath}/${index}`)
+    );
 
-  return {
+  const data = {
     value: fragments,
     ...inputLinks,
   };
+
+  if (call) {
+    data.call = linksForTrace(call, `${basePath}/call`);
+  }
+
+  return data;
 }
 
-export function resultDecomposition(result) {
-  const { inputs } = result[traceSymbol];
-  const flags = inputFlags(result);
+export function resultDecomposition(result, trace = result[traceSymbol]) {
+  const { call, code, inputs } = trace;
+  const flags = inputFlags(code, inputs);
   const inputDecompositions = inputs
     .filter((input, index) => flags[index])
-    .map(resultDecomposition);
-  return {
+    .map((input) => resultDecomposition(input));
+
+  const data = {
     value: result,
     ...inputDecompositions,
   };
+
+  if (call) {
+    data.call = resultDecomposition(result, call);
+  }
+
+  return data;
 }
 
-// Return an array of flags indicating whether the input with corresponding
-// index should be used.
-function inputFlags(result) {
-  const { code, inputs } = result[traceSymbol];
-  return inputs.map((input, index) => {
-    if (typeof input !== "object" || input[traceSymbol] === undefined) {
-      // Primitive value, don't use
-      return false;
-    }
-    if (
-      index === 0 &&
-      code[0]?.[0] === ops.builtin &&
-      code[0]?.[1] === "indent"
-    ) {
-      // Ignore template strings
-      return false;
-    }
-    return true;
-  });
+export function traceLinks(result) {
+  return linksForTrace(result[traceSymbol]);
 }

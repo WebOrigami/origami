@@ -14,11 +14,15 @@ import { traceSymbol } from "./symbols.js";
  * @returns
  */
 export default function addDebuggingInfo(result, context, code, inputs) {
-  if (result == null || typeof result === "symbol") {
+  if (
+    result == null ||
+    typeof result === "symbol" ||
+    typeof result === "function"
+  ) {
     return result;
   }
 
-  if (!(typeof result === "object")) {
+  if (typeof result !== "object") {
     result = box(result);
   } else if (!Object.isExtensible(result)) {
     // Can't add trace
@@ -47,16 +51,11 @@ export default function addDebuggingInfo(result, context, code, inputs) {
     trace.call = result[traceSymbol];
   }
 
-  // try {
   Object.defineProperty(result, traceSymbol, {
     enumerable: false,
     value: trace,
     writable: true,
   });
-  // }
-  // catch (/** @type {any} */ error) {
-  //   // Ignore errors.
-  // }
 
   return result;
 }
