@@ -1,5 +1,5 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
-import addTrace from "./addTrace.js";
+import addDebuggingInfo from "./addDebuggingInfo.js";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
 
@@ -81,8 +81,8 @@ export default async function evaluate(code) {
     result.parent = tree;
   }
 
-  // Add tracing information to aid debugging
-  result = addTrace(this, code, evaluated, result);
+  // Add information to aid debugging
+  result = addDebuggingInfo(result, this, code, evaluated);
 
   return result;
 }
