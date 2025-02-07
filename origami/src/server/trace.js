@@ -1,15 +1,17 @@
 /* Generate trace links and results for debugger */
 
-import { symbols } from "@weborigami/language";
+import { ops, symbols } from "@weborigami/language";
 const { codeSymbol, inputsSymbol } = symbols;
 
 export function traceLinks(result, basePath = "") {
   const code = result[codeSymbol];
   const text = code.location.source.text;
+  const flags = inputFlags(result);
 
   // Construct link data for this level of the result
   const spans = code
-    .filter((entry) => entry instanceof Array)
+    .slice(1) // Drop function
+    .filter((entry, index) => entry instanceof Array && flags[index])
     .map((entry, index) => ({
       end: entry.location.end.offset,
       index,
@@ -50,9 +52,7 @@ export function traceLinks(result, basePath = "") {
 
   // Gather link info for inputs
   const inputLinks = result[inputsSymbol]
-    .filter(
-      (input) => typeof input === "object" && input[inputsSymbol] !== undefined
-    )
+    .filter((input, index) => flags[index])
     .map((input, index) => traceLinks(input, `${basePath}/${index}`));
 
   return {
@@ -62,13 +62,33 @@ export function traceLinks(result, basePath = "") {
 }
 
 export function resultDecomposition(result) {
+  const flags = inputFlags(result);
   const inputs = result[inputsSymbol]
-    .filter(
-      (input) => typeof input === "object" && input[inputsSymbol] !== undefined
-    )
+    .filter((input, index) => flags[index])
     .map(resultDecomposition);
   return {
     value: result,
     ...inputs,
   };
+}
+
+// Return an array of flags indicating whether the input with corresponding
+// index should be used.
+function inputFlags(result) {
+  const code = result[codeSymbol];
+  return result[inputsSymbol].map((input, index) => {
+    if (typeof input !== "object" || input[inputsSymbol] === undefined) {
+      // Primitive value, don't use
+      return false;
+    }
+    if (
+      index === 0 &&
+      code[0]?.[0] === ops.builtin &&
+      code[0]?.[1] === "indent"
+    ) {
+      // Ignore template strings
+      return false;
+    }
+    return true;
+  });
 }

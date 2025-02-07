@@ -33,9 +33,14 @@ body {
     margin: 0;
     padding: 0 0 0 2ch;
 
-    mark {
+    a {
       background: none;
       color: var(--color-highlight);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 

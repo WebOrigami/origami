@@ -19,22 +19,33 @@ function escapeXml(text) {
 async function refreshTrace() {
   const resultLocation = resultFrame.contentDocument.location;
   const resultPathname = resultLocation.pathname;
-  const tracePathname = `/.trace${resultPathname}`;
+
+  if (resultPathname.startsWith("/.results")) {
+    // Don't trace the trace
+    return;
+  }
+
+  const tracePathname = `/.links${resultPathname}`;
   const traceUrl = new URL(tracePathname, resultLocation.origin);
   const traceResponse = await fetch(traceUrl);
-  const location = await traceResponse.json();
-  console.log(location);
+  const linkData = await traceResponse.json();
+  console.log(linkData);
 
-  const { source, start, end } = location;
-  const { text, url } = source;
-  const prologue = text.slice(0, start.offset);
-  const fragment = text.slice(start.offset, end.offset);
-  const epilogue = text.slice(end.offset);
+  let basePath = `/.results${resultPathname}`;
+  if (basePath.endsWith("/")) {
+    basePath = basePath.slice(0, -1);
+  }
+  const links = linkData
+    .map((data) => {
+      const text = escapeXml(data.text);
+      return data.path
+        ? `<a href="${basePath}${data.path}" target="result">${text}</a>`
+        : text;
+    })
+    .join("");
 
-  sourceFilePath.textContent = new URL(url).pathname;
-  trace.innerHTML = `${escapeXml(prologue)}<mark>${escapeXml(
-    fragment
-  )}</mark>${escapeXml(epilogue)}`;
+  // sourceFilePath.textContent = new URL(url).pathname;
+  trace.innerHTML = links;
   resultPath.textContent = resultPathname;
 }
 

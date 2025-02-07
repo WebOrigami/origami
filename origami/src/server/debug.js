@@ -1,8 +1,10 @@
 import { ObjectTree } from "@weborigami/async-tree";
-import { OrigamiFiles, symbols } from "@weborigami/language";
+import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
+import labeledTree from "./labeledTree.js";
+import { resultDecomposition, traceLinks } from "./trace.js";
 
 let debugTemplatePromise;
 
@@ -15,7 +17,8 @@ const debugInfo = {
       return template();
     },
   },
-  ".trace": {},
+  ".links": {},
+  ".results": {},
 };
 Object.defineProperty(debugInfo[".debug"], "pack", {
   enumerable: false,
@@ -50,6 +53,10 @@ async function loadDebugTemplate() {
 }
 
 export function saveTrace(result, keys) {
-  const trace = JSON.stringify(result[symbols.traceSymbol], null, 2);
-  addValueToObject(debugInfo[".trace"], keys, trace);
+  addValueToObject(debugInfo[".links"], keys, () =>
+    JSON.stringify(labeledTree(traceLinks(result)), null, 2)
+  );
+  addValueToObject(debugInfo[".results"], keys, () =>
+    labeledTree(resultDecomposition(result))
+  );
 }
