@@ -30,12 +30,22 @@ export default function addDebuggingInfo(result, context, code, inputs) {
   } else if (code[0] === ops.literal) {
     // Don't trace literals
     return result;
+  } else if (code[0] === ops.external) {
+    // ops.external wraps ops.scope, no need to add more tracing info
+    return result;
+  }
+
+  const args = inputs.slice(1); // Ignore function for now
+  if (args.some((arg) => arg === result)) {
+    // The function directly returned one of its arguments
+    // TODO: Handle this case? For now we punt to avoid cycle
+    return result;
   }
 
   const trace = {
     code,
 
-    inputs: inputs.slice(1), // Ignore function for now
+    inputs: args,
 
     get scope() {
       return context ? scope(context).trees : null;
