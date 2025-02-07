@@ -56,7 +56,8 @@ export function saveTrace(result, keys) {
   addValueToObject(debugInfo[".links"], keys, () =>
     JSON.stringify(labeledTree(traceLinks(result)), null, 2)
   );
-  addValueToObject(debugInfo[".results"], keys, (key) =>
-    labeledTree(resultDecomposition(result)).get(key)
-  );
+  addValueToObject(debugInfo[".results"], keys, (key) => {
+    const tree = labeledTree(resultDecomposition(result));
+    return key ? tree.get(key) : tree;
+  });
 }

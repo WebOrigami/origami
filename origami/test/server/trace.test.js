@@ -15,10 +15,10 @@ describe("trace", () => {
     const result = await object.g;
     assert.strictEqual(result.valueOf(), 8);
     const links = traceLinks(result);
-    assert.deepEqual(links, {
+    assert.deepStrictEqual(links, {
       value: [
         {
-          text: "2 * ",
+          text: "  2 * ",
         },
         {
           path: "/0",
@@ -27,20 +27,15 @@ describe("trace", () => {
       ],
       0: {
         value: [
+          { text: "  " },
           {
             path: "/0/0",
             text: "x",
           },
-          {
-            text: " + 1",
-          },
+          { text: " + 1" },
         ],
         0: {
-          value: [
-            {
-              text: "x",
-            },
-          ],
+          value: [{ text: "x" }],
         },
       },
     });
