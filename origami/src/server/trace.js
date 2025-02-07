@@ -1,10 +1,10 @@
 /* Generate trace links and results for debugger */
 
 import { ops, symbols } from "@weborigami/language";
-const { codeSymbol, inputsSymbol } = symbols;
+const { traceSymbol } = symbols;
 
 export function traceLinks(result, basePath = "") {
-  const code = result[codeSymbol];
+  const { code, inputs } = result[traceSymbol];
   const text = code.location.source.text;
   const flags = inputFlags(result);
 
@@ -60,7 +60,7 @@ export function traceLinks(result, basePath = "") {
   // const path = `${basePath}/${index}`;
 
   // Gather link info for inputs
-  const inputLinks = result[inputsSymbol]
+  const inputLinks = inputs
     .filter((input, index) => flags[index])
     .map((input, index) => traceLinks(input, `${basePath}/${index}`));
 
@@ -71,22 +71,23 @@ export function traceLinks(result, basePath = "") {
 }
 
 export function resultDecomposition(result) {
+  const { inputs } = result[traceSymbol];
   const flags = inputFlags(result);
-  const inputs = result[inputsSymbol]
+  const inputDecompositions = inputs
     .filter((input, index) => flags[index])
     .map(resultDecomposition);
   return {
     value: result,
-    ...inputs,
+    ...inputDecompositions,
   };
 }
 
 // Return an array of flags indicating whether the input with corresponding
 // index should be used.
 function inputFlags(result) {
-  const code = result[codeSymbol];
-  return result[inputsSymbol].map((input, index) => {
-    if (typeof input !== "object" || input[inputsSymbol] === undefined) {
+  const { code, inputs } = result[traceSymbol];
+  return inputs.map((input, index) => {
+    if (typeof input !== "object" || input[traceSymbol] === undefined) {
       // Primitive value, don't use
       return false;
     }
