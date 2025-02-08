@@ -7,6 +7,11 @@ const { traceSymbol } = symbols;
 // index should be used.
 function inputFlags(code, inputs) {
   return inputs.map((input, index) => {
+    // For now, ignore input 0, which is the function being called
+    if (index === 0) {
+      return false;
+    }
+
     // Ignore primitive or untraced values
     if (typeof input !== "object" || input[traceSymbol] === undefined) {
       return false;
@@ -14,16 +19,15 @@ function inputFlags(code, inputs) {
 
     // Ignore template strings
     if (
-      index === 0 &&
-      ((code[0]?.[0] === ops.builtin && code[0]?.[1] === "indent") ||
-        code[0]?.[0] === ops.template)
+      code[0]?.[0] === ops.template ||
+      (code[0]?.[0] === ops.builtin && code[0]?.[1] === "indent")
     ) {
-      return false;
+      return index !== 1;
     }
 
     // Only use first arg of ops.external
-    if (index === 0 && code[0] === ops.external) {
-      return false;
+    if (code[0] === ops.external) {
+      return index === 1;
     }
 
     return true;
@@ -31,22 +35,27 @@ function inputFlags(code, inputs) {
 }
 
 function linksForTrace(trace, basePath = "") {
-  const { call, code, inputs } = trace;
+  const { code, inputs } = trace;
   const text = code.location.source.text;
   const flags = inputFlags(code, inputs);
 
   // Construct link data for this level of the result
   const spans = code
-    .slice(1) // Drop function
-    .filter((entry, index) => entry instanceof Array && flags[index])
-    .map((entry, index) => ({
-      end: entry.location.end.offset,
-      index,
-      start: entry.location.start.offset,
-    }));
-  spans.sort((a, b) => a.start - b.start);
+    .map((entry, index) => {
+      if (entry instanceof Array && flags[index]) {
+        return {
+          end: entry.location.end.offset,
+          input: inputs[index],
+          start: entry.location.start.offset,
+        };
+      }
+      return null;
+    })
+    .filter((span) => span !== null)
+    .sort((a, b) => a.start - b.start);
 
   const fragments = [];
+  const calls = {};
 
   // Grab initial indentation so that lines after the first line up
   const codeStart = code.location.start;
@@ -57,38 +66,51 @@ function linksForTrace(trace, basePath = "") {
   const indentation = startOfLine.match(/^\s*/)[0];
 
   let i = code.location.start.offset;
-  for (const { end, index, start } of spans) {
-    if (i < start || (index === 0 && indentation)) {
+  for (let spanIndex = 0; spanIndex < spans.length; spanIndex++) {
+    const { end, input, start } = spans[spanIndex];
+    const inputTrace = input[traceSymbol];
+    // spanIndex is also the index of the result
+    const resultPath = `${basePath}/${spanIndex}`;
+
+    // Add fragment for indendation and text before this input
+    if (i < start || (spanIndex === 0 && indentation)) {
       fragments.push({
         text: indentation + text.slice(i, start),
       });
     }
-    fragments.push({
-      path: `${basePath}/${index}`,
-      text: text.slice(start, end),
-    });
+
+    // If input is result of function call, add fragment and links for that call
+    if (inputTrace.call) {
+      const callPath = `${resultPath}/0`;
+      fragments.push({
+        text: "⎆",
+        path: callPath,
+      });
+      calls[callPath] = linksForTrace(inputTrace.call, callPath);
+    }
+
+    // Add fragments for the input
+    const inputLinks = linksForTrace(inputTrace, resultPath);
+    fragments.push(...inputLinks.fragments);
+    if (inputLinks.calls) {
+      Object.assign(calls, inputLinks.calls);
+    }
+
     i = end;
   }
+
+  // Add fragment for text after last input
   if (i < code.location.end.offset) {
     fragments.push({
       text: text.slice(i, code.location.end.offset),
     });
   }
 
-  // Gather link info for inputs
-  const inputLinks = inputs
-    .filter((input, index) => flags[index])
-    .map((input, index) =>
-      linksForTrace(input[traceSymbol], `${basePath}/${index}`)
-    );
-
   const data = {
-    value: fragments,
-    ...inputLinks,
+    fragments,
   };
-
-  if (call) {
-    data.call = linksForTrace(call, `${basePath}/call`);
+  if (Object.keys(calls).length > 0) {
+    data.calls = calls;
   }
 
   return data;

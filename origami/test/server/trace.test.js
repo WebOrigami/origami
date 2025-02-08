@@ -15,30 +15,32 @@ describe("trace", () => {
     const result = await object.g;
     assert.strictEqual(result.valueOf(), 8);
     const links = traceLinks(result);
-    assert.deepStrictEqual(links, {
-      value: [
+    assert.deepEqual(links, {
+      // g
+      fragments: [
         {
           text: "  2 * ",
+        },
+        {
+          path: "/0/0",
+          text: "⎆",
         },
         {
           path: "/0",
           text: "f/(3)",
         },
       ],
-      0: {
-        value: [{ text: "f/(3)" }],
-        call: {
-          value: [
+      calls: {
+        // call to f
+        "/0/0": {
+          fragments: [
             { text: "  " },
             {
-              path: "/0/call/0",
+              path: "/0/0/0",
               text: "x",
             },
             { text: " + 1" },
           ],
-          0: {
-            value: [{ text: "x" }],
-          },
         },
       },
     });
@@ -47,7 +49,8 @@ describe("trace", () => {
       value: 8,
       0: {
         value: 4,
-        call: {
+        0: {
+          // call to f
           value: 4,
           0: {
             value: 3,

@@ -35,7 +35,7 @@ export default function addDebuggingInfo(result, context, code, inputs) {
     return result;
   }
 
-  const args = inputs.slice(1); // Ignore function for now
+  const args = inputs.slice(1);
   if (args.some((arg) => arg === result)) {
     // The function directly returned one of its arguments
     // TODO: Handle this case? For now we punt to avoid cycle
@@ -45,7 +45,7 @@ export default function addDebuggingInfo(result, context, code, inputs) {
   const trace = {
     code,
 
-    inputs: args,
+    inputs,
 
     get scope() {
       return context ? scope(context).trees : null;
