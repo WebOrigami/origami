@@ -1,23 +1,28 @@
 /* Generate trace links and results for debugger */
 
-import { ops, symbols } from "@weborigami/language";
+import { trailingSlash } from "@weborigami/async-tree";
+import {
+  taggedTemplateIndent as indent,
+  ops,
+  symbols,
+} from "@weborigami/language";
 const { traceSymbol } = symbols;
 
 // Return an array of flags indicating whether the input with corresponding
 // index should be used.
 function inputFlags(code, inputs) {
   return inputs.map((input, index) => {
-    // For now, ignore input 0, which is the function being called
-    if (index === 0) {
-      return false;
-    }
-
     // Ignore primitive or untraced values
     if (typeof input !== "object" || input[traceSymbol] === undefined) {
       return false;
     }
 
-    // Ignore template strings
+    // For now ignore functions
+    if (typeof input === "function") {
+      return false;
+    }
+
+    // Ignore the template strings argument in template literals
     if (
       code[0]?.[0] === ops.template ||
       (code[0]?.[0] === ops.builtin && code[0]?.[1] === "indent")
@@ -34,86 +39,30 @@ function inputFlags(code, inputs) {
   });
 }
 
-function linksForTrace(trace, basePath = "") {
-  const { code, inputs } = trace;
-  const text = code.location.source.text;
-  const flags = inputFlags(code, inputs);
-
-  // Construct link data for this level of the result
-  const spans = code
-    .map((entry, index) => {
-      if (entry instanceof Array && flags[index]) {
-        return {
-          end: entry.location.end.offset,
-          input: inputs[index],
-          start: entry.location.start.offset,
-        };
-      }
-      return null;
-    })
-    .filter((span) => span !== null)
-    .sort((a, b) => a.start - b.start);
-
-  const fragments = [];
-  const calls = {};
-
-  // Grab initial indentation so that lines after the first line up
-  const codeStart = code.location.start;
-  const startOfLine = text.slice(
-    codeStart.offset - codeStart.column + 1,
-    codeStart.offset
+function inputData(inputTrace, inputPath) {
+  // Get HTML for the input itself
+  const { call, code } = inputTrace;
+  const inputSource = code.location.source.text.slice(
+    code.location.start.offset,
+    code.location.end.offset
   );
-  const indentation = startOfLine.match(/^\s*/)[0];
+  const inputHtml = `<span data-href="${inputPath}">${inputSource}</span>`;
 
-  let i = code.location.start.offset;
-  for (let spanIndex = 0; spanIndex < spans.length; spanIndex++) {
-    const { end, input, start } = spans[spanIndex];
-    const inputTrace = input[traceSymbol];
-    // spanIndex is also the index of the result
-    const resultPath = `${basePath}/${spanIndex}`;
-
-    // Add fragment for indendation and text before this input
-    if (i < start || (spanIndex === 0 && indentation)) {
-      fragments.push({
-        text: indentation + text.slice(i, start),
-      });
-    }
-
-    // If input is result of function call, add fragment and links for that call
-    if (inputTrace.call) {
-      const callPath = `${resultPath}/0`;
-      fragments.push({
-        text: "⎆",
-        path: callPath,
-      });
-      calls[callPath] = linksForTrace(inputTrace.call, callPath);
-    }
-
-    // Add fragments for the input
-    const inputLinks = linksForTrace(inputTrace, resultPath);
-    fragments.push(...inputLinks.fragments);
-    if (inputLinks.calls) {
-      Object.assign(calls, inputLinks.calls);
-    }
-
-    i = end;
+  if (call) {
+    const callPath = `${trailingSlash.remove(inputPath)}/-`;
+    // Wrap input with a link to the call
+    const html = `<span data-href="${callPath}">⎆${inputHtml}</span>`;
+    const calls = resultHtml(call, callPath);
+    return {
+      calls,
+      html,
+    };
+  } else {
+    return {
+      calls: "",
+      html: inputHtml,
+    };
   }
-
-  // Add fragment for text after last input
-  if (i < code.location.end.offset) {
-    fragments.push({
-      text: text.slice(i, code.location.end.offset),
-    });
-  }
-
-  const data = {
-    fragments,
-  };
-  if (Object.keys(calls).length > 0) {
-    data.calls = calls;
-  }
-
-  return data;
 }
 
 export function resultDecomposition(result, trace = result[traceSymbol]) {
@@ -135,6 +84,82 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
   return data;
 }
 
-export function traceLinks(result) {
-  return linksForTrace(result[traceSymbol]);
+function resultHtml(resultTrace, basePath) {
+  const { code, inputs } = resultTrace;
+  const text = code.location.source.text;
+  const flags = inputFlags(code, inputs);
+
+  // Construct link data for this level of the result
+  const spans = code
+    .map((entry, index) => {
+      if (entry instanceof Array && flags[index]) {
+        return {
+          end: entry.location.end.offset,
+          input: inputs[index],
+          start: entry.location.start.offset,
+        };
+      }
+      return null;
+    })
+    .filter((span) => span !== null)
+    .sort((a, b) => a.start - b.start);
+
+  // Full source for comment
+  const source = text.slice(
+    code.location.start.offset,
+    code.location.end.offset
+  );
+  let html = indent`
+    <!-- ${source} -->
+    <section data-prefix="${basePath}">
+      <span data-href="${basePath}">`;
+  let calls = "";
+
+  let i = code.location.start.offset;
+  for (let spanIndex = 0; spanIndex < spans.length; spanIndex++) {
+    const { end, input, start } = spans[spanIndex];
+
+    // Add fragment for the text before this input
+    if (i < start) {
+      html += text.slice(i, start);
+    }
+
+    // Add span for the input
+    const inputPath = `${trailingSlash.remove(basePath)}/${spanIndex}`;
+    const { calls: inputCalls, html: inputHtml } = inputData(
+      input[traceSymbol],
+      inputPath
+    );
+    html += inputHtml;
+    if (inputCalls) {
+      calls += inputCalls;
+    }
+
+    i = end;
+  }
+
+  // Add fragment for text after last input
+  if (i < code.location.end.offset) {
+    html += text.slice(i, code.location.end.offset);
+  }
+
+  // Close the span and section
+  html += "</span>\n</section>\n";
+
+  // Add any calls
+  html += calls;
+
+  return html;
+}
+
+export function traceHtml(result, basePath = "/") {
+  // Grab initial indentation so that lines after the first line up
+  // const codeStart = code.location.start;
+  // const startOfLine = text.slice(
+  //   codeStart.offset - codeStart.column + 1,
+  //   codeStart.offset
+  // );
+  // const indentation = startOfLine.match(/^\s*/)[0];
+
+  return resultHtml(result[traceSymbol], basePath);
 }
