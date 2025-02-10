@@ -78,7 +78,7 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
   };
 
   if (call) {
-    data.call = resultDecomposition(result, call);
+    data["-"] = resultDecomposition(result, call);
   }
 
   return data;
@@ -152,7 +152,7 @@ function resultHtml(resultTrace, basePath) {
   return html;
 }
 
-export function traceHtml(result, basePath = "/") {
+export function traceHtml(result, basePath) {
   // Grab initial indentation so that lines after the first line up
   // const codeStart = code.location.start;
   // const startOfLine = text.slice(

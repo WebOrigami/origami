@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
 import labeledTree from "./labeledTree.js";
-import { resultDecomposition, traceLinks } from "./trace.js";
+import { resultDecomposition, traceHtml } from "./trace.js";
 
 let debugTemplatePromise;
 
@@ -54,7 +54,7 @@ async function loadDebugTemplate() {
 
 export function saveTrace(result, keys) {
   addValueToObject(debugInfo[".links"], keys, () => {
-    const links = traceLinks(result);
+    const links = traceHtml(result, "./");
     return JSON.stringify(links, null, 2);
   });
   addValueToObject(debugInfo[".results"], keys, (key) => {

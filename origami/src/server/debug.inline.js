@@ -28,24 +28,16 @@ async function refreshTrace() {
   const tracePathname = `/.links${resultPathname}`;
   const traceUrl = new URL(tracePathname, resultLocation.origin);
   const traceResponse = await fetch(traceUrl);
-  const linkData = await traceResponse.json();
-  console.log(linkData);
+  const traceHtml = await traceResponse.json();
+  console.log(traceHtml);
 
-  let basePath = `/.results${resultPathname}`;
-  if (basePath.endsWith("/")) {
-    basePath = basePath.slice(0, -1);
-  }
-  const links = linkData
-    .map((data) => {
-      const text = escapeXml(data.text);
-      return data.path
-        ? `<a href="${basePath}${data.path}" target="result">${text}</a>`
-        : text;
-    })
-    .join("");
+  // let basePath = `/.results${resultPathname}`;
+  // if (basePath.endsWith("/")) {
+  //   basePath = basePath.slice(0, -1);
+  // }
 
   // sourceFilePath.textContent = new URL(url).pathname;
-  trace.innerHTML = links;
+  trace.innerHTML = traceHtml;
   resultPath.textContent = resultPathname;
 }
 
