@@ -54,7 +54,7 @@ async function loadDebugTemplate() {
 
 export function saveTrace(result, keys) {
   addValueToObject(debugInfo[".links"], keys, () => {
-    const links = traceHtml(result, "./");
+    const links = traceHtml(result, "/");
     return JSON.stringify(links, null, 2);
   });
   addValueToObject(debugInfo[".results"], keys, (key) => {

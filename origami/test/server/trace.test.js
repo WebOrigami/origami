@@ -20,13 +20,13 @@ describe("trace", () => {
       html,
       indent`
         <!-- 2 * f/(3) -->
-        <section data-prefix="/test">
+        <pre data-prefix="/test">
           <span data-href="/test">2 * <span data-href="/test/0/-">⎆<span data-href="/test/0">f/(3)</span></span></span>
-        </section>
+        </pre>
         <!-- x + 1 -->
-        <section data-prefix="/test/0/-">
+        <pre data-prefix="/test/0/-">
           <span data-href="/test/0/-"><span data-href="/test/0/-/0">x</span> + 1</span>
-        </section>
+        </pre>
       `
     );
     const results = resultDecomposition(result);

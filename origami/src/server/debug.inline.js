@@ -29,6 +29,26 @@ async function refreshTrace() {
   // sourceFilePath.textContent = new URL(url).pathname;
   trace.innerHTML = traceHtml;
   resultPath.textContent = resultPathname;
+
+  trace.querySelectorAll("span").forEach((span) => {
+    span.addEventListener("mouseover", (event) => {
+      event.target.classList.add("highlight");
+      let current = event.target.parentElement;
+      while (current) {
+        current.classList.remove("highlight");
+        current = current.parentElement;
+      }
+    });
+    span.addEventListener("click", (event) => {
+      document.querySelectorAll(".selected").forEach((selected) => {
+        selected.classList.remove("selected");
+      });
+      event.target.classList.add("selected");
+    });
+    span.addEventListener("mouseleave", (event) => {
+      event.target.classList.remove("highlight");
+    });
+  });
 }
 
 window.addEventListener("load", () => {

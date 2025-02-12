@@ -93,12 +93,12 @@ function contextHtml(contextTrace, basePath) {
 
   const data = contextData(contextTrace, basePath);
 
-  // Include comment, wrap in section
+  // Include comment, wrap in pre
   let html = indent`
     <!-- ${source} -->
-    <section data-prefix="${basePath}">
+    <pre data-prefix="${basePath}">
       ${data.html}
-    </section>
+    </pre>
   `;
 
   // Add any contexts
