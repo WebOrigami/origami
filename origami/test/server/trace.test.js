@@ -21,11 +21,11 @@ describe("trace", () => {
       indent`
         <!-- 2 * f/(3) -->
         <pre data-prefix="/test">
-          <span data-href="/test">2 * <span data-href="/test/0/-">⎆<span data-href="/test/0">f/(3)</span></span></span>
+          <debug-link href="/test">2 * <debug-link href="/test/0/-">⎆<debug-link href="/test/0">f/(3)</debug-link></debug-link></debug-link>
         </pre>
         <!-- x + 1 -->
         <pre data-prefix="/test/0/-">
-          <span data-href="/test/0/-"><span data-href="/test/0/-/0">x</span> + 1</span>
+          <debug-link href="/test/0/-"><debug-link href="/test/0/-/0">x</debug-link> + 1</debug-link>
         </pre>
       `
     );

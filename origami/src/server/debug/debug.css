@@ -36,27 +36,8 @@ body {
       line-height: 1.5;
       margin: 0;
       padding: 0 0 0 2ch;
-  
-      span {
-        cursor: pointer;
-        display: inline-block;
-      }
-    }
-    
-    .selected {
-      background: color-mix(in oklch, SelectedItem, white 90%);
-      color: black;
-      font-weight: bold;
     }
 
-    .highlight:not(.selected) {
-      &, * {
-        color: var(--color-highlight);
-        text-decoration: underline;
-        text-decoration-color: currentColor;
-        text-underline-offset: 4px;
-      }
-    }
   }
 
   &:has(#trace:not(:empty)) {

@@ -11,7 +11,7 @@ const { traceSymbol } = symbols;
 function addCallData(callTrace, basePath, data) {
   const callPath = `${trailingSlash.remove(basePath)}/-`;
   // Wrap input with a link to the call
-  const callHtml = `<span data-href="${callPath}">⎆${data.html}</span>`;
+  const callHtml = `<debug-link href="${callPath}">⎆${data.html}</debug-link>`;
   const contexts = data.contexts + contextHtml(callTrace, callPath);
   return {
     contexts,
@@ -70,8 +70,8 @@ function contextData(contextTrace, basePath) {
     html += escapeXml(text.slice(i, code.location.end.offset));
   }
 
-  // Wrap in span
-  html = indent`<span data-href="${basePath}">${html}</span>`;
+  // Wrap in link
+  html = indent`<debug-link href="${basePath}">${html}</debug-link>`;
 
   const data = {
     contexts,
@@ -125,7 +125,7 @@ function inputData(inputTrace, inputPath) {
     code.location.end.offset
   );
   const escaped = escapeXml(inputSource);
-  const html = `<span data-href="${inputPath}">${escaped}</span>`;
+  const html = `<debug-link href="${inputPath}">${escaped}</debug-link>`;
 
   const data = {
     contexts: "",

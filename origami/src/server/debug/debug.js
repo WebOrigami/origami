@@ -1,9 +1,29 @@
+import DebugLink from "./DebugLink.js";
+
+const forceLoad = [DebugLink];
+
 /* This file is inlined into the debug template page */
 
 let resultFrame;
 let resultPath;
 let sourceFilePath;
 let trace;
+
+function navigate(resultPath) {
+  const currentLocation = resultFrame.contentDocument.location;
+  const currentPath = currentLocation.pathname;
+
+  let keys = currentPath.split("/").slice(1);
+  if (keys[0] === ".results") {
+    keys.shift();
+  }
+  // TODO: Handle deep paths
+  const key = keys[0];
+
+  const newPath = `/.results/${key}${resultPath}`;
+  console.log(`Navigating to ${newPath}`);
+  resultFrame.src = newPath;
+}
 
 // Result has changed; refresh the trace
 async function refreshTrace() {
@@ -19,7 +39,7 @@ async function refreshTrace() {
   const traceUrl = new URL(tracePathname, resultLocation.origin);
   const traceResponse = await fetch(traceUrl);
   const traceHtml = await traceResponse.json();
-  console.log(traceHtml);
+  // console.log(traceHtml);
 
   // let basePath = `/.results${resultPathname}`;
   // if (basePath.endsWith("/")) {
@@ -29,26 +49,6 @@ async function refreshTrace() {
   // sourceFilePath.textContent = new URL(url).pathname;
   trace.innerHTML = traceHtml;
   resultPath.textContent = resultPathname;
-
-  trace.querySelectorAll("span").forEach((span) => {
-    span.addEventListener("mouseover", (event) => {
-      event.target.classList.add("highlight");
-      let current = event.target.parentElement;
-      while (current) {
-        current.classList.remove("highlight");
-        current = current.parentElement;
-      }
-    });
-    span.addEventListener("click", (event) => {
-      document.querySelectorAll(".selected").forEach((selected) => {
-        selected.classList.remove("selected");
-      });
-      event.target.classList.add("selected");
-    });
-    span.addEventListener("mouseleave", (event) => {
-      event.target.classList.remove("highlight");
-    });
-  });
 }
 
 window.addEventListener("load", () => {
@@ -56,6 +56,10 @@ window.addEventListener("load", () => {
   resultPath = document.getElementById("resultPath");
   sourceFilePath = document.getElementById("sourceFilePath");
   trace = document.getElementById("trace");
+
+  trace?.addEventListener("navigate", (event) => {
+    navigate(event.detail.href);
+  });
 
   if (!resultFrame) {
     console.error("Result frame not found");
