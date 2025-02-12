@@ -5,16 +5,6 @@ let resultPath;
 let sourceFilePath;
 let trace;
 
-// Escape XML entities for in the text.
-function escapeXml(text) {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
 // Result has changed; refresh the trace
 async function refreshTrace() {
   const resultLocation = resultFrame.contentDocument.location;
