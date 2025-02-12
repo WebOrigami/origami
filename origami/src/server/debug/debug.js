@@ -15,7 +15,7 @@ async function refreshTrace() {
     return;
   }
 
-  const tracePathname = `/.links${resultPathname}`;
+  const tracePathname = `/.trace${resultPathname}`;
   const traceUrl = new URL(tracePathname, resultLocation.origin);
   const traceResponse = await fetch(traceUrl);
   const traceHtml = await traceResponse.json();

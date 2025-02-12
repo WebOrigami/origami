@@ -8,8 +8,10 @@ import {
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
-import { debugTree, saveTrace } from "./debug.js";
+import { loadDebugSite, saveTrace } from "./debug.js";
 import parsePostData from "./parsePostData.js";
+
+let debugTree;
 
 /**
  * Copy a constructed response to a ServerResponse. Return true if the response
@@ -109,10 +111,10 @@ export async function handleRequest(request, response, tree) {
     }
 
     // TODO: Handle root path with no keys
-    const noTrace = [".debug", ".links", ".results"];
+    const noTrace = [".debug", ".debug.html", ".results", ".trace"];
     if (keys.length > 0 && !noTrace.includes(trailingSlash.remove(keys[0]))) {
       // Save trace
-      saveTrace(resource, keys);
+      await saveTrace(debugTree, resource, keys);
     }
 
     // Copy the construct response to the ServerResponse and return true if
@@ -166,12 +168,16 @@ function keysFromUrl(url) {
  * @param {Treelike} treelike
  */
 export function requestListener(treelike) {
-  const tree = Tree.from(treelike);
-  const merged = merge(debugTree, tree); // tree has priority
-  /** @type {any} */ (merged).pack = () => {
-    return tree.get("index.html");
-  };
+  let merged;
   return async function (request, response) {
+    if (!merged) {
+      const tree = Tree.from(treelike);
+      debugTree = await loadDebugSite();
+      merged = merge(debugTree, tree); // tree has priority
+      /** @type {any} */ (merged).pack = () => {
+        return tree.get("index.html");
+      };
+    }
     console.log(decodeURI(request.url));
     const handled = await handleRequest(request, response, merged);
     if (!handled) {

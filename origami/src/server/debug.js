@@ -1,31 +1,9 @@
-import { ObjectTree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
 import labeledTree from "./labeledTree.js";
 import { resultDecomposition, traceHtml } from "./trace.js";
-
-let debugTemplatePromise;
-
-const debugInfo = {
-  ".debug": {
-    "index.html": async () => {
-      // debugTemplatePromise ??= loadDebugTemplate();
-      debugTemplatePromise = loadDebugTemplate();
-      const template = await debugTemplatePromise;
-      return template();
-    },
-  },
-  ".links": {},
-  ".results": {},
-};
-Object.defineProperty(debugInfo[".debug"], "pack", {
-  enumerable: false,
-  value: () => debugInfo[".debug"]["index.html"],
-});
-
-export const debugTree = new ObjectTree(debugInfo);
 
 // Add a single value to a nested object based on an array of keys.
 function addValueToObject(object, keys, value) {
@@ -44,20 +22,21 @@ function addValueToObject(object, keys, value) {
   }
 }
 
-async function loadDebugTemplate() {
+export async function loadDebugSite() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
   const folder = new OrigamiFiles(folderPath);
   folder.parent = builtinsTree;
-  const templateFile = await folder.get("debug.ori.html");
-  return templateFile.unpack();
+  const packed = await folder.get("debug.ori");
+  const site = await packed.unpack();
+  return site;
 }
 
-export function saveTrace(result, keys) {
-  addValueToObject(debugInfo[".links"], keys, () => {
+export async function saveTrace(debugTree, result, keys) {
+  addValueToObject(await debugTree[".trace"], keys, () => {
     const links = traceHtml(result, "/");
     return JSON.stringify(links, null, 2);
   });
-  addValueToObject(debugInfo[".results"], keys, (key) => {
+  addValueToObject(await debugTree[".results"], keys, (key) => {
     const tree = labeledTree(resultDecomposition(result));
     return key ? tree.get(key) : tree;
   });
