@@ -36,7 +36,7 @@ export async function saveTrace(debugTree, result, keys) {
     const links = traceHtml(result, "/");
     return JSON.stringify(links, null, 2);
   });
-  const decompositionKeys = [...keys, "-"];
+  const decompositionKeys = [...keys, "~"];
   addValueToObject(await debugTree[".results"], decompositionKeys, (key) => {
     const tree = labeledTree(resultDecomposition(result));
     return key ? tree.get(key) : tree;

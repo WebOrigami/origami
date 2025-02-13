@@ -63,11 +63,15 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
           font-weight: bold;
         }
 
-        :host(.highlight:not(.selected)) {
-          color: var(--color-highlight);
-          text-decoration: underline;
+        :host,
+        ::slotted(*) {
+          text-decoration: var(--text-decoration);
           text-decoration-color: currentColor;
           text-underline-offset: 4px;
+        }
+
+        :host(.highlight) {
+          --text-decoration: underline;
         }
       </style>
       <slot></slot>

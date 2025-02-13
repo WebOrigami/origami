@@ -20,6 +20,7 @@ export default class DebugPage extends HTMLElement {
 
     this.tracePane.addEventListener("navigate", (event) => {
       this.href = event.detail.href;
+      console.log(this.href);
     });
 
     this.resultPane.addEventListener("load", () => {
@@ -55,6 +56,16 @@ export default class DebugPage extends HTMLElement {
   }
 
   get template() {
+    // <div>
+    // Source file:
+    // <span id="sourceFilePath" class="path"></span>
+    // </div>
+
+    // <div>
+    // Result path:
+    // <span id="resultPath" class="path"></span>
+    // </div>
+
     return html`
       <style>
         :host {
@@ -68,19 +79,6 @@ export default class DebugPage extends HTMLElement {
           width: 100%;
         }
       </style>
-
-      <!--
-      <div>
-      Source file:
-      <span id="sourceFilePath" class="path"></span>
-      </div>
-      -->
-      <!--
-      <div>
-      Result path:
-      <span id="resultPath" class="path"></span>
-      </div>
-      -->
       <debug-trace id="tracePane"></debug-trace>
       <iframe id="resultPane" name="resultPane"></iframe>
     `;

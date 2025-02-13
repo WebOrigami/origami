@@ -62,6 +62,7 @@ export default function addDebuggingInfo(result, context, code, inputs) {
   }
 
   Object.defineProperty(result, traceSymbol, {
+    configurable: true,
     enumerable: false,
     value: trace,
     writable: true,
