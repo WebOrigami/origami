@@ -8,7 +8,7 @@ import {
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
-import { loadDebugSite, saveTrace } from "./debug.js";
+import { loadDebugSite, saveTrace } from "./debugTree.js";
 import parsePostData from "./parsePostData.js";
 
 let debugTree;

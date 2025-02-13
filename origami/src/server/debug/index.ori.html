@@ -4,21 +4,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Origami Debugger</title>
-    <link rel="stylesheet" href="/.debug/debug.css" />
-    <script type="module" src="/.debug/debug.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        height: 100%;
+      }
+
+      body {
+        display: grid;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script type="module" src="/.debug/DebugPage.js"></script>
   </head>
   <body>
-    <section id="tracePane">
-      <div>
-        Source file:
-        <span id="sourceFilePath" class="path"></span>
-      </div>
-      <div id="trace"></div>
-      <div>
-        Result path:
-        <span id="resultPath" class="path"></span>
-      </div>
-    </section>
-    <iframe id="result" name="result"></iframe>
+    <debug-page></debug-page>
   </body>
 </html>

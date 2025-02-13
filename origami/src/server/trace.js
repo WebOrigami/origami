@@ -96,9 +96,9 @@ function contextHtml(contextTrace, basePath) {
   // Include comment, wrap in pre
   let html = indent`
     <!-- ${source} -->
-    <pre data-prefix="${basePath}">
+    <div data-prefix="${basePath}">
       ${data.html}
-    </pre>
+    </div>
   `;
 
   // Add any contexts
@@ -114,7 +114,10 @@ function escapeXml(text) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+    .replace(/'/g, "&apos;")
+    .replace(/ /g, "&nbsp;")
+    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+    .replace(/\n/g, "<br>");
 }
 
 function inputData(inputTrace, inputPath) {

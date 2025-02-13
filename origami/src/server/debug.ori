@@ -3,4 +3,7 @@
   .debug: debug
   .results: {}
   .trace: {}
+
+  // Bundled CSS all UI components
+  // debug.css: concat(filter(debug, =_/endsWith(".css")))
 }
