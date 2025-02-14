@@ -40,16 +40,13 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
       event.target.classList.remove("highlight");
     });
     this.addEventListener("mouseover", (event) => {
-      let current = event.target;
-      while (current && !(current instanceof DebugLink)) {
-        current = event.target.parentElement;
-      }
+      let current = event.target.closest("debug-link");
       if (current) {
         current.classList.add("highlight");
-        current = current.parentElement;
+        current = current.parentElement.closest("debug-link");
         while (current) {
           current.classList.remove("highlight");
-          current = current.parentElement;
+          current = current.parentElement.closest("debug-link");
         }
       }
     });
@@ -78,14 +75,17 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
         :host(.selected) {
           --border-color: var(--trace-background);
           --link-background: #666;
+          --link-weight: bold;
           color: white;
-          font-weight: bold;
         }
 
         :host {
           background: var(--link-background);
         }
 
+        ::slotted(debug-link) {
+          font-weight: var(--link-weight, normal);
+        }
         ::slotted(debug-link:first-child) {
           border-left: none;
         }

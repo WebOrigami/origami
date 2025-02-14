@@ -91,22 +91,21 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       this.innerHTML = traceHtml;
     }
 
-    // Select links where the link href matches decomposition path
+    // Select contexts and links where the link href matches decomposition path
     const path = decompositionPath(this.href);
     console.log(`selection path: ${path}`);
-    const links = this.querySelectorAll("debug-link");
-    links.forEach((link) => {
-      const linkPath = link.href;
-      // const match =
-      //   path.length < contextPath.length
-      //     ? path === contextPath.slice(0, path.length)
-      //     : contextPath === path.slice(0, contextPath.length);
+    const contexts = this.querySelectorAll("debug-context");
+    contexts.forEach((context) => {
+      let selected = false;
 
-      // const match = path.startsWith(linkPath);
+      context.querySelectorAll("debug-link").forEach((link) => {
+        const match = link.href === path;
+        link.classList.toggle("selected", match);
+        selected ||= match;
+      });
 
-      const match = path === linkPath;
-
-      link.classList.toggle("selected", match);
+      context.classList.toggle("selected", selected);
+      context.classList.toggle("applicable", path.startsWith(context.href));
     });
   }
 
@@ -118,10 +117,11 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
           --trace-background: #222;
           background: var(--trace-background);
           color: #ccc;
+          display: grid;
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
           font-family: monospace;
           font-size: 15px;
-          gap: 1rem;
+          gap: 0.5rem;
           padding: 1rem;
           user-select: none;
         }
@@ -130,16 +130,8 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
           /* color: var(--color-highlight); */
         }
 
-        ::slotted(debug-context:not(:first-child)) {
-          margin-top: 0.5rem;
-        }
-        ::slotted(debug-context)::before {
-          content: "↑";
-          margin-right: 0.25rem;
-          visibility: hidden;
-        }
-        ::slotted(debug-context:not(:first-child))::before {
-          visibility: visible;
+        ::slotted(debug-context:not(.applicable)) {
+          display: none;
         }
       </style>
       <slot></slot>

@@ -6,8 +6,8 @@ const forceLoad = [DebugTrace];
 export default class DebugPage extends HTMLElement {
   constructor() {
     super();
-    this._href = "/index.html";
-    // this._href = "/g";
+    // this._href = "/index.html";
+    this._href = "/g";
   }
 
   connectedCallback() {
@@ -72,6 +72,18 @@ export default class DebugPage extends HTMLElement {
         :host {
           display: grid;
           grid-template-rows: auto 1fr;
+        }
+
+        #tracePane {
+          debug-context::before {
+            content: "=";
+            margin-right: 0.25rem;
+            visibility: hidden;
+          }
+
+          debug-context.selected + debug-context.selected::before {
+            visibility: visible;
+          }
         }
 
         #resultPane {
