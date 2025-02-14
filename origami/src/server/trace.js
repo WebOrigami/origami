@@ -11,7 +11,12 @@ const { traceSymbol } = symbols;
 function addCallData(callTrace, basePath, data) {
   const callPath = `${trailingSlash.remove(basePath)}/-`;
   // Wrap input with a link to the call
-  const callHtml = `<debug-link href="${callPath}">⎆${data.html}</debug-link>`;
+  const callHtml = indent`
+    <debug-link href="${callPath}">
+      ⎆
+      ${data.html}
+    </debug-link>
+  `;
   const contexts = data.contexts + contextHtml(callTrace, callPath);
   return {
     contexts,
@@ -57,6 +62,9 @@ function contextData(contextTrace, basePath) {
       input[traceSymbol],
       inputPath
     );
+    if (html) {
+      html += "\n";
+    }
     html += inputHtml;
     if (inputContexts) {
       contexts += inputContexts;
@@ -71,7 +79,11 @@ function contextData(contextTrace, basePath) {
   }
 
   // Wrap in link
-  html = indent`<debug-link href="${basePath}">${html}</debug-link>`;
+  html = indent`
+    <debug-link href="${basePath}">
+      ${html}
+    </debug-link>
+  `;
 
   const data = {
     contexts,
@@ -87,6 +99,7 @@ function contextHtml(contextTrace, basePath) {
   // Full source for comment
   const { code } = contextTrace;
   const text = code.location.source.text;
+  // Don't convert whitespace to keep the comment legible
   const source = escapeXml(
     text.slice(code.location.start.offset, code.location.end.offset)
   );
@@ -96,9 +109,9 @@ function contextHtml(contextTrace, basePath) {
   // Include comment, wrap in pre
   let html = indent`
     <!-- ${source} -->
-    <div data-prefix="${basePath}">
+    <debug-context href="${basePath}">
       ${data.html}
-    </div>
+    </debug-context>
   `;
 
   // Add any contexts
@@ -114,7 +127,12 @@ function escapeXml(text) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;")
+    .replace(/'/g, "&apos;");
+}
+
+// Replace explicit whitespace with HTML
+function explicitWhitespace(text) {
+  return text
     .replace(/ /g, "&nbsp;")
     .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
     .replace(/\n/g, "<br>");
@@ -128,7 +146,11 @@ function inputData(inputTrace, inputPath) {
     code.location.end.offset
   );
   const escaped = escapeXml(inputSource);
-  const html = `<debug-link href="${inputPath}">${escaped}</debug-link>`;
+  const html = indent`
+    <debug-link href="${inputPath}">
+      ${escaped}
+    </debug-link>
+  `;
 
   const data = {
     contexts: "",

@@ -20,13 +20,26 @@ describe("trace", () => {
       html,
       indent`
         <!-- 2 * f/(3) -->
-        <pre data-prefix="/test">
-          <debug-link href="/test">2 * <debug-link href="/test/0/-">⎆<debug-link href="/test/0">f/(3)</debug-link></debug-link></debug-link>
-        </pre>
+        <debug-context href="/test">
+          <debug-link href="/test">
+            2 * 
+            <debug-link href="/test/0/-">
+              ⎆
+              <debug-link href="/test/0">
+                f/(3)
+              </debug-link>
+            </debug-link>
+          </debug-link>
+        </debug-context>
         <!-- x + 1 -->
-        <pre data-prefix="/test/0/-">
-          <debug-link href="/test/0/-"><debug-link href="/test/0/-/0">x</debug-link> + 1</debug-link>
-        </pre>
+        <debug-context href="/test/0/-">
+          <debug-link href="/test/0/-">
+            <debug-link href="/test/0/-/0">
+              x
+            </debug-link>
+             + 1
+          </debug-link>
+        </debug-context>
       `
     );
     const results = resultDecomposition(result);
