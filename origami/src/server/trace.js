@@ -8,16 +8,8 @@ import {
 } from "@weborigami/language";
 const { traceSymbol } = symbols;
 
-function addCallContexts(callTrace, path, data) {
-  const contexts = data.contexts + contextHtml(callTrace, path);
-  return {
-    contexts,
-    html: data.html,
-  };
-}
-
 function contextData(contextTrace, basePath) {
-  const { code, inputs } = contextTrace;
+  const { call, code, inputs } = contextTrace;
   const text = code.location.source.text;
   const flags = inputFlags(code, inputs);
 
@@ -45,7 +37,7 @@ function contextData(contextTrace, basePath) {
 
     // Add fragment for the text before this input
     if (i < start) {
-      html += escapeXml(text.slice(i, start));
+      html += `<span>${escapeXml(text.slice(i, start))}</span>`;
     }
 
     // Add span for the input
@@ -67,7 +59,9 @@ function contextData(contextTrace, basePath) {
 
   // Add fragment for text after last input
   if (i < code.location.end.offset) {
-    html += escapeXml(text.slice(i, code.location.end.offset));
+    html += `<span>${escapeXml(
+      text.slice(i, code.location.end.offset)
+    )}</span>`;
   }
 
   // Wrap in link
@@ -77,14 +71,14 @@ function contextData(contextTrace, basePath) {
     </debug-link>
   `;
 
-  const data = {
+  if (call) {
+    contexts += contextHtml(call, basePath);
+  }
+
+  return {
     contexts,
     html,
   };
-
-  return contextTrace.call
-    ? addCallContexts(contextTrace.call, basePath, data)
-    : data;
 }
 
 function contextHtml(contextTrace, basePath) {
@@ -144,12 +138,12 @@ function inputData(inputTrace, inputPath) {
     </debug-link>
   `;
 
-  const data = {
-    contexts: "",
+  const contexts = call ? contextHtml(call, inputPath) : "";
+
+  return {
+    contexts,
     html,
   };
-
-  return call ? addCallContexts(call, inputPath, data) : data;
 }
 
 // Return an array of flags indicating whether the input with corresponding

@@ -115,7 +115,6 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       <style>
         :host {
           --color-highlight: white;
-          --link-border: transparent;
           background: #222;
           color: #ccc;
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -123,14 +122,11 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
           font-size: 15px;
           gap: 1rem;
           padding: 1rem;
+          user-select: none;
         }
 
         #sourceFilePath {
           /* color: var(--color-highlight); */
-        }
-
-        :host(:hover) {
-          --link-border: #666;
         }
 
         ::slotted(debug-context:not(:first-child)) {

@@ -40,11 +40,17 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
       event.target.classList.remove("highlight");
     });
     this.addEventListener("mouseover", (event) => {
-      event.target.classList.add("highlight");
-      let current = event.target.parentElement;
-      while (current) {
-        current.classList.remove("highlight");
+      let current = event.target;
+      while (current && !(current instanceof DebugLink)) {
+        current = event.target.parentElement;
+      }
+      if (current) {
+        current.classList.add("highlight");
         current = current.parentElement;
+        while (current) {
+          current.classList.remove("highlight");
+          current = current.parentElement;
+        }
       }
     });
   }
@@ -54,7 +60,14 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
       <style>
         :host {
           --link-background: transparent;
-          border: 1px solid var(--link-border);
+          --border-color: #666;
+          --padding: 0.4rem;
+          border-bottom-width: 0;
+          border-color: var(--border-color);
+          border-left-width: 1px;
+          border-right-width: 1px;
+          border-style: solid;
+          border-top-width: 0;
           cursor: pointer;
           display: inline-block;
         }
@@ -73,9 +86,20 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
           background: var(--link-background);
         }
 
-        ::slotted(debug-link) {
-          border-top: none;
-          border-bottom: none;
+        ::slotted(debug-link:first-child) {
+          border-left: none;
+        }
+        ::slotted(debug-link:last-child) {
+          border-right: none;
+        }
+
+        ::slotted(debug-link:not(:has(*))) {
+          padding-left: var(--padding);
+          padding-right: var(--padding);
+        }
+        ::slotted(span) {
+          padding-left: var(--padding);
+          padding-right: var(--padding);
         }
       </style>
       <slot></slot>
