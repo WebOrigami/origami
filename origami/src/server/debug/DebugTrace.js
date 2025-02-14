@@ -78,17 +78,22 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       this.innerHTML = traceHtml;
     }
 
-    // Select contexts where the context href matches decomposition path
+    // Select links where the link href matches decomposition path
     const path = decompositionPath(this.href);
     console.log(`selection path: ${path}`);
-    const contexts = this.querySelectorAll("debug-context");
-    contexts.forEach((context) => {
-      const contextPath = context.href;
-      const match =
-        path.length < contextPath.length
-          ? path === contextPath.slice(0, path.length)
-          : contextPath === path.slice(0, contextPath.length);
-      context.classList.toggle("selected", match);
+    const links = this.querySelectorAll("debug-link");
+    links.forEach((link) => {
+      const linkPath = link.href;
+      // const match =
+      //   path.length < contextPath.length
+      //     ? path === contextPath.slice(0, path.length)
+      //     : contextPath === path.slice(0, contextPath.length);
+
+      // const match = path.startsWith(linkPath);
+
+      const match = path === linkPath;
+
+      link.classList.toggle("selected", match);
     });
   }
 
@@ -98,7 +103,7 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
         :host {
           --color-highlight: white;
           background: #222;
-          color: #999;
+          color: #888;
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
           font-family: monospace;
           font-size: 15px;
@@ -134,6 +139,10 @@ function decompositionPath(href) {
     // Remove the marker and everthing before it
     if (markerIndex >= 0) {
       keys = keys.slice(markerIndex + 1);
+    }
+    if (keys.at(-1) === "") {
+      // Remove trailing slash
+      keys.pop();
     }
   } else {
     // Raw resource from original site, use path as is

@@ -58,8 +58,9 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
         }
 
         :host(.selected) {
-          background: color-mix(in oklch, SelectedItem, white 90%);
-          color: black;
+          /* background: color-mix(in oklch, SelectedItem, white 90%); */
+          background: #666;
+          color: white;
           font-weight: bold;
         }
 
