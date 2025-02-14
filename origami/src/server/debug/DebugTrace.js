@@ -18,6 +18,19 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
     const root = this.attachShadow({ mode: "open" });
     root.innerHTML = this.template;
 
+    this.addEventListener("click", (event) => {
+      // If we got a click, it was on the trace background
+      // Restore the default selection
+      this.dispatchEvent(
+        new CustomEvent("navigate", {
+          bubbles: true,
+          detail: {
+            href: this._tracedResultPath,
+          },
+        })
+      );
+    });
+
     this.addEventListener("linkclick", (event) => {
       const directResult = event.detail.href === "/";
       let tracedPath = this._tracedResultPath;
@@ -102,24 +115,36 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       <style>
         :host {
           --color-highlight: white;
+          --link-border: transparent;
           background: #222;
-          color: #888;
+          color: #ccc;
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
           font-family: monospace;
           font-size: 15px;
           gap: 1rem;
-          margin: 0;
           padding: 1rem;
-        }
-
-        pre {
-          line-height: 1.5;
-          margin: 0;
-          padding: 0 0 0 2ch;
         }
 
         #sourceFilePath {
           /* color: var(--color-highlight); */
+        }
+
+        :host(:hover) {
+          --link-border: #666;
+        }
+
+        ::slotted(debug-context:not(:first-child)) {
+          margin-top: 0.5rem;
+        }
+        ::slotted(debug-context)::before {
+          content: "↑";
+          margin-right: 0.25rem;
+          position: relative;
+          top: -1rem;
+          visibility: hidden;
+        }
+        ::slotted(debug-context:not(:first-child))::before {
+          visibility: visible;
         }
       </style>
       <slot></slot>

@@ -30,6 +30,8 @@ export default class DebugContext extends AttributeMarshallingMixin(
       <style>
         :host {
           display: block;
+          line-height: 1.5;
+          margin: 2px 0;
         }
       </style>
       <slot></slot>

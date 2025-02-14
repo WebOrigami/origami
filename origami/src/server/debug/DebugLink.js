@@ -53,26 +53,29 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
     return html`
       <style>
         :host {
+          --link-background: transparent;
+          border: 1px solid var(--link-border);
           cursor: pointer;
           display: inline-block;
         }
 
+        :host(.highlight) {
+          --link-background: #444;
+        }
+
         :host(.selected) {
-          /* background: color-mix(in oklch, SelectedItem, white 90%); */
-          background: #666;
+          --link-background: #666;
           color: white;
           font-weight: bold;
         }
 
-        :host,
-        ::slotted(*) {
-          text-decoration: var(--text-decoration);
-          text-decoration-color: currentColor;
-          text-underline-offset: 4px;
+        :host {
+          background: var(--link-background);
         }
 
-        :host(.highlight) {
-          --text-decoration: underline;
+        ::slotted(debug-link) {
+          border-top: none;
+          border-bottom: none;
         }
       </style>
       <slot></slot>
