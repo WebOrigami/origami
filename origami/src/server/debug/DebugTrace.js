@@ -39,7 +39,7 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       }
       const href = directResult
         ? this._tracedResultPath
-        : `/.results${tracedPath}/${marker}${event.detail.href}`;
+        : `/.results${tracedPath}/${marker}${event.detail.href}/result`;
       this.dispatchEvent(
         new CustomEvent("navigate", {
           bubbles: true,
@@ -161,6 +161,10 @@ function decompositionPath(href) {
     }
     if (keys.at(-1) === "") {
       // Remove trailing slash
+      keys.pop();
+    }
+    if (keys.at(-1) === "result") {
+      // Remove result key
       keys.pop();
     }
   } else {

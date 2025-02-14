@@ -190,7 +190,7 @@ function joinPath(basePath, key) {
 export function resultDecomposition(result, trace = result[traceSymbol]) {
   const { call, code, inputs } = trace;
   const data = {
-    value: result,
+    result,
   };
 
   if (call) {

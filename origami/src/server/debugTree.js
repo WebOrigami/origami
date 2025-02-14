@@ -1,8 +1,8 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
-import labeledTree from "./labeledTree.js";
 import { resultDecomposition, traceHtml } from "./trace.js";
 
 // Add a single value to a nested object based on an array of keys.
@@ -38,7 +38,7 @@ export async function saveTrace(debugTree, result, keys) {
   });
   const decompositionKeys = [...keys, "~"];
   addValueToObject(await debugTree[".results"], decompositionKeys, (key) => {
-    const tree = labeledTree(resultDecomposition(result));
-    return key ? tree.get(key) : tree;
+    const decomposition = resultDecomposition(result);
+    return key ? decomposition[trailingSlash.remove(key)] : decomposition;
   });
 }

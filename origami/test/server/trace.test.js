@@ -45,13 +45,13 @@ describe("trace", () => {
     );
     const decomposition = resultDecomposition(result);
     assert.deepEqual(await toPlainValue(decomposition), {
-      value: 8,
+      result: 8,
       0: {
-        value: 4,
+        result: 4,
         "-": {
-          value: 4,
+          result: 4,
           0: {
-            value: 3,
+            result: 3,
           },
         },
       },
@@ -94,14 +94,14 @@ describe("trace", () => {
     );
     const decomposition = resultDecomposition(result);
     assert.deepEqual(await toPlainValue(decomposition), {
-      value: "Hello, Origami!",
+      result: "Hello, Origami!",
       0: {
-        value: "(name) => `Hello, ${name}!`",
+        result: "(name) => `Hello, ${name}!`",
       },
       "-": {
-        value: "Hello, Origami!",
+        result: "Hello, Origami!",
         0: {
-          value: "Origami",
+          result: "Origami",
         },
       },
     });
