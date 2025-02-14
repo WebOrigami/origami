@@ -43,8 +43,8 @@ describe("trace", () => {
         </debug-context>
       `
     );
-    const results = resultDecomposition(result);
-    assert.deepEqual(await toPlainValue(results), {
+    const decomposition = resultDecomposition(result);
+    assert.deepEqual(await toPlainValue(decomposition), {
       value: 8,
       0: {
         value: 4,
@@ -55,7 +55,7 @@ describe("trace", () => {
     });
   });
 
-  test("trace template", async () => {
+  test.only("trace template", async () => {
     const context = new (HandleExtensionsTransform(ObjectTree))({
       "greet.ori": "(name) => `Hello, ${name}!`",
     });
@@ -64,5 +64,12 @@ describe("trace", () => {
     const program = compile.expression(source);
     const result = await program.call(context);
     assert.strictEqual(String(result), "Hello, Origami!");
+    const decomposition = resultDecomposition(result);
+    assert.deepEqual(await toPlainValue(decomposition), {
+      value: "Hello, Origami!",
+      0: {
+        value: "Origami",
+      },
+    });
   });
 });

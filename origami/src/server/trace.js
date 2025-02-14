@@ -185,6 +185,11 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
     return resultDecomposition(result, call);
   }
 
+  if (inputs[0] === ops.concat) {
+    // Elide ops.concat from decomposition
+    return resultDecomposition(inputs[1]);
+  }
+
   const flags = inputFlags(code, inputs);
   const inputDecompositions = inputs
     .filter((input, index) => flags[index])
@@ -199,13 +204,5 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
 }
 
 export function traceHtml(result, basePath) {
-  // Grab initial indentation so that lines after the first line up
-  // const codeStart = code.location.start;
-  // const startOfLine = text.slice(
-  //   codeStart.offset - codeStart.column + 1,
-  //   codeStart.offset
-  // );
-  // const indentation = startOfLine.match(/^\s*/)[0];
-
   return contextHtml(result[traceSymbol], basePath);
 }
