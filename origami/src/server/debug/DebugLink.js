@@ -60,7 +60,6 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
       <style>
         :host {
           --link-background: transparent;
-          --border-color: #666;
           --padding: 0.4rem;
           border-bottom-width: 0;
           border-color: var(--border-color);
@@ -77,6 +76,7 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
         }
 
         :host(.selected) {
+          --border-color: var(--trace-background);
           --link-background: #666;
           color: white;
           font-weight: bold;
@@ -97,8 +97,11 @@ export default class DebugLink extends AttributeMarshallingMixin(HTMLElement) {
           padding-left: var(--padding);
           padding-right: var(--padding);
         }
-        ::slotted(span) {
+
+        ::slotted(span:first-child) {
           padding-left: var(--padding);
+        }
+        ::slotted(span:last-child) {
           padding-right: var(--padding);
         }
       </style>

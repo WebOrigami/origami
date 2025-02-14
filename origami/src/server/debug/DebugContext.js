@@ -29,8 +29,9 @@ export default class DebugContext extends AttributeMarshallingMixin(
     return html`
       <style>
         :host {
+          --border-color: #666;
           display: block;
-          line-height: 1.5;
+          line-height: 1.75;
           margin: 2px 0;
         }
       </style>

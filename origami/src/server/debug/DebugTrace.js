@@ -115,7 +115,8 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       <style>
         :host {
           --color-highlight: white;
-          background: #222;
+          --trace-background: #222;
+          background: var(--trace-background);
           color: #ccc;
           font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
           font-family: monospace;
@@ -135,8 +136,6 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
         ::slotted(debug-context)::before {
           content: "↑";
           margin-right: 0.25rem;
-          position: relative;
-          top: -1rem;
           visibility: hidden;
         }
         ::slotted(debug-context:not(:first-child))::before {
