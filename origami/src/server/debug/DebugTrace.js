@@ -99,13 +99,20 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       let selected = false;
 
       context.querySelectorAll("debug-link").forEach((link) => {
+        // const stripped = link.href.replace(/^(\/.*)(\/-)*-$/, "$0");
+        // const match = stripped === path;
         const match = link.href === path;
         link.classList.toggle("selected", match);
         selected ||= match;
       });
 
       context.classList.toggle("selected", selected);
-      context.classList.toggle("applicable", path.startsWith(context.href));
+
+      // Context is applicable if context href matches, ignore any trailing `/-`
+      // that indicate function calls
+      // const stripped = context.href.replace(/^\/.*(\/-)*-$/, "");
+      const applicable = path.startsWith(context.href);
+      context.classList.toggle("applicable", applicable);
     });
   }
 

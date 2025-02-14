@@ -27,15 +27,15 @@ describe("trace", () => {
         <debug-context href="/test">
           <debug-link href="/test">
             <span>2 * </span>
-            <debug-link href="/test/0">
+            <debug-link href="/test/0/-">
               f/(3)
             </debug-link>
           </debug-link>
         </debug-context>
         <!-- x + 1 -->
-        <debug-context href="/test/0">
-          <debug-link href="/test/0">
-            <debug-link href="/test/0/0">
+        <debug-context href="/test/0/-">
+          <debug-link href="/test/0/-">
+            <debug-link href="/test/0/-/0">
               x
             </debug-link>
             <span> + 1</span>
@@ -48,14 +48,17 @@ describe("trace", () => {
       value: 8,
       0: {
         value: 4,
-        0: {
-          value: 3,
+        "-": {
+          value: 4,
+          0: {
+            value: 3,
+          },
         },
       },
     });
   });
 
-  test.only("trace template", async () => {
+  test("trace template", async () => {
     const context = new (HandleExtensionsTransform(ObjectTree))({
       "greet.ori": "(name) => `Hello, ${name}!`",
     });
@@ -64,11 +67,42 @@ describe("trace", () => {
     const program = compile.expression(source);
     const result = await program.call(context);
     assert.strictEqual(String(result), "Hello, Origami!");
+    const html = traceHtml(result, "/");
+    assert.equal(
+      html,
+      indent`
+        <!-- greet.ori("Origami") -->
+        <debug-context href="/">
+          <debug-link href="/-">
+            <debug-link href="/0">
+              greet.ori
+            </debug-link>
+            <span>(&quot;Origami&quot;)</span>
+          </debug-link>
+        </debug-context>
+        <!-- \`Hello, \${name}!\` -->
+        <debug-context href="/-">
+          <debug-link href="/-">
+            <span>\`Hello, </span>
+            <debug-link href="/-/0">
+              \${name}
+            </debug-link>
+            <span>!\`</span>
+          </debug-link>
+        </debug-context>
+    `
+    );
     const decomposition = resultDecomposition(result);
     assert.deepEqual(await toPlainValue(decomposition), {
       value: "Hello, Origami!",
       0: {
-        value: "Origami",
+        value: "(name) => `Hello, ${name}!`",
+      },
+      "-": {
+        value: "Hello, Origami!",
+        0: {
+          value: "Origami",
+        },
       },
     });
   });

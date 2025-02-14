@@ -8,6 +8,8 @@ import {
 } from "@weborigami/language";
 const { traceSymbol } = symbols;
 
+const callMarker = "-";
+
 function contextData(contextTrace, basePath) {
   const { call, code, inputs } = contextTrace;
   const text = code.location.source.text;
@@ -65,14 +67,15 @@ function contextData(contextTrace, basePath) {
   }
 
   // Wrap in link
+  const path = call ? joinPath(basePath, callMarker) : basePath;
   html = indent`
-    <debug-link href="${basePath}">
+    <debug-link href="${path}">
       ${html}
     </debug-link>
   `;
 
   if (call) {
-    contexts += contextHtml(call, basePath);
+    contexts += contextHtml(call, path);
   }
 
   return {
@@ -133,13 +136,15 @@ function inputData(inputTrace, inputPath) {
     code.location.end.offset
   );
   const escaped = escapeXml(inputSource);
+  const path = call ? joinPath(inputPath, callMarker) : inputPath;
+
   const html = indent`
-    <debug-link href="${inputPath}">
+    <debug-link href="${path}">
       ${escaped}
     </debug-link>
   `;
 
-  const contexts = call ? contextHtml(call, inputPath) : "";
+  const contexts = call ? contextHtml(call, path) : "";
 
   return {
     contexts,
@@ -178,11 +183,18 @@ function inputFlags(code, inputs) {
   });
 }
 
+function joinPath(basePath, key) {
+  return `${trailingSlash.add(basePath)}${key}`;
+}
+
 export function resultDecomposition(result, trace = result[traceSymbol]) {
   const { call, code, inputs } = trace;
+  const data = {
+    value: result,
+  };
 
   if (call) {
-    return resultDecomposition(result, call);
+    data[callMarker] = resultDecomposition(result, call);
   }
 
   if (inputs[0] === ops.concat) {
@@ -195,10 +207,7 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
     .filter((input, index) => flags[index])
     .map((input) => resultDecomposition(input));
 
-  const data = {
-    value: result,
-    ...inputDecompositions,
-  };
+  Object.assign(data, inputDecompositions);
 
   return data;
 }
