@@ -7,7 +7,7 @@ export default class DebugPage extends HTMLElement {
   constructor() {
     super();
     // this._href = "/index.html";
-    this._href = "/g";
+    this._href = "/greet.html";
   }
 
   connectedCallback() {

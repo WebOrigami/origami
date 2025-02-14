@@ -1,12 +1,16 @@
-import { toPlainValue } from "@weborigami/async-tree";
-import { taggedTemplateIndent as indent } from "@weborigami/language";
+import { ObjectTree, toPlainValue } from "@weborigami/async-tree";
+import {
+  HandleExtensionsTransform,
+  taggedTemplateIndent as indent,
+} from "@weborigami/language";
 import * as compile from "@weborigami/language/src/compiler/compile.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { builtinsTree } from "../../src/internal.js";
 import { resultDecomposition, traceHtml } from "../../src/server/trace.js";
 
 describe("trace", () => {
-  test("constructs trace links and result decomposition", async () => {
+  test("trace function call", async () => {
     const source = indent`{
       f: (x) => x + 1
       g: 2 * f/(3)
@@ -22,7 +26,7 @@ describe("trace", () => {
         <!-- 2 * f/(3) -->
         <debug-context href="/test">
           <debug-link href="/test">
-            2 * 
+            <span>2 * </span>
             <debug-link href="/test/0">
               f/(3)
             </debug-link>
@@ -34,7 +38,7 @@ describe("trace", () => {
             <debug-link href="/test/0/0">
               x
             </debug-link>
-             + 1
+            <span> + 1</span>
           </debug-link>
         </debug-context>
       `
@@ -49,5 +53,16 @@ describe("trace", () => {
         },
       },
     });
+  });
+
+  test("trace template", async () => {
+    const context = new (HandleExtensionsTransform(ObjectTree))({
+      "greet.ori": "(name) => `Hello, ${name}!`",
+    });
+    context.parent = builtinsTree;
+    const source = `greet.ori("Origami")`;
+    const program = compile.expression(source);
+    const result = await program.call(context);
+    assert.strictEqual(String(result), "Hello, Origami!");
   });
 });

@@ -86,8 +86,9 @@ function contextHtml(contextTrace, basePath) {
   const { code } = contextTrace;
   const text = code.location.source.text;
   // Don't convert whitespace to keep the comment legible
-  const source = escapeXml(
-    text.slice(code.location.start.offset, code.location.end.offset)
+  const source = text.slice(
+    code.location.start.offset,
+    code.location.end.offset
   );
 
   const data = contextData(contextTrace, basePath);
