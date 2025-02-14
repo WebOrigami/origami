@@ -8,19 +8,11 @@ import {
 } from "@weborigami/language";
 const { traceSymbol } = symbols;
 
-function addCallData(callTrace, basePath, data) {
-  const callPath = `${trailingSlash.remove(basePath)}/-`;
-  // Wrap input with a link to the call
-  const callHtml = indent`
-    <debug-link href="${callPath}">
-      ⎆
-      ${data.html}
-    </debug-link>
-  `;
-  const contexts = data.contexts + contextHtml(callTrace, callPath);
+function addCallContexts(callTrace, path, data) {
+  const contexts = data.contexts + contextHtml(callTrace, path);
   return {
     contexts,
-    html: callHtml,
+    html: data.html,
   };
 }
 
@@ -91,7 +83,7 @@ function contextData(contextTrace, basePath) {
   };
 
   return contextTrace.call
-    ? addCallData(contextTrace.call, basePath, data)
+    ? addCallContexts(contextTrace.call, basePath, data)
     : data;
 }
 
@@ -157,7 +149,7 @@ function inputData(inputTrace, inputPath) {
     html,
   };
 
-  return call ? addCallData(call, inputPath, data) : data;
+  return call ? addCallContexts(call, inputPath, data) : data;
 }
 
 // Return an array of flags indicating whether the input with corresponding
@@ -193,6 +185,11 @@ function inputFlags(code, inputs) {
 
 export function resultDecomposition(result, trace = result[traceSymbol]) {
   const { call, code, inputs } = trace;
+
+  if (call) {
+    return resultDecomposition(result, call);
+  }
+
   const flags = inputFlags(code, inputs);
   const inputDecompositions = inputs
     .filter((input, index) => flags[index])
@@ -202,10 +199,6 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
     value: result,
     ...inputDecompositions,
   };
-
-  if (call) {
-    data["-"] = resultDecomposition(result, call);
-  }
 
   return data;
 }

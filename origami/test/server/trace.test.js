@@ -23,18 +23,15 @@ describe("trace", () => {
         <debug-context href="/test">
           <debug-link href="/test">
             2 * 
-            <debug-link href="/test/0/-">
-              ⎆
-              <debug-link href="/test/0">
-                f/(3)
-              </debug-link>
+            <debug-link href="/test/0">
+              f/(3)
             </debug-link>
           </debug-link>
         </debug-context>
         <!-- x + 1 -->
-        <debug-context href="/test/0/-">
-          <debug-link href="/test/0/-">
-            <debug-link href="/test/0/-/0">
+        <debug-context href="/test/0">
+          <debug-link href="/test/0">
+            <debug-link href="/test/0/0">
               x
             </debug-link>
              + 1
@@ -47,12 +44,8 @@ describe("trace", () => {
       value: 8,
       0: {
         value: 4,
-        "-": {
-          // call to f
-          value: 4,
-          0: {
-            value: 3,
-          },
+        0: {
+          value: 3,
         },
       },
     });
