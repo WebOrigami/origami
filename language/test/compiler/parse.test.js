@@ -1017,13 +1017,13 @@ describe("Origami parser", () => {
       [ops.literal, ["", ""]],
       [ops.concat, [ops.template, [ops.literal, ["nested"]]]],
     ]);
-    assertParse("templateLiteral", "`${ map:(people, =`${name}`) }`", [
+    assertParse("templateLiteral", "`${ map(people, =`${name}`) }`", [
       ops.template,
       [ops.literal, ["", ""]],
       [
         ops.concat,
         [
-          [ops.builtin, "map:"],
+          [ops.builtin, "map"],
           [ops.scope, "people"],
           [
             ops.lambda,
