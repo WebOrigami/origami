@@ -24,13 +24,13 @@ describe("trace", () => {
       html,
       indent`
         <ul>
-          <li><em>2 * f/(3)</em> 8</li>
+          <li><code>2 * f/(3)</code><span>8</span></li>
           <ul>
-            <li><em>f/(3)</em> 4</li>
+            <li><code>f/(3)</code><span>4</span></li>
             <ul>
-              <li><em>f</em> x + 1</li>
+              <li><code>f</code><span>x + 1</span></li>
               <ul>
-                <li><em>x</em> 3</li>
+                <li><code>x</code><span>3</span></li>
               </ul>
             </ul>
           </ul>
@@ -66,22 +66,22 @@ describe("trace", () => {
       html,
       // indent`
       //   <ul>
-      //     <li><a href="/result"><em>greet.ori("Origami")</em> Hello, Origami!</a></li>
+      //     <li><a href="/result"><code>greet.ori("Origami")</code><span>Hello, Origami!</a></span></li>
       //     <ul>
-      //       <li><a href="/0/result"><em>greet.ori</em> \`Hello, \${ name }!\`</a></li>
+      //       <li><a href="/0/result"><code>greet.ori</code><span>\`Hello, \${ name }!\`</a></span></li>
       //       <ul>
-      //         <li><a href="/-/0/result"><em>name</em> Origami</a></li>
+      //         <li><a href="/-/0/result"><code>name</code><span>Origami</a></span></li>
       //       </ul>
       //     </ul>
       //   </ul>
       // `
       indent`
         <ul>
-          <li><em>greet.ori("Origami")</em> Hello, Origami!</li>
+          <li><code>greet.ori(&quot;Origami&quot;)</code><span>Hello, Origami!</span></li>
           <ul>
-            <li><em>greet.ori</em> (name) => \`Hello, \${ name }!\`</li>
+            <li><code>greet.ori</code><span>(name) =&gt; \`Hello, \${ name }!\`</span></li>
             <ul>
-              <li><em>name</em> Origami</li>
+              <li><code>name</code><span>Origami</span></li>
             </ul>
           </ul>
         </ul>

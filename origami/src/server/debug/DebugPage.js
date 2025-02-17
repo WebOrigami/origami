@@ -6,9 +6,9 @@ const forceLoad = [DebugTrace];
 export default class DebugPage extends HTMLElement {
   constructor() {
     super();
-    // this._href = "/index.html";
+    this._href = "/index.html";
     // this._href = "/greet.html";
-    this._href = "/g";
+    // this._href = "/g";
   }
 
   connectedCallback() {
@@ -71,19 +71,53 @@ export default class DebugPage extends HTMLElement {
     return html`
       <style>
         :host {
+          color: white;
           display: grid;
-          grid-template-rows: auto 1fr;
+          grid-template-rows: minmax(auto, max-content) 1fr;
         }
 
         #tracePane {
-          debug-context::before {
-            content: "=";
-            margin-right: 0.25rem;
-            visibility: hidden;
+          background: #222;
+          font-family: monospace;
+          font-size: 15px;
+          /* max-height: 50%; */
+          overflow: auto;
+          padding: 2ch;
+
+          ul {
+            margin-bottom: 0.5rem;
+            padding-left: 2ch;
+
+            > * {
+              margin-top: 0.25rem;
+            }
           }
 
-          debug-context.selected + debug-context.selected::before {
-            visibility: visible;
+          > ul {
+            margin: 0;
+            padding: 0;
+          }
+
+          li {
+            display: inline-grid;
+            gap: 1ch;
+            grid-template-columns: repeat(2, minmax(0, auto));
+            list-style: none;
+
+            > * {
+              min-width: 0;
+              overflow: clip;
+              text-wrap: nowrap;
+            }
+
+            code {
+              font-style: normal;
+            }
+
+            span {
+              color: #aaa;
+              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
           }
         }
 

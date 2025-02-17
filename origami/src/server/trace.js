@@ -164,7 +164,11 @@ function inputData(inputTrace, inputPath) {
 function inputFlags(code, inputs) {
   return inputs.map((input, index) => {
     // Ignore primitive or untraced values
-    if (typeof input !== "object" || input[traceSymbol] === undefined) {
+    if (
+      input === null ||
+      typeof input !== "object" ||
+      input[traceSymbol] === undefined
+    ) {
       return false;
     }
 
@@ -226,9 +230,11 @@ export function traceHtml(result, basePath) {
 /***************/
 
 function formatCode(code) {
-  return code.location.source.text.slice(
-    code.location.start.offset,
-    code.location.end.offset
+  return escapeXml(
+    code.location.source.text.slice(
+      code.location.start.offset,
+      code.location.end.offset
+    )
   );
 }
 
@@ -237,7 +243,8 @@ async function formatResult(object) {
     return object;
   } else if (isStringLike(object)) {
     const text = toString(object);
-    return text.length > 255 ? text.slice(0, 255) + "…" : text;
+    const trimmed = text.length > 255 ? text.slice(0, 255) + "…" : text;
+    return escapeXml(trimmed);
   } else if (isPrimitive(object)) {
     return object;
   } else if (object instanceof Number || object instanceof String) {
@@ -265,7 +272,7 @@ async function traceOutline(trace, expression, value, path) {
 
   const formatted = await formatResult(value);
   const item = indent`
-    <li><em>${expression}</em> ${formatted}</li>
+    <li><code>${expression}</code><span>${formatted}</span></li>
   `;
 
   const flags = inputFlags(code, inputs);

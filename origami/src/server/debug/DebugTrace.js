@@ -12,12 +12,12 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
     this._tracedResultPath = null;
   }
 
-  connectedCallback() {
-    super.connectedCallback?.();
+  // connectedCallback() {
+  //   super.connectedCallback?.();
 
-    const root = this.attachShadow({ mode: "open" });
-    root.innerHTML = this.template;
-  }
+  //   const root = this.attachShadow({ mode: "open" });
+  //   root.innerHTML = this.template;
+  // }
 
   // The href of the resource being traced
   get href() {
@@ -84,34 +84,13 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
     // });
   }
 
-  get template() {
-    return html`
-      <style>
-        :host {
-          --color-highlight: white;
-          --trace-background: #222;
-          background: var(--trace-background);
-          color: #ccc;
-          display: grid;
-          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-          font-family: monospace;
-          font-size: 15px;
-          gap: 0.5rem;
-          padding: 1rem;
-          user-select: none;
-        }
-
-        #sourceFilePath {
-          /* color: var(--color-highlight); */
-        }
-
-        ::slotted(debug-context:not(.applicable)) {
-          display: none;
-        }
-      </style>
-      <slot></slot>
-    `;
-  }
+  // get template() {
+  //   return html`
+  //     <style>
+  //     </style>
+  //     <slot></slot>
+  //   `;
+  // }
 }
 
 // Return the result decomposition path for a given href
