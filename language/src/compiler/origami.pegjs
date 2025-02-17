@@ -611,7 +611,7 @@ templateLiteralText
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
   = "${" expression:expression "}" {
-      return annotate(expression, location());
+      return expression;
     }
 
 textChar

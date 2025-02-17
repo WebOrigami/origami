@@ -625,7 +625,7 @@ function peg$parse(input, options) {
       return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f73 = function(expression) {
-      return annotate(expression, location());
+      return expression;
     };
   var peg$f74 = function(operator, expression) {
       return makeUnaryOperation(operator, expression, location());
