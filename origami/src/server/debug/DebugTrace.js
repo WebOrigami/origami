@@ -17,38 +17,6 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
 
     const root = this.attachShadow({ mode: "open" });
     root.innerHTML = this.template;
-
-    this.addEventListener("click", (event) => {
-      // If we got a click, it was on the trace background
-      // Restore the default selection
-      this.dispatchEvent(
-        new CustomEvent("navigate", {
-          bubbles: true,
-          detail: {
-            href: this._tracedResultPath,
-          },
-        })
-      );
-    });
-
-    this.addEventListener("linkclick", (event) => {
-      const directResult = event.detail.href === "/";
-      let tracedPath = this._tracedResultPath;
-      if (tracedPath.endsWith("/")) {
-        tracedPath = tracedPath.slice(0, -1);
-      }
-      const href = directResult
-        ? this._tracedResultPath
-        : `/.results${tracedPath}/${marker}${event.detail.href}/result`;
-      this.dispatchEvent(
-        new CustomEvent("navigate", {
-          bubbles: true,
-          detail: {
-            href,
-          },
-        })
-      );
-    });
   }
 
   // The href of the resource being traced
@@ -85,35 +53,35 @@ export default class DebugTrace extends AttributeMarshallingMixin(HTMLElement) {
       const origin = new URL(this.href).origin;
       const traceUrl = new URL(tracePathname, origin);
       const traceResponse = await fetch(traceUrl);
-      const traceHtml = await traceResponse.json();
+      const traceHtml = await traceResponse.text();
 
       // sourceFilePath.textContent = new URL(url).pathname;
       this.innerHTML = traceHtml;
     }
 
-    // Select contexts and links where the link href matches decomposition path
-    const path = decompositionPath(this.href);
-    console.log(`selection path: ${path}`);
-    const contexts = this.querySelectorAll("debug-context");
-    contexts.forEach((context) => {
-      let selected = false;
+    // // Select contexts and links where the link href matches decomposition path
+    // const path = decompositionPath(this.href);
+    // console.log(`selection path: ${path}`);
+    // const contexts = this.querySelectorAll("debug-context");
+    // contexts.forEach((context) => {
+    //   let selected = false;
 
-      context.querySelectorAll("debug-link").forEach((link) => {
-        // const stripped = link.href.replace(/^(\/.*)(\/-)*-$/, "$0");
-        // const match = stripped === path;
-        const match = link.href === path;
-        link.classList.toggle("selected", match);
-        selected ||= match;
-      });
+    //   context.querySelectorAll("debug-link").forEach((link) => {
+    //     // const stripped = link.href.replace(/^(\/.*)(\/-)*-$/, "$0");
+    //     // const match = stripped === path;
+    //     const match = link.href === path;
+    //     link.classList.toggle("selected", match);
+    //     selected ||= match;
+    //   });
 
-      context.classList.toggle("selected", selected);
+    //   context.classList.toggle("selected", selected);
 
-      // Context is applicable if context href matches, ignore any trailing `/-`
-      // that indicate function calls
-      // const stripped = context.href.replace(/^\/.*(\/-)*-$/, "");
-      const applicable = path.startsWith(context.href);
-      context.classList.toggle("applicable", applicable);
-    });
+    //   // Context is applicable if context href matches, ignore any trailing `/-`
+    //   // that indicate function calls
+    //   // const stripped = context.href.replace(/^\/.*(\/-)*-$/, "");
+    //   const applicable = path.startsWith(context.href);
+    //   context.classList.toggle("applicable", applicable);
+    // });
   }
 
   get template() {

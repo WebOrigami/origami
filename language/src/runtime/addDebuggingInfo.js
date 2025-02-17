@@ -14,11 +14,7 @@ import { traceSymbol } from "./symbols.js";
  * @returns
  */
 export default function addDebuggingInfo(result, context, code, inputs) {
-  if (
-    result == null ||
-    typeof result === "symbol" ||
-    typeof result === "function"
-  ) {
+  if (result == null || typeof result === "symbol") {
     return result;
   }
 

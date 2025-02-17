@@ -51,7 +51,9 @@ export default class ObjectTree {
 
     if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
       // Value is an inherited method; bind it to the object.
+      const original = value;
       value = value.bind(this.object);
+      value.toString = () => original.toString();
     }
 
     return value;

@@ -3,7 +3,7 @@ import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
-import { resultDecomposition, traceHtml } from "./trace.js";
+import { resultDecomposition, resultTrace } from "./trace.js";
 
 // Add a single value to a nested object based on an array of keys.
 function addValueToObject(object, keys, value) {
@@ -32,10 +32,9 @@ export async function loadDebugSite() {
 }
 
 export async function saveTrace(debugTree, result, keys) {
-  addValueToObject(await debugTree[".trace"], keys, () => {
-    const links = traceHtml(result, "/");
-    return JSON.stringify(links, null, 2);
-  });
+  addValueToObject(await debugTree[".trace"], keys, () =>
+    resultTrace(result, "/")
+  );
   const decompositionKeys = [...keys, "~"];
   addValueToObject(await debugTree[".results"], decompositionKeys, (key) => {
     const decomposition = resultDecomposition(result);

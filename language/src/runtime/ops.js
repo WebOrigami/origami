@@ -258,6 +258,7 @@ export function lambda(parameters, code) {
   });
 
   invoke.code = code;
+  invoke.toString = () => code.expression;
   return invoke;
 }
 addOpLabel(lambda, "«ops.lambda");

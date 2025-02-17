@@ -237,19 +237,17 @@ async function formatResult(object) {
     return object;
   } else if (isStringLike(object)) {
     const text = toString(object);
-    return text.length > 255 ? text.slice(0, 255) + "..." : text;
+    return text.length > 255 ? text.slice(0, 255) + "…" : text;
   } else if (isPrimitive(object)) {
     return object;
   } else if (object instanceof Number || object instanceof String) {
     return object.valueOf();
-  } else if (object instanceof Function) {
-    return object.name;
   } else if (Tree.isAsyncTree(object)) {
-    return "...";
+    return "…";
   } else if (isPlainObject(object)) {
     return object;
   } else if (object instanceof Array) {
-    return "...";
+    return "…";
   } else {
     return object;
   }
@@ -285,7 +283,7 @@ async function traceOutline(trace, expression, value, path) {
     children.shift();
     const fnChild = inputs[0];
     const fnTrace = fnChild[traceSymbol];
-    const expression = formatCode(fnTrace.code);
+    const expression = fnTrace ? formatCode(fnTrace.code) : "[unknown]";
     const callPath = joinPath(path, callMarker);
     const callOutline = await traceOutline(
       trace.call,
