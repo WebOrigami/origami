@@ -7,7 +7,7 @@ import * as compile from "@weborigami/language/src/compiler/compile.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { builtinsTree } from "../../src/internal.js";
-import { resultDecomposition, traceHtml } from "../../src/server/trace.js";
+import { resultDecomposition, resultTrace } from "../../src/server/trace.js";
 
 describe("trace", () => {
   test("trace function call", async () => {
@@ -58,39 +58,65 @@ describe("trace", () => {
     });
   });
 
-  test("trace template", async () => {
+  test.only("trace template", async () => {
     const context = new (HandleExtensionsTransform(ObjectTree))({
-      "greet.ori": "(name) => `Hello, ${name}!`",
+      "greet.ori": "(name) => `Hello, ${ name }!`",
     });
     context.parent = builtinsTree;
     const source = `greet.ori("Origami")`;
     const program = compile.expression(source);
     const result = await program.call(context);
     assert.strictEqual(String(result), "Hello, Origami!");
-    const html = traceHtml(result, "/");
-    assert.equal(
+    // const html = traceHtml(result, "/");
+    // assert.equal(
+    //   html,
+    //   indent`
+    //     <!-- greet.ori("Origami") -->
+    //     <debug-context href="/">
+    //       <debug-link href="/-">
+    //         <debug-link href="/0">
+    //           greet.ori
+    //         </debug-link>
+    //         <span>(&quot;Origami&quot;)</span>
+    //       </debug-link>
+    //     </debug-context>
+    //     <!-- \`Hello, \${name}!\` -->
+    //     <debug-context href="/-">
+    //       <debug-link href="/-">
+    //         <span>\`Hello, </span>
+    //         <debug-link href="/-/0">
+    //           \${name}
+    //         </debug-link>
+    //         <span>!\`</span>
+    //       </debug-link>
+    //     </debug-context>
+    // `
+    // );
+    const html = await resultTrace(result, "/");
+    assert.deepStrictEqual(
       html,
+      // indent`
+      //   <ul>
+      //     <li><a href="/result"><em>greet.ori("Origami")</em> Hello, Origami!</a></li>
+      //     <ul>
+      //       <li><a href="/0/result"><em>greet.ori</em> \`Hello, \${ name }!\`</a></li>
+      //       <ul>
+      //         <li><a href="/-/0/result"><em>name</em> Origami</a></li>
+      //       </ul>
+      //     </ul>
+      //   </ul>
+      // `
       indent`
-        <!-- greet.ori("Origami") -->
-        <debug-context href="/">
-          <debug-link href="/-">
-            <debug-link href="/0">
-              greet.ori
-            </debug-link>
-            <span>(&quot;Origami&quot;)</span>
-          </debug-link>
-        </debug-context>
-        <!-- \`Hello, \${name}!\` -->
-        <debug-context href="/-">
-          <debug-link href="/-">
-            <span>\`Hello, </span>
-            <debug-link href="/-/0">
-              \${name}
-            </debug-link>
-            <span>!\`</span>
-          </debug-link>
-        </debug-context>
-    `
+        <ul>
+          <li><em>greet.ori("Origami")</em> Hello, Origami!</li>
+          <ul>
+            <li><em>greet.ori</em> (name) => \`Hello, \${ name }!\`</li>
+            <ul>
+              <li><em>name</em> Origami</li>
+            </ul>
+          </ul>
+        </ul>
+      `
     );
     const decomposition = resultDecomposition(result);
     assert.deepEqual(await toPlainValue(decomposition), {

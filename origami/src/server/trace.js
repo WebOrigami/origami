@@ -1,6 +1,13 @@
 /* Generate trace links and results for debugger */
 
-import { trailingSlash } from "@weborigami/async-tree";
+import {
+  isPlainObject,
+  isPrimitive,
+  isStringLike,
+  toString,
+  trailingSlash,
+  Tree,
+} from "@weborigami/async-tree";
 import {
   taggedTemplateIndent as indent,
   ops,
@@ -161,7 +168,7 @@ function inputFlags(code, inputs) {
       return false;
     }
 
-    // For now ignore functions
+    // Ignore functions
     if (typeof input === "function") {
       return false;
     }
@@ -214,4 +221,100 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
 
 export function traceHtml(result, basePath) {
   return contextHtml(result[traceSymbol], basePath);
+}
+
+/***************/
+
+function formatCode(code) {
+  return code.location.source.text.slice(
+    code.location.start.offset,
+    code.location.end.offset
+  );
+}
+
+async function formatResult(object) {
+  if (object == null) {
+    return object;
+  } else if (isStringLike(object)) {
+    const text = toString(object);
+    return text.length > 255 ? text.slice(0, 255) + "..." : text;
+  } else if (isPrimitive(object)) {
+    return object;
+  } else if (object instanceof Number || object instanceof String) {
+    return object.valueOf();
+  } else if (object instanceof Function) {
+    return object.name;
+  } else if (Tree.isAsyncTree(object)) {
+    return "...";
+  } else if (isPlainObject(object)) {
+    return object;
+  } else if (object instanceof Array) {
+    return "...";
+  } else {
+    return object;
+  }
+}
+
+async function traceOutline(trace, expression, value, path) {
+  const { code, inputs } = trace;
+
+  // Special cases
+  if (code[0] === ops.concat) {
+    // Elide ops.concat from outline
+    const arg = inputs[1];
+    return traceOutline(arg[traceSymbol], expression, arg, path);
+  }
+
+  const formatted = await formatResult(value);
+  const item = indent`
+    <li><em>${expression}</em> ${formatted}</li>
+  `;
+
+  const flags = inputFlags(code, inputs);
+  const childPromises = inputs
+    .filter((input, index) => flags[index])
+    .map((input, index) => {
+      const inputTrace = input[traceSymbol];
+      const expression = formatCode(inputTrace.code);
+      const inputPath = joinPath(path, index);
+      return traceOutline(inputTrace, expression, input, inputPath);
+    });
+  const children = await Promise.all(childPromises);
+
+  if (trace.call) {
+    children.shift();
+    const fnChild = inputs[0];
+    const fnTrace = fnChild[traceSymbol];
+    const expression = formatCode(fnTrace.code);
+    const callPath = joinPath(path, callMarker);
+    const callOutline = await traceOutline(
+      trace.call,
+      expression,
+      fnChild,
+      callPath
+    );
+    children.push(callOutline);
+  }
+
+  const list =
+    children.length > 0
+      ? indent`
+        <ul>
+          ${children.join("")}
+        </ul>
+      `
+      : "";
+
+  return list ? [item, list].join("") : item;
+}
+
+export async function resultTrace(result, path) {
+  const trace = result[traceSymbol];
+  const expression = formatCode(trace.code);
+  const context = await traceOutline(trace, expression, result, path);
+  return indent`
+    <ul>
+      ${context}
+    </ul>
+  `;
 }
