@@ -468,7 +468,7 @@ program "Origami program"
 
 // Protocol with double-slash path: `https://example.com/index.html`
 protocolExpression
-  = fn:namespace "//" host:host path:path? {
+  = fn:namespace "//" host:(host / slash) path:path? {
       const keys = annotate([host, ...(path ?? [])], location());
       return makeCall(fn, keys);
     }
@@ -519,13 +519,6 @@ separator
   = __ "," __
   / whitespaceWithNewLine
 
-// Check whether next character is a slash without consuming input
-slashFollows
-  // This expression returned `undefined` if successful; we convert to `true`
-  = &"/" {
-      return true;
-    }
-
 shebang
   = "#!" [^\n\r]* { return null; }
 
@@ -562,6 +555,19 @@ singleQuoteString "single quote string"
 
 singleQuoteStringChar
   = !("'" / newLine) @textChar
+
+// Used for an initial slash in a protocol expression
+slash
+  = slashFollows {
+    return annotate([ops.literal, "/"], location());
+  }
+
+// Check whether next character is a slash without consuming input
+slashFollows
+  // This expression returned `undefined` if successful; we convert to `true`
+  = &"/" {
+      return true;
+    }
 
 spreadElement
   = ellipsis __ value:pipelineExpression {
