@@ -10,7 +10,7 @@ import { builtinsTree } from "../../src/internal.js";
 import { resultDecomposition, resultTrace } from "../../src/server/trace.js";
 
 describe("trace", () => {
-  test.only("trace function call", async () => {
+  test("trace function call", async () => {
     const source = indent`{
       f: (x) => x + 1
       g: 2 * f/(3)
@@ -19,18 +19,39 @@ describe("trace", () => {
     const object = await program.call(null);
     const result = await object.g;
     assert.strictEqual(result.valueOf(), 8);
-    const html = await resultTrace(result, "/test");
-    assert.deepEqual(
+    const html = await resultTrace(result, "/");
+    assert.deepStrictEqual(
       html,
       indent`
         <ul>
-          <li><code>2 * f/(3)</code><span>8</span></li>
+          <li>
+            <a href="/result" target="resultPane">
+              <code>2 * f/(3)</code>
+              <span>8</span>
+            </a>
+          </li>
           <ul>
-            <li><code>f/(3)</code><span>4</span></li>
+            <li>
+              <a href="/0/result" target="resultPane">
+                <code>f/(3)</code>
+                <span>4</span>
+              </a>
+            </li>
             <ul>
-              <li><code>f</code><span>x + 1</span></li>
+              <div>⋮</div>
+              <li>
+                <a href="/0/-/result" target="resultPane">
+                  <code>f</code>
+                  <span>x + 1</span>
+                </a>
+              </li>
               <ul>
-                <li><code>x</code><span>3</span></li>
+                <li>
+                  <a href="/0/-/0/result" target="resultPane">
+                    <code>x</code>
+                    <span>3</span>
+                  </a>
+                </li>
               </ul>
             </ul>
           </ul>
@@ -52,7 +73,7 @@ describe("trace", () => {
     });
   });
 
-  test.only("trace template", async () => {
+  test("trace template", async () => {
     const context = new (HandleExtensionsTransform(ObjectTree))({
       "greet.ori": "(name) => `Hello, ${ name }!`",
     });
@@ -64,24 +85,29 @@ describe("trace", () => {
     const html = await resultTrace(result, "/");
     assert.deepStrictEqual(
       html,
-      // indent`
-      //   <ul>
-      //     <li><a href="/result"><code>greet.ori("Origami")</code><span>Hello, Origami!</a></span></li>
-      //     <ul>
-      //       <li><a href="/0/result"><code>greet.ori</code><span>\`Hello, \${ name }!\`</a></span></li>
-      //       <ul>
-      //         <li><a href="/-/0/result"><code>name</code><span>Origami</a></span></li>
-      //       </ul>
-      //     </ul>
-      //   </ul>
-      // `
       indent`
         <ul>
-          <li><code>greet.ori(&quot;Origami&quot;)</code><span>Hello, Origami!</span></li>
+          <li>
+            <a href="/result" target="resultPane">
+              <code>greet.ori(&quot;Origami&quot;)</code>
+              <span>Hello, Origami!</span>
+            </a>
+          </li>
           <ul>
-            <li><code>greet.ori</code><span>(name) =&gt; \`Hello, \${ name }!\`</span></li>
+            <div>⋮</div>
+            <li>
+              <a href="/-/result" target="resultPane">
+                <code>greet.ori</code>
+                <span>(name) =&gt; \`Hello, \${ name }!\`</span>
+              </a>
+            </li>
             <ul>
-              <li><code>name</code><span>Origami</span></li>
+              <li>
+                <a href="/-/0/result" target="resultPane">
+                  <code>name</code>
+                  <span>Origami</span>
+                </a>
+              </li>
             </ul>
           </ul>
         </ul>

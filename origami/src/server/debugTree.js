@@ -32,9 +32,10 @@ export async function loadDebugSite() {
 }
 
 export async function saveTrace(debugTree, result, keys) {
-  addValueToObject(await debugTree[".trace"], keys, () =>
-    resultTrace(result, "/")
-  );
+  addValueToObject(await debugTree[".trace"], keys, () => {
+    const path = `/.results/${keys.join("/")}/~/`;
+    return resultTrace(result, path);
+  });
   const decompositionKeys = [...keys, "~"];
   addValueToObject(await debugTree[".results"], decompositionKeys, (key) => {
     const decomposition = resultDecomposition(result);

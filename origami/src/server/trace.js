@@ -229,13 +229,8 @@ export function traceHtml(result, basePath) {
 
 /***************/
 
-function formatCode(code) {
-  return escapeXml(
-    code.location.source.text.slice(
-      code.location.start.offset,
-      code.location.end.offset
-    )
-  );
+function formatCode(expression) {
+  return escapeXml(expression);
 }
 
 async function formatResult(object) {
@@ -260,7 +255,7 @@ async function formatResult(object) {
   }
 }
 
-async function traceOutline(trace, expression, value, path) {
+async function traceOutline(trace, expression, value, path, isCall = false) {
   const { code, inputs } = trace;
 
   // Special cases
@@ -271,8 +266,15 @@ async function traceOutline(trace, expression, value, path) {
   }
 
   const formatted = await formatResult(value);
+  const resultPath = joinPath(path, "result");
   const item = indent`
-    <li><code>${expression}</code><span>${formatted}</span></li>
+    ${isCall ? "<div>⋮</div>\n" : ""}
+    <li>
+      <a href="${resultPath}" target="resultPane">
+        <code>${expression}</code>
+        <span>${formatted}</span>
+      </a>
+    </li>
   `;
 
   const flags = inputFlags(code, inputs);
@@ -280,7 +282,7 @@ async function traceOutline(trace, expression, value, path) {
     .filter((input, index) => flags[index])
     .map((input, index) => {
       const inputTrace = input[traceSymbol];
-      const expression = formatCode(inputTrace.code);
+      const expression = formatCode(inputTrace.code.expression);
       const inputPath = joinPath(path, index);
       return traceOutline(inputTrace, expression, input, inputPath);
     });
@@ -290,13 +292,14 @@ async function traceOutline(trace, expression, value, path) {
     children.shift();
     const fnChild = inputs[0];
     const fnTrace = fnChild[traceSymbol];
-    const expression = fnTrace ? formatCode(fnTrace.code) : "[unknown]";
+    const expression = fnTrace ? formatCode(fnTrace.expression) : "[unknown]";
     const callPath = joinPath(path, callMarker);
     const callOutline = await traceOutline(
       trace.call,
       expression,
       fnChild,
-      callPath
+      callPath,
+      true
     );
     children.push(callOutline);
   }
@@ -315,7 +318,7 @@ async function traceOutline(trace, expression, value, path) {
 
 export async function resultTrace(result, path) {
   const trace = result[traceSymbol];
-  const expression = formatCode(trace.code);
+  const expression = formatCode(trace.expression);
   const context = await traceOutline(trace, expression, result, path);
   return indent`
     <ul>

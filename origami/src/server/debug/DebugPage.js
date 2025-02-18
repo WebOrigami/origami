@@ -71,6 +71,7 @@ export default class DebugPage extends HTMLElement {
     return html`
       <style>
         :host {
+          --dim-text: #aaa;
           color: white;
           display: grid;
           grid-template-rows: minmax(auto, max-content) 1fr;
@@ -87,10 +88,6 @@ export default class DebugPage extends HTMLElement {
           ul {
             margin-bottom: 0.5rem;
             padding-left: 2ch;
-
-            > * {
-              margin-top: 0.25rem;
-            }
           }
 
           > ul {
@@ -99,25 +96,40 @@ export default class DebugPage extends HTMLElement {
           }
 
           li {
-            display: inline-grid;
-            gap: 1ch;
-            grid-template-columns: repeat(2, minmax(0, auto));
             list-style: none;
 
-            > * {
-              min-width: 0;
-              overflow: clip;
-              text-wrap: nowrap;
-            }
+            a {
+              color: inherit;
+              display: inline-grid;
+              gap: 1ch;
+              grid-template-columns: repeat(2, minmax(0, auto));
+              padding: 0.25rem;
+              text-decoration: none;
 
-            code {
-              font-style: normal;
-            }
+              &:hover {
+                background: #555;
+              }
 
-            span {
-              color: #aaa;
-              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              > * {
+                min-width: 0;
+                overflow: clip;
+                text-wrap: nowrap;
+              }
+
+              code {
+                font-style: normal;
+              }
+
+              span {
+                color: var(--dim-text);
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              }
             }
+          }
+
+          div {
+            color: var(--dim-text);
+            padding: 0.25rem;
           }
         }
 
