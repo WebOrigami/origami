@@ -17,106 +17,6 @@ const { traceSymbol } = symbols;
 
 const callMarker = "-";
 
-function contextData(contextTrace, basePath) {
-  const { call, code, inputs } = contextTrace;
-  const text = code.location.source.text;
-  const flags = inputFlags(code, inputs);
-
-  // Construct link data for this level of the result
-  const spans = code
-    .map((entry, index) => {
-      if (entry instanceof Array && flags[index]) {
-        return {
-          end: entry.location.end.offset,
-          input: inputs[index],
-          start: entry.location.start.offset,
-        };
-      }
-      return null;
-    })
-    .filter((span) => span !== null)
-    .sort((a, b) => a.start - b.start);
-
-  let html = "";
-  let contexts = "";
-
-  let i = code.location.start.offset;
-  for (let spanIndex = 0; spanIndex < spans.length; spanIndex++) {
-    const { end, input, start } = spans[spanIndex];
-
-    // Add fragment for the text before this input
-    if (i < start) {
-      html += `<span>${escapeXml(text.slice(i, start))}</span>`;
-    }
-
-    // Add span for the input
-    const inputPath = `${trailingSlash.remove(basePath)}/${spanIndex}`;
-    const { contexts: inputContexts, html: inputHtml } = inputData(
-      input[traceSymbol],
-      inputPath
-    );
-    if (html) {
-      html += "\n";
-    }
-    html += inputHtml;
-    if (inputContexts) {
-      contexts += inputContexts;
-    }
-
-    i = end;
-  }
-
-  // Add fragment for text after last input
-  if (i < code.location.end.offset) {
-    html += `<span>${escapeXml(
-      text.slice(i, code.location.end.offset)
-    )}</span>`;
-  }
-
-  // Wrap in link
-  const path = call ? joinPath(basePath, callMarker) : basePath;
-  html = indent`
-    <debug-link href="${path}">
-      ${html}
-    </debug-link>
-  `;
-
-  if (call) {
-    contexts += contextHtml(call, path);
-  }
-
-  return {
-    contexts,
-    html,
-  };
-}
-
-function contextHtml(contextTrace, basePath) {
-  // Full source for comment
-  const { code } = contextTrace;
-  const text = code.location.source.text;
-  // Don't convert whitespace to keep the comment legible
-  const source = text.slice(
-    code.location.start.offset,
-    code.location.end.offset
-  );
-
-  const data = contextData(contextTrace, basePath);
-
-  // Include comment, wrap in pre
-  let html = indent`
-    <!-- ${source} -->
-    <debug-context href="${basePath}">
-      ${data.html}
-    </debug-context>
-  `;
-
-  // Add any contexts
-  html += data.contexts;
-
-  return html;
-}
-
 // Escape XML entities for in the text.
 function escapeXml(text) {
   return text
@@ -127,36 +27,30 @@ function escapeXml(text) {
     .replace(/'/g, "&apos;");
 }
 
-// Replace explicit whitespace with HTML
-function explicitWhitespace(text) {
-  return text
-    .replace(/ /g, "&nbsp;")
-    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
-    .replace(/\n/g, "<br>");
+function formatCode(expression) {
+  return escapeXml(expression);
 }
 
-function inputData(inputTrace, inputPath) {
-  // Get HTML for the input itself
-  const { call, code } = inputTrace;
-  const inputSource = code.location.source.text.slice(
-    code.location.start.offset,
-    code.location.end.offset
-  );
-  const escaped = escapeXml(inputSource);
-  const path = call ? joinPath(inputPath, callMarker) : inputPath;
-
-  const html = indent`
-    <debug-link href="${path}">
-      ${escaped}
-    </debug-link>
-  `;
-
-  const contexts = call ? contextHtml(call, path) : "";
-
-  return {
-    contexts,
-    html,
-  };
+async function formatResult(object) {
+  if (object == null) {
+    return object;
+  } else if (isStringLike(object)) {
+    const text = toString(object);
+    const trimmed = text.length > 255 ? text.slice(0, 255) + "…" : text;
+    return escapeXml(trimmed);
+  } else if (isPrimitive(object)) {
+    return object;
+  } else if (object instanceof Number || object instanceof String) {
+    return object.valueOf();
+  } else if (Tree.isAsyncTree(object)) {
+    return "…";
+  } else if (isPlainObject(object)) {
+    return object;
+  } else if (object instanceof Array) {
+    return "…";
+  } else {
+    return object;
+  }
 }
 
 // Return an array of flags indicating whether the input with corresponding
@@ -223,36 +117,15 @@ export function resultDecomposition(result, trace = result[traceSymbol]) {
   return data;
 }
 
-export function traceHtml(result, basePath) {
-  return contextHtml(result[traceSymbol], basePath);
-}
-
-/***************/
-
-function formatCode(expression) {
-  return escapeXml(expression);
-}
-
-async function formatResult(object) {
-  if (object == null) {
-    return object;
-  } else if (isStringLike(object)) {
-    const text = toString(object);
-    const trimmed = text.length > 255 ? text.slice(0, 255) + "…" : text;
-    return escapeXml(trimmed);
-  } else if (isPrimitive(object)) {
-    return object;
-  } else if (object instanceof Number || object instanceof String) {
-    return object.valueOf();
-  } else if (Tree.isAsyncTree(object)) {
-    return "…";
-  } else if (isPlainObject(object)) {
-    return object;
-  } else if (object instanceof Array) {
-    return "…";
-  } else {
-    return object;
-  }
+export async function resultTrace(result, path) {
+  const trace = result[traceSymbol];
+  const expression = formatCode(trace.expression);
+  const context = await traceOutline(trace, expression, result, path);
+  return indent`
+    <ul>
+      ${context}
+    </ul>
+  `;
 }
 
 async function traceOutline(trace, expression, value, path, isCall = false) {
@@ -314,15 +187,4 @@ async function traceOutline(trace, expression, value, path, isCall = false) {
       : "";
 
   return list ? [item, list].join("") : item;
-}
-
-export async function resultTrace(result, path) {
-  const trace = result[traceSymbol];
-  const expression = formatCode(trace.expression);
-  const context = await traceOutline(trace, expression, result, path);
-  return indent`
-    <ul>
-      ${context}
-    </ul>
-  `;
 }
