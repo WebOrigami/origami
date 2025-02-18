@@ -6,8 +6,8 @@ const forceLoad = [DebugTrace];
 export default class DebugPage extends HTMLElement {
   constructor() {
     super();
-    this._href = "/index.html";
-    // this._href = "/greet.html";
+    // this._href = "/index.html";
+    this._href = "/greet.html";
     // this._href = "/g";
   }
 
@@ -20,15 +20,16 @@ export default class DebugPage extends HTMLElement {
     // this.sourceFilePath = root.getElementById("sourceFilePath");
     this.tracePane = root.getElementById("tracePane");
 
-    this.tracePane.addEventListener("navigate", (event) => {
-      this.href = event.detail.href;
-      console.log(this.href);
-    });
-
     this.resultPane.addEventListener("load", () => {
-      const location = this.resultPane.contentDocument.location;
+      const contentDocument = this.resultPane.contentDocument;
+      const location = contentDocument.location;
       if (location.href !== "about:blank") {
         this.href = location.href;
+        const title =
+          contentDocument.title.length > 0
+            ? contentDocument.title
+            : contentDocument.location.pathname;
+        document.title = `Debug ${title}`;
       }
     });
 
@@ -72,7 +73,7 @@ export default class DebugPage extends HTMLElement {
       <style>
         :host {
           --dim-text: #aaa;
-          color: white;
+          color: #f0f0f0;
           display: grid;
           grid-template-rows: minmax(auto, max-content) 1fr;
         }
