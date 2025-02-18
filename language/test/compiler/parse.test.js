@@ -873,6 +873,12 @@ describe("Origami parser", () => {
       [ops.literal, "localhost:5000/"],
       [ops.literal, "foo"],
     ]);
+    assertParse("protocolExpression", "files:///foo/bar.txt", [
+      [ops.builtin, "files:"],
+      [ops.literal, "/"],
+      [ops.literal, "foo/"],
+      [ops.literal, "bar.txt"],
+    ]);
   });
 
   test("qualifiedReference", () => {
