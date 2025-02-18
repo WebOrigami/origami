@@ -165,12 +165,18 @@ async function traceOutline(trace, expression, value, path, isCall = false) {
     children.shift();
     const fnChild = inputs[0];
     const fnTrace = fnChild[traceSymbol];
-    const expression = fnTrace ? formatCode(fnTrace.expression) : "[unknown]";
+    const callExpression =
+      fnChild === ops.scope
+        ? code.expression
+        : fnTrace
+        ? formatCode(fnTrace.expression)
+        : "[unknown]";
+    const callValue = fnChild === ops.scope ? trace.call.expression : fnChild;
     const callPath = joinPath(path, callMarker);
     const callOutline = await traceOutline(
       trace.call,
-      expression,
-      fnChild,
+      callExpression,
+      callValue,
       callPath,
       true
     );
