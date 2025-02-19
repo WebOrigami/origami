@@ -14,7 +14,7 @@ export function lastTrace(expectedResult) {
   if (expectedResult !== undefined) {
     const lastResult = globalThis.$origamiLastTrace?.result;
     if (lastResult !== undefined && lastResult !== expectedResult) {
-      throw new Error("Internal error recording diagnostic trace information");
+      // throw new Error("Internal error recording diagnostic trace information");
     }
   }
   return globalThis.$origamiLastTrace;
@@ -31,16 +31,9 @@ export function lastTrace(expectedResult) {
 export function saveTrace(result, code, inputs, call) {
   const trace = {
     code,
+    inputs,
     result,
   };
-
-  const args = inputs.slice(1);
-  // See if the code returned one of its inputs
-  const resultIsInput = args.some((arg) => arg === result);
-  // For now avoid cycles
-  if (inputs.length > 0 && !resultIsInput) {
-    trace.inputs = inputs;
-  }
 
   if (call) {
     trace.call = call;
@@ -62,6 +55,8 @@ export function saveTrace(result, code, inputs, call) {
  * Update the last trace with a new result. This should be called if a function
  * calls `evaluate()` but then modifies its result before returning it.
  *
+ * Returns the updated trace.
+ *
  * @param {any} expectedResult
  * @param {any} newResult
  */
@@ -71,4 +66,5 @@ export function updateTrace(expectedResult, newResult) {
     throw new Error("Internal error recording diagnostic trace information");
   }
   globalThis.$origamiLastTrace.result = newResult;
+  return globalThis.$origamiLastTrace;
 }

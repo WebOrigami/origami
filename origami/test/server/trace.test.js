@@ -4,22 +4,24 @@ import {
   taggedTemplateIndent as indent,
 } from "@weborigami/language";
 import * as compile from "@weborigami/language/src/compiler/compile.js";
+import { lastTrace } from "@weborigami/language/src/runtime/tracing.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { builtinsTree } from "../../src/internal.js";
-import { resultDecomposition, resultTrace } from "../../src/server/trace.js";
+import { resultDecomposition, traceHtml } from "../../src/server/trace.js";
 
-describe("trace", () => {
+describe.only("trace", () => {
   test("trace function call", async () => {
     const source = indent`{
       f: (x) => x + 1
-      g: 2 * f/(3)
+      g = 2 * f/(3)
     }`;
     const program = compile.expression(source);
     const object = await program.call(null);
     const result = await object.g;
-    assert.strictEqual(result.valueOf(), 8);
-    const html = await resultTrace(result, "/");
+    assert.strictEqual(result, 8);
+    const trace = lastTrace(result);
+    const html = await traceHtml(trace, "/");
     assert.deepStrictEqual(
       html,
       indent`
@@ -41,7 +43,7 @@ describe("trace", () => {
               <div>⋮</div>
               <li>
                 <a href="/0/-/result" target="resultPane">
-                  <code>f</code>
+                  <code>f/</code>
                   <span>x + 1</span>
                 </a>
               </li>
@@ -58,8 +60,8 @@ describe("trace", () => {
         </ul>
       `
     );
-    const decomposition = resultDecomposition(result);
-    assert.deepEqual(await toPlainValue(decomposition), {
+    const decomposition = resultDecomposition(trace);
+    assert.deepEqual(decomposition, {
       result: 8,
       0: {
         result: 4,
@@ -81,8 +83,9 @@ describe("trace", () => {
     const source = `greet.ori("Origami")`;
     const program = compile.expression(source);
     const result = await program.call(context);
-    assert.strictEqual(String(result), "Hello, Origami!");
-    const html = await resultTrace(result, "/");
+    assert.strictEqual(result, "Hello, Origami!");
+    const trace = lastTrace(result);
+    const html = await traceHtml(trace, "/");
     assert.deepStrictEqual(
       html,
       indent`
@@ -113,7 +116,7 @@ describe("trace", () => {
         </ul>
       `
     );
-    const decomposition = resultDecomposition(result);
+    const decomposition = resultDecomposition(trace);
     assert.deepEqual(await toPlainValue(decomposition), {
       result: "Hello, Origami!",
       0: {

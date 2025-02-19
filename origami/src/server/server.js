@@ -5,13 +5,11 @@ import {
   merge,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { formatError } from "@weborigami/language";
+import { formatError, tracing } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
-import { loadDebugSite, saveTrace } from "./debugTree.js";
+import * as debugSite from "./debugSite.js";
 import parsePostData from "./parsePostData.js";
-
-let debugTree;
 
 /**
  * Copy a constructed response to a ServerResponse. Return true if the response
@@ -98,6 +96,18 @@ export async function handleRequest(request, response, tree) {
   try {
     resource = await Tree.traverseOrThrow(extendedTree, ...keys);
 
+    // TODO: Handle root path with no keys
+    const noTrace = [".debug", ".debug.html", ".results", ".trace"];
+    if (
+      resource !== undefined &&
+      keys.length > 0 &&
+      !noTrace.includes(trailingSlash.remove(keys[0]))
+    ) {
+      // Save trace
+      const trace = tracing.lastTrace(resource);
+      await debugSite.saveTrace(trace, keys);
+    }
+
     // If resource is a function, invoke to get the object we want to return.
     // For a POST request, pass the data to the function.
     if (typeof resource === "function") {
@@ -108,13 +118,6 @@ export async function handleRequest(request, response, tree) {
     const constructed = await constructResponse(request, resource);
     if (!constructed) {
       return false;
-    }
-
-    // TODO: Handle root path with no keys
-    const noTrace = [".debug", ".debug.html", ".results", ".trace"];
-    if (keys.length > 0 && !noTrace.includes(trailingSlash.remove(keys[0]))) {
-      // Save trace
-      await saveTrace(debugTree, resource, keys);
     }
 
     // Copy the construct response to the ServerResponse and return true if
@@ -172,8 +175,8 @@ export function requestListener(treelike) {
   return async function (request, response) {
     if (!merged) {
       const tree = Tree.from(treelike);
-      debugTree = await loadDebugSite();
-      merged = merge(debugTree, tree); // tree has priority
+      const site = await debugSite.load();
+      merged = merge(site, tree); // tree has priority
       /** @type {any} */ (merged).pack = () => {
         return tree.get("index.html");
       };

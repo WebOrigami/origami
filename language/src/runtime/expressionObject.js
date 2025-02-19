@@ -8,7 +8,7 @@ import {
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
 import { traceSymbol } from "./symbols.js";
-import { lastTrace } from "./tracing.js";
+import { lastTrace, updateTrace } from "./tracing.js";
 
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
@@ -87,13 +87,16 @@ export default async function expressionObject(entries, parent) {
 
       let get = async () => {
         tree ??= new ObjectTree(object);
-        let result = await evaluate.call(tree, code);
+        const result = await evaluate.call(tree, code);
         // If key has extension, getter attaches unpack method
         if (extname) {
-          result = handleExtension(tree, result, key);
+          const handlerAttached = handleExtension(tree, result, key);
+          object[traceSymbol][key] = updateTrace(result, handlerAttached);
+          return handlerAttached;
+        } else {
+          object[traceSymbol][key] = lastTrace(result);
+          return result;
         }
-        object[traceSymbol][key] = lastTrace(result);
-        return result;
       };
       Object.defineProperty(object, key, {
         configurable: true,
