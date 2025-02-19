@@ -83,22 +83,12 @@ export default async function expressionObject(entries, parent) {
         code = value;
       }
 
-      let get;
-      if (extname) {
-        // Key has extension, getter will invoke code then attach unpack method
-        get = async () => {
-          tree ??= new ObjectTree(object);
-          const result = await evaluate.call(tree, code);
-          return handleExtension(tree, result, key);
-        };
-      } else {
-        // No extension, so getter just invokes code.
-        get = async () => {
-          tree ??= new ObjectTree(object);
-          return evaluate.call(tree, code);
-        };
-      }
-
+      let get = async () => {
+        tree ??= new ObjectTree(object);
+        const result = await evaluate.call(tree, code);
+        // If key has extension, getter attaches unpack method
+        return extname ? handleExtension(tree, result, key) : result;
+      };
       Object.defineProperty(object, key, {
         configurable: true,
         enumerable,

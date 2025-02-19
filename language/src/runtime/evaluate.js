@@ -1,7 +1,7 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
-import addDebuggingInfo from "./addDebuggingInfo.js";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
+import { lastTrace, saveTrace } from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -16,6 +16,7 @@ export default async function evaluate(code) {
 
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
+    saveTrace(code, code, []);
     return code;
   }
 
@@ -27,13 +28,18 @@ export default async function evaluate(code) {
     ops.object,
     ops.literal,
   ];
+  const inputs = [];
   if (unevaluatedFns.includes(code[0])) {
     // Don't evaluate instructions, use as is.
     evaluated = code;
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate.call(tree, instruction))
+      code.map(async (instruction, index) => {
+        const result = await evaluate.call(tree, instruction);
+        inputs[index] = lastTrace(result);
+        return result;
+      })
     );
   }
 
@@ -82,7 +88,8 @@ export default async function evaluate(code) {
   }
 
   // Add information to aid debugging
-  result = addDebuggingInfo(result, this, code, evaluated);
+  const call = lastTrace(result);
+  saveTrace(result, code, inputs, call);
 
   return result;
 }
