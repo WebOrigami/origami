@@ -7,6 +7,8 @@ import {
 } from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
+import { traceSymbol } from "./symbols.js";
+import { lastTrace } from "./tracing.js";
 
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
@@ -85,9 +87,13 @@ export default async function expressionObject(entries, parent) {
 
       let get = async () => {
         tree ??= new ObjectTree(object);
-        const result = await evaluate.call(tree, code);
+        let result = await evaluate.call(tree, code);
         // If key has extension, getter attaches unpack method
-        return extname ? handleExtension(tree, result, key) : result;
+        if (extname) {
+          result = handleExtension(tree, result, key);
+        }
+        object[traceSymbol][key] = lastTrace(result);
+        return result;
       };
       Object.defineProperty(object, key, {
         configurable: true,
@@ -102,6 +108,14 @@ export default async function expressionObject(entries, parent) {
     configurable: true,
     enumerable: false,
     value: () => keys(object, eagerProperties, propertyIsEnumerable, entries),
+    writable: true,
+  });
+
+  // Define a place to store traces
+  Object.defineProperty(object, traceSymbol, {
+    configurable: true,
+    enumerable: false,
+    value: {},
     writable: true,
   });
 

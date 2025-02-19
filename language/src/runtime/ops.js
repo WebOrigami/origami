@@ -20,6 +20,7 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import taggedTemplate from "./taggedTemplate.js";
+import { updateTrace } from "./tracing.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -238,12 +239,13 @@ export function lambda(parameters, code) {
     // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
     if (result instanceof Function) {
-      const resultCode = result.code;
-      result = result.bind(target);
+      const boundResult = result.bind(target);
       if (code) {
         // Copy over Origami code
-        result.code = resultCode;
+        boundResult.code = result.code;
       }
+      updateTrace(result, boundResult);
+      result = boundResult;
     }
 
     return result;

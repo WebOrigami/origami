@@ -16,7 +16,6 @@ export default async function evaluate(code) {
 
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
-    saveTrace(code, code, []);
     return code;
   }
 
@@ -37,7 +36,9 @@ export default async function evaluate(code) {
     evaluated = await Promise.all(
       code.map(async (instruction, index) => {
         const result = await evaluate.call(tree, instruction);
-        inputs[index] = lastTrace(result);
+        if (instruction instanceof Array) {
+          inputs[index] = lastTrace(result);
+        }
         return result;
       })
     );
@@ -88,7 +89,10 @@ export default async function evaluate(code) {
   }
 
   // Add information to aid debugging
-  const call = lastTrace(result);
+  const trace = lastTrace();
+  // If the last trace was for the result we now have, the call recursively
+  // invoked evaluate in a different context; adopt the trace from that call.
+  const call = trace?.result === result ? trace : undefined;
   saveTrace(result, code, inputs, call);
 
   return result;
