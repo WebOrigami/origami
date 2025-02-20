@@ -1,7 +1,6 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import { lastTrace, saveTrace } from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -12,11 +11,22 @@ import { lastTrace, saveTrace } from "./tracing.js";
  * @param {import("../../index.ts").AnnotatedCode} code
  */
 export default async function evaluate(code) {
-  const tree = this;
-
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
+  }
+
+  // const tree = this;
+  const context = this;
+
+  let trace = {
+    code,
+    expression: codeFragment(code.location),
+    /** @type {any[]} */
+    inputs: [],
+  };
+  if (context) {
+    /** @type {any} */ (context).trace = trace;
   }
 
   let evaluated;
@@ -27,7 +37,6 @@ export default async function evaluate(code) {
     ops.object,
     ops.literal,
   ];
-  const inputs = [];
   if (unevaluatedFns.includes(code[0])) {
     // Don't evaluate instructions, use as is.
     evaluated = code;
@@ -35,9 +44,10 @@ export default async function evaluate(code) {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
       code.map(async (instruction, index) => {
-        const result = await evaluate.call(tree, instruction);
-        if (instruction instanceof Array) {
-          inputs[index] = lastTrace(result);
+        const inputContext = Object.create(context);
+        const result = await evaluate.call(inputContext, instruction);
+        if (inputContext.hasOwnProperty("trace")) {
+          trace.inputs[index] = inputContext.trace;
         }
         return result;
       })
@@ -63,10 +73,11 @@ export default async function evaluate(code) {
 
   // Execute the function or traverse the tree.
   let result;
+  const callContext = context ? Object.create(context) : null;
   try {
     result =
       fn instanceof Function
-        ? await fn.call(tree, ...args) // Invoke the function
+        ? await fn.call(callContext, ...args) // Invoke the function
         : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
     if (!error.location) {
@@ -85,15 +96,14 @@ export default async function evaluate(code) {
   // If the result is a tree, then the default parent of the tree is the current
   // tree.
   if (Tree.isAsyncTree(result) && !result.parent) {
-    result.parent = tree;
+    result.parent = context;
   }
 
   // Add information to aid debugging
-  const trace = lastTrace();
-  // If the last trace was for the result we now have, the call recursively
-  // invoked evaluate in a different context; adopt the trace from that call.
-  const call = trace?.result === result ? trace : undefined;
-  saveTrace(result, code, inputs, call);
+  trace.result = result;
+  if (callContext?.hasOwnProperty("trace")) {
+    trace.call = callContext.trace;
+  }
 
   return result;
 }

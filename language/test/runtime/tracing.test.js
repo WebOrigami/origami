@@ -1,20 +1,25 @@
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
-import indent from "../../src/runtime/taggedTemplateIndent.js";
-import { lastTrace } from "../../src/runtime/tracing.js";
 
 describe("tracing", () => {
   test("evaluating code records last result and trace", async () => {
-    const source = indent`{
-      f: (x) => x + 1
-      g = 2 * f/(3)
-    }`;
-    const program = compile.expression(source);
-    const object = await program.call(null);
-    const result = await object.g;
+    // const source = indent`{
+    //   f: (x) => x + 1
+    //   g = 2 * f/(3)
+    // }`;
+    // const program = compile.expression(source);
+    const lambda = compile.expression(`(x) => x + 1`);
+    const f = await lambda.call(new ObjectTree());
+    const parent = new ObjectTree({
+      f,
+    });
+    const program = compile.expression(`2 * f/(3)`);
+    const context = Object.create(parent);
+    const result = await program.call(context);
     assert.strictEqual(result, 8);
-    const trace = lastTrace(result);
+    const trace = context.trace;
     const results = resultsOnly(trace);
     assert.deepEqual(results, {
       expression: "2 * f/(3)",
@@ -30,12 +35,18 @@ describe("tracing", () => {
           expression: "f/(3)",
           inputs: [
             {
-              call: {
-                expression: "f",
-                result: "«function»",
-              },
               expression: "f/",
-              inputs: [, { expression: "f", result: "«function»" }],
+              inputs: [
+                ,
+                {
+                  call: {
+                    expression: "f",
+                    result: "«function»",
+                  },
+                  expression: "f",
+                  result: "«function»",
+                },
+              ],
               result: "«function»",
             },
           ],

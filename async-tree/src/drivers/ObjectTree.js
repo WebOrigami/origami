@@ -15,7 +15,7 @@ export default class ObjectTree {
    *
    * @param {any} object The object/array to wrap.
    */
-  constructor(object) {
+  constructor(object = {}) {
     this.object = object;
     this.parent = object[symbols.parent] ?? null;
   }
@@ -51,9 +51,15 @@ export default class ObjectTree {
 
     if (typeof value === "function" && !Object.hasOwn(this.object, key)) {
       // Value is an inherited method; bind it to the object.
-      const original = value;
-      value = value.bind(this.object);
-      value.toString = () => original.toString();
+      const defaultTarget = this.object;
+      const originalFn = value;
+      const boundByDefaultFn = function (...args) {
+        const target = this ?? defaultTarget;
+        return originalFn.apply(target, args);
+      };
+      // value = value.bind(this.object);
+      boundByDefaultFn.toString = () => originalFn.toString();
+      value = boundByDefaultFn;
     }
 
     return value;

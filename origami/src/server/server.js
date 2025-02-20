@@ -5,7 +5,7 @@ import {
   merge,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { formatError, tracing } from "@weborigami/language";
+import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
 import * as debugSite from "./debugSite.js";
@@ -104,8 +104,8 @@ export async function handleRequest(request, response, tree) {
       !noTrace.includes(trailingSlash.remove(keys[0]))
     ) {
       // Save trace
-      const trace = tracing.lastTrace(resource);
-      await debugSite.saveTrace(trace, keys);
+      // const trace = tracing.lastTrace(resource);
+      // await debugSite.saveTrace(trace, keys);
     }
 
     // If resource is a function, invoke to get the object we want to return.

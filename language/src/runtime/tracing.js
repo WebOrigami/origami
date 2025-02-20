@@ -1,4 +1,7 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import codeFragment from "./codeFragment.js";
+
+export const asyncLocalStorage = new AsyncLocalStorage();
 
 /**
  * Retrieve the last recorded trace. If the expected result is provided, verify
@@ -14,7 +17,7 @@ export function lastTrace(expectedResult) {
   if (expectedResult !== undefined) {
     const lastResult = globalThis.$origamiLastTrace?.result;
     if (lastResult !== undefined && lastResult !== expectedResult) {
-      // throw new Error("Internal error recording diagnostic trace information");
+      throw new Error("Internal error recording diagnostic trace information");
     }
   }
   return globalThis.$origamiLastTrace;
@@ -26,12 +29,26 @@ export function lastTrace(expectedResult) {
  * @param {any} result
  * @param {import("../../index.ts").AnnotatedCode} code
  * @param {any[]} inputs
- * @param {any} [call]
+ * @param {any} call
+ * @param {number} contextId
+ * @param {number} parentContextId
+ * @param {number} inputIndex
  */
-export function saveTrace(result, code, inputs, call) {
+export function saveTrace(
+  result,
+  code,
+  inputs,
+  call,
+  contextId,
+  parentContextId,
+  inputIndex
+) {
   const trace = {
     code,
+    contextId,
+    inputIndex,
     inputs,
+    parentContextId,
     result,
   };
 

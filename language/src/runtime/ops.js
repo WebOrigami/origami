@@ -20,7 +20,6 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import taggedTemplate from "./taggedTemplate.js";
-import { updateTrace } from "./tracing.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -225,16 +224,15 @@ export function lambda(parameters, code) {
       for (const parameter of parameters) {
         ambients[parameter] = args.shift();
       }
-      // Object.defineProperty(ambients, codeSymbol, {
-      //   value: code,
-      //   enumerable: false,
-      // });
       const ambientTree = new ObjectTree(ambients);
       ambientTree.parent = context;
       target = ambientTree;
     }
 
     let result = await evaluate.call(target, code);
+    if (this && target.hasOwnProperty("trace")) {
+      this.trace = target.trace;
+    }
 
     // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
@@ -244,7 +242,6 @@ export function lambda(parameters, code) {
         // Copy over Origami code
         boundResult.code = result.code;
       }
-      updateTrace(result, boundResult);
       result = boundResult;
     }
 
