@@ -8,12 +8,7 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
-import {
-  taggedTemplateIndent as indent,
-  ops,
-  symbols,
-} from "@weborigami/language";
-const { traceSymbol } = symbols;
+import { taggedTemplateIndent as indent, ops } from "@weborigami/language";
 
 const callMarker = "-";
 
@@ -28,7 +23,7 @@ function escapeXml(text) {
 }
 
 function formatCode(expression) {
-  return escapeXml(expression);
+  return expression;
 }
 
 async function formatResult(object) {
@@ -37,7 +32,7 @@ async function formatResult(object) {
   } else if (isStringLike(object)) {
     const text = toString(object);
     const trimmed = text.length > 255 ? text.slice(0, 255) + "…" : text;
-    return escapeXml(trimmed);
+    return trimmed;
   } else if (isPrimitive(object)) {
     return object;
   } else if (object instanceof Number || object instanceof String) {
@@ -146,8 +141,8 @@ async function traceOutline(trace, path, callExpression, callValue) {
     ${callExpression !== undefined ? "<div>⋮</div>\n" : ""}
     <li>
       <a href="${resultPath}" target="resultPane">
-        <code>${expression}</code>
-        <span>${formatted}</span>
+        <code>${escapeXml(expression)}</code>
+        <span>${escapeXml(formatted)}</span>
       </a>
     </li>
   `;
