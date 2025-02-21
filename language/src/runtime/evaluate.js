@@ -1,7 +1,7 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import { asyncLocalStorage } from "./tracing.js";
+import { asyncLocalStorage, traceOrigamiCode } from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -19,8 +19,8 @@ export default async function evaluate(code) {
     return code;
   }
 
-  const trace = asyncLocalStorage.getStore();
-  if (trace && Object.keys(trace).length > 0) {
+  const trace = asyncLocalStorage.getStore() ?? {};
+  if (Object.keys(trace).length > 0) {
     // Trace object exists but isn't empty, which might mean that a call to
     // evaluate was already made in this context.
     throw new Error("Internal error recording diagnostic trace information");
@@ -41,14 +41,17 @@ export default async function evaluate(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map(async (instruction, index) => {
-        const inputTrace = {};
-        const result = await asyncLocalStorage.run(inputTrace, () =>
-          evaluate.call(tree, instruction)
-        );
-        if (instruction instanceof Array) {
-          inputs[index] = inputTrace;
+      code.map(async (inputCode, index) => {
+        if (!(inputCode instanceof Array)) {
+          // Simple scalar; return as is.
+          return inputCode;
         }
+        // Evaluate the input
+        const { result, trace: inputTrace } = await traceOrigamiCode.call(
+          tree,
+          /** @type {any} */ (inputCode)
+        );
+        inputs[index] = inputTrace;
         return result;
       })
     );
@@ -73,7 +76,7 @@ export default async function evaluate(code) {
 
   // Execute the function or traverse the tree.
   let result;
-  const callTrace = {};
+  let callTrace = {};
   try {
     result = await asyncLocalStorage.run(
       callTrace,

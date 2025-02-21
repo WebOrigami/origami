@@ -4,17 +4,18 @@ import { describe, test } from "node:test";
 
 import expressionObject from "../../src/runtime/expressionObject.js";
 import { ops } from "../../src/runtime/internal.js";
+import { createCode } from "../compiler/codeHelpers.js";
 
-describe.only("expressionObject", () => {
+describe("expressionObject", () => {
   test("can instantiate an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
 
-    const entries = [
+    const entries = createCode([
       ["hello", [[ops.scope, "upper"], "hello"]],
       ["world", [[ops.scope, "upper"], "world"]],
-    ];
+    ]);
 
     const object = await expressionObject(entries, scope);
     assert.equal(await object.hello, "HELLO");
@@ -25,23 +26,23 @@ describe.only("expressionObject", () => {
   test("can define a property getter", async () => {
     let count = 0;
     const increment = () => count++;
-    const entries = [["count", [ops.getter, [increment]]]];
+    const entries = createCode([["count", [ops.getter, [increment]]]]);
     const object = await expressionObject(entries, null);
     assert.equal(await object.count, 0);
     assert.equal(await object.count, 1);
   });
 
   test("treats a getter for a primitive value as a regular property", async () => {
-    const entries = [["name", [ops.getter, "world"]]];
+    const entries = createCode([["name", [ops.getter, "world"]]]);
     const object = await expressionObject(entries, null);
     assert.equal(object.name, "world");
   });
 
   test("can instantiate an Origami tree", async () => {
-    const entries = [
+    const entries = createCode([
       ["name", "world"],
       ["message", [ops.concat, "Hello, ", [ops.scope, "name"], "!"]],
-    ];
+    ]);
     const parent = new ObjectTree({});
     const object = await expressionObject(entries, parent);
     assert.deepEqual(await Tree.plain(object), {
@@ -52,7 +53,7 @@ describe.only("expressionObject", () => {
   });
 
   test("returned object values can be unpacked", async () => {
-    const entries = [["data.json", `{ "a": 1 }`]];
+    const entries = createCode([["data.json", `{ "a": 1 }`]]);
     const parent = new ObjectTree({
       "json.handler": {
         unpack: JSON.parse,
@@ -65,24 +66,24 @@ describe.only("expressionObject", () => {
   });
 
   test("a key declared with parentheses is not enumerable", async () => {
-    const entries = [
+    const entries = createCode([
       ["(hidden)", "shh"],
       ["visible", "hey"],
-    ];
+    ]);
     const object = await expressionObject(entries, null);
     assert.deepEqual(Object.keys(object), ["visible"]);
     assert.equal(object["hidden"], "shh");
   });
 
-  test.only("provides a symbols.keys method", async () => {
-    const entries = [
+  test("provides a symbols.keys method", async () => {
+    const entries = createCode([
       // Will return a tree, should have a slash
       ["getter", [ops.getter, [ops.object, ["b", [ops.literal, 2]]]]],
       ["hasSlash/", "This isn't really a tree but says it is"],
       ["message", "Hello"],
       // Immediate treelike value, should have a slash
       ["object", [ops.object, ["b", [ops.literal, 2]]]],
-    ];
+    ]);
     const object = await expressionObject(entries, null);
     assert.deepEqual(object[symbols.keys](), [
       "getter/",

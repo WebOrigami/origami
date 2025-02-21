@@ -20,7 +20,7 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import taggedTemplate from "./taggedTemplate.js";
-import { updateTrace } from "./tracing.js";
+import { traceJavaScriptFunction, traceOrigamiCode } from "./tracing.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -242,9 +242,8 @@ export function lambda(parameters, code) {
       const boundResult = result.bind(target);
       if (code) {
         // Copy over Origami code
-        boundResult.code = result.code;
+        boundResult.code = code;
       }
-      updateTrace(result, boundResult);
       result = boundResult;
     }
 
@@ -354,8 +353,14 @@ export async function merge(...codes) {
     }
   }
 
+  const tree = this;
+  // Trace to create a new context, not to get a trace
   const directObject = directEntries
-    ? await expressionObject(directEntries, this)
+    ? (
+        await traceJavaScriptFunction(() =>
+          expressionObject(directEntries, tree)
+        )
+      ).result
     : null;
   if (!treeSpreads) {
     // No tree spreads, we're done
@@ -366,16 +371,21 @@ export async function merge(...codes) {
   let context;
   if (directObject) {
     context = Tree.from(directObject);
-    context.parent = this;
+    context.parent = tree;
   } else {
-    context = this;
+    context = tree;
   }
-
+  // TODO: Avoid evaluating direct properties twice. The first time (above) is
+  // to make them available to other trees, the second time (here) is so we can
+  // merge them in the correct order.
   const trees = await Promise.all(
-    codes.map(async (code) => evaluate.call(context, code))
+    codes.map(
+      // Trace to create a new context, not to get a trace
+      async (code) => (await traceOrigamiCode.call(context, code)).result
+    )
   );
 
-  return mergeTrees.call(this, ...trees);
+  return mergeTrees.call(tree, ...trees);
 }
 addOpLabel(merge, "«ops.merge»");
 

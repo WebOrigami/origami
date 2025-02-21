@@ -7,8 +7,7 @@ import {
 } from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
-import { traceSymbol } from "./symbols.js";
-import { asyncLocalStorage } from "./tracing.js";
+import { traceJavaScriptFunction } from "./tracing.js";
 
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
@@ -35,7 +34,7 @@ export default async function expressionObject(entries, parent) {
   }
 
   let tree;
-  const eagerProperties = [];
+  const propertyIsEager = {};
   const propertyIsEnumerable = {};
   for (let [key, value] of entries) {
     // Determine if we need to define a getter or a regular property. If the key
@@ -81,31 +80,16 @@ export default async function expressionObject(entries, parent) {
       if (value[0] === ops.getter) {
         code = value[1];
       } else {
-        eagerProperties.push(key);
+        propertyIsEager[key] = true;
         code = value;
       }
 
       let get = async () => {
         tree ??= new ObjectTree(object);
-        const trace = asyncLocalStorage.getStore();
-        const propertyTrace = {};
-        const result = await asyncLocalStorage.run(propertyTrace, () =>
-          evaluate.call(tree, code)
-        );
         // If key has extension, getter attaches unpack method
+        let result = await evaluate.call(tree, code);
         if (extname) {
-          handleExtension(tree, result, key);
-        }
-        // if (Object.keys(trace).length > 0) {
-        //   debugger;
-        // }
-        if (trace) {
-          // object[traceSymbol][key] = propertyTrace;
-          trace.call = propertyTrace;
-          trace.code = code;
-          trace.expression = key;
-          trace.inputs = [];
-          trace.result = result;
+          result = await handleExtension(tree, result, key);
         }
         return result;
       };
@@ -121,15 +105,7 @@ export default async function expressionObject(entries, parent) {
   Object.defineProperty(object, symbols.keys, {
     configurable: true,
     enumerable: false,
-    value: () => keys(object, eagerProperties, propertyIsEnumerable, entries),
-    writable: true,
-  });
-
-  // Define a place to store traces
-  Object.defineProperty(object, traceSymbol, {
-    configurable: true,
-    enumerable: false,
-    value: {},
+    value: () => keys(object, propertyIsEager, propertyIsEnumerable, entries),
     writable: true,
   });
 
@@ -143,22 +119,33 @@ export default async function expressionObject(entries, parent) {
 
   // Evaluate any properties that were declared as immediate: get their value
   // and overwrite the property getter with the actual value.
-  for (const key of eagerProperties) {
-    const value = await object[key];
-    // @ts-ignore Unclear why TS thinks `object` might be undefined here
-    const enumerable = Object.getOwnPropertyDescriptor(object, key).enumerable;
-    Object.defineProperty(object, key, {
-      configurable: true,
-      enumerable,
-      value,
-      writable: true,
-    });
-  }
+  const propertyTraces = [];
+  const promises = entries.map(async (entry, index) => {
+    const key = entry[0];
+    if (propertyIsEager[key]) {
+      const { result, trace } = await traceJavaScriptFunction(
+        () => object[key]
+      );
+      propertyTraces[index] = trace;
+      // @ts-ignore Unclear why TS thinks `object` might be undefined here
+      const enumerable = Object.getOwnPropertyDescriptor(
+        object,
+        key
+      ).enumerable;
+      Object.defineProperty(object, key, {
+        configurable: true,
+        enumerable,
+        value: result,
+        writable: true,
+      });
+    }
+  });
+  await Promise.all(promises);
 
   return object;
 }
 
-function entryKey(object, eagerProperties, entry) {
+function entryKey(object, eager, entry) {
   const [key, value] = entry;
 
   const hasExplicitSlash = trailingSlash.has(key);
@@ -168,7 +155,7 @@ function entryKey(object, eagerProperties, entry) {
   }
 
   // If eager property value is treelike, add slash to the key
-  if (eagerProperties.includes(key) && Tree.isTreelike(object[key])) {
+  if (eager && Tree.isTreelike(object[key])) {
     return trailingSlash.add(key);
   }
 
@@ -182,8 +169,8 @@ function entryKey(object, eagerProperties, entry) {
   return trailingSlash.toggle(key, entryCreatesSubtree);
 }
 
-function keys(object, eagerProperties, propertyIsEnumerable, entries) {
+function keys(object, propertyIsEager, propertyIsEnumerable, entries) {
   return entries
     .filter(([key]) => propertyIsEnumerable[key])
-    .map((entry) => entryKey(object, eagerProperties, entry));
+    .map((entry) => entryKey(object, propertyIsEager[entry[0]], entry));
 }

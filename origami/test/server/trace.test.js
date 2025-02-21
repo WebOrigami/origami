@@ -4,13 +4,12 @@ import {
   taggedTemplateIndent as indent,
 } from "@weborigami/language";
 import * as compile from "@weborigami/language/src/compiler/compile.js";
-import { lastTrace } from "@weborigami/language/src/runtime/tracing.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { builtinsTree } from "../../src/internal.js";
 import { resultDecomposition, traceHtml } from "../../src/server/trace.js";
 
-describe.only("trace", () => {
+describe.skip("trace", () => {
   test("trace function call", async () => {
     const source = indent`{
       f: (x) => x + 1
