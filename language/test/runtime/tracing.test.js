@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import indent from "../../src/runtime/taggedTemplateIndent.js";
-import { lastTrace } from "../../src/runtime/tracing.js";
+import { asyncLocalStorage } from "../../src/runtime/tracing.js";
 
 describe("tracing", () => {
   test("evaluating code records last result and trace", async () => {
@@ -12,10 +12,11 @@ describe("tracing", () => {
     }`;
     const program = compile.expression(source);
     const object = await program.call(null);
-    const result = await object.g;
+    let trace = {};
+    const result = await asyncLocalStorage.run(trace, async () => object.g);
     assert.strictEqual(result, 8);
-    const trace = lastTrace(result);
-    const results = resultsOnly(trace);
+    // const results = resultsOnly(trace);
+    const results = resultsOnly(trace.call);
     assert.deepEqual(results, {
       expression: "2 * f/(3)",
       inputs: [
@@ -30,10 +31,6 @@ describe("tracing", () => {
           expression: "f/(3)",
           inputs: [
             {
-              call: {
-                expression: "f",
-                result: "«function»",
-              },
               expression: "f/",
               inputs: [, { expression: "f", result: "«function»" }],
               result: "«function»",

@@ -1,7 +1,7 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import { lastTrace, saveTrace } from "./tracing.js";
+import { asyncLocalStorage } from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -17,6 +17,13 @@ export default async function evaluate(code) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
+  }
+
+  const trace = asyncLocalStorage.getStore();
+  if (trace && Object.keys(trace).length > 0) {
+    // Trace object exists but isn't empty, which might mean that a call to
+    // evaluate was already made in this context.
+    throw new Error("Internal error recording diagnostic trace information");
   }
 
   let evaluated;
@@ -35,9 +42,12 @@ export default async function evaluate(code) {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
       code.map(async (instruction, index) => {
-        const result = await evaluate.call(tree, instruction);
+        const inputTrace = {};
+        const result = await asyncLocalStorage.run(inputTrace, () =>
+          evaluate.call(tree, instruction)
+        );
         if (instruction instanceof Array) {
-          inputs[index] = lastTrace(result);
+          inputs[index] = inputTrace;
         }
         return result;
       })
@@ -63,11 +73,15 @@ export default async function evaluate(code) {
 
   // Execute the function or traverse the tree.
   let result;
+  const callTrace = {};
   try {
-    result =
-      fn instanceof Function
-        ? await fn.call(tree, ...args) // Invoke the function
-        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
+    result = await asyncLocalStorage.run(
+      callTrace,
+      async () =>
+        fn instanceof Function
+          ? await fn.call(tree, ...args) // Invoke the function
+          : await Tree.traverseOrThrow(fn, ...args) // Traverse the tree.
+    );
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
@@ -88,12 +102,19 @@ export default async function evaluate(code) {
     result.parent = tree;
   }
 
-  // Add information to aid debugging
-  const trace = lastTrace();
-  // If the last trace was for the result we now have, the call recursively
-  // invoked evaluate in a different context; adopt the trace from that call.
-  const call = trace?.result === result ? trace : undefined;
-  saveTrace(result, code, inputs, call);
+  if (trace) {
+    // Save intermediate results in the trace
+    Object.assign(
+      trace,
+      {
+        code,
+        expression: codeFragment(code.location),
+        inputs,
+        result,
+      },
+      Object.keys(callTrace).length > 0 && { call: callTrace }
+    );
+  }
 
   return result;
 }

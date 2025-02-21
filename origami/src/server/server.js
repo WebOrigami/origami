@@ -94,7 +94,10 @@ export async function handleRequest(request, response, tree) {
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Tree.traverseOrThrow(extendedTree, ...keys);
+    const trace = {};
+    resource = await tracing.asyncLocalStorage.run(trace, () =>
+      Tree.traverseOrThrow(extendedTree, ...keys)
+    );
 
     // TODO: Handle root path with no keys
     const noTrace = [".debug", ".debug.html", ".results", ".trace"];
@@ -104,7 +107,6 @@ export async function handleRequest(request, response, tree) {
       !noTrace.includes(trailingSlash.remove(keys[0]))
     ) {
       // Save trace
-      const trace = tracing.lastTrace(resource);
       await debugSite.saveTrace(trace, keys);
     }
 

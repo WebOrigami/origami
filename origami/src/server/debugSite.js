@@ -1,5 +1,6 @@
 import { trailingSlash } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
+import { asyncLocalStorage } from "@weborigami/language/src/runtime/tracing.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
@@ -30,7 +31,9 @@ export async function load() {
     const folder = new OrigamiFiles(folderPath);
     folder.parent = builtinsTree;
     const packed = await folder.get("debug.ori");
-    site = await packed.unpack();
+    // Create a trace context we can throw away
+    const trace = {};
+    site = await asyncLocalStorage.run(trace, () => packed.unpack());
   }
   return site;
 }

@@ -1,4 +1,7 @@
+import { AsyncLocalStorage } from "node:async_hooks";
 import codeFragment from "./codeFragment.js";
+
+export const asyncLocalStorage = new AsyncLocalStorage();
 
 /**
  * Retrieve the last recorded trace. If the expected result is provided, verify
