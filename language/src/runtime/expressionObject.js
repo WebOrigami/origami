@@ -7,7 +7,7 @@ import {
 } from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
-import { traceJavaScriptFunction } from "./tracing.js";
+import { traceJavaScriptFunction } from "./trace.js";
 
 /**
  * Given an array of entries with string keys and Origami code values (arrays of

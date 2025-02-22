@@ -3,11 +3,20 @@ import { evaluate } from "./internal.js";
 
 export const asyncLocalStorage = new AsyncLocalStorage();
 
+/**
+ * Return the current trace object, if there is one.
+ */
 export function getCurrentTrace() {
   return asyncLocalStorage.getStore();
 }
 
 /**
+ * Run the given function with a new trace object, and return the result and the
+ * trace.
+ *
+ * If the optional propagateTrace is omitted, the call will only be traced if
+ * this call itself is already being traced.
+ *
  * @param {() => any} fn
  * @param {boolean} [propagateTrace]
  */
@@ -20,6 +29,12 @@ export async function traceJavaScriptFunction(fn, propagateTrace) {
 }
 
 /**
+ * Run the given Origami code with a new trace, and return the result and the
+ * trace.
+ *
+ * If the optional propagateTrace is omitted, the call will only be traced if
+ * this call itself is already being traced.
+ *
  * @this {import("@weborigami/types").AsyncTree|null}
  * @param {import("../../index.ts").AnnotatedCode} code
  * @param {boolean} [propagateTrace]

@@ -20,7 +20,7 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import taggedTemplate from "./taggedTemplate.js";
-import { traceJavaScriptFunction, traceOrigamiCode } from "./tracing.js";
+import { traceJavaScriptFunction, traceOrigamiCode } from "./trace.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {

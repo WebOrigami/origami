@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import indent from "../../src/runtime/taggedTemplateIndent.js";
-import { traceOrigamiCode } from "../../src/runtime/tracing.js";
+import { traceOrigamiCode } from "../../src/runtime/trace.js";
 
 describe("tracing", () => {
   test("trace basic math", async () => {

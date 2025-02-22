@@ -5,7 +5,7 @@ import {
   getCurrentTrace,
   traceJavaScriptFunction,
   traceOrigamiCode,
-} from "./tracing.js";
+} from "./trace.js";
 
 /**
  * Evaluate the given code and return the result.

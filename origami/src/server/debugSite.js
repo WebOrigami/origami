@@ -4,7 +4,7 @@ import { asyncLocalStorage } from "@weborigami/language/src/runtime/tracing.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { builtinsTree } from "../internal.js";
-import { resultDecomposition, traceHtml } from "./trace.js";
+import { resultDecomposition, traceHtml } from "./formatTrace.js";
 
 // Add a single value to a nested object based on an array of keys.
 function addValueToObject(object, keys, value) {

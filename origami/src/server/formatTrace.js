@@ -1,4 +1,4 @@
-/* Generate trace links and results for debugger */
+/* Format trace links and results for debugger */
 
 import {
   isPlainObject,

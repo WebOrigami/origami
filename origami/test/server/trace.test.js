@@ -7,7 +7,10 @@ import * as compile from "@weborigami/language/src/compiler/compile.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { builtinsTree } from "../../src/internal.js";
-import { resultDecomposition, traceHtml } from "../../src/server/trace.js";
+import {
+  resultDecomposition,
+  traceHtml,
+} from "../../src/server/formatTrace.js";
 
 describe.skip("trace", () => {
   test("trace function call", async () => {
