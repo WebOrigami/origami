@@ -7,7 +7,7 @@ import {
 } from "@weborigami/async-tree";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
-import { traceJavaScriptFunction } from "./trace.js";
+import { asyncLocalStorage, traceJavaScriptFunction } from "./trace.js";
 
 /**
  * Given an array of entries with string keys and Origami code values (arrays of
@@ -141,6 +141,12 @@ export default async function expressionObject(entries, parent) {
     }
   });
   await Promise.all(promises);
+
+  // Save trace
+  const trace = asyncLocalStorage.getStore();
+  if (trace) {
+    trace.inputs = propertyTraces;
+  }
 
   return object;
 }

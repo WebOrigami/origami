@@ -122,6 +122,13 @@ export default async function evaluate(code) {
       },
       callTrace && Object.keys(callTrace).length > 0 && { call: callTrace }
     );
+
+    // HACK for object literals
+    if (code[0] === ops.object) {
+      // Move call inputs to inputs, remove call
+      trace.inputs = trace.call.inputs;
+      delete trace.call;
+    }
   }
 
   return result;

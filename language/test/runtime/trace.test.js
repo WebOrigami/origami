@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
@@ -15,12 +15,12 @@ describe("trace", () => {
       true
     );
     assert.strictEqual(result, 8);
-    const results = resultsOnly(trace);
+    const results = await resultsOnly(trace);
     assert.deepEqual(results, {
       expression: "2 * (3 + 1)",
       inputs: [
-        ,
-        ,
+        undefined,
+        undefined,
         {
           expression: "(3 + 1)",
           result: 4,
@@ -41,11 +41,11 @@ describe("trace", () => {
       true
     );
     assert.strictEqual(result, 2);
-    const results = resultsOnly(trace);
+    const results = await resultsOnly(trace);
     assert.deepEqual(results, {
       call: {
         expression: "x + 1",
-        inputs: [, { expression: "x", result: 1 }],
+        inputs: [undefined, { expression: "x", result: 1 }],
         result: 2,
       },
       expression: "fn(1)",
@@ -56,6 +56,37 @@ describe("trace", () => {
         },
       ],
       result: 2,
+    });
+  });
+
+  test("trace object literal", async () => {
+    const program = compile.expression(indent`
+      {
+        a: 1 + 1
+        b = a
+      }`);
+    const { result, trace } = await traceOrigamiCode.call(
+      null,
+      program.code,
+      true
+    );
+    assert.deepEqual(await Tree.plain(result), {
+      a: 2,
+      b: 2,
+    });
+    const results = await resultsOnly(trace);
+    assert.deepEqual(results, {
+      expression: "{ a: 1 + 1 b = a }",
+      inputs: [
+        {
+          expression: "1 + 1",
+          result: 2,
+        },
+      ],
+      result: {
+        a: 2,
+        b: 2,
+      },
     });
   });
 
@@ -74,7 +105,7 @@ describe("trace", () => {
       true
     );
     assert.strictEqual(result, 1);
-    const results = resultsOnly(trace);
+    const results = await resultsOnly(trace);
     assert.deepEqual(results, {
       call: {
         call: {
@@ -91,18 +122,22 @@ describe("trace", () => {
 });
 
 // Return only the results from the trace
-function resultsOnly(trace) {
+async function resultsOnly(trace) {
   const result =
-    typeof trace.result === "function" ? "«function»" : trace.result;
+    typeof trace.result === "function"
+      ? "«function»"
+      : Tree.isTreelike(trace.result)
+      ? await Tree.plain(trace.result)
+      : await trace.result;
   const filtered = {
     expression: trace.expression,
     result,
   };
   if (trace.inputs?.length > 0) {
-    filtered.inputs = trace.inputs.map(resultsOnly);
+    filtered.inputs = await Promise.all(trace.inputs.map(resultsOnly));
   }
   if (trace.call) {
-    filtered.call = resultsOnly(trace.call);
+    filtered.call = await resultsOnly(trace.call);
   }
   return filtered;
 }
