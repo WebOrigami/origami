@@ -1,6 +1,7 @@
 import DebugTrace from "./DebugTrace.js";
 
 const html = String.raw;
+// @ts-ignore
 const forceLoad = [DebugTrace];
 
 export default class DebugPage extends HTMLElement {

@@ -2,6 +2,7 @@ import AttributeMarshallingMixin from "./AttributeMarshallingMixin.js";
 import DebugContext from "./DebugContext.js";
 
 const html = String.raw;
+// @ts-ignore
 const forceLoad = [DebugContext];
 const marker = "~";
 

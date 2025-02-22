@@ -225,10 +225,6 @@ export function lambda(parameters, code) {
       for (const parameter of parameters) {
         ambients[parameter] = args.shift();
       }
-      // Object.defineProperty(ambients, codeSymbol, {
-      //   value: code,
-      //   enumerable: false,
-      // });
       const ambientTree = new ObjectTree(ambients);
       ambientTree.parent = context;
       target = ambientTree;

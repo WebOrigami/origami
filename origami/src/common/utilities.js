@@ -5,7 +5,6 @@ import {
   isUnpackable,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { symbols } from "@weborigami/language";
 import { basename } from "node:path";
 
 // For a given tree, return some user-friendly descriptor
@@ -14,7 +13,10 @@ export function getDescriptor(tree) {
     return trailingSlash.add(basename(tree.path));
   }
 
-  const source = tree[symbols.sourceSymbol];
+  // TODO: This code previously relied on a symbol attached to a result that we
+  // don't use anymore. Either remove or come up with some other way of
+  // identifying the source of a tree.
+  const source = null; // tree[symbols.sourceSymbol];
   if (source) {
     // If the source looks like an identifier, use that.
     // TODO: Use real identifier parsing.

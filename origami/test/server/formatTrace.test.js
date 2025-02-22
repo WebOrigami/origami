@@ -2,6 +2,7 @@ import { ObjectTree, toPlainValue } from "@weborigami/async-tree";
 import {
   HandleExtensionsTransform,
   taggedTemplateIndent as indent,
+  trace,
 } from "@weborigami/language";
 import * as compile from "@weborigami/language/src/compiler/compile.js";
 import assert from "node:assert";
@@ -12,7 +13,9 @@ import {
   traceHtml,
 } from "../../src/server/formatTrace.js";
 
-describe.skip("trace", () => {
+const { traceJavaScriptFunction } = trace;
+
+describe("formatTrace", () => {
   test("trace function call", async () => {
     const source = indent`{
       f: (x) => x + 1
@@ -20,9 +23,11 @@ describe.skip("trace", () => {
     }`;
     const program = compile.expression(source);
     const object = await program.call(null);
-    const result = await object.g;
+    const { result, trace } = await traceJavaScriptFunction(
+      () => object.g,
+      true
+    );
     assert.strictEqual(result, 8);
-    const trace = lastTrace(result);
     const html = await traceHtml(trace, "/");
     assert.deepStrictEqual(
       html,
@@ -84,9 +89,11 @@ describe.skip("trace", () => {
     context.parent = builtinsTree;
     const source = `greet.ori("Origami")`;
     const program = compile.expression(source);
-    const result = await program.call(context);
+    const { result, trace } = await traceJavaScriptFunction(
+      () => program.call(context),
+      true
+    );
     assert.strictEqual(result, "Hello, Origami!");
-    const trace = lastTrace(result);
     const html = await traceHtml(trace, "/");
     assert.deepStrictEqual(
       html,

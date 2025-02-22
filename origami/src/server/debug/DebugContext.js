@@ -2,6 +2,7 @@ import AttributeMarshallingMixin from "./AttributeMarshallingMixin.js";
 import DebugLink from "./DebugLink.js";
 
 const html = String.raw;
+// @ts-ignore
 const forceLoad = [DebugLink];
 
 export default class DebugContext extends AttributeMarshallingMixin(

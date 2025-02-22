@@ -111,7 +111,7 @@ export default async function evaluate(code) {
   }
 
   if (trace) {
-    // Save intermediate results in the trace
+    // Save everything we did in the trace
     Object.assign(
       trace,
       {
@@ -120,7 +120,7 @@ export default async function evaluate(code) {
         inputs,
         result,
       },
-      Object.keys(callTrace).length > 0 && { call: callTrace }
+      callTrace && Object.keys(callTrace).length > 0 && { call: callTrace }
     );
   }
 

@@ -1,11 +1,9 @@
 // Memoized maps of attribute to property names and vice versa.
 // We initialize this with the special case of the tabindex (lowercase "i")
 // attribute, which is mapped to the tabIndex (capital "I") property.
-/** @type {IndexedObject<string>} */
 const attributeToPropertyNames = {
   tabindex: "tabIndex",
 };
-/** @type {IndexedObject<string>} */
 const propertyNamesToAttributes = {
   tabIndex: "tabindex",
 };
@@ -45,7 +43,7 @@ const propertyNamesToAttributes = {
  * yourself.
  *
  * @module AttributeMarshallingMixin
- * @param {Constructor<CustomElement>} Base
+ * @param {CustomElementConstructor} Base
  */
 export default function AttributeMarshallingMixin(Base) {
   // The class prototype added by the mixin.
@@ -59,7 +57,9 @@ export default function AttributeMarshallingMixin(Base) {
      * @param {string} newValue
      */
     attributeChangedCallback(attributeName, oldValue, newValue) {
+      // @ts-ignore
       if (super.attributeChangedCallback) {
+        // @ts-ignore
         super.attributeChangedCallback(attributeName, oldValue, newValue);
       }
 
@@ -107,7 +107,7 @@ export default function AttributeMarshallingMixin(Base) {
  * array of attribute names will include the "foo-bar" attribute.
  *
  * @private
- * @param {Constructor<HTMLElement>} classFn
+ * @param {CustomElementConstructor} classFn
  * @returns {string[]}
  */
 function attributesForClass(classFn) {
@@ -211,7 +211,6 @@ function propertyNameToAttribute(propertyName) {
   return attribute;
 }
 
-/** @type {IndexedObject<boolean>} */
 export const standardBooleanAttributes = {
   checked: true,
   defer: true,

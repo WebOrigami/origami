@@ -5,7 +5,7 @@ import * as compile from "../../src/compiler/compile.js";
 import indent from "../../src/runtime/taggedTemplateIndent.js";
 import { traceOrigamiCode } from "../../src/runtime/trace.js";
 
-describe("tracing", () => {
+describe("trace", () => {
   test("trace basic math", async () => {
     const source = indent`2 * (3 + 1)`;
     const program = compile.expression(source);

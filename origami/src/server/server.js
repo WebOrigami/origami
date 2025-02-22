@@ -5,11 +5,13 @@ import {
   merge,
   trailingSlash,
 } from "@weborigami/async-tree";
-import { formatError, tracing } from "@weborigami/language";
+import { formatError, trace } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
 import * as debugSite from "./debugSite.js";
 import parsePostData from "./parsePostData.js";
+
+const { traceJavaScriptFunction } = trace;
 
 /**
  * Copy a constructed response to a ServerResponse. Return true if the response
@@ -94,7 +96,7 @@ export async function handleRequest(request, response, tree) {
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    const { result, trace } = await tracing.traceJavaScriptFunction(
+    const { result, trace } = await traceJavaScriptFunction(
       () => Tree.traverseOrThrow(extendedTree, ...keys),
       true
     );
