@@ -9,7 +9,11 @@ describe("tracing", () => {
   test("trace basic math", async () => {
     const source = indent`2 * (3 + 1)`;
     const program = compile.expression(source);
-    const { result, trace } = await traceOrigamiCode.call(null, program.code);
+    const { result, trace } = await traceOrigamiCode.call(
+      null,
+      program.code,
+      true
+    );
     assert.strictEqual(result, 8);
     const results = resultsOnly(trace);
     assert.deepEqual(results, {
@@ -31,7 +35,11 @@ describe("tracing", () => {
     const fn = await fnProgram.call(null);
     const parent = new ObjectTree({ fn });
     const program = compile.expression(`fn(1)`);
-    const { result, trace } = await traceOrigamiCode.call(parent, program.code);
+    const { result, trace } = await traceOrigamiCode.call(
+      parent,
+      program.code,
+      true
+    );
     assert.strictEqual(result, 2);
     const results = resultsOnly(trace);
     assert.deepEqual(results, {
@@ -60,7 +68,11 @@ describe("tracing", () => {
     `);
     const object = await objectProgram.call(null);
     const program = compile.expression(`b`);
-    const { result, trace } = await traceOrigamiCode.call(object, program.code);
+    const { result, trace } = await traceOrigamiCode.call(
+      object,
+      program.code,
+      true
+    );
     assert.strictEqual(result, 1);
     const results = resultsOnly(trace);
     assert.deepEqual(results, {

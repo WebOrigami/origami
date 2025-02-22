@@ -1,7 +1,11 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import { asyncLocalStorage, traceOrigamiCode } from "./tracing.js";
+import {
+  getCurrentTrace,
+  traceJavaScriptFunction,
+  traceOrigamiCode,
+} from "./tracing.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -19,8 +23,8 @@ export default async function evaluate(code) {
     return code;
   }
 
-  const trace = asyncLocalStorage.getStore() ?? {};
-  if (Object.keys(trace).length > 0) {
+  const trace = getCurrentTrace();
+  if (trace && Object.keys(trace).length > 0) {
     // Trace object exists but isn't empty, which might mean that a call to
     // evaluate was already made in this context.
     throw new Error("Internal error recording diagnostic trace information");
@@ -76,15 +80,16 @@ export default async function evaluate(code) {
 
   // Execute the function or traverse the tree.
   let result;
-  let callTrace = {};
+  let callTrace;
   try {
-    result = await asyncLocalStorage.run(
-      callTrace,
+    const resultAndTrace = await traceJavaScriptFunction(
       async () =>
         fn instanceof Function
           ? await fn.call(tree, ...args) // Invoke the function
           : await Tree.traverseOrThrow(fn, ...args) // Traverse the tree.
     );
+    result = resultAndTrace.result;
+    callTrace = resultAndTrace.trace;
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
