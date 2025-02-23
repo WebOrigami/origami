@@ -1,11 +1,7 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
 import { ops } from "./internal.js";
-import {
-  getCurrentTrace,
-  traceJavaScriptFunction,
-  traceOrigamiCode,
-} from "./trace.js";
+import { getCurrentTrace, traceOrigamiCode } from "./trace.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -21,13 +17,6 @@ export default async function evaluate(code) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
-  }
-
-  const trace = getCurrentTrace();
-  if (trace && Object.keys(trace).length > 0) {
-    // Trace object exists but isn't empty, which might mean that a call to
-    // evaluate was already made in this context.
-    throw new Error("Internal error recording diagnostic trace information");
   }
 
   let evaluated;
@@ -80,16 +69,21 @@ export default async function evaluate(code) {
 
   // Execute the function or traverse the tree.
   let result;
-  let callTrace;
+  // let callTrace;
   try {
-    const resultAndTrace = await traceJavaScriptFunction(
-      async () =>
-        fn instanceof Function
-          ? await fn.call(tree, ...args) // Invoke the function
-          : await Tree.traverseOrThrow(fn, ...args) // Traverse the tree.
-    );
-    result = resultAndTrace.result;
-    callTrace = resultAndTrace.trace;
+    result =
+      fn instanceof Function
+        ? await fn.call(tree, ...args) // Invoke the function
+        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
+
+    // const resultAndTrace = await traceJavaScriptFunction(
+    //   async () =>
+    //     fn instanceof Function
+    //       ? await fn.call(tree, ...args) // Invoke the function
+    //       : await Tree.traverseOrThrow(fn, ...args) // Traverse the tree.
+    // );
+    // result = resultAndTrace.result;
+    // callTrace = resultAndTrace.trace;
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
@@ -110,24 +104,35 @@ export default async function evaluate(code) {
     result.parent = tree;
   }
 
+  const trace = getCurrentTrace();
   if (trace) {
-    // Save everything we did in the trace
-    Object.assign(
-      trace,
-      {
-        code,
-        expression: codeFragment(code.location),
-        inputs,
-        result,
-      },
-      callTrace && Object.keys(callTrace).length > 0 && { call: callTrace }
-    );
+    let call;
+    if (Object.keys(trace).length > 0) {
+      // Trace exists but isn't empty, which means that a call to evaluate was
+      // already made in this context. Move that earlier trace to become a call
+      // of the new trace.
+      call = Object.assign({}, trace);
+      for (const key of Object.keys(trace)) {
+        delete trace[key];
+      }
+    }
 
-    // HACK for object literals
-    if (code[0] === ops.object) {
-      // Move call inputs to inputs, remove call
-      trace.inputs = trace.call.inputs;
-      delete trace.call;
+    // Save everything we just did in the trace
+    Object.assign(trace, {
+      code,
+      expression: codeFragment(code.location),
+      inputs,
+      result,
+    });
+
+    if (call) {
+      if (code[0] === ops.object) {
+        // Object literals are evaluated specially; adopt call inputs
+        trace.inputs = call.inputs;
+      } else {
+        // Regular call
+        trace.call = call;
+      }
     }
   }
 
