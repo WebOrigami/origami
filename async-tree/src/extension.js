@@ -89,7 +89,10 @@ export function match(key, ext) {
 
   // Key matches if it ends with the same extension
   const normalized = trailingSlash.remove(key);
-  if (normalized.endsWith(ext)) {
+
+  if (ext === "") {
+    return normalized.includes(".") ? null : normalized;
+  } else if (normalized.endsWith(ext)) {
     const removed =
       ext.length > 0 ? normalized.slice(0, -ext.length) : normalized;
     return trailingSlash.toggle(removed, trailingSlash.has(key));

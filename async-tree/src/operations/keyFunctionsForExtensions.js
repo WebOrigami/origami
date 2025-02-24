@@ -2,15 +2,14 @@ import * as extension from "../extension.js";
 import * as trailingSlash from "../trailingSlash.js";
 
 /**
- * Given a source resultExtension and a result resultExtension, return a pair of key
+ * Given a source extension and a result extension, return a pair of key
  * functions that map between them.
  *
  * The resulting `inverseKey` and `key` functions are compatible with those
  * expected by map and other transforms.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @param {{ resultExtension?: string, sourceExtension: string }}
- * options
+ * @param {{ resultExtension?: string, sourceExtension: string }} options
  */
 export default function keyFunctionsForExtensions({
   resultExtension,
@@ -42,7 +41,7 @@ export default function keyFunctionsForExtensions({
 function checkDeprecatedExtensionWithoutDot(extension) {
   if (extension && extension !== "/" && !extension.startsWith(".")) {
     throw new RangeError(
-      `map: Warning: the extension "${extension}" should start with a period.`
+      `The extension "${extension}" must start with a period.`
     );
   }
 }

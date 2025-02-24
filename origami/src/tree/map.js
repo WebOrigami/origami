@@ -7,6 +7,7 @@ import {
 } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
 import { toFunction } from "../common/utilities.js";
+import parseExtensions from "./parseExtensions.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
@@ -141,40 +142,4 @@ function extendKeyFn(keyFn) {
     const resultKey = await keyFn(sourceValue, sourceKey, sourceTree);
     return resultKey;
   };
-}
-
-/**
- * Given a string specifying an extension or a mapping of one extension to another,
- * return the source and result extensions.
- *
- * Syntax:
- *   .foo           source and result extension are the same
- *   .foo→.bar      Unicode Rightwards Arrow
- *   .foo→          Unicode Rightwards Arrow, no result extension
- *   .foo->.bar     hyphen and greater-than sign
- *
- * @param {string} specifier
- */
-function parseExtensions(specifier) {
-  const lowercase = specifier?.toLowerCase() ?? "";
-  const extensionRegex =
-    /^((?<sourceExtension>\.\S*)\s*(→|->)\s*(?<resultExtension>\.\S*)?)|(?<extension>\.\S*)$/;
-  const match = lowercase.match(extensionRegex);
-  if (!match) {
-    // Shouldn't happen because the regex is exhaustive.
-    throw new Error(`map: Invalid extension specifier "${specifier}".`);
-  }
-  // @ts-ignore
-  let { extension, resultExtension, sourceExtension } = match.groups;
-  if (extension) {
-    // foo
-    return {
-      resultExtension: extension,
-      sourceExtension: extension,
-    };
-  } else {
-    // foo→bar
-    resultExtension ??= "";
-    return { resultExtension, sourceExtension };
-  }
 }
