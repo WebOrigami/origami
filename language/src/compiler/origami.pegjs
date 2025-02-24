@@ -323,10 +323,9 @@ multiplicativeOperator
   / "%"
 
 // A namespace reference is a string of letters only, followed by a colon.
-// For the time being, we also allow a leading `@`, which is deprecated.
 namespace
-  = at:"@"? chars:[A-Za-z]+ ":" {
-    return annotate([ops.builtin, (at ?? "") + chars.join("") + ":"], location());
+  = chars:[A-Za-z]+ ":" {
+    return annotate([ops.builtin, chars.join("") + ":"], location());
   }
 
 newLine

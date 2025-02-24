@@ -6,6 +6,7 @@ import {
 } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
+import parseExtensions from "./parseExtensions.js";
 
 /**
  * Return a function that transforms a tree of keys and values to a new tree of
@@ -122,38 +123,4 @@ export default function mapFnBuiltin(operation) {
     mapped.parent = tree;
     return mapped;
   };
-}
-
-/**
- * Given a string specifying an extension or a mapping of one extension to another,
- * return the source and result extensions.
- *
- * Syntax:
- *   foo
- *   foo→bar      Unicode Rightwards Arrow
- *   foo->bar     hyphen and greater-than sign
- *
- * @param {string} specifier
- */
-function parseExtensions(specifier) {
-  const lowercase = specifier?.toLowerCase() ?? "";
-  const extensionRegex =
-    /^(\.?(?<sourceExtension>\S*)\s*(→|->)\s*\.?(?<resultExtension>\S*))|(\.?(?<extension>\S*))$/;
-  const match = lowercase.match(extensionRegex);
-  if (!match) {
-    // Shouldn't happen because the regex is exhaustive.
-    throw new Error(`@mapFn: Invalid extension specifier "${specifier}".`);
-  }
-  // @ts-ignore
-  const { extension, resultExtension, sourceExtension } = match.groups;
-  if (sourceExtension || resultExtension) {
-    // foo→bar
-    return { resultExtension, sourceExtension };
-  } else {
-    // foo
-    return {
-      resultExtension: specifier,
-      sourceExtension: specifier,
-    };
-  }
 }

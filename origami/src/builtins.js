@@ -1,5 +1,4 @@
 import * as calc from "./calc/calc.js";
-import deprecated from "./deprecated.js";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
@@ -46,9 +45,6 @@ export default {
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
-
-  // Deprecated builtins
-  ...deprecated,
 };
 
 // Handle cases where a builtin name conflicts with a JS reserved word
