@@ -148,23 +148,24 @@ function extendKeyFn(keyFn) {
  * return the source and result extensions.
  *
  * Syntax:
- *   foo
- *   foo→bar      Unicode Rightwards Arrow
- *   foo->bar     hyphen and greater-than sign
+ *   .foo           source and result extension are the same
+ *   .foo→.bar      Unicode Rightwards Arrow
+ *   .foo→          Unicode Rightwards Arrow, no result extension
+ *   .foo->.bar     hyphen and greater-than sign
  *
  * @param {string} specifier
  */
 function parseExtensions(specifier) {
   const lowercase = specifier?.toLowerCase() ?? "";
   const extensionRegex =
-    /^((?<sourceExtension>\.?\S*)\s*(→|->)\s*(?<resultExtension>\.?\S*))|(?<extension>\.?\S*)$/;
+    /^((?<sourceExtension>\.\S*)\s*(→|->)\s*(?<resultExtension>\.\S*)?)|(?<extension>\.\S*)$/;
   const match = lowercase.match(extensionRegex);
   if (!match) {
     // Shouldn't happen because the regex is exhaustive.
     throw new Error(`map: Invalid extension specifier "${specifier}".`);
   }
   // @ts-ignore
-  const { extension, resultExtension, sourceExtension } = match.groups;
+  let { extension, resultExtension, sourceExtension } = match.groups;
   if (extension) {
     // foo
     return {
@@ -173,6 +174,7 @@ function parseExtensions(specifier) {
     };
   } else {
     // foo→bar
+    resultExtension ??= "";
     return { resultExtension, sourceExtension };
   }
 }
