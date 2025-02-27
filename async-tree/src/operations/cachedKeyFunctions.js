@@ -48,8 +48,8 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
           computedResultKey &&
           trailingSlash.remove(computedResultKey) === resultKeyWithoutSlash
         ) {
-          // Match found, match trailing slash and return
-          return trailingSlash.toggle(sourceKey, trailingSlash.has(resultKey));
+          // Match found
+          return matchSlashHandling(computedResultKey, sourceKey, resultKey);
         }
       }
 
@@ -104,19 +104,33 @@ function getKeyMapsForTree(tree) {
   return keyMaps;
 }
 
-// Search the given key map for the key. Ignore trailing slashes in the search,
-// but preserve them in the result.
-function searchKeyMap(keyMap, key) {
+// Given the input key passed to a function and the result of that function, and
+// a requested key being searched for, determine whether we should add a slash
+// to the output key.
+function matchSlashHandling(inputKey, outputKey, requestedKey) {
+  if (trailingSlash.has(inputKey) !== trailingSlash.has(outputKey)) {
+    // The key function toggled the slash on the input key; return output as is
+    return outputKey;
+  } else {
+    // Match the slash handling of the requested key
+    return trailingSlash.toggle(outputKey, trailingSlash.has(requestedKey));
+  }
+}
+
+// Search the given key map for the key. Ignore trailing slashes in the search.
+function searchKeyMap(keyMap, requestedKey) {
   // Check key as is
-  let match;
-  if (keyMap.has(key)) {
-    match = keyMap.get(key);
+  let resultKey;
+  let sourceKey = requestedKey;
+  if (keyMap.has(sourceKey)) {
+    resultKey = keyMap.get(requestedKey);
   } else {
     // Check alternative with/without slash
-    const alternativeKey = trailingSlash.toggle(key, !trailingSlash.has(key));
-    match = keyMap.get(alternativeKey);
+    sourceKey = trailingSlash.toggle(requestedKey);
+    resultKey = keyMap.get(sourceKey);
   }
-  return match
-    ? trailingSlash.toggle(match, trailingSlash.has(key))
-    : undefined;
+  if (resultKey === undefined) {
+    return undefined;
+  }
+  return matchSlashHandling(sourceKey, resultKey, requestedKey);
 }

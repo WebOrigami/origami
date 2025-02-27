@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { DeepObjectTree, ObjectTree } from "../../src/internal.js";
 import cachedKeyFunctions from "../../src/operations/cachedKeyFunctions.js";
+import * as trailingSlash from "../../src/trailingSlash.js";
 
 describe("cachedKeyFunctions", () => {
   test("maps keys with caching", async () => {
@@ -74,7 +75,7 @@ describe("cachedKeyFunctions", () => {
     assert.equal(callCount, 1);
   });
 
-  test("preserves trailing slashes", async () => {
+  test("preserves trailing slashes if key function does so", async () => {
     const tree = new ObjectTree({
       a: "letter a",
     });
@@ -86,5 +87,20 @@ describe("cachedKeyFunctions", () => {
 
     assert.equal(await inverseKey("_a/", tree), "a/");
     assert.equal(await inverseKey("_a", tree), "a");
+  });
+
+  test("if key function toggles slash, defers to key function slash handling", async () => {
+    const tree = new ObjectTree({
+      a: "letter a",
+    });
+    const addUnderscoreAndSlash = async (sourceKey) =>
+      `_${trailingSlash.remove(sourceKey)}/`;
+    const { inverseKey, key } = cachedKeyFunctions(addUnderscoreAndSlash);
+
+    assert.equal(await inverseKey("_a/", tree), "a");
+    assert.equal(await inverseKey("_a", tree), "a");
+
+    assert.equal(await key("a", tree), "_a/");
+    assert.equal(await key("a/", tree), "_a/");
   });
 });
