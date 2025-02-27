@@ -8,8 +8,9 @@ import { getDescriptor } from "../common/utilities.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
+ * @param {string} [basePath]
  */
-export default async function index(treelike) {
+export default async function index(treelike, basePath) {
   const tree = await getTreeArgument(this, arguments, treelike, "site:index");
   const keys = Array.from(await tree.keys());
 
@@ -21,8 +22,9 @@ export default async function index(treelike) {
   const links = [];
   for (const key of filtered) {
     const keyText = String(key);
+    const path = basePath ? [basePath, keyText].join("/") : keyText;
     // Simple key.
-    const link = `      <li><a href="${keyText}">${keyText}</a></li>`;
+    const link = `      <li><a href="${path}">${keyText}</a></li>`;
     links.push(link);
   }
 
