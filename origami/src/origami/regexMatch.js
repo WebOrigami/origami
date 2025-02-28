@@ -1,5 +1,9 @@
-import regexMatchFn from "./regexMatchFn.js";
+const parsers = {};
 
 export default function regexMatch(text, regex) {
-  return regexMatchFn(regex)(text);
+  if (!parsers[regex]) {
+    const regexp = new RegExp(regex);
+    parsers[regex] = (input) => input.match(regexp)?.groups;
+  }
+  return parsers[regex](text);
 }

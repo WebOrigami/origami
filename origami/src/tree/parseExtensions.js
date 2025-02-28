@@ -6,6 +6,7 @@
  *   .foo           source and result extension are the same
  *   .foo→.bar      Unicode Rightwards Arrow
  *   .foo→          Unicode Rightwards Arrow, no result extension
+ *   →.bar          Unicode Rightwards Arrow, no source extension
  *   .foo->.bar     hyphen and greater-than sign
  *
  * @param {string} specifier
