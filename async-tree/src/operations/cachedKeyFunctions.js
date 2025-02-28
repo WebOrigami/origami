@@ -6,16 +6,16 @@ const treeToCaches = new Map();
  * Given a key function, return a new key function and inverse key function that
  * cache the results of the original.
  *
- * If `skipSubtrees` is true, the inverse key function will skip any source keys
- * that are keys for subtrees, returning the source key unmodified.
+ * If `deep` is true, the inverse key function will skip any source keys that
+ * are keys for subtrees, returning the source key unmodified.
  *
  * @typedef {import("../../index.ts").KeyFn} KeyFn
  *
  * @param {KeyFn} keyFn
- * @param {boolean?} skipSubtrees
+ * @param {boolean?} deep
  * @returns {{ key: KeyFn, inverseKey: KeyFn }}
  */
-export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
+export default function cachedKeyFunctions(keyFn, deep = false) {
   return {
     async inverseKey(resultKey, tree) {
       const { resultKeyToSourceKey, sourceKeyToResultKey } =
@@ -40,7 +40,7 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
         const computedResultKey = await computeAndCacheResultKey(
           tree,
           keyFn,
-          skipSubtrees,
+          deep,
           sourceKey
         );
 
@@ -67,7 +67,7 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
       const resultKey = await computeAndCacheResultKey(
         tree,
         keyFn,
-        skipSubtrees,
+        deep,
         sourceKey
       );
       return resultKey;
@@ -75,12 +75,12 @@ export default function cachedKeyFunctions(keyFn, skipSubtrees = false) {
   };
 }
 
-async function computeAndCacheResultKey(tree, keyFn, skipSubtrees, sourceKey) {
+async function computeAndCacheResultKey(tree, keyFn, deep, sourceKey) {
   const { resultKeyToSourceKey, sourceKeyToResultKey } =
     getKeyMapsForTree(tree);
 
   const resultKey =
-    skipSubtrees && trailingSlash.has(sourceKey)
+    deep && trailingSlash.has(sourceKey)
       ? sourceKey
       : await keyFn(sourceKey, tree);
 
