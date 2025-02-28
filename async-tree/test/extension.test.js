@@ -19,7 +19,7 @@ describe("extension", () => {
     assert.equal(match("file.md", ".txt"), null);
     assert.equal(match("file.md/", ".md"), "file/");
     assert.equal(match("file", ""), "file");
-    assert.equal(match("file.md", ""), null);
+    assert.equal(match("file.md", ""), "file.md");
     assert.equal(match("file", "/"), null);
     assert.equal(match("file/", "/"), "file");
   });

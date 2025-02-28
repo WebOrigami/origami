@@ -41,16 +41,17 @@ describe("map", () => {
 
   test.only("can add an extension to a key", async () => {
     const treelike = {
-      "file0.txt": "Will be removed",
-      file1: 1,
-      file2: 2,
+      "file0.txt": 1,
+      file1: 2,
+      file2: 3,
     };
     const fixture = await map.call(null, treelike, {
       extension: "->.data",
     });
     assert.deepEqual(await Tree.plain(fixture), {
-      "file1.data": 1,
-      "file2.data": 2,
+      "file0.txt.data": 1,
+      "file1.data": 2,
+      "file2.data": 3,
     });
   });
 

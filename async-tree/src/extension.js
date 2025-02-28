@@ -65,7 +65,7 @@ export function extname(path) {
  * See if the key ends with the given extension. If it does, return the base
  * name without the extension; if it doesn't return null.
  *
- * If the extension is empty, the key must not have an extension to match.
+ * If the extension is the empty string, this will match any key.
  *
  * If the extension is a slash, then the key must end with a slash for the match
  * to succeed. Otherwise, a trailing slash in the key is ignored for purposes of
@@ -89,10 +89,7 @@ export function match(key, ext) {
 
   // Key matches if it ends with the same extension
   const normalized = trailingSlash.remove(key);
-
-  if (ext === "") {
-    return normalized.includes(".") ? null : normalized;
-  } else if (normalized.endsWith(ext)) {
+  if (normalized.endsWith(ext)) {
     const removed =
       ext.length > 0 ? normalized.slice(0, -ext.length) : normalized;
     return trailingSlash.toggle(removed, trailingSlash.has(key));
