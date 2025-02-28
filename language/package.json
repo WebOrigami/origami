@@ -6,10 +6,10 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "22.10.2",
+    "@types/node": "22.13.5",
     "peggy": "4.2.0.",
-    "typescript": "5.7.2",
-    "yaml": "2.6.1"
+    "typescript": "5.8.2",
+    "yaml": "2.7.0"
   },
   "dependencies": {
     "@weborigami/async-tree": "0.2.8",
