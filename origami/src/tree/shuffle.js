@@ -1,6 +1,4 @@
 import getTreeArgument from "../common/getTreeArgument.js";
-import { transformObject } from "../common/utilities.js";
-import { default as ShuffleTransform, shuffle } from "./ShuffleTransform.js";
 
 /**
  * Return a new tree with the original's keys shuffled
@@ -10,8 +8,9 @@ import { default as ShuffleTransform, shuffle } from "./ShuffleTransform.js";
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
+ * @param {boolean} [reshuffle]
  */
-export default async function shuffleTree(treelike) {
+export default async function shuffleTree(treelike, reshuffle = false) {
   // Special case: If the treelike is an array, shuffle it directly. Otherwise
   // we'll end up shuffling the array's indexes, and if this is directly
   // displayed by the ori CLI, this will end up creating a plain object. Even
@@ -23,6 +22,36 @@ export default async function shuffleTree(treelike) {
     shuffle(array);
     return array;
   }
+
   const tree = await getTreeArgument(this, arguments, treelike, "tree:shuffle");
-  return transformObject(ShuffleTransform, tree);
+
+  let keys;
+  return {
+    async get(key) {
+      return tree.get(key);
+    },
+
+    async keys() {
+      if (!keys || reshuffle) {
+        keys = Array.from(await tree.keys());
+        shuffle(keys);
+      }
+      return keys;
+    },
+  };
+}
+
+/*
+ * Shuffle an array.
+ *
+ * Performs a Fisher-Yates shuffle. From http://sedition.com/perl/javascript-fy.html
+ */
+export function shuffle(array) {
+  let i = array.length;
+  while (--i >= 0) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 }
