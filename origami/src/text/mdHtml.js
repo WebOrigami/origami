@@ -1,6 +1,6 @@
 import { extension, isUnpackable } from "@weborigami/async-tree";
 import highlight from "highlight.js";
-import { marked } from "marked";
+import { Marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
@@ -10,6 +10,8 @@ import origamiHighlightDefinition from "./origamiHighlightDefinition.js";
 
 highlight.registerLanguage("ori", origamiHighlightDefinition);
 
+// Create our own marked instance so we don't interfere with the global one
+const marked = new Marked();
 marked.use(
   // @ts-ignore
   markedGfmHeadingId(),
@@ -24,8 +26,6 @@ marked.use(
   markedSmartypants(),
   {
     gfm: true, // Use GitHub-flavored markdown.
-    // @ts-ignore
-    mangle: false,
   }
 );
 
@@ -52,7 +52,7 @@ export default async function mdHtml(input) {
   if (markdown === null) {
     throw new Error("mdHtml: The provided input couldn't be treated as text.");
   }
-  const html = marked(markdown);
+  const html = marked.parse(markdown);
   return inputIsDocument ? documentObject(html, input) : html;
 }
 
