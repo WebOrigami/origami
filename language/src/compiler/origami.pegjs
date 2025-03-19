@@ -50,7 +50,7 @@ arguments "function arguments"
   / templateLiteral
 
 arrayLiteral "array"
-  = "[" __ entries:arrayEntries? __ closingBracket {
+  = "[" __ entries:arrayEntries? __ expectClosingBracket {
       return makeArray(entries ?? [], location());
     }
 
@@ -69,11 +69,11 @@ arrayEntry
     }
 
 arrowFunction
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:pipelineExpression {
+  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
       const lambdaParameters = annotate(parameters ?? [], location());
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
-  / identifier:identifier __ doubleArrow __ pipeline:pipelineExpression {
+  / identifier:identifier __ doubleArrow __ pipeline:expectPipelineExpression {
       const lambdaParameters = annotate([identifier], location())
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
@@ -108,30 +108,6 @@ bitwiseXorOperator
 callExpression "function call"
   = head:protocolExpression tail:arguments* {
       return tail.reduce(makeCall, head);
-    }
-
-// Required closing curly brace. We use this for the `object` term: if the
-// parser sees a left curly brace, here we must see a right curly brace.
-closingBrace
-  = "}"
-  / .? {
-      error(`An object ended without a closing brace, or contained something that wasn't expected.\nThe top level of an object can only contain definitions ("a: b" or "a = b") or spreads ("...a").`);
-    }
-
-// Required closing bracket
-closingBracket
-  = "]"
-  / .? {
-      error("Expected right bracket");
-    }
-
-// Required closing parenthesis. We use this for the `group` term: it's the last
-// term in the `step` parser that starts with a parenthesis, so if that parser
-// sees a left parenthesis, here we must see a right parenthesis.
-closingParenthesis
-  = ")"
-  / .? {
-      error("Expected right parenthesis");
     }
 
 // A comma-separated list of expressions: `x, y, z`
@@ -171,7 +147,7 @@ digits
 doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
-  = '"' chars:doubleQuoteStringChar* '"' {
+  = '"' chars:doubleQuoteStringChar* expectDoubleQuote {
     return annotate([ops.literal, chars.join("")], location());
   }
 
@@ -201,6 +177,55 @@ escapedChar "backslash-escaped character"
   / "\\v" { return "\v"; }
   / "\\" @.
 
+expectBacktick
+  = "`"
+  / .? {
+      error("Expected closing backtick");
+    }
+
+expectClosingBrace
+  = "}"
+  / .? {
+      error(`An object ended without a closing brace, or contained something that wasn't expected.\nThe top level of an object can only contain definitions ("a: b" or "a = b") or spreads ("...a").`);
+    }
+
+expectClosingBracket
+  = "]"
+  / .? {
+      error("Expected right bracket");
+    }
+
+expectClosingParenthesis
+  = ")"
+  / .? {
+      error("Expected right parenthesis");
+    }
+
+expectDoubleQuote
+  = '"'
+  / .? {
+      error("Expected closing quote");
+    }
+
+expectGuillemet
+  = '»'
+  / .? {
+      error("Expected closing guillemet");
+    }
+
+expectSingleQuote
+  = "'"
+  / .? {
+      error("Expected closing quote");
+    }
+
+// Required expression
+expectPipelineExpression
+  = pipelineExpression
+  / .? {
+      error("Expected an expression");
+    }
+
 exponentiationExpression
   = left:unaryExpression right:(__ "**" __ @exponentiationExpression)? {
       return right ? annotate([ops.exponentiation, left, right], location()) : left;
@@ -217,12 +242,12 @@ floatLiteral "floating-point number"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" expression:expression closingParenthesis {
+  = "(" expression:expression expectClosingParenthesis {
       return annotate(downgradeReference(expression), location());
     }
 
 guillemetString "guillemet string"
-  = '«' chars:guillemetStringChar* '»' {
+  = '«' chars:guillemetStringChar* expectGuillemet {
     return annotate([ops.literal, chars.join("")], location());
   }
 
@@ -350,7 +375,7 @@ nullishCoalescingExpression
 
 // An object literal: `{foo: 1, bar: 2}`
 objectLiteral "object literal"
-  = "{" __ entries:objectEntries? __ closingBrace {
+  = "{" __ entries:objectEntries? __ expectClosingBrace {
       return makeObject(entries ?? [], location());
     }
 
@@ -368,7 +393,7 @@ objectEntry
 
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
-  = key:objectKey __ "=" __ pipeline:pipelineExpression {
+  = key:objectKey __ "=" __ pipeline:expectPipelineExpression {
       return annotate(
         makeProperty(key, annotate([ops.getter, pipeline], location())),
         location()
@@ -384,7 +409,7 @@ objectKey "object key"
 
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
-  = key:objectKey __ ":" __ pipeline:pipelineExpression {
+  = key:objectKey __ ":" __ pipeline:expectPipelineExpression {
       return annotate(makeProperty(key, pipeline), location());
     }
 
@@ -406,7 +431,7 @@ objectPublicKey
 
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
-  = "(" __ list:list? __ ")" {
+  = "(" __ list:list? __ expectClosingParenthesis {
       return annotate(list ?? [undefined], location());
     }
 
@@ -548,7 +573,7 @@ singleLineComment
   = "//" [^\n\r]* { return null; }
 
 singleQuoteString "single quote string"
-  = "'" chars:singleQuoteStringChar* "'" {
+  = "'" chars:singleQuoteStringChar* expectSingleQuote {
     return annotate([ops.literal, chars.join("")], location());
   }
 
@@ -600,7 +625,7 @@ templateDocumentText "template text"
 
 // A backtick-quoted template literal
 templateLiteral "template literal"
-  = "`" head:templateLiteralText tail:(templateSubstitution templateLiteralText)* "`" {
+  = "`" head:templateLiteralText tail:(templateSubstitution templateLiteralText)* expectBacktick {
       return makeTemplate(ops.template, head, tail, location());
     }
 

@@ -282,6 +282,18 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("errors for missing pieces", () => {
+    assertThrows("arrowFunction", "(a) => ", "Expected an expression");
+    assertThrows("arrowFunction", "a ⇒ ", "Expected an expression");
+    assertThrows("callExpression", "fn(a", "Expected right parenthesis");
+    assertThrows("doubleQuoteString", '"foo', "Expected closing quote");
+    assertThrows("guillemetString", "«foo", "Expected closing guillemet");
+    assertThrows("objectGetter", "a =", "Expected an expression");
+    assertThrows("objectProperty", "a:", "Expected an expression");
+    assertThrows("singleQuoteString", "'foo", "Expected closing quote");
+    assertThrows("templateLiteral", "`foo", "Expected closing backtick");
+  });
+
   test("exponentiationExpression", () => {
     assertParse("exponentiationExpression", "2 ** 2 ** 3", [
       ops.exponentiation,
@@ -1100,4 +1112,20 @@ function assertCodeLocations(code) {
       assertCodeLocations(item);
     }
   }
+}
+
+function assertThrows(startRule, source, message) {
+  try {
+    parse(source, {
+      grammarSource: { text: source },
+      startRule,
+    });
+  } catch (/** @type {any} */ error) {
+    assert(
+      error.message.includes(message),
+      `Error message incorrect:\n  expected: "${message}"\n  actual: "${error.message}"`
+    );
+    return;
+  }
+  assert.fail(`Expected error: ${message}`);
 }
