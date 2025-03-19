@@ -70,12 +70,11 @@ arrayEntry
 
 arrowFunction
   = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
-      const lambdaParameters = annotate(parameters ?? [], location());
+      const lambdaParameters = parameters ?? annotate([], location());
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
-  / identifier:identifier __ doubleArrow __ pipeline:expectPipelineExpression {
-      const lambdaParameters = annotate([identifier], location())
-      return annotate([ops.lambda, lambdaParameters, pipeline], location());
+  / identifier:identifierSingleton __ doubleArrow __ pipeline:expectPipelineExpression {
+      return annotate([ops.lambda, identifier, pipeline], location());
     }
   / conditionalExpression
 
@@ -282,6 +281,12 @@ identifierChar
 identifierList
   = list:identifier|1.., separator| separator? {
       return annotate(list, location());
+    }
+
+// A list with a single identifier
+identifierSingleton
+  = identifier:identifier {
+      return annotate([identifier], location());
     }
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
