@@ -13,10 +13,10 @@ export default class SiteTree {
   /**
    * @param {string} href
    */
-  constructor(href = window?.location.href) {
-    if (href?.startsWith(".") && window?.location !== undefined) {
+  constructor(href = globalThis?.location.href) {
+    if (href?.startsWith(".") && globalThis?.location !== undefined) {
       // URL represents a relative path; concatenate with current location.
-      href = new URL(href, window.location.href).href;
+      href = new URL(href, globalThis.location.href).href;
     }
 
     // Add trailing slash if not present; URL should represent a directory.
