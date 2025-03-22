@@ -18,7 +18,7 @@ describe("optimize", () => {
     const code = fn.code;
     assertCodeEqual(code, [
       ops.lambda,
-      ["name"],
+      [[ops.literal, "name"]],
       [
         ops.object,
         ["a", 1],

@@ -34,7 +34,7 @@ export default function optimize(
   switch (fn) {
     case ops.lambda:
       const parameters = args[0];
-      additionalLocalNames = parameters;
+      additionalLocalNames = parameters.map((param) => param[1]);
       break;
 
     case ops.literal:
@@ -110,13 +110,15 @@ export default function optimize(
   }
 
   // Optimize children
-  const optimized = code.map((child) => {
-    if (Array.isArray(child) && "location" in child) {
+  const optimized = code.map((child, index) => {
+    // Don't optimize lambda parameter names
+    if (fn === ops.lambda && index === 1) {
+      return child;
+    } else if (Array.isArray(child) && "location" in child) {
       // Review: This currently descends into arrays that are not instructions,
-      // such as the parameters of a lambda. This should be harmless, but it'd
+      // such as the entries of an ops.object. This should be harmless, but it'd
       // be preferable to only descend into instructions. This would require
-      // surrounding ops.lambda parameters with ops.literal, and ops.object
-      // entries with ops.array.
+      // surrounding ops.object entries with ops.array.
       return optimize(
         /** @type {AnnotatedCode} */ (child),
         enableCaching,

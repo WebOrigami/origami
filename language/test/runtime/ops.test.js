@@ -169,7 +169,10 @@ describe("ops", () => {
   test("ops.lambda adds input parameters to scope", async () => {
     const code = createCode([
       ops.lambda,
-      ["a", "b"],
+      [
+        [ops.literal, "a"],
+        [ops.literal, "b"],
+      ],
       [ops.concat, [ops.scope, "b"], [ops.scope, "a"]],
     ]);
     const fn = await evaluate.call(null, code);

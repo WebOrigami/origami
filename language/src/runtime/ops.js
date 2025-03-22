@@ -223,7 +223,8 @@ export function lambda(parameters, code) {
       // Add arguments to scope.
       const ambients = {};
       for (const parameter of parameters) {
-        ambients[parameter] = args.shift();
+        const parameterName = parameter[1];
+        ambients[parameterName] = args.shift();
       }
       Object.defineProperty(ambients, codeSymbol, {
         value: code,

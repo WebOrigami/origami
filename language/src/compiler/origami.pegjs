@@ -69,12 +69,12 @@ arrayEntry
     }
 
 arrowFunction
-  = "(" __ parameters:identifierList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
+  = "(" __ parameters:parameterList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
       const lambdaParameters = parameters ?? annotate([], location());
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
-  / identifier:identifierSingleton __ doubleArrow __ pipeline:expectPipelineExpression {
-      return annotate([ops.lambda, identifier, pipeline], location());
+  / parameter:parameterSingleton __ doubleArrow __ pipeline:expectPipelineExpression {
+      return annotate([ops.lambda, parameter, pipeline], location());
     }
   / conditionalExpression
 
@@ -278,17 +278,6 @@ identifierChar
   / @'-' !'>' // Accept a hyphen but not in a single arrow combination
   / escapedChar
 
-identifierList
-  = list:identifier|1.., separator| separator? {
-      return annotate(list, location());
-    }
-
-// A list with a single identifier
-identifierSingleton
-  = identifier:identifier {
-      return annotate([identifier], location());
-    }
-
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
       return args ? makeCall(head, args) : head;
@@ -434,6 +423,25 @@ objectPublicKey
     return string[1];
   }
 
+parameter
+  = identifier:identifier {
+      return annotate([ops.literal, identifier], location());
+    }
+
+parameterList
+  = list:parameter|1.., separator| separator? {
+      return annotate(list, location());
+    }
+
+// A list with a single identifier
+parameterSingleton
+  = identifier:identifier {
+      return annotate(
+        [annotate([ops.literal, identifier], location())],
+        location()
+      );
+    }
+
 // Function arguments in parentheses
 parenthesesArguments "function arguments in parentheses"
   = "(" __ list:list? __ expectClosingParenthesis {
@@ -565,7 +573,10 @@ shiftOperator
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
   = "=" !"=" __ definition:implicitParenthesesCallExpression {
-      const lambdaParameters = annotate(["_"], location());
+      const lambdaParameters = annotate(
+        [annotate([ops.literal, "_"], location())],
+        location()
+      );
       return annotate([ops.lambda, lambdaParameters, definition], location());
     }
   / implicitParenthesesCallExpression
@@ -612,7 +623,10 @@ stringLiteral "string"
 // literal, but can contain backticks at the top level.
 templateDocument "template"
   = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
-      const lambdaParameters = annotate(["_"], location());
+      const lambdaParameters = annotate(
+        [annotate([ops.literal, "_"], location())],
+        location()
+      );
       return annotate(
         [ops.lambda, lambdaParameters, makeTemplate(ops.templateIndent, head, tail, location())],
         location()

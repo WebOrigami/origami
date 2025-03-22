@@ -64,12 +64,16 @@ describe("Origami parser", () => {
     ]);
     assertParse("arrowFunction", "x => y", [
       ops.lambda,
-      ["x"],
+      [[ops.literal, "x"]],
       [ops.scope, "y"],
     ]);
     assertParse("arrowFunction", "(a, b, c) ⇒ fn(a, b, c)", [
       ops.lambda,
-      ["a", "b", "c"],
+      [
+        [ops.literal, "a"],
+        [ops.literal, "b"],
+        [ops.literal, "c"],
+      ],
       [
         [ops.builtin, "fn"],
         [ops.scope, "a"],
@@ -79,10 +83,10 @@ describe("Origami parser", () => {
     ]);
     assertParse("arrowFunction", "a => b => fn(a, b)", [
       ops.lambda,
-      ["a"],
+      [[ops.literal, "a"]],
       [
         ops.lambda,
-        ["b"],
+        [[ops.literal, "b"]],
         [
           [ops.builtin, "fn"],
           [ops.scope, "a"],
@@ -259,7 +263,7 @@ describe("Origami parser", () => {
     assertParse("conditionalExpression", "false ? =1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
-      [ops.lambda, [], [ops.lambda, ["_"], [ops.literal, "1"]]],
+      [ops.lambda, [], [ops.lambda, [[ops.literal, "_"]], [ops.literal, "1"]]],
       [ops.literal, "0"],
     ]);
   });
@@ -401,7 +405,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("expression", "fn =`x`", [
       [ops.builtin, "fn"],
-      [ops.lambda, ["_"], [ops.template, [ops.literal, ["x"]]]],
+      [ops.lambda, [[ops.literal, "_"]], [ops.template, [ops.literal, ["x"]]]],
     ]);
     assertParse("expression", "copy app.js(formulas), files:snapshot", [
       [ops.builtin, "copy"],
@@ -418,7 +422,7 @@ describe("Origami parser", () => {
       [ops.builtin, "map"],
       [
         ops.lambda,
-        ["_"],
+        [[ops.literal, "_"]],
         [
           ops.template,
           [ops.literal, ["<li>", "</li>"]],
@@ -438,7 +442,10 @@ describe("Origami parser", () => {
     ]);
     assertParse("expression", "(post, slug) => fn.js(post, slug)", [
       ops.lambda,
-      ["post", "slug"],
+      [
+        [ops.literal, "post"],
+        [ops.literal, "slug"],
+      ],
       [
         [ops.scope, "fn.js"],
         [ops.scope, "post"],
@@ -730,7 +737,7 @@ describe("Origami parser", () => {
     assertParse("objectEntry", "a: a", ["a", [ops.inherited, "a"]]);
     assertParse("objectEntry", "a: (a) => a", [
       "a",
-      [ops.lambda, ["a"], [ops.scope, "a"]],
+      [ops.lambda, [[ops.literal, "a"]], [ops.scope, "a"]],
     ]);
     assertParse("objectEntry", "posts/: map(posts, post.ori)", [
       "posts/",
@@ -955,12 +962,12 @@ describe("Origami parser", () => {
   test("shorthandFunction", () => {
     assertParse("shorthandFunction", "=message", [
       ops.lambda,
-      ["_"],
+      [[ops.literal, "_"]],
       [undetermined, "message"],
     ]);
     assertParse("shorthandFunction", "=`Hello, ${name}.`", [
       ops.lambda,
-      ["_"],
+      [[ops.literal, "_"]],
       [
         ops.template,
         [ops.literal, ["Hello, ", "."]],
@@ -969,7 +976,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("shorthandFunction", "=indent`hello`", [
       ops.lambda,
-      ["_"],
+      [[ops.literal, "_"]],
       [
         [ops.builtin, "indent"],
         [ops.literal, ["hello"]],
@@ -1003,7 +1010,7 @@ describe("Origami parser", () => {
   test("templateDocument", () => {
     assertParse("templateDocument", "hello${foo}world", [
       ops.lambda,
-      ["_"],
+      [[ops.literal, "_"]],
       [
         ops.templateIndent,
         [ops.literal, ["hello", "world"]],
@@ -1012,7 +1019,7 @@ describe("Origami parser", () => {
     ]);
     assertParse("templateDocument", "Documents can contain ` backticks", [
       ops.lambda,
-      ["_"],
+      [[ops.literal, "_"]],
       [
         ops.templateIndent,
         [ops.literal, ["Documents can contain ` backticks"]],
@@ -1045,7 +1052,7 @@ describe("Origami parser", () => {
           [ops.scope, "people"],
           [
             ops.lambda,
-            ["_"],
+            [[ops.literal, "_"]],
             [
               ops.template,
               [ops.literal, ["", ""]],
