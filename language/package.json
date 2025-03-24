@@ -6,7 +6,7 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "22.13.11",
+    "@types/node": "22.13.13",
     "peggy": "4.2.0.",
     "typescript": "5.8.2",
     "yaml": "2.7.0"
