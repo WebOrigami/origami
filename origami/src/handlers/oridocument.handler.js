@@ -77,7 +77,7 @@ export default {
 
     // Compile the source as an Origami template document
     const scopeCaching = frontSource ? false : true;
-    const defineTemplateFn = compile.templateDocument(bodySource, {
+    const defineTemplateFn = compile.templateBody(bodySource, {
       scopeCaching,
     });
 

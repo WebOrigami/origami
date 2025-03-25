@@ -619,10 +619,10 @@ stringLiteral "string"
   / singleQuoteString
   / guillemetString
 
-// A top-level document defining a template. This is the same as a template
-// literal, but can contain backticks at the top level.
-templateDocument "template"
-  = head:templateDocumentText tail:(templateSubstitution templateDocumentText)* {
+// The body of a template document is a kind of template literal that can
+// contain backticks at the top level.
+templateBody "template"
+  = head:templateBodyText tail:(templateSubstitution templateBodyText)* {
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
         location()
@@ -633,12 +633,12 @@ templateDocument "template"
       );
     }
 
-// Template documents can contain backticks at the top level.
-templateDocumentChar
+// Template document bodies can contain backticks at the top level
+templateBodyChar
   = !("${") @textChar
 
-templateDocumentText "template text"
-  = chars:templateDocumentChar* {
+templateBodyText "template text"
+  = chars:templateBodyChar* {
       return annotate([ops.literal, chars.join("")], location());
     }
 

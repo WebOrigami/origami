@@ -49,8 +49,8 @@ describe("compile", () => {
     assert.deepEqual(await object.a.b, "Alice");
   });
 
-  test("templateDocument", async () => {
-    const defineTemplateFn = compile.templateDocument(
+  test("templateBody", async () => {
+    const defineTemplateFn = compile.templateBody(
       "Documents can contain ` backticks"
     );
     const templateFn = await defineTemplateFn.call(null);
