@@ -4,7 +4,7 @@ import assert from "node:assert";
 export function assertCodeEqual(actual, expected) {
   const actualStripped = stripCodeLocations(actual);
   const expectedStripped = stripCodeLocations(expected);
-  assert.deepEqual(actualStripped, expectedStripped);
+  assert.deepStrictEqual(actualStripped, expectedStripped);
 }
 
 /**

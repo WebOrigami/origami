@@ -19,6 +19,7 @@
 import * as ops from "../runtime/ops.js";
 import {
   annotate,
+  applyMacro,
   downgradeReference,
   makeArray,
   makeBinaryOperation,
@@ -659,7 +660,7 @@ function peg$parse(input, options) {
       return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f81 = function(front, body) {
-      return annotate(body, location());
+      return annotate(applyMacro(front, "@template", body), location());
     };
   var peg$f82 = function(body) {
       return annotate(body, location());
@@ -2335,7 +2336,7 @@ function peg$parse(input, options) {
         s2 = peg$FAILED;
       }
       if (s2 !== peg$FAILED) {
-        s3 = peg$parsecommaExpression();
+        s3 = peg$parseexpression();
         if (s3 !== peg$FAILED) {
           s4 = peg$parsefrontDelimiter();
           if (s4 !== peg$FAILED) {

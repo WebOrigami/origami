@@ -31,6 +31,28 @@ export function annotate(code, location) {
 }
 
 /**
+ * In the given code, replace all scope refernces to the given name with the
+ * given macro code.
+ *
+ * @param {AnnotatedCode} code
+ * @param {string} name
+ * @param {AnnotatedCode} macro
+ */
+export function applyMacro(code, name, macro) {
+  if (!(code instanceof Array)) {
+    return code;
+  }
+
+  const [fn, ...args] = code;
+  if (fn === ops.scope && args[0] === name) {
+    return macro;
+  }
+
+  const applied = code.map((child) => applyMacro(child, name, macro));
+  return annotate(applied, code.location);
+}
+
+/**
  * The indicated code is being used to define a property named by the given key.
  * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
  * infinite recursion.

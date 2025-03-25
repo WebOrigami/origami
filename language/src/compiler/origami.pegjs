@@ -14,6 +14,7 @@
 import * as ops from "../runtime/ops.js";
 import {
   annotate,
+  applyMacro,
   downgradeReference,
   makeArray,
   makeBinaryOperation,
@@ -249,7 +250,7 @@ frontMatterExpression
   // Call helper to detect Origami front matter
   = frontDelimiter &{
     return isOrigamiFrontMatter(input.slice(location().end.offset))
-  } @commaExpression frontDelimiter
+  } @expression frontDelimiter
 
 // Presumed YAML front matter; not parsed but consumed
 frontMatterYaml
@@ -662,7 +663,7 @@ templateBodyText "template text"
 
 templateDocument "template document"
   = front:frontMatterExpression __ body:templateBody {
-      return annotate(body, location());
+      return annotate(applyMacro(front, "@template", body), location());
     }
   / frontMatterYaml? body:templateBody {
       return annotate(body, location());

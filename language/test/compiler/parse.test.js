@@ -251,20 +251,20 @@ describe("Origami parser", () => {
     assertParse("conditionalExpression", "true ? 1 : 0", [
       ops.conditional,
       [ops.scope, "true"],
-      [ops.literal, "1"],
-      [ops.literal, "0"],
+      [ops.literal, 1],
+      [ops.literal, 0],
     ]);
     assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
-      [ops.lambda, [], [ops.lambda, [], [ops.literal, "1"]]],
-      [ops.literal, "0"],
+      [ops.lambda, [], [ops.lambda, [], [ops.literal, 1]]],
+      [ops.literal, 0],
     ]);
     assertParse("conditionalExpression", "false ? =1 : 0", [
       ops.conditional,
       [ops.scope, "false"],
-      [ops.lambda, [], [ops.lambda, [[ops.literal, "_"]], [ops.literal, "1"]]],
-      [ops.literal, "0"],
+      [ops.lambda, [], [ops.lambda, [[ops.literal, "_"]], [ops.literal, 1]]],
+      [ops.literal, 0],
     ]);
   });
 
@@ -309,12 +309,10 @@ describe("Origami parser", () => {
   test("expression", () => {
     assertParse(
       "expression",
-      `
-        {
-          index.html = index.ori(teamData.yaml)
-          thumbnails = map(images, { value: thumbnail.js })
-        }
-      `,
+      `{
+        index.html = index.ori(teamData.yaml)
+        thumbnails = map(images, { value: thumbnail.js })
+      }`,
       [
         ops.object,
         [
@@ -1054,13 +1052,31 @@ Body text`,
     assertParse(
       "templateDocument",
       `---
-{ data: @template() }
+{
+  title: "Title"
+  @text: @template()
+}
 ---
-Body text`,
+<h1>$\{ title }</h1>
+`,
       [
-        ops.lambda,
-        [[ops.literal, "_"]],
-        [ops.templateIndent, [ops.literal, ["Body text"]]],
+        ops.object,
+        ["title", [ops.literal, "Title"]],
+        [
+          "@text",
+          [
+            [
+              ops.lambda,
+              [[ops.literal, "_"]],
+              [
+                ops.templateIndent,
+                [ops.literal, ["<h1>", "</h1>\n"]],
+                [ops.concat, [ops.scope, "title"]],
+              ],
+            ],
+            undefined,
+          ],
+        ],
       ]
     );
   });
@@ -1144,7 +1160,7 @@ function assertParse(startRule, source, expected, checkLocation = true) {
       code.location.start.offset,
       code.location.end.offset
     );
-    assert.equal(resultSource, source.trim());
+    assert.equal(resultSource, source);
   }
 
   assertCodeEqual(code, expected);
