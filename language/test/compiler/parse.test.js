@@ -1027,6 +1027,44 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("templateDocument with no front matter", () => {
+    assertParse("templateDocument", "Hello, world!", [
+      ops.lambda,
+      [[ops.literal, "_"]],
+      [ops.templateIndent, [ops.literal, ["Hello, world!"]]],
+    ]);
+  });
+
+  test("templateDocument with YAML front matter", () => {
+    assertParse(
+      "templateDocument",
+      `---
+title: Title goes here
+---
+Body text`,
+      [
+        ops.lambda,
+        [[ops.literal, "_"]],
+        [ops.templateIndent, [ops.literal, ["Body text"]]],
+      ]
+    );
+  });
+
+  test("templateDocument with Origami front matter", () => {
+    assertParse(
+      "templateDocument",
+      `---
+{ data: @template() }
+---
+Body text`,
+      [
+        ops.lambda,
+        [[ops.literal, "_"]],
+        [ops.templateIndent, [ops.literal, ["Body text"]]],
+      ]
+    );
+  });
+
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
       ops.template,

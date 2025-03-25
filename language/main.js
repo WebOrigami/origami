@@ -1,6 +1,7 @@
 export * from "./src/runtime/internal.js";
 
 export * as compile from "./src/compiler/compile.js";
+export { default as isOrigamiFrontMatter } from "./src/compiler/isOrigamiFrontMatter.js";
 export * from "./src/runtime/errors.js";
 export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";

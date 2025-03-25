@@ -26,6 +26,7 @@ import {
   makeTemplate,
   makeUnaryOperation
 } from "./parserHelpers.js";
+import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
 }}
 
@@ -238,6 +239,23 @@ floatLiteral "floating-point number"
   = digits? "." digits {
       return annotate([ops.literal, parseFloat(text())], location());
     }
+
+// Marker for the beginning or end of front matter
+frontDelimiter
+  = "---\n"
+
+// Origami front matter
+frontMatterExpression
+  // Call helper to detect Origami front matter
+  = frontDelimiter &{
+    return isOrigamiFrontMatter(input.slice(location().end.offset))
+  } @commaExpression frontDelimiter
+
+// Presumed YAML front matter; not parsed but consumed
+frontMatterYaml
+  = frontDelimiter ( !frontDelimiter . )* frontDelimiter {
+    return {};
+  }
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
@@ -640,6 +658,14 @@ templateBodyChar
 templateBodyText "template text"
   = chars:templateBodyChar* {
       return annotate([ops.literal, chars.join("")], location());
+    }
+
+templateDocument "template document"
+  = front:frontMatterExpression __ body:templateBody {
+      return annotate(body, location());
+    }
+  / frontMatterYaml? body:templateBody {
+      return annotate(body, location());
     }
 
 // A backtick-quoted template literal
