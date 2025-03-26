@@ -25,7 +25,8 @@ import {
   makeProperty,
   makeReference,
   makeTemplate,
-  makeUnaryOperation
+  makeUnaryOperation,
+  makeYamlObject
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -252,10 +253,9 @@ frontMatterExpression
     return isOrigamiFrontMatter(input.slice(location().end.offset))
   } @expression frontDelimiter
 
-// Presumed YAML front matter; not parsed but consumed
-frontMatterYaml
-  = frontDelimiter ( !frontDelimiter . )* frontDelimiter {
-    return {};
+frontMatterYaml "YAML front matter"
+  = frontDelimiter chars:( !frontDelimiter @. )* frontDelimiter {
+    return makeYamlObject(chars.join(""), location());
   }
 
 // An expression in parentheses: `(foo)`
@@ -665,8 +665,10 @@ templateDocument "template document"
   = front:frontMatterExpression __ body:templateBody {
       return annotate(applyMacro(front, "@template", body), location());
     }
-  / frontMatterYaml? body:templateBody {
-      return annotate(body, location());
+  / front:frontMatterYaml? body:templateBody {
+      return front
+        ? annotate([ops.documentObject, front, body], location())
+        : annotate(body, location());
     }
 
 // A backtick-quoted template literal

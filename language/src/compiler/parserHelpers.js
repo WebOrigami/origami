@@ -1,6 +1,12 @@
 import { trailingSlash } from "@weborigami/async-tree";
+import * as YAMLModule from "yaml";
 import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
+
+// The "yaml" package doesn't seem to provide a default export that the browser can
+// recognize, so we have to handle two ways to accommodate Node and the browser.
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 // Parser helpers
 
@@ -405,6 +411,17 @@ export function makeUnaryOperation(operator, value, location) {
     "~": ops.bitwiseNot,
   };
   return annotate([operators[operator], value], location);
+}
+
+/**
+ * Make an object from YAML front matter
+ *
+ * @param {string} text
+ * @param {CodeLocation} location
+ */
+export function makeYamlObject(text, location) {
+  const parsed = YAML.parse(text);
+  return annotate([ops.literal, parsed], location);
 }
 
 /**

@@ -113,6 +113,25 @@ export async function conditional(condition, truthy, falsy) {
   return value instanceof Function ? await value() : value;
 }
 
+/**
+ * Construct a document object by invoking the body function and adding the
+ * resulting text to the front data.
+ *
+ * @this {AsyncTree|null}
+ * @param {any} frontData
+ * @param {function} bodyFn
+ */
+export async function documentObject(frontData, bodyFn) {
+  const context = new ObjectTree(frontData);
+  context.parent = this;
+  const body = await bodyFn.call(context);
+  const object = {
+    ...frontData,
+    "@text": body,
+  };
+  return object;
+}
+
 export function division(a, b) {
   return a / b;
 }

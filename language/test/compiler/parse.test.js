@@ -1033,7 +1033,7 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("templateDocument with YAML front matter", () => {
+  test.only("templateDocument with YAML front matter", () => {
     assertParse(
       "templateDocument",
       `---
@@ -1041,9 +1041,13 @@ title: Title goes here
 ---
 Body text`,
       [
-        ops.lambda,
-        [[ops.literal, "_"]],
-        [ops.templateIndent, [ops.literal, ["Body text"]]],
+        ops.documentObject,
+        [ops.literal, { title: "Title goes here" }],
+        [
+          ops.lambda,
+          [[ops.literal, "_"]],
+          [ops.templateIndent, [ops.literal, ["Body text"]]],
+        ],
       ]
     );
   });

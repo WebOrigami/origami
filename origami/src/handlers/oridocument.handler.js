@@ -1,15 +1,8 @@
-import {
-  extension,
-  ObjectTree,
-  symbols,
-  trailingSlash,
-} from "@weborigami/async-tree";
+import { extension, trailingSlash } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import { parseYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
 import getParent from "./getParent.js";
-import parseFrontMatter from "./parseFrontMatter.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -36,21 +29,6 @@ export default {
       url = new URL(key, parentHref);
     }
 
-    // Determine the data (if present) and text content
-    let frontData = null;
-    let extendedParent = parent;
-    const parsed = parseFrontMatter(text);
-    const hasFrontYaml = parsed ? !parsed.isOrigami : false;
-    if (hasFrontYaml) {
-      // YAML front matter
-      frontData = parseYaml(parsed.frontText);
-      if (typeof frontData !== "object") {
-        throw new TypeError(`YAML or JSON front matter must be an object`);
-      }
-      extendedParent = new ObjectTree(frontData);
-      extendedParent.parent = parent;
-    }
-
     // Compile the text as an Origami template document
     const source = {
       name: key,
@@ -60,25 +38,7 @@ export default {
     const defineFn = compile.templateDocument(source);
 
     // Invoke the definition to get back the template function
-    const templateFn = await defineFn.call(extendedParent);
-
-    // Determine the form of the result
-    let result;
-    if (hasFrontYaml) {
-      // Result is a function that adds the front data to the template result
-      result = async (input) => {
-        const text = await templateFn.call(extendedParent, input);
-        const object = {
-          ...frontData,
-          "@text": text,
-        };
-        object[symbols.parent] = extendedParent;
-        return object;
-      };
-    } else {
-      // Return the resulting function itself
-      result = templateFn;
-    }
+    const result = await defineFn.call(parent);
 
     const resultExtension = key ? extension.extname(key) : null;
     if (resultExtension && Object.isExtensible(result)) {
