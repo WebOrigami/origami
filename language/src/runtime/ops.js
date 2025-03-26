@@ -114,23 +114,29 @@ export async function conditional(condition, truthy, falsy) {
 }
 
 /**
- * Construct a document object by invoking the body function and adding the
- * resulting text to the front data.
+ * Construct a document object by invoking the body code (a lambda) and adding
+ * the resulting text to the front data.
  *
  * @this {AsyncTree|null}
  * @param {any} frontData
- * @param {function} bodyFn
+ * @param {AnnotatedCode} bodyCode
  */
-export async function documentObject(frontData, bodyFn) {
+export async function documentFunction(frontData, bodyCode) {
   const context = new ObjectTree(frontData);
   context.parent = this;
-  const body = await bodyFn.call(context);
-  const object = {
-    ...frontData,
-    "@text": body,
+  const bodyFn = await evaluate.call(context, bodyCode);
+  const documentLambda = async (input) => {
+    const body = await bodyFn(input);
+    const object = {
+      ...frontData,
+      "@text": body,
+    };
+    return object;
   };
-  return object;
+  return documentLambda;
 }
+addOpLabel(documentFunction, "«ops.documentFunction»");
+documentFunction.unevaluatedArgs = true;
 
 export function division(a, b) {
   return a / b;
@@ -177,6 +183,7 @@ export async function external(path, code, cache) {
   return value;
 }
 addOpLabel(external, "«ops.external»");
+external.unevaluatedArgs = true;
 
 /**
  * This op is only used during parsing. It signals to ops.object that the
@@ -282,6 +289,7 @@ export function lambda(parameters, code) {
   return invoke;
 }
 addOpLabel(lambda, "«ops.lambda");
+lambda.unevaluatedArgs = true;
 
 export function lessThan(a, b) {
   return a < b;
@@ -303,6 +311,7 @@ export async function literal(value) {
   return value;
 }
 addOpLabel(literal, "«ops.literal»");
+literal.unevaluatedArgs = true;
 
 /**
  * Logical AND operator
@@ -396,6 +405,7 @@ export async function merge(...codes) {
   return mergeTrees.call(this, ...trees);
 }
 addOpLabel(merge, "«ops.merge»");
+merge.unevaluatedArgs = true;
 
 export function multiplication(a, b) {
   return a * b;
@@ -444,6 +454,7 @@ export async function object(...entries) {
   return expressionObject(entries, this);
 }
 addOpLabel(object, "«ops.object»");
+object.unevaluatedArgs = true;
 
 export function remainder(a, b) {
   return a % b;

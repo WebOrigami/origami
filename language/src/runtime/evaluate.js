@@ -1,6 +1,5 @@
 import { Tree, isUnpackable, scope } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
-import { ops } from "./internal.js";
 import { codeSymbol, scopeSymbol, sourceSymbol } from "./symbols.js";
 
 /**
@@ -20,14 +19,7 @@ export default async function evaluate(code) {
   }
 
   let evaluated;
-  const unevaluatedFns = [
-    ops.external,
-    ops.lambda,
-    ops.merge,
-    ops.object,
-    ops.literal,
-  ];
-  if (unevaluatedFns.includes(code[0])) {
+  if (code[0]?.unevaluatedArgs) {
     // Don't evaluate instructions, use as is.
     evaluated = code;
   } else {

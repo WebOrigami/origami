@@ -1041,7 +1041,7 @@ title: Title goes here
 ---
 Body text`,
       [
-        ops.documentObject,
+        ops.documentFunction,
         [ops.literal, { title: "Title goes here" }],
         [
           ops.lambda,
@@ -1061,7 +1061,7 @@ Body text`,
   @text: @template()
 }
 ---
-<h1>$\{ title }</h1>
+<h1>\${ title }</h1>
 `,
       [
         ops.object,

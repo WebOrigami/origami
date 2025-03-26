@@ -80,19 +80,24 @@ describe("ops", () => {
     assert.strictEqual(await ops.conditional(false, errorFn, trueFn), true);
   });
 
-  test("ops.documentObject", async () => {
+  test("ops.documentFunction", async () => {
     const code = createCode([
-      ops.documentObject,
+      ops.documentFunction,
       {
         a: 1,
       },
-      /** @this {ObjectTree} */
-      async function () {
-        const a = await this.get("a");
-        return `a = ${a}`;
-      },
+      [
+        ops.lambda,
+        [["_"]],
+        [
+          ops.template,
+          [ops.literal, ["a = ", ""]],
+          [ops.concat, [ops.scope, "a"]],
+        ],
+      ],
     ]);
-    const result = await evaluate.call(null, code);
+    const fn = await evaluate.call(null, code);
+    const result = await fn();
     assert.deepEqual(result, {
       a: 1,
       "@text": "a = 1",

@@ -113,7 +113,7 @@ export function maybeOrigamiSourceCode(text) {
 
 export async function scopeReferenceError(scope, key) {
   const messages = [
-    `"${key}" is not in scope.`,
+    `"${key}" is not in scope or is undefined.`,
     await formatScopeTypos(scope, key),
   ];
   const message = messages.join(" ");

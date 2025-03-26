@@ -28,11 +28,14 @@ describe("Origami document handler", () => {
   });
 
   test("YAML front matter is returned with @text", async () => {
+    const parent = new ObjectTree({
+      message: "Hello",
+    });
     const text = `---
 name: world
 ---
-Hello, \${ name }!`;
-    const fn = await oridocumentHandler.unpack(text);
+\${ message }, \${ name }!`;
+    const fn = await oridocumentHandler.unpack(text, { parent });
     const result = await fn();
     assert.deepEqual(result.name, "world");
     assert.equal(result["@text"], "Hello, world!");
