@@ -466,7 +466,7 @@ function peg$parse(input, options) {
       error("Expected an Origami expression");
     };
   var peg$f28 = function() {
-      error("Expected '---'");
+      error("Expected \"---\"");
     };
   var peg$f29 = function() {
       error("Expected closing guillemet");
@@ -5073,7 +5073,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e97); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parseexpression();
+      s2 = peg$parseexpectExpression();
       if (s2 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 125) {
           s3 = peg$c28;

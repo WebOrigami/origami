@@ -218,7 +218,7 @@ expectExpression
 expectFrontDelimiter
   = frontDelimiter
   / .? {
-      error("Expected '---'");
+      error("Expected \"---\"");
     }
 
 expectGuillemet
@@ -705,7 +705,7 @@ templateLiteralText
 
 // A substitution in a template literal: `${x}`
 templateSubstitution "template substitution"
-  = "${" expression:expression "}" {
+  = "${" expression:expectExpression "}" {
       return annotate(expression, location());
     }
 

@@ -305,8 +305,8 @@ describe("Origami parser", () => {
 (name) => foo)
 ---
 Body`,
-      "Expected an Origami expression",
-      { line: 2, column: 11 }
+      'Expected "---"',
+      { line: 2, column: 14 }
     );
   });
 
