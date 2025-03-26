@@ -23,7 +23,7 @@ export default {
     const parent = getParent(packed, options);
 
     // Unpack as a text document
-    const unpacked = toString(packed);
+    const text = toString(packed);
 
     // See if we can construct a URL to use in error messages
     const key = options.key;
@@ -37,77 +37,47 @@ export default {
     }
 
     // Determine the data (if present) and text content
-    let text;
     let frontData = null;
-    let frontSource = null;
-    let offset = 0;
     let extendedParent = parent;
-    const parsed = parseFrontMatter(unpacked);
-    if (!parsed) {
-      text = unpacked;
-    } else {
-      const { body, frontText, isOrigami } = parsed;
-      if (isOrigami) {
-        // Origami front matter
-        frontSource = { name: key, text: frontText, url };
-      } else {
-        // YAML front matter
-        frontData = parseYaml(frontText);
-        if (typeof frontData !== "object") {
-          throw new TypeError(`YAML or JSON front matter must be an object`);
-        }
-        extendedParent = new ObjectTree(frontData);
-        extendedParent.parent = parent;
+    const parsed = parseFrontMatter(text);
+    const hasFrontYaml = parsed ? !parsed.isOrigami : false;
+    if (hasFrontYaml) {
+      // YAML front matter
+      frontData = parseYaml(parsed.frontText);
+      if (typeof frontData !== "object") {
+        throw new TypeError(`YAML or JSON front matter must be an object`);
       }
-
-      // Determine how many lines the source code is offset by (if any) to
-      // account for front matter, plus 2 lines for `---` separators
-      offset = (frontText.match(/\r?\n/g) ?? []).length + 2;
-
-      text = body;
+      extendedParent = new ObjectTree(frontData);
+      extendedParent.parent = parent;
     }
 
-    // Construct an object to represent the source code
-    const bodySource = {
+    // Compile the text as an Origami template document
+    const source = {
       name: key,
-      offset,
       text,
       url,
     };
+    const defineFn = compile.templateDocument(source);
 
-    // Compile the source as an Origami template document
-    const scopeCaching = frontSource ? false : true;
-    const defineTemplateFn = compile.templateBody(bodySource, {
-      scopeCaching,
-    });
+    // Invoke the definition to get back the template function
+    const templateFn = await defineFn.call(extendedParent);
 
-    // Determine the result of the template
+    // Determine the form of the result
     let result;
-    if (frontSource) {
-      // Result is the evaluated front source
-      const frontFn = compile.expression(frontSource, {
-        macros: {
-          "@template": defineTemplateFn.code,
-        },
-      });
-      result = await frontFn.call(parent);
-    } else {
-      const templateFn = await defineTemplateFn.call(extendedParent);
-      if (frontData) {
-        // Result is a function that adds the front data to the template result
-        result = async (input) => {
-          const text = await templateFn.call(extendedParent, input);
-          const object = {
-            ...frontData,
-            "@text": text,
-          };
-          object[symbols.parent] = extendedParent;
-          return object;
+    if (hasFrontYaml) {
+      // Result is a function that adds the front data to the template result
+      result = async (input) => {
+        const text = await templateFn.call(extendedParent, input);
+        const object = {
+          ...frontData,
+          "@text": text,
         };
-      } else {
-        // Result is a function that calls the body template
-        result = templateFn;
-      }
+        object[symbols.parent] = extendedParent;
+        return object;
+      };
+    } else {
+      // Return the resulting function itself
+      result = templateFn;
     }
 
     const resultExtension = key ? extension.extname(key) : null;

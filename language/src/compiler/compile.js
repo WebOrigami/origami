@@ -31,9 +31,9 @@ export function program(source, options = {}) {
   });
 }
 
-export function templateBody(source, options = {}) {
+export function templateDocument(source, options = {}) {
   return compile(source, {
     ...options,
-    startRule: "templateBody",
+    startRule: "templateDocument",
   });
 }
