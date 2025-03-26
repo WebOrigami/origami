@@ -286,7 +286,7 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("errors for missing pieces", () => {
+  test("error thrown for missing token", () => {
     assertThrows("arrowFunction", "(a) => ", "Expected an expression");
     assertThrows("arrowFunction", "a ⇒ ", "Expected an expression");
     assertThrows("callExpression", "fn(a", "Expected right parenthesis");
@@ -296,6 +296,31 @@ describe("Origami parser", () => {
     assertThrows("objectProperty", "a:", "Expected an expression");
     assertThrows("singleQuoteString", "'foo", "Expected closing quote");
     assertThrows("templateLiteral", "`foo", "Expected closing backtick");
+  });
+
+  test.only("error thrown for invalid Origami front matter expression", () => {
+    assertThrows(
+      "templateDocument",
+      `---
+(name) => foo)
+---
+Body`,
+      "Expected an Origami expression",
+      { line: 2, column: 11 }
+    );
+  });
+
+  test("error thrown for invalid YAML front matter", () => {
+    assertThrows(
+      "templateDocument",
+      `---
+a : 1
+}
+---
+Body`,
+      "Unexpected flow-map-end token",
+      { line: 3, column: 1 }
+    );
   });
 
   test("exponentiationExpression", () => {
@@ -1033,7 +1058,7 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test.only("templateDocument with YAML front matter", () => {
+  test("templateDocument with YAML front matter", () => {
     assertParse(
       "templateDocument",
       `---
@@ -1179,7 +1204,7 @@ function assertCodeLocations(code) {
   }
 }
 
-function assertThrows(startRule, source, message) {
+function assertThrows(startRule, source, message, position) {
   try {
     parse(source, {
       grammarSource: { text: source },
@@ -1190,6 +1215,10 @@ function assertThrows(startRule, source, message) {
       error.message.includes(message),
       `Error message incorrect:\n  expected: "${message}"\n  actual: "${error.message}"`
     );
+    if (position) {
+      assert.equal(error.location.start.line, position.line);
+      assert.equal(error.location.start.column, position.column);
+    }
     return;
   }
   assert.fail(`Expected error: ${message}`);

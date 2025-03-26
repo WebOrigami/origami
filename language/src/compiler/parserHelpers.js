@@ -420,7 +420,49 @@ export function makeUnaryOperation(operator, value, location) {
  * @param {CodeLocation} location
  */
 export function makeYamlObject(text, location) {
-  const parsed = YAML.parse(text);
+  // Account for the "---" delimiter at the beginning of the YAML front matter
+  const yamlLineDelta = 1;
+  const yamlOffsetDelta = 4; // 3 dashes + 1 newline
+
+  let parsed;
+  try {
+    parsed = YAML.parse(text);
+  } catch (/** @type {any} */ yamlError) {
+    // Convert YAML error to a SyntaxError
+
+    let { message } = yamlError;
+    // Remove the line number and column if present
+    const lineNumberRegex = /( at line )(\d+)(,)/;
+    const lineNumberMatch = message.match(lineNumberRegex);
+    if (lineNumberMatch) {
+      message = message.slice(0, lineNumberMatch.index);
+    }
+
+    /** @type {any} */
+    const error = new SyntaxError(message);
+    error.location = {
+      end: {
+        column: yamlError.linePos[1].col,
+        line: yamlError.linePos[1].line + yamlLineDelta,
+        offset: yamlError.pos[1] + yamlOffsetDelta,
+      },
+      source: location.source,
+      start: {
+        column: yamlError.linePos[0].col,
+        line: yamlError.linePos[0].line + yamlLineDelta,
+        offset: yamlError.pos[0] + yamlOffsetDelta,
+      },
+    };
+    throw error;
+  }
+
+  if (!(parsed instanceof Object)) {
+    /** @type {any} */
+    const error = new SyntaxError("YAML front matter must be an object.");
+    error.location = location;
+    throw error;
+  }
+
   return annotate([ops.literal, parsed], location);
 }
 

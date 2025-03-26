@@ -209,6 +209,18 @@ expectDoubleQuote
       error("Expected closing quote");
     }
 
+expectExpression
+  = expression
+  / .? {
+      error("Expected an Origami expression");
+    }
+
+expectFrontDelimiter
+  = frontDelimiter
+  / .? {
+      error("Expected '---'");
+    }
+
 expectGuillemet
   = '»'
   / .? {
@@ -248,14 +260,19 @@ frontDelimiter
 
 // Origami front matter
 frontMatterExpression
-  // Call helper to detect Origami front matter
+  // If we detect Origami front matter, we need to see an expression
   = frontDelimiter &{
     return isOrigamiFrontMatter(input.slice(location().end.offset))
-  } @expression frontDelimiter
+  } @expectExpression expectFrontDelimiter
+
+frontMatterText
+  = chars:( !frontDelimiter @. )* {
+    return chars.join("");
+  }
 
 frontMatterYaml "YAML front matter"
-  = frontDelimiter chars:( !frontDelimiter @. )* frontDelimiter {
-    return makeYamlObject(chars.join(""), location());
+  = frontDelimiter yaml:frontMatterText frontDelimiter {
+    return makeYamlObject(yaml, location());
   }
 
 // An expression in parentheses: `(foo)`
@@ -667,7 +684,7 @@ templateDocument "template document"
     }
   / front:frontMatterYaml? body:templateBody {
       return front
-        ? annotate([ops.documentObject, front, body], location())
+        ? annotate([ops.documentFunction, front, body], location())
         : annotate(body, location());
     }
 

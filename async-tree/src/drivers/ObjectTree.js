@@ -16,6 +16,11 @@ export default class ObjectTree {
    * @param {any} object The object/array to wrap.
    */
   constructor(object) {
+    if (!(object instanceof Object)) {
+      throw new TypeError(
+        `${this.constructor.name}: Expected an object or array.`
+      );
+    }
     this.object = object;
     this.parent = object[symbols.parent] ?? null;
   }
