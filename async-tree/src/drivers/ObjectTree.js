@@ -13,10 +13,12 @@ export default class ObjectTree {
   /**
    * Create a tree wrapping a given plain object or array.
    *
-   * @param {any} object The object/array to wrap.
+   * @param {object|any[]} object The object/array to wrap.
    */
   constructor(object) {
-    if (!(object instanceof Object)) {
+    // Note: we use `typeof` here instead of `instanceof Object` to allow for
+    // objects such as Node's `Module` class for representing an ES module.
+    if (typeof object !== "object" || object === null) {
       throw new TypeError(
         `${this.constructor.name}: Expected an object or array.`
       );
