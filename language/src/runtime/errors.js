@@ -5,6 +5,8 @@ import {
   trailingSlash,
   TraverseError,
 } from "@weborigami/async-tree";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
 import { typos } from "./typos.js";
 
@@ -85,9 +87,24 @@ export function formatError(error) {
     if (!fragmentInMessage) {
       message += `\nevaluating: ${fragment}`;
     }
+
     if (typeof source === "object" && source.url) {
-      message += `\n    at ${source.url.href}:${line}:${start.column}`;
+      const { url } = source;
+      let fileRef;
+      // If URL is a file: URL, change to a relative path
+      if (url.protocol === "file:") {
+        fileRef = fileURLToPath(url);
+        const relativePath = path.relative(process.cwd(), fileRef);
+        if (!relativePath.startsWith("..")) {
+          fileRef = relativePath;
+        }
+      } else {
+        // Not a file: URL, use as is
+        fileRef = url.href;
+      }
+      message += `\n    at ${fileRef}:${line}:${start.column}`;
     } else if (source.text.includes("\n")) {
+      // Don't know the URL, but has multiple lines so add line number
       message += `\n    at line ${line}, column ${start.column}`;
     }
   }
