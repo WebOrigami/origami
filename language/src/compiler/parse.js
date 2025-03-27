@@ -675,7 +675,7 @@ function peg$parse(input, options) {
     };
   var peg$f85 = function(front, body) {
       return front
-        ? annotate([ops.documentFunction, front, body], location())
+        ? annotate([ops.document, front, body], location())
         : annotate(body, location());
     };
   var peg$f86 = function(head, tail) {

@@ -43,14 +43,18 @@ export default async function inline(input) {
   }
 
   // @ts-ignore
-  const templateFn = await oridocumentHandler.unpack(input, {
+  let result = await oridocumentHandler.unpack(input, {
     parent: extendedParent,
   });
 
-  const inputData = inputIsDocument ? input : null;
-  const templateResult = await templateFn(inputData);
+  if (result instanceof Function) {
+    const text = await result();
+    if (inputIsDocument) {
+      return documentObject(text, input);
+    } else {
+      return text;
+    }
+  }
 
-  return inputIsDocument
-    ? documentObject(templateResult, inputData)
-    : templateResult;
+  return result;
 }

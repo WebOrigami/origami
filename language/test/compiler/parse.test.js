@@ -1066,7 +1066,7 @@ title: Title goes here
 ---
 Body text`,
       [
-        ops.documentFunction,
+        ops.document,
         [ops.literal, { title: "Title goes here" }],
         [
           ops.lambda,

@@ -15,15 +15,28 @@ describe("inline", () => {
   });
 
   test("can reference its own front matter", async () => {
-    const document = `---
-name: Carol
+    const text = `---
+name: Bob
 ---
 Hello, \${ name }!`;
     /** @type {any} */
+    const inlined = await inline.call(null, text);
+    assert.deepEqual(inlined, {
+      "@text": `Hello, Bob!`,
+      name: "Bob",
+    });
+  });
+
+  test("document reference its own properties", async () => {
+    const document = {
+      name: "Carol",
+      "@text": `Hello, \${ name }!`,
+    };
+    /** @type {any} */
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {
-      "@text": `Hello, Carol!`,
       name: "Carol",
+      "@text": `Hello, Carol!`,
     });
   });
 });

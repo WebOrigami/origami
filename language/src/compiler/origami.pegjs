@@ -684,7 +684,7 @@ templateDocument "template document"
     }
   / front:frontMatterYaml? body:templateBody {
       return front
-        ? annotate([ops.documentFunction, front, body], location())
+        ? annotate([ops.document, front, body], location())
         : annotate(body, location());
     }
 

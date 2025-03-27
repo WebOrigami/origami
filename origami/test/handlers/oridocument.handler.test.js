@@ -35,8 +35,7 @@ describe("Origami document handler", () => {
 name: world
 ---
 \${ message }, \${ name }!`;
-    const fn = await oridocumentHandler.unpack(text, { parent });
-    const result = await fn();
+    const result = await oridocumentHandler.unpack(text, { parent });
     assert.deepEqual(result.name, "world");
     assert.equal(result["@text"], "Hello, world!");
   });

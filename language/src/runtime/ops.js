@@ -10,6 +10,7 @@ import {
   Tree,
   isUnpackable,
   scope as scopeFn,
+  symbols,
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
@@ -121,22 +122,20 @@ export async function conditional(condition, truthy, falsy) {
  * @param {any} frontData
  * @param {AnnotatedCode} bodyCode
  */
-export async function documentFunction(frontData, bodyCode) {
+export async function document(frontData, bodyCode) {
   const context = new ObjectTree(frontData);
   context.parent = this;
   const bodyFn = await evaluate.call(context, bodyCode);
-  const documentLambda = async (input) => {
-    const body = await bodyFn(input);
-    const object = {
-      ...frontData,
-      "@text": body,
-    };
-    return object;
+  const body = await bodyFn();
+  const object = {
+    ...frontData,
+    "@text": body,
   };
-  return documentLambda;
+  object[symbols.parent] = this;
+  return object;
 }
-addOpLabel(documentFunction, "«ops.documentFunction»");
-documentFunction.unevaluatedArgs = true;
+addOpLabel(document, "«ops.document");
+document.unevaluatedArgs = true;
 
 export function division(a, b) {
   return a / b;

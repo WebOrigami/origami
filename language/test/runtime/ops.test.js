@@ -82,7 +82,7 @@ describe("ops", () => {
 
   test("ops.documentFunction", async () => {
     const code = createCode([
-      ops.documentFunction,
+      ops.document,
       {
         a: 1,
       },
@@ -96,8 +96,7 @@ describe("ops", () => {
         ],
       ],
     ]);
-    const fn = await evaluate.call(null, code);
-    const result = await fn();
+    const result = await evaluate.call(null, code);
     assert.deepEqual(result, {
       a: 1,
       "@text": "a = 1",
