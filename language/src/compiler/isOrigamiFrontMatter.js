@@ -2,8 +2,8 @@
  * Return true if the given text is Origami front matter
  *
  * Our heurstic is to see skip any initial alphanumeric or underscore
- * characters, then see if the next character is a parenthesis, dot, slash, or
- * curly brace. If so, we assume this is an Origami expression.
+ * characters, then see if the next character is a parenthesis, dot, slash,
+ * curly brace, or equals sign. If so, we assume this is an Origami expression.
  *
  * The goal is to identify Origami front matter like:
  *
@@ -22,5 +22,5 @@
  * @param {string} text
  */
 export default function isOrigamiFrontMatter(text) {
-  return /^[ \t\r\n]*[A-Za-z0-9_]*[\(\.\/\{]/.test(text);
+  return /^[ \t\r\n]*[A-Za-z0-9_]*[\(\.\/\{=]/.test(text);
 }
