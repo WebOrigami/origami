@@ -1,6 +1,9 @@
 import * as trailingSlash from "../trailingSlash.js";
 
-const treeToCaches = new Map();
+// For each (tree, keyFn) combination, we maintain a cache mapping a source key to
+// a result key and vice versa. We have to maintain three levels of Map: tree ->
+// keyFn -> sourceKey -> resultKey. This is the top level map.
+const treeMap = new Map();
 
 /**
  * Given a key function, return a new key function and inverse key function that
@@ -19,7 +22,7 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
   return {
     async inverseKey(resultKey, tree) {
       const { resultKeyToSourceKey, sourceKeyToResultKey } =
-        getKeyMapsForTree(tree);
+        getKeyMapsForTreeKeyFn(tree, keyFn);
 
       const cachedSourceKey = searchKeyMap(resultKeyToSourceKey, resultKey);
       if (cachedSourceKey !== undefined) {
@@ -57,7 +60,7 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
     },
 
     async key(sourceKey, tree) {
-      const { sourceKeyToResultKey } = getKeyMapsForTree(tree);
+      const { sourceKeyToResultKey } = getKeyMapsForTreeKeyFn(tree, keyFn);
 
       const cachedResultKey = searchKeyMap(sourceKeyToResultKey, sourceKey);
       if (cachedResultKey !== undefined) {
@@ -76,8 +79,10 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
 }
 
 async function computeAndCacheResultKey(tree, keyFn, deep, sourceKey) {
-  const { resultKeyToSourceKey, sourceKeyToResultKey } =
-    getKeyMapsForTree(tree);
+  const { resultKeyToSourceKey, sourceKeyToResultKey } = getKeyMapsForTreeKeyFn(
+    tree,
+    keyFn
+  );
 
   const resultKey =
     deep && trailingSlash.has(sourceKey)
@@ -90,17 +95,26 @@ async function computeAndCacheResultKey(tree, keyFn, deep, sourceKey) {
   return resultKey;
 }
 
-// Maintain key->inverseKey and inverseKey->key mappings for each tree. These
-// store subtree keys in either direction with a trailing slash.
-function getKeyMapsForTree(tree) {
-  let keyMaps = treeToCaches.get(tree);
+// Maintain key->inverseKey and inverseKey->key mappings for each (tree, keyFn)
+// pair. These store subtree keys in either direction with a trailing slash.
+function getKeyMapsForTreeKeyFn(tree, keyFn) {
+  // Check if we already have a cache for this tree
+  let keyFnMap = treeMap.get(tree);
+  if (!keyFnMap) {
+    keyFnMap = new Map();
+    treeMap.set(tree, keyFnMap);
+  }
+
+  // Check if we have a cache for this keyFn
+  let keyMaps = keyFnMap.get(keyFn);
   if (!keyMaps) {
     keyMaps = {
       resultKeyToSourceKey: new Map(),
       sourceKeyToResultKey: new Map(),
     };
-    treeToCaches.set(tree, keyMaps);
+    keyFnMap.set(keyFn, keyMaps);
   }
+
   return keyMaps;
 }
 
