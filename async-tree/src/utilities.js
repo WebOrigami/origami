@@ -8,6 +8,30 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 
 /**
+ * If the given object isn't treelike, throw an exception.
+ *
+ * @param {any} object
+ * @param {string} operation
+ * @param {number} [position]
+ */
+export function assertIsTreelike(object, operation, position = 0) {
+  let message;
+  if (!object) {
+    message = `${operation}: The tree argument wasn't defined.`;
+  } else if (object instanceof Promise) {
+    // A common mistake
+    message = `${operation}: The tree argument was a Promise. Did you mean to use await?`;
+  } else if (!Tree.isTreelike) {
+    message = `${operation}: The tree argument wasn't a treelike object.`;
+  }
+  if (message) {
+    const error = new TypeError(message);
+    /** @type {any} */ (error).position = position;
+    throw error;
+  }
+}
+
+/**
  * Return the value as an object. If the value is already an object it will be
  * returned as is. If the value is a primitive, it will be wrapped in an object:
  * a string will be wrapped in a String object, a number will be wrapped in a

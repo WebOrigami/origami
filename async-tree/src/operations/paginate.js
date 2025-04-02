@@ -1,5 +1,5 @@
 import { Tree } from "../internal.js";
-import * as symbols from "../symbols.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Return a new grouping of the treelike's values into chunks of the specified
@@ -12,7 +12,9 @@ import * as symbols from "../symbols.js";
  * @param {number} [size=10]
  */
 export default async function paginate(treelike, size = 10) {
+  assertIsTreelike(treelike, "paginate");
   const tree = Tree.from(treelike);
+
   const keys = Array.from(await tree.keys());
   const pageCount = Math.ceil(keys.length / size);
 
@@ -50,6 +52,5 @@ export default async function paginate(treelike, size = 10) {
     },
   };
 
-  paginated[symbols.parent] = this;
   return paginated;
 }

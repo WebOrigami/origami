@@ -1,5 +1,6 @@
 import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Transform the keys and/or values of a tree.
@@ -19,11 +20,7 @@ export default function map(treelike, options = {}) {
   let needsSourceValue;
   let valueFn;
 
-  if (!treelike) {
-    const error = new TypeError(`map: The tree to map isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
+  assertIsTreelike(treelike, "map");
 
   if (typeof options === "function") {
     // Take the single function argument as the valueFn

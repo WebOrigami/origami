@@ -1,4 +1,4 @@
-import { trailingSlash, Tree } from "@weborigami/async-tree";
+import { assertIsTreelike, trailingSlash, Tree } from "@weborigami/async-tree";
 
 /**
  * Given trees `a` and `b`, return a filtered version of `a` where only the keys
@@ -13,6 +13,8 @@ import { trailingSlash, Tree } from "@weborigami/async-tree";
  * @returns {AsyncTree}
  */
 export default function filter(a, b) {
+  assertIsTreelike(a, "filter", 0);
+  assertIsTreelike(b, "filter", 1);
   a = Tree.from(a);
   b = Tree.from(b, { deep: true });
 

@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -11,13 +12,9 @@ import { Tree } from "../internal.js";
  * @param {number} count
  */
 export default async function deepTake(treelike, count) {
-  if (!treelike) {
-    const error = new TypeError(`deepTake: The tree isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "deepTake");
   const tree = await Tree.from(treelike, { deep: true });
+
   const { values } = await traverse(tree, count);
   return Tree.from(values, { deep: true });
 }

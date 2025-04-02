@@ -1,4 +1,5 @@
 import { ObjectTree, Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Given a function that returns a grouping key for a value, returns a transform
@@ -8,12 +9,7 @@ import { ObjectTree, Tree } from "../internal.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function group(treelike, groupKeyFn) {
-  if (!treelike) {
-    const error = new TypeError(`groupBy: The tree to group isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "group");
   const tree = Tree.from(treelike);
 
   const keys = Array.from(await tree.keys());

@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
@@ -11,12 +12,7 @@ import { Tree } from "../internal.js";
  * @returns {AsyncTree & {trees: AsyncTree[]}}
  */
 export default function scope(treelike) {
-  if (!treelike) {
-    const error = new TypeError(`scope: The tree isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "scope");
   const tree = Tree.from(treelike);
 
   return {

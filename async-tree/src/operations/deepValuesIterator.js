@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Return an iterator that yields all values in a tree, including nested trees.
@@ -14,13 +15,9 @@ export default async function* deepValuesIterator(
   treelike,
   options = { expand: false }
 ) {
-  if (!treelike) {
-    const error = new TypeError(`deepValues: The tree isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "deepValuesIterator");
   const tree = Tree.from(treelike, { deep: true });
+
   for (const key of await tree.keys()) {
     let value = await tree.get(key);
 

@@ -1,4 +1,5 @@
 import { ObjectTree, Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Caches values from a source tree in a second cache tree. Cache source tree
@@ -15,11 +16,7 @@ import { ObjectTree, Tree } from "../internal.js";
  * @returns {AsyncTree & { description: string }}
  */
 export default function treeCache(sourceTreelike, cacheTreelike) {
-  if (!sourceTreelike) {
-    const error = new TypeError(`cache: The source tree isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
+  assertIsTreelike(sourceTreelike, "cache");
 
   const source = Tree.from(sourceTreelike);
 

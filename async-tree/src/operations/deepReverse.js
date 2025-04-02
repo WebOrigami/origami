@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Reverse the order of keys at all levels of the tree.
@@ -10,13 +11,7 @@ import { Tree } from "../internal.js";
  * @returns {AsyncTree}
  */
 export default function deepReverse(treelike) {
-  if (!treelike) {
-    const error = new TypeError(
-      `deepReverse: The tree to reverse isn't defined.`
-    );
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
+  assertIsTreelike(treelike, "deepReverse");
 
   const tree = Tree.from(treelike, { deep: true });
   return {

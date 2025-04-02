@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Return a new tree with the original's keys sorted. A comparison function can
@@ -14,16 +15,12 @@ import { Tree } from "../internal.js";
  * @param {SortOptions} [options]
  */
 export default function sort(treelike, options) {
-  if (!treelike) {
-    const error = new TypeError(`sort: The tree to sort isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
+  assertIsTreelike(treelike, "sort");
+  const tree = Tree.from(treelike);
 
   const sortKey = options?.sortKey;
   let compare = options?.compare;
 
-  const tree = Tree.from(treelike);
   const transformed = Object.create(tree);
   transformed.keys = async () => {
     const keys = Array.from(await tree.keys());

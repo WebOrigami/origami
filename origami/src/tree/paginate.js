@@ -19,5 +19,7 @@ export default async function paginateBuiltin(treelike, size = 10) {
     treelike,
     "tree:paginate"
   );
-  return paginate(tree, size);
+  const paginated = await paginate(tree, size);
+  paginated.parent = this;
+  return paginated;
 }

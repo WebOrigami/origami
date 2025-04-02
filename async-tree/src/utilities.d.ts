@@ -1,6 +1,7 @@
 import { AsyncTree } from "@weborigami/types";
 import { Packed, PlainObject, StringLike } from "../index.ts";
 
+export function assertIsTreelike(object: any, operation: string, position?: number): void;
 export function box(value: any): any;
 export function castArrayLike(keys: any[], values: any[]): any;
 export function getRealmObjectPrototype(object: any): any;

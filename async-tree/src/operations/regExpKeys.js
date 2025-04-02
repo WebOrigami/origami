@@ -1,5 +1,6 @@
 import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * A tree whose keys are strings interpreted as regular expressions.
@@ -12,15 +13,9 @@ import * as trailingSlash from "../trailingSlash.js";
  * @type {import("../../index.ts").TreeTransform}
  */
 export default async function regExpKeys(treelike) {
-  if (!treelike) {
-    const error = new TypeError(
-      `regExpKeys: The tree of regular expressions isn't defined.`
-    );
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "regExpKeys");
   const tree = Tree.from(treelike);
+
   const map = new Map();
 
   // We build the output tree first so that we can refer to it when setting

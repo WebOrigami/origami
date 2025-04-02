@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.
@@ -7,12 +8,7 @@ import { Tree } from "../internal.js";
  * @param {number} count
  */
 export default function take(treelike, count) {
-  if (!treelike) {
-    const error = new TypeError(`take: The tree to take from isn't defined.`);
-    /** @type {any} */ (error).position = 0;
-    throw error;
-  }
-
+  assertIsTreelike(treelike, "take");
   const tree = Tree.from(treelike);
 
   return {
