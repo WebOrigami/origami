@@ -1,7 +1,7 @@
-import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import paginate from "../../src/tree/paginate.js";
+import { Tree } from "../../src/internal.js";
+import paginate from "../../src/operations/paginate.js";
 
 describe("paginate", () => {
   test("divides tree keys into fixed-length chunks", async () => {
