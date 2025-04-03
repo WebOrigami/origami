@@ -1,14 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { ObjectTree, Tree } from "../../src/internal.js";
-import keyFunctionsForExtensions from "../../src/operations/keyFunctionsForExtensions.js";
+import extensionKeyFunctions from "../../src/operations/extensionKeyFunctions.js";
 import map from "../../src/operations/map.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
-    const { inverseKey, key } = keyFunctionsForExtensions({
-      sourceExtension: ".txt",
-    });
+    const { inverseKey, key } = extensionKeyFunctions(".txt");
     assert.equal(await inverseKey("file.txt"), "file.txt");
     assert.equal(await inverseKey("file.txt/"), "file.txt");
     assert.equal(await key("file.txt"), "file.txt");
@@ -18,10 +16,7 @@ describe("keyMapsForExtensions", () => {
   });
 
   test("returns key functions that can map extensions", async () => {
-    const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: ".json",
-      sourceExtension: ".md",
-    });
+    const { inverseKey, key } = extensionKeyFunctions(".md", ".json");
     assert.equal(await inverseKey("file.json"), "file.md");
     assert.equal(await inverseKey("file.json/"), "file.md");
     assert.equal(await key("file.md"), "file.json");
@@ -31,10 +26,7 @@ describe("keyMapsForExtensions", () => {
   });
 
   test("key functions can handle a slash as an explicit extension", async () => {
-    const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: ".html",
-      sourceExtension: "/",
-    });
+    const { inverseKey, key } = extensionKeyFunctions("/", ".html");
     assert.equal(await inverseKey("file.html"), "file/");
     assert.equal(await inverseKey("file.html/"), "file/");
     assert.equal(await key("file"), undefined);
@@ -47,9 +39,7 @@ describe("keyMapsForExtensions", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     });
-    const { inverseKey, key } = keyFunctionsForExtensions({
-      sourceExtension: ".txt",
-    });
+    const { inverseKey, key } = extensionKeyFunctions(".txt");
     const fixture = map(files, {
       inverseKey,
       key,
@@ -66,10 +56,7 @@ describe("keyMapsForExtensions", () => {
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
     });
-    const { inverseKey, key } = keyFunctionsForExtensions({
-      resultExtension: ".upper",
-      sourceExtension: ".txt",
-    });
+    const { inverseKey, key } = extensionKeyFunctions(".txt", ".upper");
     const fixture = map(files, {
       inverseKey,
       key,

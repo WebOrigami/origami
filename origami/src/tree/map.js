@@ -1,8 +1,8 @@
 import {
   cachedKeyFunctions,
+  extensionKeyFunctions,
   isPlainObject,
   isUnpackable,
-  keyFunctionsForExtensions,
   map as mapTransform,
 } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
@@ -102,10 +102,7 @@ function extendedOptions(context, operation) {
   if (extension) {
     // Generate key/inverseKey functions from the extension
     let { resultExtension, sourceExtension } = parseExtensions(extension);
-    const keyFns = keyFunctionsForExtensions({
-      resultExtension,
-      sourceExtension,
-    });
+    const keyFns = extensionKeyFunctions(sourceExtension, resultExtension);
     keyFn = keyFns.key;
     inverseKeyFn = keyFns.inverseKey;
   } else if (keyFn) {

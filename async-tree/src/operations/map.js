@@ -13,40 +13,9 @@ import { assertIsTreelike } from "../utilities.js";
  * @param {MapOptions|ValueKeyFn} options
  */
 export default function map(treelike, options = {}) {
-  let deep;
-  let description;
-  let inverseKeyFn;
-  let keyFn;
-  let needsSourceValue;
-  let valueFn;
-
   assertIsTreelike(treelike, "map");
-
-  if (typeof options === "function") {
-    // Take the single function argument as the valueFn
-    valueFn = options;
-  } else {
-    deep = options.deep;
-    description = options.description;
-    inverseKeyFn = options.inverseKey;
-    keyFn = options.key;
-    needsSourceValue = options.needsSourceValue;
-    valueFn = options.value;
-  }
-
-  deep ??= false;
-  description ??= "key/value map";
-  // @ts-ignore
-  inverseKeyFn ??= valueFn?.inverseKey;
-  // @ts-ignore
-  keyFn ??= valueFn?.key;
-  needsSourceValue ??= true;
-
-  if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
-    throw new TypeError(
-      `map: You must specify both key and inverseKey functions, or neither.`
-    );
-  }
+  const { deep, description, inverseKeyFn, keyFn, needsSourceValue, valueFn } =
+    validateOptions(options);
 
   /**
    * @param {import("@weborigami/types").AsyncTree} tree
@@ -140,4 +109,49 @@ export default function map(treelike, options = {}) {
 
   const tree = Tree.from(treelike, { deep });
   return mapFn(tree);
+}
+
+// Extract and validate options
+function validateOptions(options) {
+  let deep;
+  let description;
+  let inverseKeyFn;
+  let keyFn;
+  let needsSourceValue;
+  let valueFn;
+
+  if (typeof options === "function") {
+    // Take the single function argument as the valueFn
+    valueFn = options;
+  } else {
+    deep = options.deep;
+    description = options.description;
+    inverseKeyFn = options.inverseKey;
+    keyFn = options.key;
+    needsSourceValue = options.needsSourceValue;
+    valueFn = options.value;
+  }
+
+  deep ??= false;
+  description ??= "key/value map";
+  // @ts-ignore
+  inverseKeyFn ??= valueFn?.inverseKey;
+  // @ts-ignore
+  keyFn ??= valueFn?.key;
+  needsSourceValue ??= true;
+
+  if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
+    throw new TypeError(
+      `map: You must specify both key and inverseKey functions, or neither.`
+    );
+  }
+
+  return {
+    deep,
+    description,
+    inverseKeyFn,
+    keyFn,
+    needsSourceValue,
+    valueFn,
+  };
 }

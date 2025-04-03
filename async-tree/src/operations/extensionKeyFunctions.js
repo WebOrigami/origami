@@ -8,13 +8,13 @@ import * as trailingSlash from "../trailingSlash.js";
  * The resulting `inverseKey` and `key` functions are compatible with those
  * expected by map and other transforms.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @param {{ resultExtension?: string, sourceExtension: string }} options
+ * @param {string} sourceExtension
+ * @param {string} [resultExtension]
  */
-export default function keyFunctionsForExtensions({
-  resultExtension,
+export default function extensionKeyFunctions(
   sourceExtension,
-}) {
+  resultExtension
+) {
   if (resultExtension === undefined) {
     resultExtension = sourceExtension;
   }
