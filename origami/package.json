@@ -19,6 +19,7 @@
   "dependencies": {
     "@weborigami/async-tree": "0.2.11",
     "@weborigami/language": "0.2.11",
+    "@weborigami/json-feed-to-rss": "1.0.0",
     "@weborigami/types": "0.2.11",
     "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
