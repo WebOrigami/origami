@@ -11,6 +11,7 @@ export { default as SetTree } from "./src/drivers/SetTree.js";
 export { default as SiteTree } from "./src/drivers/SiteTree.js";
 export { DeepObjectTree, ObjectTree, Tree } from "./src/internal.js";
 export * as jsonKeys from "./src/jsonKeys.js";
+export { default as addNextPrevious } from "./src/operations/addNextPrevious.js";
 export { default as cache } from "./src/operations/cache.js";
 export { default as cachedKeyFunctions } from "./src/operations/cachedKeyFunctions.js";
 export { default as concat } from "./src/operations/concat.js";

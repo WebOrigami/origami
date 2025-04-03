@@ -17,7 +17,6 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function treeCache(sourceTreelike, cacheTreelike) {
   assertIsTreelike(sourceTreelike, "cache");
-
   const source = Tree.from(sourceTreelike);
 
   /** @type {AsyncMutableTree} */
