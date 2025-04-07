@@ -4,12 +4,9 @@ import deepValuesIterator from "./deepValuesIterator.js";
 /**
  * Concatenate the deep text values in a tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- *
- * @this {AsyncTree|null}
  * @param {import("../../index.ts").Treelike} treelike
  */
-export default async function concatTreeValues(treelike) {
+export default async function concat(treelike) {
   assertIsTreelike(treelike, "concat");
 
   const strings = [];
