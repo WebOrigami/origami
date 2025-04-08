@@ -39,7 +39,7 @@ describe("map", () => {
     assert.deepEqual(await fixture.get("Alice"), 1);
   });
 
-  test.only("can add an extension to a key", async () => {
+  test("can add an extension to a key", async () => {
     const treelike = {
       "file0.txt": 1,
       file1: 2,

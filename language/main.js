@@ -14,7 +14,6 @@ export { default as InvokeFunctionsTransform } from "./src/runtime/InvokeFunctio
 export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFiles } from "./src/runtime/OrigamiFiles.js";
 export * as symbols from "./src/runtime/symbols.js";
-export { default as taggedTemplate } from "./src/runtime/taggedTemplate.js";
 export { default as taggedTemplateIndent } from "./src/runtime/taggedTemplateIndent.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

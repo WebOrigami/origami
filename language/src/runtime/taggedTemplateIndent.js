@@ -1,22 +1,27 @@
+import { concat, Tree } from "@weborigami/async-tree";
+
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 
 const mapStringsToModifications = new Map();
 
 /**
- * Normalize indentation in a tagged template string.
+ * Normalize indentation in a tagged template string
  *
  * @param {TemplateStringsArray} strings
  * @param  {...any} values
- * @returns {string}
+ * @returns {Promise<string>}
  */
-export default function indent(strings, ...values) {
+export default async function indent(strings, ...values) {
   let modified = mapStringsToModifications.get(strings);
   if (!modified) {
     modified = modifyStrings(strings);
     mapStringsToModifications.set(strings, modified);
   }
   const { blockIndentations, strings: modifiedStrings } = modified;
-  return joinBlocks(modifiedStrings, values, blockIndentations);
+  const valueTexts = await Promise.all(
+    values.map((value) => (Tree.isTreelike(value) ? concat(value) : value))
+  );
+  return joinBlocks(modifiedStrings, valueTexts, blockIndentations);
 }
 
 // Join strings and values, applying the given block indentation to the lines of

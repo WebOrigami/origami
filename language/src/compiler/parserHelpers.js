@@ -226,7 +226,13 @@ export function makeCall(target, args) {
     }
   } else if (args[0] === ops.template) {
     // Tagged template
-    fnCall = [upgradeReference(target), ...args.slice(1)];
+    const strings = args[1];
+    const values = args.slice(2);
+    fnCall = makeTaggedTemplateCall(
+      upgradeReference(target),
+      strings,
+      ...values
+    );
   } else {
     // Function call with explicit or implicit parentheses
     fnCall = [upgradeReference(target), ...args];
@@ -374,6 +380,24 @@ export function makeReference(identifier) {
 }
 
 /**
+ * Make a tagged template call
+ *
+ * Because the tagged template function may not be an Origami function, we wrap
+ * each argument in a ops.concat call to convert it to a string.
+ *
+ * @param {AnnotatedCode} fn
+ * @param {AnnotatedCode} strings
+ * @param {AnnotatedCode[]} values
+ */
+function makeTaggedTemplateCall(fn, strings, ...values) {
+  const args = values.map((value) =>
+    // @ts-ignore
+    annotate([ops.concat, value], value.location)
+  );
+  return annotate([fn, strings, ...args], strings.location);
+}
+
+/**
  * Make a template
  *
  * @param {any} op
@@ -385,8 +409,7 @@ export function makeTemplate(op, head, tail, location) {
   const strings = [head[1]];
   const values = [];
   for (const [value, literal] of tail) {
-    const concat = annotate([ops.concat, value], value.location);
-    values.push(concat);
+    values.push(value);
     strings.push(literal[1]);
   }
   const stringsCode = annotate(strings, location);

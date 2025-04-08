@@ -8,6 +8,7 @@
 import {
   ObjectTree,
   Tree,
+  concatTrees,
   isUnpackable,
   scope as scopeFn,
   symbols,
@@ -21,7 +22,6 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import { codeSymbol } from "./symbols.js";
-import taggedTemplate from "./taggedTemplate.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -532,15 +532,15 @@ addOpLabel(subtraction, "«ops.subtraction»");
 /**
  * Apply the default tagged template function.
  */
-export function template(strings, ...values) {
-  return taggedTemplate(strings, ...values);
+export async function template(strings, ...values) {
+  return concatTrees(strings, ...values);
 }
 addOpLabel(template, "«ops.template»");
 
 /**
  * Apply the tagged template indent function.
  */
-export function templateIndent(strings, ...values) {
+export async function templateIndent(strings, ...values) {
   return taggedTemplateIndent(strings, ...values);
 }
 addOpLabel(templateIndent, "«ops.templateIndent");

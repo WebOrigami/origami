@@ -298,7 +298,7 @@ describe("Origami parser", () => {
     assertThrows("templateLiteral", "`foo", "Expected closing backtick");
   });
 
-  test.only("error thrown for invalid Origami front matter expression", () => {
+  test("error thrown for invalid Origami front matter expression", () => {
     assertThrows(
       "templateDocument",
       `---
@@ -446,11 +446,7 @@ Body`,
       [
         ops.lambda,
         [[ops.literal, "_"]],
-        [
-          ops.template,
-          [ops.literal, ["<li>", "</li>"]],
-          [ops.concat, [ops.scope, "_"]],
-        ],
+        [ops.template, [ops.literal, ["<li>", "</li>"]], [ops.scope, "_"]],
       ],
     ]);
     assertParse("expression", `https://example.com/about/`, [
@@ -991,11 +987,7 @@ Body`,
     assertParse("shorthandFunction", "=`Hello, ${name}.`", [
       ops.lambda,
       [[ops.literal, "_"]],
-      [
-        ops.template,
-        [ops.literal, ["Hello, ", "."]],
-        [ops.concat, [ops.scope, "name"]],
-      ],
+      [ops.template, [ops.literal, ["Hello, ", "."]], [ops.scope, "name"]],
     ]);
     assertParse("shorthandFunction", "=indent`hello`", [
       ops.lambda,
@@ -1037,7 +1029,7 @@ Body`,
       [
         ops.templateIndent,
         [ops.literal, ["hello", "world"]],
-        [ops.concat, [ops.scope, "foo"]],
+        [ops.scope, "foo"],
       ],
     ]);
     assertParse("templateBody", "Documents can contain ` backticks", [
@@ -1100,7 +1092,7 @@ Body text`,
               [
                 ops.templateIndent,
                 [ops.literal, ["<h1>", "</h1>\n"]],
-                [ops.concat, [ops.scope, "title"]],
+                [ops.scope, "title"],
               ],
             ],
             undefined,
@@ -1118,30 +1110,23 @@ Body text`,
     assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.template,
       [ops.literal, ["foo ", " bar"]],
-      [ops.concat, [ops.scope, "x"]],
+      [ops.scope, "x"],
     ]);
     assertParse("templateLiteral", "`${`nested`}`", [
       ops.template,
       [ops.literal, ["", ""]],
-      [ops.concat, [ops.template, [ops.literal, ["nested"]]]],
+      [ops.template, [ops.literal, ["nested"]]],
     ]);
     assertParse("templateLiteral", "`${ map:(people, =`${name}`) }`", [
       ops.template,
       [ops.literal, ["", ""]],
       [
-        ops.concat,
+        [ops.builtin, "map:"],
+        [ops.scope, "people"],
         [
-          [ops.builtin, "map:"],
-          [ops.scope, "people"],
-          [
-            ops.lambda,
-            [[ops.literal, "_"]],
-            [
-              ops.template,
-              [ops.literal, ["", ""]],
-              [ops.concat, [ops.scope, "name"]],
-            ],
-          ],
+          ops.lambda,
+          [[ops.literal, "_"]],
+          [ops.template, [ops.literal, ["", ""]], [ops.scope, "name"]],
         ],
       ],
     ]);

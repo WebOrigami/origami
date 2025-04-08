@@ -3,13 +3,13 @@ import { describe, test } from "node:test";
 import indent from "../../src/runtime/taggedTemplateIndent.js";
 
 describe("taggedTemplateIndent", () => {
-  test("joins strings and values together if template isn't a block template", () => {
-    const result = indent`a ${"b"} c`;
+  test("joins strings and values together if template isn't a block template", async () => {
+    const result = await indent`a ${"b"} c`;
     assert.equal(result, "a b c");
   });
 
-  test("removes first and last lines if template is a block template", () => {
-    const actual = indent`
+  test("removes first and last lines if template is a block template", async () => {
+    const actual = await indent`
     <p>
       Hello, ${"Alice"}!
     </p>
@@ -22,12 +22,12 @@ describe("taggedTemplateIndent", () => {
     assert.equal(actual, expected);
   });
 
-  test("indents all lines in a block substitution", () => {
+  test("indents all lines in a block substitution", async () => {
     const lines = `
 Line 1
 Line 2
 Line 3`.trimStart();
-    const actual = indent`
+    const actual = await indent`
     <main>
       ${lines}
     </main>
