@@ -6,6 +6,7 @@ import {
   yamlHandler,
 } from "../internal.js";
 import cssHandler from "./css.handler.js";
+import csvHandler from "./csv.handler.js";
 import htmHandler from "./htm.handler.js";
 import htmlHandler from "./html.handler.js";
 import jpegHandler from "./jpeg.handler.js";
@@ -19,6 +20,7 @@ import ymlHandler from "./yml.handler.js";
 
 export default {
   "css.handler": cssHandler,
+  "csv.handler": csvHandler,
   "htm.handler": htmHandler,
   "html.handler": htmlHandler,
   "jpeg.handler": jpegHandler,

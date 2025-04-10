@@ -9,6 +9,7 @@ export { toFunction } from "../common/utilities.js";
 export { default as help } from "../help/help.js"; // Alias
 export { default as basename } from "./basename.js";
 export { default as config } from "./config.js";
+export { default as csv } from "./csv.js";
 export { default as json } from "./json.js";
 export { default as jsonParse } from "./jsonParse.js";
 export { default as naturalOrder } from "./naturalOrder.js";
