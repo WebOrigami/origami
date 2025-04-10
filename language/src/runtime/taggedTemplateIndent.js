@@ -1,4 +1,4 @@
-import { concat, Tree } from "@weborigami/async-tree";
+import { concat, toString, Tree } from "@weborigami/async-tree";
 
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 
@@ -29,7 +29,7 @@ export default async function indent(strings, ...values) {
 function joinBlocks(strings, values, blockIndentations) {
   let result = strings[0];
   for (let i = 0; i < values.length; i++) {
-    let text = values[i];
+    let text = toString(values[i]);
     if (text) {
       const blockIndentation = blockIndentations[i];
       if (blockIndentation) {

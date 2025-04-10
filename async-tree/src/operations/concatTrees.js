@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import { toString } from "../utilities.js";
 import concat from "./concat.js";
 
 /**
@@ -11,7 +12,9 @@ import concat from "./concat.js";
 export default async function concatTrees(strings, ...values) {
   // Convert all the values to strings
   const valueTexts = await Promise.all(
-    values.map((value) => (Tree.isTreelike(value) ? concat(value) : value))
+    values.map((value) =>
+      Tree.isTreelike(value) ? concat(value) : toString(value)
+    )
   );
   // Splice all the strings together
   let result = strings[0];
