@@ -11,20 +11,14 @@ describe("csv", () => {
     ];
     const result = await csv.call(null, data);
 
-    // The expected header is inferred from the first object's keys.
-    // Depending on the object key iteration order, the header is assumed to be:
-    const expectedHeader = "name,age,city";
+    const expected = `name,age,city
+Alice,30,"New York, NY"
+Bob,25,Los Angeles
+"Carol ""CJ""",22,Chicago
+`;
+    const normalized = expected.replace(/\n/g, "\r\n");
 
-    // Expected CSV output lines (with CRLF as line separator):
-    const expectedLines = [
-      expectedHeader,
-      'Alice,30,"New York, NY"',
-      "Bob,25,Los Angeles",
-      '"Carol ""CJ""",22,Chicago',
-    ];
-    const expectedCSV = expectedLines.join("\r\n");
-
-    assert.strictEqual(result, expectedCSV);
+    assert.strictEqual(result, normalized);
   });
 
   test("returns an empty string for empty array input", async () => {

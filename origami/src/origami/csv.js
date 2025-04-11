@@ -53,6 +53,6 @@ function formatCsv(array) {
       .join(",");
   });
 
-  // Concatenate header and data rows, joining with CRLF.
-  return [headerRow, ...dataRows].join("\r\n");
+  // Concatenate header and data rows, joining and ending with CRLF.
+  return [headerRow, ...dataRows].join("\r\n") + "\r\n";
 }
