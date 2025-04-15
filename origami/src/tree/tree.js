@@ -21,6 +21,7 @@ export { default as inners } from "./inners.js";
 export { default as keys } from "./keys.js";
 export { default as length } from "./length.js";
 export { default as map } from "./map.js";
+export { default as mask } from "./mask.js";
 export { default as match } from "./match.js";
 export { default as merge } from "./merge.js";
 export { default as paginate } from "./paginate.js";

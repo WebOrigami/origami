@@ -302,8 +302,8 @@ tree:
       args: (tree)
       description: The tree's [key, value] pairs
     filter:
-      args: (source, filter)
-      description: Filter the source tree using the filter tree
+      args: (source, options)
+      description: Filter the source tree
     first:
       args: (tree)
       description: The first value in the tree
@@ -352,6 +352,9 @@ tree:
     mapReduce:
       args: (tree, valueFn, reduceFn)
       description: Map values and reduce them
+    mask:
+      args: (source, mask)
+      description: Return the source tree with only the keys in the mask
     match:
       args: (pattern, fn, [keys])
       description: Matches simple patterns or regular expressions
