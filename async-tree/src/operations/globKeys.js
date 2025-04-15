@@ -1,9 +1,13 @@
-import { ObjectTree, Tree, merge, trailingSlash } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { assertIsTreelike } from "../utilities.js";
+import merge from "./merge.js";
 
 const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
 export default function globKeys(treelike) {
+  assertIsTreelike(treelike, "globKeys");
   const globs = Tree.from(treelike, { deep: true });
   return {
     async get(key) {

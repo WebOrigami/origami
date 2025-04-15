@@ -1,11 +1,11 @@
-import { Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Add nextKey/previousKey properties to values.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
+ * @typedef {import("../../index.ts").PlainObject} PlainObject
  *
  * @param {import("../../index.ts").Treelike} treelike
  * @returns {Promise<PlainObject|Array>}

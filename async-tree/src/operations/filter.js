@@ -1,4 +1,6 @@
-import { assertIsTreelike, trailingSlash, Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Given trees `a` and `b`, return a filtered version of `a` where only the keys
