@@ -1,5 +1,6 @@
 export * from "./src/calc/calc.js";
 export { default as documentObject } from "./src/common/documentObject.js";
+export * as serialize from "./src/common/serialize.js";
 export { toString } from "./src/common/utilities.js";
 export * from "./src/dev/dev.js";
 export * from "./src/handlers/handlerExports.js";

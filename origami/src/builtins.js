@@ -8,12 +8,14 @@ import node from "./node.js";
 import * as origami from "./origami/origami.js";
 import explore from "./protocols/explore.js";
 import files from "./protocols/files.js";
+import go from "./protocols/go.js";
 import http from "./protocols/http.js";
 import https from "./protocols/https.js";
 import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
 import inherited from "./protocols/inherited.js";
 import instantiate from "./protocols/new.js";
+import out from "./protocols/out.js";
 import packageNamespace from "./protocols/package.js";
 import scope from "./protocols/scope.js";
 import * as site from "./site/site.js";
@@ -26,6 +28,7 @@ export default {
   "dev:": dev,
   "explore:": explore,
   "files:": files,
+  "go:": go,
   "help:": help,
   "http:": http,
   "https:": https,
@@ -37,6 +40,7 @@ export default {
   "new:": instantiate,
   "node:": node,
   "origami:": origami,
+  "out:": out,
   "package:": packageNamespace,
   "scope:": scope,
   "site:": adjustReservedWords(site),
