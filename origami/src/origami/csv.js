@@ -12,11 +12,16 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  */
 export default async function csv(object) {
   assertTreeIsDefined(this, "origami:csv");
+  object = object ?? this;
+  if (object === undefined) {
+    return undefined;
+  }
   if (isUnpackable(object)) {
     object = await object.unpack();
   }
   const value = await toPlainValue(object);
-  const text = formatCsv(value);
+  const array = Array.isArray(value) ? value : Object.values(value);
+  const text = formatCsv(array);
   return text;
 }
 
