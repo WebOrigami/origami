@@ -1,5 +1,4 @@
 import {
-  cachedKeyFunctions,
   isPlainObject,
   isUnpackable,
   map as mapTransform,
@@ -96,16 +95,6 @@ function extendedOptions(context, operation) {
     if (keyFn) {
       // Extend the key function to include a value parameter
       keyFn = extendKeyFn(keyFn);
-    } else {
-      // Use sidecar key/inverseKey functions if the valueFn defines them
-      keyFn = /** @type {any} */ (valueFn)?.key;
-      inverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
-    }
-    if (keyFn && !inverseKeyFn) {
-      // Only keyFn was provided, so we need to generate the inverseKeyFn
-      const keyFns = cachedKeyFunctions(keyFn, deep);
-      keyFn = keyFns.key;
-      inverseKeyFn = keyFns.inverseKey;
     }
   }
 

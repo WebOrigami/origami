@@ -1,6 +1,7 @@
 import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import parseExtensions from "./parseExtensions.js";
 
@@ -136,18 +137,23 @@ function validateOptions(options) {
     valueFn = options.value;
   }
 
-  if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
+  if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
-      `map: You must specify both key and inverseKey functions, or neither.`
+      `map: You can't specify extensions and also a key or inverseKey function`
     );
   }
 
-  if (extension) {
-    if (keyFn || inverseKeyFn) {
-      throw new TypeError(
-        `map: You can't specify extensions and also a key or inverseKey function`
-      );
-    }
+  if (keyFn && !inverseKeyFn) {
+    // Only keyFn was provided, so we need to generate the inverseKeyFn
+    const keyFns = cachedKeyFunctions(keyFn, deep);
+    keyFn = keyFns.key;
+    inverseKeyFn = keyFns.inverseKey;
+  } else if (!keyFn && inverseKeyFn) {
+    throw new TypeError(
+      `map: You can't specify an inverseKey function without a key function`
+    );
+  } else if (extension) {
+    // Use the extension mapping to generate key and inverseKey functions
     const parsed = parseExtensions(extension);
     const keyFns = extensionKeyFunctions(
       parsed.sourceExtension,
@@ -161,7 +167,7 @@ function validateOptions(options) {
   description ??= "key/value map";
   needsSourceValue ??= true;
 
-  // If key or inverseKey functions weren't specified, look for sidecar functions
+  // If key or inverseKey weren't specified, look for sidecar functions
   // @ts-ignore
   inverseKeyFn ??= valueFn?.inverseKey;
   // @ts-ignore

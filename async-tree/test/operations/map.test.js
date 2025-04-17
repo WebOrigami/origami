@@ -68,6 +68,20 @@ describe("map", () => {
     });
   });
 
+  test("if only given a key, will generate an inverseKey", async () => {
+    const tree = {
+      a: "letter a",
+      b: "letter b",
+    };
+    const underscoreKeys = map(tree, {
+      key: addUnderscore,
+    });
+    assert.deepEqual(await Tree.plain(underscoreKeys), {
+      _a: "letter a",
+      _b: "letter b",
+    });
+  });
+
   test("maps keys and values", async () => {
     const tree = {
       a: "letter a",
@@ -102,7 +116,7 @@ describe("map", () => {
     });
   });
 
-  test("value can provide a default key and inverse key functions", async () => {
+  test("value can provide a default key and inverse key sidecar functions", async () => {
     const uppercase = (s) => s.toUpperCase();
     uppercase.key = addUnderscore;
     uppercase.inverseKey = removeUnderscore;
