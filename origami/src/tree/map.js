@@ -4,10 +4,10 @@ import {
   isPlainObject,
   isUnpackable,
   map as mapTransform,
+  parseExtensions,
 } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
 import { toFunction } from "../common/utilities.js";
-import parseExtensions from "./parseExtensions.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.

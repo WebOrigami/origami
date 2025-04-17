@@ -19,8 +19,8 @@ export default function extensionKeyFunctions(
     resultExtension = sourceExtension;
   }
 
-  checkDeprecatedExtensionWithoutDot(resultExtension);
-  checkDeprecatedExtensionWithoutDot(sourceExtension);
+  checkExtension(resultExtension);
+  checkExtension(sourceExtension);
 
   return {
     async inverseKey(resultKey, tree) {
@@ -38,7 +38,7 @@ export default function extensionKeyFunctions(
   };
 }
 
-function checkDeprecatedExtensionWithoutDot(extension) {
+function checkExtension(extension) {
   if (extension && extension !== "/" && !extension.startsWith(".")) {
     throw new RangeError(
       `The extension "${extension}" must start with a period.`
