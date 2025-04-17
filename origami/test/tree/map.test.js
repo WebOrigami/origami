@@ -55,54 +55,6 @@ describe("map", () => {
     });
   });
 
-  test("can change a key's extension", async () => {
-    const treelike = {
-      "file1.txt": "will be mapped",
-      file2: "won't be mapped",
-      "file3.foo": "won't be mapped",
-    };
-    const fixture = await map.call(null, treelike, {
-      extension: ".txt->.upper",
-      value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
-    });
-    assert.deepEqual(await Tree.plain(fixture), {
-      "file1.upper": "WILL BE MAPPED",
-    });
-  });
-
-  test("can remove a key's extension", async () => {
-    const treelike = {
-      "file1.txt": 1,
-      "file2.txt": 2,
-    };
-    const fixture = await map.call(null, treelike, {
-      extension: ".txt->",
-    });
-    assert.deepEqual(await Tree.plain(fixture), {
-      file1: 1,
-      file2: 2,
-    });
-  });
-
-  test("can remove extensions deeply", async () => {
-    const treelike = {
-      "file1.txt": 1,
-      more: {
-        "file2.txt": 2,
-      },
-    };
-    const fixture = await map.call(null, treelike, {
-      deep: true,
-      extension: ".txt->",
-    });
-    assert.deepEqual(await Tree.plain(fixture), {
-      file1: 1,
-      more: {
-        file2: 2,
-      },
-    });
-  });
-
   test("can map keys and values deeply", async () => {
     const treelike = new DeepObjectTree({
       a: 1,

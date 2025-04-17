@@ -1,10 +1,8 @@
 import {
   cachedKeyFunctions,
-  extensionKeyFunctions,
   isPlainObject,
   isUnpackable,
   map as mapTransform,
-  parseExtensions,
 } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
 import { toFunction } from "../common/utilities.js";
@@ -81,12 +79,6 @@ function extendedOptions(context, operation) {
   let keyFn = options.key;
   let inverseKeyFn = options.inverseKey;
 
-  if (extension && (keyFn || inverseKeyFn)) {
-    throw new TypeError(
-      `map: You can't specify extensions and also a key or inverseKey function`
-    );
-  }
-
   if (valueFn) {
     // @ts-ignore
     valueFn = toFunction(valueFn);
@@ -94,36 +86,33 @@ function extendedOptions(context, operation) {
     // Origami builtins can be used as value functions.
     // @ts-ignore
     const bound = valueFn.bind(context);
+    // Transfer sidecar functions
     // @ts-ignore
     Object.assign(bound, valueFn);
     valueFn = bound;
   }
 
-  if (extension) {
-    // Generate key/inverseKey functions from the extension
-    let { resultExtension, sourceExtension } = parseExtensions(extension);
-    const keyFns = extensionKeyFunctions(sourceExtension, resultExtension);
-    keyFn = keyFns.key;
-    inverseKeyFn = keyFns.inverseKey;
-  } else if (keyFn) {
-    // Extend the key function to include a value parameter
-    keyFn = extendKeyFn(keyFn);
-  } else {
-    // Use sidecar key/inverseKey functions if the valueFn defines them
-    keyFn = /** @type {any} */ (valueFn)?.key;
-    inverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
-  }
-
-  if (keyFn && !inverseKeyFn) {
-    // Only keyFn was provided, so we need to generate the inverseKeyFn
-    const keyFns = cachedKeyFunctions(keyFn, deep);
-    keyFn = keyFns.key;
-    inverseKeyFn = keyFns.inverseKey;
+  if (!extension) {
+    if (keyFn) {
+      // Extend the key function to include a value parameter
+      keyFn = extendKeyFn(keyFn);
+    } else {
+      // Use sidecar key/inverseKey functions if the valueFn defines them
+      keyFn = /** @type {any} */ (valueFn)?.key;
+      inverseKeyFn = /** @type {any} */ (valueFn)?.inverseKey;
+    }
+    if (keyFn && !inverseKeyFn) {
+      // Only keyFn was provided, so we need to generate the inverseKeyFn
+      const keyFns = cachedKeyFunctions(keyFn, deep);
+      keyFn = keyFns.key;
+      inverseKeyFn = keyFns.inverseKey;
+    }
   }
 
   return {
     deep,
     description,
+    extension,
     inverseKey: inverseKeyFn,
     key: keyFn,
     needsSourceValue,

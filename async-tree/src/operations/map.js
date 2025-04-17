@@ -1,6 +1,8 @@
 import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import extensionKeyFunctions from "./extensionKeyFunctions.js";
+import parseExtensions from "./parseExtensions.js";
 
 /**
  * Transform the keys and/or values of a tree.
@@ -115,6 +117,7 @@ export default function map(treelike, options = {}) {
 function validateOptions(options) {
   let deep;
   let description;
+  let extension;
   let inverseKeyFn;
   let keyFn;
   let needsSourceValue;
@@ -126,25 +129,43 @@ function validateOptions(options) {
   } else {
     deep = options.deep;
     description = options.description;
+    extension = options.extension;
     inverseKeyFn = options.inverseKey;
     keyFn = options.key;
     needsSourceValue = options.needsSourceValue;
     valueFn = options.value;
   }
 
-  deep ??= false;
-  description ??= "key/value map";
-  // @ts-ignore
-  inverseKeyFn ??= valueFn?.inverseKey;
-  // @ts-ignore
-  keyFn ??= valueFn?.key;
-  needsSourceValue ??= true;
-
   if ((keyFn && !inverseKeyFn) || (!keyFn && inverseKeyFn)) {
     throw new TypeError(
       `map: You must specify both key and inverseKey functions, or neither.`
     );
   }
+
+  if (extension) {
+    if (keyFn || inverseKeyFn) {
+      throw new TypeError(
+        `map: You can't specify extensions and also a key or inverseKey function`
+      );
+    }
+    const parsed = parseExtensions(extension);
+    const keyFns = extensionKeyFunctions(
+      parsed.sourceExtension,
+      parsed.resultExtension
+    );
+    keyFn = keyFns.key;
+    inverseKeyFn = keyFns.inverseKey;
+  }
+
+  deep ??= false;
+  description ??= "key/value map";
+  needsSourceValue ??= true;
+
+  // If key or inverseKey functions weren't specified, look for sidecar functions
+  // @ts-ignore
+  inverseKeyFn ??= valueFn?.inverseKey;
+  // @ts-ignore
+  keyFn ??= valueFn?.key;
 
   return {
     deep,

@@ -46,6 +46,7 @@ export type Treelike =
 export type TreeMapOptions = {
   deep?: boolean;
   description?: string;
+  extension?: string;
   needsSourceValue?: boolean;
   inverseKey?: KeyFn;
   key?: KeyFn;

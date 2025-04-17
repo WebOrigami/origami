@@ -177,6 +177,40 @@ describe("map", () => {
     });
   });
 
+  test("can change a key's extension", async () => {
+    const treelike = {
+      "file1.lower": "will be mapped",
+      file2: "won't be mapped",
+      "file3.foo": "won't be mapped",
+    };
+    const fixture = await map(treelike, {
+      extension: ".lower->.upper",
+      value: (sourceValue) => sourceValue.toUpperCase(),
+    });
+    assert.deepEqual(await Tree.plain(fixture), {
+      "file1.upper": "WILL BE MAPPED",
+    });
+  });
+
+  test("can manipulate extensions deeply", async () => {
+    const treelike = {
+      "file1.txt": 1,
+      more: {
+        "file2.txt": 2,
+      },
+    };
+    const fixture = await map(treelike, {
+      deep: true,
+      extension: ".txt->",
+    });
+    assert.deepEqual(await Tree.plain(fixture), {
+      file1: 1,
+      more: {
+        file2: 2,
+      },
+    });
+  });
+
   test("needsSourceValue can be set to false in cases where the value isn't necessary", async () => {
     let flag = false;
     const tree = new FunctionTree(() => {
