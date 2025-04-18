@@ -333,7 +333,20 @@ integerLiteral "integer"
   = digits {
       return annotate([ops.literal, parseInt(text())], location());
     }
-    
+
+jsIdentifier
+  = $( jsIdentifierStart jsIdentifierPart* )
+
+// Continuation of a JavaScript identifier
+// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierPart
+jsIdentifierPart "JavaScript identifier continuation"
+  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
+
+// Start of a JavaScript identifier
+// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
+jsIdentifierStart "JavaScript identifier start"
+  = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
+
 // A separated list of values
 list "list"
   = values:pipelineExpression|1.., separator| separator? {

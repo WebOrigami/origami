@@ -567,6 +567,21 @@ Body`,
     ]);
   });
 
+  test("jsIdentifier", () => {
+    assertParse("jsIdentifier", "foo", "foo", false);
+    assertParse("jsIdentifier", "$Δelta", "$Δelta", false);
+    assertThrows(
+      "jsIdentifier",
+      "1stCharacterIsNumber",
+      "Expected JavaScript identifier start"
+    );
+    assertThrows(
+      "jsIdentifier",
+      "has space",
+      "Expected JavaScript identifier continuation"
+    );
+  });
+
   test("list", () => {
     assertParse("list", "1", [[ops.literal, 1]]);
     assertParse("list", "1,2,3", [
