@@ -515,6 +515,13 @@ Body`,
     ]);
   });
 
+  test("group with property acccess", () => {
+    assertParse("group", "(foo).bar", [
+      [ops.scope, "foo"],
+      [ops.literal, "bar"],
+    ]);
+  });
+
   test("homeDirectory", () => {
     assertParse("homeDirectory", "~", [ops.homeDirectory]);
   });
@@ -578,6 +585,11 @@ Body`,
     assertThrows(
       "jsIdentifier",
       "has space",
+      "Expected JavaScript identifier continuation"
+    );
+    assertThrows(
+      "jsIdentifier",
+      "foo.bar",
       "Expected JavaScript identifier continuation"
     );
   });

@@ -364,6 +364,15 @@ export function makeProperty(key, value) {
   return [key, modified];
 }
 
+export function makeJsPropertyAccess(expression, property) {
+  const location = {
+    source: expression.location.source,
+    start: expression.location.start,
+    end: property.location.end,
+  };
+  return annotate([expression, property], location);
+}
+
 export function makeReference(identifier) {
   // We can't know for sure that an identifier is a builtin reference until we
   // see whether it's being called as a function.

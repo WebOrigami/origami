@@ -20,6 +20,7 @@ import {
   makeBinaryOperation,
   makeCall,
   makeDeferredArguments,
+  makeJsPropertyAccess,
   makeObject,
   makePipeline,
   makeProperty,
@@ -277,8 +278,11 @@ frontMatterYaml "YAML front matter"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" expression:expression expectClosingParenthesis {
-      return annotate(downgradeReference(expression), location());
+  = "(" head:expression expectClosingParenthesis tail:jsPropertyAccess* {
+      return tail.reduce(
+        makeJsPropertyAccess,
+        annotate(downgradeReference(head), location()),
+      );
     }
 
 guillemetString "guillemet string"
@@ -346,6 +350,11 @@ jsIdentifierPart "JavaScript identifier continuation"
 // https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
 jsIdentifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
+
+jsPropertyAccess
+  = __ "." __ property:jsIdentifier {
+    return annotate([ops.literal, property], location());
+  }
 
 // A separated list of values
 list "list"
