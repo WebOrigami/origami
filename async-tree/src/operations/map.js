@@ -143,16 +143,7 @@ function validateOptions(options) {
     );
   }
 
-  if (keyFn && !inverseKeyFn) {
-    // Only keyFn was provided, so we need to generate the inverseKeyFn
-    const keyFns = cachedKeyFunctions(keyFn, deep);
-    keyFn = keyFns.key;
-    inverseKeyFn = keyFns.inverseKey;
-  } else if (!keyFn && inverseKeyFn) {
-    throw new TypeError(
-      `map: You can't specify an inverseKey function without a key function`
-    );
-  } else if (extension) {
+  if (extension) {
     // Use the extension mapping to generate key and inverseKey functions
     const parsed = parseExtensions(extension);
     const keyFns = extensionKeyFunctions(
@@ -161,17 +152,28 @@ function validateOptions(options) {
     );
     keyFn = keyFns.key;
     inverseKeyFn = keyFns.inverseKey;
+  } else {
+    // If key or inverseKey weren't specified, look for sidecar functions
+    inverseKeyFn ??= valueFn?.inverseKey;
+    keyFn ??= valueFn?.key;
+
+    if (!keyFn && inverseKeyFn) {
+      throw new TypeError(
+        `map: You can't specify an inverseKey function without a key function`
+      );
+    }
+
+    if (keyFn && !inverseKeyFn) {
+      // Only keyFn was provided, so we need to generate the inverseKeyFn
+      const keyFns = cachedKeyFunctions(keyFn, deep);
+      keyFn = keyFns.key;
+      inverseKeyFn = keyFns.inverseKey;
+    }
   }
 
   deep ??= false;
   description ??= "key/value map";
   needsSourceValue ??= true;
-
-  // If key or inverseKey weren't specified, look for sidecar functions
-  // @ts-ignore
-  inverseKeyFn ??= valueFn?.inverseKey;
-  // @ts-ignore
-  keyFn ??= valueFn?.key;
 
   return {
     deep,
