@@ -206,7 +206,7 @@ function peg$parse(input, options) {
   var peg$FAILED = {};
   var peg$source = options.grammarSource;
 
-  var peg$startRuleFunctions = { __: peg$parse__, additiveExpression: peg$parseadditiveExpression, additiveOperator: peg$parseadditiveOperator, arguments: peg$parsearguments, arrayLiteral: peg$parsearrayLiteral, arrayEntries: peg$parsearrayEntries, arrayEntry: peg$parsearrayEntry, arrowFunction: peg$parsearrowFunction, bitwiseAndExpression: peg$parsebitwiseAndExpression, bitwiseAndOperator: peg$parsebitwiseAndOperator, bitwiseOrExpression: peg$parsebitwiseOrExpression, bitwiseOrOperator: peg$parsebitwiseOrOperator, bitwiseXorExpression: peg$parsebitwiseXorExpression, bitwiseXorOperator: peg$parsebitwiseXorOperator, callExpression: peg$parsecallExpression, commaExpression: peg$parsecommaExpression, comment: peg$parsecomment, conditionalExpression: peg$parseconditionalExpression, digits: peg$parsedigits, doubleArrow: peg$parsedoubleArrow, doubleQuoteString: peg$parsedoubleQuoteString, doubleQuoteStringChar: peg$parsedoubleQuoteStringChar, ellipsis: peg$parseellipsis, equalityExpression: peg$parseequalityExpression, equalityOperator: peg$parseequalityOperator, escapedChar: peg$parseescapedChar, expectBacktick: peg$parseexpectBacktick, expectClosingBrace: peg$parseexpectClosingBrace, expectClosingBracket: peg$parseexpectClosingBracket, expectClosingParenthesis: peg$parseexpectClosingParenthesis, expectDoubleQuote: peg$parseexpectDoubleQuote, expectExpression: peg$parseexpectExpression, expectFrontDelimiter: peg$parseexpectFrontDelimiter, expectGuillemet: peg$parseexpectGuillemet, expectSingleQuote: peg$parseexpectSingleQuote, expectPipelineExpression: peg$parseexpectPipelineExpression, exponentiationExpression: peg$parseexponentiationExpression, expression: peg$parseexpression, floatLiteral: peg$parsefloatLiteral, frontDelimiter: peg$parsefrontDelimiter, frontMatterExpression: peg$parsefrontMatterExpression, frontMatterText: peg$parsefrontMatterText, frontMatterYaml: peg$parsefrontMatterYaml, group: peg$parsegroup, guillemetString: peg$parseguillemetString, guillemetStringChar: peg$parseguillemetStringChar, homeDirectory: peg$parsehomeDirectory, host: peg$parsehost, identifier: peg$parseidentifier, identifierChar: peg$parseidentifierChar, implicitParenthesesCallExpression: peg$parseimplicitParenthesesCallExpression, implicitParensthesesArguments: peg$parseimplicitParensthesesArguments, inlineSpace: peg$parseinlineSpace, integerLiteral: peg$parseintegerLiteral, jsIdentifier: peg$parsejsIdentifier, jsIdentifierPart: peg$parsejsIdentifierPart, jsIdentifierStart: peg$parsejsIdentifierStart, jsPropertyAccess: peg$parsejsPropertyAccess, list: peg$parselist, literal: peg$parseliteral, logicalAndExpression: peg$parselogicalAndExpression, logicalOrExpression: peg$parselogicalOrExpression, multiLineComment: peg$parsemultiLineComment, multiplicativeExpression: peg$parsemultiplicativeExpression, multiplicativeOperator: peg$parsemultiplicativeOperator, namespace: peg$parsenamespace, newLine: peg$parsenewLine, numericLiteral: peg$parsenumericLiteral, nullishCoalescingExpression: peg$parsenullishCoalescingExpression, objectLiteral: peg$parseobjectLiteral, objectEntries: peg$parseobjectEntries, objectEntry: peg$parseobjectEntry, objectGetter: peg$parseobjectGetter, objectHiddenKey: peg$parseobjectHiddenKey, objectKey: peg$parseobjectKey, objectProperty: peg$parseobjectProperty, objectShorthandProperty: peg$parseobjectShorthandProperty, objectPublicKey: peg$parseobjectPublicKey, parameter: peg$parseparameter, parameterList: peg$parseparameterList, parameterSingleton: peg$parseparameterSingleton, parenthesesArguments: peg$parseparenthesesArguments, path: peg$parsepath, pathArguments: peg$parsepathArguments, pathKey: peg$parsepathKey, pathSegment: peg$parsepathSegment, pathSegmentChar: peg$parsepathSegmentChar, pipelineExpression: peg$parsepipelineExpression, primary: peg$parseprimary, program: peg$parseprogram, protocolExpression: peg$parseprotocolExpression, qualifiedReference: peg$parsequalifiedReference, inherited: peg$parseinherited, relationalExpression: peg$parserelationalExpression, relationalOperator: peg$parserelationalOperator, rootDirectory: peg$parserootDirectory, scopeReference: peg$parsescopeReference, separator: peg$parseseparator, shebang: peg$parseshebang, shiftExpression: peg$parseshiftExpression, shiftOperator: peg$parseshiftOperator, shorthandFunction: peg$parseshorthandFunction, singleArrow: peg$parsesingleArrow, singleLineComment: peg$parsesingleLineComment, singleQuoteString: peg$parsesingleQuoteString, singleQuoteStringChar: peg$parsesingleQuoteStringChar, slash: peg$parseslash, slashFollows: peg$parseslashFollows, spreadElement: peg$parsespreadElement, stringLiteral: peg$parsestringLiteral, templateBody: peg$parsetemplateBody, templateBodyChar: peg$parsetemplateBodyChar, templateBodyText: peg$parsetemplateBodyText, templateDocument: peg$parsetemplateDocument, templateLiteral: peg$parsetemplateLiteral, templateLiteralChar: peg$parsetemplateLiteralChar, templateLiteralText: peg$parsetemplateLiteralText, templateSubstitution: peg$parsetemplateSubstitution, textChar: peg$parsetextChar, unaryExpression: peg$parseunaryExpression, unaryOperator: peg$parseunaryOperator, whitespace: peg$parsewhitespace, whitespaceWithNewLine: peg$parsewhitespaceWithNewLine };
+  var peg$startRuleFunctions = { __: peg$parse__, additiveExpression: peg$parseadditiveExpression, additiveOperator: peg$parseadditiveOperator, arguments: peg$parsearguments, arrayLiteral: peg$parsearrayLiteral, arrayEntries: peg$parsearrayEntries, arrayEntry: peg$parsearrayEntry, arrowFunction: peg$parsearrowFunction, bitwiseAndExpression: peg$parsebitwiseAndExpression, bitwiseAndOperator: peg$parsebitwiseAndOperator, bitwiseOrExpression: peg$parsebitwiseOrExpression, bitwiseOrOperator: peg$parsebitwiseOrOperator, bitwiseXorExpression: peg$parsebitwiseXorExpression, bitwiseXorOperator: peg$parsebitwiseXorOperator, callExpression: peg$parsecallExpression, commaExpression: peg$parsecommaExpression, comment: peg$parsecomment, conditionalExpression: peg$parseconditionalExpression, digits: peg$parsedigits, doubleArrow: peg$parsedoubleArrow, doubleQuoteString: peg$parsedoubleQuoteString, doubleQuoteStringChar: peg$parsedoubleQuoteStringChar, ellipsis: peg$parseellipsis, equalityExpression: peg$parseequalityExpression, equalityOperator: peg$parseequalityOperator, escapedChar: peg$parseescapedChar, expectBacktick: peg$parseexpectBacktick, expectClosingBrace: peg$parseexpectClosingBrace, expectClosingBracket: peg$parseexpectClosingBracket, expectClosingParenthesis: peg$parseexpectClosingParenthesis, expectDoubleQuote: peg$parseexpectDoubleQuote, expectExpression: peg$parseexpectExpression, expectFrontDelimiter: peg$parseexpectFrontDelimiter, expectGuillemet: peg$parseexpectGuillemet, expectSingleQuote: peg$parseexpectSingleQuote, expectPipelineExpression: peg$parseexpectPipelineExpression, exponentiationExpression: peg$parseexponentiationExpression, expression: peg$parseexpression, floatLiteral: peg$parsefloatLiteral, frontDelimiter: peg$parsefrontDelimiter, frontMatterExpression: peg$parsefrontMatterExpression, frontMatterText: peg$parsefrontMatterText, frontMatterYaml: peg$parsefrontMatterYaml, group: peg$parsegroup, guillemetString: peg$parseguillemetString, guillemetStringChar: peg$parseguillemetStringChar, homeDirectory: peg$parsehomeDirectory, host: peg$parsehost, identifier: peg$parseidentifier, identifierChar: peg$parseidentifierChar, implicitParenthesesCallExpression: peg$parseimplicitParenthesesCallExpression, implicitParensthesesArguments: peg$parseimplicitParensthesesArguments, inherited: peg$parseinherited, inlineSpace: peg$parseinlineSpace, integerLiteral: peg$parseintegerLiteral, jsIdentifier: peg$parsejsIdentifier, jsIdentifierPart: peg$parsejsIdentifierPart, jsIdentifierStart: peg$parsejsIdentifierStart, jsPropertyAccess: peg$parsejsPropertyAccess, list: peg$parselist, literal: peg$parseliteral, logicalAndExpression: peg$parselogicalAndExpression, logicalOrExpression: peg$parselogicalOrExpression, multiLineComment: peg$parsemultiLineComment, multiplicativeExpression: peg$parsemultiplicativeExpression, multiplicativeOperator: peg$parsemultiplicativeOperator, namespace: peg$parsenamespace, newLine: peg$parsenewLine, numericLiteral: peg$parsenumericLiteral, nullishCoalescingExpression: peg$parsenullishCoalescingExpression, objectLiteral: peg$parseobjectLiteral, objectEntries: peg$parseobjectEntries, objectEntry: peg$parseobjectEntry, objectGetter: peg$parseobjectGetter, objectHiddenKey: peg$parseobjectHiddenKey, objectKey: peg$parseobjectKey, objectProperty: peg$parseobjectProperty, objectShorthandProperty: peg$parseobjectShorthandProperty, objectPublicKey: peg$parseobjectPublicKey, parameter: peg$parseparameter, parameterList: peg$parseparameterList, parameterSingleton: peg$parseparameterSingleton, parenthesesArguments: peg$parseparenthesesArguments, path: peg$parsepath, pathArguments: peg$parsepathArguments, pathKey: peg$parsepathKey, pathSegment: peg$parsepathSegment, pathSegmentChar: peg$parsepathSegmentChar, pipelineExpression: peg$parsepipelineExpression, primary: peg$parseprimary, program: peg$parseprogram, protocolExpression: peg$parseprotocolExpression, qualifiedReference: peg$parsequalifiedReference, relationalExpression: peg$parserelationalExpression, relationalOperator: peg$parserelationalOperator, rootDirectory: peg$parserootDirectory, scopeReference: peg$parsescopeReference, separator: peg$parseseparator, shebang: peg$parseshebang, shiftExpression: peg$parseshiftExpression, shiftOperator: peg$parseshiftOperator, shorthandFunction: peg$parseshorthandFunction, singleArrow: peg$parsesingleArrow, singleLineComment: peg$parsesingleLineComment, singleQuoteString: peg$parsesingleQuoteString, singleQuoteStringChar: peg$parsesingleQuoteStringChar, slash: peg$parseslash, slashFollows: peg$parseslashFollows, spreadElement: peg$parsespreadElement, stringLiteral: peg$parsestringLiteral, templateBody: peg$parsetemplateBody, templateBodyChar: peg$parsetemplateBodyChar, templateBodyText: peg$parsetemplateBodyText, templateDocument: peg$parsetemplateDocument, templateLiteral: peg$parsetemplateLiteral, templateLiteralChar: peg$parsetemplateLiteralChar, templateLiteralText: peg$parsetemplateLiteralText, templateSubstitution: peg$parsetemplateSubstitution, textChar: peg$parsetextChar, unaryExpression: peg$parseunaryExpression, unaryOperator: peg$parseunaryOperator, whitespace: peg$parsewhitespace, whitespaceWithNewLine: peg$parsewhitespaceWithNewLine };
   var peg$startRuleFunction = peg$parse__;
 
   var peg$c0 = "[";
@@ -495,12 +495,9 @@ function peg$parse(input, options) {
   var peg$f36 = function(yaml) {
     return makeYamlObject(yaml, location());
   };
-  var peg$f37 = function(head, tail) {
-      return tail.reduce(
-        makeJsPropertyAccess,
-        annotate(downgradeReference(head), location()),
-      );
-    };
+  var peg$f37 = function(expression) {
+    return annotate(downgradeReference(expression), location());
+  };
   var peg$f38 = function(chars) {
     return annotate([ops.literal, chars.join("")], location());
   };
@@ -526,7 +523,8 @@ function peg$parse(input, options) {
   var peg$f45 = function(char) { return char.match(/[$_\p{ID_Continue}]/u) };
   var peg$f46 = function(char) { return char.match(/[$_\p{ID_Start}]/u) };
   var peg$f47 = function(property) {
-    return annotate([ops.literal, property], location());
+    const literal = annotate([ops.literal, property], location());
+    return annotate([ops.traverse, literal], location());
   };
   var peg$f48 = function(values) {
       return annotate(values, location());
@@ -974,7 +972,10 @@ function peg$parse(input, options) {
     if (s0 === peg$FAILED) {
       s0 = peg$parsepathArguments();
       if (s0 === peg$FAILED) {
-        s0 = peg$parsetemplateLiteral();
+        s0 = peg$parsejsPropertyAccess();
+        if (s0 === peg$FAILED) {
+          s0 = peg$parsetemplateLiteral();
+        }
       }
     }
     peg$silentFails--;
@@ -2536,7 +2537,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parsegroup() {
-    var s0, s1, s2, s3, s4, s5;
+    var s0, s1, s2, s3;
 
     peg$silentFails++;
     s0 = peg$currPos;
@@ -2552,14 +2553,8 @@ function peg$parse(input, options) {
       if (s2 !== peg$FAILED) {
         s3 = peg$parseexpectClosingParenthesis();
         if (s3 !== peg$FAILED) {
-          s4 = [];
-          s5 = peg$parsejsPropertyAccess();
-          while (s5 !== peg$FAILED) {
-            s4.push(s5);
-            s5 = peg$parsejsPropertyAccess();
-          }
           peg$savedPos = s0;
-          s0 = peg$f37(s2, s4);
+          s0 = peg$f37(s2);
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -2899,6 +2894,26 @@ function peg$parse(input, options) {
     } else {
       peg$currPos = s0;
       s0 = peg$FAILED;
+    }
+
+    return s0;
+  }
+
+  function peg$parseinherited() {
+    var s0;
+
+    s0 = peg$parserootDirectory();
+    if (s0 === peg$FAILED) {
+      s0 = peg$parsehomeDirectory();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parsequalifiedReference();
+        if (s0 === peg$FAILED) {
+          s0 = peg$parsenamespace();
+          if (s0 === peg$FAILED) {
+            s0 = peg$parsescopeReference();
+          }
+        }
+      }
     }
 
     return s0;
@@ -4321,26 +4336,6 @@ function peg$parse(input, options) {
     return s0;
   }
 
-  function peg$parseinherited() {
-    var s0;
-
-    s0 = peg$parserootDirectory();
-    if (s0 === peg$FAILED) {
-      s0 = peg$parsehomeDirectory();
-      if (s0 === peg$FAILED) {
-        s0 = peg$parsequalifiedReference();
-        if (s0 === peg$FAILED) {
-          s0 = peg$parsenamespace();
-          if (s0 === peg$FAILED) {
-            s0 = peg$parsescopeReference();
-          }
-        }
-      }
-    }
-
-    return s0;
-  }
-
   function peg$parserelationalExpression() {
     var s0, s1, s2, s3, s4, s5, s6, s7;
 
@@ -5440,6 +5435,7 @@ const peg$allowedStartRules = [
   "identifierChar",
   "implicitParenthesesCallExpression",
   "implicitParensthesesArguments",
+  "inherited",
   "inlineSpace",
   "integerLiteral",
   "jsIdentifier",
@@ -5480,7 +5476,6 @@ const peg$allowedStartRules = [
   "program",
   "protocolExpression",
   "qualifiedReference",
-  "inherited",
   "relationalExpression",
   "relationalOperator",
   "rootDirectory",

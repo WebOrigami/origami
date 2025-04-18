@@ -236,6 +236,14 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test("callExpression using property acccess", () => {
+    assertParse("callExpression", "(foo).bar", [
+      ops.traverse,
+      [ops.scope, "foo"],
+      [ops.literal, "bar"],
+    ]);
+  });
+
   test("commaExpression", () => {
     assertParse("commaExpression", "1", [ops.literal, 1]);
     assertParse("commaExpression", "a, b, c", [
@@ -512,13 +520,6 @@ Body`,
     assertParse("group", "(a -> b)", [
       [ops.builtin, "b"],
       [ops.scope, "a"],
-    ]);
-  });
-
-  test("group with property acccess", () => {
-    assertParse("group", "(foo).bar", [
-      [ops.scope, "foo"],
-      [ops.literal, "bar"],
     ]);
   });
 

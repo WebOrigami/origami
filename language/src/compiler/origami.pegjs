@@ -51,6 +51,7 @@ additiveOperator
 arguments "function arguments"
   = parenthesesArguments
   / pathArguments
+  / jsPropertyAccess
   / templateLiteral
 
 arrayLiteral "array"
@@ -278,12 +279,9 @@ frontMatterYaml "YAML front matter"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" head:expression expectClosingParenthesis tail:jsPropertyAccess* {
-      return tail.reduce(
-        makeJsPropertyAccess,
-        annotate(downgradeReference(head), location()),
-      );
-    }
+  = "(" expression:expression expectClosingParenthesis {
+    return annotate(downgradeReference(expression), location());
+  }
 
 guillemetString "guillemet string"
   = '«' chars:guillemetStringChar* expectGuillemet {
@@ -360,7 +358,8 @@ jsIdentifierStart "JavaScript identifier start"
 
 jsPropertyAccess
   = __ "." __ property:jsIdentifier {
-    return annotate([ops.literal, property], location());
+    const literal = annotate([ops.literal, property], location());
+    return annotate([ops.traverse, literal], location());
   }
 
 // A separated list of values
