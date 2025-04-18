@@ -52,6 +52,7 @@ arguments "function arguments"
   = parenthesesArguments
   / pathArguments
   / jsPropertyAccess
+  / computedPropertyAccess
   / templateLiteral
 
 arrayLiteral "array"
@@ -127,6 +128,11 @@ commaExpression
 comment "comment"
   = multiLineComment
   / singleLineComment
+
+computedPropertyAccess
+  = __ "[" expression:expression expectClosingBracket {
+      return annotate([ops.traverse, expression], location());
+    }
 
 conditionalExpression
   = condition:logicalOrExpression tail:(__

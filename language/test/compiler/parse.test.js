@@ -242,6 +242,16 @@ describe("Origami parser", () => {
       [ops.scope, "foo"],
       [ops.literal, "bar"],
     ]);
+    assertParse("callExpression", "(foo).bar.baz", [
+      ops.traverse,
+      [ops.traverse, [ops.scope, "foo"], [ops.literal, "bar"]],
+      [ops.literal, "baz"],
+    ]);
+    assertParse("callExpression", "foo[bar]", [
+      ops.traverse,
+      [ops.scope, "foo/"],
+      [ops.scope, "bar"],
+    ]);
   });
 
   test("commaExpression", () => {
