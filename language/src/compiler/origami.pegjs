@@ -330,6 +330,13 @@ implicitParensthesesArguments
       return annotate(values, location());
     }
 
+inherited
+  = rootDirectory
+  / homeDirectory
+  / qualifiedReference
+  / namespace
+  / scopeReference
+
 inlineSpace
   = [ \t]
 
@@ -575,13 +582,6 @@ qualifiedReference
       const literal = annotate([ops.literal, reference[1]], reference.location);
       return makeCall(fn, [literal]);
     }
-
-inherited
-  = rootDirectory
-  / homeDirectory
-  / qualifiedReference
-  / namespace
-  / scopeReference
 
 relationalExpression
   = head:shiftExpression tail:(__ @relationalOperator __ @shiftExpression)* {
