@@ -91,6 +91,8 @@ export default class FileTree {
 
   /**
    * Enumerate the names of the files/subdirectories in this directory.
+   *
+   * @returns {Promise<string[]>}
    */
   async keys() {
     let entries;

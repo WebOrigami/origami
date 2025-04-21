@@ -15,10 +15,10 @@ export { default as addNextPrevious } from "./src/operations/addNextPrevious.js"
 export { default as cache } from "./src/operations/cache.js";
 export { default as cachedKeyFunctions } from "./src/operations/cachedKeyFunctions.js";
 export { default as concat } from "./src/operations/concat.js";
-export { default as concatTrees } from "./src/operations/concatTrees.js";
 export { default as deepMerge } from "./src/operations/deepMerge.js";
 export { default as deepReverse } from "./src/operations/deepReverse.js";
 export { default as deepTake } from "./src/operations/deepTake.js";
+export { default as deepText } from "./src/operations/deepText.js";
 export { default as deepValues } from "./src/operations/deepValues.js";
 export { default as deepValuesIterator } from "./src/operations/deepValuesIterator.js";
 export { default as extensionKeyFunctions } from "./src/operations/extensionKeyFunctions.js";

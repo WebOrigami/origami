@@ -9,7 +9,7 @@ import concat from "./concat.js";
  * @param {TemplateStringsArray} strings
  * @param  {...any} values
  */
-export default async function concatTrees(strings, ...values) {
+export default async function deepText(strings, ...values) {
   // Convert all the values to strings
   const valueTexts = await Promise.all(
     values.map((value) =>

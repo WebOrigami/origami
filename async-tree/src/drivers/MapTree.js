@@ -16,6 +16,9 @@ import { setParent } from "../utilities.js";
  */
 export default class MapTree {
   /**
+   * Constructs a new `MapTree` instance. This `iterable` parameter can be a
+   * `Map` instance, or any other iterable of key-value pairs.
+   *
    * @param {Iterable} [iterable]
    */
   constructor(iterable = []) {

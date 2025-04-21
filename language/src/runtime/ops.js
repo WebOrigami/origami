@@ -8,7 +8,7 @@
 import {
   ObjectTree,
   Tree,
-  concatTrees,
+  deepText,
   isUnpackable,
   scope as scopeFn,
   symbols,
@@ -533,7 +533,7 @@ addOpLabel(subtraction, "«ops.subtraction»");
  * Apply the default tagged template function.
  */
 export async function template(strings, ...values) {
-  return concatTrees(strings, ...values);
+  return deepText(strings, ...values);
 }
 addOpLabel(template, "«ops.template»");
 

@@ -6,11 +6,17 @@ import SiteTree from "./SiteTree.js";
  * route even though such a mechanism is not built into the HTTP protocol.
  */
 export default class ExplorableSiteTree extends SiteTree {
-  constructor(...args) {
-    super(...args);
+  /**
+   * @param {string} href
+   */
+  constructor(href) {
+    super(href);
     this.serverKeysPromise = undefined;
   }
 
+  /**
+   * @returns {Promise<string[]>}
+   */
   async getServerKeys() {
     // We use a promise to ensure we only check for keys once.
     const href = new URL(".keys.json", this.href).href;
@@ -32,8 +38,6 @@ export default class ExplorableSiteTree extends SiteTree {
   /**
    * Returns the keys of the site route. For this to work, the route must have a
    * `.keys.json` file that contains a JSON array of string keys.
-   *
-   * @returns {Promise<Iterable<string>>}
    */
   async keys() {
     const serverKeys = await this.getServerKeys();
