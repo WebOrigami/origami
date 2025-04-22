@@ -25,7 +25,8 @@ export async function describe(name, fn) {
     const name = result.name;
     const message = result.result === "fail" ? `: ${result.message}` : "";
     const skipped = result.result === "skipped" ? " [skipped]" : "";
-    console.log(`${marker} ${name}${message}${skipped}`);
+    const fn = result.result === "fail" ? "error" : "log";
+    console[fn](`${marker} ${name}${message}${skipped}`);
   }
   console.groupEnd();
 }

@@ -6,14 +6,16 @@
   "main": "./main.js",
   "browser": "./browser.js",
   "types": "./index.ts",
-  "devDependencies": {
-    "@types/node": "22.13.13",
-    "typescript": "5.8.2"
-  },
   "dependencies": {
     "@weborigami/types": "0.3.0"
   },
+  "devDependencies": {
+    "@types/node": "22.13.13",
+    "puppeteer": "24.6.1",
+    "typescript": "5.8.2"
+  },
   "scripts": {
+    "headlessTest": "node test/browser/headlessTest.js",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }

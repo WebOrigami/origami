@@ -39,16 +39,16 @@ describe("addNextPrevious", () => {
     assert.deepEqual(result, [
       {
         value: "Alice",
-        nextKey: 1,
+        nextKey: "1",
       },
       {
         value: "Bob",
-        nextKey: 2,
-        previousKey: 0,
+        nextKey: "2",
+        previousKey: "0",
       },
       {
         value: "Carol",
-        previousKey: 1,
+        previousKey: "1",
       },
     ]);
   });
