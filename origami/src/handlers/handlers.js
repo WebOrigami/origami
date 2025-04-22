@@ -14,6 +14,7 @@ import jpgHandler from "./jpg.handler.js";
 import jsonHandler from "./json.handler.js";
 import mdHandler from "./md.handler.js";
 import mjsHandler from "./mjs.handler.js";
+import tsHandler from "./ts.handler.js";
 import txtHandler from "./txt.handler.js";
 import xhtmlHandler from "./xhtml.handler.js";
 import ymlHandler from "./yml.handler.js";
@@ -31,6 +32,7 @@ export default {
   "mjs.handler": mjsHandler,
   "ori.handler": oriHandler,
   "oridocument.handler": oridocumentHandler,
+  "ts.handler": tsHandler,
   "txt.handler": txtHandler,
   "wasm.handler": wasmHandler,
   "xhtml.handler": xhtmlHandler,
