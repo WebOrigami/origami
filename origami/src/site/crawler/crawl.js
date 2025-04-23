@@ -59,7 +59,6 @@ export default async function crawlBuiltin(treelike, baseHref) {
 
   const cache = {};
   const resources = {};
-  const errors = [];
 
   // We iterate until there are no more promises to wait for.
   for await (const result of crawlResources(tree, baseUrl)) {
@@ -79,14 +78,6 @@ export default async function crawlBuiltin(treelike, baseHref) {
       };
       addValueToObject(resources, resourceKeys, fn);
     }
-  }
-
-  if (errors.length) {
-    addValueToObject(
-      cache,
-      ["crawl-errors.json"],
-      JSON.stringify(errors, null, 2)
-    );
   }
 
   // Merge the cache on top of the resources tree. If we have an actual value
