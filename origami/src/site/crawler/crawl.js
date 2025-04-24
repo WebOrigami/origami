@@ -2,14 +2,12 @@ import {
   DeepObjectTree,
   Tree,
   deepMerge,
-  isPlainObject,
   keysFromPath,
-  trailingSlash,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
 import getTreeArgument from "../../common/getTreeArgument.js";
 import crawlResources from "./crawlResources.js";
-import { getBaseUrl } from "./utilities.js";
+import { addValueToObject, getBaseUrl } from "./utilities.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to
@@ -62,30 +60,4 @@ export default async function crawlBuiltin(treelike, baseHref) {
     new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );
   return result;
-}
-
-function addValueToObject(object, keys, value) {
-  for (let i = 0, current = object; i < keys.length; i++) {
-    const key = trailingSlash.remove(keys[i]);
-    if (i === keys.length - 1) {
-      // Write out value
-      if (isPlainObject(current[key])) {
-        // Route with existing values; treat the new value as an index.html
-        current[key]["index.html"] = value;
-      } else {
-        current[key] = value;
-      }
-    } else {
-      // Traverse further
-      if (!current[key]) {
-        current[key] = {};
-      } else if (!isPlainObject(current[key])) {
-        // Already have a value at this point. The site has a page at a route
-        // like /foo, and the site also has resources within that at routes like
-        // /foo/bar.jpg. We move the current value to "index.html".
-        current[key] = { "index.html": current[key] };
-      }
-      current = current[key];
-    }
-  }
 }

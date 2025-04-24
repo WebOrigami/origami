@@ -1,8 +1,45 @@
-import { extension, trailingSlash } from "@weborigami/async-tree";
+import {
+  extension,
+  isPlainObject,
+  trailingSlash,
+} from "@weborigami/async-tree";
 
 // A fake base URL used to handle cases where an href is relative and must be
 // treated relative to some base URL.
 const fakeBaseUrl = new URL("fake:/");
+
+/**
+ * Add the value to the object at the path given by the keys
+ *
+ * @param {any} object
+ * @param {string[]} keys
+ * @param {any} value
+ */
+export function addValueToObject(object, keys, value) {
+  for (let i = 0, current = object; i < keys.length; i++) {
+    const key = trailingSlash.remove(keys[i]);
+    if (i === keys.length - 1) {
+      // Write out value
+      if (isPlainObject(current[key])) {
+        // Route with existing values; treat the new value as an index.html
+        current[key]["index.html"] = value;
+      } else {
+        current[key] = value;
+      }
+    } else {
+      // Traverse further
+      if (!current[key]) {
+        current[key] = {};
+      } else if (!isPlainObject(current[key])) {
+        // Already have a value at this point. The site has a page at a route
+        // like /foo, and the site also has resources within that at routes like
+        // /foo/bar.jpg. We move the current value to "index.html".
+        current[key] = { "index.html": current[key] };
+      }
+      current = current[key];
+    }
+  }
+}
 
 /**
  * Determine a URL we can use to determine whether a link is local within the
