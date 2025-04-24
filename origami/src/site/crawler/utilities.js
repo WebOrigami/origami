@@ -2,7 +2,41 @@ import { extension, trailingSlash } from "@weborigami/async-tree";
 
 // A fake base URL used to handle cases where an href is relative and must be
 // treated relative to some base URL.
-const fakeBaseUrl = new URL("https://fake");
+const fakeBaseUrl = new URL("fake:/");
+
+/**
+ * Determine a URL we can use to determine whether a link is local within the
+ * tree or not.
+ *
+ * If a baseHref is supplied, convert that to a URL. If it's a relative path,
+ * use a fake base URL. If no baseHref is supplied, see if the `object`
+ * parameter defines an `href` property and use that to construct a URL.
+ *
+ * @param {string|undefined} baseHref
+ * @param {any} object
+ */
+export function getBaseUrl(baseHref, object) {
+  let url;
+  if (baseHref !== undefined) {
+    // See if the href is valid
+    try {
+      url = new URL(baseHref);
+    } catch (e) {
+      // Invalid, probably a path; use a fake protocol
+      url = new URL(baseHref, fakeBaseUrl);
+    }
+  } else if (object.href) {
+    // Use href property on object
+    let href = object.href;
+    if (!href?.endsWith("/")) {
+      href += "/";
+    }
+    url = new URL(href);
+  } else {
+    url = fakeBaseUrl;
+  }
+  return url;
+}
 
 export function isCrawlableHref(href) {
   // Use a fake base URL to cover the case where the href is relative.

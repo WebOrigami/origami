@@ -9,6 +9,7 @@ import {
 import { InvokeFunctionsTransform } from "@weborigami/language";
 import getTreeArgument from "../../common/getTreeArgument.js";
 import crawlResources from "./crawlResources.js";
+import { getBaseUrl } from "./utilities.js";
 
 /**
  * Crawl a tree, starting its root index.html page, and following links to
@@ -20,6 +21,7 @@ import crawlResources from "./crawlResources.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ *
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
@@ -27,35 +29,7 @@ import crawlResources from "./crawlResources.js";
  */
 export default async function crawlBuiltin(treelike, baseHref) {
   const tree = await getTreeArgument(this, arguments, treelike, "site:crawl");
-
-  if (baseHref === undefined) {
-    // Ask tree or original treelike if it has an `href` property we can use as
-    // the base href to determine whether a link is local within the tree or
-    // not. If not, use a fake `local:/` base href.
-    baseHref =
-      /** @type {any} */ (tree).href ??
-      /** @type {any} */ (treelike).href ??
-      "local:/";
-    if (!baseHref?.endsWith("/")) {
-      baseHref += "/";
-    }
-  } else {
-    // Is the href already valid?
-    let isHrefValid = false;
-    try {
-      new URL(baseHref);
-      isHrefValid = true;
-    } catch (e) {
-      // Ignore
-    }
-    if (!isHrefValid) {
-      // Use a fake base href.
-      baseHref = `local:/${baseHref}`;
-    }
-  }
-
-  // @ts-ignore
-  const baseUrl = new URL(baseHref);
+  const baseUrl = getBaseUrl(baseHref, treelike);
 
   const cache = {};
   const resources = {};
