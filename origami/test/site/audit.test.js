@@ -22,4 +22,16 @@ describe("audit", () => {
       "index.html": ["missing.png"],
     });
   });
+
+  test.only("treats /foo or /foo/ as equivalent to /foo.html", async () => {
+    const tree = {
+      "index.html": `
+        <a href="foo">Without slash</a>
+        <a href="foo/">With slash</a>
+      `,
+      "foo.html": "Foo",
+    };
+    const result = await audit.call(null, tree);
+    assert.equal(result, undefined);
+  });
 });

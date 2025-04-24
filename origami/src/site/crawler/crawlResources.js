@@ -130,7 +130,7 @@ async function processPath(tree, path, baseUrl) {
 
   // Traverse tree to get value.
   let value = await Tree.traverse(tree, ...keys);
-  const normalizedKeys = keys.slice();
+  let normalizedKeys = keys.slice();
   let normalizedPath = path;
   if (Tree.isTreelike(value)) {
     // Path is actually a directory. See if we can get the empty string or
@@ -149,6 +149,24 @@ async function processPath(tree, path, baseUrl) {
       // Add index.html to keys if it's not already there
       if (normalizedKeys.at(-1) !== "index.html") {
         normalizedKeys.push("index.html");
+      }
+    }
+  }
+
+  if (value === undefined) {
+    // The path may be a URL like `foo` or `foo/` that points to `foo.html`, so
+    // we'll try looking adding `.html` to the end. We don't want to check every
+    // path twice, so we only do this if the last key does *not* include an
+    // extension.
+    const lastKey = keys.at(-1);
+    if (lastKey !== "" && !lastKey?.includes(".")) {
+      const adjustedLastKey = `${trailingSlash.remove(lastKey)}.html`;
+      const adjustedKeys = [...keys.slice(0, -1), adjustedLastKey];
+      value = await Tree.traverse(tree, ...adjustedKeys);
+      if (value !== undefined) {
+        // Page exists at foo.html
+        normalizedPath = pathFromKeys(adjustedKeys);
+        normalizedKeys = adjustedKeys;
       }
     }
   }
