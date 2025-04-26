@@ -149,7 +149,6 @@ function findPathsInJs(js) {
 function findPathsInHtml(html) {
   const crawlablePaths = [];
   const resourcePaths = [];
-  let match;
 
   const dom = htmlDom(html);
 
@@ -179,13 +178,13 @@ function findPathsInHtml(html) {
     }
   }
 
-  // Find `url()` functions in CSS.
-  const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
-  while ((match = urlRegex.exec(html))) {
-    const href = normalizeHref(match.groups?.href);
-    if (href) {
-      resourcePaths.push(href);
-    }
+  // Find paths in CSS in <style> tags.
+  const styleTags = dom.querySelectorAll("style");
+  for (const styleTag of styleTags) {
+    const css = styleTag.textContent;
+    const cssResults = findPathsInCss(css);
+    crawlablePaths.push(...cssResults.crawlablePaths);
+    resourcePaths.push(...cssResults.resourcePaths);
   }
 
   // Find ancient `background` attribute on body tag.
