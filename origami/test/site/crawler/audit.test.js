@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import audit from "../../src/site/crawler/audit.js";
+import audit from "../../../src/site/crawler/audit.js";
 
 describe("audit", () => {
   test("reports missing pages", async () => {
