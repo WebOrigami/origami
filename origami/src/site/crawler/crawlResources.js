@@ -153,7 +153,7 @@ async function processPath(tree, path, baseUrl) {
     }
   }
 
-  if (value === undefined) {
+  if (value === undefined && path.length > 0) {
     // The path may be a URL like `foo` or `foo/` that points to `foo.html`, so
     // we'll try looking adding `.html` to the end. We don't want to check every
     // path twice, so we only do this if the last key does *not* include an

@@ -46,15 +46,20 @@ describe("crawl", () => {
     const tree = {
       "index.html": `
         <script src="a.js" type="module"></script>
+        <script type="module">
+          import b from './b.js';
+        </script>
       `,
-      "a.js": "import b from './b.js';",
+      "a.js": "import c from './c.js';",
       "b.js": "export default true;",
+      "c.js": "export default false;",
     };
     const crawled = await crawl.call(null, tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "a.js",
       "b.js",
+      "c.js",
     ]);
   });
 

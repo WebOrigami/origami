@@ -1,4 +1,5 @@
 import { extension, toString } from "@weborigami/async-tree";
+import htmlDom from "../../text/htmlDom.js";
 import { isCrawlableHref, normalizeHref } from "./utilities.js";
 
 // Filter the paths to those that are local to the site.
@@ -150,13 +151,12 @@ function findPathsInHtml(html) {
   const resourcePaths = [];
   let match;
 
-  // Find `href` attributes in anchor and link tags.
-  const linkRegex =
-    /<(?:a|A|link|LINK)[\s][^>]*?(?:href|HREF)=["'](?<link>[^>]*?)["'][^>]*>/g;
-  while ((match = linkRegex.exec(html))) {
-    // Links can point to be other crawlable paths and resource paths.
-    // We guess the type based on the extension.
-    const href = normalizeHref(match.groups?.link);
+  const dom = htmlDom(html);
+
+  // Find `href` attributes in anchor, area, and link tags.
+  const hrefTags = dom.querySelectorAll("a[href], area[href], link[href]");
+  for (const hrefTag of hrefTags) {
+    const href = normalizeHref(hrefTag.getAttribute("href"));
     if (href) {
       if (isCrawlableHref(href)) {
         crawlablePaths.push(href);
@@ -166,14 +166,12 @@ function findPathsInHtml(html) {
     }
   }
 
-  // Find `src` attributes in img and script tags.
-  const srcRegex =
-    /<(?<tag>img|IMG|script|SCRIPT)[\s][^>]*?(?:src|SRC)=["'](?<src>[^>]*?)["'][^>]*>/g;
-  while ((match = srcRegex.exec(html))) {
-    const tag = match.groups?.tag;
-    const src = normalizeHref(match.groups?.src);
+  // Find `src` attributes in frame, img, and script tags.
+  const srcTags = dom.querySelectorAll("frame[src], img[src], script[src]");
+  for (const srcTag of srcTags) {
+    const src = normalizeHref(srcTag.getAttribute("src"));
     if (src) {
-      if (tag === "script" || tag === "SCRIPT") {
+      if (srcTag.tagName === "FRAME" || srcTag.tagName === "SCRIPT") {
         crawlablePaths.push(src);
       } else {
         resourcePaths.push(src);
@@ -190,39 +188,21 @@ function findPathsInHtml(html) {
     }
   }
 
-  // Find `src` attribute on frame tags.
-  const frameRegex =
-    /<(?:frame|FRAME)[\s][^>]*?(?:src|SRC)=["'](?<href>[^>]*?)["'][^>]*>/g;
-  while ((match = frameRegex.exec(html))) {
-    const href = normalizeHref(match.groups?.href);
-    if (href) {
-      crawlablePaths.push(href);
-    }
-  }
-
   // Find ancient `background` attribute on body tag.
-  const backgroundRegex =
-    /<(?:body|BODY)[\s][^>]*?(?:background|BACKGROUND)=["'](?<href>[^>]*?)["'][^>]*>/g;
-  while ((match = backgroundRegex.exec(html))) {
-    const href = normalizeHref(match.groups?.href);
+  const body = dom.querySelector("body[background]");
+  if (body) {
+    const href = normalizeHref(body.getAttribute("background"));
     if (href) {
       resourcePaths.push(href);
     }
   }
 
-  // Find `href` attribute on area tags.
-  const areaRegex =
-    /<(?:area|AREA)[\s][^>]*?(?:href|HREF)=["'](?<href>[^>]*?)["'][^>]*>/g;
-  while ((match = areaRegex.exec(html))) {
-    const href = normalizeHref(match.groups?.href);
-    if (href) {
-      crawlablePaths.push(href);
-    }
-  }
-
   // Also look for JS `import` statements that might be in <script type="module"> tags.
-  const jsResults = findPathsInJs(html);
-  crawlablePaths.push(...jsResults.crawlablePaths);
+  const scriptTags = dom.querySelectorAll("script[type='module']");
+  for (const scriptTag of scriptTags) {
+    const jsResults = findPathsInJs(scriptTag.textContent);
+    crawlablePaths.push(...jsResults.crawlablePaths);
+  }
 
   return { crawlablePaths, resourcePaths };
 }
