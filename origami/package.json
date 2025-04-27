@@ -29,6 +29,7 @@
     "marked-gfm-heading-id": "4.1.1",
     "marked-highlight": "2.2.1",
     "marked-smartypants": "1.1.9",
+    "rrweb-cssom": "0.8.0",
     "sharp": "0.33.5",
     "yaml": "2.7.0"
   },
