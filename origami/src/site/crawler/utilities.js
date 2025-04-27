@@ -9,6 +9,19 @@ import {
 const fakeBaseUrl = new URL("fake:/");
 
 /**
+ * Destructively add a path to the paths object
+ */
+export function addHref(paths, href, isCrawlable) {
+  href = normalizeHref(href);
+  isCrawlable ??= isCrawlableHref(href);
+  if (isCrawlable) {
+    paths.crawlablePaths.push(href);
+  } else {
+    paths.resourcePaths.push(href);
+  }
+}
+
+/**
  * Add the value to the object at the path given by the keys
  *
  * @param {any} object

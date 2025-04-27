@@ -1,20 +1,18 @@
-import { normalizeHref } from "./utilities.js";
+import { addHref } from "./utilities.js";
 
 export default function pathsInJs(js) {
-  const crawlablePaths = [];
+  const paths = {
+    crawlablePaths: [],
+    resourcePaths: [],
+  };
+
   let match;
 
   // Find `import` statements.
   const importRegex = /import [\s\S]+?from\s+["'](?<import>[^"']*)["'];/g;
   while ((match = importRegex.exec(js))) {
-    const href = normalizeHref(match.groups?.import);
-    if (href) {
-      crawlablePaths.push(href);
-    }
+    addHref(paths, match.groups?.import, true);
   }
 
-  return {
-    crawlablePaths,
-    resourcePaths: [],
-  };
+  return paths;
 }

@@ -1,64 +1,84 @@
 import { JSDOM } from "jsdom";
 import pathsInCss from "./pathsInCss.js";
 import pathsInJs from "./pathsInJs.js";
-import { isCrawlableHref, normalizeHref } from "./utilities.js";
+import { addHref } from "./utilities.js";
 
 export default function findPathsInHtml(html) {
-  const crawlablePaths = [];
-  const resourcePaths = [];
+  const paths = {
+    crawlablePaths: [],
+    resourcePaths: [],
+  };
 
-  const dom = JSDOM.fragment(html);
+  const dom = new JSDOM(html);
+  const document = dom.window.document;
 
   // Find `href` attributes in anchor, area, and link tags.
-  const hrefTags = dom.querySelectorAll("a[href], area[href], link[href]");
+  const hrefTags = document.querySelectorAll("a[href], area[href], link[href]");
   for (const hrefTag of hrefTags) {
-    const href = normalizeHref(hrefTag.getAttribute("href"));
-    if (href) {
-      if (isCrawlableHref(href)) {
-        crawlablePaths.push(href);
-      } else {
-        resourcePaths.push(href);
-      }
-    }
+    const crawlable = ["A", "AREA"].includes(hrefTag.tagName)
+      ? true
+      : undefined;
+    addHref(paths, hrefTag.getAttribute("href"), crawlable);
   }
 
-  // Find `src` attributes in frame, img, and script tags.
-  const srcTags = dom.querySelectorAll("frame[src], img[src], script[src]");
+  // Find `src` attributes in input, frame, media, and script tags.
+  const srcTags = document.querySelectorAll(
+    "audio[src], embed[src], frame[src], iframe[src], img[src], input[src], script[src], source[src], track[src], video[src]"
+  );
   for (const srcTag of srcTags) {
-    const src = normalizeHref(srcTag.getAttribute("src"));
-    if (src) {
-      if (srcTag.tagName === "FRAME" || srcTag.tagName === "SCRIPT") {
-        crawlablePaths.push(src);
-      } else {
-        resourcePaths.push(src);
+    const crawlable = ["FRAME", "IFRAME"].includes(srcTag.tagName)
+      ? true
+      : srcTag.tagName === "SCRIPT"
+      ? srcTag.type === "module" // Only crawl modules
+      : undefined;
+    addHref(paths, srcTag.getAttribute("src"), crawlable);
+  }
+
+  // Find `srcset` attributes in image and source tags.
+  const srcsetTags = document.querySelectorAll("img[srcset], source[srcset]");
+  for (const srcsetTag of srcsetTags) {
+    const srcset = srcsetTag.getAttribute("srcset");
+    const srcRegex = /(?<url>[^\s,]+)(?=\s+\d+(?:\.\d+)?[wxh])/g;
+    let match;
+    while ((match = srcRegex.exec(srcset))) {
+      if (match.groups?.url) {
+        addHref(paths, match.groups.url, false);
       }
     }
   }
 
-  // Find paths in CSS in <style> tags.
-  const styleTags = dom.querySelectorAll("style");
-  for (const styleTag of styleTags) {
-    const css = styleTag.textContent;
-    const cssResults = pathsInCss(css);
-    crawlablePaths.push(...cssResults.crawlablePaths);
-    resourcePaths.push(...cssResults.resourcePaths);
+  // Find `poster` attributes in <video> tags.
+  const posterTags = document.querySelectorAll("video[poster]");
+  for (const posterTag of posterTags) {
+    addHref(paths, posterTag.getAttribute("poster"), false);
+  }
+
+  // Find `data` attributes in <object> tags.
+  const objectTags = document.querySelectorAll("object[data]");
+  for (const objectTag of objectTags) {
+    addHref(paths, objectTag.getAttribute("data"), false);
   }
 
   // Find ancient `background` attribute on body tag.
-  const body = dom.querySelector("body[background]");
+  const body = document.querySelector("body[background]");
   if (body) {
-    const href = normalizeHref(body.getAttribute("background"));
-    if (href) {
-      resourcePaths.push(href);
-    }
+    addHref(paths, body.getAttribute("background"), false);
+  }
+
+  // Find paths in CSS in <style> tags.
+  const styleTags = document.querySelectorAll("style");
+  for (const styleTag of styleTags) {
+    const cssPaths = pathsInCss(styleTag.textContent);
+    paths.crawlablePaths.push(...cssPaths.crawlablePaths);
+    paths.resourcePaths.push(...cssPaths.resourcePaths);
   }
 
   // Also look for JS `import` statements that might be in <script type="module"> tags.
-  const scriptTags = dom.querySelectorAll("script[type='module']");
+  const scriptTags = document.querySelectorAll("script[type='module']");
   for (const scriptTag of scriptTags) {
-    const jsResults = pathsInJs(scriptTag.textContent);
-    crawlablePaths.push(...jsResults.crawlablePaths);
+    const jsPaths = pathsInJs(scriptTag.textContent);
+    paths.crawlablePaths.push(...jsPaths.crawlablePaths);
   }
 
-  return { crawlablePaths, resourcePaths };
+  return paths;
 }

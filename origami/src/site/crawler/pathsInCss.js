@@ -1,9 +1,11 @@
 import CSSOM from "rrweb-cssom";
-import { isCrawlableHref, normalizeHref } from "./utilities.js";
+import { addHref } from "./utilities.js";
 
 export default function findPathsInCss(css) {
-  const crawlablePaths = [];
-  const resourcePaths = [];
+  const paths = {
+    crawlablePaths: [],
+    resourcePaths: [],
+  };
 
   const cssom = new CSSOM.parse(css);
   const rules = cssom.cssRules;
@@ -11,48 +13,57 @@ export default function findPathsInCss(css) {
     if (rule instanceof CSSOM.CSSFontFaceRule) {
       // @font-face
       const src = rule.style.getPropertyValue("src");
-      const href = findUrl(src);
-      if (isCrawlableHref(href)) {
-        crawlablePaths.push(href);
-      } else {
-        resourcePaths.push(href);
-      }
+      findUrlHrefs(src).forEach((href) => {
+        addHref(paths, href, false);
+      });
     } else if (rule instanceof CSSOM.CSSImportRule) {
       // @import
-      const href = normalizeHref(rule.href);
-      if (href) {
-        if (isCrawlableHref(href)) {
-          crawlablePaths.push(href);
-        } else {
-          resourcePaths.push(href);
-        }
-      }
+      addHref(paths, rule.href, true);
     } else if (rule instanceof CSSOM.CSSStyleRule) {
-      // Regular rule, search for `url()` functions
       const style = rule.style;
       for (let i = 0; i < style.length; i++) {
         const name = style[i];
         const value = style.getPropertyValue(name);
-        const href = findUrl(value);
-        if (isCrawlableHref(href)) {
-          crawlablePaths.push(href);
-        } else {
-          resourcePaths.push(href);
-        }
+        const imageRules = ["cross-fade(", "image(", "image-set("];
+        const isImageRule = imageRules.some((prefix) =>
+          value.trim().startsWith(prefix)
+        );
+        const hrefs = isImageRule ? findImageHrefs(value) : findUrlHrefs(value);
+        hrefs.forEach((href) => {
+          addHref(paths, href, false);
+        });
       }
     }
   }
 
-  return {
-    crawlablePaths,
-    resourcePaths,
-  };
+  return paths;
 }
 
-// Search for `url()` functions in a CSS value
-function findUrl(propertyValue) {
+// Find hrefs in properties for image() and image-set() functions, which can be
+// plain strings or url() functions.
+function findImageHrefs(text) {
+  const hrefs = [];
+  const hrefRegex = /"(?<string>.+?)"|url\("?(?<url>.+?)"?\)/g;
+  let match;
+  while ((match = hrefRegex.exec(text))) {
+    const href = match?.groups?.string ?? match?.groups?.url;
+    if (href) {
+      hrefs.push(href);
+    }
+  }
+  return hrefs;
+}
+
+// Find all hrefs in `url()` functions
+function findUrlHrefs(text) {
+  const hrefs = [];
   const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
-  const match = urlRegex.exec(propertyValue);
-  const href = match?.groups?.href;
-  return href ? normalizeHref(href) : null;
+  let match;
+  while ((match = urlRegex.exec(text))) {
+    const href = match?.groups?.href;
+    if (href) {
+      hrefs.push(href);
+    }
+  }
+  return hrefs;
 }
