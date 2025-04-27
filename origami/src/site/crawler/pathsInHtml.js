@@ -9,8 +9,10 @@ export default function pathsInHtml(html) {
     resourcePaths: [],
   };
 
-  const dom = new JSDOM(html);
-  const document = dom.window.document;
+  // Only create a full document if we need to handle <frameset>
+  const document = html.includes("<frameset>")
+    ? new JSDOM(html).window.document
+    : JSDOM.fragment(html);
 
   // Find `href` attributes in anchor, area, and link tags.
   const hrefTags = document.querySelectorAll("a[href], area[href], link[href]");
