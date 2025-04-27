@@ -122,6 +122,53 @@ describe("pathsInHtml", () => {
     });
   });
 
+  test("finds images in meta tags", () => {
+    const html = `
+      <meta property="og:image" content="og-image.png">
+      <meta property="twitter:image" content="twitter-image.jpg">
+      <meta property="fb:image" content="fb-image.png">
+      <meta property="article:image" content="article-image.jpg">
+    `;
+    const paths = pathsInHtml(html);
+    assert.deepEqual(paths, {
+      crawlablePaths: [],
+      resourcePaths: [
+        "og-image.png",
+        "twitter-image.jpg",
+        "fb-image.png",
+        "article-image.jpg",
+      ],
+    });
+  });
+
+  test("finds paths in <style> tags", () => {
+    const html = `
+      <style>
+        @import url('import.css');
+        body {
+          background-image: url('background.jpg');
+        }
+      </style>
+    `;
+    const paths = pathsInHtml(html);
+    assert.deepEqual(paths, {
+      crawlablePaths: ["import.css"],
+      resourcePaths: ["background.jpg"],
+    });
+  });
+
+  test("finds paths in `style` attributes", () => {
+    const html = `
+      <div style="background-image: url('image.jpg');"></div>
+      <div style="mask-image: url('images/mask.png');"></div>
+    `;
+    const paths = pathsInHtml(html);
+    assert.deepEqual(paths, {
+      crawlablePaths: [],
+      resourcePaths: ["image.jpg", "images/mask.png"],
+    });
+  });
+
   // Finds scripts in <script> tags
   test("finds src in script elements", () => {
     const html = `
@@ -145,8 +192,8 @@ describe("pathsInHtml", () => {
     `;
     const paths = pathsInHtml(html);
     assert.deepEqual(paths, {
-      crawlablePaths: [],
-      resourcePaths: ["./foo.js", "./bar.js"],
+      crawlablePaths: ["./foo.js", "./bar.js"],
+      resourcePaths: [],
     });
   });
 });

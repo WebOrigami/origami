@@ -1,7 +1,7 @@
 import CSSOM from "rrweb-cssom";
 import { addHref } from "./utilities.js";
 
-export default function findPathsInCss(css) {
+export default function pathsInCss(css) {
   const paths = {
     crawlablePaths: [],
     resourcePaths: [],
@@ -55,7 +55,7 @@ function findImageHrefs(text) {
 }
 
 // Find all hrefs in `url()` functions
-function findUrlHrefs(text) {
+export function findUrlHrefs(text) {
   const hrefs = [];
   const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
   let match;

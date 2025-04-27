@@ -1,9 +1,9 @@
 import { JSDOM } from "jsdom";
-import pathsInCss from "./pathsInCss.js";
+import pathsInCss, { findUrlHrefs } from "./pathsInCss.js";
 import pathsInJs from "./pathsInJs.js";
 import { addHref } from "./utilities.js";
 
-export default function findPathsInHtml(html) {
+export default function pathsInHtml(html) {
   const paths = {
     crawlablePaths: [],
     resourcePaths: [],
@@ -65,12 +65,31 @@ export default function findPathsInHtml(html) {
     addHref(paths, body.getAttribute("background"), false);
   }
 
+  // Find paths in <meta> image tags.
+  const imageMetaTags = document.querySelectorAll('meta[property$=":image"]');
+  for (const imageMetaTag of imageMetaTags) {
+    const content = imageMetaTag.getAttribute("content");
+    if (content) {
+      addHref(paths, content, false);
+    }
+  }
+
   // Find paths in CSS in <style> tags.
   const styleTags = document.querySelectorAll("style");
-  for (const styleTag of styleTags) {
-    const cssPaths = pathsInCss(styleTag.textContent);
+  for (const styleAttribute of styleTags) {
+    const cssPaths = pathsInCss(styleAttribute.textContent);
     paths.crawlablePaths.push(...cssPaths.crawlablePaths);
     paths.resourcePaths.push(...cssPaths.resourcePaths);
+  }
+
+  // Find paths in CSS in `style` attributes.
+  const styleAttributeTags = document.querySelectorAll("[style]");
+  for (const tag of styleAttributeTags) {
+    const style = tag.getAttribute("style");
+    const hrefs = findUrlHrefs(style);
+    hrefs.forEach((href) => {
+      addHref(paths, href, false);
+    });
   }
 
   // Also look for JS `import` statements that might be in <script type="module"> tags.
