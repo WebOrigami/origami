@@ -33,7 +33,7 @@ describe("pathsInCss", () => {
     });
   });
 
-  test.only("handles string and url() calls in image() and image-set()", async () => {
+  test("handles string and url() calls in image() and image-set()", async () => {
     const css = `
       body {
         /* CSS parser ignores the first, overwritten background-image rule */
