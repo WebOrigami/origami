@@ -224,7 +224,8 @@ export async function inherited(key) {
     return undefined;
   }
   const parentScope = scopeFn(this.parent);
-  return parentScope.get(key);
+  const value = await parentScope.get(key);
+  return value;
 }
 addOpLabel(inherited, "«ops.inherited»");
 
@@ -391,8 +392,10 @@ export async function merge(...codes) {
   // Second pass: evaluate the trees with the direct properties object in scope
   let context;
   if (directObject) {
+    // The `expressionObject` function will set the object's parent symbol to
+    // `this`. Tree.from will call the ObjectTree constructor, which will use
+    // that symbol to set the parent for the new tree to `this.`
     context = Tree.from(directObject);
-    context.parent = this;
   } else {
     context = this;
   }
