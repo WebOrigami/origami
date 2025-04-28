@@ -13,6 +13,10 @@ const fakeBaseUrl = new URL("fake:/");
  */
 export function addHref(paths, href, isCrawlable) {
   href = normalizeHref(href);
+  if (href === null) {
+    // Normalized href is null, was just an anchor or search; skip
+    return;
+  }
   isCrawlable ??= isCrawlableHref(href);
   if (isCrawlable) {
     paths.crawlablePaths.push(href);
