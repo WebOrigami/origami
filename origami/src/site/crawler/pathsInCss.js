@@ -9,7 +9,19 @@ export default function pathsInCss(css, context = "stylesheet") {
     resourcePaths: [],
   };
 
-  const ast = parse(css, { context });
+  let ast;
+  try {
+    parse(css, { context });
+  } catch (e) {
+    // If the CSS is invalid, we can't parse it, so we can't extract paths. For
+    // now we just return no paths.
+    return paths;
+  }
+
+  if (!ast) {
+    // Unclear why parser sometimes returns an undefined AST
+    return paths;
+  }
 
   walk(
     ast,
