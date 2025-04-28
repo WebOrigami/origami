@@ -18,6 +18,45 @@ describe("pathsInHtml", () => {
     });
   });
 
+  test("finds href attributes in SVG", () => {
+    const html = `
+      <svg>
+        <image href="images/photo.jpg" width="200" height="150" />
+        <filter id="f">
+          <feImage href="textures/pattern.png" result="tex"/>
+        </filter>
+        <use href="icons.svg#icon-alert" x="10" y="10" />
+        <defs>
+          <pattern href="defs.svg#stripePattern" width="4" height="4" />
+          <linearGradient href="defs.svg#mainGradient" />
+          <radialGradient href="defs.svg#radialGlow" />
+        </defs>
+        <defs>
+          <mpath href="shapes.svg#motionPath" />
+          <textPath href="shapes.svg#textPathShape">Text along a curve</textPath>
+        </defs>
+        <filter href="filters.svg#fancyBlur" />
+      </svg>
+    `;
+    const paths = pathsInHtml(html);
+    // NOTE: As of April 2024, jsdom querySelectorAll does not appear to find
+    // elements with mixed-case tag names.
+    assert.deepEqual(paths, {
+      crawlablePaths: [],
+      resourcePaths: [
+        "images/photo.jpg",
+        // "textures/pattern.png",
+        "icons.svg",
+        "defs.svg",
+        // "defs.svg",
+        // "defs.svg",
+        "shapes.svg",
+        // "shapes.svg",
+        "filters.svg",
+      ],
+    });
+  });
+
   test("finds src attributes", () => {
     const html = `
       <img src="photo.jpg" alt="A photo">
@@ -167,6 +206,30 @@ describe("pathsInHtml", () => {
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: ["image.jpg", "images/mask.png"],
+    });
+  });
+
+  test("finds paths in SVG attributes", () => {
+    const html = `
+      <svg>
+        <rect fill="url('patterns.svg#dots')" stroke="url('borders.svg#dashed')" />
+        <rect filter="url('filters.svg#glowEffect')" x="10" y="10" width="80" height="80" />
+        <path d="M10,10 L90,90"
+          marker-start="url('markers.svg#arrowStart')"
+          marker-end="url('markers.svg#arrowEnd')"
+        />
+      </svg>
+    `;
+    const paths = pathsInHtml(html);
+    assert.deepEqual(paths, {
+      crawlablePaths: [],
+      resourcePaths: [
+        "patterns.svg",
+        "borders.svg",
+        "filters.svg",
+        "markers.svg",
+        "markers.svg",
+      ],
     });
   });
 

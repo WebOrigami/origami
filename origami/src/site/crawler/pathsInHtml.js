@@ -14,8 +14,13 @@ export default function pathsInHtml(html) {
     ? new JSDOM(html).window.document
     : JSDOM.fragment(html);
 
-  // Find `href` attributes in anchor, area, and link tags.
-  const hrefTags = document.querySelectorAll("a[href], area[href], link[href]");
+  // Find `href` attributes in anchor, area, link, SVG tags.
+  //
+  // NOTE: As of April 2024, jsdom querySelectorAll does not appear to find
+  // elements with mixed-case tag names.
+  const hrefTags = document.querySelectorAll(
+    "a[href], area[href], image[href], feImage[href], filter[href], linearGradient[href], link[href], mpath[href], pattern[href], radialGradient[href], textPath[href], use[href]"
+  );
   for (const hrefTag of hrefTags) {
     const crawlable = ["A", "AREA"].includes(hrefTag.tagName)
       ? true
@@ -84,7 +89,7 @@ export default function pathsInHtml(html) {
     paths.resourcePaths.push(...cssPaths.resourcePaths);
   }
 
-  // Find paths in CSS in `style` attributes.
+  // Find URLs in CSS in `style` attributes.
   const styleAttributeTags = document.querySelectorAll("[style]");
   for (const tag of styleAttributeTags) {
     const style = tag.getAttribute("style");
@@ -92,6 +97,36 @@ export default function pathsInHtml(html) {
     stylePaths.resourcePaths.forEach((href) => {
       addHref(paths, href, false);
     });
+  }
+
+  // Find URLs in SVG attributes.
+  const svgAttributeNames = [
+    "clip-path",
+    "fill",
+    "filter",
+    "marker-end",
+    "marker-start",
+    "mask",
+    "stroke",
+  ];
+  const svgTags = document.querySelectorAll(
+    svgAttributeNames.map((name) => `[${name}]`).join(", ")
+  );
+  for (const svgTag of svgTags) {
+    for (const name of svgAttributeNames) {
+      const attributeValue = svgTag.getAttribute(name);
+      if (!attributeValue) {
+        continue;
+      }
+      const urlRegex = /url\((['"]?)(?<href>.*?)\1\)/g;
+      const attributeValueMatch = urlRegex.exec(attributeValue);
+      if (attributeValueMatch) {
+        const href = attributeValueMatch.groups?.href;
+        if (href) {
+          addHref(paths, href, false);
+        }
+      }
+    }
   }
 
   // Also look for JS `import` statements that might be in <script type="module"> tags.
