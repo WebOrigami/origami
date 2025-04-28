@@ -1,5 +1,5 @@
 import { JSDOM } from "jsdom";
-import pathsInCss, { findUrlHrefs } from "./pathsInCss.js";
+import pathsInCss from "./pathsInCss.js";
 import pathsInJs from "./pathsInJs.js";
 import { addHref } from "./utilities.js";
 
@@ -88,8 +88,8 @@ export default function pathsInHtml(html) {
   const styleAttributeTags = document.querySelectorAll("[style]");
   for (const tag of styleAttributeTags) {
     const style = tag.getAttribute("style");
-    const hrefs = findUrlHrefs(style);
-    hrefs.forEach((href) => {
+    const stylePaths = pathsInCss(style, "declarationList");
+    stylePaths.resourcePaths.forEach((href) => {
       addHref(paths, href, false);
     });
   }

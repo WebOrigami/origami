@@ -7,6 +7,8 @@ describe("pathsInCss", () => {
     const css = `
       /* url("bogus.css") ignored because it's in a comment */
       
+      @namespace url(http://www.w3.org/1999/xhtml);
+
       @import "stringImport.css" screen and (min-width: 600px);
       @import url("import.css");
 
@@ -26,6 +28,7 @@ describe("pathsInCss", () => {
     assert.deepEqual(paths, {
       crawlablePaths: ["stringImport.css", "import.css"],
       resourcePaths: [
+        "http://www.w3.org/1999/xhtml",
         "/fonts/OpenSans.woff2",
         "/fonts/OpenSans.woff",
         "background.jpg",
@@ -36,7 +39,6 @@ describe("pathsInCss", () => {
   test("handles string and url() calls in image() and image-set()", async () => {
     const css = `
       body {
-        /* CSS parser ignores the first, overwritten background-image rule */
         background-image: image("background.jpg");
         background-image: image-set("image-set.jpg" 1x, url("image-set.png") 2x);
       }
@@ -44,7 +46,7 @@ describe("pathsInCss", () => {
     const paths = await pathsInCss(css);
     assert.deepEqual(paths, {
       crawlablePaths: [],
-      resourcePaths: ["image-set.jpg", "image-set.png"],
+      resourcePaths: ["background.jpg", "image-set.jpg", "image-set.png"],
     });
   });
 });

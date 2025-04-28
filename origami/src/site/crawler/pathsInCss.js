@@ -1,69 +1,39 @@
-import CSSOM from "rrweb-cssom";
+import { parse, walk } from "css-tree";
 import { addHref } from "./utilities.js";
 
-export default function pathsInCss(css) {
+const imageFunctions = ["cross-fade", "image", "image-set"];
+
+export default function pathsInCss(css, context = "stylesheet") {
   const paths = {
     crawlablePaths: [],
     resourcePaths: [],
   };
 
-  const cssom = new CSSOM.parse(css);
-  const rules = cssom.cssRules;
-  for (const rule of rules) {
-    if (rule instanceof CSSOM.CSSFontFaceRule) {
-      // @font-face
-      const src = rule.style.getPropertyValue("src");
-      findUrlHrefs(src).forEach((href) => {
-        addHref(paths, href, false);
-      });
-    } else if (rule instanceof CSSOM.CSSImportRule) {
-      // @import
-      addHref(paths, rule.href, true);
-    } else if (rule instanceof CSSOM.CSSStyleRule) {
-      const style = rule.style;
-      for (let i = 0; i < style.length; i++) {
-        const name = style[i];
-        const value = style.getPropertyValue(name);
-        const imageRules = ["cross-fade(", "image(", "image-set("];
-        const isImageRule = imageRules.some((prefix) =>
-          value.trim().startsWith(prefix)
-        );
-        const hrefs = isImageRule ? findImageHrefs(value) : findUrlHrefs(value);
-        hrefs.forEach((href) => {
-          addHref(paths, href, false);
-        });
+  const ast = parse(css, { context });
+
+  walk(
+    ast,
+    /** @this {any} */
+    function (node) {
+      const { type, value } = node;
+      if (
+        this.atrule?.name === "import" &&
+        (type === "String" || type === "Url")
+      ) {
+        // A plain string or url() in an @import
+        addHref(paths, value, true);
+      } else if (
+        type === "String" &&
+        imageFunctions.includes(this.function?.name)
+      ) {
+        // A plain string in an cross-fade(), image(), or image-set()
+        addHref(paths, value, false);
+      } else if (type === "Url") {
+        // A url() anywhere else
+        addHref(paths, value, false);
       }
     }
-  }
+  );
 
   return paths;
-}
-
-// Find hrefs in properties for image() and image-set() functions, which can be
-// plain strings or url() functions.
-function findImageHrefs(text) {
-  const hrefs = [];
-  const hrefRegex = /"(?<string>.+?)"|url\("?(?<url>.+?)"?\)/g;
-  let match;
-  while ((match = hrefRegex.exec(text))) {
-    const href = match?.groups?.string ?? match?.groups?.url;
-    if (href) {
-      hrefs.push(href);
-    }
-  }
-  return hrefs;
-}
-
-// Find all hrefs in `url()` functions
-export function findUrlHrefs(text) {
-  const hrefs = [];
-  const urlRegex = /url\(["']?(?<href>[^"')]*?)["']?\)/g;
-  let match;
-  while ((match = urlRegex.exec(text))) {
-    const href = match?.groups?.href;
-    if (href) {
-      hrefs.push(href);
-    }
-  }
-  return hrefs;
 }
