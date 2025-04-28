@@ -9,11 +9,12 @@ describe("pathsInHtml", () => {
       <area href="map2.html" shape="rect" coords="0,0,100,100" alt="Map region"></area>
       <link rel="stylesheet" href="style.css">
       <link rel="alternate" href="feed.xml" type="application/rss+xml" title="RSS feed">
+      <link rel="icon" href="favicon.svg" type="image/svg+xml">
     `;
     const paths = pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["page2.html", "map2.html", "style.css"],
-      resourcePaths: ["feed.xml"],
+      resourcePaths: ["feed.xml", "favicon.svg"],
     });
   });
 
