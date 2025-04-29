@@ -45,13 +45,13 @@ describe("pathsInHtml", () => {
       crawlablePaths: [],
       resourcePaths: [
         "images/photo.jpg",
-        // "textures/pattern.png",
+        "textures/pattern.png",
         "icons.svg",
         "defs.svg",
-        // "defs.svg",
-        // "defs.svg",
+        "defs.svg",
+        "defs.svg",
         "shapes.svg",
-        // "shapes.svg",
+        "shapes.svg",
         "filters.svg",
       ],
     });

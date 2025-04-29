@@ -1,4 +1,4 @@
-import { JSDOM } from "jsdom";
+import { JSDOM, VirtualConsole } from "jsdom";
 import pathsInCss from "./pathsInCss.js";
 import pathsInJs from "./pathsInJs.js";
 import { addHref } from "./utilities.js";
@@ -9,11 +9,9 @@ export default function pathsInHtml(html) {
     resourcePaths: [],
   };
 
-  // Only create a full document if we need to handle <frameset>
-  const isFrameset = html.includes("<frameset");
-  const document = isFrameset
-    ? new JSDOM(html).window.document
-    : JSDOM.fragment(html);
+  // Create a virtual console to avoid logging errors to the console
+  const virtualConsole = new VirtualConsole();
+  const document = new JSDOM(html, { virtualConsole }).window.document;
 
   // Find `href` attributes in anchor, area, link, SVG tags.
   //
@@ -137,18 +135,17 @@ export default function pathsInHtml(html) {
     paths.crawlablePaths.push(...jsPaths.crawlablePaths);
   }
 
-  if (isFrameset) {
-    // Look for <noframes>. We need to use a regex for this because the jsdom
-    // parser supports frames, so will treat a <noframes> tag as a text node.
-    const noframesRegex = /<noframes>(?<html>[\s\S]*?)<\/noframes>/g;
-    let match;
-    while ((match = noframesRegex.exec(html))) {
-      const noframesHtml = match.groups?.html;
-      if (noframesHtml) {
-        const noframesPaths = pathsInHtml(noframesHtml);
-        paths.crawlablePaths.push(...noframesPaths.crawlablePaths);
-        paths.resourcePaths.push(...noframesPaths.resourcePaths);
-      }
+  // Special handling for <noframes> in framesets. We need to use a regex for
+  // this because the jsdom parser supports frames, so it will treat a
+  // <noframes> tag as a text node.
+  const noframesRegex = /<noframes>(?<html>[\s\S]*?)<\/noframes>/g;
+  let match;
+  while ((match = noframesRegex.exec(html))) {
+    const noframesHtml = match.groups?.html;
+    if (noframesHtml) {
+      const noframesPaths = pathsInHtml(noframesHtml);
+      paths.crawlablePaths.push(...noframesPaths.crawlablePaths);
+      paths.resourcePaths.push(...noframesPaths.resourcePaths);
     }
   }
 
