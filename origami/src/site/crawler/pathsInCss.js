@@ -11,7 +11,7 @@ export default function pathsInCss(css, context = "stylesheet") {
 
   let ast;
   try {
-    parse(css, { context });
+    ast = parse(css, { context });
   } catch (e) {
     // If the CSS is invalid, we can't parse it, so we can't extract paths. For
     // now we just return no paths.
