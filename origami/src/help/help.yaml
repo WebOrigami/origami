@@ -1,12 +1,18 @@
 dev:
   description: Develop and debug Origami projects
   commands:
+    audit:
+      args: (tree)
+      description: Identify broken internal links and references
     breakpoint:
       args: (a)
       description: Break into the JavaScript debugger, then return a
     changes:
       args: (old, new)
       description: Return a tree of changes
+    crawl:
+      args: (tree, base)
+      description: A tree of a site's discoverable resources
     debug:
       args: (tree)
       description: Add debug features to the tree
@@ -213,12 +219,6 @@ scope:
 site:
   description: Add common website features
   commands:
-    audit:
-      args: (tree)
-      description: Identify broken internal links and references
-    crawl:
-      args: (tree, base)
-      description: A tree of a site's discoverable resources
     index:
       args: (tree)
       description: A default index.html page for the tree

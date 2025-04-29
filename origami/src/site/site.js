@@ -1,5 +1,3 @@
-export { default as audit } from "./crawler/audit.js";
-export { default as crawl } from "./crawler/crawl.js";
 export { default as index } from "./index.js";
 export { default as jsonKeys } from "./jsonKeys.js";
 export { default as redirect } from "./redirect.js";

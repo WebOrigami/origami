@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import pathsInJs from "../../../src/site/crawler/pathsInJs.js";
+import pathsInJs from "../../../src/dev/crawler/pathsInJs.js";
 
 describe("pathsInJs", () => {
   test("find import/export paths", () => {

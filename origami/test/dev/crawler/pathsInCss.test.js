@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import pathsInCss from "../../../src/site/crawler/pathsInCss.js";
+import pathsInCss from "../../../src/dev/crawler/pathsInCss.js";
 
 describe("pathsInCss", () => {
   test("finds URLs in CSS", async () => {

@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import pathsInHtml from "../../../src/site/crawler/pathsInHtml.js";
+import pathsInHtml from "../../../src/dev/crawler/pathsInHtml.js";
 
 describe("pathsInHtml", () => {
   test("find href attributes", () => {
