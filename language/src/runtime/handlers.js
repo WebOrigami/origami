@@ -5,7 +5,7 @@ import {
   isStringLike,
   isUnpackable,
   scope,
-  symbols,
+  setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
 
@@ -92,7 +92,7 @@ export async function handleExtension(parent, value, key) {
         if (handler.mediaType) {
           value.mediaType = handler.mediaType;
         }
-        value[symbols.parent] = parent;
+        setParent(value, parent);
 
         const unpack = handler.unpack;
         if (unpack) {

@@ -1,6 +1,7 @@
 import {
   extension,
   ObjectTree,
+  setParent,
   symbols,
   trailingSlash,
   Tree,
@@ -116,12 +117,7 @@ export default async function expressionObject(entries, parent) {
   });
 
   // Attach the parent
-  Object.defineProperty(object, symbols.parent, {
-    configurable: true,
-    enumerable: false,
-    value: parent,
-    writable: true,
-  });
+  setParent(object, parent);
 
   // Evaluate any properties that were declared as immediate: get their value
   // and overwrite the property getter with the actual value.

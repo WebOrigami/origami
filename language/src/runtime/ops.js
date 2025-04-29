@@ -11,7 +11,7 @@ import {
   deepText,
   isUnpackable,
   scope as scopeFn,
-  symbols,
+  setParent,
   concat as treeConcat,
 } from "@weborigami/async-tree";
 import os from "node:os";
@@ -131,7 +131,7 @@ export async function document(frontData, bodyCode) {
     ...frontData,
     "@text": body,
   };
-  object[symbols.parent] = this;
+  setParent(object, this);
   return object;
 }
 addOpLabel(document, "«ops.document");
@@ -389,19 +389,33 @@ export async function merge(...codes) {
     return directObject;
   }
 
-  // Second pass: evaluate the trees with the direct properties object in scope
-  let context;
-  if (directObject) {
-    // The `expressionObject` function will set the object's parent symbol to
-    // `this`. Tree.from will call the ObjectTree constructor, which will use
-    // that symbol to set the parent for the new tree to `this.`
-    context = Tree.from(directObject);
-  } else {
-    context = this;
-  }
+  // If we have direct property entries, create a context for them. The
+  // `expressionObject` function will set the object's parent symbol to `this`.
+  // Tree.from will call the ObjectTree constructor, which will use that symbol
+  // to set the parent for the new tree to `this`.
+  const context = directObject ? Tree.from(directObject) : this;
 
+  // Second pass: evaluate the trees. For the trees which are direct property
+  // entries, we'll copy over the values we've already calculated. We can't
+  // reuse the `directObject` as is because in a merge we need to respect the
+  // order in which the properties are defined. Trees that aren't direct
+  // property entries are evaluated with the direct property entries in scope.
   const trees = await Promise.all(
-    codes.map(async (code) => evaluate.call(context, code))
+    codes.map(async (code) => {
+      if (code[0] === object) {
+        // Using the code as reference, create a new object with the direct
+        // property values we've already calculated.
+        const object = {};
+        for (const [key] of code.slice(1)) {
+          // @ts-ignore directObject will always be defined
+          object[key] = directObject[key];
+        }
+        setParent(object, this);
+        return object;
+      } else {
+        return evaluate.call(context, code);
+      }
+    })
   );
 
   return mergeTrees.call(this, ...trees);
