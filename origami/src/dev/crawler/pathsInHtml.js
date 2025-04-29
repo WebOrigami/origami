@@ -65,10 +65,18 @@ export default function pathsInHtml(html) {
     addHref(paths, objectTag.getAttribute("data"), false);
   }
 
-  // Find ancient `background` attribute on body tag.
-  const body = document.querySelector("body[background]");
-  if (body) {
-    addHref(paths, body.getAttribute("background"), false);
+  // Find deprecated `background` attribute on body and table tags.
+  const backgroundTags = document.querySelectorAll(
+    "body[background], table[background], td[background], th[background]"
+  );
+  for (const backgroundTag of backgroundTags) {
+    addHref(paths, backgroundTag.getAttribute("background"), false);
+  }
+
+  // Find deprecated `longdesc` attributes on <img> tags.
+  const longdescTags = document.querySelectorAll("img[longdesc]");
+  for (const longdescTag of longdescTags) {
+    addHref(paths, longdescTag.getAttribute("longdesc"), false);
   }
 
   // Find paths in <meta> image tags.
