@@ -3,13 +3,14 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { macros, startRule } = options;
+  const { macros, mode, startRule } = options;
   const enableCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }
   const code = parse(source.text, {
     grammarSource: source,
+    mode,
     startRule,
   });
   const optimized = optimize(code, enableCaching, macros);

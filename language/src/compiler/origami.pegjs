@@ -49,7 +49,21 @@ additiveOperator
   / "-"
 
 angleBracketPath
-  = "<" __ @(path / scopeReference) __ ">"
+  = "<" __ head:scopeReference tail:("/" @angleBracketPathKey|0.., "/"|)? __ ">" {
+      return annotate([ops.traverse, head, ...(tail ?? [])], location());
+    }
+
+angleBracketPathKey
+  = chars:angleBracketPathChar+ slashFollows:slashFollows? {
+    // Append a trailing slash if one follows (but don't consume it)
+    const key = chars.join("") + (slashFollows ? "/" : "");
+    return annotate([ops.literal, key], location());
+  }
+
+// A single character in a slash-separated path segment
+angleBracketPathChar
+  = [^/<>] // Much more permissive than an identifier
+  / escapedChar
 
 arguments "function arguments"
   = parenthesesArguments
@@ -380,6 +394,7 @@ list "list"
 literal
   = numericLiteral
   / stringLiteral
+  / &{ return options.mode === "jse" } @angleBracketPath
 
 logicalAndExpression
   = head:bitwiseOrExpression tail:(__ "&&" __ @bitwiseOrExpression)* {

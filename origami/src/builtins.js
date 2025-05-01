@@ -20,6 +20,17 @@ import * as site from "./site/site.js";
 import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
 
+const Tree = {
+  ...tree,
+  indent: text.indent,
+};
+
+const Origami = {
+  ...origami,
+  ...site,
+  ...text,
+};
+
 /** @type {any} */
 export default {
   "calc:": adjustReservedWords(calc),
@@ -45,6 +56,9 @@ export default {
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
+
+  Tree,
+  Origami,
 };
 
 // Handle cases where a builtin name conflicts with a JS reserved word

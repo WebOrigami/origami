@@ -19,12 +19,13 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test.skip("angleBracketPath", () => {
+  test("angleBracketPath", () => {
     assertParse(
       "angleBracketPath",
       "<index.html>",
-      [ops.scope, "index.html"],
-      false
+      [ops.traverse, [ops.scope, "index.html"]],
+      false,
+      "jse"
     );
     assertParse(
       "angleBracketPath",
@@ -35,7 +36,8 @@ describe("Origami parser", () => {
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ],
-      false
+      false,
+      "jse"
     );
   });
 
@@ -654,6 +656,17 @@ Body`,
     ]);
   });
 
+  test("literal", () => {
+    // JSE
+    assertParse(
+      "literal",
+      "<index.html>",
+      [ops.traverse, [ops.scope, "index.html"]],
+      false,
+      "jse"
+    );
+  });
+
   test("logicalAndExpression", () => {
     assertParse("logicalAndExpression", "true && false", [
       ops.logicalAnd,
@@ -1217,9 +1230,10 @@ Body text`,
   });
 });
 
-function assertParse(startRule, source, expected, checkLocation = true) {
+function assertParse(startRule, source, expected, checkLocation = true, mode) {
   const code = parse(source, {
     grammarSource: { text: source },
+    mode,
     startRule,
   });
 
