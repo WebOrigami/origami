@@ -48,6 +48,9 @@ additiveOperator
   = "+"
   / "-"
 
+angleBracketPath
+  = "<" __ @(path / scopeReference) __ ">"
+
 arguments "function arguments"
   = parenthesesArguments
   / pathArguments

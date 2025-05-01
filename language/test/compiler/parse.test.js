@@ -19,6 +19,26 @@ describe("Origami parser", () => {
     ]);
   });
 
+  test.skip("angleBracketPath", () => {
+    assertParse(
+      "angleBracketPath",
+      "<index.html>",
+      [ops.scope, "index.html"],
+      false
+    );
+    assertParse(
+      "angleBracketPath",
+      "<foo/bar/baz>",
+      [
+        ops.traverse,
+        [ops.scope, "foo/"],
+        [ops.literal, "bar/"],
+        [ops.literal, "baz"],
+      ],
+      false
+    );
+  });
+
   test("arrayLiteral", () => {
     assertParse("arrayLiteral", "[]", [ops.array]);
     assertParse("arrayLiteral", "[1, 2, 3]", [

@@ -275,6 +275,15 @@ export function makeDeferredArguments(args) {
   });
 }
 
+export function makeJsPropertyAccess(expression, property) {
+  const location = {
+    source: expression.location.source,
+    start: expression.location.start,
+    end: property.location.end,
+  };
+  return annotate([expression, property], location);
+}
+
 /**
  * Make an object.
  *
@@ -362,15 +371,6 @@ export function makePipeline(arg, fn) {
 export function makeProperty(key, value) {
   const modified = avoidRecursivePropertyCalls(value, key);
   return [key, modified];
-}
-
-export function makeJsPropertyAccess(expression, property) {
-  const location = {
-    source: expression.location.source,
-    start: expression.location.start,
-    end: property.location.end,
-  };
-  return annotate([expression, property], location);
 }
 
 export function makeReference(identifier) {
