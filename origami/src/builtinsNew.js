@@ -19,9 +19,21 @@ import * as site from "./site/site.js";
 import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
 
+const Tree = {
+  ...tree,
+  indent: text.indent,
+  json: origami.json,
+};
+
+const Origami = {
+  ...dev,
+  ...origami,
+  ...site,
+  ...text,
+};
+
 /** @type {any} */
 export default {
-  "dev:": dev,
   "explore:": explore,
   "files:": files,
   "help:": help,
@@ -29,28 +41,18 @@ export default {
   "https:": https,
   "httpstree:": httpstree,
   "httptree:": httptree,
-  "image:": image,
   "inherited:": inherited,
-  "js:": js,
   "new:": instantiate,
   "node:": node,
-  "origami:": origami,
   "package:": packageNamespace,
   "scope:": scope,
-  "site:": adjustReservedWords(site),
-  "text:": text,
-  "tree:": tree,
+
+  ...js,
+
+  Tree,
+  Origami,
+  Image: image,
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
 };
-
-// Handle cases where a builtin name conflicts with a JS reserved word
-function adjustReservedWords(obj) {
-  const result = {};
-  for (const [key, value] of Object.entries(obj)) {
-    const name = value.key ?? key;
-    result[name] = value;
-  }
-  return result;
-}
