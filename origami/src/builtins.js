@@ -1,4 +1,3 @@
-import * as calc from "./calc/calc.js";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
@@ -33,7 +32,6 @@ const Origami = {
 
 /** @type {any} */
 export default {
-  "calc:": adjustReservedWords(calc),
   "dev:": dev,
   "explore:": explore,
   "files:": files,
