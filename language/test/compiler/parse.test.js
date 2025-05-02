@@ -419,13 +419,8 @@ Body`,
     ]);
 
     // Consecutive slashes at start of something = comment
-    assertParse(
-      "expression",
-      "path //comment",
-      [ops.scope, "path"],
-      "jse",
-      false
-    );
+    assertParse("expression", "x //comment", [ops.scope, "x"], "jse", false);
+
     assertParse("expression", "page.ori(mdHtml:(about.md))", [
       [ops.scope, "page.ori"],
       [
@@ -1216,7 +1211,7 @@ Body text`,
       "templateSubstitution",
       "${foo}",
       [ops.scope, "foo"],
-      "jse",
+      "shell",
       false
     );
   });

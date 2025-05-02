@@ -67,7 +67,7 @@ angleBracketPathChar
 
 arguments "function arguments"
   = parenthesesArguments
-  / pathArguments
+  / &{ return options.mode === "shell" } @pathArguments
   / jsPropertyAccess
   / computedPropertyAccess
   / templateLiteral
@@ -378,6 +378,11 @@ jsPropertyAccess
     return annotate([ops.traverse, literal], location());
   }
 
+jsReference "identifier reference"
+  = id:jsIdentifier {
+      return annotate([ops.scope, id], location());
+    }
+
 // A separated list of values
 list "list"
   = values:pipelineExpression|1.., separator| separator? {
@@ -573,9 +578,17 @@ primary
   / arrayLiteral
   / objectLiteral
   / group
-  / &{ return options.mode === "jse" } @angleBracketPath
   / templateLiteral
-  / rootDirectory
+  / &{ return options.mode === "jse" } @primaryJse
+  / &{ return options.mode === "shell" } @primaryShell
+
+// Primary allowed in JSE mode
+primaryJse
+  = angleBracketPath
+  / jsReference
+
+primaryShell
+  = rootDirectory
   / homeDirectory
   / qualifiedReference
   / namespace
