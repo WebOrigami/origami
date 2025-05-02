@@ -67,7 +67,7 @@ angleBracketPathChar
 
 arguments "function arguments"
   = parenthesesArguments
-  / &{ return options.mode === "shell" } @pathArguments
+  / shellMode @pathArguments
   / jsPropertyAccess
   / computedPropertyAccess
   / templateLiteral
@@ -347,7 +347,7 @@ implicitParenthesesCallExpression "function call with implicit parentheses"
 // A separated list of values for an implicit parens call. This differs from
 // `list` in that the value term can't be a pipeline.
 implicitParensthesesArguments
-  = &{ return options.mode === "shell" } values:shorthandFunction|1.., separator| separator? {
+  = shellMode values:shorthandFunction|1.., separator| separator? {
       return annotate(values, location());
     }
 
@@ -358,6 +358,9 @@ integerLiteral "integer"
   = digits {
       return annotate([ops.literal, parseInt(text())], location());
     }
+
+jseMode
+  = &{ return options.mode === "jse" }
 
 jsIdentifier
   = $( jsIdentifierStart jsIdentifierPart* )
@@ -579,8 +582,8 @@ primary
   / objectLiteral
   / group
   / templateLiteral
-  / &{ return options.mode === "jse" } @primaryJse
-  / &{ return options.mode === "shell" } @primaryShell
+  / jseMode @primaryJse
+  / shellMode @primaryShell
 
 // Primary allowed in JSE mode
 primaryJse
@@ -642,10 +645,13 @@ scopeReference "scope reference"
 
 separator
   = __ "," __
-  / &{ return options.mode === "shell" } @whitespaceWithNewLine
+  / shellMode @whitespaceWithNewLine
 
 shebang
   = "#!" [^\n\r]* { return null; }
+
+shellMode
+  = &{ return options.mode === "shell" }
 
 shiftExpression
   = head:additiveExpression tail:(__ @shiftOperator __ @additiveExpression)* {
@@ -660,7 +666,7 @@ shiftOperator
 // A shorthand lambda expression: `=foo(_)`
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
-  = "=" !"=" __ definition:implicitParenthesesCallExpression {
+  = shellMode "=" !"=" __ definition:implicitParenthesesCallExpression {
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
         location()
@@ -705,7 +711,7 @@ spreadElement
 stringLiteral "string"
   = doubleQuoteString
   / singleQuoteString
-  / &{ return options.mode === "shell" } @guillemetString
+  / shellMode @guillemetString
 
 // The body of a template document is a kind of template literal that can
 // contain backticks at the top level.
@@ -785,8 +791,8 @@ whitespace
 
 // Whitespace requires in shell mode, optional in JSE mode
 whitespaceShell
-  = &{ return options.mode === "shell" } whitespace
-  / &{ return options.mode === "jse" } __
+  = shellMode whitespace
+  / jseMode __
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
