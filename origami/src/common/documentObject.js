@@ -42,7 +42,7 @@ export default async function documentObject(input, data) {
   Object.defineProperty(result, "__body__", {
     configurable: true,
     value: text,
-    enumerable: true,
+    enumerable: false, // TODO: Make enumerable
     writable: true,
   });
   return result;

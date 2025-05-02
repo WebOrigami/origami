@@ -78,7 +78,7 @@ export default {
       Object.defineProperty(unpacked, "__body__", {
         configurable: true,
         value: text,
-        enumerable: true,
+        enumerable: false, // TODO: Make enumerable
         writable: true,
       });
     } else {
