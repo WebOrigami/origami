@@ -40,7 +40,7 @@ __
   }
 
 additiveExpression
-  = head:multiplicativeExpression tail:(whitespace @additiveOperator whitespace @multiplicativeExpression)* {
+  = head:multiplicativeExpression tail:(whitespaceShell @additiveOperator whitespaceShell @multiplicativeExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -347,7 +347,7 @@ implicitParenthesesCallExpression "function call with implicit parentheses"
 // A separated list of values for an implicit parens call. This differs from
 // `list` in that the value term can't be a pipeline.
 implicitParensthesesArguments
-  = values:shorthandFunction|1.., separator| separator? {
+  = &{ return options.mode === "shell" } values:shorthandFunction|1.., separator| separator? {
       return annotate(values, location());
     }
 
@@ -413,7 +413,7 @@ multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
 multiplicativeExpression
-  = head:exponentiationExpression tail:(whitespace @multiplicativeOperator whitespace @exponentiationExpression)* {
+  = head:exponentiationExpression tail:(whitespaceShell @multiplicativeOperator whitespaceShell @exponentiationExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -782,6 +782,11 @@ whitespace
   = inlineSpace
   / newLine
   / comment
+
+// Whitespace requires in shell mode, optional in JSE mode
+whitespaceShell
+  = &{ return options.mode === "shell" } whitespace
+  / &{ return options.mode === "jse" } __
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
