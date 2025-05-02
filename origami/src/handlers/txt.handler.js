@@ -39,7 +39,8 @@ export default {
       throw new TypeError("The input to pack must be a JavaScript object.");
     }
 
-    const text = object["@text"] ?? "";
+    // TODO: Deprecate @text
+    const text = object.__body__ ?? object["@text"] ?? "";
 
     /** @type {any} */
     const dataWithoutText = Object.assign({}, object);
@@ -72,7 +73,14 @@ export default {
       } else {
         frontData = parseYaml(frontText);
       }
+      // TODO: Deprecate @text
       unpacked = Object.assign({}, frontData, { "@text": body });
+      Object.defineProperty(unpacked, "__body__", {
+        configurable: true,
+        value: text,
+        enumerable: true,
+        writable: true,
+      });
     } else {
       // Plain text
       unpacked = new String(text);

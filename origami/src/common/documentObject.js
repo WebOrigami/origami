@@ -37,6 +37,13 @@ export default async function documentObject(input, data) {
   // };
   // const result = Object.create(base);
   const result = {};
+  // TODO: Deprecate @text
   Object.assign(result, inputData, data, { "@text": text });
+  Object.defineProperty(result, "__body__", {
+    configurable: true,
+    value: text,
+    enumerable: true,
+    writable: true,
+  });
   return result;
 }
