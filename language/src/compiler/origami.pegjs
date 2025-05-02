@@ -705,7 +705,7 @@ spreadElement
 stringLiteral "string"
   = doubleQuoteString
   / singleQuoteString
-  / guillemetString
+  / &{ return options.mode === "shell" } @guillemetString
 
 // The body of a template document is a kind of template literal that can
 // contain backticks at the top level.
