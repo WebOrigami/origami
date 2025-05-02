@@ -22,6 +22,7 @@ import * as tree from "./tree/tree.js";
 const Tree = {
   ...tree,
   indent: text.indent,
+  json: origami.json,
 };
 
 const Origami = {
