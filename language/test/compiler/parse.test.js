@@ -24,7 +24,6 @@ describe("Origami parser", () => {
       "angleBracketPath",
       "<index.html>",
       [ops.traverse, [ops.scope, "index.html"]],
-      false,
       "jse"
     );
     assertParse(
@@ -36,7 +35,6 @@ describe("Origami parser", () => {
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ],
-      false,
       "jse"
     );
   });
@@ -421,7 +419,13 @@ Body`,
     ]);
 
     // Consecutive slashes at start of something = comment
-    assertParse("expression", "path //comment", [ops.scope, "path"], false);
+    assertParse(
+      "expression",
+      "path //comment",
+      [ops.scope, "path"],
+      "jse",
+      false
+    );
     assertParse("expression", "page.ori(mdHtml:(about.md))", [
       [ops.scope, "page.ori"],
       [
@@ -566,10 +570,10 @@ Body`,
   });
 
   test("identifier", () => {
-    assertParse("identifier", "abc", "abc", false);
-    assertParse("identifier", "index.html", "index.html", false);
-    assertParse("identifier", "foo\\ bar", "foo bar", false);
-    assertParse("identifier", "x-y-z", "x-y-z", false);
+    assertParse("identifier", "abc", "abc", "shell", false);
+    assertParse("identifier", "index.html", "index.html", "shell", false);
+    assertParse("identifier", "foo\\ bar", "foo bar", "shell", false);
+    assertParse("identifier", "x-y-z", "x-y-z", "shell", false);
   });
 
   test("implicitParenthesesCallExpression", () => {
@@ -608,8 +612,8 @@ Body`,
   });
 
   test("jsIdentifier", () => {
-    assertParse("jsIdentifier", "foo", "foo", false);
-    assertParse("jsIdentifier", "$Δelta", "$Δelta", false);
+    assertParse("jsIdentifier", "foo", "foo", "jse", false);
+    assertParse("jsIdentifier", "$Δelta", "$Δelta", "jse", false);
     assertThrows(
       "jsIdentifier",
       "1stCharacterIsNumber",
@@ -656,17 +660,6 @@ Body`,
     ]);
   });
 
-  test("literal", () => {
-    // JSE
-    assertParse(
-      "literal",
-      "<index.html>",
-      [ops.traverse, [ops.scope, "index.html"]],
-      false,
-      "jse"
-    );
-  });
-
   test("logicalAndExpression", () => {
     assertParse("logicalAndExpression", "true && false", [
       ops.logicalAnd,
@@ -695,7 +688,13 @@ Body`,
   });
 
   test("multiLineComment", () => {
-    assertParse("multiLineComment", "/*\nHello, world!\n*/", null, false);
+    assertParse(
+      "multiLineComment",
+      "/*\nHello, world!\n*/",
+      null,
+      "jse",
+      false
+    );
   });
 
   test("multiplicativeExpression", () => {
@@ -872,9 +871,9 @@ Body`,
   });
 
   test("objectPublicKey", () => {
-    assertParse("objectPublicKey", "a", "a", false);
-    assertParse("objectPublicKey", "markdown/", "markdown/", false);
-    assertParse("objectPublicKey", "foo\\ bar", "foo bar", false);
+    assertParse("objectPublicKey", "a", "a", "jse", false);
+    assertParse("objectPublicKey", "markdown/", "markdown/", "jse", false);
+    assertParse("objectPublicKey", "foo\\ bar", "foo bar", "jse", false);
   });
 
   test("parenthesesArguments", () => {
@@ -944,6 +943,14 @@ Body`,
       [ops.literal, 1],
       [ops.literal, 2],
     ]);
+    // Only in JSE
+    assertParse(
+      "primary",
+      "<index.html>",
+      [ops.traverse, [ops.scope, "index.html"]],
+      "jse"
+    );
+    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell");
   });
 
   test("program", () => {
@@ -953,6 +960,7 @@ Body`,
 'Hello'
 `,
       [ops.literal, "Hello"],
+      "jse",
       false
     );
   });
@@ -1071,7 +1079,7 @@ Body`,
   });
 
   test("singleLineComment", () => {
-    assertParse("singleLineComment", "// Hello, world!", null, false);
+    assertParse("singleLineComment", "// Hello, world!", null, "jse", false);
   });
 
   test("spreadElement", () => {
@@ -1204,7 +1212,13 @@ Body text`,
   });
 
   test("templateSubtitution", () => {
-    assertParse("templateSubstitution", "${foo}", [ops.scope, "foo"], false);
+    assertParse(
+      "templateSubstitution",
+      "${foo}",
+      [ops.scope, "foo"],
+      "jse",
+      false
+    );
   });
 
   test("whitespace block", () => {
@@ -1215,6 +1229,7 @@ Body text`,
   // Second comment
      `,
       null,
+      "jse",
       false
     );
   });
@@ -1230,7 +1245,13 @@ Body text`,
   });
 });
 
-function assertParse(startRule, source, expected, checkLocation = true, mode) {
+function assertParse(
+  startRule,
+  source,
+  expected,
+  mode = "shell",
+  checkLocation = true
+) {
   const code = parse(source, {
     grammarSource: { text: source },
     mode,
@@ -1261,10 +1282,11 @@ function assertCodeLocations(code) {
   }
 }
 
-function assertThrows(startRule, source, message, position) {
+function assertThrows(startRule, source, message, position, mode = "shell") {
   try {
     parse(source, {
       grammarSource: { text: source },
+      mode,
       startRule,
     });
   } catch (/** @type {any} */ error) {

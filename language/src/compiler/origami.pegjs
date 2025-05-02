@@ -351,13 +351,6 @@ implicitParensthesesArguments
       return annotate(values, location());
     }
 
-inherited
-  = rootDirectory
-  / homeDirectory
-  / qualifiedReference
-  / namespace
-  / scopeReference
-
 inlineSpace
   = [ \t]
 
@@ -390,11 +383,6 @@ list "list"
   = values:pipelineExpression|1.., separator| separator? {
       return annotate(values, location());
     }
-
-literal
-  = numericLiteral
-  / stringLiteral
-  / &{ return options.mode === "jse" } @angleBracketPath
 
 logicalAndExpression
   = head:bitwiseOrExpression tail:(__ "&&" __ @bitwiseOrExpression)* {
@@ -580,12 +568,18 @@ pipelineExpression
     }
 
 primary
-  = literal
+  = numericLiteral
+  / stringLiteral
   / arrayLiteral
   / objectLiteral
   / group
+  / &{ return options.mode === "jse" } @angleBracketPath
   / templateLiteral
-  / inherited
+  / rootDirectory
+  / homeDirectory
+  / qualifiedReference
+  / namespace
+  / scopeReference
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
