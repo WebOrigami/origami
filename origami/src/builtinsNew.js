@@ -1,3 +1,4 @@
+import { ObjectTree, trailingSlash } from "@weborigami/async-tree";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
@@ -19,21 +20,41 @@ import * as site from "./site/site.js";
 import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
 
-const Tree = {
+// See notes in builtinsTree.js
+class BuiltinsTree {
+  constructor(object) {
+    this.object = object;
+  }
+
+  async get(key) {
+    const normalizedKey = trailingSlash.remove(key);
+    return this.object[normalizedKey];
+  }
+
+  async keys() {
+    return Object.keys(this.object);
+  }
+}
+
+const Tree = new BuiltinsTree({
   ...tree,
   indent: text.indent,
   json: origami.json,
-};
+});
 
-const Origami = {
+const Origami = new BuiltinsTree({
   ...dev,
   ...origami,
   ...site,
   ...text,
-};
+});
+
+const Image = new BuiltinsTree({
+  ...image,
+});
 
 /** @type {any} */
-export default {
+export default new ObjectTree({
   "explore:": explore,
   "files:": files,
   "help:": help,
@@ -47,12 +68,12 @@ export default {
   "package:": packageNamespace,
   "scope:": scope,
 
-  ...js,
+  js: new BuiltinsTree(js),
 
   Tree,
   Origami,
-  Image: image,
+  Image,
 
   // Some builtins need to be exposed at top level
   ...handlers.default,
-};
+});

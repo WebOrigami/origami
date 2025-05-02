@@ -12,6 +12,7 @@ export default {
     let parent = getParent(packed, options);
 
     builtinsNew ??= (await import("../builtinsNew.js")).default;
+
     const newParent = cloneParent(parent);
     if (newParent) {
       parent = newParent;
@@ -36,7 +37,10 @@ function cloneParent(parent) {
     clone = new ObjectTree(parent.object);
   } else if (!parent.parent) {
     // Builtins
-    clone = new ObjectTree(builtinsNew);
+    clone = builtinsNew;
+  } else {
+    // Maybe a map? Skip it and hope for the best.
+    return cloneParent(parent.parent);
   }
   clone.parent = cloneParent(parent.parent);
   return clone;
