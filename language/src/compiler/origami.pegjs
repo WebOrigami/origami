@@ -642,7 +642,7 @@ scopeReference "scope reference"
 
 separator
   = __ "," __
-  / whitespaceWithNewLine
+  / &{ return options.mode === "shell" } @whitespaceWithNewLine
 
 shebang
   = "#!" [^\n\r]* { return null; }
