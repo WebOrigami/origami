@@ -17,6 +17,7 @@ export default {
   NaN,
   Number,
   Object,
+  Reflect,
   RegExp,
   Response,
   Set,

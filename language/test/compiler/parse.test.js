@@ -996,6 +996,10 @@ Body`,
     ]);
   });
 
+  test.only("regexLiteral", () => {
+    assertParse("regexLiteral", "/abc+/g", [ops.literal, /abc+/g]);
+  });
+
   test("relationalExpression", () => {
     assertParse("relationalExpression", "1 < 2", [
       ops.lessThan,

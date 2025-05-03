@@ -586,6 +586,7 @@ primary
   / templateLiteral
   / jseMode @primaryJse
   / shellMode @primaryShell
+  / regexLiteral
 
 // Primary allowed in JSE mode
 primaryJse
@@ -617,6 +618,21 @@ qualifiedReference
       const literal = annotate([ops.literal, reference[1]], reference.location);
       return makeCall(fn, [literal]);
     }
+
+regexFlags
+  = flags:[gimuy]* {
+      return flags.join("");
+    }
+
+regexLiteral
+  = "/" chars:regexLiteralChar* "/" flags:regexFlags? {
+      const regex = new RegExp(chars.join(""), flags);
+      return annotate([ops.literal, regex], location());
+    }
+
+regexLiteralChar
+  = [^/\n\r] // No unescaped slashes or newlines
+  / escapedChar
 
 relationalExpression
   = head:shiftExpression tail:(__ @relationalOperator __ @shiftExpression)* {
