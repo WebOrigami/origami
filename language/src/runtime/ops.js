@@ -472,6 +472,14 @@ export async function object(...entries) {
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
 
+export function optionalTraverse(treelike, key) {
+  if (!treelike) {
+    return undefined;
+  }
+  return Tree.traverseOrThrow(treelike, key);
+}
+addOpLabel(optionalTraverse, "«ops.optionalTraverse");
+
 export function remainder(a, b) {
   return a % b;
 }
@@ -566,14 +574,6 @@ addOpLabel(templateIndent, "«ops.templateIndent»");
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
-
-export function optionalTraverse(treelike, key) {
-  if (!treelike) {
-    return undefined;
-  }
-  return Tree.traverseOrThrow(treelike, key);
-}
-addOpLabel(optionalTraverse, "«ops.optionalTraverse");
 
 export function unaryMinus(a) {
   return -a;
