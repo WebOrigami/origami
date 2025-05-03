@@ -715,6 +715,13 @@ Body`,
     assertParse("namespace", "js:", [ops.builtin, "js:"]);
   });
 
+  test("newExpression", () => {
+    assertParse("newExpression", "new Foo()", [
+      ops.construct,
+      [ops.scope, "Foo"],
+    ]);
+  });
+
   test("nullishCoalescingExpression", () => {
     assertParse("nullishCoalescingExpression", "a ?? b", [
       ops.nullishCoalescing,

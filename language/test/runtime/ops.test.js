@@ -80,6 +80,10 @@ describe("ops", () => {
     assert.strictEqual(await ops.conditional(false, errorFn, trueFn), true);
   });
 
+  test("ops.construct", async () => {
+    assert.equal(await ops.construct(String, "hello"), "hello");
+  });
+
   test("ops.documentFunction", async () => {
     const code = createCode([
       ops.document,

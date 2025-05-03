@@ -114,6 +114,13 @@ export async function conditional(condition, truthy, falsy) {
   return value instanceof Function ? await value() : value;
 }
 
+export async function construct(constructor, ...args) {
+  if (isUnpackable(constructor)) {
+    constructor = await constructor.unpack();
+  }
+  return Reflect.construct(constructor, args);
+}
+
 /**
  * Construct a document object by invoking the body code (a lambda) and adding
  * the resulting text to the front data.

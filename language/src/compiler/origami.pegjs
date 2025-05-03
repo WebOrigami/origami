@@ -434,6 +434,13 @@ namespace
     return annotate([ops.builtin, chars.join("") + ":"], location());
   }
 
+// A new expression: `new Foo()`
+newExpression
+  = "new" __ head:jsReference tail:parenthesesArguments {
+      const args = tail?.[0] !== undefined ? tail : [];
+      return annotate([ops.construct, head, ...args], location());
+    }
+
 newLine
   = "\n"
   / "\r\n"
@@ -616,6 +623,7 @@ protocolExpression
       const keys = annotate([host, ...(path ?? [])], location());
       return makeCall(fn, keys);
     }
+  / newExpression
   / primary
 
 // A namespace followed by a key: `foo:x`
