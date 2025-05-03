@@ -560,12 +560,20 @@ addOpLabel(template, "«ops.template»");
 export async function templateIndent(strings, ...values) {
   return taggedTemplateIndent(strings, ...values);
 }
-addOpLabel(templateIndent, "«ops.templateIndent");
+addOpLabel(templateIndent, "«ops.templateIndent»");
 
 /**
  * Traverse a path of keys through a tree.
  */
 export const traverse = Tree.traverseOrThrow;
+
+export function optionalTraverse(treelike, key) {
+  if (!treelike) {
+    return undefined;
+  }
+  return Tree.traverseOrThrow(treelike, key);
+}
+addOpLabel(optionalTraverse, "«ops.optionalTraverse");
 
 export function unaryMinus(a) {
   return -a;

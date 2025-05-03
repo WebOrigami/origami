@@ -872,6 +872,13 @@ Body`,
     assertParse("objectPublicKey", "foo\\ bar", "foo bar", "jse", false);
   });
 
+  test("optionalChaining", () => {
+    assertParse("optionalChaining", "?.key", [
+      ops.optionalTraverse,
+      [ops.literal, "key"],
+    ]);
+  });
+
   test("parenthesesArguments", () => {
     assertParse("parenthesesArguments", "()", [undefined]);
     assertParse("parenthesesArguments", "(a, b, c)", [
@@ -996,7 +1003,7 @@ Body`,
     ]);
   });
 
-  test.only("regexLiteral", () => {
+  test("regexLiteral", () => {
     assertParse("regexLiteral", "/abc+/g", [ops.literal, /abc+/g]);
   });
 

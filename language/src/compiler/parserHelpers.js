@@ -204,7 +204,8 @@ export function makeCall(target, args) {
   }
 
   let fnCall;
-  if (args[0] === ops.traverse) {
+  const op = args[0];
+  if (op === ops.traverse || op === ops.optionalTraverse) {
     let tree = target;
 
     if (tree[0] === undetermined) {
@@ -219,12 +220,12 @@ export function makeCall(target, args) {
     if (args.length > 1) {
       // Regular traverse
       const keys = args.slice(1);
-      fnCall = [ops.traverse, tree, ...keys];
+      fnCall = [op, tree, ...keys];
     } else {
       // Traverse without arguments equates to unpack
       fnCall = [ops.unpack, tree];
     }
-  } else if (args[0] === ops.template) {
+  } else if (op === ops.template) {
     // Tagged template
     const strings = args[1];
     const values = args.slice(2);

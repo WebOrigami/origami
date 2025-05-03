@@ -72,6 +72,7 @@ arguments "function arguments"
   / shellMode @pathArguments
   / jsPropertyAccess
   / computedPropertyAccess
+  / optionalChaining
   / templateLiteral
 
 arrayLiteral "array"
@@ -502,13 +503,18 @@ objectShorthandProperty "object identifier"
 
 objectPublicKey
   = identifier:identifier slash:"/"? {
-    return identifier + (slash ?? "");
-  }
+      return identifier + (slash ?? "");
+    }
   / string:stringLiteral {
-    // Remove `ops.literal` from the string code
-    return string[1];
-  }
+      // Remove `ops.literal` from the string code
+      return string[1];
+    }
 
+optionalChaining
+  = __ "?." __ property:jsIdentifier {
+    const literal = annotate([ops.literal, property], location());
+    return annotate([ops.optionalTraverse, literal], location());
+  }
 parameter
   = identifier:identifier {
       return annotate([ops.literal, identifier], location());
