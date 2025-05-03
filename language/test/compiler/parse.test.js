@@ -23,7 +23,7 @@ describe("Origami parser", () => {
     assertParse(
       "angleBracketPath",
       "<index.html>",
-      [ops.traverse, [ops.scope, "index.html"]],
+      [ops.scope, "index.html"],
       "jse"
     );
     assertParse(
@@ -940,12 +940,7 @@ Body`,
       [ops.literal, 2],
     ]);
     // Only in JSE
-    assertParse(
-      "primary",
-      "<index.html>",
-      [ops.traverse, [ops.scope, "index.html"]],
-      "jse"
-    );
+    assertParse("primary", "<index.html>", [ops.scope, "index.html"], "jse");
     assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell");
   });
 

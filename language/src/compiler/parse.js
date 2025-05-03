@@ -396,7 +396,9 @@ function peg$parse(input, options) {
       return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f2 = function(head, tail) {
-      return annotate([ops.traverse, head, ...(tail ?? [])], location());
+      return tail
+        ? annotate([ops.traverse, head, ...tail], location())
+        : annotate(head, location());
     };
   var peg$f3 = function(chars, slashFollows) {
     // Append a trailing slash if one follows (but don't consume it)

@@ -50,7 +50,9 @@ additiveOperator
 
 angleBracketPath
   = "<" __ head:scopeReference tail:("/" @angleBracketPathKey|0.., "/"|)? __ ">" {
-      return annotate([ops.traverse, head, ...(tail ?? [])], location());
+      return tail
+        ? annotate([ops.traverse, head, ...tail], location())
+        : annotate(head, location());
     }
 
 angleBracketPathKey
