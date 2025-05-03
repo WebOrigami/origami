@@ -28,13 +28,14 @@ export default {
 
 function cloneParent(parent) {
   let clone;
-  // We expect the parent to be a FileTree, ObjectTree, or builtins.
+  // We expect the parent to be a FileTree (or a subclass), ObjectTree (or a
+  // subclass), or builtins.
   if (!parent) {
     return null;
   } else if (parent instanceof FileTree) {
-    clone = new FileTree(parent.path);
+    clone = Reflect.construct(parent.constructor, [parent.path]);
   } else if (parent instanceof ObjectTree) {
-    clone = new ObjectTree(parent.object);
+    clone = Reflect.construct(parent.constructor, [parent.object]);
   } else if (!parent.parent) {
     // Builtins
     clone = builtinsNew;
