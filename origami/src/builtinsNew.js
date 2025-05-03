@@ -68,7 +68,7 @@ export default new ObjectTree({
   "package:": packageNamespace,
   "scope:": scope,
 
-  js: new BuiltinsTree(js),
+  ...js,
 
   Tree,
   Origami,
