@@ -4568,7 +4568,20 @@ function peg$parse(input, options) {
                     s0 = peg$FAILED;
                   }
                   if (s0 === peg$FAILED) {
-                    s0 = peg$parseregexLiteral();
+                    s0 = peg$currPos;
+                    s1 = peg$parsejseMode();
+                    if (s1 !== peg$FAILED) {
+                      s2 = peg$parseregexLiteral();
+                      if (s2 !== peg$FAILED) {
+                        s0 = s2;
+                      } else {
+                        peg$currPos = s0;
+                        s0 = peg$FAILED;
+                      }
+                    } else {
+                      peg$currPos = s0;
+                      s0 = peg$FAILED;
+                    }
                   }
                 }
               }

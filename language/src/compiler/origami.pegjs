@@ -599,7 +599,7 @@ primary
   / templateLiteral
   / jseMode @primaryJse
   / shellMode @primaryShell
-  / regexLiteral
+  / jseMode @regexLiteral
 
 // Primary allowed in JSE mode
 primaryJse
