@@ -1,6 +1,6 @@
 import { Tree } from "../internal.js";
 import { toString } from "../utilities.js";
-import concat from "./concat.js";
+import concat from "./text.js";
 
 /**
  * A tagged template literal function that concatenate the deep text values in a

@@ -2,9 +2,9 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionTree from "../../src/drivers/FunctionTree.js";
 import { Tree } from "../../src/internal.js";
-import concat from "../../src/operations/concat.js";
+import text from "../../src/operations/text.js";
 
-describe("concat", () => {
+describe("text", () => {
   test("concatenates deep tree values", async () => {
     const tree = Tree.from({
       a: "A",
@@ -15,7 +15,7 @@ describe("concat", () => {
         e: "E",
       },
     });
-    const result = await concat.call(null, tree);
+    const result = await text(tree);
     assert.equal(result, "ABCDE");
   });
 
@@ -28,7 +28,7 @@ describe("concat", () => {
       }),
       letters
     );
-    const result = await concat.call(null, specimens);
+    const result = await text(specimens);
     assert.equal(result, "aAbBcC");
   });
 });

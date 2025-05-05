@@ -6,8 +6,8 @@ import deepValuesIterator from "./deepValuesIterator.js";
  *
  * @param {import("../../index.ts").Treelike} treelike
  */
-export default async function concat(treelike) {
-  assertIsTreelike(treelike, "concat");
+export default async function text(treelike) {
+  assertIsTreelike(treelike, "text");
 
   const strings = [];
   for await (const value of deepValuesIterator(treelike, { expand: true })) {
@@ -20,7 +20,7 @@ export default async function concat(treelike) {
       string = toString(value);
     }
     if (value === null || value === undefined) {
-      const message = `Warning: Origami template encountered a ${string} value. To locate where this happened, build your project and search your build output for the text "${string}".`;
+      const message = `Warning: a template encountered a ${string} value. To locate where this happened, build your project and search your build output for the text "${string}".`;
       console.warn(message);
     }
     strings.push(string);

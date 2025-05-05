@@ -12,7 +12,7 @@ import {
   isUnpackable,
   scope as scopeFn,
   setParent,
-  concat as treeConcat,
+  text as treeText,
 } from "@weborigami/async-tree";
 import os from "node:os";
 import taggedTemplateIndent from "../../src/runtime/taggedTemplateIndent.js";
@@ -105,7 +105,7 @@ addOpLabel(comma, "«ops.comma»");
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return treeConcat.call(this, args);
+  return treeText.call(this, args);
 }
 addOpLabel(concat, "«ops.concat»");
 
