@@ -12,6 +12,7 @@ import htmlHandler from "./html.handler.js";
 import jpegHandler from "./jpeg.handler.js";
 import jpgHandler from "./jpg.handler.js";
 import jseHandler from "./jse.handler.js";
+import jseDocumentHandler from "./jsedocument.handler.js";
 import jsonHandler from "./json.handler.js";
 import mdHandler from "./md.handler.js";
 import mjsHandler from "./mjs.handler.js";
@@ -29,6 +30,7 @@ export default {
   "jpg.handler": jpgHandler,
   "js.handler": jsHandler,
   "jse.handler": jseHandler,
+  "jsedocument.handler": jseDocumentHandler,
   "json.handler": jsonHandler,
   "md.handler": mdHandler,
   "mjs.handler": mjsHandler,

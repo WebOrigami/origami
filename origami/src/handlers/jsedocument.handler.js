@@ -1,13 +1,13 @@
 import getParent from "./getParent.js";
 import jseModeParent from "./jseModeParent.js";
-import oriHandler from "./ori.handler.js";
+import oriDocumentHandler from "./oridocument.handler.js";
 
 export default {
-  ...oriHandler,
+  ...oriDocumentHandler,
 
   async unpack(packed, options = {}) {
     const parent = getParent(packed, options);
-    return oriHandler.unpack(packed, {
+    return oriDocumentHandler.unpack(packed, {
       ...options,
       mode: "jse",
       parent: await jseModeParent(parent),
