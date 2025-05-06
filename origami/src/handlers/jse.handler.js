@@ -1,6 +1,6 @@
+import { oriHandler } from "../internal.js";
 import getParent from "./getParent.js";
 import jseModeParent from "./jseModeParent.js";
-import oriHandler from "./ori.handler.js";
 
 export default {
   ...oriHandler,

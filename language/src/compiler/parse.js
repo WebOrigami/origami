@@ -724,7 +724,8 @@ function peg$parse(input, options) {
       return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f97 = function(front, body) {
-      return annotate(applyMacro(front, "@template", body), location());
+      const macroName = options.mode === "jse" ? "template" : "@template";
+      return annotate(applyMacro(front, macroName, body), location());
     };
   var peg$f98 = function(front, body) {
       return front

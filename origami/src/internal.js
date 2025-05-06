@@ -15,6 +15,10 @@ export { default as oriHandler } from "./handlers/ori.handler.js";
 
 export { default as oridocumentHandler } from "./handlers/oridocument.handler.js";
 
+export { default as jseHandler } from "./handlers/jse.handler.js";
+
+export { default as jsedocumentHandler } from "./handlers/jsedocument.handler.js";
+
 export { default as processUnpackedContent } from "./common/processUnpackedContent.js";
 
 export { default as wasmHandler } from "./handlers/wasm.handler.js";

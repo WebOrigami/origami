@@ -35,7 +35,7 @@ export default {
       text,
       url,
     };
-    const mode = options.mode ?? "ori";
+    const mode = options.mode ?? "shell";
     const defineFn = compile.templateDocument(source, { mode });
 
     // Invoke the definition to get back the template function
