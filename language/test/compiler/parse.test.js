@@ -1199,6 +1199,12 @@ Body text`,
       ops.templateTree,
       [ops.literal, ["Hello, world."]],
     ]);
+    assertParse(
+      "templateLiteral",
+      "`Hello, world.`",
+      [ops.templateStandard, [ops.literal, ["Hello, world."]]],
+      "jse"
+    );
     assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.templateTree,
       [ops.literal, ["foo ", " bar"]],
