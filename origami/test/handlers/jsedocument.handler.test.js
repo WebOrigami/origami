@@ -40,7 +40,7 @@ name: world
     assert.equal(result["@text"], "Hello, world!");
   });
 
-  test.only("JSE front matter can refer to template() as a macro", async () => {
+  test("JSE front matter can refer to template() as a macro", async () => {
     const text = `---
 (name) => template()
 ---
@@ -54,7 +54,7 @@ Hello, \${ name }!
   test("unpacks a document with JSE front matter", async () => {
     const text = `---
 {
-  sum: 1 + 1
+  sum: 1 + 1,
   text: template()
 }
 ---

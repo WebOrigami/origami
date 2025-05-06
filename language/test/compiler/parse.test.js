@@ -548,6 +548,23 @@ Body`,
     ]);
   });
 
+  test("frontMatterExpression", () => {
+    assertParse(
+      "frontMatterExpression",
+      `---
+(name) => template()
+---
+`,
+      [
+        ops.lambda,
+        [[ops.literal, "name"]],
+        [[ops.scope, "template"], undefined],
+      ],
+      "jse",
+      false
+    );
+  });
+
   test("group", () => {
     assertParse("group", "(hello)", [ops.scope, "hello"]);
     assertParse("group", "(((nested)))", [ops.scope, "nested"]);

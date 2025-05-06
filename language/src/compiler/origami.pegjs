@@ -815,7 +815,9 @@ unaryExpression
 unaryOperator
   = "!"
   / "+"
-  / "-"
+  // Don't match a front matter delimiter. For some reason, the negative
+  // lookahead !"--\n" doesn't work.
+  / @"-" !"-\n"
   / "~"
 
 whitespace
