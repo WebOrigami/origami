@@ -467,7 +467,11 @@ Body`,
     ]);
     assertParse("expression", "fn =`x`", [
       [ops.builtin, "fn"],
-      [ops.lambda, [[ops.literal, "_"]], [ops.template, [ops.literal, ["x"]]]],
+      [
+        ops.lambda,
+        [[ops.literal, "_"]],
+        [ops.templateTree, [ops.literal, ["x"]]],
+      ],
     ]);
     assertParse("expression", "copy app.js(formulas), files:snapshot", [
       [ops.builtin, "copy"],
@@ -485,7 +489,7 @@ Body`,
       [
         ops.lambda,
         [[ops.literal, "_"]],
-        [ops.template, [ops.literal, ["<li>", "</li>"]], [ops.scope, "_"]],
+        [ops.templateTree, [ops.literal, ["<li>", "</li>"]], [ops.scope, "_"]],
       ],
     ]);
     assertParse("expression", `https://example.com/about/`, [
@@ -1075,7 +1079,7 @@ Body`,
     assertParse("shorthandFunction", "=`Hello, ${name}.`", [
       ops.lambda,
       [[ops.literal, "_"]],
-      [ops.template, [ops.literal, ["Hello, ", "."]], [ops.scope, "name"]],
+      [ops.templateTree, [ops.literal, ["Hello, ", "."]], [ops.scope, "name"]],
     ]);
     assertParse("shorthandFunction", "=indent`hello`", [
       ops.lambda,
@@ -1192,21 +1196,21 @@ Body text`,
 
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
-      ops.template,
+      ops.templateTree,
       [ops.literal, ["Hello, world."]],
     ]);
     assertParse("templateLiteral", "`foo ${x} bar`", [
-      ops.template,
+      ops.templateTree,
       [ops.literal, ["foo ", " bar"]],
       [ops.scope, "x"],
     ]);
     assertParse("templateLiteral", "`${`nested`}`", [
-      ops.template,
+      ops.templateTree,
       [ops.literal, ["", ""]],
-      [ops.template, [ops.literal, ["nested"]]],
+      [ops.templateTree, [ops.literal, ["nested"]]],
     ]);
     assertParse("templateLiteral", "`${ map:(people, =`${name}`) }`", [
-      ops.template,
+      ops.templateTree,
       [ops.literal, ["", ""]],
       [
         [ops.builtin, "map:"],
@@ -1214,7 +1218,7 @@ Body text`,
         [
           ops.lambda,
           [[ops.literal, "_"]],
-          [ops.template, [ops.literal, ["", ""]], [ops.scope, "name"]],
+          [ops.templateTree, [ops.literal, ["", ""]], [ops.scope, "name"]],
         ],
       ],
     ]);

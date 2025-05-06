@@ -225,7 +225,7 @@ export function makeCall(target, args) {
       // Traverse without arguments equates to unpack
       fnCall = [ops.unpack, tree];
     }
-  } else if (op === ops.template) {
+  } else if (op === ops.templateTree) {
     // Tagged template
     const strings = args[1];
     const values = args.slice(2);

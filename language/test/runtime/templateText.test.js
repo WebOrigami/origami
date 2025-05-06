@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import templateText from "../../src/runtime/templateText.js";
+import templateText from "../../src/runtime/templateStandard.js";
 
 describe("templateText", () => {
   test("joins strings and values together like JavaScript", async () => {

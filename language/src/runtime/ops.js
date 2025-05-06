@@ -12,16 +12,17 @@ import {
   isUnpackable,
   scope as scopeFn,
   setParent,
-  text as treeText,
+  text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
-import taggedTemplateIndent from "../../src/runtime/taggedTemplateIndent.js";
 import { builtinReferenceError, scopeReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import { codeSymbol } from "./symbols.js";
+import templateFunctionIndent from "./templateIndent.js";
+import templateFunctionStandard from "./templateStandard.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -105,7 +106,7 @@ addOpLabel(comma, "«ops.comma»");
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return treeText.call(this, args);
+  return deepText.call(this, args);
 }
 addOpLabel(concat, "«ops.concat»");
 
@@ -562,20 +563,28 @@ export function subtraction(a, b) {
 addOpLabel(subtraction, "«ops.subtraction»");
 
 /**
- * Apply the default tagged template function.
- */
-export async function template(strings, ...values) {
-  return deepText(strings, ...values);
-}
-addOpLabel(template, "«ops.template»");
-
-/**
- * Apply the tagged template indent function.
+ * Apply the tree indent tagged template function.
  */
 export async function templateIndent(strings, ...values) {
-  return taggedTemplateIndent(strings, ...values);
+  return templateFunctionIndent(strings, ...values);
 }
 addOpLabel(templateIndent, "«ops.templateIndent»");
+
+/**
+ * Apply the default tagged template function.
+ */
+export function templateStandard(strings, ...values) {
+  return templateFunctionStandard(strings, ...values);
+}
+addOpLabel(templateStandard, "«ops.templateStandard»");
+
+/**
+ * Apply the tree tagged template function.
+ */
+export async function templateTree(strings, ...values) {
+  return templateFunctionTree(strings, ...values);
+}
+addOpLabel(templateTree, "«ops.templateTree»");
 
 /**
  * Traverse a path of keys through a tree.

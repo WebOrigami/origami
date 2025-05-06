@@ -781,7 +781,7 @@ templateDocument "template document"
 // A backtick-quoted template literal
 templateLiteral "template literal"
   = "`" head:templateLiteralText tail:(templateSubstitution templateLiteralText)* expectBacktick {
-      return makeTemplate(ops.template, head, tail, location());
+      return makeTemplate(ops.templateTree, head, tail, location());
     }
 
 templateLiteralChar

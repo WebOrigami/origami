@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import indent from "../../src/runtime/taggedTemplateIndent.js";
+import indent from "../../src/runtime/templateIndent.js";
 
 describe("taggedTemplateIndent", () => {
   test("joins strings and values together if template isn't a block template", async () => {

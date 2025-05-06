@@ -732,7 +732,7 @@ function peg$parse(input, options) {
         : annotate(body, location());
     };
   var peg$f99 = function(head, tail) {
-      return makeTemplate(ops.template, head, tail, location());
+      return makeTemplate(ops.templateTree, head, tail, location());
     };
   var peg$f100 = function(chars) {
       return annotate([ops.literal, chars.join("")], location());

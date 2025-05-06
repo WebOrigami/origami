@@ -84,7 +84,7 @@ describe("ops", () => {
     assert.equal(await ops.construct(String, "hello"), "hello");
   });
 
-  test("ops.documentFunction", async () => {
+  test("ops.document", async () => {
     const code = createCode([
       ops.document,
       {
@@ -94,7 +94,7 @@ describe("ops", () => {
         ops.lambda,
         [["_"]],
         [
-          ops.template,
+          ops.templateIndent,
           [ops.literal, ["a = ", ""]],
           [ops.concat, [ops.scope, "a"]],
         ],

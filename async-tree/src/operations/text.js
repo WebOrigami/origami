@@ -1,29 +1,25 @@
-import { assertIsTreelike, toString } from "../utilities.js";
-import deepValuesIterator from "./deepValuesIterator.js";
+import { Tree } from "../internal.js";
+import { toString } from "../utilities.js";
+import deepText from "./deepText.js";
 
 /**
- * Concatenate the deep text values in a tree.
+ * A tagged template literal function that concatenate the deep text values in a
+ * tree. Any treelike values will be concatenated using `deepText`.
  *
- * @param {import("../../index.ts").Treelike} treelike
+ * @param {TemplateStringsArray} strings
+ * @param  {...any} values
  */
-export default async function text(treelike) {
-  assertIsTreelike(treelike, "text");
-
-  const strings = [];
-  for await (const value of deepValuesIterator(treelike, { expand: true })) {
-    let string;
-    if (value === null) {
-      string = "null";
-    } else if (value === undefined) {
-      string = "undefined";
-    } else {
-      string = toString(value);
-    }
-    if (value === null || value === undefined) {
-      const message = `Warning: a template encountered a ${string} value. To locate where this happened, build your project and search your build output for the text "${string}".`;
-      console.warn(message);
-    }
-    strings.push(string);
+export default async function text(strings, ...values) {
+  // Convert all the values to strings
+  const valueTexts = await Promise.all(
+    values.map((value) =>
+      Tree.isTreelike(value) ? deepText(value) : toString(value)
+    )
+  );
+  // Splice all the strings together
+  let result = strings[0];
+  for (let i = 0; i < valueTexts.length; i++) {
+    result += valueTexts[i] + strings[i + 1];
   }
-  return strings.join("");
+  return result;
 }
