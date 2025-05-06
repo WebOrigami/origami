@@ -1,4 +1,8 @@
-import { ObjectTree, trailingSlash } from "@weborigami/async-tree";
+import {
+  ObjectTree,
+  trailingSlash,
+  text as treeText,
+} from "@weborigami/async-tree";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
@@ -40,6 +44,7 @@ const Tree = new BuiltinsTree({
   ...tree,
   indent: text.indent,
   json: origami.json,
+  text: treeText,
 });
 
 const Origami = new BuiltinsTree({
