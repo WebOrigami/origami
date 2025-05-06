@@ -19,15 +19,16 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("angleBracketPath", () => {
+  test("angleBracketLiteral", () => {
     assertParse(
-      "angleBracketPath",
+      "angleBracketLiteral",
       "<index.html>",
       [ops.scope, "index.html"],
-      "jse"
+      "jse",
+      false
     );
     assertParse(
-      "angleBracketPath",
+      "angleBracketLiteral",
       "<foo/bar/baz>",
       [
         ops.traverse,
@@ -35,7 +36,26 @@ describe("Origami parser", () => {
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ],
-      "jse"
+      "jse",
+      false
+    );
+    assertParse("angleBracketLiteral", "<files:src/assets>", [
+      ops.traverse,
+      [
+        [ops.builtin, "files:"],
+        [ops.literal, "src/"],
+      ],
+      [ops.literal, "assets"],
+    ]);
+    assertParse(
+      "angleBracketLiteral",
+      "<https://example.com/>",
+      [
+        [ops.builtin, "https:"],
+        [ops.literal, "example.com/"],
+      ],
+      "jse",
+      false
     );
   });
 
@@ -975,8 +995,14 @@ Body`,
       [ops.literal, 2],
     ]);
     // Only in JSE
-    assertParse("primary", "<index.html>", [ops.scope, "index.html"], "jse");
-    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell");
+    assertParse(
+      "primary",
+      "<index.html>",
+      [ops.scope, "index.html"],
+      "jse",
+      false
+    );
+    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell", false);
   });
 
   test("program", () => {

@@ -48,12 +48,25 @@ additiveOperator
   = "+"
   / "-"
 
-angleBracketPath
-  = "<" __ head:scopeReference tail:("/" @angleBracketPathKey|0.., "/"|)? __ ">" {
-      return tail
-        ? annotate([ops.traverse, head, ...tail], location())
-        : annotate(head, location());
+angleBracketLiteral
+  = "<" __ protocol:angleBracketProtocol "//" path:angleBracketPath __ ">" {
+    return annotate([protocol, ...path], location());
     }
+  / "<" protocol:angleBracketProtocol path:angleBracketPath ">" {
+      const [head, ...tail] = path;
+      const root = annotate([protocol, head], location());
+      return annotate([ops.traverse, root, ...tail], location());
+    }
+  / "<" __ path:angleBracketPath __ ">" {
+    const [head, ...tail] = path;
+    const root = annotate([ops.scope, head[1]], location());
+    return tail.length === 0
+      ? root
+      : annotate([ops.traverse, root, ...tail], location())
+  }
+
+angleBracketPath
+  = @angleBracketPathKey|0.., "/"| "/"?
 
 angleBracketPathKey
   = chars:angleBracketPathChar+ slashFollows:slashFollows? {
@@ -64,8 +77,13 @@ angleBracketPathKey
 
 // A single character in a slash-separated path segment
 angleBracketPathChar
-  = [^/<>] // Much more permissive than an identifier
+  = [^/:<>] // Much more permissive than an identifier
   / escapedChar
+
+angleBracketProtocol
+  = protocol:jsIdentifier ":" {
+      return annotate([ops.builtin, `${protocol}:`], location());
+    }
 
 arguments "function arguments"
   = parenthesesArguments
@@ -597,14 +615,14 @@ primary
   / objectLiteral
   / group
   / templateLiteral
-  / jseMode @primaryJse
   / shellMode @primaryShell
-  / jseMode @regexLiteral
+  / jseMode @primaryJse
 
 // Primary allowed in JSE mode
 primaryJse
-  = angleBracketPath
+  = angleBracketLiteral
   / jsReference
+  / regexLiteral
 
 primaryShell
   = rootDirectory
