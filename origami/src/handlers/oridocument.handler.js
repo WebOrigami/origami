@@ -35,7 +35,8 @@ export default {
       text,
       url,
     };
-    const defineFn = compile.templateDocument(source);
+    const mode = options.mode ?? "ori";
+    const defineFn = compile.templateDocument(source, { mode });
 
     // Invoke the definition to get back the template function
     const result = await defineFn.call(parent);

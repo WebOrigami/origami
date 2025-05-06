@@ -34,7 +34,7 @@ export default {
 
     // Compile the source code as an Origami program and evaluate it.
     const compiler = options.compiler ?? compile.program;
-    const mode = options.mode;
+    const mode = options.mode ?? "shell";
     const fn = compiler(source, { mode });
     const target = parent ?? builtinsTree;
     let content = await fn.call(target);

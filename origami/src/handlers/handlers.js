@@ -30,6 +30,7 @@ export default {
   "jpg.handler": jpgHandler,
   "js.handler": jsHandler,
   "jse.handler": jseHandler,
+  "jsep.handler": jseHandler,
   "jsedocument.handler": jseDocumentHandler,
   "json.handler": jsonHandler,
   "md.handler": mdHandler,
