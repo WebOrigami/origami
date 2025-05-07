@@ -1002,7 +1002,7 @@ Body`,
       "jse",
       false
     );
-    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell", false);
+    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell");
   });
 
   test("program", () => {

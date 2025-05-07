@@ -1,4 +1,3 @@
-export * from "./src/calc/calc.js";
 export { default as documentObject } from "./src/common/documentObject.js";
 export { toString } from "./src/common/utilities.js";
 export * from "./src/dev/dev.js";
