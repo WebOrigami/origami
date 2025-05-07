@@ -1,4 +1,4 @@
-import { text, toString, Tree } from "@weborigami/async-tree";
+import { deepText, toString, Tree } from "@weborigami/async-tree";
 
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 
@@ -19,7 +19,7 @@ export default async function indent(strings, ...values) {
   }
   const { blockIndentations, strings: modifiedStrings } = modified;
   const valueTexts = await Promise.all(
-    values.map((value) => (Tree.isTreelike(value) ? text(value) : value))
+    values.map((value) => (Tree.isTreelike(value) ? deepText(value) : value))
   );
   return joinBlocks(modifiedStrings, valueTexts, blockIndentations);
 }
