@@ -130,7 +130,7 @@ async function processPath(tree, path, baseUrl) {
 
   // Traverse tree to get value.
   let value;
-  let normalizedKeys;
+  let normalizedKeys = [];
   let normalizedPath;
   try {
     value = await Tree.traverse(tree, ...keys);

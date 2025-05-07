@@ -5,7 +5,9 @@ import { addHref } from "./utilities.js";
 
 export default function pathsInHtml(html) {
   const paths = {
+    /** @type {string[]} */
     crawlablePaths: [],
+    /** @type {string[]} */
     resourcePaths: [],
   };
 
