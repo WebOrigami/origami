@@ -42,7 +42,7 @@ name: world
 
   test("JSE front matter can refer to template() as a macro", async () => {
     const text = `---
-(name) => template()
+(name) => _template()
 ---
 Hello, \${ name }!
 `;
@@ -55,14 +55,14 @@ Hello, \${ name }!
     const text = `---
 {
   sum: 1 + 1,
-  text: template()
+  _body: _template()
 }
 ---
 Body text`;
     const result = await jsedocumentHandler.unpack(text);
     assert.deepEqual(result, {
       sum: 2,
-      text: "Body text",
+      _body: "Body text",
     });
   });
 });

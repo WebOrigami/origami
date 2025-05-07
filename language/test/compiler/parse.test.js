@@ -572,13 +572,13 @@ Body`,
     assertParse(
       "frontMatterExpression",
       `---
-(name) => template()
+(name) => _template()
 ---
 `,
       [
         ops.lambda,
         [[ops.literal, "name"]],
-        [[ops.scope, "template"], undefined],
+        [[ops.scope, "_template"], undefined],
       ],
       "jse",
       false

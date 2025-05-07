@@ -788,7 +788,7 @@ templateBodyText "template text"
 
 templateDocument "template document"
   = front:frontMatterExpression __ body:templateBody {
-      const macroName = options.mode === "jse" ? "template" : "@template";
+      const macroName = options.mode === "jse" ? "_template" : "@template";
       return annotate(applyMacro(front, macroName, body), location());
     }
   / front:frontMatterYaml? body:templateBody {
