@@ -40,7 +40,7 @@ export default {
     }
 
     // TODO: Deprecate @text
-    const text = object.__body__ ?? object["@text"] ?? "";
+    const text = object._body ?? object["@text"] ?? "";
 
     /** @type {any} */
     const dataWithoutText = Object.assign({}, object);
@@ -75,7 +75,7 @@ export default {
       }
       // TODO: Deprecate @text
       unpacked = Object.assign({}, frontData, { "@text": body });
-      Object.defineProperty(unpacked, "__body__", {
+      Object.defineProperty(unpacked, "_body", {
         configurable: true,
         value: text,
         enumerable: false, // TODO: Make enumerable

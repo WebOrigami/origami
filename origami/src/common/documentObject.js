@@ -39,7 +39,7 @@ export default async function documentObject(input, data) {
   const result = {};
   // TODO: Deprecate @text
   Object.assign(result, inputData, data, { "@text": text });
-  Object.defineProperty(result, "__body__", {
+  Object.defineProperty(result, "_body", {
     configurable: true,
     value: text,
     enumerable: false, // TODO: Make enumerable
