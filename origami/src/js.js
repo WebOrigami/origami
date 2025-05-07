@@ -1,3 +1,5 @@
+import path from "node:path";
+
 /**
  * The complete set of support JavaScript globals and global-like values.
  *
@@ -64,6 +66,7 @@ export default {
   false: false, // treat like a global
   fetch: fetchWrapper, // special case
   globalThis,
+  import: importWrapper, // not a function in JS but acts like one
   isFinite,
   isNaN,
   null: null, // treat like a global
@@ -76,4 +79,21 @@ export default {
 async function fetchWrapper(resource, options) {
   const response = await fetch(resource, options);
   return response.ok ? await response.arrayBuffer() : undefined;
+}
+
+/** @this {import("@weborigami/types").AsyncTree|null|undefined} */
+async function importWrapper(modulePath) {
+  // Walk up parent tree looking for a FileTree or other object with a `path`
+  /** @type {any} */
+  let current = this;
+  while (current && !("path" in current)) {
+    current = current.parent;
+  }
+  if (!current) {
+    throw new TypeError(
+      "Modules can only be imported from a folder or other object with a path property."
+    );
+  }
+  const filePath = path.resolve(current.path, modulePath);
+  return import(filePath);
 }
