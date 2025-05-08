@@ -3,7 +3,6 @@ import { compile } from "@weborigami/language";
 import { toString } from "../common/utilities.js";
 import { processUnpackedContent } from "../internal.js";
 import getParent from "./getParent.js";
-import JseBoundaryTree from "./JseBoundaryTree.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -39,17 +38,8 @@ export default {
     const mode = options.mode ?? "shell";
     const defineFn = compile.templateDocument(source, { mode, parent });
 
-    let target = parent;
-
-    // For JSE mode, add a tree to throw an error for a failed local reference
-    if (mode === "jse") {
-      const fileBoundary = new JseBoundaryTree();
-      fileBoundary.parent = target;
-      target = fileBoundary;
-    }
-
     // Invoke the definition to get back the template function
-    const result = await defineFn.call(target);
+    const result = await defineFn.call(parent);
 
     const resultExtension = key ? extension.extname(key) : null;
     if (resultExtension && Object.isExtensible(result)) {

@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import { jseHandler } from "../../src/internal.js";
 
 describe("JSE handler", () => {
-  test("local references that don't match locally throw", async () => {
+  test.skip("local references that don't match locally throw", async () => {
     const parent = new ObjectTree({
       name: "world",
     });

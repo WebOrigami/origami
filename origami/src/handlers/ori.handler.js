@@ -2,7 +2,6 @@ import { compile } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
 import { builtinsTree, processUnpackedContent } from "../internal.js";
 import getParent from "./getParent.js";
-import JseBoundaryTree from "./JseBoundaryTree.js";
 
 /**
  * An Origami expression file
@@ -38,15 +37,7 @@ export default {
     const mode = options.mode ?? "shell";
     const fn = compiler(source, { mode, parent });
 
-    let target = parent ?? builtinsTree;
-
-    // For JSE mode, add a tree to throw an error for a failed local reference
-    if (mode === "jse") {
-      const fileBoundary = new JseBoundaryTree();
-      fileBoundary.parent = target;
-      target = fileBoundary;
-    }
-
+    const target = parent ?? builtinsTree;
     let content = await fn.call(target);
 
     return processUnpackedContent(content, parent);
