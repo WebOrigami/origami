@@ -14,7 +14,7 @@ function compile(source, options) {
     mode,
     startRule,
   });
-  const optimized = optimize(code, enableCaching, macros);
+  const optimized = optimize(code, parent, enableCaching, macros);
   const fn = createExpressionFunction(optimized);
   return fn;
 }

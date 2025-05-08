@@ -68,7 +68,7 @@ export default {
       const { body, frontText, isOrigami } = parsed;
       let frontData;
       if (isOrigami) {
-        const compiled = compile.expression(frontText.trim());
+        const compiled = compile.expression(frontText.trim(), { parent });
         frontData = await compiled.call(parent);
       } else {
         frontData = parseYaml(frontText);

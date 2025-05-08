@@ -1,3 +1,5 @@
+import { ObjectTree } from "@weborigami/async-tree";
+import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import optimize from "../../src/compiler/optimize.js";
@@ -14,8 +16,14 @@ describe("optimize", () => {
         d: name         // local, should be left as ops.scope
       }
     `;
-    const fn = compile.expression(expression);
+    const parent = new ObjectTree({});
+    const fn = compile.expression(expression, { parent });
     const code = fn.code;
+
+    // Extract the parent scope from the code and check it
+    const parentScope = code[2][3][1][2][0];
+    assert.deepEqual(parentScope.trees, [parent]);
+
     assertCodeEqual(code, [
       ops.lambda,
       [[ops.literal, "name"]],
@@ -23,7 +31,7 @@ describe("optimize", () => {
         ops.object,
         ["a", 1],
         ["b", [ops.scope, "a"]],
-        ["c", [ops.external, "elsewhere", [ops.scope, "elsewhere"], {}]],
+        ["c", [ops.external, "elsewhere", [parentScope, "elsewhere"], {}]],
         ["d", [ops.scope, "name"]],
       ],
     ]);

@@ -37,7 +37,7 @@ export default {
       url,
     };
     const mode = options.mode ?? "shell";
-    const defineFn = compile.templateDocument(source, { mode });
+    const defineFn = compile.templateDocument(source, { mode, parent });
 
     let target = parent;
 

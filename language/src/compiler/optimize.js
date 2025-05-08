@@ -1,4 +1,4 @@
-import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
+import { pathFromKeys, scope, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import { annotate, undetermined } from "./parserHelpers.js";
 
@@ -15,6 +15,7 @@ import { annotate, undetermined } from "./parserHelpers.js";
  * @typedef {import("./parserHelpers.js").Code} Code
  *
  * @param {AnnotatedCode} code
+ * @param {import("@weborigami/types").AsyncTree|null} fileParent
  * @param {boolean} enableCaching
  * @param {Record<string, AnnotatedCode>} macros
  * @param {Record<string, AnnotatedCode>} cache
@@ -23,11 +24,14 @@ import { annotate, undetermined } from "./parserHelpers.js";
  */
 export default function optimize(
   code,
+  fileParent = null,
   enableCaching = true,
   macros = {},
   cache = {},
   locals = {}
 ) {
+  const parentScope = fileParent && scope(fileParent);
+
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
   let additionalLocalNames;
@@ -57,11 +61,24 @@ export default function optimize(
       if (macros?.[normalizedKey]) {
         // Apply macro
         const macro = macros?.[normalizedKey];
-        return applyMacro(macro, code, enableCaching, macros, cache, locals);
-      } else if (enableCaching && !locals[normalizedKey]) {
+        return applyMacro(
+          macro,
+          code,
+          fileParent,
+          enableCaching,
+          macros,
+          cache,
+          locals
+        );
+      } else if (enableCaching && parentScope && !locals[normalizedKey]) {
         // Upgrade to cached external scope reference
         return annotate(
-          [ops.external, key, annotate([ops.scope, key], code.location), cache],
+          [
+            ops.external,
+            key,
+            annotate([parentScope, key], code.location),
+            cache,
+          ],
           code.location
         );
       } else if (fn === undetermined) {
@@ -121,6 +138,7 @@ export default function optimize(
       // surrounding ops.object entries with ops.array.
       return optimize(
         /** @type {AnnotatedCode} */ (child),
+        fileParent,
         enableCaching,
         macros,
         cache,
@@ -134,8 +152,23 @@ export default function optimize(
   return annotate(optimized, code.location);
 }
 
-function applyMacro(macro, code, enableCaching, macros, cache, locals) {
-  const optimized = optimize(macro, enableCaching, macros, cache, locals);
+function applyMacro(
+  macro,
+  code,
+  fileParent,
+  enableCaching,
+  macros,
+  cache,
+  locals
+) {
+  const optimized = optimize(
+    macro,
+    fileParent,
+    enableCaching,
+    macros,
+    cache,
+    locals
+  );
   return optimized instanceof Array
     ? annotate(optimized, code.location)
     : optimized;
