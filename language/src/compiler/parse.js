@@ -25,6 +25,7 @@ import {
   makeBinaryOperation,
   makeCall,
   makeDeferredArguments,
+  makeDocument,
   makeJsPropertyAccess,
   makeObject,
   makePipeline,
@@ -726,14 +727,7 @@ function peg$parse(input, options) {
       return annotate([ops.spread, value], location());
     };
   var peg$f98 = function(head, tail) {
-      const lambdaParameters = annotate(
-        [annotate([ops.literal, "_"], location())],
-        location()
-      );
-      return annotate(
-        [ops.lambda, lambdaParameters, makeTemplate(ops.templateIndent, head, tail, location())],
-        location()
-      );
+      return makeTemplate(ops.templateIndent, head, tail, location());
     };
   var peg$f99 = function(chars) {
       return annotate([ops.literal, chars.join("")], location());
@@ -743,21 +737,26 @@ function peg$parse(input, options) {
       return annotate(applyMacro(front, macroName, body), location());
     };
   var peg$f101 = function(front, body) {
-      return front
-        ? annotate([ops.document, front, body], location())
-        : annotate(body, location());
+      return makeDocument(options.mode, front, body, location());
     };
-  var peg$f102 = function(head, tail) {
+  var peg$f102 = function(body) {
+      const lambdaParameters = annotate(
+        [annotate([ops.literal, "_"], location())],
+        location()
+      );
+      return annotate([ops.lambda, lambdaParameters, body], location());
+    };
+  var peg$f103 = function(head, tail) {
       const op = options.mode === "jse" ? ops.templateStandard : ops.templateTree;
       return makeTemplate(op, head, tail, location());
     };
-  var peg$f103 = function(chars) {
+  var peg$f104 = function(chars) {
       return annotate([ops.literal, chars.join("")], location());
     };
-  var peg$f104 = function(expression) {
+  var peg$f105 = function(expression) {
       return annotate(expression, location());
     };
-  var peg$f105 = function(operator, expression) {
+  var peg$f106 = function(operator, expression) {
       return makeUnaryOperation(operator, expression, location());
     };
   var peg$currPos = options.peg$currPos | 0;
@@ -5704,12 +5703,21 @@ function peg$parse(input, options) {
     if (s0 === peg$FAILED) {
       s0 = peg$currPos;
       s1 = peg$parsefrontMatterYaml();
-      if (s1 === peg$FAILED) {
-        s1 = null;
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsetemplateBody();
+        peg$savedPos = s0;
+        s0 = peg$f101(s1, s2);
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
       }
-      s2 = peg$parsetemplateBody();
-      peg$savedPos = s0;
-      s0 = peg$f101(s1, s2);
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = peg$parsetemplateBody();
+        peg$savedPos = s0;
+        s1 = peg$f102(s1);
+        s0 = s1;
+      }
     }
     peg$silentFails--;
     if (s0 === peg$FAILED) {
@@ -5761,7 +5769,7 @@ function peg$parse(input, options) {
       s4 = peg$parseexpectBacktick();
       if (s4 !== peg$FAILED) {
         peg$savedPos = s0;
-        s0 = peg$f102(s2, s3);
+        s0 = peg$f103(s2, s3);
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;
@@ -5835,7 +5843,7 @@ function peg$parse(input, options) {
       s2 = peg$parsetemplateLiteralChar();
     }
     peg$savedPos = s0;
-    s1 = peg$f103(s1);
+    s1 = peg$f104(s1);
     s0 = s1;
 
     return s0;
@@ -5865,7 +5873,7 @@ function peg$parse(input, options) {
         }
         if (s3 !== peg$FAILED) {
           peg$savedPos = s0;
-          s0 = peg$f104(s2);
+          s0 = peg$f105(s2);
         } else {
           peg$currPos = s0;
           s0 = peg$FAILED;
@@ -5914,7 +5922,7 @@ function peg$parse(input, options) {
       s3 = peg$parseunaryExpression();
       if (s3 !== peg$FAILED) {
         peg$savedPos = s0;
-        s0 = peg$f105(s1, s3);
+        s0 = peg$f106(s1, s3);
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;

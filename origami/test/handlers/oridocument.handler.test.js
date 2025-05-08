@@ -27,7 +27,7 @@ describe("Origami document handler", () => {
     assert.equal(result, "<h1>Home</h1>");
   });
 
-  test.only("YAML front matter is returned with @text", async () => {
+  test("YAML front matter is returned with @text", async () => {
     const parent = new ObjectTree({
       message: "Hello",
     });

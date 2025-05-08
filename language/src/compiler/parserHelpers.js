@@ -37,7 +37,7 @@ export function annotate(code, location) {
 }
 
 /**
- * In the given code, replace all scope refernces to the given name with the
+ * In the given code, replace all function calls to the given name with the
  * given macro code.
  *
  * @param {AnnotatedCode} code
@@ -49,8 +49,14 @@ export function applyMacro(code, name, macro) {
     return code;
   }
 
-  const [fn, ...args] = code;
-  if (fn === ops.scope && args[0] === name) {
+  // We're looking for a function call with the given name.
+  // For `foo`, the call would be: [[ops.scope, "foo"], undefined]
+  if (
+    code[0] &&
+    code[0][0] === ops.scope &&
+    code[0][1] === name &&
+    code[1] === undefined
+  ) {
     return macro;
   }
 
@@ -276,6 +282,21 @@ export function makeDeferredArguments(args) {
   });
 }
 
+export function makeDocument(mode, front, body, location) {
+  // In order for template expressions to see the front matter properties,
+  // we translate the top-level front properties to objec entries.
+  const entries = Object.entries(front).map(([key, value]) =>
+    annotate([key, annotate([ops.literal, value], location)], location)
+  );
+
+  // Add an entry for the body
+  const bodyKey = mode === "jse" ? "_body" : "@text";
+  entries.push(annotate([bodyKey, body], location));
+
+  // Return the code for the document object
+  return annotate([ops.object, ...entries], location);
+}
+
 export function makeJsPropertyAccess(expression, property) {
   const location = {
     source: expression.location.source,
@@ -496,7 +517,7 @@ export function makeYamlObject(text, location) {
     throw error;
   }
 
-  return annotate([ops.literal, parsed], location);
+  return parsed;
 }
 
 /**

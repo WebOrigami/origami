@@ -8,7 +8,7 @@ describe("JSE handler", () => {
     const parent = new ObjectTree({
       name: "world",
     });
-    const text = "() => `Hello, ${ name }!`";
+    const text = "(name) => `Hello, ${ name }!`";
     const fn = await jseHandler.unpack(text, {
       key: "test.ori.txt",
       parent,

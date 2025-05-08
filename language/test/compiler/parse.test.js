@@ -1159,21 +1159,13 @@ Body`,
 
   test("templateBody", () => {
     assertParse("templateBody", "hello${foo}world", [
-      ops.lambda,
-      [[ops.literal, "_"]],
-      [
-        ops.templateIndent,
-        [ops.literal, ["hello", "world"]],
-        [ops.scope, "foo"],
-      ],
+      ops.templateIndent,
+      [ops.literal, ["hello", "world"]],
+      [ops.scope, "foo"],
     ]);
     assertParse("templateBody", "Documents can contain ` backticks", [
-      ops.lambda,
-      [[ops.literal, "_"]],
-      [
-        ops.templateIndent,
-        [ops.literal, ["Documents can contain ` backticks"]],
-      ],
+      ops.templateIndent,
+      [ops.literal, ["Documents can contain ` backticks"]],
     ]);
   });
 
@@ -1193,13 +1185,9 @@ title: Title goes here
 ---
 Body text`,
       [
-        ops.document,
-        [ops.literal, { title: "Title goes here" }],
-        [
-          ops.lambda,
-          [[ops.literal, "_"]],
-          [ops.templateIndent, [ops.literal, ["Body text"]]],
-        ],
+        ops.object,
+        ["title", [ops.literal, "Title goes here"]],
+        ["@text", [ops.templateIndent, [ops.literal, ["Body text"]]]],
       ]
     );
   });
@@ -1221,16 +1209,9 @@ Body text`,
         [
           "@text",
           [
-            [
-              ops.lambda,
-              [[ops.literal, "_"]],
-              [
-                ops.templateIndent,
-                [ops.literal, ["<h1>", "</h1>\n"]],
-                [ops.scope, "title"],
-              ],
-            ],
-            undefined,
+            ops.templateIndent,
+            [ops.literal, ["<h1>", "</h1>\n"]],
+            [ops.scope, "title"],
           ],
         ],
       ]

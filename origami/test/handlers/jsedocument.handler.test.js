@@ -27,7 +27,7 @@ describe("JSE document handler", () => {
     assert.equal(result, "<h1>Home</h1>");
   });
 
-  test("YAML front matter is returned with @text", async () => {
+  test("YAML front matter is returned as _body", async () => {
     const parent = new ObjectTree({
       message: "Hello",
     });
@@ -37,7 +37,7 @@ name: world
 \${ message }, \${ name }!`;
     const result = await jsedocumentHandler.unpack(text, { parent });
     assert.deepEqual(result.name, "world");
-    assert.equal(result["@text"], "Hello, world!");
+    assert.equal(result._body, "Hello, world!");
   });
 
   test("JSE front matter can refer to template() as a macro", async () => {

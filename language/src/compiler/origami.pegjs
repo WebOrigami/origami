@@ -20,6 +20,7 @@ import {
   makeBinaryOperation,
   makeCall,
   makeDeferredArguments,
+  makeDocument,
   makeJsPropertyAccess,
   makeObject,
   makePipeline,
@@ -768,14 +769,7 @@ stringLiteral "string"
 // contain backticks at the top level.
 templateBody "template"
   = head:templateBodyText tail:(templateSubstitution templateBodyText)* {
-      const lambdaParameters = annotate(
-        [annotate([ops.literal, "_"], location())],
-        location()
-      );
-      return annotate(
-        [ops.lambda, lambdaParameters, makeTemplate(ops.templateIndent, head, tail, location())],
-        location()
-      );
+      return makeTemplate(ops.templateIndent, head, tail, location());
     }
 
 // Template document bodies can contain backticks at the top level
@@ -792,10 +786,15 @@ templateDocument "template document"
       const macroName = options.mode === "jse" ? "_template" : "@template";
       return annotate(applyMacro(front, macroName, body), location());
     }
-  / front:frontMatterYaml? body:templateBody {
-      return front
-        ? annotate([ops.document, front, body], location())
-        : annotate(body, location());
+  / front:frontMatterYaml body:templateBody {
+      return makeDocument(options.mode, front, body, location());
+    }
+  / body:templateBody {
+      const lambdaParameters = annotate(
+        [annotate([ops.literal, "_"], location())],
+        location()
+      );
+      return annotate([ops.lambda, lambdaParameters, body], location());
     }
 
 // A backtick-quoted template literal
