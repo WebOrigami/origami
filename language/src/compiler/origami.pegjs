@@ -540,8 +540,9 @@ optionalChaining
     const literal = annotate([ops.literal, property], location());
     return annotate([ops.optionalTraverse, literal], location());
   }
+  
 parameter
-  = identifier:identifier {
+  = identifier:jsIdentifier {
       return annotate([ops.literal, identifier], location());
     }
 

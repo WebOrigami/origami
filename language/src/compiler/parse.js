@@ -4374,7 +4374,7 @@ function peg$parse(input, options) {
     var s0, s1;
 
     s0 = peg$currPos;
-    s1 = peg$parseidentifier();
+    s1 = peg$parsejsIdentifier();
     if (s1 !== peg$FAILED) {
       peg$savedPos = s0;
       s1 = peg$f73(s1);
