@@ -122,29 +122,6 @@ export async function construct(constructor, ...args) {
   return Reflect.construct(constructor, args);
 }
 
-/**
- * Construct a document object by invoking the body code (a lambda) and adding
- * the resulting text to the front data.
- *
- * @this {AsyncTree|null}
- * @param {any} frontData
- * @param {AnnotatedCode} bodyCode
- */
-export async function document(frontData, bodyCode) {
-  const context = new ObjectTree(frontData);
-  context.parent = this;
-  const bodyFn = await evaluate.call(context, bodyCode);
-  const body = await bodyFn();
-  const object = {
-    ...frontData,
-    "@text": body,
-  };
-  setParent(object, this);
-  return object;
-}
-addOpLabel(document, "«ops.document");
-document.unevaluatedArgs = true;
-
 export function division(a, b) {
   return a / b;
 }

@@ -84,29 +84,6 @@ describe("ops", () => {
     assert.equal(await ops.construct(String, "hello"), "hello");
   });
 
-  test("ops.document", async () => {
-    const code = createCode([
-      ops.document,
-      {
-        a: 1,
-      },
-      [
-        ops.lambda,
-        [["_"]],
-        [
-          ops.templateIndent,
-          [ops.literal, ["a = ", ""]],
-          [ops.concat, [ops.scope, "a"]],
-        ],
-      ],
-    ]);
-    const result = await evaluate.call(null, code);
-    assert.deepEqual(result, {
-      a: 1,
-      "@text": "a = 1",
-    });
-  });
-
   test("ops.division divides two numbers", async () => {
     assert.strictEqual(ops.division(12, 2), 6);
     assert.strictEqual(ops.division(3, 2), 1.5);
