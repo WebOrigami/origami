@@ -3,7 +3,7 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { macros, startRule } = options;
+  const { macros, parent, startRule } = options;
   const mode = options.mode ?? "shell";
   const enableCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
