@@ -23,7 +23,7 @@ describe("audit", () => {
     });
   });
 
-  test.only("treats /foo or /foo/ as equivalent to /foo.html", async () => {
+  test("treats /foo or /foo/ as equivalent to /foo.html", async () => {
     const tree = {
       "index.html": `
         <a href="foo">Without slash</a>
