@@ -23,7 +23,7 @@ describe("Origami parser", () => {
     assertParse(
       "angleBracketLiteral",
       "<index.html>",
-      [ops.scope, "index.html"],
+      [ops.external, "index.html"],
       "jse",
       false
     );
@@ -32,7 +32,7 @@ describe("Origami parser", () => {
       "<foo/bar/baz>",
       [
         ops.traverse,
-        [ops.scope, "foo/"],
+        [ops.external, "foo/"],
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ],
@@ -998,7 +998,7 @@ Body`,
     assertParse(
       "primary",
       "<index.html>",
-      [ops.scope, "index.html"],
+      [ops.external, "index.html"],
       "jse",
       false
     );

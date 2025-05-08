@@ -60,7 +60,7 @@ angleBracketLiteral
     }
   / "<" __ path:angleBracketPath __ ">" {
     const [head, ...tail] = path;
-    const root = annotate([ops.scope, head[1]], location());
+    const root = annotate([ops.external, head[1]], location());
     return tail.length === 0
       ? root
       : annotate([ops.traverse, root, ...tail], location())

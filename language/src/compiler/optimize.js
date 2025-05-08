@@ -34,8 +34,27 @@ export default function optimize(
 
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
+  const key = args[0];
   let additionalLocalNames;
   switch (fn) {
+    case ops.external:
+      // External reference found by compiler, add scope and cache
+      if (enableCaching) {
+        return annotate(
+          [
+            ops.external,
+            key,
+            annotate([parentScope, key], code.location),
+            cache,
+          ],
+          code.location
+        );
+      } else {
+        // Downgrade to regular scope reference
+        return annotate([ops.scope, key], code.location);
+      }
+      break;
+
     case ops.lambda:
       const parameters = args[0];
       additionalLocalNames = parameters.map((param) => param[1]);
@@ -50,13 +69,18 @@ export default function optimize(
 
     case ops.object:
       const entries = args;
-      additionalLocalNames = entries.map(([key]) => trailingSlash.remove(key));
+      additionalLocalNames = entries.map(([key]) => {
+        if (key[0] === "(" && key[key.length - 1] === ")") {
+          // Non-enumerable property, remove parentheses
+          key = key.slice(1, -1);
+        }
+        return trailingSlash.remove(key);
+      });
       break;
 
     // Both of these are handled the same way
     case undetermined:
     case ops.scope:
-      const key = args[0];
       const normalizedKey = trailingSlash.remove(key);
       if (macros?.[normalizedKey]) {
         // Apply macro
