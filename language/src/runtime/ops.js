@@ -299,6 +299,30 @@ addOpLabel(literal, "«ops.literal»");
 literal.unevaluatedArgs = true;
 
 /**
+ * Walk up the parent tree by the indicated number of ancestors, then ask that
+ * tree for the given key.
+ *
+ * @this {AsyncTree|null}
+ * @param {number} ancestor
+ * @param {any} key
+ */
+export async function local(ancestor, key) {
+  const message = `Internal error: couldn't find local key: ${key}`;
+  if (!this) {
+    throw new Error(message);
+  }
+  let tree = this;
+  for (let i = 0; i < ancestor; i++) {
+    if (!tree.parent) {
+      throw new Error(message);
+    }
+    tree = tree.parent;
+  }
+  const value = await tree.get(key);
+  return value;
+}
+
+/**
  * Logical AND operator
  */
 export async function logicalAnd(head, ...tail) {
@@ -366,19 +390,30 @@ export async function merge(...codes) {
     }
   }
 
+  // Create a scope for the direct entries that includes an empty tree. This
+  // allows the ops.local ancestor counts to be the same for both the direct
+  // entries and the regular trees so that the optimizer doesn't have to
+  // calculate different ancestor counts for each argument to merge.
+  const emptyTree = new ObjectTree({});
+  emptyTree.parent = this;
   const directObject = directEntries
-    ? await expressionObject(directEntries, this)
+    ? await expressionObject(directEntries, emptyTree)
     : null;
   if (!treeSpreads) {
     // No tree spreads, we're done
     return directObject;
   }
 
-  // If we have direct property entries, create a context for them. The
-  // `expressionObject` function will set the object's parent symbol to `this`.
-  // Tree.from will call the ObjectTree constructor, which will use that symbol
-  // to set the parent for the new tree to `this`.
-  const context = directObject ? Tree.from(directObject) : this;
+  // If we have direct property entries, create a context for them.
+  let context;
+  if (directObject) {
+    context = Tree.from(directObject);
+    // Remove the empty tree from the parent chain so that the ancestor counts
+    // for the remaining trees are correct.
+    context.parent = emptyTree.parent;
+  } else {
+    context = this;
+  }
 
   // Second pass: evaluate the trees. For the trees which are direct property
   // entries, we'll copy over the values we've already calculated. We can't

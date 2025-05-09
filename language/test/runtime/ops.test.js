@@ -196,6 +196,18 @@ describe("ops", () => {
     assert(ops.lessThanOrEqual("aa", "ab"));
   });
 
+  test("ops.local", async () => {
+    const a = new ObjectTree({ a: 1 });
+    const b = new ObjectTree({ b: 2 });
+    const c = new ObjectTree({ c: 3 });
+    a.parent = b;
+    b.parent = c;
+    assert.equal(await ops.local.call(a, 0, "a"), 1);
+    assert.equal(await ops.local.call(a, 0, "b"), undefined);
+    assert.equal(await ops.local.call(a, 1, "b"), 2);
+    assert.equal(await ops.local.call(a, 2, "c"), 3);
+  });
+
   test("ops.logicalAnd", async () => {
     assert.strictEqual(await ops.logicalAnd(true, trueFn), true);
     assert.strictEqual(await ops.logicalAnd(true, falseFn), false);

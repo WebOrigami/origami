@@ -19,7 +19,7 @@ import { annotate, undetermined } from "./parserHelpers.js";
  * @param {boolean} enableCaching
  * @param {Record<string, AnnotatedCode>} macros
  * @param {Record<string, AnnotatedCode>} cache
- * @param {Record<string, boolean>} locals
+ * @param {Record<string, number>} locals
  * @returns {AnnotatedCode}
  */
 export default function optimize(
@@ -57,7 +57,9 @@ export default function optimize(
 
     case ops.lambda:
       const parameters = args[0];
-      additionalLocalNames = parameters.map((param) => param[1]);
+      if (parameters.length > 0) {
+        additionalLocalNames = parameters.map((param) => param[1]);
+      }
       break;
 
     case ops.literal:
@@ -65,6 +67,11 @@ export default function optimize(
       if (!(value instanceof Array)) {
         return value;
       }
+      break;
+
+    case ops.merge:
+      // Will increase the depth, pretend it has empty array of locals
+      additionalLocalNames = [];
       break;
 
     case ops.object:
@@ -94,7 +101,11 @@ export default function optimize(
           cache,
           locals
         );
-      } else if (enableCaching && parentScope && !locals[normalizedKey]) {
+      } else if (
+        enableCaching &&
+        parentScope &&
+        locals[normalizedKey] === undefined
+      ) {
         // Upgrade to cached external scope reference
         return annotate(
           [
@@ -105,6 +116,10 @@ export default function optimize(
           ],
           code.location
         );
+      } else if (locals[normalizedKey] !== undefined) {
+        // Transform local reference to ops.local
+        const localIndex = locals[normalizedKey];
+        return annotate([ops.local, localIndex, key], code.location);
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
         return annotate([ops.scope, key], code.location);
@@ -120,7 +135,7 @@ export default function optimize(
       if (enableCaching && isScopeRef) {
         // Is the first argument a nonlocal reference?
         const normalizedKey = trailingSlash.remove(args[0][1]);
-        if (!locals[normalizedKey]) {
+        if (locals[normalizedKey] === undefined) {
           // Are the remaining arguments all literals?
           const allLiterals = args
             .slice(1)
@@ -140,14 +155,18 @@ export default function optimize(
 
   // Add any locals introduced by this code to the list that will be consulted
   // when we descend into child nodes.
+  /** @type {Record<string, number>} */
   let updatedLocals;
-  if (additionalLocalNames) {
-    updatedLocals = { ...locals };
-    for (const key of additionalLocalNames) {
-      updatedLocals[key] = true;
-    }
-  } else {
+  if (additionalLocalNames === undefined) {
     updatedLocals = locals;
+  } else {
+    updatedLocals = {};
+    for (const key in locals) {
+      updatedLocals[key] = locals[key] + 1;
+    }
+    for (const key of additionalLocalNames) {
+      updatedLocals[key] = 0;
+    }
   }
 
   // Optimize children

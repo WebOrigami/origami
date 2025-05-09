@@ -11,9 +11,9 @@ describe("optimize", () => {
     const expression = `
       (name) => {
         a: 1
-        b: a            // local, should be left as ops.scope
-        c: elsewhere    // external, should be converted to ops.external
-        d: name         // local, should be left as ops.scope
+        b: a            // local key, should be optimized to ops.local
+        c: elsewhere    // external, should be optimized to ops.external
+        d: name         // local parameter, should be optimized to ops.local
       }
     `;
     const parent = new ObjectTree({});
@@ -30,9 +30,9 @@ describe("optimize", () => {
       [
         ops.object,
         ["a", 1],
-        ["b", [ops.scope, "a"]],
+        ["b", [ops.local, 0, "a"]],
         ["c", [ops.external, "elsewhere", [parentScope, "elsewhere"], {}]],
-        ["d", [ops.scope, "name"]],
+        ["d", [ops.local, 1, "name"]],
       ],
     ]);
   });
