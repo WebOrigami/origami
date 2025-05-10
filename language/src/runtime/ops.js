@@ -423,12 +423,20 @@ export async function merge(...codes) {
   const trees = await Promise.all(
     codes.map(async (code) => {
       if (code[0] === object) {
-        // Using the code as reference, create a new object with the direct
-        // property values we've already calculated.
+        // Using the code as reference, create a new object that delegates
+        // properties to the directObject.
         const object = {};
         for (const [key] of code.slice(1)) {
-          // @ts-ignore directObject will always be defined
-          object[key] = directObject[key];
+          if (key[0] === "(" && key[key.length - 1] === ")") {
+            continue; // Skip non-enumerable keys
+          }
+          Object.defineProperty(object, key, {
+            enumerable: true,
+            get() {
+              // @ts-ignore directObject will always be defined
+              return directObject[key];
+            },
+          });
         }
         setParent(object, this);
         return object;
