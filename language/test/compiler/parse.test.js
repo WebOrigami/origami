@@ -81,7 +81,7 @@ describe("Origami parser", () => {
       [ops.literal, 4],
     ]);
     assertParse("arrayLiteral", "[ 1, ...[2, 3]]", [
-      ops.merge,
+      ops.flat,
       [ops.array, [ops.literal, 1]],
       [ops.array, [ops.literal, 2], [ops.literal, 3]],
     ]);

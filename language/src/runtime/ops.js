@@ -169,6 +169,11 @@ export async function external(path, code, cache) {
 addOpLabel(external, "«ops.external»");
 external.unevaluatedArgs = true;
 
+export function flat(...args) {
+  return args.flat();
+}
+addOpLabel(flat, "«ops.flat»");
+
 /**
  * This op is only used during parsing. It signals to ops.object that the
  * "arguments" of the expression should be used to define a property getter.
@@ -396,9 +401,10 @@ export async function merge(...codes) {
   // calculate different ancestor counts for each argument to merge.
   const emptyTree = new ObjectTree({});
   emptyTree.parent = this;
-  const directObject = directEntries
-    ? await expressionObject(directEntries, emptyTree)
-    : null;
+  const directObject =
+    directEntries.length > 0
+      ? await expressionObject(directEntries, emptyTree)
+      : null;
   if (!treeSpreads) {
     // No tree spreads, we're done
     return directObject;

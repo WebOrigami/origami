@@ -145,7 +145,7 @@ export function makeArray(entries, location) {
 
   let result;
   if (spreads.length > 1) {
-    result = [ops.merge, ...spreads];
+    result = [ops.flat, ...spreads];
   } else if (spreads.length === 1) {
     result = spreads[0];
   } else {

@@ -125,6 +125,10 @@ describe("ops", () => {
     assert.strictEqual(result2, 1);
   });
 
+  test("ops.flat", () => {
+    assert.deepEqual(ops.flat(1, 2, [3]), [1, 2, 3]);
+  });
+
   test("ops.greaterThan", () => {
     assert(ops.greaterThan(5, 3));
     assert(!ops.greaterThan(3, 3));
