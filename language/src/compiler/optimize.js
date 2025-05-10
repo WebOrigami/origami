@@ -70,19 +70,20 @@ export default function optimize(
       break;
 
     case ops.merge:
-      // Will increase the depth, pretend it has empty array of locals
-      additionalLocalNames = [];
+      // Gather the locals from the direct trees being merged. Those local names
+      // will be overridden (which is what we want) in the individual object
+      // trees when those are processed.
+      additionalLocalNames = code
+        .slice(1)
+        .filter((child) => child instanceof Array && child[0] === ops.object)
+        .flatMap((objectCode) =>
+          objectCode.slice(1).map(([key]) => propertyName(key))
+        );
       break;
 
     case ops.object:
       const entries = args;
-      additionalLocalNames = entries.map(([key]) => {
-        if (key[0] === "(" && key[key.length - 1] === ")") {
-          // Non-enumerable property, remove parentheses
-          key = key.slice(1, -1);
-        }
-        return trailingSlash.remove(key);
-      });
+      additionalLocalNames = entries.map(([key]) => propertyName(key));
       break;
 
     // Both of these are handled the same way
@@ -215,4 +216,12 @@ function applyMacro(
   return optimized instanceof Array
     ? annotate(optimized, code.location)
     : optimized;
+}
+
+function propertyName(key) {
+  if (key[0] === "(" && key[key.length - 1] === ")") {
+    // Non-enumerable property, remove parentheses
+    key = key.slice(1, -1);
+  }
+  return trailingSlash.remove(key);
 }
