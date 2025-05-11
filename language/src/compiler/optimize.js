@@ -69,18 +69,6 @@ export default function optimize(
       }
       break;
 
-    case ops.merge:
-      // Gather the locals from the direct trees being merged. Those local names
-      // will be overridden (which is what we want) in the individual object
-      // trees when those are processed.
-      additionalLocalNames = code
-        .slice(1)
-        .filter((child) => child instanceof Array && child[0] === ops.object)
-        .flatMap((objectCode) =>
-          objectCode.slice(1).map(([key]) => propertyName(key))
-        );
-      break;
-
     case ops.object:
       const entries = args;
       additionalLocalNames = entries.map(([key]) => propertyName(key));
