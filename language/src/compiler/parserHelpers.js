@@ -307,6 +307,68 @@ export function makeJsPropertyAccess(expression, property) {
 }
 
 /**
+ * From the given spreads within an object spread, return the merge.
+ *
+ * Example:
+ *
+ *      {
+ *        x = { a: 1 }
+ *        …x
+ *        y = x
+ *      }
+ *
+ *  will be treated as:
+ *
+ *      {
+ *        x = { a: 1 }
+ *        y = x
+ *        _result: {
+ *          x
+ *          …x
+ *          y
+ *        }
+ *      }.result
+ *
+ * @param {*} spreads
+ * @param {CodeLocation} location
+ */
+function makeMerge(spreads, location) {
+  const topEntries = [];
+  const resultEntries = [];
+  for (const spread of spreads) {
+    if (spread[0] === ops.object) {
+      topEntries.push(...spread.slice(1));
+      // Also add an object to the result with indirect references
+      const indirectEntries = spread.slice(1).map((entry) => {
+        const [key] = entry;
+        const reference = annotate([ops.local, 1, key], entry.location);
+        return annotate([key, reference], entry.location);
+      });
+      const indirectObject = annotate(
+        [ops.object, ...indirectEntries],
+        location
+      );
+      resultEntries.push(indirectObject);
+    } else {
+      resultEntries.push(spread);
+    }
+  }
+
+  // Merge to create result
+  const result = annotate([ops.merge, ...resultEntries], location);
+
+  // Add the result to the top-level object as _result
+  topEntries.push(annotate(["_result", result], location));
+
+  // Construct the top-level object
+  const topObject = annotate([ops.object, ...topEntries], location);
+
+  // Get the _result property
+  const code = annotate([topObject, "_result"], location);
+  return code;
+}
+
+/**
  * Make an object.
  *
  * @param {AnnotatedCode[]} entries
@@ -362,7 +424,7 @@ export function makeObject(entries, location) {
   let code;
   if (spreads.length > 1) {
     // Merge multiple spreads
-    code = [ops.merge, ...spreads];
+    code = makeMerge(spreads, location);
   } else if (spreads.length === 1) {
     // A single spread can just be the object
     code = spreads[0];

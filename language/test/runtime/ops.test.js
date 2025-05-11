@@ -1,4 +1,4 @@
-import { DeepObjectTree, ObjectTree } from "@weborigami/async-tree";
+import { DeepObjectTree, ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
@@ -247,40 +247,31 @@ describe("ops", () => {
   test("ops.merge", async () => {
     // {
     //   a: 1
-    //   …fn(a)
-    // }
-    const scope = new ObjectTree({
-      fn: (a) => ({ b: 2 * a }),
-    });
-    const code = createCode([
-      ops.merge,
-      [ops.object, ["a", [ops.literal, 1]]],
-      [
-        [ops.builtin, "fn"],
-        [ops.scope, "a"],
-      ],
-    ]);
-    const result = await evaluate.call(scope, code);
-    assert.deepEqual(result, { a: 1, b: 2 });
-  });
-
-  test("ops.merge lets all direct properties see each other", async () => {
-    // {
-    //   a: 1
-    //   ...more
+    //   …more
     //   c: a
     // }
     const scope = new ObjectTree({
       more: { b: 2 },
     });
     const code = createCode([
-      ops.merge,
-      [ops.object, ["a", [ops.literal, 1]]],
-      [ops.scope, "more"],
-      [ops.object, ["c", [ops.scope, "a"]]],
+      [
+        ops.object,
+        ["a", [ops.literal, 1]],
+        ["c", [ops.local, 0, "a"]],
+        [
+          "_result",
+          [
+            ops.merge,
+            [ops.object, ["a", [ops.local, 1, "a"]]],
+            [ops.scope, "more"],
+            [ops.object, ["c", [ops.local, 1, "c"]]],
+          ],
+        ],
+      ],
+      "_result",
     ]);
     const result = await evaluate.call(scope, code);
-    assert.deepEqual(result, { a: 1, b: 2, c: 1 });
+    assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
   test("ops.multiplication multiplies two numbers", async () => {

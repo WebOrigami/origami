@@ -848,10 +848,22 @@ Body`,
         ],
       ],
     ]);
-    assertParse("objectLiteral", "{ a: 1, ...b }", [
-      ops.merge,
-      [ops.object, ["a", [ops.literal, 1]]],
-      [ops.scope, "b"],
+    assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
+      [
+        ops.object,
+        ["a", [ops.literal, 1]],
+        ["c", [ops.scope, "a"]],
+        [
+          "_result",
+          [
+            ops.merge,
+            [ops.object, ["a", [ops.local, 1, "a"]]],
+            [ops.scope, "more"],
+            [ops.object, ["c", [ops.local, 1, "c"]]],
+          ],
+        ],
+      ],
+      "_result",
     ]);
     assertParse("objectLiteral", "{ a: 1, ...{ b: 2 } }", [
       ops.object,

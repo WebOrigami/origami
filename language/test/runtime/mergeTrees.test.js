@@ -41,11 +41,6 @@ describe("mergeTrees", () => {
     });
   });
 
-  test("if all arguments are arrays, result is an array", async () => {
-    const result = await mergeTrees.call(null, [1, 2], [3, 4]);
-    assert.deepEqual(result, [1, 2, 3, 4]);
-  });
-
   test("merges heterogenous arguments as trees", async () => {
     const tree = await mergeTrees.call(
       null,

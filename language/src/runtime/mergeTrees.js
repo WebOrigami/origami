@@ -53,11 +53,6 @@ export default async function mergeTrees(...trees) {
     return result;
   }
 
-  // If all trees are arrays, return an array.
-  if (unpacked.every((tree) => Array.isArray(tree))) {
-    return unpacked.flat();
-  }
-
   // Merge the trees.
   const result = merge(...unpacked);
   setParent(result, this);

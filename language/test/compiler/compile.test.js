@@ -32,6 +32,29 @@ describe("compile", () => {
     });
   });
 
+  test("merge", async () => {
+    {
+      const scope = new ObjectTree({
+        more: {
+          b: 2,
+        },
+      });
+      const fn = compile.expression(`
+        {
+          a: 1
+          ...more
+          c: a
+        }
+      `);
+      const result = await fn.call(scope);
+      assert.deepEqual(await Tree.plain(result), {
+        a: 1,
+        b: 2,
+        c: 1,
+      });
+    }
+  });
+
   test("number", async () => {
     await assertCompile("1", 1);
     await assertCompile("3.14159", 3.14159);

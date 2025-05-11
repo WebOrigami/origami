@@ -11,7 +11,6 @@ import {
   deepText,
   isUnpackable,
   scope as scopeFn,
-  setParent,
   text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
@@ -381,81 +380,12 @@ addOpLabel(logicalOr, "«ops.logicalOr»");
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
  * @this {AsyncTree|null}
- * @param {AnnotatedCode[]} codes
+ * @param {any[]} trees
  */
-export async function merge(...codes) {
-  // First pass: evaluate the direct property entries in a single object
-  let treeSpreads = false;
-  const directEntries = [];
-  for (const code of codes) {
-    if (code[0] === object) {
-      directEntries.push(...code.slice(1));
-    } else {
-      treeSpreads = true;
-    }
-  }
-
-  // Create a scope for the direct entries that includes an empty tree. This
-  // allows the ops.local ancestor counts to be the same for both the direct
-  // entries and the regular trees so that the optimizer doesn't have to
-  // calculate different ancestor counts for each argument to merge.
-  const emptyTree = new ObjectTree({});
-  emptyTree.parent = this;
-  const directObject =
-    directEntries.length > 0
-      ? await expressionObject(directEntries, emptyTree)
-      : null;
-  if (!treeSpreads) {
-    // No tree spreads, we're done
-    return directObject;
-  }
-
-  // If we have direct property entries, create a context for them.
-  let context;
-  if (directObject) {
-    context = Tree.from(directObject);
-    // Remove the empty tree from the parent chain so that the ancestor counts
-    // for the remaining trees are correct.
-    context.parent = emptyTree.parent;
-  } else {
-    context = this;
-  }
-
-  // Second pass: evaluate the trees. For the trees which are direct property
-  // entries, we'll copy over the values we've already calculated. We can't
-  // reuse the `directObject` as is because in a merge we need to respect the
-  // order in which the properties are defined. Trees that aren't direct
-  // property entries are evaluated with the direct property entries in scope.
-  const trees = await Promise.all(
-    codes.map(async (code) => {
-      if (code[0] === object) {
-        // Using the code as reference, create a new object that delegates
-        // properties to the directObject.
-        const object = {};
-        for (const [key] of code.slice(1)) {
-          if (key[0] === "(" && key[key.length - 1] === ")") {
-            continue; // Skip non-enumerable keys
-          }
-          Object.defineProperty(object, key, {
-            enumerable: true,
-            get() {
-              // @ts-ignore directObject will always be defined
-              return directObject[key];
-            },
-          });
-        }
-        setParent(object, this);
-        return object;
-      } else {
-        return evaluate.call(context, code);
-      }
-    })
-  );
-
+export async function merge(...trees) {
   return mergeTrees.call(this, ...trees);
 }
 addOpLabel(merge, "«ops.merge»");
-merge.unevaluatedArgs = true;
 
 export function multiplication(a, b) {
   return a * b;
