@@ -1,5 +1,6 @@
 import { pathFromKeys, scope, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
+import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, undetermined } from "./parserHelpers.js";
 
 /**
@@ -21,7 +22,9 @@ import { annotate, undetermined } from "./parserHelpers.js";
 export default function optimize(code, options = {}) {
   const { parent } = options;
   const enableCaching = options.enableCaching ?? true;
+  const globals = options.globals ?? jsGlobals;
   const macros = options.macros ?? {};
+  const mode = options.mode ?? "shell";
   const cache = options.cache ?? {};
   const locals = options.locals ?? {};
 
@@ -48,7 +51,10 @@ export default function optimize(code, options = {}) {
         // Downgrade to regular scope reference
         return annotate([ops.scope, key], code.location);
       }
-      break;
+
+    case ops.global:
+      // Replace global op with the globals
+      return annotate([globals, key], code.location);
 
     case ops.lambda:
       const parameters = args[0];
@@ -78,6 +84,7 @@ export default function optimize(code, options = {}) {
         const macro = macros?.[normalizedKey];
         return applyMacro(macro, code, options);
       } else if (
+        mode === "shell" &&
         enableCaching &&
         parentScope &&
         locals[normalizedKey] === undefined
@@ -99,7 +106,11 @@ export default function optimize(code, options = {}) {
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
         return annotate([ops.scope, key], code.location);
-      } else {
+      } else if (mode === "jse") {
+        // Transform scope reference to globals in jse mode
+        return annotate([globals, key], code.location);
+      }
+      {
         // Internal ops.scope call; leave as is
         return code;
       }
@@ -156,10 +167,7 @@ export default function optimize(code, options = {}) {
       // be preferable to only descend into instructions. This would require
       // surrounding ops.object entries with ops.array.
       return optimize(/** @type {AnnotatedCode} */ (child), {
-        parent,
-        enableCaching,
-        macros,
-        cache,
+        ...options,
         locals: updatedLocals,
       });
     } else {

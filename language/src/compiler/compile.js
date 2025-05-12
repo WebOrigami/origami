@@ -18,7 +18,9 @@ function compile(source, options) {
   });
   const optimized = optimize(code, {
     enableCaching,
+    globals,
     macros,
+    mode,
     parent,
   });
   const fn = createExpressionFunction(optimized);

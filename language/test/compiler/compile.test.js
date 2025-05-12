@@ -1,4 +1,4 @@
-import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
@@ -20,14 +20,12 @@ describe("compile", () => {
   test("functionComposition", async () => {
     await assertCompile("greet()", "Hello, undefined!");
     await assertCompile("greet(name)", "Hello, Alice!");
+    await assertCompile("greet(name)", "Hello, Alice!", "jse");
     await assertCompile("greet 'world'", "Hello, world!");
   });
 
   test("tree", async () => {
-    const fn = compile.expression("{ message = greet(name) }");
-    const tree = await fn.call(null);
-    tree[symbols.parent] = shared;
-    assert.deepEqual(await Tree.plain(tree), {
+    await assertCompile("{ message = greet(name) }", {
       message: "Hello, Alice!",
     });
   });
@@ -91,7 +89,7 @@ describe("compile", () => {
 
   test("tagged template string array is identical across calls", async () => {
     let saved;
-    const scope = new ObjectTree({
+    const globals = new ObjectTree({
       tag: (strings, ...values) => {
         assertCodeEqual(strings, ["Hello, ", "!"]);
         if (saved) {
@@ -102,8 +100,8 @@ describe("compile", () => {
         return strings[0] + values[0] + strings[1];
       },
     });
-    const program = compile.expression("=tag`Hello, ${_}!`");
-    const lambda = await program.call(scope);
+    const program = compile.expression("=tag`Hello, ${_}!`", { globals });
+    const lambda = await program.call(null);
     const alice = await lambda("Alice");
     assert.equal(alice, "Hello, Alice!");
     const bob = await lambda("Bob");
@@ -123,8 +121,13 @@ describe("compile", () => {
   });
 });
 
-async function assertCompile(text, expected) {
-  const fn = compile.expression(text);
-  const result = await fn.call(shared);
+async function assertCompile(text, expected, mode = "shell") {
+  const fn = compile.expression(text, { globals: shared, mode });
+  // For shell mode, use globals as scope too
+  const target = mode === "shell" ? shared : null;
+  let result = await fn.call(target);
+  if (Tree.isTreelike(result)) {
+    result = await Tree.plain(result);
+  }
   assert.deepEqual(result, expected);
 }
