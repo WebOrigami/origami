@@ -35,6 +35,8 @@ export default async function ori(
   // passing a function to the `watch` builtin will always look the current
   // value of things in scope.
   const fn = compile.expression(expression, {
+    globals: builtinsTree,
+    mode: "shell",
     parent: this,
     scopeCaching: false,
   });

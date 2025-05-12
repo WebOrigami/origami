@@ -34,10 +34,11 @@ export default {
 
     // Compile the source code as an Origami program and evaluate it.
     const compiler = options.compiler ?? compile.program;
+    const globals = options.globals ?? builtinsTree;
     const mode = options.mode ?? "shell";
-    const fn = compiler(source, { mode, parent });
+    const fn = compiler(source, { globals, mode, parent });
 
-    const target = parent ?? builtinsTree;
+    const target = parent ?? globals;
     let content = await fn.call(target);
 
     return processUnpackedContent(content, parent);

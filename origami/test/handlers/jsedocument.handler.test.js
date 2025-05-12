@@ -8,7 +8,7 @@ describe("JSE document handler", () => {
     const parent = new ObjectTree({
       name: "world",
     });
-    const text = "Hello, ${ name }!";
+    const text = "Hello, ${ <name> }!";
     const fn = await jsedocumentHandler.unpack(text, {
       key: "test.ori.txt",
       parent,
@@ -34,7 +34,7 @@ describe("JSE document handler", () => {
     const text = `---
 name: world
 ---
-\${ message }, \${ name }!`;
+\${ <message> }, \${ name }!`;
     const result = await jsedocumentHandler.unpack(text, { parent });
     assert.deepEqual(result.name, "world");
     assert.equal(result._body, "Hello, world!");

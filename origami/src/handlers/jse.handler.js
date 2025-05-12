@@ -1,6 +1,5 @@
-import { oriHandler } from "../internal.js";
+import { builtinsNew, oriHandler } from "../internal.js";
 import getParent from "./getParent.js";
-import jseModeParent from "./jseModeParent.js";
 
 export default {
   ...oriHandler,
@@ -9,8 +8,9 @@ export default {
     const parent = getParent(packed, options);
     return oriHandler.unpack(packed, {
       ...options,
+      globals: builtinsNew,
       mode: "jse",
-      parent: await jseModeParent(parent),
+      parent,
     });
   },
 };

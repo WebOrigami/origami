@@ -26,3 +26,5 @@ export { default as wasmHandler } from "./handlers/wasm.handler.js";
 export { default as yamlHandler } from "./handlers/yaml.handler.js";
 
 export { default as builtinsTree } from "./builtinsTree.js";
+
+export { default as builtinsNew } from "./builtinsNew.js";

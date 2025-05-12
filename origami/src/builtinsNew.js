@@ -17,7 +17,6 @@ import https from "./protocols/https.js";
 import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
 import inherited from "./protocols/inherited.js";
-import instantiate from "./protocols/new.js";
 import packageNamespace from "./protocols/package.js";
 import scope from "./protocols/scope.js";
 import * as site from "./site/site.js";
@@ -70,7 +69,6 @@ export default new ObjectTree({
   "httpstree:": httpstree,
   "httptree:": httptree,
   "inherited:": inherited,
-  "new:": instantiate,
   "node:": node,
   "package:": packageNamespace,
   "scope:": scope,

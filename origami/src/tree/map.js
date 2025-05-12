@@ -69,7 +69,7 @@ function extendedOptions(context, operation) {
     options = {};
   } else {
     throw new TypeError(
-      `map: You must specify a value function or options dictionary as the first parameter.`
+      `map: You must specify a value function or options dictionary as the second parameter.`
     );
   }
 

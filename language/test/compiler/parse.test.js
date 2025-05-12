@@ -292,6 +292,12 @@ describe("Origami parser", () => {
       [ops.scope, "foo/"],
       [ops.scope, "bar"],
     ]);
+    assertParse(
+      "callExpression",
+      "Tree.map",
+      [ops.traverse, [ops.scope, "Tree"], [ops.literal, "map"]],
+      "jse"
+    );
   });
 
   test("commaExpression", () => {

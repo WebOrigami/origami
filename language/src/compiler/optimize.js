@@ -109,20 +109,20 @@ export default function optimize(code, options = {}) {
       } else if (mode === "jse") {
         // Transform scope reference to globals in jse mode
         return annotate([globals, key], code.location);
-      }
-      {
+      } else {
         // Internal ops.scope call; leave as is
         return code;
       }
 
     case ops.traverse:
-      // Is the first argument a nonscope/undetermined reference?
+      // In shell mode, is the first argument a nonscope/undetermined reference?
       const isScopeRef =
         args[0]?.[0] === ops.scope || args[0]?.[0] === undetermined;
-      if (enableCaching && isScopeRef) {
+      if (mode === "shell" && enableCaching && isScopeRef) {
         // Is the first argument a nonlocal reference?
         const normalizedKey = trailingSlash.remove(args[0][1]);
-        if (locals[normalizedKey] === undefined) {
+        const nonLocal = locals[normalizedKey] === undefined;
+        if (nonLocal) {
           // Are the remaining arguments all literals?
           const allLiterals = args
             .slice(1)
