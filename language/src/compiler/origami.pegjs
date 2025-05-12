@@ -83,7 +83,7 @@ angleBracketPathChar
 
 angleBracketProtocol
   = protocol:jsIdentifier ":" {
-      return annotate([ops.builtin, `${protocol}:`], location());
+      return annotate([ops.global, `${protocol}:`], location());
     }
 
 arguments "function arguments"
@@ -450,7 +450,7 @@ multiplicativeOperator
 // A namespace reference is a string of letters only, followed by a colon.
 namespace
   = chars:[A-Za-z]+ ":" {
-    return annotate([ops.builtin, chars.join("") + ":"], location());
+    return annotate([ops.global, chars.join("") + ":"], location());
   }
 
 // A new expression: `new Foo()`

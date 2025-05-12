@@ -215,7 +215,7 @@ export function makeCall(target, args) {
     let tree = target;
 
     if (tree[0] === undetermined) {
-      // In a traversal, downgrade ops.builtin references to ops.scope
+      // In a traversal, downgrade ops.global references to ops.scope
       tree = downgradeReference(tree);
       if (tree[0] === ops.scope && !trailingSlash.has(tree[1])) {
         // Target didn't parse with a trailing slash; add one
@@ -465,7 +465,7 @@ export function makeReference(identifier) {
   if (builtinRegex.test(identifier)) {
     op = identifier.endsWith(":")
       ? // Namespace is always a builtin reference
-        ops.builtin
+        ops.global
       : undetermined;
   } else {
     op = ops.scope;
@@ -590,7 +590,7 @@ export function makeYamlObject(text, location) {
  */
 export function upgradeReference(code) {
   if (code.length === 2 && code[0] === undetermined) {
-    const result = [ops.builtin, code[1]];
+    const result = [ops.global, code[1]];
     return annotate(result, code.location);
   } else {
     return code;

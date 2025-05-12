@@ -42,17 +42,6 @@ describe("ops", () => {
     assert.strictEqual(ops.bitwiseXor(5, 3), 6);
   });
 
-  test("ops.builtin gets a value from the top of the scope chain", async () => {
-    const root = new ObjectTree({
-      a: 1,
-    });
-    const tree = new ObjectTree({});
-    tree.parent = root;
-    const code = createCode([ops.builtin, "a"]);
-    const result = await evaluate.call(tree, code);
-    assert.strictEqual(result, 1);
-  });
-
   test("ops.comma returns the last value", async () => {
     const code = createCode([ops.comma, 1, 2, 3]);
     const result = await evaluate.call(null, code);
@@ -143,6 +132,17 @@ describe("ops", () => {
       const result = await ops.flat(object, tree, array);
       assert.deepEqual(result, [1, 2, 3, 4, 5, 6]);
     });
+  });
+
+  test("ops.global gets a value from the top of the scope chain", async () => {
+    const root = new ObjectTree({
+      a: 1,
+    });
+    const tree = new ObjectTree({});
+    tree.parent = root;
+    const code = createCode([ops.global, "a"]);
+    const result = await evaluate.call(tree, code);
+    assert.strictEqual(result, 1);
   });
 
   test("ops.greaterThan", () => {
