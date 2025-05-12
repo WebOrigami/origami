@@ -21,4 +21,4 @@ export function toFunction(tree: Treelike): Function;
 export function traverse(tree: Treelike, ...keys: any[]): Promise<any>;
 export function traverseOrThrow(tree: Treelike, ...keys: any[]): Promise<any>;
 export function traversePath(tree: Treelike, path: string): Promise<any>;
-export function values(AsyncTree: AsyncTree): Promise<IterableIterator<any>>;
+export function values(tree: Treelike): Promise<IterableIterator<any>>;

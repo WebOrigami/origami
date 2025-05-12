@@ -473,9 +473,10 @@ export async function traversePath(tree, path) {
 /**
  * Return the values in the specific node of the tree.
  *
- * @param {AsyncTree} tree
+ * @param {Treelike} tree
  */
-export async function values(tree) {
+export async function values(treelike) {
+  const tree = from(treelike);
   const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => tree.get(key));
   return Promise.all(promises);
