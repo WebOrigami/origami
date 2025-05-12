@@ -543,7 +543,10 @@ optionalChaining
   }
   
 parameter
-  = identifier:jsIdentifier {
+  = jseMode identifier:jsIdentifier {
+      return annotate([ops.literal, identifier], location());
+    }
+  / shellMode identifier:identifier {
       return annotate([ops.literal, identifier], location());
     }
 
