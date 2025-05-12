@@ -3,11 +3,11 @@ import {
   trailingSlash,
   text as treeText,
 } from "@weborigami/async-tree";
+import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
 import * as image from "./image/image.js";
-import js from "./js.js";
 import node from "./node.js";
 import * as origami from "./origami/origami.js";
 import explore from "./protocols/explore.js";
@@ -60,6 +60,8 @@ const Image = new BuiltinsTree({
 
 /** @type {any} */
 export default new ObjectTree({
+  ...jsGlobals,
+
   "explore:": explore,
   "files:": files,
   "help:": help,
@@ -72,8 +74,6 @@ export default new ObjectTree({
   "node:": node,
   "package:": packageNamespace,
   "scope:": scope,
-
-  ...js,
 
   Tree,
   Origami,

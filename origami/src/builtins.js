@@ -1,8 +1,8 @@
+import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import * as handlers from "./handlers/handlers.js";
 import help from "./help/help.js";
 import * as image from "./image/image.js";
-import js from "./js.js";
 import node from "./node.js";
 import * as origami from "./origami/origami.js";
 import explore from "./protocols/explore.js";
@@ -31,7 +31,7 @@ export default {
   "httptree:": httptree,
   "image:": image,
   "inherited:": inherited,
-  "js:": js,
+  "js:": jsGlobals,
   "new:": instantiate,
   "node:": node,
   "origami:": origami,
