@@ -1,10 +1,12 @@
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
+import jsGlobals from "../runtime/jsGlobals.js";
 import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
   const { macros, parent, startRule } = options;
   const mode = options.mode ?? "shell";
+  const globals = options.globals ?? jsGlobals;
   const enableCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
@@ -14,7 +16,11 @@ function compile(source, options) {
     mode,
     startRule,
   });
-  const optimized = optimize(code, parent, enableCaching, macros);
+  const optimized = optimize(code, {
+    enableCaching,
+    macros,
+    parent,
+  });
   const fn = createExpressionFunction(optimized);
   return fn;
 }

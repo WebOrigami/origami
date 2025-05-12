@@ -15,22 +15,17 @@ import { annotate, undetermined } from "./parserHelpers.js";
  * @typedef {import("./parserHelpers.js").Code} Code
  *
  * @param {AnnotatedCode} code
- * @param {import("@weborigami/types").AsyncTree|null} fileParent
- * @param {boolean} enableCaching
- * @param {Record<string, AnnotatedCode>} macros
- * @param {Record<string, AnnotatedCode>} cache
- * @param {Record<string, number>} locals
+ * @param {any} options
  * @returns {AnnotatedCode}
  */
-export default function optimize(
-  code,
-  fileParent = null,
-  enableCaching = true,
-  macros = {},
-  cache = {},
-  locals = {}
-) {
-  const parentScope = fileParent && scope(fileParent);
+export default function optimize(code, options = {}) {
+  const { parent } = options;
+  const enableCaching = options.enableCaching ?? true;
+  const macros = options.macros ?? {};
+  const cache = options.cache ?? {};
+  const locals = options.locals ?? {};
+
+  const parentScope = parent && scope(parent);
 
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
@@ -81,15 +76,7 @@ export default function optimize(
       if (macros?.[normalizedKey]) {
         // Apply macro
         const macro = macros?.[normalizedKey];
-        return applyMacro(
-          macro,
-          code,
-          fileParent,
-          enableCaching,
-          macros,
-          cache,
-          locals
-        );
+        return applyMacro(macro, code, options);
       } else if (
         enableCaching &&
         parentScope &&
@@ -168,14 +155,13 @@ export default function optimize(
       // such as the entries of an ops.object. This should be harmless, but it'd
       // be preferable to only descend into instructions. This would require
       // surrounding ops.object entries with ops.array.
-      return optimize(
-        /** @type {AnnotatedCode} */ (child),
-        fileParent,
+      return optimize(/** @type {AnnotatedCode} */ (child), {
+        parent,
         enableCaching,
         macros,
         cache,
-        updatedLocals
-      );
+        locals: updatedLocals,
+      });
     } else {
       return child;
     }
@@ -184,23 +170,8 @@ export default function optimize(
   return annotate(optimized, code.location);
 }
 
-function applyMacro(
-  macro,
-  code,
-  fileParent,
-  enableCaching,
-  macros,
-  cache,
-  locals
-) {
-  const optimized = optimize(
-    macro,
-    fileParent,
-    enableCaching,
-    macros,
-    cache,
-    locals
-  );
+function applyMacro(macro, code, options) {
+  const optimized = optimize(macro, options);
   return optimized instanceof Array
     ? annotate(optimized, code.location)
     : optimized;
