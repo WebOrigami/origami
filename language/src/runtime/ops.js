@@ -168,8 +168,21 @@ export async function external(path, code, cache) {
 addOpLabel(external, "«ops.external»");
 external.unevaluatedArgs = true;
 
-export function flat(...args) {
-  return args.flat();
+/**
+ * Flatten the values of the given trees
+ *
+ * @param {...any} args
+ */
+export async function flat(...args) {
+  const arrays = await Promise.all(
+    args.map(async (arg) =>
+      arg instanceof Array || typeof arg !== "object"
+        ? arg
+        : await Tree.values(arg)
+    )
+  );
+
+  return arrays.flat();
 }
 addOpLabel(flat, "«ops.flat»");
 

@@ -125,8 +125,24 @@ describe("ops", () => {
     assert.strictEqual(result2, 1);
   });
 
-  test("ops.flat", () => {
-    assert.deepEqual(ops.flat(1, 2, [3]), [1, 2, 3]);
+  describe.only("ops.flat", () => {
+    test("flattens arrays", async () => {
+      assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);
+    });
+
+    test("flattens treelike objects", async () => {
+      const object = {
+        a: 1,
+        b: 2,
+      };
+      const tree = new ObjectTree({
+        c: 3,
+        d: 4,
+      });
+      const array = [5, 6];
+      const result = await ops.flat(object, tree, array);
+      assert.deepEqual(result, [1, 2, 3, 4, 5, 6]);
+    });
   });
 
   test("ops.greaterThan", () => {
