@@ -278,9 +278,9 @@ describe("ops", () => {
           "_result",
           [
             ops.merge,
-            [ops.object, ["a", [ops.local, 1, "a"]]],
+            [ops.object, ["a", [ops.getter, [ops.local, 1, "a"]]]],
             [ops.scope, "more"],
-            [ops.object, ["c", [ops.local, 1, "c"]]],
+            [ops.object, ["c", [ops.getter, [ops.local, 1, "c"]]]],
           ],
         ],
       ],
