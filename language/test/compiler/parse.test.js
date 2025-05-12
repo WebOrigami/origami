@@ -874,12 +874,43 @@ Body`,
       ops.object,
       ["(a)", [ops.literal, 1]],
     ]);
+    assertParse(
+      "objectLiteral",
+      "{ <path/to/file.txt> }",
+      [
+        ops.object,
+        [
+          "file.txt",
+          [
+            ops.traverse,
+            [ops.external, "path/"],
+            [ops.literal, "to/"],
+            [ops.literal, "file.txt"],
+          ],
+        ],
+      ],
+      "jse"
+    );
   });
 
   test("objectEntry", () => {
     assertParse("objectEntry", "foo", ["foo", [ops.inherited, "foo"]]);
     assertParse("objectEntry", "x: y", ["x", [ops.scope, "y"]]);
     assertParse("objectEntry", "a: a", ["a", [ops.inherited, "a"]]);
+    assertParse(
+      "objectEntry",
+      "<path/to/file.txt>",
+      [
+        "file.txt",
+        [
+          ops.traverse,
+          [ops.external, "path/"],
+          [ops.literal, "to/"],
+          [ops.literal, "file.txt"],
+        ],
+      ],
+      "jse"
+    );
     assertParse("objectEntry", "a: (a) => a", [
       "a",
       [ops.lambda, [[ops.literal, "a"]], [ops.scope, "a"]],

@@ -526,6 +526,13 @@ objectShorthandProperty "object identifier"
       const inherited = annotate([ops.inherited, key], location());
       return annotate([key, inherited], location());
     }
+  / jseMode path:angleBracketLiteral {
+    let lastKey = path.at(-1);
+    if (lastKey instanceof Array) {
+      lastKey = lastKey[1]; // get scope identifier or literal
+    }
+    return annotate([lastKey, path], location());
+  }
 
 objectPublicKey
   = identifier:identifier slash:"/"? {
