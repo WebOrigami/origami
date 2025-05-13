@@ -4,59 +4,9 @@ import {
   isPacked,
   isStringLike,
   isUnpackable,
-  scope,
   setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
-
-/** @typedef {import("../../index.ts").ExtensionHandler} ExtensionHandler */
-
-// Track extensions handlers for a given containing tree.
-const handlersForContainer = new Map();
-
-/**
- * Find an extension handler for a file in the given container.
- *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- *
- * @param {AsyncTree} parent
- * @param {string} extension
- */
-export async function getExtensionHandler(parent, extension) {
-  let handlers = handlersForContainer.get(parent);
-  if (handlers) {
-    if (handlers[extension]) {
-      return handlers[extension];
-    }
-  } else {
-    handlers = {};
-    handlersForContainer.set(parent, handlers);
-  }
-
-  const handlerName = `${extension.slice(1)}.handler`;
-  const parentScope = scope(parent);
-
-  /** @type {Promise<ExtensionHandler>} */
-  let handlerPromise = parentScope
-    ?.get(handlerName)
-    .then(async (extensionHandler) => {
-      if (isUnpackable(extensionHandler)) {
-        // The extension handler itself needs to be unpacked. E.g., if it's a
-        // buffer containing JavaScript file, we need to unpack it to get its
-        // default export.
-        // @ts-ignore
-        extensionHandler = await extensionHandler.unpack();
-      }
-      // Update cache with actual handler
-      handlers[extension] = extensionHandler;
-      return extensionHandler;
-    });
-
-  // Cache handler even if it's undefined so we don't look it up again
-  handlers[extension] = handlerPromise;
-
-  return handlerPromise;
-}
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -67,8 +17,13 @@ export async function getExtensionHandler(parent, extension) {
  * @param {any} value
  * @param {any} key
  */
-export async function handleExtension(parent, value, key) {
-  if (isPacked(value) && isStringLike(key) && value.unpack === undefined) {
+export async function handleExtension(parent, value, key, handlers) {
+  if (
+    handlers &&
+    isPacked(value) &&
+    isStringLike(key) &&
+    value.unpack === undefined
+  ) {
     const hasSlash = trailingSlash.has(key);
     if (hasSlash) {
       key = trailingSlash.remove(key);
@@ -82,8 +37,14 @@ export async function handleExtension(parent, value, key) {
       ? ".jsedocument"
       : extension.extname(key);
     if (extname) {
-      const handler = await getExtensionHandler(parent, extname);
+      const handlerName = `${extname.slice(1)}.handler`;
+      let handler = await handlers.get(handlerName);
       if (handler) {
+        if (isUnpackable(handler)) {
+          // The extension handler itself needs to be unpacked
+          handler = await handler.unpack();
+        }
+
         if (hasSlash && handler.unpack) {
           // Key like `data.json/` ends in slash -- unpack immediately
           return handler.unpack(value, { key, parent });

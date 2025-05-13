@@ -13,8 +13,6 @@ import project from "./project.js";
  */
 export default async function config(key) {
   const projectTree = await project.call(this);
-  // HACK: We use specific knowledge of how @project returns a tree to get the
-  // config. The config is always the parent of the project folder.
-  const parent = projectTree.parent;
-  return key === undefined ? parent : parent.get(key);
+  const projectConfig = projectTree.config;
+  return key === undefined ? projectConfig : projectConfig.get(key);
 }

@@ -1,13 +1,19 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import { builtinsTree, oriHandler } from "../internal.js";
+import { oriHandler } from "../internal.js";
+
+// Separate from above imports to avoid circular dependency
+import { Tree } from "@weborigami/async-tree";
+import handlers from "../handlers/handlers.js";
 
 const configFileName = "config.ori";
 
 /**
- * Return the tree for the current project's root folder.
+ * Return an object for the current project including
+ *
+ * `config`: the evaluated config.ori file
+ * `root`: the project's root folder
  *
  * This searches the current directory and its ancestors for an Origami file
  * called `config.ori`. If an Origami configuration file is found, the
@@ -19,81 +25,69 @@ const configFileName = "config.ori";
  * returned as a tree, with the builtins as its parent.
  *
  * @this {AsyncTree|null}
- * @param {any} [key]
  */
-export default async function project(key) {
+export default async function project() {
   assertTreeIsDefined(this, "origami:project");
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
-  currentTree.parent = builtinsTree;
 
   // Search up the tree for the configuration file or package.json to determine
   // the project root.
-  const configContainer =
-    (await findAncestorFile(currentTree, configFileName)) ??
-    (await findAncestorFile(currentTree, "package.json"));
-
-  let projectRoot;
-  if (!configContainer) {
-    // No configuration file or package.json found; use the current directory.
-    projectRoot = currentTree;
+  let root;
+  const foundConfig = await findAncestorFile(currentTree, configFileName);
+  if (foundConfig) {
+    root = foundConfig.container;
+    // Unpack Origami configuration file
+    const buffer = foundConfig.value;
+    root.config = await oriHandler.unpack(buffer, {
+      key: configFileName,
+      parent: root,
+    });
   } else {
-    // Load the configuration file if one exists.
-    const buffer = await configContainer.get(configFileName);
-    if (!buffer) {
-      // Project root defined by package.json
-      projectRoot = configContainer;
+    // No Origami configuration file, look for package.json
+    const foundPackageJson = await findAncestorFile(
+      currentTree,
+      "package.json"
+    );
+    if (foundPackageJson) {
+      // Found package.json; use its parent as the project root
+      root = foundPackageJson.container;
     } else {
-      // Load Origami configuration file
-      const config = await oriHandler.unpack(buffer, {
-        key: configFileName,
-        parent: configContainer,
-      });
-      if (!config) {
-        const configPath = /** @type {any} */ (configContainer).path;
-        throw new Error(
-          `Couldn't load the Origami configuration in ${configPath}/${configFileName}`
-        );
-      }
-
-      // The config tree may refer to the container tree *and vice versa*. To
-      // support this, we put the container in the tree twice. The chain will
-      // be: projectRoot -> configTree -> configContainer -> builtins, where
-      // the projectRoot and configContainer are the same folder.
-      const configTree = Tree.from(config);
-      projectRoot = new OrigamiFiles(configContainer.path);
-      projectRoot.parent = configTree;
-      configTree.parent = configContainer;
-      configContainer.parent = builtinsTree;
+      // No package.json found; use the current directory as root
+      root = currentTree;
     }
   }
 
-  return key === undefined ? projectRoot : projectRoot.get(key);
+  root.handlers = Tree.from(handlers);
+
+  return root;
 }
 
-// Return the first ancestor of the given tree that contains a file with the
-// given name.
+// Find the first ancestor of the given folder that contains a file with the
+// given name. Return the container and the file contents.
 async function findAncestorFile(start, fileName) {
-  let current = start;
-  while (current) {
-    const value = await current.get(fileName);
+  let container = start;
+  while (container) {
+    const value = await container.get(fileName);
     if (value) {
-      // Found the desired file; its container is the project root. Set the
-      // parent to the builtins; in the context of this project, there's nothing
-      // higher up.
-      current.parent = builtinsTree;
-      return current;
+      // Found the desired file
+      return {
+        container,
+        value,
+      };
     }
-    // Not found; try the parent.
-    const parent = await current.get("..");
+    // Not found; try the parent
+    const parent = await container.get("..");
     if (
       !parent ||
-      (parent.path && current.path && parent.path === current.path)
+      (parent.path && container.path && parent.path === container.path)
     ) {
       break;
     }
-    current = parent;
+    container = parent;
   }
-  return undefined;
+
+  // Not found
+  return null;
 }

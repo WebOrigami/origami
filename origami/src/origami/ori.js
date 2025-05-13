@@ -28,8 +28,8 @@ export default async function ori(
   // In case expression has come from a file, cast it to a string.
   expression = toString(expression);
 
-  // Run in the context of `this` if defined, otherwise use the builtins.
-  const tree = this ?? builtinsTree;
+  // Run in the context of `this` if defined
+  const tree = this;
 
   // Compile the expression. Avoid caching scope references so that, e.g.,
   // passing a function to the `watch` builtin will always look the current
@@ -37,7 +37,7 @@ export default async function ori(
   const fn = compile.expression(expression, {
     globals: builtinsTree,
     mode: "shell",
-    parent: this,
+    parent: tree,
     scopeCaching: false,
   });
 

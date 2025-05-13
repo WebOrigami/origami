@@ -6,6 +6,7 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
+import getHandlers from "./getHandlers.js";
 import { handleExtension } from "./handlers.js";
 import { evaluate, ops } from "./internal.js";
 
@@ -32,6 +33,7 @@ export default async function expressionObject(entries, parent) {
   if (parent !== null && !Tree.isAsyncTree(parent)) {
     throw new TypeError(`Parent must be an AsyncTree or null`);
   }
+  setParent(object, parent);
 
   let tree;
   const eagerProperties = [];
@@ -90,7 +92,8 @@ export default async function expressionObject(entries, parent) {
         get = async () => {
           tree ??= new ObjectTree(object);
           const result = await evaluate.call(tree, code);
-          return handleExtension(tree, result, key);
+          const handlers = getHandlers(tree);
+          return handleExtension(tree, result, key, handlers);
         };
       } else {
         // No extension, so getter just invokes code.
@@ -115,9 +118,6 @@ export default async function expressionObject(entries, parent) {
     value: () => keys(object, eagerProperties, propertyIsEnumerable, entries),
     writable: true,
   });
-
-  // Attach the parent
-  setParent(object, parent);
 
   // Evaluate any properties that were declared as immediate: get their value
   // and overwrite the property getter with the actual value.

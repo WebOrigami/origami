@@ -65,8 +65,8 @@ describe("compile", () => {
   });
 
   test("async object", async () => {
-    const fn = compile.expression("{ a: { b = name }}");
-    const object = await fn.call(shared);
+    const fn = compile.expression("{ a: { b = name }}", { globals: shared });
+    const object = await fn.call(null);
     assert.deepEqual(await object.a.b, "Alice");
   });
 

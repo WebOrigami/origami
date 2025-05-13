@@ -3,6 +3,12 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { handleExtension } from "../../src/runtime/handlers.js";
 
+const handlers = new ObjectTree({
+  "json.handler": {
+    unpack: (buffer) => JSON.parse(String(buffer)),
+  },
+});
+
 describe("handlers", () => {
   test("attaches an unpack method to a value with an extension", async () => {
     const fixture = createFixture();
@@ -10,7 +16,12 @@ describe("handlers", () => {
     assert(typeof numberValue === "number");
     assert.equal(numberValue, 1);
     const jsonFile = await fixture.get("bar.json");
-    const withHandler = await handleExtension(fixture, jsonFile, "bar.json");
+    const withHandler = await handleExtension(
+      fixture,
+      jsonFile,
+      "bar.json",
+      handlers
+    );
     assert.equal(String(withHandler), `{ "bar": 2 }`);
     const data = await withHandler.unpack();
     assert.deepEqual(data, { bar: 2 });
@@ -19,21 +30,19 @@ describe("handlers", () => {
   test("immediately unpacks if key ends in slash", async () => {
     const fixture = createFixture();
     const jsonFile = await fixture.get("bar.json");
-    const data = await handleExtension(fixture, jsonFile, "bar.json/");
+    const data = await handleExtension(
+      fixture,
+      jsonFile,
+      "bar.json/",
+      handlers
+    );
     assert.deepEqual(data, { bar: 2 });
   });
 });
 
 function createFixture() {
-  const parent = new ObjectTree({
-    "json.handler": {
-      unpack: (buffer) => JSON.parse(String(buffer)),
-    },
-  });
-  let tree = new ObjectTree({
+  return new ObjectTree({
     foo: 1, // No extension, should be left alone
     "bar.json": `{ "bar": 2 }`,
   });
-  tree.parent = parent;
-  return tree;
 }

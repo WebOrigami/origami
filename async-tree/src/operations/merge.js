@@ -16,7 +16,17 @@ import * as trailingSlash from "../trailingSlash.js";
  * @returns {AsyncTree & { description: string, trees: AsyncTree[]}}
  */
 export default function merge(...sources) {
-  const trees = sources.map((treelike) => Tree.from(treelike));
+  const trees = sources
+    .filter((source) => source)
+    .map((treelike) => Tree.from(treelike));
+
+  if (trees.length === 0) {
+    throw new TypeError("merge: all trees are null or undefined");
+  } else if (trees.length === 1) {
+    // Only one tree, no need to merge
+    return trees[0];
+  }
+
   return {
     description: "merge",
 

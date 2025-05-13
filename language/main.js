@@ -7,6 +7,7 @@ export { default as evaluate } from "./src/runtime/evaluate.js";
 export { default as EventTargetMixin } from "./src/runtime/EventTargetMixin.js";
 export * as expressionFunction from "./src/runtime/expressionFunction.js";
 export { default as functionResultsMap } from "./src/runtime/functionResultsMap.js";
+export { default as getHandlers } from "./src/runtime/getHandlers.js";
 export { default as HandleExtensionsTransform } from "./src/runtime/HandleExtensionsTransform.js";
 export * from "./src/runtime/handlers.js";
 export { default as ImportModulesMixin } from "./src/runtime/ImportModulesMixin.js";

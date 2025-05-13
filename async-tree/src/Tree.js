@@ -362,8 +362,8 @@ export async function remove(tree, key) {
  */
 export function root(tree) {
   let current = from(tree);
-  while (current.parent) {
-    current = current.parent;
+  while (current.parent || current[symbols.parent]) {
+    current = current.parent || current[symbols.parent];
   }
   return current;
 }
@@ -473,7 +473,7 @@ export async function traversePath(tree, path) {
 /**
  * Return the values in the specific node of the tree.
  *
- * @param {Treelike} tree
+ * @param {Treelike} treelike
  */
 export async function values(treelike) {
   const tree = from(treelike);

@@ -1,4 +1,9 @@
-import { pathFromKeys, scope, trailingSlash } from "@weborigami/async-tree";
+import {
+  merge,
+  pathFromKeys,
+  scope,
+  trailingSlash,
+} from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, undetermined } from "./parserHelpers.js";
@@ -29,6 +34,12 @@ export default function optimize(code, options = {}) {
   const locals = options.locals ?? {};
 
   const parentScope = parent && scope(parent);
+
+  const externalScope =
+    mode === "shell"
+      ? // External scope is parent scope + globals
+        merge(globals, parentScope)
+      : null;
 
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
@@ -86,7 +97,6 @@ export default function optimize(code, options = {}) {
       } else if (
         mode === "shell" &&
         enableCaching &&
-        parentScope &&
         locals[normalizedKey] === undefined
       ) {
         // Upgrade to cached external scope reference
@@ -94,7 +104,7 @@ export default function optimize(code, options = {}) {
           [
             ops.external,
             key,
-            annotate([parentScope, key], code.location),
+            annotate([externalScope, key], code.location),
             cache,
           ],
           code.location
@@ -110,8 +120,8 @@ export default function optimize(code, options = {}) {
         // Transform scope reference to globals in jse mode
         return annotate([globals, key], code.location);
       } else {
-        // Internal ops.scope call; leave as is
-        return code;
+        // Shell mode use of external scope
+        return annotate([externalScope, key], code.location);
       }
 
     case ops.traverse:
