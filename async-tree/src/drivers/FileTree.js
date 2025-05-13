@@ -85,7 +85,12 @@ export default class FileTree {
       value = Uint8Array.from(buffer);
     }
 
-    setParent(value, this);
+    const parent =
+      key === ".."
+        ? // Special case: ".." parent is the grandparent (if it exists)
+          this.parent?.parent
+        : this;
+    setParent(value, parent);
     return value;
   }
 
