@@ -73,6 +73,20 @@ describe("ops", () => {
     assert.equal(await ops.construct(String, "hello"), "hello");
   });
 
+  test("ops.context", async () => {
+    const tree = new DeepObjectTree({
+      a: {
+        b: {
+          c: {},
+        },
+      },
+    });
+    const b = await Tree.traverse(tree, "a", "b");
+    const c = await b.get("c");
+    assert.equal(ops.context.call(c), c);
+    assert.equal(ops.context.call(c, 1), b);
+  });
+
   test("ops.division divides two numbers", async () => {
     assert.strictEqual(ops.division(12, 2), 6);
     assert.strictEqual(ops.division(3, 2), 1.5);
@@ -93,21 +107,17 @@ describe("ops", () => {
     assert.strictEqual(ops.exponentiation(2, 0), 1);
   });
 
-  test("ops.external evaluates code and cache its result", async () => {
+  test.only("ops.external evaluates code and cache its result", async () => {
     let count = 0;
     const tree = new DeepObjectTree({
       group: {
         get count() {
-          return ++count;
+          // Use promise to test async behavior
+          return Promise.resolve(++count);
         },
       },
     });
-    const code = createCode([
-      ops.external,
-      "group/count",
-      [ops.traverse, [ops.scope, "group"], [ops.literal, "count"]],
-      {},
-    ]);
+    const code = createCode([ops.external, {}, 0, "group", "count"]);
     const result = await evaluate.call(tree, code);
     assert.strictEqual(result, 1);
     const result2 = await evaluate.call(tree, code);

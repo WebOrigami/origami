@@ -23,7 +23,7 @@ describe("Origami parser", () => {
     assertParse(
       "angleBracketLiteral",
       "<index.html>",
-      [ops.external, "index.html"],
+      [ops.external, null, 0, [ops.literal, "index.html"]],
       "jse",
       false
     );
@@ -31,8 +31,10 @@ describe("Origami parser", () => {
       "angleBracketLiteral",
       "<foo/bar/baz>",
       [
-        ops.traverse,
-        [ops.external, "foo/"],
+        ops.external,
+        null,
+        0,
+        [ops.literal, "foo/"],
         [ops.literal, "bar/"],
         [ops.literal, "baz"],
       ],
@@ -40,7 +42,8 @@ describe("Origami parser", () => {
       false
     );
     assertParse("angleBracketLiteral", "<files:src/assets>", [
-      ops.traverse,
+      ops.external,
+      null,
       [
         [ops.global, "files:"],
         [ops.literal, "src/"],
@@ -51,6 +54,8 @@ describe("Origami parser", () => {
       "angleBracketLiteral",
       "<https://example.com/>",
       [
+        ops.external,
+        null,
         [ops.global, "https:"],
         [ops.literal, "example.com/"],
       ],
@@ -885,8 +890,10 @@ Body`,
         [
           "file.txt",
           [
-            ops.traverse,
-            [ops.external, "path/"],
+            ops.external,
+            null,
+            0,
+            [ops.literal, "path/"],
             [ops.literal, "to/"],
             [ops.literal, "file.txt"],
           ],
@@ -906,8 +913,10 @@ Body`,
       [
         "file.txt",
         [
-          ops.traverse,
-          [ops.external, "path/"],
+          ops.external,
+          null,
+          0,
+          [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
         ],
@@ -1044,7 +1053,7 @@ Body`,
     assertParse(
       "primary",
       "<index.html>",
-      [ops.external, "index.html"],
+      [ops.external, null, 0, [ops.literal, "index.html"]],
       "jse",
       false
     );

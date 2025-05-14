@@ -100,6 +100,23 @@ export async function construct(constructor, ...args) {
   return Reflect.construct(constructor, args);
 }
 
+/**
+ * Return the nth parent of the current tree
+ *
+ * @this {AsyncTree|null|undefined}
+ */
+export function context(n = 0) {
+  let tree = this;
+  for (let i = 0; i < n; i++) {
+    tree = tree?.parent;
+  }
+  if (!tree) {
+    throw new Error("Internal error: couldn't find tree ancestor.");
+  }
+  return tree;
+}
+addOpLabel(context, "«ops.context»");
+
 export function division(a, b) {
   return a / b;
 }
@@ -121,18 +138,23 @@ addOpLabel(exponentiation, "«ops.exponentiation»");
  *
  * @this {AsyncTree|null}
  */
-export async function external(path, code, cache) {
+export async function external(cache, ancestor, ...keys) {
   if (!this) {
     throw new Error("Tried to get the scope of a null or undefined tree.");
   }
 
+  const path = keys.join("/");
   if (path in cache) {
     // Cache hit
     return cache[path];
   }
 
+  const tree =
+    typeof ancestor === "number" ? context.call(this, ancestor) : ancestor;
+
   // Don't await: might get another request for this before promise resolves
-  const promise = evaluate.call(this, code);
+  const promise = Tree.traverseOrThrow(tree, ...keys);
+
   // Save promise so another request will get the same promise
   cache[path] = promise;
 
@@ -145,7 +167,6 @@ export async function external(path, code, cache) {
   return value;
 }
 addOpLabel(external, "«ops.external»");
-external.unevaluatedArgs = true;
 
 /**
  * Flatten the values of the given trees
@@ -327,13 +348,7 @@ export async function local(ancestor, key) {
   if (!this) {
     throw new Error(message);
   }
-  let tree = this;
-  for (let i = 0; i < ancestor; i++) {
-    if (!tree.parent) {
-      throw new Error(message);
-    }
-    tree = tree.parent;
-  }
+  let tree = context.call(this, ancestor);
   const value = await tree.get(key);
   return value;
 }

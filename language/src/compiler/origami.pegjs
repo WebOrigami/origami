@@ -56,14 +56,10 @@ angleBracketLiteral
   / "<" protocol:angleBracketProtocol path:angleBracketPath ">" {
       const [head, ...tail] = path;
       const root = annotate([protocol, head], location());
-      return annotate([ops.traverse, root, ...tail], location());
+      return annotate([ops.external, null, root, ...tail], location());
     }
   / "<" __ path:angleBracketPath __ ">" {
-    const [head, ...tail] = path;
-    const root = annotate([ops.external, head[1]], location());
-    return tail.length === 0
-      ? root
-      : annotate([ops.traverse, root, ...tail], location())
+    return annotate([ops.external, null, 0, ...path], location())
   }
 
 angleBracketPath

@@ -21,13 +21,6 @@ describe("optimize", () => {
     const fn = compile.expression(expression, { globals, parent });
     const code = fn.code;
 
-    // Extract the external scope from the code
-    const externalScope = code[2][3][1][2][0];
-    // Confirm it contains the globals
-    assert.equal(externalScope.trees[0], globals);
-    // Confirm it contains the parent scope
-    assert.equal(externalScope.trees[1].trees[0], parent);
-
     assertCodeEqual(code, [
       ops.lambda,
       [[ops.literal, "name"]],
@@ -35,7 +28,7 @@ describe("optimize", () => {
         ops.object,
         ["a", 1],
         ["b", [ops.local, 0, "a"]],
-        ["c", [ops.external, "elsewhere", [externalScope, "elsewhere"], {}]],
+        ["c", [ops.external, {}, 0, "elsewhere"]],
         ["d", [ops.local, 1, "name"]],
       ],
     ]);
