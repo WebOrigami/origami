@@ -38,9 +38,8 @@ export default {
     const mode = options.mode ?? "shell";
     const fn = compiler(source, { globals, mode, parent });
 
-    const target = parent ?? globals;
-    let content = await fn.call(target);
+    let result = await fn.call(parent);
 
-    return processUnpackedContent(content, parent);
+    return processUnpackedContent(result, parent);
   },
 };
