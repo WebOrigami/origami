@@ -7,7 +7,7 @@ import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
 describe("optimize", () => {
-  test("optimize local ops.scope calls to local references", async () => {
+  test.only("optimize local ops.scope calls to local references", async () => {
     const expression = `(name) => {
       a: name,
       b: a

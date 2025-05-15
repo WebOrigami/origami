@@ -30,10 +30,10 @@ import {
   makeObject,
   makePipeline,
   makeProperty,
-  makeReference,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
+  reference,
   traversal
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
@@ -411,8 +411,7 @@ function peg$parse(input, options) {
     return annotate([protocol, ...path], location());
     };
   var peg$f3 = function(path) {
-    const root = annotate([ops.scope], location());
-    return annotate([root, ...path], location())
+    return annotate([reference, ...path], location())
   };
   var peg$f4 = function(chars, slashFollows) {
     // Append a trailing slash if one follows (but don't consume it)
@@ -563,8 +562,7 @@ function peg$parse(input, options) {
     return annotate([traversal, property], location());
   };
   var peg$f55 = function(id) {
-      const root = annotate([ops.scope], location());
-      return annotate([root, id], location());
+      return annotate([reference, id], location());
     };
   var peg$f56 = function(values) {
       return annotate(values, location());
@@ -697,7 +695,8 @@ function peg$parse(input, options) {
     };
   var peg$f88 = function(identifier, slashFollows) {
       const id = identifier + (slashFollows ? "/" : "");
-      return makeReference(id, location());
+      const idCode = annotate([ops.literal, identifier], location());
+      return annotate([reference, idCode], location());
     };
   var peg$f89 = function() { return null; };
   var peg$f90 = function() { return options.mode === "shell" };

@@ -18,8 +18,8 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 // Marker for a continuation of a path traversal
 export const traversal = Symbol("traversal");
 
-// Marker for a reference that may be a builtin or a scope reference
-export const undetermined = Symbol("undetermined");
+// Marker for a reference that may be a local, scope, or global reference
+export const reference = Symbol("reference");
 
 const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
@@ -53,11 +53,10 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[[ops.scope], [ops.literal, "foo"]], undefined]
+  // For `foo`, the call would be: [[reference, [ops.literal, "foo"]], undefined]
   if (
     code[0] &&
-    code[0][0] instanceof Array &&
-    code[0][0][0] === ops.scope &&
+    code[0][0] === reference &&
     code[0][1] instanceof Array &&
     code[0][1][0] === ops.literal &&
     code[0][1][1] === name &&
@@ -105,14 +104,13 @@ function avoidRecursivePropertyCalls(code, key) {
 }
 
 /**
- * Downgrade a potential builtin reference to a scope reference.
+ * Downgrade a potential global reference to a reference.
  *
  * @param {AnnotatedCode} code
  */
 export function downgradeReference(code) {
-  if (code && code.length === 2 && code[0] === undetermined) {
-    const root = annotate([ops.scope], code.location);
-    return annotate([root, code[1]], code.location);
+  if (code && code.length === 2 && code[0] === reference) {
+    return annotate([reference, code[1]], code.location);
   } else {
     return code;
   }
@@ -222,24 +220,22 @@ export function makeCall(target, args) {
   if (op === traversal || op === ops.optionalTraverse) {
     let tree = target;
 
-    if (tree[0] === undetermined) {
-      // In a traversal, downgrade ops.global references to ops.scope
-      tree = downgradeReference(tree);
-      if (tree[0] === ops.scope && !trailingSlash.has(tree[1])) {
-        // Target didn't parse with a trailing slash; add one
-        tree[1] = trailingSlash.add(tree[1]);
-      }
+    if (tree[0] === reference && !trailingSlash.has(tree[1][1])) {
+      // Target didn't parse with a trailing slash; add one
+      tree[1][1] = trailingSlash.add(tree[1][1]);
     }
 
-    // Should the target call be extended? We do this for traversals that start
-    // with a scope reference or qualified namespace reference.
+    // Is the target an existing traversal that can be extended?
     const extend =
-      tree[0] instanceof Array &&
-      (tree[0][0] === ops.scope ||
-        (tree[0][0] === ops.global && tree[0][1].endsWith(":")));
+      tree[0] === reference ||
+      (tree[0] instanceof Array && tree[0][0] === ops.global);
     if (extend) {
-      // Traversal starts with scope reference, combine with the new keys
       fnCall = tree;
+      // If last key doesn't end with slash, add one
+      const last = tree.at(-1);
+      if (last instanceof Array && last[0] === ops.literal) {
+        last[1] = trailingSlash.add(last[1]);
+      }
     } else {
       fnCall = [tree];
     }
@@ -482,23 +478,6 @@ export function makeProperty(key, value) {
   return [key, modified];
 }
 
-export function makeReference(identifier, location) {
-  // We can't know for sure that an identifier is a builtin reference until we
-  // see whether it's being called as a function.
-  let root;
-  if (!builtinRegex.test(identifier)) {
-    // Not a builtin
-    root = annotate([ops.scope], location);
-  } else if (identifier.endsWith(":")) {
-    // Namespace is always a builtin reference
-    root = ops.global;
-  } else {
-    root = undetermined;
-  }
-  const idCode = annotate([ops.literal, identifier], location);
-  return annotate([root, idCode], location);
-}
-
 /**
  * Make a tagged template call
  *
@@ -615,7 +594,11 @@ export function makeYamlObject(text, location) {
  * @param {AnnotatedCode} code
  */
 export function upgradeReference(code) {
-  if (code.length === 2 && code[0] === undetermined) {
+  if (
+    code.length === 2 &&
+    code[0] === reference &&
+    builtinRegex.exec(code[1][1])
+  ) {
     const result = [ops.global, code[1][1]];
     return annotate(result, code.location);
   } else {

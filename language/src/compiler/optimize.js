@@ -6,12 +6,12 @@ import {
 } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
-import { annotate, undetermined } from "./parserHelpers.js";
+import { annotate, reference } from "./parserHelpers.js";
 
 /**
  * Optimize an Origami code instruction:
  *
- * - Transform any remaining undetermined references to scope references.
+ * - Transform any remaining reference references to scope references.
  * - Transform those or explicit ops.scope calls to ops.external calls unless
  *   they refer to local variables (variables defined by object literals or
  *   lambda parameters).
@@ -83,70 +83,68 @@ export default function optimize(code, options = {}) {
       const entries = args;
       additionalLocalNames = entries.map(([key]) => propertyName(key));
       break;
+  }
 
-    // Both of these are handled the same way
-    case undetermined:
-    case ops.scope:
-      const normalizedKey = trailingSlash.remove(key);
-      if (
-        mode === "shell" &&
-        enableCaching &&
-        locals[normalizedKey] === undefined
-      ) {
-        // Upgrade to cached external scope reference
-        return annotate(
-          [
-            ops.external,
-            key,
-            annotate([externalScope, key], code.location),
-            cache,
-          ],
-          code.location
-        );
-      } else if (locals[normalizedKey] !== undefined) {
-        // Transform local reference
-        const localIndex = locals[normalizedKey];
-        const contextCode = [ops.context];
-        if (localIndex > 0) {
-          contextCode.push(localIndex);
-        }
-        const context = annotate(contextCode, code.location);
-        return annotate([context, key], code.location);
-      } else if (fn === undetermined) {
-        // Transform undetermined reference to regular scope call
-        return annotate([ops.scope, key], code.location);
-      } else if (mode === "jse") {
-        // Transform scope reference to globals in jse mode
-        return annotate([globals, key], code.location);
-      } else {
-        // Shell mode use of external scope
-        return annotate([externalScope, key], code.location);
+  // TODO: consolidate reference and ops.scope
+
+  // Convert references to either local references with ops.context or cached
+  // external references.
+  const isReference =
+    fn === reference || (fn instanceof Array && fn[0] === ops.scope);
+  if (isReference) {
+    const referenceKey = fn === reference ? key : args[1][1];
+    const normalizedKey = trailingSlash.remove(referenceKey);
+    if (
+      mode === "shell" &&
+      enableCaching &&
+      locals[normalizedKey] === undefined
+    ) {
+      // Upgrade to cached external scope reference
+      return annotate(
+        [ops.cache, cache, key, annotate([externalScope, key], code.location)],
+        code.location
+      );
+    } else if (locals[normalizedKey] !== undefined) {
+      // Transform local reference
+      const localIndex = locals[normalizedKey];
+      const contextCode = [ops.context];
+      if (localIndex > 0) {
+        contextCode.push(localIndex);
       }
+      const context = annotate(contextCode, code.location);
+      return annotate([context, key], code.location);
+    } else if (fn === reference) {
+      // Transform reference reference to regular scope call
+      return annotate([ops.scope, key], code.location);
+    } else if (mode === "jse") {
+      // Transform scope reference to globals in jse mode
+      return annotate([globals, key], code.location);
+    } else {
+      // Shell mode use of external scope
+      return annotate([externalScope, key], code.location);
+    }
 
-    case ops.traverse:
-      // In shell mode, is the first argument a nonscope/undetermined reference?
-      const isScopeRef =
-        args[0]?.[0] === ops.scope || args[0]?.[0] === undetermined;
-      if (mode === "shell" && enableCaching && isScopeRef) {
-        // Is the first argument a nonlocal reference?
-        const normalizedKey = trailingSlash.remove(args[0][1]);
-        const nonLocal = locals[normalizedKey] === undefined;
-        if (nonLocal) {
-          // Are the remaining arguments all literals?
-          const allLiterals = args
-            .slice(1)
-            .every((arg) => arg[0] === ops.literal);
-          if (allLiterals) {
-            // Convert to ops.external
-            const keys = args.map((arg) => arg[1]);
-            const path = pathFromKeys(keys);
-            /** @type {Code} */
-            const optimized = [ops.external, path, code, cache];
-            return annotate(optimized, code.location);
-          }
+    // In shell mode, is the first argument a nonscope/reference reference?
+    const isScopeRef = args[0]?.[0] === ops.scope || args[0]?.[0] === reference;
+    if (mode === "shell" && enableCaching && isScopeRef) {
+      // Is the first argument a nonlocal reference?
+      const normalizedKey = trailingSlash.remove(args[0][1]);
+      const nonLocal = locals[normalizedKey] === undefined;
+      if (nonLocal) {
+        // Are the remaining arguments all literals?
+        const allLiterals = args
+          .slice(1)
+          .every((arg) => arg[0] === ops.literal);
+        if (allLiterals) {
+          // Convert to ops.external
+          const keys = args.map((arg) => arg[1]);
+          const path = pathFromKeys(keys);
+          /** @type {Code} */
+          const optimized = [ops.external, path, code, cache];
+          return annotate(optimized, code.location);
         }
       }
-      break;
+    }
   }
 
   // Add any locals introduced by this code to the list that will be consulted

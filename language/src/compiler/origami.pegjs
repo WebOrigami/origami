@@ -25,10 +25,10 @@ import {
   makeObject,
   makePipeline,
   makeProperty,
-  makeReference,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
+  reference,
   traversal
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
@@ -55,8 +55,7 @@ angleBracketLiteral
     return annotate([protocol, ...path], location());
     }
   / "<" __ path:angleBracketPath __ ">" {
-    const root = annotate([ops.scope], location());
-    return annotate([root, ...path], location())
+    return annotate([reference, ...path], location())
   }
 
 angleBracketPath
@@ -399,8 +398,7 @@ jsPropertyAccess
 
 jsReference "identifier reference"
   = id:jsIdentifier {
-      const root = annotate([ops.scope], location());
-      return annotate([root, id], location());
+      return annotate([reference, id], location());
     }
 
 // A separated list of values
@@ -689,7 +687,8 @@ rootDirectory
 scopeReference "scope reference"
   = identifier:identifier slashFollows:slashFollows? {
       const id = identifier + (slashFollows ? "/" : "");
-      return makeReference(id, location());
+      const idCode = annotate([ops.literal, identifier], location());
+      return annotate([reference, idCode], location());
     }
 
 separator
