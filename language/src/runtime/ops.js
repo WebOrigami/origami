@@ -477,12 +477,14 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
  * Return the scope of the current tree
  *
  * @this {AsyncTree|null}
+ * @param {AsyncTree|null} [context]
  */
-export async function scope() {
-  if (!this) {
+export async function scope(context) {
+  context ??= this;
+  if (!context) {
     throw new Error("Tried to get the scope of a null or undefined tree.");
   }
-  return scopeFn(this);
+  return scopeFn(context);
 }
 addOpLabel(scope, "«ops.scope»");
 
