@@ -28,7 +28,8 @@ import {
   makeReference,
   makeTemplate,
   makeUnaryOperation,
-  makeYamlObject
+  makeYamlObject,
+  traversal
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -75,7 +76,7 @@ angleBracketPathChar
 
 angleBracketProtocol
   = protocol:jsIdentifier ":" {
-      return annotate([ops.global, `${protocol}:`], location());
+      return annotate([ops.global, `${protocol[1]}:`], location());
     }
 
 arguments "function arguments"
@@ -162,7 +163,7 @@ comment "comment"
 
 computedPropertyAccess
   = __ "[" expression:expression expectClosingBracket {
-      return annotate([ops.traverse, expression], location());
+      return annotate([traversal, expression], location());
     }
 
 conditionalExpression
@@ -377,7 +378,9 @@ jseMode
   = &{ return options.mode === "jse" }
 
 jsIdentifier
-  = $( jsIdentifierStart jsIdentifierPart* )
+  = id:$( jsIdentifierStart jsIdentifierPart* ) {
+    return annotate([ops.literal, id], location());
+  }
 
 // Continuation of a JavaScript identifier
 // https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierPart
@@ -391,13 +394,13 @@ jsIdentifierStart "JavaScript identifier start"
 
 jsPropertyAccess
   = __ "." __ property:jsIdentifier {
-    const literal = annotate([ops.literal, property], location());
-    return annotate([ops.traverse, literal], location());
+    return annotate([traversal, property], location());
   }
 
 jsReference "identifier reference"
   = id:jsIdentifier {
-      return annotate([ops.scope, id], location());
+      const root = annotate([ops.scope], location());
+      return annotate([root, id], location());
     }
 
 // A separated list of values
@@ -537,14 +540,11 @@ objectPublicKey
 
 optionalChaining
   = __ "?." __ property:jsIdentifier {
-    const literal = annotate([ops.literal, property], location());
-    return annotate([ops.optionalTraverse, literal], location());
+    return annotate([ops.optionalTraverse, property], location());
   }
   
 parameter
-  = jseMode identifier:jsIdentifier {
-      return annotate([ops.literal, identifier], location());
-    }
+  = jseMode @jsIdentifier
   / shellMode identifier:identifier {
       return annotate([ops.literal, identifier], location());
     }
@@ -581,7 +581,7 @@ path "slash-separated path"
 // A slash-separated path of keys that follows a call target
 pathArguments
   = path:path {
-      return annotate([ops.traverse, ...path], location());
+      return annotate([traversal, ...path], location());
     }
 
 // A single key in a slash-separated path: `/a`
@@ -651,8 +651,7 @@ protocolExpression
 // A namespace followed by a key: `foo:x`
 qualifiedReference
   = fn:namespace reference:scopeReference {
-      const literal = annotate([ops.literal, reference[1]], reference.location);
-      return makeCall(fn, [literal]);
+      return makeCall(fn, [reference[1]]);
     }
 
 regexFlags
@@ -681,20 +680,16 @@ relationalOperator
   / ">="
   / ">"
 
-// A top-level folder below the root: `/foo`
-// or the root folder itself: `/`
+// The root folder: `/`
 rootDirectory
-  = "/" key:pathKey {
-      return annotate([ops.rootDirectory, key], location());
-    }
-  / "/" !"/" {
+  = &("/" !"/") {
       return annotate([ops.rootDirectory], location());
     }
 
 scopeReference "scope reference"
   = identifier:identifier slashFollows:slashFollows? {
       const id = identifier + (slashFollows ? "/" : "");
-      return annotate(makeReference(id), location());
+      return makeReference(id, location());
     }
 
 separator

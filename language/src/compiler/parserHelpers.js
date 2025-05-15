@@ -15,6 +15,9 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /** @typedef {import("../../index.ts").CodeLocation} CodeLocation */
 /** @typedef {import("../../index.ts").Code} Code */
 
+// Marker for a continuation of a path traversal
+export const traversal = Symbol("traversal");
+
 // Marker for a reference that may be a builtin or a scope reference
 export const undetermined = Symbol("undetermined");
 
@@ -50,11 +53,14 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[ops.scope, "foo"], undefined]
+  // For `foo`, the call would be: [[[ops.scope], [ops.literal, "foo"]], undefined]
   if (
     code[0] &&
-    code[0][0] === ops.scope &&
-    code[0][1] === name &&
+    code[0][0] instanceof Array &&
+    code[0][0][0] === ops.scope &&
+    code[0][1] instanceof Array &&
+    code[0][1][0] === ops.literal &&
+    code[0][1][1] === name &&
     code[1] === undefined
   ) {
     return macro;
@@ -79,11 +85,12 @@ function avoidRecursivePropertyCalls(code, key) {
   /** @type {Code} */
   let modified;
   if (
-    code[0] === ops.scope &&
-    trailingSlash.remove(code[1]) === trailingSlash.remove(key)
+    code[0] instanceof Array &&
+    code[0][0] === ops.scope &&
+    trailingSlash.remove(code[1][1]) === trailingSlash.remove(key)
   ) {
     // Rewrite to avoid recursion
-    modified = [ops.inherited, code[1]];
+    modified = [ops.inherited, code[1][1]];
   } else if (
     code[0] === ops.lambda &&
     code[1].some((param) => param[1] === key)
@@ -104,7 +111,8 @@ function avoidRecursivePropertyCalls(code, key) {
  */
 export function downgradeReference(code) {
   if (code && code.length === 2 && code[0] === undetermined) {
-    return annotate([ops.scope, code[1]], code.location);
+    const root = annotate([ops.scope], code.location);
+    return annotate([root, code[1]], code.location);
   } else {
     return code;
   }
@@ -211,7 +219,7 @@ export function makeCall(target, args) {
 
   let fnCall;
   const op = args[0];
-  if (op === ops.traverse || op === ops.optionalTraverse) {
+  if (op === traversal || op === ops.optionalTraverse) {
     let tree = target;
 
     if (tree[0] === undetermined) {
@@ -223,13 +231,28 @@ export function makeCall(target, args) {
       }
     }
 
+    // Should the target call be extended? We do this for traversals that start
+    // with a scope reference or qualified namespace reference.
+    const extend =
+      tree[0] instanceof Array &&
+      (tree[0][0] === ops.scope ||
+        (tree[0][0] === ops.global && tree[0][1].endsWith(":")));
+    if (extend) {
+      // Traversal starts with scope reference, combine with the new keys
+      fnCall = tree;
+    } else {
+      fnCall = [tree];
+    }
+
     if (args.length > 1) {
       // Regular traverse
       const keys = args.slice(1);
-      fnCall = [op, tree, ...keys];
-    } else {
+      fnCall.push(...keys);
+    } else if (tree[0] !== ops.rootDirectory) {
       // Traverse without arguments equates to unpack
       fnCall = [ops.unpack, tree];
+    } else {
+      fnCall = tree;
     }
   } else if (op === ops.templateStandard || op === ops.templateTree) {
     // Tagged template
@@ -284,7 +307,7 @@ export function makeDeferredArguments(args) {
 
 export function makeDocument(mode, front, body, location) {
   // In order for template expressions to see the front matter properties,
-  // we translate the top-level front properties to objec entries.
+  // we translate the top-level front properties to object entries.
   const entries = Object.entries(front).map(([key, value]) =>
     annotate([key, annotate([ops.literal, value], location)], location)
   );
@@ -459,19 +482,21 @@ export function makeProperty(key, value) {
   return [key, modified];
 }
 
-export function makeReference(identifier) {
+export function makeReference(identifier, location) {
   // We can't know for sure that an identifier is a builtin reference until we
   // see whether it's being called as a function.
-  let op;
-  if (builtinRegex.test(identifier)) {
-    op = identifier.endsWith(":")
-      ? // Namespace is always a builtin reference
-        ops.global
-      : undetermined;
+  let root;
+  if (!builtinRegex.test(identifier)) {
+    // Not a builtin
+    root = annotate([ops.scope], location);
+  } else if (identifier.endsWith(":")) {
+    // Namespace is always a builtin reference
+    root = ops.global;
   } else {
-    op = ops.scope;
+    root = undetermined;
   }
-  return [op, identifier];
+  const idCode = annotate([ops.literal, identifier], location);
+  return annotate([root, idCode], location);
 }
 
 /**
@@ -591,7 +616,7 @@ export function makeYamlObject(text, location) {
  */
 export function upgradeReference(code) {
   if (code.length === 2 && code[0] === undetermined) {
-    const result = [ops.global, code[1]];
+    const result = [ops.global, code[1][1]];
     return annotate(result, code.location);
   } else {
     return code;

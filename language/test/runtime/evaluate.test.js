@@ -50,7 +50,7 @@ describe("evaluate", () => {
     const fn = (x, y) => ({
       c: `${x}${y}c`,
     });
-    const code = createCode([ops.traverse, fn, "a", "b", "c"]);
+    const code = createCode([fn, "a", "b", "c"]);
     assert.equal(await evaluate.call(null, code), "abc");
   });
 

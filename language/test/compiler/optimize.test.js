@@ -25,10 +25,9 @@ describe("optimize", () => {
     await assertCompile(expression, expected, "jse");
   });
 
-  test.only("optimize path references to ops.external", async () => {
+  test("optimize path references to ops.external", async () => {
     const expression = `<folder/file.txt>`;
     const expected = [
-      ops.traverse,
       [ops.scope],
       [ops.literal, "folder/"],
       [ops.literal, "file.txt"],
