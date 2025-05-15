@@ -19,7 +19,7 @@ describe("Origami parser", () => {
     ]);
   });
 
-  describe.only("angleBracketLiteral", () => {
+  describe("angleBracketLiteral", () => {
     test("with path", () => {
       assertParse(
         "angleBracketLiteral",
@@ -860,9 +860,9 @@ Body`,
           "_result",
           [
             ops.merge,
-            [ops.object, ["a", [ops.getter, [ops.local, 1, "a"]]]],
+            [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
             [ops.scope, "more"],
-            [ops.object, ["c", [ops.getter, [ops.local, 1, "c"]]]],
+            [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
           ],
         ],
       ],
@@ -885,9 +885,7 @@ Body`,
         [
           "file.txt",
           [
-            ops.external,
-            null,
-            0,
+            [ops.scope],
             [ops.literal, "path/"],
             [ops.literal, "to/"],
             [ops.literal, "file.txt"],
@@ -908,9 +906,7 @@ Body`,
       [
         "file.txt",
         [
-          ops.external,
-          null,
-          0,
+          [ops.scope],
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
@@ -1048,7 +1044,7 @@ Body`,
     assertParse(
       "primary",
       "<index.html>",
-      [ops.external, null, 0, [ops.literal, "index.html"]],
+      [[ops.scope], [ops.literal, "index.html"]],
       "jse",
       false
     );

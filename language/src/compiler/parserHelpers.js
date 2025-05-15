@@ -341,7 +341,8 @@ function makeMerge(spreads, location) {
       // Also add an object to the result with indirect references
       const indirectEntries = spread.slice(1).map((entry) => {
         const [key] = entry;
-        const reference = annotate([ops.local, 1, key], entry.location);
+        const context = annotate([ops.context, 1], entry.location);
+        const reference = annotate([context, key], entry.location);
         const getter = annotate([ops.getter, reference], entry.location);
         return annotate([key, getter], entry.location);
       });

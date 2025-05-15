@@ -50,16 +50,12 @@ additiveOperator
   / "-"
 
 angleBracketLiteral
-  = "<" __ protocol:angleBracketProtocol "//" path:angleBracketPath __ ">" {
+  = "<" __ protocol:angleBracketProtocol "//"? path:angleBracketPath __ ">" {
     return annotate([protocol, ...path], location());
     }
-  / "<" protocol:angleBracketProtocol path:angleBracketPath ">" {
-      const [head, ...tail] = path;
-      const root = annotate([protocol, head], location());
-      return annotate([ops.external, null, root, ...tail], location());
-    }
   / "<" __ path:angleBracketPath __ ">" {
-    return annotate([ops.external, null, 0, ...path], location())
+    const root = annotate([ops.scope], location());
+    return annotate([root, ...path], location())
   }
 
 angleBracketPath
