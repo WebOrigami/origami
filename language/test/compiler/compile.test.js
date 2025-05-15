@@ -2,7 +2,6 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
-import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
 const shared = new ObjectTree({
@@ -106,18 +105,6 @@ describe("compile", () => {
     assert.equal(alice, "Hello, Alice!");
     const bob = await lambda("Bob");
     assert.equal(bob, "Hello, Bob!");
-  });
-
-  test("can apply a macro", async () => {
-    const literal = [ops.literal, 1];
-    const expression = `{ a: literal }`;
-    const fn = compile.expression(expression, {
-      macros: {
-        literal,
-      },
-    });
-    const code = fn.code;
-    assertCodeEqual(code, [ops.object, ["a", 1]]);
   });
 });
 

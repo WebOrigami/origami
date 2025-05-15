@@ -4,7 +4,7 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { macros, parent, startRule } = options;
+  const { parent, startRule } = options;
   const mode = options.mode ?? "shell";
   const globals = options.globals ?? jsGlobals;
   const enableCaching = options.scopeCaching ?? true;
@@ -19,7 +19,6 @@ function compile(source, options) {
   const optimized = optimize(code, {
     enableCaching,
     globals,
-    macros,
     mode,
     parent,
   });

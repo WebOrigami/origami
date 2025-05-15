@@ -15,7 +15,6 @@ import { annotate, undetermined } from "./parserHelpers.js";
  * - Transform those or explicit ops.scope calls to ops.external calls unless
  *   they refer to local variables (variables defined by object literals or
  *   lambda parameters).
- * - Apply any macros to the code.
  *
  * @typedef {import("./parserHelpers.js").AnnotatedCode} AnnotatedCode
  * @typedef {import("./parserHelpers.js").Code} Code
@@ -28,7 +27,6 @@ export default function optimize(code, options = {}) {
   const { parent } = options;
   const enableCaching = options.enableCaching ?? true;
   const globals = options.globals ?? jsGlobals;
-  const macros = options.macros ?? {};
   const mode = options.mode ?? "shell";
   const cache = options.cache ?? {};
   const locals = options.locals ?? {};
@@ -90,11 +88,7 @@ export default function optimize(code, options = {}) {
     case undetermined:
     case ops.scope:
       const normalizedKey = trailingSlash.remove(key);
-      if (macros?.[normalizedKey]) {
-        // Apply macro
-        const macro = macros?.[normalizedKey];
-        return applyMacro(macro, code, options);
-      } else if (
+      if (
         mode === "shell" &&
         enableCaching &&
         locals[normalizedKey] === undefined

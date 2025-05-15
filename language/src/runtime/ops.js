@@ -546,11 +546,6 @@ export async function templateTree(strings, ...values) {
 }
 addOpLabel(templateTree, "«ops.templateTree»");
 
-/**
- * Traverse a path of keys through a tree.
- */
-export const traverse = Tree.traverseOrThrow;
-
 export function unaryMinus(a) {
   return -a;
 }
