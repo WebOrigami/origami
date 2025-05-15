@@ -100,14 +100,14 @@ describe("optimize", () => {
   });
 
   test("optimize scope traversals with all literal keys", async () => {
-    // Compilation of `x/y.js`
+    // Compilation of `x/y/z.js`
     const code = createCode([
-      ops.traverse,
       [ops.scope, "x/"],
-      [ops.literal, "y.js"],
+      [ops.literal, "y/"],
+      [ops.literal, "z.js"],
     ]);
     const optimized = optimize(code);
-    assertCodeEqual(optimized, [ops.external, "x/y.js", code, {}]);
+    assertCodeEqual(optimized, [ops.cache, "x/y.js", code, {}]);
   });
 });
 

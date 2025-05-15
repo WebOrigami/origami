@@ -112,7 +112,7 @@ describe("ops", () => {
     assert.strictEqual(ops.exponentiation(2, 0), 1);
   });
 
-  test("ops.external evaluates code and cache its result", async () => {
+  test("ops.cache evaluates code and cache its result", async () => {
     let count = 0;
     const tree = new DeepObjectTree({
       group: {
@@ -122,7 +122,12 @@ describe("ops", () => {
         },
       },
     });
-    const code = createCode([ops.external, {}, 0, "group", "count"]);
+    const code = createCode([
+      ops.cache,
+      {},
+      "group/count",
+      [[ops.scope], [ops.literal, "group"], [ops.literal, "count"]],
+    ]);
     const result = await evaluate.call(tree, code);
     assert.strictEqual(result, 1);
     const result2 = await evaluate.call(tree, code);

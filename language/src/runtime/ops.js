@@ -67,6 +67,41 @@ export function bitwiseXor(a, b) {
 addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
 
 /**
+ * Cache the value of the code for an external reference
+ *
+ * @this {AsyncTree|null}
+ * @param {any} cache
+ * @param {string} path
+ * @param {AnnotatedCode} code
+ */
+export async function cache(cache, path, code) {
+  if (!this) {
+    throw new Error("Tried to get the scope of a null or undefined tree.");
+  }
+
+  if (path in cache) {
+    // Cache hit
+    return cache[path];
+  }
+
+  // Don't await: might get another request for this before promise resolves
+  const promise = await evaluate.call(this, code);
+
+  // Save promise so another request will get the same promise
+  cache[path] = promise;
+
+  // Now wait for the value
+  const value = await promise;
+
+  // Update the cache with the actual value
+  cache[path] = value;
+
+  return value;
+}
+addOpLabel(cache, "«ops.cache»");
+cache.unevaluatedArgs = true;
+
+/**
  * JavaScript comma operator, returns the last argument.
  *
  * @param  {...any} args
@@ -131,42 +166,6 @@ export function exponentiation(a, b) {
   return a ** b;
 }
 addOpLabel(exponentiation, "«ops.exponentiation»");
-
-/**
- * Look up the given key as an external reference and cache the value for future
- * requests.
- *
- * @this {AsyncTree|null}
- */
-export async function external(cache, ancestor, ...keys) {
-  if (!this) {
-    throw new Error("Tried to get the scope of a null or undefined tree.");
-  }
-
-  const path = keys.join("/");
-  if (path in cache) {
-    // Cache hit
-    return cache[path];
-  }
-
-  const tree =
-    typeof ancestor === "number" ? context.call(this, ancestor) : ancestor;
-
-  // Don't await: might get another request for this before promise resolves
-  const promise = Tree.traverseOrThrow(tree, ...keys);
-
-  // Save promise so another request will get the same promise
-  cache[path] = promise;
-
-  // Now wait for the value
-  const value = await promise;
-
-  // Update the cache with the actual value
-  cache[path] = value;
-
-  return value;
-}
-addOpLabel(external, "«ops.external»");
 
 /**
  * Flatten the values of the given trees
