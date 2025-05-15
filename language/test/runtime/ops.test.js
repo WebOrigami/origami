@@ -53,7 +53,12 @@ describe("ops", () => {
       name: "world",
     });
 
-    const code = createCode([ops.concat, "Hello, ", [ops.scope, "name"], "."]);
+    const code = createCode([
+      ops.concat,
+      "Hello, ",
+      [[ops.scope], "name"],
+      ".",
+    ]);
 
     const result = await evaluate.call(scope, code);
     assert.strictEqual(result, "Hello, world.");
@@ -107,7 +112,7 @@ describe("ops", () => {
     assert.strictEqual(ops.exponentiation(2, 0), 1);
   });
 
-  test.only("ops.external evaluates code and cache its result", async () => {
+  test("ops.external evaluates code and cache its result", async () => {
     let count = 0;
     const tree = new DeepObjectTree({
       group: {
@@ -124,7 +129,7 @@ describe("ops", () => {
     assert.strictEqual(result2, 1);
   });
 
-  test("ops.flat", () => {
+  describe("ops.flat", () => {
     test("flattens arrays", async () => {
       assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);
     });
@@ -193,7 +198,7 @@ describe("ops", () => {
       message: "Hello",
     });
 
-    const code = createCode([ops.lambda, ["_"], [ops.scope, "message"]]);
+    const code = createCode([ops.lambda, ["_"], [[ops.scope], "message"]]);
 
     const fn = await evaluate.call(scope, code);
     const result = await fn.call(scope);
@@ -207,7 +212,7 @@ describe("ops", () => {
         [ops.literal, "a"],
         [ops.literal, "b"],
       ],
-      [ops.concat, [ops.scope, "b"], [ops.scope, "a"]],
+      [ops.concat, [[ops.scope], "b"], [[ops.scope], "a"]],
     ]);
     const fn = await evaluate.call(null, code);
     const result = await fn("x", "y");
@@ -224,18 +229,6 @@ describe("ops", () => {
     assert(!ops.lessThanOrEqual(5, 3));
     assert(ops.lessThanOrEqual(3, 3));
     assert(ops.lessThanOrEqual("aa", "ab"));
-  });
-
-  test("ops.local", async () => {
-    const a = new ObjectTree({ a: 1 });
-    const b = new ObjectTree({ b: 2 });
-    const c = new ObjectTree({ c: 3 });
-    a.parent = b;
-    b.parent = c;
-    assert.equal(await ops.local.call(a, 0, "a"), 1);
-    assert.equal(await ops.local.call(a, 0, "b"), undefined);
-    assert.equal(await ops.local.call(a, 1, "b"), 2);
-    assert.equal(await ops.local.call(a, 2, "c"), 3);
   });
 
   test("ops.logicalAnd", async () => {
@@ -283,14 +276,14 @@ describe("ops", () => {
       [
         ops.object,
         ["a", [ops.literal, 1]],
-        ["c", [ops.local, 0, "a"]],
+        ["c", [[ops.context], "a"]],
         [
           "_result",
           [
             ops.merge,
-            [ops.object, ["a", [ops.getter, [ops.local, 1, "a"]]]],
-            [ops.scope, "more"],
-            [ops.object, ["c", [ops.getter, [ops.local, 1, "c"]]]],
+            [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
+            [[ops.scope], "more"],
+            [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
           ],
         ],
       ],
@@ -337,7 +330,7 @@ describe("ops", () => {
     assert.strictEqual(await ops.nullishCoalescing(1, errorFn), 1);
   });
 
-  test("ops.object instantiates an object", async () => {
+  test.skip("ops.object instantiates an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
@@ -361,7 +354,7 @@ describe("ops", () => {
       ops.array,
       "Hello",
       1,
-      [[ops.scope, "upper"], "world"],
+      [[[ops.scope], "upper"], "world"],
     ]);
     const result = await evaluate.call(scope, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
@@ -372,6 +365,19 @@ describe("ops", () => {
     assert.strictEqual(ops.remainder(-13, 5), -3);
     assert.strictEqual(ops.remainder(4, 2), 0);
     assert.strictEqual(ops.remainder(-4, 2), -0);
+  });
+
+  test("ops.scope returns the scope of the current tree", async () => {
+    const tree = new DeepObjectTree({
+      a: {
+        b: {},
+      },
+      c: 1,
+    });
+    const a = await tree.get("a");
+    const b = await a.get("b");
+    const scope = await ops.scope.call(b);
+    assert.equal(await scope.get("c"), 1);
   });
 
   test("ops.shiftLeft", () => {

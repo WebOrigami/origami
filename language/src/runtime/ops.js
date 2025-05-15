@@ -14,7 +14,7 @@ import {
   text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
-import { builtinReferenceError, scopeReferenceError } from "./errors.js";
+import { builtinReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -336,24 +336,6 @@ addOpLabel(literal, "«ops.literal»");
 literal.unevaluatedArgs = true;
 
 /**
- * Walk up the parent tree by the indicated number of ancestors, then ask that
- * tree for the given key.
- *
- * @this {AsyncTree|null}
- * @param {number} ancestor
- * @param {any} key
- */
-export async function local(ancestor, key) {
-  const message = `Internal error: couldn't find local key: ${key}`;
-  if (!this) {
-    throw new Error(message);
-  }
-  let tree = context.call(this, ancestor);
-  const value = await tree.get(key);
-  return value;
-}
-
-/**
  * Logical AND operator
  */
 export async function logicalAnd(head, ...tail) {
@@ -492,20 +474,15 @@ export async function rootDirectory(key) {
 addOpLabel(rootDirectory, "«ops.rootDirectory»");
 
 /**
- * Look up the given key in the scope for the current tree.
+ * Return the scope of the current tree
  *
  * @this {AsyncTree|null}
  */
-export async function scope(key) {
+export async function scope() {
   if (!this) {
     throw new Error("Tried to get the scope of a null or undefined tree.");
   }
-  const scope = scopeFn(this);
-  const value = await scope.get(key);
-  if (value === undefined && key !== "undefined") {
-    throw await scopeReferenceError(scope, key);
-  }
-  return value;
+  return scopeFn(this);
 }
 addOpLabel(scope, "«ops.scope»");
 
