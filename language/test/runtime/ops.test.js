@@ -330,15 +330,15 @@ describe("ops", () => {
     assert.strictEqual(await ops.nullishCoalescing(1, errorFn), 1);
   });
 
-  test.skip("ops.object instantiates an object", async () => {
+  test("ops.object instantiates an object", async () => {
     const scope = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
 
     const code = createCode([
       ops.object,
-      ["hello", [[ops.scope, "upper"], "hello"]],
-      ["world", [[ops.scope, "upper"], "world"]],
+      ["hello", [[[ops.scope], "upper"], "hello"]],
+      ["world", [[[ops.scope], "upper"], "world"]],
     ]);
 
     const result = await evaluate.call(scope, code);
