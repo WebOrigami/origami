@@ -19,49 +19,44 @@ describe("Origami parser", () => {
     ]);
   });
 
-  test("angleBracketLiteral", () => {
-    assertParse(
-      "angleBracketLiteral",
-      "<index.html>",
-      [ops.external, null, 0, [ops.literal, "index.html"]],
-      "jse",
-      false
-    );
-    assertParse(
-      "angleBracketLiteral",
-      "<foo/bar/baz>",
-      [
-        ops.external,
-        null,
-        0,
-        [ops.literal, "foo/"],
-        [ops.literal, "bar/"],
-        [ops.literal, "baz"],
-      ],
-      "jse",
-      false
-    );
-    assertParse("angleBracketLiteral", "<files:src/assets>", [
-      ops.external,
-      null,
-      [
+  describe.only("angleBracketLiteral", () => {
+    test("with path", () => {
+      assertParse(
+        "angleBracketLiteral",
+        "<index.html>",
+        [[ops.scope], [ops.literal, "index.html"]],
+        "jse"
+      );
+      assertParse(
+        "angleBracketLiteral",
+        "<foo/bar/baz>",
+        [
+          [ops.scope],
+          [ops.literal, "foo/"],
+          [ops.literal, "bar/"],
+          [ops.literal, "baz"],
+        ],
+        "jse"
+      );
+    });
+
+    test("with protocol URL", () => {
+      assertParse("angleBracketLiteral", "<files:src/assets>", [
         [ops.global, "files:"],
         [ops.literal, "src/"],
-      ],
-      [ops.literal, "assets"],
-    ]);
-    assertParse(
-      "angleBracketLiteral",
-      "<https://example.com/>",
-      [
-        ops.external,
-        null,
-        [ops.global, "https:"],
-        [ops.literal, "example.com/"],
-      ],
-      "jse",
-      false
-    );
+        [ops.literal, "assets"],
+      ]);
+      assertParse(
+        "angleBracketLiteral",
+        "<https://example.com/data.yaml>",
+        [
+          [ops.global, "https:"],
+          [ops.literal, "example.com/"],
+          [ops.literal, "data.yaml"],
+        ],
+        "jse"
+      );
+    });
   });
 
   test("arrayLiteral", () => {

@@ -110,9 +110,14 @@ export default function optimize(code, options = {}) {
           code.location
         );
       } else if (locals[normalizedKey] !== undefined) {
-        // Transform local reference to ops.local
+        // Transform local reference
         const localIndex = locals[normalizedKey];
-        return annotate([ops.local, localIndex, key], code.location);
+        const contextCode = [ops.context];
+        if (localIndex > 0) {
+          contextCode.push(localIndex);
+        }
+        const context = annotate(contextCode, code.location);
+        return annotate([context, key], code.location);
       } else if (fn === undetermined) {
         // Transform undetermined reference to regular scope call
         return annotate([ops.scope, key], code.location);

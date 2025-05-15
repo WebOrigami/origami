@@ -124,7 +124,7 @@ describe("ops", () => {
     assert.strictEqual(result2, 1);
   });
 
-  describe("ops.flat", () => {
+  test("ops.flat", () => {
     test("flattens arrays", async () => {
       assert.deepEqual(await ops.flat(1, 2, [3]), [1, 2, 3]);
     });

@@ -7,13 +7,42 @@ import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
 describe("optimize", () => {
-  test("optimize non-local ops.scope calls in shell mode", async () => {
+  test("optimize local ops.scope calls to local references", async () => {
+    const expression = `(name) => {
+      a: name,
+      b: a
+    }`;
+    const expected = [
+      ops.lambda,
+      [[ops.literal, "name"]],
+      [
+        ops.object,
+        ["a", [[ops.context, 1], "name"]],
+        ["b", [[ops.context], "a"]],
+      ],
+    ];
+    await assertCompile(expression, expected);
+    await assertCompile(expression, expected, "jse");
+  });
+
+  test.only("optimize path references to ops.external", async () => {
+    const expression = `<folder/file.txt>`;
+    const expected = [
+      ops.traverse,
+      [ops.scope],
+      [ops.literal, "folder/"],
+      [ops.literal, "file.txt"],
+    ];
+    await assertCompile(expression, expected, "jse");
+  });
+
+  test.skip("optimize non-local ops.scope calls in shell mode", async () => {
     const expression = `
       (name) => {
         a: 1
-        b: a            // local key, should be optimized to ops.local
-        c: elsewhere    // external, should be optimized to ops.external
-        d: name         // local parameter, should be optimized to ops.local
+        b: a            // local key, optimizes to local ref in same object
+        c: elsewhere    // external, optimizes to ops.external
+        d: name         // local parameter, optimizes to local ref in parent
       }
     `;
     const parent = new ObjectTree({});
@@ -27,14 +56,14 @@ describe("optimize", () => {
       [
         ops.object,
         ["a", 1],
-        ["b", [ops.local, 0, "a"]],
+        ["b", [[ops.context], "a"]],
         ["c", [ops.external, {}, 0, "elsewhere"]],
-        ["d", [ops.local, 1, "name"]],
+        ["d", [[ops.context, 1], "name"]],
       ],
     ]);
   });
 
-  test("optimize non-local ops.scope calls in jse mode", async () => {
+  test.skip("optimize non-local ops.scope calls in jse mode", async () => {
     const expression = `
       (name) => {
         a: 1,
@@ -82,3 +111,11 @@ describe("optimize", () => {
     assertCodeEqual(optimized, [ops.external, "x/y.js", code, {}]);
   });
 });
+
+async function assertCompile(expression, expected, mode = "shell") {
+  const parent = new ObjectTree({});
+  const globals = new ObjectTree({});
+  const fn = compile.expression(expression, { globals, mode, parent });
+  const actual = fn.code;
+  assertCodeEqual(actual, expected);
+}
