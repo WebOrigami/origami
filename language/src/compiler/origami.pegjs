@@ -28,8 +28,7 @@ import {
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
-  reference,
-  traverse
+  markers,
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -77,7 +76,7 @@ angleBracketPathChar
 
 angleBracketProtocol
   = protocol:jsIdentifier ":" {
-      return annotate([ops.global, `${protocol[1]}:`], location());
+      return annotate([markers.global, `${protocol[1]}:`], location());
     }
 
 arguments "function arguments"
@@ -164,7 +163,7 @@ comment "comment"
 
 computedPropertyAccess
   = __ "[" expression:expression expectClosingBracket {
-      return annotate([traverse, expression], location());
+      return annotate([markers.traverse, expression], location());
     }
 
 conditionalExpression
@@ -395,12 +394,12 @@ jsIdentifierStart "JavaScript identifier start"
 
 jsPropertyAccess
   = __ "." __ property:jsIdentifier {
-    return annotate([traverse, property], location());
+    return annotate([markers.traverse, property], location());
   }
 
 jsReference "identifier reference"
   = id:jsIdentifier {
-      return annotate([reference, id], location());
+      return annotate([markers.reference, id], location());
     }
 
 // A separated list of values
@@ -445,7 +444,7 @@ multiplicativeOperator
 // A namespace reference is a string of letters only, followed by a colon.
 namespace
   = chars:[A-Za-z]+ ":" {
-    return annotate([ops.global, chars.join("") + ":"], location());
+    return annotate([markers.global, chars.join("") + ":"], location());
   }
 
 // A new expression: `new Foo()`
@@ -581,7 +580,7 @@ path "slash-separated path"
 // A slash-separated path of keys that follows a call target
 pathArguments
   = path:path {
-      return annotate([traverse, ...path], location());
+      return annotate([markers.traverse, ...path], location());
     }
 
 // A single key in a slash-separated path: `/a`
@@ -690,7 +689,7 @@ scopeReference "scope reference"
   = identifier:identifier slashFollows:slashFollows? {
       const id = identifier + (slashFollows ? "/" : "");
       const idCode = annotate([ops.literal, identifier], location());
-      return annotate([reference, idCode], location());
+      return annotate([markers.reference, idCode], location());
     }
 
 separator

@@ -33,8 +33,7 @@ import {
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
-  reference,
-  traverse
+  markers,
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -421,7 +420,7 @@ function peg$parse(input, options) {
     return annotate([ops.literal, key], location());
   };
   var peg$f5 = function(protocol) {
-      return annotate([ops.global, `${protocol[1]}:`], location());
+      return annotate([markers.global, `${protocol[1]}:`], location());
     };
   var peg$f6 = function(entries) {
       return makeArray(entries ?? [], location());
@@ -457,7 +456,7 @@ function peg$parse(input, options) {
         : annotate([ops.comma, ...list], location());
     };
   var peg$f16 = function(expression) {
-      return annotate([traverse, expression], location());
+      return annotate([markers.traverse, expression], location());
     };
   var peg$f17 = function(condition, tail) {
       if (!tail) {
@@ -561,10 +560,10 @@ function peg$parse(input, options) {
   var peg$f52 = function(char) { return char.match(/[$_\p{ID_Continue}]/u) };
   var peg$f53 = function(char) { return char.match(/[$_\p{ID_Start}]/u) };
   var peg$f54 = function(property) {
-    return annotate([traverse, property], location());
+    return annotate([markers.traverse, property], location());
   };
   var peg$f55 = function(id) {
-      return annotate([reference, id], location());
+      return annotate([markers.reference, id], location());
     };
   var peg$f56 = function(values) {
       return annotate(values, location());
@@ -590,7 +589,7 @@ function peg$parse(input, options) {
       return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f61 = function(chars) {
-    return annotate([ops.global, chars.join("") + ":"], location());
+    return annotate([markers.global, chars.join("") + ":"], location());
   };
   var peg$f62 = function(head, tail) {
       const args = tail?.[0] !== undefined ? tail : [];
@@ -662,7 +661,7 @@ function peg$parse(input, options) {
       return annotate(segments, location());
     };
   var peg$f79 = function(path) {
-      return annotate([traverse, ...path], location());
+      return annotate([markers.traverse, ...path], location());
     };
   var peg$f80 = function(chars, slashFollows) {
     // Append a trailing slash if one follows (but don't consume it)
@@ -698,7 +697,7 @@ function peg$parse(input, options) {
   var peg$f88 = function(identifier, slashFollows) {
       const id = identifier + (slashFollows ? "/" : "");
       const idCode = annotate([ops.literal, identifier], location());
-      return annotate([reference, idCode], location());
+      return annotate([markers.reference, idCode], location());
     };
   var peg$f89 = function() { return null; };
   var peg$f90 = function() { return options.mode === "shell" };

@@ -2,7 +2,7 @@ import { ObjectTree } from "@weborigami/async-tree";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import optimize from "../../src/compiler/optimize.js";
-import { reference } from "../../src/compiler/parserHelpers.js";
+import { markers } from "../../src/compiler/parserHelpers.js";
 import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
@@ -28,7 +28,7 @@ describe("optimize", () => {
   test("cache shell non-local references to globals+scope calls", async () => {
     // Compilation of `x/y/z.js`
     const code = createCode([
-      reference,
+      markers.reference,
       [ops.literal, "x/"],
       [ops.literal, "y/"],
       [ops.literal, "z.js"],
@@ -46,7 +46,7 @@ describe("optimize", () => {
   test("change jse non-local references to globals", async () => {
     // Compilation of `x/y`
     const code = createCode([
-      reference,
+      markers.reference,
       [ops.literal, "x/"],
       [ops.literal, "y"],
     ]);

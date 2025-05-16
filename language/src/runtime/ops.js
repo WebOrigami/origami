@@ -6,12 +6,12 @@
  */
 
 import {
-  ObjectTree,
-  Tree,
-  deepText,
-  isUnpackable,
-  scope as scopeFn,
-  text as templateFunctionTree,
+    ObjectTree,
+    Tree,
+    deepText,
+    isUnpackable,
+    scope as scopeFn,
+    text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
@@ -183,7 +183,7 @@ addOpLabel(flat, "«ops.flat»");
 /**
  * This op is only used during parsing for an explicit to a global.
  */
-export const global = new String("«ops.global");
+export const global = new String("«global");
 
 /**
  * This op is only used during parsing. It signals to ops.object that the

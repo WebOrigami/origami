@@ -1,9 +1,7 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
-import { annotate, reference } from "./parserHelpers.js";
-
-const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
+import { annotate, markers } from "./parserHelpers.js";
 
 /**
  * Optimize an Origami code instruction:
@@ -43,7 +41,7 @@ export default function optimize(code, options = {}) {
   let optimized = code;
   let externalReference = fn instanceof Array && fn[0] === ops.scope;
   switch (fn) {
-    case ops.global:
+    case markers.global:
       // Replace global op with the globals
       optimized = annotate([globals, key], code.location);
       break;
@@ -67,7 +65,7 @@ export default function optimize(code, options = {}) {
       additionalLocalNames = entries.map(([key]) => propertyName(key));
       break;
 
-    case reference:
+    case markers.reference:
       // Determine whether reference is local and, if so, transform to
       // ops.local call. Otherwise transform to ops.scope call.
       const normalizedKey = trailingSlash.remove(key[1]);

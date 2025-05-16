@@ -15,11 +15,12 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /** @typedef {import("../../index.ts").CodeLocation} CodeLocation */
 /** @typedef {import("../../index.ts").Code} Code */
 
-// Marker for a continuation of a path traversal
-export const traverse = Symbol("traverse");
-
-// Marker for a reference that may be a local, scope, or global reference
-export const reference = Symbol("reference");
+// Markers in compiled output, will get optimized away
+export const markers = {
+  global: Symbol("global"), // Global reference
+  traverse: Symbol("traverse"), // Continuation of path traversal
+  reference: Symbol("reference"), // Reference to local, scope, or global
+};
 
 const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
@@ -56,7 +57,7 @@ export function applyMacro(code, name, macro) {
   // For `foo`, the call would be: [[reference, [ops.literal, "foo"]], undefined]
   if (
     code[0] &&
-    code[0][0] === reference &&
+    code[0][0] === markers.reference &&
     code[0][1] instanceof Array &&
     code[0][1][0] === ops.literal &&
     code[0][1][1] === name &&
@@ -109,8 +110,8 @@ function avoidRecursivePropertyCalls(code, key) {
  * @param {AnnotatedCode} code
  */
 export function downgradeReference(code) {
-  if (code && code.length === 2 && code[0] === reference) {
-    return annotate([reference, code[1]], code.location);
+  if (code && code.length === 2 && code[0] === markers.reference) {
+    return annotate([markers.reference, code[1]], code.location);
   } else {
     return code;
   }
@@ -217,19 +218,19 @@ export function makeCall(target, args, mode) {
 
   let fnCall;
   const op = args[0];
-  if (op === traverse || op === ops.optionalTraverse) {
+  if (op === markers.traverse || op === ops.optionalTraverse) {
     let tree = target;
 
-    if (tree[0] === reference && !trailingSlash.has(tree[1][1])) {
+    if (tree[0] === markers.reference && !trailingSlash.has(tree[1][1])) {
       // Target didn't parse with a trailing slash; add one
       tree[1][1] = trailingSlash.add(tree[1][1]);
     }
 
     // Is the target an existing traversal that can be extended? It should be a
-    // reference or ops.global where all the args are literals.
+    // reference or global where all the args are literals.
     const extend =
-      (tree[0] === reference ||
-        (tree[0] instanceof Array && tree[0][0] === ops.global)) &&
+      (tree[0] === markers.reference ||
+        (tree[0] instanceof Array && tree[0][0] === markers.global)) &&
       !tree
         .slice(1)
         .some((arg) => !(arg instanceof Array && arg[0] === ops.literal));
@@ -602,10 +603,10 @@ export function upgradeReference(code, mode) {
   if (
     mode === "shell" &&
     code.length === 2 &&
-    code[0] === reference &&
+    code[0] === markers.reference &&
     builtinRegex.exec(code[1][1])
   ) {
-    const result = [ops.global, code[1][1]];
+    const result = [markers.global, code[1][1]];
     return annotate(result, code.location);
   } else {
     return code;
