@@ -14,7 +14,6 @@ import {
   text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
-import { builtinReferenceError } from "./errors.js";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
@@ -75,10 +74,6 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
  * @param {AnnotatedCode} code
  */
 export async function cache(cache, path, code) {
-  if (!this) {
-    throw new Error("Tried to get the scope of a null or undefined tree.");
-  }
-
   if (path in cache) {
     // Cache hit
     return cache[path];
@@ -186,25 +181,10 @@ export async function flat(...args) {
 addOpLabel(flat, "«ops.flat»");
 
 /**
- * Like ops.scope, but only searches for a global at the top of the scope
- * chain.
- *
- * @this {AsyncTree|null}
+ * This op is only used during parsing for an explicit to a global.
  */
-export async function global(key) {
-  if (!this) {
-    throw new Error("Tried to get the scope of a null or undefined tree.");
-  }
+export const global = new String("«ops.global");
 
-  const globals = Tree.root(this);
-  const value = await globals.get(key);
-  if (value === undefined) {
-    throw await builtinReferenceError(this, globals, key);
-  }
-
-  return value;
-}
-addOpLabel(global, "«ops.global»");
 /**
  * This op is only used during parsing. It signals to ops.object that the
  * "arguments" of the expression should be used to define a property getter.

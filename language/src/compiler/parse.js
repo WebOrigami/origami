@@ -34,7 +34,7 @@ import {
   makeUnaryOperation,
   makeYamlObject,
   reference,
-  traversal
+  traverse
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -411,7 +411,9 @@ function peg$parse(input, options) {
     return annotate([protocol, ...path], location());
     };
   var peg$f3 = function(path) {
-    return annotate([reference, ...path], location())
+    // Angle bracket paths always reference scope
+    const scope = annotate([ops.scope], location());
+    return annotate([scope, ...path], location());
   };
   var peg$f4 = function(chars, slashFollows) {
     // Append a trailing slash if one follows (but don't consume it)
@@ -447,7 +449,7 @@ function peg$parse(input, options) {
       return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f14 = function(head, tail) {
-      return tail.reduce(makeCall, head);
+      return tail.reduce((target, args) => makeCall(target, args, options.mode), head);
     };
   var peg$f15 = function(list) {
       return list.length === 1
@@ -455,7 +457,7 @@ function peg$parse(input, options) {
         : annotate([ops.comma, ...list], location());
     };
   var peg$f16 = function(expression) {
-      return annotate([traversal, expression], location());
+      return annotate([traverse, expression], location());
     };
   var peg$f17 = function(condition, tail) {
       if (!tail) {
@@ -544,7 +546,7 @@ function peg$parse(input, options) {
   };
   var peg$f46 = function(chars) { return chars.join(""); };
   var peg$f47 = function(head, args) {
-      return args ? makeCall(head, args) : head;
+      return args ? makeCall(head, args, options.mode) : head;
     };
   var peg$f48 = function(values) {
       return annotate(values, location());
@@ -559,7 +561,7 @@ function peg$parse(input, options) {
   var peg$f52 = function(char) { return char.match(/[$_\p{ID_Continue}]/u) };
   var peg$f53 = function(char) { return char.match(/[$_\p{ID_Start}]/u) };
   var peg$f54 = function(property) {
-    return annotate([traversal, property], location());
+    return annotate([traverse, property], location());
   };
   var peg$f55 = function(id) {
       return annotate([reference, id], location());
@@ -660,7 +662,7 @@ function peg$parse(input, options) {
       return annotate(segments, location());
     };
   var peg$f79 = function(path) {
-      return annotate([traversal, ...path], location());
+      return annotate([traverse, ...path], location());
     };
   var peg$f80 = function(chars, slashFollows) {
     // Append a trailing slash if one follows (but don't consume it)
@@ -669,16 +671,16 @@ function peg$parse(input, options) {
   };
   var peg$f81 = function(head, tail) {
       return annotate(
-        tail.reduce(makePipeline, downgradeReference(head)),
+        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), downgradeReference(head)),
         location()
       );
     };
   var peg$f82 = function(fn, host, path) {
       const keys = annotate([host, ...(path ?? [])], location());
-      return makeCall(fn, keys);
+      return makeCall(fn, keys, options.mode);
     };
   var peg$f83 = function(fn, reference) {
-      return makeCall(fn, [reference[1]]);
+      return makeCall(fn, [reference[1]], options.mode);
     };
   var peg$f84 = function(flags) {
       return flags.join("");

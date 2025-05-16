@@ -37,7 +37,6 @@ export default async function ori(
   const fn = compile.expression(expression, {
     globals: builtinsTree,
     mode: "shell",
-    parent: tree,
     scopeCaching: false,
   });
 

@@ -1,12 +1,9 @@
-import {
-  merge,
-  pathFromKeys,
-  scope,
-  trailingSlash,
-} from "@weborigami/async-tree";
+import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, reference } from "./parserHelpers.js";
+
+const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
 
 /**
  * Optimize an Origami code instruction:
@@ -24,46 +21,32 @@ import { annotate, reference } from "./parserHelpers.js";
  * @returns {AnnotatedCode}
  */
 export default function optimize(code, options = {}) {
-  const { parent } = options;
   const enableCaching = options.enableCaching ?? true;
   const globals = options.globals ?? jsGlobals;
   const mode = options.mode ?? "shell";
   const cache = options.cache ?? {};
   const locals = options.locals ?? {};
 
-  const parentScope = parent && scope(parent);
-
   const externalScope =
     mode === "shell"
       ? // External scope is parent scope + globals
-        merge(globals, parentScope)
-      : null;
+        annotate(
+          [ops.merge, globals, annotate([ops.scope], code.location)],
+          code.location
+        )
+      : annotate([ops.scope], code.location);
 
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
   const key = args[0];
   let additionalLocalNames;
+  let optimized = code;
+  let externalReference = fn instanceof Array && fn[0] === ops.scope;
   switch (fn) {
-    case ops.external:
-      // External reference found by compiler, add scope and cache
-      if (enableCaching) {
-        return annotate(
-          [
-            ops.external,
-            key,
-            annotate([parentScope, key], code.location),
-            cache,
-          ],
-          code.location
-        );
-      } else {
-        // Downgrade to regular scope reference
-        return annotate([ops.scope, key], code.location);
-      }
-
     case ops.global:
       // Replace global op with the globals
-      return annotate([globals, key], code.location);
+      optimized = annotate([globals, key], code.location);
+      break;
 
     case ops.lambda:
       const parameters = args[0];
@@ -83,68 +66,29 @@ export default function optimize(code, options = {}) {
       const entries = args;
       additionalLocalNames = entries.map(([key]) => propertyName(key));
       break;
-  }
 
-  // TODO: consolidate reference and ops.scope
-
-  // Convert references to either local references with ops.context or cached
-  // external references.
-  const isReference =
-    fn === reference || (fn instanceof Array && fn[0] === ops.scope);
-  if (isReference) {
-    const referenceKey = fn === reference ? key : args[1][1];
-    const normalizedKey = trailingSlash.remove(referenceKey);
-    if (
-      mode === "shell" &&
-      enableCaching &&
-      locals[normalizedKey] === undefined
-    ) {
-      // Upgrade to cached external scope reference
-      return annotate(
-        [ops.cache, cache, key, annotate([externalScope, key], code.location)],
-        code.location
-      );
-    } else if (locals[normalizedKey] !== undefined) {
-      // Transform local reference
-      const localIndex = locals[normalizedKey];
-      const contextCode = [ops.context];
-      if (localIndex > 0) {
-        contextCode.push(localIndex);
-      }
-      const context = annotate(contextCode, code.location);
-      return annotate([context, key], code.location);
-    } else if (fn === reference) {
-      // Transform reference reference to regular scope call
-      return annotate([ops.scope, key], code.location);
-    } else if (mode === "jse") {
-      // Transform scope reference to globals in jse mode
-      return annotate([globals, key], code.location);
-    } else {
-      // Shell mode use of external scope
-      return annotate([externalScope, key], code.location);
-    }
-
-    // In shell mode, is the first argument a nonscope/reference reference?
-    const isScopeRef = args[0]?.[0] === ops.scope || args[0]?.[0] === reference;
-    if (mode === "shell" && enableCaching && isScopeRef) {
-      // Is the first argument a nonlocal reference?
-      const normalizedKey = trailingSlash.remove(args[0][1]);
-      const nonLocal = locals[normalizedKey] === undefined;
-      if (nonLocal) {
-        // Are the remaining arguments all literals?
-        const allLiterals = args
-          .slice(1)
-          .every((arg) => arg[0] === ops.literal);
-        if (allLiterals) {
-          // Convert to ops.external
-          const keys = args.map((arg) => arg[1]);
-          const path = pathFromKeys(keys);
-          /** @type {Code} */
-          const optimized = [ops.external, path, code, cache];
-          return annotate(optimized, code.location);
+    case reference:
+      // Determine whether reference is local and, if so, transform to
+      // ops.local call. Otherwise transform to ops.scope call.
+      const normalizedKey = trailingSlash.remove(key[1]);
+      let target;
+      if (locals[normalizedKey] !== undefined) {
+        // Transform local reference
+        const localIndex = locals[normalizedKey];
+        const contextCode = [ops.context];
+        if (localIndex > 0) {
+          contextCode.push(localIndex);
         }
+        target = annotate(contextCode, code.location);
+      } else if (mode === "shell") {
+        // Transform non-local reference
+        target = externalScope;
+        externalReference = true;
+      } else if (mode === "jse") {
+        target = globals;
       }
-    }
+      optimized = annotate([target, ...args], code.location);
+      break;
   }
 
   // Add any locals introduced by this code to the list that will be consulted
@@ -164,32 +108,50 @@ export default function optimize(code, options = {}) {
   }
 
   // Optimize children
-  const optimized = code.map((child, index) => {
-    // Don't optimize lambda parameter names
-    if (fn === ops.lambda && index === 1) {
-      return child;
-    } else if (Array.isArray(child) && "location" in child) {
-      // Review: This currently descends into arrays that are not instructions,
-      // such as the entries of an ops.object. This should be harmless, but it'd
-      // be preferable to only descend into instructions. This would require
-      // surrounding ops.object entries with ops.array.
-      return optimize(/** @type {AnnotatedCode} */ (child), {
-        ...options,
-        locals: updatedLocals,
-      });
-    } else {
-      return child;
+  optimized = annotate(
+    optimized.map((child, index) => {
+      // Don't optimize lambda parameter names
+      if (fn === ops.lambda && index === 1) {
+        return child;
+      } else if (Array.isArray(child) && "location" in child) {
+        // Review: This currently descends into arrays that are not instructions,
+        // such as the entries of an ops.object. This should be harmless, but it'd
+        // be preferable to only descend into instructions. This would require
+        // surrounding ops.object entries with ops.array.
+        return optimize(/** @type {AnnotatedCode} */ (child), {
+          ...options,
+          locals: updatedLocals,
+        });
+      } else {
+        return child;
+      }
+    }),
+    optimized.location
+  );
+
+  // Cache external scope or merged globals + scope references
+  if (enableCaching && externalReference) {
+    // Get all the keys so we can construct a path as a cache key
+    const keys = optimized
+      .slice(1)
+      .map((arg) =>
+        typeof arg === "string"
+          ? arg
+          : arg instanceof Array && arg[0] === ops.literal
+          ? arg[1]
+          : null
+      );
+    if (keys.some((key) => key === null)) {
+      throw new Error("Internal error: scope reference with non-literal key");
     }
-  });
+    const path = pathFromKeys(keys);
+    optimized = annotate(
+      [ops.cache, cache, path, optimized],
+      optimized.location
+    );
+  }
 
   return annotate(optimized, code.location);
-}
-
-function applyMacro(macro, code, options) {
-  const optimized = optimize(macro, options);
-  return optimized instanceof Array
-    ? annotate(optimized, code.location)
-    : optimized;
 }
 
 function propertyName(key) {

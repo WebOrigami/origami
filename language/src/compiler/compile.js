@@ -4,7 +4,7 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { parent, startRule } = options;
+  const { startRule } = options;
   const mode = options.mode ?? "shell";
   const globals = options.globals ?? jsGlobals;
   const enableCaching = options.scopeCaching ?? true;
@@ -20,7 +20,6 @@ function compile(source, options) {
     enableCaching,
     globals,
     mode,
-    parent,
   });
   const fn = createExpressionFunction(optimized);
   return fn;

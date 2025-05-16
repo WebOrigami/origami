@@ -12,8 +12,8 @@ describe("expressionObject", () => {
     });
 
     const entries = [
-      ["hello", [[ops.scope, "upper"], "hello"]],
-      ["world", [[ops.scope, "upper"], "world"]],
+      ["hello", [[[ops.scope], "upper"], "hello"]],
+      ["world", [[[ops.scope], "upper"], "world"]],
     ];
 
     const object = await expressionObject(entries, scope);
@@ -40,7 +40,7 @@ describe("expressionObject", () => {
   test("can instantiate an Origami tree", async () => {
     const entries = [
       ["name", "world"],
-      ["message", [ops.concat, "Hello, ", [ops.scope, "name"], "!"]],
+      ["message", [ops.concat, "Hello, ", [[ops.scope], "name"], "!"]],
     ];
     const parent = new ObjectTree({});
     const object = await expressionObject(entries, parent);

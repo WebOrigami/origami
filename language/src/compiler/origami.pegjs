@@ -29,7 +29,7 @@ import {
   makeUnaryOperation,
   makeYamlObject,
   reference,
-  traversal
+  traverse
 } from "./parserHelpers.js";
 import isOrigamiFrontMatter from "./isOrigamiFrontMatter.js";
 
@@ -55,7 +55,9 @@ angleBracketLiteral
     return annotate([protocol, ...path], location());
     }
   / "<" __ path:angleBracketPath __ ">" {
-    return annotate([reference, ...path], location())
+    // Angle bracket paths always reference scope
+    const scope = annotate([ops.scope], location());
+    return annotate([scope, ...path], location());
   }
 
 angleBracketPath
@@ -143,7 +145,7 @@ bitwiseXorOperator
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
   = head:protocolExpression tail:arguments* {
-      return tail.reduce(makeCall, head);
+      return tail.reduce((target, args) => makeCall(target, args, options.mode), head);
     }
 
 // A comma-separated list of expressions: `x, y, z`
@@ -162,7 +164,7 @@ comment "comment"
 
 computedPropertyAccess
   = __ "[" expression:expression expectClosingBracket {
-      return annotate([traversal, expression], location());
+      return annotate([traverse, expression], location());
     }
 
 conditionalExpression
@@ -355,7 +357,7 @@ identifierChar
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
-      return args ? makeCall(head, args) : head;
+      return args ? makeCall(head, args, options.mode) : head;
     }
     
 // A separated list of values for an implicit parens call. This differs from
@@ -393,7 +395,7 @@ jsIdentifierStart "JavaScript identifier start"
 
 jsPropertyAccess
   = __ "." __ property:jsIdentifier {
-    return annotate([traversal, property], location());
+    return annotate([traverse, property], location());
   }
 
 jsReference "identifier reference"
@@ -579,7 +581,7 @@ path "slash-separated path"
 // A slash-separated path of keys that follows a call target
 pathArguments
   = path:path {
-      return annotate([traversal, ...path], location());
+      return annotate([traverse, ...path], location());
     }
 
 // A single key in a slash-separated path: `/a`
@@ -605,7 +607,7 @@ pathSegmentChar
 pipelineExpression
   = head:shorthandFunction tail:(__ singleArrow __ @shorthandFunction)* {
       return annotate(
-        tail.reduce(makePipeline, downgradeReference(head)),
+        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), downgradeReference(head)),
         location()
       );
     }
@@ -641,7 +643,7 @@ program "Origami program"
 protocolExpression
   = fn:namespace "//" host:(host / slash) path:path? {
       const keys = annotate([host, ...(path ?? [])], location());
-      return makeCall(fn, keys);
+      return makeCall(fn, keys, options.mode);
     }
   / newExpression
   / primary
@@ -649,7 +651,7 @@ protocolExpression
 // A namespace followed by a key: `foo:x`
 qualifiedReference
   = fn:namespace reference:scopeReference {
-      return makeCall(fn, [reference[1]]);
+      return makeCall(fn, [reference[1]], options.mode);
     }
 
 regexFlags

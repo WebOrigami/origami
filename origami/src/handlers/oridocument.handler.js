@@ -40,7 +40,6 @@ export default {
     const defineFn = compile.templateDocument(source, {
       globals,
       mode,
-      parent,
     });
 
     // Invoke the definition to get back the template function

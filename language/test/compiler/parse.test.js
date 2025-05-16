@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
-import { reference, traversal } from "../../src/compiler/parserHelpers.js";
+import { reference, traverse } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
@@ -24,14 +24,14 @@ describe("Origami parser", () => {
       assertParse(
         "angleBracketLiteral",
         "<index.html>",
-        [reference, [ops.literal, "index.html"]],
+        [[ops.scope], [ops.literal, "index.html"]],
         "jse"
       );
       assertParse(
         "angleBracketLiteral",
         "<foo/bar/baz>",
         [
-          reference,
+          [ops.scope],
           [ops.literal, "foo/"],
           [ops.literal, "bar/"],
           [ops.literal, "baz"],
@@ -813,7 +813,7 @@ Body`,
     assertParse("numericLiteral", "123.45", [ops.literal, 123.45]);
   });
 
-  test.skip("objectLiteral", () => {
+  test("objectLiteral", () => {
     assertParse("objectLiteral", "{}", [ops.object]);
     assertParse("objectLiteral", "{ a: 1, b }", [
       ops.object,
@@ -909,7 +909,7 @@ Body`,
         [
           "file.txt",
           [
-            reference,
+            [ops.scope],
             [ops.literal, "path/"],
             [ops.literal, "to/"],
             [ops.literal, "file.txt"],
@@ -920,17 +920,17 @@ Body`,
     );
   });
 
-  test.skip("objectEntry", () => {
+  test("objectEntry", () => {
     assertParse("objectEntry", "foo", ["foo", [ops.inherited, "foo"]]);
     assertParse("objectEntry", "x: y", ["x", [reference, [ops.literal, "y"]]]);
-    assertParse("objectEntry", "a: a", ["a", [ops.inherited, "a"]]);
+    assertParse("objectEntry", "a: a", ["a", [reference, [ops.literal, "a"]]]);
     assertParse(
       "objectEntry",
       "<path/to/file.txt>",
       [
         "file.txt",
         [
-          reference,
+          [ops.scope],
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
@@ -946,13 +946,13 @@ Body`,
       "posts/",
       [
         [ops.global, "map"],
-        [ops.inherited, "posts"],
+        [reference, [ops.literal, "posts"]],
         [reference, [ops.literal, "post.ori"]],
       ],
     ]);
   });
 
-  test.skip("objectGetter", () => {
+  test("objectGetter", () => {
     assertParse("objectGetter", "data = obj.json", [
       "data",
       [ops.getter, [reference, [ops.literal, "obj.json"]]],
@@ -1024,12 +1024,12 @@ Body`,
   });
 
   test("pathArguments", () => {
-    assertParse("pathArguments", "/", [traversal]);
-    assertParse("pathArguments", "/tree", [traversal, [ops.literal, "tree"]]);
-    assertParse("pathArguments", "/tree/", [traversal, [ops.literal, "tree/"]]);
+    assertParse("pathArguments", "/", [traverse]);
+    assertParse("pathArguments", "/tree", [traverse, [ops.literal, "tree"]]);
+    assertParse("pathArguments", "/tree/", [traverse, [ops.literal, "tree/"]]);
   });
 
-  test.skip("pipelineExpression", () => {
+  test("pipelineExpression", () => {
     assertParse("pipelineExpression", "foo", [reference, [ops.literal, "foo"]]);
     assertParse("pipelineExpression", "a -> b", [
       [ops.global, "b"],
@@ -1062,7 +1062,7 @@ Body`,
     assertParse(
       "primary",
       "<index.html>",
-      [reference, [ops.literal, "index.html"]],
+      [[ops.scope], [ops.literal, "index.html"]],
       "jse",
       false
     );
@@ -1264,7 +1264,7 @@ Body text`,
     );
   });
 
-  test.skip("templateDocument with Origami front matter", () => {
+  test("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",
       `---

@@ -154,17 +154,6 @@ describe("ops", () => {
     });
   });
 
-  test("ops.global gets a value from the top of the scope chain", async () => {
-    const root = new ObjectTree({
-      a: 1,
-    });
-    const tree = new ObjectTree({});
-    tree.parent = root;
-    const code = createCode([ops.global, "a"]);
-    const result = await evaluate.call(tree, code);
-    assert.strictEqual(result, 1);
-  });
-
   test("ops.greaterThan", () => {
     assert(ops.greaterThan(5, 3));
     assert(!ops.greaterThan(3, 3));

@@ -16,7 +16,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 /** @typedef {import("../../index.ts").Code} Code */
 
 // Marker for a continuation of a path traversal
-export const traversal = Symbol("traversal");
+export const traverse = Symbol("traverse");
 
 // Marker for a reference that may be a local, scope, or global reference
 export const reference = Symbol("reference");
@@ -71,7 +71,7 @@ export function applyMacro(code, name, macro) {
 
 /**
  * The indicated code is being used to define a property named by the given key.
- * Rewrite any [ops.scope, key] calls to be [ops.inherited, key] to avoid
+ * Rewrite any [[ops.scope], key] calls to be [ops.inherited, key] to avoid
  * infinite recursion.
  *
  * @param {AnnotatedCode} code
@@ -208,7 +208,7 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
  * @param {AnnotatedCode} target
  * @param {any[]} args
  */
-export function makeCall(target, args) {
+export function makeCall(target, args, mode) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = /** @type {any} */ (target).location;
@@ -217,7 +217,7 @@ export function makeCall(target, args) {
 
   let fnCall;
   const op = args[0];
-  if (op === traversal || op === ops.optionalTraverse) {
+  if (op === traverse || op === ops.optionalTraverse) {
     let tree = target;
 
     if (tree[0] === reference && !trailingSlash.has(tree[1][1])) {
@@ -225,10 +225,14 @@ export function makeCall(target, args) {
       tree[1][1] = trailingSlash.add(tree[1][1]);
     }
 
-    // Is the target an existing traversal that can be extended?
+    // Is the target an existing traversal that can be extended? It should be a
+    // reference or ops.global where all the args are literals.
     const extend =
-      tree[0] === reference ||
-      (tree[0] instanceof Array && tree[0][0] === ops.global);
+      (tree[0] === reference ||
+        (tree[0] instanceof Array && tree[0][0] === ops.global)) &&
+      !tree
+        .slice(1)
+        .some((arg) => !(arg instanceof Array && arg[0] === ops.literal));
     if (extend) {
       fnCall = tree;
       // If last key doesn't end with slash, add one
@@ -255,13 +259,13 @@ export function makeCall(target, args) {
     const strings = args[1];
     const values = args.slice(2);
     fnCall = makeTaggedTemplateCall(
-      upgradeReference(target),
+      upgradeReference(target, mode),
       strings,
       ...values
     );
   } else {
     // Function call with explicit or implicit parentheses
-    fnCall = [upgradeReference(target), ...args];
+    fnCall = [upgradeReference(target, mode), ...args];
   }
 
   // Create a location spanning the newly-constructed function call.
@@ -462,10 +466,11 @@ export function makeObject(entries, location) {
  *
  * @param {AnnotatedCode} arg
  * @param {AnnotatedCode} fn
+ * @param {string} mode
  */
-export function makePipeline(arg, fn) {
-  const upgraded = upgradeReference(fn);
-  const result = makeCall(upgraded, [arg]);
+export function makePipeline(arg, fn, mode) {
+  const upgraded = upgradeReference(fn, mode);
+  const result = makeCall(upgraded, [arg], mode);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
@@ -593,8 +598,9 @@ export function makeYamlObject(text, location) {
  *
  * @param {AnnotatedCode} code
  */
-export function upgradeReference(code) {
+export function upgradeReference(code, mode) {
   if (
+    mode === "shell" &&
     code.length === 2 &&
     code[0] === reference &&
     builtinRegex.exec(code[1][1])

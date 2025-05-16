@@ -13,7 +13,9 @@ export function assertCodeEqual(actual, expected) {
  * @returns {import("../../index.ts").AnnotatedCode}
  */
 export function createCode(array) {
-  const code = array;
+  const code = array.map((item) =>
+    item instanceof Array ? createCode(item) : item
+  );
   /** @type {any} */ (code).location = {
     end: 0,
     source: {

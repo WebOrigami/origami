@@ -36,7 +36,7 @@ export default {
     const compiler = options.compiler ?? compile.program;
     const globals = options.globals ?? builtinsTree;
     const mode = options.mode ?? "shell";
-    const fn = compiler(source, { globals, mode, parent });
+    const fn = compiler(source, { globals, mode });
 
     let result = await fn.call(parent);
 
