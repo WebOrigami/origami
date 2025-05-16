@@ -1,25 +1,25 @@
 import {
+  cssHandler,
+  csvHandler,
+  htmHandler,
+  htmlHandler,
+  jpegHandler,
+  jpgHandler,
+  jsedocumentHandler,
+  jseHandler,
   jsHandler,
-  oriHandler,
+  jsonHandler,
+  mdHandler,
+  mjsHandler,
   oridocumentHandler,
+  oriHandler,
+  tsHandler,
+  txtHandler,
   wasmHandler,
+  xhtmlHandler,
   yamlHandler,
+  ymlHandler,
 } from "../internal.js";
-import cssHandler from "./css.handler.js";
-import csvHandler from "./csv.handler.js";
-import htmHandler from "./htm.handler.js";
-import htmlHandler from "./html.handler.js";
-import jpegHandler from "./jpeg.handler.js";
-import jpgHandler from "./jpg.handler.js";
-import jseHandler from "./jse.handler.js";
-import jseDocumentHandler from "./jsedocument.handler.js";
-import jsonHandler from "./json.handler.js";
-import mdHandler from "./md.handler.js";
-import mjsHandler from "./mjs.handler.js";
-import tsHandler from "./ts.handler.js";
-import txtHandler from "./txt.handler.js";
-import xhtmlHandler from "./xhtml.handler.js";
-import ymlHandler from "./yml.handler.js";
 
 export default {
   "css.handler": cssHandler,
@@ -30,8 +30,7 @@ export default {
   "jpg.handler": jpgHandler,
   "js.handler": jsHandler,
   "jse.handler": jseHandler,
-  "jsep.handler": jseHandler,
-  "jsedocument.handler": jseDocumentHandler,
+  "jsedocument.handler": jsedocumentHandler,
   "json.handler": jsonHandler,
   "md.handler": mdHandler,
   "mjs.handler": mjsHandler,

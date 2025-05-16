@@ -4,7 +4,6 @@ import {
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import builtinsTree from "../builtinsTree.js";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toYaml } from "../common/serialize.js";
 
@@ -34,6 +33,7 @@ export default async function ori(
   // Compile the expression. Avoid caching scope references so that, e.g.,
   // passing a function to the `watch` builtin will always look the current
   // value of things in scope.
+  const builtinsTree = (await import("../builtinsTree.js")).default;
   const fn = compile.expression(expression, {
     globals: builtinsTree,
     mode: "shell",

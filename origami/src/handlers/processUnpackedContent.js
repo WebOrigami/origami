@@ -1,5 +1,4 @@
 import { symbols, Tree } from "@weborigami/async-tree";
-import { builtinsTree } from "../internal.js";
 
 /**
  * Perform any necessary post-processing on the unpacked content of a file. This
@@ -14,8 +13,7 @@ import { builtinsTree } from "../internal.js";
 export default function processUnpackedContent(content, parent) {
   if (typeof content === "function") {
     // Bind the function to the parent as the `this` context.
-    const target = parent ?? builtinsTree;
-    const result = content.bind(target);
+    const result = content.bind(parent);
     // Copy over any properties that were attached to the function
     Object.assign(result, content);
     return result;

@@ -1,2 +1,2 @@
 // .jpg is a synonym for .jpeg
-export { default } from "./jpeg.handler.js";
+export { jpegHandler as default } from "../internal.js";

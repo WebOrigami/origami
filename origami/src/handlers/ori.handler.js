@@ -1,7 +1,9 @@
 import { compile } from "@weborigami/language";
 import * as utilities from "../common/utilities.js";
-import { builtinsTree, processUnpackedContent } from "../internal.js";
 import getParent from "./getParent.js";
+import processUnpackedContent from "./processUnpackedContent.js";
+
+let builtins;
 
 /**
  * An Origami expression file
@@ -34,7 +36,14 @@ export default {
 
     // Compile the source code as an Origami program and evaluate it.
     const compiler = options.compiler ?? compile.program;
-    const globals = options.globals ?? builtinsTree;
+
+    let globals;
+    if (options.globals) {
+      globals = options.globals;
+    } else {
+      builtins ??= (await import("../builtinsTree.js")).default;
+      globals = builtins;
+    }
     const mode = options.mode ?? "shell";
     const fn = compiler(source, { globals, mode });
 

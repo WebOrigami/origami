@@ -1,7 +1,7 @@
 // .css files use the .txt loader
-import fileTypeText from "./txt.handler.js";
+import { txtHandler } from "../internal.js";
 
 export default {
-  ...fileTypeText,
+  ...txtHandler,
   mediaType: "text/css",
 };

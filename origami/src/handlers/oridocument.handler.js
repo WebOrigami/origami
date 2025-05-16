@@ -1,8 +1,10 @@
 import { extension, trailingSlash } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import { toString } from "../common/utilities.js";
-import { builtinsTree, processUnpackedContent } from "../internal.js";
 import getParent from "./getParent.js";
+import processUnpackedContent from "./processUnpackedContent.js";
+
+let builtins;
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -35,7 +37,15 @@ export default {
       text,
       url,
     };
-    const globals = options.globals ?? builtinsTree;
+
+    let globals;
+    if (options.globals) {
+      globals = options.globals;
+    } else {
+      builtins ??= (await import("../builtinsTree.js")).default;
+      globals = builtins;
+    }
+
     const mode = options.mode ?? "shell";
     const defineFn = compile.templateDocument(source, {
       globals,
