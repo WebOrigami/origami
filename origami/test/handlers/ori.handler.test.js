@@ -2,15 +2,12 @@ import { ObjectTree, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { oriHandler } from "../../src/internal.js";
-
-import handlers from "../../src/handlers/handlers.js";
+import { oriHandler } from "../../src/handlers/handlers.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFiles(fixturesUrl);
-fixtures.handlers = handlers;
 
-describe(".ori handler", () => {
+describe(".ori handler", async () => {
   test("loads a string expression", async () => {
     const source = `"Hello"`;
     const text = await oriHandler.unpack(source);
@@ -82,8 +79,8 @@ describe(".ori handler", () => {
   });
 
   test("loads a tree that includes a template", async () => {
-    const treeDocument = await fixtures.get("site.ori");
-    const tree = await treeDocument.unpack();
+    const source = await fixtures.get("site.ori");
+    const tree = await oriHandler.unpack(source);
     const indexHtml = await tree["index.html"];
     assert.equal(indexHtml, "Hello, world!");
   });

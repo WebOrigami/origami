@@ -1,8 +1,3 @@
-// Use a dynamic import to avoid circular dependencies
-export const builtins = import("../internal.js").then(
-  (internal) => internal.builtinsTree
-);
-
 export { extension } from "@weborigami/async-tree";
 export { toFunction } from "../common/utilities.js";
 

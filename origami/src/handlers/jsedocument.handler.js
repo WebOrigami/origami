@@ -1,17 +1,15 @@
-import { oridocumentHandler } from "../internal.js";
+import builtinsJse from "../builtinsJse.js";
 import getParent from "./getParent.js";
-
-let builtins;
+import { oridocumentHandler } from "./handlers.js";
 
 export default {
   ...oridocumentHandler,
 
   async unpack(packed, options = {}) {
     const parent = getParent(packed, options);
-    builtins ??= (await import("../builtinsNew.js")).default;
     return oridocumentHandler.unpack(packed, {
       ...options,
-      globals: builtins,
+      globals: builtinsJse(),
       mode: "jse",
       parent,
     });

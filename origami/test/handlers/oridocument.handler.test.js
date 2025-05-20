@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { oridocumentHandler } from "../../src/internal.js";
+import { oridocumentHandler } from "../../src/handlers/handlers.js";
 
 describe("Origami document handler", () => {
   test("unpacks text with Origami expressions", async () => {

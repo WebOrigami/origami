@@ -1,1 +1,1 @@
-export { jsHandler as default } from "../internal.js";
+export { jsHandler as default } from "./handlers.js";

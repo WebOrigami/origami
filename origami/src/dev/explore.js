@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { getDescriptor } from "../common/utilities.js";
-// import { builtinsTree } from "../internal.js";
+// import { builtinsTree } from "../handlers/handlers.js";
 import debug from "./debug.js";
 
 let templatePromise;

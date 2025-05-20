@@ -1,5 +1,5 @@
 // .md files use the .txt loader
-import { txtHandler } from "../internal.js";
+import { txtHandler } from "./handlers.js";
 
 export default {
   ...txtHandler,

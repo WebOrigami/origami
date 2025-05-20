@@ -3,9 +3,8 @@ import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import YAML from "yaml";
+import handlerBuiltins from "../../src/handlers/handlerBuiltins.js";
 import packageProtocol from "../../src/protocols/package.js";
-
-import handlers from "../../src/handlers/handlers.js";
 
 // Create a tree whose scope includes the monorepo's node_modules.
 const nodeModulesUrl = new URL("../../../node_modules", import.meta.url);
@@ -15,10 +14,10 @@ const tree = new ObjectTree({
 });
 nodeModulesTree.parent = tree;
 
-// Add handlers so package can unpack .js files
-tree.handlers = handlers;
-
 describe("package", () => {
+  // Add handlers so package can unpack .js files
+  tree.handlers = new ObjectTree(handlerBuiltins());
+
   test("imports a package with an organization name", async () => {
     const packageExports = await packageProtocol.call(
       tree,

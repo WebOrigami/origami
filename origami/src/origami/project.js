@@ -1,11 +1,9 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
+import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import { oriHandler } from "../internal.js";
-
-// Separate from above imports to avoid circular dependency
-import { Tree } from "@weborigami/async-tree";
-import handlers from "../handlers/handlers.js";
+import handlerBuiltins from "../handlers/handlerBuiltins.js";
+import { oriHandler } from "../handlers/handlers.js";
 
 const configFileName = "config.ori";
 
@@ -59,7 +57,7 @@ export default async function project() {
     }
   }
 
-  root.handlers = Tree.from(handlers);
+  root.handlers = Tree.from(handlerBuiltins());
 
   return root;
 }

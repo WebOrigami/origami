@@ -6,7 +6,7 @@ import {
 } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import documentObject from "../common/documentObject.js";
-import { oridocumentHandler } from "../internal.js";
+import { oridocumentHandler } from "../handlers/handlers.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input

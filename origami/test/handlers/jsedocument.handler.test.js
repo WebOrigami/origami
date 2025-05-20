@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { jsedocumentHandler } from "../../src/internal.js";
+import { jsedocumentHandler } from "../../src/handlers/handlers.js";
 
 describe("JSE document handler", () => {
   test("unpacks text with JSE expressions", async () => {

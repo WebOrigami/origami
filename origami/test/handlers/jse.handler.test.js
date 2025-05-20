@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { jseHandler } from "../../src/internal.js";
+import { jseHandler } from "../../src/handlers/handlers.js";
 
 describe("JSE handler", () => {
   test.skip("local references that don't match locally throw", async () => {
