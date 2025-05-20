@@ -55,7 +55,7 @@ describe("optimize", () => {
     assertCodeEqual(optimize(code, { globals, mode: "jse" }), expected);
   });
 
-  test("cache jse scope references", async () => {
+  test("cache jse top-level scope references", async () => {
     // Compilation of `x/y/z.js`
     const code = createCode([
       [ops.scope],
@@ -68,6 +68,19 @@ describe("optimize", () => {
       {},
       "x/y/z.js",
       [[ops.scope], "x/", "y/", "z.js"],
+    ];
+    assertCodeEqual(optimize(code, { mode: "jse" }), expected);
+  });
+
+  test("cache jse deeper scope references", async () => {
+    // Compilation of `{ property: <x> }`
+    const code = createCode([
+      ops.object,
+      ["property", [[ops.scope], [ops.literal, "x"]]],
+    ]);
+    const expected = [
+      ops.object,
+      ["property", [ops.cache, {}, "x", [[ops.scope, [ops.context, 1]], "x"]]],
     ];
     assertCodeEqual(optimize(code, { mode: "jse" }), expected);
   });

@@ -1,6 +1,5 @@
-import { Tree, isUnpackable, scope } from "@weborigami/async-tree";
+import { Tree, isUnpackable } from "@weborigami/async-tree";
 import codeFragment from "./codeFragment.js";
-import { codeSymbol, scopeSymbol, sourceSymbol } from "./symbols.js";
 
 /**
  * Evaluate the given code and return the result.
@@ -69,37 +68,37 @@ export default async function evaluate(code) {
 
   // If the result is a tree, then the default parent of the tree is the current
   // tree.
-  if (Tree.isAsyncTree(result) && !result.parent) {
-    result.parent = tree;
-  }
+  // if (Tree.isAsyncTree(result) && !result.parent) {
+  //   result.parent = tree;
+  // }
 
   // To aid debugging, add the code to the result.
-  if (Object.isExtensible(result)) {
-    try {
-      if (code.location && !result[sourceSymbol]) {
-        Object.defineProperty(result, sourceSymbol, {
-          value: codeFragment(code.location),
-          enumerable: false,
-        });
-      }
-      if (!result[codeSymbol]) {
-        Object.defineProperty(result, codeSymbol, {
-          value: code,
-          enumerable: false,
-        });
-      }
-      if (!result[scopeSymbol]) {
-        Object.defineProperty(result, scopeSymbol, {
-          get() {
-            return scope(this).trees;
-          },
-          enumerable: false,
-        });
-      }
-    } catch (/** @type {any} */ error) {
-      // Ignore errors.
-    }
-  }
+  // if (Object.isExtensible(result)) {
+  //   try {
+  //     if (code.location && !result[sourceSymbol]) {
+  //       Object.defineProperty(result, sourceSymbol, {
+  //         value: codeFragment(code.location),
+  //         enumerable: false,
+  //       });
+  //     }
+  //     if (!result[codeSymbol]) {
+  //       Object.defineProperty(result, codeSymbol, {
+  //         value: code,
+  //         enumerable: false,
+  //       });
+  //     }
+  //     if (!result[scopeSymbol]) {
+  //       Object.defineProperty(result, scopeSymbol, {
+  //         get() {
+  //           return scope(this).trees;
+  //         },
+  //         enumerable: false,
+  //       });
+  //     }
+  //   } catch (/** @type {any} */ error) {
+  //     // Ignore errors.
+  //   }
+  // }
 
   return result;
 }

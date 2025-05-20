@@ -6,12 +6,12 @@
  */
 
 import {
-    ObjectTree,
-    Tree,
-    deepText,
-    isUnpackable,
-    scope as scopeFn,
-    text as templateFunctionTree,
+  ObjectTree,
+  Tree,
+  deepText,
+  isUnpackable,
+  scope as scopeFn,
+  text as templateFunctionTree,
 } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
@@ -138,10 +138,10 @@ export async function construct(constructor, ...args) {
 export function context(n = 0) {
   let tree = this;
   for (let i = 0; i < n; i++) {
-    tree = tree?.parent;
-  }
-  if (!tree) {
-    throw new Error("Internal error: couldn't find tree ancestor.");
+    if (!tree) {
+      throw new Error("Internal error: couldn't find tree ancestor.");
+    }
+    tree = tree.parent;
   }
   return tree;
 }
@@ -459,9 +459,11 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
  * @param {AsyncTree|null} [context]
  */
 export async function scope(context) {
-  context ??= this;
+  if (context === undefined) {
+    context = this;
+  }
   if (!context) {
-    throw new Error("Tried to get the scope of a null or undefined tree.");
+    return null;
   }
   return scopeFn(context);
 }

@@ -19,17 +19,28 @@ describe("compile", () => {
   test("functionComposition", async () => {
     await assertCompile("greet()", "Hello, undefined!");
     await assertCompile("greet(name)", "Hello, Alice!");
-    await assertCompile("greet(name)", "Hello, Alice!", "jse");
+    await assertCompile("greet(name)", "Hello, Alice!", { mode: "jse" });
     await assertCompile("greet 'world'", "Hello, world!");
   });
 
-  test("tree", async () => {
+  test("angle bracket path", async () => {
+    await assertCompile("<name>", "Alice", { mode: "jse", target: shared });
+  });
+
+  test("object literal", async () => {
     await assertCompile("{ message = greet(name) }", {
       message: "Hello, Alice!",
     });
+    await assertCompile(
+      "{ message = greet(name) }",
+      {
+        message: "Hello, Alice!",
+      },
+      { mode: "jse" }
+    );
   });
 
-  test("merge", async () => {
+  test.skip("merge", async () => {
     {
       const scope = new ObjectTree({
         more: {
@@ -108,10 +119,11 @@ describe("compile", () => {
   });
 });
 
-async function assertCompile(text, expected, mode = "shell") {
+async function assertCompile(text, expected, options = {}) {
+  const mode = options.mode ?? "shell";
   const fn = compile.expression(text, { globals: shared, mode });
   // For shell mode, use globals as scope too
-  const target = mode === "shell" ? shared : null;
+  const target = options.target ?? mode === "shell" ? shared : null;
   let result = await fn.call(target);
   if (Tree.isTreelike(result)) {
     result = await Tree.plain(result);

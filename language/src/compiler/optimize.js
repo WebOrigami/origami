@@ -23,7 +23,9 @@ export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
   const mode = options.mode ?? "shell";
   const cache = options.cache ?? {};
-  const locals = options.locals ?? {};
+  const locals = options.locals ?? {
+    __depth__: 0,
+  };
 
   const externalScope =
     mode === "shell"
@@ -86,6 +88,18 @@ export default function optimize(code, options = {}) {
         target = globals;
       }
       optimized = annotate([target, ...args], code.location);
+      break;
+
+    case ops.scope:
+      const depth = locals.__depth__ ?? 0;
+      if (depth === 0) {
+        // Use scope call as is
+        optimized = code;
+      } else {
+        // Add context for appropriate depth to scope call
+        const contextCode = annotate([ops.context, depth], code.location);
+        optimized = annotate([ops.scope, contextCode], code.location);
+      }
       break;
   }
 
