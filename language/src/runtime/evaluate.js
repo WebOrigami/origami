@@ -66,12 +66,6 @@ export default async function evaluate(code) {
     throw error;
   }
 
-  // If the result is a tree, then the default parent of the tree is the current
-  // tree.
-  // if (Tree.isAsyncTree(result) && !result.parent) {
-  //   result.parent = tree;
-  // }
-
   // To aid debugging, add the code to the result.
   // if (Object.isExtensible(result)) {
   //   try {
