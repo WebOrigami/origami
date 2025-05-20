@@ -10,7 +10,7 @@ describe("JSE document handler", () => {
     });
     const text = "Hello, ${ <name> }!";
     const fn = await jsedocumentHandler.unpack(text, {
-      key: "test.ori.txt",
+      key: "test.jse.txt",
       parent,
     });
     const result = await fn();

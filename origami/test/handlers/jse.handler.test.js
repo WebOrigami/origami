@@ -4,23 +4,16 @@ import { describe, test } from "node:test";
 import { jseHandler } from "../../src/handlers/handlers.js";
 
 describe("JSE handler", () => {
-  test.skip("local references that don't match locally throw", async () => {
+  test("local a function", async () => {
     const parent = new ObjectTree({
       name: "world",
     });
-    const text = "(name) => `Hello, ${ name }!`";
+    const text = "() => `Hello, ${ <name> }!`";
     const fn = await jseHandler.unpack(text, {
-      key: "test.ori.txt",
+      key: "test.jse",
       parent,
     });
-    assert.rejects(
-      async () => {
-        await fn();
-      },
-      {
-        name: "ReferenceError",
-        message: "Not found: name",
-      }
-    );
+    const result = await fn();
+    assert.equal(result, "Hello, world!");
   });
 });
