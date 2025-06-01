@@ -77,7 +77,7 @@ export default {
       unpacked = Object.assign({}, frontData, { "@text": body });
       Object.defineProperty(unpacked, "_body", {
         configurable: true,
-        value: text,
+        value: body,
         enumerable: false, // TODO: Make enumerable
         writable: true,
       });
