@@ -4935,13 +4935,18 @@ function peg$parse(input, options) {
     if (s1 !== peg$FAILED) {
       s2 = [];
       s3 = peg$currPos;
-      s4 = peg$parse__();
-      s5 = peg$parserelationalOperator();
-      if (s5 !== peg$FAILED) {
-        s6 = peg$parse__();
-        s7 = peg$parseshiftExpression();
-        if (s7 !== peg$FAILED) {
-          s3 = [ s5, s7 ];
+      s4 = peg$parseinlineSpace();
+      if (s4 !== peg$FAILED) {
+        s5 = peg$parserelationalOperator();
+        if (s5 !== peg$FAILED) {
+          s6 = peg$parse__();
+          s7 = peg$parseshiftExpression();
+          if (s7 !== peg$FAILED) {
+            s3 = [ s5, s7 ];
+          } else {
+            peg$currPos = s3;
+            s3 = peg$FAILED;
+          }
         } else {
           peg$currPos = s3;
           s3 = peg$FAILED;
@@ -4953,13 +4958,18 @@ function peg$parse(input, options) {
       while (s3 !== peg$FAILED) {
         s2.push(s3);
         s3 = peg$currPos;
-        s4 = peg$parse__();
-        s5 = peg$parserelationalOperator();
-        if (s5 !== peg$FAILED) {
-          s6 = peg$parse__();
-          s7 = peg$parseshiftExpression();
-          if (s7 !== peg$FAILED) {
-            s3 = [ s5, s7 ];
+        s4 = peg$parseinlineSpace();
+        if (s4 !== peg$FAILED) {
+          s5 = peg$parserelationalOperator();
+          if (s5 !== peg$FAILED) {
+            s6 = peg$parse__();
+            s7 = peg$parseshiftExpression();
+            if (s7 !== peg$FAILED) {
+              s3 = [ s5, s7 ];
+            } else {
+              peg$currPos = s3;
+              s3 = peg$FAILED;
+            }
           } else {
             peg$currPos = s3;
             s3 = peg$FAILED;
@@ -5126,15 +5136,9 @@ function peg$parse(input, options) {
     }
     if (s0 === peg$FAILED) {
       s0 = peg$currPos;
-      s1 = peg$parseshellMode();
+      s1 = peg$parsewhitespaceWithNewLine();
       if (s1 !== peg$FAILED) {
-        s2 = peg$parsewhitespaceWithNewLine();
-        if (s2 !== peg$FAILED) {
-          s0 = s2;
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
-        }
+        s0 = s1;
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;
@@ -5539,7 +5543,7 @@ function peg$parse(input, options) {
     s1 = peg$parseellipsis();
     if (s1 !== peg$FAILED) {
       s2 = peg$parse__();
-      s3 = peg$parsepipelineExpression();
+      s3 = peg$parseexpectPipelineExpression();
       if (s3 !== peg$FAILED) {
         peg$savedPos = s0;
         s0 = peg$f97(s3);

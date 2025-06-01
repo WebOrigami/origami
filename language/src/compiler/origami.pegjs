@@ -669,7 +669,11 @@ regexLiteralChar
   / escapedChar
 
 relationalExpression
-  = head:shiftExpression tail:(__ @relationalOperator __ @shiftExpression)* {
+  // We disallow a newline before the relational operator to support a newline
+  // as a separator in an object literal that has an object shorthand property
+  // with an angle bracket path. Otherwise the opening angle bracket would be
+  // interpreted as a relational operator.
+  = head:shiftExpression tail:(inlineSpace @relationalOperator __ @shiftExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -694,7 +698,7 @@ scopeReference "scope reference"
 
 separator
   = __ "," __
-  / shellMode @whitespaceWithNewLine
+  / @whitespaceWithNewLine
 
 shebang
   = "#!" [^\n\r]* { return null; }
@@ -753,7 +757,7 @@ slashFollows
     }
 
 spreadElement
-  = ellipsis __ value:pipelineExpression {
+  = ellipsis __ value:expectPipelineExpression {
       return annotate([ops.spread, value], location());
     }
 
@@ -840,7 +844,7 @@ whitespace
   / newLine
   / comment
 
-// Whitespace requires in shell mode, optional in JSE mode
+// Whitespace required in shell mode, optional in JSE mode
 whitespaceShell
   = shellMode whitespace
   / jseMode __

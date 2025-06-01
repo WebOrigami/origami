@@ -728,7 +728,6 @@ Body`,
       [ops.literal, 2],
       [ops.literal, 3],
     ]);
-    assertThrows("list", "1\n2\n3", `but "\\n" found`, 0, "jse");
     assertParse("list", "'a' , 'b' , 'c'", [
       [ops.literal, "a"],
       [ops.literal, "b"],
