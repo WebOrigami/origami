@@ -33,13 +33,10 @@ export default function builtinsJse() {
 
     const Origami = new BuiltinsTree({
       ...dev,
+      image,
       ...origami,
       ...site,
       ...text,
-    });
-
-    const Image = new BuiltinsTree({
-      ...image,
     });
 
     /** @type {any} */
@@ -60,7 +57,6 @@ export default function builtinsJse() {
 
       Tree,
       Origami,
-      Image,
 
       // Handlers need to be exposed at top level
       ...handlerBuiltins(),
