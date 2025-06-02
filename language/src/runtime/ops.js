@@ -214,23 +214,6 @@ export async function homeDirectory() {
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
 
 /**
- * Search the parent's scope -- i.e., exclude the current tree -- for the given
- * key.
- *
- * @this {AsyncTree|null}
- * @param {*} key
- */
-export async function inherited(key) {
-  if (!this?.parent) {
-    return undefined;
-  }
-  const parentScope = scopeFn(this.parent);
-  const value = await parentScope.get(key);
-  return value;
-}
-addOpLabel(inherited, "«ops.inherited»");
-
-/**
  * Return a function that will invoke the given code.
  *
  * @this {AsyncTree|null}

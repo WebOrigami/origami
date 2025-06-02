@@ -799,6 +799,10 @@ Body`,
       ops.construct,
       [markers.reference, [ops.literal, "Foo"]],
     ]);
+    assertParse("newExpression", "new:Foo()", [
+      ops.construct,
+      [markers.reference, [ops.literal, "Foo"]],
+    ]);
   });
 
   test("nullishCoalescingExpression", () => {
@@ -826,7 +830,7 @@ Body`,
     assertParse("objectLiteral", "{ a: 1, b }", [
       ops.object,
       ["a", [ops.literal, 1]],
-      ["b", [ops.inherited, "b"]],
+      ["b", [markers.reference, "b"]],
     ]);
     assertParse("objectLiteral", "{ sub: { a: 1 } }", [
       ops.object,
@@ -932,7 +936,7 @@ Body`,
   });
 
   test("objectEntry", () => {
-    assertParse("objectEntry", "foo", ["foo", [ops.inherited, "foo"]]);
+    assertParse("objectEntry", "foo", ["foo", [markers.reference, "foo"]]);
     assertParse("objectEntry", "x: y", [
       "x",
       [markers.reference, [ops.literal, "y"]],

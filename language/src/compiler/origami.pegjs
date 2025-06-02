@@ -453,6 +453,10 @@ newExpression
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
+  / "new:" head:jsReference tail:parenthesesArguments {
+      const args = tail?.[0] !== undefined ? tail : [];
+      return annotate([ops.construct, head, ...args], location());
+    }
 
 newLine
   = "\n"
@@ -517,8 +521,8 @@ objectProperty "object property"
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
   = key:objectPublicKey {
-      const inherited = annotate([ops.inherited, key], location());
-      return annotate([key, inherited], location());
+      const reference = annotate([markers.reference, key], location());
+      return annotate([key, reference], location());
     }
   / jseMode path:angleBracketLiteral {
     let lastKey = path.at(-1);

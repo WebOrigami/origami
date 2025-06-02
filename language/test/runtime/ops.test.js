@@ -166,20 +166,6 @@ describe("ops", () => {
     assert(ops.greaterThanOrEqual("ab", "aa"));
   });
 
-  test("ops.inherited searches inherited scope", async () => {
-    const parent = new ObjectTree({
-      a: 1, // This is the inherited value we want
-    });
-    /** @type {any} */
-    const child = new ObjectTree({
-      a: 2, // Should be ignored
-    });
-    child.parent = parent;
-    const code = createCode([ops.inherited, "a"]);
-    const result = await evaluate.call(child, code);
-    assert.strictEqual(result, 1);
-  });
-
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
     const fn = await evaluate.call(null, code);
