@@ -125,11 +125,12 @@ export default function optimize(code, options = {}) {
         // Code that defines a property `x` that contains references to `x`
         // shouldn't find this context but look further up.
         const [key, value] = child;
+        const normalizedKey = trailingSlash.remove(key);
         let adjustedLocals = updatedLocals;
-        if (updatedLocals.hasOwnProperty(key)) {
+        if (updatedLocals.hasOwnProperty(normalizedKey)) {
           adjustedLocals = Object.create(locals);
           for (const contextLocalKey of contextLocalNames) {
-            if (contextLocalKey !== key) {
+            if (contextLocalKey !== normalizedKey) {
               adjustedLocals[contextLocalKey] = true;
             }
           }
