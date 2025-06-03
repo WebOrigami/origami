@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@weborigami/async-tree";
+import { merge } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import handlerBuiltins from "../handlers/handlerBuiltins.js";
@@ -57,7 +57,8 @@ export default async function project() {
     }
   }
 
-  root.handlers = Tree.from(handlerBuiltins());
+  // Merge config if present into handlers
+  root.handlers = merge(handlerBuiltins(), root.config);
 
   return root;
 }

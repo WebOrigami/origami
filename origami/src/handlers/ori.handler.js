@@ -1,5 +1,7 @@
+import { merge } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtinsShell from "../builtinsShell.js";
+import getConfig from "../cli/getConfig.js";
 import * as utilities from "../common/utilities.js";
 import getParent from "./getParent.js";
 import processUnpackedContent from "./processUnpackedContent.js";
@@ -36,12 +38,9 @@ export default {
     // Compile the source code as an Origami program and evaluate it.
     const compiler = options.compiler ?? compile.program;
 
-    let globals;
-    if (options.globals) {
-      globals = options.globals;
-    } else {
-      globals = builtinsShell();
-    }
+    const config = getConfig(parent);
+    const globals = merge(options.globals ?? builtinsShell(), config);
+
     const mode = options.mode ?? "shell";
     const fn = compiler(source, { globals, mode });
 
