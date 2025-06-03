@@ -25,6 +25,22 @@ describe("optimize", () => {
     await assertCompile(expression, expected, "jse");
   });
 
+  test("when defining a property, avoid recursive references", async () => {
+    const expression = `{
+      name: "Alice",
+      user: {
+        name: name
+      }
+    }`;
+    const expected = [
+      ops.object,
+      ["name", "Alice"],
+      ["user", [ops.object, ["name", [[ops.context, 1], "name"]]]],
+    ];
+    await assertCompile(expression, expected);
+    await assertCompile(expression, expected, "jse");
+  });
+
   test("cache shell non-local references to globals+scope calls", async () => {
     // Compilation of `x/y/z.js`
     const code = createCode([
