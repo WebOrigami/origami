@@ -15,6 +15,7 @@ import {
 } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
+import getHandlers from "./getHandlers.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
@@ -208,7 +209,8 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
  */
 export async function homeDirectory() {
   const tree = new OrigamiFiles(os.homedir());
-  tree.parent = this ? Tree.root(this) : null;
+  // Use the same handlers as the current tree
+  tree.handlers = getHandlers(this);
   return tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
@@ -426,11 +428,9 @@ addOpLabel(remainder, "«ops.remainder»");
  * @this {AsyncTree|null}
  */
 export async function rootDirectory() {
-  let tree = new OrigamiFiles("/");
-  // We set the builtins as the parent because logically the filesystem root is
-  // outside the project. This ignores the edge case where the project itself is
-  // the root of the filesystem and has a config file.
-  tree.parent = this ? Tree.root(this) : null;
+  const tree = new OrigamiFiles("/");
+  // Use the same handlers as the current tree
+  tree.handlers = getHandlers(this);
   return tree;
 }
 addOpLabel(rootDirectory, "«ops.rootDirectory»");

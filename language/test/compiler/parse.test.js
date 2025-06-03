@@ -40,6 +40,23 @@ describe("Origami parser", () => {
       );
     });
 
+    test("root directory", () => {
+      assertParse("angleBracketLiteral", "</>", [ops.rootDirectory]);
+      assertParse("angleBracketLiteral", "</etc/passwd>", [
+        [ops.rootDirectory],
+        [ops.literal, "etc/"],
+        [ops.literal, "passwd"],
+      ]);
+    });
+
+    test("home directory", () => {
+      assertParse("angleBracketLiteral", "<~>", [ops.homeDirectory]);
+      assertParse("angleBracketLiteral", "<~/.bash_profile>", [
+        [ops.homeDirectory],
+        [ops.literal, ".bash_profile"],
+      ]);
+    });
+
     test("with protocol URL", () => {
       assertParse("angleBracketLiteral", "<files:src/assets>", [
         [markers.global, "files:"],

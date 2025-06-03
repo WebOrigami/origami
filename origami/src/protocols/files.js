@@ -1,4 +1,4 @@
-import { OrigamiFiles } from "@weborigami/language";
+import { OrigamiFiles, getHandlers } from "@weborigami/language";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -26,5 +26,6 @@ export default async function files(...keys) {
   const resolved = path.resolve(basePath, relativePath);
 
   const result = new OrigamiFiles(resolved);
+  result.handlers = getHandlers(this);
   return result;
 }

@@ -53,21 +53,29 @@ angleBracketLiteral
   = "<" __ protocol:angleBracketProtocol "//"? path:angleBracketPath __ ">" {
     return annotate([protocol, ...path], location());
     }
+  / "<" __ "/" path:angleBracketPath __ ">" {
+      const root = annotate([ops.rootDirectory], location());
+      return path.length > 0 ? annotate([root, ...path], location()) : root;
+    }
+  / "<" __ "~" "/"? path:angleBracketPath __ ">" {
+      const home = annotate([ops.homeDirectory], location());
+      return path.length > 0 ? annotate([home, ...path], location()) : home;
+    }
   / "<" __ path:angleBracketPath __ ">" {
-    // Angle bracket paths always reference scope
-    const scope = annotate([ops.scope], location());
-    return annotate([scope, ...path], location());
-  }
+      // Angle bracket paths always reference scope
+      const scope = annotate([ops.scope], location());
+      return annotate([scope, ...path], location());
+    }
 
 angleBracketPath
   = @angleBracketPathKey|0.., "/"| "/"?
 
 angleBracketPathKey
   = chars:angleBracketPathChar+ slashFollows:slashFollows? {
-    // Append a trailing slash if one follows (but don't consume it)
-    const key = chars.join("") + (slashFollows ? "/" : "");
-    return annotate([ops.literal, key], location());
-  }
+      // Append a trailing slash if one follows (but don't consume it)
+      const key = chars.join("") + (slashFollows ? "/" : "");
+      return annotate([ops.literal, key], location());
+    }
 
 // A single character in a slash-separated path segment
 angleBracketPathChar
@@ -841,7 +849,8 @@ unaryOperator
   // Don't match a front matter delimiter. For some reason, the negative
   // lookahead !"--\n" doesn't work.
   / @"-" !"-\n"
-  / "~"
+  // Don't match a path that starts with a tilde: ~/foo
+  / @"~" !"/"
 
 whitespace
   = inlineSpace
