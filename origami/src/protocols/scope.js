@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import { ops } from "@weborigami/language";
+import { Tree, scope as scopeFn } from "@weborigami/async-tree";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
@@ -12,7 +11,8 @@ export default async function scope(...keys) {
   let value;
   try {
     // Look up key in scope but don't throw if it's undefined
-    value = await ops.scope.call(this, key);
+    const thisScope = scopeFn(this);
+    value = await thisScope.get(key);
   } catch (error) {
     if (error instanceof ReferenceError) {
       value = undefined;
