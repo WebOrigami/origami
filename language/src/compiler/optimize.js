@@ -23,7 +23,11 @@ export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
   const mode = options.mode ?? "shell";
   const cache = options.cache ?? {};
-  const locals = options.locals ?? {};
+
+  // The locals is an array, one item for each function or object context that
+  // has been entered. The array grows to the right. The array items are
+  // subarrays containing the names of local variables defined in that context.
+  const locals = options.locals ? options.locals.slice() : [];
 
   const externalScope =
     mode === "shell"
@@ -36,21 +40,20 @@ export default function optimize(code, options = {}) {
 
   // See if we can optimize this level of the code
   const [fn, ...args] = code;
-  const key = args[0];
-  let contextLocalNames;
   let optimized = code;
   let externalReference = fn instanceof Array && fn[0] === ops.scope;
   let depth;
   switch (fn) {
     case markers.global:
       // Replace global op with the globals
-      optimized = annotate([globals, key], code.location);
+      optimized = annotate([globals, args[0]], code.location);
       break;
 
     case ops.lambda:
       const parameters = args[0];
       if (parameters.length > 0) {
-        contextLocalNames = parameters.map((param) => param[1]);
+        const names = parameters.map((param) => param[1]);
+        locals.push(names);
       }
       break;
 
@@ -63,13 +66,18 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      contextLocalNames = entries.map(([key]) => propertyName(key));
+      const keys = entries.map(([key]) => propertyName(key));
+      locals.push(keys);
       break;
 
     case markers.reference:
       // Determine whether reference is local and, if so, transform to
       // ops.local call. Otherwise transform to ops.scope call.
-      const normalizedKey = trailingSlash.remove(key[1]);
+      let key = args[0];
+      if (key instanceof Array && key[0] === ops.literal) {
+        key = key[1];
+      }
+      const normalizedKey = trailingSlash.remove(key);
       let target;
       depth = getLocalReferenceDepth(locals, normalizedKey);
       if (depth >= 0) {
@@ -90,7 +98,7 @@ export default function optimize(code, options = {}) {
       break;
 
     case ops.scope:
-      depth = getLocalsDepth(locals);
+      depth = locals.length;
       if (depth === 0) {
         // Use scope call as is
         optimized = code;
@@ -100,19 +108,6 @@ export default function optimize(code, options = {}) {
         optimized = annotate([ops.scope, contextCode], code.location);
       }
       break;
-  }
-
-  // Add any locals introduced by this code to the list that will be consulted
-  // when we descend into child nodes.
-  let updatedLocals;
-  if (contextLocalNames === undefined) {
-    updatedLocals = locals;
-  } else {
-    // This context introduces new locals
-    updatedLocals = Object.create(locals);
-    for (const key of contextLocalNames) {
-      updatedLocals[key] = true;
-    }
   }
 
   // Optimize children
@@ -126,14 +121,15 @@ export default function optimize(code, options = {}) {
         // shouldn't find this context but look further up.
         const [key, value] = child;
         const normalizedKey = trailingSlash.remove(key);
-        let adjustedLocals = updatedLocals;
-        if (updatedLocals.hasOwnProperty(normalizedKey)) {
-          adjustedLocals = Object.create(locals);
-          for (const contextLocalKey of contextLocalNames) {
-            if (contextLocalKey !== normalizedKey) {
-              adjustedLocals[contextLocalKey] = true;
-            }
-          }
+        let adjustedLocals;
+        if (locals.at(-1)?.includes(normalizedKey)) {
+          adjustedLocals = locals.slice();
+          // Remove the key from the current context's locals
+          adjustedLocals[adjustedLocals.length - 1] = locals
+            .at(-1)
+            .filter((name) => name !== normalizedKey);
+        } else {
+          adjustedLocals = locals;
         }
         return [
           key,
@@ -147,7 +143,7 @@ export default function optimize(code, options = {}) {
         // does this descend into?
         return optimize(/** @type {AnnotatedCode} */ (child), {
           ...options,
-          locals: updatedLocals,
+          locals,
         });
       } else {
         return child;
@@ -183,32 +179,11 @@ export default function optimize(code, options = {}) {
 
 // Determine how many contexts up we need to go for a local
 function getLocalReferenceDepth(locals, key) {
-  let depth = 0;
-  let current = locals;
-  while (current) {
-    if (current.hasOwnProperty(key)) {
-      // Found the local variable
-      return depth;
-    }
-    depth++;
-    current = Object.getPrototypeOf(current);
+  const contextIndex = locals.findLastIndex((names) => names.includes(key));
+  if (contextIndex < 0) {
+    return -1; // Not a local reference
   }
-  return -1;
-}
-
-// Determine how many contexts deep this locals object is
-function getLocalsDepth(locals) {
-  let depth = 0;
-  let current = locals;
-  while (current) {
-    const proto = Object.getPrototypeOf(current);
-    if (proto === null || proto === Object.prototype) {
-      // Reached the end of the prototype chain
-      break;
-    }
-    depth++;
-    current = proto;
-  }
+  const depth = locals.length - contextIndex - 1;
   return depth;
 }
 
