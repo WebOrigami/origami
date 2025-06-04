@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { getDescriptor } from "../common/utilities.js";
-// import { builtinsTree } from "../handlers/handlers.js";
+import oriHandler from "../handlers/ori.handler.js";
 import debug from "./debug.js";
 
 let templatePromise;
@@ -44,7 +44,7 @@ export default async function explore(...keys) {
     const data = await getScopeData(scope(tree));
     templatePromise ??= loadTemplate();
     const template = await templatePromise;
-    const text = await template(data);
+    const text = await template.call(this, data);
 
     result = new String(text);
     result.unpack = () => debug.call(tree, tree);
@@ -57,10 +57,6 @@ async function getScopeData(scope) {
   const trees = scope.trees ?? [scope];
   const data = [];
   for (const tree of trees) {
-    if (tree.parent === undefined) {
-      // Skip builtins.
-      continue;
-    }
     const name = getDescriptor(tree);
     const treeKeys = Array.from(await tree.keys());
     // Skip system-ish files that start with a period.
@@ -73,8 +69,7 @@ async function getScopeData(scope) {
 async function loadTemplate() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
   const folder = new OrigamiFiles(folderPath);
-  folder.parent = builtinsTree;
   const templateFile = await folder.get("explore.ori");
-  const template = await templateFile.unpack();
+  const template = await oriHandler.unpack(templateFile, { parent: folder });
   return template;
 }
