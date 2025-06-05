@@ -158,7 +158,7 @@ export default function optimize(code, options = {}) {
     const keys = optimized
       .slice(1)
       .map((arg) =>
-        typeof arg === "string"
+        typeof arg === "string" || typeof arg === "number"
           ? arg
           : arg instanceof Array && arg[0] === ops.literal
           ? arg[1]
