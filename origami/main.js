@@ -1,6 +1,7 @@
 export { default as documentObject } from "./src/common/documentObject.js";
 export { toString } from "./src/common/utilities.js";
 export * from "./src/dev/dev.js";
+export { default as handlerBuiltins } from "./src/handlers/handlerBuiltins.js";
 export * from "./src/handlers/handlers.js";
 export * from "./src/image/image.js";
 export * from "./src/origami/origami.js";
