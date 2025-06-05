@@ -26,8 +26,6 @@ import {
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-const treeModule = this;
-
 /**
  * Apply the key/values pairs from the source tree to the target tree.
  *
@@ -416,7 +414,7 @@ export async function traverseOrThrow(treelike, ...keys) {
 
   // If traversal operation was called with a `this` context, use that as the
   // target for function calls.
-  const target = this === treeModule ? undefined : this;
+  const target = this;
 
   // Process all the keys.
   const remainingKeys = keys.slice();

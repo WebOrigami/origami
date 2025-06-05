@@ -51,7 +51,7 @@ export default async function evaluate(code) {
     result =
       fn instanceof Function
         ? await fn.call(tree, ...args) // Invoke the function
-        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
+        : await Tree.traverseOrThrow.call(tree, fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.
