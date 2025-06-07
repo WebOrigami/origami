@@ -71,40 +71,6 @@ export function applyMacro(code, name, macro) {
 }
 
 /**
- * The indicated code is being used to define a property named by the given key.
- * Rewrite any [[ops.scope], key] calls to be [ops.inherited, key] to avoid
- * infinite recursion.
- *
- * @param {AnnotatedCode} code
- * @param {string} key
- */
-function avoidRecursivePropertyCalls(code, key) {
-  if (!(code instanceof Array)) {
-    return code;
-  }
-  /** @type {Code} */
-  let modified;
-  if (
-    code[0] instanceof Array &&
-    code[0][0] === ops.scope &&
-    trailingSlash.remove(code[1][1]) === trailingSlash.remove(key)
-  ) {
-    // Rewrite to avoid recursion
-    modified = [ops.inherited, code[1][1]];
-  } else if (
-    code[0] === ops.lambda &&
-    code[1].some((param) => param[1] === key)
-  ) {
-    // Lambda that defines the key; don't rewrite
-    return code;
-  } else {
-    // Process any nested code
-    modified = code.map((value) => avoidRecursivePropertyCalls(value, key));
-  }
-  return annotate(modified, code.location);
-}
-
-/**
  * Downgrade a potential global reference to a reference.
  *
  * @param {AnnotatedCode} code
@@ -476,12 +442,6 @@ export function makePipeline(arg, fn, mode) {
   let start = arg.location.start;
   let end = fn.location.end;
   return annotate(result, { start, source, end });
-}
-
-// Define a property on an object.
-export function makeProperty(key, value) {
-  const modified = avoidRecursivePropertyCalls(value, key);
-  return [key, modified];
 }
 
 /**

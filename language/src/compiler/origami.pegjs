@@ -24,7 +24,6 @@ import {
   makeJsPropertyAccess,
   makeObject,
   makePipeline,
-  makeProperty,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
@@ -507,10 +506,8 @@ objectEntry
 // A getter definition inside an object literal: `foo = 1`
 objectGetter "object getter"
   = key:objectKey __ "=" __ pipeline:expectPipelineExpression {
-      return annotate(
-        makeProperty(key, annotate([ops.getter, pipeline], location())),
-        location()
-      );
+      const getter = annotate([ops.getter, pipeline], location());
+      return annotate([key, getter], location());
     }
 
 objectHiddenKey
@@ -523,7 +520,7 @@ objectKey "object key"
 // A property definition in an object literal: `x: 1`
 objectProperty "object property"
   = key:objectKey __ ":" __ pipeline:expectPipelineExpression {
-      return annotate(makeProperty(key, pipeline), location());
+      return annotate([key, pipeline], location());
     }
 
 // A shorthand reference inside an object literal: `foo`

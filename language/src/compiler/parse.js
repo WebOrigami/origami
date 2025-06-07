@@ -29,7 +29,6 @@ import {
   makeJsPropertyAccess,
   makeObject,
   makePipeline,
-  makeProperty,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
@@ -624,14 +623,12 @@ function peg$parse(input, options) {
       return annotate(entries, location());
     };
   var peg$f69 = function(key, pipeline) {
-      return annotate(
-        makeProperty(key, annotate([ops.getter, pipeline], location())),
-        location()
-      );
+      const getter = annotate([ops.getter, pipeline], location());
+      return annotate([key, getter], location());
     };
   var peg$f70 = function(hiddenKey) { return hiddenKey.join(""); };
   var peg$f71 = function(key, pipeline) {
-      return annotate(makeProperty(key, pipeline), location());
+      return annotate([key, pipeline], location());
     };
   var peg$f72 = function(key) {
       const reference = annotate([markers.reference, key], location());
