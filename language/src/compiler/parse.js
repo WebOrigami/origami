@@ -3979,13 +3979,11 @@ function peg$parse(input, options) {
       s3 = peg$parsejsReference();
       if (s3 !== peg$FAILED) {
         s4 = peg$parseparenthesesArguments();
-        if (s4 !== peg$FAILED) {
-          peg$savedPos = s0;
-          s0 = peg$f64(s3, s4);
-        } else {
-          peg$currPos = s0;
-          s0 = peg$FAILED;
+        if (s4 === peg$FAILED) {
+          s4 = null;
         }
+        peg$savedPos = s0;
+        s0 = peg$f64(s3, s4);
       } else {
         peg$currPos = s0;
         s0 = peg$FAILED;
