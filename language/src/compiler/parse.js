@@ -756,8 +756,7 @@ function peg$parse(input, options) {
       return annotate([ops.lambda, lambdaParameters, body], location());
     };
   var peg$f106 = function(head, tail) {
-      const op = options.mode === "jse" ? ops.templateStandard : ops.templateTree;
-      return makeTemplate(op, head, tail, location());
+      return makeTemplate(ops.templateTree, head, tail, location());
     };
   var peg$f107 = function(chars) {
       return annotate([ops.literal, chars.join("")], location());

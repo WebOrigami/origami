@@ -21,7 +21,6 @@ import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import { codeSymbol } from "./symbols.js";
 import templateFunctionIndent from "./templateIndent.js";
-import templateFunctionStandard from "./templateStandard.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -495,14 +494,6 @@ export async function templateIndent(strings, ...values) {
   return templateFunctionIndent(strings, ...values);
 }
 addOpLabel(templateIndent, "«ops.templateIndent»");
-
-/**
- * Apply the default tagged template function.
- */
-export function templateStandard(strings, ...values) {
-  return templateFunctionStandard(strings, ...values);
-}
-addOpLabel(templateStandard, "«ops.templateStandard»");
 
 /**
  * Apply the tree tagged template function.

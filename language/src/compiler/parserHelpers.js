@@ -221,7 +221,7 @@ export function makeCall(target, args, mode) {
     } else {
       fnCall = tree;
     }
-  } else if (op === ops.templateStandard || op === ops.templateTree) {
+  } else if (op === ops.templateTree) {
     // Tagged template
     const strings = args[1];
     const values = args.slice(2);
