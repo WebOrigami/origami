@@ -1,12 +1,7 @@
-import {
-  isUnpackable,
-  ObjectTree,
-  symbols,
-  toString,
-} from "@weborigami/async-tree";
+import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import documentObject from "../common/documentObject.js";
-import { oridocumentHandler } from "../handlers/handlers.js";
+import { jsedocumentHandler } from "../handlers/handlers.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input
@@ -25,8 +20,11 @@ export default async function inline(input) {
   if (isUnpackable(input)) {
     input = await input.unpack();
   }
-  const inputIsDocument = input["@text"] !== undefined;
-  const origami = inputIsDocument ? input["@text"] : toString(input);
+  const inputIsDocument =
+    input["@text"] !== undefined || input._body !== undefined;
+  const origami = inputIsDocument
+    ? input["@text"] ?? input._body
+    : toString(input);
   if (origami === null) {
     return undefined;
   }
@@ -36,15 +34,22 @@ export default async function inline(input) {
     /** @type {any} */ (input)[symbols.parent] ??
     this;
 
-  let extendedParent = parent;
+  let front;
   if (inputIsDocument) {
-    extendedParent = new ObjectTree(input);
-    extendedParent.parent = parent;
+    // Collect all document properties except the body
+    front = Object.fromEntries(
+      Object.entries(input).filter(
+        ([key]) => key !== "@text" && key !== "_body"
+      )
+    );
+  } else {
+    front = null;
   }
 
   // @ts-ignore
-  let result = await oridocumentHandler.unpack(input, {
-    parent: extendedParent,
+  let result = await jsedocumentHandler.unpack(origami, {
+    front,
+    parent,
   });
 
   if (result instanceof Function) {

@@ -800,6 +800,9 @@ templateDocument "template document"
       return makeDocument(options.mode, front, body, location());
     }
   / body:templateBody {
+      if (options.front) {
+        return makeDocument(options.mode, options.front, body, location());
+      }
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
         location()

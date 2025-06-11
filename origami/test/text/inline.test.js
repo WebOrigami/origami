@@ -22,21 +22,21 @@ Hello, \${ name }!`;
     /** @type {any} */
     const inlined = await inline.call(null, text);
     assert.deepEqual(inlined, {
-      "@text": `Hello, Bob!`,
       name: "Bob",
+      _body: `Hello, Bob!`,
     });
   });
 
   test("document reference its own properties", async () => {
     const document = {
       name: "Carol",
-      "@text": `Hello, \${ name }!`,
+      _body: `Hello, \${ name }!`,
     };
     /** @type {any} */
     const inlined = await inline.call(null, document);
     assert.deepEqual(inlined, {
       name: "Carol",
-      "@text": `Hello, Carol!`,
+      _body: `Hello, Carol!`,
     });
   });
 });

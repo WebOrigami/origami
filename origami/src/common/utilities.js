@@ -94,8 +94,8 @@ export function toFunction(obj) {
  * @returns {string|null}
  */
 export function toString(object) {
-  if (isPlainObject(object) && "@text" in object) {
-    object = object["@text"];
+  if (isPlainObject(object) && ("@text" in object || "_body" in object)) {
+    object = object["@text"] ?? object._body;
   }
   return asyncTreeToString(object);
 }

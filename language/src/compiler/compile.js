@@ -4,14 +4,15 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { startRule } = options;
+  const { front, startRule } = options;
   const mode = options.mode ?? "shell";
   const globals = options.globals ?? jsGlobals;
   const enableCaching = options.scopeCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }
-  const code = parse(source.text, {
+  let code = parse(source.text, {
+    front,
     grammarSource: source,
     mode,
     startRule,

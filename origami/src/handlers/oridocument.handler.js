@@ -44,10 +44,10 @@ export default {
       globals = builtinsShell();
     }
 
-    const mode = options.mode ?? "shell";
     const defineFn = compile.templateDocument(source, {
+      front: options.front,
       globals,
-      mode,
+      mode: options.mode ?? "shell",
     });
 
     // Invoke the definition to get back the template function
