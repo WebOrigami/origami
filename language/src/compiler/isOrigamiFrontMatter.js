@@ -3,14 +3,15 @@
  *
  * Our heurstic is to see skip any initial alphanumeric or underscore
  * characters, then see if the next character is a parenthesis, dot, slash,
- * curly brace, or equals sign. If so, we assume this is an Origami expression.
+ * curly brace, left angle bracket, or equals sign. If so, we assume this is an
+ * Origami expression.
  *
  * The goal is to identify Origami front matter like:
  *
  * ```
  *   fn(x)              function call
  *   index.ori()        file extension
- *   src/data.json      file path
+ *   <src/data.json>    file path
  *   // Hello           comment
  *   { a: 1 }           object literal
  * ```
@@ -22,5 +23,5 @@
  * @param {string} text
  */
 export default function isOrigamiFrontMatter(text) {
-  return /^[ \t\r\n]*[A-Za-z0-9_]*[\(\.\/\{=]/.test(text);
+  return /^[ \t\r\n]*[A-Za-z0-9_]*[\(\.\/\{<=]/.test(text);
 }
