@@ -170,7 +170,7 @@ comment "comment"
 
 computedPropertyAccess
   = __ "[" expression:expression expectClosingBracket {
-      return annotate([markers.traverse, expression], location());
+      return annotate([markers.property, expression], location());
     }
 
 conditionalExpression
@@ -401,7 +401,7 @@ jsIdentifierStart "JavaScript identifier start"
 
 jsPropertyAccess
   = __ "." __ property:jsIdentifier {
-    return annotate([markers.traverse, property], location());
+    return annotate([markers.property, property], location());
   }
 
 jsReference "identifier reference"

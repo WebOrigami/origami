@@ -18,8 +18,9 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 // Markers in compiled output, will get optimized away
 export const markers = {
   global: Symbol("global"), // Global reference
-  traverse: Symbol("traverse"), // Continuation of path traversal
+  property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
+  traverse: Symbol("traverse"), // Continuation of path traversal
 };
 
 const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
@@ -221,6 +222,10 @@ export function makeCall(target, args, mode) {
     } else {
       fnCall = tree;
     }
+  } else if (op === markers.property) {
+    // Property access
+    const property = args[1];
+    fnCall = [target, property];
   } else if (op === ops.templateTree) {
     // Tagged template
     const strings = args[1];

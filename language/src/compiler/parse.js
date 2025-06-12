@@ -465,7 +465,7 @@ function peg$parse(input, options) {
         : annotate([ops.comma, ...list], location());
     };
   var peg$f18 = function(expression) {
-      return annotate([markers.traverse, expression], location());
+      return annotate([markers.property, expression], location());
     };
   var peg$f19 = function(condition, tail) {
       if (!tail) {
@@ -569,7 +569,7 @@ function peg$parse(input, options) {
   var peg$f54 = function(char) { return char.match(/[$_\p{ID_Continue}]/u) };
   var peg$f55 = function(char) { return char.match(/[$_\p{ID_Start}]/u) };
   var peg$f56 = function(property) {
-    return annotate([markers.traverse, property], location());
+    return annotate([markers.property, property], location());
   };
   var peg$f57 = function(id) {
       return annotate([markers.reference, id], location());

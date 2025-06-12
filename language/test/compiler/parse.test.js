@@ -318,25 +318,27 @@ describe("Origami parser", () => {
 
   test("callExpression using property acccess", () => {
     assertParse("callExpression", "(foo).bar", [
-      markers.reference,
-      [ops.literal, "foo/"],
+      [markers.reference, [ops.literal, "foo"]],
       [ops.literal, "bar"],
     ]);
     assertParse("callExpression", "(foo).bar.baz", [
-      markers.reference,
-      [ops.literal, "foo/"],
-      [ops.literal, "bar/"],
+      [
+        [markers.reference, [ops.literal, "foo"]],
+        [ops.literal, "bar"],
+      ],
       [ops.literal, "baz"],
     ]);
     assertParse("callExpression", "foo[bar]", [
-      markers.reference,
-      [ops.literal, "foo/"],
+      [markers.reference, [ops.literal, "foo"]],
       [markers.reference, [ops.literal, "bar"]],
     ]);
     assertParse(
       "callExpression",
       "Tree.map",
-      [markers.reference, [ops.literal, "Tree/"], [ops.literal, "map"]],
+      [
+        [markers.reference, [ops.literal, "Tree"]],
+        [ops.literal, "map"],
+      ],
       "jse"
     );
   });
