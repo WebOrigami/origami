@@ -1,4 +1,4 @@
-import { handleExtension } from "@weborigami/language";
+import { getHandlers, handleExtension } from "@weborigami/language";
 
 /**
  * Fetch the resource at the given href.
@@ -19,7 +19,8 @@ export default async function fetchAndHandleExtension(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (this && filename) {
-    buffer = await handleExtension(this, buffer, filename);
+    const handlers = getHandlers(this);
+    buffer = await handleExtension(this, buffer, filename, handlers);
   }
 
   return buffer;
