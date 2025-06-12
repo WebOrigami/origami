@@ -21,7 +21,7 @@ export default async function documentObject(input, data) {
   }
 
   if (isPlainObject(input)) {
-    text = input["@text"];
+    text = input["@text"] ?? input._body;
     inputData = input;
   } else {
     text = toString(input);
