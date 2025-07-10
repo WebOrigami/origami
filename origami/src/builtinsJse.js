@@ -42,6 +42,7 @@ export default function builtinsJse() {
     /** @type {any} */
     result = new BuiltinsTree({
       ...jsGlobals,
+      ...node,
 
       "explore:": explore,
       "files:": files,
