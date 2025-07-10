@@ -11,6 +11,13 @@ import {
   naturalOrder,
   setParent,
 } from "../utilities.js";
+import limitConcurrency from "./limitConcurrency.js";
+
+// As of July 2025, Node doesn't provide any way to limit the number of
+// concurrent calls to readFile, so we wrap readFile in a function that
+// arbitrarily limits the number of concurrent calls to it.
+const MAX_CONCURRENT_READS = 256;
+const limitReadFile = limitConcurrency(fs.readFile, MAX_CONCURRENT_READS);
 
 /**
  * A file system tree via the Node file system API.
@@ -81,7 +88,7 @@ export default class FileTree {
       value = Reflect.construct(this.constructor, [filePath]);
     } else {
       // Return file contents as a standard Uint8Array
-      const buffer = await fs.readFile(filePath);
+      const buffer = await limitReadFile(filePath);
       value = Uint8Array.from(buffer);
     }
 
