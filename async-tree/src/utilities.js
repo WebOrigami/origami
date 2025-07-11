@@ -279,17 +279,22 @@ export function setParent(child, parent) {
       child.parent = parent;
     }
   } else if (Object.isExtensible(child) && !child[symbols.parent]) {
-    // Add parent reference as a symbol to avoid polluting the object. This
-    // reference will be used if the object is later used as a tree. We set
-    // `enumerable` to false even thought this makes no practical difference
-    // (symbols are never enumerated) because it can provide a hint in the
-    // debugger that the property is for internal use.
-    Object.defineProperty(child, symbols.parent, {
-      configurable: true,
-      enumerable: false,
-      value: parent,
-      writable: true,
-    });
+    try {
+      // Add parent reference as a symbol to avoid polluting the object. This
+      // reference will be used if the object is later used as a tree. We set
+      // `enumerable` to false even thought this makes no practical difference
+      // (symbols are never enumerated) because it can provide a hint in the
+      // debugger that the property is for internal use.
+      Object.defineProperty(child, symbols.parent, {
+        configurable: true,
+        enumerable: false,
+        value: parent,
+        writable: true,
+      });
+    } catch (error) {
+      // Ignore exceptions. Some esoteric objects don't allow adding properties.
+      // We can still treat them as trees, but they won't have a parent.
+    }
   }
 }
 
