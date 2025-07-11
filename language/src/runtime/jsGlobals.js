@@ -7,6 +7,10 @@ import path from "node:path";
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects.
  * That page lists some things like `TypedArrays` which are not globals so are
  * omitted here.
+ *
+ * Also includes
+ * Fetch API
+ * URL API
  */
 export default {
   AggregateError,
@@ -25,6 +29,7 @@ export default {
   Float32Array,
   Float64Array,
   Function,
+  Headers,
   Infinity,
   Int16Array,
   Int32Array,
@@ -44,6 +49,8 @@ export default {
   ReferenceError,
   Reflect,
   RegExp,
+  Request,
+  Response,
   Set,
   SharedArrayBuffer,
   String,
