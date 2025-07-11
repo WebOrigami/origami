@@ -550,25 +550,16 @@ optionalChaining
   = __ "?." __ property:jsIdentifier {
     return annotate([ops.optionalTraverse, property], location());
   }
-  
-parameter
-  = jseMode @jsIdentifier
-  / shellMode identifier:identifier {
-      return annotate([ops.literal, identifier], location());
-    }
 
 parameterList
-  = list:parameter|1.., separator| separator? {
+  = list:jsIdentifier|1.., separator| separator? {
       return annotate(list, location());
     }
 
 // A list with a single identifier
 parameterSingleton
-  = identifier:identifier {
-      return annotate(
-        [annotate([ops.literal, identifier], location())],
-        location()
-      );
+  = identifier:jsIdentifier {
+      return annotate([identifier], location());
     }
 
 // Function arguments in parentheses
