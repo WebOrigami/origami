@@ -1114,15 +1114,10 @@ Body`,
       [ops.literal, 1],
       [ops.literal, 2],
     ]);
-    // Only in JSE
-    assertParse(
-      "primary",
-      "<index.html>",
-      [[ops.scope], [ops.literal, "index.html"]],
-      "jse",
-      false
-    );
-    assertThrows("primary", "<index.html>", `but "<" found`, 0, "shell");
+    assertParse("primary", "<index.html>", [
+      [ops.scope],
+      [ops.literal, "index.html"],
+    ]);
   });
 
   test("program", () => {

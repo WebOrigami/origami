@@ -529,7 +529,7 @@ objectShorthandProperty "object identifier"
       const reference = annotate([markers.reference, key], location());
       return annotate([key, reference], location());
     }
-  / jseMode path:angleBracketLiteral {
+  / path:angleBracketLiteral {
     let lastKey = path.at(-1);
     if (lastKey instanceof Array) {
       lastKey = lastKey[1]; // get scope identifier or literal
@@ -627,15 +627,16 @@ primary
   / objectLiteral
   / group
   / templateLiteral
+  / angleBracketLiteral
   / shellMode @primaryShell
   / jseMode @primaryJse
 
 // Primary allowed in JSE mode
 primaryJse
-  = angleBracketLiteral
-  / jsReference
+  = jsReference
   / regexLiteral
 
+// Primary allowed in shell mode
 primaryShell
   = rootDirectory
   / homeDirectory
