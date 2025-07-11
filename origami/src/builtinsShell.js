@@ -1,3 +1,4 @@
+import { text as treeText } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import BuiltinsTree from "./BuiltinsTree.js";
 import * as dev from "./dev/dev.js";
@@ -24,6 +25,21 @@ let result;
 
 export default function builtinsShell() {
   if (!result) {
+    const flatTree = flatten("Tree", {
+      ...tree,
+      indent: text.indent,
+      json: origami.json,
+      text: treeText,
+    });
+
+    const flatOrigami = flatten("Origami", {
+      ...dev,
+      image,
+      ...origami,
+      ...site,
+      ...text,
+    });
+
     const builtins = {
       "dev:": dev,
       "explore:": explore,
@@ -44,6 +60,9 @@ export default function builtinsShell() {
       "site:": adjustReservedWords(site),
       "text:": text,
       "tree:": tree,
+
+      ...flatTree,
+      ...flatOrigami,
 
       // Handlers need to be exposed at top level
       ...handlerBuiltins(),
@@ -78,6 +97,17 @@ function adjustReservedWords(obj) {
   for (const [key, value] of Object.entries(obj)) {
     const name = value.key ?? key;
     result[name] = value;
+  }
+  return result;
+}
+
+// Given a prefix "a" and an object with properties `x` and `y`, return an
+// object with properties `a.x` and `a.y` whose values correspond to the
+// original properties.
+function flatten(prefix, obj) {
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    result[`${prefix}.${key}`] = value;
   }
   return result;
 }
