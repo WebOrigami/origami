@@ -135,17 +135,7 @@ new:
   description: Create instances of JavaScript classes
 
 node:
-  description: Node.js classes and modules
-  collection: true
-  commands:
-    Buffer:
-      description: Node.js Buffer class
-    path:
-      description: Node.js path module
-    process:
-      description: Node.js process object
-    url:
-      description: Node.js URL module
+  description: Node.js modules
 
 origami:
   description: Perform general Origami language functions
