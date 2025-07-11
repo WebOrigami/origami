@@ -25,7 +25,7 @@ export default function limitConcurrency(fn, maxConcurrency) {
     // Join the queue
     queue.push({
       promise: resultPromise,
-      resolve: turnWithResolvers.resolve,
+      unblock: turnWithResolvers.resolve,
     });
 
     if (activeCallPool.size >= maxConcurrency) {
@@ -39,13 +39,14 @@ export default function limitConcurrency(fn, maxConcurrency) {
     return resultPromise;
   };
 
-  // If there are calls in the queue and the active pool is not full, resolve
-  // the next call in the queue and add it to the active pool.
+  // If there are calls in the queue and the active pool is not full, start
+  // the next call in the queue.
   function next() {
     if (queue.length > 0 && activeCallPool.size < maxConcurrency) {
-      const { promise, resolve } = queue.shift();
+      const { promise, unblock } = queue.shift();
       activeCallPool.add(promise);
-      resolve();
+      // Resolve the turn promise to allow the call to proceed
+      unblock();
     }
   }
 }
