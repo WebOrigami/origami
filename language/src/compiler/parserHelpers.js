@@ -18,6 +18,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 // Markers in compiled output, will get optimized away
 export const markers = {
   global: Symbol("global"), // Global reference
+  path: Symbol("path"), // Path or possibly property access and/or division
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
   traverse: Symbol("traverse"), // Continuation of path traversal
