@@ -193,6 +193,14 @@ conditionalExpression
 digits
   = @[0-9]+
 
+// A sequence of one or more identifiers separated by dots: `a.b.c`
+dotChain
+  = identifiers:jsIdentifier|1.., "."| {
+      return identifiers.length === 1
+        ? annotate([markers.reference, identifiers[0]], location())
+        : annotate([markers.dots, ...identifiers], location());
+    }
+
 doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
@@ -346,20 +354,12 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier:identifier port:(":" @integerLiteral)? slashFollows:slashFollows? {
+  = identifier:jsIdentifier port:(":" @integerLiteral)? slashFollows:slashFollows? {
     const portText = port ? `:${port[1]}` : "";
     const slashText = slashFollows ? "/" : "";
-    const hostText = identifier + portText + slashText;
+    const hostText = identifier[1] + portText + slashText;
     return annotate([ops.literal, hostText], location());
   }
-
-identifier "identifier"
-  = chars:identifierChar+ { return chars.join(""); }
-
-identifierChar
-  = [^(){}\[\]<>\?!\|\-=,/:\`"'«»\\→⇒… \t\n\r] // No unescaped whitespace or special chars
-  / @'-' !'>' // Accept a hyphen but not in a single arrow combination
-  / escapedChar
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
@@ -448,12 +448,6 @@ multiplicativeOperator
   / "/"
   / "%"
 
-// A namespace reference is a string of letters only, followed by a colon.
-namespace
-  = chars:[A-Za-z]+ ":" {
-    return annotate([markers.global, chars.join("") + ":"], location());
-  }
-
 // A new expression: `new Foo()`
 newExpression
   = "new" __ head:jsReference tail:parenthesesArguments? {
@@ -538,8 +532,8 @@ objectShorthandProperty "object identifier"
   }
 
 objectPublicKey
-  = identifier:identifier slash:"/"? {
-      return identifier + (slash ?? "");
+  = identifier:jsIdentifier slash:"/"? {
+      return identifier[1] + (slash ?? "");
     }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
@@ -619,40 +613,27 @@ primary
   / group
   / templateLiteral
   / angleBracketLiteral
-  / shellMode @primaryShell
-  / jseMode @primaryJse
-
-// Primary allowed in JSE mode
-primaryJse
-  = jsReference
   / regexLiteral
-
-// Primary allowed in shell mode
-primaryShell
-  = rootDirectory
-  / homeDirectory
-  / qualifiedReference
-  / namespace
-  / scopeReference
+  / slashChain
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
   = shebang? @expression
 
+// A protocol is a string of letters only, followed by a colon.
+protocol
+  = chars:[A-Za-z]+ ":" {
+    return annotate([markers.global, chars.join("") + ":"], location());
+  }
+
 // Protocol with double-slash path: `https://example.com/index.html`
 protocolExpression
-  = fn:namespace "//" host:(host / slash) path:path? {
+  = protocol:protocol "//" host:(host / slash) path:path? {
       const keys = annotate([host, ...(path ?? [])], location());
-      return makeCall(fn, keys, options.mode);
+      return makeCall(protocol, keys, options.mode);
     }
   / newExpression
   / primary
-
-// A namespace followed by a key: `foo:x`
-qualifiedReference
-  = fn:namespace reference:scopeReference {
-      return makeCall(fn, [reference[1]], options.mode);
-    }
 
 regexFlags
   = flags:[gimuy]* {
@@ -683,19 +664,6 @@ relationalOperator
   / "<"
   / ">="
   / ">"
-
-// The root folder: `/`
-rootDirectory
-  = &("/" !"/") {
-      return annotate([ops.rootDirectory], location());
-    }
-
-scopeReference "scope reference"
-  = identifier:identifier slashFollows:slashFollows? {
-      const id = identifier + (slashFollows ? "/" : "");
-      const idCode = annotate([ops.literal, identifier], location());
-      return annotate([markers.reference, idCode], location());
-    }
 
 separator
   = __ "," __
@@ -749,6 +717,14 @@ slash
   = slashFollows {
     return annotate([ops.literal, "/"], location());
   }
+
+// A sequence of one or more dot chains separated by slashes: `a.b/x.y`
+slashChain
+  = dotChains:dotChain|1.., "/"| {
+      return dotChains.length === 1
+        ? dotChains[0]
+        : annotate([markers.path, ...dotChains], location());
+    }
 
 // Check whether next character is a slash without consuming input
 slashFollows

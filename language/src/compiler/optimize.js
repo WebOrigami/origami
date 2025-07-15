@@ -1,4 +1,4 @@
-import { trailingSlash } from "@weborigami/async-tree";
+import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, markers } from "./parserHelpers.js";
@@ -77,8 +77,8 @@ export default function optimize(code, options = {}) {
         const isHeadVariable =
           key in globals || getLocalReferenceDepth(locals, key) >= 0;
         return isHeadVariable
-          ? divisionChain(args, globals, locals, code.location)
-          : externalPath(args, enableCaching, code.location);
+          ? divisionChain(args, globals, locals)
+          : externalPath(args, enableCaching ? cache : null);
       }
       break;
 
@@ -193,7 +193,22 @@ export default function optimize(code, options = {}) {
   return annotate(optimized, code.location);
 }
 
-function divisionChain(args, globals, locals, location) {
+function cacheResult(cache, code) {
+  const args = code.slice(1);
+  const keys = args.map((arg) =>
+    typeof arg === "string" || typeof arg === "number"
+      ? arg
+      : arg instanceof Array && arg[0] === ops.literal
+      ? arg[1]
+      : null
+  );
+  if (keys.some((key) => key === null)) {
+    throw new Error("Internal error: scope reference with non-literal key");
+  }
+  return annotate([ops.cache, cache, pathFromKeys(keys), code], code.location);
+}
+
+function divisionChain(args, globals, locals) {
   const [first, ...rest] = args;
   let result = propertyChain(first, globals, locals);
   for (const segment of rest) {
@@ -203,21 +218,16 @@ function divisionChain(args, globals, locals, location) {
   return result;
 }
 
-function externalPath(args, enableCaching, location) {
-  let lookup = ops.scope;
-  let path = "";
-  for (let i = 0; i < args.length; i++) {
-    const segments = args[i];
-    const texts = segments.map((segment) => segment[1]);
-    const key = trailingSlash.toggle(texts.join("."), i < args.length - 1);
-    path += key;
-    const location = { ...segments[0].location };
-    location.end = segments[segments.length - 1].location.end;
-    lookup = annotate([lookup, key], location);
-  }
-  return enableCaching
-    ? annotate([ops.cache, {}, path, lookup], location)
-    : lookup;
+function externalPath(args, cache) {
+  const keys = args.map((segments, index) => {
+    const key = segments.map((segment) => segment[1]).join(".");
+    return trailingSlash.toggle(key, index < args.length - 1);
+  });
+  const location = { ...args[0].location };
+  location.end = args[args.length - 1].location.end;
+  const scope = annotate([ops.scope], location);
+  const traversal = annotate([scope, ...keys], location);
+  return cache ? cacheResult(cache, traversal) : traversal;
 }
 
 // Determine how many contexts up we need to go for a local

@@ -106,14 +106,8 @@ describe.only("optimize", () => {
       // Math.PI/Math.E
       const code = createCode([
         markers.path,
-        [
-          [ops.literal, "Math"],
-          [ops.literal, "PI"],
-        ],
-        [
-          [ops.literal, "Math"],
-          [ops.literal, "E"],
-        ],
+        [markers.dots, [ops.literal, "Math"], [ops.literal, "PI"]],
+        [markers.dots, [ops.literal, "Math"], [ops.literal, "E"]],
       ]);
       const globals = { Math: { PI: 0, E: 0 } }; // values don't matter
       const actual = optimize(code, { globals });
@@ -127,11 +121,9 @@ describe.only("optimize", () => {
     test("path head is local", () => {
       // x.y, where x is local
       const code = createCode([
-        markers.path,
-        [
-          [ops.literal, "x"],
-          [ops.literal, "y"],
-        ],
+        markers.dots,
+        [ops.literal, "x"],
+        [ops.literal, "y"],
       ]);
       const locals = [["x"]];
       const actual = optimize(code, { locals });
@@ -142,14 +134,8 @@ describe.only("optimize", () => {
       // a.b/x.y where a is neither local nor global
       const code = createCode([
         markers.path,
-        [
-          [ops.literal, "a"],
-          [ops.literal, "b"],
-        ],
-        [
-          [ops.literal, "x"],
-          [ops.literal, "y"],
-        ],
+        [markers.dots, [ops.literal, "a"], [ops.literal, "b"]],
+        [markers.dots, [ops.literal, "x"], [ops.literal, "y"]],
       ]);
       const globals = {};
       const actual = optimize(code, { globals });
@@ -157,7 +143,7 @@ describe.only("optimize", () => {
         ops.cache,
         {},
         "a.b/x.y",
-        [[ops.scope, "a.b/"], "x.y"],
+        [[ops.scope], "a.b/", "x.y"],
       ]);
     });
   });
