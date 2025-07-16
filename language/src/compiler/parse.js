@@ -639,9 +639,9 @@ function peg$parse(input, options) {
     }
     return annotate([lastKey, path], location());
   };
-  var peg$f73 = function(identifier, slash) {
-      return identifier[1] + (slash ?? "");
-    };
+  var peg$f73 = function(identifiers, slash) {
+    return identifiers.map(literal => literal[1]).join(".") + (slash ?? "");
+  };
   var peg$f74 = function(string) {
       // Remove `ops.literal` from the string code
       return string[1];
@@ -4324,10 +4324,40 @@ function peg$parse(input, options) {
   }
 
   function peg$parseobjectPublicKey() {
-    var s0, s1, s2;
+    var s0, s1, s2, s3, s4;
 
     s0 = peg$currPos;
-    s1 = peg$parsejsIdentifier();
+    s1 = peg$currPos;
+    s2 = [];
+    s3 = peg$parsejsIdentifier();
+    while (s3 !== peg$FAILED) {
+      s2.push(s3);
+      s3 = peg$currPos;
+      if (input.charCodeAt(peg$currPos) === 46) {
+        s4 = peg$c15;
+        peg$currPos++;
+      } else {
+        s4 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$e22); }
+      }
+      if (s4 !== peg$FAILED) {
+        s4 = peg$parsejsIdentifier();
+        if (s4 === peg$FAILED) {
+          peg$currPos = s3;
+          s3 = peg$FAILED;
+        } else {
+          s3 = s4;
+        }
+      } else {
+        s3 = s4;
+      }
+    }
+    if (s2.length < 1) {
+      peg$currPos = s1;
+      s1 = peg$FAILED;
+    } else {
+      s1 = s2;
+    }
     if (s1 !== peg$FAILED) {
       if (input.charCodeAt(peg$currPos) === 47) {
         s2 = peg$c3;

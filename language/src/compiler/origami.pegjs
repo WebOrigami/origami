@@ -533,9 +533,9 @@ objectShorthandProperty "object identifier"
   }
 
 objectPublicKey
-  = identifier:jsIdentifier slash:"/"? {
-      return identifier[1] + (slash ?? "");
-    }
+  = identifiers:jsIdentifier|1.., "."| slash:"/"? {
+    return identifiers.map(literal => literal[1]).join(".") + (slash ?? "");
+  }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
       return string[1];

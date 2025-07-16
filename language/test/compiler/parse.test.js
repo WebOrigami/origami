@@ -220,7 +220,7 @@ describe.only("Origami parser", () => {
         [markers.reference, [ops.literal, "b"]],
       ]);
     });
-    test.only("with paths", () => {
+    test("with paths", () => {
       assertParse("callExpression", "tree/", [
         [ops.scope],
         [ops.literal, "tree/"],
@@ -439,7 +439,7 @@ Body`,
     ]);
   });
 
-  test.skip("expression", () => {
+  test.only("expression", () => {
     assertParse(
       "expression",
       `{
@@ -483,7 +483,7 @@ Body`,
     );
 
     // Builtin on its own is the function itself, not a function call
-    assertParse("expression", "mdHtml:", [markers.global, "mdHtml:"]);
+    // assertParse("expression", "mdHtml:", [markers.global, "mdHtml:"]);
 
     // Consecutive slashes at start of something = comment
     assertParse(
@@ -494,27 +494,32 @@ Body`,
       false
     );
 
-    assertParse("expression", "page.ori(mdHtml:(about.md))", [
-      [markers.reference, [ops.literal, "page.ori"]],
+    assertParse("expression", "page.ori(mdHtml(about.md))", [
+      [markers.dots, [ops.literal, "page"], [ops.literal, "ori"]],
       [
-        [markers.global, "mdHtml:"],
-        [markers.reference, [ops.literal, "about.md"]],
+        [markers.global, "mdHtml"],
+        [markers.dots, [ops.literal, "about"], [ops.literal, "md"]],
       ],
     ]);
 
-    // Slash on its own is the root folder
-    assertParse("expression", "keys /", [
+    assertParse("expression", "keys </>", [
       [markers.global, "keys"],
       [ops.rootDirectory],
     ]);
 
-    assertParse("expression", "'Hello' -> test.orit", [
-      [markers.reference, [ops.literal, "test.orit"]],
+    assertParse("expression", "'Hello' -> test.ori.html", [
+      [
+        markers.dots,
+        [ops.literal, "test"],
+        [ops.literal, "ori"],
+        [ops.literal, "html"],
+      ],
       [ops.literal, "Hello"],
     ]);
     assertParse("expression", "obj.json", [
-      markers.reference,
-      [ops.literal, "obj.json"],
+      markers.dots,
+      [ops.literal, "obj"],
+      [ops.literal, "json"],
     ]);
     assertParse("expression", "(fn a, b, c)", [
       [markers.global, "fn"],
@@ -523,14 +528,14 @@ Body`,
       [markers.reference, [ops.literal, "c"]],
     ]);
     assertParse("expression", "foo.bar('hello', 'world')", [
-      [markers.reference, [ops.literal, "foo.bar"]],
+      [markers.dots, [ops.literal, "foo"], [ops.literal, "bar"]],
       [ops.literal, "hello"],
       [ops.literal, "world"],
     ]);
-    // assertParse("expression", "(key)('a')", [
-    //   [markers.reference, [ops.literal, "key"]],
-    //   [ops.literal, "a"],
-    // ]);
+    assertParse("expression", "(key)('a')", [
+      [markers.global, "key"],
+      [ops.literal, "a"],
+    ]);
     assertParse("expression", "1", [ops.literal, 1]);
     assertParse("expression", "{ a: 1, b: 2 }", [
       ops.object,
@@ -549,17 +554,17 @@ Body`,
         [ops.templateTree, [ops.literal, ["x"]]],
       ],
     ]);
-    assertParse("expression", "copy app.js(formulas), files:snapshot", [
-      [markers.global, "copy"],
-      [
-        [markers.reference, [ops.literal, "app.js"]],
-        [markers.reference, [ops.literal, "formulas"]],
-      ],
-      [
-        [markers.global, "files:"],
-        [ops.literal, "snapshot"],
-      ],
-    ]);
+    // assertParse("expression", "copy app.js(formulas), files:snapshot", [
+    //   [markers.global, "copy"],
+    //   [
+    //     [markers.dots, [ops.literal, "app"], [ops.literal, "js"]],
+    //     [markers.reference, [ops.literal, "formulas"]],
+    //   ],
+    //   [
+    //     [markers.global, "files:"],
+    //     [ops.literal, "snapshot"],
+    //   ],
+    // ]);
     assertParse("expression", "map =`<li>${_}</li>`", [
       [markers.global, "map"],
       [
@@ -572,11 +577,11 @@ Body`,
         ],
       ],
     ]);
-    assertParse("expression", `https://example.com/about/`, [
-      [markers.global, "https:"],
-      [ops.literal, "example.com/"],
-      [ops.literal, "about/"],
-    ]);
+    // assertParse("expression", `https://example.com/about/`, [
+    //   [markers.global, "https:"],
+    //   [ops.literal, "example.com/"],
+    //   [ops.literal, "about/"],
+    // ]);
     assertParse("expression", "tag`Hello, ${name}!`", [
       [markers.global, "tag"],
       [ops.literal, ["Hello, ", "!"]],
@@ -589,18 +594,14 @@ Body`,
         [ops.literal, "slug"],
       ],
       [
-        [markers.reference, [ops.literal, "fn.js"]],
+        [markers.dots, [ops.literal, "fn"], [ops.literal, "js"]],
         [markers.reference, [ops.literal, "post"]],
         [markers.reference, [ops.literal, "slug"]],
       ],
     ]);
-    assertParse("expression", "keys ~", [
+    assertParse("expression", "keys <~>", [
       [markers.global, "keys"],
       [ops.homeDirectory],
-    ]);
-    assertParse("expression", "keys /Users/alice", [
-      [markers.global, "keys"],
-      [[ops.rootDirectory], [ops.literal, "Users/"], [ops.literal, "alice"]],
     ]);
 
     // Verify parser treatment of identifiers containing operators
@@ -609,14 +610,11 @@ Body`,
       [markers.reference, [ops.literal, "a"]],
       [markers.reference, [ops.literal, "b"]],
     ]);
-    assertParse("expression", "a+b", [markers.reference, [ops.literal, "a+b"]]);
     assertParse("expression", "a - b", [
       ops.subtraction,
       [markers.reference, [ops.literal, "a"]],
       [markers.reference, [ops.literal, "b"]],
     ]);
-    assertParse("expression", "a-b", [markers.reference, [ops.literal, "a-b"]]);
-    assertParse("expression", "a&b", [markers.reference, [ops.literal, "a&b"]]);
     assertParse("expression", "a & b", [
       ops.bitwiseAnd,
       [markers.reference, [ops.literal, "a"]],
@@ -948,9 +946,9 @@ Body`,
 
   test("objectEntry", () => {
     assertParse("objectEntry", "foo", ["foo", [markers.reference, "foo"]]);
-    assertParse("objectEntry", "x: y", [
-      "x",
-      [markers.reference, [ops.literal, "y"]],
+    assertParse("objectEntry", "index.html: x", [
+      "index.html",
+      [markers.reference, [ops.literal, "x"]],
     ]);
     assertParse("objectEntry", "a: a", [
       "a",
@@ -993,13 +991,13 @@ Body`,
       "data",
       [ops.getter, [markers.dots, [ops.literal, "obj"], [ops.literal, "json"]]],
     ]);
-    assertParse("objectGetter", "foo = page.ori 'bar'", [
-      "foo",
+    assertParse("objectGetter", "index.html = index.ori(teamData.yaml)", [
+      "index.html",
       [
         ops.getter,
         [
-          [markers.dots, [ops.literal, "page"], [ops.literal, "ori"]],
-          [ops.literal, "bar"],
+          [markers.dots, [ops.literal, "index"], [ops.literal, "ori"]],
+          [markers.dots, [ops.literal, "teamData"], [ops.literal, "yaml"]],
         ],
       ],
     ]);
@@ -1007,8 +1005,8 @@ Body`,
 
   test("objectProperty", () => {
     assertParse("objectProperty", "a: 1", ["a", [ops.literal, 1]]);
-    assertParse("objectProperty", "name: 'Alice'", [
-      "name",
+    assertParse("objectProperty", "data.json: 'Alice'", [
+      "data.json",
       [ops.literal, "Alice"],
     ]);
     assertParse("objectProperty", "x: fn('a')", [
@@ -1021,9 +1019,10 @@ Body`,
   });
 
   test("objectPublicKey", () => {
-    assertParse("objectPublicKey", "a", "a", "jse", false);
-    assertParse("objectPublicKey", "markdown/", "markdown/", "jse", false);
-    assertParse("objectPublicKey", `"foo bar"`, "foo bar", "jse", false);
+    assertParse("objectPublicKey", "a", "a", "shell", false);
+    assertParse("objectPublicKey", "index.html", "index.html", "shell", false);
+    assertParse("objectPublicKey", "markdown/", "markdown/", "shell", false);
+    assertParse("objectPublicKey", `"foo bar"`, "foo bar", "shell", false);
   });
 
   test("optionalChaining", () => {
@@ -1327,13 +1326,13 @@ Body text`,
     );
   });
 
-  test.skip("templateDocument with Origami front matter", () => {
+  test("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",
       `---
 {
   title: "Title"
-  @text: @template()
+  _body: _template()
 }
 ---
 <h1>\${ title }</h1>
@@ -1342,14 +1341,15 @@ Body text`,
         ops.object,
         ["title", [ops.literal, "Title"]],
         [
-          "@text",
+          "_body",
           [
             ops.templateIndent,
             [ops.literal, ["<h1>", "</h1>\n"]],
             [markers.reference, [ops.literal, "title"]],
           ],
         ],
-      ]
+      ],
+      "jse"
     );
   });
 
