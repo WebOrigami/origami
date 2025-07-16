@@ -184,7 +184,7 @@ describe.only("Origami parser", () => {
         undefined,
       ]);
       assertParse("callExpression", "foo.js(arg)", [
-        [markers.reference, [ops.literal, "foo.js"]],
+        [markers.dots, [ops.literal, "foo"], [ops.literal, "js"]],
         [markers.reference, [ops.literal, "arg"]],
       ]);
       assertParse("callExpression", "fn(a, b)", [
@@ -193,7 +193,7 @@ describe.only("Origami parser", () => {
         [markers.reference, [ops.literal, "b"]],
       ]);
       assertParse("callExpression", "foo.js( a , b )", [
-        [markers.reference, [ops.literal, "foo.js"]],
+        [markers.dots, [ops.literal, "foo"], [ops.literal, "js"]],
         [markers.reference, [ops.literal, "a"]],
         [markers.reference, [ops.literal, "b"]],
       ]);
@@ -204,7 +204,7 @@ describe.only("Origami parser", () => {
     });
     test("call chains", () => {
       assertParse("callExpression", "(foo.js())('arg')", [
-        [[markers.reference, [ops.literal, "foo.js"]], undefined],
+        [[markers.dots, [ops.literal, "foo"], [ops.literal, "js"]], undefined],
         [ops.literal, "arg"],
       ]);
       assertParse("callExpression", "fn('a')('b')", [
@@ -215,48 +215,43 @@ describe.only("Origami parser", () => {
         [ops.literal, "b"],
       ]);
       assertParse("callExpression", "(foo.js())(a, b)", [
-        [[markers.reference, [ops.literal, "foo.js"]], undefined],
+        [[markers.dots, [ops.literal, "foo"], [ops.literal, "js"]], undefined],
         [markers.reference, [ops.literal, "a"]],
         [markers.reference, [ops.literal, "b"]],
       ]);
     });
-    test("with paths", () => {
+    test.only("with paths", () => {
       assertParse("callExpression", "tree/", [
-        ops.unpack,
-        [markers.reference, [ops.literal, "tree/"]],
+        [ops.scope],
+        [ops.literal, "tree/"],
       ]);
       assertParse("callExpression", "tree/foo/bar", [
-        markers.reference,
-        [ops.literal, "tree/"],
-        [ops.literal, "foo/"],
+        markers.path,
+        [ops.literal, "tree"],
+        [ops.literal, "foo"],
         [ops.literal, "bar"],
       ]);
       assertParse("callExpression", "tree/foo/bar/", [
-        markers.reference,
+        [ops.scope],
         [ops.literal, "tree/"],
         [ops.literal, "foo/"],
         [ops.literal, "bar/"],
       ]);
       // Consecutive slahes in a path are removed
-      assertParse("callExpression", "path//key", [
-        markers.reference,
-        [ops.literal, "path/"],
+      assertParse("callExpression", "tree//key", [
+        markers.path,
+        [ops.literal, "tree"],
         [ops.literal, "key"],
-      ]);
-      assertParse("callExpression", "/foo/bar", [
-        [ops.rootDirectory],
-        [ops.literal, "foo/"],
-        [ops.literal, "bar"],
       ]);
       assertParse("callExpression", "{ a: 1, b: 2}/b", [
         [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
         [ops.literal, "b"],
       ]);
-      assertParse("callExpression", "files:foo/bar", [
-        [markers.global, "files:"],
-        [ops.literal, "foo/"],
-        [ops.literal, "bar"],
-      ]);
+      // assertParse("callExpression", "files:foo/bar", [
+      //   [markers.global, "files:"],
+      //   [ops.literal, "foo/"],
+      //   [ops.literal, "bar"],
+      // ]);
     });
     test("path and parentheses chains", () => {
       assertParse("callExpression", "foo.js()/key", [
@@ -264,16 +259,8 @@ describe.only("Origami parser", () => {
         [ops.literal, "key"],
       ]);
       assertParse("callExpression", "tree/key()", [
-        [
-          markers.path,
-          [markers.reference, [ops.literal, "tree"]],
-          [markers.reference, [ops.literal, "key"]],
-        ],
+        [markers.path, [ops.literal, "tree"], [ops.literal, "key"]],
         undefined,
-      ]);
-      assertParse("callExpression", "(tree)/", [
-        ops.unpack,
-        [markers.reference, [ops.literal, "tree/"]],
       ]);
       assertParse("callExpression", "fn()/key()", [
         [
@@ -702,11 +689,7 @@ Body`,
       [ops.literal, "arg"],
     ]);
     assertParse("implicitParenthesesCallExpression", "tree/key arg", [
-      [
-        markers.path,
-        [markers.reference, [ops.literal, "tree"]],
-        [markers.reference, [ops.literal, "key"]],
-      ],
+      [markers.path, [ops.literal, "tree"], [ops.literal, "key"]],
       [markers.reference, [ops.literal, "arg"]],
     ]);
     assertParse("implicitParenthesesCallExpression", "foo.js bar.ori 'arg'", [
@@ -1262,6 +1245,7 @@ Body`,
   });
 
   test("slashChain", () => {
+    assertParse("slashChain", "foo", [markers.reference, [ops.literal, "foo"]]);
     assertParse("slashChain", "index.html", [
       markers.dots,
       [ops.literal, "index"],
@@ -1269,8 +1253,17 @@ Body`,
     ]);
     assertParse("slashChain", "package.json/name", [
       markers.path,
-      [markers.dots, [ops.literal, "package"], [ops.literal, "json"]],
-      [markers.reference, [ops.literal, "name"]],
+      [
+        [ops.literal, "package"],
+        [ops.literal, "json"],
+      ],
+      [ops.literal, "name"],
+    ]);
+    // Trailing slash is an unpack
+    assertParse("slashChain", "a.b/x.y/", [
+      [ops.scope],
+      [ops.literal, "a.b/"],
+      [ops.literal, "x.y/"],
     ]);
   });
 

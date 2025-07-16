@@ -188,42 +188,9 @@ export function makeCall(target, args, mode) {
   let fnCall;
   const op = args[0];
   if (op === markers.traverse || op === ops.optionalTraverse) {
-    let tree = target;
-
-    if (tree[0] === markers.reference && !trailingSlash.has(tree[1][1])) {
-      // Target didn't parse with a trailing slash; add one
-      tree[1][1] = trailingSlash.add(tree[1][1]);
-    }
-
-    // Is the target an existing traversal that can be extended? It should be a
-    // reference or global where all the args are literals.
-    const extend =
-      (tree[0] === markers.reference ||
-        (tree[0] instanceof Array && tree[0][0] === markers.global)) &&
-      !tree
-        .slice(1)
-        .some((arg) => !(arg instanceof Array && arg[0] === ops.literal));
-    if (extend) {
-      fnCall = tree;
-      // If last key doesn't end with slash, add one
-      const last = tree.at(-1);
-      if (last instanceof Array && last[0] === ops.literal) {
-        last[1] = trailingSlash.add(last[1]);
-      }
-    } else {
-      fnCall = [tree];
-    }
-
-    if (args.length > 1) {
-      // Regular traverse
-      const keys = args.slice(1);
-      fnCall.push(...keys);
-    } else if (tree[0] !== ops.rootDirectory) {
-      // Traverse without arguments equates to unpack
-      fnCall = [ops.unpack, tree];
-    } else {
-      fnCall = tree;
-    }
+    // Traverse
+    const keys = args.slice(1);
+    fnCall = [target, ...keys];
   } else if (op === markers.property) {
     // Property access
     const property = args[1];
@@ -449,6 +416,60 @@ export function makePipeline(arg, fn, mode) {
   let start = arg.location.start;
   let end = fn.location.end;
   return annotate(result, { start, source, end });
+}
+
+/**
+ * Handle a path with one or more segments separated by slashes.
+ *
+ * @param {AnnotatedCode[]} args
+ * @param {CodeLocation} location
+ */
+export function makeSlashPath(args, location) {
+  if (args.length === 1) {
+    return args[0];
+  }
+
+  const simplified = args
+    .map((chain) =>
+      chain[0] === markers.dots
+        ? annotate(chain.slice(1), chain.location)
+        : chain[0] === markers.reference
+        ? chain[1] // literal
+        : chain
+    )
+    .filter(
+      (segment, index) =>
+        // Remove empty segments
+        segment[0] !== ops.literal ||
+        segment[1] !== "" ||
+        index === args.length - 1
+    );
+
+  if (
+    simplified.at(-1) instanceof Array &&
+    simplified.at(-1)[0] === ops.literal &&
+    simplified.at(-1)[1] === ""
+  ) {
+    // A path that ends with a trailing slash is always a traverse
+    const keys = simplified.map((segment, index) => {
+      const key =
+        segment[0] === ops.literal
+          ? segment[1]
+          : segment.map((dot) => dot[1]).join(".");
+      return annotate(
+        [ops.literal, trailingSlash.toggle(key, index < simplified.length - 1)],
+        segment.location
+      );
+    });
+    if (keys.at(-1)[1] === "") {
+      // Remove the last empty key
+      keys.pop();
+    }
+    const scope = annotate([ops.scope], location);
+    return annotate([scope, ...keys], location);
+  }
+
+  return annotate([markers.path, ...simplified], location);
 }
 
 /**

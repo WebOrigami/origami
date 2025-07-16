@@ -24,6 +24,7 @@ import {
   makeJsPropertyAccess,
   makeObject,
   makePipeline,
+  makeSlashPath,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
@@ -718,12 +719,20 @@ slash
     return annotate([ops.literal, "/"], location());
   }
 
+// One or more consecutive slashes
+slashes
+  = "/"+ {
+      return annotate([ops.literal, "/"], location());
+    }
+
 // A sequence of one or more dot chains separated by slashes: `a.b/x.y`
 slashChain
-  = dotChains:dotChain|1.., "/"| {
-      return dotChains.length === 1
-        ? dotChains[0]
-        : annotate([markers.path, ...dotChains], location());
+  = dotChains:dotChain|1.., slashes| trailingSlash:slashes? {
+      const args = dotChains;
+      if (trailingSlash) {
+        args.push(annotate([ops.literal, ""], location()));
+      }
+      return makeSlashPath(args, location());
     }
 
 // Check whether next character is a slash without consuming input
