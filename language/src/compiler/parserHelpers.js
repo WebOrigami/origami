@@ -74,19 +74,6 @@ export function applyMacro(code, name, macro) {
 }
 
 /**
- * Downgrade a potential global reference to a reference.
- *
- * @param {AnnotatedCode} code
- */
-export function downgradeReference(code) {
-  if (code && code.length === 2 && code[0] === markers.reference) {
-    return annotate([markers.reference, code[1]], code.location);
-  } else {
-    return code;
-  }
-}
-
-/**
  * Create an array
  *
  * @param {AnnotatedCode[]} entries
@@ -199,14 +186,10 @@ export function makeCall(target, args, mode) {
     // Tagged template
     const strings = args[1];
     const values = args.slice(2);
-    fnCall = makeTaggedTemplateCall(
-      upgradeReference(target, mode),
-      strings,
-      ...values
-    );
+    fnCall = makeTaggedTemplateCall(target, strings, ...values);
   } else {
     // Function call with explicit or implicit parentheses
-    fnCall = [upgradeReference(target, mode), ...args];
+    fnCall = [target, ...args];
   }
 
   // Create a location spanning the newly-constructed function call.
@@ -410,8 +393,7 @@ export function makeObject(entries, location) {
  * @param {string} mode
  */
 export function makePipeline(arg, fn, mode) {
-  const upgraded = upgradeReference(fn, mode);
-  const result = makeCall(upgraded, [arg], mode);
+  const result = makeCall(fn, [arg], mode);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
@@ -580,23 +562,4 @@ export function makeYamlObject(text, location) {
   }
 
   return parsed;
-}
-
-/**
- * Upgrade a potential builtin reference to an actual builtin reference.
- *
- * @param {AnnotatedCode} code
- */
-export function upgradeReference(code, mode) {
-  if (
-    mode === "shell" &&
-    code.length === 2 &&
-    code[0] === markers.reference &&
-    builtinRegex.exec(code[1][1])
-  ) {
-    const result = [markers.global, code[1][1]];
-    return annotate(result, code.location);
-  } else {
-    return code;
-  }
 }

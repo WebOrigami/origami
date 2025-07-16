@@ -20,7 +20,6 @@ import * as ops from "../runtime/ops.js";
 import {
   annotate,
   applyMacro,
-  downgradeReference,
   makeArray,
   makeBinaryOperation,
   makeCall,
@@ -471,9 +470,9 @@ function peg$parse(input, options) {
       const deferred = makeDeferredArguments(tail);
       return annotate([
         ops.conditional,
-        downgradeReference(condition),
-        downgradeReference(deferred[0]),
-        downgradeReference(deferred[1])
+        condition,
+        deferred[0],
+        deferred[1]
       ], location());
     };
   var peg$f20 = function(identifiers) {
@@ -540,7 +539,7 @@ function peg$parse(input, options) {
     return makeYamlObject(yaml, location());
   };
   var peg$f45 = function(expression) {
-    return annotate(downgradeReference(expression), location());
+    return annotate(expression, location());
   };
   var peg$f46 = function(chars) {
     return annotate([ops.literal, chars.join("")], location());
@@ -582,7 +581,7 @@ function peg$parse(input, options) {
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalAnd, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
           location()
         );
     };
@@ -590,7 +589,7 @@ function peg$parse(input, options) {
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalOr, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
           location()
         );
     };
@@ -610,7 +609,7 @@ function peg$parse(input, options) {
       return tail.length === 0
         ? head
         : annotate(
-          [ops.nullishCoalescing, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
           location()
         );
     };
@@ -673,7 +672,7 @@ function peg$parse(input, options) {
   };
   var peg$f82 = function(head, tail) {
       return annotate(
-        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), downgradeReference(head)),
+        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), head),
         location()
       );
     };

@@ -15,7 +15,6 @@ import * as ops from "../runtime/ops.js";
 import {
   annotate,
   applyMacro,
-  downgradeReference,
   makeArray,
   makeBinaryOperation,
   makeCall,
@@ -185,9 +184,9 @@ conditionalExpression
       const deferred = makeDeferredArguments(tail);
       return annotate([
         ops.conditional,
-        downgradeReference(condition),
-        downgradeReference(deferred[0]),
-        downgradeReference(deferred[1])
+        condition,
+        deferred[0],
+        deferred[1]
       ], location());
     }
   
@@ -334,7 +333,7 @@ frontMatterYaml "YAML front matter"
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
   = "(" expression:expression expectClosingParenthesis {
-    return annotate(downgradeReference(expression), location());
+    return annotate(expression, location());
   }
 
 guillemetString "guillemet string"
@@ -421,7 +420,7 @@ logicalAndExpression
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalAnd, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.logicalAnd, head, ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -431,7 +430,7 @@ logicalOrExpression
       return tail.length === 0
         ? head
         : annotate(
-          [ops.logicalOr, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.logicalOr, head, ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -475,7 +474,7 @@ nullishCoalescingExpression
       return tail.length === 0
         ? head
         : annotate(
-          [ops.nullishCoalescing, downgradeReference(head), ...makeDeferredArguments(tail)],
+          [ops.nullishCoalescing, head, ...makeDeferredArguments(tail)],
           location()
         );
     }
@@ -601,7 +600,7 @@ pathSegmentChar
 pipelineExpression
   = head:shorthandFunction tail:(__ singleArrow __ @shorthandFunction)* {
       return annotate(
-        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), downgradeReference(head)),
+        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), head),
         location()
       );
     }

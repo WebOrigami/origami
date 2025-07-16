@@ -132,7 +132,7 @@ describe.only("Origami parser", () => {
         [ops.literal, "c"],
       ],
       [
-        [markers.global, "fn"],
+        [markers.reference, [ops.literal, "fn"]],
         [markers.reference, [ops.literal, "a"]],
         [markers.reference, [ops.literal, "b"]],
         [markers.reference, [ops.literal, "c"]],
@@ -145,7 +145,7 @@ describe.only("Origami parser", () => {
         ops.lambda,
         [[ops.literal, "b"]],
         [
-          [markers.global, "fn"],
+          [markers.reference, [ops.literal, "fn"]],
           [markers.reference, [ops.literal, "a"]],
           [markers.reference, [ops.literal, "b"]],
         ],
@@ -180,7 +180,7 @@ describe.only("Origami parser", () => {
   describe("callExpression", () => {
     test("with parentheses arguments", () => {
       assertParse("callExpression", "fn()", [
-        [markers.global, "fn"],
+        [markers.reference, [ops.literal, "fn"]],
         undefined,
       ]);
       assertParse("callExpression", "foo.js(arg)", [
@@ -188,7 +188,7 @@ describe.only("Origami parser", () => {
         [markers.reference, [ops.literal, "arg"]],
       ]);
       assertParse("callExpression", "fn(a, b)", [
-        [markers.global, "fn"],
+        [markers.reference, [ops.literal, "fn"]],
         [markers.reference, [ops.literal, "a"]],
         [markers.reference, [ops.literal, "b"]],
       ]);
@@ -198,7 +198,7 @@ describe.only("Origami parser", () => {
         [markers.reference, [ops.literal, "b"]],
       ]);
       assertParse("callExpression", "fn()(arg)", [
-        [[markers.global, "fn"], undefined],
+        [[markers.reference, [ops.literal, "fn"]], undefined],
         [markers.reference, [ops.literal, "arg"]],
       ]);
     });
@@ -209,7 +209,7 @@ describe.only("Origami parser", () => {
       ]);
       assertParse("callExpression", "fn('a')('b')", [
         [
-          [markers.global, "fn"],
+          [markers.reference, [ops.literal, "fn"]],
           [ops.literal, "a"],
         ],
         [ops.literal, "b"],
@@ -264,7 +264,7 @@ describe.only("Origami parser", () => {
       ]);
       assertParse("callExpression", "fn()/key()", [
         [
-          [[markers.global, "fn"], undefined],
+          [[markers.reference, [ops.literal, "fn"]], undefined],
           [ops.literal, "key"],
         ],
         undefined,
@@ -281,7 +281,7 @@ describe.only("Origami parser", () => {
     });
     test("tagged templates", () => {
       assertParse("callExpression", "indent`hello`", [
-        [markers.global, "indent"],
+        [markers.reference, [ops.literal, "indent"]],
         [ops.literal, ["hello"]],
       ]);
       assertParse("callExpression", "fn.js`Hello, world.`", [
@@ -439,7 +439,7 @@ Body`,
     ]);
   });
 
-  test.only("expression", () => {
+  test("expression", () => {
     assertParse(
       "expression",
       `{
@@ -463,7 +463,7 @@ Body`,
           [
             ops.getter,
             [
-              [markers.global, "map"],
+              [markers.reference, [ops.literal, "map"]],
               [markers.reference, [ops.literal, "images"]],
               [
                 ops.object,
@@ -497,13 +497,13 @@ Body`,
     assertParse("expression", "page.ori(mdHtml(about.md))", [
       [markers.dots, [ops.literal, "page"], [ops.literal, "ori"]],
       [
-        [markers.global, "mdHtml"],
+        [markers.reference, [ops.literal, "mdHtml"]],
         [markers.dots, [ops.literal, "about"], [ops.literal, "md"]],
       ],
     ]);
 
     assertParse("expression", "keys </>", [
-      [markers.global, "keys"],
+      [markers.reference, [ops.literal, "keys"]],
       [ops.rootDirectory],
     ]);
 
@@ -522,7 +522,7 @@ Body`,
       [ops.literal, "json"],
     ]);
     assertParse("expression", "(fn a, b, c)", [
-      [markers.global, "fn"],
+      [markers.reference, [ops.literal, "fn"]],
       [markers.reference, [ops.literal, "a"]],
       [markers.reference, [ops.literal, "b"]],
       [markers.reference, [ops.literal, "c"]],
@@ -533,7 +533,7 @@ Body`,
       [ops.literal, "world"],
     ]);
     assertParse("expression", "(key)('a')", [
-      [markers.global, "key"],
+      [markers.reference, [ops.literal, "key"]],
       [ops.literal, "a"],
     ]);
     assertParse("expression", "1", [ops.literal, 1]);
@@ -543,11 +543,11 @@ Body`,
       ["b", [ops.literal, 2]],
     ]);
     assertParse("expression", "serve { index.html: 'hello' }", [
-      [markers.global, "serve"],
+      [markers.reference, [ops.literal, "serve"]],
       [ops.object, ["index.html", [ops.literal, "hello"]]],
     ]);
     assertParse("expression", "fn =`x`", [
-      [markers.global, "fn"],
+      [markers.reference, [ops.literal, "fn"]],
       [
         ops.lambda,
         [[ops.literal, "_"]],
@@ -566,7 +566,7 @@ Body`,
     //   ],
     // ]);
     assertParse("expression", "map =`<li>${_}</li>`", [
-      [markers.global, "map"],
+      [markers.reference, [ops.literal, "map"]],
       [
         ops.lambda,
         [[ops.literal, "_"]],
@@ -583,7 +583,7 @@ Body`,
     //   [ops.literal, "about/"],
     // ]);
     assertParse("expression", "tag`Hello, ${name}!`", [
-      [markers.global, "tag"],
+      [markers.reference, [ops.literal, "tag"]],
       [ops.literal, ["Hello, ", "!"]],
       [ops.concat, [markers.reference, [ops.literal, "name"]]],
     ]);
@@ -600,7 +600,7 @@ Body`,
       ],
     ]);
     assertParse("expression", "keys <~>", [
-      [markers.global, "keys"],
+      [markers.reference, [ops.literal, "keys"]],
       [ops.homeDirectory],
     ]);
 
@@ -648,9 +648,12 @@ Body`,
       markers.reference,
       [ops.literal, "nested"],
     ]);
-    assertParse("group", "(fn())", [[markers.global, "fn"], undefined]);
+    assertParse("group", "(fn())", [
+      [markers.reference, [ops.literal, "fn"]],
+      undefined,
+    ]);
     assertParse("group", "(a -> b)", [
-      [markers.global, "b"],
+      [markers.reference, [ops.literal, "b"]],
       [markers.reference, [ops.literal, "a"]],
     ]);
   });
@@ -666,7 +669,7 @@ Body`,
 
   test("implicitParenthesesCallExpression", () => {
     assertParse("implicitParenthesesCallExpression", "fn arg", [
-      [markers.global, "fn"],
+      [markers.reference, [ops.literal, "fn"]],
       [markers.reference, [ops.literal, "arg"]],
     ]);
     assertParse("implicitParenthesesCallExpression", "page.ori 'a', 'b'", [
@@ -675,15 +678,15 @@ Body`,
       [ops.literal, "b"],
     ]);
     assertParse("implicitParenthesesCallExpression", "fn a(b), c", [
-      [markers.global, "fn"],
+      [markers.reference, [ops.literal, "fn"]],
       [
-        [markers.global, "a"],
+        [markers.reference, [ops.literal, "a"]],
         [markers.reference, [ops.literal, "b"]],
       ],
       [markers.reference, [ops.literal, "c"]],
     ]);
     assertParse("implicitParenthesesCallExpression", "(fn()) 'arg'", [
-      [[markers.global, "fn"], undefined],
+      [[markers.reference, [ops.literal, "fn"]], undefined],
       [ops.literal, "arg"],
     ]);
     assertParse("implicitParenthesesCallExpression", "tree/key arg", [
@@ -883,7 +886,13 @@ Body`,
       ops.object,
       [
         "a",
-        [ops.object, ["b", [ops.getter, [[markers.global, "fn"], undefined]]]],
+        [
+          ops.object,
+          [
+            "b",
+            [ops.getter, [[markers.reference, [ops.literal, "fn"]], undefined]],
+          ],
+        ],
       ],
     ]);
     assertParse("objectLiteral", "{ x = fn.js('a') }", [
@@ -979,7 +988,7 @@ Body`,
     assertParse("objectEntry", "posts/: map(posts, post.ori)", [
       "posts/",
       [
-        [markers.global, "map"],
+        [markers.reference, [ops.literal, "map"]],
         [markers.reference, [ops.literal, "posts"]],
         [markers.dots, [ops.literal, "post"], [ops.literal, "ori"]],
       ],
@@ -1012,7 +1021,7 @@ Body`,
     assertParse("objectProperty", "x: fn('a')", [
       "x",
       [
-        [markers.global, "fn"],
+        [markers.reference, [ops.literal, "fn"]],
         [ops.literal, "a"],
       ],
     ]);
@@ -1076,7 +1085,7 @@ Body`,
       [ops.literal, "foo"],
     ]);
     assertParse("pipelineExpression", "a -> b", [
-      [markers.global, "b"],
+      [markers.reference, [ops.literal, "b"]],
       [markers.reference, [ops.literal, "a"]],
     ]);
     assertParse("pipelineExpression", "input → one.js → two.js", [
@@ -1087,9 +1096,9 @@ Body`,
       ],
     ]);
     assertParse("pipelineExpression", "fn a -> b", [
-      [markers.global, "b"],
+      [markers.reference, [ops.literal, "b"]],
       [
-        [markers.global, "fn"],
+        [markers.reference, [ops.literal, "fn"]],
         [markers.reference, [ops.literal, "a"]],
       ],
     ]);
@@ -1233,7 +1242,7 @@ Body`,
       ops.lambda,
       [[ops.literal, "_"]],
       [
-        [markers.global, "indent"],
+        [markers.reference, [ops.literal, "indent"]],
         [ops.literal, ["hello"]],
       ],
     ]);
@@ -1378,7 +1387,7 @@ Body text`,
       ops.templateTree,
       [ops.literal, ["", ""]],
       [
-        [markers.global, "map"],
+        [markers.reference, [ops.literal, "map"]],
         [markers.reference, [ops.literal, "people"]],
         [
           ops.lambda,
