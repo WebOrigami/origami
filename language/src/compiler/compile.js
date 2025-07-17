@@ -17,8 +17,9 @@ function compile(source, options) {
     mode,
     startRule,
   });
+  const cache = enableCaching ? {} : null;
   const optimized = optimize(code, {
-    enableCaching,
+    cache,
     globals,
     mode,
   });

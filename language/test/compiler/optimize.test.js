@@ -6,7 +6,7 @@ import { markers } from "../../src/compiler/parserHelpers.js";
 import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
-describe.only("optimize", () => {
+describe("optimize", () => {
   test("change local references to context references", () => {
     const expression = `(name) => {
       a: name,
@@ -22,7 +22,21 @@ describe.only("optimize", () => {
       ],
     ];
     assertCompile(expression, expected);
-    assertCompile(expression, expected, "jse");
+  });
+
+  test("resolve deeper context references", () => {
+    // Compilation of `{ a: 1, more: { a } }`
+    const code = createCode([
+      ops.object,
+      ["a", [ops.literal, 1]],
+      ["more", [ops.object, ["a", [markers.reference, "a"]]]],
+    ]);
+    const expected = [
+      ops.object,
+      ["a", 1],
+      ["more", [ops.object, ["a", [[ops.context, 1], "a"]]]],
+    ];
+    assertCodeEqual(optimize(code), expected);
   });
 
   test("when defining a property, avoid recursive references", () => {
@@ -41,110 +55,121 @@ describe.only("optimize", () => {
     assertCompile(expression, expected, "jse");
   });
 
-  test("cache shell non-local references to globals+scope calls", () => {
-    // Compilation of `x/y/z.js`
-    const code = createCode([
-      markers.reference,
-      [ops.literal, "x/"],
-      [ops.literal, "y/"],
-      [ops.literal, "z.js"],
-    ]);
-    const globals = {};
-    const expected = [
-      ops.cache,
-      {},
-      "x/y/z.js",
-      [[ops.merge, globals, [ops.scope]], "x/", "y/", "z.js"],
-    ];
-    assertCodeEqual(optimize(code, { globals }), expected);
+  describe("resolve reference to simple key", () => {
+    test("external reference", () => {
+      // Compilation of `folder` where folder isn't a variable
+      const code = createCode([markers.reference, "folder"]);
+      const expected = [ops.cache, {}, "folder", [[ops.scope], "folder"]];
+      const globals = {};
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
+    test("global reference", () => {
+      // Compilation of `Math` where Math is a global variable
+      const code = createCode([markers.reference, "Math"]);
+      const globals = { Math: { PI: 0 } }; // value doesn't matter
+      const expected = [globals, "Math"];
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
+    test("local reference", () => {
+      // Compilation of `post` where post is a local variable
+      const code = createCode([markers.reference, "post"]);
+      const globals = {};
+      const locals = [["post"]];
+      const actual = optimize(code, { globals, locals });
+      const expected = [[ops.context], "post"];
+      assertCodeEqual(actual, expected);
+    });
   });
 
-  test("change jse non-local references to globals", () => {
-    // Compilation of `x/y`
-    const code = createCode([
-      markers.reference,
-      [ops.literal, "x/"],
-      [ops.literal, "y"],
-    ]);
-    const globals = {};
-    const expected = [globals, "x/", "y"];
-    assertCodeEqual(optimize(code, { globals, mode: "jse" }), expected);
+  describe("resolve dot chain", () => {
+    test("external reference", () => {
+      // Compilation of `index.html` where `index` isn't a variable
+      const code = createCode([
+        markers.dots,
+        [ops.literal, "index"],
+        [ops.literal, "html"],
+      ]);
+      const expected = [
+        ops.cache,
+        {},
+        "index.html",
+        [[ops.scope], "index.html"],
+      ];
+      const globals = {};
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
+    test("global reference", () => {
+      // Compilation of `Math.PI` where Math is a global variable
+      const code = createCode([
+        markers.dots,
+        [ops.literal, "Math"],
+        [ops.literal, "PI"],
+      ]);
+      const globals = { Math: { PI: 0 } }; // value doesn't matter
+      const expected = [[globals, "Math"], "PI"];
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
+    test("local reference", () => {
+      // Compilation of `post.title` where post is a local variable
+      const code = createCode([
+        markers.dots,
+        [ops.literal, "post"],
+        [ops.literal, "title"],
+      ]);
+      const globals = {};
+      const locals = [["post"]];
+      const actual = optimize(code, { globals, locals });
+      const expected = [[[ops.context], "post"], "title"];
+      assertCodeEqual(actual, expected);
+    });
   });
 
-  test("cache jse top-level scope references", () => {
-    // Compilation of `x/y/z.js`
-    const code = createCode([
-      [ops.scope],
-      [ops.literal, "x/"],
-      [ops.literal, "y/"],
-      [ops.literal, "z.js"],
-    ]);
-    const expected = [
-      ops.cache,
-      {},
-      "x/y/z.js",
-      [[ops.scope], "x/", "y/", "z.js"],
-    ];
-    assertCodeEqual(optimize(code, { mode: "jse" }), expected);
-  });
+  describe("resolve path", () => {
+    test("external path", () => {
+      // Compilation of `package.json/name` where package is neither local nor global
+      const code = createCode([
+        markers.path,
+        [markers.dots, [ops.literal, "package"], [ops.literal, "json"]],
+        [ops.literal, "name"],
+      ]);
+      const globals = {};
+      const expected = [
+        ops.cache,
+        {},
+        "package.json/name",
+        [[ops.scope], "package.json/", "name"],
+      ];
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
 
-  test("cache jse deeper scope references", () => {
-    // Compilation of `{ property: <x> }`
-    const code = createCode([
-      ops.object,
-      ["property", [[ops.scope], [ops.literal, "x"]]],
-    ]);
-    const expected = [
-      ops.object,
-      ["property", [ops.cache, {}, "x", [[ops.scope, [ops.context, 1]], "x"]]],
-    ];
-    assertCodeEqual(optimize(code, { mode: "jse" }), expected);
-  });
-
-  describe.only("transform ambiguous path", () => {
-    test("path head is global", () => {
-      // Math.PI/Math.E
+    test("global division", () => {
+      // Compilation of `Math.PI/2` where Math is a global variable
       const code = createCode([
         markers.path,
         [markers.dots, [ops.literal, "Math"], [ops.literal, "PI"]],
-        [markers.dots, [ops.literal, "Math"], [ops.literal, "E"]],
+        [ops.literal, 2],
       ]);
-      const globals = { Math: { PI: 0, E: 0 } }; // values don't matter
-      const actual = optimize(code, { globals });
-      assertCodeEqual(actual, [
-        ops.division,
-        [[globals, "Math"], "PI"],
-        [[globals, "Math"], "E"],
-      ]);
+      const globals = { Math: { PI: 0 } }; // values don't matter
+      const expected = [ops.division, [[globals, "Math"], "PI"], 2];
+      assertCodeEqual(optimize(code, { globals }), expected);
     });
 
-    test("path head is local", () => {
-      // x.y, where x is local
-      const code = createCode([
-        markers.dots,
-        [ops.literal, "x"],
-        [ops.literal, "y"],
-      ]);
-      const locals = [["x"]];
-      const actual = optimize(code, { locals });
-      assertCodeEqual(actual, [[ops.context, 0], "y"]);
-    });
-
-    test("path head is external", () => {
-      // a.b/x.y where a is neither local nor global
+    test("local division", () => {
+      // Compilation of `post.count/2` where post is a local variable
       const code = createCode([
         markers.path,
-        [markers.dots, [ops.literal, "a"], [ops.literal, "b"]],
-        [markers.dots, [ops.literal, "x"], [ops.literal, "y"]],
+        [markers.dots, [ops.literal, "post"], [ops.literal, "count"]],
+        [ops.literal, 2],
       ]);
       const globals = {};
-      const actual = optimize(code, { globals });
-      assertCodeEqual(actual, [
-        ops.cache,
-        {},
-        "a.b/x.y",
-        [[ops.scope], "a.b/", "x.y"],
-      ]);
+      const locals = [["post"]];
+      const actual = optimize(code, { globals, locals });
+      const expected = [ops.division, [[[ops.context], "post"], "count"], 2];
+      assertCodeEqual(actual, expected);
     });
   });
 });

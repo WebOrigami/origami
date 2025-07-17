@@ -5,7 +5,7 @@ import { markers } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
-describe.only("Origami parser", () => {
+describe("Origami parser", () => {
   test("additiveExpression", () => {
     assertParse("additiveExpression", "1 + 2", [
       ops.addition,
@@ -247,11 +247,11 @@ describe.only("Origami parser", () => {
         [ops.object, ["a", [ops.literal, 1]], ["b", [ops.literal, 2]]],
         [ops.literal, "b"],
       ]);
-      // assertParse("callExpression", "files:foo/bar", [
-      //   [markers.global, "files:"],
-      //   [ops.literal, "foo/"],
-      //   [ops.literal, "bar"],
-      // ]);
+      assertParse("callExpression", "files:foo/bar", [
+        [markers.global, "files:"],
+        [ops.literal, "foo/"],
+        [ops.literal, "bar"],
+      ]);
     });
 
     test("path and parentheses chains", () => {
@@ -270,15 +270,15 @@ describe.only("Origami parser", () => {
         ],
         undefined,
       ]);
-      // assertParse("callExpression", "package:@weborigami/dropbox/auth(creds)", [
-      //   [
-      //     [markers.global, "package:"],
-      //     [ops.literal, "@weborigami/"],
-      //     [ops.literal, "dropbox/"],
-      //     [ops.literal, "auth"],
-      //   ],
-      //   [markers.reference, "creds"],
-      // ]);
+      assertParse("callExpression", "package:@weborigami/dropbox/auth(creds)", [
+        [
+          [markers.global, "package:"],
+          [ops.literal, "@weborigami/"],
+          [ops.literal, "dropbox/"],
+          [ops.literal, "auth"],
+        ],
+        [markers.reference, "creds"],
+      ]);
     });
 
     test("tagged templates", () => {
