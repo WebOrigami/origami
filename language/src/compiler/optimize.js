@@ -22,6 +22,7 @@ import { annotate, markers } from "./parserHelpers.js";
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
   const cache = options.cache ?? {};
+  const mode = options.mode ?? "shell";
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. The array items are
@@ -41,7 +42,7 @@ export default function optimize(code, options = {}) {
       break;
 
     case markers.path:
-      return resolvePath(code, globals, locals, cache);
+      return resolvePath(code, globals, locals, cache, mode);
 
     case markers.reference:
       return resolveReference(code, globals, locals, cache);
@@ -256,11 +257,16 @@ function resolveReference(code, globals, locals, cache) {
     : variableReference(code, globals, locals);
 }
 
-function resolvePath(code, globals, locals, cache) {
+function resolvePath(code, globals, locals, cache, mode) {
   const head = code[1];
-  return isExternalReference(head, globals, locals)
-    ? externalPath(code, locals, cache)
-    : divisionChain(code, globals, locals);
+  if (isExternalReference(head, globals, locals)) {
+    return externalPath(code, locals, cache);
+  } else if (mode === "shell") {
+    // TODO: Remove
+    return variablePath(code, globals, locals);
+  } else {
+    return divisionChain(code, globals, locals);
+  }
 }
 
 function scopeCall(locals, location) {
@@ -288,4 +294,19 @@ function variableReference(code, globals, locals) {
   }
   const contextCall = annotate(context, code.location);
   return annotate([contextCall, key], code.location);
+}
+
+// TODO: Remove
+function variablePath(code, globals, locals) {
+  const [_, head, ...tail] = code;
+  const variableCode = annotate(
+    [markers.reference, keyFromCode(head)],
+    head.location
+  );
+  let result = variableReference(variableCode, globals, locals);
+  for (const arg of tail) {
+    const key = keyFromCode(arg);
+    result = annotate([result, key], arg.location);
+  }
+  return result;
 }

@@ -170,7 +170,7 @@ describe("optimize", () => {
       ]);
       const globals = { Math: { PI: 0 } }; // values don't matter
       const expected = [ops.division, [[globals, "Math"], "PI"], 2];
-      assertCodeEqual(optimize(code, { globals }), expected);
+      assertCodeEqual(optimize(code, { globals, mode: "jse" }), expected);
     });
 
     test("local division", () => {
@@ -182,8 +182,23 @@ describe("optimize", () => {
       ]);
       const globals = {};
       const locals = [["post"]];
-      const actual = optimize(code, { globals, locals });
+      const actual = optimize(code, { globals, locals, mode: "jse" });
       const expected = [ops.division, [[[ops.context], "post"], "count"], 2];
+      assertCodeEqual(actual, expected);
+    });
+
+    // TODO: Remove
+    test("local path [deprecated]", () => {
+      // Compilation of `page/title` where page is a local variable
+      const code = createCode([
+        markers.path,
+        [ops.literal, "page"],
+        [ops.literal, "title"],
+      ]);
+      const globals = {};
+      const locals = [["page"]];
+      const actual = optimize(code, { globals, locals });
+      const expected = [[[ops.context], "page"], "title"];
       assertCodeEqual(actual, expected);
     });
   });
