@@ -55,14 +55,11 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[reference, [ops.literal, "foo"]], undefined]
+  // For `foo`, the call would be: [[markers.reference,  "foo"], undefined]
   if (
-    code[0] &&
+    code[0] instanceof Array &&
     code[0][0] === markers.reference &&
-    code[0][1] instanceof Array &&
-    code[0][1][0] === ops.literal &&
-    code[0][1][1] === name &&
-    code[1] === undefined
+    code[0][1] === name
   ) {
     return macro;
   }

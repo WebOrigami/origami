@@ -49,7 +49,7 @@ additiveOperator
   / "-"
 
 angleBracketLiteral
-  = "<" __ protocol:angleBracketProtocol "//"? path:angleBracketPath __ ">" {
+  = "<" __ protocol:protocol "//"? path:angleBracketPath __ ">" {
     return annotate([protocol, ...path], location());
     }
   / "<" __ "/" path:angleBracketPath __ ">" {
@@ -78,13 +78,8 @@ angleBracketPathKey
 
 // A single character in a slash-separated path segment
 angleBracketPathChar
-  = [^/:<>] // Much more permissive than an identifier
+  = [^/:<>\t\n] // Much more permissive than an identifier
   / escapedChar
-
-angleBracketProtocol
-  = protocol:jsIdentifier ":" {
-      return annotate([markers.global, `${protocol[1]}:`], location());
-    }
 
 arguments "function arguments"
   = parenthesesArguments
@@ -203,6 +198,11 @@ dotChain
         identifier => annotate([ops.literal, identifier[1]], identifier.location)
       );
       return annotate([markers.dots, ...literals], location());
+    }
+
+dotChainText
+  = identifiers:jsReference|1.., "."| {
+      return text();
     }
 
 doubleArrow = "⇒" / "=>"
@@ -358,17 +358,34 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = identifier:jsIdentifier port:(":" @integerLiteral)? slashFollows:slashFollows? {
+  = name:dotChainText port:(":" @integerLiteral)? slashFollows:slashFollows? {
     const portText = port ? `:${port[1]}` : "";
     const slashText = slashFollows ? "/" : "";
-    const hostText = identifier[1] + portText + slashText;
-    return annotate([ops.literal, hostText], location());
+    const host = name + portText + slashText;
+    return annotate([ops.literal, host], location());
   }
 
+// JavaScript-compatible identifier
+identifier
+  = id:$( identifierStart identifierPart* ) {
+    return id;
+  }
+
+// Identifier as a literal
 identifierLiteral
-  = id:jsIdentifier {
+  = id:identifier {
       return annotate([ops.literal, id], location());
     }
+
+// Continuation of a JavaScript identifier
+// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierPart
+identifierPart "JavaScript identifier continuation"
+  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
+
+// Start of a JavaScript identifier
+// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
+identifierStart "JavaScript identifier start"
+  = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
@@ -393,28 +410,13 @@ integerLiteral "integer"
 jseMode
   = &{ return options.mode === "jse" }
 
-jsIdentifier
-  = id:$( jsIdentifierStart jsIdentifierPart* ) {
-    return id;
-  }
-
-// Continuation of a JavaScript identifier
-// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierPart
-jsIdentifierPart "JavaScript identifier continuation"
-  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
-
-// Start of a JavaScript identifier
-// https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
-jsIdentifierStart "JavaScript identifier start"
-  = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
-
 jsPropertyAccess
   = __ "." __ property:identifierLiteral {
     return annotate([markers.property, property], location());
   }
 
 jsReference "identifier reference"
-  = id:jsIdentifier {
+  = id:identifier {
       return annotate([markers.reference, id], location());
     }
 
@@ -541,8 +543,8 @@ objectShorthandProperty "object identifier"
   }
 
 objectPublicKey
-  = identifiers:jsIdentifier|1.., "."| slash:"/"? {
-    return identifiers.join(".") + (slash ?? "");
+  = key:dotChainText slash:"/"? {
+    return key + (slash ?? "");
   }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
@@ -550,7 +552,7 @@ objectPublicKey
     }
 
 optionalChaining
-  = __ "?." __ property:jsIdentifier {
+  = __ "?." __ property:identifier {
     return annotate([ops.optionalTraverse, property], location());
   }
 
@@ -629,15 +631,16 @@ primary
 program "Origami program"
   = shebang? @expression
 
-// A protocol is a string of letters only, followed by a colon.
+// Protocol (technically, a scheme) in a URL
+// See https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
 protocol
-  = chars:[A-Za-z]+ ":" {
-    return annotate([markers.global, chars.join("") + ":"], location());
-  }
+  = [a-z][a-z0-9+-.]*[:] {
+      return annotate([markers.global, text()], location());
+    }
 
-// Protocol with double-slash path: `https://example.com/index.html`
+// Protocol with a path: `https://example.com/index.html`, `files:assets`
 protocolExpression
-  = protocol:protocol "//" host:(host / slash) path:path? {
+  = protocol:protocol "//"? host:(host / slash) path:path? {
       const keys = annotate([host, ...(path ?? [])], location());
       return makeCall(protocol, keys, options.mode);
     }

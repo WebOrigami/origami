@@ -21,23 +21,21 @@ describe.only("Origami parser", () => {
 
   describe("angleBracketLiteral", () => {
     test("with path", () => {
+      assertParse("angleBracketLiteral", "<index.html>", [
+        [ops.scope],
+        [ops.literal, "index.html"],
+      ]);
       assertParse(
         "angleBracketLiteral",
-        "<index.html>",
-        [[ops.scope], [ops.literal, "index.html"]],
-        "jse"
+        "<Path with spaces (and parens).html>",
+        [[ops.scope], [ops.literal, "Path with spaces (and parens).html"]]
       );
-      assertParse(
-        "angleBracketLiteral",
-        "<foo/bar/baz>",
-        [
-          [ops.scope],
-          [ops.literal, "foo/"],
-          [ops.literal, "bar/"],
-          [ops.literal, "baz"],
-        ],
-        "jse"
-      );
+      assertParse("angleBracketLiteral", "<foo/bar/baz>", [
+        [ops.scope],
+        [ops.literal, "foo/"],
+        [ops.literal, "bar/"],
+        [ops.literal, "baz"],
+      ]);
     });
 
     test("root directory", () => {
@@ -57,7 +55,7 @@ describe.only("Origami parser", () => {
       ]);
     });
 
-    test.skip("with protocol URL", () => {
+    test("with protocol URL", () => {
       assertParse("angleBracketLiteral", "<files:src/assets>", [
         [markers.global, "files:"],
         [ops.literal, "src/"],
@@ -202,6 +200,7 @@ describe.only("Origami parser", () => {
         [markers.reference, "arg"],
       ]);
     });
+
     test("call chains", () => {
       assertParse("callExpression", "(foo.js())('arg')", [
         [[markers.dots, [ops.literal, "foo"], [ops.literal, "js"]], undefined],
@@ -220,6 +219,7 @@ describe.only("Origami parser", () => {
         [markers.reference, "b"],
       ]);
     });
+
     test("with paths", () => {
       assertParse("callExpression", "tree/", [
         [ops.scope],
@@ -253,6 +253,7 @@ describe.only("Origami parser", () => {
       //   [ops.literal, "bar"],
       // ]);
     });
+
     test("path and parentheses chains", () => {
       assertParse("callExpression", "foo.js()/key", [
         [[markers.dots, [ops.literal, "foo"], [ops.literal, "js"]], undefined],
@@ -279,6 +280,7 @@ describe.only("Origami parser", () => {
       //   [markers.reference, "creds"],
       // ]);
     });
+
     test("tagged templates", () => {
       assertParse("callExpression", "indent`hello`", [
         [markers.reference, "indent"],
@@ -289,19 +291,19 @@ describe.only("Origami parser", () => {
         [ops.literal, ["Hello, world."]],
       ]);
     });
-    test.skip("protocols", () => {
+
+    test("protocols", () => {
       assertParse("callExpression", "files:src/assets", [
         [markers.global, "files:"],
         [ops.literal, "src/"],
         [ops.literal, "assets"],
       ]);
-      assertParse("callExpression", "new:(js:Date, '2025-01-01')", [
-        [markers.global, "new:"],
+      assertParse("callExpression", "<node:process>.env", [
         [
-          [markers.global, "js:"],
-          [ops.literal, "Date"],
+          [markers.global, "node:"],
+          [ops.literal, "process"],
         ],
-        [ops.literal, "2025-01-01"],
+        [ops.literal, "env"],
       ]);
     });
   });
@@ -649,9 +651,29 @@ Body`,
     assertParse("homeDirectory", "~", [ops.homeDirectory]);
   });
 
-  test.skip("host", () => {
+  test("host", () => {
     assertParse("host", "abc", [ops.literal, "abc"]);
     assertParse("host", "abc:123", [ops.literal, "abc:123"]);
+  });
+
+  test("identifier", () => {
+    assertParse("identifier", "foo", "foo", "jse", false);
+    assertParse("identifier", "$Δelta", "$Δelta", "jse", false);
+    assertThrows(
+      "identifier",
+      "1stCharacterIsNumber",
+      "Expected JavaScript identifier start"
+    );
+    assertThrows(
+      "identifier",
+      "has space",
+      "Expected JavaScript identifier continuation"
+    );
+    assertThrows(
+      "identifier",
+      "foo.bar",
+      "Expected JavaScript identifier continuation"
+    );
   });
 
   test("implicitParenthesesCallExpression", () => {
@@ -687,26 +709,6 @@ Body`,
         [ops.literal, "arg"],
       ],
     ]);
-  });
-
-  test("jsIdentifier", () => {
-    assertParse("jsIdentifier", "foo", "foo", "jse", false);
-    assertParse("jsIdentifier", "$Δelta", "$Δelta", "jse", false);
-    assertThrows(
-      "jsIdentifier",
-      "1stCharacterIsNumber",
-      "Expected JavaScript identifier start"
-    );
-    assertThrows(
-      "jsIdentifier",
-      "has space",
-      "Expected JavaScript identifier continuation"
-    );
-    assertThrows(
-      "jsIdentifier",
-      "foo.bar",
-      "Expected JavaScript identifier continuation"
-    );
   });
 
   test("list", () => {
@@ -1111,45 +1113,51 @@ Body`,
     assertParse("protocol", "https:", [markers.global, "https:"]);
   });
 
-  test.skip("protocolExpression", () => {
-    assertParse("protocolExpression", "foo://bar/baz", [
-      [markers.global, "foo:"],
-      [ops.literal, "bar/"],
-      [ops.literal, "baz"],
-    ]);
-    assertParse("protocolExpression", "http://example.com", [
-      [markers.global, "http:"],
-      [ops.literal, "example.com"],
-    ]);
-    assertParse("protocolExpression", "https://example.com/about/", [
-      [markers.global, "https:"],
-      [ops.literal, "example.com/"],
-      [ops.literal, "about/"],
-    ]);
-    assertParse("protocolExpression", "https://example.com/about/index.html", [
-      [markers.global, "https:"],
-      [ops.literal, "example.com/"],
-      [ops.literal, "about/"],
-      [ops.literal, "index.html"],
-    ]);
-    assertParse("protocolExpression", "http://localhost:5000/foo", [
-      [markers.global, "http:"],
-      [ops.literal, "localhost:5000/"],
-      [ops.literal, "foo"],
-    ]);
-    assertParse("protocolExpression", "files:///foo/bar.txt", [
-      [markers.global, "files:"],
-      [ops.literal, "/"],
-      [ops.literal, "foo/"],
-      [ops.literal, "bar.txt"],
-    ]);
-  });
+  describe("protocolExpression", () => {
+    test("protocol call", () => {
+      assertParse("protocolExpression", "files:build", [
+        [markers.global, "files:"],
+        [ops.literal, "build"],
+      ]);
+    });
 
-  test.skip("qualifiedReference", () => {
-    assertParse("qualifiedReference", "js:Date", [
-      [markers.global, "js:"],
-      [ops.literal, "Date"],
-    ]);
+    test("URLs with protocols", () => {
+      assertParse("protocolExpression", "foo://bar/baz", [
+        [markers.global, "foo:"],
+        [ops.literal, "bar/"],
+        [ops.literal, "baz"],
+      ]);
+      assertParse("protocolExpression", "http://example.com", [
+        [markers.global, "http:"],
+        [ops.literal, "example.com"],
+      ]);
+      assertParse("protocolExpression", "https://example.com/about/", [
+        [markers.global, "https:"],
+        [ops.literal, "example.com/"],
+        [ops.literal, "about/"],
+      ]);
+      assertParse(
+        "protocolExpression",
+        "https://example.com/about/index.html",
+        [
+          [markers.global, "https:"],
+          [ops.literal, "example.com/"],
+          [ops.literal, "about/"],
+          [ops.literal, "index.html"],
+        ]
+      );
+      assertParse("protocolExpression", "http://localhost:5000/foo", [
+        [markers.global, "http:"],
+        [ops.literal, "localhost:5000/"],
+        [ops.literal, "foo"],
+      ]);
+      assertParse("protocolExpression", "files:///foo/bar.txt", [
+        [markers.global, "files:"],
+        [ops.literal, "/"],
+        [ops.literal, "foo/"],
+        [ops.literal, "bar.txt"],
+      ]);
+    });
   });
 
   test("regexLiteral", () => {
@@ -1306,7 +1314,7 @@ Body text`,
     );
   });
 
-  test.skip("templateDocument with Origami front matter", () => {
+  test("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",
       `---
