@@ -1,6 +1,5 @@
 import { text as treeText } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
-import BuiltinsTree from "./BuiltinsTree.js";
 import * as dev from "./dev/dev.js";
 import handlerBuiltins from "./handlers/handlerBuiltins.js";
 import help from "./help/help.js";
@@ -20,27 +19,27 @@ import * as site from "./site/site.js";
 import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
 
-let result;
+let builtins;
 
 export default function builtinsJse() {
-  if (!result) {
-    const Tree = new BuiltinsTree({
+  if (!builtins) {
+    const Tree = {
       ...tree,
       indent: text.indent,
       json: origami.json,
       text: treeText,
-    });
+    };
 
-    const Origami = new BuiltinsTree({
+    const Origami = {
       ...dev,
       image,
       ...origami,
       ...site,
       ...text,
-    });
+    };
 
     /** @type {any} */
-    result = new BuiltinsTree({
+    builtins = {
       ...jsGlobals,
 
       "explore:": explore,
@@ -60,8 +59,8 @@ export default function builtinsJse() {
 
       // Handlers need to be exposed at top level
       ...handlerBuiltins(),
-    });
+    };
   }
 
-  return result;
+  return builtins;
 }

@@ -16,7 +16,7 @@ nodeModulesTree.parent = tree;
 
 describe("package", () => {
   // Add handlers so package can unpack .js files
-  tree.handlers = new ObjectTree(handlerBuiltins());
+  tree.handlers = handlerBuiltins();
 
   test("imports a package with an organization name", async () => {
     const packageExports = await packageProtocol.call(

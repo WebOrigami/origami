@@ -2,7 +2,7 @@
   title = "Template can invoke a map"
 
   team = ["Alice", "Bob", "Carol"]
-  template.ori = (names) => `Greetings: ${ map(names, (name) => `Hello, ${ name }! `) }`
+  template.ori = (names) => `Greetings: ${ Tree.map(names, (name) => `Hello, ${ name }! `) }`
 
   actual = template.ori(team)
   expected = "Greetings: Hello, Alice! Hello, Bob! Hello, Carol! "

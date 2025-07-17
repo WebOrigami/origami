@@ -3,11 +3,11 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import { handleExtension } from "../../src/runtime/handlers.js";
 
-const handlers = new ObjectTree({
+const handlers = {
   "json.handler": {
     unpack: (buffer) => JSON.parse(String(buffer)),
   },
-});
+};
 
 describe("handlers", () => {
   test("attaches an unpack method to a value with an extension", async () => {

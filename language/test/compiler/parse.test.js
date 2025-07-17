@@ -438,6 +438,23 @@ Body`,
   });
 
   test("expression", () => {
+    // Deprecated (x)/y syntax for traversal
+    assertParse(
+      "expression",
+      "(x)/y",
+      [
+        [markers.reference, "x"],
+        [ops.literal, "y"],
+      ],
+      "shell"
+    );
+    assertParse(
+      "expression",
+      "(x)/y",
+      [ops.division, [markers.reference, "x"], [markers.reference, "y"]],
+      "jse"
+    );
+
     assertParse(
       "expression",
       `{
