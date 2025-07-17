@@ -91,7 +91,7 @@ arguments "function arguments"
   / shellMode @pathArguments
   / jsPropertyAccess
   / computedPropertyAccess
-  / optionalChaining
+  // / optionalChaining
   / templateLiteral
 
 arrayLiteral "array"
@@ -195,10 +195,14 @@ digits
 
 // A sequence of one or more identifiers separated by dots: `a.b.c`
 dotChain
-  = identifiers:jsIdentifier|1.., "."| {
-      return identifiers.length === 1
-        ? annotate([markers.reference, identifiers[0]], location())
-        : annotate([markers.dots, ...identifiers], location());
+  = identifiers:jsReference|1.., "."| {
+      if (identifiers.length === 1) {
+        return annotate([markers.reference, identifiers[0][1]], identifiers[0].location);
+      }
+      const literals = identifiers.map(
+        identifier => annotate([ops.literal, identifier[1]], identifier.location)
+      );
+      return annotate([markers.dots, ...literals], location());
     }
 
 doubleArrow = "⇒" / "=>"
@@ -361,6 +365,11 @@ host "HTTP/HTTPS host"
     return annotate([ops.literal, hostText], location());
   }
 
+identifierLiteral
+  = id:jsIdentifier {
+      return annotate([ops.literal, id], location());
+    }
+
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
       return args ? makeCall(head, args, options.mode) : head;
@@ -386,7 +395,7 @@ jseMode
 
 jsIdentifier
   = id:$( jsIdentifierStart jsIdentifierPart* ) {
-    return annotate([ops.literal, id], location());
+    return id;
   }
 
 // Continuation of a JavaScript identifier
@@ -400,7 +409,7 @@ jsIdentifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
 
 jsPropertyAccess
-  = __ "." __ property:jsIdentifier {
+  = __ "." __ property:identifierLiteral {
     return annotate([markers.property, property], location());
   }
 
@@ -533,7 +542,7 @@ objectShorthandProperty "object identifier"
 
 objectPublicKey
   = identifiers:jsIdentifier|1.., "."| slash:"/"? {
-    return identifiers.map(literal => literal[1]).join(".") + (slash ?? "");
+    return identifiers.join(".") + (slash ?? "");
   }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
@@ -546,14 +555,14 @@ optionalChaining
   }
 
 parameterList
-  = list:jsIdentifier|1.., separator| separator? {
+  = list:identifierLiteral|1.., separator| separator? {
       return annotate(list, location());
     }
 
 // A list with a single identifier
 parameterSingleton
-  = identifier:jsIdentifier {
-      return annotate([identifier], location());
+  = param:identifierLiteral {
+      return annotate([param], location());
     }
 
 // Function arguments in parentheses

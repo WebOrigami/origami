@@ -25,8 +25,6 @@ export const markers = {
   traverse: Symbol("traverse"), // Continuation of path traversal
 };
 
-const builtinRegex = /^[A-Za-z][A-Za-z0-9]*$/;
-
 /**
  * If a parse result is an object that will be evaluated at runtime, attach the
  * location of the source code that produced it for debugging and error messages.
@@ -416,7 +414,7 @@ export function makeSlashPath(args, location) {
       chain[0] === markers.dots
         ? annotate(chain.slice(1), chain.location)
         : chain[0] === markers.reference
-        ? chain[1] // literal
+        ? annotate([ops.literal, chain[1]], chain.location)
         : chain
     )
     .filter(
