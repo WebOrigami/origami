@@ -181,11 +181,6 @@ export async function flat(...args) {
 addOpLabel(flat, "«ops.flat»");
 
 /**
- * This op is only used during parsing for an explicit to a global.
- */
-export const global = new String("«global");
-
-/**
  * This op is only used during parsing. It signals to ops.object that the
  * "arguments" of the expression should be used to define a property getter.
  */

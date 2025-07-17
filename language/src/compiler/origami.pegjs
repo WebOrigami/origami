@@ -359,11 +359,11 @@ homeDirectory
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
   = name:dotChainText port:(":" @integerLiteral)? slashFollows:slashFollows? {
-    const portText = port ? `:${port[1]}` : "";
-    const slashText = slashFollows ? "/" : "";
-    const host = name + portText + slashText;
-    return annotate([ops.literal, host], location());
-  }
+      const portText = port ? `:${port[1]}` : "";
+      const slashText = slashFollows ? "/" : "";
+      const host = name + portText + slashText;
+      return annotate([ops.literal, host], location());
+    }
 
 // JavaScript-compatible identifier
 identifier
@@ -638,10 +638,15 @@ protocol
       return annotate([markers.global, text()], location());
     }
 
-// Protocol with a path: `https://example.com/index.html`, `files:assets`
+// Protocol with a path
 protocolExpression
-  = protocol:protocol "//"? host:(host / slash) path:path? {
+  = protocol:protocol "//" host:(host / slash) path:path? {
+      // URL like `https://example.com/index.html`
       const keys = annotate([host, ...(path ?? [])], location());
+      return makeCall(protocol, keys, options.mode);
+    }
+  / protocol:protocol keys:pathKey|1.., "/"| {
+      // Custom protocol like `files:assets`
       return makeCall(protocol, keys, options.mode);
     }
   / newExpression

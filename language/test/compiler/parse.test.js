@@ -480,9 +480,6 @@ Body`,
       ]
     );
 
-    // Builtin on its own is the function itself, not a function call
-    // assertParse("expression", "mdHtml:", [markers.global, "mdHtml:"]);
-
     // Consecutive slashes at start of something = comment
     assertParse(
       "expression",
@@ -552,17 +549,17 @@ Body`,
         [ops.templateTree, [ops.literal, ["x"]]],
       ],
     ]);
-    // assertParse("expression", "copy app.js(formulas), files:snapshot", [
-    //   [markers.global, "copy"],
-    //   [
-    //     [markers.dots, [ops.literal, "app"], [ops.literal, "js"]],
-    //     [markers.reference, "formulas"],
-    //   ],
-    //   [
-    //     [markers.global, "files:"],
-    //     [ops.literal, "snapshot"],
-    //   ],
-    // ]);
+    assertParse("expression", "copy app.js(formulas), files:snapshot", [
+      [markers.reference, "copy"],
+      [
+        [markers.dots, [ops.literal, "app"], [ops.literal, "js"]],
+        [markers.reference, "formulas"],
+      ],
+      [
+        [markers.global, "files:"],
+        [ops.literal, "snapshot"],
+      ],
+    ]);
     assertParse("expression", "map =`<li>${_}</li>`", [
       [markers.reference, "map"],
       [
@@ -575,11 +572,11 @@ Body`,
         ],
       ],
     ]);
-    // assertParse("expression", `https://example.com/about/`, [
-    //   [markers.global, "https:"],
-    //   [ops.literal, "example.com/"],
-    //   [ops.literal, "about/"],
-    // ]);
+    assertParse("expression", `https://example.com/about/`, [
+      [markers.global, "https:"],
+      [ops.literal, "example.com/"],
+      [ops.literal, "about/"],
+    ]);
     assertParse("expression", "tag`Hello, ${name}!`", [
       [markers.reference, "tag"],
       [ops.literal, ["Hello, ", "!"]],

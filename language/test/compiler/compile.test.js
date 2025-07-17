@@ -4,10 +4,10 @@ import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
-const shared = new ObjectTree({
+const sharedGlobals = {
   greet: (name) => `Hello, ${name}!`,
   name: "Alice",
-});
+};
 
 describe("compile", () => {
   test("array", async () => {
@@ -24,7 +24,11 @@ describe("compile", () => {
   });
 
   test("angle bracket path", async () => {
-    await assertCompile("<name>", "Alice", { mode: "jse", target: shared });
+    await assertCompile("<data>", "Bob", {
+      target: {
+        data: "Bob",
+      },
+    });
   });
 
   test("object literal", async () => {
@@ -75,7 +79,9 @@ describe("compile", () => {
   });
 
   test("async object", async () => {
-    const fn = compile.expression("{ a: { b = name }}", { globals: shared });
+    const fn = compile.expression("{ a: { b = name }}", {
+      globals: sharedGlobals,
+    });
     const object = await fn.call(null);
     assert.deepEqual(await object.a.b, "Alice");
   });
@@ -99,7 +105,7 @@ describe("compile", () => {
 
   test("tagged template string array is identical across calls", async () => {
     let saved;
-    const globals = new ObjectTree({
+    const globals = {
       tag: (strings, ...values) => {
         assertCodeEqual(strings, ["Hello, ", "!"]);
         if (saved) {
@@ -109,7 +115,7 @@ describe("compile", () => {
         }
         return strings[0] + values[0] + strings[1];
       },
-    });
+    };
     const program = compile.expression("=tag`Hello, ${_}!`", { globals });
     const lambda = await program.call(null);
     const alice = await lambda("Alice");
@@ -121,9 +127,8 @@ describe("compile", () => {
 
 async function assertCompile(text, expected, options = {}) {
   const mode = options.mode ?? "shell";
-  const fn = compile.expression(text, { globals: shared, mode });
-  // For shell mode, use globals as scope too
-  const target = options.target ?? mode === "shell" ? shared : null;
+  const fn = compile.expression(text, { globals: sharedGlobals, mode });
+  const target = options.target ?? null;
   let result = await fn.call(target);
   if (Tree.isTreelike(result)) {
     result = await Tree.plain(result);

@@ -174,7 +174,9 @@ function getLocalReferenceDepth(locals, key) {
 }
 
 function inlineLiteral(code) {
-  return code[0] === ops.literal ? code[1] : code;
+  // If the literal value is an array, it's likely the strings array
+  // of a template literal, so return it as is.
+  return code[0] === ops.literal && !Array.isArray(code[1]) ? code[1] : code;
 }
 
 function isExternalReference(code, globals, locals) {
