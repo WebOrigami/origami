@@ -136,7 +136,7 @@ function cacheResult(cache, code) {
 function divisionChain(args, globals, locals) {
   const [_, head, ...tail] = args;
   let result =
-    head[0] === markers.reference
+    head[0] === markers.reference || head[0] === ops.literal
       ? variableReference(head, globals, locals)
       : propertyAccess(head, globals, locals);
   for (const arg of tail) {
@@ -226,8 +226,24 @@ function propertyName(key) {
 }
 
 function resolveDots(code, globals, locals, cache) {
-  // Property chain
-  const [_, head, ...tail] = code;
+  // Try the entire x.y.z as a single local/global reference
+  const key = keyFromCode(code);
+  const depth = getLocalReferenceDepth(locals, key);
+  if (depth >= 0) {
+    // Local reference
+    const context = [ops.context];
+    if (depth > 0) {
+      context.push(depth);
+    }
+    const contextCall = annotate(context, code.location);
+    return annotate([contextCall, key], code.location);
+  } else if (key in globals) {
+    // Global reference
+    return annotate([globals, key], code.location);
+  }
+
+  // Entire key isn't a local or global, look just at the head
+  const [_, head] = code;
   return isExternalReference(head, globals, locals)
     ? externalReference(code, locals, cache)
     : propertyAccess(code, globals, locals);

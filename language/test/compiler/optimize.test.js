@@ -126,6 +126,21 @@ describe("optimize", () => {
       const expected = [[[ops.context], "post"], "title"];
       assertCodeEqual(actual, expected);
     });
+
+    test("ambiguous local x.y reference", () => {
+      const expression = `{
+        index: "a"
+        index.html: "b"
+        result: index.html
+      }`;
+      const expected = [
+        ops.object,
+        ["index", "a"],
+        ["index.html", "b"],
+        ["result", [[ops.context], "index.html"]],
+      ];
+      assertCompile(expression, expected);
+    });
   });
 
   describe("resolve path", () => {
