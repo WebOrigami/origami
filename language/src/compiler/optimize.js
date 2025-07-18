@@ -198,14 +198,6 @@ function isExternalReference(code, globals, locals) {
     if (isVariable(joinedKey, globals, locals)) {
       return false; // Global or local variable
     }
-
-    // See if the last part of the dot chain is a registered extension
-    const lastKey = keyFromCode(firstSegment.at(-1));
-    const handler = `${lastKey}.handler`;
-    if (globals[handler] !== undefined) {
-      // Registered handler, so external reference
-      return true;
-    }
   }
 
   // Get the very first part of the first segment
