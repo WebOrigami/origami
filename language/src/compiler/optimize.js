@@ -186,7 +186,7 @@ function inlineLiteral(code) {
 function isExternalReference(code, globals, locals) {
   const key = pathHead(code);
   if (key in globals) {
-    return false; // global
+    return false; // global (maybe local too)
   } else if (getLocalReferenceDepth(locals, key) >= 0) {
     return false; // local
   } else {
@@ -299,12 +299,13 @@ function scopeCall(locals, location) {
 
 function variableReference(code, globals, locals) {
   const key = keyFromCode(code);
-  if (key in globals) {
-    // Global variable
+
+  const depth = getLocalReferenceDepth(locals, key);
+  if (depth < 0) {
+    // Not local, so global
     return annotate([globals, key], code.location);
   }
 
-  const depth = getLocalReferenceDepth(locals, key);
   const context = [ops.context];
   if (depth > 0) {
     context.push(depth);

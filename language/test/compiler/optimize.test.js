@@ -75,7 +75,7 @@ describe("optimize", () => {
     test("local reference", () => {
       // Compilation of `post` where post is a local variable
       const code = createCode([markers.reference, "post"]);
-      const globals = {};
+      const globals = { post: {} }; // local should take precedence
       const locals = [["post"]];
       const actual = optimize(code, { globals, locals });
       const expected = [[ops.context], "post"];
