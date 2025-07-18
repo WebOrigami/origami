@@ -188,14 +188,48 @@ function inlineLiteral(code) {
 }
 
 function isExternalReference(code, globals, locals) {
-  const key = pathHead(code);
-  if (key in globals) {
-    return false; // global (maybe local too)
-  } else if (getLocalReferenceDepth(locals, key) >= 0) {
-    return false; // local
-  } else {
-    return true; // must be external
+  // Identify the first segment of the path
+  const firstSegment = code[0] === markers.path ? code[1] : code;
+
+  const [op] = firstSegment;
+  if (op === markers.dots) {
+    // See if the joined x.y dot chain is a global or local variable
+    const joinedKey = keyFromCode(firstSegment);
+    if (isVariable(joinedKey, globals, locals)) {
+      return false; // Global or local variable
+    }
+
+    // See if the last part of the dot chain is a registered extension
+    const lastKey = keyFromCode(firstSegment.at(-1));
+    const handler = `${lastKey}.handler`;
+    if (globals[handler] !== undefined) {
+      // Registered handler, so external reference
+      return true;
+    }
   }
+
+  // Get the very first part of the first segment
+  const firstReference = op === markers.dots ? firstSegment[1] : firstSegment;
+  const firstKey = keyFromCode(firstReference);
+
+  // Check first key to see if it's a global or local reference
+  if (firstKey in globals) {
+    return false; // global (maybe local too)
+  } else if (getLocalReferenceDepth(locals, firstKey) >= 0) {
+    return false; // local
+  }
+
+  return true; // external reference
+}
+
+function isVariable(key, globals, locals) {
+  // Check if the key is a global variable
+  if (key in globals) {
+    return true;
+  } else if (getLocalReferenceDepth(locals, key) >= 0) {
+    return true; // local variable
+  }
+  return false; // not a variable
 }
 
 function keyFromCode(code) {
@@ -204,29 +238,7 @@ function keyFromCode(code) {
     return args[0];
   } else if (op === markers.dots) {
     return args.map((arg) => keyFromCode(arg)).join(".");
-  } else {
-    debugger;
   }
-}
-
-// Return the key at the head of a reference
-function pathHead(code) {
-  if (typeof code === "string") {
-    return code;
-  }
-
-  const [op, ...args] = code;
-  switch (op) {
-    case markers.reference:
-    case ops.literal:
-      return args[0];
-
-    case markers.path:
-    case markers.dots:
-      return pathHead(args[0]);
-  }
-
-  debugger;
 }
 
 function propertyAccess(code, globals, locals) {
@@ -265,22 +277,19 @@ function resolveDots(code, globals, locals, cache) {
   }
 
   // Entire key isn't a local or global, look just at the head
-  const [_, head] = code;
-  return isExternalReference(head, globals, locals)
+  return isExternalReference(code, globals, locals)
     ? externalReference(code, locals, cache)
     : propertyAccess(code, globals, locals);
 }
 
 function resolveReference(code, globals, locals, cache) {
-  const key = code[1];
-  return isExternalReference(key, globals, locals)
+  return isExternalReference(code, globals, locals)
     ? externalReference(code, locals, cache)
     : variableReference(code, globals, locals);
 }
 
 function resolvePath(code, globals, locals, cache, mode) {
-  const head = code[1];
-  if (isExternalReference(head, globals, locals)) {
+  if (isExternalReference(code, globals, locals)) {
     return externalPath(code, locals, cache);
   } else if (mode === "shell") {
     // TODO: Deprecate

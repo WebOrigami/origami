@@ -89,6 +89,26 @@ describe("optimize", () => {
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
+    test("reference with registered extension prefers external", () => {
+      // `index.html` where `.html` is a registered extension
+      const code = createCode([
+        markers.dots,
+        [ops.literal, "index"],
+        [ops.literal, "html"],
+      ]);
+      const globals = {
+        "html.handler": {}, // mock handler
+      };
+      const locals = [["index"]];
+      const actual = optimize(code, { globals, locals });
+      assertCodeEqual(actual, [
+        ops.cache,
+        {},
+        "index.html",
+        [[ops.scope, [ops.context, 1]], "index.html"],
+      ]);
+    });
+
     test("global reference", () => {
       // Compilation of `Math` where Math is a global variable
       const code = createCode([markers.reference, "Math"]);
