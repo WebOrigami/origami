@@ -1257,10 +1257,7 @@ Body`,
     ]);
     assertParse("slashChain", "package.json/name", [
       markers.path,
-      [
-        [ops.literal, "package"],
-        [ops.literal, "json"],
-      ],
+      [markers.dots, [ops.literal, "package"], [ops.literal, "json"]],
       [ops.literal, "name"],
     ]);
     // Trailing slash is an unpack
@@ -1328,7 +1325,7 @@ Body text`,
     );
   });
 
-  test.only("templateDocument with Origami front matter", () => {
+  test("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",
       `---

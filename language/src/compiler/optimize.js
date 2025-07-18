@@ -134,15 +134,18 @@ function cacheResult(cache, code) {
   return annotate([ops.cache, cache, pathFromKeys(keys), code], code.location);
 }
 
-function divisionChain(args, globals, locals) {
-  const [_, head, ...tail] = args;
-  let result =
-    head[0] === markers.reference || head[0] === ops.literal
-      ? variableReference(head, globals, locals)
-      : propertyAccess(head, globals, locals);
+function divisionArgument(code, globals, locals) {
+  return code[0] === markers.reference || code[0] === ops.literal
+    ? variableReference(code, globals, locals)
+    : propertyAccess(code, globals, locals);
+}
+
+function divisionChain(code, globals, locals) {
+  const [_, head, ...tail] = code;
+  let result = divisionArgument(head, globals, locals);
   for (const arg of tail) {
-    const value = inlineLiteral(arg);
-    result = annotate([ops.division, result, value], arg.location);
+    const divisor = divisionArgument(arg, globals, locals);
+    result = annotate([ops.division, result, divisor], arg.location);
   }
   return result;
 }
@@ -193,26 +196,40 @@ function isExternalReference(code, globals, locals) {
 
 function keyFromCode(code) {
   const [op, ...args] = code;
-  return op === markers.dots ? args.map((arg) => arg[1]).join(".") : args[0];
+  if (op === markers.reference || op === ops.literal) {
+    return args[0];
+  } else if (op === markers.dots) {
+    return args.map((arg) => keyFromCode(arg)).join(".");
+  } else {
+    debugger;
+  }
 }
 
 // Return the key at the head of a reference
 function pathHead(code) {
   if (typeof code === "string") {
     return code;
-  } else if (code[0] === markers.dots) {
-    return code[1][1];
-  } else {
-    // markers.path
-    return pathHead(code[1]);
   }
+
+  const [op, ...args] = code;
+  switch (op) {
+    case markers.reference:
+    case ops.literal:
+      return args[0];
+
+    case markers.path:
+    case markers.dots:
+      return pathHead(args[0]);
+  }
+
+  debugger;
 }
 
 function propertyAccess(code, globals, locals) {
   const [_, head, ...tail] = code;
   let result = variableReference(head, globals, locals);
   for (const arg of tail) {
-    const key = arg[1];
+    const key = keyFromCode(arg);
     result = annotate([result, key], arg.location);
   }
   return result;
@@ -281,7 +298,7 @@ function scopeCall(locals, location) {
 }
 
 function variableReference(code, globals, locals) {
-  const key = code[1];
+  const key = keyFromCode(code);
   if (key in globals) {
     // Global variable
     return annotate([globals, key], code.location);

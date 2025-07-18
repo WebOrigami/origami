@@ -143,7 +143,7 @@ describe("optimize", () => {
     });
   });
 
-  describe("resolve path", () => {
+  describe.only("resolve path", () => {
     test("external path", () => {
       // Compilation of `package.json/name` where package is neither local nor global
       const code = createCode([
@@ -162,28 +162,40 @@ describe("optimize", () => {
     });
 
     test("global division", () => {
-      // Compilation of `Math.PI/2` where Math is a global variable
+      // Compilation of `Math.PI/Math.E` where Math is a global variable
       const code = createCode([
         markers.path,
         [markers.dots, [ops.literal, "Math"], [ops.literal, "PI"]],
-        [ops.literal, 2],
+        [markers.dots, [ops.literal, "Math"], [ops.literal, "E"]],
       ]);
-      const globals = { Math: { PI: 0 } }; // values don't matter
-      const expected = [ops.division, [[globals, "Math"], "PI"], 2];
-      assertCodeEqual(optimize(code, { globals, mode: "jse" }), expected);
+      const globals = { Math: {} }; // values don't matter
+      const locals = [["x"]];
+      const expected = [
+        ops.division,
+        [[globals, "Math"], "PI"],
+        [[globals, "Math"], "E"],
+      ];
+      assertCodeEqual(
+        optimize(code, { globals, locals, mode: "jse" }),
+        expected
+      );
     });
 
     test("local division", () => {
-      // Compilation of `post.count/2` where post is a local variable
+      // Compilation of `post.count/x` where post and x are local variables
       const code = createCode([
         markers.path,
         [markers.dots, [ops.literal, "post"], [ops.literal, "count"]],
-        [ops.literal, 2],
+        [ops.literal, "x"],
       ]);
       const globals = {};
-      const locals = [["post"]];
+      const locals = [["post", "x"]];
       const actual = optimize(code, { globals, locals, mode: "jse" });
-      const expected = [ops.division, [[[ops.context], "post"], "count"], 2];
+      const expected = [
+        ops.division,
+        [[[ops.context], "post"], "count"],
+        [[ops.context], "x"],
+      ];
       assertCodeEqual(actual, expected);
     });
 

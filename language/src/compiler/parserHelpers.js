@@ -408,9 +408,7 @@ export function makeSlashPath(args, location) {
 
   const simplified = args
     .map((chain) =>
-      chain[0] === markers.dots
-        ? annotate(chain.slice(1), chain.location)
-        : chain[0] === markers.reference
+      chain[0] === markers.reference
         ? annotate([ops.literal, chain[1]], chain.location)
         : chain
     )
@@ -432,7 +430,10 @@ export function makeSlashPath(args, location) {
       const key =
         segment[0] === ops.literal
           ? segment[1]
-          : segment.map((dot) => dot[1]).join(".");
+          : segment
+              .slice(1)
+              .map((dot) => dot[1])
+              .join(".");
       return annotate(
         [ops.literal, trailingSlash.toggle(key, index < simplified.length - 1)],
         segment.location
