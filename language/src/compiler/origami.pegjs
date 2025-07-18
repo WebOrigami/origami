@@ -386,6 +386,8 @@ identifierPart "JavaScript identifier continuation"
 // https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
 identifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
+  // TODO: Deprecate
+  / shellMode @"@"
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {

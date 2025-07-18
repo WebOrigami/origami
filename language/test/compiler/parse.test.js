@@ -1328,6 +1328,33 @@ Body text`,
     );
   });
 
+  test.only("templateDocument with Origami front matter", () => {
+    assertParse(
+      "templateDocument",
+      `---
+{
+  title: "Title"
+  @text: @template()
+}
+---
+<h1>\${ title }</h1>
+`,
+      [
+        ops.object,
+        ["title", [ops.literal, "Title"]],
+        [
+          "@text",
+          [
+            ops.templateIndent,
+            [ops.literal, ["<h1>", "</h1>\n"]],
+            [markers.reference, "title"],
+          ],
+        ],
+      ],
+      "shell"
+    );
+  });
+
   test("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",

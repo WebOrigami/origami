@@ -262,7 +262,7 @@ function resolvePath(code, globals, locals, cache, mode) {
   if (isExternalReference(head, globals, locals)) {
     return externalPath(code, locals, cache);
   } else if (mode === "shell") {
-    // TODO: Remove
+    // TODO: Deprecate
     return variablePath(code, globals, locals);
   } else {
     return divisionChain(code, globals, locals);
@@ -296,7 +296,7 @@ function variableReference(code, globals, locals) {
   return annotate([contextCall, key], code.location);
 }
 
-// TODO: Remove
+// TODO: Deprecate
 function variablePath(code, globals, locals) {
   const [_, head, ...tail] = code;
   const variableCode = annotate(
