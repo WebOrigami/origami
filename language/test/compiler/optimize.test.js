@@ -64,6 +64,31 @@ describe("optimize", () => {
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
+    test("external reference inside object with matching key", () => {
+      // Compilation of `{ (posts) = posts.txt }`
+      const code = createCode([
+        ops.object,
+        ["(posts)", [ops.getter, [markers.reference, "posts.txt"]]],
+      ]);
+      const expected = [
+        ops.object,
+        [
+          "(posts)",
+          [
+            ops.getter,
+            [
+              ops.cache,
+              {},
+              "posts.txt",
+              [[ops.scope, [ops.context, 1]], "posts.txt"],
+            ],
+          ],
+        ],
+      ];
+      const globals = {};
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
     test("global reference", () => {
       // Compilation of `Math` where Math is a global variable
       const code = createCode([markers.reference, "Math"]);
@@ -143,7 +168,7 @@ describe("optimize", () => {
     });
   });
 
-  describe.only("resolve path", () => {
+  describe("resolve path", () => {
     test("external path", () => {
       // Compilation of `package.json/name` where package is neither local nor global
       const code = createCode([

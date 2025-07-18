@@ -38,8 +38,7 @@ export default function optimize(code, options = {}) {
 
     case markers.global:
       // Replace global op with the globals
-      optimized = annotate([globals, args[0]], code.location);
-      break;
+      return annotate([globals, args[0]], code.location);
 
     case markers.path:
       return resolvePath(code, globals, locals, cache, mode);
@@ -76,20 +75,8 @@ export default function optimize(code, options = {}) {
       if (op === ops.lambda && index === 1) {
         return child;
       } else if (op === ops.object && index > 0) {
-        // Code that defines a property `x` that contains references to `x`
-        // shouldn't find this context but look further up.
         const [key, value] = child;
-        const normalizedKey = trailingSlash.remove(key);
-        let adjustedLocals;
-        if (locals.at(-1)?.includes(normalizedKey)) {
-          adjustedLocals = locals.slice();
-          // Remove the key from the current context's locals
-          adjustedLocals[adjustedLocals.length - 1] = locals
-            .at(-1)
-            .filter((name) => name !== normalizedKey);
-        } else {
-          adjustedLocals = locals;
-        }
+        const adjustedLocals = avoidLocalRecursion(locals, key);
         return [
           key,
           optimize(/** @type {AnnotatedCode} */ (value), {
@@ -112,6 +99,23 @@ export default function optimize(code, options = {}) {
   );
 
   return annotate(optimized, code.location);
+}
+
+// When defining a property named `key` (or `key/` or `(key)`), we need to
+// remove any local variable with that name from the stack of locals to avoid a
+// recursive reference.
+function avoidLocalRecursion(locals, key) {
+  const normalizedKey = trailingSlash.remove(propertyName(key));
+  if (locals.at(-1)?.includes(normalizedKey)) {
+    const adjustedLocals = locals.slice();
+    // Remove the key from the current context's locals
+    adjustedLocals[adjustedLocals.length - 1] = locals
+      .at(-1)
+      .filter((name) => name !== normalizedKey);
+    return adjustedLocals;
+  } else {
+    return locals;
+  }
 }
 
 function cacheResult(cache, code) {
