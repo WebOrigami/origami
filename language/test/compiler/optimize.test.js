@@ -89,6 +89,25 @@ describe("optimize", () => {
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
+    test("external reference doesn't match local tree", () => {
+      // `{ a: b.txt, b : {} }`
+      const code = createCode([
+        ops.object,
+        ["a", [markers.dots, [ops.literal, "b"], [ops.literal, "txt"]]],
+        ["b", [ops.object]],
+      ]);
+      const expected = [
+        ops.object,
+        [
+          "a",
+          [ops.cache, {}, "b.txt", [[ops.scope, [ops.context, 1]], "b.txt"]],
+        ],
+        ["b", [ops.object]],
+      ];
+      const globals = {};
+      assertCodeEqual(optimize(code, { globals }), expected);
+    });
+
     test("global reference", () => {
       // Compilation of `Math` where Math is a global variable
       const code = createCode([markers.reference, "Math"]);

@@ -136,17 +136,23 @@ export default async function expressionObject(entries, parent) {
   return object;
 }
 
-function entryKey(object, eagerProperties, entry) {
-  const [key, value] = entry;
+export function entryKey(entry, object = null, eagerProperties = []) {
+  let [key, value] = entry;
 
-  const hasExplicitSlash = trailingSlash.has(key);
-  if (hasExplicitSlash) {
-    // Return key as is
+  if (key[0] === "(" && key[key.length - 1] === ")") {
+    // Non-enumerable property, remove parentheses. This doesn't come up in the
+    // constructor, but can happen in situations encountered by the compiler's
+    // optimizer.
+    key = key.slice(1, -1);
+  }
+
+  if (trailingSlash.has(key)) {
+    // Explicit trailing slash, return as is
     return key;
   }
 
   // If eager property value is treelike, add slash to the key
-  if (eagerProperties.includes(key) && Tree.isTreelike(object[key])) {
+  if (eagerProperties.includes(key) && Tree.isTreelike(object?.[key])) {
     return trailingSlash.add(key);
   }
 
@@ -163,5 +169,5 @@ function entryKey(object, eagerProperties, entry) {
 function keys(object, eagerProperties, propertyIsEnumerable, entries) {
   return entries
     .filter(([key]) => propertyIsEnumerable[key])
-    .map((entry) => entryKey(object, eagerProperties, entry));
+    .map((entry) => entryKey(entry, object, eagerProperties));
 }

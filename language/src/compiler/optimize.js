@@ -1,4 +1,5 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
+import { entryKey } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, markers } from "./parserHelpers.js";
@@ -59,7 +60,7 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      const keys = entries.map(([key]) => propertyName(key));
+      const keys = entries.map(entryKey);
       locals.push(keys);
       break;
 
@@ -105,13 +106,23 @@ export default function optimize(code, options = {}) {
 // remove any local variable with that name from the stack of locals to avoid a
 // recursive reference.
 function avoidLocalRecursion(locals, key) {
-  const normalizedKey = trailingSlash.remove(propertyName(key));
-  if (locals.at(-1)?.includes(normalizedKey)) {
-    const adjustedLocals = locals.slice();
+  if (key[0] === "(" && key[key.length - 1] === ")") {
+    // Non-enumerable property, remove parentheses
+    key = key.slice(1, -1);
+  }
+
+  const currentFrame = locals.length - 1;
+  const matchingKeyIndex = locals[currentFrame].findIndex(
+    (localKey) =>
+      // Ignore trailing slashes when comparing keys
+      trailingSlash.remove(localKey) === trailingSlash.remove(key)
+  );
+
+  if (matchingKeyIndex >= 0) {
     // Remove the key from the current context's locals
-    adjustedLocals[adjustedLocals.length - 1] = locals
-      .at(-1)
-      .filter((name) => name !== normalizedKey);
+    const adjustedLocals = locals.slice();
+    adjustedLocals[currentFrame] = adjustedLocals[currentFrame].slice();
+    adjustedLocals[currentFrame].splice(matchingKeyIndex, 1);
     return adjustedLocals;
   } else {
     return locals;
@@ -172,8 +183,14 @@ function externalPath(code, locals, cache) {
 }
 
 // Determine how many contexts up we need to go for a local
-function getLocalReferenceDepth(locals, key) {
-  const contextIndex = locals.findLastIndex((names) => names.includes(key));
+function getLocalReferenceDepth(locals, key, slashSensitive = false) {
+  const contextIndex = locals.findLastIndex((names) =>
+    names.some((name) =>
+      slashSensitive
+        ? name === key
+        : trailingSlash.remove(name) === trailingSlash.remove(key)
+    )
+  );
   if (contextIndex < 0) {
     return -1; // Not a local reference
   }
@@ -205,20 +222,19 @@ function isExternalReference(code, globals, locals) {
   const firstKey = keyFromCode(firstReference);
 
   // Check first key to see if it's a global or local reference
-  if (firstKey in globals) {
-    return false; // global (maybe local too)
-  } else if (getLocalReferenceDepth(locals, firstKey) >= 0) {
-    return false; // local
+  const slashSensitive = op === markers.dots;
+  if (isVariable(firstKey, globals, locals, slashSensitive)) {
+    return false; // Global or local variable
   }
 
   return true; // external reference
 }
 
-function isVariable(key, globals, locals) {
+function isVariable(key, globals, locals, slashSensitive = false) {
   // Check if the key is a global variable
   if (key in globals) {
     return true;
-  } else if (getLocalReferenceDepth(locals, key) >= 0) {
+  } else if (getLocalReferenceDepth(locals, key, slashSensitive) >= 0) {
     return true; // local variable
   }
   return false; // not a variable
@@ -241,14 +257,6 @@ function propertyAccess(code, globals, locals) {
     result = annotate([result, key], arg.location);
   }
   return result;
-}
-
-function propertyName(key) {
-  if (key[0] === "(" && key[key.length - 1] === ")") {
-    // Non-enumerable property, remove parentheses
-    key = key.slice(1, -1);
-  }
-  return trailingSlash.remove(key);
 }
 
 function resolveDots(code, globals, locals, cache) {
