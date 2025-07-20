@@ -32,6 +32,7 @@ export default function builtinsJse() {
 
     const Origami = {
       ...dev,
+      files,
       image,
       ...origami,
       ...site,
