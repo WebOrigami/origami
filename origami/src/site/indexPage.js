@@ -10,7 +10,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {Treelike} [treelike]
  * @param {string} [basePath]
  */
-export default async function index(treelike, basePath) {
+export default async function indexPage(treelike, basePath) {
   const tree = await getTreeArgument(this, arguments, treelike, "site:index");
   const keys = Array.from(await tree.keys());
 

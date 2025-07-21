@@ -1,7 +1,7 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
 import { transformObject } from "../common/utilities.js";
-import index from "./index.js";
+import index from "./indexPage.js";
 
 /**
  * Expose common static keys (index.html, .keys.json) for a tree.

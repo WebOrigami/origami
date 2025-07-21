@@ -1,4 +1,4 @@
-export { default as index } from "./index.js";
+export { default as indexPage } from "./indexPage.js";
 export { default as jsonKeys } from "./jsonKeys.js";
 export { default as redirect } from "./redirect.js";
 export { default as rss } from "./rss.js";

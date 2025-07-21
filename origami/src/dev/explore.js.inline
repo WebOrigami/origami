@@ -3,7 +3,7 @@ let frame;
 
 const modes = {
   Content: "",
-  Index: "!index",
+  Index: "!indexPage",
   YAML: "!yaml",
   SVG: "!svg",
 };

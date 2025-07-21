@@ -1,6 +1,6 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import index from "../site/index.js";
+import indexPage from "../site/indexPage.js";
 
 /**
  * Wraps a tree (typically a SiteTree) to turn a standard site into an
@@ -32,7 +32,7 @@ export default function ExplorableSiteTransform(Base) {
         // The tree doesn't have the key; try the defaults.
         if (key === "index.html") {
           // This tree is both the function call target and the parameter.
-          value = await index.call(this, this);
+          value = await indexPage.call(this, this);
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(this);
         }
