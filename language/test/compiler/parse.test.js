@@ -372,7 +372,32 @@ describe("Origami parser", () => {
       [ops.literal, "b"],
       [ops.literal, "c"],
     ]);
-    // assertParse("dotChain", ".", [[markers.reference, "."]]);
+    assertParse("dotChain", ".foo", [
+      markers.dots,
+      [ops.literal, ""],
+      [ops.literal, "foo"],
+    ]);
+    assertParse("dotChain", "..foo..bar..", [
+      markers.dots,
+      [ops.literal, ""],
+      [ops.literal, ""],
+      [ops.literal, "foo"],
+      [ops.literal, ""],
+      [ops.literal, "bar"],
+      [ops.literal, ""],
+      [ops.literal, ""],
+    ]);
+    assertParse("dotChain", ".", [
+      markers.dots,
+      [ops.literal, ""],
+      [ops.literal, ""],
+    ]);
+    assertParse("dotChain", "..", [
+      markers.dots,
+      [ops.literal, ""],
+      [ops.literal, ""],
+      [ops.literal, ""],
+    ]);
   });
 
   test("equalityExpression", () => {

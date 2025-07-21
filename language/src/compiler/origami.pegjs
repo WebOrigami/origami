@@ -189,15 +189,19 @@ digits
 
 // A sequence of one or more identifiers separated by dots: `a.b.c`
 dotChain
-  = identifiers:reference|1.., "."| {
-      if (identifiers.length === 1) {
-        return annotate([markers.reference, identifiers[0][1]], identifiers[0].location);
-      }
-      const literals = identifiers.map(
-        identifier => annotate([ops.literal, identifier[1]], identifier.location)
-      );
-      return annotate([markers.dots, ...literals], location());
+  = elements:dotChainElement|2.., "."| {
+      return annotate([markers.dots, ...elements], location());
     }
+  / @reference // Single identifier without a dot
+
+dotChainElement
+  = reference:reference {
+      return annotate([ops.literal, reference[1]], reference.location);
+    }
+  / "" {
+    // Empty string -- e.g., the part before the dot in `.foo`
+    return annotate([ops.literal, ""], location());
+  }
 
 dotChainText
   = identifiers:reference|1.., "."| {
@@ -357,12 +361,18 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = name:dotChainText port:(":" @integerLiteral)? slashFollows:slashFollows? {
+  = name:hostName port:(":" @integerLiteral)? slashFollows:slashFollows? {
       const portText = port ? `:${port[1]}` : "";
       const slashText = slashFollows ? "/" : "";
       const host = name + portText + slashText;
       return annotate([ops.literal, host], location());
     }
+
+// Name with possible dots: `example.com` or `example.com.fr`
+hostName
+  = elements:reference|1.., "."| {
+    return text();
+  }
 
 // JavaScript-compatible identifier
 identifier
@@ -534,8 +544,8 @@ objectShorthandProperty "object identifier"
   }
 
 objectPublicKey
-  = key:dotChainText slash:"/"? {
-    return key + (slash ?? "");
+  = key:dotChain slash:"/"? {
+    return text();
   }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
