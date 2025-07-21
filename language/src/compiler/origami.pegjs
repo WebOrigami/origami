@@ -20,7 +20,6 @@ import {
   makeCall,
   makeDeferredArguments,
   makeDocument,
-  makeJsPropertyAccess,
   makeObject,
   makePipeline,
   makeSlashPath,
@@ -84,7 +83,7 @@ angleBracketPathChar
 arguments "function arguments"
   = parenthesesArguments
   / shellMode @pathArguments
-  / jsPropertyAccess
+  / propertyAccess
   / computedPropertyAccess
   // / optionalChaining
   / templateLiteral
@@ -190,7 +189,7 @@ digits
 
 // A sequence of one or more identifiers separated by dots: `a.b.c`
 dotChain
-  = identifiers:jsReference|1.., "."| {
+  = identifiers:reference|1.., "."| {
       if (identifiers.length === 1) {
         return annotate([markers.reference, identifiers[0][1]], identifiers[0].location);
       }
@@ -201,7 +200,7 @@ dotChain
     }
 
 dotChainText
-  = identifiers:jsReference|1.., "."| {
+  = identifiers:reference|1.., "."| {
       return text();
     }
 
@@ -412,16 +411,6 @@ integerLiteral "integer"
 jseMode
   = &{ return options.mode === "jse" }
 
-jsPropertyAccess
-  = __ "." __ property:identifierLiteral {
-    return annotate([markers.property, property], location());
-  }
-
-jsReference "identifier reference"
-  = id:identifier {
-      return annotate([markers.reference, id], location());
-    }
-
 // A separated list of values
 list "list"
   = values:pipelineExpression|1.., separator| separator? {
@@ -463,11 +452,11 @@ multiplicativeOperator
 
 // A new expression: `new Foo()`
 newExpression
-  = "new" __ head:jsReference tail:parenthesesArguments? {
+  = "new" __ head:reference tail:parenthesesArguments? {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
-  / "new:" head:jsReference tail:parenthesesArguments {
+  / "new:" head:reference tail:parenthesesArguments {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
@@ -633,6 +622,11 @@ primary
 program "Origami program"
   = shebang? @expression
 
+propertyAccess
+  = __ "." __ property:identifierLiteral {
+    return annotate([markers.property, property], location());
+  }
+
 // Protocol (technically, a scheme) in a URL
 // See https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
 protocol
@@ -653,6 +647,11 @@ protocolExpression
     }
   / newExpression
   / primary
+
+reference "identifier reference"
+  = id:identifier {
+      return annotate([markers.reference, id], location());
+    }
 
 regexFlags
   = flags:[gimuy]* {

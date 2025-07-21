@@ -372,6 +372,7 @@ describe("Origami parser", () => {
       [ops.literal, "b"],
       [ops.literal, "c"],
     ]);
+    // assertParse("dotChain", ".", [[markers.reference, "."]]);
   });
 
   test("equalityExpression", () => {

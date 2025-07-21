@@ -239,15 +239,6 @@ export function makeDocument(mode, front, body, location) {
   return annotate([ops.object, ...entries], location);
 }
 
-export function makeJsPropertyAccess(expression, property) {
-  const location = {
-    source: expression.location.source,
-    start: expression.location.start,
-    end: property.location.end,
-  };
-  return annotate([expression, property], location);
-}
-
 /**
  * From the given spreads within an object spread, return the merge.
  *
