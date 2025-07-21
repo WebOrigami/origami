@@ -32,10 +32,13 @@ export default async function ori(
   // Run in the context of `this` if defined
   const tree = this;
 
-  // TODO
   const config = getConfig(tree);
-  // const globals = merge(builtinsShell(), config);
-  const globals = builtinsShell();
+  const globals = config
+    ? {
+        ...builtinsShell(),
+        ...config,
+      }
+    : builtinsShell();
 
   // Compile the expression. Avoid caching scope references so that, e.g.,
   // passing a function to the `watch` builtin will always look the current

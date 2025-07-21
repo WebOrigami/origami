@@ -1,4 +1,4 @@
 {
-  greet = code/greet.js
+  greet = ./code/greet.js
   message = "Hello"
 }

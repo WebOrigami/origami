@@ -28,6 +28,7 @@ export default async function project() {
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);
+  let config;
 
   // Search up the tree for the configuration file or package.json to determine
   // the project root.
@@ -37,10 +38,11 @@ export default async function project() {
     root = foundConfig.container;
     // Unpack Origami configuration file
     const buffer = foundConfig.value;
-    root.config = await oriHandler.unpack(buffer, {
+    config = await oriHandler.unpack(buffer, {
       key: configFileName,
       parent: root,
     });
+    root.config = config;
   } else {
     // No Origami configuration file, look for package.json
     const foundPackageJson = await findAncestorFile(
@@ -56,10 +58,13 @@ export default async function project() {
     }
   }
 
-  // TODO
   // Merge config if present into handlers
-  // root.handlers = merge(handlerBuiltins(), root.config);
-  root.handlers = handlerBuiltins();
+  root.handlers = config
+    ? {
+        ...handlerBuiltins(),
+        ...configHandlers(config),
+      }
+    : handlerBuiltins();
 
   return root;
 }
@@ -90,4 +95,15 @@ async function findAncestorFile(start, fileName) {
 
   // Not found
   return null;
+}
+
+// Return an object with all `.handler` keys from the config
+function configHandlers(config) {
+  const handlers = {};
+  for (const key in config) {
+    if (key.endsWith(".handler")) {
+      handlers[key] = config[key];
+    }
+  }
+  return handlers;
 }

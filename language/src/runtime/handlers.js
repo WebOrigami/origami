@@ -38,7 +38,7 @@ export async function handleExtension(parent, value, key, handlers) {
       : extension.extname(key);
     if (extname) {
       const handlerName = `${extname.slice(1)}.handler`;
-      let handler = handlers[handlerName];
+      let handler = await handlers[handlerName];
       if (handler) {
         if (isUnpackable(handler)) {
           // The extension handler itself needs to be unpacked

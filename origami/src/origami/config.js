@@ -14,5 +14,5 @@ import project from "./project.js";
 export default async function config(key) {
   const projectTree = await project.call(this);
   const projectConfig = projectTree.config;
-  return key === undefined ? projectConfig : projectConfig.get(key);
+  return key === undefined ? projectConfig : projectConfig[key];
 }
