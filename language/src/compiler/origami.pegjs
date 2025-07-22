@@ -418,12 +418,8 @@ jseMode
 
 // A key in a path or an expression that looks like one
 key
-  // Digits followed by non-digit characters: `404.html`
-  = digits:digits nonDigits:keyCharNotDigit+ more:keyChar* {
-      return annotate([ops.literal, text()], location());
-    }
-  // Sequence with tilde not in start position: `a~b`
-  / tilde:keyCharNotTilde+ "~" keyChar* {
+  // Unambiguous key: definitely not a JavaScript identifier
+  = keyUnambiguous {
       return annotate([ops.literal, text()], location());
     }
   // Ambiguous key: key or object+property reference
@@ -440,6 +436,15 @@ keyCharNotDigit
 keyCharNotTilde
   // Like keyChar, but disallow tildes
   = char:. &{ return char.match(/[$_\-\.\p{ID_Continue}]/u) }
+
+// A key that can't be a JavaScript identifier
+keyUnambiguous
+  // Period followed by key characters: `.foo`
+  = "." keyChar+
+  // Digits followed by non-digit characters: `404.html`
+  / digits:digits nonDigits:keyCharNotDigit+ more:keyChar*
+  // Sequence with tilde not in start position: `a~b`
+  / tilde:keyCharNotTilde+ "~" keyChar*
 
 // A separated list of values
 list "list"

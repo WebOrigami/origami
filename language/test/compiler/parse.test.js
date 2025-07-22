@@ -760,6 +760,7 @@ Body`,
 
   describe("key", () => {
     test("unambiguous keys", () => {
+      assertParse("key", ".ssh", [ops.literal, ".ssh"]);
       assertParse("key", "404.html", [ops.literal, "404.html"]);
       assertParse("key", "1a2b3c", [ops.literal, "1a2b3c"]);
       assertParse("key", "a~b", [ops.literal, "a~b"]);
