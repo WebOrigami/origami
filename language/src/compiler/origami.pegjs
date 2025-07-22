@@ -203,11 +203,6 @@ dotChainElement
     return annotate([ops.literal, ""], location());
   }
 
-dotChainText
-  = identifiers:reference|1.., "."| {
-      return text();
-    }
-
 doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
