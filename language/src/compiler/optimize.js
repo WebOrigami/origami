@@ -183,12 +183,10 @@ function externalPath(code, locals, cache) {
 }
 
 // Determine how many contexts up we need to go for a local
-function getLocalReferenceDepth(locals, key, slashSensitive = false) {
+function getLocalReferenceDepth(locals, key) {
   const contextIndex = locals.findLastIndex((names) =>
-    names.some((name) =>
-      slashSensitive
-        ? name === key
-        : trailingSlash.remove(name) === trailingSlash.remove(key)
+    names.some(
+      (name) => trailingSlash.remove(name) === trailingSlash.remove(key)
     )
   );
   if (contextIndex < 0) {
@@ -222,19 +220,18 @@ function isExternalReference(code, globals, locals) {
   const firstKey = keyFromCode(firstReference);
 
   // Check first key to see if it's a global or local reference
-  const slashSensitive = op === markers.dots;
-  if (isVariable(firstKey, globals, locals, slashSensitive)) {
+  if (isVariable(firstKey, globals, locals)) {
     return false; // Global or local variable
   }
 
   return true; // external reference
 }
 
-function isVariable(key, globals, locals, slashSensitive = false) {
+function isVariable(key, globals, locals) {
   // Check if the key is a global variable
   if (key in globals) {
     return true;
-  } else if (getLocalReferenceDepth(locals, key, slashSensitive) >= 0) {
+  } else if (getLocalReferenceDepth(locals, key) >= 0) {
     return true; // local variable
   }
   return false; // not a variable
