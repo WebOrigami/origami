@@ -311,7 +311,7 @@ function scopeCall(locals, location) {
 }
 
 function variableReference(code, globals, locals) {
-  const key = keyFromCode(code);
+  const key = trailingSlash.remove(keyFromCode(code));
 
   const depth = getLocalReferenceDepth(locals, key);
   if (depth < 0) {

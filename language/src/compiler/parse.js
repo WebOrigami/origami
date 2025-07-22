@@ -455,7 +455,7 @@ function peg$parse(input, options) {
       return tail.reduce(makeBinaryOperation, head);
     };
   var peg$f15 = function(head, tail) {
-      return tail.reduce((target, args) => makeCall(target, args, options.mode), head);
+      return tail.reduce((target, args) => makeCall(target, args), head);
     };
   var peg$f16 = function(list) {
       return list.length === 1
@@ -750,7 +750,7 @@ function peg$parse(input, options) {
       if (trailingSlash) {
         args.push(annotate([ops.literal, ""], location()));
       }
-      return makeSlashPath(args, location());
+      return makeSlashPath(args, location(), options.mode);
     };
   var peg$f107 = function() {
       return true;

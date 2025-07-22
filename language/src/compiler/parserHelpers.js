@@ -160,7 +160,7 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
  * @param {AnnotatedCode} target
  * @param {any[]} args
  */
-export function makeCall(target, args, mode) {
+export function makeCall(target, args) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = /** @type {any} */ (target).location;
@@ -391,8 +391,9 @@ export function makePipeline(arg, fn, mode) {
  *
  * @param {AnnotatedCode[]} args
  * @param {CodeLocation} location
+ * @param {string} mode
  */
-export function makeSlashPath(args, location) {
+export function makeSlashPath(args, location, mode = "jse") {
   if (args.length === 1) {
     return args[0];
   }
@@ -444,8 +445,17 @@ export function makeSlashPath(args, location) {
       // Remove the last empty key
       keys.pop();
     }
-    const scope = annotate([ops.scope], location);
-    return annotate([scope, ...keys], location);
+
+    if (mode === "shell") {
+      // TODO: Deprecate, remove
+      // Use first key as a reference
+      const head = keys.shift()[1];
+      const reference = annotate([markers.reference, head], location);
+      return annotate([reference, ...keys], location);
+    } else {
+      const scope = annotate([ops.scope], location);
+      return annotate([scope, ...keys], location);
+    }
   }
 
   return annotate([markers.path, ...simplified], location);

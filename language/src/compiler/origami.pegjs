@@ -145,7 +145,7 @@ bitwiseXorOperator
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
   = head:protocolExpression tail:arguments* {
-      return tail.reduce((target, args) => makeCall(target, args, options.mode), head);
+      return tail.reduce((target, args) => makeCall(target, args), head);
     }
 
 // A comma-separated list of expressions: `x, y, z`
@@ -784,7 +784,7 @@ slashChain
       if (trailingSlash) {
         args.push(annotate([ops.literal, ""], location()));
       }
-      return makeSlashPath(args, location());
+      return makeSlashPath(args, location(), options.mode);
     }
 
 // Check whether next character is a slash without consuming input

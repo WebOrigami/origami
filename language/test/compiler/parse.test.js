@@ -221,22 +221,29 @@ describe("Origami parser", () => {
     });
 
     test("with paths", () => {
-      assertParse("callExpression", "tree/", [
-        [ops.scope],
-        [ops.literal, "tree/"],
-      ]);
+      assertParse(
+        "callExpression",
+        "tree/",
+        [[ops.scope], [ops.literal, "tree/"]],
+        "jse"
+      );
       assertParse("callExpression", "tree/foo/bar", [
         markers.path,
         [ops.literal, "tree"],
         [ops.literal, "foo"],
         [ops.literal, "bar"],
       ]);
-      assertParse("callExpression", "tree/foo/bar/", [
-        [ops.scope],
-        [ops.literal, "tree/"],
-        [ops.literal, "foo/"],
-        [ops.literal, "bar/"],
-      ]);
+      assertParse(
+        "callExpression",
+        "tree/foo/bar/",
+        [
+          [ops.scope],
+          [ops.literal, "tree/"],
+          [ops.literal, "foo/"],
+          [ops.literal, "bar/"],
+        ],
+        "jse"
+      );
       // Consecutive slahes in a path are removed
       assertParse("callExpression", "tree//key", [
         markers.path,
@@ -1307,19 +1314,30 @@ Body`,
     });
 
     test("unambiguous keys", () => {
-      assertParse("slashChain", "pages/404.html", [
-        [ops.scope],
-        [ops.literal, "pages/"],
-        [ops.literal, "404.html"],
-      ]);
+      assertParse(
+        "slashChain",
+        "pages/404.html",
+        [
+          [markers.reference, "pages/"],
+          [ops.literal, "404.html"],
+        ],
+        "shell"
+      );
+      assertParse(
+        "slashChain",
+        "pages/404.html",
+        [[ops.scope], [ops.literal, "pages/"], [ops.literal, "404.html"]],
+        "jse"
+      );
     });
 
     test("traversal with trailing slash", () => {
-      assertParse("slashChain", "a.b/x.y/", [
-        [ops.scope],
-        [ops.literal, "a.b/"],
-        [ops.literal, "x.y/"],
-      ]);
+      assertParse(
+        "slashChain",
+        "a.b/x.y/",
+        [[ops.scope], [ops.literal, "a.b/"], [ops.literal, "x.y/"]],
+        "jse"
+      );
     });
   });
 
