@@ -48,27 +48,27 @@ additiveOperator
   / "-"
 
 angleBracketLiteral
-  = "<" __ protocol:protocol "//"? path:angleBracketPath __ ">" {
+  = "<" protocol:protocol "//"? path:angleBracketPath ">" {
     return annotate([protocol, ...path], location());
     }
-  / "<" __ "/" path:angleBracketPath __ ">" {
+  / "<" "/" path:angleBracketPath ">" {
       const root = annotate([ops.rootDirectory], location());
       return path.length > 0 ? annotate([root, ...path], location()) : root;
     }
-  / "<" __ "~" "/"? path:angleBracketPath __ ">" {
+  / "<" "~" "/"? path:angleBracketPath ">" {
       const home = annotate([ops.homeDirectory], location());
       return path.length > 0 ? annotate([home, ...path], location()) : home;
     }
-  / "<" __ path:angleBracketPath __ ">" {
+  / "<" path:angleBracketPath ">" {
       // Angle bracket paths always reference scope
       const scope = annotate([ops.scope], location());
       return annotate([scope, ...path], location());
     }
 
 angleBracketPath
-  = @angleBracketPathKey|0.., "/"| "/"?
+  = @angleBracketKey|0.., "/"| "/"?
 
-angleBracketPathKey
+angleBracketKey
   = chars:angleBracketPathChar+ slashFollows:slashFollows? {
       // Append a trailing slash if one follows (but don't consume it)
       const key = chars.join("") + (slashFollows ? "/" : "");
@@ -421,6 +421,31 @@ integerLiteral "integer"
 jseMode
   = &{ return options.mode === "jse" }
 
+// A key in a path or an expression that looks like one
+key
+  // Digits followed by non-digit characters: `404.html`
+  = digits:digits nonDigits:keyCharNotDigit+ more:keyChar* {
+      return annotate([ops.literal, text()], location());
+    }
+  // Sequence with tilde not in start position: `a~b`
+  / tilde:keyCharNotTilde+ "~" keyChar* {
+      return annotate([ops.literal, text()], location());
+    }
+  // Ambiguous key: key or object+property reference
+  / @dotChain
+
+keyChar
+  // In addition to ID_Continue, allow hyphens, periods, tildes
+  = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) }
+
+keyCharNotDigit
+  // Like keyChar, but disallow digits
+  = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) && !char.match(/[0-9]/) }
+
+keyCharNotTilde
+  // Like keyChar, but disallow tildes
+  = char:. &{ return char.match(/[$_\-\.\p{ID_Continue}]/u) }
+
 // A separated list of values
 list "list"
   = values:pipelineExpression|1.., separator| separator? {
@@ -544,7 +569,7 @@ objectShorthandProperty "object identifier"
   }
 
 objectPublicKey
-  = key:dotChain slash:"/"? {
+  = key:key slash:"/"? {
     return text();
   }
   / string:stringLiteral {
@@ -754,8 +779,8 @@ slashes
 
 // A sequence of one or more dot chains separated by slashes: `a.b/x.y`
 slashChain
-  = dotChains:dotChain|1.., slashes| trailingSlash:slashes? {
-      const args = dotChains;
+  = keys:key|1.., slashes| trailingSlash:slashes? {
+      const args = keys;
       if (trailingSlash) {
         args.push(annotate([ops.literal, ""], location()));
       }
@@ -849,11 +874,10 @@ unaryExpression
 unaryOperator
   = "!"
   / "+"
+  / "~"
   // Don't match a front matter delimiter. For some reason, the negative
   // lookahead !"--\n" doesn't work.
   / @"-" !"-\n"
-  // Don't match a path that starts with a tilde: ~/foo
-  / @"~" !"/"
 
 whitespace
   = inlineSpace

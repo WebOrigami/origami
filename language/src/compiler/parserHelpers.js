@@ -397,6 +397,20 @@ export function makeSlashPath(args, location) {
     return args[0];
   }
 
+  // Are any segments non-empty ops.literal are unambiguous keys, i.e.,
+  // definitely not JS?
+  const hasUnambiguousKeys = args.some(
+    (segment) => segment[0] === ops.literal && segment[1] !== ""
+  );
+  // Does the path end with a trailing slash?
+  const lastSegment = args.at(-1);
+  const hasTrailingSlash =
+    lastSegment?.[0] === ops.literal && lastSegment?.[1] === "";
+
+  // In those cases, we always do a traverse.
+  const traverse = hasUnambiguousKeys || hasTrailingSlash;
+
+  // Simplify the path and remove empty segments
   const simplified = args
     .map((chain) =>
       chain[0] === markers.reference
@@ -411,12 +425,8 @@ export function makeSlashPath(args, location) {
         index === args.length - 1
     );
 
-  if (
-    simplified.at(-1) instanceof Array &&
-    simplified.at(-1)[0] === ops.literal &&
-    simplified.at(-1)[1] === ""
-  ) {
-    // A path that ends with a trailing slash is always a traverse
+  if (traverse) {
+    // Handle a scope traverse
     const keys = simplified.map((segment, index) => {
       const key =
         segment[0] === ops.literal

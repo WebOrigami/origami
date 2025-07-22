@@ -637,7 +637,7 @@ Body`,
         [markers.reference, "slug"],
       ],
     ]);
-    assertParse("expression", "keys <~>", [
+    assertParse("expression", "keys(<~>)", [
       [markers.reference, "keys"],
       [ops.homeDirectory],
     ]);
@@ -749,6 +749,23 @@ Body`,
         [ops.literal, "arg"],
       ],
     ]);
+  });
+
+  describe("key", () => {
+    test("unambiguous keys", () => {
+      assertParse("key", "404.html", [ops.literal, "404.html"]);
+      assertParse("key", "1a2b3c", [ops.literal, "1a2b3c"]);
+      assertParse("key", "a~b", [ops.literal, "a~b"]);
+    });
+
+    test("ambiguous keys", () => {
+      assertParse("key", "a", [markers.reference, "a"]);
+      assertParse("key", "index.html", [
+        markers.dots,
+        [ops.literal, "index"],
+        [ops.literal, "html"],
+      ]);
+    });
   });
 
   test("list", () => {
@@ -1274,24 +1291,36 @@ Body`,
     assertParse("singleLineComment", "// Hello, world!", null, "jse", false);
   });
 
-  test("slashChain", () => {
-    assertParse("slashChain", "foo", [markers.reference, "foo"]);
-    assertParse("slashChain", "index.html", [
-      markers.dots,
-      [ops.literal, "index"],
-      [ops.literal, "html"],
-    ]);
-    assertParse("slashChain", "package.json/name", [
-      markers.path,
-      [markers.dots, [ops.literal, "package"], [ops.literal, "json"]],
-      [ops.literal, "name"],
-    ]);
-    // Trailing slash is an unpack
-    assertParse("slashChain", "a.b/x.y/", [
-      [ops.scope],
-      [ops.literal, "a.b/"],
-      [ops.literal, "x.y/"],
-    ]);
+  describe("slashChain", () => {
+    test("ambiguous keys", () => {
+      assertParse("slashChain", "foo", [markers.reference, "foo"]);
+      assertParse("slashChain", "index.html", [
+        markers.dots,
+        [ops.literal, "index"],
+        [ops.literal, "html"],
+      ]);
+      assertParse("slashChain", "package.json/name", [
+        markers.path,
+        [markers.dots, [ops.literal, "package"], [ops.literal, "json"]],
+        [ops.literal, "name"],
+      ]);
+    });
+
+    test("unambiguous keys", () => {
+      assertParse("slashChain", "pages/404.html", [
+        [ops.scope],
+        [ops.literal, "pages/"],
+        [ops.literal, "404.html"],
+      ]);
+    });
+
+    test("traversal with trailing slash", () => {
+      assertParse("slashChain", "a.b/x.y/", [
+        [ops.scope],
+        [ops.literal, "a.b/"],
+        [ops.literal, "x.y/"],
+      ]);
+    });
   });
 
   test("spreadElement", () => {
