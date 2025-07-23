@@ -423,15 +423,21 @@ key
       return annotate([ops.literal, text()], location());
     }
   // Ambiguous key: key or object+property reference
-  / @dotChain
+  / keyCharNotHyphen keyChar* {
+      return annotate([markers.key, text()], location());
+    }
 
 keyChar
-  // In addition to ID_Continue, allow hyphens, periods, tildes
+  // In addition to JS identifier characters, allow hyphens, periods, tildes
   = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) }
 
 keyCharNotDigit
   // Like keyChar, but disallow digits
   = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) && !char.match(/[0-9]/) }
+
+keyCharNotHyphen
+  // Like keyChar, but disallow hyphens
+  = char:. &{ return char.match(/[$_\.~\p{ID_Continue}]/u) }
 
 keyCharNotTilde
   // Like keyChar, but disallow tildes
@@ -445,6 +451,9 @@ keyUnambiguous
   / digits:digits nonDigits:keyCharNotDigit+ more:keyChar*
   // Sequence with tilde not in start position: `a~b`
   / tilde:keyCharNotTilde+ "~" keyChar*
+  // At sign followed by key characters: `@foo`
+  // TODO: Deprecate this
+  / shellMode "@" keyChar+
 
 // A separated list of values
 list "list"

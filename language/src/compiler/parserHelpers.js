@@ -19,6 +19,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 export const markers = {
   dots: Symbol("dots"), // Dot chain: x.y.z
   global: Symbol("global"), // Global reference
+  key: Symbol("key"), // Ambiguous key: external reference or JS operation
   path: Symbol("path"), // Path or division: x/y
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
@@ -55,10 +56,10 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[markers.reference,  "foo"], undefined]
+  // For `foo`, the call would be: [[markers.key,  "foo"], undefined]
   if (
     code[0] instanceof Array &&
-    code[0][0] === markers.reference &&
+    (code[0][0] === ops.literal || code[0][0] === markers.key) &&
     code[0][1] === name
   ) {
     return macro;
@@ -411,31 +412,19 @@ export function makeSlashPath(args, location, mode = "jse") {
   // In those cases, we always do a traverse.
   const traverse = hasUnambiguousKeys || hasTrailingSlash;
 
-  // Simplify the path and remove empty segments
-  const simplified = args
-    .map((chain) =>
-      chain[0] === markers.reference
-        ? annotate([ops.literal, chain[1]], chain.location)
-        : chain
-    )
-    .filter(
-      (segment, index) =>
-        // Remove empty segments
-        segment[0] !== ops.literal ||
-        segment[1] !== "" ||
-        index === args.length - 1
-    );
+  // Remove empty segments except at the end
+  const simplified = args.filter(
+    (segment, index) =>
+      // Remove empty segments
+      segment[0] !== markers.key ||
+      segment[1] !== "" ||
+      index === args.length - 1
+  );
 
   if (traverse) {
     // Handle a scope traverse
     const keys = simplified.map((segment, index) => {
-      const key =
-        segment[0] === ops.literal
-          ? segment[1]
-          : segment
-              .slice(1)
-              .map((dot) => dot[1])
-              .join(".");
+      const key = segment[1];
       return annotate(
         [ops.literal, trailingSlash.toggle(key, index < simplified.length - 1)],
         segment.location
