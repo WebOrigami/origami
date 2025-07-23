@@ -796,11 +796,11 @@ Body`,
   test("newExpression", () => {
     assertParse("newExpression", "new Foo()", [
       ops.construct,
-      [markers.reference, "Foo"],
+      [markers.key, "Foo"],
     ]);
     assertParse("newExpression", "new:Foo()", [
       ops.construct,
-      [markers.reference, "Foo"],
+      [markers.key, "Foo"],
     ]);
   });
 
@@ -829,7 +829,7 @@ Body`,
     assertParse("objectLiteral", "{ a: 1, b }", [
       ops.object,
       ["a", [ops.literal, 1]],
-      ["b", [markers.reference, "b"]],
+      ["b", [markers.key, "b"]],
     ]);
     assertParse("objectLiteral", "{ sub: { a: 1 } }", [
       ops.object,
@@ -935,7 +935,7 @@ Body`,
   });
 
   test("objectEntry", () => {
-    assertParse("objectEntry", "foo", ["foo", [markers.reference, "foo"]]);
+    assertParse("objectEntry", "foo", ["foo", [markers.key, "foo"]]);
     assertParse("objectEntry", "index.html: x", [
       "index.html",
       [markers.key, "x"],

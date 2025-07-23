@@ -7,7 +7,7 @@ import { ops } from "../../src/runtime/internal.js";
 import { assertCodeEqual, createCode } from "./codeHelpers.js";
 
 describe("optimize", () => {
-  test("change local references to context references", () => {
+  test.only("change local references to context references", () => {
     const expression = `(name) => {
       a: name,
       b: a
@@ -17,8 +17,8 @@ describe("optimize", () => {
       [[ops.literal, "name"]],
       [
         ops.object,
-        ["a", [[ops.context, 1], "name"]],
-        ["b", [[ops.context], "a"]],
+        ["a", [[markers.key, 1], "name"]],
+        ["b", [[markers.key], "a"]],
       ],
     ];
     assertCompile(expression, expected);

@@ -187,22 +187,6 @@ conditionalExpression
 digits
   = @[0-9]+
 
-// A sequence of one or more identifiers separated by dots: `a.b.c`
-dotChain
-  = elements:dotChainElement|2.., "."| {
-      return annotate([markers.dots, ...elements], location());
-    }
-  / @reference // Single identifier without a dot
-
-dotChainElement
-  = reference:reference {
-      return annotate([ops.literal, reference[1]], reference.location);
-    }
-  / "" {
-    // Empty string -- e.g., the part before the dot in `.foo`
-    return annotate([ops.literal, ""], location());
-  }
-
 doubleArrow = "⇒" / "=>"
 
 doubleQuoteString "double quote string"
@@ -356,19 +340,18 @@ homeDirectory
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
 host "HTTP/HTTPS host"
-  = name:hostName port:(":" @integerLiteral)? slashFollows:slashFollows? {
+  = name:hostname port:(":" @integerLiteral)? slashFollows:slashFollows? {
       const portText = port ? `:${port[1]}` : "";
       const slashText = slashFollows ? "/" : "";
       const host = name + portText + slashText;
       return annotate([ops.literal, host], location());
     }
 
-// Name with possible dots: `example.com` or `example.com.fr`
-hostName
-  = elements:reference|1.., "."| {
+hostname
+  = key {
     return text();
   }
-
+  
 // JavaScript-compatible identifier
 identifier
   = id:$( identifierStart identifierPart* ) {
@@ -496,11 +479,11 @@ multiplicativeOperator
 
 // A new expression: `new Foo()`
 newExpression
-  = "new" __ head:reference tail:parenthesesArguments? {
+  = "new" __ head:key tail:parenthesesArguments? {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
-  / "new:" head:reference tail:parenthesesArguments {
+  / "new:" head:key tail:parenthesesArguments {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
@@ -566,7 +549,7 @@ objectProperty "object property"
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
   = key:objectPublicKey {
-      const reference = annotate([markers.reference, key], location());
+      const reference = annotate([markers.key, key], location());
       return annotate([key, reference], location());
     }
   / path:angleBracketLiteral {
@@ -691,11 +674,6 @@ protocolExpression
     }
   / newExpression
   / primary
-
-reference "identifier reference"
-  = id:identifier {
-      return annotate([markers.reference, id], location());
-    }
 
 regexFlags
   = flags:[gimuy]* {
