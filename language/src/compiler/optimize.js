@@ -41,6 +41,9 @@ export default function optimize(code, options = {}) {
       // Replace global op with the globals
       return annotate([globals, args[0]], code.location);
 
+    case markers.key:
+      return resolveKey(code, globals, locals, cache);
+
     case markers.path:
       return resolvePath(code, globals, locals, cache, mode);
 
@@ -278,6 +281,8 @@ function resolveDots(code, globals, locals, cache) {
     ? externalReference(code, locals, cache)
     : propertyAccess(code, globals, locals);
 }
+
+function resolveKey(code, globals, locals, cache) {}
 
 function resolveReference(code, globals, locals, cache) {
   return isExternalReference(code, globals, locals)

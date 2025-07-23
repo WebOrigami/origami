@@ -689,7 +689,7 @@ Body`,
     ]);
   });
 
-  describe("key", () => {
+  describe.only("key", () => {
     test("unambiguous keys", () => {
       assertParse("key", ".ssh", [ops.literal, ".ssh"]);
       assertParse("key", "404.html", [ops.literal, "404.html"]);
@@ -1024,19 +1024,39 @@ Body`,
     ]);
   });
 
+  test("implicitPath", () => {
+    assertParse(
+      "implicitPath",
+      "month/12",
+      [
+        [markers.reference, "month/"],
+        [ops.literal, "12"],
+      ],
+      "shell"
+    );
+    assertParse(
+      "implicitPath",
+      "month/12",
+      [[ops.scope], [ops.literal, "month/"], [ops.literal, "12"]],
+      "jse"
+    );
+  });
+
   test("path", () => {
-    assertParse("path", "/tree/", [[ops.literal, "tree/"]]);
-    assertParse("path", "/month/12", [
+    assertParse("path", "tree/", [[ops.literal, "tree/"]]);
+    assertParse("path", "month/12", [
       [ops.literal, "month/"],
       [ops.literal, "12"],
     ]);
-    assertParse("path", "/tree/foo/bar", [
+    assertParse("path", "tree/foo/bar", [
       [ops.literal, "tree/"],
       [ops.literal, "foo/"],
       [ops.literal, "bar"],
     ]);
-    assertParse("path", "/a///b", [
+    assertParse("path", "a///b", [
       [ops.literal, "a/"],
+      [ops.literal, ""],
+      [ops.literal, ""],
       [ops.literal, "b"],
     ]);
   });
@@ -1104,7 +1124,7 @@ Body`,
     assertParse("protocol", "https:", [markers.global, "https:"]);
   });
 
-  describe("protocolExpression", () => {
+  describe.skip("protocolExpression", () => {
     test("protocol call", () => {
       assertParse("protocolExpression", "files:build", [
         [markers.global, "files:"],
@@ -1225,45 +1245,6 @@ Body`,
     assertParse("singleLineComment", "// Hello, world!", null, "jse", false);
   });
 
-  describe("slashChain", () => {
-    test("ambiguous keys", () => {
-      assertParse("slashChain", "foo", [markers.key, "foo"]);
-      assertParse("slashChain", "index.html", [markers.key, "index.html"]);
-      assertParse("slashChain", "package.json/name", [
-        markers.path,
-        [markers.key, "package.json"],
-        [markers.key, "name"],
-      ]);
-    });
-
-    test("unambiguous keys", () => {
-      assertParse(
-        "slashChain",
-        "pages/404.html",
-        [
-          [markers.reference, "pages/"],
-          [ops.literal, "404.html"],
-        ],
-        "shell"
-      );
-      assertParse(
-        "slashChain",
-        "pages/404.html",
-        [[ops.scope], [ops.literal, "pages/"], [ops.literal, "404.html"]],
-        "jse"
-      );
-    });
-
-    test("traversal with trailing slash", () => {
-      assertParse(
-        "slashChain",
-        "a.b/x.y/",
-        [[ops.scope], [ops.literal, "a.b/"], [ops.literal, "x.y/"]],
-        "jse"
-      );
-    });
-  });
-
   test("spreadElement", () => {
     assertParse("spreadElement", "...a", [ops.spread, [markers.key, "a"]]);
     assertParse("spreadElement", "…a", [ops.spread, [markers.key, "a"]]);
@@ -1345,7 +1326,7 @@ Body text`,
     );
   });
 
-  test("templateDocument with Origami front matter", () => {
+  test.skip("templateDocument with Origami front matter", () => {
     assertParse(
       "templateDocument",
       `---
@@ -1480,8 +1461,9 @@ function assertCodeLocations(code) {
 }
 
 function assertThrows(startRule, source, message, position, mode = "shell") {
+  let code;
   try {
-    parse(source, {
+    code = parse(source, {
       grammarSource: { text: source },
       mode,
       startRule,

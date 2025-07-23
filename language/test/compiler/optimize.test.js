@@ -17,8 +17,8 @@ describe("optimize", () => {
       [[ops.literal, "name"]],
       [
         ops.object,
-        ["a", [[markers.key, 1], "name"]],
-        ["b", [[markers.key], "a"]],
+        ["a", [[ops.context, 1], "name"]],
+        ["b", [[ops.context], "a"]],
       ],
     ];
     assertCompile(expression, expected);

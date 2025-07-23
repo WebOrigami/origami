@@ -21,8 +21,8 @@ import {
   makeDeferredArguments,
   makeDocument,
   makeObject,
+  makePath,
   makePipeline,
-  makeSlashPath,
   makeTemplate,
   makeUnaryOperation,
   makeYamlObject,
@@ -45,7 +45,7 @@ additiveExpression
 
 additiveOperator
   = "+"
-  / "-"
+  / "-" !">" // don't match pipeline operator
 
 angleBracketLiteral
   = "<" protocol:protocol "//"? path:angleBracketPath ">" {
@@ -60,7 +60,6 @@ angleBracketLiteral
       return path.length > 0 ? annotate([home, ...path], location()) : home;
     }
   / "<" path:angleBracketPath ">" {
-      // Angle bracket paths always reference scope
       const scope = annotate([ops.scope], location());
       return annotate([scope, ...path], location());
     }
@@ -351,7 +350,7 @@ hostname
   = key {
     return text();
   }
-  
+
 // JavaScript-compatible identifier
 identifier
   = id:$( identifierStart identifierPart* ) {
@@ -375,6 +374,12 @@ identifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
   // TODO: Deprecate
   / shellMode @"@"
+
+// A path without angle brackets
+implicitPath
+  = keys:pathKey|2..| {
+    return makePath(keys, location(), options.mode);
+  }
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
@@ -406,37 +411,45 @@ key
       return annotate([ops.literal, text()], location());
     }
   // Ambiguous key: key or object+property reference
-  / keyCharNotHyphen keyChar* {
+  / keyCharStart keyChar* {
       return annotate([markers.key, text()], location());
     }
 
+// Character after the first in a key
 keyChar
-  // In addition to JS identifier characters, allow hyphens, periods, tildes
-  = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) }
+  // All JS identifier characters
+  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) } {
+      return text();
+    }
+  // Also allow hyphens, periods, tildes
+  / "-"
+  / "."
+  / "~"
 
-keyCharNotDigit
-  // Like keyChar, but disallow digits
-  = char:. &{ return char.match(/[$_\-\.~\p{ID_Continue}]/u) && !char.match(/[0-9]/) }
+keyCharStartNotTilde
+  // Like keyCharStart, but disallow tildes
+  = char:keyCharStart &{ return !char.match(/~/) }
 
-keyCharNotHyphen
-  // Like keyChar, but disallow hyphens
-  = char:. &{ return char.match(/[$_\.~\p{ID_Continue}]/u) }
-
-keyCharNotTilde
-  // Like keyChar, but disallow tildes
-  = char:. &{ return char.match(/[$_\-\.\p{ID_Continue}]/u) }
+// First character in a key
+keyCharStart
+  // All JS identifier characters
+  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) } {
+      return text();
+    }
 
 // A key that can't be a JavaScript identifier
 keyUnambiguous
   // Period followed by key characters: `.foo`
   = "." keyChar+
-  // Digits followed by non-digit characters: `404.html`
-  / digits:digits nonDigits:keyCharNotDigit+ more:keyChar*
-  // Sequence with tilde not in start position: `a~b`
-  / tilde:keyCharNotTilde+ "~" keyChar*
+  // Digits followed by non-digit characters: `404.html`. The `digits` term will
+  // consume all consecutive digits, so if this matches, there's at least one
+  // non-digit character after the digits.
+  / digits keyChar+
   // At sign followed by key characters: `@foo`
   // TODO: Deprecate this
   / shellMode "@" keyChar+
+  // Contains a tilde after the beginning
+  / keyCharStartNotTilde* "~" keyChar*
 
 // A separated list of values
 list "list"
@@ -593,36 +606,32 @@ parenthesesArguments "function arguments in parentheses"
 
 // A slash-separated path of keys: `a/b/c`
 path "slash-separated path"
-  // Path with at least a tail
-  = segments:pathSegment|1..| {
-      // Drop empty segments that represent consecutive or final slashes
-      segments = segments.filter(segment => segment);
-      return annotate(segments, location());
+  = keys:pathKey|1..| {
+      return annotate(keys, location());
     }
 
 // A slash-separated path of keys that follows a call target
 pathArguments
-  = path:path {
-      return annotate([markers.traverse, ...path], location());
+  = "/" path:path? {
+      const args = path ?? [];
+      return annotate([markers.traverse, ...args], location());
     }
 
-// A single key in a slash-separated path: `/a`
+// A single key in a path, possibly with trailing slash: `a/`, `b`
 pathKey
-  = chars:pathSegmentChar+ slashFollows:slashFollows? {
-    // Append a trailing slash if one follows (but don't consume it)
-    const key = chars.join("") + (slashFollows ? "/" : "");
-    return annotate([ops.literal, key], location());
-  }
+  = chars:pathKeyChar+ "/"? {
+      return annotate([ops.literal, text()], location());
+    }
+  / "/" {
+    // A single slash is a path key
+    return annotate([ops.literal, ""], location());
+    }
 
-pathSegment
-  = "/" @pathKey?
-
-// A single character in a slash-separated path segment
-pathSegmentChar
+// A single character in a path key
+pathKeyChar
   // This is more permissive than an identifier. It allows some characters like
   // brackets or quotes that are not allowed in identifiers.
   = [^(){}\[\],:/\\ \t\n\r]
-  / escapedChar
 
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
@@ -640,10 +649,11 @@ primary
   / arrayLiteral
   / objectLiteral
   / group
-  / templateLiteral
   / angleBracketLiteral
   / regexLiteral
-  / slashChain
+  / templateLiteral
+  / implicitPath
+  / key
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
@@ -663,12 +673,12 @@ protocol
 
 // Protocol with a path
 protocolExpression
-  = protocol:protocol "//" host:(host / slash) path:path? {
+  = protocol:protocol "//" host "/" path:path? {
       // URL like `https://example.com/index.html`
       const keys = annotate([host, ...(path ?? [])], location());
       return makeCall(protocol, keys, options.mode);
     }
-  / protocol:protocol keys:pathKey|1.., "/"| {
+  / protocol:protocol keys:pathKey|1..| {
       // Custom protocol like `files:assets`
       return makeCall(protocol, keys, options.mode);
     }
@@ -764,16 +774,6 @@ slashes
       return annotate([ops.literal, "/"], location());
     }
 
-// A sequence of one or more dot chains separated by slashes: `a.b/x.y`
-slashChain
-  = keys:key|1.., slashes| trailingSlash:slashes? {
-      const args = keys;
-      if (trailingSlash) {
-        args.push(annotate([ops.literal, ""], location()));
-      }
-      return makeSlashPath(args, location(), options.mode);
-    }
-
 // Check whether next character is a slash without consuming input
 slashFollows
   // This expression returned `undefined` if successful; we convert to `true`
@@ -853,7 +853,7 @@ textChar
 
 // A unary prefix operator: `!x`
 unaryExpression
-  = operator:unaryOperator __ expression:unaryExpression {
+  = operator:unaryOperator __ expression:expectExpression {
       return makeUnaryOperation(operator, expression, location());
     }
   / callExpression

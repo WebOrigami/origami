@@ -1,4 +1,3 @@
-import { trailingSlash } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
 import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
@@ -390,64 +389,26 @@ export function makePipeline(arg, fn, mode) {
 /**
  * Handle a path with one or more segments separated by slashes.
  *
- * @param {AnnotatedCode[]} args
+ * @param {AnnotatedCode[]} keys
  * @param {CodeLocation} location
  * @param {string} mode
  */
-export function makeSlashPath(args, location, mode = "jse") {
-  if (args.length === 1) {
-    return args[0];
-  }
-
-  // Are any segments non-empty ops.literal are unambiguous keys, i.e.,
-  // definitely not JS?
-  const hasUnambiguousKeys = args.some(
-    (segment) => segment[0] === ops.literal && segment[1] !== ""
-  );
-  // Does the path end with a trailing slash?
-  const lastSegment = args.at(-1);
-  const hasTrailingSlash =
-    lastSegment?.[0] === ops.literal && lastSegment?.[1] === "";
-
-  // In those cases, we always do a traverse.
-  const traverse = hasUnambiguousKeys || hasTrailingSlash;
-
+export function makePath(keys, location, mode = "jse") {
   // Remove empty segments except at the end
-  const simplified = args.filter(
-    (segment, index) =>
-      // Remove empty segments
-      segment[0] !== markers.key ||
-      segment[1] !== "" ||
-      index === args.length - 1
+  const simplified = keys.filter(
+    (key, index) => key[1] !== "/" || index === keys.length - 1
   );
 
-  if (traverse) {
-    // Handle a scope traverse
-    const keys = simplified.map((segment, index) => {
-      const key = segment[1];
-      return annotate(
-        [ops.literal, trailingSlash.toggle(key, index < simplified.length - 1)],
-        segment.location
-      );
-    });
-    if (keys.at(-1)[1] === "") {
-      // Remove the last empty key
-      keys.pop();
-    }
-
-    if (mode === "shell") {
-      // TODO: Deprecate, remove
-      // Use first key as a reference
-      const head = keys.shift()[1];
-      const reference = annotate([markers.reference, head], location);
-      return annotate([reference, ...keys], location);
-    } else {
-      const scope = annotate([ops.scope], location);
-      return annotate([scope, ...keys], location);
-    }
+  if (mode === "shell") {
+    // TODO: Deprecate, remove
+    // Use first key as a reference
+    const head = simplified.shift()[1];
+    const reference = annotate([markers.reference, head], location);
+    return annotate([reference, ...simplified], location);
+  } else {
+    const scope = annotate([ops.scope], location);
+    return annotate([scope, ...simplified], location);
   }
-
-  return annotate([markers.path, ...simplified], location);
 }
 
 /**
