@@ -34,21 +34,9 @@ export default function optimize(code, options = {}) {
   const [op, ...args] = code;
   let optimized = code;
   switch (op) {
-    case markers.dots:
-      return resolveDots(code, globals, locals, cache);
-
     case markers.global:
       // Replace global op with the globals
       return annotate([globals, args[0]], code.location);
-
-    case markers.key:
-      return resolveKey(code, globals, locals, cache);
-
-    case markers.path:
-      return resolvePath(code, globals, locals, cache, mode);
-
-    case markers.reference:
-      return resolveReference(code, globals, locals, cache);
 
     case ops.lambda:
       const parameters = args[0];
@@ -70,6 +58,12 @@ export default function optimize(code, options = {}) {
     case ops.scope:
       optimized = scopeCall(locals, code.location);
       break;
+  }
+
+  if (op === markers.reference) {
+    return resolveReference(code, globals, locals, cache);
+  } else if (op instanceof Array && op[0] === markers.reference) {
+    optimized = resolvePath(code, globals, locals, cache, mode);
   }
 
   // Optimize children
@@ -152,37 +146,10 @@ function cacheResult(cache, code) {
   return annotate([ops.cache, cache, pathFromKeys(keys), code], code.location);
 }
 
-function divisionArgument(code, globals, locals) {
-  return code[0] === markers.reference || code[0] === ops.literal
-    ? variableReference(code, globals, locals)
-    : propertyAccess(code, globals, locals);
-}
-
-function divisionChain(code, globals, locals) {
-  const [_, head, ...tail] = code;
-  let result = divisionArgument(head, globals, locals);
-  for (const arg of tail) {
-    const divisor = divisionArgument(arg, globals, locals);
-    result = annotate([ops.division, result, divisor], arg.location);
-  }
-  return result;
-}
-
 function externalReference(code, locals, cache) {
   const key = keyFromCode(code);
   const scope = scopeCall(locals, code.location);
-  const traversal = annotate([scope, key], code.location);
-  return cacheResult(cache, traversal);
-}
-
-function externalPath(code, locals, cache) {
-  const [_, ...args] = code;
-  const keys = args.map((arg, index) =>
-    trailingSlash.toggle(keyFromCode(arg), index < args.length - 1)
-  );
-  const scope = scopeCall(locals, code.location);
-  const traversal = annotate([scope, ...keys], code.location);
-  return cacheResult(cache, traversal);
+  return annotate([scope, key], code.location);
 }
 
 // Determine how many contexts up we need to go for a local
@@ -206,24 +173,21 @@ function inlineLiteral(code) {
 }
 
 function isExternalReference(code, globals, locals) {
-  // Identify the first segment of the path
-  const firstSegment = code[0] === markers.path ? code[1] : code;
+  const key = keyFromCode(code);
 
-  const [op] = firstSegment;
-  if (op === markers.dots) {
-    // See if the joined x.y dot chain is a global or local variable
-    const joinedKey = keyFromCode(firstSegment);
-    if (isVariable(joinedKey, globals, locals)) {
-      return false; // Global or local variable
-    }
+  // See if the whole key is a global or local variable
+  if (isVariable(key, globals, locals)) {
+    return false; // Global or local variable
   }
 
-  // Get the very first part of the first segment
-  const firstReference = op === markers.dots ? firstSegment[1] : firstSegment;
-  const firstKey = keyFromCode(firstReference);
+  // Split by periods
+  const parts = key.split(".");
+  if (parts.length === 1) {
+    return true; // External reference
+  }
 
-  // Check first key to see if it's a global or local reference
-  if (isVariable(firstKey, globals, locals)) {
+  // Check first part to see if it's a global or local reference
+  if (isVariable(parts[0], globals, locals)) {
     return false; // Global or local variable
   }
 
@@ -241,64 +205,39 @@ function isVariable(key, globals, locals) {
 }
 
 function keyFromCode(code) {
-  const [op, ...args] = code;
-  if (op === markers.reference || op === ops.literal) {
-    return args[0];
-  } else if (op === markers.dots) {
-    return args.map((arg) => keyFromCode(arg)).join(".");
-  }
-}
-
-function propertyAccess(code, globals, locals) {
-  const [_, head, ...tail] = code;
-  let result = variableReference(head, globals, locals);
-  for (const arg of tail) {
-    const key = keyFromCode(arg);
-    result = annotate([result, key], arg.location);
-  }
-  return result;
-}
-
-function resolveDots(code, globals, locals, cache) {
-  // Try the entire x.y.z as a single local/global reference
-  const key = keyFromCode(code);
-  const depth = getLocalReferenceDepth(locals, key);
-  if (depth >= 0) {
-    // Local reference
-    const context = [ops.context];
-    if (depth > 0) {
-      context.push(depth);
-    }
-    const contextCall = annotate(context, code.location);
-    return annotate([contextCall, key], code.location);
-  } else if (key in globals) {
-    // Global reference
-    return annotate([globals, key], code.location);
-  }
-
-  // Entire key isn't a local or global, look just at the head
-  return isExternalReference(code, globals, locals)
-    ? externalReference(code, locals, cache)
-    : propertyAccess(code, globals, locals);
-}
-
-function resolveKey(code, globals, locals, cache) {}
-
-function resolveReference(code, globals, locals, cache) {
-  return isExternalReference(code, globals, locals)
-    ? externalReference(code, locals, cache)
-    : variableReference(code, globals, locals);
+  return code[1];
 }
 
 function resolvePath(code, globals, locals, cache, mode) {
-  if (isExternalReference(code, globals, locals)) {
-    return externalPath(code, locals, cache);
-  } else if (mode === "shell") {
-    // TODO: Deprecate
-    return variablePath(code, globals, locals);
-  } else {
-    return divisionChain(code, globals, locals);
+  const [head, ...tail] = code;
+
+  // In JSE mode, all paths start with an external reference
+  const isExternal =
+    mode === "jse" || isExternalReference(head, globals, locals);
+  let result = isExternal
+    ? externalReference(head, locals, cache)
+    : variableReference(head, globals, locals);
+
+  result.push(...tail);
+
+  if (isExternal) {
+    // Cache external paths
+    result = cacheResult(cache, result);
   }
+
+  return result;
+}
+
+function resolveReference(code, globals, locals, cache) {
+  const isExternal = isExternalReference(code, globals, locals);
+  let result = isExternal
+    ? externalReference(code, locals, cache)
+    : variableReference(code, globals, locals);
+  if (isExternal) {
+    // Cache external references
+    result = cacheResult(cache, result);
+  }
+  return result;
 }
 
 function scopeCall(locals, location) {
@@ -315,31 +254,27 @@ function scopeCall(locals, location) {
 function variableReference(code, globals, locals) {
   const key = trailingSlash.remove(keyFromCode(code));
 
-  const depth = getLocalReferenceDepth(locals, key);
+  const parts = key.split(".");
+  const [head, ...tail] = parts;
+
+  let result;
+  const depth = getLocalReferenceDepth(locals, head);
   if (depth < 0) {
     // Not local, so global
-    return annotate([globals, key], code.location);
+    result = annotate([globals, head], code.location);
+  } else {
+    const context = [ops.context];
+    if (depth > 0) {
+      context.push(depth);
+    }
+    const contextCall = annotate(context, code.location);
+    result = annotate([contextCall, head], code.location);
   }
 
-  const context = [ops.context];
-  if (depth > 0) {
-    context.push(depth);
+  while (tail.length > 0) {
+    const part = tail.shift();
+    result = annotate([result, part], code.location);
   }
-  const contextCall = annotate(context, code.location);
-  return annotate([contextCall, key], code.location);
-}
 
-// TODO: Deprecate
-function variablePath(code, globals, locals) {
-  const [_, head, ...tail] = code;
-  const variableCode = annotate(
-    [markers.reference, keyFromCode(head)],
-    head.location
-  );
-  let result = variableReference(variableCode, globals, locals);
-  for (const arg of tail) {
-    const key = keyFromCode(arg);
-    result = annotate([result, key], arg.location);
-  }
   return result;
 }

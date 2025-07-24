@@ -45,11 +45,11 @@ additiveExpression
 
 additiveOperator
   = "+"
-  / "-" !">" // don't match pipeline operator
+  / minus
 
 angleBracketLiteral
-  = "<" protocol:protocol "//"? path:angleBracketPath ">" {
-    return annotate([protocol, ...path], location());
+  = "<" scheme:uriScheme "//"? path:angleBracketPath ">" {
+    return annotate([scheme, ...path], location());
     }
   / "<" "/" path:angleBracketPath ">" {
       const root = annotate([ops.rootDirectory], location());
@@ -67,6 +67,7 @@ angleBracketLiteral
 angleBracketPath
   = @angleBracketKey|0.., "/"| "/"?
 
+// Single key in an angle bracket path, possibly with a trailing slash
 angleBracketKey
   = chars:angleBracketPathChar+ slashFollows:slashFollows? {
       // Append a trailing slash if one follows (but don't consume it)
@@ -74,14 +75,15 @@ angleBracketKey
       return annotate([ops.literal, key], location());
     }
 
-// A single character in a slash-separated path segment
+// A single character in an angle bracket key
 angleBracketPathChar
-  = [^/:<>\t\n] // Much more permissive than an identifier
+  // Accept anything that doesn't end the angle bracket key or path
+  = [^/>\t\n\r]
   / escapedChar
 
 arguments "function arguments"
   = parenthesesArguments
-  / shellMode @pathArguments
+  / pathArguments
   / propertyAccess
   / computedPropertyAccess
   // / optionalChaining
@@ -117,7 +119,7 @@ arrowFunction
   / conditionalExpression
 
 bitwiseAndExpression
-  = head:equalityExpression tail:(__ @bitwiseAndOperator __ @equalityExpression)* {
+  = head:equalityExpression tail:(whitespace @bitwiseAndOperator whitespace @equalityExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -125,7 +127,7 @@ bitwiseAndOperator
   = @"&" !"&"
 
 bitwiseOrExpression
-  = head:bitwiseXorExpression tail:(__ @bitwiseOrOperator __ @bitwiseXorExpression)* {
+  = head:bitwiseXorExpression tail:(whitespace @bitwiseOrOperator whitespace @bitwiseXorExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -133,7 +135,7 @@ bitwiseOrOperator
   = @"|" !"|"
 
 bitwiseXorExpression
-  = head:bitwiseAndExpression tail:(__ @bitwiseXorOperator __ @bitwiseAndExpression)* {
+  = head:bitwiseAndExpression tail:(whitespace @bitwiseXorOperator whitespace @bitwiseAndExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -143,8 +145,11 @@ bitwiseXorOperator
 // A function call: `fn(arg)`, possibly part of a chain of function calls, like
 // `fn(arg1)(arg2)(arg3)`.
 callExpression "function call"
-  = head:protocolExpression tail:arguments* {
-      return tail.reduce((target, args) => makeCall(target, args), head);
+  = head:uriExpression tail:arguments* {
+      return tail.reduce(
+        (target, args) => makeCall(target, args, location()),
+        head
+      );
     }
 
 // A comma-separated list of expressions: `x, y, z`
@@ -281,7 +286,7 @@ expectPipelineExpression
     }
 
 exponentiationExpression
-  = left:unaryExpression right:(__ "**" __ @exponentiationExpression)? {
+  = left:unaryExpression right:(whitespace "**" whitespace @exponentiationExpression)? {
       return right ? annotate([ops.exponentiation, left, right], location()) : left;
     }
 
@@ -375,15 +380,9 @@ identifierStart "JavaScript identifier start"
   // TODO: Deprecate
   / shellMode @"@"
 
-// A path without angle brackets
-implicitPath
-  = keys:pathKey|2..| {
-    return makePath(keys, location(), options.mode);
-  }
-
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
-      return args ? makeCall(head, args, options.mode) : head;
+      return args ? makeCall(head, args, location()) : head;
     }
     
 // A separated list of values for an implicit parens call. This differs from
@@ -406,50 +405,27 @@ jseMode
 
 // A key in a path or an expression that looks like one
 key
-  // Unambiguous key: definitely not a JavaScript identifier
-  = keyUnambiguous {
-      return annotate([ops.literal, text()], location());
-    }
-  // Ambiguous key: key or object+property reference
-  / keyCharStart keyChar* {
-      return annotate([markers.key, text()], location());
-    }
+  = keyCharStart keyChar* {
+    return text();
+  }
 
 // Character after the first in a key
 keyChar
-  // All JS identifier characters
-  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) } {
-      return text();
-    }
-  // Also allow hyphens, periods, tildes
-  / "-"
-  / "."
-  / "~"
-
-keyCharStartNotTilde
-  // Like keyCharStart, but disallow tildes
-  = char:keyCharStart &{ return !char.match(/~/) }
+  = keyCharStart
+  // Also allow some math operators (not slash)
+  / unaryOperator
+  / "*"
+  / "%"
+  / "&"
+  / "|"
+  / "^"
 
 // First character in a key
 keyCharStart
   // All JS identifier characters
-  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) } {
-      return text();
-    }
-
-// A key that can't be a JavaScript identifier
-keyUnambiguous
-  // Period followed by key characters: `.foo`
-  = "." keyChar+
-  // Digits followed by non-digit characters: `404.html`. The `digits` term will
-  // consume all consecutive digits, so if this matches, there's at least one
-  // non-digit character after the digits.
-  / digits keyChar+
-  // At sign followed by key characters: `@foo`
-  // TODO: Deprecate this
-  / shellMode "@" keyChar+
-  // Contains a tilde after the beginning
-  / keyCharStartNotTilde* "~" keyChar*
+  = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
+  / "."
+  / "@"
 
 // A separated list of values
 list "list"
@@ -477,6 +453,12 @@ logicalOrExpression
         );
     }
 
+// Unary or binary minus operator
+minus
+  // Don't match a front matter delimiter or pipeline operator. For some reason,
+  // the negative lookahead !"--\n" doesn't work.
+  = @"-" !"-\n" !">"
+
 multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
@@ -492,11 +474,11 @@ multiplicativeOperator
 
 // A new expression: `new Foo()`
 newExpression
-  = "new" __ head:key tail:parenthesesArguments? {
+  = "new" __ head:pathLiteral tail:parenthesesArguments? {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
-  / "new:" head:key tail:parenthesesArguments {
+  / "new:" head:pathLiteral tail:parenthesesArguments {
       const args = tail?.[0] !== undefined ? tail : [];
       return annotate([ops.construct, head, ...args], location());
     }
@@ -562,7 +544,7 @@ objectProperty "object property"
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
   = key:objectPublicKey {
-      const reference = annotate([markers.key, key], location());
+      const reference = annotate([markers.reference, key], location());
       return annotate([key, reference], location());
     }
   / path:angleBracketLiteral {
@@ -604,56 +586,57 @@ parenthesesArguments "function arguments in parentheses"
       return annotate(list ?? [undefined], location());
     }
 
-// A slash-separated path of keys: `a/b/c`
-path "slash-separated path"
-  = keys:pathKey|1..| {
-      return annotate(keys, location());
-    }
-
-// A slash-separated path of keys that follows a call target
+// A slash-separated path of keys that follows a call target, such as the path
+// after the slash in `(x)/y/z`
 pathArguments
-  = "/" path:path? {
-      const args = path ?? [];
+  = "/" keys:pathKeys? {
+      const args = keys ?? [];
       return annotate([markers.traverse, ...args], location());
     }
 
-// A single key in a path, possibly with trailing slash: `a/`, `b`
-pathKey
-  = chars:pathKeyChar+ "/"? {
-      return annotate([ops.literal, text()], location());
-    }
-  / "/" {
-    // A single slash is a path key
-    return annotate([ops.literal, ""], location());
+// Sequence of keys that may each have trailing slashes
+pathKeys
+  = pathSegment|1..|
+  
+// A path without angle brackets
+pathLiteral
+  = keys:pathKeys {
+      return makePath(keys);
     }
 
-// A single character in a path key
-pathKeyChar
-  // This is more permissive than an identifier. It allows some characters like
-  // brackets or quotes that are not allowed in identifiers.
-  = [^(){}\[\],:/\\ \t\n\r]
+// A path key with an optional trailing slash
+pathSegment
+  = key:key "/"? {
+      return annotate([ops.literal, text()], location());
+    }
+  // A single slash is a path key
+  / "/" {
+      return annotate([ops.literal, text()], location());
+    }
 
 // A pipeline that starts with a value and optionally applies a series of
 // functions to it.
 pipelineExpression
   = head:shorthandFunction tail:(__ singleArrow __ @shorthandFunction)* {
       return annotate(
-        tail.reduce((arg, fn) => makePipeline(arg, fn, options.mode), head),
+        tail.reduce((arg, fn) => makePipeline(arg, fn, location()), head),
         location()
       );
     }
 
 primary
-  = numericLiteral
-  / stringLiteral
+  // The following start with distinct characters
+  = stringLiteral
   / arrayLiteral
   / objectLiteral
   / group
   / angleBracketLiteral
   / regexLiteral
   / templateLiteral
-  / implicitPath
-  / key
+
+  // These are more ambiguous
+  / @numericLiteral !keyChar // numbers + chars would be a key
+  / pathLiteral
 
 // Top-level Origami progam with possible shebang directive (which is ignored)
 program "Origami program"
@@ -663,27 +646,6 @@ propertyAccess
   = __ "." __ property:identifierLiteral {
     return annotate([markers.property, property], location());
   }
-
-// Protocol (technically, a scheme) in a URL
-// See https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
-protocol
-  = [a-z][a-z0-9+-.]*[:] {
-      return annotate([markers.global, text()], location());
-    }
-
-// Protocol with a path
-protocolExpression
-  = protocol:protocol "//" host "/" path:path? {
-      // URL like `https://example.com/index.html`
-      const keys = annotate([host, ...(path ?? [])], location());
-      return makeCall(protocol, keys, options.mode);
-    }
-  / protocol:protocol keys:pathKey|1..| {
-      // Custom protocol like `files:assets`
-      return makeCall(protocol, keys, options.mode);
-    }
-  / newExpression
-  / primary
 
 regexFlags
   = flags:[gimuy]* {
@@ -858,13 +820,59 @@ unaryExpression
     }
   / callExpression
 
+// URI
+uri
+  // Double slashes after colon: `https://example.com/index.html`
+  = scheme:uriScheme "//" host:host path:("/" uriPath)? {
+      const rest = path ? path[1] : [];
+      const keys = annotate([host, ...rest], location());
+      return makeCall(scheme, keys, location());
+    }
+  // No slashes after colon: `files:assets`
+  / scheme:uriScheme keys:pathKeys {
+      return makeCall(scheme, keys, location());
+    }
+
+// URI expression
+uriExpression
+  = uri
+  / newExpression
+  / primary
+
+// A single key in a path, possibly with trailing slash: `a/`, `b`
+uriKey
+  = chars:uriKeyChar+ "/"? {
+      return annotate([ops.literal, text()], location());
+    }
+  / "/" {
+    // A single slash is a path key
+    return annotate([ops.literal, ""], location());
+    }
+
+// A single character in a URI key
+uriKeyChar
+  // Accept anything that doesn't end the URI key or path
+  = [^/\)\]\}\s]
+  / escapedChar
+
+// A slash-separated path of keys: `a/b/c`
+uriPath "slash-separated path"
+  = keys:uriKey|1..| {
+      return annotate(keys, location());
+    }
+
+// URI scheme, commonly called a protocol
+// See https://datatracker.ietf.org/doc/html/rfc3986#section-3.1
+uriScheme
+  = [a-z][a-z0-9+-.]*[:] {
+      return annotate([markers.global, text()], location());
+    }
+
 unaryOperator
   = "!"
   / "+"
   / "~"
-  // Don't match a front matter delimiter. For some reason, the negative
-  // lookahead !"--\n" doesn't work.
-  / @"-" !"-\n"
+  / minus
 
 whitespace
   = inlineSpace

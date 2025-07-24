@@ -1,4 +1,5 @@
 import * as YAMLModule from "yaml";
+import trailingSlash from "../../../origami/src/origami/slash.js";
 import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
 
@@ -55,10 +56,10 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[markers.key,  "foo"], undefined]
+  // For `foo`, the call would be: [[markers.reference,  "foo"], undefined]
   if (
     code[0] instanceof Array &&
-    (code[0][0] === ops.literal || code[0][0] === markers.key) &&
+    (code[0][0] === ops.literal || code[0][0] === markers.reference) &&
     code[0][1] === name
   ) {
     return macro;
@@ -160,7 +161,7 @@ export function makeBinaryOperation(left, [operatorToken, right]) {
  * @param {AnnotatedCode} target
  * @param {any[]} args
  */
-export function makeCall(target, args) {
+export function makeCall(target, args, location) {
   if (!(target instanceof Array)) {
     const error = new SyntaxError(`Can't call this like a function: ${target}`);
     /** @type {any} */ (error).location = /** @type {any} */ (target).location;
@@ -185,21 +186,6 @@ export function makeCall(target, args) {
   } else {
     // Function call with explicit or implicit parentheses
     fnCall = [target, ...args];
-  }
-
-  // Create a location spanning the newly-constructed function call.
-  const location = { ...target.location };
-  if (args instanceof Array) {
-    let end;
-    if ("location" in args) {
-      end = /** @type {any} */ (args).location.end;
-    } else if ("location" in args.at(-1)) {
-      end = args.at(-1).location.end;
-    }
-    if (end === undefined) {
-      throw "Internal parser error: no location for function call argument";
-    }
-    location.end = end;
   }
 
   return annotate(fnCall, location);
@@ -372,43 +358,46 @@ export function makeObject(entries, location) {
 }
 
 /**
+ * Handle a path with one or more segments separated by slashes.
+ *
+ * @param {AnnotatedCode} keys
+ */
+export function makePath(keys) {
+  // Remove empty segments
+  const args = keys.filter((key) => key[1] !== "" && key[1] !== "/");
+
+  // Upgrade head to a reference
+  const [head, ...tail] = args;
+  const reference = annotate([markers.reference, head[1]], head.location);
+
+  let code;
+  if (tail.length === 0) {
+    code = reference;
+  } else {
+    code = [reference, ...tail];
+    code.location = spanLocations(code);
+  }
+
+  // Last key has trailing slash implies unpack operation
+  if (trailingSlash.has(args.at(-1)[1])) {
+    code = annotate([ops.unpack, code], code.location);
+  }
+
+  return code;
+}
+
+/**
  * Make a pipline: similar to a function call, but the order is reversed.
  *
  * @param {AnnotatedCode} arg
  * @param {AnnotatedCode} fn
- * @param {string} mode
  */
-export function makePipeline(arg, fn, mode) {
-  const result = makeCall(fn, [arg], mode);
+export function makePipeline(arg, fn, location) {
+  const result = makeCall(fn, [arg], location);
   const source = fn.location.source;
   let start = arg.location.start;
   let end = fn.location.end;
   return annotate(result, { start, source, end });
-}
-
-/**
- * Handle a path with one or more segments separated by slashes.
- *
- * @param {AnnotatedCode[]} keys
- * @param {CodeLocation} location
- * @param {string} mode
- */
-export function makePath(keys, location, mode = "jse") {
-  // Remove empty segments except at the end
-  const simplified = keys.filter(
-    (key, index) => key[1] !== "/" || index === keys.length - 1
-  );
-
-  if (mode === "shell") {
-    // TODO: Deprecate, remove
-    // Use first key as a reference
-    const head = simplified.shift()[1];
-    const reference = annotate([markers.reference, head], location);
-    return annotate([reference, ...simplified], location);
-  } else {
-    const scope = annotate([ops.scope], location);
-    return annotate([scope, ...simplified], location);
-  }
 }
 
 /**
@@ -519,4 +508,16 @@ export function makeYamlObject(text, location) {
   }
 
   return parsed;
+}
+
+// Create a locations that spans those in the array. This assumes the locations
+// are in order and non-overlapping.
+function spanLocations(code) {
+  const first = code[0].location;
+  const last = code[code.findLastIndex((item) => item)].location;
+  return {
+    source: first.source,
+    start: first.start,
+    end: last.end,
+  };
 }
