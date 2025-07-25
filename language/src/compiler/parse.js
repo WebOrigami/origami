@@ -284,7 +284,7 @@ function peg$parse(input, options) {
   var peg$r6 = /^[gimuy]/;
   var peg$r7 = /^[^\/\n\r]/;
   var peg$r8 = /^[^\n\r]/;
-  var peg$r9 = /^[^\/)\]}s]/;
+  var peg$r9 = /^[^\/,)\]}s]/;
   var peg$r10 = /^[a-z]/;
   var peg$r11 = /^[a-z0-9+-.]/;
   var peg$r12 = /^[:]/;
@@ -398,7 +398,7 @@ function peg$parse(input, options) {
   var peg$e105 = peg$otherExpectation("template document");
   var peg$e106 = peg$otherExpectation("template literal");
   var peg$e107 = peg$otherExpectation("template substitution");
-  var peg$e108 = peg$classExpectation(["/", ")", "]", "}", "s"], true, false);
+  var peg$e108 = peg$classExpectation(["/", ",", ")", "]", "}", "s"], true, false);
   var peg$e109 = peg$otherExpectation("slash-separated path");
   var peg$e110 = peg$classExpectation([["a", "z"]], false, false);
   var peg$e111 = peg$classExpectation([["a", "z"], ["0", "9"], ["+", "."]], false, false);

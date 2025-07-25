@@ -126,26 +126,6 @@ function avoidLocalRecursion(locals, key) {
   }
 }
 
-function cacheResult(cache, code) {
-  if (cache === null) {
-    // No cache, return as is
-    return code;
-  }
-
-  const args = code.slice(1);
-  const keys = args.map((arg) =>
-    typeof arg === "string" || typeof arg === "number"
-      ? arg
-      : arg instanceof Array && arg[0] === ops.literal
-      ? arg[1]
-      : null
-  );
-  if (keys.some((key) => key === null)) {
-    throw new Error("Internal error: scope reference with non-literal key");
-  }
-  return annotate([ops.cache, cache, pathFromKeys(keys), code], code.location);
-}
-
 function externalReference(code, locals, cache) {
   const key = keyFromCode(code);
   const scope = scopeCall(locals, code.location);
@@ -211,18 +191,27 @@ function keyFromCode(code) {
 function resolvePath(code, globals, locals, cache, mode) {
   const [head, ...tail] = code;
 
-  // In JSE mode, all paths start with an external reference
+  const path = traversalPath(code);
+  const isTraversal = path !== null;
+
+  // In JSE mode, all traversals start with an external reference
   const isExternal =
-    mode === "jse" || isExternalReference(head, globals, locals);
+    (isTraversal && mode === "jse") ||
+    isExternalReference(head, globals, locals);
   let result = isExternal
     ? externalReference(head, locals, cache)
     : variableReference(head, globals, locals);
 
-  result.push(...tail);
-
-  if (isExternal) {
-    // Cache external paths
-    result = cacheResult(cache, result);
+  if (isTraversal) {
+    // Path traversal
+    result.push(...tail);
+    if (isExternal && cache !== null) {
+      // Cache external traversal
+      result = annotate([ops.cache, cache, path, result], code.location);
+    }
+  } else {
+    // Function call
+    result = annotate([result, ...tail], code.location);
   }
 
   return result;
@@ -233,9 +222,10 @@ function resolveReference(code, globals, locals, cache) {
   let result = isExternal
     ? externalReference(code, locals, cache)
     : variableReference(code, globals, locals);
-  if (isExternal) {
+  if (isExternal && cache !== null) {
     // Cache external references
-    result = cacheResult(cache, result);
+    const path = keyFromCode(code);
+    result = annotate([ops.cache, cache, path, result], code.location);
   }
   return result;
 }
@@ -249,6 +239,25 @@ function scopeCall(locals, location) {
     code.push(contextCode);
   }
   return annotate(code, location);
+}
+
+function traversalPath(code) {
+  const [head, ...tail] = code;
+
+  if (!(head instanceof Array) || head[0] !== markers.reference) {
+    return null;
+  }
+
+  const headKey = keyFromCode(head);
+  const tailKeys = tail.map((arg) =>
+    arg instanceof Array && arg[0] === ops.literal ? arg[1] : null
+  );
+  if (tailKeys.some((key) => key === null)) {
+    return null;
+  }
+
+  const keys = [headKey, ...tailKeys];
+  return pathFromKeys(keys);
 }
 
 function variableReference(code, globals, locals) {

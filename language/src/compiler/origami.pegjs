@@ -852,7 +852,7 @@ uriKey
 // A single character in a URI key
 uriKeyChar
   // Accept anything that doesn't end the URI key or path
-  = [^/\)\]\}\s]
+  = [^/,\)\]\}\s]
   / escapedChar
 
 // A slash-separated path of keys: `a/b/c`
