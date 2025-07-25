@@ -63,7 +63,7 @@ export default function optimize(code, options = {}) {
   if (op === markers.reference) {
     return resolveReference(code, globals, locals, cache);
   } else if (op instanceof Array && op[0] === markers.reference) {
-    optimized = resolvePath(code, globals, locals, cache, mode);
+    optimized = resolvePath(code, globals, locals, cache);
   }
 
   // Optimize children
@@ -188,16 +188,13 @@ function keyFromCode(code) {
   return code[1];
 }
 
-function resolvePath(code, globals, locals, cache, mode) {
+function resolvePath(code, globals, locals, cache) {
   const [head, ...tail] = code;
 
   const path = traversalPath(code);
   const isTraversal = path !== null;
 
-  // In JSE mode, all traversals start with an external reference
-  const isExternal =
-    (isTraversal && mode === "jse") ||
-    isExternalReference(head, globals, locals);
+  const isExternal = isExternalReference(head, globals, locals);
   let result = isExternal
     ? externalReference(head, locals, cache)
     : variableReference(head, globals, locals);

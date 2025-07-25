@@ -140,23 +140,7 @@ describe("optimize", () => {
   });
 
   describe("resolve path starting with reference", () => {
-    test("path in JSE is always external", () => {
-      // Compilation of `package.json/name` where package is neither local nor global
-      const code = createCode([
-        [markers.reference, "package.json/"],
-        [ops.literal, "name"],
-      ]);
-      const globals = { "package.json": null }; // want to confirm this isn't used
-      const expected = [
-        ops.cache,
-        {},
-        "package.json/name",
-        [[ops.scope], "package.json/", "name"],
-      ];
-      assertCodeEqual(optimize(code, { globals, mode: "jse" }), expected);
-    });
-
-    test("shell mode external path", () => {
+    test("external path", () => {
       // Compilation of `package.json/name` where package is neither local nor global
       const code = createCode([
         [markers.reference, "package.json/"],
@@ -172,8 +156,7 @@ describe("optimize", () => {
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
-    // TODO: Remove
-    test("shell mode local path [deprecated]", () => {
+    test("local path", () => {
       // Compilation of `page/title` where page is a local variable
       const code = createCode([
         [markers.reference, "page"],
