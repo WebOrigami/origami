@@ -569,14 +569,20 @@ optionalChaining
     return annotate([ops.optionalTraverse, property], location());
   }
 
+// Name of a unction parameter
+parameter
+  = key:key {
+      return annotate([ops.literal, key], location());
+    }
+
 parameterList
-  = list:identifierLiteral|1.., separator| separator? {
+  = list:parameter|1.., separator| separator? {
       return annotate(list, location());
     }
 
 // A list with a single identifier
 parameterSingleton
-  = param:identifierLiteral {
+  = param:parameter {
       return annotate([param], location());
     }
 
