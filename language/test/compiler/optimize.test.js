@@ -139,10 +139,11 @@ describe("optimize", () => {
     });
   });
 
-  describe("resolve path starting with reference", () => {
+  describe("resolve path traversal", () => {
     test("external path", () => {
       // Compilation of `package.json/name` where package is neither local nor global
       const code = createCode([
+        markers.traverse,
         [markers.reference, "package.json/"],
         [ops.literal, "name"],
       ]);
@@ -159,6 +160,7 @@ describe("optimize", () => {
     test("local path", () => {
       // Compilation of `page/title` where page is a local variable
       const code = createCode([
+        markers.traverse,
         [markers.reference, "page"],
         [ops.literal, "title"],
       ]);

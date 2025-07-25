@@ -226,6 +226,7 @@ describe("Origami parser", () => {
         [markers.reference, "tree/"],
       ]);
       assertParse("callExpression", "tree/foo/bar", [
+        markers.traverse,
         [markers.reference, "tree/"],
         [ops.literal, "foo/"],
         [ops.literal, "bar"],
@@ -233,6 +234,7 @@ describe("Origami parser", () => {
       assertParse("callExpression", "tree/foo/bar/", [
         ops.unpack,
         [
+          markers.traverse,
           [markers.reference, "tree/"],
           [ops.literal, "foo/"],
           [ops.literal, "bar/"],
@@ -240,6 +242,7 @@ describe("Origami parser", () => {
       ]);
       // Consecutive slahes in a path are removed
       assertParse("callExpression", "tree//key", [
+        markers.traverse,
         [markers.reference, "tree/"],
         [ops.literal, "key"],
       ]);
@@ -260,10 +263,7 @@ describe("Origami parser", () => {
         [ops.literal, "key"],
       ]);
       assertParse("callExpression", "tree/key()", [
-        [
-          [markers.reference, "tree/"],
-          [ops.literal, "key"],
-        ],
+        [markers.traverse, [markers.reference, "tree/"], [ops.literal, "key"]],
         undefined,
       ]);
       assertParse("callExpression", "fn()/key()", [
@@ -409,6 +409,7 @@ Body`,
   describe("expression", () => {
     test("slash with and without spaces", () => {
       assertParse("expression", "x/y", [
+        markers.traverse,
         [markers.reference, "x/"],
         [ops.literal, "y"],
       ]);
@@ -706,10 +707,7 @@ Body`,
       "implicitParenthesesCallExpression",
       "tree/key arg",
       [
-        [
-          [markers.reference, "tree/"],
-          [ops.literal, "key"],
-        ],
+        [markers.traverse, [markers.reference, "tree/"], [ops.literal, "key"]],
         [markers.reference, "arg"],
       ],
       "shell"
@@ -1115,12 +1113,14 @@ Body`,
       [markers.reference, "tree/"],
     ]);
     assertParse("pathLiteral", "month/12", [
+      markers.traverse,
       [markers.reference, "month/"],
       [ops.literal, "12"],
     ]);
     assertParse("pathLiteral", "a/b/c/", [
       ops.unpack,
       [
+        markers.traverse,
         [markers.reference, "a/"],
         [ops.literal, "b/"],
         [ops.literal, "c/"],
@@ -1413,7 +1413,7 @@ Body text`,
   });
 
   describe("uri", () => {
-    test.only("with double slashes after colon", () => {
+    test("with double slashes after colon", () => {
       assertParse("uri", "foo://bar/baz", [
         [markers.global, "foo:"],
         [ops.literal, "bar/"],

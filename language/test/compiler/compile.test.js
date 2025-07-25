@@ -103,7 +103,7 @@ describe("compile", () => {
     );
   });
 
-  test.only("tagged template string array is identical across calls", async () => {
+  test("tagged template string array is identical across calls", async () => {
     let saved;
     const globals = {
       tag: (strings, ...values) => {
