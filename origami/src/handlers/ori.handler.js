@@ -40,7 +40,7 @@ export default {
     const config = getConfig(parent) ?? {};
     const globals = {
       ...(options.globals ?? builtinsShell()),
-      config,
+      ...config,
     };
 
     const mode = options.mode ?? "shell";
