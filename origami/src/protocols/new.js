@@ -13,12 +13,16 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 export default async function instantiate(...keys) {
   assertTreeIsDefined(this, "new:");
   let constructor;
+
   const scope = this ? scopeFn(this) : null;
   if (
     keys.length === 1 &&
     (typeof keys[0] === "object" || typeof keys[0] === "function")
   ) {
     constructor = keys[0];
+  } else if (globalThis[keys[0]]) {
+    // Backward compat
+    constructor = globalThis[keys[0]];
   } else if (scope) {
     constructor = await Tree.traverseOrThrow(scope, ...keys);
   } else {
