@@ -1126,6 +1126,11 @@ Body`,
         [ops.literal, "c/"],
       ],
     ]);
+    assertParse("pathLiteral", "~/.cshrc", [
+      markers.traverse,
+      [markers.reference, "~/"],
+      [ops.literal, ".cshrc"],
+    ]);
   });
 
   test("pipelineExpression", () => {

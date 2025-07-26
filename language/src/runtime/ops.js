@@ -201,11 +201,11 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
  *
  * @this {AsyncTree|null}
  */
-export async function homeDirectory() {
+export async function homeDirectory(...keys) {
   const tree = new OrigamiFiles(os.homedir());
   // Use the same handlers as the current tree
   tree.handlers = getHandlers(this);
-  return tree;
+  return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
 

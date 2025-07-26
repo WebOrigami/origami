@@ -158,6 +158,11 @@ function compoundReference(key, globals, locals, location) {
 }
 
 function externalReference(key, locals, location) {
+  const normalized = trailingSlash.remove(key);
+  if (normalized === "~") {
+    // Special case for home directory
+    return annotate([ops.homeDirectory], location);
+  }
   const scope = scopeCall(locals, location);
   return annotate([scope, key], location);
 }

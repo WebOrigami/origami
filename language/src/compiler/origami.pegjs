@@ -413,7 +413,9 @@ key
 keyChar
   = keyCharStart
   // Also allow some math operators (not slash)
-  / unaryOperator
+  / "!"
+  / "+"
+  / minus
   / "*"
   / "%"
   / "&"
@@ -425,6 +427,7 @@ keyCharStart
   // All JS identifier characters
   = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
   / "."
+  / "~"
   / "@"
 
 // A separated list of values
@@ -877,7 +880,7 @@ uriScheme
 unaryOperator
   = "!"
   / "+"
-  / "~"
+  / @"~" !"/" // don't match a `~/` home directory path
   / minus
 
 whitespace
