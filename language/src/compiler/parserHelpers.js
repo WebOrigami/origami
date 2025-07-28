@@ -17,13 +17,11 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 // Markers in compiled output, will get optimized away
 export const markers = {
-  dots: Symbol("dots"), // Dot chain: x.y.z
   global: Symbol("global"), // Global reference
-  key: Symbol("key"), // Ambiguous key: external reference or JS operation
-  path: Symbol("path"), // Path or division: x/y
+  external: Symbol("external"), // External reference
   property: Symbol("property"), // Property access
   reference: Symbol("reference"), // Reference to local, scope, or global
-  traverse: Symbol("traverse"), // Continuation of path traversal
+  traverse: Symbol("traverse"), // Path traversal
 };
 
 /**
@@ -56,13 +54,15 @@ export function applyMacro(code, name, macro) {
   }
 
   // We're looking for a function call with the given name.
-  // For `foo`, the call would be: [[markers.reference,  "foo"], undefined]
+  // For `foo`, the call would be: [[markers.traverse, [markers.reference,  "foo"]], undefined]
   if (
     code[0] instanceof Array &&
-    (code[0][0] === ops.literal || code[0][0] === markers.reference) &&
-    code[0][1] === name
+    code[0][0] === markers.traverse &&
+    code[0][1][0] === markers.reference &&
+    code[0][1][1] === name
   ) {
-    return macro;
+    // Replace the call with the macro
+    return annotate(macro, code.location);
   }
 
   const applied = code.map((child) => applyMacro(child, name, macro));
@@ -364,19 +364,17 @@ export function makeObject(entries, location) {
  */
 export function makePath(keys) {
   // Remove empty segments
-  const args = keys.filter((key) => key[1] !== "" && key[1] !== "/");
+  const args = keys.filter(
+    (key, index) => index === 0 || (key[1] !== "" && key[1] !== "/")
+  );
 
   // Upgrade head to a reference
   const [head, ...tail] = args;
-  const reference = annotate([markers.reference, head[1]], head.location);
+  const headKey = head[1];
+  const reference = annotate([markers.reference, headKey], head.location);
 
-  let code;
-  if (tail.length === 0) {
-    code = reference;
-  } else {
-    code = [markers.traverse, reference, ...tail];
-    code.location = spanLocations(code);
-  }
+  let code = [markers.traverse, reference, ...tail];
+  code.location = spanLocations(code);
 
   // Last key has trailing slash implies unpack operation
   if (trailingSlash.has(args.at(-1)[1])) {

@@ -51,17 +51,14 @@ angleBracketLiteral
   = "<" scheme:uriScheme "//"? path:angleBracketPath ">" {
     return annotate([scheme, ...path], location());
     }
-  / "<" "/" path:angleBracketPath ">" {
-      const root = annotate([ops.rootDirectory], location());
-      return path.length > 0 ? annotate([root, ...path], location()) : root;
-    }
-  / "<" "~" "/"? path:angleBracketPath ">" {
-      const home = annotate([ops.homeDirectory], location());
-      return path.length > 0 ? annotate([home, ...path], location()) : home;
+  / "</" path:angleBracketPath ">" {
+      const external = annotate([markers.external, "/"], location());
+      return annotate([markers.traverse, external, ...path], location());
     }
   / "<" path:angleBracketPath ">" {
-      const scope = annotate([ops.scope], location());
-      return annotate([scope, ...path], location());
+      const [head, ...tail] = path;
+      const external = annotate([markers.external, head[1]], location());
+      return annotate([markers.traverse, external, ...tail], location());
     }
 
 angleBracketPath
@@ -334,12 +331,6 @@ guillemetString "guillemet string"
 guillemetStringChar
   = !('»' / newLine) @textChar
 
-// The user's home directory: `~`
-homeDirectory
-  = "~" {
-      return annotate([ops.homeDirectory], location());
-    }
-
 // A host identifier that may include a colon and port number: `example.com:80`.
 // This is used as a special case at the head of a path, where we want to
 // interpret a colon as part of a text identifier.
@@ -548,7 +539,8 @@ objectProperty "object property"
 objectShorthandProperty "object identifier"
   = key:objectPublicKey {
       const reference = annotate([markers.reference, key], location());
-      return annotate([key, reference], location());
+      const traverse = annotate([markers.traverse, reference], location());
+      return annotate([key, traverse], location());
     }
   / path:angleBracketLiteral {
     let lastKey = path.at(-1);
@@ -880,7 +872,7 @@ uriScheme
 unaryOperator
   = "!"
   / "+"
-  / @"~" !"/" // don't match a `~/` home directory path
+  / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
   / minus
 
 whitespace

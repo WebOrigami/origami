@@ -4,9 +4,9 @@ import { ops } from "../runtime/internal.js";
 import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, markers } from "./parserHelpers.js";
 
-const REFERENCE_LOCAL = 0;
-const REFERENCE_GLOBAL = 1;
-const REFERENCE_UNKNOWN = 2;
+const REFERENCE_LOCAL = 1;
+const REFERENCE_GLOBAL = 2;
+const REFERENCE_EXTERNAL = 3;
 
 /**
  * Optimize an Origami code instruction:
@@ -40,9 +40,6 @@ export default function optimize(code, options = {}) {
       // Replace global op with the globals
       return annotate([globals, args[0]], code.location);
 
-    case markers.reference:
-      return resolveReference(code, globals, locals, cache);
-
     case markers.traverse:
       return resolvePath(code, globals, locals, cache);
 
@@ -62,9 +59,6 @@ export default function optimize(code, options = {}) {
       const keys = entries.map(entryKey);
       locals.push(keys);
       break;
-
-    case ops.scope:
-      return scopeCall(locals, code.location);
   }
 
   // Optimize children
@@ -127,12 +121,18 @@ function avoidLocalRecursion(locals, key) {
   }
 }
 
+function cachePath(code, cache) {
+  const keys = code.map(keyFromCode).filter((key) => key !== null);
+  const path = pathFromKeys(keys);
+  return annotate([ops.cache, cache, path, code], code.location);
+}
+
 // A reference with periods like x.y.z
 function compoundReference(key, globals, locals, location) {
   const parts = key.split(".");
   if (parts.length === 1) {
     // Not a compound reference
-    return { type: REFERENCE_UNKNOWN, result: null };
+    return { type: REFERENCE_EXTERNAL, result: null };
   }
 
   // Check first part to see if it's a global or local reference
@@ -145,7 +145,7 @@ function compoundReference(key, globals, locals, location) {
     result = localReference(head, locals, location);
   } else {
     // Not a compound reference
-    return { type: REFERENCE_UNKNOWN, result: null };
+    return { type: REFERENCE_EXTERNAL, result: null };
   }
 
   // Process the remaining parts as property accesses
@@ -158,13 +158,9 @@ function compoundReference(key, globals, locals, location) {
 }
 
 function externalReference(key, locals, location) {
-  const normalized = trailingSlash.remove(key);
-  if (normalized === "~") {
-    // Special case for home directory
-    return annotate([ops.homeDirectory], location);
-  }
   const scope = scopeCall(locals, location);
-  return annotate([scope, key], location);
+  const literal = annotate([ops.literal, key], location);
+  return annotate([scope, literal], location);
 }
 
 // Determine how many contexts up we need to go for a local
@@ -200,16 +196,56 @@ function localReference(key, locals, location) {
     context.push(depth);
   }
   const contextCall = annotate(context, location);
-  return annotate([contextCall, key], location);
+  const literal = annotate([ops.literal, key], location);
+  return annotate([contextCall, literal], location);
 }
 
 function keyFromCode(code) {
-  return code[1];
+  const op = code instanceof Array ? code[0] : code;
+  switch (op) {
+    case ops.homeDirectory:
+      return "~";
+
+    case markers.external:
+    case markers.global:
+    case markers.reference:
+    case ops.literal:
+      return code[1];
+
+    case ops.rootDirectory:
+      return "/";
+
+    default:
+      return null;
+  }
 }
 
 function reference(code, globals, locals) {
   const key = keyFromCode(code);
+  const normalized = trailingSlash.remove(key);
   const location = code.location;
+
+  if (normalized === "~") {
+    // Special case for home directory
+    return {
+      type: REFERENCE_EXTERNAL,
+      result: annotate([ops.homeDirectory], location),
+    };
+  } else if (normalized === "") {
+    // Special case for root directory
+    return {
+      type: REFERENCE_EXTERNAL,
+      result: annotate([ops.rootDirectory], location),
+    };
+  }
+
+  if (code[0] === markers.external) {
+    // Explicit external reference
+    return {
+      type: REFERENCE_EXTERNAL,
+      result: externalReference(key, locals, location),
+    };
+  }
 
   // See if the whole key is a global or local variable
   let type = referenceType(key, globals, locals);
@@ -241,7 +277,7 @@ function referenceType(key, globals, locals) {
   } else if (normalized in globals) {
     return REFERENCE_GLOBAL;
   } else {
-    return REFERENCE_UNKNOWN;
+    return REFERENCE_EXTERNAL;
   }
 }
 
@@ -251,27 +287,13 @@ function resolvePath(code, globals, locals, cache) {
 
   let { type, result } = reference(head, globals, locals);
 
-  const headKey = keyFromCode(head);
-  const tailKeys = tail.map((arg) => inlineLiteral(arg));
-  result.push(...tailKeys);
+  result.push(...tail);
 
-  if (type === REFERENCE_UNKNOWN && cache !== null) {
-    // Cache external traversal
-    const keys = [headKey, ...tailKeys];
-    const path = pathFromKeys(keys);
-    result = annotate([ops.cache, cache, path, result], code.location);
+  if (type === REFERENCE_EXTERNAL && cache !== null) {
+    // Cache external path
+    return cachePath(result, cache);
   }
 
-  return result;
-}
-
-function resolveReference(code, globals, locals, cache) {
-  let { type, result } = reference(code, globals, locals);
-  if (type === REFERENCE_UNKNOWN && cache !== null) {
-    // Cache external references
-    const path = keyFromCode(code);
-    result = annotate([ops.cache, cache, path, result], code.location);
-  }
   return result;
 }
 
