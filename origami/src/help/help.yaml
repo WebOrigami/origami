@@ -168,6 +168,9 @@ origami:
       description: POST the given data to the URL
     project:
       description: The root folder for the current Origami project
+    regexMatch:
+      args: (text, regex)
+      description: Return matches of the regex in the text
     repeat:
       args: (n, obj)
       description: An array of n copies of the object
