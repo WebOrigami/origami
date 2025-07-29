@@ -732,15 +732,15 @@ function peg$parse(input, options) {
       return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f99 = function(front, body) {
-      const macroName = options.mode === "jse" ? "_template" : "@template";
+      const macroName = text().includes("@template") ? "@template" : "_template";
       return annotate(applyMacro(front, macroName, body), location());
     };
   var peg$f100 = function(front, body) {
-      return makeDocument(options.mode, front, body, location());
+      return makeDocument(front, body, location());
     };
   var peg$f101 = function(body) {
       if (options.front) {
-        return makeDocument(options.mode, options.front, body, location());
+        return makeDocument(options.front, body, location());
       }
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
@@ -968,11 +968,11 @@ function peg$parse(input, options) {
     if (s1 !== peg$FAILED) {
       s2 = [];
       s3 = peg$currPos;
-      s4 = peg$parsewhitespaceShell();
+      s4 = peg$parsewhitespace();
       if (s4 !== peg$FAILED) {
         s5 = peg$parseadditiveOperator();
         if (s5 !== peg$FAILED) {
-          s6 = peg$parsewhitespaceShell();
+          s6 = peg$parsewhitespace();
           if (s6 !== peg$FAILED) {
             s7 = peg$parsemultiplicativeExpression();
             if (s7 !== peg$FAILED) {
@@ -996,11 +996,11 @@ function peg$parse(input, options) {
       while (s3 !== peg$FAILED) {
         s2.push(s3);
         s3 = peg$currPos;
-        s4 = peg$parsewhitespaceShell();
+        s4 = peg$parsewhitespace();
         if (s4 !== peg$FAILED) {
           s5 = peg$parseadditiveOperator();
           if (s5 !== peg$FAILED) {
-            s6 = peg$parsewhitespaceShell();
+            s6 = peg$parsewhitespace();
             if (s6 !== peg$FAILED) {
               s7 = peg$parsemultiplicativeExpression();
               if (s7 !== peg$FAILED) {

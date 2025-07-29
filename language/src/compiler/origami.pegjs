@@ -39,7 +39,7 @@ __
   }
 
 additiveExpression
-  = head:multiplicativeExpression tail:(whitespaceShell @additiveOperator whitespaceShell @multiplicativeExpression)* {
+  = head:multiplicativeExpression tail:(whitespace @additiveOperator whitespace @multiplicativeExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -368,8 +368,6 @@ identifierPart "JavaScript identifier continuation"
 // https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#prod-IdentifierStart
 identifierStart "JavaScript identifier start"
   = char:. &{ return char.match(/[$_\p{ID_Start}]/u) }
-  // TODO: Deprecate
-  / shellMode @"@"
 
 implicitParenthesesCallExpression "function call with implicit parentheses"
   = head:arrowFunction args:(inlineSpace+ @implicitParensthesesArguments)? {
@@ -390,9 +388,6 @@ integerLiteral "integer"
   = digits {
       return annotate([ops.literal, parseInt(text())], location());
     }
-
-jseMode
-  = &{ return options.mode === "jse" }
 
 // A key in a path or an expression that looks like one
 key
@@ -457,7 +452,7 @@ multiLineComment
   = "/*" (!"*/" .)* "*/" { return null; }
 
 multiplicativeExpression
-  = head:exponentiationExpression tail:(whitespaceShell @multiplicativeOperator whitespaceShell @exponentiationExpression)* {
+  = head:exponentiationExpression tail:(whitespace @multiplicativeOperator whitespace @exponentiationExpression)* {
       return tail.reduce(makeBinaryOperation, head);
     }
 
@@ -772,15 +767,15 @@ templateBodyText "template text"
 
 templateDocument "template document"
   = front:frontMatterExpression __ body:templateBody {
-      const macroName = options.mode === "jse" ? "_template" : "@template";
+      const macroName = text().includes("@template") ? "@template" : "_template";
       return annotate(applyMacro(front, macroName, body), location());
     }
   / front:frontMatterYaml body:templateBody {
-      return makeDocument(options.mode, front, body, location());
+      return makeDocument(front, body, location());
     }
   / body:templateBody {
       if (options.front) {
-        return makeDocument(options.mode, options.front, body, location());
+        return makeDocument(options.front, body, location());
       }
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
@@ -879,11 +874,6 @@ whitespace
   = inlineSpace
   / newLine
   / comment
-
-// Whitespace required in shell mode, optional in JSE mode
-whitespaceShell
-  = shellMode whitespace
-  / jseMode __
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

@@ -210,7 +210,7 @@ export function makeDeferredArguments(args) {
   });
 }
 
-export function makeDocument(mode, front, body, location) {
+export function makeDocument(front, body, location) {
   // In order for template expressions to see the front matter properties,
   // we translate the top-level front properties to object entries.
   const entries = Object.entries(front).map(([key, value]) =>
@@ -218,8 +218,9 @@ export function makeDocument(mode, front, body, location) {
   );
 
   // Add an entry for the body
-  const bodyKey = mode === "jse" ? "_body" : "@text";
-  entries.push(annotate([bodyKey, body], location));
+  // TODO: Deprecate @text
+  entries.push(annotate(["(@text)", body], location));
+  entries.push(annotate(["_body", body], location));
 
   // Return the code for the document object
   return annotate([ops.object, ...entries], location);
