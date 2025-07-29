@@ -1380,7 +1380,8 @@ Body text`,
       [
         ops.object,
         ["title", [ops.literal, "Title goes here"]],
-        ["@text", [ops.templateIndent, [ops.literal, ["Body text"]]]],
+        ["(@text)", [ops.templateIndent, [ops.literal, ["Body text"]]]],
+        ["_body", [ops.templateIndent, [ops.literal, ["Body text"]]]],
       ]
     );
   });
