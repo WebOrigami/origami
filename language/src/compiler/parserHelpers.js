@@ -1,5 +1,5 @@
+import { trailingSlash } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
-import trailingSlash from "../../../origami/src/origami/slash.js";
 import codeFragment from "../runtime/codeFragment.js";
 import * as ops from "../runtime/ops.js";
 
