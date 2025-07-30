@@ -46,7 +46,7 @@ export default async function ori(
   const fn = compile.expression(expression, {
     globals,
     mode: "shell",
-    scopeCaching: false,
+    enableCaching: false,
   });
 
   // Execute

@@ -7,7 +7,7 @@ function compile(source, options) {
   const { front, startRule } = options;
   const mode = options.mode ?? "shell";
   const globals = options.globals ?? jsGlobals;
-  const enableCaching = options.scopeCaching ?? true;
+  const enableCaching = options.enableCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }

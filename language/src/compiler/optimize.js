@@ -26,7 +26,7 @@ const REFERENCE_EXTERNAL = 3;
  */
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
-  const cache = options.cache ?? {};
+  const cache = options.cache === undefined ? {} : options.cache;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. The array items are
