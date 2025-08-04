@@ -18,27 +18,45 @@ export default function builtinsShell() {
       ...builtinsJse(),
 
       // Old protocols to be deprecated
-      "dev:": dev,
-      "image:": image,
-      "js:": jsGlobals,
-      "new:": instantiate,
-      "origami:": origami,
-      "scope:": scope,
-      "site:": adjustReservedWords(site),
-      "text:": text,
-      "tree:": tree,
+      "dev:": deprecationWarnings(dev, "dev:", "Origami."),
+      "image:": deprecationWarnings(image, "image:", "Origami.image."),
+      "js:": deprecationWarnings(jsGlobals, "js:", ""),
+      "new:": deprecationWarnings(instantiate, "new:", "new"),
+      "origami:": deprecationWarnings(origami, "origami:", "Origami."),
+      "scope:": deprecationWarnings(scope, "scope:", "Origami."),
+      "site:": deprecationWarnings(
+        adjustReservedWords(site),
+        "site:",
+        "Origami."
+      ),
+      "text:": deprecationWarnings(text, "text:", "Origami."),
+      "tree:": deprecationWarnings(tree, "tree:", "Tree."),
 
       // For backward compat, include all methods at the top level
       ...dev,
-      ...image,
-      ...origami,
-      ...adjustReservedWords(site),
-      ...text,
-      ...tree,
+      ...deprecationWarnings(image, "", "Origami.image."),
+      ...deprecationWarnings(origami, "", "Origami."),
+      ...deprecationWarnings(adjustReservedWords(site), "site:", "Origami."),
+      ...deprecationWarnings(text, "", "Origami."),
+      ...deprecationWarnings(tree, "", "Tree."),
     };
   }
 
   return builtins;
+}
+
+function deprecationWarnings(fns, oldPrefix, newPrefix) {
+  const wrappedEntries = Object.entries(fns).map(([key, value]) => [
+    key,
+    function (...args) {
+      const oldKey = key === "indent" ? key : `${oldPrefix}${key}()`;
+      const newKey =
+        key === "indent" ? `${newPrefix}${key}` : `${newPrefix}${key}()`;
+      console.warn(`Warning: ${oldKey} is deprecated, use ${newKey} instead.`);
+      return value.apply(this, args);
+    },
+  ]);
+  return Object.fromEntries(wrappedEntries);
 }
 
 // Handle cases where a builtin name conflicts with a JS reserved word
