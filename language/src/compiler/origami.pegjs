@@ -254,7 +254,7 @@ expectDoubleQuote
 expectExpression
   = expression
   / .? {
-      error("Expected an Origami expression");
+      error("Expected an expression");
     }
 
 expectFrontDelimiter
@@ -278,6 +278,12 @@ expectSingleQuote
 // Required expression
 expectPipelineExpression
   = pipelineExpression
+  / .? {
+      error("Expected an expression");
+    }
+
+expectUnaryExpression
+  = unaryExpression
   / .? {
       error("Expected an expression");
     }
@@ -811,7 +817,7 @@ textChar
 
 // A unary prefix operator: `!x`
 unaryExpression
-  = operator:unaryOperator __ expression:expectExpression {
+  = operator:unaryOperator __ expression:expectUnaryExpression {
       return makeUnaryOperation(operator, expression, location());
     }
   / callExpression

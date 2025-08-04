@@ -618,6 +618,12 @@ Body`,
         [markers.traverse, [markers.reference, "keys"]],
         [markers.traverse, [markers.external, "~"]],
       ]);
+      assertParse("expression", "!x ? 0 : 1", [
+        ops.conditional,
+        [ops.logicalNot, [markers.traverse, [markers.reference, "x"]]],
+        [ops.literal, 0],
+        [ops.literal, 1],
+      ]);
     });
 
     test("complex object", () => {
