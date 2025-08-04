@@ -164,7 +164,7 @@ comment "comment"
   / singleLineComment
 
 computedPropertyAccess
-  = __ "[" expression:expression expectClosingBracket {
+  = __ "[" expression:expectExpression expectClosingBracket {
       return annotate([markers.property, expression], location());
     }
 
@@ -325,7 +325,7 @@ frontMatterYaml "YAML front matter"
 
 // An expression in parentheses: `(foo)`
 group "parenthetical group"
-  = "(" expression:expression expectClosingParenthesis {
+  = "(" expression:expectExpression expectClosingParenthesis {
     return annotate(expression, location());
   }
 

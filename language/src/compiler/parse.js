@@ -1905,7 +1905,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e9); }
     }
     if (s2 !== peg$FAILED) {
-      s3 = peg$parseexpression();
+      s3 = peg$parseexpectExpression();
       if (s3 !== peg$FAILED) {
         s4 = peg$parseexpectClosingBracket();
         if (s4 !== peg$FAILED) {
@@ -2966,7 +2966,7 @@ function peg$parse(input, options) {
       if (peg$silentFails === 0) { peg$fail(peg$e11); }
     }
     if (s1 !== peg$FAILED) {
-      s2 = peg$parseexpression();
+      s2 = peg$parseexpectExpression();
       if (s2 !== peg$FAILED) {
         s3 = peg$parseexpectClosingParenthesis();
         if (s3 !== peg$FAILED) {
