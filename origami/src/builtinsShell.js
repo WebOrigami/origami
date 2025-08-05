@@ -22,7 +22,7 @@ export default function builtinsShell() {
       "dev:": deprecationWarnings(dev, "dev:", "Origami."),
       "image:": deprecationWarnings(image, "image:", "Origami.image."),
       "js:": deprecationWarnings(jsGlobals, "js:", ""),
-      "new:": deprecationWarnings(instantiate, "new:", "new"),
+      "new:": instantiate,
       "origami:": deprecationWarnings(origami, "origami:", "Origami."),
       "scope:": scope,
       "site:": deprecationWarnings(

@@ -11,6 +11,9 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param  {...any} keys
  */
 export default async function instantiate(...keys) {
+  console.warn(
+    `Warning: the new:Class() syntax is deprecated. Use \`new Class()\` instead.`
+  );
   assertTreeIsDefined(this, "new:");
   let constructor;
 
