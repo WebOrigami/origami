@@ -1,4 +1,5 @@
 export { default as clear } from "../tree/clear.js";
+export { default as keys } from "../tree/keys.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
 export { default as code } from "./code.js";
