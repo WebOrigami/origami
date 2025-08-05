@@ -63,7 +63,7 @@ async function evaluateTree(parent, fn) {
     return tree;
   }
   if (!message) {
-    message = `warning: watch expression did not return a tree`;
+    message = `Warning: watch expression did not return a tree`;
   }
   console.warn(message);
   tree = new ConstantTree(message);

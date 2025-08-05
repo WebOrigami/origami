@@ -74,11 +74,21 @@ export default {
         frontData = parseYaml(frontText);
       }
       // TODO: Deprecate @text
-      unpacked = Object.assign({}, frontData, { "@text": body });
+      unpacked = { ...frontData };
+      Object.defineProperty(unpacked, "@text", {
+        configurable: true,
+        enumerable: false,
+        get() {
+          console.warn(
+            "Warning: The @text property is deprecated. Use _body instead."
+          );
+          return body;
+        },
+      });
       Object.defineProperty(unpacked, "_body", {
         configurable: true,
+        enumerable: true,
         value: body,
-        enumerable: false, // TODO: Make enumerable
         writable: true,
       });
     } else {

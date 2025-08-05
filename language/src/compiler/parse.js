@@ -732,7 +732,12 @@ function peg$parse(input, options) {
       return annotate([ops.literal, chars.join("")], location());
     };
   var peg$f99 = function(front, body) {
+      // TODO: Deprecate @template
       const macroName = text().includes("@template") ? "@template" : "_template";
+      if (macroName === "@template") {
+        // If the front matter is a macro, apply it to the body
+        console.warn("Warning: the @template() macro is deprecated. Use _template() instead.");
+      }
       return annotate(applyMacro(front, macroName, body), location());
     };
   var peg$f100 = function(front, body) {
