@@ -7,6 +7,9 @@ import { Tree, scope as scopeFn } from "@weborigami/async-tree";
  * @param {string[]} keys
  */
 export default async function scope(...keys) {
+  console.warn(
+    `Warning: the scope: protocol is deprecated. In most cases it can be dropped.`
+  );
   const key = keys.shift();
   let value;
   try {

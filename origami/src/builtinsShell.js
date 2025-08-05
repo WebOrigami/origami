@@ -24,7 +24,7 @@ export default function builtinsShell() {
       "js:": deprecationWarnings(jsGlobals, "js:", ""),
       "new:": deprecationWarnings(instantiate, "new:", "new"),
       "origami:": deprecationWarnings(origami, "origami:", "Origami."),
-      "scope:": deprecationWarnings(scope, "scope:", "Origami."),
+      "scope:": scope,
       "site:": deprecationWarnings(
         adjustReservedWords(site),
         "site:",
