@@ -10,6 +10,9 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {string[]} keys
  */
 export default async function inherited(...keys) {
+  console.warn(
+    `Warning: the inherited: protocol is deprecated. In most cases it can be dropped.`
+  );
   assertTreeIsDefined(this, "inherited:");
   const key = keys.shift();
   if (!this?.parent) {

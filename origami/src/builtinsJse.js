@@ -11,7 +11,6 @@ import http from "./protocols/http.js";
 import https from "./protocols/https.js";
 import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
-import inherited from "./protocols/inherited.js";
 import node from "./protocols/node.js";
 import packageNamespace from "./protocols/package.js";
 import scope from "./protocols/scope.js";
@@ -31,7 +30,6 @@ export default function builtinsJse() {
     };
 
     const Origami = {
-      ...dev,
       files,
       image,
       ...origami,
@@ -50,11 +48,11 @@ export default function builtinsJse() {
       "https:": https,
       "httpstree:": httpstree,
       "httptree:": httptree,
-      "inherited:": inherited,
       "node:": node,
       "package:": packageNamespace,
       "scope:": scope,
 
+      Dev: dev,
       Tree,
       Origami,
 

@@ -1,5 +1,5 @@
 import { compile } from "@weborigami/language";
-import builtinsShell from "../builtinsShell.js";
+import builtinsProgram from "../builtinsProgram.js";
 import getConfig from "../cli/getConfig.js";
 import * as utilities from "../common/utilities.js";
 import getParent from "./getParent.js";
@@ -39,7 +39,7 @@ export default {
 
     const config = getConfig(parent) ?? {};
     const globals = {
-      ...(options.globals ?? builtinsShell()),
+      ...(options.globals ?? builtinsProgram()),
       ...config,
     };
 

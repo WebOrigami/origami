@@ -1,6 +1,6 @@
 import { extension, trailingSlash } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import builtinsShell from "../builtinsShell.js";
+import builtinsProgram from "../builtinsProgram.js";
 import { toString } from "../common/utilities.js";
 import getParent from "./getParent.js";
 import processUnpackedContent from "./processUnpackedContent.js";
@@ -41,7 +41,7 @@ export default {
     if (options.globals) {
       globals = options.globals;
     } else {
-      globals = builtinsShell();
+      globals = builtinsProgram();
     }
 
     const defineFn = compile.templateDocument(source, {

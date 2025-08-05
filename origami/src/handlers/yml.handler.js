@@ -1,2 +1,2 @@
 // .yml is a synonym for .yaml
-export { default } from "./yaml.handler.js";
+export { yamlHandler as default } from "./handlers.js";

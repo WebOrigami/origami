@@ -1,2 +1,2 @@
 // .xhtml is a synonynm for .html
-export { default } from "./html.handler.js";
+export { htmlHandler as default } from "./handlers.js";

@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { getDescriptor } from "../common/utilities.js";
-import oriHandler from "../handlers/ori.handler.js";
+import { oriHandler } from "../handlers/handlers.js";
 import debug from "./debug.js";
 
 let templatePromise;
