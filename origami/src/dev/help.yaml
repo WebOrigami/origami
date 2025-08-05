@@ -13,6 +13,9 @@ Dev:
     crawl:
       args: (tree, base)
       description: A tree of a site's discoverable resources
+    copy:
+      args: (source, target)
+      description: Copy the source tree to the target
     debug:
       args: (tree)
       description: Add debug features to the tree
@@ -50,12 +53,8 @@ Origami:
       description: Get help on builtin namespaces and commands
     extension:
       description: Helpers for working with file extensions
-    image.format:
-      args: (image, format, options)
-      description: Return the image in a different format
-    image.resize:
-      args: (image, options)
-      description: Resize the image
+    image:
+      description: Collection of functions for working with images
     indexPage:
       args: (tree)
       description: A default index.html page for the tree
@@ -172,9 +171,6 @@ Tree:
     constant:
       args: (value)
       description: Return a deep tree with a single constant value
-    copy:
-      args: (source, target)
-      description: Copy the source tree to the target
     deepMap:
       args: (tree, options)
       description: Map the keys and values of a deep tree
