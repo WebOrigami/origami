@@ -1,3 +1,4 @@
+import { Tree } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import builtinsJse from "./builtinsJse.js";
 import * as dev from "./dev/dev.js";
@@ -46,16 +47,19 @@ export default function builtinsShell() {
 }
 
 function deprecationWarnings(fns, oldPrefix, newPrefix) {
-  const wrappedEntries = Object.entries(fns).map(([key, value]) => [
-    key,
-    function (...args) {
+  const wrappedEntries = Object.entries(fns).map(([key, value]) => {
+    const wrappedFn = function (...args) {
       const oldKey = key === "indent" ? key : `${oldPrefix}${key}()`;
       const newKey =
         key === "indent" ? `${newPrefix}${key}` : `${newPrefix}${key}()`;
       console.warn(`Warning: ${oldKey} is deprecated, use ${newKey} instead.`);
-      return value.apply(this, args);
-    },
-  ]);
+      return value instanceof Function
+        ? value.apply(this, args)
+        : Tree.traverseOrThrow.call(this, value, ...args);
+    };
+    Object.assign(wrappedFn, value);
+    return [key, wrappedFn];
+  });
   return Object.fromEntries(wrappedEntries);
 }
 
