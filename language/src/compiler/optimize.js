@@ -37,8 +37,8 @@ export default function optimize(code, options = {}) {
   const [op, ...args] = code;
   switch (op) {
     case markers.global:
-      // Replace global op with the globals
-      return annotate([globals, args[0]], code.location);
+      // Replace with the indicated global
+      return globals[args[0]];
 
     case markers.traverse:
       return resolvePath(code, globals, locals, cache);
@@ -140,7 +140,7 @@ function compoundReference(key, globals, locals, location) {
   const type = referenceType(head, globals, locals);
   let result;
   if (type === REFERENCE_GLOBAL) {
-    result = globalReference(head, globals, location);
+    result = globalReference(head, globals);
   } else if (type === REFERENCE_LOCAL) {
     result = localReference(head, locals, location);
   } else {
@@ -177,9 +177,9 @@ function getLocalReferenceDepth(locals, key) {
   return depth;
 }
 
-function globalReference(key, globals, location) {
+function globalReference(key, globals) {
   const normalized = trailingSlash.remove(key);
-  return annotate([globals, normalized], location);
+  return globals[normalized];
 }
 
 function inlineLiteral(code) {
@@ -249,24 +249,29 @@ function reference(code, globals, locals) {
 
   // See if the whole key is a global or local variable
   let type = referenceType(key, globals, locals);
-  let result;
   if (type === REFERENCE_GLOBAL) {
-    result = globalReference(key, globals, location);
+    return {
+      type,
+      result: globalReference(key, globals),
+    };
   } else if (type === REFERENCE_LOCAL) {
-    result = localReference(key, locals, location);
-  } else {
-    // Try key as a compound reference x.y.z
-    const compound = compoundReference(key, globals, locals, location);
-    result = compound?.result;
-    type = compound?.type;
+    return {
+      type,
+      result: localReference(key, locals, location),
+    };
   }
 
-  if (!result) {
-    // If none of the above worked, it must be an external reference
-    result = externalReference(key, locals, location);
+  // Try key as a compound reference x.y.z
+  const compound = compoundReference(key, globals, locals, location);
+  if (compound.type !== REFERENCE_EXTERNAL) {
+    return compound;
   }
 
-  return { type, result };
+  // Not a compound reference, must be external
+  return {
+    type: REFERENCE_EXTERNAL,
+    result: externalReference(key, locals, location),
+  };
 }
 
 function referenceType(key, globals, locals) {
@@ -287,7 +292,13 @@ function resolvePath(code, globals, locals, cache) {
 
   let { type, result } = reference(head, globals, locals);
 
-  result.push(...tail);
+  if (tail.length > 0) {
+    if (result instanceof Array) {
+      result.push(...tail);
+    } else {
+      result = annotate([result, ...tail], code.location);
+    }
+  }
 
   if (type === REFERENCE_EXTERNAL && cache !== null) {
     // Cache external path

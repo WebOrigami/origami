@@ -155,8 +155,8 @@ describe("optimize", () => {
     test("global reference", () => {
       // Compilation of `Math` where Math is a global variable
       const code = createCode([markers.traverse, [markers.reference, "Math"]]);
-      const globals = { Math: null }; // value doesn't matter
-      const expected = [globals, "Math"];
+      const globals = { Math: {} }; // value doesn't matter
+      const expected = globals.Math;
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
@@ -167,7 +167,7 @@ describe("optimize", () => {
         [markers.reference, "Math.PI"],
       ]);
       const globals = { Math: { PI: null } }; // value doesn't matter
-      const expected = [[globals, "Math"], "PI"];
+      const expected = [globals.Math, "PI"];
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
