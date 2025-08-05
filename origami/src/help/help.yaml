@@ -63,77 +63,6 @@ image:
       args: (image, options)
       description: Resize the image
 
-inherited:
-  description: URL protocol to get an inherited value instead of a local one
-
-js:
-  description: JavaScript classes and functions
-  collection: true
-  commands:
-    Array:
-      description: JavaScript Array class
-    BigInt:
-      description: JavaScript BigInt class
-    Boolean:
-      description: JavaScript Boolean class
-    Date:
-      description: JavaScript Date class
-    Error:
-      description: JavaScript Error class
-    Infinity:
-      description: JavaScript Infinity constant
-    Intl:
-      description: JavaScript Intl object
-    JSON:
-      description: JavaScript JSON object
-    Map:
-      description: JavaScript Map class
-    Math:
-      description: JavaScript Math object
-    NaN:
-      description: JavaScript NaN constant
-    Number:
-      description: JavaScript Number class
-    Object:
-      description: JavaScript Object class
-    RegExp:
-      description: JavaScript RegExp class
-    Set:
-      description: JavaScript Set class
-    String:
-      description: JavaScript String class
-    Symbol:
-      description: JavaScript Symbol class
-    decodeURI:
-      description: JavaScript decodeURI function
-    decodeURIComponent:
-      description: JavaScript decodeURIComponent function
-    encodeURI:
-      description: JavaScript encodeURI function
-    encodeURIComponent:
-      description: JavaScript encodeURIComponent function
-    "false":
-      description: JavaScript false constant
-    fetch:
-      description: JavaScript fetch function
-    isFinite:
-      description: JavaScript isFinite function
-    isNaN:
-      description: JavaScript isNaN function
-    "null":
-      description: JavaScript null constant
-    parseFloat:
-      description: JavaScript parseFloat function
-    parseInt:
-      description: JavaScript parseInt function
-    "true":
-      description: JavaScript true constant
-    undefined:
-      description: JavaScript undefined constant
-
-new:
-  description: Create instances of JavaScript classes
-
 node:
   description: Node.js modules
 
@@ -202,9 +131,6 @@ origami:
 
 package:
   description: URL protocol for packages installed in node_modules
-
-scope:
-  description: URL protocol to explicitly reference a key in scope
 
 site:
   description: Add common website features
