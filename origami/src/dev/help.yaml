@@ -1,4 +1,4 @@
-dev:
+Dev:
   description: Develop and debug Origami projects
   commands:
     audit:
@@ -32,42 +32,8 @@ dev:
       args: (tree, fn)
       description: Reevaluate fn when tree changes
 
-explore:
-  description: URL protocol to treat a website with JSON keys as a tree
-
-files:
-  description: URL protocol for file system folders and files
-
-help:
-  description: Get help on builtin namespaces and commands
-
-http:
-  description: URL protocol for web resources via HTTP
-
-https:
-  description: URL protocol for web resources via HTTPS
-
-httpstree:
-  description: URL protocol for a website tree via HTTPS
-
-httptree:
-  description: URL protocol for a website tree via HTTP
-
-image:
-  description: Format and resize images
-  commands:
-    format:
-      args: (image, format, options)
-      description: Return the image in a different format
-    resize:
-      args: (image, options)
-      description: Resize the image
-
-node:
-  description: Node.js modules
-
-origami:
-  description: Perform general Origami language functions
+Origami:
+  description: Create sites and other digital artifacts
   commands:
     basename:
       args: (key)
@@ -76,14 +42,38 @@ origami:
       description: The set of installed builtin functions
     config:
       description: The current project's configuration
+    document:
+      args: (text, [data])
+      description: Create a document object with the text and data
+    help:
+      args: (namespace|command)
+      description: Get help on builtin namespaces and commands
     extension:
       description: Helpers for working with file extensions
+    image.format:
+      args: (image, format, options)
+      description: Return the image in a different format
+    image.resize:
+      args: (image, options)
+      description: Resize the image
+    indexPage:
+      args: (tree)
+      description: A default index.html page for the tree
+    inline:
+      args: (text)
+      description: Inline Origami expressions found in the text
     json:
       args: (obj)
       description: Render the object in JSON format
+    jsonKeys:
+      args: (tree)
+      description: Add .keys.json files to a tree
     jsonParse:
       args: (text)
       description: Parse text as JSON
+    mdHtml:
+      args: (markdown)
+      description: Render the markdown as HTML
     naturalOrder:
       description: A comparison function for natural sort order
     once:
@@ -97,17 +87,29 @@ origami:
       description: POST the given data to the URL
     project:
       description: The root folder for the current Origami project
-    regexMatch:
-      args: (text, regex)
-      description: Return matches of the regex in the text
+    redirect:
+      args: (url, options)
+      description: Redirect to the given URL
     repeat:
       args: (n, obj)
       description: An array of n copies of the object
+    rss:
+      args: (feed)
+      description: Transforms a JSON Feed tree to RSS XML
     shell:
       args: (text)
       description: Run the text as a shell command, return the output
+    sitemap:
+      args: (tree)
+      description: Generate a sitemap for the tree
     slash:
       description: Helpers for working with trailing slashes
+    slug:
+      args: (text)
+      description: A version of the text suitable for use in URLs
+    static:
+      args: (tree)
+      description: Define common static files for the tree
     stdin:
       description: Returns the content of the standard input stream
     string:
@@ -129,51 +131,28 @@ origami:
       args: (text)
       description: Parse text as YAML
 
-package:
-  description: URL protocol for packages installed in node_modules
-
-site:
-  description: Add common website features
+Protocol:
+  description: Retrieve resources via URL protocols
   commands:
-    index:
-      args: (tree)
-      description: A default index.html page for the tree
-    jsonKeys:
-      args: (tree)
-      description: Add .keys.json files to a tree
-    redirect:
-      args: (url, options)
-      description: Redirect to the given URL
-    rss:
-      args: (feed)
-      description: Transforms a JSON Feed tree to RSS XML
-    sitemap:
-      args: (tree)
-      description: Generate a sitemap for the tree
-    slug:
-      args: (text)
-      description: A version of the text suitable for use in URLs
-    static:
-      args: (tree)
-      description: Define common static files for the tree
+    explore:
+      description: Treat a website with JSON keys as a tree
+    files:
+      description: File system folders and files
+    http:
+      description: Web resources via HTTP
+    https:
+      description: Web resources via HTTPS
+    httptree:
+      description: Website tree via HTTP
+    httpstree:
+      description: Website tree via HTTPS
+    node:
+      description: Installed Node.js modules
+    package:
+      description: Packages installed in node_modules
 
-text:
-  description: Manipulate text
-  commands:
-    document:
-      args: (text, [data])
-      description: Create a document object with the text and data
-    indent:
-      description: Tagged template literal for normalizing indentation
-    inline:
-      args: (text)
-      description: Inline Origami expressions found in the text
-    mdHtml:
-      args: (markdown)
-      description: Render the markdown as HTML
-
-tree:
-  description: Work with trees
+Tree:
+  description: Work with trees of files and data
   commands:
     addNextPrevious:
       args: (tree)
@@ -241,6 +220,8 @@ tree:
     has:
       args: (tree, key)
       description: True if key exists in tree
+    indent:
+      description: Tagged template literal for normalizing indentation
     inners:
       args: (tree)
       description: The tree's interior nodes

@@ -57,7 +57,7 @@ async function commandDescription(commandHelp, namespace, command) {
 
 function formatCommandDescription(commandHelp, namespace, command) {
   const { args, description } = commandHelp;
-  return `  ${namespace}:${command}${args ?? ""} - ${description}`;
+  return `  ${namespace}.${command}${args ?? ""} - ${description}`;
 }
 
 async function namespaceCommands(namespaceHelp, namespace) {
@@ -71,7 +71,7 @@ async function namespaceCommands(namespaceHelp, namespace) {
       const description = namespaceHelp.description;
       const lowercase = description[0].toLowerCase() + description.slice(1);
       text.push(
-        `The "${namespace}" namespace contains commands to ${lowercase}.`
+        `The ${namespace} namespace contains commands to ${lowercase}.`
       );
     }
     text.push("");
@@ -97,7 +97,7 @@ async function namespaceDescriptions(helpData) {
     }
   }
   text.push(
-    `\nType "ori help:<namespace>" for more or visit https://weborigami.org/builtins\n`
+    `\nType "ori help/<namespace>" for more or visit https://weborigami.org/builtins\n`
   );
   return text.join("\n");
 }
