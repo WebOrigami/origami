@@ -1,9 +1,9 @@
 import { Tree } from "@weborigami/async-tree";
-import { jsGlobals } from "@weborigami/language";
 import builtinsJse from "./builtinsJse.js";
 import * as dev from "./dev/dev.js";
 import * as image from "./image/image.js";
 import * as origami from "./origami/origami.js";
+import js from "./protocols/js.js";
 import instantiate from "./protocols/new.js";
 import scope from "./protocols/scope.js";
 import * as site from "./site/site.js";
@@ -19,34 +19,34 @@ export default function builtinsShell() {
       ...builtinsJse(),
 
       // Old protocols to be deprecated
-      "dev:": deprecationWarnings(dev, "dev:", "Origami."),
-      "image:": deprecationWarnings(image, "image:", "Origami.image."),
-      "js:": deprecationWarnings(jsGlobals, "js:", ""),
+      "dev:": deprecateFunctions(dev, "dev:", "Origami."),
+      "image:": deprecateFunctions(image, "image:", "Origami.image."),
+      "js:": js,
       "new:": instantiate,
-      "origami:": deprecationWarnings(origami, "origami:", "Origami."),
+      "origami:": deprecateFunctions(origami, "origami:", "Origami."),
       "scope:": scope,
-      "site:": deprecationWarnings(
+      "site:": deprecateFunctions(
         adjustReservedWords(site),
         "site:",
         "Origami."
       ),
-      "text:": deprecationWarnings(text, "text:", "Origami."),
-      "tree:": deprecationWarnings(tree, "tree:", "Tree."),
+      "text:": deprecateFunctions(text, "text:", "Origami."),
+      "tree:": deprecateFunctions(tree, "tree:", "Tree."),
 
       // For backward compat, include all methods at the top level
       ...dev,
-      ...deprecationWarnings(image, "", "Origami.image."),
-      ...deprecationWarnings(origami, "", "Origami."),
-      ...deprecationWarnings(adjustReservedWords(site), "site:", "Origami."),
-      ...deprecationWarnings(text, "", "Origami."),
-      ...deprecationWarnings(tree, "", "Tree."),
+      ...deprecateFunctions(image, "", "Origami.image."),
+      ...deprecateFunctions(origami, "", "Origami."),
+      ...deprecateFunctions(adjustReservedWords(site), "site:", "Origami."),
+      ...deprecateFunctions(text, "", "Origami."),
+      ...deprecateFunctions(tree, "", "Tree."),
     };
   }
 
   return builtins;
 }
 
-function deprecationWarnings(fns, oldPrefix, newPrefix) {
+function deprecateFunctions(fns, oldPrefix, newPrefix) {
   const wrappedEntries = Object.entries(fns).map(([key, value]) => {
     const wrappedFn = function (...args) {
       const oldKey = key === "indent" ? key : `${oldPrefix}${key}()`;
