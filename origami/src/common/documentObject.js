@@ -37,11 +37,21 @@ export default async function documentObject(input, data) {
   // const result = Object.create(base);
   const result = {};
   // TODO: Deprecate @text
-  Object.assign(result, inputData, data, { "@text": text });
+  Object.assign(result, inputData, data);
+  Object.defineProperty(result, "@text", {
+    configurable: true,
+    enumerable: false,
+    get() {
+      console.warn(
+        "Warning: The @text property is deprecated. Use _body instead."
+      );
+      return text;
+    },
+  });
   Object.defineProperty(result, "_body", {
     configurable: true,
+    enumerable: true,
     value: text,
-    enumerable: false, // TODO: Make enumerable
     writable: true,
   });
   return result;
