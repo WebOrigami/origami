@@ -1,11 +1,15 @@
+export { default as clear } from "../tree/clear.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
 export { default as code } from "./code.js";
+export { default as copy } from "./copy.js";
 export { default as audit } from "./crawler/audit.js";
 export { default as crawl } from "./crawler/crawl.js";
 export { default as debug } from "./debug.js";
 export { default as explore } from "./explore.js";
+export { default as help } from "./help.js";
 export { default as log } from "./log.js";
 export { default as serve } from "./serve.js";
 export { default as svg } from "./svg.js";
+export { default as version } from "./version.js";
 export { default as watch } from "./watch.js";

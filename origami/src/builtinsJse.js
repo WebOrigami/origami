@@ -1,8 +1,8 @@
 import { text as treeText } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
+import help from "./dev/help.js";
 import handlerBuiltins from "./handlers/handlerBuiltins.js";
-import help from "./help/help.js";
 import * as image from "./image/image.js";
 import * as origami from "./origami/origami.js";
 import explore from "./protocols/explore.js";

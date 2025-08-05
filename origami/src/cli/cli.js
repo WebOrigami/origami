@@ -4,7 +4,7 @@ import { Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
-import help from "../help/help.js";
+import help from "../dev/help.js";
 import ori from "../origami/ori.js";
 import project from "../origami/project.js";
 

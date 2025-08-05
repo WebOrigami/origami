@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "url";
 import YAML from "yaml";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import version from "../origami/version.js";
+import version from "./version.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
