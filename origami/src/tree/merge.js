@@ -11,7 +11,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {(Treelike|null)[]} trees
  */
 export default async function treeMerge(...trees) {
-  assertTreeIsDefined(this, "tree:merge");
+  assertTreeIsDefined(this, "merge");
 
   // Filter out null or undefined trees.
   /** @type {Treelike[]}

@@ -24,7 +24,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {Treelike} [keys]
  */
 export default function match(pattern, resultFn, keys = []) {
-  assertTreeIsDefined(this, "tree:match");
+  assertTreeIsDefined(this, "match");
   let regex;
   if (typeof pattern === "string") {
     // Convert the simple pattern format into a regular expression.

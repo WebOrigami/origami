@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function cacheBuiltin(sourceTreelike, cacheTreelike) {
-  assertTreeIsDefined(this, "tree:cache");
+  assertTreeIsDefined(this, "cache");
   /** @type {any} */
   const cacheTree = cacheTreelike
     ? Tree.from(cacheTreelike, { parent: this })

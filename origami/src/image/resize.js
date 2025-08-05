@@ -9,7 +9,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {import("sharp").ResizeOptions} options
  */
 export default async function resize(input, options) {
-  assertTreeIsDefined(this, "image:resize");
+  assertTreeIsDefined(this, "resize");
   return input instanceof Uint8Array || input instanceof ArrayBuffer
     ? sharp(input).rotate().resize(options).toBuffer()
     : undefined;

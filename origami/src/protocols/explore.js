@@ -14,6 +14,6 @@ import constructSiteTree from "../common/constructSiteTree.js";
  * @param  {...string} keys
  */
 export default function explore(host, ...keys) {
-  assertTreeIsDefined(this, "explore:");
+  assertTreeIsDefined(this, "explore");
   return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
 }

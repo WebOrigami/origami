@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function globKeysBuiltin(tree) {
-  assertTreeIsDefined(this, "tree:globs");
+  assertTreeIsDefined(this, "globs");
   const result = globKeys(tree);
   setParent(this, result);
   return result;

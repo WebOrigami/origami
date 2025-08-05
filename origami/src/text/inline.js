@@ -14,7 +14,7 @@ import { jsedocumentHandler } from "../handlers/handlers.js";
  * @param {StringLike} input
  */
 export default async function inline(input) {
-  assertTreeIsDefined(this, "text:inline");
+  assertTreeIsDefined(this, "inline");
 
   // Get the input text and any attached front matter.
   if (isUnpackable(input)) {

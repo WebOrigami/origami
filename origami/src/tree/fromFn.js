@@ -13,7 +13,7 @@ import { toFunction } from "../common/utilities.js";
  * @param {Invocable} [invocable]
  */
 export default async function fromFn(invocable, keys = []) {
-  assertTreeIsDefined(this, "tree:fromFn");
+  assertTreeIsDefined(this, "fromFn");
   if (invocable === undefined) {
     throw new Error(
       "An Origami function was called with an initial argument, but its value is undefined."

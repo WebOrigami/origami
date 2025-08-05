@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @this {AsyncTree|null}
  */
 export default async function regExpKeysBuiltin(tree) {
-  assertTreeIsDefined(this, "tree:globs");
+  assertTreeIsDefined(this, "regExpKeys");
   const result = regExpKeys(tree);
   setParent(this, result);
   return result;

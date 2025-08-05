@@ -11,7 +11,7 @@ const codePromiseMap = new Map();
  * @param {Function} fn
  */
 export default async function once(fn) {
-  assertTreeIsDefined(this, "origami:once");
+  assertTreeIsDefined(this, "once");
 
   const code = /** @type {any} */ (fn).code;
   if (code) {

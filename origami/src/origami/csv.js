@@ -11,7 +11,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {any} [object]
  */
 export default async function csv(object) {
-  assertTreeIsDefined(this, "origami:csv");
+  assertTreeIsDefined(this, "csv");
   object = object ?? this;
   if (object === undefined) {
     return undefined;

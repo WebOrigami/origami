@@ -10,7 +10,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {Treelike[]} trees
  */
 export default async function treeDeepMerge(...trees) {
-  assertTreeIsDefined(this, "tree:deepMerge");
+  assertTreeIsDefined(this, "deepMerge");
   // Merge the trees.
   const result = deepMerge(...trees);
   result.parent = this;

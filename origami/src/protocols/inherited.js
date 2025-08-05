@@ -13,7 +13,7 @@ export default async function inherited(...keys) {
   console.warn(
     `Warning: the inherited: protocol is deprecated. In most cases it can be dropped.`
   );
-  assertTreeIsDefined(this, "inherited:");
+  assertTreeIsDefined(this, "inherited");
   const key = keys.shift();
   if (!this?.parent) {
     return undefined;

@@ -13,6 +13,6 @@ import imageFormatFn from "./formatFn.js";
  * @param {any} options
  */
 export default async function imageFormat(input, format, options) {
-  assertTreeIsDefined(this, "image:format");
+  assertTreeIsDefined(this, "format");
   return imageFormatFn.call(this, format, options)(input);
 }

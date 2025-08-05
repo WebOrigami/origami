@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {Treelike} maskTreelike
  */
 export default async function maskBuiltin(sourceTreelike, maskTreelike) {
-  assertTreeIsDefined(this, "tree:mask");
+  assertTreeIsDefined(this, "mask");
   const result = mask(sourceTreelike, maskTreelike);
   result.parent = this;
   return result;

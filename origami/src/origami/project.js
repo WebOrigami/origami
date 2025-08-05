@@ -24,7 +24,7 @@ const configFileName = "config.ori";
  * @this {AsyncTree|null}
  */
 export default async function project() {
-  assertTreeIsDefined(this, "origami:project");
+  assertTreeIsDefined(this, "project");
 
   const dirname = process.cwd();
   const currentTree = new OrigamiFiles(dirname);

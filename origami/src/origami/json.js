@@ -9,7 +9,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {any} [obj]
  */
 export default async function json(obj) {
-  assertTreeIsDefined(this, "origami:json");
+  assertTreeIsDefined(this, "json");
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(

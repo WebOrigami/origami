@@ -14,6 +14,6 @@ import constructSiteTree from "../common/constructSiteTree.js";
  * @param  {...string} keys
  */
 export default function httptree(host, ...keys) {
-  assertTreeIsDefined(this, "httptree:");
+  assertTreeIsDefined(this, "httptree");
   return constructSiteTree("http:", SiteTree, this, host, ...keys);
 }

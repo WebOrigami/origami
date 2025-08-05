@@ -14,7 +14,7 @@ export default async function instantiate(...keys) {
   console.warn(
     `Warning: the new:Class() syntax is deprecated. Use \`new Class()\` instead.`
   );
-  assertTreeIsDefined(this, "new:");
+  assertTreeIsDefined(this, "new");
   let constructor;
 
   const scope = this ? scopeFn(this) : null;

@@ -14,7 +14,7 @@ import setDeep from "../tree/setDeep.js";
  * @param {Treelike} target
  */
 export default async function copy(source, target) {
-  assertTreeIsDefined(this, "tree:copy");
+  assertTreeIsDefined(this, "copy");
   const sourceTree = Tree.from(source, { parent: this });
   /** @type {any} */ let targetTree = Tree.from(target, { parent: this });
 

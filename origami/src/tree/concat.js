@@ -11,7 +11,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {any[]} args
  */
 export default async function concat(...args) {
-  assertTreeIsDefined(this, "tree:concat");
+  assertTreeIsDefined(this, "concat");
   const tree = args.length === 0 ? this : Tree.from(args, { parent: this });
   return ops.concat.call(this, tree);
 }

@@ -10,6 +10,6 @@ import documentObject from "../common/documentObject.js";
  * @param {any} [data]
  */
 export default async function documentBuiltin(text, data) {
-  assertTreeIsDefined(this, "text:document");
+  assertTreeIsDefined(this, "document");
   return documentObject(text, data);
 }

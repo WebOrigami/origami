@@ -9,6 +9,6 @@ import { toString } from "../common/utilities.js";
  * @param {any} object
  */
 export default function stringBuiltin(object) {
-  assertTreeIsDefined(this, "origami:string");
+  assertTreeIsDefined(this, "string");
   return toString(object);
 }

@@ -12,7 +12,7 @@ import version from "./version.js";
  * @param {string} [key]
  */
 export default async function help(key) {
-  assertTreeIsDefined(this, "help:");
+  assertTreeIsDefined(this, "help");
 
   const helpFilename = path.resolve(
     fileURLToPath(import.meta.url),

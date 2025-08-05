@@ -14,7 +14,7 @@ let templatePromise;
  * @this {AsyncTree|null}
  */
 export default async function explore(...keys) {
-  assertTreeIsDefined(this, "origami:explore");
+  assertTreeIsDefined(this, "explore");
   if (!this) {
     return undefined;
   }

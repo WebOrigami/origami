@@ -10,7 +10,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {any} options
  */
 export default async function rss(jsonFeedTree, options = {}) {
-  assertTreeIsDefined(this, "site:rss");
+  assertTreeIsDefined(this, "rss");
   const jsonFeed = await Tree.plain(jsonFeedTree);
   return jsonFeedToRss(jsonFeed, options);
 }

@@ -12,7 +12,7 @@ import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
  * @param  {...string} keys
  */
 export default async function https(host, ...keys) {
-  assertTreeIsDefined(this, "https:");
+  assertTreeIsDefined(this, "https");
   const href = constructHref("https:", host, ...keys);
   return fetchAndHandleExtension.call(this, href);
 }

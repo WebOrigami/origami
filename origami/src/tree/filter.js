@@ -12,7 +12,7 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {Treelike} filterTreelike
  */
 export default async function filterBuiltin(sourceTreelike, filterTreelike) {
-  assertTreeIsDefined(this, "tree:filter");
+  assertTreeIsDefined(this, "filter");
   const result = filter(sourceTreelike, filterTreelike);
   result.parent = this;
   return result;
