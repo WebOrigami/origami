@@ -285,7 +285,7 @@ function peg$parse(input, options) {
   var peg$r7 = /^[gimuy]/;
   var peg$r8 = /^[^\/\n\r]/;
   var peg$r9 = /^[^\n\r]/;
-  var peg$r10 = /^[^\/,)\]}s]/;
+  var peg$r10 = /^[^\/,)\]} \t]/;
   var peg$r11 = /^[a-z]/;
   var peg$r12 = /^[a-z0-9+-.]/;
   var peg$r13 = /^[:]/;
@@ -399,7 +399,7 @@ function peg$parse(input, options) {
   var peg$e105 = peg$otherExpectation("template document");
   var peg$e106 = peg$otherExpectation("template literal");
   var peg$e107 = peg$otherExpectation("template substitution");
-  var peg$e108 = peg$classExpectation(["/", ",", ")", "]", "}", "s"], true, false);
+  var peg$e108 = peg$classExpectation(["/", ",", ")", "]", "}", " ", "\t"], true, false);
   var peg$e109 = peg$otherExpectation("slash-separated path");
   var peg$e110 = peg$classExpectation([["a", "z"]], false, false);
   var peg$e111 = peg$classExpectation([["a", "z"], ["0", "9"], ["+", "."]], false, false);
@@ -781,6 +781,8 @@ function peg$parse(input, options) {
   var peg$f111 = function() {
       return annotate([markers.global, text()], location());
     };
+  var peg$f112 = function(char) { return /\s/.test(char); };
+  var peg$f113 = function(char) { return char; };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;
   var peg$posDetailsCache = [{ line: 1, column: 1 }];
@@ -6164,14 +6166,37 @@ function peg$parse(input, options) {
   }
 
   function peg$parsewhitespace() {
-    var s0;
+    var s0, s1, s2;
 
-    s0 = peg$parseinlineSpace();
-    if (s0 === peg$FAILED) {
-      s0 = peg$parsenewLine();
-      if (s0 === peg$FAILED) {
-        s0 = peg$parsecomment();
+    s0 = peg$currPos;
+    if (input.length > peg$currPos) {
+      s1 = input.charAt(peg$currPos);
+      peg$currPos++;
+    } else {
+      s1 = peg$FAILED;
+      if (peg$silentFails === 0) { peg$fail(peg$e41); }
+    }
+    if (s1 !== peg$FAILED) {
+      peg$savedPos = peg$currPos;
+      s2 = peg$f112(s1);
+      if (s2) {
+        s2 = undefined;
+      } else {
+        s2 = peg$FAILED;
       }
+      if (s2 !== peg$FAILED) {
+        peg$savedPos = s0;
+        s0 = peg$f113(s1);
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
+    }
+    if (s0 === peg$FAILED) {
+      s0 = peg$parsecomment();
     }
 
     return s0;

@@ -854,7 +854,8 @@ uriKey
 // A single character in a URI key
 uriKeyChar
   // Accept anything that doesn't end the URI key or path
-  = [^/,\)\]\}\s]
+  // Note: Peggy doesn't support `/s` so we list space and tab explicitly.
+  = [^/,\)\]\} \t]
   / escapedChar
 
 // A slash-separated path of keys: `a/b/c`
@@ -877,8 +878,9 @@ unaryOperator
   / minus
 
 whitespace
-  = inlineSpace
-  / newLine
+  // JavaScript considers a large number of characters whitespace so we use the
+  // `/s` definition to avoid missing any.
+  = char:. &{ return /\s/.test(char); } { return char; }
   / comment
 
 whitespaceWithNewLine
