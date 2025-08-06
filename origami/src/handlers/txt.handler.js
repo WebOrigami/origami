@@ -1,5 +1,5 @@
-import { isPacked, symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
+import { isPacked } from "@weborigami/async-tree";
+import { attachWarning, compile, symbols } from "@weborigami/language";
 import { parseYaml, toYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import parseFrontMatter from "./parseFrontMatter.js";
@@ -79,10 +79,10 @@ export default {
         configurable: true,
         enumerable: false,
         get() {
-          console.warn(
-            "Warning: The @text property is deprecated. Use _body instead."
+          return attachWarning(
+            body,
+            "The @text property is deprecated. Use _body instead."
           );
-          return body;
         },
       });
       Object.defineProperty(unpacked, "_body", {

@@ -1,4 +1,5 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
+import { displayWarning, symbols } from "@weborigami/language";
 import codeFragment from "./codeFragment.js";
 
 /**
@@ -66,33 +67,10 @@ export default async function evaluate(code) {
     throw error;
   }
 
-  // To aid debugging, add the code to the result.
-  // if (Object.isExtensible(result)) {
-  //   try {
-  //     if (code.location && !result[sourceSymbol]) {
-  //       Object.defineProperty(result, sourceSymbol, {
-  //         value: codeFragment(code.location),
-  //         enumerable: false,
-  //       });
-  //     }
-  //     if (!result[codeSymbol]) {
-  //       Object.defineProperty(result, codeSymbol, {
-  //         value: code,
-  //         enumerable: false,
-  //       });
-  //     }
-  //     if (!result[scopeSymbol]) {
-  //       Object.defineProperty(result, scopeSymbol, {
-  //         get() {
-  //           return scope(this).trees;
-  //         },
-  //         enumerable: false,
-  //       });
-  //     }
-  //   } catch (/** @type {any} */ error) {
-  //     // Ignore errors.
-  //   }
-  // }
+  if (result?.[symbols.warningSymbol]) {
+    displayWarning(result[symbols.warningSymbol], code.location);
+    delete result[symbols.warningSymbol];
+  }
 
   return result;
 }

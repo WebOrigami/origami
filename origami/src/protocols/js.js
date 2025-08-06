@@ -1,9 +1,10 @@
 import { Tree } from "@weborigami/async-tree";
-import { jsGlobals } from "@weborigami/language";
+import { attachWarning, jsGlobals } from "@weborigami/language";
 
-export default function js(...keys) {
-  console.warn(
-    `Warning: the js:<name> protocol is deprecated. Drop the js: and just use <name> instead.`
+export default async function js(...keys) {
+  const result = await Tree.traverseOrThrow.call(this, jsGlobals, ...keys);
+  return attachWarning(
+    result,
+    "The js:<name> protocol is deprecated. Drop the js: and just use <name> instead."
   );
-  return Tree.traverseOrThrow.call(this, jsGlobals, ...keys);
 }

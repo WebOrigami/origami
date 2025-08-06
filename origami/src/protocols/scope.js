@@ -1,4 +1,5 @@
 import { Tree, scope as scopeFn } from "@weborigami/async-tree";
+import { attachWarning } from "@weborigami/language";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
@@ -7,9 +8,6 @@ import { Tree, scope as scopeFn } from "@weborigami/async-tree";
  * @param {string[]} keys
  */
 export default async function scope(...keys) {
-  console.warn(
-    `Warning: the scope: protocol is deprecated. In most cases it can be dropped.`
-  );
   const key = keys.shift();
   let value;
   try {
@@ -23,5 +21,9 @@ export default async function scope(...keys) {
       throw error;
     }
   }
-  return keys.length > 0 ? await Tree.traverse(value, ...keys) : value;
+  const result = keys.length > 0 ? await Tree.traverse(value, ...keys) : value;
+  return attachWarning(
+    result,
+    "The scope protocol is deprecated. In most cases it can be dropped."
+  );
 }

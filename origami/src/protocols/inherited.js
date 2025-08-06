@@ -1,4 +1,5 @@
 import { scope, Tree } from "@weborigami/async-tree";
+import { attachWarning } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
@@ -10,9 +11,6 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {string[]} keys
  */
 export default async function inherited(...keys) {
-  console.warn(
-    `Warning: the inherited: protocol is deprecated. In most cases it can be dropped.`
-  );
   assertTreeIsDefined(this, "inherited");
   const key = keys.shift();
   if (!this?.parent) {
@@ -20,5 +18,9 @@ export default async function inherited(...keys) {
   }
   const parentScope = scope(this.parent);
   const value = await parentScope.get(key);
-  return keys.length > 0 ? await Tree.traverse(value, ...keys) : value;
+  const result = keys.length > 0 ? await Tree.traverse(value, ...keys) : value;
+  return attachWarning(
+    result,
+    "The inherited protocol is deprecated. In most cases it can be dropped."
+  );
 }

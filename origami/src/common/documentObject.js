@@ -1,4 +1,5 @@
 import { isPlainObject, isUnpackable, toString } from "@weborigami/async-tree";
+import { attachWarning } from "@weborigami/language";
 
 /**
  * In Origami, a text document object is any object with a `@text` property and
@@ -42,10 +43,10 @@ export default async function documentObject(input, data) {
     configurable: true,
     enumerable: false,
     get() {
-      console.warn(
-        "Warning: The @text property is deprecated. Use _body instead."
+      return attachWarning(
+        text,
+        "The @text property is deprecated. Use _body instead."
       );
-      return text;
     },
   });
   Object.defineProperty(result, "_body", {

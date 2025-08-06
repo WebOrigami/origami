@@ -1,6 +1,7 @@
 // Text we look for in an error stack to guess whether a given line represents a
 
 import {
+  box,
   scope as scopeFn,
   trailingSlash,
   TraverseError,
@@ -8,6 +9,7 @@ import {
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import codeFragment from "./codeFragment.js";
+import * as symbols from "./symbols.js";
 import { typos } from "./typos.js";
 
 // function in the Origami source code.
@@ -17,6 +19,19 @@ const origamiSourceSignals = [
   "origami/src/",
   "at Scope.evaluate",
 ];
+
+const displayedWarnings = new Set();
+
+export function attachWarning(value, message) {
+  if (typeof value === "object" && value?.[symbols.warningSymbol]) {
+    // Already has a warning, don't overwrite it
+    return value;
+  }
+
+  const boxed = box(value);
+  boxed[symbols.warningSymbol] = message;
+  return boxed;
+}
 
 export async function builtinReferenceError(tree, builtins, key) {
   // See if the key is in scope (but not as a builtin)
@@ -38,6 +53,16 @@ export async function builtinReferenceError(tree, builtins, key) {
     message = messages.join("\n");
   }
   return new ReferenceError(message);
+}
+
+// Display a warning message in the console, but only once for each unique
+// message and location.
+export function displayWarning(message, location) {
+  const warning = "Warning: " + message + lineInfo(location);
+  if (!displayedWarnings.has(warning)) {
+    displayedWarnings.add(warning);
+    console.warn(warning);
+  }
 }
 
 /**
@@ -80,33 +105,10 @@ export function formatError(error) {
 
   // Add location
   if (location) {
-    let { source, start } = location;
-    // Adjust line number with offset if present (for example, if the code is in
-    // an Origami template document with front matter that was stripped)
-    let line = start.line + (source.offset ?? 0);
     if (!fragmentInMessage) {
       message += `\nevaluating: ${fragment}`;
     }
-
-    if (typeof source === "object" && source.url) {
-      const { url } = source;
-      let fileRef;
-      // If URL is a file: URL, change to a relative path
-      if (url.protocol === "file:") {
-        fileRef = fileURLToPath(url);
-        const relativePath = path.relative(process.cwd(), fileRef);
-        if (!relativePath.startsWith("..")) {
-          fileRef = relativePath;
-        }
-      } else {
-        // Not a file: URL, use as is
-        fileRef = url.href;
-      }
-      message += `\n    at ${fileRef}:${line}:${start.column}`;
-    } else if (source.text.includes("\n")) {
-      // Don't know the URL, but has multiple lines so add line number
-      message += `\n    at line ${line}, column ${start.column}`;
-    }
+    message += lineInfo(location);
   }
 
   return message;
@@ -126,6 +128,36 @@ export async function formatScopeTypos(scope, key) {
 
 export function maybeOrigamiSourceCode(text) {
   return origamiSourceSignals.some((signal) => text.includes(signal));
+}
+
+// Return user-friendly line information for the error location
+function lineInfo(location) {
+  let { source, start } = location;
+  // Adjust line number with offset if present (for example, if the code is in
+  // an Origami template document with front matter that was stripped)
+  let line = start.line + (source.offset ?? 0);
+
+  if (typeof source === "object" && source.url) {
+    const { url } = source;
+    let fileRef;
+    // If URL is a file: URL, change to a relative path
+    if (url.protocol === "file:") {
+      fileRef = fileURLToPath(url);
+      const relativePath = path.relative(process.cwd(), fileRef);
+      if (!relativePath.startsWith("..")) {
+        fileRef = relativePath;
+      }
+    } else {
+      // Not a file: URL, use as is
+      fileRef = url.href;
+    }
+    return `\n    at ${fileRef}:${line}:${start.column}`;
+  } else if (source.text.includes("\n")) {
+    // Don't know the URL, but has multiple lines so add line number
+    return `\n    at line ${line}, column ${start.column}`;
+  } else {
+    return "";
+  }
 }
 
 export async function scopeReferenceError(scope, key) {

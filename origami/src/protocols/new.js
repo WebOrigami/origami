@@ -1,4 +1,5 @@
 import { isUnpackable, scope as scopeFn, Tree } from "@weborigami/async-tree";
+import { attachWarning } from "@weborigami/language";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
@@ -11,9 +12,6 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param  {...any} keys
  */
 export default async function instantiate(...keys) {
-  console.warn(
-    `Warning: the new:Class() syntax is deprecated. Use \`new Class()\` instead.`
-  );
   assertTreeIsDefined(this, "new");
   let constructor;
 
@@ -36,7 +34,7 @@ export default async function instantiate(...keys) {
   }
   // Origami may pass `undefined` as the first argument to the constructor. We
   // don't pass that along, because constructors like `Date` don't like it.
-  return (...args) => {
+  const result = (...args) => {
     const object =
       args.length === 1 && args[0] === undefined
         ? new constructor()
@@ -46,4 +44,8 @@ export default async function instantiate(...keys) {
     }
     return object;
   };
+  return attachWarning(
+    result,
+    "The new:Class() syntax is deprecated. Use `new Class()` instead."
+  );
 }
