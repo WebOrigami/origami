@@ -1,5 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 import builtinsJse from "./builtinsJse.js";
+import * as dev from "./dev/dev.js";
 import * as image from "./image/image.js";
 import * as origami from "./origami/origami.js";
 import inherited from "./protocols/inherited.js";
@@ -19,6 +20,7 @@ export default function builtinsProgram() {
       ...builtinsJse(),
 
       // // Old protocols to be deprecated
+      "dev:": deprecateFunctions(dev, "dev:", "Dev."),
       "image:": deprecateFunctions(image, "image:", "Origami.image."),
       "inherited:": inherited,
       "js:": js,
@@ -34,6 +36,7 @@ export default function builtinsProgram() {
       "tree:": deprecateFunctions(tree, "tree:", "Tree."),
 
       // // For backward compat, include all methods at the top level
+      ...deprecateFunctions(dev, "", "Dev."),
       ...deprecateFunctions(image, "", "Origami.image."),
       ...deprecateFunctions(origami, "", "Origami."),
       ...deprecateFunctions(adjustReservedWords(site), "site:", "Origami."),

@@ -10,6 +10,9 @@ Dev:
     changes:
       args: (old, new)
       description: Return a tree of changes
+    clear:
+      args: (tree)
+      description: Remove all values from the tree (alias of Tree.clear)
     crawl:
       args: (tree, base)
       description: A tree of a site's discoverable resources
@@ -22,15 +25,23 @@ Dev:
     explore:
       args: ()
       description: Explore the current scope [when run in browser]
+    keys:
+      args: (tree)
+      description: The keys of the tree (alias of Tree.keys)
     log:
       args: (a, message)
       description: Log message to the console and return a
     serve:
       args: (tree, port)
       description: Start a web server for the tree
+    stdin:
+      description: Returns the content of the standard input stream
     svg:
       args: (tree, options)
       description: Render a tree visually in SVG format
+    version:
+      args: ()
+      description: Return the version number of the Origami language
     watch:
       args: (tree, fn)
       description: Reevaluate fn when tree changes
@@ -45,6 +56,9 @@ Origami:
       description: The set of installed builtin functions
     config:
       description: The current project's configuration
+    csv:
+      args: (tree)
+      description: Render the tree as a CSV file
     document:
       args: (text, [data])
       description: Create a document object with the text and data
@@ -61,9 +75,6 @@ Origami:
     inline:
       args: (text)
       description: Inline Origami expressions found in the text
-    json:
-      args: (obj)
-      description: Render the object in JSON format
     jsonKeys:
       args: (tree)
       description: Add .keys.json files to a tree
@@ -109,8 +120,6 @@ Origami:
     static:
       args: (tree)
       description: Define common static files for the tree
-    stdin:
-      description: Returns the content of the standard input stream
     string:
       args: (obj)
       description: Coerce a buffer or document to a string
@@ -120,9 +129,6 @@ Origami:
     unpack:
       args: (buffer)
       description: Unpack the buffer into a usable form
-    version:
-      args: ()
-      description: Return the version number of the Origami language
     yaml:
       args: (obj)
       description: Render the object in YAML format
@@ -233,6 +239,9 @@ Tree:
     isTreelike:
       args: (object)
       description: True if object can be coerced to a tree
+    json:
+      args: (obj)
+      description: Render the object in JSON format
     keys:
       args: (tree)
       description: The keys of the tree

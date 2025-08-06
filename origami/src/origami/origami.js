@@ -17,7 +17,6 @@ export { default as regexMatch } from "./regexMatch.js";
 export { default as repeat } from "./repeat.js";
 export { default as shell } from "./shell.js";
 export { default as slash } from "./slash.js";
-export { default as stdin } from "./stdin.js";
 export { default as string } from "./string.js";
 export { default as unpack } from "./unpack.js";
 export { default as yaml } from "./yaml.js";

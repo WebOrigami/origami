@@ -30,11 +30,22 @@ export default function builtinsJse() {
     };
 
     const Origami = {
-      files,
       image,
       ...origami,
       ...site,
+      static: site.staticBuiltin,
       ...text,
+    };
+
+    const Protocol = {
+      explore,
+      files,
+      http,
+      https,
+      httpstree,
+      httptree,
+      node,
+      package: packageNamespace,
     };
 
     /** @type {any} */
@@ -55,6 +66,7 @@ export default function builtinsJse() {
       Dev: dev,
       Tree,
       Origami,
+      Protocol,
 
       // Handlers need to be exposed at top level
       ...handlerBuiltins(),
