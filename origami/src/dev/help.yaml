@@ -25,6 +25,9 @@ Dev:
     explore:
       args: ()
       description: Explore the current scope [when run in browser]
+    help:
+      args: (namespace|command)
+      description: Get help on builtin namespaces and commands
     keys:
       args: (tree)
       description: The keys of the tree (alias of Tree.keys)
@@ -52,8 +55,6 @@ Origami:
     basename:
       args: (key)
       description: Removes an extension from the key if present
-    builtins:
-      description: The set of installed builtin functions
     config:
       description: The current project's configuration
     csv:
@@ -62,9 +63,6 @@ Origami:
     document:
       args: (text, [data])
       description: Create a document object with the text and data
-    help:
-      args: (namespace|command)
-      description: Get help on builtin namespaces and commands
     extension:
       description: Helpers for working with file extensions
     image:
