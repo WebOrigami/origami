@@ -7,5 +7,9 @@ export * as image from "./src/image/image.js";
 export * from "./src/origami/origami.js";
 export { default as packageBuiltin } from "./src/protocols/package.js";
 export * from "./src/server/server.js";
+export * from "./src/site/site.js";
 export { default as origamiHighlightDefinition } from "./src/text/origamiHighlightDefinition.js";
 export * from "./src/text/text.js";
+
+// TODO: Remove once these all moves to async-tree
+export * from "./src/tree/tree.js";
