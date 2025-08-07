@@ -164,9 +164,13 @@ comment "comment"
   / singleLineComment
 
 computedPropertyAccess
-  = __ "[" expression:expectExpression expectClosingBracket {
+  = computedPropertySpace "[" expression:expectExpression expectClosingBracket {
       return annotate([markers.property, expression], location());
     }
+
+computedPropertySpace
+  = shellMode
+  / !shellMode __
 
 conditionalExpression
   = condition:logicalOrExpression tail:(__
