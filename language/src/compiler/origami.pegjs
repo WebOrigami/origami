@@ -168,6 +168,9 @@ computedPropertyAccess
       return annotate([markers.property, expression], location());
     }
 
+// A space before a computed property access. This is allowed when in not in
+// shell mode, but not in shell mode. In shell mode `foo [bar]` should parse as
+// a function call with a single argument of an array, not as a property access.
 computedPropertySpace
   = shellMode
   / !shellMode __

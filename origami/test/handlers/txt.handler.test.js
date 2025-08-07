@@ -5,7 +5,7 @@ import txtHandler from "../../src/handlers/txt.handler.js";
 describe("text handler", () => {
   test("packs an object as YAML with front matter", async () => {
     const object = {
-      "@text": "Body text",
+      _body: "Body text",
       a: 1,
     };
     const packed = await txtHandler.pack(object);
@@ -22,7 +22,7 @@ describe("text handler", () => {
     const text = "---\na: 1\n---\nBody text";
     const document = await txtHandler.unpack(text);
     assert.deepEqual(document, {
-      "@text": "Body text",
+      _body: "Body text",
       a: 1,
     });
   });
@@ -35,7 +35,7 @@ Body text`;
     const document = await txtHandler.unpack(text);
     assert.deepEqual(document, {
       sum: 2,
-      "@text": "Body text",
+      _body: "Body text",
     });
   });
 });

@@ -1,5 +1,5 @@
-import { isPacked } from "@weborigami/async-tree";
-import { attachWarning, compile, symbols } from "@weborigami/language";
+import { isPacked, symbols } from "@weborigami/async-tree";
+import { attachWarning, compile } from "@weborigami/language";
 import { parseYaml, toYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import parseFrontMatter from "./parseFrontMatter.js";
@@ -44,6 +44,7 @@ export default {
 
     /** @type {any} */
     const dataWithoutText = Object.assign({}, object);
+    delete dataWithoutText._body;
     delete dataWithoutText["@text"];
     if (Object.keys(dataWithoutText).length > 0) {
       const frontMatter = (await toYaml(dataWithoutText)).trimEnd();
@@ -97,6 +98,7 @@ export default {
     }
 
     unpacked[symbols.parent] = parent;
+
     return unpacked;
   },
 };

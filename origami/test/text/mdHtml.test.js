@@ -12,12 +12,12 @@ describe("mdHtml", () => {
 
   test("transformed markdown document to HTML document", async () => {
     const markdownDocument = {
-      "@text": `# Hello, world.`,
+      _body: `# Hello, world.`,
       title: "Hello",
     };
     const htmlDocument = await mdHtml.call(null, markdownDocument);
     assert.deepEqual(htmlDocument, {
-      "@text": `<h1 id="hello-world">Hello, world.</h1>\n`,
+      _body: `<h1 id="hello-world">Hello, world.</h1>\n`,
       title: "Hello",
     });
   });
