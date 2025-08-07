@@ -78,7 +78,7 @@ export default {
       unpacked = { ...frontData };
       Object.defineProperty(unpacked, "@text", {
         configurable: true,
-        enumerable: false,
+        enumerable: true,
         get() {
           return attachWarning(
             body,

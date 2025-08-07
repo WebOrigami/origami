@@ -41,7 +41,7 @@ export default async function documentObject(input, data) {
   Object.assign(result, inputData, data);
   Object.defineProperty(result, "@text", {
     configurable: true,
-    enumerable: false,
+    enumerable: true,
     get() {
       return attachWarning(
         text,
