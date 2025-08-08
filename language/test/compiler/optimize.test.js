@@ -4,7 +4,11 @@ import * as compile from "../../src/compiler/compile.js";
 import optimize from "../../src/compiler/optimize.js";
 import { markers } from "../../src/compiler/parserHelpers.js";
 import { ops } from "../../src/runtime/internal.js";
-import { assertCodeEqual, createCode } from "./codeHelpers.js";
+import {
+  assertCodeEqual,
+  assertCodeLocations,
+  createCode,
+} from "./codeHelpers.js";
 
 describe("optimize", () => {
   test("change local references to context references", () => {
@@ -277,5 +281,6 @@ function assertCompile(expression, expected, mode = "shell") {
   const globals = new ObjectTree({});
   const fn = compile.expression(expression, { globals, mode, parent });
   const actual = fn.code;
+  assertCodeLocations(actual);
   assertCodeEqual(actual, expected);
 }

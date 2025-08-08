@@ -70,13 +70,16 @@ export default function optimize(code, options = {}) {
       } else if (op === ops.object && index > 0) {
         const [key, value] = child;
         const adjustedLocals = avoidLocalRecursion(locals, key);
-        return [
-          key,
-          optimize(/** @type {AnnotatedCode} */ (value), {
-            ...options,
-            locals: adjustedLocals,
-          }),
-        ];
+        return annotate(
+          [
+            key,
+            optimize(/** @type {AnnotatedCode} */ (value), {
+              ...options,
+              locals: adjustedLocals,
+            }),
+          ],
+          child.location
+        );
       } else if (Array.isArray(child) && "location" in child) {
         // Review: Aside from ops.object (above), what non-instruction arrays
         // does this descend into?

@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import { parse } from "../../src/compiler/parse.js";
 import { markers } from "../../src/compiler/parserHelpers.js";
 import * as ops from "../../src/runtime/ops.js";
-import { assertCodeEqual } from "./codeHelpers.js";
+import { assertCodeEqual, assertCodeLocations } from "./codeHelpers.js";
 
 describe("Origami parser", () => {
   test("additiveExpression", () => {
@@ -1594,15 +1594,6 @@ function assertParse(
   }
 
   assertCodeEqual(code, expected);
-}
-
-function assertCodeLocations(code) {
-  assert(code.location, "no location");
-  for (const item of code) {
-    if (Array.isArray(item)) {
-      assertCodeLocations(item);
-    }
-  }
 }
 
 function assertThrows(startRule, source, message, position, mode = "shell") {

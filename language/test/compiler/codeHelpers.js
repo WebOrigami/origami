@@ -7,6 +7,15 @@ export function assertCodeEqual(actual, expected) {
   assert.deepStrictEqual(actualStripped, expectedStripped);
 }
 
+export function assertCodeLocations(code) {
+  assert(code.location, "no location");
+  for (const item of code) {
+    if (Array.isArray(item)) {
+      assertCodeLocations(item);
+    }
+  }
+}
+
 /**
  * Adds a fake source to code.
  *
