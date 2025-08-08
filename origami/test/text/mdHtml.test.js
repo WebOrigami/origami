@@ -15,6 +15,7 @@ describe("mdHtml", () => {
       _body: `# Hello, world.`,
       title: "Hello",
     };
+    /** @type {any} */
     const htmlDocument = await mdHtml.call(null, markdownDocument);
     // TODO: Adjust after @text is deprecated
     // assert.deepEqual(htmlDocument, {

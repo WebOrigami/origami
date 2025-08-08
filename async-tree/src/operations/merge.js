@@ -13,7 +13,7 @@ import * as trailingSlash from "../trailingSlash.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @param {import("../../index.ts").Treelike[]} sources
- * @returns {AsyncTree & { description: string, trees: AsyncTree[]}}
+ * @returns {AsyncTree & { description?: string, trees?: AsyncTree[]}}
  */
 export default function merge(...sources) {
   const trees = sources

@@ -1,6 +1,9 @@
 import { Tree } from "@weborigami/async-tree";
 import { attachWarning, jsGlobals } from "@weborigami/language";
 
+/**
+ * @this {import("@weborigami/types").AsyncTree}
+ */
 export default async function js(...keys) {
   const result = await Tree.traverseOrThrow.call(this, jsGlobals, ...keys);
   return attachWarning(

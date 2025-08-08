@@ -5,6 +5,7 @@ export default function getConfig(tree) {
   if (!tree) {
     return null;
   }
+  /** @type {any} */
   const root = Tree.root(tree);
   return root.config;
 }

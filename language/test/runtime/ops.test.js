@@ -358,7 +358,7 @@ describe("ops", () => {
       const a = await tree.get("a");
       const b = await a.get("b");
       const scope = await ops.scope.call(b);
-      assert.equal(await scope.get("c"), 1);
+      assert.equal(await scope?.get("c"), 1);
     });
 
     test("accepts an optional context", async () => {
@@ -372,7 +372,7 @@ describe("ops", () => {
       const a = await tree.get("a");
       const b = await a.get("b");
       const scope = await ops.scope.call(b, tree);
-      assert.equal(await scope.get("c"), 1);
+      assert.equal(await scope?.get("c"), 1);
     });
   });
 

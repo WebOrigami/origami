@@ -11,7 +11,7 @@ import { jsedocumentHandler } from "../handlers/handlers.js";
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  *
  * @this {AsyncTree|null}
- * @param {StringLike} input
+ * @param {StringLike & {_body?: StringLike}} input
  */
 export default async function inline(input) {
   assertTreeIsDefined(this, "inline");

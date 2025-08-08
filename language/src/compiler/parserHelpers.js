@@ -28,7 +28,7 @@ export const markers = {
  * If a parse result is an object that will be evaluated at runtime, attach the
  * location of the source code that produced it for debugging and error messages.
  *
- * @param {Code[]} code
+ * @param {any[]} code
  * @param {CodeLocation} location
  */
 export function annotate(code, location) {
@@ -375,11 +375,12 @@ export function makePath(keys) {
   const reference = annotate([markers.reference, headKey], head.location);
 
   let code = [markers.traverse, reference, ...tail];
-  code.location = spanLocations(code);
+  const location = spanLocations(code);
+  code = annotate(code, location);
 
   // Last key has trailing slash implies unpack operation
   if (trailingSlash.has(args.at(-1)[1])) {
-    code = annotate([ops.unpack, code], code.location);
+    code = annotate([ops.unpack, code], location);
   }
 
   return code;

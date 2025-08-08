@@ -26,6 +26,6 @@ export default async function files(...keys) {
   const resolved = path.resolve(basePath, relativePath);
 
   const result = new OrigamiFiles(resolved);
-  result.handlers = getHandlers(this);
+  /** @type {any} */ (result).handlers = getHandlers(this);
   return result;
 }

@@ -204,7 +204,7 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
 export async function homeDirectory(...keys) {
   const tree = new OrigamiFiles(os.homedir());
   // Use the same handlers as the current tree
-  tree.handlers = getHandlers(this);
+  /** @type {any} */ (tree).handlers = getHandlers(this);
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
@@ -424,7 +424,7 @@ addOpLabel(remainder, "«ops.remainder»");
 export async function rootDirectory(...keys) {
   const tree = new OrigamiFiles("/");
   // Use the same handlers as the current tree
-  tree.handlers = getHandlers(this);
+  /** @type {any} */ (tree).handlers = getHandlers(this);
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(rootDirectory, "«ops.rootDirectory»");

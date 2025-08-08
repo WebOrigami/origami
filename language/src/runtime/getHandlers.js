@@ -6,5 +6,5 @@ export default function getHandlers(tree) {
     return null;
   }
   const root = Tree.root(tree);
-  return root.handlers;
+  return /** @type {any} */ (root).handlers;
 }

@@ -56,7 +56,7 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      const keys = entries.map(entryKey);
+      const keys = entries.map((entry) => entryKey(entry));
       locals.push(keys);
       break;
   }
@@ -191,6 +191,7 @@ function inlineLiteral(code) {
 function localReference(key, locals, location) {
   const normalized = trailingSlash.remove(key);
   const depth = getLocalReferenceDepth(locals, normalized);
+  /** @type {any[]} */
   const context = [ops.context];
   if (depth > 0) {
     context.push(depth);
@@ -310,6 +311,7 @@ function resolvePath(code, globals, locals, cache) {
 
 function scopeCall(locals, location) {
   const depth = locals.length;
+  /** @type {any[]} */
   const code = [ops.scope];
   if (depth > 0) {
     // Add context for appropriate depth to scope call

@@ -1,5 +1,6 @@
 import { Tree, scope as scopeFn } from "@weborigami/async-tree";
 import { attachWarning } from "@weborigami/language";
+import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
@@ -8,6 +9,7 @@ import { attachWarning } from "@weborigami/language";
  * @param {string[]} keys
  */
 export default async function scope(...keys) {
+  assertTreeIsDefined(this, "scope");
   const key = keys.shift();
   let value;
   try {

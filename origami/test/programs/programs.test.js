@@ -13,7 +13,7 @@ import handlerBuiltins from "../../src/handlers/handlerBuiltins.js";
 describe("programs", async () => {
   const dir = new URL("fixtures", import.meta.url);
   const fixtures = new OrigamiFiles(dir);
-  fixtures.handlers = handlerBuiltins();
+  /** @type {any} */ (fixtures).handlers = handlerBuiltins();
 
   for (const key of await fixtures.keys()) {
     const file = await fixtures.get(key);

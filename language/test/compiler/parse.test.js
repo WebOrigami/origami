@@ -1606,6 +1606,7 @@ function assertCodeLocations(code) {
 }
 
 function assertThrows(startRule, source, message, position, mode = "shell") {
+  // @ts-ignore We declare this so we can inspect it in debugger
   let code;
   try {
     code = parse(source, {
