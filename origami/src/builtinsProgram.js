@@ -56,7 +56,11 @@ function deprecateFunctions(fns, oldPrefix, newPrefix) {
       async function (...args) {
         const oldKey = key === "indent" ? key : `${oldPrefix}${key}()`;
         const newKey =
-          key === "indent" ? `${newPrefix}${key}` : `${newPrefix}${key}()`;
+          key === "indent"
+            ? `Tree.indent`
+            : key === "json"
+            ? `Tree.json`
+            : `${newPrefix}${key}()`;
         const result =
           value instanceof Function
             ? await value.apply(this, args)
