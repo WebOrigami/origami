@@ -866,8 +866,8 @@ uriKey
 // A single character in a URI key
 uriKeyChar
   // Accept anything that doesn't end the URI key or path
-  // Note: Peggy doesn't support `/s` so we list space and tab explicitly.
-  = [^/,\)\]\} \t]
+  // Reject whitespace; see notes for `whitespace` term
+  = char:[^/,\)\]\}] !&{ return /\s/.test(char); } { return char; }
   / escapedChar
 
 // A slash-separated path of keys: `a/b/c`
