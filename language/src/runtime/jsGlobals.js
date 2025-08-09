@@ -79,6 +79,7 @@ export default {
   null: null, // treat like a global
   parseFloat,
   parseInt,
+  setTimeout,
   true: true, // treat like a global
   undefined,
 };
