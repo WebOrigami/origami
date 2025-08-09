@@ -12,22 +12,46 @@ import path from "node:path";
  * Fetch API
  * URL API
  */
-export default {
+const globals = {
+  AbortController,
+  AbortSignal,
   AggregateError,
   Array,
   ArrayBuffer,
+  // @ts-ignore this exists despite what TypeScript thinks
+  AsyncDisposableStack,
   Atomics,
   BigInt,
   BigInt64Array,
   BigUint64Array,
+  Blob,
   Boolean,
+  BroadcastChannel,
+  Buffer,
+  ByteLengthQueuingStrategy,
+  CloseEvent,
+  CompressionStream,
+  CountQueuingStrategy,
+  Crypto,
+  CryptoKey,
+  CustomEvent,
+  DOMException,
   DataView,
   Date,
+  DecompressionStream,
+  // @ts-ignore this exists despite what TypeScript thinks
+  DisposableStack,
   Error,
   EvalError,
+  Event,
+  EventTarget,
+  File,
   FinalizationRegistry,
+  // @ts-ignore this exists despite what TypeScript thinks
+  Float16Array,
   Float32Array,
   Float64Array,
+  FormData,
   Function,
   Headers,
   Infinity,
@@ -35,17 +59,33 @@ export default {
   Int32Array,
   Int8Array,
   Intl,
-  // @ts-ignore Iterator does exist despite what TypeScript thinks
+  // @ts-ignore this exists despite what TypeScript thinks
   Iterator,
   JSON,
   Map,
   Math,
+  MessageChannel,
+  MessageEvent,
+  MessagePort,
   NaN,
   Number,
   Object,
+  Performance,
+  PerformanceEntry,
+  PerformanceMark,
+  PerformanceMeasure,
+  PerformanceObserver,
+  PerformanceObserverEntryList,
+  PerformanceResourceTiming,
   Promise,
   Proxy,
   RangeError,
+  ReadableByteStreamController,
+  ReadableStream,
+  ReadableStreamBYOBReader,
+  ReadableStreamBYOBRequest,
+  ReadableStreamDefaultController,
+  ReadableStreamDefaultReader,
   ReferenceError,
   Reflect,
   RegExp,
@@ -54,10 +94,23 @@ export default {
   Set,
   SharedArrayBuffer,
   String,
+  SubtleCrypto,
+  // @ts-ignore this exists despite what TypeScript thinks
+  SuppressedError,
   Symbol,
   SyntaxError,
+  TextDecoder,
+  TextDecoderStream,
+  TextEncoder,
+  TextEncoderStream,
+  TransformStream,
+  TransformStreamDefaultController,
   TypeError,
   URIError,
+  URL,
+  // @ts-ignore this exists despite what TypeScript thinks
+  URLPattern,
+  URLSearchParams,
   Uint16Array,
   Uint32Array,
   Uint8Array,
@@ -65,24 +118,58 @@ export default {
   WeakMap,
   WeakRef,
   WeakSet,
+  WebAssembly,
+  WebSocket,
+  WritableStream,
+  WritableStreamDefaultController,
+  WritableStreamDefaultWriter,
+  atob,
+  btoa,
+  clearImmediate,
+  clearInterval,
+  clearTimeout,
+  console,
+  crypto,
   decodeURI,
   decodeURIComponent,
   encodeURI,
   encodeURIComponent,
+  escape,
   eval,
-  false: false, // treat like a global
-  fetch: fetchWrapper, // special case
+  // fetch -- special case, see below
+  global,
   globalThis,
-  import: importWrapper, // not a function in JS but acts like one
   isFinite,
   isNaN,
-  null: null, // treat like a global
   parseFloat,
   parseInt,
+  performance,
+  process,
+  queueMicrotask,
+  setImmediate,
+  setInterval,
   setTimeout,
-  true: true, // treat like a global
+  structuredClone,
   undefined,
+  unescape,
+
+  // Treat these like globals
+  false: false,
+  null: null,
+  true: true,
+
+  // Special cases
+  fetch: fetchWrapper,
+  import: importWrapper,
 };
+
+// Give access to our own custom globals as `globalThis`
+Object.defineProperty(globals, "globalThis", {
+  enumerable: true,
+  value: globals,
+});
+
+export default globals;
 
 async function fetchWrapper(resource, options) {
   const response = await fetch(resource, options);
