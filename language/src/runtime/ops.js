@@ -99,13 +99,17 @@ cache.unevaluatedArgs = true;
 /**
  * JavaScript comma operator, returns the last argument.
  *
- * @param  {...any} args
- * @returns
+ * @param  {...AnnotatedCode[]} args
  */
-export function comma(...args) {
-  return args.at(-1);
+export async function comma(...args) {
+  let result;
+  for (const arg of args) {
+    result = await evaluate.call(this, arg);
+  }
+  return result;
 }
 addOpLabel(comma, "«ops.comma»");
+comma.unevaluatedArgs = true;
 
 /**
  * Concatenate the given arguments.
