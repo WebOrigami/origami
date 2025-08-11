@@ -137,7 +137,6 @@ const globals = {
   escape,
   eval,
   // fetch -- special case, see below
-  global,
   globalThis,
   isFinite,
   isNaN,
