@@ -99,7 +99,8 @@ cache.unevaluatedArgs = true;
 /**
  * JavaScript comma operator, returns the last argument.
  *
- * @param  {...AnnotatedCode[]} args
+ * @this {AsyncTree|null}
+ * @param  {...AnnotatedCode} args
  */
 export async function comma(...args) {
   let result;

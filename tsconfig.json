@@ -14,5 +14,5 @@
     "target": "ES2022"
   },
   "include": ["**/*.js"],
-  "exclude": ["origami/exports/exports.js"]
+  "exclude": ["origami/exports/exports.js", "origami/src/dev/explore.inline.js"]
 }
