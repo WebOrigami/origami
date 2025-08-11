@@ -38,7 +38,11 @@ function removeDocumentPath(path) {
 function selectMode(newMode) {
   const currentMode = getModeFromLocation();
   if (newMode !== currentMode) {
-    let newPath = removeDocumentPath(frame.contentDocument.location.pathname);
+    const location = frame.contentDocument.location;
+    let newPath =
+      location.href === "about:blank"
+        ? ""
+        : removeDocumentPath(location.pathname);
     const currentExtension = modes[currentMode];
     if (currentExtension && newPath.endsWith(currentExtension)) {
       // Remove the current extension.

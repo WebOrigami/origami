@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Web Origami Explorer</title>
     <style>${ <explore.css> }</style>
-    <script>${ <explore.js.inline> }</script>
+    <script>${ <explore.inline.js> }</script>
   </head>
   <body>
     <nav>
