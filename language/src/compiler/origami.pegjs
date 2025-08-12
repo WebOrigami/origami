@@ -651,6 +651,9 @@ primary
 program "Origami program"
   = shebang? @expression
 
+programMode
+  = &{ return options.mode === "program" }
+
 propertyAccess
   = __ "." __ property:identifierLiteral {
     return annotate([markers.property, property], location());
@@ -709,7 +712,10 @@ shiftOperator
 // A shorthand lambda expression: `=foo(_)`
 shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
-  = shellMode "=" !"=" __ definition:implicitParenthesesCallExpression {
+  = (shellMode / programMode) "=" !"=" __ definition:implicitParenthesesCallExpression {
+      if (options.mode === "program") {
+        console.warn("Warning: the shorthand function syntax is deprecated in Origami programs. Use arrow syntax instead.");
+      }
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
         location()

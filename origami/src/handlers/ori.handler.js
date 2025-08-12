@@ -43,9 +43,7 @@ export default {
       ...config,
     };
 
-    // To the parse, program and JSE modes are the same
-    // TODO: Rename mode to "program"
-    const mode = options.mode ?? "jse";
+    const mode = options.mode ?? "program";
     const fn = compiler(source, { globals, mode });
 
     let result = await fn.call(parent);
