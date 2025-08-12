@@ -896,10 +896,12 @@ unaryOperator
   / minus
 
 whitespace
+  = (whitespaceChar / comment)+
+
+whitespaceChar
   // JavaScript considers a large number of characters whitespace so we use the
   // `/s` definition to avoid missing any.
   = char:. &{ return /\s/.test(char); } { return char; }
-  / comment
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __

@@ -1537,19 +1537,6 @@ Body text`,
     assertParse("uriScheme", "https:", [markers.global, "https:"]);
   });
 
-  test("whitespace block", () => {
-    assertParse(
-      "__",
-      `  
-  // First comment
-  // Second comment
-     `,
-      null,
-      "jse",
-      false
-    );
-  });
-
   test("unaryExpression", () => {
     assertParse("unaryExpression", "!true", [
       ops.logicalNot,
@@ -1565,6 +1552,19 @@ Body text`,
     assertParse("unaryOperator", "+", "+");
     assertParse("unaryOperator", "-", "-");
     assertParse("unaryOperator", "~", "~");
+  });
+
+  test("whitespace block", () => {
+    assertParse(
+      "__",
+      `  
+  // First comment
+  // Second comment
+     `,
+      null,
+      "jse",
+      false
+    );
   });
 });
 
