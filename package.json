@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/monorepo",
-  "version": "0.3.4-jse.9",
+  "version": "0.4.0",
   "workspaces": [
     "async-tree",
     "language",
@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "cd language; npm run build",
-    "publish-all": "cd types; npm publish --tag test; cd ../async-tree; npm publish --tag test; cd ../language; npm publish --tag test; cd ../origami; npm publish --tag test",
+    "publish-all": "cd types; npm publish; cd ../async-tree; npm publish; cd ../language; npm publish; cd ../origami; npm publish",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"
   }
