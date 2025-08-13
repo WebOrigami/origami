@@ -156,14 +156,29 @@ export function entryKey(entry, object = null, eagerProperties = []) {
     return trailingSlash.add(key);
   }
 
+  if (!(value instanceof Array)) {
+    // Can't be a subtree
+    return trailingSlash.remove(key);
+  }
+
+  // If we're dealing with a getter, work with what that gets
+  if (value[0] === ops.getter) {
+    value = value[1];
+  }
+
   // If entry will definitely create a subtree, add a trailing slash
-  const entryCreatesSubtree =
-    value instanceof Array &&
-    (value[0] === ops.object ||
-      (value[0] === ops.getter &&
-        value[1] instanceof Array &&
-        (value[1][0] === ops.object || value[1][0] === ops.merge)));
-  return trailingSlash.toggle(key, entryCreatesSubtree);
+  if (value[0] === ops.object) {
+    // Subtree
+    return trailingSlash.add(key);
+  }
+
+  // See if it looks a merged object
+  if (value[1] === "_result" && value[0][0] === ops.object) {
+    // Merge
+    return trailingSlash.add(key);
+  }
+
+  return key;
 }
 
 function keys(object, eagerProperties, propertyIsEnumerable, entries) {
