@@ -1,4 +1,5 @@
 import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
 
 /**
@@ -20,8 +21,9 @@ export default async function paginate(treelike, size = 10) {
 
   const paginated = {
     async get(pageKey) {
+      const normalized = trailingSlash.remove(pageKey);
       // Note: page numbers are 1-based.
-      const pageNumber = Number(pageKey);
+      const pageNumber = Number(normalized);
       if (Number.isNaN(pageNumber)) {
         return undefined;
       }
