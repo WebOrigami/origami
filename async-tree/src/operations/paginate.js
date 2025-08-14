@@ -29,14 +29,14 @@ export default async function paginate(treelike, size = 10) {
       }
       const nextPage = pageNumber + 1 <= pageCount ? pageNumber + 1 : null;
       const previousPage = pageNumber - 1 >= 1 ? pageNumber - 1 : null;
-      const items = {};
+      const items = new Map();
       for (
         let index = (pageNumber - 1) * size;
         index < Math.min(keys.length, pageNumber * size);
         index++
       ) {
         const key = keys[index];
-        items[key] = await tree.get(keys[index]);
+        items.set(key, await tree.get(keys[index]));
       }
 
       return {
