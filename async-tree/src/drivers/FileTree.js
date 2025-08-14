@@ -16,7 +16,7 @@ import limitConcurrency from "./limitConcurrency.js";
 // As of July 2025, Node doesn't provide any way to limit the number of
 // concurrent calls to readFile, so we wrap readFile in a function that
 // arbitrarily limits the number of concurrent calls to it.
-const MAX_CONCURRENT_READS = 256;
+const MAX_CONCURRENT_READS = 4096;
 const limitReadFile = limitConcurrency(fs.readFile, MAX_CONCURRENT_READS);
 
 /**
@@ -89,6 +89,7 @@ export default class FileTree {
     } else {
       // Return file contents as a standard Uint8Array
       const buffer = await limitReadFile(filePath);
+      // const buffer = await fs.readFile(filePath);
       value = Uint8Array.from(buffer);
     }
 
