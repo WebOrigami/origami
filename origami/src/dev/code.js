@@ -1,21 +1,23 @@
-import { symbols } from "@weborigami/language";
+import { toString } from "@weborigami/async-tree";
+import { compile } from "@weborigami/language";
 import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
- * @param {any} value
+ * @param {import("@weborigami/async-tree").StringLike} input
  */
-export default async function code(value) {
-  if (value === undefined) {
-    value = await getTreeArgument(this, arguments, value, "dev:code");
+export default async function code(input) {
+  if (input === undefined) {
+    input = await getTreeArgument(this, arguments, input, "dev:code");
   }
-  if (value === undefined) {
+  if (input === undefined) {
     return undefined;
   }
-  const code = value.code ?? value[symbols.codeSymbol];
-  return code ? functionNames(code) : undefined;
+  const text = toString(input);
+  const fn = compile.program(text);
+  return functionNames(fn.code);
 }
 
 function functionNames(code) {

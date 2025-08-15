@@ -273,7 +273,7 @@ export function lambda(parameters, code) {
   invoke.code = code;
   return invoke;
 }
-addOpLabel(lambda, "«ops.lambda");
+addOpLabel(lambda, "«ops.lambda»");
 lambda.unevaluatedArgs = true;
 
 export function lessThan(a, b) {
