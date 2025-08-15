@@ -1,6 +1,6 @@
 {
   "name": "@weborigami/language",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Web Origami expression language compiler and runtime",
   "type": "module",
   "main": "./main.js",
@@ -11,8 +11,8 @@
     "typescript": "5.8.2"
   },
   "dependencies": {
-    "@weborigami/async-tree": "0.4.1",
-    "@weborigami/types": "0.4.1",
+    "@weborigami/async-tree": "0.4.2",
+    "@weborigami/types": "0.4.2",
     "watcher": "2.3.1",
     "yaml": "2.7.0"
   },
