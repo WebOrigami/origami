@@ -23,6 +23,10 @@ const origamiSourceSignals = [
 const displayedWarnings = new Set();
 
 export function attachWarning(value, message) {
+  if (value == null) {
+    return value;
+  }
+
   if (typeof value === "object" && value?.[symbols.warningSymbol]) {
     // Already has a warning, don't overwrite it
     return value;
