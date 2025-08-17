@@ -655,7 +655,7 @@ programMode
   = &{ return options.mode === "program" }
 
 propertyAccess
-  = __ "." __ property:identifierLiteral {
+  = whitespaceOptionalForProgram "." whitespaceOptionalForProgram property:identifierLiteral {
     return annotate([markers.property, property], location());
   }
 
@@ -902,6 +902,12 @@ whitespaceChar
   // JavaScript considers a large number of characters whitespace so we use the
   // `/s` definition to avoid missing any.
   = char:. &{ return /\s/.test(char); } { return char; }
+
+// In some cases whitespace isn't allowed in shell mode but is allowed in
+// program mode
+whitespaceOptionalForProgram
+  = programMode __
+  / shellMode
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
