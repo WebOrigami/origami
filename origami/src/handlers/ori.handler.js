@@ -43,8 +43,10 @@ export default {
       ...config,
     };
 
-    const mode = options.mode ?? "program";
-    const fn = compiler(source, { globals, mode });
+    const fn = compiler(source, {
+      globals,
+      mode: "program",
+    });
 
     let result = await fn.call(parent);
 

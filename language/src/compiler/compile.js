@@ -21,7 +21,6 @@ function compile(source, options) {
   const optimized = optimize(code, {
     cache,
     globals,
-    mode,
   });
   const fn = createExpressionFunction(optimized);
   return fn;

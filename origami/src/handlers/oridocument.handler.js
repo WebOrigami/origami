@@ -47,7 +47,7 @@ export default {
     const defineFn = compile.templateDocument(source, {
       front: options.front,
       globals,
-      mode: options.mode ?? "shell",
+      mode: "program",
     });
 
     // Invoke the definition to get back the template function

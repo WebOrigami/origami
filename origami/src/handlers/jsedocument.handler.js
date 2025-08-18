@@ -10,7 +10,6 @@ export default {
     return oridocumentHandler.unpack(packed, {
       ...options,
       globals: builtinsJse(),
-      mode: "jse",
       parent,
     });
   },
