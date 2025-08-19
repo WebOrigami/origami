@@ -29,10 +29,12 @@ export default async function serve(treelike, port) {
     if (!isTransformApplied(ExplorableSiteTransform, tree)) {
       tree = transformObject(ExplorableSiteTransform, tree);
     }
-  } else {
+  } else if (arguments.length === 0) {
     // By default, watch the default tree and add default pages.
     const withDefaults = await debug.call(this);
     tree = await watch.call(this, withDefaults);
+  } else {
+    throw new Error("serve: no tree was provided to serve");
   }
 
   if (port === undefined) {
