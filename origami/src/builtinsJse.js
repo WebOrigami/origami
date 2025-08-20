@@ -1,4 +1,4 @@
-import { text as treeText } from "@weborigami/async-tree";
+import { deepText, text as treeText } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
@@ -24,6 +24,7 @@ export default function builtinsJse() {
   if (!builtins) {
     const Tree = {
       ...tree,
+      deepText,
       indent: text.indent,
       json: origami.json,
       text: treeText,

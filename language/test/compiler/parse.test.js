@@ -895,123 +895,133 @@ Body`,
     assertParse("numericLiteral", "123.45", [ops.literal, 123.45]);
   });
 
-  test("objectLiteral", () => {
-    assertParse("objectLiteral", "{}", [ops.object]);
-    assertParse("objectLiteral", "{ a: 1, b }", [
-      ops.object,
-      ["a", [ops.literal, 1]],
-      ["b", [markers.traverse, [markers.reference, "b"]]],
-    ]);
-    assertParse("objectLiteral", "{ sub: { a: 1 } }", [
-      ops.object,
-      ["sub", [ops.object, ["a", [ops.literal, 1]]]],
-    ]);
-    assertParse("objectLiteral", "{ sub: { a/: 1 } }", [
-      ops.object,
-      ["sub", [ops.object, ["a/", [ops.literal, 1]]]],
-    ]);
-    assertParse("objectLiteral", `{ "a": 1, "b": 2 }`, [
-      ops.object,
-      ["a", [ops.literal, 1]],
-      ["b", [ops.literal, 2]],
-    ]);
-    assertParse("objectLiteral", "{ a = b, b = 2 }", [
-      ops.object,
-      ["a", [ops.getter, [markers.traverse, [markers.reference, "b"]]]],
-      ["b", [ops.literal, 2]],
-    ]);
-    assertParse(
-      "objectLiteral",
-      `{
-        a = b
-        b = 2
-      }`,
-      [
+  describe("objectLiteral", () => {
+    describe("basic objects", () => {
+      assertParse("objectLiteral", "{}", [ops.object]);
+      assertParse("objectLiteral", "{ a: 1, b }", [
+        ops.object,
+        ["a", [ops.literal, 1]],
+        ["b", [markers.traverse, [markers.reference, "b"]]],
+      ]);
+      assertParse("objectLiteral", "{ sub: { a: 1 } }", [
+        ops.object,
+        ["sub", [ops.object, ["a", [ops.literal, 1]]]],
+      ]);
+      assertParse("objectLiteral", "{ sub: { a/: 1 } }", [
+        ops.object,
+        ["sub", [ops.object, ["a/", [ops.literal, 1]]]],
+      ]);
+      assertParse("objectLiteral", `{ "a": 1, "b": 2 }`, [
+        ops.object,
+        ["a", [ops.literal, 1]],
+        ["b", [ops.literal, 2]],
+      ]);
+      assertParse("objectLiteral", "{ a = b, b = 2 }", [
         ops.object,
         ["a", [ops.getter, [markers.traverse, [markers.reference, "b"]]]],
         ["b", [ops.literal, 2]],
-      ]
-    );
-    assertParse("objectLiteral", "{ a: { b: 1 } }", [
-      ops.object,
-      ["a", [ops.object, ["b", [ops.literal, 1]]]],
-    ]);
-    assertParse("objectLiteral", "{ a: { b = 1 } }", [
-      ops.object,
-      ["a", [ops.object, ["b", [ops.literal, 1]]]],
-    ]);
-    assertParse("objectLiteral", "{ a: { b = fn() } }", [
-      ops.object,
-      [
-        "a",
+      ]);
+      assertParse(
+        "objectLiteral",
+        `{
+        a = b
+        b = 2
+      }`,
         [
           ops.object,
+          ["a", [ops.getter, [markers.traverse, [markers.reference, "b"]]]],
+          ["b", [ops.literal, 2]],
+        ]
+      );
+      assertParse("objectLiteral", "{ a: { b: 1 } }", [
+        ops.object,
+        ["a", [ops.object, ["b", [ops.literal, 1]]]],
+      ]);
+      assertParse("objectLiteral", "{ a: { b = 1 } }", [
+        ops.object,
+        ["a", [ops.object, ["b", [ops.literal, 1]]]],
+      ]);
+      assertParse("objectLiteral", "{ a: { b = fn() } }", [
+        ops.object,
+        [
+          "a",
           [
-            "b",
+            ops.object,
             [
-              ops.getter,
-              [[markers.traverse, [markers.reference, "fn"]], undefined],
+              "b",
+              [
+                ops.getter,
+                [[markers.traverse, [markers.reference, "fn"]], undefined],
+              ],
             ],
           ],
         ],
-      ],
-    ]);
-    assertParse("objectLiteral", "{ x = fn.js('a') }", [
-      ops.object,
-      [
-        "x",
+      ]);
+      assertParse("objectLiteral", "{ x = fn.js('a') }", [
+        ops.object,
         [
-          ops.getter,
+          "x",
           [
-            [markers.traverse, [markers.reference, "fn.js"]],
-            [ops.literal, "a"],
+            ops.getter,
+            [
+              [markers.traverse, [markers.reference, "fn.js"]],
+              [ops.literal, "a"],
+            ],
           ],
         ],
-      ],
-    ]);
-    assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
-      [
+      ]);
+
+      assertParse("objectLiteral", "{ (a): 1 }", [
+        ops.object,
+        ["(a)", [ops.literal, 1]],
+      ]);
+      assertParse(
+        "objectLiteral",
+        "{ <path/to/file.txt> }",
+        [
+          ops.object,
+          [
+            "file.txt",
+            [
+              markers.traverse,
+              [markers.external, "path/"],
+              [ops.literal, "to/"],
+              [ops.literal, "file.txt"],
+            ],
+          ],
+        ],
+        "jse"
+      );
+    });
+
+    describe("spreads", () => {
+      assertParse("objectLiteral", "{ ...x }", [
+        ops.unpack,
+        [markers.traverse, [markers.reference, "x"]],
+      ]);
+      assertParse("objectLiteral", "{ a: 1, ...more, c: a }", [
+        [
+          ops.object,
+          ["a", [ops.literal, 1]],
+          ["c", [markers.traverse, [markers.reference, "a"]]],
+          [
+            "_result",
+            [
+              ops.merge,
+              [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
+              [markers.traverse, [markers.reference, "more"]],
+              [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
+            ],
+          ],
+        ],
+        "_result",
+      ]);
+      assertParse("objectLiteral", "{ a: 1, ...{ b: 2 } }", [
         ops.object,
         ["a", [ops.literal, 1]],
-        ["c", [markers.traverse, [markers.reference, "a"]]],
-        [
-          "_result",
-          [
-            ops.merge,
-            [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
-            [markers.traverse, [markers.reference, "more"]],
-            [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
-          ],
-        ],
-      ],
-      "_result",
-    ]);
-    assertParse("objectLiteral", "{ a: 1, ...{ b: 2 } }", [
-      ops.object,
-      ["a", [ops.literal, 1]],
-      ["b", [ops.literal, 2]],
-    ]);
-    assertParse("objectLiteral", "{ (a): 1 }", [
-      ops.object,
-      ["(a)", [ops.literal, 1]],
-    ]);
-    assertParse(
-      "objectLiteral",
-      "{ <path/to/file.txt> }",
-      [
-        ops.object,
-        [
-          "file.txt",
-          [
-            markers.traverse,
-            [markers.external, "path/"],
-            [ops.literal, "to/"],
-            [ops.literal, "file.txt"],
-          ],
-        ],
-      ],
-      "jse"
-    );
+        ["b", [ops.literal, 2]],
+      ]);
+    });
   });
 
   test("objectEntry", () => {

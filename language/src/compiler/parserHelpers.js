@@ -348,8 +348,12 @@ export function makeObject(entries, location) {
     // Merge multiple spreads
     code = makeMerge(spreads, location);
   } else if (spreads.length === 1) {
-    // A single spread can just be the object
-    code = spreads[0];
+    // Spreading a single reference equates to an unpack
+    if (spreads[0][0] === markers.traverse) {
+      code = annotate([ops.unpack, spreads[0]], location);
+    } else {
+      code = spreads[0];
+    }
   } else {
     // Empty object
     code = [ops.object];
