@@ -5,9 +5,8 @@ import { parse } from "./parse.js";
 
 function compile(source, options) {
   const { front, startRule } = options;
-  const mode = options.mode ?? "shell";
+  const mode = options.mode ?? "program";
   const globals = options.globals ?? jsGlobals;
-  const enableCaching = options.enableCaching ?? true;
   if (typeof source === "string") {
     source = { text: source };
   }
@@ -17,7 +16,7 @@ function compile(source, options) {
     mode,
     startRule,
   });
-  const cache = enableCaching ? {} : null;
+  const cache = mode === "program" ? {} : null;
   const optimized = optimize(code, {
     cache,
     globals,
