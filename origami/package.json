@@ -13,8 +13,8 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "22.13.13",
-    "typescript": "5.8.2"
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2"
   },
   "dependencies": {
     "@weborigami/async-tree": "0.4.2",
@@ -26,12 +26,12 @@
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.11.1",
     "jsdom": "26.1.0",
-    "marked": "15.0.7",
-    "marked-gfm-heading-id": "4.1.1",
-    "marked-highlight": "2.2.1",
-    "marked-smartypants": "1.1.9",
-    "sharp": "0.33.5",
-    "yaml": "2.7.0"
+    "marked": "16.2.0",
+    "marked-gfm-heading-id": "4.1.2",
+    "marked-highlight": "2.2.2",
+    "marked-smartypants": "1.1.10",
+    "sharp": "0.34.3",
+    "yaml": "2.8.1"
   },
   "scripts": {
     "test": "node --test --test-reporter=spec",

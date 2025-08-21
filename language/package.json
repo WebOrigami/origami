@@ -6,15 +6,15 @@
   "main": "./main.js",
   "types": "./index.ts",
   "devDependencies": {
-    "@types/node": "22.13.13",
+    "@types/node": "24.3.0",
     "peggy": "4.2.0.",
-    "typescript": "5.8.2"
+    "typescript": "5.9.2"
   },
   "dependencies": {
     "@weborigami/async-tree": "0.4.2",
     "@weborigami/types": "0.4.2",
     "watcher": "2.3.1",
-    "yaml": "2.7.0"
+    "yaml": "2.8.1"
   },
   "scripts": {
     "build": "peggy --allowed-start-rules=\"*\" --format es src/compiler/origami.pegjs --output src/compiler/parse.js",
