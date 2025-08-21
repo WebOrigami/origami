@@ -231,7 +231,7 @@ export function makeDocument(front, body, location) {
  *
  *      {
  *        x = { a: 1 }
- *        …x
+ *        ...x
  *        y = x
  *      }
  *
@@ -242,7 +242,7 @@ export function makeDocument(front, body, location) {
  *        y = x
  *        _result: {
  *          x
- *          …x
+ *          ...x
  *          y
  *        }
  *      }.result

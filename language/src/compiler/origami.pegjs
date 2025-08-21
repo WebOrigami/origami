@@ -205,7 +205,7 @@ doubleQuoteString "double quote string"
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
 
-ellipsis = "..." / "…" // Unicode ellipsis
+ellipsis = "..."
 
 equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {

@@ -1346,10 +1346,6 @@ Body`,
       ops.spread,
       [markers.traverse, [markers.reference, "a"]],
     ]);
-    assertParse("spreadElement", "…a", [
-      ops.spread,
-      [markers.traverse, [markers.reference, "a"]],
-    ]);
   });
 
   test("stringLiteral", () => {

@@ -246,7 +246,7 @@ describe("ops", () => {
   test("ops.merge", async () => {
     // {
     //   a: 1
-    //   …more
+    //   ...more
     //   c: a
     // }
     const scope = new ObjectTree({
