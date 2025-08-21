@@ -27,31 +27,16 @@ export default function origamiHighlightDefinition(hljs) {
         ],
       },
       {
-        // Treat namespaces as keywords
-        className: "keyword",
-        begin:
-          /\b(calc|dev|explore|files|http|https|httpstree|httptree|image|inherited|js|new|node|origami|package|scope|site|text|tree):\b/,
-      },
-      {
-        // Treat identifier containing a period before an open paren or backtick as a variable
-        className: "variable",
-        begin:
-          /\b[^(){}\[\]<>\?!\|=,/:\`"'«»\\→⇒ \t\n\r]+\.[^(){}\[\]<>\?!\|=,/:\`"'«»\\→⇒ \t\n\r]+(?=(\(|\`))\b/,
-      },
-      {
-        className: "built_in",
-        // Treat shorthands before open paren or backtick as a builtin
-        begin: /\b[A-Za-z][A-Za-z0-9]*(?=(\(|\`))\b/,
-      },
-      {
         className: "operator",
         begin:
           /===|!==|==|!=|<=|<|>=|>|\*|\*\*|\/|%|\+|-|=>|⇒|->|→|=|:|\.\.\.|&&|&|\|\||\||!|\^|~|\?\?|\?|#!/,
       },
       {
-        // Treat remaining identifiers as variables
         className: "variable",
-        begin: /\b[^(){}\[\]<>\?!\|=,/:\`"'«»\\→⇒ \t\n\r]+\b/,
+        // This is simpler than the corresponding definition in the VS Code
+        // extension; we couldn't figure out how to get the Unicode ID_Continue
+        // pattern to match.
+        begin: /[$_A-Za-z0-9\.~][$_A-Za-z0-9\.~@!+\-*%&|^]+/,
       },
     ],
   };
