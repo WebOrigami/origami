@@ -89,7 +89,7 @@ describe("optimize", () => {
       ],
     ];
     assertCompile(expression, expected);
-    assertCompile(expression, expected, "jse");
+    assertCompile(expression, expected, "shell");
   });
 
   describe("resolve reference", () => {

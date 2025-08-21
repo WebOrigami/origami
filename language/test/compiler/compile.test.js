@@ -19,8 +19,7 @@ describe("compile", () => {
   test("functionComposition", async () => {
     await assertCompile("greet()", "Hello, undefined!");
     await assertCompile("greet(name)", "Hello, Alice!");
-    await assertCompile("greet(name)", "Hello, Alice!", { mode: "jse" });
-    await assertCompile("greet 'world'", "Hello, world!");
+    await assertCompile("greet 'world'", "Hello, world!", { mode: "shell" });
   });
 
   test("angle bracket path", async () => {
@@ -40,7 +39,7 @@ describe("compile", () => {
       {
         message: "Hello, Alice!",
       },
-      { mode: "jse" }
+      { mode: "shell" }
     );
   });
 
@@ -126,7 +125,7 @@ describe("compile", () => {
 });
 
 async function assertCompile(text, expected, options = {}) {
-  const mode = options.mode ?? "shell";
+  const mode = options.mode ?? "program";
   const fn = compile.expression(text, { globals: sharedGlobals, mode });
   const target = options.target ?? null;
   let result = await fn.call(target);

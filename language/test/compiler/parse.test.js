@@ -72,16 +72,11 @@ describe("Origami parser", () => {
         [ops.literal, "src/"],
         [ops.literal, "assets"],
       ]);
-      assertParse(
-        "angleBracketLiteral",
-        "<https://example.com/data.yaml>",
-        [
-          [markers.global, "https:"],
-          [ops.literal, "example.com/"],
-          [ops.literal, "data.yaml"],
-        ],
-        "jse"
-      );
+      assertParse("angleBracketLiteral", "<https://example.com/data.yaml>", [
+        [markers.global, "https:"],
+        [ops.literal, "example.com/"],
+        [ops.literal, "data.yaml"],
+      ]);
     });
   });
 
@@ -500,7 +495,7 @@ Body`,
         "expression",
         "x //comment",
         [markers.traverse, [markers.reference, "x"]],
-        "jse",
+        "program",
         false
       );
     });
@@ -679,7 +674,7 @@ Body`,
         [[ops.literal, "name"]],
         [[markers.traverse, [markers.reference, "_template"]], undefined],
       ],
-      "jse",
+      "program",
       false
     );
   });
@@ -709,8 +704,8 @@ Body`,
   });
 
   test("identifier", () => {
-    assertParse("identifier", "foo", "foo", "jse", false);
-    assertParse("identifier", "$Δelta", "$Δelta", "jse", false);
+    assertParse("identifier", "foo", "foo", "program", false);
+    assertParse("identifier", "$Δelta", "$Δelta", "program", false);
     assertThrows(
       "identifier",
       "1stCharacterIsNumber",
@@ -841,7 +836,7 @@ Body`,
       "multiLineComment",
       "/*\nHello, world!\n*/",
       null,
-      "jse",
+      "program",
       false
     );
   });
@@ -975,23 +970,18 @@ Body`,
         ops.object,
         ["(a)", [ops.literal, 1]],
       ]);
-      assertParse(
-        "objectLiteral",
-        "{ <path/to/file.txt> }",
+      assertParse("objectLiteral", "{ <path/to/file.txt> }", [
+        ops.object,
         [
-          ops.object,
+          "file.txt",
           [
-            "file.txt",
-            [
-              markers.traverse,
-              [markers.external, "path/"],
-              [ops.literal, "to/"],
-              [ops.literal, "file.txt"],
-            ],
+            markers.traverse,
+            [markers.external, "path/"],
+            [ops.literal, "to/"],
+            [ops.literal, "file.txt"],
           ],
         ],
-        "jse"
-      );
+      ]);
     });
 
     describe("spreads", () => {
@@ -1037,20 +1027,15 @@ Body`,
       "a",
       [markers.traverse, [markers.reference, "a"]],
     ]);
-    assertParse(
-      "objectEntry",
-      "<path/to/file.txt>",
+    assertParse("objectEntry", "<path/to/file.txt>", [
+      "file.txt",
       [
-        "file.txt",
-        [
-          markers.traverse,
-          [markers.external, "path/"],
-          [ops.literal, "to/"],
-          [ops.literal, "file.txt"],
-        ],
+        markers.traverse,
+        [markers.external, "path/"],
+        [ops.literal, "to/"],
+        [ops.literal, "file.txt"],
       ],
-      "jse"
-    );
+    ]);
     assertParse("objectEntry", "a: (a) => a", [
       "a",
       [
@@ -1262,7 +1247,7 @@ Body`,
 'Hello'
 `,
       [ops.literal, "Hello"],
-      "jse",
+      "program",
       false
     );
   });
@@ -1338,7 +1323,13 @@ Body`,
   });
 
   test("singleLineComment", () => {
-    assertParse("singleLineComment", "// Hello, world!", null, "jse", false);
+    assertParse(
+      "singleLineComment",
+      "// Hello, world!",
+      null,
+      "program",
+      false
+    );
   });
 
   test("spreadElement", () => {
@@ -1446,8 +1437,7 @@ Body text`,
             [markers.traverse, [markers.reference, "title"]],
           ],
         ],
-      ],
-      "jse"
+      ]
     );
   });
 
@@ -1456,12 +1446,10 @@ Body text`,
       ops.templateTree,
       [ops.literal, ["Hello, world."]],
     ]);
-    assertParse(
-      "templateLiteral",
-      "`Hello, world.`",
-      [ops.templateTree, [ops.literal, ["Hello, world."]]],
-      "jse"
-    );
+    assertParse("templateLiteral", "`Hello, world.`", [
+      ops.templateTree,
+      [ops.literal, ["Hello, world."]],
+    ]);
     assertParse("templateLiteral", "`foo ${x} bar`", [
       ops.templateTree,
       [ops.literal, ["foo ", " bar"]],
@@ -1567,7 +1555,7 @@ Body text`,
   // Second comment
      `,
       null,
-      "jse",
+      "program",
       false
     );
   });
@@ -1601,7 +1589,7 @@ function assertParse(
   assertCodeEqual(code, expected);
 }
 
-function assertThrows(startRule, source, message, position, mode = "shell") {
+function assertThrows(startRule, source, message, position, mode = "program") {
   // @ts-ignore We declare this so we can inspect it in debugger
   let code;
   try {

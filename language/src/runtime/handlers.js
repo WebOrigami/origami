@@ -31,6 +31,7 @@ export async function handleExtension(parent, value, key, handlers) {
 
     // Special cases: `.ori.<ext>` extensions are Origami documents,
     // `.jse.<ext>` are JSE documents.
+    // TODO: Remove .jse.<ext>
     const extname = key.match(/\.ori\.\S+$/)
       ? ".oridocument"
       : key.match(/\.jse\.\S+$/)
