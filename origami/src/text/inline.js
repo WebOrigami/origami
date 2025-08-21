@@ -1,7 +1,7 @@
 import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import documentObject from "../common/documentObject.js";
-import { jsedocumentHandler } from "../handlers/handlers.js";
+import { oridocumentHandler } from "../handlers/handlers.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input
@@ -47,7 +47,7 @@ export default async function inline(input) {
   }
 
   // @ts-ignore
-  let result = await jsedocumentHandler.unpack(origami, {
+  let result = await oridocumentHandler.unpack(origami, {
     front,
     parent,
   });

@@ -9,8 +9,9 @@ export default function handlerBuiltins() {
     "jpeg.handler": handlers.jpegHandler,
     "jpg.handler": handlers.jpgHandler,
     "js.handler": handlers.jsHandler,
-    "jse.handler": handlers.jseHandler,
-    "jsedocument.handler": handlers.jsedocumentHandler,
+    // TODO: Remove deprecated JSE extensions
+    "jse.handler": handlers.oriHandler,
+    "jsedocument.handler": handlers.oridocumentHandler,
     "json.handler": handlers.jsonHandler,
     "md.handler": handlers.mdHandler,
     "mjs.handler": handlers.mjsHandler,

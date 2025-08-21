@@ -14,11 +14,7 @@ export { default as tsHandler } from "./ts.handler.js";
 
 export { default as oriHandler } from "./ori.handler.js";
 
-export { default as jseHandler } from "./jse.handler.js";
-
 export { default as oridocumentHandler } from "./oridocument.handler.js";
-
-export { default as jsedocumentHandler } from "./jsedocument.handler.js";
 
 export { default as txtHandler } from "./txt.handler.js";
 
