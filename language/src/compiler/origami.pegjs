@@ -786,13 +786,7 @@ templateBodyText "template text"
 
 templateDocument "template document"
   = front:frontMatterExpression __ body:templateBody {
-      // TODO: Deprecate @template
-      const macroName = text().includes("@template") ? "@template" : "_template";
-      if (macroName === "@template") {
-        // If the front matter is a macro, apply it to the body
-        console.warn("Warning: the @template() macro is deprecated. Use _template() instead.");
-      }
-      return annotate(applyMacro(front, macroName, body), location());
+      return annotate(applyMacro(front, "_template", body), location());
     }
   / front:frontMatterYaml body:templateBody {
       return makeDocument(front, body, location());

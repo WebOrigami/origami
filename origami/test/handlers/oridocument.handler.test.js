@@ -27,7 +27,7 @@ describe("Origami document handler", () => {
     assert.equal(result, "<h1>Home</h1>");
   });
 
-  test("YAML front matter is returned with @text", async () => {
+  test("YAML front matter is returned with _body", async () => {
     const parent = new ObjectTree({
       message: "Hello",
     });
@@ -37,27 +37,27 @@ name: world
 \${ message }, \${ name }!`;
     const result = await oridocumentHandler.unpack(text, { parent });
     assert.deepEqual(result.name, "world");
-    assert.equal(result["@text"], "Hello, world!");
+    assert.equal(result._body, "Hello, world!");
   });
 
   test("unpacks a document with Origami front matter", async () => {
     const text = `---
 {
   sum: 1 + 1
-  @text: @template()
+  _body: _template()
 }
 ---
 Body text`;
     const result = await oridocumentHandler.unpack(text);
     assert.deepEqual(result, {
       sum: 2,
-      "@text": "Body text",
+      _body: "Body text",
     });
   });
 
-  test("Origami front matter can refer to @template as a macro", async () => {
+  test("Origami front matter can refer to _template as a macro", async () => {
     const text = `---
-(name) => @template()
+(name) => _template()
 ---
 Hello, \${ name }!
 `;

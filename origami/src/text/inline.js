@@ -20,11 +20,8 @@ export default async function inline(input) {
   if (isUnpackable(input)) {
     input = await input.unpack();
   }
-  const inputIsDocument =
-    input["@text"] !== undefined || input._body !== undefined;
-  const origami = inputIsDocument
-    ? input["@text"] ?? input._body
-    : toString(input);
+  const inputIsDocument = input._body !== undefined;
+  const origami = inputIsDocument ? input._body : toString(input);
   if (origami === null) {
     return undefined;
   }
@@ -38,9 +35,7 @@ export default async function inline(input) {
   if (inputIsDocument) {
     // Collect all document properties except the body
     front = Object.fromEntries(
-      Object.entries(input).filter(
-        ([key]) => key !== "@text" && key !== "_body"
-      )
+      Object.entries(input).filter(([key]) => key !== "_body")
     );
   } else {
     front = null;

@@ -42,9 +42,9 @@ describe("utilities", () => {
     assert.equal(result, null);
   });
 
-  test("toString returns the value of an object's `@text` property", () => {
+  test("toString returns the value of an object's `_body` property", () => {
     const obj = {
-      "@text": "text",
+      _body: "text",
     };
     assert.equal(utilities.toString(obj), "text");
   });

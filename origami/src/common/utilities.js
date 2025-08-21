@@ -87,15 +87,15 @@ export function toFunction(obj) {
 }
 
 /**
- * Extend the async-tree toString method: objects that have a `@text` property
+ * Extend the async-tree toString method: objects that have a `_body` property
  * will return the value of that property as a string.
  *
  * @param {any} object
  * @returns {string|null}
  */
 export function toString(object) {
-  if (isPlainObject(object) && ("@text" in object || "_body" in object)) {
-    object = object._body ?? object["@text"];
+  if (isPlainObject(object) && "_body" in object) {
+    object = object._body;
   }
   return asyncTreeToString(object);
 }

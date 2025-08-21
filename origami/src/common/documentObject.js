@@ -1,10 +1,8 @@
 import { isPlainObject, isUnpackable, toString } from "@weborigami/async-tree";
-import { attachWarning } from "@weborigami/language";
 
 /**
- * In Origami, a text document object is any object with a `@text` property and
- * a pack() method that formats that object as text with YAML front matter. This
- * function is a helper for constructing such text document objects.
+ * In Origami, a text document object is any object with a `_body` property.
+ * This function is a helper for constructing such text document objects.
  *
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
@@ -22,7 +20,7 @@ export default async function documentObject(input, data) {
   }
 
   if (isPlainObject(input)) {
-    text = input._body ?? input["@text"];
+    text = input._body;
     inputData = input;
   } else {
     text = toString(input);
@@ -37,23 +35,13 @@ export default async function documentObject(input, data) {
   // };
   // const result = Object.create(base);
   const result = {};
-  // TODO: Deprecate @text
   Object.assign(result, inputData, data);
-  Object.defineProperty(result, "@text", {
-    configurable: true,
-    enumerable: true,
-    get() {
-      return attachWarning(
-        text,
-        "The @text property is deprecated. Use _body instead."
-      );
-    },
-  });
   Object.defineProperty(result, "_body", {
     configurable: true,
     enumerable: true,
     value: text,
     writable: true,
   });
+
   return result;
 }

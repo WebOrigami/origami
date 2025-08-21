@@ -1,5 +1,5 @@
 import { isPacked, symbols } from "@weborigami/async-tree";
-import { attachWarning, compile } from "@weborigami/language";
+import { compile } from "@weborigami/language";
 import { parseYaml, toYaml } from "../common/serialize.js";
 import { toString } from "../common/utilities.js";
 import parseFrontMatter from "./parseFrontMatter.js";
@@ -17,7 +17,7 @@ import parseFrontMatter from "./parseFrontMatter.js";
  *
  * If there is front matter, any Origami expressions in the front matter will be
  * evaluated. The result will be a plain JavaScript object with the evaluated
- * data and a `@text` property containing the document text.
+ * data and a `_body` property containing the document text.
  */
 export default {
   mediaType: "text/plain",
@@ -26,7 +26,7 @@ export default {
    * If the input is already in some packed format, it will be returned as is.
    *
    * Otherwise, the properties of the object will be formatted as YAML. If the
-   * object has a `@text` property, that will be used as the body of the text
+   * object has a `_body` property, that will be used as the body of the text
    * document; otherwise, an empty string will be used.
    *
    * @param {any} object
@@ -39,13 +39,11 @@ export default {
       throw new TypeError("The input to pack must be a JavaScript object.");
     }
 
-    // TODO: Deprecate @text
-    const text = object._body ?? object["@text"] ?? "";
+    const text = object._body ?? "";
 
     /** @type {any} */
     const dataWithoutText = Object.assign({}, object);
     delete dataWithoutText._body;
-    delete dataWithoutText["@text"];
     if (Object.keys(dataWithoutText).length > 0) {
       const frontMatter = (await toYaml(dataWithoutText)).trimEnd();
       return `---\n${frontMatter}\n---\n${text}`;
@@ -74,18 +72,7 @@ export default {
       } else {
         frontData = parseYaml(frontText);
       }
-      // TODO: Deprecate @text
       unpacked = { ...frontData };
-      Object.defineProperty(unpacked, "@text", {
-        configurable: true,
-        enumerable: true,
-        get() {
-          return attachWarning(
-            body,
-            "The @text property is deprecated. Use _body instead."
-          );
-        },
-      });
       Object.defineProperty(unpacked, "_body", {
         configurable: true,
         enumerable: true,

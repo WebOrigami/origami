@@ -1396,7 +1396,6 @@ Body text`,
       [
         ops.object,
         ["title", [ops.literal, "Title goes here"]],
-        ["(@text)", [ops.templateIndent, [ops.literal, ["Body text"]]]],
         ["_body", [ops.templateIndent, [ops.literal, ["Body text"]]]],
       ]
     );
@@ -1408,7 +1407,7 @@ Body text`,
       `---
 {
   title: "Title"
-  @text: @template()
+  _body: _template()
 }
 ---
 <h1>\${ title }</h1>
@@ -1417,7 +1416,7 @@ Body text`,
         ops.object,
         ["title", [ops.literal, "Title"]],
         [
-          "@text",
+          "_body",
           [
             ops.templateIndent,
             [ops.literal, ["<h1>", "</h1>\n"]],

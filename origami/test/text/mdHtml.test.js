@@ -17,16 +17,10 @@ describe("mdHtml", () => {
     };
     /** @type {any} */
     const htmlDocument = await mdHtml.call(null, markdownDocument);
-    // TODO: Adjust after @text is deprecated
-    // assert.deepEqual(htmlDocument, {
-    //   _body: `<h1 id="hello-world">Hello, world.</h1>\n`,
-    //   title: "Hello",
-    // });
-    assert.equal(
-      htmlDocument._body,
-      `<h1 id="hello-world">Hello, world.</h1>\n`
-    );
-    assert.equal(htmlDocument.title, "Hello");
+    assert.deepEqual(htmlDocument, {
+      _body: `<h1 id="hello-world">Hello, world.</h1>\n`,
+      title: "Hello",
+    });
   });
 
   test("mapping with @mdHtml changes keys by default", async () => {

@@ -21,13 +21,10 @@ describe("text handler", () => {
   test("unpacks a document with YAML/JSON front matter", async () => {
     const text = "---\na: 1\n---\nBody text";
     const document = await txtHandler.unpack(text);
-    // TODO: Adjust after @text is deprecated
-    // assert.deepEqual(document, {
-    //   _body: "Body text",
-    //   a: 1,
-    // });
-    assert.equal(document._body, "Body text");
-    assert.equal(document.a, 1);
+    assert.deepEqual(document, {
+      a: 1,
+      _body: "Body text",
+    });
   });
 
   test("unpacks a document with Origami front matter", async () => {
@@ -36,12 +33,9 @@ describe("text handler", () => {
 ---
 Body text`;
     const document = await txtHandler.unpack(text);
-    // TODO: Adjust after @text is deprecated
-    // assert.deepEqual(document, {
-    //   sum: 2,
-    //   _body: "Body text",
-    // });
-    assert.equal(document._body, "Body text");
-    assert.equal(document.sum, 2);
+    assert.deepEqual(document, {
+      sum: 2,
+      _body: "Body text",
+    });
   });
 });

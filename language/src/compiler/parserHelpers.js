@@ -218,8 +218,6 @@ export function makeDocument(front, body, location) {
   );
 
   // Add an entry for the body
-  // TODO: Deprecate @text
-  entries.push(annotate(["(@text)", body], location));
   entries.push(annotate(["_body", body], location));
 
   // Return the code for the document object
