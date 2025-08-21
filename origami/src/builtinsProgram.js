@@ -13,7 +13,6 @@ import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
 import node from "./protocols/node.js";
 import packageNamespace from "./protocols/package.js";
-import scope from "./protocols/scope.js";
 import * as site from "./site/site.js";
 import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
@@ -62,7 +61,6 @@ export default function builtinsProgram() {
       "httptree:": httptree,
       "node:": node,
       "package:": packageNamespace,
-      "scope:": scope,
 
       Dev: dev,
       Tree,
