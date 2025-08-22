@@ -205,7 +205,11 @@ doubleQuoteString "double quote string"
 doubleQuoteStringChar
   = !('"' / newLine) @textChar
 
-ellipsis = "..."
+ellipsis
+  = "..."
+  / "…" {
+    console.warn("The use of the Unicode ellipsis character for an object spread is deprecated; use `...` (three periods) instead.");
+  }
 
 equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
