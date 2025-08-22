@@ -171,7 +171,7 @@ describe("optimize", () => {
         [markers.reference, "Math.PI"],
       ]);
       const globals = { Math: { PI: null } }; // value doesn't matter
-      const expected = [globals.Math, "PI"];
+      const expected = [ops.property, globals.Math, "PI"];
       assertCodeEqual(optimize(code, { globals }), expected);
     });
 
@@ -195,7 +195,8 @@ describe("optimize", () => {
       const locals = [["post"]];
       const actual = optimize(code, { globals, locals });
       const expected = [
-        [[[ops.context], [ops.literal, "post"]], "author"],
+        ops.property,
+        [ops.property, [[ops.context], [ops.literal, "post"]], "author"],
         "name",
       ];
       assertCodeEqual(actual, expected);

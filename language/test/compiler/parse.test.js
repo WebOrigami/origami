@@ -308,6 +308,7 @@ describe("Origami parser", () => {
         [ops.literal, "assets"],
       ]);
       assertParse("callExpression", "<node:process>.env", [
+        ops.property,
         [
           [markers.global, "node:"],
           [ops.literal, "process"],
@@ -470,17 +471,21 @@ Body`,
 
     test("property acccess", () => {
       assertParse("expression", "(foo).bar", [
+        ops.property,
         [markers.traverse, [markers.reference, "foo"]],
         [ops.literal, "bar"],
       ]);
       assertParse("expression", "(foo).bar.baz", [
+        ops.property,
         [
+          ops.property,
           [markers.traverse, [markers.reference, "foo"]],
           [ops.literal, "bar"],
         ],
         [ops.literal, "baz"],
       ]);
       assertParse("expression", "foo[bar]", [
+        ops.property,
         [markers.traverse, [markers.reference, "foo"]],
         [markers.traverse, [markers.reference, "bar"]],
       ]);

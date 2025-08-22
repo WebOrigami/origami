@@ -154,7 +154,7 @@ function compoundReference(key, globals, locals, location) {
   // Process the remaining parts as property accesses
   while (tail.length > 0) {
     const part = tail.shift();
-    result = annotate([result, part], location);
+    result = annotate([ops.property, result, part], location);
   }
 
   return { type, result };

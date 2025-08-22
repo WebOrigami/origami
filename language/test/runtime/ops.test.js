@@ -340,6 +340,13 @@ describe("ops", () => {
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
+  test("ops.property returns a property if defined, otherwise traverses", async () => {
+    assert.equal(await ops.property({ a: 1 }, "a"), 1);
+    assert.equal(await ops.property({ a: 1 }, "b"), undefined);
+    const uppercase = (text) => text.toUpperCase();
+    assert.equal(await ops.property(uppercase, "a"), "A");
+  });
+
   test("ops.remainder calculates the remainder of two numbers", async () => {
     assert.strictEqual(ops.remainder(13, 5), 3);
     assert.strictEqual(ops.remainder(-13, 5), -3);

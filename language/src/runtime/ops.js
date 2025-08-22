@@ -416,6 +416,27 @@ export function optionalTraverse(treelike, key) {
 }
 addOpLabel(optionalTraverse, "«ops.optionalTraverse");
 
+/**
+ * Return the indicated property
+ *
+ * @param {any} obj
+ * @param {string} key
+ */
+export function property(obj, key) {
+  if (obj == null) {
+    throw new ReferenceError();
+  }
+
+  if (key in obj) {
+    // Object defines the property, get it
+    return obj[key];
+  } else {
+    // Handle as tree traversal
+    return Tree.traverseOrThrow(obj, key);
+  }
+}
+addOpLabel(property, "«ops.property»");
+
 export function remainder(a, b) {
   return a % b;
 }
