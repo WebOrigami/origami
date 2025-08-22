@@ -422,18 +422,36 @@ addOpLabel(optionalTraverse, "«ops.optionalTraverse");
  * @param {any} obj
  * @param {string} key
  */
-export function property(obj, key) {
+export async function property(obj, key) {
   if (obj == null) {
     throw new ReferenceError();
   }
 
+  if (isUnpackable(obj)) {
+    obj = await obj.unpack();
+  } else if (typeof obj === "string") {
+    obj = new String(obj);
+  } else if (typeof obj === "number") {
+    obj = new Number(obj);
+  }
+
   if (key in obj) {
     // Object defines the property, get it
-    return obj[key];
-  } else {
-    // Handle as tree traversal
-    return Tree.traverseOrThrow(obj, key);
+    let value = obj[key];
+    // Is value an instance method? Copied from ObjectTree.
+    const isInstanceMethod =
+      !(obj instanceof Function) &&
+      value instanceof Function &&
+      !Object.hasOwn(obj, key);
+    if (isInstanceMethod) {
+      // Bind it to the object
+      value = value.bind(obj);
+    }
+    return value;
   }
+
+  // Handle as tree traversal
+  return Tree.traverseOrThrow(obj, key);
 }
 addOpLabel(property, "«ops.property»");
 
