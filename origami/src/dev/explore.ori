@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Web Origami Explorer</title>
+    <title>Origami Explorer</title>
     <style>${ <explore.css> }</style>
     <script>${ <explore.inline.js> }</script>
   </head>
   <body>
     <nav>
-    <div id="label">Web Origami Explorer</div>
+    <div id="label">Origami Explorer</div>
     <div id="scopeToolbar">
       <button id="buttonContent">Content</button>
       <button id="buttonIndex">Index</button>
