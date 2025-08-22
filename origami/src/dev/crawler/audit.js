@@ -15,7 +15,7 @@ import { getBaseUrl } from "./utilities.js";
  * @param {string} [baseHref]
  */
 export default async function audit(treelike, baseHref) {
-  const tree = await getTreeArgument(this, arguments, treelike, "site:audit");
+  const tree = await getTreeArgument(this, arguments, treelike, "audit");
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   let errors = {};

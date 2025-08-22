@@ -10,6 +10,6 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function values(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:values");
+  const tree = await getTreeArgument(this, arguments, treelike, "values");
   return Tree.values(tree);
 }

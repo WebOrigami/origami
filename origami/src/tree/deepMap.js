@@ -19,7 +19,7 @@ export default async function deepMap(treelike, operation) {
     this,
     arguments,
     treelike,
-    "tree:deepMap",
+    "deepMap",
     true
   );
   /** @type {TreeMapOptions} */

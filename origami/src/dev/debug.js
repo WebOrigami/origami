@@ -16,7 +16,7 @@ import OriCommandTransform from "./OriCommandTransform.js";
 export default async function debug(treelike) {
   // The debug command leaves the tree's existing scope intact; it does not
   // apply its own scope to the tree.
-  let tree = await getTreeArgument(this, arguments, treelike, "dev:debug");
+  let tree = await getTreeArgument(this, arguments, treelike, "debug");
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);

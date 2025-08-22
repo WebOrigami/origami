@@ -14,7 +14,7 @@ export default async function addNextPreviousBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "tree:addNextPrevious"
+    "addNextPrevious"
   );
   const result = await addNextPrevious(tree);
   result[symbols.parent] = this;

@@ -10,6 +10,6 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function plain(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:plain");
+  const tree = await getTreeArgument(this, arguments, treelike, "plain");
   return Tree.plain(tree);
 }

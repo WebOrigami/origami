@@ -15,7 +15,7 @@ export default async function jsonKeysBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "site:jsonKeys",
+    "jsonKeys",
     true
   );
   return transformObject(JsonKeysTransform, tree);

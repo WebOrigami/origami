@@ -20,13 +20,7 @@ export default async function svg(treelike, options = {}) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  const tree = await getTreeArgument(
-    this,
-    arguments,
-    treelike,
-    "dev:svg",
-    true
-  );
+  const tree = await getTreeArgument(this, arguments, treelike, "svg", true);
   const dotText = await dot.call(this, tree, options);
   if (dotText === undefined) {
     return undefined;

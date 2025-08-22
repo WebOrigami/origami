@@ -26,7 +26,7 @@ import { addValueToObject, getBaseUrl } from "./utilities.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawlBuiltin(treelike, baseHref) {
-  const tree = await getTreeArgument(this, arguments, treelike, "site:crawl");
+  const tree = await getTreeArgument(this, arguments, treelike, "crawl");
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   const cache = {};

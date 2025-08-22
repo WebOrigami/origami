@@ -23,7 +23,7 @@ import { toFunction } from "../common/utilities.js";
  * @param {SortOptions|ValueKeyFn} [options]
  */
 export default async function sortBuiltin(treelike, options) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:sort");
+  const tree = await getTreeArgument(this, arguments, treelike, "sort");
 
   if (typeof options === "function") {
     // Take the function as the `sortKey` option

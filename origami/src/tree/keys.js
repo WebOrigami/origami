@@ -9,7 +9,7 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {Treelike} [treelike]
  */
 export default async function keys(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:keys");
+  const tree = await getTreeArgument(this, arguments, treelike, "keys");
   const keys = await tree.keys();
   return Array.from(keys);
 }

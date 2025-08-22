@@ -15,7 +15,7 @@ export default async function deepValuesBuiltin(treelike) {
     this,
     arguments,
     treelike,
-    "tree:deepValues",
+    "deepValues",
     true
   );
   return deepValues(tree);

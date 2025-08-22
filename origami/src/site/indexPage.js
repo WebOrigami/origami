@@ -11,7 +11,7 @@ import { getDescriptor } from "../common/utilities.js";
  * @param {string} [basePath]
  */
 export default async function indexPage(treelike, basePath) {
-  const tree = await getTreeArgument(this, arguments, treelike, "site:index");
+  const tree = await getTreeArgument(this, arguments, treelike, "indexPage");
   const keys = Array.from(await tree.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

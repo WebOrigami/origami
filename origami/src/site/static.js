@@ -12,7 +12,7 @@ import index from "./indexPage.js";
  * @param {Treelike} treelike
  */
 export default async function staticBuiltin(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "site:static");
+  const tree = await getTreeArgument(this, arguments, treelike, "static");
   const result = transformObject(StaticTransform, tree);
   result.parent = this;
   return result;

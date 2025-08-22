@@ -13,7 +13,7 @@ import { toFunction } from "../common/utilities.js";
  * @param {import("../../index.ts").Invocable} groupKey
  */
 export default async function groupBuiltin(treelike, groupKey) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:group");
+  const tree = await getTreeArgument(this, arguments, treelike, "group");
 
   const groupKeyFn = toFunction(groupKey);
   // Have the group key function run in this tree.

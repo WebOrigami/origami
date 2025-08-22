@@ -31,7 +31,7 @@ export default async function map(treelike, operation) {
     this,
     arguments,
     treelike,
-    "tree:map",
+    "map",
     options?.deep
   );
 

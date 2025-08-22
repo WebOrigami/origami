@@ -23,7 +23,7 @@ export default async function shuffleTree(treelike, reshuffle = false) {
     return array;
   }
 
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:shuffle");
+  const tree = await getTreeArgument(this, arguments, treelike, "shuffle");
 
   let keys;
   return {

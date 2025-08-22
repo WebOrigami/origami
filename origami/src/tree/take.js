@@ -12,7 +12,7 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {number} count
  */
 export default async function take(treelike, count) {
-  const tree = await getTreeArgument(this, arguments, treelike, "tree:take");
+  const tree = await getTreeArgument(this, arguments, treelike, "take");
   const taken = await takeTransform(tree, count);
   taken.parent = this;
   return taken;
