@@ -36,7 +36,7 @@ export default function origamiHighlightDefinition(hljs) {
         // This is simpler than the corresponding definition in the VS Code
         // extension; we couldn't figure out how to get the Unicode ID_Continue
         // pattern to match.
-        begin: /[$_A-Za-z0-9\.~][$_A-Za-z0-9\.~@!+\-*%&|^]+/,
+        begin: /[$_A-Za-z0-9\.~][$_A-Za-z0-9\.~@!+\-*%&|^]*/,
       },
     ],
   };
