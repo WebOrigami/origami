@@ -67,6 +67,11 @@ function extendedOptions(context, operation) {
   ) {
     valueFn = operation;
     options = {};
+  } else if (operation === undefined) {
+    /** @type {any} */
+    const error = new TypeError(`map: The second parameter was undefined.`);
+    error.position = 1;
+    throw error;
   } else {
     throw new TypeError(
       `map: You must specify a value function or options dictionary as the second parameter.`
