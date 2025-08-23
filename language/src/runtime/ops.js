@@ -293,7 +293,12 @@ addOpLabel(lessThanOrEqual, "«ops.lessThanOrEqual»");
  * literals.
  */
 export async function literal(value) {
-  return value;
+  if (value instanceof Array) {
+    // Strip code properties like `source`
+    return [...value];
+  } else {
+    return value;
+  }
 }
 addOpLabel(literal, "«ops.literal»");
 literal.unevaluatedArgs = true;
