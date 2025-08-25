@@ -36,6 +36,8 @@ export default async function project() {
   const foundConfig = await findAncestorFile(currentTree, configFileName);
   if (foundConfig) {
     root = foundConfig.container;
+    // Attach standard extension handlers so config can use them
+    root.handlers = handlerBuiltins();
     // Unpack Origami configuration file
     const buffer = foundConfig.value;
     config = await oriHandler.unpack(buffer, {
