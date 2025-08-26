@@ -108,7 +108,7 @@ describe("compile", () => {
       tag: (strings, ...values) => {
         assertCodeEqual(strings, ["Hello, ", "!"]);
         if (saved) {
-          assert.equal(strings, saved);
+          assert.deepEqual(strings, saved);
         } else {
           saved = strings;
         }
