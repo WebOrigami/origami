@@ -297,7 +297,12 @@ function resolvePath(code, globals, locals, cache) {
   let { type, result } = reference(head, globals, locals);
 
   if (tail.length > 0) {
-    if (result instanceof Array) {
+    // If the result is a traversal, we can safely extend it
+    const extendResult =
+      result instanceof Array &&
+      result[0] instanceof Array &&
+      (result[0][0] === ops.scope || result[0][0] === ops.context);
+    if (extendResult) {
       result.push(...tail);
     } else {
       result = annotate([result, ...tail], code.location);
