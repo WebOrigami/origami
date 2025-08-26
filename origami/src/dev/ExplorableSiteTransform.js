@@ -1,6 +1,6 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
-import indexPage from "../site/indexPage.js";
+import indexPage from "../origami/indexPage.js";
 
 /**
  * Wraps a tree (typically a SiteTree) to turn a standard site into an

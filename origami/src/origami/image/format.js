@@ -1,5 +1,5 @@
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import imageFormatFn from "./formatFn.js";
+import sharp from "sharp";
+import assertTreeIsDefined from "../../common/assertTreeIsDefined.js";
 
 /**
  * Return the image in a different format.
@@ -14,5 +14,7 @@ import imageFormatFn from "./formatFn.js";
  */
 export default async function imageFormat(input, format, options) {
   assertTreeIsDefined(this, "format");
-  return imageFormatFn.call(this, format, options)(input);
+  return input instanceof Uint8Array || input instanceof ArrayBuffer
+    ? sharp(input).toFormat(format, options).toBuffer()
+    : undefined;
 }

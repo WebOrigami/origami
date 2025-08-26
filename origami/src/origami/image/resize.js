@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
+import assertTreeIsDefined from "../../common/assertTreeIsDefined.js";
 
 /**
  * Resize an image.

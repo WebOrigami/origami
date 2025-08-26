@@ -3,7 +3,6 @@ import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
 import handlerBuiltins from "./handlers/handlerBuiltins.js";
-import * as image from "./image/image.js";
 import * as origami from "./origami/origami.js";
 import explore from "./protocols/explore.js";
 import files from "./protocols/files.js";
@@ -13,8 +12,6 @@ import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
 import node from "./protocols/node.js";
 import packageNamespace from "./protocols/package.js";
-import * as site from "./site/site.js";
-import * as text from "./text/text.js";
 import * as tree from "./tree/tree.js";
 
 let builtins;
@@ -24,17 +21,14 @@ export default function builtinsProgram() {
     const Tree = {
       ...tree,
       deepText,
-      indent: text.indent,
+      indent: origami.indent,
       json: origami.json,
       text: treeText,
     };
 
     const Origami = {
-      image,
       ...origami,
-      ...site,
-      static: site.staticBuiltin,
-      ...text,
+      static: origami.staticBuiltin,
     };
 
     const Protocol = {

@@ -1,11 +1,25 @@
 export { extension } from "@weborigami/async-tree";
+export { taggedTemplateIndent as indent } from "@weborigami/language";
 export { toFunction } from "../common/utilities.js";
-
 export { default as help } from "../dev/help.js"; // Alias
+export { default as document } from "../origami/document.js";
+export { default as htmlDom } from "../origami/htmlDom.js";
+export { default as indexPage } from "../origami/indexPage.js";
+export { default as inline } from "../origami/inline.js";
+export { default as jsonKeys } from "../origami/jsonKeys.js";
+export { default as mdHtml } from "../origami/mdHtml.js";
+export { default as redirect } from "../origami/redirect.js";
+export { default as rss } from "../origami/rss.js";
+export { default as sitemap } from "../origami/sitemap.js";
+export { default as slug } from "../origami/slug.js";
+export { default as staticBuiltin } from "../origami/static.js";
 export { default as basename } from "./basename.js";
 export { default as config } from "./config.js";
 export { default as csv } from "./csv.js";
 export { default as fetch } from "./fetch.js";
+export { default as format } from "./image/format.js";
+export * as image from "./image/image.js";
+export { default as resize } from "./image/resize.js";
 export { default as json } from "./json.js";
 export { default as jsonParse } from "./jsonParse.js";
 export { default as naturalOrder } from "./naturalOrder.js";
