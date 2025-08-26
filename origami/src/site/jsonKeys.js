@@ -1,6 +1,5 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
-import { transformObject } from "../common/utilities.js";
 
 /**
  * Expose .keys.json for a tree.
@@ -18,26 +17,26 @@ export default async function jsonKeysBuiltin(treelike) {
     "jsonKeys",
     true
   );
-  return transformObject(JsonKeysTransform, tree);
+  return jsonKeysTree(tree);
 }
 
-function JsonKeysTransform(Base) {
-  return class Static extends Base {
+function jsonKeysTree(tree) {
+  return {
     async get(key) {
-      let value = await super.get(key);
+      let value = await tree.get(key);
       if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
-        const tree = Tree.from(value, { deep: true, parent: this });
-        value = transformObject(JsonKeysTransform, tree);
+        const subtree = Tree.from(value, { deep: true, parent: this });
+        value = jsonKeysTree(subtree);
       }
       return value;
-    }
+    },
 
     async keys() {
-      const keys = new Set(await super.keys());
+      const keys = new Set(await tree.keys());
       keys.add(".keys.json");
       return keys;
-    }
+    },
   };
 }

@@ -1,6 +1,5 @@
 import { Tree, jsonKeys } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
-import { transformObject } from "../common/utilities.js";
 import index from "./indexPage.js";
 
 /**
@@ -13,7 +12,7 @@ import index from "./indexPage.js";
  */
 export default async function staticBuiltin(treelike) {
   const tree = await getTreeArgument(this, arguments, treelike, "static");
-  const result = transformObject(StaticTransform, tree);
+  const result = staticTree(tree);
   result.parent = this;
   return result;
 }
@@ -21,26 +20,26 @@ export default async function staticBuiltin(treelike) {
 // The name we'll register as a builtin
 staticBuiltin.key = "static";
 
-function StaticTransform(Base) {
-  return class Static extends Base {
+function staticTree(tree) {
+  return {
     async get(key) {
-      let value = await super.get(key);
+      let value = await tree.get(key);
       if (value === undefined && key === "index.html") {
         value = await index.call(this, this);
       } else if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {
-        const tree = Tree.from(value, { parent: this });
-        value = transformObject(StaticTransform, tree);
+        const subtree = Tree.from(value, { parent: this });
+        value = staticTree(subtree);
       }
       return value;
-    }
+    },
 
     async keys() {
-      const keys = new Set(await super.keys());
+      const keys = new Set(await tree.keys());
       keys.add("index.html");
       keys.add(".keys.json");
       return keys;
-    }
+    },
   };
 }
