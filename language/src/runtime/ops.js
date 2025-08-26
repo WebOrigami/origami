@@ -6,12 +6,13 @@
  */
 
 import {
-  ObjectTree,
-  Tree,
   deepText,
+  indent,
   isUnpackable,
+  ObjectTree,
   scope as scopeFn,
-  text as templateFunctionTree,
+  text,
+  Tree,
 } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
@@ -20,7 +21,6 @@ import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
 import { codeSymbol } from "./symbols.js";
-import templateFunctionIndent from "./templateIndent.js";
 
 function addOpLabel(op, label) {
   Object.defineProperty(op, "toString", {
@@ -535,17 +535,17 @@ addOpLabel(subtraction, "«ops.subtraction»");
  * Apply the tree indent tagged template function.
  */
 export async function templateIndent(strings, ...values) {
-  return templateFunctionIndent(strings, ...values);
+  return indent(strings, ...values);
 }
 addOpLabel(templateIndent, "«ops.templateIndent»");
 
 /**
  * Apply the tree tagged template function.
  */
-export async function templateTree(strings, ...values) {
-  return templateFunctionTree(strings, ...values);
+export async function templateText(strings, ...values) {
+  return text(strings, ...values);
 }
-addOpLabel(templateTree, "«ops.templateTree»");
+addOpLabel(templateText, "«ops.templateText»");
 
 export function unaryMinus(a) {
   return -a;

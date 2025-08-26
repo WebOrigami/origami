@@ -16,6 +16,5 @@ export { default as jsGlobals } from "./src/runtime/jsGlobals.js";
 export * as moduleCache from "./src/runtime/moduleCache.js";
 export { default as OrigamiFiles } from "./src/runtime/OrigamiFiles.js";
 export * as symbols from "./src/runtime/symbols.js";
-export { default as taggedTemplateIndent } from "./src/runtime/templateIndent.js";
 export { default as TreeEvent } from "./src/runtime/TreeEvent.js";
 export { default as WatchFilesMixin } from "./src/runtime/WatchFilesMixin.js";

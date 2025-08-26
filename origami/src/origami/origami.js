@@ -1,5 +1,4 @@
 export { extension } from "@weborigami/async-tree";
-export { taggedTemplateIndent as indent } from "@weborigami/language";
 export { toFunction } from "../common/utilities.js";
 export { default as help } from "../dev/help.js"; // Alias
 export { default as document } from "../origami/document.js";
@@ -12,7 +11,7 @@ export { default as redirect } from "../origami/redirect.js";
 export { default as rss } from "../origami/rss.js";
 export { default as sitemap } from "../origami/sitemap.js";
 export { default as slug } from "../origami/slug.js";
-export { default as staticBuiltin } from "../origami/static.js";
+export { default as static } from "../origami/static.js";
 export { default as basename } from "./basename.js";
 export { default as config } from "./config.js";
 export { default as csv } from "./csv.js";

@@ -1,4 +1,4 @@
-import { deepText, text as treeText } from "@weborigami/async-tree";
+import { deepText, indent, json, text } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
@@ -21,14 +21,9 @@ export default function builtinsProgram() {
     const Tree = {
       ...tree,
       deepText,
-      indent: origami.indent,
-      json: origami.json,
-      text: treeText,
-    };
-
-    const Origami = {
-      ...origami,
-      static: origami.staticBuiltin,
+      indent,
+      json,
+      text,
     };
 
     const Protocol = {
@@ -58,7 +53,7 @@ export default function builtinsProgram() {
 
       Dev: dev,
       Tree,
-      Origami,
+      Origami: origami,
       Protocol,
 
       // Handlers need to be exposed at top level

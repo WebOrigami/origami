@@ -557,7 +557,7 @@ Body`,
         [
           ops.lambda,
           [[ops.literal, "_"]],
-          [ops.templateTree, [ops.literal, ["x"]]],
+          [ops.templateText, [ops.literal, ["x"]]],
         ],
       ]);
       assertParse("expression", "copy app.js(formulas), files:snapshot", [
@@ -577,7 +577,7 @@ Body`,
           ops.lambda,
           [[ops.literal, "_"]],
           [
-            ops.templateTree,
+            ops.templateText,
             [ops.literal, ["<li>", "</li>"]],
             [markers.traverse, [markers.reference, "_"]],
           ],
@@ -1312,7 +1312,7 @@ Body`,
       ops.lambda,
       [[ops.literal, "_"]],
       [
-        ops.templateTree,
+        ops.templateText,
         [ops.literal, ["Hello, ", "."]],
         [markers.traverse, [markers.reference, "name"]],
       ],
@@ -1448,25 +1448,25 @@ Body text`,
 
   test("templateLiteral", () => {
     assertParse("templateLiteral", "`Hello, world.`", [
-      ops.templateTree,
+      ops.templateText,
       [ops.literal, ["Hello, world."]],
     ]);
     assertParse("templateLiteral", "`Hello, world.`", [
-      ops.templateTree,
+      ops.templateText,
       [ops.literal, ["Hello, world."]],
     ]);
     assertParse("templateLiteral", "`foo ${x} bar`", [
-      ops.templateTree,
+      ops.templateText,
       [ops.literal, ["foo ", " bar"]],
       [markers.traverse, [markers.reference, "x"]],
     ]);
     assertParse("templateLiteral", "`${`nested`}`", [
-      ops.templateTree,
+      ops.templateText,
       [ops.literal, ["", ""]],
-      [ops.templateTree, [ops.literal, ["nested"]]],
+      [ops.templateText, [ops.literal, ["nested"]]],
     ]);
     assertParse("templateLiteral", "`${ map(people, =`${name}`) }`", [
-      ops.templateTree,
+      ops.templateText,
       [ops.literal, ["", ""]],
       [
         [markers.traverse, [markers.reference, "map"]],
@@ -1475,7 +1475,7 @@ Body text`,
           ops.lambda,
           [[ops.literal, "_"]],
           [
-            ops.templateTree,
+            ops.templateText,
             [ops.literal, ["", ""]],
             [markers.traverse, [markers.reference, "name"]],
           ],

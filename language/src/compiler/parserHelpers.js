@@ -178,7 +178,7 @@ export function makeCall(target, args, location) {
     // Property access
     const property = args[1];
     fnCall = [ops.property, target, property];
-  } else if (op === ops.templateTree) {
+  } else if (op === ops.templateText) {
     // Tagged template
     const strings = args[1];
     const values = args.slice(2);
