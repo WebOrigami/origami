@@ -21,7 +21,7 @@ export default async function staticBuiltin(treelike) {
 staticBuiltin.key = "static";
 
 function staticTree(tree) {
-  return {
+  return Object.assign(Object.create(tree), {
     async get(key) {
       let value = await tree.get(key);
       if (value === undefined && key === "index.html") {
@@ -41,5 +41,5 @@ function staticTree(tree) {
       keys.add(".keys.json");
       return keys;
     },
-  };
+  });
 }

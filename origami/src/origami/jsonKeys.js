@@ -21,7 +21,7 @@ export default async function jsonKeysBuiltin(treelike) {
 }
 
 function jsonKeysTree(tree) {
-  return {
+  return Object.assign(Object.create(tree), {
     async get(key) {
       let value = await tree.get(key);
       if (value === undefined && key === ".keys.json") {
@@ -38,5 +38,5 @@ function jsonKeysTree(tree) {
       keys.add(".keys.json");
       return keys;
     },
-  };
+  });
 }
