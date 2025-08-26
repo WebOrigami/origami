@@ -65,6 +65,9 @@ Origami:
       description: Create a document object with the text and data
     extension:
       description: Helpers for working with file extensions
+    fetch:
+      args: (url, options)
+      description: Fetch a resource from a URL with support for extensions
     image:
       description: Collection of functions for working with images
     indexPage:
