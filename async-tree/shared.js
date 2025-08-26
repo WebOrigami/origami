@@ -22,6 +22,7 @@ export { default as deepValues } from "./src/operations/deepValues.js";
 export { default as deepValuesIterator } from "./src/operations/deepValuesIterator.js";
 export { default as extensionKeyFunctions } from "./src/operations/extensionKeyFunctions.js";
 export { default as filter } from "./src/operations/filter.js";
+export { default as globKeys } from "./src/operations/globKeys.js";
 export { default as group } from "./src/operations/group.js";
 export { default as indent } from "./src/operations/indent.js";
 export { default as invokeFunctions } from "./src/operations/invokeFunctions.js";
