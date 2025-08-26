@@ -73,6 +73,9 @@ Origami:
     inline:
       args: (text)
       description: Inline Origami expressions found in the text
+    json:
+      args: (obj)
+      description: Render the object in JSON format
     jsonKeys:
       args: (tree)
       description: Add .keys.json files to a tree
@@ -187,6 +190,9 @@ Tree:
     deepTake:
       args: (tree, n)
       description: The first n values from the deep tree
+    deepText:
+      args: (tree)
+      description: The text values of the deep tree
     deepValues:
       args: (tree)
       description: The in-order leaf values of the tree
@@ -238,8 +244,8 @@ Tree:
       args: (object)
       description: True if object can be coerced to a tree
     json:
-      args: (obj)
-      description: Render the object in JSON format
+      args: (tree)
+      description: Render the tree in JSON format
     keys:
       args: (tree)
       description: The keys of the tree
