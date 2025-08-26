@@ -882,7 +882,7 @@ function peg$parse(input, options) {
     return annotate([ops.lambda, lambdaParameters, body], location());
   }
   function peg$f104(head, tail) {
-    return makeTemplate(ops.templateTree, head, tail, location());
+    return makeTemplate(ops.templateText, head, tail, location());
   }
   function peg$f105(chars) {
     return annotate([ops.literal, chars.join("")], location());
