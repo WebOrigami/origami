@@ -7,7 +7,7 @@
   "types": "./index.ts",
   "devDependencies": {
     "@types/node": "24.3.0",
-    "peggy": "4.2.0.",
+    "peggy": "5.0.6",
     "typescript": "5.9.2"
   },
   "dependencies": {
