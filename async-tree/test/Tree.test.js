@@ -232,6 +232,27 @@ describe("Tree", () => {
     assert.deepEqual(await Tree.paths(tree), ["a", "b", "c/d", "c/e"]);
   });
 
+  test("paths can focus just on keys with trailing slashes", async () => {
+    const tree = new ObjectTree({
+      a: 1,
+      b: 2,
+      // This is a shallow ObjectTree, so `c` won't have a trailing slash
+      c: {
+        d: 3,
+      },
+      // Explicitly include a trailing slash to signal a subtree
+      "d/": new ObjectTree({
+        e: 4,
+      }),
+    });
+    assert.deepEqual(await Tree.paths(tree, { assumeSlashes: true }), [
+      "a",
+      "b",
+      "c",
+      "d/e",
+    ]);
+  });
+
   test("plain() produces a plain object version of a tree", async () => {
     const tree = new ObjectTree({
       a: 1,

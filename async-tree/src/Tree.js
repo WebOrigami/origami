@@ -292,17 +292,35 @@ export async function mapReduce(treelike, valueFn, reduceFn) {
  * Returns slash-separated paths for all values in the tree.
  *
  * @param {Treelike} treelike
- * @param {string?} base
+ * @param {{ assumeSlashes?: boolean, base?: string }} options
  */
-export async function paths(treelike, base = "") {
+export async function paths(treelike, options = {}) {
   const tree = from(treelike);
+  const base = options.base ?? "";
+  const assumeSlashes = options.assumeSlashes ?? false;
   const result = [];
   for (const key of await tree.keys()) {
     const separator = trailingSlash.has(base) ? "" : "/";
     const valuePath = base ? `${base}${separator}${key}` : key;
-    const value = await tree.get(key);
-    if (await isAsyncTree(value)) {
-      const subPaths = await paths(value, valuePath);
+    let isSubtree;
+    let value;
+    if (assumeSlashes) {
+      // Subtree needs to have a trailing slash
+      isSubtree = trailingSlash.has(key);
+      if (isSubtree) {
+        // We'll need the value to recurse
+        value = await tree.get(key);
+      }
+    } else {
+      // Get value and check
+      value = await tree.get(key);
+    }
+    if (value) {
+      // If we got the value we can check if it's a subtree
+      isSubtree = isAsyncTree(value);
+    }
+    if (isSubtree) {
+      const subPaths = await paths(value, { assumeSlashes, base: valuePath });
       result.push(...subPaths);
     } else {
       result.push(valuePath);

@@ -13,7 +13,7 @@ export function isTraversable(obj: any): boolean;
 export function isTreelike(obj: any): obj is Treelike;
 export function map(tree: Treelike, options: TreeMapOptions|ValueKeyFn): AsyncTree;
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn | null, reduceFn: ReduceFn): Promise<any>;
-export function paths(tree: Treelike, base?: string): string[];
+export function paths(tree: Treelike, options?: { assumeSlashes?: boolean, base?: string }): string[];
 export function plain(tree: Treelike): Promise<PlainObject>;
 export function root(tree: Treelike): AsyncTree;
 export function remove(AsyncTree: AsyncMutableTree, key: any): Promise<boolean>;
