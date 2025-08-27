@@ -12,7 +12,7 @@ import path from "node:path";
  * Fetch API
  * URL API
  */
-const globals = {
+const globals = bindStaticMethodsForGlobals({
   AbortController,
   AbortSignal,
   AggregateError,
@@ -152,15 +152,13 @@ const globals = {
   // Special cases
   fetch: fetchWrapper,
   import: importWrapper,
-};
+});
 
 // Give access to our own custom globals as `globalThis`
 Object.defineProperty(globals, "globalThis", {
   enumerable: true,
   value: globals,
 });
-
-export default globals;
 
 async function fetchWrapper(resource, options) {
   console.warn(
@@ -186,3 +184,44 @@ async function importWrapper(modulePath) {
   const filePath = path.resolve(current.path, modulePath);
   return import(filePath);
 }
+
+/**
+ * Some JavaScript globals like Promise have static methods like Promise.all
+ * verify that the call target is the class. This creates an issue because the
+ * Origami evaluate() function calls all functions with the evaluation context
+ * -- the tree in which the code is running -- as the call target.
+ *
+ * This function works around the problem. If the indicated classFn has no
+ * static methods, it's returned as is. If it does have static methods, this
+ * returns an extension of the classFn prototype that overrides the static
+ * methods with ones that are bound to the class.
+ */
+function bindStaticMethodsForClass(classFn) {
+  const staticMethodDescriptors = Object.entries(
+    Object.getOwnPropertyDescriptors(classFn)
+  )
+    .filter(([key, descriptor]) => descriptor.value instanceof Function)
+    .map(([key, descriptor]) => [
+      key,
+      {
+        ...descriptor,
+        value: descriptor.value.bind(classFn),
+      },
+    ]);
+  if (staticMethodDescriptors.length === 0) {
+    // No static methods
+    return classFn;
+  }
+  return Object.create(classFn, Object.fromEntries(staticMethodDescriptors));
+}
+
+function bindStaticMethodsForGlobals(objects) {
+  const entries = Object.entries(objects);
+  const bound = entries.map(([key, value]) => [
+    key,
+    value instanceof Function ? bindStaticMethodsForClass(value) : value,
+  ]);
+  return Object.fromEntries(bound);
+}
+
+export default globals;
