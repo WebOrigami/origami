@@ -12,7 +12,9 @@ describe("sitemap", () => {
         "c.html": "C",
       },
     });
-    const result = await sitemap.call(null, tree, "https://example.com");
+    const result = await sitemap.call(null, tree, {
+      base: "https://example.com",
+    });
     assert.deepEqual(
       result,
       `<?xml version="1.0" encoding="UTF-8"?>

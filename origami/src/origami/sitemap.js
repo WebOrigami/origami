@@ -17,9 +17,9 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @this {AsyncTree|null}
  * @param {Treelike} treelike
- * @param {string} [baseHref ]
+ * @param {{ assumeSlashes?: boolean, base?: string }} options
  */
-export default async function sitemap(treelike, baseHref = "") {
+export default async function sitemap(treelike, options = {}) {
   assertTreeIsDefined(this, "sitemap");
   const tree = await getTreeArgument(this, arguments, treelike, "sitemap");
 
@@ -38,7 +38,7 @@ export default async function sitemap(treelike, baseHref = "") {
     },
   };
 
-  const treePaths = await Tree.paths(filterTree, baseHref);
+  const treePaths = await Tree.paths(filterTree, options);
 
   // For simplicity, we assume that HTML pages will end in .html.
   // If the page is named index.html, we remove index.html from
