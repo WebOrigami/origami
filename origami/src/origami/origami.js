@@ -21,6 +21,7 @@ export * as image from "./image/image.js";
 export { default as resize } from "./image/resize.js";
 export { default as json } from "./json.js";
 export { default as jsonParse } from "./jsonParse.js";
+export { default as mdOutline } from "./mdOutline.js";
 export { default as naturalOrder } from "./naturalOrder.js";
 export { default as once } from "./once.js";
 export { default as ori } from "./ori.js";

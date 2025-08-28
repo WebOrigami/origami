@@ -88,6 +88,9 @@ Origami:
     mdHtml:
       args: (markdown)
       description: Render the markdown as HTML
+    mdOutline:
+      args: (markdown)
+      description: The outline structure of the markdown document
     naturalOrder:
       description: A comparison function for natural sort order
     once:
