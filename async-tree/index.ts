@@ -20,6 +20,7 @@ export type HasString = {
  * an HTTP response via response.write, or readily converted to such a form.
  */
 export type Packed = (ArrayBuffer | Buffer | ReadableStream | string | String | TypedArray) & {
+  parent?: AsyncTree|null;
   unpack?(): Promise<any>;
 };
 
@@ -69,5 +70,10 @@ export type TypedArray =
 export type Unpackable<T> = {
   unpack(): Promise<T>
 };
+
+/**
+ * A function that converts a value from a persistent form into a live value.
+ */
+export type UnpackFunction = (input: Packed, options?: any) => any;
 
 export type ValueKeyFn = (value: any, key: any, innerTree: AsyncTree) => any;

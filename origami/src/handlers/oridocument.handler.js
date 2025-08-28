@@ -1,9 +1,8 @@
-import { extension, trailingSlash } from "@weborigami/async-tree";
+import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import builtinsProgram from "../builtinsProgram.js";
 import getConfig from "../cli/getConfig.js";
 import { toString } from "../common/utilities.js";
-import getParent from "./getParent.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
@@ -13,7 +12,7 @@ import processUnpackedContent from "./processUnpackedContent.js";
 export default {
   mediaType: "text/plain",
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const parent = getParent(packed, options);
 

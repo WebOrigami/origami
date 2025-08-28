@@ -4,6 +4,7 @@ import { Packed, PlainObject, StringLike } from "../index.ts";
 export function assertIsTreelike(object: any, operation: string, position?: number): void;
 export function box(value: any): any;
 export function castArrayLike(keys: any[], values: any[]): any;
+export function getParent(object: any, options?: any): AsyncTree|null;
 export function getRealmObjectPrototype(object: any): any;
 export const hiddenFileNames: string[];
 export function isPacked(obj: any): obj is Packed;

@@ -1,5 +1,3 @@
-import { Packed } from "@weborigami/async-tree";
-
 export * from "./main.js";
 
 /**
@@ -64,8 +62,3 @@ export type Source = {
   text: string;
   url?: URL;
 }
-
-/**
- * A function that converts a value from a persistent form into a live value.
- */
-export type UnpackFunction = (input: Packed, options?: any) => any;

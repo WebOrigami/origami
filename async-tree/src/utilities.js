@@ -88,6 +88,36 @@ export function castArrayLike(keys, values) {
 }
 
 /**
+ * Return a suitable parent for the packed file.
+ *
+ * This is intended to be called by unpack functions.
+ *
+ * @param {any} packed
+ * @param {any} [options]
+ * @returns {AsyncTree|null}
+ */
+export function getParent(packed, options = {}) {
+  // Prefer parent set on options
+  if (options?.parent) {
+    return options.parent;
+  }
+
+  // If the packed object has a `parent` property, use that. Exception: Node
+  // Buffer objects have a `parent` property that we ignore.
+  if (packed.parent && !(packed instanceof Buffer)) {
+    return packed.parent;
+  }
+
+  // If the packed object has a parent symbol, use that.
+  if (packed[symbols.parent]) {
+    return packed[symbols.parent];
+  }
+
+  // Otherwise, return null.
+  return null;
+}
+
+/**
  * Return the Object prototype at the root of the object's prototype chain.
  *
  * This is used by functions like isPlainObject() to handle cases where the
