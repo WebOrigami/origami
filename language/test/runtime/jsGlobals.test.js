@@ -10,4 +10,10 @@ describe("jsGlobals", () => {
     const value = await promise;
     assert.equal(value, "hi");
   });
+
+  test("can instantiate a constructor that delegates to a global", async () => {
+    const { Date: fixture } = jsGlobals;
+    const instance = new fixture();
+    assert(instance instanceof Date);
+  });
 });

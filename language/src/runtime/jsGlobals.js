@@ -196,23 +196,32 @@ async function importWrapper(modulePath) {
  * returns an extension of the classFn prototype that overrides the static
  * methods with ones that are bound to the class.
  */
-function bindStaticMethodsForClass(classFn) {
+function bindStaticMethodsForClass(fn) {
   const staticMethodDescriptors = Object.entries(
-    Object.getOwnPropertyDescriptors(classFn)
+    Object.getOwnPropertyDescriptors(fn)
   )
     .filter(([key, descriptor]) => descriptor.value instanceof Function)
     .map(([key, descriptor]) => [
       key,
       {
         ...descriptor,
-        value: descriptor.value.bind(classFn),
+        value: descriptor.value.bind(fn),
       },
     ]);
   if (staticMethodDescriptors.length === 0) {
     // No static methods
-    return classFn;
+    return fn;
   }
-  return Object.create(classFn, Object.fromEntries(staticMethodDescriptors));
+
+  // Extend the class. In cases like global functions like Proxy that don't have
+  // a prototype, extend the function itself.
+  const extended = fn.prototype
+    ? class extendedClass extends fn {}
+    : Object.create(fn);
+  return Object.defineProperties(
+    extended,
+    Object.fromEntries(staticMethodDescriptors)
+  );
 }
 
 function bindStaticMethodsForGlobals(objects) {
