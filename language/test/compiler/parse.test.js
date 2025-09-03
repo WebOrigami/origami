@@ -1019,44 +1019,58 @@ Body`,
     });
   });
 
-  test("objectEntry", () => {
-    assertParse("objectEntry", "foo", [
-      "foo",
-      [markers.traverse, [markers.reference, "foo"]],
-    ]);
-    assertParse("objectEntry", "index.html: x", [
-      "index.html",
-      [markers.traverse, [markers.reference, "x"]],
-    ]);
-    assertParse("objectEntry", "a: a", [
-      "a",
-      [markers.traverse, [markers.reference, "a"]],
-    ]);
-    assertParse("objectEntry", "<path/to/file.txt>", [
-      "file.txt",
-      [
-        markers.traverse,
-        [markers.external, "path/"],
-        [ops.literal, "to/"],
-        [ops.literal, "file.txt"],
-      ],
-    ]);
-    assertParse("objectEntry", "a: (a) => a", [
-      "a",
-      [
-        ops.lambda,
-        [[ops.literal, "a"]],
+  describe("objectEntry", () => {
+    test("shorthand", () => {
+      assertParse("objectEntry", "foo", [
+        "foo",
+        [markers.traverse, [markers.reference, "foo"]],
+      ]);
+      assertParse("objectEntry", "path/to/file.txt", [
+        "file.txt",
+        [
+          markers.traverse,
+          [markers.reference, "path/"],
+          [ops.literal, "to/"],
+          [ops.literal, "file.txt"],
+        ],
+      ]);
+      assertParse("objectEntry", "<path/to/file.txt>", [
+        "file.txt",
+        [
+          markers.traverse,
+          [markers.external, "path/"],
+          [ops.literal, "to/"],
+          [ops.literal, "file.txt"],
+        ],
+      ]);
+    });
+
+    test("key: value", () => {
+      assertParse("objectEntry", "index.html: x", [
+        "index.html",
+        [markers.traverse, [markers.reference, "x"]],
+      ]);
+      assertParse("objectEntry", "a: a", [
+        "a",
         [markers.traverse, [markers.reference, "a"]],
-      ],
-    ]);
-    assertParse("objectEntry", "posts/: map(posts, post.ori)", [
-      "posts/",
-      [
-        [markers.traverse, [markers.reference, "map"]],
-        [markers.traverse, [markers.reference, "posts"]],
-        [markers.traverse, [markers.reference, "post.ori"]],
-      ],
-    ]);
+      ]);
+      assertParse("objectEntry", "a: (a) => a", [
+        "a",
+        [
+          ops.lambda,
+          [[ops.literal, "a"]],
+          [markers.traverse, [markers.reference, "a"]],
+        ],
+      ]);
+      assertParse("objectEntry", "posts/: map(posts, post.ori)", [
+        "posts/",
+        [
+          [markers.traverse, [markers.reference, "map"]],
+          [markers.traverse, [markers.reference, "posts"]],
+          [markers.traverse, [markers.reference, "post.ori"]],
+        ],
+      ]);
+    });
   });
 
   test("objectGetter", () => {

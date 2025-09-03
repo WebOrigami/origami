@@ -549,23 +549,18 @@ objectProperty "object property"
 
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
-  = key:objectPublicKey {
-      const reference = annotate([markers.reference, key], location());
-      const traverse = annotate([markers.traverse, reference], location());
-      return annotate([key, traverse], location());
+  = path:(pathLiteral / angleBracketLiteral) {
+      let lastKey = path.at(-1);
+      if (lastKey instanceof Array) {
+        lastKey = lastKey[1]; // get scope identifier or literal
+      }
+      return annotate([lastKey, path], location());
     }
-  / path:angleBracketLiteral {
-    let lastKey = path.at(-1);
-    if (lastKey instanceof Array) {
-      lastKey = lastKey[1]; // get scope identifier or literal
-    }
-    return annotate([lastKey, path], location());
-  }
 
 objectPublicKey
   = key:key slash:"/"? {
-    return text();
-  }
+      return text();
+    }
   / string:stringLiteral {
       // Remove `ops.literal` from the string code
       return string[1];
@@ -573,8 +568,8 @@ objectPublicKey
 
 optionalChaining
   = __ "?." __ property:identifier {
-    return annotate([ops.optionalTraverse, property], location());
-  }
+      return annotate([ops.optionalTraverse, property], location());
+    }
 
 // Name of a unction parameter
 parameter
