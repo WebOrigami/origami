@@ -1025,6 +1025,10 @@ Body`,
         "foo",
         [markers.traverse, [markers.reference, "foo"]],
       ]);
+      assertParse("objectEntry", "folder/", [
+        "folder/",
+        [ops.unpack, [markers.traverse, [markers.reference, "folder/"]]],
+      ]);
       assertParse("objectEntry", "path/to/file.txt", [
         "file.txt",
         [
@@ -1033,6 +1037,10 @@ Body`,
           [ops.literal, "to/"],
           [ops.literal, "file.txt"],
         ],
+      ]);
+      assertParse("objectEntry", "<folder/>", [
+        "folder/",
+        [markers.traverse, [markers.external, "folder/"]],
       ]);
       assertParse("objectEntry", "<path/to/file.txt>", [
         "file.txt",

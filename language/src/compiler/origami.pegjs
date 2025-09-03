@@ -549,11 +549,17 @@ objectProperty "object property"
 
 // A shorthand reference inside an object literal: `foo`
 objectShorthandProperty "object identifier"
-  = path:(pathLiteral / angleBracketLiteral) {
-      let lastKey = path.at(-1);
-      if (lastKey instanceof Array) {
-        lastKey = lastKey[1]; // get scope identifier or literal
-      }
+  = path:pathLiteral {
+      const lastKey = path[0] === ops.unpack
+        // [ops.unpack, [markers.traverse, [markers.reference, lastKey]]]
+        ? path[1][1][1]
+        // [markers.traverse, ..., [markers.reference, lastKey]
+        : path.at(-1)[1];
+      return annotate([lastKey, path], location());
+    }
+  / path:angleBracketLiteral {
+      // [markers.traverse, ..., [markers.reference, lastKey]]
+      const lastKey = path.at(-1)[1];
       return annotate([lastKey, path], location());
     }
 
