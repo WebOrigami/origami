@@ -579,3 +579,13 @@ export async function unpack(value) {
   return isUnpackable(value) ? value.unpack() : value;
 }
 addOpLabel(unpack, "«ops.unpack»");
+
+/**
+ * Emulate JavaScript's rarely-used `void` operator
+ *
+ * @param {any} value
+ */
+export function voidOp(value) {
+  return undefined;
+}
+addOpLabel(voidOp, "«ops.voidOp»");

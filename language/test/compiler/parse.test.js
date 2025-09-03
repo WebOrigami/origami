@@ -1566,6 +1566,7 @@ Body text`,
     assertParse("unaryExpression", "-2", [ops.unaryMinus, [ops.literal, 2]]);
     assertParse("unaryExpression", "~3", [ops.bitwiseNot, [ops.literal, 3]]);
     assertParse("unaryExpression", "typeof 1", [ops.typeOf, [ops.literal, 1]]);
+    assertParse("unaryExpression", "void 0", [ops.voidOp, [ops.literal, 0]]);
   });
 
   test("unaryOperator", () => {

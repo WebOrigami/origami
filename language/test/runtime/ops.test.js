@@ -442,6 +442,12 @@ describe("ops", () => {
     const result = await ops.unpack.call(null, fixture);
     assert.strictEqual(result, "unpacked");
   });
+
+  test("ops.voidOp returns undefined", () => {
+    assert.strictEqual(ops.voidOp(123), undefined);
+    assert.strictEqual(ops.voidOp("hello"), undefined);
+    assert.strictEqual(ops.voidOp(null), undefined);
+  });
 });
 
 function errorFn() {

@@ -844,6 +844,7 @@ unaryOperator
   / "+"
   / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
   / "typeof"
+  / "void"
   / minus
 
 // URI

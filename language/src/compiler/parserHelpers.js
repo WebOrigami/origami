@@ -456,6 +456,7 @@ export function makeUnaryOperation(operator, value, location) {
     "-": ops.unaryMinus,
     "~": ops.bitwiseNot,
     typeof: ops.typeOf,
+    void: ops.voidOp,
   };
   return annotate([operators[operator], value], location);
 }
