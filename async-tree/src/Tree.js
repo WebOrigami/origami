@@ -291,6 +291,11 @@ export async function mapReduce(treelike, valueFn, reduceFn) {
 /**
  * Returns slash-separated paths for all values in the tree.
  *
+ * The `base` argument is prepended to all paths.
+ *
+ * If `assumeSlashes` is true, then keys are assumed to have trailing slashes to
+ * indicate subtrees. The default value of this option is false.
+ *
  * @param {Treelike} treelike
  * @param {{ assumeSlashes?: boolean, base?: string }} options
  */
