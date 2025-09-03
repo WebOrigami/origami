@@ -9,7 +9,7 @@ import * as utilities from "../common/utilities.js";
 export default {
   mediaType: "application/json",
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   unpack(packed) {
     const json = utilities.toString(packed);
     if (!json) {

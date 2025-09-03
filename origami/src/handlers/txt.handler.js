@@ -52,7 +52,7 @@ export default {
     }
   },
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const parent = options.parent ?? null;
     const text = toString(packed);

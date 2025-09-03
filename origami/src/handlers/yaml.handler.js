@@ -17,7 +17,7 @@ const YAML = YAMLModule.default ?? YAMLModule.YAML;
 export default {
   mediaType: "application/yaml",
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   unpack(packed, options = {}) {
     const parent = options.parent ?? null;
     const yaml = utilities.toString(packed);

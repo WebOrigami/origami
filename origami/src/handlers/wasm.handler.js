@@ -8,7 +8,7 @@ import processUnpackedContent from "./processUnpackedContent.js";
 export default {
   mediaType: "application/wasm",
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options = {}) {
     const wasmModule = await WebAssembly.instantiate(packed);
     // @ts-ignore TypeScript thinks wasmModule is already an Instance.

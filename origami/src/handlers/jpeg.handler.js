@@ -15,7 +15,7 @@ const exifDateTags = [
 export default {
   mediaType: "image/jpeg",
 
-  /** @type {import("@weborigami/language").UnpackFunction} */
+  /** @type {import("@weborigami/async-tree").UnpackFunction} */
   async unpack(packed, options) {
     if (packed instanceof Uint8Array) {
       // Downgrade to old Node Buffer for exif-parser.
