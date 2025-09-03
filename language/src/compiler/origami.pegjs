@@ -106,7 +106,7 @@ arrayEntry
     }
 
 arrowFunction
-  = "(" __ parameters:parameterList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
+  = ("async" __)? "(" __ parameters:parameterList? __ ")" __ doubleArrow __ pipeline:expectPipelineExpression {
       const lambdaParameters = parameters ?? annotate([], location());
       return annotate([ops.lambda, lambdaParameters, pipeline], location());
     }
@@ -843,6 +843,7 @@ unaryOperator
   = "!"
   / "+"
   / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
+  / "await"
   / "typeof"
   / "void"
   / minus

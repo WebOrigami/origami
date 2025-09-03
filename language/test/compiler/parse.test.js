@@ -155,6 +155,11 @@ describe("Origami parser", () => {
         ],
       ],
     ]);
+    assertParse("arrowFunction", "async (x) => x", [
+      ops.lambda,
+      [[ops.literal, "x"]],
+      [markers.traverse, [markers.reference, "x"]],
+    ]);
   });
 
   test("bitwiseAndExpression", () => {
@@ -1567,6 +1572,7 @@ Body text`,
     assertParse("unaryExpression", "~3", [ops.bitwiseNot, [ops.literal, 3]]);
     assertParse("unaryExpression", "typeof 1", [ops.typeOf, [ops.literal, 1]]);
     assertParse("unaryExpression", "void 0", [ops.voidOp, [ops.literal, 0]]);
+    assertParse("unaryExpression", "await 2", [ops.literal, 2]);
   });
 
   test("unaryOperator", () => {

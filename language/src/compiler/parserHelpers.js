@@ -455,10 +455,12 @@ export function makeUnaryOperation(operator, value, location) {
     "+": ops.unaryPlus,
     "-": ops.unaryMinus,
     "~": ops.bitwiseNot,
+    await: null, // no-op
     typeof: ops.typeOf,
     void: ops.voidOp,
   };
-  return annotate([operators[operator], value], location);
+  const op = operators[operator];
+  return op ? annotate([op, value], location) : annotate(value, location);
 }
 
 /**
