@@ -213,11 +213,18 @@ function bindStaticMethodsForClass(fn) {
     return fn;
   }
 
-  // Extend the class. In cases like global functions like Proxy that don't have
-  // a prototype, extend the function itself.
-  const extended = fn.prototype
-    ? class extendedClass extends fn {}
-    : Object.create(fn);
+  let extended;
+  if (!fn.prototype) {
+    // A function like Proxy
+    extended = Object.create(fn);
+  } else {
+    /** @this {any} */
+    extended = function (...args) {
+      const calledWithNew = this instanceof extended;
+      return calledWithNew ? new fn(...args) : fn(...args);
+    };
+  }
+
   return Object.defineProperties(
     extended,
     Object.fromEntries(staticMethodDescriptors)

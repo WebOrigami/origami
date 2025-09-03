@@ -11,9 +11,13 @@ describe("jsGlobals", () => {
     assert.equal(value, "hi");
   });
 
-  test("can instantiate a constructor that delegates to a global", async () => {
-    const { Date: fixture } = jsGlobals;
+  test("can invoke a global constructor", async () => {
+    const { Number: fixture } = jsGlobals;
+    // Without `new`
+    const instance1 = fixture(5);
+    assert.equal(instance1, 5);
+    // With `new`
     const instance = new fixture();
-    assert(instance instanceof Date);
+    assert(instance instanceof Number);
   });
 });
