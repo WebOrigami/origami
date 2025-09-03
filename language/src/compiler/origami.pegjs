@@ -839,6 +839,13 @@ unaryExpression
     }
   / callExpression
 
+unaryOperator
+  = "!"
+  / "+"
+  / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
+  / "typeof"
+  / minus
+
 // URI
 uri
   // Double slashes after colon: `https://example.com/index.html`
@@ -887,12 +894,6 @@ uriScheme
   = [a-z][a-z0-9+-.]*[:] {
       return annotate([markers.global, text()], location());
     }
-
-unaryOperator
-  = "!"
-  / "+"
-  / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
-  / minus
 
 whitespace
   = (whitespaceChar / comment)+

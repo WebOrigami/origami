@@ -547,6 +547,18 @@ export async function templateText(strings, ...values) {
 }
 addOpLabel(templateText, "«ops.templateText»");
 
+/**
+ * Emulate the JavaScript `typeof` operator
+ *
+ * Note the name is `typeOf` (uppercase "O"), as `typeof` is a reserved word
+ *
+ * @param {any} value
+ */
+export function typeOf(value) {
+  return typeof value;
+}
+addOpLabel(typeOf, "«ops.typeOf»");
+
 export function unaryMinus(a) {
   return -a;
 }

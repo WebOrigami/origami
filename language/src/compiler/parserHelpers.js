@@ -455,6 +455,7 @@ export function makeUnaryOperation(operator, value, location) {
     "+": ops.unaryPlus,
     "-": ops.unaryMinus,
     "~": ops.bitwiseNot,
+    typeof: ops.typeOf,
   };
   return annotate([operators[operator], value], location);
 }

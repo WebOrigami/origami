@@ -414,6 +414,17 @@ describe("ops", () => {
     assert.strictEqual(ops.subtraction(5, true), 4);
   });
 
+  test("ops.typeOf emulates JavaScript typeof", () => {
+    assert.strictEqual(ops.typeOf(true), "boolean");
+    assert.strictEqual(ops.typeOf(1), "number");
+    assert.strictEqual(ops.typeOf("hi"), "string");
+    assert.strictEqual(ops.typeOf(undefined), "undefined");
+    assert.strictEqual(
+      ops.typeOf(() => null),
+      "function"
+    );
+  });
+
   test("ops.unaryMinus", () => {
     assert.strictEqual(ops.unaryMinus(4), -4);
     assert.strictEqual(ops.unaryMinus(-4), 4);
