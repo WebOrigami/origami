@@ -843,10 +843,10 @@ unaryOperator
   = "!"
   / "+"
   / @"~" ![\/\)\]\}]  // don't match `~/` or end of term
-  / "await"
-  / "typeof"
-  / "void"
   / minus
+  / @"await" &whitespaceOrParenthesis
+  / @"typeof" &whitespaceOrParenthesis
+  / @"void" &whitespaceOrParenthesis
 
 // URI
 uri
@@ -910,6 +910,10 @@ whitespaceChar
 whitespaceOptionalForProgram
   = programMode __
   / shellMode
+
+whitespaceOrParenthesis
+  = whitespace
+  / "("
 
 whitespaceWithNewLine
   = inlineSpace* comment? newLine __
