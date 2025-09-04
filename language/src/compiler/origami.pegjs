@@ -417,21 +417,21 @@ keyChar
   = keyCharStart
   // Also allow some math operators (not slash)
   / "!"
-  / "+"
-  / minus
-  / "*"
   / "%"
   / "&"
-  / "|"
+  / "*"
+  / "+"
   / "^"
+  / "|"
+  / minus
 
 // First character in a key
 keyCharStart
   // All JS identifier characters
   = char:. &{ return char.match(/[$_\p{ID_Continue}]/u) }
   / "."
-  / "~"
   / "@"
+  / "~"
 
 // A separated list of values
 list "list"
