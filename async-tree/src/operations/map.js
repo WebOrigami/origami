@@ -171,6 +171,12 @@ function validateOptions(options) {
     }
   }
 
+  if (!valueFn && !keyFn) {
+    throw new TypeError(
+      `map: You must specify a value function or a key function`
+    );
+  }
+
   deep ??= false;
   description ??= "key/value map";
   needsSourceValue ??= true;
