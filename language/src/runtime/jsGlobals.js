@@ -191,52 +191,56 @@ async function importWrapper(modulePath) {
  * Origami evaluate() function calls all functions with the evaluation context
  * -- the tree in which the code is running -- as the call target.
  *
- * This function works around the problem. If the indicated classFn has no
- * static methods, it's returned as is. If it does have static methods, this
- * returns an extension of the classFn prototype that overrides the static
- * methods with ones that are bound to the class.
+ * This function works around the problem. If the indicated object has no static
+ * methods, it's returned as is. If it does have static methods, this returns an
+ * extension of the object that overrides the static methods with ones that are
+ * bound to the object.
  */
-function bindStaticMethodsForClass(fn) {
+function bindStaticMethods(obj) {
+  if (typeof obj !== "function" && (typeof obj !== "object" || obj === null)) {
+    // Something like `NaN` or `null`
+    return obj;
+  }
+
   const staticMethodDescriptors = Object.entries(
-    Object.getOwnPropertyDescriptors(fn)
+    Object.getOwnPropertyDescriptors(obj)
   )
     .filter(([key, descriptor]) => descriptor.value instanceof Function)
     .map(([key, descriptor]) => [
       key,
       {
         ...descriptor,
-        value: descriptor.value.bind(fn),
+        value: descriptor.value.bind(obj),
       },
     ]);
   if (staticMethodDescriptors.length === 0) {
     // No static methods
-    return fn;
+    return obj;
   }
 
   let extended;
-  if (!fn.prototype) {
-    // A function like Proxy
-    extended = Object.create(fn);
+  // A regular object or an oddball like Proxy with no prototype
+  if (typeof obj === "object" || !obj.prototype) {
+    extended = Object.create(obj);
   } else {
     /** @this {any} */
     extended = function (...args) {
       const calledWithNew = this instanceof extended;
-      return calledWithNew ? new fn(...args) : fn(...args);
+      return calledWithNew ? new obj(...args) : obj(...args);
     };
   }
 
-  return Object.defineProperties(
+  Object.defineProperties(
     extended,
     Object.fromEntries(staticMethodDescriptors)
   );
+
+  return extended;
 }
 
 function bindStaticMethodsForGlobals(objects) {
   const entries = Object.entries(objects);
-  const bound = entries.map(([key, value]) => [
-    key,
-    value instanceof Function ? bindStaticMethodsForClass(value) : value,
-  ]);
+  const bound = entries.map(([key, value]) => [key, bindStaticMethods(value)]);
   return Object.fromEntries(bound);
 }
 
