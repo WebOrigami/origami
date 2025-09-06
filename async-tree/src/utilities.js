@@ -328,6 +328,22 @@ export function setParent(child, parent) {
   }
 }
 
+function toBase64(object) {
+  if (typeof Buffer !== "undefined") {
+    // Node.js environment
+    return Buffer.from(object).toString("base64");
+  } else {
+    // Browser environment
+    let binary = "";
+    const bytes = new Uint8Array(object);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+}
+
 /**
  * Convert the given input to the plainest possible JavaScript value. This
  * helper is intended for functions that want to accept an argument from the ori
@@ -387,22 +403,6 @@ export async function toPlainValue(input) {
       plain[key] = await toPlainValue(value);
     }
     return plain;
-  }
-}
-
-function toBase64(object) {
-  if (typeof Buffer !== "undefined") {
-    // Node.js environment
-    return Buffer.from(object).toString("base64");
-  } else {
-    // Browser environment
-    let binary = "";
-    const bytes = new Uint8Array(object);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
   }
 }
 
