@@ -2,6 +2,7 @@ import {
   DeepObjectTree,
   ObjectTree,
   Tree,
+  castArrayLike,
   isStringLike,
 } from "@weborigami/async-tree";
 import assert from "node:assert";
@@ -9,6 +10,42 @@ import { describe, test } from "node:test";
 import * as utilities from "../../src/common/utilities.js";
 
 describe("utilities", () => {
+  test("castArrayLike returns an object if any keys are not integers", () => {
+    const values = ["a", "b", "c"];
+    const keys = [0, 1, "x"];
+    const result = castArrayLike(keys, values);
+    assert.deepEqual(result, {
+      0: "a",
+      1: "b",
+      x: "c",
+    });
+  });
+
+  test("castArrayLike returns values as is if keys are numeric and 0..length-1", () => {
+    const values = ["a", "b", "c"];
+    const keys = [0, 1, 2];
+    const result = castArrayLike(keys, values);
+    assert.equal(result, values);
+  });
+
+  test("castArrayLike order of keys doesn't matter as long as they're all present", () => {
+    const values = ["a", "b", "c"];
+    const keys = [1, 0, 2];
+    const result = castArrayLike(keys, values);
+    assert.deepEqual(result, ["a", "b", "c"]);
+  });
+
+  test("castArrayLike resorts object if numeric keys are missing", () => {
+    const values = ["a", "b", "c"];
+    const keys = [1, 0, 3];
+    const result = castArrayLike(keys, values);
+    assert.deepEqual(result, {
+      1: "a",
+      0: "b",
+      3: "c",
+    });
+  });
+
   test("isStringLike returns true for things that can act like strings", () => {
     assert(isStringLike("string"));
     assert(isStringLike(new String("string")));

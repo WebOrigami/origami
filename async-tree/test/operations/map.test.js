@@ -6,15 +6,13 @@ import map from "../../src/operations/map.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
 describe("map", () => {
-  test("returns identity graph if no key or value function is supplied", async () => {
+  test("throws if no key or value function is supplied", async () => {
     const tree = {
       a: "letter a",
       b: "letter b",
     };
-    const mapped = map(tree, {});
-    assert.deepEqual(await Tree.plain(mapped), {
-      a: "letter a",
-      b: "letter b",
+    assert.throws(() => {
+      map(tree, {});
     });
   });
 
