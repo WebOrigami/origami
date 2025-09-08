@@ -37,7 +37,7 @@ describe("sort", () => {
       Carol: { age: 42 },
     };
     const sorted = await sort(tree, {
-      sortKey: async (key, tree) => Tree.traverse(tree, key, "age"),
+      sortKey: async (value, key, tree) => value.age,
     });
     assert.deepEqual(Array.from(await sorted.keys()), [
       "Bob",

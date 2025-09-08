@@ -8,18 +8,26 @@ import { assertIsTreelike } from "../utilities.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {(key: any, tree: AsyncTree) => any} SortKeyFn
- * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }}
- * SortOptions
+ * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }} SortOptions
+ * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
  *
- * @param {import("../../index.ts").Treelike} treelike
- * @param {SortOptions} [options]
+ * @param {Treelike} treelike
+ * @param {SortOptions|ValueKeyFn} [options]
  */
 export default function sort(treelike, options) {
   assertIsTreelike(treelike, "sort");
   const tree = Tree.from(treelike);
 
-  const sortKey = options?.sortKey;
-  let compare = options?.compare;
+  let sortKey;
+  let compare;
+  if (options instanceof Function) {
+    // Take the function as the `sortKey` option
+    sortKey = options;
+  } else {
+    compare = options?.compare;
+    sortKey = options?.sortKey;
+  }
 
   const transformed = Object.create(tree);
   transformed.keys = async () => {
@@ -30,7 +38,8 @@ export default function sort(treelike, options) {
       // Create { key, sortKey } tuples.
       const tuples = await Promise.all(
         keys.map(async (key) => {
-          const sort = await sortKey(key, tree);
+          const value = await tree.get(key);
+          const sort = await sortKey(value, key, tree);
           if (sort === undefined) {
             throw new Error(
               `sortKey function returned undefined for key ${key}`

@@ -1,7 +1,7 @@
+import { sort } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import naturalOrder from "../../src/origami/naturalOrder.js";
-import sort from "../../src/tree/sort.js";
 
 describe("naturalOrder", () => {
   test("sorts a tree's keys using natural sort order", async () => {
