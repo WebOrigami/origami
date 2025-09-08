@@ -53,7 +53,7 @@ function extendTreeScopeWithParams(tree, url) {
   }
 
   const paramTree = new ObjectTree({
-    "@params": params,
+    _params: params,
   });
 
   // Create a new tree that's like the original one, but has the parameters in
