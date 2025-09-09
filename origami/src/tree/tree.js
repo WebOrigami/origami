@@ -8,6 +8,7 @@ export {
   deepValues,
   filter,
   globKeys,
+  group,
   merge,
   sort,
   take,
@@ -21,7 +22,6 @@ export { default as deepMap } from "./deepMap.js";
 export { default as defineds } from "./defineds.js";
 export { default as first } from "./first.js";
 export { default as fromFn } from "./fromFn.js";
-export { default as group } from "./group.js";
 export { default as inners } from "./inners.js";
 export { default as keys } from "./keys.js";
 export { default as length } from "./length.js";
