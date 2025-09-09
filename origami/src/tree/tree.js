@@ -1,13 +1,12 @@
 import { Tree } from "@weborigami/async-tree";
 
-export { cache, merge, sort } from "@weborigami/async-tree";
+export { cache, deepMerge, merge, sort } from "@weborigami/async-tree";
 export { default as addNextPrevious } from "./addNextPrevious.js";
 export { default as calendar } from "./calendar.js";
 export { default as clear } from "./clear.js";
 export { default as concat } from "./concat.js";
 export { default as constant } from "./constant.js";
 export { default as deepMap } from "./deepMap.js";
-export { default as deepMerge } from "./deepMerge.js";
 export { default as deepReverse } from "./deepReverse.js";
 export { default as deepTake } from "./deepTake.js";
 export { default as deepValues } from "./deepValues.js";

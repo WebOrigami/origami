@@ -5,12 +5,15 @@ import * as trailingSlash from "../trailingSlash.js";
  * Return a tree that performs a deep merge of the given trees.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @param {import("../../index.ts").Treelike[]} sources
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ *
+ * @param {Treelike[]} sources
  * @returns {AsyncTree & { description: string }}
  */
 export default function deepMerge(...sources) {
-  let trees = sources.map((treelike) => Tree.from(treelike, { deep: true }));
-  let mergeParent;
+  const filtered = sources.filter((source) => source);
+  let trees = filtered.map((treelike) => Tree.from(treelike, { deep: true }));
+
   return {
     description: "deepMerge",
 
@@ -25,10 +28,6 @@ export default function deepMerge(...sources) {
           Tree.isAsyncTree(value) ||
           (Tree.isTreelike(value) && trailingSlash.has(key))
         ) {
-          if (/** @type {any} */ (value).parent === tree) {
-            // Merged tree acts as parent instead of the source tree.
-            /** @type {any} */ (value).parent = this;
-          }
           subtrees.unshift(value);
         } else if (value !== undefined) {
           return value;
@@ -37,7 +36,6 @@ export default function deepMerge(...sources) {
 
       if (subtrees.length > 1) {
         const merged = deepMerge(...subtrees);
-        merged.parent = this;
         return merged;
       } else if (subtrees.length === 1) {
         return subtrees[0];
@@ -61,20 +59,6 @@ export default function deepMerge(...sources) {
         }
       }
       return keys;
-    },
-
-    get parent() {
-      return mergeParent;
-    },
-    set parent(parent) {
-      mergeParent = parent;
-      trees = sources.map((treelike) => {
-        const tree = Tree.isAsyncTree(treelike)
-          ? Object.create(treelike)
-          : Tree.from(treelike);
-        tree.parent = parent;
-        return tree;
-      });
     },
   };
 }
