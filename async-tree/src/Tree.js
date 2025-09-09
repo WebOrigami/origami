@@ -67,6 +67,9 @@ export async function assign(target, source) {
  * @param {AsyncMutableTree} tree
  */
 export async function clear(tree) {
+  if (!isAsyncMutableTree(tree)) {
+    throw new TypeError("clean: the given tree is read-only.");
+  }
   const keys = Array.from(await tree.keys());
   const promises = keys.map((key) => tree.set(key, undefined));
   await Promise.all(promises);

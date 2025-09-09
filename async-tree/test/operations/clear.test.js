@@ -4,15 +4,14 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import clean from "../../src/tree/clear.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
-describe("clean", () => {
+describe("clear", () => {
   test("unsets all public keys in an object tree", async () => {
     const tree = new ObjectTree({ a: 1, b: 2, c: 3 });
-    await clean.call(null, tree);
+    await Tree.clear(tree);
     assert.deepEqual(await Tree.plain(tree), {});
   });
 
@@ -23,7 +22,7 @@ describe("clean", () => {
     await fs.writeFile(path.join(tempDirectory, "b"), "2");
 
     const tree = new FileTree(tempDirectory);
-    await clean.call(null, tree);
+    await Tree.clear(tree);
 
     const files = await fs.readdir(tempDirectory);
     assert.deepEqual(files, []);

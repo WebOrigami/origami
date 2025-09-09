@@ -20,7 +20,6 @@ export {
   sort,
   take,
 } from "@weborigami/async-tree";
-export { default as clear } from "./clear.js";
 export { default as concat } from "./concat.js";
 export { default as deepMap } from "./deepMap.js";
 export { default as defineds } from "./defineds.js";
@@ -36,6 +35,7 @@ export { default as setDeep } from "./setDeep.js";
 export { default as shuffle } from "./shuffle.js";
 
 export const assign = Tree.assign;
+export const clear = Tree.clear;
 export const entries = Tree.entries;
 export const forEach = Tree.forEach;
 export const from = Tree.from;

@@ -1,6 +1,7 @@
+import { Tree } from "@weborigami/async-tree";
+
 export { default as indexPage } from "../origami/indexPage.js";
 export { default as yaml } from "../origami/yaml.js";
-export { default as clear } from "../tree/clear.js";
 export { default as keys } from "../tree/keys.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
@@ -17,3 +18,5 @@ export { default as stdin } from "./stdin.js";
 export { default as svg } from "./svg.js";
 export { default as version } from "./version.js";
 export { default as watch } from "./watch.js";
+
+export const clear = Tree.clear;
