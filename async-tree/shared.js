@@ -38,6 +38,7 @@ export { default as mask } from "./src/operations/mask.js";
 export { default as match } from "./src/operations/match.js";
 export { default as merge } from "./src/operations/merge.js";
 export { default as paginate } from "./src/operations/paginate.js";
+export { default as parent } from "./src/operations/parent.js";
 export { default as parseExtensions } from "./src/operations/parseExtensions.js";
 export { default as regExpKeys } from "./src/operations/regExpKeys.js";
 export { default as reverse } from "./src/operations/reverse.js";
