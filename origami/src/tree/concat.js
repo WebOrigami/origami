@@ -11,6 +11,9 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * @param {any[]} args
  */
 export default async function concat(...args) {
+  console.warn(
+    "Warning: the Tree.concat function is deprecated, use Tree.deepText instead."
+  );
   assertTreeIsDefined(this, "concat");
   const tree = args.length === 0 ? this : Tree.from(args, { parent: this });
   return ops.concat.call(this, tree);
