@@ -10,13 +10,7 @@ describe("ori builtin", () => {
       b: 2,
       c: 3,
     });
-    const result = await ori.call(tree, `keys`);
-    assert.equal(
-      String(result),
-      `- a
-- b
-- c
-`
-    );
+    const result = await ori.call(tree, `b`);
+    assert.equal(result, 2);
   });
 });

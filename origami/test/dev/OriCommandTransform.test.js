@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import OriCommandTransform from "../../src/dev/OriCommandTransform.js";
@@ -17,7 +17,7 @@ describe("OriCommandTransform", () => {
       a: 1,
       b: 2,
     });
-    const value = await tree.get("!keys");
-    assert.deepEqual(await Tree.plain(value), ["a", "b"]);
+    const value = await tree.get("!b");
+    assert.deepEqual(value, 2);
   });
 });

@@ -1,8 +1,8 @@
 import { Tree } from "@weborigami/async-tree";
 
+export { default as keys } from "@weborigami/async-tree/src/operations/keys.js";
 export { default as indexPage } from "../origami/indexPage.js";
 export { default as yaml } from "../origami/yaml.js";
-export { default as keys } from "../tree/keys.js";
 export { default as breakpoint } from "./breakpoint.js";
 export { default as changes } from "./changes.js";
 export { default as code } from "./code.js";

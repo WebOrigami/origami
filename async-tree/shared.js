@@ -31,6 +31,7 @@ export { default as indent } from "./src/operations/indent.js";
 export { default as inners } from "./src/operations/inners.js";
 export { default as invokeFunctions } from "./src/operations/invokeFunctions.js";
 export { default as json } from "./src/operations/json.js";
+export { default as keys } from "./src/operations/keys.js";
 export { default as map } from "./src/operations/map.js";
 export { default as mask } from "./src/operations/mask.js";
 export { default as merge } from "./src/operations/merge.js";
