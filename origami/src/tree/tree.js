@@ -25,6 +25,7 @@ export {
   parent,
   regExpKeys,
   reverse,
+  scope,
   sort,
   take,
   withKeys,
