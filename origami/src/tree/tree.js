@@ -12,6 +12,7 @@ export {
   deepValues,
   defineds,
   filter,
+  first,
   globKeys,
   group,
   mask,
@@ -23,7 +24,6 @@ export {
   take,
 } from "@weborigami/async-tree";
 export { default as concat } from "./concat.js";
-export { default as first } from "./first.js";
 export { default as fromFn } from "./fromFn.js";
 export { default as inners } from "./inners.js";
 export { default as keys } from "./keys.js";
