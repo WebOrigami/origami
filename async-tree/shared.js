@@ -1,7 +1,7 @@
 // Exports for both Node.js and browser
 
-export { default as calendarTree } from "./src/drivers/calendarTree.js";
-export { default as constantTree } from "./src/drivers/constantTree.js";
+export { default as calendar } from "./src/drivers/calendarTree.js";
+export { default as constant } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
 export { default as DeferredTree } from "./src/drivers/DeferredTree.js";
 export { default as ExplorableSiteTree } from "./src/drivers/ExplorableSiteTree.js";
@@ -32,6 +32,7 @@ export { default as mask } from "./src/operations/mask.js";
 export { default as merge } from "./src/operations/merge.js";
 export { default as paginate } from "./src/operations/paginate.js";
 export { default as parseExtensions } from "./src/operations/parseExtensions.js";
+export { default as regExpKeys } from "./src/operations/regExpKeys.js";
 export { default as reverse } from "./src/operations/reverse.js";
 export { default as scope } from "./src/operations/scope.js";
 export { default as sort } from "./src/operations/sort.js";
