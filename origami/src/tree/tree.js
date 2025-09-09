@@ -5,6 +5,7 @@ export {
   deepMerge,
   deepReverse,
   deepTake,
+  deepValues,
   merge,
   sort,
   take,
@@ -15,7 +16,6 @@ export { default as clear } from "./clear.js";
 export { default as concat } from "./concat.js";
 export { default as constant } from "./constant.js";
 export { default as deepMap } from "./deepMap.js";
-export { default as deepValues } from "./deepValues.js";
 export { default as defineds } from "./defineds.js";
 export { default as filter } from "./filter.js";
 export { default as first } from "./first.js";
