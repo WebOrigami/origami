@@ -1,5 +1,6 @@
 // Exports for both Node.js and browser
 
+export { default as defineds } from "./src/defineds.js";
 export { default as calendar } from "./src/drivers/calendarTree.js";
 export { default as constant } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";

@@ -1,17 +1,20 @@
-import { Tree } from "@weborigami/async-tree";
-import getTreeArgument from "../common/getTreeArgument.js";
+import { Tree } from "./internal.js";
+import { assertIsTreelike } from "./utilities.js";
 
 /**
- * Return only the defined (not `undefined`) values in the tree.
+ * Return only the defined (not `undefined`) values in the deep tree.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {AsyncTree|null}
  * @param {Treelike} treelike
  */
 export default async function defineds(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "defineds");
+  console.warn(
+    "Warning: Tree.defineds is deprecated. If you have a use for it, please let us know."
+  );
+  assertIsTreelike(treelike, "defineds");
+  const tree = Tree.from(treelike, { deep: true });
 
   const result = await Tree.mapReduce(tree, null, async (values, keys) => {
     const object = {};
