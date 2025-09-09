@@ -17,6 +17,7 @@ export {
   group,
   inners,
   keys,
+  length,
   mask,
   merge,
   paginate,
@@ -28,7 +29,6 @@ export {
 } from "@weborigami/async-tree";
 export { default as concat } from "./concat.js";
 export { default as fromFn } from "./fromFn.js";
-export { default as length } from "./length.js";
 export { default as map } from "./map.js";
 export { default as match } from "./match.js";
 export { default as parent } from "./parent.js";
