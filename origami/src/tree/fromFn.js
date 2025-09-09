@@ -1,5 +1,4 @@
 import { FunctionTree, isUnpackable } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toFunction } from "../common/utilities.js";
 
 /**
@@ -9,14 +8,12 @@ import { toFunction } from "../common/utilities.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("../../index.ts").Invocable} Invocable
  *
- * @this {AsyncTree|null}
  * @param {Invocable} [invocable]
  */
 export default async function fromFn(invocable, keys = []) {
-  assertTreeIsDefined(this, "fromFn");
   if (invocable === undefined) {
     throw new Error(
-      "An Origami function was called with an initial argument, but its value is undefined."
+      "Tree.fromFn: the first argument must be a function or a tree."
     );
   }
   const fn = toFunction(invocable);
@@ -24,6 +21,5 @@ export default async function fromFn(invocable, keys = []) {
     keys = await keys.unpack();
   }
   const tree = new FunctionTree(fn, keys);
-  tree.parent = this;
   return tree;
 }

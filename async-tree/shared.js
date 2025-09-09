@@ -41,6 +41,7 @@ export { default as scope } from "./src/operations/scope.js";
 export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export { default as text } from "./src/operations/text.js";
+export { default as withKeys } from "./src/operations/withKeys.js";
 export * as symbols from "./src/symbols.js";
 export * as trailingSlash from "./src/trailingSlash.js";
 export { default as TraverseError } from "./src/TraverseError.js";

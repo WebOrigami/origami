@@ -22,6 +22,7 @@ export {
   reverse,
   sort,
   take,
+  withKeys,
 } from "@weborigami/async-tree";
 export { default as concat } from "./concat.js";
 export { default as fromFn } from "./fromFn.js";
