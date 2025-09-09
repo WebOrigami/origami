@@ -6,6 +6,7 @@ export {
   deepReverse,
   deepTake,
   deepValues,
+  filter,
   merge,
   sort,
   take,
@@ -17,7 +18,6 @@ export { default as concat } from "./concat.js";
 export { default as constant } from "./constant.js";
 export { default as deepMap } from "./deepMap.js";
 export { default as defineds } from "./defineds.js";
-export { default as filter } from "./filter.js";
 export { default as first } from "./first.js";
 export { default as fromFn } from "./fromFn.js";
 export { default as globKeys } from "./globKeys.js";
