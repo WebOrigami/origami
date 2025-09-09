@@ -1,5 +1,6 @@
-import { trailingSlash, Tree } from "@weborigami/async-tree";
-import getTreeArgument from "../common/getTreeArgument.js";
+import { Tree } from "../internal.js";
+import * as trailingSlash from "../trailingSlash.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Return the interior nodes of the tree. This relies on subtree keys having
@@ -7,16 +8,17 @@ import getTreeArgument from "../common/getTreeArgument.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @this {AsyncTree|null}
- * @param {Treelike} [treelike]
+ *
+ * @param {Treelike} treelike
  */
-export default async function inners(treelike) {
-  const tree = await getTreeArgument(this, arguments, treelike, "inners");
+export default function inners(treelike) {
+  assertIsTreelike(treelike, "inners");
+  const tree = Tree.from(treelike);
 
-  const result = {
+  return {
     async get(key) {
       const value = await tree.get(key);
-      return Tree.isAsyncTree(value) ? inners.call(this, value) : undefined;
+      return Tree.isAsyncTree(value) ? inners(value) : undefined;
     },
 
     async keys() {
@@ -25,6 +27,4 @@ export default async function inners(treelike) {
       return subtreeKeys;
     },
   };
-
-  return result;
 }

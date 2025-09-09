@@ -28,6 +28,7 @@ export { default as first } from "./src/operations/first.js";
 export { default as globKeys } from "./src/operations/globKeys.js";
 export { default as group } from "./src/operations/group.js";
 export { default as indent } from "./src/operations/indent.js";
+export { default as inners } from "./src/operations/inners.js";
 export { default as invokeFunctions } from "./src/operations/invokeFunctions.js";
 export { default as json } from "./src/operations/json.js";
 export { default as map } from "./src/operations/map.js";
