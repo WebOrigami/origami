@@ -14,6 +14,7 @@ export * as jsonKeys from "./src/jsonKeys.js";
 export { default as addNextPrevious } from "./src/operations/addNextPrevious.js";
 export { default as cache } from "./src/operations/cache.js";
 export { default as cachedKeyFunctions } from "./src/operations/cachedKeyFunctions.js";
+export { default as deepMap } from "./src/operations/deepMap.js";
 export { default as deepMerge } from "./src/operations/deepMerge.js";
 export { default as deepReverse } from "./src/operations/deepReverse.js";
 export { default as deepTake } from "./src/operations/deepTake.js";

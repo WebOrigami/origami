@@ -5,6 +5,7 @@ export {
   cache,
   calendar,
   constant,
+  deepMap,
   deepMerge,
   deepReverse,
   deepTake,
@@ -21,7 +22,6 @@ export {
   take,
 } from "@weborigami/async-tree";
 export { default as concat } from "./concat.js";
-export { default as deepMap } from "./deepMap.js";
 export { default as defineds } from "./defineds.js";
 export { default as first } from "./first.js";
 export { default as fromFn } from "./fromFn.js";
