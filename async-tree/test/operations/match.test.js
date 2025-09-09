@@ -2,7 +2,7 @@
 import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import match from "../../src/tree/match.js";
+import match from "../../src/operations/match.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
@@ -10,7 +10,7 @@ describe("match", () => {
     function fn(matches) {
       return `Hello, ${matches.name}!`;
     }
-    const tree = match.call(null, "[name].html", fn, [
+    const tree = match("[name].html", fn, [
       "Alice.html",
       "Bob.html",
       "Carol.html",
@@ -29,7 +29,7 @@ describe("match", () => {
     function fn(matches) {
       return `Hello, ${matches.name}!`;
     }
-    const tree = match.call(null, /^(?<name>.+)\.html$/, fn);
+    const tree = match(/^(?<name>.+)\.html$/, fn);
     const value = await tree.get("Alice.html");
     assert.equal(value, "Hello, Alice!");
   });

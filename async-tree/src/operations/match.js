@@ -1,5 +1,4 @@
 import { Tree } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -16,15 +15,13 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../index.ts").Invocable} Invocable
+ * @typedef {import("../../../origami/index.ts").Invocable} Invocable
  *
- * @this {AsyncTree|null}
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn
  * @param {Treelike} [keys]
  */
 export default function match(pattern, resultFn, keys = []) {
-  assertTreeIsDefined(this, "match");
   let regex;
   if (typeof pattern === "string") {
     // Convert the simple pattern format into a regular expression.
@@ -38,8 +35,6 @@ export default function match(pattern, resultFn, keys = []) {
   } else {
     throw new Error(`match(): Unsupported pattern`);
   }
-
-  const tree = this;
 
   const result = {
     async get(key) {
@@ -62,7 +57,7 @@ export default function match(pattern, resultFn, keys = []) {
       // Invoke the result function with the extended scope.
       let value;
       if (typeof resultFn === "function") {
-        value = await resultFn.call(this, matches);
+        value = await resultFn(matches);
       } else {
         value = Object.create(resultFn);
       }
@@ -71,7 +66,7 @@ export default function match(pattern, resultFn, keys = []) {
     },
 
     async keys() {
-      return typeof keys === "function" ? await keys.call(tree) : keys;
+      return typeof keys === "function" ? await keys() : keys;
     },
   };
 
