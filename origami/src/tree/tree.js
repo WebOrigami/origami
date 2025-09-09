@@ -6,6 +6,7 @@ export {
   deepReverse,
   merge,
   sort,
+  take,
 } from "@weborigami/async-tree";
 export { default as addNextPrevious } from "./addNextPrevious.js";
 export { default as calendar } from "./calendar.js";
@@ -34,7 +35,6 @@ export { default as regExpKeys } from "./regExpKeys.js";
 export { default as reverse } from "./reverse.js";
 export { default as setDeep } from "./setDeep.js";
 export { default as shuffle } from "./shuffle.js";
-export { default as take } from "./take.js";
 export { default as values } from "./values.js";
 
 export const assign = Tree.assign;
