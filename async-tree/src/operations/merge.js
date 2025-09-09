@@ -1,24 +1,36 @@
 import { Tree } from "../internal.js";
-import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
+import { isPlainObject } from "../utilities.js";
 
 /**
  * Return a tree that performs a shallow merge of the given trees.
  *
- * Given a set of trees, the `get` method looks at each tree in turn. The first
- * tree is asked for the value with the key. If an tree returns a defined value
- * (i.e., not undefined), that value is returned. If the first tree returns
- * undefined, the second tree will be asked, and so on. If none of the trees
+ * This is similar to an object spread in JavaScript extended to async trees.
+ * Given a set of trees, the `get` method looks at each tree in turn, starting
+ * from the *last* tree and working backwards to the first. If a tree returns a
+ * defined value for the key, that value is returned. If none of the trees
  * return a defined value, the `get` method returns undefined.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @param {import("../../index.ts").Treelike[]} sources
- * @returns {AsyncTree & { description?: string, trees?: AsyncTree[]}}
+ * @typedef {import("../../index.ts").PlainObject} PlainObject
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ *
+ * @param {Treelike[]} sources
+ * @returns {(AsyncTree & { description?: string, trees?: AsyncTree[]}) | PlainObject}
  */
 export default function merge(...sources) {
-  const trees = sources
-    .filter((source) => source)
-    .map((treelike) => Tree.from(treelike));
+  const filtered = sources.filter((source) => source);
+
+  // If all arguments are plain objects, return a plain object.
+  if (
+    filtered.every(
+      (source) => !Tree.isAsyncTree(source) && isPlainObject(source)
+    )
+  ) {
+    return filtered.reduce((acc, obj) => ({ ...acc, ...obj }), {});
+  }
+
+  const trees = filtered.map((treelike) => Tree.from(treelike));
 
   if (trees.length === 0) {
     throw new TypeError("merge: all trees are null or undefined");
@@ -36,15 +48,6 @@ export default function merge(...sources) {
         const tree = trees[index];
         const value = await tree.get(key);
         if (value !== undefined) {
-          // Merged tree acts as parent instead of the source tree.
-          if (Tree.isAsyncTree(value) && value.parent === tree) {
-            value.parent = this;
-          } else if (
-            typeof value === "object" &&
-            value?.[symbols.parent] === tree
-          ) {
-            value[symbols.parent] = this;
-          }
           return value;
         }
       }

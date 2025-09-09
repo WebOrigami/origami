@@ -1,6 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 
-export { cache, sort } from "@weborigami/async-tree";
+export { cache, merge, sort } from "@weborigami/async-tree";
 export { default as addNextPrevious } from "./addNextPrevious.js";
 export { default as calendar } from "./calendar.js";
 export { default as clear } from "./clear.js";
@@ -23,7 +23,6 @@ export { default as length } from "./length.js";
 export { default as map } from "./map.js";
 export { default as mask } from "./mask.js";
 export { default as match } from "./match.js";
-export { default as merge } from "./merge.js";
 export { default as paginate } from "./paginate.js";
 export { default as parent } from "./parent.js";
 export { default as plain } from "./plain.js";
