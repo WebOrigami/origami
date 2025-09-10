@@ -64,7 +64,7 @@ export default {
 
 // Return a function that adds the given extension
 function addExtension(resultExtension) {
-  return (sourceKey) => {
+  return (sourceValue, sourceKey) => {
     if (sourceKey === undefined) {
       return undefined;
     }

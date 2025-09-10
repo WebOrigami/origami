@@ -30,7 +30,7 @@ export default function extensionKeyFunctions(
       return basename ? `${basename}${sourceExtension}` : undefined;
     },
 
-    async key(sourceKey, tree) {
+    async key(value, sourceKey, tree) {
       return extension.match(sourceKey, sourceExtension)
         ? extension.replace(sourceKey, sourceExtension, resultExtension)
         : undefined;

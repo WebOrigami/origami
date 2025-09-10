@@ -50,7 +50,7 @@ export type TreeMapOptions = {
   extension?: string;
   needsSourceValue?: boolean;
   inverseKey?: KeyFn;
-  key?: KeyFn;
+  key?: ValueKeyFn;
   value?: ValueKeyFn;
 };
   

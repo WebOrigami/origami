@@ -12,7 +12,7 @@ describe("cachedKeyFunctions", () => {
     });
 
     let callCount = 0;
-    const addUnderscore = async (sourceKey, tree) => {
+    const addUnderscore = async (sourceValue, sourceKey, tree) => {
       callCount++;
       return `_${sourceKey}`;
     };
@@ -26,15 +26,15 @@ describe("cachedKeyFunctions", () => {
     assert.equal(await inverseKey("_b", tree), "b"); // Cache miss
     assert.equal(callCount, 2);
 
-    assert.equal(await key("a", tree), "_a");
-    assert.equal(await key("a", tree), "_a");
-    assert.equal(await key("b", tree), "_b");
+    assert.equal(await key(null, "a", tree), "_a");
+    assert.equal(await key(null, "a", tree), "_a");
+    assert.equal(await key(null, "b", tree), "_b");
     assert.equal(callCount, 2);
 
     // `c` isn't in tree, so we should get undefined.
     assert.equal(await inverseKey("_c", tree), undefined);
     // But key mapping is still possible.
-    assert.equal(await key("c", tree), "_c");
+    assert.equal(await key(null, "c", tree), "_c");
     // And now we have a cache hit.
     assert.equal(await inverseKey("_c", tree), "c");
     assert.equal(callCount, 3);
@@ -49,7 +49,7 @@ describe("cachedKeyFunctions", () => {
     });
 
     let callCount = 0;
-    const addUnderscore = async (sourceKey, tree) => {
+    const addUnderscore = async (sourceValue, sourceKey, tree) => {
       callCount++;
       return `_${sourceKey}`;
     };
@@ -66,12 +66,12 @@ describe("cachedKeyFunctions", () => {
     assert.equal(await inverseKey("b/", tree), "b/");
     assert.equal(callCount, 1);
 
-    assert.equal(await key("a", tree), "_a");
-    assert.equal(await key("a", tree), "_a");
+    assert.equal(await key(null, "a", tree), "_a");
+    assert.equal(await key(null, "a", tree), "_a");
     assert.equal(callCount, 1);
 
-    assert.equal(await key("b/", tree), "b/");
-    assert.equal(await key("b", tree), "b");
+    assert.equal(await key(null, "b/", tree), "b/");
+    assert.equal(await key(null, "b", tree), "b");
     assert.equal(callCount, 1);
   });
 
@@ -79,11 +79,11 @@ describe("cachedKeyFunctions", () => {
     const tree = new ObjectTree({
       a: "letter a",
     });
-    const addUnderscore = async (sourceKey) => `_${sourceKey}`;
+    const addUnderscore = async (sourceValue, sourceKey) => `_${sourceKey}`;
     const { inverseKey, key } = cachedKeyFunctions(addUnderscore);
 
-    assert.equal(await key("a/", tree), "_a/");
-    assert.equal(await key("a", tree), "_a");
+    assert.equal(await key(null, "a/", tree), "_a/");
+    assert.equal(await key(null, "a", tree), "_a");
 
     assert.equal(await inverseKey("_a/", tree), "a/");
     assert.equal(await inverseKey("_a", tree), "a");
@@ -93,14 +93,14 @@ describe("cachedKeyFunctions", () => {
     const tree = new ObjectTree({
       a: "letter a",
     });
-    const addUnderscoreAndSlash = async (sourceKey) =>
+    const addUnderscoreAndSlash = async (sourceValue, sourceKey) =>
       `_${trailingSlash.remove(sourceKey)}/`;
     const { inverseKey, key } = cachedKeyFunctions(addUnderscoreAndSlash);
 
     assert.equal(await inverseKey("_a/", tree), "a");
     assert.equal(await inverseKey("_a", tree), "a");
 
-    assert.equal(await key("a", tree), "_a/");
-    assert.equal(await key("a/", tree), "_a/");
+    assert.equal(await key(null, "a", tree), "_a/");
+    assert.equal(await key(null, "a/", tree), "_a/");
   });
 });

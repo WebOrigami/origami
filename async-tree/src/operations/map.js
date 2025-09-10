@@ -88,12 +88,15 @@ function createKeys(tree, options) {
   return async () => {
     // Apply the keyFn to source keys for leaf values (not subtrees).
     const sourceKeys = Array.from(await tree.keys());
+    const sourceValues = await Promise.all(
+      sourceKeys.map((sourceKey) => tree.get(sourceKey))
+    );
     const mapped = await Promise.all(
-      sourceKeys.map(async (sourceKey) =>
+      sourceKeys.map(async (sourceKey, index) =>
         // Deep maps leave source keys for subtrees alone
         deep && trailingSlash.has(sourceKey)
           ? sourceKey
-          : await keyFn(sourceKey, tree)
+          : await keyFn(sourceValues[index], sourceKey, tree)
       )
     );
     // Filter out any cases where the keyFn returned undefined.

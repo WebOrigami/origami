@@ -17,7 +17,7 @@ describe("Origami document handler", () => {
     assert.equal(result, "Hello, world!");
 
     // Test sidecar keyFn
-    assert.equal(fn.key("data.json"), "data.txt");
+    assert.equal(fn.key(null, "data.json"), "data.txt");
   });
 
   test("Argument to template document available as underscore", async () => {

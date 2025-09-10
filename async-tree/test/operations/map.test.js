@@ -104,7 +104,7 @@ describe("map", () => {
       },
     };
     const underscoreKeys = map(tree, {
-      key: async (sourceKey, tree) => `_${sourceKey}`,
+      key: async (value, sourceKey, tree) => `_${sourceKey}`,
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
       value: async (sourceValue, sourceKey, tree) => sourceKey,
     });
@@ -241,7 +241,7 @@ describe("map", () => {
   });
 });
 
-function addUnderscore(key) {
+function addUnderscore(value, key) {
   return `_${key}`;
 }
 

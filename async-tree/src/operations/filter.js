@@ -30,9 +30,8 @@ export default function filter(treelike, options) {
     // Assume source key is the same as result key
     inverseKey: async (resultKey) => resultKey,
 
-    key: async (sourceKey, tree) => {
-      const value = await tree.get(sourceKey);
-      const passes = await testFn(value, sourceKey, tree);
+    key: async (sourceValue, sourceKey, tree) => {
+      const passes = await testFn(sourceValue, sourceKey, tree);
       return passes ? sourceKey : undefined;
     },
   });

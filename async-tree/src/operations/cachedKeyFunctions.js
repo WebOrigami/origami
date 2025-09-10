@@ -13,10 +13,11 @@ const treeMap = new Map();
  * are keys for subtrees, returning the source key unmodified.
  *
  * @typedef {import("../../index.ts").KeyFn} KeyFn
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
  * @param {KeyFn} keyFn
  * @param {boolean?} deep
- * @returns {{ key: KeyFn, inverseKey: KeyFn }}
+ * @returns {{ key: ValueKeyFn, inverseKey: KeyFn }}
  */
 export default function cachedKeyFunctions(keyFn, deep = false) {
   return {
@@ -40,10 +41,13 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
           continue;
         }
 
+        const sourceValue = await tree.get(sourceKey);
+
         const computedResultKey = await computeAndCacheResultKey(
           tree,
           keyFn,
           deep,
+          sourceValue,
           sourceKey
         );
 
@@ -59,7 +63,7 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
       return undefined;
     },
 
-    async key(sourceKey, tree) {
+    async key(sourceValue, sourceKey, tree) {
       const { sourceKeyToResultKey } = getKeyMapsForTreeKeyFn(tree, keyFn);
 
       const cachedResultKey = searchKeyMap(sourceKeyToResultKey, sourceKey);
@@ -71,6 +75,7 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
         tree,
         keyFn,
         deep,
+        sourceValue,
         sourceKey
       );
       return resultKey;
@@ -78,7 +83,13 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
   };
 }
 
-async function computeAndCacheResultKey(tree, keyFn, deep, sourceKey) {
+async function computeAndCacheResultKey(
+  tree,
+  keyFn,
+  deep,
+  sourceValue,
+  sourceKey
+) {
   const { resultKeyToSourceKey, sourceKeyToResultKey } = getKeyMapsForTreeKeyFn(
     tree,
     keyFn
@@ -87,7 +98,7 @@ async function computeAndCacheResultKey(tree, keyFn, deep, sourceKey) {
   const resultKey =
     deep && trailingSlash.has(sourceKey)
       ? sourceKey
-      : await keyFn(sourceKey, tree);
+      : await keyFn(sourceValue, sourceKey, tree);
 
   sourceKeyToResultKey.set(sourceKey, resultKey);
   resultKeyToSourceKey.set(resultKey, sourceKey);

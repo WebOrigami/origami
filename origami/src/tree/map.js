@@ -96,13 +96,6 @@ function extendedOptions(context, operation) {
     valueFn = bound;
   }
 
-  if (!extension) {
-    if (keyFn) {
-      // Extend the key function to include a value parameter
-      keyFn = extendKeyFn(keyFn);
-    }
-  }
-
   return {
     deep,
     description,
@@ -111,15 +104,5 @@ function extendedOptions(context, operation) {
     key: keyFn,
     needsSourceValue,
     value: valueFn,
-  };
-}
-
-// Extend the key function to include a value parameter
-function extendKeyFn(keyFn) {
-  keyFn = toFunction(keyFn);
-  return async function keyWithValueFn(sourceKey, sourceTree) {
-    const sourceValue = await sourceTree.get(sourceKey);
-    const resultKey = await keyFn(sourceValue, sourceKey, sourceTree);
-    return resultKey;
   };
 }
