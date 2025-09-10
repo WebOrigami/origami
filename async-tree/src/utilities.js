@@ -349,6 +349,43 @@ function toBase64(object) {
 }
 
 /**
+ * Convert the given object to a function.
+ *
+ * @typedef {import("../index.ts").Invocable} Invocable
+ *
+ * @param {Invocable} obj
+ * @returns {Function|null}
+ */
+export function toFunction(obj) {
+  if (typeof obj === "function") {
+    // Return a function as is.
+    return obj;
+  } else if (isUnpackable(obj)) {
+    // Extract the contents of the object and convert that to a function.
+    let fnPromise;
+    /** @this {any} */
+    return async function (...args) {
+      if (!fnPromise) {
+        // unpack() may return a function or a promise for a function; normalize
+        // to a promise for a function
+        const unpackPromise = Promise.resolve(
+          /** @type {any} */ (obj).unpack()
+        );
+        fnPromise = unpackPromise.then((content) => toFunction(content));
+      }
+      const fn = await fnPromise;
+      return fn.call(this, ...args);
+    };
+  } else if (Tree.isTreelike(obj)) {
+    // Return a function that invokes the tree's getter.
+    return Tree.toFunction(obj);
+  } else {
+    // Not a function
+    return null;
+  }
+}
+
+/**
  * Convert the given input to the plainest possible JavaScript value. This
  * helper is intended for functions that want to accept an argument from the ori
  * CLI, which could a string, a stream of data, or some other kind of JavaScript

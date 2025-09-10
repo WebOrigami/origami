@@ -15,7 +15,7 @@ import { Tree } from "../internal.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Treelike} Treelike
- * @typedef {import("../../../origami/index.ts").Invocable} Invocable
+ * @typedef {import("@weborigami/async-tree").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn

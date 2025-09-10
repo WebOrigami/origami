@@ -6,9 +6,9 @@ import getTreeArgument from "../common/getTreeArgument.js";
 /**
  * Let a tree (e.g., of files) respond to changes.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("@weborigami/async-tree").Invocable} Invocable
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../index.ts").Invocable} Invocable
+ * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @this {AsyncTree|null}
  * @param {Treelike} [treelike]

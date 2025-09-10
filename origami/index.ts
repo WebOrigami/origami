@@ -3,15 +3,11 @@
  * tool to confirm our code is type safe.
  */
 
-import { Treelike, Unpackable } from "@weborigami/async-tree";
-
 /**
  * A class constructor is an object with a `new` method that returns an
  * instance of the indicated type.
  */
 export type Constructor<T> = new (...args: any[]) => T;
-
-export type Invocable = Function | Unpackable<Function|Treelike> | Treelike;
 
 export interface JsonObject {
   [key: string]: JsonValue;

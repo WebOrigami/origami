@@ -1,6 +1,11 @@
 import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
-import { assertIsTreelike } from "../utilities.js";
+import {
+  assertIsTreelike,
+  isPlainObject,
+  isUnpackable,
+  toFunction,
+} from "../utilities.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import parseExtensions from "./parseExtensions.js";
@@ -129,6 +134,18 @@ function createMapFn(options) {
   };
 }
 
+// Return the indicated option, throwing if it's specified but not defined;
+// that's probably an accident.
+function validateOption(options, key) {
+  const value = options[key];
+  if (key in options && value === undefined) {
+    throw new TypeError(
+      `map: The ${key} option is given but its value is undefined.`
+    );
+  }
+  return value;
+}
+
 // Extract and validate options
 function validateOptions(options) {
   let deep;
@@ -142,14 +159,32 @@ function validateOptions(options) {
   if (typeof options === "function") {
     // Take the single function argument as the valueFn
     valueFn = options;
+  } else if (isUnpackable(options)) {
+    // Assume it's an unpackable function
+    valueFn = toFunction(options);
+  } else if (isPlainObject(options)) {
+    // Extract options from the dictionary
+    description = options.description; // fine if it's undefined
+
+    // Validate individual options
+    deep = validateOption(options, "deep");
+    extension = validateOption(options, "extension");
+    inverseKeyFn = validateOption(options, "inverseKey");
+    keyFn = validateOption(options, "key");
+    needsSourceValue = validateOption(options, "needsSourceValue");
+    valueFn = validateOption(options, "value");
+  } else if (options === undefined) {
+    /** @type {any} */
+    const error = new TypeError(`map: The second parameter was undefined.`);
+    error.position = 1;
+    throw error;
   } else {
-    deep = options.deep;
-    description = options.description;
-    extension = options.extension;
-    inverseKeyFn = options.inverseKey;
-    keyFn = options.key;
-    needsSourceValue = options.needsSourceValue;
-    valueFn = options.value;
+    /** @type {any} */
+    const error = new TypeError(
+      `map: You must specify a value function or options dictionary as the second parameter.`
+    );
+    error.position = 1;
+    throw error;
   }
 
   if (extension && (keyFn || inverseKeyFn)) {

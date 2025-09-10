@@ -1,8 +1,4 @@
-import {
-  isPlainObject,
-  isUnpackable,
-  map as mapTransform,
-} from "@weborigami/async-tree";
+import { isPlainObject, map as mapTransform } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
@@ -18,22 +14,16 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
 export default async function map(treelike, operation) {
-  if (isUnpackable(operation)) {
-    operation = await operation.unpack();
-  }
-
-  const options = extendedOptions(operation);
-
   // The tree we're going to map
   const source = await getTreeArgument(
     this,
     arguments,
     treelike,
     "map",
-    options?.deep
+    operation?.deep
   );
 
-  const mapped = mapTransform(source, options);
+  const mapped = mapTransform(source, operation);
   return mapped;
 }
 

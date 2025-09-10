@@ -1,14 +1,11 @@
-import { FunctionTree, isUnpackable } from "@weborigami/async-tree";
-import { toFunction } from "../common/utilities.js";
+import { FunctionTree, isUnpackable, toFunction } from "@weborigami/async-tree";
 
 /**
  * Create a tree from a function and a set of keys.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("../../index.ts").Invocable} Invocable
+ * @typedef {import("@weborigami/async-tree").Invocable} Invocable
  *
- * @param {Invocable} [invocable]
+ * @param {Invocable} invocable
  */
 export default async function fromFn(invocable, keys = []) {
   if (invocable === undefined) {

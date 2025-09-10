@@ -97,6 +97,31 @@ describe("utilities", () => {
     assert.equal(treeWithParent.parent, "parent");
   });
 
+  test("toFunction returns a plain function as is", () => {
+    const fn = () => {};
+    assert.equal(utilities.toFunction(fn), fn);
+  });
+
+  test("toFunction returns a tree's getter as a function", async () => {
+    const tree = new ObjectTree({
+      a: 1,
+    });
+    const fn = utilities.toFunction(tree);
+    assert.equal(await fn("a"), 1);
+  });
+
+  test("toFunction can use a packed object's `unpack` as a function", async () => {
+    const obj = new String();
+    /** @type {any} */ (obj).unpack = () => () => "result";
+    const fn = utilities.toFunction(obj);
+    assert.equal(await fn(), "result");
+  });
+
+  test("toFunction returns null for something that's not a function", () => {
+    const result = utilities.toFunction("this is not a function");
+    assert.equal(result, null);
+  });
+
   test("toPlainValue returns the plainest representation of an object", async () => {
     class User {
       constructor(name) {

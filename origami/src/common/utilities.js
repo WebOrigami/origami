@@ -1,8 +1,6 @@
 import {
-  Tree,
   toString as asyncTreeToString,
   isPlainObject,
-  isUnpackable,
   trailingSlash,
 } from "@weborigami/async-tree";
 import { symbols } from "@weborigami/language";
@@ -50,40 +48,6 @@ export function isTransformApplied(Transform, obj) {
     }
   }
   return false;
-}
-
-/**
- * Convert the given object to a function.
- *
- * @typedef {import("../../index.ts").Invocable} Invocable
- * @param {any} obj
- * @returns {Function|null}
- */
-export function toFunction(obj) {
-  if (typeof obj === "function") {
-    // Return a function as is.
-    return obj;
-  } else if (isUnpackable(obj)) {
-    // Extract the contents of the object and convert that to a function.
-    let fnPromise;
-    /** @this {any} */
-    return async function (...args) {
-      if (!fnPromise) {
-        // unpack() may return a function or a promise for a function; normalize
-        // to a promise for a function
-        const unpackPromise = Promise.resolve(obj.unpack());
-        fnPromise = unpackPromise.then((content) => toFunction(content));
-      }
-      const fn = await fnPromise;
-      return fn.call(this, ...args);
-    };
-  } else if (Tree.isTreelike(obj)) {
-    // Return a function that invokes the tree's getter.
-    return Tree.toFunction(obj);
-  } else {
-    // Not a function
-    return null;
-  }
 }
 
 /**

@@ -2,6 +2,8 @@ import type { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 
+export type Invocable = Function | Treelike | Unpackable<Function|Treelike>;
+
 export type KeyFn = (key: any, innerTree: AsyncTree) => any;
 
 /**

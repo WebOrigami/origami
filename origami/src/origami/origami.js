@@ -1,5 +1,4 @@
 export { extension } from "@weborigami/async-tree";
-export { toFunction } from "../common/utilities.js";
 export { default as help } from "../dev/help.js"; // Alias
 export { default as document } from "../origami/document.js";
 export { default as htmlDom } from "../origami/htmlDom.js";
