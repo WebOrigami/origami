@@ -4,7 +4,6 @@ import {
   map as mapTransform,
 } from "@weborigami/async-tree";
 import getTreeArgument from "../common/getTreeArgument.js";
-import { toFunction } from "../common/utilities.js";
 
 /**
  * Map a hierarchical tree of keys and values to a new tree of keys and values.
@@ -22,9 +21,8 @@ export default async function map(treelike, operation) {
   if (isUnpackable(operation)) {
     operation = await operation.unpack();
   }
-  // The tree in which the map operation happens
-  const context = this;
-  const options = extendedOptions(context, operation);
+
+  const options = extendedOptions(operation);
 
   // The tree we're going to map
   const source = await getTreeArgument(
@@ -36,7 +34,6 @@ export default async function map(treelike, operation) {
   );
 
   const mapped = mapTransform(source, options);
-  mapped.parent = context;
   return mapped;
 }
 
@@ -44,10 +41,9 @@ export default async function map(treelike, operation) {
  * Return a function that transforms a tree of keys and values to a new tree of
  * keys and values.
  *
- * @param {AsyncTree|null} context
  * @param {ValueKeyFn|TreeMapOptions} operation
  */
-function extendedOptions(context, operation) {
+function extendedOptions(operation) {
   // Identify whether the map instructions take the form of a value function or
   // a dictionary of options.
   /** @type {TreeMapOptions} */
@@ -82,19 +78,6 @@ function extendedOptions(context, operation) {
   const description = options.description ?? `map ${extension ?? ""}`;
   let keyFn = options.key;
   let inverseKeyFn = options.inverseKey;
-
-  if (valueFn) {
-    // @ts-ignore
-    valueFn = toFunction(valueFn);
-    // By default, run the value function in the context of this tree so that
-    // Origami builtins can be used as value functions.
-    // @ts-ignore
-    const bound = valueFn.bind(context);
-    // Transfer sidecar functions
-    // @ts-ignore
-    Object.assign(bound, valueFn);
-    valueFn = bound;
-  }
 
   return {
     deep,
