@@ -1,4 +1,6 @@
-import { deepText, toString, Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
+import { toString } from "../utilities.js";
+import deepText from "./deepText.js";
 
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 

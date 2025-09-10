@@ -4,13 +4,14 @@ import map from "./map.js";
 /**
  * Shorthand for calling `map` with the `deep: true` option.
  *
+ * @typedef {import("../../index.ts").TreeMapOptions} TreeMapOptions
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
- * @typedef {import("@weborigami/async-tree").TreeMapOptions} TreeMapOptions
  *
  * @param {Treelike} treelike
  * @param {ValueKeyFn|TreeMapOptions} operation
+ * @returns {Promise<AsyncTree>}
  */
 export default async function deepMap(treelike, operation) {
   assertIsTreelike(treelike, "deepMap");

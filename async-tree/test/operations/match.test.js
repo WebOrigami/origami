@@ -1,12 +1,10 @@
-/** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { Tree } from "../../src/internal.js";
 import match from "../../src/operations/match.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
-    /** @this {AsyncTree|null} */
     function fn(matches) {
       return `Hello, ${matches.name}!`;
     }
@@ -25,7 +23,6 @@ describe("match", () => {
   });
 
   test("matches keys against a regular expression", async () => {
-    /** @this {AsyncTree|null} */
     function fn(matches) {
       return `Hello, ${matches.name}!`;
     }

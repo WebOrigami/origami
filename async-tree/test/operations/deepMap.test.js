@@ -1,6 +1,6 @@
-import { DeepObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { DeepObjectTree, Tree } from "../../src/internal.js";
 import deepMap from "../../src/operations/deepMap.js";
 
 describe("deepMap", () => {

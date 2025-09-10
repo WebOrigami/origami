@@ -4,7 +4,7 @@ import { assertIsTreelike } from "../utilities.js";
 /**
  * Return the top-level keys in the tree as an array.
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
  */

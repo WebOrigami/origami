@@ -1,6 +1,5 @@
 // Exports for both Node.js and browser
 
-export { default as defineds } from "./src/defineds.js";
 export { default as calendar } from "./src/drivers/calendarTree.js";
 export { default as constant } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
@@ -22,6 +21,7 @@ export { default as deepTake } from "./src/operations/deepTake.js";
 export { default as deepText } from "./src/operations/deepText.js";
 export { default as deepValues } from "./src/operations/deepValues.js";
 export { default as deepValuesIterator } from "./src/operations/deepValuesIterator.js";
+export { default as defineds } from "./src/operations/defineds.js";
 export { default as extensionKeyFunctions } from "./src/operations/extensionKeyFunctions.js";
 export { default as filter } from "./src/operations/filter.js";
 export { default as first } from "./src/operations/first.js";

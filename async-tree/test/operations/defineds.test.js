@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import defineds from "../../src/defineds.js";
 import { Tree } from "../../src/internal.js";
+import defineds from "../../src/operations/defineds.js";
 
 describe("defineds", () => {
   test("returns only defined values in a tree", async () => {

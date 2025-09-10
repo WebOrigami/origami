@@ -5,7 +5,7 @@ import { assertIsTreelike } from "../utilities.js";
  * Return a tree whose keys are provided by the _values_ of a second tree (e.g.,
  * an array of keys).
  *
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Treelike} treelike

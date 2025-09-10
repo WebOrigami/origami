@@ -1,11 +1,11 @@
-import { Tree } from "./internal.js";
-import { assertIsTreelike } from "./utilities.js";
+import { Tree } from "../internal.js";
+import { assertIsTreelike } from "../utilities.js";
 
 /**
  * Return only the defined (not `undefined`) values in the deep tree.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
  */

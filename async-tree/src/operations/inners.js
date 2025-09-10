@@ -7,7 +7,7 @@ import { assertIsTreelike } from "../utilities.js";
  * trailing slashes.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
  */

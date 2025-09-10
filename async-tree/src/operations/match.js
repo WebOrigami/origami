@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -14,7 +14,7 @@ import { Tree } from "@weborigami/async-tree";
  * invokes the given function with an object containing the matched values.
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  * @typedef {import("../../../origami/index.ts").Invocable} Invocable
  *
  * @param {string|RegExp} pattern

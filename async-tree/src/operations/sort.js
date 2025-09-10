@@ -9,8 +9,8 @@ import { assertIsTreelike } from "../utilities.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {(key: any, tree: AsyncTree) => any} SortKeyFn
  * @typedef {{ compare?: (a: any, b: any) => number, sortKey?: SortKeyFn }} SortOptions
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @typedef {import("@weborigami/async-tree").ValueKeyFn} ValueKeyFn
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
  * @param {Treelike} treelike
  * @param {SortOptions|ValueKeyFn} [options]
