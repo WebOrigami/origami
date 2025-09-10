@@ -173,6 +173,11 @@ function validateOptions(options) {
     keyFn = validateOption(options, "key");
     needsSourceValue = validateOption(options, "needsSourceValue");
     valueFn = validateOption(options, "value");
+
+    // Cast function options to functions
+    inverseKeyFn &&= toFunction(inverseKeyFn);
+    keyFn &&= toFunction(keyFn);
+    valueFn &&= toFunction(valueFn);
   } else if (options === undefined) {
     /** @type {any} */
     const error = new TypeError(`map: The second parameter was undefined.`);

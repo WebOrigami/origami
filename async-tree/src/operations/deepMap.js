@@ -10,15 +10,15 @@ import map from "./map.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn|TreeMapOptions} operation
+ * @param {ValueKeyFn|TreeMapOptions} options
  * @returns {Promise<AsyncTree>}
  */
-export default async function deepMap(treelike, operation) {
+export default async function deepMap(treelike, options) {
   assertIsTreelike(treelike, "deepMap");
-  const options = isPlainObject(operation)
+  const withDeep = isPlainObject(options)
     ? // Dictionary
-      { ...operation, deep: true }
+      { ...options, deep: true }
     : // Function
-      { deep: true, value: operation };
-  return map(treelike, options);
+      { deep: true, value: options };
+  return map(treelike, withDeep);
 }
