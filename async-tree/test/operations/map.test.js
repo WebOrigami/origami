@@ -81,18 +81,19 @@ describe("map", () => {
   });
 
   test("maps keys and values", async () => {
-    const tree = {
-      a: "letter a",
-      b: "letter b",
-    };
-    const underscoreKeysUppercaseValues = map(tree, {
-      key: addUnderscore,
-      inverseKey: removeUnderscore,
-      value: async (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
+    const treelike = new ObjectTree([
+      { name: "Alice", age: 1 },
+      { name: "Bob", age: 2 },
+      { name: "Carol", age: 3 },
+    ]);
+    const result = await map(treelike, {
+      key: (value, key, tree) => value.name,
+      value: (value, key, tree) => value.age,
     });
-    assert.deepEqual(await Tree.plain(underscoreKeysUppercaseValues), {
-      _a: "LETTER A",
-      _b: "LETTER B",
+    assert.deepEqual(await Tree.plain(result), {
+      Alice: 1,
+      Bob: 2,
+      Carol: 3,
     });
   });
 
@@ -186,6 +187,22 @@ describe("map", () => {
       more: {
         _b: "LETTER B",
       },
+    });
+  });
+
+  test("can add an extension to a key", async () => {
+    const treelike = {
+      "file0.txt": 1,
+      file1: 2,
+      file2: 3,
+    };
+    const fixture = await map(treelike, {
+      extension: "->.data",
+    });
+    assert.deepEqual(await Tree.plain(fixture), {
+      "file0.txt.data": 1,
+      "file1.data": 2,
+      "file2.data": 3,
     });
   });
 
