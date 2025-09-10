@@ -64,15 +64,17 @@ export async function assign(target, source) {
 /**
  * Removes all entries from the tree.
  *
- * @param {AsyncMutableTree} tree
+ * @param {Treelike} treelike
  */
-export async function clear(tree) {
+export async function clear(treelike) {
+  const tree = from(treelike);
   if (!isAsyncMutableTree(tree)) {
-    throw new TypeError("clean: the given tree is read-only.");
+    throw new TypeError("clear: can't clear a read-only tree.");
   }
   const keys = Array.from(await tree.keys());
   const promises = keys.map((key) => tree.set(key, undefined));
   await Promise.all(promises);
+  return tree;
 }
 
 /**
