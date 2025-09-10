@@ -3,7 +3,6 @@ import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { transformObject } from "../common/utilities.js";
-import setDeep from "../tree/setDeep.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
@@ -25,7 +24,7 @@ export default async function copy(source, target) {
     countCopied = 0;
   }
 
-  await setDeep.call(this, targetTree, sourceTree);
+  await Tree.assign(targetTree, sourceTree);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
