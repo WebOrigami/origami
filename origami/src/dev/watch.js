@@ -1,6 +1,5 @@
-import { Tree } from "@weborigami/async-tree";
+import { constant, Tree } from "@weborigami/async-tree";
 import { formatError, moduleCache } from "@weborigami/language";
-import ConstantTree from "../common/ConstantTree.js";
 import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
@@ -61,8 +60,7 @@ async function evaluateTree(parent, fn) {
     message = `Warning: watch expression did not return a tree`;
   }
   console.warn(message);
-  tree = new ConstantTree(message);
-  tree.parent = parent;
+  tree = constant(message);
   return tree;
 }
 
