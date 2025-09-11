@@ -10,9 +10,9 @@ import map from "./map.js";
  *
  * @param {Treelike} treelike
  * @param {function|any} options
- * @returns {AsyncTree}
+ * @returns {Promise<AsyncTree>}
  */
-export default function filter(treelike, options) {
+export default async function filter(treelike, options) {
   assertIsTreelike(treelike, "map");
   let testFn;
   let deep;

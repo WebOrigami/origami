@@ -40,7 +40,7 @@ describe("keyMapsForExtensions", () => {
       "file3.foo": "won't be mapped",
     });
     const { inverseKey, key } = extensionKeyFunctions(".txt");
-    const fixture = map(files, {
+    const fixture = await map(files, {
       inverseKey,
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
@@ -57,7 +57,7 @@ describe("keyMapsForExtensions", () => {
       "file3.foo": "won't be mapped",
     });
     const { inverseKey, key } = extensionKeyFunctions(".txt", ".upper");
-    const fixture = map(files, {
+    const fixture = await map(files, {
       inverseKey,
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),

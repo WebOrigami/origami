@@ -1,23 +1,18 @@
-import { map, Tree } from "@weborigami/async-tree";
+import { map } from "@weborigami/async-tree";
 
 /**
  * When using `get` to retrieve a value from a tree, if the value is a
  * function, invoke it and return the result.
  */
-export default function functionResultsMap(treelike) {
+export default async function functionResultsMap(treelike) {
   return map(treelike, {
     description: "functionResultsMap",
 
     value: async (sourceValue, sourceKey, tree) => {
-      let resultValue;
-      if (typeof sourceValue === "function") {
-        resultValue = await sourceValue.call(tree);
-        if (Tree.isAsyncTree(resultValue) && !resultValue.parent) {
-          resultValue.parent = tree;
-        }
-      } else {
-        resultValue = sourceValue;
-      }
+      const resultValue =
+        typeof sourceValue === "function"
+          ? await sourceValue.call(tree)
+          : sourceValue;
       return resultValue;
     },
   });

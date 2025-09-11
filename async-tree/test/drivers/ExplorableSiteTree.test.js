@@ -77,7 +77,7 @@ describe("ExplorableSiteTree", () => {
   test("can convert a site to a plain object", async () => {
     const fixture = new ExplorableSiteTree(mockHost);
     // Convert buffers to strings.
-    const strings = Tree.map(fixture, {
+    const strings = await Tree.map(fixture, {
       deep: true,
       value: (value) => textDecoder.decode(value),
     });

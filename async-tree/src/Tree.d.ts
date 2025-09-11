@@ -11,7 +11,7 @@ export function isAsyncMutableTree(obj: any): obj is AsyncMutableTree;
 export function isAsyncTree(obj: any): obj is AsyncTree;
 export function isTraversable(obj: any): boolean;
 export function isTreelike(obj: any): obj is Treelike;
-export function map(tree: Treelike, options: TreeMapOptions|ValueKeyFn): AsyncTree;
+export function map(tree: Treelike, options: TreeMapOptions|ValueKeyFn): Promise<AsyncTree>;
 export function mapReduce(tree: Treelike, mapFn: ValueKeyFn | null, reduceFn: ReduceFn): Promise<any>;
 export function paths(tree: Treelike, options?: { assumeSlashes?: boolean, base?: string }): string[];
 export function plain(tree: Treelike): Promise<PlainObject>;

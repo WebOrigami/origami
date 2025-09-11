@@ -191,7 +191,7 @@ describe("Tree", () => {
         b: "Bob",
       },
     });
-    const mapped = Tree.map(tree, {
+    const mapped = await Tree.map(tree, {
       deep: true,
       value: (value) => value.toUpperCase(),
     });
