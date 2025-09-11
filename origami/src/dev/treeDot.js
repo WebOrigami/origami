@@ -1,5 +1,6 @@
 import {
   Tree,
+  assertIsTreelike,
   isPlainObject,
   isStringLike,
   toString,
@@ -11,15 +12,14 @@ import { getDescriptor } from "../common/utilities.js";
 /**
  * Render a tree in DOT format.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {PlainObject} [options]
  */
 export default async function dot(treelike, options = {}) {
+  assertIsTreelike(treelike, "treeDot");
   const tree = Tree.from(treelike, { deep: true });
   const rootLabel = getDescriptor(tree) ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);

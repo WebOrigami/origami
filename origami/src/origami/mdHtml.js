@@ -35,7 +35,6 @@ marked.use(
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  * @typedef {import("@weborigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
  *
- * @this {import("@weborigami/types").AsyncTree|null|void}
  * @param {StringLike|UnpackableStringlike} input
  */
 export default async function mdHtml(input) {

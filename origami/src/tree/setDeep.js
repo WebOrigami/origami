@@ -3,13 +3,13 @@ import { Tree } from "@weborigami/async-tree";
 /**
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {import("@weborigami/types").AsyncTree|null}
  * @param {Treelike} target
  * @param {Treelike} source
  */
 export default async function setDeep(target, source) {
-  const targetTree = Tree.from(target, { parent: this });
-  const sourceTree = Tree.from(source, { parent: this });
+  console.warn("Tree.setDeep is deprecated, use Tree.assign instead.");
+  const targetTree = Tree.from(target);
+  const sourceTree = Tree.from(source);
   await applyUpdates(sourceTree, targetTree);
 }
 

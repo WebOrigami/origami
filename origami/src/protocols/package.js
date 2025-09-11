@@ -1,7 +1,8 @@
 import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
 
 /**
- * @this {import("@weborigami/types").AsyncTree|null}
+ * Return the exports of an npm package.
+ *
  * @param {string[]} keys
  */
 export default async function packageNamespace(...keys) {

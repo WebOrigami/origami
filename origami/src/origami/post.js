@@ -7,7 +7,8 @@ import {
 } from "@weborigami/async-tree";
 
 /**
- * @this {import("@weborigami/types").AsyncTree|null}
+ * POST data to the indicated URL.
+ *
  * @param {string} url
  * @param {any} data
  */
