@@ -48,7 +48,6 @@ export default function ExplorableSiteTransform(Base) {
         // If the value isn't a tree, but has a tree attached via an `unpack`
         // method, wrap the unpack method to add this transform.
         const original = value.unpack.bind(value);
-        const parent = this;
         value.unpack = async () => {
           const content = await original();
           // See function notes at @debug
@@ -57,9 +56,6 @@ export default function ExplorableSiteTransform(Base) {
           }
           /** @type {any} */
           let tree = Tree.from(content);
-          if (!tree.parent) {
-            tree.parent = parent;
-          }
           if (!isTransformApplied(ExplorableSiteTransform, tree)) {
             tree = transformObject(ExplorableSiteTransform, tree);
           }

@@ -1,17 +1,12 @@
 import { toString } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {import("@weborigami/async-tree").StringLike} input
  */
 export default async function code(input) {
-  if (input === undefined) {
-    input = await getTreeArgument(this, arguments, input, "code");
-  }
   if (input === undefined) {
     return undefined;
   }

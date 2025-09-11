@@ -1,13 +1,10 @@
-import { Tree } from "@weborigami/async-tree";
+import { assertIsTreelike, Tree } from "@weborigami/async-tree";
 import http from "node:http";
 import { createServer } from "node:net";
 import process from "node:process";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import { requestListener } from "../server/server.js";
-import debug from "./debug.js";
 import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
-import watch from "./watch.js";
 
 const defaultPort = 5000;
 
@@ -19,22 +16,13 @@ const defaultPort = 5000;
  *
  * @param {Treelike} treelike
  * @param {number} [port]
- * @this {AsyncTree|null}
  */
 export default async function serve(treelike, port) {
-  assertTreeIsDefined(this, "serve");
-  let tree;
-  if (treelike) {
-    tree = Tree.from(treelike, { parent: this });
-    if (!isTransformApplied(ExplorableSiteTransform, tree)) {
-      tree = transformObject(ExplorableSiteTransform, tree);
-    }
-  } else if (arguments.length === 0) {
-    // By default, watch the default tree and add default pages.
-    const withDefaults = await debug.call(this);
-    tree = await watch.call(this, withDefaults);
-  } else {
-    throw new Error("serve: no tree was provided to serve");
+  assertIsTreelike(treelike, "serve");
+  let tree = Tree.from(treelike);
+
+  if (!isTransformApplied(ExplorableSiteTransform, tree)) {
+    tree = transformObject(ExplorableSiteTransform, tree);
   }
 
   if (port === undefined) {

@@ -1,5 +1,9 @@
-import { pathFromKeys, symbols, Tree } from "@weborigami/async-tree";
-import getTreeArgument from "../../common/getTreeArgument.js";
+import {
+  assertIsTreelike,
+  pathFromKeys,
+  symbols,
+  Tree,
+} from "@weborigami/async-tree";
 import crawlResources from "./crawlResources.js";
 import { getBaseUrl } from "./utilities.js";
 
@@ -10,12 +14,12 @@ import { getBaseUrl } from "./utilities.js";
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
  */
 export default async function audit(treelike, baseHref) {
-  const tree = await getTreeArgument(this, arguments, treelike, "audit");
+  assertIsTreelike(treelike, "audit");
+  const tree = Tree.from(treelike);
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   let errors = {};
@@ -73,13 +77,10 @@ export default async function audit(treelike, baseHref) {
     return undefined;
   }
 
-  Object.defineProperty(errors, symbols.parent, {
-    enumerable: false,
-    value: this,
-  });
   Object.defineProperty(errors, symbols.deep, {
     enumerable: false,
     value: true,
   });
+
   return errors;
 }

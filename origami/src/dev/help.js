@@ -2,18 +2,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "url";
 import YAML from "yaml";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import version from "./version.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {string} [key]
  */
 export default async function help(key) {
-  assertTreeIsDefined(this, "help");
-
   const helpFilename = path.resolve(
     fileURLToPath(import.meta.url),
     "../help.yaml"

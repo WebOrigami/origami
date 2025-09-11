@@ -1,5 +1,4 @@
 import { isUnpackable, toPlainValue } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * Render the object as text in CSV format.
@@ -7,12 +6,9 @@ import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
  * The object should a treelike object such as an array. The output will include
  * a header row with field names taken from the first item in the tree/array.
  *
- * @this {import("@weborigami/types").AsyncTree|null}
- * @param {any} [object]
+ * @param {any} object
  */
 export default async function csv(object) {
-  assertTreeIsDefined(this, "csv");
-  object = object ?? this;
   if (object === undefined) {
     return undefined;
   }

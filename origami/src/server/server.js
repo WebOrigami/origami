@@ -1,4 +1,4 @@
-import { ObjectTree, Tree, keysFromPath } from "@weborigami/async-tree";
+import { Tree, keysFromPath } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import { ServerResponse } from "node:http";
 import constructResponse from "./constructResponse.js";
@@ -39,32 +39,6 @@ async function copyResponse(constructed, response) {
   return true;
 }
 
-// Extend the tree's scope with the URL's search parameters.
-function extendTreeScopeWithParams(tree, url) {
-  // Create a tree that includes the URL's search parameters.
-  const params = {};
-  for (const [key, value] of url.searchParams) {
-    params[key] = value;
-  }
-
-  if (Object.keys(params).length === 0) {
-    // No search parameters, so return the tree as is.
-    return tree;
-  }
-
-  const paramTree = new ObjectTree({
-    _params: params,
-  });
-
-  // Create a new tree that's like the original one, but has the parameters in
-  // its parent hierarchy.
-  const extendedTree = Object.create(tree);
-  const realParent = tree.parent;
-  paramTree.parent = realParent;
-  extendedTree.parent = paramTree;
-  return extendedTree;
-}
-
 /**
  * Handle a client request.
  *
@@ -77,17 +51,12 @@ export async function handleRequest(request, response, tree) {
   const url = new URL(request.url ?? "", `https://${request.headers.host}`);
   const keys = keysFromUrl(url);
 
-  const extendedTree =
-    url.searchParams && "parent" in tree
-      ? extendTreeScopeWithParams(tree, url)
-      : tree;
-
   const data = request.method === "POST" ? await parsePostData(request) : null;
 
   // Ask the tree for the resource with those keys.
   let resource;
   try {
-    resource = await Tree.traverseOrThrow(extendedTree, ...keys);
+    resource = await Tree.traverseOrThrow(tree, ...keys);
 
     // If resource is a function, invoke to get the object we want to return.
     // For a POST request, pass the data to the function.

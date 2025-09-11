@@ -1,11 +1,11 @@
 import {
   DeepObjectTree,
   Tree,
+  assertIsTreelike,
   deepMerge,
   keysFromPath,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
-import getTreeArgument from "../../common/getTreeArgument.js";
 import crawlResources from "./crawlResources.js";
 import { addValueToObject, getBaseUrl } from "./utilities.js";
 
@@ -20,13 +20,13 @@ import { addValueToObject, getBaseUrl } from "./utilities.js";
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {AsyncTree|null}
  * @param {Treelike} treelike
  * @param {string} [baseHref]
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawlBuiltin(treelike, baseHref) {
-  const tree = await getTreeArgument(this, arguments, treelike, "crawl");
+  assertIsTreelike(treelike, "crawl");
+  const tree = Tree.from(treelike);
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   const cache = {};

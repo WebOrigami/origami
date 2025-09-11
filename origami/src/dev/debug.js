@@ -1,5 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import getTreeArgument from "../common/getTreeArgument.js";
+import { assertIsTreelike, Tree } from "@weborigami/async-tree";
 import { isTransformApplied, transformObject } from "../common/utilities.js";
 import ExplorableSiteTransform from "./ExplorableSiteTransform.js";
 import OriCommandTransform from "./OriCommandTransform.js";
@@ -10,13 +9,12 @@ import OriCommandTransform from "./OriCommandTransform.js";
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
+ * @returns {Promise<AsyncTree>}
  */
 export default async function debug(treelike) {
-  // The debug command leaves the tree's existing scope intact; it does not
-  // apply its own scope to the tree.
-  let tree = await getTreeArgument(this, arguments, treelike, "debug");
+  assertIsTreelike(treelike, "debug");
+  let tree = Tree.from(treelike);
 
   if (!isTransformApplied(DebugTransform, tree)) {
     tree = transformObject(DebugTransform, tree);

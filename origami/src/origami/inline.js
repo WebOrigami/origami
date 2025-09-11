@@ -1,5 +1,4 @@
 import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import documentObject from "../common/documentObject.js";
 import { oridocumentHandler } from "../handlers/handlers.js";
 
@@ -10,12 +9,9 @@ import { oridocumentHandler } from "../handlers/handlers.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").StringLike} StringLike
  *
- * @this {AsyncTree|null}
  * @param {StringLike & {_body?: StringLike}} input
  */
 export default async function inline(input) {
-  assertTreeIsDefined(this, "inline");
-
   // Get the input text and any attached front matter.
   if (isUnpackable(input)) {
     input = await input.unpack();
@@ -28,8 +24,7 @@ export default async function inline(input) {
 
   const parent =
     /** @type {any} */ (input).parent ??
-    /** @type {any} */ (input)[symbols.parent] ??
-    this;
+    /** @type {any} */ (input)[symbols.parent];
 
   let front;
   if (inputIsDocument) {

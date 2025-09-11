@@ -1,6 +1,5 @@
-import { constant, Tree } from "@weborigami/async-tree";
+import { assertIsTreelike, constant, Tree } from "@weborigami/async-tree";
 import { formatError, moduleCache } from "@weborigami/language";
-import getTreeArgument from "../common/getTreeArgument.js";
 
 /**
  * Let a tree (e.g., of files) respond to changes.
@@ -9,13 +8,14 @@ import getTreeArgument from "../common/getTreeArgument.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
- * @param {Treelike} [treelike]
+ * @param {Treelike} treelike
  * @param {Invocable} [fn]
+ * @returns {Promise<AsyncTree>}
  */
 export default async function watch(treelike, fn) {
-  /** @type {any} */
-  const container = await getTreeArgument(this, arguments, treelike, "watch");
+  assertIsTreelike(treelike, "watch");
+
+  const container = Tree.from(treelike);
 
   // Watch the indicated tree.
   await /** @type {any} */ (container).watch?.();
@@ -34,7 +34,7 @@ export default async function watch(treelike, fn) {
   const handle = Object.create(tree);
 
   // Reevaluate the function whenever the tree changes.
-  container.addEventListener?.("change", async () => {
+  /** @type {any} */ (container).addEventListener?.("change", async () => {
     const tree = await evaluateTree(container, fn);
     moduleCache.resetTimestamp();
     updateIndirectPointer(handle, tree);

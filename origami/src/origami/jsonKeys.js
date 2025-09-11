@@ -1,22 +1,17 @@
-import { Tree, jsonKeys } from "@weborigami/async-tree";
-import getTreeArgument from "../common/getTreeArgument.js";
+import { Tree, assertIsTreelike, jsonKeys } from "@weborigami/async-tree";
 
 /**
  * Expose .keys.json for a tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @this {AsyncTree|null}
+ *
  * @param {Treelike} treelike
+ * @returns {Promise<AsyncTree>}
  */
 export default async function jsonKeysBuiltin(treelike) {
-  const tree = await getTreeArgument(
-    this,
-    arguments,
-    treelike,
-    "jsonKeys",
-    true
-  );
+  assertIsTreelike(treelike, "jsonKeys");
+  const tree = Tree.from(treelike);
   return jsonKeysTree(tree);
 }
 

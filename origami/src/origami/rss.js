@@ -1,16 +1,15 @@
-import { Tree } from "@weborigami/async-tree";
+import { assertIsTreelike, Tree } from "@weborigami/async-tree";
 import jsonFeedToRss from "@weborigami/json-feed-to-rss";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @this {AsyncTree|null}
- * @param {Treelike} jsonFeedTree
+ *
+ * @param {Treelike} jsonFeed
  * @param {any} options
  */
-export default async function rss(jsonFeedTree, options = {}) {
-  assertTreeIsDefined(this, "rss");
-  const jsonFeed = await Tree.plain(jsonFeedTree);
-  return jsonFeedToRss(jsonFeed, options);
+export default async function rss(jsonFeed, options = {}) {
+  assertIsTreelike(jsonFeed, "rss");
+  const jsonFeedPlain = await Tree.plain(jsonFeed);
+  return jsonFeedToRss(jsonFeedPlain, options);
 }

@@ -1,6 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import getTreeArgument from "../common/getTreeArgument.js";
+import { assertIsTreelike, Tree } from "@weborigami/async-tree";
 import { oriHandler } from "../handlers/handlers.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
@@ -15,13 +13,14 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @this {AsyncTree|null}
+ *
  * @param {Treelike} treelike
  * @param {{ assumeSlashes?: boolean, base?: string }} options
+ * @returns {Promise<string>}
  */
 export default async function sitemap(treelike, options = {}) {
-  assertTreeIsDefined(this, "sitemap");
-  const tree = await getTreeArgument(this, arguments, treelike, "sitemap");
+  assertIsTreelike(treelike, "sitemap");
+  const tree = Tree.from(treelike);
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {
@@ -48,6 +47,6 @@ export default async function sitemap(treelike, options = {}) {
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
   const templateFn = await oriHandler.unpack(templateText);
-  const templateResult = await templateFn.call(this, htmlPaths);
+  const templateResult = await templateFn(htmlPaths);
   return String(templateResult);
 }
