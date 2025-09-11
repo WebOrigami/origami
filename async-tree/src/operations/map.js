@@ -20,10 +20,16 @@ import parseExtensions from "./parseExtensions.js";
  *
  * @param {import("../../index.ts").Treelike} treelike
  * @param {MapOptions|ValueKeyFn} options
- * @returns {AsyncTree}
+ * @returns {Promise<AsyncTree>}
  */
-export default function map(treelike, options = {}) {
+export default async function map(treelike, options = {}) {
   assertIsTreelike(treelike, "map");
+  if (isUnpackable(treelike)) {
+    treelike = await treelike.unpack();
+  }
+  if (isUnpackable(options)) {
+    options = await options.unpack();
+  }
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
   const tree = Tree.from(treelike, { deep: validated.deep });
@@ -159,9 +165,6 @@ function validateOptions(options) {
   if (typeof options === "function") {
     // Take the single function argument as the valueFn
     valueFn = options;
-  } else if (isUnpackable(options)) {
-    // Assume it's an unpackable function
-    valueFn = toFunction(options);
   } else if (isPlainObject(options)) {
     // Extract options from the dictionary
     description = options.description; // fine if it's undefined
