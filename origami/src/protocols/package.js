@@ -1,11 +1,13 @@
 import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
+import project from "../origami/project.js";
 
 /**
- * Return the exports of an npm package.
- *
+ * @this {import("@weborigami/types").AsyncTree|null}
  * @param {string[]} keys
  */
 export default async function packageNamespace(...keys) {
+  const parent = this ?? (await project.call(null));
+
   let name = keys.shift();
   let organization;
   if (name?.startsWith("@")) {
@@ -13,15 +15,16 @@ export default async function packageNamespace(...keys) {
     organization = name;
     if (keys.length === 0) {
       // Return a function that will process the next key
-      return async (name, ...keys) => getPackage(organization, name, keys);
+      return async (name, ...keys) =>
+        getPackage(parent, organization, name, keys);
     }
     name = keys.shift();
   }
 
-  return getPackage(organization, name, keys);
+  return getPackage(parent, organization, name, keys);
 }
 
-async function getPackage(organization, name, keys) {
+async function getPackage(parent, organization, name, keys) {
   const packagePath = ["node_modules"];
   if (organization) {
     packagePath.push(organization);
@@ -58,6 +61,10 @@ async function getPackage(organization, name, keys) {
     keys.length > 0
       ? await Tree.traverse(packageExports, ...keys)
       : packageExports;
+
+  if (Tree.isAsyncTree(result)) {
+    result.parent = parent;
+  }
 
   return result;
 }
