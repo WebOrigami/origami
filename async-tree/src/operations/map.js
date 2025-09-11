@@ -232,7 +232,8 @@ function validateOptions(options) {
     );
   }
 
-  deep ??= false;
+  // Set defaults for options not specified. We don't set a default value for
+  // `deep` because a false value is a stronger signal than undefined.
   description ??= "key/value map";
   needsSourceValue ??= true;
 
