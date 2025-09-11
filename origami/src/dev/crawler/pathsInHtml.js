@@ -1,9 +1,10 @@
-import { JSDOM, VirtualConsole } from "jsdom";
+import loadJsDom from "../../common/loadJsDom.js";
 import pathsInCss from "./pathsInCss.js";
 import pathsInJs from "./pathsInJs.js";
 import { addHref } from "./utilities.js";
 
-export default function pathsInHtml(html) {
+export default async function pathsInHtml(html) {
+  const { JSDOM, VirtualConsole } = await loadJsDom();
   const paths = {
     /** @type {string[]} */
     crawlablePaths: [],
@@ -153,7 +154,7 @@ export default function pathsInHtml(html) {
   while ((match = noframesRegex.exec(html))) {
     const noframesHtml = match.groups?.html;
     if (noframesHtml) {
-      const noframesPaths = pathsInHtml(noframesHtml);
+      const noframesPaths = await pathsInHtml(noframesHtml);
       paths.crawlablePaths.push(...noframesPaths.crawlablePaths);
       paths.resourcePaths.push(...noframesPaths.resourcePaths);
     }

@@ -100,8 +100,8 @@ describe("crawl", () => {
     const crawled = await crawl.call(null, tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
-      "index.html",
       "mysitemap.xml",
+      "index.html",
     ]);
   });
 

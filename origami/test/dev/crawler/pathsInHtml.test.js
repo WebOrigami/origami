@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import pathsInHtml from "../../../src/dev/crawler/pathsInHtml.js";
 
 describe("pathsInHtml", () => {
-  test("find href attributes", () => {
+  test("find href attributes", async () => {
     const html = `
       <a href="page2.html">Next page</a>
       <area href="map2.html" shape="rect" coords="0,0,100,100" alt="Map region"></area>
@@ -11,14 +11,14 @@ describe("pathsInHtml", () => {
       <link rel="alternate" href="feed.xml" type="application/rss+xml" title="RSS feed">
       <link rel="icon" href="favicon.svg" type="image/svg+xml">
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["page2.html", "map2.html", "style.css"],
       resourcePaths: ["feed.xml", "favicon.svg"],
     });
   });
 
-  test("finds href attributes in SVG", () => {
+  test("finds href attributes in SVG", async () => {
     const html = `
       <svg>
         <image href="images/photo.jpg" width="200" height="150" />
@@ -38,7 +38,7 @@ describe("pathsInHtml", () => {
         <filter href="filters.svg#fancyBlur" />
       </svg>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     // NOTE: As of April 2024, jsdom querySelectorAll does not appear to find
     // elements with mixed-case tag names.
     assert.deepEqual(paths, {
@@ -57,7 +57,7 @@ describe("pathsInHtml", () => {
     });
   });
 
-  test("finds src attributes", () => {
+  test("finds src attributes", async () => {
     const html = `
       <img src="photo.jpg" alt="A photo">
       <input type="image" src="button.png" alt="Submit">
@@ -68,7 +68,7 @@ describe("pathsInHtml", () => {
       <track src="track.vtt" kind="subtitles" srclang="en" label="English">
       <source src="source.mp4" type="video/mp4">
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["frame.html"],
       resourcePaths: [
@@ -83,7 +83,7 @@ describe("pathsInHtml", () => {
     });
   });
 
-  test("finds frames in framesets", () => {
+  test("finds frames in framesets", async () => {
     const html = `
       <html>
         <frameset>
@@ -92,14 +92,14 @@ describe("pathsInHtml", () => {
         </frameset>
       </html>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["frame1.html", "frame2.html"],
       resourcePaths: [],
     });
   });
 
-  test("find URLs in srcset attributes", () => {
+  test("find URLs in srcset attributes", async () => {
     const html = `
       <source
         media="(min-width: 800px)"
@@ -116,7 +116,7 @@ describe("pathsInHtml", () => {
         "
       >
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: [
@@ -129,7 +129,7 @@ describe("pathsInHtml", () => {
     });
   });
 
-  test("finds poster in video elements", () => {
+  test("finds poster in video elements", async () => {
     const html = `
       <video
         id="media"
@@ -138,14 +138,14 @@ describe("pathsInHtml", () => {
       >
       </video>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: ["assets/video.mp4", "assets/poster.jpg"],
     });
   });
 
-  test("finds data in object elements", () => {
+  test("finds data in object elements", async () => {
     const html = `
       <object
         type="video/mp4"
@@ -155,21 +155,21 @@ describe("pathsInHtml", () => {
       >
       </object>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: ["/shared-assets/videos/flower.mp4"],
     });
   });
 
-  test("finds images in meta tags", () => {
+  test("finds images in meta tags", async () => {
     const html = `
       <meta property="og:image" content="og-image.png">
       <meta property="twitter:image" content="twitter-image.jpg">
       <meta property="fb:image" content="fb-image.png">
       <meta property="article:image" content="article-image.jpg">
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: [
@@ -181,7 +181,7 @@ describe("pathsInHtml", () => {
     });
   });
 
-  test("finds paths in <style> tags", () => {
+  test("finds paths in <style> tags", async () => {
     const html = `
       <style>
         @import url('import.css');
@@ -190,26 +190,26 @@ describe("pathsInHtml", () => {
         }
       </style>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["import.css"],
       resourcePaths: ["background.jpg"],
     });
   });
 
-  test("finds paths in `style` attributes", () => {
+  test("finds paths in `style` attributes", async () => {
     const html = `
       <div style="background-image: url('image.jpg');"></div>
       <div style="mask-image: url('images/mask.png');"></div>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: ["image.jpg", "images/mask.png"],
     });
   });
 
-  test("finds paths in SVG attributes", () => {
+  test("finds paths in SVG attributes", async () => {
     const html = `
       <svg>
         <rect fill="url('patterns.svg#dots')" stroke="url('borders.svg#dashed')" />
@@ -220,7 +220,7 @@ describe("pathsInHtml", () => {
         />
       </svg>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: [],
       resourcePaths: [
@@ -234,12 +234,12 @@ describe("pathsInHtml", () => {
   });
 
   // Finds scripts in <script> tags
-  test("finds src in script elements", () => {
+  test("finds src in script elements", async () => {
     const html = `
       <script src="old.js"></script>
       <script src="module.js" type="module"></script>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["module.js"],
       resourcePaths: ["old.js"],
@@ -247,14 +247,14 @@ describe("pathsInHtml", () => {
   });
 
   // Finds scripts in text of module scripts
-  test("finds src in module scripts", () => {
+  test("finds src in module scripts", async () => {
     const html = `
       <script type="module">
         import { foo } from "./foo.js";
         import { bar } from "./bar.js";
       </script>
     `;
-    const paths = pathsInHtml(html);
+    const paths = await pathsInHtml(html);
     assert.deepEqual(paths, {
       crawlablePaths: ["./foo.js", "./bar.js"],
       resourcePaths: [],

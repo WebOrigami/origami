@@ -1,6 +1,7 @@
-import { JSDOM } from "jsdom";
+import loadJsDom from "../common/loadJsDom.js";
 
-export default function htmlDom(html) {
+export default async function htmlDom(html) {
+  const { JSDOM } = await loadJsDom();
   const dom = JSDOM.fragment(html);
   return dom;
 }

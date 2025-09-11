@@ -41,7 +41,7 @@ function filterPaths(paths, baseUrl, localPath) {
  * Given a value retrieved from a site using a given key (name), determine what
  * kind of file it is and, based on that, find the paths it references.
  */
-export default function findPaths(value, key, baseUrl, localPath) {
+export default async function findPaths(value, key, baseUrl, localPath) {
   const text = toString(value);
 
   // We guess the value is HTML is if its key has an .html extension or
@@ -49,7 +49,7 @@ export default function findPaths(value, key, baseUrl, localPath) {
   const ext = key ? extension.extname(key).toLowerCase() : "";
   let foundPaths;
   if (ext === ".html" || ext === ".htm" || ext === ".xhtml") {
-    foundPaths = pathsInHtml(text);
+    foundPaths = await pathsInHtml(text);
   } else if (ext === ".css") {
     foundPaths = pathsInCss(text);
   } else if (ext === ".js") {
@@ -62,7 +62,7 @@ export default function findPaths(value, key, baseUrl, localPath) {
     foundPaths = pathsInSitemap(text);
   } else if (ext === "" && text?.trim().startsWith("<")) {
     // Probably HTML
-    foundPaths = pathsInHtml(text);
+    foundPaths = await pathsInHtml(text);
   } else {
     // Doesn't have an extension we want to process
     return {

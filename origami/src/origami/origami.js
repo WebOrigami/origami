@@ -1,7 +1,7 @@
 export { extension } from "@weborigami/async-tree";
 export { default as help } from "../dev/help.js"; // Alias
 export { default as document } from "../origami/document.js";
-export { default as htmlDom } from "../origami/htmlDom.js";
+// export { default as htmlDom } from "../origami/htmlDom.js";
 export { default as indexPage } from "../origami/indexPage.js";
 export { default as inline } from "../origami/inline.js";
 export { default as jsonKeys } from "../origami/jsonKeys.js";
