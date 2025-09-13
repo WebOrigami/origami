@@ -185,8 +185,10 @@ export function isAsyncTree(obj) {
     typeof obj === "object" &&
     typeof obj.get === "function" &&
     typeof obj.keys === "function" &&
-    // JavaScript Map look like trees but can't be extended the same way, so we
-    // report false.
+    // Regular JavaScript Map instances look like trees but can't have their
+    // prototype chains extended (the way map() does), so exclude them.
+    // Subclasses of Map that implement their own get() and keys() methods are
+    // allowed, because they shouldn't have the same limitations.
     !(obj instanceof Map && Object.getPrototypeOf(obj) === Map.prototype)
   );
 }
