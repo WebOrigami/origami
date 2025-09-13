@@ -19,10 +19,10 @@ export default class MapTree {
    * Constructs a new `MapTree` instance. This `iterable` parameter can be a
    * `Map` instance, or any other iterable of key-value pairs.
    *
-   * @param {Iterable} [iterable]
+   * @param {Iterable} [source]
    */
-  constructor(iterable = []) {
-    this.map = new Map(iterable);
+  constructor(source = []) {
+    this.map = source instanceof Map ? source : new Map(source);
     this.parent = null;
   }
 
