@@ -28,6 +28,7 @@ export {
   regExpKeys,
   reverse,
   scope,
+  shuffle,
   sort,
   take,
   withKeys,
@@ -35,7 +36,6 @@ export {
 export { default as concat } from "./concat.js";
 export { default as fromFn } from "./fromFn.js";
 export { default as setDeep } from "./setDeep.js";
-export { default as shuffle } from "./shuffle.js";
 
 export const assign = Tree.assign;
 export const clear = Tree.clear;

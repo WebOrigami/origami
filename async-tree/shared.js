@@ -44,6 +44,7 @@ export { default as parseExtensions } from "./src/operations/parseExtensions.js"
 export { default as regExpKeys } from "./src/operations/regExpKeys.js";
 export { default as reverse } from "./src/operations/reverse.js";
 export { default as scope } from "./src/operations/scope.js";
+export { default as shuffle } from "./src/operations/shuffle.js";
 export { default as sort } from "./src/operations/sort.js";
 export { default as take } from "./src/operations/take.js";
 export { default as text } from "./src/operations/text.js";
