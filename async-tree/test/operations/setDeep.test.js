@@ -1,7 +1,7 @@
-import { DeepObjectTree, ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import setDeep from "../../src/tree/setDeep.js";
+import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import setDeep from "../../src/operations/setDeep.js";
 
 describe("tree/setDeep", () => {
   test("can apply updates with a single argument to set", async () => {

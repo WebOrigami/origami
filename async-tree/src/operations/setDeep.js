@@ -1,4 +1,4 @@
-import { Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
 
 /**
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike

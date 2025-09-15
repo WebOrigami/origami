@@ -1,4 +1,5 @@
-import { FunctionTree, isUnpackable, toFunction } from "@weborigami/async-tree";
+import FunctionTree from "../drivers/FunctionTree.js";
+import { isUnpackable, toFunction } from "../utilities.js";
 
 /**
  * Create a tree from a function and a set of keys.
@@ -8,6 +9,7 @@ import { FunctionTree, isUnpackable, toFunction } from "@weborigami/async-tree";
  * @param {Invocable} invocable
  */
 export default async function fromFn(invocable, keys = []) {
+  console.warn("Tree.fromFn is deprecated, use Tree.withKeys instead.");
   if (invocable === undefined) {
     throw new Error(
       "Tree.fromFn: the first argument must be a function or a tree."

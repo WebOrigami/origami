@@ -1,4 +1,5 @@
-import { deepText, Tree } from "@weborigami/async-tree";
+import { Tree } from "../internal.js";
+import deepText from "./deepText.js";
 
 /**
  * Concatenate the text content of objects or trees.

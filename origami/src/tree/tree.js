@@ -4,6 +4,7 @@ export {
   addNextPrevious,
   cache,
   calendar,
+  concat,
   constant,
   deepMap,
   deepMerge,
@@ -13,6 +14,7 @@ export {
   defineds,
   filter,
   first,
+  fromFn,
   globKeys,
   group,
   inners,
@@ -28,14 +30,12 @@ export {
   regExpKeys,
   reverse,
   scope,
+  setDeep,
   shuffle,
   sort,
   take,
   withKeys,
 } from "@weborigami/async-tree";
-export { default as concat } from "./concat.js";
-export { default as fromFn } from "./fromFn.js";
-export { default as setDeep } from "./setDeep.js";
 
 export const assign = Tree.assign;
 export const clear = Tree.clear;
