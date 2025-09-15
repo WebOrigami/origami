@@ -19,6 +19,7 @@ export {
   keys,
   length,
   map,
+  mapExtension,
   mask,
   match,
   merge,

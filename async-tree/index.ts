@@ -55,6 +55,14 @@ export type TreeMapOptions = {
   key?: ValueKeyFn;
   value?: ValueKeyFn;
 };
+
+export type TreeMapExtensionOptions = {
+  deep?: boolean;
+  description?: string;
+  extension?: string;
+  needsSourceValue?: boolean;
+  value?: ValueKeyFn;
+};
   
 export type TreeTransform = (treelike: Treelike) => AsyncTree;
 
