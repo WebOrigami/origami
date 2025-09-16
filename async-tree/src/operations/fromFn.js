@@ -1,5 +1,6 @@
 import FunctionTree from "../drivers/FunctionTree.js";
-import { isUnpackable, toFunction } from "../utilities.js";
+import isUnpackable from "../utilities/isUnpackable.js";
+import toFunction from "../utilities/toFunction.js";
 
 /**
  * Create a tree from a function and a set of keys.
@@ -19,6 +20,7 @@ export default async function fromFn(invocable, keys = []) {
   if (isUnpackable(keys)) {
     keys = await keys.unpack();
   }
+  // @ts-ignore
   const tree = new FunctionTree(fn, keys);
   return tree;
 }

@@ -1,6 +1,6 @@
 import ObjectTree from "../drivers/ObjectTree.js";
 import * as trailingSlash from "../trailingSlash.js";
-import { assertIsTreelike } from "../utilities.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 import merge from "./merge.js";

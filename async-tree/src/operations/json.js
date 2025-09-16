@@ -1,5 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { isUnpackable, toPlainValue } from "../utilities.js";
+import isUnpackable from "../utilities/isUnpackable.js";
+import toPlainValue from "../utilities/toPlainValue.js";
 import from from "./from.js";
 
 /**

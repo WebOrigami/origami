@@ -6,6 +6,9 @@ export default {
   unpack(packed, options = {}) {
     const parent = options.parent ?? null;
     const text = toString(packed);
+    if (text === null) {
+      throw new TypeError("CSV handler can only unpack text");
+    }
     const data = csvParse(text);
     // Define `parent` as non-enumerable property
     Object.defineProperty(data, symbols.parent, {

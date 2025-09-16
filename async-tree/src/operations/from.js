@@ -5,7 +5,9 @@ import MapTree from "../drivers/MapTree.js";
 import ObjectTree from "../drivers/ObjectTree.js";
 import SetTree from "../drivers/SetTree.js";
 import * as symbols from "../symbols.js";
-import { box, isPlainObject, isUnpackable } from "../utilities.js";
+import box from "../utilities/box.js";
+import isPlainObject from "../utilities/isPlainObject.js";
+import isUnpackable from "../utilities/isUnpackable.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**

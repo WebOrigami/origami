@@ -1,6 +1,7 @@
 import ObjectTree from "../drivers/ObjectTree.js";
 import * as trailingSlash from "../trailingSlash.js";
-import { castArrayLike, toPlainValue } from "../utilities.js";
+import castArraylike from "../utilities/castArraylike.js";
+import toPlainValue from "../utilities/toPlainValue.js";
 import mapReduce from "./mapReduce.js";
 
 /**
@@ -35,6 +36,6 @@ export default async function plain(treelike) {
     }
     // Normalize slashes in keys.
     keys = keys.map(trailingSlash.remove);
-    return castArrayLike(keys, values);
+    return castArraylike(keys, values);
   });
 }

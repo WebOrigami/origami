@@ -1,5 +1,5 @@
 import {
-  isStringLike,
+  isStringlike,
   isUnpackable,
   toPlainValue,
   toString,
@@ -24,7 +24,7 @@ export default async function post(url, data) {
     headers = {
       "Content-Type": "application/json",
     };
-  } else if (isStringLike(data)) {
+  } else if (isStringlike(data)) {
     body = toString(data);
     headers = {
       "Content-Type": "text/plain",

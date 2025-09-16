@@ -4,7 +4,7 @@ import { compile } from "@weborigami/language";
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @param {import("@weborigami/async-tree").StringLike} input
+ * @param {import("@weborigami/async-tree").Stringlike} input
  */
 export default async function code(input) {
   if (input === undefined) {

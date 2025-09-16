@@ -43,6 +43,12 @@ function filterPaths(paths, baseUrl, localPath) {
  */
 export default async function findPaths(value, key, baseUrl, localPath) {
   const text = toString(value);
+  if (text === null) {
+    return {
+      crawlablePaths: [],
+      resourcePaths: [],
+    };
+  }
 
   // We guess the value is HTML is if its key has an .html extension or
   // doesn't have an extension, or the value starts with `<`.

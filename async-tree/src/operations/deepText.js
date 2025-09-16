@@ -1,4 +1,5 @@
-import { assertIsTreelike, toString } from "../utilities.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import toString from "../utilities/toString.js";
 import deepValuesIterator from "./deepValuesIterator.js";
 
 /**

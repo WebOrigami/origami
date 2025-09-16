@@ -1,12 +1,10 @@
+import { hiddenFileNames } from "../constants.js";
 import assign from "../operations/assign.js";
 import isTreelike from "../operations/isTreelike.js";
 import * as trailingSlash from "../trailingSlash.js";
-import {
-  hiddenFileNames,
-  isStringLike,
-  naturalOrder,
-  setParent,
-} from "../utilities.js";
+import isStringlike from "../utilities/isStringlike.js";
+import naturalOrder from "../utilities/naturalOrder.js";
+import setParent from "../utilities/setParent.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -146,7 +144,7 @@ export default class BrowserFileTree {
       value instanceof DataView ||
       value instanceof Blob;
 
-    if (!isWriteable && isStringLike(value)) {
+    if (!isWriteable && isStringlike(value)) {
       // Value has a meaningful `toString` method, use that.
       value = String(value);
       isWriteable = true;

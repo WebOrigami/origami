@@ -1,4 +1,4 @@
-import { toString } from "../utilities.js";
+import toString from "../utilities/toString.js";
 import deepText from "./deepText.js";
 import isTreelike from "./isTreelike.js";
 

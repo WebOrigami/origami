@@ -1,5 +1,5 @@
 import ObjectTree from "../drivers/ObjectTree.js";
-import { assertIsTreelike } from "../utilities.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import isAsyncTree from "./isAsyncTree.js";

@@ -1,6 +1,6 @@
 import isAsyncTree from "../operations/isAsyncTree.js";
 import * as trailingSlash from "../trailingSlash.js";
-import { setParent } from "../utilities.js";
+import setParent from "../utilities/setParent.js";
 
 /**
  * A tree backed by a JavaScript `Map` object.

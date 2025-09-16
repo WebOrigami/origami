@@ -1,4 +1,4 @@
-import { isPlainObject } from "../utilities.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**

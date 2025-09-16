@@ -4,10 +4,10 @@ import { isPlainObject, isUnpackable, toString } from "@weborigami/async-tree";
  * In Origami, a text document object is any object with a `_body` property.
  * This function is a helper for constructing such text document objects.
  *
- * @typedef {import("@weborigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @param {StringLike|PlainObject} input
+ * @param {Stringlike|PlainObject} input
  * @param {any} [data]
  */
 export default async function documentObject(input, data) {

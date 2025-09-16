@@ -2,7 +2,7 @@ import {
   extension,
   isPacked,
   isPlainObject,
-  isStringLike,
+  isStringlike,
   SiteTree,
   Tree,
 } from "@weborigami/async-tree";
@@ -63,7 +63,7 @@ export default async function constructResponse(request, resource) {
 
   if (
     (mediaType === "application/json" || mediaType === "text/yaml") &&
-    !isStringLike(resource)
+    !isStringlike(resource)
   ) {
     // The request is for a JSON or YAML result, and the resource we got isn't
     // yet a string: convert the resource to JSON or YAML now.

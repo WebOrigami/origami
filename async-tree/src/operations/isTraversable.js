@@ -1,4 +1,4 @@
-import { isPacked } from "../utilities.js";
+import isPacked from "../utilities/isPacked.js";
 import isTreelike from "./isTreelike.js";
 
 /**

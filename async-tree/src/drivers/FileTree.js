@@ -1,17 +1,15 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { hiddenFileNames } from "../constants.js";
 import assign from "../operations/assign.js";
 import isTreelike from "../operations/isTreelike.js";
 import * as trailingSlash from "../trailingSlash.js";
-import {
-  getRealmObjectPrototype,
-  hiddenFileNames,
-  isPacked,
-  isPlainObject,
-  naturalOrder,
-  setParent,
-} from "../utilities.js";
+import isPacked from "../utilities/isPacked.js";
+import isPlainObject from "../utilities/isPlainObject.js";
+import isStringlike from "../utilities/isStringlike.js";
+import naturalOrder from "../utilities/naturalOrder.js";
+import setParent from "../utilities/setParent.js";
 import limitConcurrency from "./limitConcurrency.js";
 
 // As of July 2025, Node doesn't provide any way to limit the number of
@@ -189,7 +187,7 @@ export default class FileTree {
       // Pack the value for writing.
       value = await value.pack();
       packed = true;
-    } else if (isStringLike(value)) {
+    } else if (isStringlike(value)) {
       // Value has a meaningful `toString` method, use that.
       value = String(value);
       packed = true;
@@ -237,27 +235,6 @@ async function isDirectory(entry, dirname) {
     }
   }
   return entry.isDirectory();
-}
-
-/**
- * Return true if the object is a string or object with a non-trival `toString`
- * method.
- *
- * @param {any} obj
- */
-function isStringLike(obj) {
-  if (typeof obj === "string") {
-    return true;
-  } else if (obj?.toString === undefined) {
-    return false;
-  } else if (obj.toString === getRealmObjectPrototype(obj)?.toString) {
-    // The stupid Object.prototype.toString implementation always returns
-    // "[object Object]", so if that's the only toString method the object has,
-    // we return false.
-    return false;
-  } else {
-    return true;
-  }
 }
 
 // Return the file information for the file/folder at the given path.

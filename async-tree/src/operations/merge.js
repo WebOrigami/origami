@@ -1,5 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import { isPlainObject } from "../utilities.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 

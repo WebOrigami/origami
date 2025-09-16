@@ -1,5 +1,5 @@
 import TraverseError from "../TraverseError.js";
-import { isUnpackable } from "../utilities.js";
+import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 
 /**

@@ -7,9 +7,9 @@ import { oridocumentHandler } from "../handlers/handlers.js";
  * text.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
- * @param {StringLike & {_body?: StringLike}} input
+ * @param {Stringlike & {_body?: Stringlike}} input
  */
 export default async function inline(input) {
   // Get the input text and any attached front matter.

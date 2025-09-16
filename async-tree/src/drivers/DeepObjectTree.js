@@ -1,5 +1,5 @@
 import isAsyncTree from "../operations/isAsyncTree.js";
-import { isPlainObject } from "../utilities.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import ObjectTree from "./ObjectTree.js";
 
 export default class DeepObjectTree extends ObjectTree {

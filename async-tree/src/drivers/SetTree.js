@@ -1,4 +1,4 @@
-import { setParent } from "../utilities.js";
+import setParent from "../utilities/setParent.js";
 
 /**
  * A tree of Set objects.

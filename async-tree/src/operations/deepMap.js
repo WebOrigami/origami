@@ -1,4 +1,5 @@
-import { assertIsTreelike, isPlainObject } from "../utilities.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import map from "./map.js";
 
 /**

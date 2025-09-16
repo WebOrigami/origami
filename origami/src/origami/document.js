@@ -2,9 +2,9 @@ import documentObject from "../common/documentObject.js";
 
 /**
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").StringLike} StringLike
+ * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
- * @param {StringLike} text
+ * @param {Stringlike} text
  * @param {any} [data]
  */
 export default async function documentBuiltin(text, data) {

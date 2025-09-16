@@ -2,7 +2,7 @@ import {
   box,
   extension,
   isPacked,
-  isStringLike,
+  isStringlike,
   isUnpackable,
   setParent,
   trailingSlash,
@@ -21,7 +21,7 @@ export async function handleExtension(parent, value, key, handlers) {
   if (
     handlers &&
     isPacked(value) &&
-    isStringLike(key) &&
+    isStringlike(key) &&
     value.unpack === undefined
   ) {
     const hasSlash = trailingSlash.has(key);

@@ -2,7 +2,7 @@ import {
   Tree,
   assertIsTreelike,
   isPlainObject,
-  isStringLike,
+  isStringlike,
   toString,
   trailingSlash,
 } from "@weborigami/async-tree";
@@ -74,7 +74,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
       const subStatements = await statements(subtree, destPath, null, options);
       result = result.concat(subStatements);
     } else {
-      const label = isStringLike(value)
+      const label = isStringlike(value)
         ? toString(value)
         : value !== undefined
         ? await serialize.toYaml(value)

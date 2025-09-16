@@ -1,10 +1,8 @@
 import * as trailingSlash from "../trailingSlash.js";
-import {
-  assertIsTreelike,
-  isPlainObject,
-  isUnpackable,
-  toFunction,
-} from "../utilities.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import isPlainObject from "../utilities/isPlainObject.js";
+import isUnpackable from "../utilities/isUnpackable.js";
+import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import from from "./from.js";

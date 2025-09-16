@@ -32,10 +32,10 @@ marked.use(
 /**
  * Transform markdown to HTML.
  *
- * @typedef {import("@weborigami/async-tree").StringLike} StringLike
- * @typedef {import("@weborigami/async-tree").Unpackable<StringLike>} UnpackableStringlike
+ * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
+ * @typedef {import("@weborigami/async-tree").Unpackable} Unpackable
  *
- * @param {StringLike|UnpackableStringlike} input
+ * @param {Stringlike|Unpackable} input
  */
 export default async function mdHtml(input) {
   if (input == null) {

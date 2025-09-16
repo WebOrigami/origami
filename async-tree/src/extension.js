@@ -1,5 +1,6 @@
 import * as trailingSlash from "./trailingSlash.js";
-import { isStringLike, toString } from "./utilities.js";
+import isStringlike from "./utilities/isStringlike.js";
+import toString from "./utilities/toString.js";
 
 /**
  * Replicate the logic of Node POSIX path.extname at
@@ -78,7 +79,7 @@ export function extname(path) {
  * dot.
  */
 export function match(key, ext) {
-  if (!isStringLike(key)) {
+  if (!isStringlike(key)) {
     return null;
   }
   key = toString(key);
@@ -113,9 +114,10 @@ export function match(key, ext) {
  * @param {string} resultExtension
  */
 export function replace(key, sourceExtension, resultExtension) {
-  if (!isStringLike(key)) {
+  if (!isStringlike(key)) {
     return null;
   }
+  // @ts-ignore
   key = toString(key);
 
   if (!match(key, sourceExtension)) {

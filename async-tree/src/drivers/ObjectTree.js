@@ -1,7 +1,8 @@
 import isAsyncTree from "../operations/isAsyncTree.js";
 import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
-import { getRealmObjectPrototype, setParent } from "../utilities.js";
+import getRealmObjectPrototype from "../utilities/getRealmObjectPrototype.js";
+import setParent from "../utilities/setParent.js";
 
 /**
  * A tree defined by a plain object or array.

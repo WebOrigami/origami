@@ -2,7 +2,7 @@ import type { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 
-export type Invocable = Function | Treelike | Unpackable<Function|Treelike>;
+export type Invocable = Function | Treelike | Unpackable;
 
 export type KeyFn = (key: any, innerTree: AsyncTree) => any;
 
@@ -32,7 +32,7 @@ export type PlainObject = {
 
 export type ReduceFn = (values: any[], keys: any[], tree: AsyncTree) => Promise<any>;
 
-export type StringLike = string | HasString;
+export type Stringlike = string | HasString;
 
 export type NativeTreelike = 
   any[] |
@@ -44,7 +44,7 @@ export type NativeTreelike =
 
 export type Treelike =
   NativeTreelike |
-  Unpackable<NativeTreelike>;
+  Unpackable;
 
 export type TreeMapOptions = {
   deep?: boolean;
@@ -77,8 +77,8 @@ export type TypedArray =
   Uint16Array |
   Uint32Array;
 
-export type Unpackable<T> = {
-  unpack(): Promise<T>
+export type Unpackable = {
+  unpack(): Promise<any>
 };
 
 /**

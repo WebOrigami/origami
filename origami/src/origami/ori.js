@@ -1,6 +1,7 @@
 import {
   Tree,
   getRealmObjectPrototype,
+  isStringlike,
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
@@ -27,6 +28,10 @@ export default async function ori(
   assertTreeIsDefined(this, "ori");
 
   // In case expression has come from a file, cast it to a string.
+  if (!isStringlike(expression)) {
+    throw new TypeError("ori: The expression is not text.");
+  }
+  // @ts-ignore
   expression = toString(expression);
 
   // Run in the context of `this` if defined

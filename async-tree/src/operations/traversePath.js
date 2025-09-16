@@ -1,4 +1,4 @@
-import { keysFromPath } from "../utilities.js";
+import keysFromPath from "../utilities/keysFromPath.js";
 import traverse from "./traverse.js";
 
 /**
