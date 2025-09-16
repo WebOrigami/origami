@@ -11,7 +11,7 @@ import index from "./indexPage.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function staticBuiltin(treelike) {
-  const tree = getTreeArgument(treelike, "static");
+  const tree = await getTreeArgument(treelike, "static");
   return staticTree(tree);
 }
 

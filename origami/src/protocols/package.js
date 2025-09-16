@@ -31,7 +31,7 @@ async function getPackage(parent, organization, name, keys) {
   }
   packagePath.push(name);
 
-  const parentScope = Tree.scope(parent);
+  const parentScope = await Tree.scope(parent);
   const packageRoot = await Tree.traverse(
     // @ts-ignore
     parentScope,
