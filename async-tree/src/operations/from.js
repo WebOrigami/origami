@@ -1,8 +1,9 @@
+import DeepObjectTree from "../drivers/DeepObjectTree.js";
 import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionTree from "../drivers/FunctionTree.js";
 import MapTree from "../drivers/MapTree.js";
+import ObjectTree from "../drivers/ObjectTree.js";
 import SetTree from "../drivers/SetTree.js";
-import { DeepObjectTree, ObjectTree } from "../internal.js";
 import * as symbols from "../symbols.js";
 import { box, isPlainObject, isUnpackable } from "../utilities.js";
 import isAsyncTree from "./isAsyncTree.js";

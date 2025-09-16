@@ -1,5 +1,6 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Reverse the order of keys at all levels of the tree.
@@ -13,11 +14,11 @@ import { assertIsTreelike } from "../utilities.js";
 export default function deepReverse(treelike) {
   assertIsTreelike(treelike, "deepReverse");
 
-  const tree = Tree.from(treelike, { deep: true });
+  const tree = from(treelike, { deep: true });
   return {
     async get(key) {
       let value = await tree.get(key);
-      if (Tree.isAsyncTree(value)) {
+      if (isAsyncTree(value)) {
         value = deepReverse(value);
       }
       return value;

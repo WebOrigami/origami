@@ -1,4 +1,4 @@
-import { Tree } from "../internal.js";
+import from from "../operations/from.js";
 
 /**
  * A tree that is loaded lazily.
@@ -64,7 +64,7 @@ export default class DeferredTree {
     this.treePromise ??= this.loadResult().then((treelike) => {
       const options =
         this._deep !== undefined ? { deep: this._deep } : undefined;
-      this._tree = Tree.from(treelike, options);
+      this._tree = from(treelike, options);
       if (this._parentUntilLoaded) {
         // Now that the tree has been loaded, we can set its parent if it hasn't
         // already been set.

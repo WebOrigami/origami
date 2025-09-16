@@ -1,5 +1,6 @@
-import { ObjectTree, Tree } from "../internal.js";
+import isAsyncTree from "../operations/isAsyncTree.js";
 import { isPlainObject } from "../utilities.js";
+import ObjectTree from "./ObjectTree.js";
 
 export default class DeepObjectTree extends ObjectTree {
   async get(key) {
@@ -12,8 +13,6 @@ export default class DeepObjectTree extends ObjectTree {
 
   /** @returns {boolean} */
   isSubtree(value) {
-    return (
-      value instanceof Array || isPlainObject(value) || Tree.isAsyncTree(value)
-    );
+    return value instanceof Array || isPlainObject(value) || isAsyncTree(value);
   }
 }

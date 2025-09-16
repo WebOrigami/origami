@@ -1,13 +1,18 @@
+import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+
 /**
  * Returns a boolean indicating whether the specific node of the tree has a
  * value for the given `key`.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {AsyncTree} tree
+ * @param {Treelike} treelike
  * @param {any} key
  */
-export default async function has(tree, key) {
+export default async function has(treelike, key) {
+  assertIsTreelike(treelike, "has");
+  const tree = from(treelike);
   const value = await tree.get(key);
   return value !== undefined;
 }

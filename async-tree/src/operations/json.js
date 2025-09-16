@@ -1,6 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "../internal.js";
 import { isUnpackable, toPlainValue } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Render the given tree in JSON format.
@@ -8,7 +8,7 @@ import { isUnpackable, toPlainValue } from "../utilities.js";
  * @param {import("../../index.ts").Treelike} [treelike]
  */
 export default async function json(treelike) {
-  let tree = Tree.from(treelike);
+  let tree = from(treelike);
   if (tree === undefined) {
     return undefined;
   }

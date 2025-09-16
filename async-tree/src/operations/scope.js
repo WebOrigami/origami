@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
@@ -13,7 +13,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function scope(treelike) {
   assertIsTreelike(treelike, "scope");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   return {
     // Starting with this tree, search up the parent hierarchy.

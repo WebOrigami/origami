@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return a new tree with the original's keys sorted. A comparison function can
@@ -17,7 +17,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function sort(treelike, options) {
   assertIsTreelike(treelike, "sort");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   let sortKey;
   let compare;

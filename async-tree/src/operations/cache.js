@@ -1,5 +1,8 @@
-import { ObjectTree, Tree } from "../internal.js";
+import ObjectTree from "../drivers/ObjectTree.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncMutableTree from "./isAsyncMutableTree.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Caches values from a source tree in a second cache tree. Cache source tree
@@ -17,14 +20,14 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function treeCache(sourceTreelike, cacheTreelike) {
   assertIsTreelike(sourceTreelike, "cache");
-  const source = Tree.from(sourceTreelike);
+  const source = from(sourceTreelike);
 
   /** @type {AsyncMutableTree} */
   let cache;
   if (cacheTreelike) {
     // @ts-ignore
-    cache = Tree.from(cacheTreelike);
-    if (!Tree.isAsyncMutableTree(cache)) {
+    cache = from(cacheTreelike);
+    if (!isAsyncMutableTree(cache)) {
       throw new Error("Cache tree must define a set() method.");
     }
   } else {
@@ -38,24 +41,24 @@ export default function treeCache(sourceTreelike, cacheTreelike) {
     async get(key) {
       // Check cache tree first.
       let cacheValue = await cache.get(key);
-      if (cacheValue !== undefined && !Tree.isAsyncTree(cacheValue)) {
+      if (cacheValue !== undefined && !isAsyncTree(cacheValue)) {
         // Leaf node cache hit
         return cacheValue;
       }
 
       // Cache miss or interior node cache hit.
       let value = await source.get(key);
-      if (Tree.isAsyncTree(value)) {
+      if (isAsyncTree(value)) {
         // Construct merged tree for a tree result.
         if (cacheValue === undefined) {
           // Construct new empty container in cache
           await cache.set(key, {});
           cacheValue = await cache.get(key);
-          if (!Tree.isAsyncTree(cacheValue)) {
+          if (!isAsyncTree(cacheValue)) {
             // Coerce to tree and then save it back to the cache. This is
             // necessary, e.g., if cache is an ObjectTree; we want the
             // subtree to also be an ObjectTree, not a plain object.
-            cacheValue = Tree.from(cacheValue);
+            cacheValue = from(cacheValue);
             await cache.set(key, cacheValue);
           }
         }

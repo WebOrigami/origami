@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return the top-level keys in the tree as an array.
@@ -10,7 +10,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function keys(treelike) {
   assertIsTreelike(treelike, "keys");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
   const keys = await tree.keys();
   return Array.from(keys);
 }

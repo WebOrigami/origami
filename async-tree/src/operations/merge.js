@@ -1,6 +1,7 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { isPlainObject } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Return a tree that performs a shallow merge of the given trees.
@@ -23,14 +24,12 @@ export default function merge(...sources) {
 
   // If all arguments are plain objects, return a plain object.
   if (
-    filtered.every(
-      (source) => !Tree.isAsyncTree(source) && isPlainObject(source)
-    )
+    filtered.every((source) => !isAsyncTree(source) && isPlainObject(source))
   ) {
     return filtered.reduce((acc, obj) => ({ ...acc, ...obj }), {});
   }
 
-  const trees = filtered.map((treelike) => Tree.from(treelike));
+  const trees = filtered.map((treelike) => from(treelike));
 
   if (trees.length === 0) {
     throw new TypeError("merge: all trees are null or undefined");

@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
@@ -12,7 +12,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function reverse(treelike) {
   assertIsTreelike(treelike, "reverse");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   return {
     async get(key) {

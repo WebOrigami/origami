@@ -1,7 +1,8 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { Tree } from "../internal.js";
+import assign from "../operations/assign.js";
+import isTreelike from "../operations/isTreelike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import {
   getRealmObjectPrototype,
@@ -199,13 +200,13 @@ export default class FileTree {
     } else if (isPlainObject(value) && Object.keys(value).length === 0) {
       // Special case: empty object means create an empty directory.
       await fs.mkdir(destPath, { recursive: true });
-    } else if (Tree.isTreelike(value)) {
+    } else if (isTreelike(value)) {
       // Treat value as a subtree and write it out as a subdirectory.
       const destTree = Reflect.construct(this.constructor, [destPath]);
       // Create the directory here, even if the subtree is empty.
       await fs.mkdir(destPath, { recursive: true });
       // Write out the subtree.
-      await Tree.assign(destTree, value);
+      await assign(destTree, value);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(

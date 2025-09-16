@@ -1,4 +1,5 @@
-import { Tree } from "../internal.js";
+import assign from "../operations/assign.js";
+import isTreelike from "../operations/isTreelike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import {
   hiddenFileNames,
@@ -159,13 +160,13 @@ export default class BrowserFileTree {
       const writable = await fileHandle.createWritable();
       await writable.write(value);
       await writable.close();
-    } else if (Tree.isTreelike(value)) {
+    } else if (isTreelike(value)) {
       // Treat value as a tree and write it out as a subdirectory.
       const subdirectory = await directory.getDirectoryHandle(baseKey, {
         create: true,
       });
       const destTree = Reflect.construct(this.constructor, [subdirectory]);
-      await Tree.assign(destTree, value);
+      await assign(destTree, value);
     } else {
       const typeName = value?.constructor?.name ?? "unknown";
       throw new TypeError(`Cannot write a value of type ${typeName} as ${key}`);

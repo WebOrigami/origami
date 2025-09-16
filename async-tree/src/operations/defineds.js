@@ -1,5 +1,6 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import mapReduce from "./mapReduce.js";
 
 /**
  * Return only the defined (not `undefined`) values in the deep tree.
@@ -14,9 +15,9 @@ export default async function defineds(treelike) {
     "Warning: Tree.defineds is deprecated. If you have a use for it, please let us know."
   );
   assertIsTreelike(treelike, "defineds");
-  const tree = Tree.from(treelike, { deep: true });
+  const tree = from(treelike, { deep: true });
 
-  const result = await Tree.mapReduce(tree, null, async (values, keys) => {
+  const result = await mapReduce(tree, null, async (values, keys) => {
     const object = {};
     let someValuesExist = false;
     for (let i = 0; i < keys.length; i++) {

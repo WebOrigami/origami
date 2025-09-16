@@ -1,4 +1,4 @@
-import { Tree } from "../internal.js";
+import isAsyncTree from "../operations/isAsyncTree.js";
 import MapTree from "./MapTree.js";
 
 export default class DeepMapTree extends MapTree {
@@ -9,7 +9,7 @@ export default class DeepMapTree extends MapTree {
       value = Reflect.construct(this.constructor, [value]);
     }
 
-    if (Tree.isAsyncTree(value) && !value.parent) {
+    if (isAsyncTree(value) && !value.parent) {
       value.parent = this;
     }
 
@@ -18,6 +18,6 @@ export default class DeepMapTree extends MapTree {
 
   /** @returns {boolean} */
   isSubtree(value) {
-    return value instanceof Map || Tree.isAsyncTree(value);
+    return value instanceof Map || isAsyncTree(value);
   }
 }

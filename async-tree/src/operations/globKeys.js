@@ -1,6 +1,8 @@
-import { ObjectTree, Tree } from "../internal.js";
+import ObjectTree from "../drivers/ObjectTree.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 import merge from "./merge.js";
 
 const globstar = "**";
@@ -8,7 +10,7 @@ const globstarSlash = `${globstar}/`;
 
 export default function globKeys(treelike) {
   assertIsTreelike(treelike, "globKeys");
-  const globs = Tree.from(treelike, { deep: true });
+  const globs = from(treelike, { deep: true });
   return {
     async get(key) {
       if (typeof key !== "string") {
@@ -16,7 +18,7 @@ export default function globKeys(treelike) {
       }
 
       let value = await matchGlobs(globs, key);
-      if (Tree.isAsyncTree(value)) {
+      if (isAsyncTree(value)) {
         value = globKeys(value);
       }
       return value;
@@ -57,7 +59,7 @@ async function matchGlobs(globs, key) {
       // Text matches glob, get value
       const globValue = await globs.get(glob);
       if (globValue !== undefined) {
-        if (!Tree.isAsyncTree(globValue)) {
+        if (!isAsyncTree(globValue)) {
           // Found a non-tree match, return immediately
           return globValue;
         }
@@ -75,7 +77,7 @@ async function matchGlobs(globs, key) {
     } else {
       // Try globstar
       const globstarValue = await matchGlobs(globstarGlobs, key);
-      if (!Tree.isAsyncTree(globstarValue)) {
+      if (!isAsyncTree(globstarValue)) {
         // Found a non-tree match, return immediately
         return globstarValue;
       } else if (trailingSlash.has(key)) {

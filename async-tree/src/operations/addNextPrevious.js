@@ -1,5 +1,8 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import entries from "./entries.js";
+import from from "./from.js";
+import isTreelike from "./isTreelike.js";
+import plain from "./plain.js";
 
 /**
  * Add nextKey/previousKey properties to values.
@@ -12,20 +15,20 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function addNextPrevious(treelike) {
   assertIsTreelike(treelike, "addNextPrevious");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
-  const entries = [...(await Tree.entries(tree))];
-  const keys = entries.map(([key]) => key);
+  const treeEntries = [...(await entries(tree))];
+  const keys = treeEntries.map(([key]) => key);
 
   // Map to an array of [key, result] pairs, where the result includes
   // nextKey/previousKey properties.
   const mappedEntries = await Promise.all(
-    entries.map(async ([key, value], index) => {
+    treeEntries.map(async ([key, value], index) => {
       let resultValue;
       if (value === undefined) {
         resultValue = undefined;
-      } else if (Tree.isTreelike(value)) {
-        resultValue = await Tree.plain(value);
+      } else if (isTreelike(value)) {
+        resultValue = await plain(value);
       } else if (typeof value === "object") {
         // Clone value to avoid modifying the original object
         resultValue = { ...value };

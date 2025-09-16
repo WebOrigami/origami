@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree } from "../src/internal.js";
+import DeepObjectTree from "../src/drivers/DeepObjectTree.js";
 import * as jsonKeys from "../src/jsonKeys.js";
 
 describe("jsonKeys", () => {

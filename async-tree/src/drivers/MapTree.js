@@ -1,4 +1,4 @@
-import { Tree } from "../internal.js";
+import isAsyncTree from "../operations/isAsyncTree.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { setParent } from "../utilities.js";
 
@@ -52,7 +52,7 @@ export default class MapTree {
 
   /** @returns {boolean} */
   isSubtree(value) {
-    return Tree.isAsyncTree(value);
+    return isAsyncTree(value);
   }
 
   async keys() {

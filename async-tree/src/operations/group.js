@@ -1,5 +1,8 @@
-import { ObjectTree, Tree } from "../internal.js";
+import ObjectTree from "../drivers/ObjectTree.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isTreelike from "./isTreelike.js";
+import values from "./values.js";
 
 /**
  * Given a function that returns a grouping key for a value, returns a transform
@@ -10,7 +13,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function group(treelike, groupKeyFn) {
   assertIsTreelike(treelike, "group");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   const keys = Array.from(await tree.keys());
 
@@ -27,14 +30,14 @@ export default async function group(treelike, groupKeyFn) {
       continue;
     }
 
-    if (!Tree.isTreelike(groups)) {
+    if (!isTreelike(groups)) {
       // A single value was returned
       groups = [groups];
     }
-    groups = Tree.from(groups);
+    groups = from(groups);
 
     // Add the value to each group.
-    for (const group of await Tree.values(groups)) {
+    for (const group of await values(groups)) {
       if (isArray) {
         result[group] ??= [];
         result[group].push(value);

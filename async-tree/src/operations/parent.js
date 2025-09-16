@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Returns the parent of the current tree.
@@ -10,6 +10,6 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function parent(treelike) {
   assertIsTreelike(treelike, "parent");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
   return tree.parent;
 }

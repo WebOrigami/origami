@@ -1,4 +1,5 @@
-import { Tree } from "../internal.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
@@ -8,8 +9,8 @@ import { Tree } from "../internal.js";
  */
 export default async function setDeep(target, source) {
   console.warn("Tree.setDeep is deprecated, use Tree.assign instead.");
-  const targetTree = Tree.from(target);
-  const sourceTree = Tree.from(source);
+  const targetTree = from(target);
+  const sourceTree = from(source);
   await applyUpdates(sourceTree, targetTree);
 }
 
@@ -35,9 +36,9 @@ async function applyUpdates(source, target) {
 // Copy the value for the given key from the source to the target.
 async function applyUpdateForKey(source, target, key) {
   const sourceValue = await source.get(key);
-  if (Tree.isAsyncTree(sourceValue)) {
+  if (isAsyncTree(sourceValue)) {
     const targetValue = await target.get(key);
-    if (Tree.isAsyncTree(targetValue)) {
+    if (isAsyncTree(targetValue)) {
       // Both source and target are async dictionaries; recurse.
       await applyUpdates(sourceValue, targetValue);
       return;

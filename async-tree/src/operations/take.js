@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.
@@ -9,7 +9,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function take(treelike, count) {
   assertIsTreelike(treelike, "take");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   return {
     async keys() {

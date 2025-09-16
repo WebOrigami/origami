@@ -1,6 +1,7 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Return the interior nodes of the tree. This relies on subtree keys having
@@ -13,12 +14,12 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function inners(treelike) {
   assertIsTreelike(treelike, "inners");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   return {
     async get(key) {
       const value = await tree.get(key);
-      return Tree.isAsyncTree(value) ? inners(value) : undefined;
+      return isAsyncTree(value) ? inners(value) : undefined;
     },
 
     async keys() {

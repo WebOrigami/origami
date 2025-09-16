@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return a new tree with the original's keys shuffled
@@ -13,7 +13,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function shuffle(treelike, reshuffle = false) {
   assertIsTreelike(treelike, "shuffle");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   let keys;
 

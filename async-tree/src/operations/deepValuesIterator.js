@@ -1,5 +1,7 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
+import isTreelike from "./isTreelike.js";
 
 /**
  * Return an iterator that yields all values in a tree, including nested trees.
@@ -16,15 +18,15 @@ export default async function* deepValuesIterator(
   options = { expand: false }
 ) {
   assertIsTreelike(treelike, "deepValuesIterator");
-  const tree = Tree.from(treelike, { deep: true });
+  const tree = from(treelike, { deep: true });
 
   for (const key of await tree.keys()) {
     let value = await tree.get(key);
 
     // Recurse into child trees, but don't expand functions.
     const recurse =
-      Tree.isAsyncTree(value) ||
-      (options.expand && typeof value !== "function" && Tree.isTreelike(value));
+      isAsyncTree(value) ||
+      (options.expand && typeof value !== "function" && isTreelike(value));
     if (recurse) {
       yield* deepValuesIterator(value, options);
     } else {

@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return the number of keys in the tree.
@@ -11,7 +11,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function length(treelike) {
   assertIsTreelike(treelike, "length");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
   const keys = Array.from(await tree.keys());
   return keys.length;
 }

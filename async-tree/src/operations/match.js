@@ -1,4 +1,4 @@
-import { Tree } from "../internal.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Return a tree with the indicated keys (if provided).
@@ -45,7 +45,7 @@ export default function match(pattern, resultFn, keys = []) {
 
       if (
         typeof resultFn !== "function" &&
-        !(Tree.isAsyncTree(resultFn) && "parent" in resultFn)
+        !(isAsyncTree(resultFn) && "parent" in resultFn)
       ) {
         // Simple return value; return as is
         return resultFn;

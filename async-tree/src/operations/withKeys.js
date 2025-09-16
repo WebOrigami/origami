@@ -1,5 +1,6 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import values from "./values.js";
 
 /**
  * Return a tree whose keys are provided by the _values_ of a second tree (e.g.,
@@ -14,9 +15,9 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default function withKeys(treelike, keysTreelike) {
   assertIsTreelike(treelike, "withKeys");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
   assertIsTreelike(keysTreelike, "withKeys", 1);
-  const keysTree = Tree.from(keysTreelike);
+  const keysTree = from(keysTreelike);
 
   let keys;
 
@@ -26,7 +27,7 @@ export default function withKeys(treelike, keysTreelike) {
     },
 
     async keys() {
-      keys ??= await Tree.values(keysTree);
+      keys ??= await values(keysTree);
       return keys;
     },
   };

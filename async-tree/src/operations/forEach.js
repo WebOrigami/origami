@@ -1,13 +1,18 @@
+import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+
 /**
  * Calls callbackFn once for each key-value pair present in the specific node of
  * the tree.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {AsyncTree} tree
+ * @param {Treelike} treelike
  * @param {Function} callbackFn
  */
-export default async function forEach(tree, callbackFn) {
+export default async function forEach(treelike, callbackFn) {
+  assertIsTreelike(treelike, "forEach");
+  const tree = from(treelike);
   const keys = Array.from(await tree.keys());
   const promises = keys.map(async (key) => {
     const value = await tree.get(key);

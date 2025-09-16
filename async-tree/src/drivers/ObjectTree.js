@@ -1,4 +1,4 @@
-import { Tree } from "../internal.js";
+import isAsyncTree from "../operations/isAsyncTree.js";
 import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { getRealmObjectPrototype, setParent } from "../utilities.js";
@@ -72,7 +72,7 @@ export default class ObjectTree {
 
   /** @returns {boolean} */
   isSubtree(value) {
-    return Tree.isAsyncTree(value);
+    return isAsyncTree(value);
   }
 
   /**

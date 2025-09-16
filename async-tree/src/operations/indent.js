@@ -1,6 +1,6 @@
-import { Tree } from "../internal.js";
 import { toString } from "../utilities.js";
 import deepText from "./deepText.js";
+import isTreelike from "./isTreelike.js";
 
 const lastLineWhitespaceRegex = /\n(?<indent>[ \t]*)$/;
 
@@ -21,7 +21,7 @@ export default async function indent(strings, ...values) {
   }
   const { blockIndentations, strings: modifiedStrings } = modified;
   const valueTexts = await Promise.all(
-    values.map((value) => (Tree.isTreelike(value) ? deepText(value) : value))
+    values.map((value) => (isTreelike(value) ? deepText(value) : value))
   );
   return joinBlocks(modifiedStrings, valueTexts, blockIndentations);
 }

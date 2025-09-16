@@ -1,4 +1,7 @@
-import { Tree } from "./internal.js";
+import isAsyncTree from "./operations/isAsyncTree.js";
+import isTreelike from "./operations/isTreelike.js";
+import map from "./operations/map.js";
+import plain from "./operations/plain.js";
 import * as symbols from "./symbols.js";
 import * as trailingSlash from "./trailingSlash.js";
 
@@ -21,7 +24,7 @@ export function assertIsTreelike(object, operation, position = 0) {
   } else if (object instanceof Promise) {
     // A common mistake
     message = `${operation}: The tree argument was a Promise. Did you mean to use await?`;
-  } else if (!Tree.isTreelike) {
+  } else if (!isTreelike) {
     message = `${operation}: The tree argument wasn't a treelike object.`;
   }
   if (message) {
@@ -307,7 +310,7 @@ export async function pipeline(start, ...fns) {
  * @param {AsyncTree|null} parent
  */
 export function setParent(child, parent) {
-  if (Tree.isAsyncTree(child)) {
+  if (isAsyncTree(child)) {
     // Value is a subtree; set its parent to this tree.
     if (!child.parent) {
       child.parent = parent;
@@ -376,9 +379,9 @@ export function toFunction(obj) {
       const fn = await fnPromise;
       return fn.call(this, ...args);
     };
-  } else if (Tree.isTreelike(obj)) {
+  } else if (isTreelike(obj)) {
     // Return a function that invokes the tree's getter.
-    return Tree.toFunction(obj);
+    return toFunction(obj);
   } else {
     // Not a function
     return null;
@@ -424,9 +427,9 @@ export async function toPlainValue(input) {
 
   if (isPrimitive(input) || input instanceof Date) {
     return input;
-  } else if (Tree.isTreelike(input)) {
-    const mapped = await Tree.map(input, (value) => toPlainValue(value));
-    return Tree.plain(mapped);
+  } else if (isTreelike(input)) {
+    const mapped = await map(input, (value) => toPlainValue(value));
+    return plain(mapped);
   } else if (isStringLike(input)) {
     return toString(input);
   } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {

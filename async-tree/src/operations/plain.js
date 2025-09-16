@@ -1,4 +1,4 @@
-import { ObjectTree } from "../internal.js";
+import ObjectTree from "../drivers/ObjectTree.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { castArrayLike, toPlainValue } from "../utilities.js";
 import mapReduce from "./mapReduce.js";

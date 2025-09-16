@@ -1,6 +1,6 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return a new grouping of the treelike's values into chunks of the specified
@@ -14,7 +14,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function paginate(treelike, size = 10) {
   assertIsTreelike(treelike, "paginate");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
 
   const keys = Array.from(await tree.keys());
   const pageCount = Math.ceil(keys.length / size);

@@ -1,6 +1,8 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
+import isTreelike from "./isTreelike.js";
 
 /**
  * Given trees `a` and `b`, return a masked version of `a` where only the keys
@@ -17,8 +19,8 @@ import { assertIsTreelike } from "../utilities.js";
 export default function mask(a, b) {
   assertIsTreelike(a, "filter", 0);
   assertIsTreelike(b, "filter", 1);
-  a = Tree.from(a);
-  b = Tree.from(b, { deep: true });
+  a = from(a);
+  b = from(b, { deep: true });
 
   return {
     async get(key) {
@@ -28,7 +30,7 @@ export default function mask(a, b) {
         return undefined;
       }
       let aValue = await a.get(key);
-      if (Tree.isTreelike(aValue)) {
+      if (isTreelike(aValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
       } else {
@@ -44,7 +46,7 @@ export default function mask(a, b) {
       const aKeySlashes = aKeys.map((key, index) =>
         trailingSlash.toggle(
           key,
-          trailingSlash.has(key) || Tree.isAsyncTree(bValues[index])
+          trailingSlash.has(key) || isAsyncTree(bValues[index])
         )
       );
       // Remove keys that don't have values in b

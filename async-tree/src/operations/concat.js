@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import deepText from "./deepText.js";
+import from from "./from.js";
 
 /**
  * Concatenate the text content of objects or trees.
@@ -12,6 +12,6 @@ export default async function concat(...args) {
   console.warn(
     "Warning: the Tree.concat function is deprecated, use Tree.deepText instead."
   );
-  const tree = Tree.from(args);
+  const tree = from(args);
   return deepText(tree);
 }

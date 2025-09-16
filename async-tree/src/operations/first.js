@@ -1,5 +1,5 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
 
 /**
  * Return the first value in the tree.
@@ -10,7 +10,7 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function first(treelike) {
   assertIsTreelike(treelike, "first");
-  const tree = Tree.from(treelike);
+  const tree = from(treelike);
   for (const key of await tree.keys()) {
     // Just return first value immediately.
     const value = await tree.get(key);

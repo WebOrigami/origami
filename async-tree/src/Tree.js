@@ -2,6 +2,8 @@
  * Collection of functions for working with async trees
  */
 
+export { default as calendar } from "./drivers/calendarTree.js";
+export { default as constant } from "./drivers/constantTree.js";
 export { default as addNextPrevious } from "./operations/addNextPrevious.js";
 export { default as assign } from "./operations/assign.js";
 export { default as cache } from "./operations/cache.js";

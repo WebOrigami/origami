@@ -1,5 +1,6 @@
-import { Tree } from "../internal.js";
 import { assertIsTreelike } from "../utilities.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -13,10 +14,10 @@ import { assertIsTreelike } from "../utilities.js";
  */
 export default async function deepTake(treelike, count) {
   assertIsTreelike(treelike, "deepTake");
-  const tree = await Tree.from(treelike, { deep: true });
+  const tree = await from(treelike, { deep: true });
 
   const { values } = await traverse(tree, count);
-  return Tree.from(values, { deep: true });
+  return from(values, { deep: true });
 }
 
 async function traverse(tree, count) {
@@ -26,7 +27,7 @@ async function traverse(tree, count) {
       break;
     }
     let value = await tree.get(key);
-    if (Tree.isAsyncTree(value)) {
+    if (isAsyncTree(value)) {
       const traversed = await traverse(value, count);
       values.push(...traversed.values);
       count = traversed.count;

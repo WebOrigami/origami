@@ -1,4 +1,3 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
 import {
   assertIsTreelike,
@@ -8,6 +7,8 @@ import {
 } from "../utilities.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
 import parseExtensions from "./parseExtensions.js";
 
 /**
@@ -32,7 +33,7 @@ export default async function map(treelike, options = {}) {
   }
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
-  const tree = Tree.from(treelike, { deep: validated.deep });
+  const tree = from(treelike, { deep: validated.deep });
   return mapFn(tree);
 }
 
@@ -52,7 +53,7 @@ function createGet(tree, options, mapFn) {
         // Special case: deep tree and value is expected to be a subtree
         const sourceValue = await tree.get(resultKey);
         // If we did get a subtree, apply the map to it
-        const resultValue = Tree.isAsyncTree(sourceValue)
+        const resultValue = isAsyncTree(sourceValue)
           ? mapFn(sourceValue)
           : undefined;
         return resultValue;
@@ -78,7 +79,7 @@ function createGet(tree, options, mapFn) {
     if (needsSourceValue && sourceValue === undefined) {
       // No source value means no result value
       resultValue = undefined;
-    } else if (deep && Tree.isAsyncTree(sourceValue)) {
+    } else if (deep && isAsyncTree(sourceValue)) {
       // We weren't expecting a subtree but got one; map it
       resultValue = mapFn(sourceValue);
     } else if (valueFn) {

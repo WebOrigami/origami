@@ -1,4 +1,4 @@
-import { trailingSlash } from "../../main.js";
+import * as trailingSlash from "../trailingSlash.js";
 
 /**
  * A tree that returns a constant value for any key. If the key ends with a

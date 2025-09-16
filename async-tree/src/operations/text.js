@@ -1,6 +1,6 @@
-import { Tree } from "../internal.js";
 import { toString } from "../utilities.js";
 import deepText from "./deepText.js";
+import isTreelike from "./isTreelike.js";
 
 /**
  * A tagged template literal function that concatenate the deep text values in a
@@ -13,7 +13,7 @@ export default async function text(strings, ...values) {
   // Convert all the values to strings
   const valueTexts = await Promise.all(
     values.map((value) =>
-      Tree.isTreelike(value) ? deepText(value) : toString(value)
+      isTreelike(value) ? deepText(value) : toString(value)
     )
   );
   // Splice all the strings together

@@ -1,5 +1,7 @@
-import { Tree } from "../internal.js";
 import * as trailingSlash from "../trailingSlash.js";
+import from from "./from.js";
+import isAsyncTree from "./isAsyncTree.js";
+import isTreelike from "./isTreelike.js";
 
 /**
  * Return a tree that performs a deep merge of the given trees.
@@ -12,7 +14,7 @@ import * as trailingSlash from "../trailingSlash.js";
  */
 export default function deepMerge(...sources) {
   const filtered = sources.filter((source) => source);
-  let trees = filtered.map((treelike) => Tree.from(treelike, { deep: true }));
+  let trees = filtered.map((treelike) => from(treelike, { deep: true }));
 
   return {
     description: "deepMerge",
@@ -25,8 +27,8 @@ export default function deepMerge(...sources) {
         const tree = trees[index];
         const value = await tree.get(key);
         if (
-          Tree.isAsyncTree(value) ||
-          (Tree.isTreelike(value) && trailingSlash.has(key))
+          isAsyncTree(value) ||
+          (isTreelike(value) && trailingSlash.has(key))
         ) {
           subtrees.unshift(value);
         } else if (value !== undefined) {
