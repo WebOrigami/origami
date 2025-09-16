@@ -58,8 +58,6 @@ export default async function toPlainValue(input) {
       keys = keys.map(trailingSlash.remove);
       return castArraylike(keys, values);
     });
-  } else if (isStringlike(input)) {
-    return toString(input);
   } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {
     // Try to interpret the buffer as UTF-8 text, otherwise use base64.
     const text = toString(input);
@@ -68,6 +66,8 @@ export default async function toPlainValue(input) {
     } else {
       return toBase64(input);
     }
+  } else if (isStringlike(input)) {
+    return toString(input);
   } else {
     // Some other kind of class instance; return its public properties.
     const plain = {};
