@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
@@ -12,9 +11,8 @@ import isAsyncTree from "./isAsyncTree.js";
  *
  * @param {Treelike} treelike
  */
-export default function inners(treelike) {
-  assertIsTreelike(treelike, "inners");
-  const tree = from(treelike);
+export default async function inners(treelike) {
+  const tree = await getTreeArgument(treelike, "inners");
 
   return {
     async get(key) {

@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Return a new tree with the original's keys sorted. A comparison function can
@@ -15,9 +14,8 @@ import from from "./from.js";
  * @param {Treelike} treelike
  * @param {SortOptions|ValueKeyFn} [options]
  */
-export default function sort(treelike, options) {
-  assertIsTreelike(treelike, "sort");
-  const tree = from(treelike);
+export default async function sort(treelike, options) {
+  const tree = await getTreeArgument(treelike, "sort");
 
   let sortKey;
   let compare;

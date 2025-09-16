@@ -1,6 +1,6 @@
 import {
   Tree,
-  assertIsTreelike,
+  getTreeArgument,
   isPlainObject,
   isStringlike,
   toString,
@@ -15,12 +15,11 @@ import { getDescriptor } from "../common/utilities.js";
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @param {Treelike} [treelike]
+ * @param {Treelike} treelike
  * @param {PlainObject} [options]
  */
 export default async function dot(treelike, options = {}) {
-  assertIsTreelike(treelike, "treeDot");
-  const tree = Tree.from(treelike, { deep: true });
+  const tree = await getTreeArgument(treelike, "treeDot", { deep: true });
   const rootLabel = getDescriptor(tree) ?? "";
   const treeArcs = await statements(tree, "", rootLabel, options);
   return `digraph g {

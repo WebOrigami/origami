@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
@@ -14,8 +13,7 @@ import isAsyncTree from "./isAsyncTree.js";
  * @type {import("../../index.ts").TreeTransform}
  */
 export default async function regExpKeys(treelike) {
-  assertIsTreelike(treelike, "regExpKeys");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "regExpKeys");
 
   const map = new Map();
 

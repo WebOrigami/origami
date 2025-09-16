@@ -10,7 +10,7 @@ describe("sort", () => {
       file1: null,
       file9: null,
     });
-    const sorted = sort(tree);
+    const sorted = await sort(tree);
     assert.deepEqual(Array.from(await sorted.keys()), [
       "file1",
       "file10",
@@ -26,7 +26,7 @@ describe("sort", () => {
     });
     // Reverse order
     const compare = (a, b) => (a > b ? -1 : a < b ? 1 : 0);
-    const sorted = sort(tree, { compare });
+    const sorted = await sort(tree, { compare });
     assert.deepEqual(Array.from(await sorted.keys()), ["c", "b", "a"]);
   });
 

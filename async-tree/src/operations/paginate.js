@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Return a new grouping of the treelike's values into chunks of the specified
@@ -9,12 +8,11 @@ import from from "./from.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {Treelike} [treelike]
+ * @param {Treelike} treelike
  * @param {number} [size=10]
  */
 export default async function paginate(treelike, size = 10) {
-  assertIsTreelike(treelike, "paginate");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "paginate");
 
   const keys = Array.from(await tree.keys());
   const pageCount = Math.ceil(keys.length / size);

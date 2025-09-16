@@ -5,7 +5,7 @@ import mask from "../../src/operations/mask.js";
 
 describe("mask", () => {
   test("removes keys and values whose mask values are falsy", async () => {
-    const result = mask(
+    const result = await mask(
       {
         a: 1,
         b: 2,

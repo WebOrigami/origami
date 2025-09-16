@@ -13,7 +13,7 @@ describe("scope", () => {
       a: 3,
     });
     inner.parent = outer;
-    const innerScope = scope(inner);
+    const innerScope = await scope(inner);
     assert.deepEqual([...(await innerScope.keys())], ["a", "b"]);
     // Inner tree has precedence
     assert.equal(await innerScope.get("a"), 3);

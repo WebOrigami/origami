@@ -1,4 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import map from "./map.js";
 
 /**
@@ -13,7 +13,6 @@ import map from "./map.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function filter(treelike, options) {
-  assertIsTreelike(treelike, "map");
   let testFn;
   let deep;
   if (typeof options === "function") {
@@ -24,7 +23,8 @@ export default async function filter(treelike, options) {
     deep = options.deep ?? false;
   }
 
-  return map(treelike, {
+  const tree = await getTreeArgument(treelike, "filter", { deep });
+  return map(tree, {
     deep,
 
     // Assume source key is the same as result key

@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.
@@ -7,9 +6,8 @@ import from from "./from.js";
  * @param {import("../../index.ts").Treelike} treelike
  * @param {number} count
  */
-export default function take(treelike, count) {
-  assertIsTreelike(treelike, "take");
-  const tree = from(treelike);
+export default async function take(treelike, count) {
+  const tree = await getTreeArgument(treelike, "take");
 
   return {
     async keys() {

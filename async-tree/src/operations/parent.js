@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Returns the parent of the current tree.
@@ -9,7 +8,6 @@ import from from "./from.js";
  * @param {Treelike} treelike
  */
 export default async function parent(treelike) {
-  assertIsTreelike(treelike, "parent");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "parent");
   return tree.parent;
 }

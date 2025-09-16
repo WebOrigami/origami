@@ -1,11 +1,10 @@
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import isUnpackable from "../utilities/isUnpackable.js";
 import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
-import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 import parseExtensions from "./parseExtensions.js";
 
@@ -22,16 +21,13 @@ import parseExtensions from "./parseExtensions.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function map(treelike, options = {}) {
-  assertIsTreelike(treelike, "map");
-  if (isUnpackable(treelike)) {
-    treelike = await treelike.unpack();
-  }
   if (isUnpackable(options)) {
     options = await options.unpack();
   }
   const validated = validateOptions(options);
   const mapFn = createMapFn(validated);
-  const tree = from(treelike, { deep: validated.deep });
+
+  const tree = await getTreeArgument(treelike, "map", { deep: validated.deep });
   return mapFn(tree);
 }
 

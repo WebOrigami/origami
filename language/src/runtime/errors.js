@@ -39,7 +39,7 @@ export function attachWarning(value, message) {
 
 export async function builtinReferenceError(tree, builtins, key) {
   // See if the key is in scope (but not as a builtin)
-  const scope = Tree.scope(tree);
+  const scope = await Tree.scope(tree);
   const value = await scope.get(key);
   let message;
   if (value === undefined) {

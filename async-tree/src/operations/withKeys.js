@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import values from "./values.js";
 
 /**
@@ -11,13 +10,13 @@ import values from "./values.js";
  *
  * @param {Treelike} treelike
  * @param {Treelike} keysTreelike
- * @returns {AsyncTree}
+ * @returns {Promise<AsyncTree>}
  */
-export default function withKeys(treelike, keysTreelike) {
-  assertIsTreelike(treelike, "withKeys");
-  const tree = from(treelike);
-  assertIsTreelike(keysTreelike, "withKeys", 1);
-  const keysTree = from(keysTreelike);
+export default async function withKeys(treelike, keysTreelike) {
+  const tree = await getTreeArgument(treelike, "withKeys", { position: 0 });
+  const keysTree = await getTreeArgument(keysTreelike, "withKeys", {
+    position: 1,
+  });
 
   let keys;
 

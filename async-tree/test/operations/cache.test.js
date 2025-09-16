@@ -6,7 +6,7 @@ import cache from "../../src/operations/cache.js";
 describe("cache", () => {
   test("caches reads of values from one tree into another", async () => {
     const objectCache = new ObjectTree({});
-    const fixture = cache(
+    const fixture = await cache(
       new DeepObjectTree({
         a: 1,
         b: 2,

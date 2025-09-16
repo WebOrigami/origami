@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import isTreelike from "./isTreelike.js";
 
@@ -12,24 +11,25 @@ import isTreelike from "./isTreelike.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {Treelike} a
- * @param {Treelike} b
- * @returns {AsyncTree}
+ * @param {Treelike} aTreelike
+ * @param {Treelike} bTreelike
+ * @returns {Promise<AsyncTree>}
  */
-export default function mask(a, b) {
-  assertIsTreelike(a, "filter", 0);
-  assertIsTreelike(b, "filter", 1);
-  a = from(a);
-  b = from(b, { deep: true });
+export default async function mask(aTreelike, bTreelike) {
+  const aTree = await getTreeArgument(aTreelike, "filter", { position: 0 });
+  const bTree = await getTreeArgument(bTreelike, "filter", {
+    deep: true,
+    position: 1,
+  });
 
   return {
     async get(key) {
       // The key must exist in b and return a truthy value
-      const bValue = await b.get(key);
+      const bValue = await bTree.get(key);
       if (!bValue) {
         return undefined;
       }
-      let aValue = await a.get(key);
+      let aValue = await aTree.get(key);
       if (isTreelike(aValue)) {
         // Filter the subtree
         return mask(aValue, bValue);
@@ -40,8 +40,8 @@ export default function mask(a, b) {
 
     async keys() {
       // Use a's keys as the basis
-      const aKeys = [...(await a.keys())];
-      const bValues = await Promise.all(aKeys.map((key) => b.get(key)));
+      const aKeys = [...(await aTree.keys())];
+      const bValues = await Promise.all(aKeys.map((key) => bTree.get(key)));
       // An async tree value in b implies that the a key should have a slash
       const aKeySlashes = aKeys.map((key, index) =>
         trailingSlash.toggle(

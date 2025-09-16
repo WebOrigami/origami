@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import isTreelike from "./isTreelike.js";
 
@@ -17,8 +16,9 @@ export default async function* deepValuesIterator(
   treelike,
   options = { expand: false }
 ) {
-  assertIsTreelike(treelike, "deepValuesIterator");
-  const tree = from(treelike, { deep: true });
+  const tree = await getTreeArgument(treelike, "deepValuesIterator", {
+    deep: true,
+  });
 
   for (const key of await tree.keys()) {
     let value = await tree.get(key);

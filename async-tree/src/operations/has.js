@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Returns a boolean indicating whether the specific node of the tree has a
@@ -11,8 +10,7 @@ import from from "./from.js";
  * @param {any} key
  */
 export default async function has(treelike, key) {
-  assertIsTreelike(treelike, "has");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "has");
   const value = await tree.get(key);
   return value !== undefined;
 }

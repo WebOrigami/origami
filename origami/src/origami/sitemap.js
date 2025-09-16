@@ -1,4 +1,4 @@
-import { assertIsTreelike, Tree } from "@weborigami/async-tree";
+import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import { oriHandler } from "../handlers/handlers.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
@@ -19,8 +19,7 @@ const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
  * @returns {Promise<string>}
  */
 export default async function sitemap(treelike, options = {}) {
-  assertIsTreelike(treelike, "sitemap");
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(treelike, "sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
   function test(key) {

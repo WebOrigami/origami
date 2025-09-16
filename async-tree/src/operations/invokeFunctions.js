@@ -1,7 +1,7 @@
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 
-export default function invokeFunctions(treelike) {
+export default async function invokeFunctions(treelike) {
   const tree = from(treelike);
   return {
     async get(key) {

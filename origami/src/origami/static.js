@@ -1,4 +1,4 @@
-import { Tree, assertIsTreelike, jsonKeys } from "@weborigami/async-tree";
+import { Tree, getTreeArgument, jsonKeys } from "@weborigami/async-tree";
 import index from "./indexPage.js";
 
 /**
@@ -11,8 +11,7 @@ import index from "./indexPage.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function staticBuiltin(treelike) {
-  assertIsTreelike(treelike, "static");
-  const tree = Tree.from(treelike);
+  const tree = getTreeArgument(treelike, "static");
   return staticTree(tree);
 }
 

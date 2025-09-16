@@ -1,7 +1,7 @@
 import {
   DeepObjectTree,
   Tree,
-  assertIsTreelike,
+  getTreeArgument,
   keysFromPath,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
@@ -24,8 +24,7 @@ import { addValueToObject, getBaseUrl } from "./utilities.js";
  * @returns {Promise<AsyncTree>}
  */
 export default async function crawlBuiltin(treelike, baseHref) {
-  assertIsTreelike(treelike, "crawl");
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(treelike, "crawl");
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   const cache = {};

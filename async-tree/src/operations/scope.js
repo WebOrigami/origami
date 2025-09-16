@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
@@ -9,11 +8,10 @@ import from from "./from.js";
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
- * @returns {AsyncTree & {trees: AsyncTree[]}}
+ * @returns {Promise<AsyncTree & {trees: AsyncTree[]}>}
  */
-export default function scope(treelike) {
-  assertIsTreelike(treelike, "scope");
-  const tree = from(treelike);
+export default async function scope(treelike) {
+  const tree = await getTreeArgument(treelike, "scope");
 
   return {
     // Starting with this tree, search up the parent hierarchy.

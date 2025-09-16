@@ -1,4 +1,5 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
+import isPlainObject from "../utilities/isPlainObject.js";
 import map from "./map.js";
 
 /**
@@ -11,10 +12,16 @@ import map from "./map.js";
  *
  * @param {Treelike} treelike
  * @param {string} extension
- * @param {ValueKeyFn|TreeMapExtensionOptions?} operation
+ * @param {ValueKeyFn|TreeMapExtensionOptions} options
  * @returns {Promise<AsyncTree>}
  */
-export default async function mapExtension(treelike, extension, operation) {
-  assertIsTreelike(treelike, "mapExtension");
-  return map(treelike, { ...operation, extension });
+export default async function mapExtension(treelike, extension, options) {
+  const tree = await getTreeArgument(treelike, "mapExtension");
+  const withExtension = isPlainObject(options)
+    ? // Dictionary
+      { ...options, extension }
+    : // Function
+      { extension, value: options };
+
+  return map(tree, withExtension);
 }

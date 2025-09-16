@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Return the top-level keys in the tree as an array.
@@ -9,8 +8,7 @@ import from from "./from.js";
  * @param {Treelike} treelike
  */
 export default async function keys(treelike) {
-  assertIsTreelike(treelike, "keys");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "keys");
   const keys = await tree.keys();
   return Array.from(keys);
 }

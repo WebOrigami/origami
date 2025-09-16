@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Return the number of keys in the tree.
@@ -7,11 +6,10 @@ import from from "./from.js";
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {Treelike} [treelike]
+ * @param {Treelike} treelike
  */
 export default async function length(treelike) {
-  assertIsTreelike(treelike, "length");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "length");
   const keys = Array.from(await tree.keys());
   return keys.length;
 }

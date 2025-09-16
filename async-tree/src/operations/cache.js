@@ -1,5 +1,5 @@
 import ObjectTree from "../drivers/ObjectTree.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -16,17 +16,20 @@ import isAsyncTree from "./isAsyncTree.js";
  *
  * @param {Treelike} sourceTreelike
  * @param {AsyncMutableTree} [cacheTreelike]
- * @returns {AsyncTree & { description: string }}
+ * @returns {Promise}
  */
-export default function treeCache(sourceTreelike, cacheTreelike) {
-  assertIsTreelike(sourceTreelike, "cache");
-  const source = from(sourceTreelike);
+export default async function treeCache(sourceTreelike, cacheTreelike) {
+  const source = await getTreeArgument(sourceTreelike, "cache", {
+    position: 0,
+  });
 
   /** @type {AsyncMutableTree} */
   let cache;
   if (cacheTreelike) {
+    cache = /** @type {any} */ (
+      await getTreeArgument(cacheTreelike, "cache", { position: 1 })
+    );
     // @ts-ignore
-    cache = from(cacheTreelike);
     if (!isAsyncMutableTree(cache)) {
       throw new Error("Cache tree must define a set() method.");
     }

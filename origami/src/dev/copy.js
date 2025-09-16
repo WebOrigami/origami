@@ -1,4 +1,4 @@
-import { assertIsTreelike, Tree } from "@weborigami/async-tree";
+import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import { formatError } from "@weborigami/language";
 import process, { stdout } from "node:process";
 import { transformObject } from "../common/utilities.js";
@@ -11,11 +11,8 @@ import { transformObject } from "../common/utilities.js";
  * @param {Treelike} target
  */
 export default async function copy(source, target) {
-  assertIsTreelike(source, "copy");
-  assertIsTreelike(target, "copy");
-
-  const sourceTree = Tree.from(source);
-  let targetTree = Tree.from(target);
+  const sourceTree = await getTreeArgument(source, "copy", { position: 0 });
+  let targetTree = await getTreeArgument(target, "copy", { position: 1 });
 
   if (stdout.isTTY) {
     targetTree = transformObject(ProgressTransform, targetTree);

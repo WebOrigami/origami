@@ -1,4 +1,4 @@
-import { assertIsTreelike, trailingSlash, Tree } from "@weborigami/async-tree";
+import { getTreeArgument, trailingSlash, Tree } from "@weborigami/async-tree";
 
 /**
  * Given an old tree and a new tree, return a tree of changes indicated
@@ -10,10 +10,14 @@ import { assertIsTreelike, trailingSlash, Tree } from "@weborigami/async-tree";
  * @param {Treelike} newTreelike
  */
 export default async function changes(oldTreelike, newTreelike) {
-  assertIsTreelike(oldTreelike, "changes");
-  assertIsTreelike(newTreelike, "changes");
-  const oldTree = Tree.from(oldTreelike, { deep: true });
-  const newTree = Tree.from(newTreelike, { deep: true });
+  const oldTree = await getTreeArgument(oldTreelike, "changes", {
+    deep: true,
+    position: 0,
+  });
+  const newTree = await getTreeArgument(newTreelike, "changes", {
+    deep: true,
+    position: 1,
+  });
 
   const oldKeys = Array.from(await oldTree.keys());
   const newKeys = Array.from(await newTree.keys());

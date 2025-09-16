@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
@@ -8,11 +7,10 @@ import from from "./from.js";
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
- * @returns {AsyncTree}
+ * @returns {Promise<AsyncTree>}
  */
-export default function reverse(treelike) {
-  assertIsTreelike(treelike, "reverse");
-  const tree = from(treelike);
+export default async function reverse(treelike) {
+  const tree = await getTreeArgument(treelike, "reverse");
 
   return {
     async get(key) {

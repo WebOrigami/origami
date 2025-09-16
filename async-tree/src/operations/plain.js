@@ -1,4 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import toPlainValue from "../utilities/toPlainValue.js";
 
 /**
@@ -29,6 +29,6 @@ export default async function plain(treelike) {
   if (treelike instanceof Function) {
     throw new TypeError("plain: can't convert a function to a plain object");
   }
-  assertIsTreelike(treelike, "plain");
-  return toPlainValue(treelike);
+  const tree = await getTreeArgument(treelike, "plain");
+  return toPlainValue(tree);
 }

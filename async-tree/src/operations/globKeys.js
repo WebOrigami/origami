@@ -1,16 +1,14 @@
 import ObjectTree from "../drivers/ObjectTree.js";
 import * as trailingSlash from "../trailingSlash.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import merge from "./merge.js";
 
 const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
-export default function globKeys(treelike) {
-  assertIsTreelike(treelike, "globKeys");
-  const globs = from(treelike, { deep: true });
+export default async function globKeys(treelike) {
+  const globs = await getTreeArgument(treelike, "globKeys", { deep: true });
   return {
     async get(key) {
       if (typeof key !== "string") {

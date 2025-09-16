@@ -5,7 +5,7 @@ import globKeys from "../../src/operations/globKeys.js";
 
 describe("globKeys", () => {
   test("matches globs", async () => {
-    const globTree = globKeys({
+    const globTree = await globKeys({
       "*.txt": true,
       "*.js": false,
       "*.jsx": true,
@@ -20,7 +20,7 @@ describe("globKeys", () => {
   });
 
   test("matches nested globs", async () => {
-    const globTree = globKeys({
+    const globTree = await globKeys({
       sub: {
         foo: "bar",
         "*": "default",
@@ -31,7 +31,7 @@ describe("globKeys", () => {
   });
 
   test("supports deep matches with globstar", async () => {
-    const globTree = globKeys({
+    const globTree = await globKeys({
       "**": {
         "*.txt": true, // More specific glob pattern must come
         "*": false,

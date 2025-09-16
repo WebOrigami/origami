@@ -1,5 +1,5 @@
 import ObjectTree from "../drivers/ObjectTree.js";
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isTreelike from "./isTreelike.js";
 import values from "./values.js";
@@ -12,8 +12,7 @@ import values from "./values.js";
  * @param {import("../../index.ts").ValueKeyFn} groupKeyFn
  */
 export default async function group(treelike, groupKeyFn) {
-  assertIsTreelike(treelike, "group");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "group");
 
   const keys = Array.from(await tree.keys());
 

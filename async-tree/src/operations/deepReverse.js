@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
@@ -9,12 +8,11 @@ import isAsyncTree from "./isAsyncTree.js";
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
- * @returns {AsyncTree}
+ * @returns {Promise<AsyncTree>}
  */
-export default function deepReverse(treelike) {
-  assertIsTreelike(treelike, "deepReverse");
+export default async function deepReverse(treelike) {
+  const tree = await getTreeArgument(treelike, "deepReverse", { deep: true });
 
-  const tree = from(treelike, { deep: true });
   return {
     async get(key) {
       let value = await tree.get(key);

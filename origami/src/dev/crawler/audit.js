@@ -1,5 +1,5 @@
 import {
-  assertIsTreelike,
+  getTreeArgument,
   pathFromKeys,
   symbols,
   Tree,
@@ -18,8 +18,7 @@ import { getBaseUrl } from "./utilities.js";
  * @param {string} [baseHref]
  */
 export default async function audit(treelike, baseHref) {
-  assertIsTreelike(treelike, "audit");
-  const tree = Tree.from(treelike);
+  const tree = await getTreeArgument(treelike, "audit");
   const baseUrl = getBaseUrl(baseHref, treelike);
 
   let errors = {};

@@ -18,7 +18,7 @@ describe("inners", () => {
         h: 5,
       },
     });
-    const result = inners(obj);
+    const result = await inners(obj);
     const plain = await Tree.plain(result);
     assert.deepEqual(plain, {
       b: {

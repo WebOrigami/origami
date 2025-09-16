@@ -5,7 +5,7 @@ import invokeFunctions from "../../src/operations/invokeFunctions.js";
 
 describe("invokeFunctions", () => {
   test("invokes function values, leaves other values as is", async () => {
-    const fixture = invokeFunctions({
+    const fixture = await invokeFunctions({
       a: 1,
       b: () => 2,
     });

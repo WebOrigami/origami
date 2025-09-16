@@ -29,7 +29,7 @@ export default async function explore(...keys) {
     if (!debugTree) {
       return undefined;
     }
-    const debugScope = Tree.scope(debugTree);
+    const debugScope = await Tree.scope(debugTree);
     // HACK: reproduce logic of ExplorableSiteTransform that turns a trailing
     // slash into index.html. Calling `debug` applies that transform and the
     // transform should handle that logic, but unfortunately the `traverse`
@@ -41,7 +41,8 @@ export default async function explore(...keys) {
     result = await Tree.traverse(debugScope, ...keys);
   } else {
     // Return the Explore page for the current scope.
-    const data = await getScopeData(Tree.scope(tree));
+    const scope = await Tree.scope(tree);
+    const data = await getScopeData(scope);
     templatePromise ??= loadTemplate();
     const template = await templatePromise;
     const text = await template.call(this, data);

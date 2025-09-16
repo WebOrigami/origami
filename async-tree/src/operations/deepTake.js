@@ -1,4 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 
@@ -13,9 +13,7 @@ import isAsyncTree from "./isAsyncTree.js";
  * @param {number} count
  */
 export default async function deepTake(treelike, count) {
-  assertIsTreelike(treelike, "deepTake");
-  const tree = await from(treelike, { deep: true });
-
+  const tree = await getTreeArgument(treelike, "deepTake", { deep: true });
   const { values } = await traverse(tree, count);
   return from(values, { deep: true });
 }

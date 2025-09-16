@@ -1,5 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
-import from from "./from.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import mapReduce from "./mapReduce.js";
 
 /**
@@ -14,8 +13,7 @@ export default async function defineds(treelike) {
   console.warn(
     "Warning: Tree.defineds is deprecated. If you have a use for it, please let us know."
   );
-  assertIsTreelike(treelike, "defineds");
-  const tree = from(treelike, { deep: true });
+  const tree = await getTreeArgument(treelike, "defineds", { deep: true });
 
   const result = await mapReduce(tree, null, async (values, keys) => {
     const object = {};

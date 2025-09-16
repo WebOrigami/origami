@@ -1,4 +1,4 @@
-import { assertIsTreelike, constant, Tree } from "@weborigami/async-tree";
+import { constant, getTreeArgument, Tree } from "@weborigami/async-tree";
 import { formatError, moduleCache } from "@weborigami/language";
 
 /**
@@ -13,9 +13,7 @@ import { formatError, moduleCache } from "@weborigami/language";
  * @returns {Promise<AsyncTree>}
  */
 export default async function watch(treelike, fn) {
-  assertIsTreelike(treelike, "watch");
-
-  const container = Tree.from(treelike);
+  const container = await getTreeArgument(treelike, "watch");
 
   // Watch the indicated tree.
   await /** @type {any} */ (container).watch?.();

@@ -1,4 +1,4 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import toString from "../utilities/toString.js";
 import deepValuesIterator from "./deepValuesIterator.js";
 
@@ -8,10 +8,9 @@ import deepValuesIterator from "./deepValuesIterator.js";
  * @param {import("../../index.ts").Treelike} treelike
  */
 export default async function deepText(treelike) {
-  assertIsTreelike(treelike, "text");
-
+  const tree = await getTreeArgument(treelike, "deepText", { deep: true });
   const strings = [];
-  for await (const value of deepValuesIterator(treelike, { expand: true })) {
+  for await (const value of deepValuesIterator(tree, { expand: true })) {
     let string;
     if (value === null) {
       string = "null";

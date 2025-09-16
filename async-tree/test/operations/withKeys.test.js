@@ -5,7 +5,7 @@ import withKeys from "../../src/operations/withKeys.js";
 
 describe("withKeys", () => {
   test("applies the indicated keys", async () => {
-    const result = withKeys(
+    const result = await withKeys(
       {
         a: 1,
         b: 2,

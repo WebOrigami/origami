@@ -1,4 +1,4 @@
-import { assertIsTreelike, Tree } from "@weborigami/async-tree";
+import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import jsonFeedToRss from "@weborigami/json-feed-to-rss";
 
 /**
@@ -9,7 +9,7 @@ import jsonFeedToRss from "@weborigami/json-feed-to-rss";
  * @param {any} options
  */
 export default async function rss(jsonFeed, options = {}) {
-  assertIsTreelike(jsonFeed, "rss");
-  const jsonFeedPlain = await Tree.plain(jsonFeed);
+  const tree = await getTreeArgument(jsonFeed, "rss");
+  const jsonFeedPlain = await Tree.plain(tree);
   return jsonFeedToRss(jsonFeedPlain, options);
 }

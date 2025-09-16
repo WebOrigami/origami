@@ -1,6 +1,5 @@
-import assertIsTreelike from "../utilities/assertIsTreelike.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import entries from "./entries.js";
-import from from "./from.js";
 import isTreelike from "./isTreelike.js";
 import plain from "./plain.js";
 
@@ -14,8 +13,7 @@ import plain from "./plain.js";
  * @returns {Promise<PlainObject|Array>}
  */
 export default async function addNextPrevious(treelike) {
-  assertIsTreelike(treelike, "addNextPrevious");
-  const tree = from(treelike);
+  const tree = await getTreeArgument(treelike, "addNextPrevious");
 
   const treeEntries = [...(await entries(tree))];
   const keys = treeEntries.map(([key]) => key);
