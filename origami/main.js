@@ -27,6 +27,3 @@ export {
   watch,
   yaml,
 } from "./src/dev/dev.js";
-
-// TODO: Remove once these async-tree owns sole copy of all tree builtins
-export * from "./src/tree/tree.js";

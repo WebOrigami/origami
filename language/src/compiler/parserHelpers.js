@@ -170,7 +170,7 @@ export function makeCall(target, args, location) {
 
   let fnCall;
   const op = args[0];
-  if (op === markers.traverse || op === ops.optionalTraverse) {
+  if (op === markers.traverse /* || op === ops.optionalTraverse */) {
     // Traverse
     const keys = args.slice(1);
     fnCall = [target, ...keys];

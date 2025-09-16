@@ -1,7 +1,6 @@
 import { Tree } from "@weborigami/async-tree";
 export const clear = Tree.clear;
-
-export { keys as keys } from "@weborigami/async-tree";
+export const keys = Tree.keys;
 
 export { default as indexPage } from "../origami/indexPage.js";
 export { default as yaml } from "../origami/yaml.js";

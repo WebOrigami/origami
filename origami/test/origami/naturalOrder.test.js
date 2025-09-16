@@ -1,4 +1,4 @@
-import { sort } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import naturalOrder from "../../src/origami/naturalOrder.js";
@@ -10,7 +10,7 @@ describe("naturalOrder", () => {
       10: "ten",
       2: "two",
     };
-    const sorted = await sort.call(null, tree, naturalOrder);
+    const sorted = await Tree.sort.call(null, tree, naturalOrder);
     const keys = await sorted.keys();
     assert.deepEqual(keys, ["1", "2", "10"]);
   });

@@ -1,4 +1,4 @@
-import { Tree, keysFromPath, scope } from "@weborigami/async-tree";
+import { Tree, keysFromPath } from "@weborigami/async-tree";
 import project from "../origami/project.js";
 
 /**
@@ -31,7 +31,7 @@ async function getPackage(parent, organization, name, keys) {
   }
   packagePath.push(name);
 
-  const parentScope = scope(parent);
+  const parentScope = Tree.scope(parent);
   const packageRoot = await Tree.traverse(
     // @ts-ignore
     parentScope,

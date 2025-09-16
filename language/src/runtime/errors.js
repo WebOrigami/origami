@@ -2,9 +2,9 @@
 
 import {
   box,
-  scope as scopeFn,
   trailingSlash,
   TraverseError,
+  Tree,
 } from "@weborigami/async-tree";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,7 +39,7 @@ export function attachWarning(value, message) {
 
 export async function builtinReferenceError(tree, builtins, key) {
   // See if the key is in scope (but not as a builtin)
-  const scope = scopeFn(tree);
+  const scope = Tree.scope(tree);
   const value = await scope.get(key);
   let message;
   if (value === undefined) {

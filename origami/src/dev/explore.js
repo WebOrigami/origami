@@ -1,5 +1,5 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree, scope } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,7 +29,7 @@ export default async function explore(...keys) {
     if (!debugTree) {
       return undefined;
     }
-    const debugScope = scope(debugTree);
+    const debugScope = Tree.scope(debugTree);
     // HACK: reproduce logic of ExplorableSiteTransform that turns a trailing
     // slash into index.html. Calling `debug` applies that transform and the
     // transform should handle that logic, but unfortunately the `traverse`
@@ -41,7 +41,7 @@ export default async function explore(...keys) {
     result = await Tree.traverse(debugScope, ...keys);
   } else {
     // Return the Explore page for the current scope.
-    const data = await getScopeData(scope(tree));
+    const data = await getScopeData(Tree.scope(tree));
     templatePromise ??= loadTemplate();
     const template = await templatePromise;
     const text = await template.call(this, data);

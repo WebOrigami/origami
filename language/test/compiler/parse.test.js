@@ -1125,12 +1125,12 @@ Body`,
     assertParse("objectPublicKey", `"foo bar"`, "foo bar", "shell", false);
   });
 
-  test.skip("optionalChaining", () => {
-    assertParse("optionalChaining", "?.key", [
-      ops.optionalTraverse,
-      [ops.literal, "key"],
-    ]);
-  });
+  // test.skip("optionalChaining", () => {
+  //   assertParse("optionalChaining", "?.key", [
+  //     ops.optionalTraverse,
+  //     [ops.literal, "key"],
+  //   ]);
+  // });
 
   test("parenthesesArguments", () => {
     assertParse("parenthesesArguments", "()", [undefined]);

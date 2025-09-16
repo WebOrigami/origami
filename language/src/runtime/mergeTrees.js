@@ -1,7 +1,6 @@
 import {
   isPlainObject,
   isUnpackable,
-  merge,
   setParent,
   Tree,
 } from "@weborigami/async-tree";
@@ -54,7 +53,7 @@ export default async function mergeTrees(...trees) {
   }
 
   // Merge the trees.
-  const result = merge(...unpacked);
+  const result = Tree.merge(...unpacked);
   setParent(result, this);
   return result;
 }

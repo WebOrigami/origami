@@ -2,7 +2,6 @@ import {
   DeepObjectTree,
   Tree,
   assertIsTreelike,
-  deepMerge,
   keysFromPath,
 } from "@weborigami/async-tree";
 import { InvokeFunctionsTransform } from "@weborigami/language";
@@ -55,7 +54,7 @@ export default async function crawlBuiltin(treelike, baseHref) {
   // Merge the cache on top of the resources tree. If we have an actual value
   // for something already, that's better than a function that will get that
   // value.
-  const result = deepMerge(
+  const result = Tree.deepMerge(
     new DeepObjectTree(cache),
     new (InvokeFunctionsTransform(DeepObjectTree))(resources)
   );

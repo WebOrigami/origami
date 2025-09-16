@@ -1,4 +1,4 @@
-import { ObjectTree, Tree, map } from "@weborigami/async-tree";
+import { ObjectTree, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/origami/mdHtml.js";
@@ -28,7 +28,7 @@ describe("mdHtml", () => {
       "Alice.md": "Hello, **Alice**!",
       "Bob.md": "Hello, **Bob**!",
     });
-    const htmlFiles = await map(markdownFiles, mdHtml);
+    const htmlFiles = await Tree.map(markdownFiles, mdHtml);
     assert.deepEqual(await Tree.plain(htmlFiles), {
       "Alice.html": "<p>Hello, <strong>Alice</strong>!</p>\n",
       "Bob.html": "<p>Hello, <strong>Bob</strong>!</p>\n",

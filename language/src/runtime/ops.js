@@ -5,15 +5,7 @@
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import {
-  deepText,
-  indent,
-  isUnpackable,
-  ObjectTree,
-  scope as scopeFn,
-  text,
-  Tree,
-} from "@weborigami/async-tree";
+import { isUnpackable, ObjectTree, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import getHandlers from "./getHandlers.js";
@@ -119,7 +111,7 @@ comma.unevaluatedArgs = true;
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return deepText.call(this, args);
+  return Tree.deepText.call(this, args);
 }
 addOpLabel(concat, "«ops.concat»");
 
@@ -413,13 +405,13 @@ export async function object(...entries) {
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
 
-export function optionalTraverse(treelike, key) {
-  if (!treelike) {
-    return undefined;
-  }
-  return Tree.traverseOrThrow(treelike, key);
-}
-addOpLabel(optionalTraverse, "«ops.optionalTraverse");
+// export function optionalTraverse(treelike, key) {
+//   if (!treelike) {
+//     return undefined;
+//   }
+//   return Tree.traverseOrThrow(treelike, key);
+// }
+// addOpLabel(optionalTraverse, "«ops.optionalTraverse");
 
 /**
  * Return the indicated property
@@ -491,7 +483,7 @@ export async function scope(context) {
   if (!context) {
     return null;
   }
-  return scopeFn(context);
+  return Tree.scope(context);
 }
 addOpLabel(scope, "«ops.scope»");
 
@@ -535,7 +527,7 @@ addOpLabel(subtraction, "«ops.subtraction»");
  * Apply the tree indent tagged template function.
  */
 export async function templateIndent(strings, ...values) {
-  return indent(strings, ...values);
+  return Tree.indent(strings, ...values);
 }
 addOpLabel(templateIndent, "«ops.templateIndent»");
 
@@ -543,7 +535,7 @@ addOpLabel(templateIndent, "«ops.templateIndent»");
  * Apply the tree tagged template function.
  */
 export async function templateText(strings, ...values) {
-  return text(strings, ...values);
+  return Tree.text(strings, ...values);
 }
 addOpLabel(templateText, "«ops.templateText»");
 

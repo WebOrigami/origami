@@ -1,4 +1,4 @@
-import { deepText, indent, json, text } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import { jsGlobals } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
@@ -12,20 +12,11 @@ import httpstree from "./protocols/httpstree.js";
 import httptree from "./protocols/httptree.js";
 import node from "./protocols/node.js";
 import packageNamespace from "./protocols/package.js";
-import * as tree from "./tree/tree.js";
 
 let builtins;
 
 export default function builtinsProgram() {
   if (!builtins) {
-    const Tree = {
-      ...tree,
-      deepText,
-      indent,
-      json,
-      text,
-    };
-
     const Protocol = {
       explore,
       files,
