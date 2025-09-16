@@ -1,6 +1,8 @@
+import ObjectTree from "../drivers/ObjectTree.js";
 import isTreelike from "../operations/isTreelike.js";
-import map from "../operations/map.js";
-import plain from "../operations/plain.js";
+import mapReduce from "../operations/mapReduce.js";
+import * as trailingSlash from "../trailingSlash.js";
+import castArraylike from "./castArraylike.js";
 import isPrimitive from "./isPrimitive.js";
 import isStringlike from "./isStringlike.js";
 import toString from "./toString.js";
@@ -46,8 +48,16 @@ export default async function toPlainValue(input) {
   if (isPrimitive(input) || input instanceof Date) {
     return input;
   } else if (isTreelike(input)) {
-    const mapped = await map(input, (value) => toPlainValue(value));
-    return plain(mapped);
+    // Recursively convert tree to plain object.
+    return mapReduce(input, toPlainValue, (values, keys, tree) => {
+      // Special case for an empty tree: if based on array, return array.
+      if (tree instanceof ObjectTree && keys.length === 0) {
+        return /** @type {any} */ (tree).object instanceof Array ? [] : {};
+      }
+      // Normalize slashes in keys.
+      keys = keys.map(trailingSlash.remove);
+      return castArraylike(keys, values);
+    });
   } else if (isStringlike(input)) {
     return toString(input);
   } else if (input instanceof ArrayBuffer || input instanceof TypedArray) {

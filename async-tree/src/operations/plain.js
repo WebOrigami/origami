@@ -1,8 +1,5 @@
-import ObjectTree from "../drivers/ObjectTree.js";
-import * as trailingSlash from "../trailingSlash.js";
-import castArraylike from "../utilities/castArraylike.js";
+import assertIsTreelike from "../utilities/assertIsTreelike.js";
 import toPlainValue from "../utilities/toPlainValue.js";
-import mapReduce from "./mapReduce.js";
 
 /**
  * Converts an asynchronous tree into a synchronous plain JavaScript object.
@@ -29,13 +26,9 @@ import mapReduce from "./mapReduce.js";
  * @param {Treelike} treelike
  */
 export default async function plain(treelike) {
-  return mapReduce(treelike, toPlainValue, (values, keys, tree) => {
-    // Special case for an empty tree: if based on array, return array.
-    if (tree instanceof ObjectTree && keys.length === 0) {
-      return /** @type {any} */ (tree).object instanceof Array ? [] : {};
-    }
-    // Normalize slashes in keys.
-    keys = keys.map(trailingSlash.remove);
-    return castArraylike(keys, values);
-  });
+  if (treelike instanceof Function) {
+    throw new TypeError("plain: can't convert a function to a plain object");
+  }
+  assertIsTreelike(treelike, "plain");
+  return toPlainValue(treelike);
 }
