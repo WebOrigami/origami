@@ -1,3 +1,4 @@
+import from from "../operations/from.js";
 import isTreelike from "../operations/isTreelike.js";
 import isUnpackable from "./isUnpackable.js";
 
@@ -31,7 +32,8 @@ export default function toFunction(obj) {
     };
   } else if (isTreelike(obj)) {
     // Return a function that invokes the tree's getter.
-    return toFunction(obj);
+    const tree = from(obj);
+    return tree.get.bind(tree);
   } else {
     // Not a function
     return null;
