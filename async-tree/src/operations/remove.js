@@ -1,10 +1,7 @@
-import has from "./has.js";
+import { default as del } from "./delete.js";
 
 /**
  * Removes the value for the given key from the specific node of the tree.
- *
- * Note: The corresponding `Map` method is `delete`, not `remove`. However,
- * `delete` is a reserved word in JavaScript, so this uses `remove` instead.
  *
  * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  *
@@ -12,11 +9,6 @@ import has from "./has.js";
  * @param {any} key
  */
 export default async function remove(tree, key) {
-  const exists = await has(tree, key);
-  if (exists) {
-    await tree.set(key, undefined);
-    return true;
-  } else {
-    return false;
-  }
+  console.warn("`Tree.remove` is deprecated. Use `Tree.delete` instead.");
+  return del(tree, key);
 }

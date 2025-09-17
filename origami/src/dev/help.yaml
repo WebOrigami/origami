@@ -202,6 +202,9 @@ Tree:
     deepValues:
       args: (tree)
       description: The in-order leaf values of the tree
+    delete:
+      args: (tree, key)
+      description: Delete the value for the key from tree
     entries:
       args: (tree)
       description: The tree's [key, value] pairs
@@ -283,9 +286,6 @@ Tree:
     regExpKeys:
       args: (tree)
       description: A tree whose keys are regular expression strings
-    remove:
-      args: (tree, key)
-      description: Remove the value for the key from tree
     reverse:
       args: (tree)
       description: Reverse the order of the tree's keys
