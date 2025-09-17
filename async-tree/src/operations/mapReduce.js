@@ -16,10 +16,10 @@ import isAsyncTree from "./isAsyncTree.js";
  * @typedef {import("../../index.ts").ValueKeyFn} ValueKeyFn
  *
  * @param {Treelike} treelike
- * @param {ValueKeyFn|null} valueFn
+ * @param {ValueKeyFn|null} mapFn
  * @param {ReduceFn} reduceFn
  */
-export default async function mapReduce(treelike, valueFn, reduceFn) {
+export default async function mapReduce(treelike, mapFn, reduceFn) {
   const tree = from(treelike);
 
   // We're going to fire off all the get requests in parallel, as quickly as
@@ -29,9 +29,9 @@ export default async function mapReduce(treelike, valueFn, reduceFn) {
   const promises = keys.map(async (key) => {
     const value = await tree.get(key);
     return isAsyncTree(value)
-      ? mapReduce(value, valueFn, reduceFn) // subtree; recurse
-      : valueFn
-      ? valueFn(value, key, tree)
+      ? mapReduce(value, mapFn, reduceFn) // subtree; recurse
+      : mapFn
+      ? mapFn(value, key, tree)
       : value;
   });
 

@@ -175,12 +175,12 @@ Tree:
     cache:
       args: (tree, [cache])
       description: Caches values from the tree
+    calendar:
+      args: (options)
+      description: Return a tree structure for years/months/days
     clear:
       args: (tree)
       description: Remove all values from the tree
-    concat:
-      args: (...objs)
-      description: Concatenate text and/or trees of text
     constant:
       args: (value)
       description: Return a deep tree with a single constant value
@@ -202,9 +202,6 @@ Tree:
     deepValues:
       args: (tree)
       description: The in-order leaf values of the tree
-    defineds:
-      args: (tree)
-      description: Only the defined values of the tree
     entries:
       args: (tree)
       description: The tree's [key, value] pairs
@@ -220,9 +217,6 @@ Tree:
     from:
       args: (object, options)
       description: Create a tree from an object
-    fromFn:
-      args: (fn, [keys])
-      description: A tree defined by a value function
     globKeys:
       args: (patterns)
       description: A tree whose keys can include glob wildcard patterns
@@ -233,6 +227,7 @@ Tree:
       args: (tree, key)
       description: True if key exists in tree
     indent:
+      args: "`…`"
       description: Tagged template literal for normalizing indentation
     inners:
       args: (tree)
@@ -262,7 +257,7 @@ Tree:
       args: (tree, options)
       description: Create a new tree by mapping keys and/or values
     mapReduce:
-      args: (tree, valueFn, reduceFn)
+      args: (tree, mapFn, reduceFn)
       description: Map values and reduce them
     mask:
       args: (source, mask)
@@ -309,6 +304,9 @@ Tree:
     take:
       args: (tree, n)
       description: The first n values in the tree
+    text:
+      args: "`…`"
+      description: Tagged template literal for rendering trees
     traverse:
       args: (tree, ...keys)
       description: Return the value at the path of keys
@@ -321,3 +319,6 @@ Tree:
     values:
       args: (tree)
       description: The tree's values
+    withKeys:
+      args: (tree, keys)
+      description: Use the given keys for the tree
