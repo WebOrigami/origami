@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import FunctionTree from "../../src/drivers/FunctionTree.js";
 import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
 import map from "../../src/operations/map.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
@@ -190,6 +189,26 @@ describe("map", () => {
     });
   });
 
+  test("keyNeedsSourceValue can be set to false in cases where the value isn't necessary", async () => {
+    const tree = {
+      a: "letter a",
+      b: "letter b",
+      c: "letter c",
+    };
+    const mapped = await map(tree, {
+      keyNeedsSourceValue: false,
+      key: (value, key) => {
+        assert.equal(value, null);
+        return key.toUpperCase();
+      },
+    });
+    assert.deepEqual(await Tree.plain(mapped), {
+      A: "letter a",
+      B: "letter b",
+      C: "letter c",
+    });
+  });
+
   test("can add an extension to a key", async () => {
     const treelike = {
       "file0.txt": 1,
@@ -238,23 +257,6 @@ describe("map", () => {
         file2: 2,
       },
     });
-  });
-
-  test("needsSourceValue can be set to false in cases where the value isn't necessary", async () => {
-    let flag = false;
-    const tree = new FunctionTree(() => {
-      flag = true;
-    }, ["a", "b", "c"]);
-    const mapped = await map(tree, {
-      needsSourceValue: false,
-      value: () => "X",
-    });
-    assert.deepEqual(await Tree.plain(mapped), {
-      a: "X",
-      b: "X",
-      c: "X",
-    });
-    assert(!flag);
   });
 });
 

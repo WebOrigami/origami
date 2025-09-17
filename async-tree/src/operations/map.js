@@ -33,7 +33,7 @@ export default async function map(treelike, options = {}) {
 
 // Create a get() function for the map
 function createGet(tree, options, mapFn) {
-  const { inverseKeyFn, deep, needsSourceValue, valueFn } = options;
+  const { inverseKeyFn, deep, valueFn } = options;
   return async (resultKey) => {
     if (resultKey === undefined) {
       throw new ReferenceError(`map: Cannot get an undefined key.`);
@@ -58,19 +58,15 @@ function createGet(tree, options, mapFn) {
     }
 
     // Step 2: Get the source value
-    let sourceValue;
-    if (needsSourceValue) {
-      // Normal case: get the value from the source tree
-      sourceValue = await tree.get(sourceKey);
-      if (deep && sourceValue === undefined) {
-        // Key might be for a subtree, see if original key exists
-        sourceValue = await tree.get(resultKey);
-      }
+    let sourceValue = await tree.get(sourceKey);
+    if (deep && sourceValue === undefined) {
+      // Key might be for a subtree, see if original key exists
+      sourceValue = await tree.get(resultKey);
     }
 
     // Step 3: Map the source value to the result value
     let resultValue;
-    if (needsSourceValue && sourceValue === undefined) {
+    if (sourceValue === undefined) {
       // No source value means no result value
       resultValue = undefined;
     } else if (deep && isAsyncTree(sourceValue)) {
@@ -90,13 +86,13 @@ function createGet(tree, options, mapFn) {
 
 // Create a keys() function for the map
 function createKeys(tree, options) {
-  const { deep, keyFn } = options;
+  const { deep, keyFn, keyNeedsSourceValue } = options;
   return async () => {
     // Apply the keyFn to source keys for leaf values (not subtrees).
     const sourceKeys = Array.from(await tree.keys());
-    const sourceValues = await Promise.all(
-      sourceKeys.map((sourceKey) => tree.get(sourceKey))
-    );
+    const sourceValues = keyNeedsSourceValue
+      ? await Promise.all(sourceKeys.map((sourceKey) => tree.get(sourceKey)))
+      : sourceKeys.map(() => null);
     const mapped = await Promise.all(
       sourceKeys.map(async (sourceKey, index) =>
         // Deep maps leave source keys for subtrees alone
@@ -154,7 +150,7 @@ function validateOptions(options) {
   let extension;
   let inverseKeyFn;
   let keyFn;
-  let needsSourceValue;
+  let keyNeedsSourceValue;
   let valueFn;
 
   if (typeof options === "function") {
@@ -169,7 +165,7 @@ function validateOptions(options) {
     extension = validateOption(options, "extension");
     inverseKeyFn = validateOption(options, "inverseKey");
     keyFn = validateOption(options, "key");
-    needsSourceValue = validateOption(options, "needsSourceValue");
+    keyNeedsSourceValue = validateOption(options, "keyNeedsSourceValue");
     valueFn = validateOption(options, "value");
 
     // Cast function options to functions
@@ -195,6 +191,11 @@ function validateOptions(options) {
       `map: You can't specify extensions and also a key or inverseKey function`
     );
   }
+  if (extension && keyNeedsSourceValue === true) {
+    throw new TypeError(
+      `map: using extensions sets keyNeedsSourceValue to be false`
+    );
+  }
 
   if (extension) {
     // Use the extension mapping to generate key and inverseKey functions
@@ -205,6 +206,7 @@ function validateOptions(options) {
     );
     keyFn = keyFns.key;
     inverseKeyFn = keyFns.inverseKey;
+    keyNeedsSourceValue = false;
   } else {
     // If key or inverseKey weren't specified, look for sidecar functions
     inverseKeyFn ??= valueFn?.inverseKey;
@@ -233,14 +235,14 @@ function validateOptions(options) {
   // Set defaults for options not specified. We don't set a default value for
   // `deep` because a false value is a stronger signal than undefined.
   description ??= "key/value map";
-  needsSourceValue ??= true;
+  keyNeedsSourceValue ??= true;
 
   return {
     deep,
     description,
     inverseKeyFn,
     keyFn,
-    needsSourceValue,
+    keyNeedsSourceValue,
     valueFn,
   };
 }
