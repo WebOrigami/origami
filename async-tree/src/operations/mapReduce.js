@@ -26,16 +26,14 @@ export default async function mapReduce(treelike, valueFn, reduceFn) {
   // the keys come in. We call the tree's `get` method for each key, but
   // *don't* wait for it yet.
   const keys = Array.from(await tree.keys());
-  const promises = keys.map((key) =>
-    tree.get(key).then((value) =>
-      // If the value is a subtree, recurse.
-      isAsyncTree(value)
-        ? mapReduce(value, valueFn, reduceFn)
-        : valueFn
-        ? valueFn(value, key, tree)
-        : value
-    )
-  );
+  const promises = keys.map(async (key) => {
+    const value = await tree.get(key);
+    return isAsyncTree(value)
+      ? mapReduce(value, valueFn, reduceFn) // subtree; recurse
+      : valueFn
+      ? valueFn(value, key, tree)
+      : value;
+  });
 
   // Wait for all the promises to resolve. Because the promises were captured
   // in the same order as the keys, the values will also be in the same order.
