@@ -1,0 +1,4 @@
+{
+  greet = ./subfolder/greet.js
+  message = "Hello"
+}
