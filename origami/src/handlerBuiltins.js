@@ -1,4 +1,4 @@
-import * as handlers from "./handlers.js";
+import { handlers } from "@weborigami/language";
 
 export default function handlerBuiltins() {
   return {

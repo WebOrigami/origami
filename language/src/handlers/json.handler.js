@@ -1,5 +1,4 @@
-import { symbols } from "@weborigami/async-tree";
-import * as utilities from "../common/utilities.js";
+import { symbols, toString } from "@weborigami/async-tree";
 
 /**
  * A JSON file
@@ -11,7 +10,7 @@ export default {
 
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
   unpack(packed) {
-    const json = utilities.toString(packed);
+    const json = toString(packed);
     if (!json) {
       throw new Error("Tried to parse something as JSON but it wasn't text.");
     }

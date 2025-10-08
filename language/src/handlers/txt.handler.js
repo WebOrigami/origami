@@ -1,7 +1,7 @@
 import { isPacked, symbols } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
-import { parseYaml, toYaml } from "../common/serialize.js";
-import { toString } from "../common/utilities.js";
+import { parseYaml, toYaml } from "../../../origami/src/common/serialize.js";
+import { toString } from "../../../origami/src/common/utilities.js";
+import * as compile from "../compiler/compile.js";
 import parseFrontMatter from "./parseFrontMatter.js";
 
 /**

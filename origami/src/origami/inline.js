@@ -1,6 +1,6 @@
 import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
+import { oridocumentHandler } from "@weborigami/language/src/handlers/handlers.js";
 import documentObject from "../common/documentObject.js";
-import { oridocumentHandler } from "../handlers/handlers.js";
 
 /**
  * Inline any Origami expressions found inside ${...} placeholders in the input

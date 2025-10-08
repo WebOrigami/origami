@@ -22,7 +22,6 @@
     "@weborigami/language": "0.5.5",
     "@weborigami/types": "0.5.5",
     "css-tree": "3.1.0",
-    "exif-parser": "0.1.12",
     "graphviz-wasm": "3.0.2",
     "highlight.js": "11.11.1",
     "jsdom": "26.1.0",

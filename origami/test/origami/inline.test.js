@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
+import txtHandler from "@weborigami/language/src/handlers/txt.handler.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import txtHandler from "../../src/handlers/txt.handler.js";
 import inline from "../../src/origami/inline.js";
 
 describe("inline", () => {

@@ -1,8 +1,7 @@
-import { getParent } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
-import builtinsProgram from "../builtinsProgram.js";
-import getConfig from "../cli/getConfig.js";
-import * as utilities from "../common/utilities.js";
+import { getParent, toString } from "@weborigami/async-tree";
+import builtinsProgram from "../../../origami/src/builtinsProgram.js";
+import getConfig from "../../../origami/src/cli/getConfig.js";
+import * as compile from "../compiler/compile.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
@@ -29,7 +28,7 @@ export default {
     }
 
     const source = {
-      text: utilities.toString(packed),
+      text: toString(packed),
       name: options.key,
       url,
     };

@@ -1,7 +1,7 @@
+export { default as handlerBuiltins } from "@weborigami/language/src/handlers/handlerBuiltins.js";
+export * from "@weborigami/language/src/handlers/handlers.js";
 export { default as documentObject } from "./src/common/documentObject.js";
 export { toString } from "./src/common/utilities.js";
-export { default as handlerBuiltins } from "./src/handlers/handlerBuiltins.js";
-export * from "./src/handlers/handlers.js";
 export * from "./src/origami/origami.js";
 export { default as origamiHighlightDefinition } from "./src/origami/origamiHighlightDefinition.js";
 export { default as package } from "./src/protocols/package.js";

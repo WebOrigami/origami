@@ -1,6 +1,7 @@
 import { Tree, isUnpackable } from "@weborigami/async-tree";
-import { displayWarning, symbols } from "@weborigami/language";
 import codeFragment from "./codeFragment.js";
+import { displayWarning } from "./errors.js";
+import * as symbols from "./symbols.js";
 
 /**
  * Evaluate the given code and return the result.

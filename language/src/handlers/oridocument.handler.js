@@ -1,8 +1,12 @@
-import { extension, getParent, trailingSlash } from "@weborigami/async-tree";
-import { compile } from "@weborigami/language";
-import builtinsProgram from "../builtinsProgram.js";
-import getConfig from "../cli/getConfig.js";
-import { toString } from "../common/utilities.js";
+import {
+  extension,
+  getParent,
+  toString,
+  trailingSlash,
+} from "@weborigami/async-tree";
+import builtinsProgram from "../../../origami/src/builtinsProgram.js";
+import getConfig from "../../../origami/src/cli/getConfig.js";
+import * as compile from "../compiler/compile.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**

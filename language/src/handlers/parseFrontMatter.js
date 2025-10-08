@@ -1,4 +1,4 @@
-import { isOrigamiFrontMatter } from "@weborigami/language";
+import isOrigamiFrontMatter from "../compiler/isOrigamiFrontMatter.js";
 
 export default function parseFrontMatter(text) {
   const regex =

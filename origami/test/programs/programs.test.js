@@ -1,7 +1,7 @@
 import { OrigamiFiles } from "@weborigami/language";
+import handlerBuiltins from "@weborigami/language/src/handlers/handlerBuiltins.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import handlerBuiltins from "../../src/handlers/handlerBuiltins.js";
 
 /**
  * Run the programs in the `programs` directory as unit tests.

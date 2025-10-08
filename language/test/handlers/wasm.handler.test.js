@@ -1,8 +1,8 @@
 import { FileTree } from "@weborigami/async-tree";
-import { ImportModulesMixin } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { wasmHandler } from "../../src/handlers/handlers.js";
+import wasmHandler from "../../src/handlers/wasm.handler.js";
+import ImportModulesMixin from "../../src/runtime/ImportModulesMixin.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);

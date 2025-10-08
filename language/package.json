@@ -13,6 +13,7 @@
   "dependencies": {
     "@weborigami/async-tree": "0.5.5",
     "@weborigami/types": "0.5.5",
+    "exif-parser": "0.1.12",
     "watcher": "2.3.1",
     "yaml": "2.8.1"
   },

@@ -1,5 +1,5 @@
 import { getTreeArgument, Tree } from "@weborigami/async-tree";
-import { oriHandler } from "../handlers/handlers.js";
+import { oriHandler } from "@weborigami/language/src/handlers/handlers.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

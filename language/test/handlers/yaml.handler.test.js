@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { yamlHandler } from "../../src/handlers/handlers.js";
+import yamlHandler from "../../src/handlers/yaml.handler.js";
 
 describe(".yaml handler", () => {
   test("loads input as a YAML file", async () => {

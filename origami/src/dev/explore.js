@@ -1,11 +1,11 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
+import { oriHandler } from "@weborigami/language/src/handlers/handlers.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { getDescriptor } from "../common/utilities.js";
-import { oriHandler } from "../handlers/handlers.js";
 import debug from "./debug.js";
 
 let templatePromise;

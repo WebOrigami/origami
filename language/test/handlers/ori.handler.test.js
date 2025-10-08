@@ -1,8 +1,8 @@
 import { ObjectTree, Tree } from "@weborigami/async-tree";
-import { OrigamiFiles } from "@weborigami/language";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { oriHandler } from "../../src/handlers/handlers.js";
+import oriHandler from "../../src/handlers/ori.handler.js";
+import OrigamiFiles from "../../src/runtime/OrigamiFiles.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
 const fixtures = new OrigamiFiles(fixturesUrl);
