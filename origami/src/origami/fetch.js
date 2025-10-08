@@ -1,4 +1,4 @@
-import { getHandlers, handleExtension } from "@weborigami/language";
+import { handleExtension } from "@weborigami/language";
 
 /**
  * @this {import("@weborigami/types").AsyncTree|null|undefined}
@@ -15,8 +15,7 @@ export default async function fetchBuiltin(resource, options) {
     return value;
   }
 
-  const handlers = getHandlers(this);
   const url = new URL(resource);
   const key = url.pathname;
-  return handleExtension(this, value, key, handlers);
+  return handleExtension(this, value, key);
 }

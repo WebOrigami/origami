@@ -6,8 +6,7 @@ import {
   trailingSlash,
   Tree,
 } from "@weborigami/async-tree";
-import getHandlers from "./getHandlers.js";
-import { handleExtension } from "./handlers.js";
+import handleExtension from "./handleExtension.js";
 import { evaluate, ops } from "./internal.js";
 
 /**
@@ -92,8 +91,7 @@ export default async function expressionObject(entries, parent) {
         get = async () => {
           tree ??= new ObjectTree(object);
           const result = await evaluate.call(tree, code);
-          const handlers = getHandlers(tree);
-          return handleExtension(tree, result, key, handlers);
+          return handleExtension(tree, result, key);
         };
       } else {
         // No extension, so getter just invokes code.

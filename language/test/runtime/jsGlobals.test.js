@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import jsGlobals from "../../src/runtime/jsGlobals.js";
+import jsGlobals from "../../src/project/jsGlobals.js";
 
 describe("jsGlobals", () => {
   test("wraps static methods to drop the call target", async () => {

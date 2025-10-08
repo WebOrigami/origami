@@ -5,10 +5,10 @@ import {
   toString,
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
-import builtinsShell from "../builtinsShell.js";
-import getConfig from "../cli/getConfig.js";
+import projectGlobals from "@weborigami/language/src/project/projectGlobals.js";
 import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toYaml } from "../common/serialize.js";
+import * as dev from "../dev/dev.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
@@ -34,25 +34,23 @@ export default async function ori(
   // @ts-ignore
   expression = toString(expression);
 
-  // Run in the context of `this` if defined
-  const tree = this;
-
-  const config = getConfig(tree);
-  const globals = config
-    ? {
-        ...builtinsShell(),
-        ...config,
-      }
-    : builtinsShell();
+  // Add Dev builtins as top-level globals
+  const globals = {
+    ...(await projectGlobals()),
+    ...dev,
+  };
 
   // Compile the expression. Avoid caching scope references so that, e.g.,
   // passing a function to the `watch` builtin will always look the current
   // value of things in scope.
   const fn = compile.expression(expression, {
     globals,
-    mode: "shell",
     enableCaching: false,
+    mode: "shell",
   });
+
+  // Run in the context of `this` if defined
+  const tree = this;
 
   // Execute
   let result = await fn.call(tree);

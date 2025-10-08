@@ -1,9 +1,14 @@
 import { DeepObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { before, describe, test } from "node:test";
+import initializeBuiltins from "../../src/initializeBuiltins.js";
 import sitemap from "../../src/origami/sitemap.js";
 
 describe("sitemap", () => {
+  before(() => {
+    initializeBuiltins();
+  });
+
   test("returns a sitemap for a tree", async () => {
     const tree = new DeepObjectTree({
       "a.html": "A",

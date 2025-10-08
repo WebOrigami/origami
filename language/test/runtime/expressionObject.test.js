@@ -54,11 +54,6 @@ describe("expressionObject", () => {
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const parent = new ObjectTree({});
-    /** @type {any} */ (parent).handlers = {
-      "json.handler": {
-        unpack: JSON.parse,
-      },
-    };
     const result = await expressionObject(entries, parent);
     const dataJson = await result["data.json"];
     const json = await dataJson.unpack();

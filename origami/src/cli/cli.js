@@ -1,20 +1,24 @@
 #!/usr/bin/env node
 
 import { Tree } from "@weborigami/async-tree";
-import { formatError } from "@weborigami/language";
+import { formatError, projectRoot } from "@weborigami/language";
 import path from "node:path";
 import process, { stdout } from "node:process";
 import help from "../dev/help.js";
+import initializeBuiltins from "../initializeBuiltins.js";
 import ori from "../origami/ori.js";
-import project from "../origami/project.js";
 
 const TypedArray = Object.getPrototypeOf(Uint8Array);
 
 async function main(...args) {
   const expression = args.join(" ");
 
+  // Need to initialize builtins before calling projectRoot, which instantiates
+  // an OrigamiFiles object that handles extensions, which requires builtins.
+  initializeBuiltins();
+
   // Find the project root.
-  const projectTree = await project.call(null);
+  const projectTree = await projectRoot();
 
   // If no arguments were passed, show usage.
   if (!expression) {

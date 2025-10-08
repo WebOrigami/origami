@@ -1,8 +1,18 @@
-import { isPacked, symbols } from "@weborigami/async-tree";
-import { parseYaml, toYaml } from "../../../origami/src/common/serialize.js";
-import { toString } from "../../../origami/src/common/utilities.js";
+import {
+  isPacked,
+  symbols,
+  toPlainValue,
+  toString,
+} from "@weborigami/async-tree";
+import * as YAMLModule from "yaml";
 import * as compile from "../compiler/compile.js";
+import projectGlobals from "../project/projectGlobals.js";
 import parseFrontMatter from "./parseFrontMatter.js";
+
+// The "yaml" package doesn't seem to provide a default export that the browser can
+// recognize, so we have to handle two ways to accommodate Node and the browser.
+// @ts-ignore
+const YAML = YAMLModule.default ?? YAMLModule.YAML;
 
 /**
  * A text file with possible front matter
@@ -39,13 +49,16 @@ export default {
       throw new TypeError("The input to pack must be a JavaScript object.");
     }
 
-    const text = object._body ?? "";
+    const isDocument = object._body !== undefined;
+    const text = isDocument ? object._body : toString(object);
 
     /** @type {any} */
     const dataWithoutText = Object.assign({}, object);
     delete dataWithoutText._body;
     if (Object.keys(dataWithoutText).length > 0) {
-      const frontMatter = (await toYaml(dataWithoutText)).trimEnd();
+      const serializable = await toPlainValue(dataWithoutText);
+      const yamlText = YAML.stringify(serializable);
+      const frontMatter = yamlText.trimEnd();
       return `---\n${frontMatter}\n---\n${text}`;
     } else {
       return text;
@@ -67,10 +80,11 @@ export default {
       const { body, frontText, isOrigami } = parsed;
       let frontData;
       if (isOrigami) {
-        const compiled = compile.expression(frontText.trim());
+        const globals = await projectGlobals();
+        const compiled = compile.expression(frontText.trim(), { globals });
         frontData = await compiled.call(parent);
       } else {
-        frontData = parseYaml(frontText);
+        frontData = YAML.parse(frontText);
       }
       unpacked = { ...frontData };
       Object.defineProperty(unpacked, "_body", {

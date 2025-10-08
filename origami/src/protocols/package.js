@@ -1,12 +1,11 @@
 import { Tree, keysFromPath } from "@weborigami/async-tree";
-import project from "../origami/project.js";
+import { projectRoot } from "@weborigami/language";
 
 /**
- * @this {import("@weborigami/types").AsyncTree|null}
  * @param {string[]} keys
  */
 export default async function packageNamespace(...keys) {
-  const parent = this ?? (await project.call(null));
+  const parent = await projectRoot();
 
   let name = keys.shift();
   let organization;

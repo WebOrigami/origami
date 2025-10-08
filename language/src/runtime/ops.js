@@ -8,7 +8,6 @@
 import { isUnpackable, ObjectTree, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
-import getHandlers from "./getHandlers.js";
 import { evaluate } from "./internal.js";
 import mergeTrees from "./mergeTrees.js";
 import OrigamiFiles from "./OrigamiFiles.js";
@@ -200,8 +199,6 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
  */
 export async function homeDirectory(...keys) {
   const tree = new OrigamiFiles(os.homedir());
-  // Use the same handlers as the current tree
-  /** @type {any} */ (tree).handlers = getHandlers(this);
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
@@ -464,8 +461,6 @@ addOpLabel(remainder, "«ops.remainder»");
  */
 export async function rootDirectory(...keys) {
   const tree = new OrigamiFiles("/");
-  // Use the same handlers as the current tree
-  /** @type {any} */ (tree).handlers = getHandlers(this);
   return keys.length > 0 ? Tree.traverse(tree, ...keys) : tree;
 }
 addOpLabel(rootDirectory, "«ops.rootDirectory»");

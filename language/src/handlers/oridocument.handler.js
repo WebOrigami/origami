@@ -4,9 +4,8 @@ import {
   toString,
   trailingSlash,
 } from "@weborigami/async-tree";
-import builtinsProgram from "../../../origami/src/builtinsProgram.js";
-import getConfig from "../../../origami/src/cli/getConfig.js";
 import * as compile from "../compiler/compile.js";
+import globals from "../project/projectGlobals.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
@@ -41,15 +40,9 @@ export default {
       url,
     };
 
-    const config = getConfig(parent) ?? {};
-    const globals = {
-      ...(options.globals ?? builtinsProgram()),
-      ...config,
-    };
-
     const defineFn = compile.templateDocument(source, {
       front: options.front,
-      globals,
+      globals: globals(),
       mode: "program",
     });
 

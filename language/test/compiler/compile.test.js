@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import { assertCodeEqual } from "./codeHelpers.js";
 
-const sharedGlobals = {
+const globals = {
   greet: (name) => `Hello, ${name}!`,
   name: "Alice",
 };
@@ -78,9 +78,7 @@ describe("compile", () => {
   });
 
   test("async object", async () => {
-    const fn = compile.expression("{ a: { b = name }}", {
-      globals: sharedGlobals,
-    });
+    const fn = compile.expression("{ a: { b = name }}", { globals });
     const object = await fn.call(null);
     assert.deepEqual(await object.a.b, "Alice");
   });
@@ -126,7 +124,7 @@ describe("compile", () => {
 
 async function assertCompile(text, expected, options = {}) {
   const mode = options.mode ?? "program";
-  const fn = compile.expression(text, { globals: sharedGlobals, mode });
+  const fn = compile.expression(text, { globals, mode });
   const target = options.target ?? null;
   let result = await fn.call(target);
   if (Tree.isTreelike(result)) {

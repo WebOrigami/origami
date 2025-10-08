@@ -1,12 +1,11 @@
 import { createExpressionFunction } from "../runtime/expressionFunction.js";
-import jsGlobals from "../runtime/jsGlobals.js";
 import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
   const { front, startRule } = options;
   const mode = options.mode ?? "program";
-  const globals = options.globals ?? jsGlobals;
+  const globals = options.globals ?? {};
   if (typeof source === "string") {
     source = { text: source };
   }

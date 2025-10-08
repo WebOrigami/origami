@@ -1,7 +1,7 @@
 import { pathFromKeys, trailingSlash } from "@weborigami/async-tree";
+import jsGlobals from "../project/jsGlobals.js";
 import { entryKey } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
-import jsGlobals from "../runtime/jsGlobals.js";
 import { annotate, markers } from "./parserHelpers.js";
 
 const REFERENCE_LOCAL = 1;

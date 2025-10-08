@@ -1,7 +1,6 @@
 import { getParent, toString } from "@weborigami/async-tree";
-import builtinsProgram from "../../../origami/src/builtinsProgram.js";
-import getConfig from "../../../origami/src/cli/getConfig.js";
 import * as compile from "../compiler/compile.js";
+import projectGlobals from "../project/projectGlobals.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
@@ -35,12 +34,7 @@ export default {
 
     // Compile the source code as an Origami program and evaluate it.
     const compiler = options.compiler ?? compile.program;
-
-    const config = getConfig(parent) ?? {};
-    const globals = {
-      ...(options.globals ?? builtinsProgram()),
-      ...config,
-    };
+    const globals = options.globals ?? (await projectGlobals());
 
     const fn = compiler(source, {
       globals,

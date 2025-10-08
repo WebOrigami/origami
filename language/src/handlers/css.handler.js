@@ -1,5 +1,5 @@
 // .css files use the .txt loader
-import { txtHandler } from "./handlers.js";
+import txtHandler from "./txt.handler.js";
 
 export default {
   ...txtHandler,

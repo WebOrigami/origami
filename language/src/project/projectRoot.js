@@ -1,3 +1,4 @@
+import { FileTree } from "@weborigami/async-tree";
 import path from "node:path";
 import OrigamiFiles from "../runtime/OrigamiFiles.js";
 
@@ -28,18 +29,19 @@ export default async function projectRoot(dirname = process.cwd()) {
 
   let root;
   let value;
-  const currentTree = new OrigamiFiles(dirname);
+  // Use a plain FileTree to avoid loading extension handlers
+  const currentTree = new FileTree(dirname);
   // Try looking for config file
   value = await currentTree.get(configFileName);
   if (value) {
     // Found config file
-    root = currentTree;
+    root = new OrigamiFiles(currentTree.path);
   } else {
     // Try looking for package.json
     value = await currentTree.get(packageFileName);
     if (value) {
       // Found package.json
-      root = currentTree;
+      root = new OrigamiFiles(currentTree.path);
     } else {
       // Move up a folder and try again
       const parentPath = path.dirname(dirname);

@@ -279,7 +279,7 @@ describe("optimize", () => {
 
 function assertCompile(expression, expected, mode = "shell") {
   const parent = new ObjectTree({});
-  const globals = new ObjectTree({});
+  const globals = {};
   const fn = compile.expression(expression, { globals, mode, parent });
   const actual = fn.code;
   assertCodeLocations(actual);

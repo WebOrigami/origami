@@ -1,6 +1,5 @@
 import { Tree } from "@weborigami/async-tree";
-import { jsGlobals } from "@weborigami/language";
-import handlerBuiltins from "@weborigami/language/src/handlers/handlerBuiltins.js";
+import { builtins } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
 import * as origami from "./origami/origami.js";
@@ -13,10 +12,13 @@ import httptree from "./protocols/httptree.js";
 import node from "./protocols/node.js";
 import packageNamespace from "./protocols/package.js";
 
-let builtins;
+let initialized = false;
 
-export default function builtinsProgram() {
-  if (!builtins) {
+/**
+ * Pass the Origami builtins to the compiler.
+ */
+export default function initializeBuiltins() {
+  if (!initialized) {
     const Protocol = {
       explore,
       files,
@@ -28,10 +30,7 @@ export default function builtinsProgram() {
       package: packageNamespace,
     };
 
-    /** @type {any} */
-    builtins = {
-      ...jsGlobals,
-
+    const origamiBuiltins = {
       "explore:": explore,
       "files:": files,
       "help:": help,
@@ -46,11 +45,10 @@ export default function builtinsProgram() {
       Tree,
       Origami: origami,
       Protocol,
-
-      // Handlers need to be exposed at top level
-      ...handlerBuiltins(),
     };
+
+    Object.assign(builtins, origamiBuiltins);
   }
 
-  return builtins;
+  initialized = true;
 }

@@ -7,6 +7,9 @@ import {
   setParent,
   trailingSlash,
 } from "@weborigami/async-tree";
+import globals from "../project/projectGlobals.js";
+
+let projectGlobals;
 
 /**
  * If the given value is packed (e.g., buffer) and the key is a string-like path
@@ -17,13 +20,9 @@ import {
  * @param {any} value
  * @param {any} key
  */
-export async function handleExtension(parent, value, key, handlers) {
-  if (
-    handlers &&
-    isPacked(value) &&
-    isStringlike(key) &&
-    value.unpack === undefined
-  ) {
+export default async function handleExtension(parent, value, key) {
+  projectGlobals ??= await globals();
+  if (isPacked(value) && isStringlike(key) && value.unpack === undefined) {
     const hasSlash = trailingSlash.has(key);
     if (hasSlash) {
       key = trailingSlash.remove(key);
@@ -39,7 +38,7 @@ export async function handleExtension(parent, value, key, handlers) {
       : extension.extname(key);
     if (extname) {
       const handlerName = `${extname.slice(1)}.handler`;
-      let handler = await handlers[handlerName];
+      let handler = await projectGlobals[handlerName];
       if (handler) {
         if (isUnpackable(handler)) {
           // The extension handler itself needs to be unpacked
