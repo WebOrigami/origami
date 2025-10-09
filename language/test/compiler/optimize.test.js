@@ -99,14 +99,18 @@ describe("optimize", () => {
         markers.traverse,
         [markers.reference, "folder"],
       ]);
+      const parent = {};
       const expected = [
         ops.cache,
         {},
         "folder",
-        [[ops.scope], [ops.literal, "folder"]],
+        [
+          [ops.scope, parent],
+          [ops.literal, "folder"],
+        ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals }), expected);
+      assertCodeEqual(optimize(code, { globals, parent }), expected);
     });
 
     test("external reference", () => {
@@ -115,14 +119,18 @@ describe("optimize", () => {
         markers.traverse,
         [markers.reference, "index.html"],
       ]);
+      const parent = {};
       const expected = [
         ops.cache,
         {},
         "index.html",
-        [[ops.scope], [ops.literal, "index.html"]],
+        [
+          [ops.scope, parent],
+          [ops.literal, "index.html"],
+        ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals }), expected);
+      assertCodeEqual(optimize(code, { globals, parent }), expected);
     });
 
     test("external reference inside object with matching key", () => {
@@ -134,6 +142,7 @@ describe("optimize", () => {
           [ops.getter, [markers.traverse, [markers.reference, "posts.txt"]]],
         ],
       ]);
+      const parent = {};
       const expected = [
         ops.object,
         [
@@ -145,7 +154,7 @@ describe("optimize", () => {
               {},
               "posts.txt",
               [
-                [ops.scope, [ops.context, 1]],
+                [ops.scope, parent],
                 [ops.literal, "posts.txt"],
               ],
             ],
@@ -153,7 +162,7 @@ describe("optimize", () => {
         ],
       ];
       const globals = {};
-      assertCodeEqual(optimize(code, { globals }), expected);
+      assertCodeEqual(optimize(code, { globals, parent }), expected);
     });
 
     test("global reference", () => {
@@ -226,18 +235,19 @@ describe("optimize", () => {
         [ops.literal, "to/"],
         [ops.literal, "file"],
       ]);
+      const parent = {};
       const expected = [
         ops.cache,
         {},
         "path/to/file",
         [
-          [ops.scope],
+          [ops.scope, parent],
           [ops.literal, "path/"],
           [ops.literal, "to/"],
           [ops.literal, "file"],
         ],
       ];
-      assertCodeEqual(optimize(code), expected);
+      assertCodeEqual(optimize(code, { parent }), expected);
     });
 
     test("implicit external path", () => {
@@ -248,13 +258,18 @@ describe("optimize", () => {
         [ops.literal, "name"],
       ]);
       const globals = {};
+      const parent = {};
       const expected = [
         ops.cache,
         {},
         "package.json/name",
-        [[ops.scope], [ops.literal, "package.json/"], [ops.literal, "name"]],
+        [
+          [ops.scope, parent],
+          [ops.literal, "package.json/"],
+          [ops.literal, "name"],
+        ],
       ];
-      assertCodeEqual(optimize(code, { globals }), expected);
+      assertCodeEqual(optimize(code, { globals, parent }), expected);
     });
 
     test("local path", () => {

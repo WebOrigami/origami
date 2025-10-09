@@ -5,12 +5,12 @@ import ori from "../../src/origami/ori.js";
 
 describe("ori builtin", () => {
   test("evaluates an expression in the context of a tree and returns result", async () => {
-    const tree = new ObjectTree({
+    const parent = new ObjectTree({
       a: 1,
       b: 2,
       c: 3,
     });
-    const result = await ori.call(tree, `b`);
+    const result = await ori(`b`, { parent });
     assert.equal(result, 2);
   });
 });

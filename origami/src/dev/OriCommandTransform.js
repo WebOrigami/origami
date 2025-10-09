@@ -1,4 +1,4 @@
-import { trailingSlash } from "@weborigami/async-tree";
+import { scope, trailingSlash } from "@weborigami/async-tree";
 import { projectGlobals } from "@weborigami/language";
 
 /**
@@ -32,12 +32,18 @@ export default function OriCommandTransform(Base) {
         const commandName = trailingSlash.remove(key.slice(1).trim());
 
         // Look for command as a global or Dev command
-        const command = globals[commandName] ?? globals.Dev[commandName];
-        if (!(command instanceof Function)) {
-          throw new Error(`Unknown Origami command: ${commandName}`);
+        const command = globals[commandName] ?? globals.Dev?.[commandName];
+        if (command) {
+          value = await command(this);
+        } else {
+          // Look for command in scope
+          const parentScope = await scope(this);
+          value = await parentScope.get(commandName);
         }
 
-        value = await command(this);
+        if (value === undefined) {
+          throw new Error(`Unknown Origami command: ${commandName}`);
+        }
       }
 
       return value;

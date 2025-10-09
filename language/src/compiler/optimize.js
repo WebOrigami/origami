@@ -27,6 +27,7 @@ const REFERENCE_EXTERNAL = 3;
 export default function optimize(code, options = {}) {
   const globals = options.globals ?? jsGlobals;
   const cache = options.cache === undefined ? {} : options.cache;
+  const parent = options.parent ?? null;
 
   // The locals is an array, one item for each function or object context that
   // has been entered. The array grows to the right. The array items are
@@ -41,7 +42,7 @@ export default function optimize(code, options = {}) {
       return globals[args[0]];
 
     case markers.traverse:
-      return resolvePath(code, globals, locals, cache);
+      return resolvePath(code, globals, parent, locals, cache);
 
     case ops.lambda:
       const parameters = args[0];
@@ -160,8 +161,8 @@ function compoundReference(key, globals, locals, location) {
   return { type, result };
 }
 
-function externalReference(key, locals, location) {
-  const scope = scopeCall(locals, location);
+function externalReference(key, parent, location) {
+  const scope = annotate([ops.scope, parent], location);
   const literal = annotate([ops.literal, key], location);
   return annotate([scope, literal], location);
 }
@@ -224,7 +225,7 @@ function keyFromCode(code) {
   }
 }
 
-function reference(code, globals, locals) {
+function reference(code, globals, parent, locals) {
   const key = keyFromCode(code);
   const normalized = trailingSlash.remove(key);
   const location = code.location;
@@ -247,7 +248,7 @@ function reference(code, globals, locals) {
     // Explicit external reference
     return {
       type: REFERENCE_EXTERNAL,
-      result: externalReference(key, locals, location),
+      result: externalReference(key, parent, location),
     };
   }
 
@@ -274,7 +275,7 @@ function reference(code, globals, locals) {
   // Not a compound reference, must be external
   return {
     type: REFERENCE_EXTERNAL,
-    result: externalReference(key, locals, location),
+    result: externalReference(key, parent, location),
   };
 }
 
@@ -290,11 +291,11 @@ function referenceType(key, globals, locals) {
   }
 }
 
-function resolvePath(code, globals, locals, cache) {
+function resolvePath(code, globals, parent, locals, cache) {
   const args = code.slice(1);
   const [head, ...tail] = args;
 
-  let { type, result } = reference(head, globals, locals);
+  let { type, result } = reference(head, globals, parent, locals);
 
   if (tail.length > 0) {
     // If the result is a traversal, we can safely extend it
@@ -315,16 +316,4 @@ function resolvePath(code, globals, locals, cache) {
   }
 
   return result;
-}
-
-function scopeCall(locals, location) {
-  const depth = locals.length;
-  /** @type {any[]} */
-  const code = [ops.scope];
-  if (depth > 0) {
-    // Add context for appropriate depth to scope call
-    const contextCode = annotate([ops.context, depth], location);
-    code.push(contextCode);
-  }
-  return annotate(code, location);
 }

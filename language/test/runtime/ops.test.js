@@ -49,18 +49,17 @@ describe("ops", () => {
   });
 
   test("ops.concat concatenates tree value text", async () => {
-    const scope = new ObjectTree({
+    const container = {
       name: "world",
-    });
-
+    };
     const code = createCode([
       ops.concat,
       "Hello, ",
-      [[ops.scope], "name"],
+      [[ops.scope, container], "name"],
       ".",
     ]);
 
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(null, code);
     assert.strictEqual(result, "Hello, world.");
   });
 
@@ -114,23 +113,27 @@ describe("ops", () => {
 
   test("ops.cache evaluates code and cache its result", async () => {
     let count = 0;
-    const tree = new DeepObjectTree({
+    const container = {
       group: {
         get count() {
           // Use promise to test async behavior
           return Promise.resolve(++count);
         },
       },
-    });
+    };
     const code = createCode([
       ops.cache,
       {},
       "group/count",
-      [[ops.scope], [ops.literal, "group"], [ops.literal, "count"]],
+      [
+        [ops.scope, container],
+        [ops.literal, "group"],
+        [ops.literal, "count"],
+      ],
     ]);
-    const result = await evaluate.call(tree, code);
+    const result = await evaluate.call(null, code);
     assert.strictEqual(result, 1);
-    const result2 = await evaluate.call(tree, code);
+    const result2 = await evaluate.call(null, code);
     assert.strictEqual(result2, 1);
   });
 
@@ -174,14 +177,18 @@ describe("ops", () => {
   });
 
   test("ops.lambda defines a function with underscore input", async () => {
-    const scope = new ObjectTree({
+    const container = {
       message: "Hello",
-    });
+    };
 
-    const code = createCode([ops.lambda, ["_"], [[ops.scope], "message"]]);
+    const code = createCode([
+      ops.lambda,
+      ["_"],
+      [[ops.scope, container], "message"],
+    ]);
 
-    const fn = await evaluate.call(scope, code);
-    const result = await fn.call(scope);
+    const fn = await evaluate.call(null, code);
+    const result = await fn();
     assert.strictEqual(result, "Hello");
   });
 
@@ -192,7 +199,7 @@ describe("ops", () => {
         [ops.literal, "a"],
         [ops.literal, "b"],
       ],
-      [ops.concat, [[ops.scope], "b"], [[ops.scope], "a"]],
+      [ops.concat, [[ops.context], "b"], [[ops.context], "a"]],
     ]);
     const fn = await evaluate.call(null, code);
     const result = await fn("x", "y");
@@ -249,9 +256,9 @@ describe("ops", () => {
     //   ...more
     //   c: a
     // }
-    const scope = new ObjectTree({
+    const container = {
       more: { b: 2 },
-    });
+    };
     const code = createCode([
       [
         ops.object,
@@ -262,14 +269,14 @@ describe("ops", () => {
           [
             ops.merge,
             [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
-            [[ops.scope], "more"],
+            [[ops.scope, container], "more"],
             [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
           ],
         ],
       ],
       "_result",
     ]);
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(null, code);
     assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
@@ -311,32 +318,32 @@ describe("ops", () => {
   });
 
   test("ops.object instantiates an object", async () => {
-    const scope = new ObjectTree({
+    const container = {
       upper: (s) => s.toUpperCase(),
-    });
+    };
 
     const code = createCode([
       ops.object,
-      ["hello", [[[ops.scope], "upper"], "hello"]],
-      ["world", [[[ops.scope], "upper"], "world"]],
+      ["hello", [[[ops.scope, container], "upper"], "hello"]],
+      ["world", [[[ops.scope, container], "upper"], "world"]],
     ]);
 
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(null, code);
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
   });
 
   test("ops.object instantiates an array", async () => {
-    const scope = new ObjectTree({
+    const container = {
       upper: (s) => s.toUpperCase(),
-    });
+    };
     const code = createCode([
       ops.array,
       "Hello",
       1,
-      [[[ops.scope], "upper"], "world"],
+      [[[ops.scope, container], "upper"], "world"],
     ]);
-    const result = await evaluate.call(scope, code);
+    const result = await evaluate.call(null, code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
   });
 
@@ -355,7 +362,7 @@ describe("ops", () => {
   });
 
   describe("ops.scope", () => {
-    test("returns the scope of the current tree", async () => {
+    test("returns the scope of the given tree", async () => {
       const tree = new DeepObjectTree({
         a: {
           b: {},
@@ -364,21 +371,7 @@ describe("ops", () => {
       });
       const a = await tree.get("a");
       const b = await a.get("b");
-      const scope = await ops.scope.call(b);
-      assert.equal(await scope?.get("c"), 1);
-    });
-
-    test("accepts an optional context", async () => {
-      const tree = new DeepObjectTree({
-        a: {
-          b: {},
-          c: 0, // shouldn't get this
-        },
-        c: 1,
-      });
-      const a = await tree.get("a");
-      const b = await a.get("b");
-      const scope = await ops.scope.call(b, tree);
+      const scope = await ops.scope(b);
       assert.equal(await scope?.get("c"), 1);
     });
   });

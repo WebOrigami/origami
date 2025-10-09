@@ -32,9 +32,9 @@ async function main(...args) {
   // Traverse from the project root to the current directory.
   const currentDirectory = process.cwd();
   const relative = path.relative(projectTree.path, currentDirectory);
-  const tree = await Tree.traversePath(projectTree, relative);
+  const parent = await Tree.traversePath(projectTree, relative);
 
-  const result = await ori.call(tree, expression);
+  const result = await ori(expression, { parent });
 
   if (result !== undefined) {
     const output =

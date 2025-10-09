@@ -463,17 +463,15 @@ addOpLabel(rootDirectory, "«ops.rootDirectory»");
 /**
  * Return the scope of the current tree
  *
- * @this {AsyncTree|null}
- * @param {AsyncTree|null} [context]
+ * @param {AsyncTree} parent
  */
-export async function scope(context) {
-  if (context === undefined) {
-    context = this;
+export async function scope(parent) {
+  if (!parent) {
+    throw new ReferenceError(
+      "Tried to find a value in scope, but no container was provided as the parent."
+    );
   }
-  if (!context) {
-    return null;
-  }
-  return Tree.scope(context);
+  return Tree.scope(parent);
 }
 addOpLabel(scope, "«ops.scope»");
 

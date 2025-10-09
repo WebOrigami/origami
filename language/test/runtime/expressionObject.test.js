@@ -7,19 +7,20 @@ import { ops } from "../../src/runtime/internal.js";
 
 describe("expressionObject", () => {
   test("can instantiate an object", async () => {
-    const scope = new ObjectTree({
+    const container = new ObjectTree({
       upper: (s) => s.toUpperCase(),
     });
 
     const entries = [
-      ["hello", [[[ops.scope], "upper"], "hello"]],
-      ["world", [[[ops.scope], "upper"], "world"]],
+      ["hello", [[[ops.scope, container], "upper"], "hello"]],
+      ["world", [[[ops.scope, container], "upper"], "world"]],
     ];
+    const parent = new ObjectTree({});
 
-    const object = await expressionObject(entries, scope);
+    const object = await expressionObject(entries, parent);
     assert.equal(await object.hello, "HELLO");
     assert.equal(await object.world, "WORLD");
-    assert.equal(object[symbols.parent], scope);
+    assert.equal(object[symbols.parent], parent);
   });
 
   test("can define a property getter", async () => {
@@ -40,7 +41,7 @@ describe("expressionObject", () => {
   test("can instantiate an Origami tree", async () => {
     const entries = [
       ["name", "world"],
-      ["message", [ops.concat, "Hello, ", [[ops.scope], "name"], "!"]],
+      ["message", [ops.concat, "Hello, ", [[ops.context], "name"], "!"]],
     ];
     const parent = new ObjectTree({});
     const object = await expressionObject(entries, parent);

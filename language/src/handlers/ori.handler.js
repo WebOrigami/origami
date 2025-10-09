@@ -39,6 +39,7 @@ export default {
     const fn = compiler(source, {
       globals,
       mode: "program",
+      parent,
     });
 
     let result = await fn.call(parent);

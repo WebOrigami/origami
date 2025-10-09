@@ -3,7 +3,7 @@ import optimize from "./optimize.js";
 import { parse } from "./parse.js";
 
 function compile(source, options) {
-  const { front, startRule } = options;
+  const { front, parent, startRule } = options;
   const mode = options.mode ?? "program";
   const globals = options.globals ?? {};
   if (typeof source === "string") {
@@ -19,6 +19,7 @@ function compile(source, options) {
   const optimized = optimize(code, {
     cache,
     globals,
+    parent,
   });
   const fn = createExpressionFunction(optimized);
   return fn;

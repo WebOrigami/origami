@@ -6,7 +6,6 @@ import {
 } from "@weborigami/async-tree";
 import { compile } from "@weborigami/language";
 import projectGlobals from "@weborigami/language/src/project/projectGlobals.js";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { toYaml } from "../common/serialize.js";
 import * as dev from "../dev/dev.js";
 
@@ -18,14 +17,11 @@ const TypedArray = Object.getPrototypeOf(Uint8Array);
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {string} expression
  */
-export default async function ori(
-  expression,
-  options = { formatResult: true }
-) {
-  assertTreeIsDefined(this, "ori");
+export default async function ori(expression, options = {}) {
+  const parent = options.parent ?? null;
+  const formatResult = options.formatResult ?? true;
 
   // In case expression has come from a file, cast it to a string.
   if (!isStringlike(expression)) {
@@ -47,23 +43,21 @@ export default async function ori(
     globals,
     enableCaching: false,
     mode: "shell",
+    parent,
   });
 
-  // Run in the context of `this` if defined
-  const tree = this;
-
   // Execute
-  let result = await fn.call(tree);
+  let result = await fn.call(null);
 
   // If result was a function, execute it.
   if (typeof result === "function") {
-    result = await result.call(tree);
+    result = await result();
   }
 
-  return options.formatResult ? await formatResult(result) : result;
+  return formatResult ? await format(result) : result;
 }
 
-async function formatResult(result) {
+async function format(result) {
   if (
     typeof result === "string" ||
     result instanceof ArrayBuffer ||

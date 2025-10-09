@@ -81,7 +81,10 @@ export default {
       let frontData;
       if (isOrigami) {
         const globals = await projectGlobals();
-        const compiled = compile.expression(frontText.trim(), { globals });
+        const compiled = compile.expression(frontText.trim(), {
+          globals,
+          parent,
+        });
         frontData = await compiled.call(parent);
       } else {
         frontData = YAML.parse(frontText);

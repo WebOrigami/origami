@@ -124,9 +124,9 @@ describe("compile", () => {
 
 async function assertCompile(text, expected, options = {}) {
   const mode = options.mode ?? "program";
-  const fn = compile.expression(text, { globals, mode });
-  const target = options.target ?? null;
-  let result = await fn.call(target);
+  const parent = options.target ?? null;
+  const fn = compile.expression(text, { globals, mode, parent });
+  let result = await fn.call(null);
   if (Tree.isTreelike(result)) {
     result = await Tree.plain(result);
   }

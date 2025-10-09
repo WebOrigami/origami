@@ -46,6 +46,7 @@ export default {
       front: options.front,
       globals,
       mode: "program",
+      parent,
     });
 
     // Invoke the definition to get back the template function
