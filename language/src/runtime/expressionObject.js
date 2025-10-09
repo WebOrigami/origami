@@ -91,7 +91,7 @@ export default async function expressionObject(entries, parent) {
         get = async () => {
           tree ??= new ObjectTree(object);
           const result = await evaluate.call(tree, code);
-          return handleExtension(tree, result, key);
+          return handleExtension(result, key, tree);
         };
       } else {
         // No extension, so getter just invokes code.

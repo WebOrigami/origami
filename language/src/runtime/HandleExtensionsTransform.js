@@ -11,7 +11,7 @@ export default function HandleExtensionsTransform(Base) {
   return class FileLoaders extends Base {
     async get(key) {
       const value = await super.get(key);
-      return handleExtension(this, value, key);
+      return handleExtension(value, key, this);
     }
   };
 }

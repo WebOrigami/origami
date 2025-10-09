@@ -18,7 +18,7 @@ export default async function fetchAndHandleExtension(href) {
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
   if (filename) {
-    buffer = await handleExtension(null, buffer, filename);
+    buffer = await handleExtension(buffer, filename);
   }
 
   return buffer;

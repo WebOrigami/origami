@@ -16,11 +16,11 @@ let projectGlobals;
  * that ends in an extension, search for a handler for that extension and, if
  * found, attach it to the value.
  *
- * @param {import("@weborigami/types").AsyncTree|null} parent
  * @param {any} value
  * @param {any} key
+ * @param {import("@weborigami/types").AsyncTree} [parent]
  */
-export default async function handleExtension(parent, value, key) {
+export default async function handleExtension(value, key, parent) {
   projectGlobals ??= await globals();
   if (isPacked(value) && isStringlike(key) && value.unpack === undefined) {
     const hasSlash = trailingSlash.has(key);
@@ -56,7 +56,10 @@ export default async function handleExtension(parent, value, key) {
         if (handler.mediaType) {
           value.mediaType = handler.mediaType;
         }
-        setParent(value, parent);
+
+        if (parent) {
+          setParent(value, parent);
+        }
 
         const unpack = handler.unpack;
         if (unpack) {

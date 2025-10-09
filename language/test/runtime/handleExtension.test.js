@@ -10,7 +10,7 @@ describe("handleExtension", () => {
     assert(typeof numberValue === "number");
     assert.equal(numberValue, 1);
     const jsonFile = await fixture.get("bar.json");
-    const withHandler = await handleExtension(fixture, jsonFile, "bar.json");
+    const withHandler = await handleExtension(jsonFile, "bar.json", fixture);
     assert.equal(String(withHandler), `{ "bar": 2 }`);
     const data = await withHandler.unpack();
     assert.deepEqual(data, { bar: 2 });
@@ -19,7 +19,7 @@ describe("handleExtension", () => {
   test("immediately unpacks if key ends in slash", async () => {
     const fixture = createFixture();
     const jsonFile = await fixture.get("bar.json");
-    const data = await handleExtension(fixture, jsonFile, "bar.json/");
+    const data = await handleExtension(jsonFile, "bar.json/", fixture);
     assert.deepEqual(data, { bar: 2 });
   });
 });
