@@ -5,7 +5,7 @@ import {
   trailingSlash,
 } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
-import globals from "../project/projectGlobals.js";
+import projectGlobals from "../project/projectGlobals.js";
 import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
@@ -40,9 +40,11 @@ export default {
       url,
     };
 
+    const globals = options.globals ?? (await projectGlobals());
+
     const defineFn = compile.templateDocument(source, {
       front: options.front,
-      globals: globals(),
+      globals,
       mode: "program",
     });
 
