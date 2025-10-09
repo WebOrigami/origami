@@ -32,7 +32,10 @@ export default async function config(dir = process.cwd()) {
         ...builtins,
       };
       // Evaluate the config file to obtain the configuration object
-      configObject = oriHandler.unpack(configText, { globals });
+      configObject = oriHandler.unpack(configText, {
+        globals,
+        parent: root,
+      });
     }
   }
 
