@@ -1,4 +1,4 @@
-import { FileTree, toString } from "@weborigami/async-tree";
+import { FileTree, toString, Tree } from "@weborigami/async-tree";
 import oriHandler from "../handlers/ori.handler.js";
 import builtins from "./builtins.js";
 import jsGlobals from "./jsGlobals.js";
@@ -25,6 +25,7 @@ export default async function config(dir = process.cwd()) {
         .default;
       const globals = {
         ...jsGlobals,
+        Tree,
         ...handlerGlobals,
         ...builtins,
       };

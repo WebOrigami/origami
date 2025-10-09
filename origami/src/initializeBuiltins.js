@@ -1,4 +1,3 @@
-import { Tree } from "@weborigami/async-tree";
 import { builtins } from "@weborigami/language";
 import * as dev from "./dev/dev.js";
 import help from "./dev/help.js";
@@ -42,7 +41,6 @@ export default function initializeBuiltins() {
       "package:": packageNamespace,
 
       Dev: dev,
-      Tree,
       Origami: origami,
       Protocol,
     };
