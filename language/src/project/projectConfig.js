@@ -6,14 +6,16 @@ import projectRoot from "./projectRoot.js";
 const mapPathToConfig = new Map();
 
 export default async function config(dir = process.cwd()) {
-  const cached = mapPathToConfig.get(dir);
+  const root = await projectRoot(dir);
+
+  const rootPath = root.path;
+  const cached = mapPathToConfig.get(rootPath);
   if (cached) {
     return cached;
   }
 
-  const root = await projectRoot(dir);
   // Use a plain FileTree to avoid loading extension handlers
-  const rootFileTree = new FileTree(root.path);
+  const rootFileTree = new FileTree(rootPath);
   const configBuffer = await rootFileTree.get("config.ori");
   let configObject = {};
   if (configBuffer) {
@@ -22,13 +24,13 @@ export default async function config(dir = process.cwd()) {
       // Config uses only core globals (we're defining the config)
       const globals = await coreGlobals();
       // Evaluate the config file to obtain the configuration object
-      configObject = oriHandler.unpack(configText, {
+      configObject = await oriHandler.unpack(configText, {
         globals,
         parent: root,
       });
     }
   }
 
-  mapPathToConfig.set(dir, configObject);
+  mapPathToConfig.set(rootPath, configObject);
   return configObject;
 }

@@ -6,10 +6,13 @@ let globals;
 // Core globals plus project config
 export default async function projectGlobals() {
   if (!globals) {
-    globals = {
-      ...(await coreGlobals()),
-      ...(await projectConfig()),
-    };
+    // Start with core globals
+    globals = await coreGlobals();
+    // Now get config. The config.ori file may require access to globals,
+    // which will obtain the core globals set above. Once we've got the
+    // config, we add it to the globals.
+    const config = await projectConfig();
+    Object.assign(globals, config);
   }
 
   return globals;
