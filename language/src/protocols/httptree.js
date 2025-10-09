@@ -6,7 +6,6 @@ import constructSiteTree from "./constructSiteTree.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {string} host
  * @param  {...string} keys
  */

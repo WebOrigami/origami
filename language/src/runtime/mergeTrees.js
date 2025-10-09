@@ -1,9 +1,4 @@
-import {
-  isPlainObject,
-  isUnpackable,
-  setParent,
-  Tree,
-} from "@weborigami/async-tree";
+import { isPlainObject, isUnpackable, Tree } from "@weborigami/async-tree";
 
 /**
  * Create a tree that's the result of merging the given trees.
@@ -11,7 +6,6 @@ import {
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  *
- * @this {AsyncTree|null}
  * @param {(Treelike|null)[]} trees
  */
 export default async function mergeTrees(...trees) {
@@ -54,6 +48,5 @@ export default async function mergeTrees(...trees) {
 
   // Merge the trees.
   const result = Tree.merge(...unpacked);
-  setParent(result, this);
   return result;
 }

@@ -11,7 +11,6 @@ let graphvizLoaded = false;
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @this {AsyncTree|null}
  * @param {Treelike} [treelike]
  * @param {PlainObject} [options]
  */
@@ -21,7 +20,7 @@ export default async function svg(treelike, options = {}) {
     graphvizLoaded = true;
   }
   const tree = await getTreeArgument(this, arguments, treelike, "svg", true);
-  const dotText = await dot.call(this, tree, options);
+  const dotText = await dot(tree, options);
   if (dotText === undefined) {
     return undefined;
   }

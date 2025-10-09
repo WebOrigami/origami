@@ -28,7 +28,6 @@ addOpLabel(addition, "«ops.addition»");
 /**
  * Construct an array.
  *
- * @this {AsyncTree|null}
  * @param {any[]} items
  */
 export async function array(...items) {
@@ -106,11 +105,10 @@ comma.unevaluatedArgs = true;
 /**
  * Concatenate the given arguments.
  *
- * @this {AsyncTree|null}
  * @param {any[]} args
  */
 export async function concat(...args) {
-  return Tree.deepText.call(this, args);
+  return Tree.deepText(args);
 }
 addOpLabel(concat, "«ops.concat»");
 
@@ -345,11 +343,10 @@ addOpLabel(logicalOr, "«ops.logicalOr»");
 /**
  * Merge the given trees. If they are all plain objects, return a plain object.
  *
- * @this {AsyncTree|null}
  * @param {any[]} trees
  */
 export async function merge(...trees) {
-  return mergeTrees.call(this, ...trees);
+  return mergeTrees(...trees);
 }
 addOpLabel(merge, "«ops.merge»");
 
@@ -456,8 +453,6 @@ addOpLabel(remainder, "«ops.remainder»");
 
 /**
  * Files tree for the filesystem root.
- *
- * @this {AsyncTree|null}
  */
 export async function rootDirectory(...keys) {
   const tree = new OrigamiFiles("/");
