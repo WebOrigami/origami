@@ -11,5 +11,5 @@ import constructSiteTree from "./constructSiteTree.js";
  * @param  {...string} keys
  */
 export default function explore(host, ...keys) {
-  return constructSiteTree("https:", ExplorableSiteTree, this, host, ...keys);
+  return constructSiteTree("https:", ExplorableSiteTree, host, ...keys);
 }

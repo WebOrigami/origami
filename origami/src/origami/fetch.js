@@ -17,5 +17,5 @@ export default async function fetchBuiltin(resource, options) {
 
   const url = new URL(resource);
   const key = url.pathname;
-  return handleExtension(this, value, key);
+  return handleExtension(value, key, this);
 }

@@ -1,6 +1,6 @@
 import { UnpackFunction } from "@weborigami/async-tree";
 
-// export * from "./main.js";
+export * from "./main.js";
 
 /**
  * Code annotated to track the original source that produced the code. If the
