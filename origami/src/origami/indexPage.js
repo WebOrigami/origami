@@ -1,4 +1,4 @@
-import getTreeArgument from "../common/getTreeArgument.js";
+import { getTreeArgument } from "@weborigami/async-tree";
 import { getDescriptor } from "../common/utilities.js";
 
 /**
@@ -6,12 +6,12 @@ import { getDescriptor } from "../common/utilities.js";
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
- * @this {AsyncTree|null}
- * @param {Treelike} [treelike]
+ *
+ * @param {Treelike} treelike
  * @param {string} [basePath]
  */
 export default async function indexPage(treelike, basePath) {
-  const tree = await getTreeArgument(this, arguments, treelike, "indexPage");
+  const tree = await getTreeArgument(treelike, "svg");
   const keys = Array.from(await tree.keys());
 
   // Skip system-ish files that start with a period. Also skip `index.html`.

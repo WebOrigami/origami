@@ -1,55 +1,31 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
-import { Tree } from "@weborigami/async-tree";
+import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import { OrigamiFiles } from "@weborigami/language";
 import { oriHandler } from "@weborigami/language/src/handlers/handlers.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
 import { getDescriptor } from "../common/utilities.js";
 import debug from "./debug.js";
 
 let templatePromise;
 
 /**
- * @this {AsyncTree|null}
+ * Display a debug/explore page for the current tree.
  */
-export default async function explore(...keys) {
-  assertTreeIsDefined(this, "explore");
-  if (!this) {
-    return undefined;
-  }
+export default async function explore(treelike) {
+  const tree = await getTreeArgument(treelike, "explore");
 
-  const tree = Tree.from(this);
+  // Construct the template page
+  const scope = await Tree.scope(tree);
+  const data = await getScopeData(scope);
+  templatePromise ??= loadTemplate();
+  const template = await templatePromise;
+  const text = await template(data);
 
+  // If the user navigates inside this page, unpack back to the original tree.
   /** @type {any} */
-  let result;
-  if (keys.length > 0) {
-    // Traverse the scope using the given keys.
-    const debugTree = await debug.call(tree, this);
-    if (!debugTree) {
-      return undefined;
-    }
-    const debugScope = await Tree.scope(debugTree);
-    // HACK: reproduce logic of ExplorableSiteTransform that turns a trailing
-    // slash into index.html. Calling `debug` applies that transform and the
-    // transform should handle that logic, but unfortunately the `traverse`
-    // operation has special casing to treat a trailing slash, and never gives
-    // ExplorableSiteTransform a chance.
-    if (keys.at(-1) === "") {
-      keys[keys.length - 1] = "index.html";
-    }
-    result = await Tree.traverse(debugScope, ...keys);
-  } else {
-    // Return the Explore page for the current scope.
-    const scope = await Tree.scope(tree);
-    const data = await getScopeData(scope);
-    templatePromise ??= loadTemplate();
-    const template = await templatePromise;
-    const text = await template.call(this, data);
-
-    result = new String(text);
-    result.unpack = () => debug.call(tree, tree);
-  }
+  const result = new String(text);
+  result.unpack = () => debug(tree);
 
   return result;
 }

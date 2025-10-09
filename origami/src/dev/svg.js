@@ -1,5 +1,6 @@
+import { getTreeArgument } from "@weborigami/async-tree";
 import graphviz from "graphviz-wasm";
-import getTreeArgument from "../common/getTreeArgument.js";
+
 import dot from "./treeDot.js";
 
 let graphvizLoaded = false;
@@ -11,7 +12,7 @@ let graphvizLoaded = false;
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  *
- * @param {Treelike} [treelike]
+ * @param {Treelike} treelike
  * @param {PlainObject} [options]
  */
 export default async function svg(treelike, options = {}) {
@@ -19,7 +20,7 @@ export default async function svg(treelike, options = {}) {
     await graphviz.loadWASM();
     graphvizLoaded = true;
   }
-  const tree = await getTreeArgument(this, arguments, treelike, "svg", true);
+  const tree = await getTreeArgument(treelike, "svg", { deep: true });
   const dotText = await dot(tree, options);
   if (dotText === undefined) {
     return undefined;

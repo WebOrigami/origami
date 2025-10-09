@@ -81,35 +81,15 @@ export async function handleRequest(request, response, tree) {
 }
 
 function keysFromUrl(url) {
-  // Split on occurrences of `/!`, which represent Origami debug commands.
-  // Command arguments can contain slashes; don't treat those as path keys.
-  const parts = url.pathname.split(/\/!/);
+  const encodedKeys = keysFromPath(url.pathname);
+  const keys = encodedKeys.map((key) => decodeURIComponent(key));
 
-  // Split everything before the first command by slashes and decode those.
-  let path = parts.shift();
-  if (parts.length > 0) {
-    // HACK: Add back trailing slash that was removed by split
-    path += "/";
-  }
-  const pathKeys = keysFromPath(path).map((key) => decodeURIComponent(key));
-  if (parts.length > 0 && pathKeys.at(-1) === "") {
-    // HACK part 2: Remove empty string that was added for trailing slash
-    pathKeys.pop();
+  // If the path ends with a trailing slash, the final key will be an empty
+  // string. Change that to "index.html".
+  if (keys.at(-1) === "") {
+    keys[keys.length - 1] = "index.html";
   }
 
-  // If there are no commands, and the path ends with a trailing slash, the
-  // final key will be an empty string. Change that to "index.html".
-  if (parts.length === 0 && pathKeys[pathKeys.length - 1] === "") {
-    pathKeys[pathKeys.length - 1] = "index.html";
-  }
-
-  // Decode the text of the commands, prefix spaces with a backslash, and add
-  // back the `!` character.
-  const commandKeys = parts.map(
-    (command) => `!${decodeURIComponent(command).replace(/ /g, "\\ ")}`
-  );
-
-  const keys = [...pathKeys, ...commandKeys];
   return keys;
 }
 

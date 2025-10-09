@@ -7,7 +7,7 @@ import YAML from "yaml";
  *
  * @param {any} [obj]
  */
-export default async function toYaml(obj) {
+export default async function yamlBuiltin(obj) {
   // A fragment of the logic from getTreeArgument.js
   if (arguments.length > 0 && obj === undefined) {
     throw new Error(
