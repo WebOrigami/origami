@@ -1,8 +1,6 @@
-import { FileTree, toString, Tree } from "@weborigami/async-tree";
+import { FileTree, toString } from "@weborigami/async-tree";
 import oriHandler from "../handlers/ori.handler.js";
-import protocolGlobals from "../protocols/protocolGlobals.js";
-import builtins from "./builtins.js";
-import jsGlobals from "./jsGlobals.js";
+import coreGlobals from "./coreGlobals.js";
 import projectRoot from "./projectRoot.js";
 
 const mapPathToConfig = new Map();
@@ -21,16 +19,8 @@ export default async function config(dir = process.cwd()) {
   if (configBuffer) {
     const configText = toString(configBuffer);
     if (configText) {
-      // Config gets a reduced set of globals
-      const handlerGlobals = (await import("../handlers/handlerGlobals.js"))
-        .default;
-      const globals = {
-        ...jsGlobals,
-        Tree,
-        ...protocolGlobals,
-        ...handlerGlobals,
-        ...builtins,
-      };
+      // Config uses only core globals (we're defining the config)
+      const globals = await coreGlobals();
       // Evaluate the config file to obtain the configuration object
       configObject = oriHandler.unpack(configText, {
         globals,

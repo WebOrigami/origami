@@ -1,23 +1,14 @@
-import { Tree } from "@weborigami/async-tree";
-import protocolGlobals from "../protocols/protocolGlobals.js";
-import builtins from "./builtins.js";
-import jsGlobals from "./jsGlobals.js";
+import coreGlobals from "./coreGlobals.js";
 import projectConfig from "./projectConfig.js";
 
 let globals;
 
+// Core globals plus project config
 export default async function projectGlobals() {
   if (!globals) {
-    const handlerGlobals = (await import("../handlers/handlerGlobals.js"))
-      .default;
-    const config = await projectConfig();
     globals = {
-      ...jsGlobals,
-      Tree,
-      ...protocolGlobals,
-      ...handlerGlobals,
-      ...builtins,
-      ...config,
+      ...(await coreGlobals()),
+      ...(await projectConfig()),
     };
   }
 
