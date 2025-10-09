@@ -5,7 +5,7 @@ import toFunction from "../utilities/toFunction.js";
 /**
  * Create a tree from a function and a set of keys.
  *
- * @typedef {import("@weborigami/async-tree").Invocable} Invocable
+ * @typedef {import("../../index.ts").Invocable} Invocable
  *
  * @param {Invocable} invocable
  */

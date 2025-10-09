@@ -1,5 +1,5 @@
 import { Tree, keysFromPath } from "@weborigami/async-tree";
-import { projectRoot } from "@weborigami/language";
+import projectRoot from "../project/projectRoot.js";
 
 /**
  * @param {string[]} keys

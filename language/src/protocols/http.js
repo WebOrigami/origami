@@ -1,6 +1,5 @@
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
-import constructHref from "../common/constructHref.js";
-import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
+import constructHref from "./constructHref.js";
+import fetchAndHandleExtension from "./fetchAndHandleExtension.js";
 
 /**
  * Retrieve the indicated web resource via HTTP.
@@ -12,7 +11,6 @@ import fetchAndHandleExtension from "../common/fetchAndHandleExtension.js";
  * @param  {...string} keys
  */
 export default async function http(host, ...keys) {
-  assertTreeIsDefined(this, "http");
   const href = constructHref("http:", host, ...keys);
-  return fetchAndHandleExtension.call(this, href);
+  return fetchAndHandleExtension(href);
 }

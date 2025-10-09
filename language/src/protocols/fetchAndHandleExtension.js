@@ -1,11 +1,10 @@
-import { handleExtension } from "@weborigami/language";
+import handleExtension from "../runtime/handleExtension.js";
 
 /**
  * Fetch the resource at the given href.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {string} href
  */
 export default async function fetchAndHandleExtension(href) {
@@ -18,8 +17,8 @@ export default async function fetchAndHandleExtension(href) {
   // Attach any loader defined for the file type.
   const url = new URL(href);
   const filename = url.pathname.split("/").pop();
-  if (this && filename) {
-    buffer = await handleExtension(this, buffer, filename);
+  if (filename) {
+    buffer = await handleExtension(null, buffer, filename);
   }
 
   return buffer;

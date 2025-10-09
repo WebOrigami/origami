@@ -1,18 +1,14 @@
-import { OrigamiFiles } from "@weborigami/language";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import assertTreeIsDefined from "../common/assertTreeIsDefined.js";
+import OrigamiFiles from "../runtime/OrigamiFiles.js";
 
 /**
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {AsyncTree|null}
  * @param {string[]} keys
  */
 export default async function files(...keys) {
-  assertTreeIsDefined(this, "files");
-
   // If path begins with `~`, treat it relative to the home directory.
   // Otherwise, treat it relative to the current working directory.
   let relativePath = keys.join(path.sep);

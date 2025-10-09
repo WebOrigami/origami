@@ -16,7 +16,7 @@ let projectGlobals;
  * that ends in an extension, search for a handler for that extension and, if
  * found, attach it to the value.
  *
- * @param {import("@weborigami/types").AsyncTree} parent
+ * @param {import("@weborigami/types").AsyncTree|null} parent
  * @param {any} value
  * @param {any} key
  */

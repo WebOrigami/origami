@@ -15,7 +15,7 @@ import isAsyncTree from "./isAsyncTree.js";
  *
  * @typedef  {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").Treelike} Treelike
- * @typedef {import("@weborigami/async-tree").Invocable} Invocable
+ * @typedef {import("../../index.ts").Invocable} Invocable
  *
  * @param {string|RegExp} pattern
  * @param {Invocable} resultFn

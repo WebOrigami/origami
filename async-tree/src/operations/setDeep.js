@@ -2,7 +2,7 @@ import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
- * @typedef {import("@weborigami/async-tree").Treelike} Treelike
+ * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} target
  * @param {Treelike} source
