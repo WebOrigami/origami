@@ -1,7 +1,11 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
-import optimize from "../../src/compiler/optimize.js";
+import {
+  REFERENCE_INHERITED,
+  REFERENCE_PARAM,
+  default as optimize,
+} from "../../src/compiler/optimize.js";
 import { markers } from "../../src/compiler/parserHelpers.js";
 import { ops } from "../../src/runtime/internal.js";
 import {
@@ -24,11 +28,17 @@ describe("optimize", () => {
         [
           "a",
           [
-            [ops.context, 1],
+            [ops.params, 0],
             [ops.literal, "name"],
           ],
         ],
-        ["b", [[ops.context], [ops.literal, "a"]]],
+        [
+          "b",
+          [
+            [ops.inherited, 0],
+            [ops.literal, "a"],
+          ],
+        ],
       ],
     ];
     assertCompile(expression, expected);
@@ -54,7 +64,7 @@ describe("optimize", () => {
           [
             "a",
             [
-              [ops.context, 1],
+              [ops.inherited, 1],
               [ops.literal, "a"],
             ],
           ],
@@ -81,7 +91,7 @@ describe("optimize", () => {
           [
             "name",
             [
-              [ops.context, 1],
+              [ops.inherited, 1],
               [ops.literal, "name"],
             ],
           ],
@@ -185,27 +195,37 @@ describe("optimize", () => {
     });
 
     test("local reference", () => {
-      // Compilation of `post` where post is a local variable
+      // Compilation of `post` where post is a local parameter
       const code = createCode([markers.traverse, [markers.reference, "post"]]);
       const globals = { post: {} }; // local should take precedence
-      const locals = [["post"]];
+      const locals = [{ type: REFERENCE_PARAM, names: ["post"] }];
       const actual = optimize(code, { globals, locals });
-      const expected = [[ops.context], [ops.literal, "post"]];
+      const expected = [
+        [ops.params, 0],
+        [ops.literal, "post"],
+      ];
       assertCodeEqual(actual, expected);
     });
 
     test("local reference and property", () => {
-      // Compilation of `post.author.name` where `post` is a local variable
+      // Compilation of `post.author.name` where `post` is a local inherited property
       const code = createCode([
         markers.traverse,
         [markers.reference, "post.author.name"],
       ]);
       const globals = { post: {} }; // local should take precedence
-      const locals = [["post"]];
+      const locals = [{ type: REFERENCE_INHERITED, names: ["post"] }];
       const actual = optimize(code, { globals, locals });
       const expected = [
         ops.property,
-        [ops.property, [[ops.context], [ops.literal, "post"]], "author"],
+        [
+          ops.property,
+          [
+            [ops.inherited, 0],
+            [ops.literal, "post"],
+          ],
+          "author",
+        ],
         "name",
       ];
       assertCodeEqual(actual, expected);
@@ -273,17 +293,17 @@ describe("optimize", () => {
     });
 
     test("local path", () => {
-      // Compilation of `page/title` where page is a local variable
+      // Compilation of `page/title` where page is a local parameter
       const code = createCode([
         markers.traverse,
         [markers.reference, "page/"],
         [ops.literal, "title"],
       ]);
       const globals = {};
-      const locals = [["page"]];
+      const locals = [{ type: REFERENCE_PARAM, names: ["page"] }];
       const actual = optimize(code, { globals, locals });
       const expected = [
-        [ops.context],
+        [ops.params, 0],
         [ops.literal, "page/"],
         [ops.literal, "title"],
       ];

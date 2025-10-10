@@ -5,7 +5,12 @@
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  */
 
-import { isUnpackable, ObjectTree, Tree } from "@weborigami/async-tree";
+import {
+  isUnpackable,
+  ObjectTree,
+  symbols,
+  Tree,
+} from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
@@ -201,6 +206,19 @@ export async function homeDirectory(...keys) {
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
 
+export async function inherited(depth, context) {
+  let current = context;
+  for (let i = 0; i < depth; i++) {
+    if (!current) {
+      throw new ReferenceError(`Origami internal error: Can't find properties`);
+    }
+    current = current.parent ?? current[symbols.parent];
+  }
+  return current;
+}
+addOpLabel(inherited, "«ops.inherited»");
+inherited.needsContext = true;
+
 /**
  * Return a function that will invoke the given code.
  *
@@ -208,15 +226,17 @@ addOpLabel(homeDirectory, "«ops.homeDirectory»");
  * @param {string[]} parameters
  * @param {AnnotatedCode} code
  */
-export function lambda(parameters, code) {
+export function lambda(parameters, code, stack) {
   const context = this;
 
   /** @this {Treelike|null} */
   async function invoke(...args) {
     let target;
+    let newStack;
     if (parameters.length === 0) {
       // No parameters
       target = context;
+      newStack = stack;
     } else {
       // Add arguments to scope.
       const ambients = {};
@@ -228,12 +248,14 @@ export function lambda(parameters, code) {
         value: code,
         enumerable: false,
       });
+      newStack = stack.slice();
+      newStack.push(ambients);
       const ambientTree = new ObjectTree(ambients);
       ambientTree.parent = context;
       target = ambientTree;
     }
 
-    let result = await evaluate.call(target, code);
+    let result = await evaluate.call(target, code, newStack);
 
     // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
@@ -257,11 +279,11 @@ export function lambda(parameters, code) {
     value: fnLength,
   });
 
-  invoke.code = code;
   return invoke;
 }
 addOpLabel(lambda, "«ops.lambda»");
 lambda.unevaluatedArgs = true;
+lambda.needsStack = true;
 
 export function lessThan(a, b) {
   return a < b;
@@ -398,6 +420,12 @@ export async function object(...entries) {
 }
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
+
+export async function params(depth, stack) {
+  return stack[stack.length - 1 - depth];
+}
+addOpLabel(params, "«ops.params»");
+params.needsStack = true;
 
 // export function optionalTraverse(treelike, key) {
 //   if (!treelike) {

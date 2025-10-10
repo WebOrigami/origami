@@ -10,8 +10,9 @@ import * as symbols from "./symbols.js";
  *
  * @this {import("@weborigami/types").AsyncTree|null}
  * @param {import("../../index.ts").AnnotatedCode} code
+ * @param {Array} [stack]
  */
-export default async function evaluate(code) {
+export default async function evaluate(code, stack = []) {
   const tree = this;
 
   if (!(code instanceof Array)) {
@@ -26,8 +27,13 @@ export default async function evaluate(code) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate.call(tree, instruction))
+      code.map((instruction) => evaluate.call(tree, instruction, stack))
     );
+  }
+
+  if (code[0]?.needsStack) {
+    // An op that wants the local variables
+    evaluated.push(stack);
   }
 
   // The head of the array is a function or a tree; the rest are args or keys.

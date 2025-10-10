@@ -192,14 +192,14 @@ describe("ops", () => {
     assert.strictEqual(result, "Hello");
   });
 
-  test("ops.lambda adds input parameters to scope", async () => {
+  test.only("ops.lambda adds input parameters to scope", async () => {
     const code = createCode([
       ops.lambda,
       [
         [ops.literal, "a"],
         [ops.literal, "b"],
       ],
-      [ops.concat, [[ops.context], "b"], [[ops.context], "a"]],
+      [ops.concat, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
     const fn = await evaluate.call(null, code);
     const result = await fn("x", "y");

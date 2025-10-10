@@ -4,9 +4,10 @@ import { entryKey } from "../runtime/expressionObject.js";
 import { ops } from "../runtime/internal.js";
 import { annotate, markers } from "./parserHelpers.js";
 
-const REFERENCE_LOCAL = 1;
-const REFERENCE_GLOBAL = 2;
-const REFERENCE_EXTERNAL = 3;
+export const REFERENCE_PARAM = 1;
+export const REFERENCE_INHERITED = 2;
+export const REFERENCE_GLOBAL = 3;
+export const REFERENCE_EXTERNAL = 4;
 
 /**
  * Optimize an Origami code instruction:
@@ -30,8 +31,9 @@ export default function optimize(code, options = {}) {
   const parent = options.parent ?? null;
 
   // The locals is an array, one item for each function or object context that
-  // has been entered. The array grows to the right. The array items are
-  // subarrays containing the names of local variables defined in that context.
+  // has been entered. The array grows to the right. Array items are objects
+  // { type, names }, where type is REFERENCE_PARAM or REFERENCE_INHERITED
+  // and names is an array of the variable names in that context.
   const locals = options.locals ? options.locals.slice() : [];
 
   // See if we can optimize this level of the code
@@ -47,8 +49,11 @@ export default function optimize(code, options = {}) {
     case ops.lambda:
       const parameters = args[0];
       if (parameters.length > 0) {
-        const names = parameters.map((param) => param[1]);
-        locals.push(names);
+        const paramNames = parameters.map((param) => param[1]);
+        locals.push({
+          type: REFERENCE_PARAM,
+          names: paramNames,
+        });
       }
       break;
 
@@ -57,8 +62,11 @@ export default function optimize(code, options = {}) {
 
     case ops.object:
       const entries = args;
-      const keys = entries.map((entry) => entryKey(entry));
-      locals.push(keys);
+      const propertyNames = entries.map((entry) => entryKey(entry));
+      locals.push({
+        type: REFERENCE_INHERITED,
+        names: propertyNames,
+      });
       break;
   }
 
@@ -107,18 +115,29 @@ function avoidLocalRecursion(locals, key) {
     key = key.slice(1, -1);
   }
 
-  const currentFrame = locals.length - 1;
-  const matchingKeyIndex = locals[currentFrame].findIndex(
-    (localKey) =>
+  const currentFrameIndex = locals.length - 1;
+  if (locals[currentFrameIndex]?.type !== REFERENCE_INHERITED) {
+    // Not an inherited context, nothing to do
+    return locals;
+  }
+
+  // See if the key matches any of the local variable names in the current
+  // context (ignoring trailing slashes)
+  const matchingKeyIndex = locals[currentFrameIndex].names.findIndex(
+    (name) =>
       // Ignore trailing slashes when comparing keys
-      trailingSlash.remove(localKey) === trailingSlash.remove(key)
+      trailingSlash.remove(name) === trailingSlash.remove(key)
   );
 
   if (matchingKeyIndex >= 0) {
     // Remove the key from the current context's locals
     const adjustedLocals = locals.slice();
-    adjustedLocals[currentFrame] = adjustedLocals[currentFrame].slice();
-    adjustedLocals[currentFrame].splice(matchingKeyIndex, 1);
+    const adjustedNames = adjustedLocals[currentFrameIndex].names.slice();
+    adjustedNames.splice(matchingKeyIndex, 1);
+    adjustedLocals[currentFrameIndex] = {
+      type: REFERENCE_INHERITED,
+      names: adjustedNames,
+    };
     return adjustedLocals;
   } else {
     return locals;
@@ -136,21 +155,18 @@ function compoundReference(key, globals, locals, location) {
   const parts = key.split(".");
   if (parts.length === 1) {
     // Not a compound reference
-    return { type: REFERENCE_EXTERNAL, result: null };
+    return null;
   }
 
   // Check first part to see if it's a global or local reference
   const [head, ...tail] = parts;
-  const type = referenceType(head, globals, locals);
-  let result;
-  if (type === REFERENCE_GLOBAL) {
-    result = globalReference(head, globals);
-  } else if (type === REFERENCE_LOCAL) {
-    result = localReference(head, locals, location);
-  } else {
-    // Not a compound reference
-    return { type: REFERENCE_EXTERNAL, result: null };
+  const headReference = localOrGlobalReference(head, globals, locals, location);
+  if (headReference === null) {
+    // First part isn't global/local reference, so not a compound reference
+    return null;
   }
+
+  let result = headReference.result;
 
   // Process the remaining parts as property accesses
   while (tail.length > 0) {
@@ -158,7 +174,7 @@ function compoundReference(key, globals, locals, location) {
     result = annotate([ops.property, result, part], location);
   }
 
-  return { type, result };
+  return { type: headReference.type, result };
 }
 
 function externalReference(key, parent, location) {
@@ -167,18 +183,26 @@ function externalReference(key, parent, location) {
   return annotate([scope, literal], location);
 }
 
-// Determine how many contexts up we need to go for a local
-function getLocalReferenceDepth(locals, key) {
-  const contextIndex = locals.findLastIndex((names) =>
-    names.some(
-      (name) => trailingSlash.remove(name) === trailingSlash.remove(key)
-    )
-  );
-  if (contextIndex < 0) {
-    return -1; // Not a local reference
+function findLocalDetails(key, locals) {
+  const normalized = trailingSlash.remove(key);
+  let paramDepth = 0;
+  let inheritedDepth = 0;
+  for (let i = locals.length - 1; i >= 0; i--) {
+    const { type, names } = locals[i];
+    const local = names.find(
+      (name) => trailingSlash.remove(name) === normalized
+    );
+    if (local) {
+      const depth = type === REFERENCE_PARAM ? paramDepth : inheritedDepth;
+      return { type, depth };
+    }
+    if (type === REFERENCE_PARAM) {
+      paramDepth++;
+    } else {
+      inheritedDepth++;
+    }
   }
-  const depth = locals.length - contextIndex - 1;
-  return depth;
+  return null;
 }
 
 function globalReference(key, globals) {
@@ -186,23 +210,16 @@ function globalReference(key, globals) {
   return globals[normalized];
 }
 
+function inheritedReference(key, depth, location) {
+  const literal = annotate([ops.literal, key], location);
+  const inherited = annotate([ops.inherited, depth], location);
+  return annotate([inherited, literal], location);
+}
+
 function inlineLiteral(code) {
   // If the literal value is an array, it's likely the strings array
   // of a template literal, so return it as is.
   return code[0] === ops.literal && !Array.isArray(code[1]) ? code[1] : code;
-}
-
-function localReference(key, locals, location) {
-  const normalized = trailingSlash.remove(key);
-  const depth = getLocalReferenceDepth(locals, normalized);
-  /** @type {any[]} */
-  const context = [ops.context];
-  if (depth > 0) {
-    context.push(depth);
-  }
-  const contextCall = annotate(context, location);
-  const literal = annotate([ops.literal, key], location);
-  return annotate([contextCall, literal], location);
 }
 
 function keyFromCode(code) {
@@ -223,6 +240,36 @@ function keyFromCode(code) {
     default:
       return null;
   }
+}
+
+function localOrGlobalReference(key, globals, locals, location) {
+  // Is key a local?
+  const normalized = trailingSlash.remove(key);
+  const localDetails = findLocalDetails(normalized, locals);
+  if (localDetails) {
+    const { type, depth } = localDetails;
+    const result =
+      type === REFERENCE_PARAM
+        ? paramReference(key, depth, location)
+        : inheritedReference(key, depth, location);
+    return { type, result };
+  }
+
+  // Is key a global?
+  if (normalized in globals) {
+    return {
+      type: REFERENCE_GLOBAL,
+      result: globalReference(key, globals),
+    };
+  }
+
+  return null;
+}
+
+function paramReference(key, depth, location) {
+  const literal = annotate([ops.literal, key], location);
+  const params = annotate([ops.params, depth], location);
+  return annotate([params, literal], location);
 }
 
 function reference(code, globals, parent, locals) {
@@ -253,42 +300,22 @@ function reference(code, globals, parent, locals) {
   }
 
   // See if the whole key is a global or local variable
-  let type = referenceType(key, globals, locals);
-  if (type === REFERENCE_GLOBAL) {
-    return {
-      type,
-      result: globalReference(key, globals),
-    };
-  } else if (type === REFERENCE_LOCAL) {
-    return {
-      type,
-      result: localReference(key, locals, location),
-    };
+  const whole = localOrGlobalReference(key, globals, locals, location);
+  if (whole) {
+    return whole;
   }
 
   // Try key as a compound reference x.y.z
   const compound = compoundReference(key, globals, locals, location);
-  if (compound.type !== REFERENCE_EXTERNAL) {
+  if (compound) {
     return compound;
   }
 
-  // Not a compound reference, must be external
+  // Must be external
   return {
     type: REFERENCE_EXTERNAL,
     result: externalReference(key, parent, location),
   };
-}
-
-function referenceType(key, globals, locals) {
-  // Check if the key is a global variable
-  const normalized = trailingSlash.remove(key);
-  if (getLocalReferenceDepth(locals, normalized) >= 0) {
-    return REFERENCE_LOCAL;
-  } else if (normalized in globals) {
-    return REFERENCE_GLOBAL;
-  } else {
-    return REFERENCE_EXTERNAL;
-  }
 }
 
 function resolvePath(code, globals, parent, locals, cache) {
@@ -302,7 +329,9 @@ function resolvePath(code, globals, parent, locals, cache) {
     const extendResult =
       result instanceof Array &&
       result[0] instanceof Array &&
-      (result[0][0] === ops.scope || result[0][0] === ops.context);
+      (result[0][0] === ops.scope ||
+        result[0][0] === ops.params ||
+        result[0][0] === ops.inherited);
     if (extendResult) {
       result.push(...tail);
     } else {
