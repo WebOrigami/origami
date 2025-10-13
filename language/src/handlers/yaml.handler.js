@@ -1,6 +1,5 @@
 import { symbols, toString } from "@weborigami/async-tree";
 import * as YAMLModule from "yaml";
-import processUnpackedContent from "./processUnpackedContent.js";
 
 // The "yaml" package doesn't seem to provide a default export that the browser can
 // recognize, so we have to handle two ways to accommodate Node and the browser.
@@ -17,8 +16,7 @@ export default {
   mediaType: "application/yaml",
 
   /** @type {import("@weborigami/async-tree").UnpackFunction} */
-  unpack(packed, options = {}) {
-    const parent = options.parent ?? null;
+  unpack(packed) {
     const yaml = toString(packed);
     if (!yaml) {
       throw new Error("Tried to parse something as YAML but it wasn't text.");
@@ -30,6 +28,6 @@ export default {
         value: true,
       });
     }
-    return processUnpackedContent(data, parent);
+    return data;
   },
 };

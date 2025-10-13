@@ -219,10 +219,11 @@ function bindStaticMethods(obj) {
   }
 
   let extended;
-  // A regular object or an oddball like Proxy with no prototype
   if (typeof obj === "object" || !obj.prototype) {
+    // A regular object or an oddball like Proxy with no prototype
     extended = Object.create(obj);
   } else {
+    // A function, possibly a constructor called with or without `new`
     /** @this {any} */
     extended = function (...args) {
       const calledWithNew = this instanceof extended;

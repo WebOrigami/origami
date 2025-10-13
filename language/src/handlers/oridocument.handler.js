@@ -6,7 +6,6 @@ import {
 } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import projectGlobals from "../project/projectGlobals.js";
-import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
  * An Origami template document: a plain text file that contains Origami
@@ -58,7 +57,7 @@ export default {
       result.key = addExtension(resultExtension);
     }
 
-    return processUnpackedContent(result, parent);
+    return result;
   },
 };
 

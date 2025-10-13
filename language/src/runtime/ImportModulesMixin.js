@@ -20,9 +20,9 @@ export default function ImportModulesMixin(Base) {
         fileUrl.href + `?cacheBust=${moduleCache.getTimestamp()}`;
 
       // Try to load the module.
-      let obj;
+      let object;
       try {
-        obj = await import(modulePath);
+        object = await import(modulePath);
       } catch (/** @type {any} */ error) {
         if (error.code !== "ERR_MODULE_NOT_FOUND") {
           throw error;
@@ -48,14 +48,8 @@ export default function ImportModulesMixin(Base) {
         throw new SyntaxError(message);
       }
 
-      if ("default" in obj) {
-        // Module with a default export; return that.
-        return obj.default;
-      } else {
-        // Module with multiple named exports. Cast from a module namespace
-        // object to a plain object.
-        return { ...obj };
-      }
+      // Cast from an exotic module namespace object to a plain object.
+      return { ...object };
     }
   };
 }

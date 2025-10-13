@@ -1,7 +1,6 @@
 import { getParent, toString } from "@weborigami/async-tree";
 import * as compile from "../compiler/compile.js";
 import projectGlobals from "../project/projectGlobals.js";
-import processUnpackedContent from "./processUnpackedContent.js";
 
 /**
  * An Origami expression file
@@ -44,6 +43,6 @@ export default {
 
     let result = await fn.call(parent);
 
-    return processUnpackedContent(result, parent);
+    return result;
   },
 };
