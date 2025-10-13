@@ -417,39 +417,37 @@ params.needsState = true;
 /**
  * Return the indicated property
  *
- * @param {any} obj
+ * @param {any} object
  * @param {string} key
  */
-export async function property(obj, key) {
-  if (obj == null) {
+export async function property(object, key) {
+  if (object == null) {
     throw new ReferenceError();
   }
 
-  if (isUnpackable(obj)) {
-    obj = await obj.unpack();
-  } else if (typeof obj === "string") {
-    obj = new String(obj);
-  } else if (typeof obj === "number") {
-    obj = new Number(obj);
+  if (isUnpackable(object)) {
+    object = await object.unpack();
+  } else if (typeof object === "string") {
+    object = new String(object);
+  } else if (typeof object === "number") {
+    object = new Number(object);
   }
 
-  if (key in obj) {
+  if (key in object) {
     // Object defines the property, get it
-    let value = obj[key];
+    let value = object[key];
     // Is value an instance method? Copied from ObjectTree.
     const isInstanceMethod =
-      !(obj instanceof Function) &&
-      value instanceof Function &&
-      !Object.hasOwn(obj, key);
+      value instanceof Function && !Object.hasOwn(object, key);
     if (isInstanceMethod) {
       // Bind it to the object
-      value = value.bind(obj);
+      value = value.bind(object);
     }
     return value;
   }
 
   // Handle as tree traversal
-  return Tree.traverseOrThrow(obj, key);
+  return Tree.traverseOrThrow(object, key);
 }
 addOpLabel(property, "«ops.property»");
 

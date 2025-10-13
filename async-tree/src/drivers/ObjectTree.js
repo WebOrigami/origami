@@ -57,12 +57,9 @@ export default class ObjectTree {
 
     setParent(value, this);
 
-    // Is value an instance method? The first clause sees if the object is a
-    // constructor, in which case the method is likely a static method.
+    // Is value an instance method?
     const isInstanceMethod =
-      !(this.object instanceof Function) &&
-      value instanceof Function &&
-      !Object.hasOwn(this.object, key);
+      value instanceof Function && !Object.hasOwn(this.object, key);
     if (isInstanceMethod) {
       // Bind it to the object
       value = value.bind(this.object);
