@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import projectConfig from "../../src/project/projectConfig.js";
 
 describe("projectConfig", () => {
-  test.only("finds Origami configuration file", async () => {
+  test("finds Origami configuration file", async () => {
     // Find the folder that represents the project root.
     const projectUrl = new URL("fixtures/withConfig/", import.meta.url);
     // Find subfolder inside project root.

@@ -9,9 +9,8 @@ import { evaluate } from "./internal.js";
  * @param {string} [name] - optional name of the function
  */
 export function createExpressionFunction(code, name) {
-  /** @this {AsyncTree|null} */
   async function fn() {
-    return evaluate.call(this, code);
+    return evaluate(code);
   }
   if (name) {
     Object.defineProperty(fn, "name", { value: name });

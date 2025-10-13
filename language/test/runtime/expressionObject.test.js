@@ -15,47 +15,47 @@ describe("expressionObject", () => {
       ["hello", [[[ops.scope, container], "upper"], "hello"]],
       ["world", [[[ops.scope, container], "upper"], "world"]],
     ];
-    const parent = new ObjectTree({});
+    const context = new ObjectTree({});
 
-    const object = await expressionObject(entries, parent);
+    const object = await expressionObject(entries, { context });
     assert.equal(await object.hello, "HELLO");
     assert.equal(await object.world, "WORLD");
-    assert.equal(object[symbols.parent], parent);
+    assert.equal(object[symbols.parent], context);
   });
 
   test("can define a property getter", async () => {
     let count = 0;
     const increment = () => count++;
     const entries = [["count", [ops.getter, [increment]]]];
-    const object = await expressionObject(entries, null);
+    const object = await expressionObject(entries);
     assert.equal(await object.count, 0);
     assert.equal(await object.count, 1);
   });
 
   test("treats a getter for a primitive value as a regular property", async () => {
     const entries = [["name", [ops.getter, "world"]]];
-    const object = await expressionObject(entries, null);
+    const object = await expressionObject(entries);
     assert.equal(object.name, "world");
   });
 
   test("can instantiate an Origami tree", async () => {
     const entries = [
       ["name", "world"],
-      ["message", [ops.concat, "Hello, ", [[ops.context], "name"], "!"]],
+      ["message", [ops.concat, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
-    const parent = new ObjectTree({});
-    const object = await expressionObject(entries, parent);
+    const context = new ObjectTree({});
+    const object = await expressionObject(entries, { context });
     assert.deepEqual(await Tree.plain(object), {
       name: "world",
       message: "Hello, world!",
     });
-    assert.equal(object[symbols.parent], parent);
+    assert.equal(object[symbols.parent], context);
   });
 
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
-    const parent = new ObjectTree({});
-    const result = await expressionObject(entries, parent);
+    const context = new ObjectTree({});
+    const result = await expressionObject(entries, { context });
     const dataJson = await result["data.json"];
     const json = await dataJson.unpack();
     assert.deepEqual(json, { a: 1 });
@@ -66,7 +66,7 @@ describe("expressionObject", () => {
       ["(hidden)", "shh"],
       ["visible", "hey"],
     ];
-    const object = await expressionObject(entries, null);
+    const object = await expressionObject(entries);
     assert.deepEqual(Object.keys(object), ["visible"]);
     assert.equal(object["hidden"], "shh");
   });
@@ -80,7 +80,7 @@ describe("expressionObject", () => {
       // Immediate treelike value, should have a slash
       ["object", [ops.object, ["b", [ops.literal, 2]]]],
     ];
-    const object = await expressionObject(entries, null);
+    const object = await expressionObject(entries);
     assert.deepEqual(object[symbols.keys](), [
       "getter/",
       "hasSlash/",

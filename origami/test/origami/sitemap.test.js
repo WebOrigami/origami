@@ -17,7 +17,7 @@ describe("sitemap", () => {
         "c.html": "C",
       },
     });
-    const result = await sitemap.call(null, tree, {
+    const result = await sitemap(tree, {
       base: "https://example.com",
     });
     assert.deepEqual(

@@ -1,4 +1,5 @@
 import { UnpackFunction } from "@weborigami/async-tree";
+import { AsyncTree } from "@weborigami/types";
 
 export * from "./main.js";
 
@@ -38,12 +39,6 @@ export type ExtensionHandler = {
   unpack?: UnpackFunction;
 }
 
-export type Position = {
-  column: number;
-  line: number;
-  offset: number;
-}
-
 /**
  * A mixin is a function that takes an existing class and returns a new class.
  *
@@ -55,6 +50,19 @@ export type Position = {
 export type Mixin<MixinMembers> = <T>(
   Base: Constructor<T>
 ) => Constructor<T & MixinMembers>;
+
+export type Position = {
+  column: number;
+  line: number;
+  offset: number;
+}
+
+export type RuntimeState = {
+  /** The tree in which the code is being evaluated */
+  context?: AsyncTree | null;
+  /** The current stack of function parameter assignments */
+  stack?: Array<Record<string, any>>;
+}
 
 /**
  * Source code representation used by the parser.

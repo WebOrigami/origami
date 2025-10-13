@@ -3,6 +3,7 @@
  * @typedef {import("@weborigami/async-tree").PlainObject} PlainObject
  * @typedef {import("@weborigami/async-tree").Treelike} Treelike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").RuntimeState} RuntimeState
  */
 
 import {
@@ -129,23 +130,6 @@ export async function construct(constructor, ...args) {
   return Reflect.construct(constructor, args);
 }
 
-/**
- * Return the nth parent of the current tree
- *
- * @this {AsyncTree|null|undefined}
- */
-export function context(n = 0) {
-  let tree = this;
-  for (let i = 0; i < n; i++) {
-    if (!tree) {
-      throw new Error("Internal error: couldn't find tree ancestor.");
-    }
-    tree = tree.parent;
-  }
-  return tree;
-}
-addOpLabel(context, "«ops.context»");
-
 export function division(a, b) {
   return a / b;
 }
@@ -206,18 +190,27 @@ export async function homeDirectory(...keys) {
 }
 addOpLabel(homeDirectory, "«ops.homeDirectory»");
 
-export async function inherited(depth, context) {
-  let current = context;
+/**
+ * Given the tree currently be using as the context for the runtime, walk up the
+ * parent chain `depth` levels and return that tree.
+ *
+ * @param {number} depth
+ * @param {RuntimeState} state
+ */
+export async function inherited(depth, state) {
+  let current = state.context;
   for (let i = 0; i < depth; i++) {
     if (!current) {
-      throw new ReferenceError(`Origami internal error: Can't find properties`);
+      throw new ReferenceError(
+        `Origami internal error: Can't find context object`
+      );
     }
     current = current.parent ?? current[symbols.parent];
   }
   return current;
 }
 addOpLabel(inherited, "«ops.inherited»");
-inherited.needsContext = true;
+inherited.needsState = true;
 
 /**
  * Return a function that will invoke the given code.
@@ -226,17 +219,18 @@ inherited.needsContext = true;
  * @param {string[]} parameters
  * @param {AnnotatedCode} code
  */
-export function lambda(parameters, code, stack) {
+export function lambda(parameters, code, state = {}) {
   const context = this;
+  const stack = state.stack ?? [];
 
   /** @this {Treelike|null} */
   async function invoke(...args) {
     let target;
-    let newStack;
+    let newState;
     if (parameters.length === 0) {
       // No parameters
       target = context;
-      newStack = stack;
+      newState = state;
     } else {
       // Add arguments to scope.
       const ambients = {};
@@ -248,14 +242,15 @@ export function lambda(parameters, code, stack) {
         value: code,
         enumerable: false,
       });
-      newStack = stack.slice();
+      const newStack = stack.slice() ?? [];
       newStack.push(ambients);
+      newState = Object.assign({}, state, { stack: newStack });
       const ambientTree = new ObjectTree(ambients);
       ambientTree.parent = context;
       target = ambientTree;
     }
 
-    let result = await evaluate.call(target, code, newStack);
+    let result = await evaluate.call(target, code, newState);
 
     // Bind a function result to the ambients so that it has access to the
     // parameter values -- i.e., like a closure.
@@ -271,6 +266,10 @@ export function lambda(parameters, code, stack) {
     return result;
   }
 
+  // Retain a reference to the original code for debugging, and so that functions
+  // can be compared by their code (e.g., for caching purposes).
+  invoke.code = code;
+
   // We set the `length` property on the function so that Tree.traverseOrThrow()
   // will correctly identify how many parameters it wants. This is unorthodox
   // but doesn't appear to affect other behavior.
@@ -283,7 +282,7 @@ export function lambda(parameters, code, stack) {
 }
 addOpLabel(lambda, "«ops.lambda»");
 lambda.unevaluatedArgs = true;
-lambda.needsStack = true;
+lambda.needsState = true;
 
 export function lessThan(a, b) {
   return a < b;
@@ -416,16 +415,25 @@ addOpLabel(nullishCoalescing, "«ops.nullishCoalescing»");
  * @param {any[]} entries
  */
 export async function object(...entries) {
-  return expressionObject(entries, this);
+  const state = entries.pop();
+  return expressionObject(entries, state);
 }
 addOpLabel(object, "«ops.object»");
 object.unevaluatedArgs = true;
+object.needsState = true;
 
-export async function params(depth, stack) {
+/**
+ * Return the stack frame that's `depth` levels up the stack.
+ *
+ * @param {number} depth
+ * @param {RuntimeState} state
+ */
+export async function params(depth, state = {}) {
+  const stack = state.stack ?? [];
   return stack[stack.length - 1 - depth];
 }
 addOpLabel(params, "«ops.params»");
-params.needsStack = true;
+params.needsState = true;
 
 // export function optionalTraverse(treelike, key) {
 //   if (!treelike) {

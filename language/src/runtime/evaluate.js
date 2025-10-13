@@ -8,13 +8,10 @@ import * as symbols from "./symbols.js";
  *
  * `this` should be the tree used as the context for the evaluation.
  *
- * @this {import("@weborigami/types").AsyncTree|null}
  * @param {import("../../index.ts").AnnotatedCode} code
- * @param {Array} [stack]
+ * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function evaluate(code, stack = []) {
-  const tree = this;
-
+export default async function evaluate(code, state = {}) {
   if (!(code instanceof Array)) {
     // Simple scalar; return as is.
     return code;
@@ -27,13 +24,8 @@ export default async function evaluate(code, stack = []) {
   } else {
     // Evaluate each instruction in the code.
     evaluated = await Promise.all(
-      code.map((instruction) => evaluate.call(tree, instruction, stack))
+      code.map((instruction) => evaluate(instruction, state))
     );
-  }
-
-  if (code[0]?.needsStack) {
-    // An op that wants the local variables
-    evaluated.push(stack);
   }
 
   // The head of the array is a function or a tree; the rest are args or keys.
@@ -53,13 +45,18 @@ export default async function evaluate(code, stack = []) {
     fn = await fn.unpack();
   }
 
+  if (fn.needsState) {
+    // The function is an op that wants the runtime state
+    args.push(state);
+  }
+
   // Execute the function or traverse the tree.
   let result;
   try {
     result =
       fn instanceof Function
-        ? await fn.call(tree, ...args) // Invoke the function
-        : await Tree.traverseOrThrow.call(tree, fn, ...args); // Traverse the tree.
+        ? await fn(...args) // Invoke the function
+        : await Tree.traverseOrThrow(fn, ...args); // Traverse the tree.
   } catch (/** @type {any} */ error) {
     if (!error.location) {
       // Attach the location of the code we tried to evaluate.

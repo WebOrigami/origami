@@ -24,11 +24,12 @@ import { evaluate, ops } from "./internal.js";
  *    property getter on the object.
  *
  * @param {*} entries
- * @param {import("@weborigami/types").AsyncTree | null} parent
+ * @param {import("../../index.ts").RuntimeState} [state]
  */
-export default async function expressionObject(entries, parent) {
+export default async function expressionObject(entries, state = {}) {
   // Create the object and set its parent
   const object = {};
+  const parent = state?.context ?? null;
   if (parent !== null && !Tree.isAsyncTree(parent)) {
     throw new TypeError(`Parent must be an AsyncTree or null`);
   }
@@ -85,21 +86,12 @@ export default async function expressionObject(entries, parent) {
         code = value;
       }
 
-      let get;
-      if (extname) {
-        // Key has extension, getter will invoke code then attach unpack method
-        get = async () => {
-          tree ??= new ObjectTree(object);
-          const result = await evaluate.call(tree, code);
-          return handleExtension(result, key, tree);
-        };
-      } else {
-        // No extension, so getter just invokes code.
-        get = async () => {
-          tree ??= new ObjectTree(object);
-          return evaluate.call(tree, code);
-        };
-      }
+      const get = async () => {
+        tree ??= new ObjectTree(object);
+        const newState = Object.assign({}, state, { context: tree });
+        const result = await evaluate(code, newState);
+        return extname ? handleExtension(result, key, tree) : result;
+      };
 
       Object.defineProperty(object, key, {
         configurable: true,

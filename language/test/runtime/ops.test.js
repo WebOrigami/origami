@@ -21,7 +21,7 @@ describe("ops", () => {
 
   test("ops.array creates an array", async () => {
     const code = createCode([ops.array, 1, 2, 3]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.deepEqual(result, [1, 2, 3]);
   });
 
@@ -44,7 +44,7 @@ describe("ops", () => {
 
   test("ops.comma returns the last value", async () => {
     const code = createCode([ops.comma, 1, 2, 3]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.strictEqual(result, 3);
   });
 
@@ -59,7 +59,7 @@ describe("ops", () => {
       ".",
     ]);
 
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.strictEqual(result, "Hello, world.");
   });
 
@@ -75,20 +75,6 @@ describe("ops", () => {
 
   test("ops.construct", async () => {
     assert.equal(await ops.construct(String, "hello"), "hello");
-  });
-
-  test("ops.context", async () => {
-    const tree = new DeepObjectTree({
-      a: {
-        b: {
-          c: {},
-        },
-      },
-    });
-    const b = await Tree.traverse(tree, "a", "b");
-    const c = await b.get("c");
-    assert.equal(ops.context.call(c), c);
-    assert.equal(ops.context.call(c, 1), b);
   });
 
   test("ops.division divides two numbers", async () => {
@@ -131,9 +117,9 @@ describe("ops", () => {
         [ops.literal, "count"],
       ],
     ]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.strictEqual(result, 1);
-    const result2 = await evaluate.call(null, code);
+    const result2 = await evaluate(code);
     assert.strictEqual(result2, 1);
   });
 
@@ -169,9 +155,19 @@ describe("ops", () => {
     assert(ops.greaterThanOrEqual("ab", "aa"));
   });
 
+  test("ops.inherited walks up the context chain", async () => {
+    const tree = new DeepObjectTree({
+      a: {
+        b: {},
+      },
+    });
+    const b = await Tree.traverse(tree, "a", "b");
+    assert.equal(await ops.inherited(2, { context: b }), tree);
+  });
+
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
-    const fn = await evaluate.call(null, code);
+    const fn = await evaluate(code);
     const result = await fn.call();
     assert.strictEqual(result, "result");
   });
@@ -187,12 +183,12 @@ describe("ops", () => {
       [[ops.scope, container], "message"],
     ]);
 
-    const fn = await evaluate.call(null, code);
+    const fn = await evaluate(code);
     const result = await fn();
     assert.strictEqual(result, "Hello");
   });
 
-  test.only("ops.lambda adds input parameters to scope", async () => {
+  test("ops.lambda adds input parameters to scope", async () => {
     const code = createCode([
       ops.lambda,
       [
@@ -201,7 +197,7 @@ describe("ops", () => {
       ],
       [ops.concat, [[ops.params, 0], "b"], [[ops.params, 0], "a"]],
     ]);
-    const fn = await evaluate.call(null, code);
+    const fn = await evaluate(code);
     const result = await fn("x", "y");
     assert.strictEqual(result, "yx");
   });
@@ -263,20 +259,20 @@ describe("ops", () => {
       [
         ops.object,
         ["a", [ops.literal, 1]],
-        ["c", [[ops.context], "a"]],
+        ["c", [[ops.inherited, 0], "a"]],
         [
           "_result",
           [
             ops.merge,
-            [ops.object, ["a", [ops.getter, [[ops.context, 1], "a"]]]],
+            [ops.object, ["a", [ops.getter, [[ops.inherited, 1], "a"]]]],
             [[ops.scope, container], "more"],
-            [ops.object, ["c", [ops.getter, [[ops.context, 1], "c"]]]],
+            [ops.object, ["c", [ops.getter, [[ops.inherited, 1], "c"]]]],
           ],
         ],
       ],
       "_result",
     ]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.deepEqual(await Tree.plain(result), { a: 1, b: 2, c: 1 });
   });
 
@@ -328,7 +324,7 @@ describe("ops", () => {
       ["world", [[[ops.scope, container], "upper"], "world"]],
     ]);
 
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.strictEqual(result.hello, "HELLO");
     assert.strictEqual(result.world, "WORLD");
   });
@@ -343,8 +339,17 @@ describe("ops", () => {
       1,
       [[[ops.scope, container], "upper"], "world"],
     ]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.deepEqual(result, ["Hello", 1, "WORLD"]);
+  });
+
+  test("ops.params returns a stack frame", async () => {
+    const code = createCode([ops.params, 1]);
+    const frame1 = { a: 1 };
+    const frame2 = { b: 2 };
+    const stack = [frame1, frame2];
+    const result = await evaluate.call(null, code, { stack });
+    assert.strictEqual(result, frame1);
   });
 
   test("ops.property returns a property if defined, otherwise traverses", async () => {
@@ -432,7 +437,7 @@ describe("ops", () => {
   test("ops.unpack unpacks a value", async () => {
     const fixture = new String("packed");
     /** @type {any} */ (fixture).unpack = async () => "unpacked";
-    const result = await ops.unpack.call(null, fixture);
+    const result = await ops.unpack(fixture);
     assert.strictEqual(result, "unpacked");
   });
 

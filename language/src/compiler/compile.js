@@ -9,18 +9,24 @@ function compile(source, options) {
   if (typeof source === "string") {
     source = { text: source };
   }
+
+  // Parse the code
   let code = parse(source.text, {
     front,
     grammarSource: source,
     mode,
     startRule,
   });
+
+  // Optimize the code
   const cache = mode === "program" ? {} : null;
   const optimized = optimize(code, {
     cache,
     globals,
     parent,
   });
+
+  // Create a function that executes the optimized code.
   const fn = createExpressionFunction(optimized);
   return fn;
 }
