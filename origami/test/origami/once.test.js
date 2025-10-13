@@ -6,7 +6,7 @@ import once from "../../src/origami/once.js";
 describe("once", () => {
   test("evaluates a generic function only once", async () => {
     let counter = 0;
-    const promise = once.call(null, () => ++counter);
+    const promise = once(() => ++counter);
     assert.strictEqual(await promise, 1);
     assert.strictEqual(await promise, 1);
   });
@@ -19,12 +19,12 @@ describe("once", () => {
     // Create two lambdas with the same code
     const code = [ops.lambda, [], [[[ops.scope, container], "increment"]]];
     // @ts-ignore
-    const lambda1 = await evaluate.call(null, code);
-    const result1 = await once.call(null, lambda1);
+    const lambda1 = await evaluate(code);
+    const result1 = await once(lambda1);
     assert.strictEqual(result1, 1);
     // @ts-ignore
-    const lambda2 = await evaluate.call(null, code);
-    const result2 = await once.call(null, lambda2);
+    const lambda2 = await evaluate(code);
+    const result2 = await once(lambda2);
     assert.strictEqual(result2, 1);
   });
 });

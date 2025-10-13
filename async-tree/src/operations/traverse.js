@@ -6,7 +6,6 @@ import traverseOrThrow from "./traverseOrThrow.js";
  *
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @this {any}
  * @param {Treelike} treelike
  * @param {...any} keys
  */
@@ -14,7 +13,7 @@ export default async function traverse(treelike, ...keys) {
   try {
     // Await the result here so that, if the path doesn't exist, the catch
     // block below will catch the exception.
-    return await traverseOrThrow.call(this, treelike, ...keys);
+    return await traverseOrThrow(treelike, ...keys);
   } catch (/** @type {any} */ error) {
     if (error instanceof TraverseError) {
       return undefined;

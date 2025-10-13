@@ -10,9 +10,7 @@ export default async function functionResultsMap(treelike) {
 
     value: async (sourceValue, sourceKey, tree) => {
       const resultValue =
-        typeof sourceValue === "function"
-          ? await sourceValue.call(tree)
-          : sourceValue;
+        typeof sourceValue === "function" ? await sourceValue() : sourceValue;
       return resultValue;
     },
   });

@@ -24,7 +24,7 @@ describe("crawl", () => {
       },
     };
     const treeWithoutKeys = new DeepObjectTreeWithoutKeys(tree);
-    const crawled = await crawl.call(null, treeWithoutKeys);
+    const crawled = await crawl(treeWithoutKeys);
     // Crawl should recover entire tree
     const plain = await Tree.plain(crawled);
     assert.deepEqual(plain, tree);
@@ -35,7 +35,7 @@ describe("crawl", () => {
       "index.html": `<img src="logo.png">`,
       "logo.png": "PNG data",
     };
-    const crawled = await crawl.call(null, tree);
+    const crawled = await crawl(tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "logo.png",
@@ -54,7 +54,7 @@ describe("crawl", () => {
       "b.js": "export default true;",
       "c.js": "export default false;",
     };
-    const crawled = await crawl.call(null, tree);
+    const crawled = await crawl(tree);
     assert.deepEqual(Array.from(await crawled.keys()), [
       "index.html",
       "a.js",
@@ -74,7 +74,7 @@ describe("crawl", () => {
   </url>
 </urlset>`,
     };
-    const crawled = await crawl.call(null, tree, "https://example.com");
+    const crawled = await crawl(tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "sitemap.xml",
       "a.html",
@@ -97,7 +97,7 @@ describe("crawl", () => {
 </urlset>`,
       "robots.txt": "Sitemap: http://example.com/mysitemap.xml",
     };
-    const crawled = await crawl.call(null, tree, "https://example.com");
+    const crawled = await crawl(tree, "https://example.com");
     assert.deepEqual(Array.from(await crawled.keys()), [
       "robots.txt",
       "mysitemap.xml",
@@ -109,7 +109,7 @@ describe("crawl", () => {
     const tree = {
       "index.html": `<a href="missing.html">Missing</a>`,
     };
-    const crawled = await crawl.call(null, tree);
+    const crawled = await crawl(tree);
     const json = await crawled.get("crawl-errors.json");
     const parsed = JSON.parse(json);
     assert.deepEqual(parsed, {
@@ -125,7 +125,7 @@ describe("crawl", () => {
       `,
       "team.html": "Our Team",
     };
-    const crawled = await crawl.call(null, tree, "about/");
+    const crawled = await crawl(tree, "about/");
     const plain = await Tree.plain(crawled);
     assert.deepEqual(plain, tree);
   });
@@ -135,7 +135,7 @@ describe("crawl", () => {
       "": "<a href='about'>About</a>",
       about: "<h1>About</h1>",
     };
-    const crawled = await crawl.call(null, tree);
+    const crawled = await crawl(tree);
     const plain = await Tree.plain(crawled);
     assert.deepEqual(plain, {
       "index.html": "<a href='about'>About</a>",

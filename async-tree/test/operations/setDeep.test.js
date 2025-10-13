@@ -14,8 +14,7 @@ describe("tree/setDeep", () => {
     });
 
     // Apply changes.
-    await setDeep.call(
-      null,
+    await setDeep(
       tree,
       new DeepObjectTree({
         a: 4, // Overwrite existing value
@@ -47,7 +46,7 @@ describe("tree/setDeep", () => {
 
   test("can apply updates to an array", async () => {
     const tree = new ObjectTree(["a", "b", "c"]);
-    await setDeep.call(null, tree, ["d", "e"]);
+    await setDeep(tree, ["d", "e"]);
     assert.deepEqual(await Tree.plain(tree), ["d", "e", "c"]);
   });
 });

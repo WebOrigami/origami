@@ -47,7 +47,7 @@ export default async function ori(expression, options = {}) {
   });
 
   // Execute
-  let result = await fn.call(null);
+  let result = await fn();
 
   // If result was a function, execute it.
   if (typeof result === "function") {

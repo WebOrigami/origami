@@ -13,7 +13,7 @@ export default function InvokeFunctionsTransform(Base) {
     async get(key) {
       let value = await super.get(key);
       if (typeof value === "function") {
-        value = await value.call(this);
+        value = await value();
 
         if (Tree.isAsyncTree(value) && !value.parent) {
           value.parent = this;

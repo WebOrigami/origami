@@ -7,7 +7,7 @@ describe("audit", () => {
     const tree = {
       "index.html": `<a href="missing.html">Missing</a>`,
     };
-    const result = await audit.call(null, tree);
+    const result = await audit(tree);
     assert.deepEqual(result, {
       "index.html": ["missing.html"],
     });
@@ -17,7 +17,7 @@ describe("audit", () => {
     const tree = {
       "index.html": `<img src="missing.png">`,
     };
-    const result = await audit.call(null, tree);
+    const result = await audit(tree);
     assert.deepEqual(result, {
       "index.html": ["missing.png"],
     });
@@ -31,7 +31,7 @@ describe("audit", () => {
       `,
       "foo.html": "Foo",
     };
-    const result = await audit.call(null, tree);
+    const result = await audit(tree);
     assert.equal(result, undefined);
   });
 });

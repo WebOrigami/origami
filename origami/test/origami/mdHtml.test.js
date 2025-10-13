@@ -16,7 +16,7 @@ describe("mdHtml", () => {
       title: "Hello",
     };
     /** @type {any} */
-    const htmlDocument = await mdHtml.call(null, markdownDocument);
+    const htmlDocument = await mdHtml(markdownDocument);
     assert.deepEqual(htmlDocument, {
       _body: `<h1 id="hello-world">Hello, world.</h1>\n`,
       title: "Hello",

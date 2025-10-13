@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
@@ -43,21 +43,24 @@ describe("compile", () => {
     );
   });
 
-  test.skip("merge", async () => {
+  test("merge", async () => {
     {
-      const scope = new ObjectTree({
+      const globals = {
         more: {
           b: 2,
         },
-      });
-      const fn = compile.expression(`
+      };
+      const fn = compile.expression(
+        `
         {
           a: 1
           ...more
           c: a
         }
-      `);
-      const result = await fn.call(scope);
+      `,
+        { globals }
+      );
+      const result = await fn();
       assert.deepEqual(await Tree.plain(result), {
         a: 1,
         b: 2,
@@ -79,7 +82,7 @@ describe("compile", () => {
 
   test("async object", async () => {
     const fn = compile.expression("{ a: { b = name }}", { globals });
-    const object = await fn.call(null);
+    const object = await fn();
     assert.deepEqual(await object.a.b, "Alice");
   });
 
@@ -87,8 +90,8 @@ describe("compile", () => {
     const defineTemplateFn = compile.templateDocument(
       "Documents can contain ` backticks"
     );
-    const templateFn = await defineTemplateFn.call(null);
-    const value = await templateFn.call(null);
+    const templateFn = await defineTemplateFn();
+    const value = await templateFn();
     assert.deepEqual(value, "Documents can contain ` backticks");
   });
 
@@ -114,7 +117,7 @@ describe("compile", () => {
       },
     };
     const program = compile.expression("=tag`Hello, ${_}!`", { globals });
-    const lambda = await program.call(null);
+    const lambda = await program();
     const alice = await lambda("Alice");
     assert.equal(alice, "Hello, Alice!");
     const bob = await lambda("Bob");
@@ -126,7 +129,7 @@ async function assertCompile(text, expected, options = {}) {
   const mode = options.mode ?? "program";
   const parent = options.target ?? null;
   const fn = compile.expression(text, { globals, mode, parent });
-  let result = await fn.call(null);
+  let result = await fn();
   if (Tree.isTreelike(result)) {
     result = await Tree.plain(result);
   }

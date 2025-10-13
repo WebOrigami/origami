@@ -3,11 +3,9 @@ import { describe, test } from "node:test";
 import jsGlobals from "../../src/project/jsGlobals.js";
 
 describe("jsGlobals", () => {
-  test("wraps static methods to drop the call target", async () => {
-    const { Promise: fixture } = jsGlobals;
-    const target = {};
-    const promise = fixture.resolve.call(target, "hi");
-    const value = await promise;
+  test("wraps static methods to bind them to defining object", async () => {
+    const all = jsGlobals.Promise.all;
+    const value = await all([Promise.resolve("hi")]);
     assert.equal(value, "hi");
   });
 

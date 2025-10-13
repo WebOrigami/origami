@@ -27,11 +27,11 @@ export default class FunctionTree {
       this.fn.length <= 1
         ? // Function takes no arguments, one argument, or a variable number of
           // arguments: invoke it.
-          await this.fn.call(this.parent, key)
+          await this.fn(key)
         : // Bind the key to the first parameter. Subsequent get calls will
           // eventually bind all parameters until only one remains. At that point,
           // the above condition will apply and the function will be invoked.
-          Reflect.construct(this.constructor, [this.fn.bind(this.parent, key)]);
+          Reflect.construct(this.constructor, [this.fn.bind(null, key)]);
     setParent(value, this);
     return value;
   }

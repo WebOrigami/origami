@@ -1,5 +1,5 @@
 import { Tree, getTreeArgument, jsonKeys } from "@weborigami/async-tree";
-import index from "./indexPage.js";
+import indexPage from "./indexPage.js";
 
 /**
  * Expose common static keys (index.html, .keys.json) for a tree.
@@ -23,7 +23,7 @@ function staticTree(tree) {
     async get(key) {
       let value = await tree.get(key);
       if (value === undefined && key === "index.html") {
-        value = await index.call(this, this);
+        value = await indexPage(this);
       } else if (value === undefined && key === ".keys.json") {
         value = await jsonKeys.stringify(this);
       } else if (Tree.isTreelike(value)) {

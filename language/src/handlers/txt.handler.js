@@ -85,7 +85,7 @@ export default {
           globals,
           parent,
         });
-        frontData = await compiled.call(parent);
+        frontData = await compiled();
       } else {
         frontData = YAML.parse(frontText);
       }

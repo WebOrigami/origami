@@ -18,7 +18,7 @@ describe("changes", () => {
       },
       e: "new",
     };
-    const result = await changes.call(null, oldTree, newTree);
+    const result = await changes(oldTree, newTree);
     assert.deepEqual(result, {
       "a/": {
         b: "changed",
@@ -35,7 +35,7 @@ describe("changes", () => {
       },
     };
     const tree2 = structuredClone(tree1);
-    const result = await changes.call(null, tree1, tree2);
+    const result = await changes(tree1, tree2);
     assert.strictEqual(result, undefined);
   });
 });

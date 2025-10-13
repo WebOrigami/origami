@@ -7,8 +7,7 @@ describe("mergeTrees", () => {
   test("if all arguments are plain objects, result is a plain object", async () => {
     let calledFoo = false;
     let calledBar = false;
-    const result = await mergeTrees.call(
-      null,
+    const result = await mergeTrees(
       {
         a: 1,
         b: 2,
@@ -42,8 +41,7 @@ describe("mergeTrees", () => {
   });
 
   test("merges heterogenous arguments as trees", async () => {
-    const tree = await mergeTrees.call(
-      null,
+    const tree = await mergeTrees(
       new ObjectTree({
         a: 1,
         b: 2,

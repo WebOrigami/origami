@@ -10,7 +10,7 @@ describe("reverse", () => {
       b: "B",
       c: "C",
     };
-    const reversed = await reverse.call(null, tree);
+    const reversed = await reverse(tree);
     // @ts-ignore
     assert.deepEqual(Array.from(await reversed.keys()), ["c", "b", "a"]);
     // @ts-ignore

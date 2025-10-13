@@ -12,7 +12,7 @@ describe("paginate", () => {
       d: 4,
       e: 5,
     };
-    const paginated = await paginate.call(null, treelike, 2);
+    const paginated = await paginate(treelike, 2);
     const plain = await Tree.plain(paginated);
     assert.deepEqual(await plain, {
       1: {

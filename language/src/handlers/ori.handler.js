@@ -41,8 +41,7 @@ export default {
       parent,
     });
 
-    let result = await fn.call(parent);
-
+    const result = await fn();
     return result;
   },
 };

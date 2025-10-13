@@ -10,7 +10,7 @@ describe("evaluate", () => {
     const packed = new String();
     /** @type {any} */ (packed).unpack = async () => fn;
     const code = createCode([packed, "a", "b", "c"]);
-    const result = await evaluate.call(null, code);
+    const result = await evaluate(code);
     assert.equal(result, "a,b,c");
   });
 });

@@ -14,7 +14,7 @@ describe("deepMap", () => {
         "file5.bar": "won't be mapped",
       },
     });
-    const fixture = await deepMap.call(null, treelike, {
+    const fixture = await deepMap(treelike, {
       deep: true,
       extension: ".txt->.upper",
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),

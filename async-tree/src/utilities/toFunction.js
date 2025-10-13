@@ -17,7 +17,6 @@ export default function toFunction(obj) {
   } else if (isUnpackable(obj)) {
     // Extract the contents of the object and convert that to a function.
     let fnPromise;
-    /** @this {any} */
     return async function (...args) {
       if (!fnPromise) {
         // unpack() may return a function or a promise for a function; normalize
@@ -28,7 +27,7 @@ export default function toFunction(obj) {
         fnPromise = unpackPromise.then((content) => toFunction(content));
       }
       const fn = await fnPromise;
-      return fn.call(this, ...args);
+      return fn(...args);
     };
   } else if (isTreelike(obj)) {
     // Return a function that invokes the tree's getter.

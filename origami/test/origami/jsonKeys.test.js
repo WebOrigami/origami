@@ -12,7 +12,7 @@ describe("jsonKeys", () => {
         "Carol.html": "Hello, Carol!",
       },
     });
-    const result = await jsonKeys.call(null, tree);
+    const result = await jsonKeys(tree);
     assert.deepEqual(await Tree.plain(result), {
       ".keys.json": `["about/"]`,
       about: {

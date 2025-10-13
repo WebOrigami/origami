@@ -9,7 +9,6 @@ import from from "./from.js";
  * @typedef {import("../../index.ts").Treelike} Treelike
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
- * @this {any}
  * @param {Treelike} treelike
  * @param  {...any} keys
  */
@@ -18,10 +17,6 @@ export default async function traverseOrThrow(treelike, ...keys) {
   /** @type {any} */
   let value = treelike;
   let position = 0;
-
-  // If traversal operation was called with a `this` context, use that as the
-  // target for function calls.
-  const target = this;
 
   // Process all the keys.
   const remainingKeys = keys.slice();
@@ -47,7 +42,7 @@ export default async function traverseOrThrow(treelike, ...keys) {
       let fnKeyCount = Math.max(fn.length, 1);
       const args = remainingKeys.splice(0, fnKeyCount);
       key = null;
-      value = await fn.call(target, ...args);
+      value = await fn(...args);
     } else {
       // Cast value to a tree.
       const tree = from(value);

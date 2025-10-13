@@ -85,7 +85,7 @@ export default function EventTargetMixin(Base) {
         if (stopImmediatePropagation) {
           break;
         }
-        listener.call(this, event);
+        listener(event);
       }
 
       return !event.defaultPrevented;

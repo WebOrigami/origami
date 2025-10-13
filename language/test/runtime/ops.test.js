@@ -168,7 +168,7 @@ describe("ops", () => {
   test("ops.lambda defines a function with no inputs", async () => {
     const code = createCode([ops.lambda, [], [ops.literal, "result"]]);
     const fn = await evaluate(code);
-    const result = await fn.call();
+    const result = await fn();
     assert.strictEqual(result, "result");
   });
 
@@ -348,7 +348,7 @@ describe("ops", () => {
     const frame1 = { a: 1 };
     const frame2 = { b: 2 };
     const stack = [frame1, frame2];
-    const result = await evaluate.call(null, code, { stack });
+    const result = await evaluate(code, { stack });
     assert.strictEqual(result, frame1);
   });
 

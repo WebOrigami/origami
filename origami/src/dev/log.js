@@ -8,7 +8,7 @@ import yaml from "../origami/yaml.js";
  * @param {any} [result]
  */
 export default async function log(result, object = result) {
-  let text = object !== undefined ? await yaml.call(null, object) : "undefined";
+  let text = object !== undefined ? await yaml(object) : "undefined";
   text = text?.trim();
   console.log(text);
   return result;

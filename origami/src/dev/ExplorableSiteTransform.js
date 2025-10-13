@@ -31,8 +31,8 @@ export default function ExplorableSiteTransform(Base) {
       if (value === undefined) {
         // The tree doesn't have the key; try the defaults.
         if (key === "index.html") {
-          // This tree is both the function call target and the parameter.
-          value = await indexPage.call(this, this);
+          // Generate an index page for this site
+          value = await indexPage(this);
         } else if (key === ".keys.json") {
           value = await jsonKeys.stringify(this);
         }

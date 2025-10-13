@@ -22,9 +22,7 @@ async function main(...args) {
 
   // If no arguments were passed, show usage.
   if (!expression) {
-    // HACK: the config is the parent of the project tree.
-    const config = projectTree.parent;
-    const usage = await help.call(config);
+    const usage = await help();
     console.log(usage);
     return;
   }

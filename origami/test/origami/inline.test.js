@@ -10,7 +10,7 @@ describe("inline", () => {
       name: "Alice",
     });
     const document = await txtHandler.unpack("Hello, ${name}!", { parent });
-    const inlined = await inline.call(null, document);
+    const inlined = await inline(document);
     assert(inlined, "Hello, Alice!");
   });
 
@@ -20,7 +20,7 @@ name: Bob
 ---
 Hello, \${ name }!`;
     /** @type {any} */
-    const inlined = await inline.call(null, text);
+    const inlined = await inline(text);
     assert.deepEqual(inlined, {
       name: "Bob",
       _body: `Hello, Bob!`,
@@ -33,7 +33,7 @@ Hello, \${ name }!`;
       _body: `Hello, \${ name }!`,
     };
     /** @type {any} */
-    const inlined = await inline.call(null, document);
+    const inlined = await inline(document);
     assert.deepEqual(inlined, {
       name: "Carol",
       _body: `Hello, Carol!`,

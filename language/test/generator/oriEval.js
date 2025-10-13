@@ -9,6 +9,6 @@ export default async function oriEval(source) {
     undefined: undefined,
   };
   const compiled = compile.program(source, { globals });
-  const result = await compiled.call(null);
+  const result = await compiled();
   return result;
 }

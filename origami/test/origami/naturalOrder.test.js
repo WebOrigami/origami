@@ -10,7 +10,7 @@ describe("naturalOrder", () => {
       10: "ten",
       2: "two",
     };
-    const sorted = await Tree.sort.call(null, tree, naturalOrder);
+    const sorted = await Tree.sort(tree, naturalOrder);
     const keys = await sorted.keys();
     assert.deepEqual(keys, ["1", "2", "10"]);
   });

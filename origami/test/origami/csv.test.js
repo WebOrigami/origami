@@ -9,7 +9,7 @@ describe("csv", () => {
       { name: "Bob", age: 25, city: "Los Angeles" },
       { name: 'Carol "CJ"', age: 22, city: "Chicago" },
     ];
-    const result = await csv.call(null, data);
+    const result = await csv(data);
 
     const expected = `name,age,city
 Alice,30,"New York, NY"
@@ -22,7 +22,7 @@ Bob,25,Los Angeles
   });
 
   test("returns an empty string for empty array input", async () => {
-    const result = await csv.call(null, []);
+    const result = await csv([]);
     assert.strictEqual(result, "");
   });
 });

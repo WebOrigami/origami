@@ -49,7 +49,7 @@ export default {
     });
 
     // Invoke the definition to get back the template function
-    const result = await defineFn.call(parent);
+    const result = await defineFn();
 
     const resultExtension = key ? extension.extname(key) : null;
     if (resultExtension && Object.isExtensible(result)) {

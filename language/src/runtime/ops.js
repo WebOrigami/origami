@@ -6,12 +6,7 @@
  * @typedef {import("../../index.ts").RuntimeState} RuntimeState
  */
 
-import {
-  isUnpackable,
-  ObjectTree,
-  symbols,
-  Tree,
-} from "@weborigami/async-tree";
+import { isUnpackable, symbols, Tree } from "@weborigami/async-tree";
 import os from "node:os";
 import expressionObject from "./expressionObject.js";
 import { evaluate } from "./internal.js";
@@ -64,7 +59,6 @@ addOpLabel(bitwiseXor, "«ops.bitwiseXor»");
 /**
  * Cache the value of the code for an external reference
  *
- * @this {AsyncTree|null}
  * @param {any} cache
  * @param {string} path
  * @param {AnnotatedCode} code
@@ -76,7 +70,7 @@ export async function cache(cache, path, code) {
   }
 
   // Don't await: might get another request for this before promise resolves
-  const promise = await evaluate.call(this, code);
+  const promise = await evaluate(code);
 
   // Save promise so another request will get the same promise
   cache[path] = promise;
@@ -95,13 +89,12 @@ cache.unevaluatedArgs = true;
 /**
  * JavaScript comma operator, returns the last argument.
  *
- * @this {AsyncTree|null}
  * @param  {...AnnotatedCode} args
  */
 export async function comma(...args) {
   let result;
   for (const arg of args) {
-    result = await evaluate.call(this, arg);
+    result = await evaluate(arg);
   }
   return result;
 }
@@ -181,8 +174,6 @@ addOpLabel(greaterThanOrEqual, "«ops.greaterThanOrEqual»");
 
 /**
  * Files tree for the user's home directory.
- *
- * @this {AsyncTree|null}
  */
 export async function homeDirectory(...keys) {
   const tree = new OrigamiFiles(os.homedir());
@@ -215,54 +206,35 @@ inherited.needsState = true;
 /**
  * Return a function that will invoke the given code.
  *
- * @this {AsyncTree|null}
  * @param {string[]} parameters
  * @param {AnnotatedCode} code
  */
 export function lambda(parameters, code, state = {}) {
-  const context = this;
   const stack = state.stack ?? [];
 
-  /** @this {Treelike|null} */
   async function invoke(...args) {
-    let target;
     let newState;
     if (parameters.length === 0) {
       // No parameters
-      target = context;
       newState = state;
     } else {
-      // Add arguments to scope.
-      const ambients = {};
+      // Create a stack frame for the parameters
+      const frame = {};
       for (const parameter of parameters) {
         const parameterName = parameter[1];
-        ambients[parameterName] = args.shift();
+        frame[parameterName] = args.shift();
       }
-      Object.defineProperty(ambients, codeSymbol, {
+      // Record which code this stack frame is associated with
+      Object.defineProperty(frame, codeSymbol, {
         value: code,
         enumerable: false,
       });
-      const newStack = stack.slice() ?? [];
-      newStack.push(ambients);
+      const newStack = stack.slice();
+      newStack.push(frame);
       newState = Object.assign({}, state, { stack: newStack });
-      const ambientTree = new ObjectTree(ambients);
-      ambientTree.parent = context;
-      target = ambientTree;
     }
 
-    let result = await evaluate.call(target, code, newState);
-
-    // Bind a function result to the ambients so that it has access to the
-    // parameter values -- i.e., like a closure.
-    if (result instanceof Function) {
-      const resultCode = result.code;
-      result = result.bind(target);
-      if (code) {
-        // Copy over Origami code
-        result.code = resultCode;
-      }
-    }
-
+    const result = await evaluate(code, newState);
     return result;
   }
 
@@ -411,7 +383,6 @@ addOpLabel(nullishCoalescing, "«ops.nullishCoalescing»");
  * parameter's, and the values will be the results of evaluating the
  * corresponding code values in `obj`.
  *
- * @this {AsyncTree|null}
  * @param {any[]} entries
  */
 export async function object(...entries) {
