@@ -1,5 +1,5 @@
 import { isUnpackable, symbols, toString } from "@weborigami/async-tree";
-import { oridocumentHandler } from "@weborigami/language/src/handlers/handlers.js";
+import { oridocument_handler } from "@weborigami/language/src/handlers/handlers.js";
 import documentObject from "../common/documentObject.js";
 
 /**
@@ -36,7 +36,7 @@ export default async function inline(input) {
   }
 
   // @ts-ignore
-  let result = await oridocumentHandler.unpack(origami, {
+  let result = await oridocument_handler.unpack(origami, {
     front,
     parent,
   });

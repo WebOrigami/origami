@@ -1,7 +1,7 @@
 import { FileTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import jsHandler from "../../src/handlers/js.handler.js";
+import js_handler from "../../src/handlers/js_handler.js";
 import ImportModulesMixin from "../../src/runtime/ImportModulesMixin.js";
 
 const fixturesUrl = new URL("fixtures", import.meta.url);
@@ -10,7 +10,7 @@ const fixturesTree = new (ImportModulesMixin(FileTree))(fixturesUrl);
 describe(".js handler", () => {
   test("loads .js file that exports a string", async () => {
     const buffer = await fixturesTree.get("string.js");
-    const text = await jsHandler.unpack(buffer, {
+    const text = await js_handler.unpack(buffer, {
       key: "string.js",
       parent: fixturesTree,
     });
@@ -19,7 +19,7 @@ describe(".js handler", () => {
 
   test("loads .js file that exports a function", async () => {
     const buffer = await fixturesTree.get("list.js");
-    const list = await jsHandler.unpack(buffer, {
+    const list = await js_handler.unpack(buffer, {
       key: "list.js",
       parent: fixturesTree,
     });
@@ -28,7 +28,7 @@ describe(".js handler", () => {
 
   test("loads .js file that exports an object", async () => {
     const buffer = await fixturesTree.get("obj.js");
-    const obj = await jsHandler.unpack(buffer, {
+    const obj = await js_handler.unpack(buffer, {
       key: "obj.js",
       parent: fixturesTree,
     });
@@ -37,7 +37,7 @@ describe(".js handler", () => {
 
   test("returns multiple exports as an object", async () => {
     const buffer = await fixturesTree.get("multiple.js");
-    const obj = await jsHandler.unpack(buffer, {
+    const obj = await js_handler.unpack(buffer, {
       key: "multiple.js",
       parent: fixturesTree,
     });

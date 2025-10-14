@@ -1,5 +1,5 @@
 import { ObjectTree } from "@weborigami/async-tree";
-import txtHandler from "@weborigami/language/src/handlers/txt.handler.js";
+import txt_handler from "@weborigami/language/src/handlers/txt_handler.js";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import inline from "../../src/origami/inline.js";
@@ -9,7 +9,7 @@ describe("inline", () => {
     const parent = new ObjectTree({
       name: "Alice",
     });
-    const document = await txtHandler.unpack("Hello, ${name}!", { parent });
+    const document = await txt_handler.unpack("Hello, ${name}!", { parent });
     const inlined = await inline(document);
     assert(inlined, "Hello, Alice!");
   });

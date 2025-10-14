@@ -5,8 +5,7 @@ import builtins from "./builtins.js";
 import jsGlobals from "./jsGlobals.js";
 
 export default async function coreGlobals() {
-  const handlerGlobals = (await import("../handlers/handlerGlobals.js"))
-    .default;
+  const handlerGlobals = await import("../handlers/handlers.js");
   return {
     ...jsGlobals,
     Tree,

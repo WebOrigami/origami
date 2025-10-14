@@ -1,5 +1,5 @@
 import { FileTree, toString } from "@weborigami/async-tree";
-import oriHandler from "../handlers/ori.handler.js";
+import ori_handler from "../handlers/ori_handler.js";
 import coreGlobals from "./coreGlobals.js";
 import projectRoot from "./projectRoot.js";
 
@@ -24,7 +24,7 @@ export default async function config(dir = process.cwd()) {
       // Config uses only core globals (we're defining the config)
       const globals = await coreGlobals();
       // Evaluate the config file to obtain the configuration object
-      configObject = await oriHandler.unpack(configText, {
+      configObject = await ori_handler.unpack(configText, {
         globals,
         parent: root,
       });

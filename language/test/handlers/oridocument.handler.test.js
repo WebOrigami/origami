@@ -1,7 +1,7 @@
 import { ObjectTree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import oridocumentHandler from "../../src/handlers/oridocument.handler.js";
+import oridocument_handler from "../../src/handlers/oridocument_handler.js";
 
 describe("Origami document handler", () => {
   test("unpacks text with Origami expressions", async () => {
@@ -9,7 +9,7 @@ describe("Origami document handler", () => {
       name: "world",
     });
     const text = "Hello, ${ name }!";
-    const fn = await oridocumentHandler.unpack(text, {
+    const fn = await oridocument_handler.unpack(text, {
       key: "test.ori.txt",
       parent,
     });
@@ -22,7 +22,7 @@ describe("Origami document handler", () => {
 
   test("Argument to template document available as underscore", async () => {
     const text = "<h1>${ _ }</h1>";
-    const fn = await oridocumentHandler.unpack(text);
+    const fn = await oridocument_handler.unpack(text);
     const result = await fn("Home");
     assert.equal(result, "<h1>Home</h1>");
   });
@@ -35,7 +35,7 @@ describe("Origami document handler", () => {
 name: world
 ---
 \${ message }, \${ name }!`;
-    const result = await oridocumentHandler.unpack(text, { parent });
+    const result = await oridocument_handler.unpack(text, { parent });
     assert.deepEqual(result.name, "world");
     assert.equal(result._body, "Hello, world!");
   });
@@ -48,7 +48,7 @@ name: world
 }
 ---
 Body text`;
-    const result = await oridocumentHandler.unpack(text);
+    const result = await oridocument_handler.unpack(text);
     assert.deepEqual(result, {
       sum: 2,
       _body: "Body text",
@@ -61,7 +61,7 @@ Body text`;
 ---
 Hello, \${ name }!
 `;
-    const fn = await oridocumentHandler.unpack(text);
+    const fn = await oridocument_handler.unpack(text);
     const result = await fn("world");
     assert.equal(result, "Hello, world!\n");
   });

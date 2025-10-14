@@ -37,7 +37,7 @@ export default async function handleExtension(value, key, parent) {
       ? ".jsedocument"
       : extension.extname(key);
     if (extname) {
-      const handlerName = `${extname.slice(1)}.handler`;
+      const handlerName = `${extname.slice(1)}_handler`;
       let handler = await projectGlobals[handlerName];
       if (handler) {
         if (isUnpackable(handler)) {

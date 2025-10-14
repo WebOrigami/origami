@@ -9,25 +9,25 @@
 //
 // Note: to avoid having VS Code auto-sort the imports, keep lines between them.
 
-export { default as jsHandler } from "./js.handler.js";
-export { default as tsHandler } from "./ts.handler.js";
+export { default as js_handler } from "./js_handler.js";
+export { default as ts_handler } from "./ts_handler.js";
 
-export { default as oriHandler } from "./ori.handler.js";
+export { default as ori_handler } from "./ori_handler.js";
 
-export { default as oridocumentHandler } from "./oridocument.handler.js";
+export { default as oridocument_handler } from "./oridocument_handler.js";
 
-export { default as txtHandler } from "./txt.handler.js";
+export { default as txt_handler } from "./txt_handler.js";
 
-export { default as cssHandler } from "./css.handler.js";
-export { default as csvHandler } from "./csv.handler.js";
-export { default as htmHandler } from "./htm.handler.js";
-export { default as htmlHandler } from "./html.handler.js";
-export { default as jpegHandler } from "./jpeg.handler.js";
-export { default as jpgHandler } from "./jpg.handler.js";
-export { default as jsonHandler } from "./json.handler.js";
-export { default as mdHandler } from "./md.handler.js";
-export { default as mjsHandler } from "./mjs.handler.js";
-export { default as wasmHandler } from "./wasm.handler.js";
-export { default as xhtmlHandler } from "./xhtml.handler.js";
-export { default as yamlHandler } from "./yaml.handler.js";
-export { default as ymlHandler } from "./yml.handler.js";
+export { default as css_handler } from "./css_handler.js";
+export { default as csv_handler } from "./csv_handler.js";
+export { default as htm_handler } from "./htm_handler.js";
+export { default as html_handler } from "./html_handler.js";
+export { default as jpeg_handler } from "./jpeg_handler.js";
+export { default as jpg_handler } from "./jpg_handler.js";
+export { default as json_handler } from "./json_handler.js";
+export { default as md_handler } from "./md_handler.js";
+export { default as mjs_handler } from "./mjs_handler.js";
+export { default as wasm_handler } from "./wasm_handler.js";
+export { default as xhtml_handler } from "./xhtml_handler.js";
+export { default as yaml_handler } from "./yaml_handler.js";
+export { default as yml_handler } from "./yml_handler.js";

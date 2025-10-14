@@ -1,5 +1,5 @@
 import { getTreeArgument, Tree } from "@weborigami/async-tree";
-import { oriHandler } from "@weborigami/language/src/handlers/handlers.js";
+import { ori_handler } from "@weborigami/language/src/handlers/handlers.js";
 
 const templateText = `(urls) => \`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -45,7 +45,7 @@ export default async function sitemap(treelike, options = {}) {
     .filter((path) => path.endsWith(".html"))
     .map((path) => (path.endsWith("index.html") ? path.slice(0, -10) : path));
 
-  const templateFn = await oriHandler.unpack(templateText);
+  const templateFn = await ori_handler.unpack(templateText);
   const templateResult = await templateFn(htmlPaths);
   return String(templateResult);
 }

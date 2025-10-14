@@ -1,7 +1,7 @@
 // .html files use the .txt loader
-import txtHandler from "./txt.handler.js";
+import txt_handler from "./txt_handler.js";
 
 export default {
-  ...txtHandler,
+  ...txt_handler,
   mediaType: "text/html",
 };

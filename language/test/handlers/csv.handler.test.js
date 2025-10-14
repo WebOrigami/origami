@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import csvHandler from "../../src/handlers/csv.handler.js";
+import csv_handler from "../../src/handlers/csv_handler.js";
 
 describe(".csv handler", () => {
   test("parses CSV text into array of objects", () => {
@@ -8,7 +8,7 @@ describe(".csv handler", () => {
 Alice,30,"New York, NY"
 Bob,25,Los Angeles
 "Carol ""CJ""",22,Chicago`;
-    const result = csvHandler.unpack(csvText);
+    const result = csv_handler.unpack(csvText);
     assert.deepStrictEqual(result, [
       { name: "Alice", age: "30", city: "New York, NY" },
       { name: "Bob", age: "25", city: "Los Angeles" },
@@ -22,7 +22,7 @@ Bob,25,Los Angeles
       { name: "Alice", age: "30", city: "New York, NY" },
       { name: "Bob", age: "25", city: "Los Angeles" },
     ];
-    const result = csvHandler.unpack(textCRLF);
+    const result = csv_handler.unpack(textCRLF);
     assert.deepStrictEqual(result, expected);
   });
 
@@ -30,7 +30,7 @@ Bob,25,Los Angeles
     // Provide a CSV string with an unmatched quote.
     const badCSV = `name,age\r\nAlice,30\r\nBob,"25\r\n`;
     assert.throws(() => {
-      csvHandler.unpack(badCSV);
+      csv_handler.unpack(badCSV);
     }, /unmatched quote/);
   });
 });

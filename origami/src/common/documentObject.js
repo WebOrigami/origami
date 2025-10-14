@@ -30,7 +30,7 @@ export default async function documentObject(input, data) {
   // document to HandleExtensionsTransform set().
   // const base = {
   //   pack() {
-  //     return txtHandler.pack(this);
+  //     return txt_handler.pack(this);
   //   },
   // };
   // const result = Object.create(base);

@@ -1,7 +1,6 @@
 /** @typedef {import("@weborigami/types").AsyncTree} AsyncTree */
 import { getTreeArgument, Tree } from "@weborigami/async-tree";
-import { OrigamiFiles } from "@weborigami/language";
-import { oriHandler } from "@weborigami/language/src/handlers/handlers.js";
+import { Handlers, OrigamiFiles } from "@weborigami/language";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getDescriptor } from "../common/utilities.js";
@@ -47,6 +46,8 @@ async function loadTemplate() {
   const folderPath = path.resolve(fileURLToPath(import.meta.url), "..");
   const folder = new OrigamiFiles(folderPath);
   const templateFile = await folder.get("explore.ori");
-  const template = await oriHandler.unpack(templateFile, { parent: folder });
+  const template = await Handlers.ori_handler.unpack(templateFile, {
+    parent: folder,
+  });
   return template;
 }
