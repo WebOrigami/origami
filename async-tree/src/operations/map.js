@@ -186,6 +186,11 @@ function validateOptions(options) {
     throw error;
   }
 
+  if (extension && !options._noExtensionWarning) {
+    console.warn(
+      `map: The 'extension' option for Tree.map() is deprecated and will be removed in a future release. Use Tree.mapExtension() instead.`
+    );
+  }
   if (extension && (keyFn || inverseKeyFn)) {
     throw new TypeError(
       `map: You can't specify extensions and also a key or inverseKey function`

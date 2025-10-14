@@ -347,10 +347,10 @@ describe("Origami parser", () => {
       [ops.lambda, [], [ops.lambda, [], [ops.literal, 1]]],
       [ops.literal, 0],
     ]);
-    assertParse("conditionalExpression", "false ? =1 : 0", [
+    assertParse("conditionalExpression", "false ? () => 1 : 0", [
       ops.conditional,
       [markers.traverse, [markers.reference, "false"]],
-      [ops.lambda, [], [ops.lambda, [[ops.literal, "_"]], [ops.literal, 1]]],
+      [ops.lambda, [], [ops.lambda, [], [ops.literal, 1]]],
       [ops.literal, 0],
     ]);
   });
