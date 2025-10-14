@@ -7,9 +7,8 @@ import documentObject from "../common/documentObject.js";
  * text.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
- * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
  *
- * @param {Stringlike & {_body?: Stringlike}} input
+ * @param {any} input
  */
 export default async function inline(input) {
   // Get the input text and any attached front matter.

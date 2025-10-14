@@ -4,10 +4,10 @@ import {
   isPlainObject,
   isStringlike,
   SiteTree,
+  toString,
   Tree,
 } from "@weborigami/async-tree";
 import * as serialize from "../common/serialize.js";
-import { toString } from "../common/utilities.js";
 import { mediaTypeForExtension } from "./mediaTypes.js";
 
 /**

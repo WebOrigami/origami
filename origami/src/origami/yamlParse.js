@@ -1,5 +1,5 @@
+import { toString } from "@weborigami/async-tree";
 import * as serialize from "../common/serialize.js";
-import { toString } from "../common/utilities.js";
 
 export default async function yamlParse(input) {
   const text = toString(input);

@@ -1,11 +1,10 @@
-import { extension, isUnpackable } from "@weborigami/async-tree";
+import { extension, isUnpackable, toString } from "@weborigami/async-tree";
 import highlight from "highlight.js";
 import { Marked } from "marked";
 import { gfmHeadingId as markedGfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 import { markedSmartypants } from "marked-smartypants";
 import documentObject from "../common/documentObject.js";
-import { toString } from "../common/utilities.js";
 import origamiHighlightDefinition from "./origamiHighlightDefinition.js";
 
 highlight.registerLanguage("ori", origamiHighlightDefinition);
@@ -32,10 +31,7 @@ marked.use(
 /**
  * Transform markdown to HTML.
  *
- * @typedef {import("@weborigami/async-tree").Stringlike} Stringlike
- * @typedef {import("@weborigami/async-tree").Unpackable} Unpackable
- *
- * @param {Stringlike|Unpackable} input
+ * @param {any} input
  */
 export default async function mdHtml(input) {
   if (input == null) {
@@ -47,7 +43,7 @@ export default async function mdHtml(input) {
     input = await input.unpack();
   }
   const inputIsDocument = typeof input === "object" && "_body" in input;
-  const markdown = toString(input);
+  const markdown = inputIsDocument ? input._body : toString(input);
   if (markdown === null) {
     throw new Error("mdHtml: The provided input couldn't be treated as text.");
   }

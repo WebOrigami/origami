@@ -53,13 +53,6 @@ describe("utilities", () => {
     assert(isStringlike({ toString: () => "string" }));
   });
 
-  test("toString returns the value of an object's `_body` property", () => {
-    const obj = {
-      _body: "text",
-    };
-    assert.equal(utilities.toString(obj), "text");
-  });
-
   test("transformObject can apply a class mixin to a single object instance", () => {
     function FixtureTransform(Base) {
       return class Fixture extends Base {

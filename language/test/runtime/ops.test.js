@@ -155,14 +155,14 @@ describe("ops", () => {
     assert(ops.greaterThanOrEqual("ab", "aa"));
   });
 
-  test("ops.inherited walks up the context chain", async () => {
+  test("ops.inherited walks up the object parent chain", async () => {
     const tree = new DeepObjectTree({
       a: {
         b: {},
       },
     });
     const b = await Tree.traverse(tree, "a", "b");
-    assert.equal(await ops.inherited(2, { context: b }), tree);
+    assert.equal(await ops.inherited(2, { object: b }), tree);
   });
 
   test("ops.lambda defines a function with no inputs", async () => {

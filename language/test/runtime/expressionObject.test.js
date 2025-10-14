@@ -17,7 +17,7 @@ describe("expressionObject", () => {
     ];
     const context = new ObjectTree({});
 
-    const object = await expressionObject(entries, { context });
+    const object = await expressionObject(entries, { object: context });
     assert.equal(await object.hello, "HELLO");
     assert.equal(await object.world, "WORLD");
     assert.equal(object[symbols.parent], context);
@@ -44,7 +44,7 @@ describe("expressionObject", () => {
       ["message", [ops.concat, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
     const context = new ObjectTree({});
-    const object = await expressionObject(entries, { context });
+    const object = await expressionObject(entries, { object: context });
     assert.deepEqual(await Tree.plain(object), {
       name: "world",
       message: "Hello, world!",
@@ -55,7 +55,7 @@ describe("expressionObject", () => {
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
     const context = new ObjectTree({});
-    const result = await expressionObject(entries, { context });
+    const result = await expressionObject(entries, { object: context });
     const dataJson = await result["data.json"];
     const json = await dataJson.unpack();
     assert.deepEqual(json, { a: 1 });

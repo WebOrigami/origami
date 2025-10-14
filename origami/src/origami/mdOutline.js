@@ -1,12 +1,12 @@
-import { isUnpackable } from "@weborigami/async-tree";
+import { isUnpackable, toString } from "@weborigami/async-tree";
 import { Marked } from "marked";
-import { toString } from "../common/utilities.js";
 
 export default async function mdOutline(input) {
   if (isUnpackable(input)) {
     input = await input.unpack();
   }
-  const markdown = toString(input);
+  const inputIsDocument = typeof input === "object" && "_body" in input;
+  const markdown = inputIsDocument ? input._body : toString(input);
   if (markdown === null) {
     throw new Error("mdHtml: The provided input couldn't be treated as text.");
   }

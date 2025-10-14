@@ -1,4 +1,4 @@
-import { toString } from "../common/utilities.js";
+import { toString } from "@weborigami/async-tree";
 
 export default async function jsonParse(input) {
   const text = toString(input);

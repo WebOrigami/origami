@@ -1,8 +1,4 @@
-import {
-  toString as asyncTreeToString,
-  isPlainObject,
-  trailingSlash,
-} from "@weborigami/async-tree";
+import { trailingSlash } from "@weborigami/async-tree";
 import { symbols } from "@weborigami/language";
 import { basename } from "node:path";
 
@@ -48,20 +44,6 @@ export function isTransformApplied(Transform, obj) {
     }
   }
   return false;
-}
-
-/**
- * Extend the async-tree toString method: objects that have a `_body` property
- * will return the value of that property as a string.
- *
- * @param {any} object
- * @returns {string|null}
- */
-export function toString(object) {
-  if (isPlainObject(object) && "_body" in object) {
-    object = object._body;
-  }
-  return asyncTreeToString(object);
 }
 
 /**
