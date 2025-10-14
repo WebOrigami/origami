@@ -116,7 +116,7 @@ describe("compile", () => {
         return strings[0] + values[0] + strings[1];
       },
     };
-    const program = compile.expression("=tag`Hello, ${_}!`", { globals });
+    const program = compile.expression("(_) => tag`Hello, ${_}!`", { globals });
     const lambda = await program();
     const alice = await lambda("Alice");
     assert.equal(alice, "Hello, Alice!");

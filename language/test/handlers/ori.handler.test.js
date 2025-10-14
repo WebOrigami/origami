@@ -65,14 +65,14 @@ describe(".ori handler", async () => {
     const parent = new ObjectTree({
       name: "Alice",
     });
-    const source = `=\`Hello, \${name}!\``;
+    const source = `() => \`Hello, \${name}!\``;
     const templateFn = await ori_handler.unpack(source, { parent });
     const value = await templateFn();
     assert.equal(value, "Hello, Alice!");
   });
 
   test("loads a template lambda that accepts input", async () => {
-    const source = `=\`Hello, \${ _/name }!\``;
+    const source = `(_) => \`Hello, \${ _.name }!\``;
     const templateFn = await ori_handler.unpack(source);
     const value = await templateFn({ name: "Alice" });
     assert.deepEqual(value, "Hello, Alice!");

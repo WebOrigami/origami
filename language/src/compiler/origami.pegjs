@@ -207,9 +207,6 @@ doubleQuoteStringChar
 
 ellipsis
   = "..."
-  / "…" {
-    console.warn("The use of the Unicode ellipsis character for an object spread is deprecated; use `...` (three periods) instead.");
-  }
 
 equalityExpression
   = head:relationalExpression tail:(__ @equalityOperator __ @relationalExpression)* {
@@ -719,7 +716,7 @@ shorthandFunction "lambda function"
   // Avoid a following equal sign (for an equality)
   = (shellMode / programMode) "=" !"=" __ definition:implicitParenthesesCallExpression {
       if (options.mode === "program") {
-        console.warn("Warning: the shorthand function syntax is deprecated in Origami programs. Use arrow syntax instead.");
+        throw new Error("Parse error: shorthand function syntax isn't allowed in Origami programs. Use arrow syntax instead.");
       }
       const lambdaParameters = annotate(
         [annotate([ops.literal, "_"], location())],
