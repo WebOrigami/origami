@@ -56,13 +56,11 @@ async function getPackage(parent, organization, name, keys) {
   const mainContainer = await Tree.traverse(packageRoot, ...mainContainerKeys);
   const packageExports = await mainContainer.import(mainFileName);
 
-  const result =
-    keys.length > 0
-      ? await Tree.traverse(packageExports, ...keys)
-      : packageExports;
+  let result =
+    "default" in packageExports ? packageExports.default : packageExports;
 
-  if (Tree.isAsyncTree(result)) {
-    result.parent = parent;
+  if (keys.length > 0) {
+    result = await Tree.traverse(result, ...keys);
   }
 
   return result;
