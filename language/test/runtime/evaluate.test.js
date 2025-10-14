@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
+import { ObjectTree } from "@weborigami/async-tree";
 import evaluate from "../../src/runtime/evaluate.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
@@ -12,5 +13,29 @@ describe("evaluate", () => {
     const code = createCode([packed, "a", "b", "c"]);
     const result = await evaluate(code);
     assert.equal(result, "a,b,c");
+  });
+
+  test("if function has needsState, it gets the state", async () => {
+    const fn = (state) => {
+      return state;
+    };
+    fn.needsState = true;
+    const state = {};
+    const code = createCode([fn]);
+    const result = await evaluate(code, state);
+    assert.equal(result, state);
+  });
+
+  test("if function has containerAsTarget, it gets bound to state.container", async () => {
+    /** @this {import("@weborigami/types").AsyncTree} */
+    const fn = function () {
+      return this;
+    };
+    fn.containerAsTarget = true;
+    const container = new ObjectTree({});
+    const state = { container };
+    const code = createCode([fn]);
+    const result = await evaluate(code, state);
+    assert.equal(result, container);
   });
 });

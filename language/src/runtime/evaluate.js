@@ -48,6 +48,9 @@ export default async function evaluate(code, state = {}) {
   if (fn.needsState) {
     // The function is an op that wants the runtime state
     args.push(state);
+  } else if (fn.containerAsTarget && state.container) {
+    // The function wants the code's container as the `this` target
+    fn = fn.bind(state.container);
   }
 
   // Execute the function or traverse the tree.

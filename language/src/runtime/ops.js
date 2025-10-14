@@ -189,7 +189,7 @@ addOpLabel(homeDirectory, "«ops.homeDirectory»");
  * @param {RuntimeState} state
  */
 export async function inherited(depth, state) {
-  let current = state.context;
+  let current = state.object;
   for (let i = 0; i < depth; i++) {
     if (!current) {
       throw new ReferenceError(

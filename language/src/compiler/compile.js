@@ -27,7 +27,7 @@ function compile(source, options) {
   });
 
   // Create a function that executes the optimized code.
-  const fn = createExpressionFunction(optimized);
+  const fn = createExpressionFunction(optimized, parent);
   return fn;
 }
 

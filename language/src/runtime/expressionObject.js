@@ -29,7 +29,7 @@ import { evaluate, ops } from "./internal.js";
 export default async function expressionObject(entries, state = {}) {
   // Create the object and set its parent
   const object = {};
-  const parent = state?.context ?? null;
+  const parent = state?.object ?? null;
   if (parent !== null && !Tree.isAsyncTree(parent)) {
     throw new TypeError(`Parent must be an AsyncTree or null`);
   }
@@ -88,7 +88,7 @@ export default async function expressionObject(entries, state = {}) {
 
       const get = async () => {
         tree ??= new ObjectTree(object);
-        const newState = Object.assign({}, state, { context: tree });
+        const newState = Object.assign({}, state, { object: tree });
         const result = await evaluate(code, newState);
         return extname ? handleExtension(result, key, tree) : result;
       };

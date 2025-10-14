@@ -184,6 +184,7 @@ async function importWrapper(modulePath) {
   const filePath = path.resolve(current.path, modulePath);
   return import(filePath);
 }
+importWrapper.containerAsTarget = true;
 
 /**
  * Some JavaScript globals like Promise have static methods like Promise.all

@@ -6,14 +6,13 @@ import { evaluate } from "./internal.js";
  * Given parsed Origami code, return a function that executes that code.
  *
  * @param {import("../../index.js").AnnotatedCode} code - parsed Origami expression
- * @param {string} [name] - optional name of the function
+ * @param {AsyncTree} parent - the parent tree in which the code is running
  */
-export function createExpressionFunction(code, name) {
+export function createExpressionFunction(code, parent) {
   async function fn() {
-    return evaluate(code);
-  }
-  if (name) {
-    Object.defineProperty(fn, "name", { value: name });
+    return evaluate(code, {
+      container: parent,
+    });
   }
   fn.code = code;
   fn.toString = () => code.location.source.text;

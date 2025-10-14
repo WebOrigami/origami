@@ -8,7 +8,7 @@ import handleExtension from "./handleExtension.js";
  * @param {AsyncTreeConstructor} Base
  */
 export default function HandleExtensionsTransform(Base) {
-  return class FileLoaders extends Base {
+  return class HandleExtensions extends Base {
     async get(key) {
       const value = await super.get(key);
       return handleExtension(value, key, this);

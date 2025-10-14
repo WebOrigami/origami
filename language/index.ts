@@ -58,8 +58,10 @@ export type Position = {
 }
 
 export type RuntimeState = {
-  /** The tree in which the code is being evaluated */
-  context?: AsyncTree | null;
+  /** The container (e.g., file system) that holds the code */
+  container?: AsyncTree | null;
+  /** The object to which this code is attached */
+  object?: AsyncTree | null;
   /** The current stack of function parameter assignments */
   stack?: Array<Record<string, any>>;
 }
