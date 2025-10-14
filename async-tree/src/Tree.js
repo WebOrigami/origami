@@ -26,6 +26,7 @@ export { default as from } from "./operations/from.js";
 export { default as fromFn } from "./operations/fromFn.js";
 export { default as globKeys } from "./operations/globKeys.js";
 export { default as group } from "./operations/group.js";
+export { default as groupBy } from "./operations/groupBy.js";
 export { default as has } from "./operations/has.js";
 export { default as indent } from "./operations/indent.js";
 export { default as inners } from "./operations/inners.js";

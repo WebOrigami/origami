@@ -223,7 +223,7 @@ Tree:
     globKeys:
       args: (patterns)
       description: A tree whose keys can include glob wildcard patterns
-    group:
+    groupBy:
       args: (tree, fn)
       description: A new tree with values grouped by the function
     has:
