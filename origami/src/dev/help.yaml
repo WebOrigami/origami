@@ -259,6 +259,9 @@ Tree:
     map:
       args: (tree, options)
       description: Create a new tree by mapping keys and/or values
+    mapExtension:
+      args: (tree, ext, options)
+      description: Map extensions and values
     mapReduce:
       args: (tree, mapFn, reduceFn)
       description: Map values and reduce them
