@@ -34,6 +34,11 @@ export default {
   },
 };
 
+// If the value is a function, bind it to the parent so that the function can,
+// e.g., find local files. Note: evaluate() supports a related but separate
+// mechanism called `containerAsTarget`. We want to use binding here so that, if
+// a function is handed to another to be called later, it still has the correct
+// `this`.
 function bindToParent(value, parent) {
   if (typeof value === "function") {
     const result = value.bind(parent);
