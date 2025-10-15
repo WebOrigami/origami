@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionMap from "../../src/drivers/FunctionMap.js";
+import * as symbols from "../../src/symbols.js";
 
 describe("FunctionMap", () => {
   test("keys uses supplied domain", () => {
@@ -16,6 +17,15 @@ describe("FunctionMap", () => {
     const map = createFixture();
     const alice = map.get("Alice.md");
     assert.equal(alice, "Hello, **Alice**.");
+  });
+
+  test("can get the value for an async function", async () => {
+    const map = new FunctionMap(async (s) => ({ s }));
+    const result = await map.get("test");
+    assert.deepEqual(result, {
+      s: "test",
+    });
+    assert.equal(result[symbols.parent], map);
   });
 
   test("getting a value from function with multiple arguments curries the function", () => {

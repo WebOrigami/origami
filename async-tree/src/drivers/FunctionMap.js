@@ -17,7 +17,7 @@ export default class FunctionMap extends MapBase {
    * @param {any} key
    */
   get(key) {
-    const value =
+    let value =
       this.fn.length <= 1
         ? // Function takes no arguments, one argument, or a variable number of
           // arguments: invoke it.
@@ -26,7 +26,14 @@ export default class FunctionMap extends MapBase {
           // eventually bind all parameters until only one remains. At that point,
           // the above condition will apply and the function will be invoked.
           Reflect.construct(this.constructor, [this.fn.bind(null, key)]);
-    setParent(value, this);
+    if (value instanceof Promise) {
+      value = value.then((v) => {
+        setParent(v, this);
+        return v;
+      });
+    } else {
+      setParent(value, this);
+    }
     return value;
   }
 
