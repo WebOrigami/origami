@@ -21,8 +21,15 @@ import MapBase from "./MapBase.js";
  */
 export default class FileMap extends MapBase {
   constructor(location) {
-    if (typeof location !== "string") {
-      throw new TypeError("FileMap location must be a string");
+    if (location instanceof URL) {
+      location = location.href;
+    } else if (
+      !(
+        typeof location === "string" ||
+        /** @type {any} */ (location) instanceof String
+      )
+    ) {
+      throw new TypeError("FileMap constructor needs a string or URL");
     }
 
     super();
