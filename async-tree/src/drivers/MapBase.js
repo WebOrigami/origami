@@ -38,6 +38,20 @@ export default class MapBase extends Map {
     return super.delete(key);
   }
 
+  // Override entries() method to call overridden get() and keys().
+  entries() {
+    // We'd like to just define entries() as a generator but TypeScript
+    // complains that it doesn't match the Map interface. We define the
+    // generator internally and then cast it to the expected type.
+    const self = this;
+    function* gen() {
+      for (const key of self.keys()) {
+        yield [key, self.get(key)];
+      }
+    }
+    return /** @type {MapIterator<[any, any]>} */ (gen());
+  }
+
   get(key) {
     let value = super.get(key);
     if (value === undefined) {
