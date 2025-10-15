@@ -15,6 +15,9 @@ import * as trailingSlash from "../trailingSlash.js";
 export default class MapBase extends Map {
   _initialized = false;
 
+  /** @type {MapBase|null} */
+  _parent = null;
+
   constructor(iterable) {
     super(iterable);
 
@@ -31,11 +34,10 @@ export default class MapBase extends Map {
   }
 
   delete(key) {
-    if (this.isReadOnly) {
+    if (this.readOnly) {
       throw new Error("delete() can't be called on a read-only map");
     }
-    // JS Map class requires explicit `this` when calling delete()
-    return super.delete.call(this, key);
+    return super.delete(key);
   }
 
   entries() {
@@ -58,8 +60,7 @@ export default class MapBase extends Map {
   }
 
   get(key) {
-    // JS Map class requires explicit `this` when calling get()
-    return super.get.call(this, key);
+    return super.get(key);
   }
 
   has(key) {
@@ -69,30 +70,35 @@ export default class MapBase extends Map {
     );
   }
 
+  [Symbol.iterator]() {
+    return this.entries()[Symbol.iterator]();
+  }
+
+  keys() {
+    return super.keys();
+  }
+
+  get parent() {
+    return this._parent;
+  }
+  set parent(parent) {
+    this._parent = parent;
+  }
+
   // Read-write subclasses that override get() must also override both delete()
   // and set().
-  get isReadOnly() {
+  get readOnly() {
     const overridesGet = this.get !== MapBase.prototype.get;
     const overridesDelete = this.delete !== MapBase.prototype.delete;
     const overridesSet = this.set !== MapBase.prototype.set;
     return overridesGet && !(overridesDelete && overridesSet);
   }
 
-  [Symbol.iterator]() {
-    return this.entries()[Symbol.iterator]();
-  }
-
-  keys() {
-    // JS Map class requires explicit `this` when calling keys()
-    return super.keys.call(this);
-  }
-
   set(key, value) {
-    if (this._initialized && this.isReadOnly) {
+    if (this._initialized && this.readOnly) {
       throw new Error("set() can't be called on a read-only map");
     }
-    // JS Map class requires explicit `this` when calling set()
-    return super.set.call(this, key, value);
+    return super.set(key, value);
   }
 
   get size() {

@@ -91,11 +91,19 @@ describe("MapBase", () => {
   });
 
   test("get", () => {
-    class Fixture extends MapBase {}
+    class Fixture extends MapBase {
+      // get(key) {
+      //   const value = super.get(key);
+      //   return value ? value + 1 : undefined;
+      // }
+    }
     const map = new Fixture([
       ["a", 1],
       ["b", 2],
     ]);
+    // assert.strictEqual(map.get("a"), 2);
+    // assert.strictEqual(map.get("b"), 3);
+    // assert.strictEqual(map.get("c"), undefined);
     assert.strictEqual(map.get("a"), 1);
     assert.strictEqual(map.get("b"), 2);
     assert.strictEqual(map.get("c"), undefined);
@@ -113,10 +121,10 @@ describe("MapBase", () => {
     assert.strictEqual(map.has("c"), false);
   });
 
-  test("isReadOnly if get() is overridden but not delete() and set()", () => {
+  test("readOnly if get() is overridden but not delete() and set()", () => {
     class NoOverrides extends MapBase {}
     const map4 = new NoOverrides();
-    assert.strictEqual(map4.isReadOnly, false);
+    assert.strictEqual(map4.readOnly, false);
 
     class ReadOnly1 extends MapBase {
       get(key) {
@@ -124,7 +132,7 @@ describe("MapBase", () => {
       }
     }
     const map1 = new ReadOnly1();
-    assert.strictEqual(map1.isReadOnly, true);
+    assert.strictEqual(map1.readOnly, true);
 
     class ReadOnly2 extends MapBase {
       get(key) {
@@ -135,7 +143,7 @@ describe("MapBase", () => {
       }
     }
     const map2 = new ReadOnly2();
-    assert.strictEqual(map2.isReadOnly, true);
+    assert.strictEqual(map2.readOnly, true);
 
     class ReadWrite extends MapBase {
       get(key) {
@@ -149,7 +157,7 @@ describe("MapBase", () => {
       }
     }
     const map3 = new ReadWrite();
-    assert.strictEqual(map3.isReadOnly, false);
+    assert.strictEqual(map3.readOnly, false);
   });
 
   test("Symbol.iterator", () => {
