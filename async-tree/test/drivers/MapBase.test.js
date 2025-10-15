@@ -4,14 +4,12 @@ import MapBase from "../../src/drivers/MapBase.js";
 
 describe("MapBase", () => {
   test("passes instanceof Map", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture();
+    const map = new MapBase();
     assert(map instanceof Map);
   });
 
   test("can be constructed with an iterable", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -21,8 +19,7 @@ describe("MapBase", () => {
   });
 
   test("clear", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -32,8 +29,7 @@ describe("MapBase", () => {
   });
 
   test("delete", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -62,8 +58,7 @@ describe("MapBase", () => {
   });
 
   test("entries", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -75,8 +70,7 @@ describe("MapBase", () => {
   });
 
   test("forEach", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -91,27 +85,35 @@ describe("MapBase", () => {
   });
 
   test("get", () => {
-    class Fixture extends MapBase {
-      // get(key) {
-      //   const value = super.get(key);
-      //   return value ? value + 1 : undefined;
-      // }
-    }
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
-    // assert.strictEqual(map.get("a"), 2);
-    // assert.strictEqual(map.get("b"), 3);
-    // assert.strictEqual(map.get("c"), undefined);
     assert.strictEqual(map.get("a"), 1);
     assert.strictEqual(map.get("b"), 2);
     assert.strictEqual(map.get("c"), undefined);
   });
 
+  test("get with trailing slash", () => {
+    const subMap = new MapBase();
+    const map = new MapBase([
+      ["a", 1],
+      ["b/", subMap],
+    ]);
+    assert.strictEqual(map.get("a"), 1);
+
+    const b = map.get("b/");
+    assert.strictEqual(b, subMap);
+    assert.strictEqual(b.parent, map);
+
+    // Trailing slash optional
+    assert.strictEqual(map.get("b"), subMap);
+
+    assert.strictEqual(map.get("c"), undefined);
+  });
+
   test("has", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b/", 2],
     ]);
@@ -122,8 +124,7 @@ describe("MapBase", () => {
   });
 
   test("readOnly if get() is overridden but not delete() and set()", () => {
-    class NoOverrides extends MapBase {}
-    const map4 = new NoOverrides();
+    const map4 = new MapBase();
     assert.strictEqual(map4.readOnly, false);
 
     class ReadOnly1 extends MapBase {
@@ -161,8 +162,7 @@ describe("MapBase", () => {
   });
 
   test("Symbol.iterator", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -174,8 +174,7 @@ describe("MapBase", () => {
   });
 
   test("keys", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
@@ -184,8 +183,7 @@ describe("MapBase", () => {
   });
 
   test("set", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture();
+    const map = new MapBase();
     assert.strictEqual(map.size, 0);
     map.set("a", 1);
     assert.strictEqual(map.size, 1);
@@ -212,8 +210,7 @@ describe("MapBase", () => {
   });
 
   test("size", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture();
+    const map = new MapBase();
     assert.strictEqual(map.size, 0);
     map.set("a", 1);
     assert.strictEqual(map.size, 1);
@@ -226,8 +223,7 @@ describe("MapBase", () => {
   });
 
   test("values", () => {
-    class Fixture extends MapBase {}
-    const map = new Fixture([
+    const map = new MapBase([
       ["a", 1],
       ["b", 2],
     ]);
