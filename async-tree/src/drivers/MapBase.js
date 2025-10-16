@@ -1,5 +1,8 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
+import toString from "../utilities/toString.js";
+
+const previewSymbol = Symbol("preview");
 
 /**
  * A base class for creating custom Map subclasses for use in trees.
@@ -95,3 +98,17 @@ export default class MapBase extends Map {
     return super.set(key, value);
   }
 }
+
+// For debugging
+Object.defineProperty(MapBase.prototype, previewSymbol, {
+  configurable: true,
+  enumerable: false,
+  get: function () {
+    const entries = Array.from(this.entries());
+    const strings = entries.map(([key, value]) => {
+      const string = toString(value) ?? value;
+      return [key, string];
+    });
+    return Object.fromEntries(strings);
+  },
+});
