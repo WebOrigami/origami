@@ -1,5 +1,5 @@
 /**
- * Return true if the indicated object is an async tree.
+ * Return true if the indicated object is an asynchronous tree.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *

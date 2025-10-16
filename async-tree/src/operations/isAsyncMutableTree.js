@@ -1,7 +1,7 @@
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
- * Return true if the indicated object is an async mutable tree.
+ * Return true if the indicated object is an asynchronous mutable tree.
  *
  * @typedef {import("@weborigami/types").AsyncMutableTree} AsyncMutableTree
  *

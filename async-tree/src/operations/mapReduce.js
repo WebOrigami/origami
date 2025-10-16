@@ -5,7 +5,7 @@ import isAsyncTree from "./isAsyncTree.js";
  * Map and reduce a tree.
  *
  * This is done in as parallel fashion as possible. Each of the tree's values
- * will be requested in an async call, then those results will be awaited
+ * will be requested in an asynchronous call, then those results will be awaited
  * collectively. If a mapFn is provided, it will be invoked to convert each
  * value to a mapped value; otherwise, values will be used as is. When the
  * values have been obtained, all the values and keys will be passed to the

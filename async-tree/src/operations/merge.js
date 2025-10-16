@@ -6,18 +6,19 @@ import isAsyncTree from "./isAsyncTree.js";
 /**
  * Return a tree that performs a shallow merge of the given trees.
  *
- * This is similar to an object spread in JavaScript extended to async trees.
- * Given a set of trees, the `get` method looks at each tree in turn, starting
- * from the *last* tree and working backwards to the first. If a tree returns a
- * defined value for the key, that value is returned. If none of the trees
- * return a defined value, the `get` method returns undefined.
+ * This is similar to an object spread in JavaScript extended to asynchronous
+ * trees. Given a set of trees, the `get` method looks at each tree in turn,
+ * starting from the *last* tree and working backwards to the first. If a tree
+ * returns a defined value for the key, that value is returned. If none of the
+ * trees return a defined value, the `get` method returns undefined.
  *
  * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  * @typedef {import("../../index.ts").PlainObject} PlainObject
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike[]} sources
- * @returns {(AsyncTree & { description?: string, trees?: AsyncTree[]}) | PlainObject}
+ * @returns {(AsyncTree & { description?: string, trees?: AsyncTree[]}) |
+ * PlainObject}
  */
 export default function merge(...sources) {
   const filtered = sources.filter((source) => source);

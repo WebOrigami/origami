@@ -16,7 +16,7 @@ import isAsyncTree from "./isAsyncTree.js";
  *
  * @param {Treelike} sourceTreelike
  * @param {AsyncMutableTree} [cacheTreelike]
- * @returns {Promise}
+ * @returns {Promise<AsyncTree>}
  */
 export default async function treeCache(sourceTreelike, cacheTreelike) {
   const source = await getTreeArgument(sourceTreelike, "cache", {

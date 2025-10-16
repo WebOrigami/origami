@@ -1,6 +1,5 @@
 node_modules
 .DS_Store
 
-# For now we include the built exports.js so that we can depend on specific
-# GitHub commits.
-# /exports/exports.js
+async-tree/src/sync
+async-tree/test/sync

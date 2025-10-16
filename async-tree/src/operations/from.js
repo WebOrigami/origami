@@ -11,7 +11,7 @@ import isUnpackable from "../utilities/isUnpackable.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
- * Attempts to cast the indicated object to an async tree.
+ * Attempts to cast the indicated object to an asynchronous tree.
  *
  * If the object is a plain object, it will be converted to an ObjectTree. The
  * optional `deep` option can be set to `true` to convert a plain object to a

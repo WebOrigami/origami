@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
-import isMaplike from "../mapOperations/isTreelike.js";
+import isMaplike from "../manualSync/isTreelike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";

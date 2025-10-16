@@ -21,6 +21,7 @@ export { default as SiteTree } from "./src/drivers/SiteTree.js";
 export * as jsonKeys from "./src/jsonKeys.js";
 export { default as scope } from "./src/operations/scope.js";
 export * as symbols from "./src/symbols.js";
+export * as SyncTree from "./src/SyncTree.js";
 export * as trailingSlash from "./src/trailingSlash.js";
 export { default as TraverseError } from "./src/TraverseError.js";
 export * as Tree from "./src/Tree.js";

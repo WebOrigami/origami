@@ -1,0 +1,3 @@
+Dev.copy(Tree.map(src/operations, asyncToSync.js), Tree.clear(files:src/sync)),
+Dev.copy(Tree.map(test/operations, asyncToSync.js), Tree.clear(files:test/sync)),
+Dev.copy(src/manualSync, src/sync)

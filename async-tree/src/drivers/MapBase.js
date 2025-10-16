@@ -32,6 +32,9 @@ export default class MapBase extends Map {
     // during initialization; i.e., during construction. After initialization,
     // calling set() on a read-only subclass will throw.
     this._initialized = true;
+
+    this._keys = Map.prototype.keys.bind(this);
+    this._values = Map.prototype.values.bind(this);
   }
 
   delete(key) {
@@ -75,6 +78,10 @@ export default class MapBase extends Map {
     );
   }
 
+  keys() {
+    return this._keys();
+  }
+
   get parent() {
     return this._parent;
   }
@@ -96,6 +103,10 @@ export default class MapBase extends Map {
       throw new Error("set() can't be called on a read-only map");
     }
     return super.set(key, value);
+  }
+
+  values() {
+    return this._values();
   }
 }
 
