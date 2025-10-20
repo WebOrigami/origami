@@ -22,9 +22,6 @@ const previewSymbol = Symbol("preview");
 export default class MapBase extends Map {
   _initialized = false;
 
-  /** @type {MapBase|null} */
-  _parent = null;
-
   constructor(iterable) {
     super(iterable);
 
@@ -33,15 +30,20 @@ export default class MapBase extends Map {
     // calling set() on a read-only subclass will throw.
     this._initialized = true;
 
-    this._keys = Map.prototype.keys.bind(this);
-    this._values = Map.prototype.values.bind(this);
+    /** @type {MapBase|null} */
+    this._parent = null;
+
+    // Record self-reference for use in Map method calls, which insist on the
+    // receiver being a Map instance. This allows method calls to work even when
+    // the prototype chain is extended via Object.create().
+    this._self = this;
   }
 
   delete(key) {
     if (this.readOnly) {
       throw new Error("delete() can't be called on a read-only map");
     }
-    return super.delete(key);
+    return super.delete.call(this._self, key);
   }
 
   // Override entries() method to call overridden get() and keys().
@@ -58,11 +60,15 @@ export default class MapBase extends Map {
     return /** @type {MapIterator<[any, any]>} */ (gen());
   }
 
+  forEach(callback, thisArg) {
+    return super.forEach.call(this._self, callback, thisArg);
+  }
+
   get(key) {
-    let value = super.get(key);
+    let value = super.get.call(this._self, key);
     if (value === undefined) {
       // Try alternate key with trailing slash added or removed
-      value = super.get(trailingSlash.toggle(key));
+      value = super.get.call(this._self, trailingSlash.toggle(key));
     }
     if (value === undefined) {
       return undefined;
@@ -73,13 +79,14 @@ export default class MapBase extends Map {
 
   has(key) {
     return (
-      super.has(key) ||
-      (!trailingSlash.has(key) && super.has(trailingSlash.add(key)))
+      super.has.call(this._self, key) ||
+      (!trailingSlash.has(key) &&
+        super.has.call(this._self, trailingSlash.add(key)))
     );
   }
 
   keys() {
-    return this._keys();
+    return super.keys.call(this._self);
   }
 
   get parent() {
@@ -102,11 +109,23 @@ export default class MapBase extends Map {
     if (this._initialized && this.readOnly) {
       throw new Error("set() can't be called on a read-only map");
     }
-    return super.set(key, value);
+    // If _self is not set, use the current instance as the receiver. This is
+    // necessary to let the constructor call `super()`.
+    return super.set.call(this._self ?? this, key, value);
+  }
+
+  get size() {
+    const descriptor = Object.getOwnPropertyDescriptor(Map.prototype, "size");
+    return descriptor.get.call(this._self);
+  }
+
+  get [Symbol.iterator]() {
+    const self = this._self;
+    return () => super[Symbol.iterator].call(self);
   }
 
   values() {
-    return this._values();
+    return super.values.call(this._self);
   }
 }
 

@@ -230,4 +230,43 @@ describe("MapBase", () => {
     const values = Array.from(map.values());
     assert.deepStrictEqual(values, [1, 2]);
   });
+
+  test("all methods work with prototype chain extension", () => {
+    const map = new MapBase([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    const map2 = Object.create(map);
+    assert.strictEqual(map2.get("a"), 1);
+    assert.strictEqual(map2.has("b"), true);
+    assert.strictEqual(map2.size, 2);
+
+    const entries = Array.from(map2.entries());
+    assert.deepStrictEqual(entries, [
+      ["a", 1],
+      ["b", 2],
+    ]);
+
+    const keys = Array.from(map2.keys());
+    assert.deepStrictEqual(keys, ["a", "b"]);
+
+    const values = Array.from(map2.values());
+    assert.deepStrictEqual(values, [1, 2]);
+
+    const iteratedEntries = Array.from(map2[Symbol.iterator]());
+    assert.deepStrictEqual(iteratedEntries, [
+      ["a", 1],
+      ["b", 2],
+    ]);
+
+    const forEachCalls = [];
+    map2.forEach((value, key, thisArg) => {
+      forEachCalls.push([key, value, thisArg]);
+    });
+    // thisArg should be map, not map2
+    assert.deepStrictEqual(forEachCalls, [
+      ["a", 1, map],
+      ["b", 2, map],
+    ]);
+  });
 });
