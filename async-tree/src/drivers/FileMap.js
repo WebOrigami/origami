@@ -8,7 +8,7 @@ import isPacked from "../utilities/isPacked.js";
 import isStringlike from "../utilities/isStringlike.js";
 import naturalOrder from "../utilities/naturalOrder.js";
 import setParent from "../utilities/setParent.js";
-import MapBase from "./MapBase.js";
+import SyncMap from "./SyncMap.js";
 
 /**
  * A file system folder as a Map.
@@ -19,7 +19,7 @@ import MapBase from "./MapBase.js";
  * https://nodejs.org/api/buffer.html#buffers-and-typedarrays. For greater
  * compatibility, files are returned as standard Uint8Array instances instead.
  */
-export default class FileMap extends MapBase {
+export default class FileMap extends SyncMap {
   constructor(location) {
     if (location instanceof URL) {
       location = location.href;

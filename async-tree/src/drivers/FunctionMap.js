@@ -1,7 +1,7 @@
 import setParent from "../utilities/setParent.js";
-import MapBase from "./MapBase.js";
+import SyncMap from "./SyncMap.js";
 
-export default class FunctionMap extends MapBase {
+export default class FunctionMap extends SyncMap {
   constructor(fn, domain = []) {
     if (typeof fn !== "function") {
       throw new TypeError("FunctionMap: first argument must be a function");

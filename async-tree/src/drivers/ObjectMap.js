@@ -2,9 +2,9 @@ import * as symbols from "../symbols.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getRealmObjectPrototype from "../utilities/getRealmObjectPrototype.js";
 import setParent from "../utilities/setParent.js";
-import MapBase from "./MapBase.js";
+import SyncMap from "./SyncMap.js";
 
-export default class ObjectMap extends MapBase {
+export default class ObjectMap extends SyncMap {
   constructor(object = {}) {
     super();
     // Note: we use `typeof` here instead of `instanceof Object` to allow for

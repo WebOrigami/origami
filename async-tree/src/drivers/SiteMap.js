@@ -1,13 +1,13 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
-import MapBase from "./MapBase.js";
+import SyncMap from "./SyncMap.js";
 
 /**
  * A tree of values obtained via HTTP/HTTPS calls. These values will be strings
  * for HTTP responses with a MIME text type; otherwise they will be ArrayBuffer
  * instances.
  */
-export default class SiteMap extends MapBase {
+export default class SiteMap extends SyncMap {
   /**
    * @param {string} href
    */

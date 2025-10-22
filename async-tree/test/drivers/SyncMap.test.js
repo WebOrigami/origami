@@ -1,15 +1,15 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import MapBase from "../../src/drivers/MapBase.js";
+import SyncMap from "../../src/drivers/SyncMap.js";
 
-describe("MapBase", () => {
+describe("SyncMap", () => {
   test("passes instanceof Map", () => {
-    const map = new MapBase();
+    const map = new SyncMap();
     assert(map instanceof Map);
   });
 
   test("can be constructed with an iterable", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -18,12 +18,12 @@ describe("MapBase", () => {
     assert.strictEqual(map.get("b"), 2);
   });
 
-  test("can be constructed with another MapBase", () => {
-    const map1 = new MapBase([
+  test("can be constructed with another SyncMap", () => {
+    const map1 = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
-    const map2 = new MapBase(map1);
+    const map2 = new SyncMap(map1);
     const entries = Array.from(map2.entries());
     assert.deepStrictEqual(entries, [
       ["a", 1],
@@ -32,7 +32,7 @@ describe("MapBase", () => {
   });
 
   test("clear", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -42,7 +42,7 @@ describe("MapBase", () => {
   });
 
   test("delete", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -55,7 +55,7 @@ describe("MapBase", () => {
   });
 
   test("delete on read-only map throws", () => {
-    class Fixture extends MapBase {
+    class Fixture extends SyncMap {
       get(key) {
         return super.get(key);
       }
@@ -71,7 +71,7 @@ describe("MapBase", () => {
   });
 
   test("entries", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -83,7 +83,7 @@ describe("MapBase", () => {
   });
 
   test("forEach", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -98,7 +98,7 @@ describe("MapBase", () => {
   });
 
   test("get", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -108,8 +108,8 @@ describe("MapBase", () => {
   });
 
   test("get with trailing slash", () => {
-    const subMap = new MapBase();
-    const map = new MapBase([
+    const subMap = new SyncMap();
+    const map = new SyncMap([
       ["a", 1],
       ["b/", subMap],
     ]);
@@ -126,7 +126,7 @@ describe("MapBase", () => {
   });
 
   test("has only cares whether the key exists", () => {
-    const map = new MapBase();
+    const map = new SyncMap();
     map.keys = () => {
       return ["a", "b/"][Symbol.iterator]();
     };
@@ -137,10 +137,10 @@ describe("MapBase", () => {
   });
 
   test("readOnly if get() is overridden but not delete() and set()", () => {
-    const map4 = new MapBase();
+    const map4 = new SyncMap();
     assert.strictEqual(map4.readOnly, false);
 
-    class ReadOnly1 extends MapBase {
+    class ReadOnly1 extends SyncMap {
       get(key) {
         return super.get(key);
       }
@@ -148,7 +148,7 @@ describe("MapBase", () => {
     const map1 = new ReadOnly1();
     assert.strictEqual(map1.readOnly, true);
 
-    class ReadOnly2 extends MapBase {
+    class ReadOnly2 extends SyncMap {
       get(key) {
         return super.get(key);
       }
@@ -159,7 +159,7 @@ describe("MapBase", () => {
     const map2 = new ReadOnly2();
     assert.strictEqual(map2.readOnly, true);
 
-    class ReadWrite extends MapBase {
+    class ReadWrite extends SyncMap {
       get(key) {
         return super.get(key);
       }
@@ -175,7 +175,7 @@ describe("MapBase", () => {
   });
 
   test("Symbol.iterator", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -187,7 +187,7 @@ describe("MapBase", () => {
   });
 
   test("keys", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -196,7 +196,7 @@ describe("MapBase", () => {
   });
 
   test("set", () => {
-    const map = new MapBase();
+    const map = new SyncMap();
     assert.strictEqual(map.size, 0);
     map.set("a", 1);
     assert.strictEqual(map.size, 1);
@@ -210,7 +210,7 @@ describe("MapBase", () => {
   });
 
   test("set on read-only map throws", () => {
-    class Fixture extends MapBase {
+    class Fixture extends SyncMap {
       get(key) {
         return super.get(key);
       }
@@ -223,7 +223,7 @@ describe("MapBase", () => {
   });
 
   test("size", () => {
-    const map = new MapBase();
+    const map = new SyncMap();
     assert.strictEqual(map.size, 0);
     map.set("a", 1);
     assert.strictEqual(map.size, 1);
@@ -236,7 +236,7 @@ describe("MapBase", () => {
   });
 
   test("values", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -245,7 +245,7 @@ describe("MapBase", () => {
   });
 
   test("all methods work with prototype chain extension", () => {
-    const map = new MapBase([
+    const map = new SyncMap([
       ["a", 1],
       ["b", 2],
     ]);

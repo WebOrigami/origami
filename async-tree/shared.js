@@ -11,13 +11,13 @@ export { default as ExplorableSiteTree } from "./src/drivers/ExplorableSiteTree.
 export { default as FileMap } from "./src/drivers/FileMap.js";
 export { default as FunctionMap } from "./src/drivers/FunctionMap.js";
 export { default as FunctionTree } from "./src/drivers/FunctionTree.js";
-export { default as MapBase } from "./src/drivers/MapBase.js";
 export { default as MapTree } from "./src/drivers/MapTree.js";
 export { default as ObjectMap } from "./src/drivers/ObjectMap.js";
 export { default as ObjectTree } from "./src/drivers/ObjectTree.js";
 export { default as SetTree } from "./src/drivers/SetTree.js";
 export { default as SiteMap } from "./src/drivers/SiteMap.js";
 export { default as SiteTree } from "./src/drivers/SiteTree.js";
+export { default as SyncMap } from "./src/drivers/SyncMap.js";
 export * as jsonKeys from "./src/jsonKeys.js";
 export { default as scope } from "./src/operations/scope.js";
 export * as symbols from "./src/symbols.js";

@@ -6,20 +6,21 @@ const previewSymbol = Symbol("preview");
 /**
  * A base class for creating custom Map subclasses for use in trees.
  *
- * Instances of MapBase (and its subclasses) pass `instanceof Map`, and all Map
+ * Instances of SyncMap (and its subclasses) pass `instanceof Map`, and all Map
  * methods have compatible signatures.
  *
  * Subclasses may be read-only or read-write. A read-only subclass overrides
  * get() but not set() or delete(). A read-write subclass overrides all three
  * methods.
  *
- * For use in trees, MapBase instances may indicate a `parent` node. They can
+ * For use in trees, SyncMap instances may indicate a `parent` node. They can
  * also indicate children subtrees using the trailing slash convention: a key
  * for a subtree may optionally end with a slash. The get() and has() methods
  * support optional trailing slashes on keys.
  */
-export default class MapBase extends Map {
+export default class SyncMap extends Map {
   _initialized = false;
+  _readOnly;
 
   constructor(iterable) {
     super(iterable);
@@ -29,7 +30,7 @@ export default class MapBase extends Map {
     // calling set() on a read-only subclass will throw.
     this._initialized = true;
 
-    /** @type {MapBase|null} */
+    /** @type {SyncMap|null} */
     this._parent = null;
 
     // Record self-reference for use in Map method calls, which insist on the
@@ -101,13 +102,31 @@ export default class MapBase extends Map {
     this._parent = parent;
   }
 
-  // Read-write subclasses that override get() must also override both delete()
-  // and set().
+  // True if the object is read-only. This will be true if get() is overridden
+  // but not set() and delete().
+  /** @returns {boolean} */
   get readOnly() {
-    const overridesGet = this.get !== MapBase.prototype.get;
-    const overridesDelete = this.delete !== MapBase.prototype.delete;
-    const overridesSet = this.set !== MapBase.prototype.set;
-    return overridesGet && !(overridesDelete && overridesSet);
+    if (this._readOnly === undefined) {
+      // Walk up prototype chain. If we encounter get() before set() and
+      // delete(), the object is read-only.
+      let hasSet, hasDelete;
+      let current = this;
+      while (true) {
+        if (!hasSet && current.hasOwnProperty("set")) {
+          hasSet = true;
+        }
+        if (!hasDelete && current.hasOwnProperty("delete")) {
+          hasDelete = true;
+        }
+        // At latest, this will be true of the SyncMap prototype
+        if (current.hasOwnProperty("get")) {
+          this._readOnly = !(hasSet && hasDelete);
+          break;
+        }
+        current = Object.getPrototypeOf(current);
+      }
+    }
+    return this._readOnly;
   }
 
   set(key, value) {
@@ -143,7 +162,7 @@ export default class MapBase extends Map {
 }
 
 // For debugging we make entries() available as a gettable property.
-Object.defineProperty(MapBase.prototype, previewSymbol, {
+Object.defineProperty(SyncMap.prototype, previewSymbol, {
   configurable: true,
   enumerable: false,
   get: function () {

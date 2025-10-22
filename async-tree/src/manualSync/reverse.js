@@ -1,4 +1,4 @@
-import MapBase from "../drivers/MapBase.js";
+import SyncMap from "../drivers/SyncMap.js";
 import from from "./from.js";
 
 /**
@@ -9,7 +9,7 @@ export default /*async*/ function reverse(object) {
   return new ReverseMap(map);
 }
 
-class ReverseMap extends MapBase {
+class ReverseMap extends SyncMap {
   keys() {
     const base = [...super.keys()];
     base.reverse();
