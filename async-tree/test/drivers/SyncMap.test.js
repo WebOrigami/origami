@@ -125,7 +125,7 @@ describe("SyncMap", () => {
     assert.strictEqual(map.get("c"), undefined);
   });
 
-  test("has only cares whether the key exists", () => {
+  test("has returns true if key exists in keys()", () => {
     const map = new SyncMap();
     map.keys = () => {
       return ["a", "b/"][Symbol.iterator]();
