@@ -59,8 +59,10 @@ export default class MapBase extends Map {
     return /** @type {MapIterator<[any, any]>} */ (gen());
   }
 
-  forEach(callback, thisArg) {
-    return super.forEach.call(this._self, callback, thisArg);
+  forEach(callback, thisArg = this) {
+    for (const [key, value] of this.entries()) {
+      callback(value, key, thisArg);
+    }
   }
 
   get(key) {
@@ -76,11 +78,15 @@ export default class MapBase extends Map {
     return value;
   }
 
+  // has() returns true if the key appears in the set returned by keys(); it
+  // doesn't matter whether the value returned by get() is defined or not.
+  // If the key with a trailing slash doesn't appear, but the
+  // alternate form with a slash does appear, this returns true.
   has(key) {
+    const keys = Array.from(this.keys());
     return (
-      super.has.call(this._self, key) ||
-      (!trailingSlash.has(key) &&
-        super.has.call(this._self, trailingSlash.add(key)))
+      keys.includes(key) ||
+      (!trailingSlash.has(key) && keys.includes(trailingSlash.add(key)))
     );
   }
 
@@ -125,7 +131,14 @@ export default class MapBase extends Map {
   }
 
   values() {
-    return super.values.call(this._self);
+    // See notes at entries()
+    const self = this;
+    function* gen() {
+      for (const key of self.keys()) {
+        yield self.get(key);
+      }
+    }
+    return /** @type {MapIterator<[any]>} */ (gen());
   }
 }
 

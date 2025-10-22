@@ -125,11 +125,11 @@ describe("MapBase", () => {
     assert.strictEqual(map.get("c"), undefined);
   });
 
-  test("has", () => {
-    const map = new MapBase([
-      ["a", 1],
-      ["b/", 2],
-    ]);
+  test("has only cares whether the key exists", () => {
+    const map = new MapBase();
+    map.keys = () => {
+      return ["a", "b/"][Symbol.iterator]();
+    };
     assert.strictEqual(map.has("a"), true);
     assert.strictEqual(map.has("b"), true); // trailing slash optional
     assert.strictEqual(map.has("b/"), true);
@@ -276,10 +276,9 @@ describe("MapBase", () => {
     map2.forEach((value, key, thisArg) => {
       forEachCalls.push([key, value, thisArg]);
     });
-    // thisArg should be map, not map2
     assert.deepStrictEqual(forEachCalls, [
-      ["a", 1, map],
-      ["b", 2, map],
+      ["a", 1, map2],
+      ["b", 2, map2],
     ]);
   });
 });
