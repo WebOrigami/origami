@@ -18,6 +18,19 @@ describe("MapBase", () => {
     assert.strictEqual(map.get("b"), 2);
   });
 
+  test("can be constructed with another MapBase", () => {
+    const map1 = new MapBase([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    const map2 = new MapBase(map1);
+    const entries = Array.from(map2.entries());
+    assert.deepStrictEqual(entries, [
+      ["a", 1],
+      ["b", 2],
+    ]);
+  });
+
   test("clear", () => {
     const map = new MapBase([
       ["a", 1],

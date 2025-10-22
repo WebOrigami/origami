@@ -6,7 +6,7 @@ import from from "./from.js";
  */
 export default /*async*/ function reverse(object) {
   const map = from(object);
-  return new ReverseMap(map.entries());
+  return new ReverseMap(map);
 }
 
 class ReverseMap extends MapBase {

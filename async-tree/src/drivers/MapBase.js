@@ -1,6 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
-import toString from "../utilities/toString.js";
 
 const previewSymbol = Symbol("preview");
 
@@ -111,17 +110,18 @@ export default class MapBase extends Map {
     }
     // If _self is not set, use the current instance as the receiver. This is
     // necessary to let the constructor call `super()`.
-    return super.set.call(this._self ?? this, key, value);
+    const target = this._self ?? this;
+    return super.set.call(target, key, value);
   }
 
+  // We define the size to be the number of keys
   get size() {
-    const descriptor = Object.getOwnPropertyDescriptor(Map.prototype, "size");
-    return descriptor.get.call(this._self);
+    const keys = Array.from(this.keys());
+    return keys.length;
   }
 
-  get [Symbol.iterator]() {
-    const self = this._self;
-    return () => super[Symbol.iterator].call(self);
+  [Symbol.iterator]() {
+    return this.entries();
   }
 
   values() {
@@ -129,16 +129,11 @@ export default class MapBase extends Map {
   }
 }
 
-// For debugging
+// For debugging we make entries() available as a gettable property.
 Object.defineProperty(MapBase.prototype, previewSymbol, {
   configurable: true,
   enumerable: false,
   get: function () {
-    const entries = Array.from(this.entries());
-    const strings = entries.map(([key, value]) => {
-      const string = toString(value) ?? value;
-      return [key, string];
-    });
-    return Object.fromEntries(strings);
+    return Array.from(this.entries());
   },
 });
