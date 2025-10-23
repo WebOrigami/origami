@@ -10,16 +10,34 @@ export default class AsyncMap {
     return this.entries();
   }
 
+  /**
+   * Remove all entries from the map.
+   *
+   * This requires that the subclass implement delete().
+   */
   async clear() {
     for await (const key of this.keys()) {
       await this.delete(key);
     }
   }
 
+  /**
+   * Deletes the given key from the map.
+   *
+   * Returns true if the key was present and deleted, false if not.
+   *
+   * @param {any} key
+   * @returns {Promise<boolean>}
+   */
   async delete(key) {
     throw new Error("delete() not implemented");
   }
 
+  /**
+   * Returns an async iterable of the map's key-value pairs.
+   *
+   * @returns {AsyncIterableIterator<[any, any][]>}
+   */
   async *entries() {
     for await (const key of this.keys()) {
       const value = await this.get(key);
@@ -28,21 +46,38 @@ export default class AsyncMap {
     }
   }
 
+  /**
+   * Invokes a callback for each key-value pair in the map.
+   *
+   * @param {(value: any, key: any, thisArg: any) => Promise<void>} callback
+   * @param {any?} thisArg
+   */
   async forEach(callback, thisArg = this) {
     for await (const [key, value] of this.entries()) {
       await callback(value, key, thisArg);
     }
   }
 
-  /** @returns {Promise<any>} */
+  /**
+   * Returns the value for the given key.
+   *
+   * @param {any} key
+   * @returns {Promise<any>}
+   */
   async get(key) {
     throw new Error("get() not implemented");
   }
 
-  // has() returns true if the key appears in the set returned by keys(); it
-  // doesn't matter whether the value returned by get() is defined or not.
-  // If the key with a trailing slash doesn't appear, but the
-  // alternate form with a slash does appear, this returns true.
+  /**
+   * Returns true if the given key appears in the set returned by keys().
+   *
+   * It doesn't matter whether the value returned by get() is defined or not.
+   *
+   * If the key with a trailing slash doesn't appear, but the alternate form
+   * with a slash does appear, this returns true.
+   *
+   * @param {any} key
+   */
   async has(key) {
     const alternateKey = !trailingSlash.has(key)
       ? trailingSlash.add(key)
@@ -61,15 +96,19 @@ export default class AsyncMap {
   /**
    * Return true if object is an instance of AsyncMap or Map.
    *
-   * From an API perspective, Map is a essentially subclass of AsyncMap.
+   * From an API perspective, Map is a considered subclass of AsyncMap.
+   *
+   * @param {any} object
    */
   static [Symbol.hasInstance](object) {
     if (object instanceof Map) {
       return true;
     }
+    // Walk up prototype chain looking for this class
     let classFn = object.constructor;
     while (classFn && classFn !== Object) {
       if (classFn === this) {
+        // AsyncMap or a subclass of it
         return true;
       }
       classFn = Object.getPrototypeOf(classFn);
@@ -77,10 +116,18 @@ export default class AsyncMap {
     return false;
   }
 
+  /**
+   * Returns an async iterable of the map's keys.
+   *
+   * @returns {AsyncIterableIterator<any>}
+   */
   async *keys() {
     throw new Error("keys() not implemented");
   }
 
+  /**
+   * The parent of this node in a tree.
+   */
   get parent() {
     return this._parent;
   }
@@ -88,9 +135,15 @@ export default class AsyncMap {
     this._parent = parent;
   }
 
-  // True if the object is read-only. This will be true if get() is overridden
-  // but not set() and delete().
-  /** @returns {boolean} */
+  /**
+   * True if the object is read-only.
+   *
+   * The default implementation of this uses a heuristic: if an instance defines
+   * get() on a more specific level of the prototype chain than set() and
+   * delete(), it is considered read-only.
+   *
+   * @returns {boolean}
+   */
   get readOnly() {
     if (this._readOnly === undefined) {
       // Walk up prototype chain. If we encounter get() before set() and
@@ -104,7 +157,7 @@ export default class AsyncMap {
         if (!hasDelete && current.hasOwnProperty("delete")) {
           hasDelete = true;
         }
-        // At latest, this will be true of the SyncMap prototype
+        // This will be true of the AsyncMap prototype, ending the loop.
         if (current.hasOwnProperty("get")) {
           this._readOnly = !(hasSet && hasDelete);
           break;
@@ -115,22 +168,36 @@ export default class AsyncMap {
     return this._readOnly;
   }
 
+  /**
+   * Sets the value for the given key.
+   *
+   * @param {any} key
+   * @param {any} value
+   */
   async set(key, value) {
     throw new Error("set() not implemented");
   }
 
-  // We define the size to be the number of keys
-  /** @type {Promise<number>} */
+  /**
+   * The number of keys in the map.
+   *
+   * @type {Promise<number>}
+   */
   get size() {
     return (async () => {
       let count = 0;
-      for await (const key of this.keys()) {
+      for await (const _ of this.keys()) {
         count++;
       }
       return count;
     })();
   }
 
+  /**
+   * Returns an async iterable of the map's values.
+   *
+   * @returns {AsyncIterableIterator<any>}
+   */
   async *values() {
     for await (const [, value] of this.entries()) {
       yield value;

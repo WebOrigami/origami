@@ -79,10 +79,16 @@ export default class SyncMap extends Map {
     return value;
   }
 
-  // has() returns true if the key appears in the set returned by keys(); it
-  // doesn't matter whether the value returned by get() is defined or not.
-  // If the key with a trailing slash doesn't appear, but the
-  // alternate form with a slash does appear, this returns true.
+  /**
+   * Returns true if the given key appears in the set returned by keys().
+   *
+   * It doesn't matter whether the value returned by get() is defined or not.
+   *
+   * If the key with a trailing slash doesn't appear, but the alternate form
+   * with a slash does appear, this returns true.
+   *
+   * @param {any} key
+   */
   has(key) {
     const keys = Array.from(this.keys());
     return (
@@ -95,6 +101,9 @@ export default class SyncMap extends Map {
     return super.keys.call(this._self);
   }
 
+  /**
+   * The parent of this node in a tree.
+   */
   get parent() {
     return this._parent;
   }

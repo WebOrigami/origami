@@ -43,6 +43,7 @@ describe("SiteMap", () => {
 
   test("can get a plain value for a key", async () => {
     const fixture = new SiteMap(mockHost);
+    /** @type {any} */
     const arrayBuffer = await fixture.get("index.html");
     const text = textDecoder.decode(arrayBuffer);
     assert.equal(text, "Home page");

@@ -66,9 +66,11 @@ export default class SiteMap extends AsyncMap {
    *
    * For a variation of `SiteMap` that can return the keys for a site route,
    * see [ExplorableSiteMap](ExplorableSiteMap.html).
+   *
+   * @returns {AsyncIterableIterator<string>}
    */
   async *keys() {
-    return;
+    yield* [];
   }
 
   // Return true if the given media type is a standard text type.
