@@ -2,6 +2,7 @@ import ObjectTree from "../drivers/ObjectTree.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isTreelike from "./isTreelike.js";
+import keys from "./keys.js";
 import values from "./values.js";
 
 /**
@@ -14,13 +15,13 @@ import values from "./values.js";
 export default async function groupBy(treelike, groupKeyFn) {
   const tree = await getTreeArgument(treelike, "groupBy");
 
-  const keys = Array.from(await tree.keys());
+  const treeKeys = await keys(tree);
 
   // Are all the keys integers?
-  const isArray = keys.every((key) => !Number.isNaN(parseInt(key)));
+  const isArray = treeKeys.every((key) => !Number.isNaN(parseInt(key)));
 
   const result = {};
-  for (const key of await tree.keys()) {
+  for (const key of treeKeys) {
     const value = await tree.get(key);
 
     // Get the groups for this value.

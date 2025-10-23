@@ -36,10 +36,7 @@ describe("crawl", () => {
       "logo.png": "PNG data",
     };
     const crawled = await crawl(tree);
-    assert.deepEqual(Array.from(await crawled.keys()), [
-      "index.html",
-      "logo.png",
-    ]);
+    assert.deepEqual(await Tree.keys(crawled), ["index.html", "logo.png"]);
   });
 
   test("finds linked JavaScript files", async () => {
@@ -55,7 +52,7 @@ describe("crawl", () => {
       "c.js": "export default false;",
     };
     const crawled = await crawl(tree);
-    assert.deepEqual(Array.from(await crawled.keys()), [
+    assert.deepEqual(await Tree.keys(crawled), [
       "index.html",
       "a.js",
       "b.js",
@@ -75,10 +72,7 @@ describe("crawl", () => {
 </urlset>`,
     };
     const crawled = await crawl(tree, "https://example.com");
-    assert.deepEqual(Array.from(await crawled.keys()), [
-      "sitemap.xml",
-      "a.html",
-    ]);
+    assert.deepEqual(await Tree.keys(crawled), ["sitemap.xml", "a.html"]);
   });
 
   test("finds sitemap via robots.txt", async () => {
@@ -98,7 +92,7 @@ describe("crawl", () => {
       "robots.txt": "Sitemap: http://example.com/mysitemap.xml",
     };
     const crawled = await crawl(tree, "https://example.com");
-    assert.deepEqual(Array.from(await crawled.keys()), [
+    assert.deepEqual(await Tree.keys(crawled), [
       "robots.txt",
       "mysitemap.xml",
       "index.html",

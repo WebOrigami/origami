@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { ObjectTree } from "../../src/internal.js";
+import keys from "../../src/operations/keys.js";
 import scope from "../../src/operations/scope.js";
 
 describe("scope", () => {
@@ -14,7 +15,7 @@ describe("scope", () => {
     });
     inner.parent = outer;
     const innerScope = await scope(inner);
-    assert.deepEqual([...(await innerScope.keys())], ["a", "b"]);
+    assert.deepEqual(await keys(innerScope), ["a", "b"]);
     // Inner tree has precedence
     assert.equal(await innerScope.get("a"), 3);
     // If tree doesn't have value, finds value from parent

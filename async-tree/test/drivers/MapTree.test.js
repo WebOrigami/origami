@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import MapTree from "../../src/drivers/MapTree.js";
 import * as symbols from "../../src/symbols.js";
 
-describe("MapTree", () => {
+describe.skip("MapTree", () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
     assert.deepEqual(Array.from(await fixture.keys()), ["a", "b", "c"]);

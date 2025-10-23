@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import keys from "../../src/operations/keys.js";
 import shuffle from "../../src/operations/shuffle.js";
 
 describe("shuffle", () => {
@@ -12,7 +13,7 @@ describe("shuffle", () => {
       e: 5,
     };
     const result = await shuffle(obj);
-    const keys = Array.from(await result.keys());
-    assert.deepEqual(keys.sort(), Object.keys(obj).sort());
+    const treeKeys = await keys(result);
+    assert.deepEqual(treeKeys.sort(), Object.keys(obj).sort());
   });
 });

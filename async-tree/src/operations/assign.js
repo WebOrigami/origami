@@ -1,6 +1,7 @@
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * Apply the key/values pairs from the source tree to the target tree.
@@ -21,8 +22,8 @@ export default async function assign(target, source) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.
-  const keys = Array.from(await sourceTree.keys());
-  const promises = keys.map(async (key) => {
+  const treeKeys = Array.from(await keys(sourceTree));
+  const promises = treeKeys.map(async (key) => {
     const sourceValue = await sourceTree.get(key);
     if (isAsyncTree(sourceValue)) {
       const targetValue = await targetTree.get(key);

@@ -1,5 +1,6 @@
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * Map and reduce a tree.
@@ -25,8 +26,8 @@ export default async function mapReduce(treelike, mapFn, reduceFn) {
   // We're going to fire off all the get requests in parallel, as quickly as
   // the keys come in. We call the tree's `get` method for each key, but
   // *don't* wait for it yet.
-  const keys = Array.from(await tree.keys());
-  const promises = keys.map(async (key) => {
+  const treeKeys = await keys(tree);
+  const promises = treeKeys.map(async (key) => {
     const value = await tree.get(key);
     return isAsyncTree(value)
       ? mapReduce(value, mapFn, reduceFn) // subtree; recurse
@@ -40,5 +41,5 @@ export default async function mapReduce(treelike, mapFn, reduceFn) {
   const values = await Promise.all(promises);
 
   // Reduce the values to a single result.
-  return reduceFn(values, keys, tree);
+  return reduceFn(values, treeKeys, tree);
 }

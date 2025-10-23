@@ -1,5 +1,6 @@
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
+import keys from "./keys.js";
 
 /**
  * Remove all entries from the tree.
@@ -13,8 +14,8 @@ export default async function clear(treelike) {
   if (!isAsyncMutableTree(tree)) {
     throw new TypeError("clear: can't clear a read-only tree.");
   }
-  const keys = Array.from(await tree.keys());
-  const promises = keys.map((key) => tree.set(key, undefined));
+  const treeKeys = Array.from(await keys(tree));
+  const promises = treeKeys.map((key) => tree.set(key, undefined));
   await Promise.all(promises);
   return tree;
 }

@@ -1,6 +1,7 @@
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * A tree whose keys are strings interpreted as regular expressions.
@@ -46,7 +47,7 @@ export default async function regExpKeys(treelike) {
 
   // Turn the input tree's string keys into regular expressions, then map those
   // to the corresponding values.
-  for (const key of await tree.keys()) {
+  for (const key of await keys(tree)) {
     if (typeof key !== "string") {
       // Skip non-string keys.
       continue;

@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
@@ -31,18 +32,18 @@ export default async function scope(treelike) {
 
     // Collect all keys for this tree and all parents
     async keys() {
-      const keys = new Set();
+      const scopeKeys = new Set();
 
       /** @type {AsyncTree|null|undefined} */
       let current = tree;
       while (current) {
-        for (const key of await current.keys()) {
-          keys.add(key);
+        for (const key of await keys(current)) {
+          scopeKeys.add(key);
         }
         current = current.parent;
       }
 
-      return keys;
+      return scopeKeys;
     },
 
     // Collect all keys for this tree and all parents.

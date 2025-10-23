@@ -9,6 +9,19 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  */
 export default async function keys(treelike) {
   const tree = await getTreeArgument(treelike, "keys");
-  const keys = await tree.keys();
-  return Array.from(keys);
+  let keys;
+  /** @type {any} */
+  let iterable = tree.keys();
+  if (Symbol.asyncIterator in iterable) {
+    keys = [];
+    for await (const key of iterable) {
+      keys.push(key);
+    }
+  } else {
+    if (iterable instanceof Promise) {
+      iterable = await iterable;
+    }
+    keys = Array.from(iterable);
+  }
+  return keys;
 }

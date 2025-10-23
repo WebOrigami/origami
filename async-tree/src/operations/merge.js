@@ -2,6 +2,7 @@ import * as trailingSlash from "../trailingSlash.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * Return a tree that performs a shallow merge of the given trees.
@@ -55,20 +56,20 @@ export default function merge(...sources) {
     },
 
     async keys() {
-      const keys = new Set();
+      const treeKeys = new Set();
       // Collect keys in the order the trees were provided.
       for (const tree of trees) {
-        for (const key of await tree.keys()) {
+        for (const key of await keys(tree)) {
           // Remove the alternate form of the key (if it exists)
           const alternateKey = trailingSlash.toggle(key);
           if (alternateKey !== key) {
-            keys.delete(alternateKey);
+            treeKeys.delete(alternateKey);
           }
 
-          keys.add(key);
+          treeKeys.add(key);
         }
       }
-      return keys;
+      return treeKeys;
     },
 
     get trees() {

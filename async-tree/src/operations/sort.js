@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Return a new tree with the original's keys sorted. A comparison function can
@@ -29,13 +30,13 @@ export default async function sort(treelike, options) {
 
   const transformed = Object.create(tree);
   transformed.keys = async () => {
-    const keys = Array.from(await tree.keys());
+    const treeKeys = await keys(tree);
 
     if (sortKey) {
       // Invoke the async sortKey function to get sort keys.
       // Create { key, sortKey } tuples.
       const tuples = await Promise.all(
-        keys.map(async (key) => {
+        treeKeys.map(async (key) => {
           const value = await tree.get(key);
           const sort = await sortKey(value, key, tree);
           if (sort === undefined) {
@@ -58,7 +59,7 @@ export default async function sort(treelike, options) {
     } else {
       // Use original keys as sort keys.
       // If compare is undefined, this uses default sort order.
-      return keys.slice().sort(compare);
+      return treeKeys.slice().sort(compare);
     }
   };
   return transformed;

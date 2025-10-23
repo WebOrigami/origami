@@ -1,5 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Return a new grouping of the treelike's values into chunks of the specified
@@ -14,8 +15,8 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 export default async function paginate(treelike, size = 10) {
   const tree = await getTreeArgument(treelike, "paginate");
 
-  const keys = Array.from(await tree.keys());
-  const pageCount = Math.ceil(keys.length / size);
+  const treeKeys = await keys(tree);
+  const pageCount = Math.ceil(treeKeys.length / size);
 
   const paginated = {
     async get(pageKey) {
@@ -30,11 +31,11 @@ export default async function paginate(treelike, size = 10) {
       const items = new Map();
       for (
         let index = (pageNumber - 1) * size;
-        index < Math.min(keys.length, pageNumber * size);
+        index < Math.min(treeKeys.length, pageNumber * size);
         index++
       ) {
-        const key = keys[index];
-        items.set(key, await tree.get(keys[index]));
+        const key = treeKeys[index];
+        items.set(key, await tree.get(treeKeys[index]));
       }
 
       return {

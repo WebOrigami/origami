@@ -38,7 +38,8 @@ export default async function treeCache(sourceTreelike, cacheTreelike) {
   }
 
   let keys;
-  return {
+
+  return /** @type {any} */ ({
     description: "cache",
 
     async get(key) {
@@ -78,5 +79,5 @@ export default async function treeCache(sourceTreelike, cacheTreelike) {
       keys ??= await source.keys();
       return keys;
     },
-  };
+  });
 }

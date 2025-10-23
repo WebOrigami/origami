@@ -1,5 +1,6 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * Reverse the order of keys at all levels of the tree.
@@ -23,9 +24,9 @@ export default async function deepReverse(treelike) {
     },
 
     async keys() {
-      const keys = Array.from(await tree.keys());
-      keys.reverse();
-      return keys;
+      const treeKeys = Array.from(await keys(tree));
+      treeKeys.reverse();
+      return treeKeys;
     },
   };
 }

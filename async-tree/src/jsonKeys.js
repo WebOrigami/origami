@@ -1,4 +1,5 @@
 import from from "./operations/from.js";
+import keys from "./operations/keys.js";
 
 /**
  * Given a tree node, return a JSON string that can be written to a .keys.json
@@ -13,9 +14,9 @@ import from from "./operations/from.js";
  */
 export async function stringify(treelike) {
   const tree = from(treelike);
-  let keys = Array.from(await tree.keys());
+  let treeKeys = Array.from(await keys(tree));
   // Skip the key `.keys.json` if present.
-  keys = keys.filter((key) => key !== ".keys.json");
-  const json = JSON.stringify(keys);
+  treeKeys = treeKeys.filter((key) => key !== ".keys.json");
+  const json = JSON.stringify(treeKeys);
   return json;
 }

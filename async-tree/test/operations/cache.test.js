@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, ObjectTree } from "../../src/internal.js";
+import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
 import cache from "../../src/operations/cache.js";
 
 describe("cache", () => {
@@ -18,8 +18,8 @@ describe("cache", () => {
       objectCache
     );
 
-    const keys = [...(await fixture.keys())];
-    assert.deepEqual(keys, ["a", "b", "c", "more/"]);
+    const treeKeys = await Tree.keys(fixture);
+    assert.deepEqual(treeKeys, ["a", "b", "c", "more/"]);
 
     assert.equal(await objectCache.get("a"), undefined);
     assert.equal(await fixture.get("a"), 1);

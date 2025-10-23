@@ -27,8 +27,8 @@ export default async function sitemap(treelike, options = {}) {
   }
   const filterTree = {
     async keys() {
-      const keys = Array.from(await tree.keys());
-      return keys.filter((key) => test(key));
+      const treeKeys = await Tree.keys(tree);
+      return treeKeys.filter((key) => test(key));
     },
 
     async get(key) {

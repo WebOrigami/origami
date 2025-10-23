@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Return the number of keys in the tree.
@@ -10,6 +11,6 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
  */
 export default async function length(treelike) {
   const tree = await getTreeArgument(treelike, "length");
-  const keys = Array.from(await tree.keys());
-  return keys.length;
+  const treeKeys = await keys(tree);
+  return treeKeys.length;
 }

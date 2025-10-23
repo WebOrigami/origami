@@ -1,4 +1,5 @@
 import from from "./from.js";
+import keys from "./keys.js";
 
 /**
  * Return the values in the specific node of the tree.
@@ -9,7 +10,7 @@ import from from "./from.js";
  */
 export default async function values(treelike) {
   const tree = from(treelike);
-  const keys = Array.from(await tree.keys());
-  const promises = keys.map(async (key) => tree.get(key));
+  const treeKeys = await keys(tree);
+  const promises = treeKeys.map(async (key) => tree.get(key));
   return Promise.all(promises);
 }

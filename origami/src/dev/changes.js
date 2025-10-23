@@ -19,8 +19,8 @@ export default async function changes(oldTreelike, newTreelike) {
     position: 1,
   });
 
-  const oldKeys = Array.from(await oldTree.keys());
-  const newKeys = Array.from(await newTree.keys());
+  const oldKeys = await Tree.keys(oldTree);
+  const newKeys = await Tree.keys(newTree);
 
   const oldKeysNormalized = oldKeys.map(trailingSlash.remove);
   const newKeysNormalized = newKeys.map(trailingSlash.remove);

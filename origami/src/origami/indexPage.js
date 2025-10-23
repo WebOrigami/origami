@@ -1,4 +1,4 @@
-import { getTreeArgument } from "@weborigami/async-tree";
+import { getTreeArgument, Tree } from "@weborigami/async-tree";
 import { getDescriptor } from "../common/utilities.js";
 
 /**
@@ -12,10 +12,10 @@ import { getDescriptor } from "../common/utilities.js";
  */
 export default async function indexPage(treelike, basePath) {
   const tree = await getTreeArgument(treelike, "svg");
-  const keys = Array.from(await tree.keys());
+  const treeKeys = await Tree.keys(tree);
 
   // Skip system-ish files that start with a period. Also skip `index.html`.
-  const filtered = keys.filter(
+  const filtered = treeKeys.filter(
     (key) => !(key.startsWith?.(".") || key === "index.html")
   );
 

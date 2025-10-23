@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Return a new tree with the original's keys shuffled
@@ -13,7 +14,7 @@ import getTreeArgument from "../utilities/getTreeArgument.js";
 export default async function shuffle(treelike, reshuffle = false) {
   const tree = await getTreeArgument(treelike, "shuffle");
 
-  let keys;
+  let treeKeys;
 
   return {
     async get(key) {
@@ -21,11 +22,11 @@ export default async function shuffle(treelike, reshuffle = false) {
     },
 
     async keys() {
-      if (!keys || reshuffle) {
-        keys = Array.from(await tree.keys());
-        shuffleArray(keys);
+      if (!treeKeys || reshuffle) {
+        treeKeys = await keys(tree);
+        shuffleArray(treeKeys);
       }
-      return keys;
+      return treeKeys;
     },
   };
 }

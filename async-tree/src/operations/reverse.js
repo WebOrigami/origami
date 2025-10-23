@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Reverse the order of the top-level keys in the tree.
@@ -18,9 +19,9 @@ export default async function reverse(treelike) {
     },
 
     async keys() {
-      const keys = Array.from(await tree.keys());
-      keys.reverse();
-      return keys;
+      const treeKeys = await keys(tree);
+      treeKeys.reverse();
+      return treeKeys;
     },
   };
 }

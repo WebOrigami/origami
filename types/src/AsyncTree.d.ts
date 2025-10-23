@@ -6,6 +6,6 @@
  */
 export default interface AsyncTree {
   get(key: any): Promise<any>;
-  keys(): Promise<Iterable<any>>;
+  keys(): Iterator<any> | Promise<Iterable<any>> | AsyncIterable<any>;
   parent?: AsyncTree|null;
 }

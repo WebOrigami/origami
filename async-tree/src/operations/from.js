@@ -1,9 +1,9 @@
 import DeepObjectTree from "../drivers/DeepObjectTree.js";
 import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionTree from "../drivers/FunctionTree.js";
-import MapTree from "../drivers/MapTree.js";
 import ObjectTree from "../drivers/ObjectTree.js";
 import SetTree from "../drivers/SetTree.js";
+import SyncMap from "../drivers/SyncMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
@@ -42,7 +42,7 @@ export default function from(object, options = {}) {
   } else if (typeof object === "function") {
     tree = new FunctionTree(object);
   } else if (object instanceof Map) {
-    tree = new MapTree(object);
+    tree = new SyncMap(object);
   } else if (object instanceof Set) {
     tree = new SetTree(object);
   } else if (isPlainObject(object) || object instanceof Array) {

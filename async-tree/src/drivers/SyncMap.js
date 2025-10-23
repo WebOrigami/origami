@@ -97,6 +97,11 @@ export default class SyncMap extends Map {
     );
   }
 
+  /**
+   * The keys of the map
+   *
+   * @returns {MapIterator<any>}
+   */
   keys() {
     return super.keys.call(this._self);
   }

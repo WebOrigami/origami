@@ -1,15 +1,28 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import AsyncMap from "../../src/drivers/AsyncMap.js";
+import ObjectTree from "../../src/drivers/ObjectTree.js";
 import keys from "../../src/operations/keys.js";
 
 describe("keys", () => {
-  test("returns the keys of a tree as an array", async () => {
-    const obj = {
+  test("handles regular iterable", async () => {
+    const obj = new ObjectTree({
       a: 1,
       b: 2,
       c: 3,
-    };
+    });
     const result = await keys(obj);
     assert.deepEqual(result, ["a", "b", "c"]);
+  });
+
+  test("handles async iterable", async () => {
+    const map = new AsyncMap();
+    map.keys = async function* () {
+      yield "x";
+      yield "y";
+      yield "z";
+    };
+    const result = await keys(map);
+    assert.deepEqual(result, ["x", "y", "z"]);
   });
 });

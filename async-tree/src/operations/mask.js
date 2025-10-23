@@ -2,6 +2,7 @@ import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import isTreelike from "./isTreelike.js";
+import keys from "./keys.js";
 
 /**
  * Given trees `a` and `b`, return a masked version of `a` where only the keys
@@ -40,7 +41,7 @@ export default async function mask(aTreelike, bTreelike) {
 
     async keys() {
       // Use a's keys as the basis
-      const aKeys = [...(await aTree.keys())];
+      const aKeys = await keys(aTree);
       const bValues = await Promise.all(aKeys.map((key) => bTree.get(key)));
       // An async tree value in b implies that the a key should have a slash
       const aKeySlashes = aKeys.map((key, index) =>
@@ -50,8 +51,10 @@ export default async function mask(aTreelike, bTreelike) {
         )
       );
       // Remove keys that don't have values in b
-      const keys = aKeySlashes.filter((key, index) => bValues[index] ?? false);
-      return keys;
+      const treeKeys = aKeySlashes.filter(
+        (key, index) => bValues[index] ?? false
+      );
+      return treeKeys;
     },
   };
 }

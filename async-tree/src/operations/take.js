@@ -1,4 +1,5 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
+import keys from "./keys.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.
@@ -11,8 +12,8 @@ export default async function take(treelike, count) {
 
   return {
     async keys() {
-      const keys = Array.from(await tree.keys());
-      return keys.slice(0, count);
+      const treeKeys = await keys(tree);
+      return treeKeys.slice(0, count);
     },
 
     async get(key) {
