@@ -15,7 +15,6 @@
     "typescript": "5.9.2"
   },
   "scripts": {
-    "build": "ori scripts/asyncToSync.ori/",
     "headlessTest": "node test/browser/headlessTest.js",
     "test": "node --test --test-reporter=spec",
     "typecheck": "tsc"

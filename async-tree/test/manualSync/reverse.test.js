@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import reverse from "../../src/sync/reverse.js";
+import reverse from "../../src/manualSync/reverse.js";
 
 describe("reverse", () => {
   test("reverses a tree's top-level keys", () => {

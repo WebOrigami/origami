@@ -1,5 +1,6 @@
 // Exports for both Node.js and browser
 
+export { default as AsyncMap } from "./src/drivers/AsyncMap.js";
 export { default as calendar } from "./src/drivers/calendarTree.js";
 export { default as constant } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
@@ -21,7 +22,6 @@ export { default as SyncMap } from "./src/drivers/SyncMap.js";
 export * as jsonKeys from "./src/jsonKeys.js";
 export { default as scope } from "./src/operations/scope.js";
 export * as symbols from "./src/symbols.js";
-export * as SyncTree from "./src/SyncTree.js";
 export * as trailingSlash from "./src/trailingSlash.js";
 export { default as TraverseError } from "./src/TraverseError.js";
 export * as Tree from "./src/Tree.js";
