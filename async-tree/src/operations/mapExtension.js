@@ -1,4 +1,5 @@
 import isPlainObject from "../utilities/isPlainObject.js";
+import isUnpackable from "../utilities/isUnpackable.js";
 import map from "./map.js";
 
 /**
@@ -63,6 +64,9 @@ export default async function mapExtension(treelike, arg2, arg3) {
       );
     }
     options.extension = arg2;
+    if (isUnpackable(arg3)) {
+      arg3 = await arg3.unpack();
+    }
     if (typeof arg3 === "function") {
       options.value = arg3;
     } else if (isPlainObject(arg3)) {
