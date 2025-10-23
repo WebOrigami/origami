@@ -34,6 +34,7 @@ export default class AsyncMap {
     }
   }
 
+  /** @returns {Promise<any>} */
   async get(key) {
     throw new Error("get() not implemented");
   }
@@ -67,11 +68,11 @@ export default class AsyncMap {
       return true;
     }
     let classFn = object.constructor;
-    while (classFn !== Object) {
-      if (classFn === AsyncMap) {
+    while (classFn && classFn !== Object) {
+      if (classFn === this) {
         return true;
       }
-      classFn = classFn.prototype.constructor;
+      classFn = Object.getPrototypeOf(classFn);
     }
     return false;
   }

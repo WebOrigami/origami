@@ -34,8 +34,11 @@ describe("SiteMap", () => {
 
   test("returns an empty array as the keys of a tree", async () => {
     const fixture = new SiteMap(mockHost);
-    const keys = await fixture.keys();
-    assert.deepEqual(Array.from(keys), []);
+    const keys = [];
+    for await (const key of fixture.keys()) {
+      keys.push(key);
+    }
+    assert.deepEqual(keys, []);
   });
 
   test("can get a plain value for a key", async () => {

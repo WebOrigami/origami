@@ -39,9 +39,9 @@ export default class ExplorableSiteMap extends SiteMap {
    * Returns the keys of the site route. For this to work, the route must have a
    * `.keys.json` file that contains a JSON array of string keys.
    */
-  async keys() {
+  async *keys() {
     const serverKeys = await this.getServerKeys();
-    return serverKeys[Symbol.iterator]();
+    yield* serverKeys;
   }
 
   processResponse(response) {

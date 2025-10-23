@@ -1,7 +1,9 @@
 import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
+import AsyncMap from "../../src/drivers/AsyncMap.js";
 import ExplorableSiteMap from "../../src/drivers/ExplorableSiteMap.js";
 import { Tree } from "../../src/internal.js";
+import * as trailingSlash from "../../src/trailingSlash.js";
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
@@ -41,8 +43,11 @@ describe("ExplorableSiteMap", () => {
 
   test("can get the keys of a tree", async () => {
     const fixture = new ExplorableSiteMap(mockHost);
-    const keys = await fixture.keys();
-    assert.deepEqual(Array.from(keys), ["about/", "index.html"]);
+    const keys = [];
+    for await (const key of fixture.keys()) {
+      keys.push(key);
+    }
+    assert.deepEqual(keys, ["about/", "index.html"]);
   });
 
   test("can get a plain value for a key", async () => {
@@ -81,7 +86,7 @@ describe("ExplorableSiteMap", () => {
       deep: true,
       value: (value) => textDecoder.decode(value),
     });
-    assert.deepEqual(await Tree.plain(strings), {
+    assert.deepEqual(await plain(strings), {
       about: {
         "Alice.html": "Hello, Alice!",
         "Bob.html": "Hello, Bob!",
@@ -113,4 +118,13 @@ async function mockFetch(href) {
     ok: false,
     status: 404,
   };
+}
+
+async function plain(tree) {
+  const result = {};
+  for await (const [key, value] of tree.entries()) {
+    const normalized = trailingSlash.remove(key);
+    result[normalized] = value instanceof AsyncMap ? await plain(value) : value;
+  }
+  return result;
 }

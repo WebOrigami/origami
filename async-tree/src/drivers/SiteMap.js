@@ -1,13 +1,13 @@
 import * as trailingSlash from "../trailingSlash.js";
 import setParent from "../utilities/setParent.js";
-import SyncMap from "./SyncMap.js";
+import AsyncMap from "./AsyncMap.js";
 
 /**
  * A tree of values obtained via HTTP/HTTPS calls. These values will be strings
  * for HTTP responses with a MIME text type; otherwise they will be ArrayBuffer
  * instances.
  */
-export default class SiteMap extends SyncMap {
+export default class SiteMap extends AsyncMap {
   /**
    * @param {string} href
    */
@@ -23,7 +23,6 @@ export default class SiteMap extends SyncMap {
     href = trailingSlash.add(href);
 
     this.href = href;
-    this.parent = null;
   }
 
   /** @returns {Promise<ArrayBuffer|string|undefined>} */
@@ -67,11 +66,9 @@ export default class SiteMap extends SyncMap {
    *
    * For a variation of `SiteMap` that can return the keys for a site route,
    * see [ExplorableSiteMap](ExplorableSiteMap.html).
-   *
-   * @returns {MapIterator<string>}
    */
-  keys() {
-    return [][Symbol.iterator]();
+  async *keys() {
+    return;
   }
 
   // Return true if the given media type is a standard text type.
