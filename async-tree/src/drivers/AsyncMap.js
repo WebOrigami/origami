@@ -1,4 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
+import SyncMap from "./SyncMap.js";
 
 export default class AsyncMap {
   /** @type {AsyncMap|null} */
@@ -32,6 +33,8 @@ export default class AsyncMap {
   async delete(key) {
     throw new Error("delete() not implemented");
   }
+
+  static EMPTY = SyncMap.EMPTY;
 
   /**
    * Returns an async iterable of the map's key-value pairs.
@@ -180,6 +183,7 @@ export default class AsyncMap {
    *
    * @param {any} key
    * @param {any} value
+   * @returns {Promise<AsyncMap>}
    */
   async set(key, value) {
     throw new Error("set() not implemented");

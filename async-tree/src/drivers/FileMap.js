@@ -172,6 +172,8 @@ export default class FileMap extends SyncMap {
 
     if (packed) {
       writeFile(value, destPath);
+    } else if (value === FileMap.EMPTY) {
+      clearDirectory(destPath, this);
     } else if (isMaplike(value)) {
       writeDirectory(value, destPath, this);
     } else {
@@ -185,8 +187,8 @@ export default class FileMap extends SyncMap {
   }
 }
 
-// Treat value as a subtree and write it out as a subdirectory.
-function writeDirectory(value, destPath, parent) {
+// Create the indicated directory.
+function clearDirectory(destPath, parent) {
   const destTree = Reflect.construct(parent.constructor, [destPath]);
 
   // Ensure the directory exists.
@@ -194,6 +196,13 @@ function writeDirectory(value, destPath, parent) {
 
   // Clear any existing files
   destTree.clear();
+
+  return destTree;
+}
+
+// Treat value as a subtree and write it out as a subdirectory.
+function writeDirectory(value, destPath, parent) {
+  const destTree = clearDirectory(destPath, parent);
 
   // Write out the subtree.
   for (const key of value.keys()) {

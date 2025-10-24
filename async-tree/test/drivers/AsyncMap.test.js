@@ -1,21 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import AsyncMap from "../../src/drivers/AsyncMap.js";
-import AsyncObjectMap from "../operations/AsyncObjectMap.js";
-
-class SampleMutableAsyncMap extends AsyncObjectMap {
-  async delete(key) {
-    return this.map.delete(key);
-  }
-
-  async set(key, value) {
-    this.map.set(key, value);
-  }
-}
+import SampleAsyncMap from "../SampleAsyncMap.js";
 
 describe("AsyncMap", () => {
   test("clear", async () => {
-    const map = new SampleMutableAsyncMap([
+    const map = new SampleAsyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -25,7 +15,7 @@ describe("AsyncMap", () => {
   });
 
   test("entries invokes keys() and get()", async () => {
-    const map = new AsyncObjectMap([
+    const map = new SampleAsyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -40,7 +30,7 @@ describe("AsyncMap", () => {
   });
 
   test("forEach", async () => {
-    const map = new AsyncObjectMap([
+    const map = new SampleAsyncMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -72,15 +62,16 @@ describe("AsyncMap", () => {
   });
 
   test("readOnly if get() is overridden but not delete() and set()", () => {
-    const map1 = new AsyncObjectMap();
+    const map1 = new SampleAsyncMap();
+    map1.get = async (key) => null;
     assert.strictEqual(map1.readOnly, true);
 
-    const map2 = new SampleMutableAsyncMap();
+    const map2 = new SampleAsyncMap();
     assert.strictEqual(map2.readOnly, false);
   });
 
   test("size", async () => {
-    const map = new SampleMutableAsyncMap();
+    const map = new SampleAsyncMap();
     assert.strictEqual(await map.size, 0);
     await map.set("a", 1);
     assert.strictEqual(await map.size, 1);
@@ -93,7 +84,7 @@ describe("AsyncMap", () => {
   });
 
   test("values", async () => {
-    const map = new AsyncObjectMap([
+    const map = new SampleAsyncMap([
       ["a", 1],
       ["b", 2],
     ]);

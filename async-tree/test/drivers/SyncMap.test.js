@@ -209,6 +209,14 @@ describe("SyncMap", () => {
     assert.strictEqual(map.get("b"), 3);
   });
 
+  test("set with EMPTY value creates empty subtree", () => {
+    const map = new SyncMap();
+    map.set("subtree", SyncMap.EMPTY);
+    const subtree = map.get("subtree");
+    assert(subtree instanceof SyncMap);
+    assert.strictEqual(subtree.size, 0);
+  });
+
   test("set on read-only map throws", () => {
     class Fixture extends SyncMap {
       get(key) {

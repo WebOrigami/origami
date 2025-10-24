@@ -9,9 +9,11 @@ import handleExtension from "./handleExtension.js";
  */
 export default function HandleExtensionsTransform(Base) {
   return class HandleExtensions extends Base {
-    async get(key) {
-      const value = await super.get(key);
-      return handleExtension(value, key, this);
+    get(key) {
+      const value = super.get(key);
+      return value instanceof Promise
+        ? value.then((resolved) => handleExtension(resolved, key, this))
+        : handleExtension(value, key, this);
     }
   };
 }

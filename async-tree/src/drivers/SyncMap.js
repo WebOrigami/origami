@@ -46,6 +46,8 @@ export default class SyncMap extends Map {
     return super.delete.call(this._self, key);
   }
 
+  static EMPTY = Symbol("EMPTY");
+
   // Override entries() method to call overridden get() and keys().
   entries() {
     // We'd like to just define entries() as a generator but TypeScript
@@ -150,6 +152,12 @@ export default class SyncMap extends Map {
     // If _self is not set, use the current instance as the receiver. This is
     // necessary to let the constructor call `super()`.
     const target = this._self ?? this;
+
+    // Support EMPTY symbol to create empty subtrees
+    if (value === SyncMap.EMPTY) {
+      value = Reflect.construct(this.constructor, []);
+    }
+
     return super.set.call(target, key, value);
   }
 

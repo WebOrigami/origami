@@ -1,3 +1,4 @@
+import SyncMap from "../drivers/SyncMap.js";
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -22,19 +23,25 @@ export default async function assign(target, source) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.
-  const treeKeys = Array.from(await keys(sourceTree));
+  const treeKeys = await keys(sourceTree);
   const promises = treeKeys.map(async (key) => {
     const sourceValue = await sourceTree.get(key);
+
     if (isAsyncTree(sourceValue)) {
-      const targetValue = await targetTree.get(key);
-      if (isAsyncMutableTree(targetValue)) {
-        // Both source and target are trees; recurse.
-        await assign(targetValue, sourceValue);
-        return;
+      let targetValue = await targetTree.get(key);
+      if (targetValue === undefined) {
+        // Target key doesn't exist; create empty subtree
+        const empty =
+          /** @type {any} */ (targetTree.constructor).EMPTY ?? SyncMap.EMPTY;
+        await targetTree.set(key, empty);
+        targetValue = await targetTree.get(key);
       }
+      // Recurse to copy subtree
+      await assign(targetValue, sourceValue);
+    } else {
+      // Copy the value from the source to the target.
+      await targetTree.set(key, sourceValue);
     }
-    // Copy the value from the source to the target.
-    await /** @type {any} */ (targetTree).set(key, sourceValue);
   });
   await Promise.all(promises);
   return targetTree;

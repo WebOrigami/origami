@@ -81,12 +81,12 @@ describe("FileMap", () => {
     removeTempDirectory();
   });
 
-  test("create subfolder via set() with empty Map", () => {
+  test("create subfolder via set() with EMPTY", () => {
     createTempDirectory();
 
     // Write out new, empty folder called "empty".
     const tempFiles = new FileMap(tempDirectory);
-    tempFiles.set("empty", new Map());
+    tempFiles.set("empty", FileMap.EMPTY);
 
     // Verify folder exists and has no contents.
     const folderPath = path.join(tempDirectory, "empty");
