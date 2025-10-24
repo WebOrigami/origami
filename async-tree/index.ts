@@ -17,6 +17,21 @@ export type HasString = {
   toString(): string;
 };
 
+export type Maplike =
+  any[] |
+  Function | 
+  Map<any, any> | 
+  PlainObject | 
+  Set<any>;
+
+export type NativeTreelike = 
+  any[] |
+  AsyncTree |
+  Function | 
+  Map<any, any> | 
+  PlainObject | 
+  Set<any>;
+
 /**
  * A packed value is one that can be written to a file via fs.writeFile or into
  * an HTTP response via response.write, or readily converted to such a form.
@@ -33,14 +48,6 @@ export type PlainObject = {
 export type ReduceFn = (values: any[], keys: any[], tree: AsyncTree) => Promise<any>;
 
 export type Stringlike = string | HasString;
-
-export type NativeTreelike = 
-  any[] |
-  AsyncTree |
-  Function | 
-  Map<any, any> | 
-  PlainObject | 
-  Set<any>;
 
 export type Treelike =
   NativeTreelike |

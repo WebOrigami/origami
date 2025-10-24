@@ -13,10 +13,10 @@ import isPlainObject from "../utilities/isPlainObject.js";
  * Note: the `from()` method accepts any JavaScript object, but `isMaplike`
  * returns `false` for an object that isn't one of the above types.
  *
- * @typedef {import("../../index.ts").Treelike} Treelike
+ * @typedef {import("../../index.ts").Maplike} Maplike
  *
  * @param {any} object
- * @returns {obj is Treelike}
+ * @returns {obj is Maplike}
  */
 export default function isMaplike(object) {
   return (
