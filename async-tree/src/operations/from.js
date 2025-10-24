@@ -1,7 +1,7 @@
-import DeepObjectTree from "../drivers/DeepObjectTree.js";
+import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionTree from "../drivers/FunctionTree.js";
-import ObjectTree from "../drivers/ObjectTree.js";
+import ObjectMap from "../drivers/ObjectMap.js";
 import SetTree from "../drivers/SetTree.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as symbols from "../symbols.js";
@@ -46,7 +46,7 @@ export default function from(object, options = {}) {
   } else if (object instanceof Set) {
     tree = new SetTree(object);
   } else if (isPlainObject(object) || object instanceof Array) {
-    tree = deep ? new DeepObjectTree(object) : new ObjectTree(object);
+    tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
   } else if (isUnpackable(object)) {
     async function AsyncFunction() {} // Sample async function
     tree =
@@ -57,7 +57,7 @@ export default function from(object, options = {}) {
           from(object.unpack());
   } else if (object && typeof object === "object") {
     // An instance of some class.
-    tree = new ObjectTree(object);
+    tree = new ObjectMap(object);
   } else if (
     typeof object === "string" ||
     typeof object === "number" ||
@@ -65,7 +65,7 @@ export default function from(object, options = {}) {
   ) {
     // A primitive value; box it into an object and construct a tree.
     const boxed = box(object);
-    tree = new ObjectTree(boxed);
+    tree = new ObjectMap(boxed);
   } else {
     throw new TypeError("Couldn't convert argument to an async tree");
   }

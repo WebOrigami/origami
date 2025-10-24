@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectTree from "../../src/drivers/DeepObjectTree.js";
+import { DeepObjectMap } from "../../index.ts";
 import ObjectTree from "../../src/drivers/ObjectTree.js";
 import from from "../../src/operations/from.js";
 import plain from "../../src/operations/plain.js";
@@ -26,17 +26,17 @@ describe("from", () => {
     });
   });
 
-  test("returns a deep object tree if deep option is true", async () => {
+  test("returns a deep object map if deep option is true", async () => {
     const obj = {
       sub: {
         a: 1,
       },
     };
     const tree = from(obj, { deep: true });
-    assert(tree instanceof DeepObjectTree);
+    assert(tree instanceof DeepObjectMap);
   });
 
-  test("returns a deep object tree if object has [deep] symbol set", async () => {
+  test("returns a deep object map if object has [deep] symbol set", async () => {
     const obj = {
       sub: {
         a: 1,
@@ -44,7 +44,7 @@ describe("from", () => {
     };
     Object.defineProperty(obj, symbols.deep, { value: true });
     const tree = from(obj);
-    assert(tree instanceof DeepObjectTree);
+    assert(tree instanceof DeepObjectMap);
   });
 
   test("creates a deferred tree if unpack() returns a promise", async () => {

@@ -1,3 +1,4 @@
+import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import keys from "./keys.js";
@@ -28,7 +29,7 @@ export default async function paginate(treelike, size = 10) {
       }
       const nextPage = pageNumber + 1 <= pageCount ? pageNumber + 1 : null;
       const previousPage = pageNumber - 1 >= 1 ? pageNumber - 1 : null;
-      const items = new Map();
+      const items = new SyncMap();
       for (
         let index = (pageNumber - 1) * size;
         index < Math.min(treeKeys.length, pageNumber * size);
