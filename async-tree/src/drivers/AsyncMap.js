@@ -39,10 +39,17 @@ export default class AsyncMap {
    * @returns {AsyncIterableIterator<[any, any][]>}
    */
   async *entries() {
+    const keys = [];
+    const valuePromises = [];
+    // Invoke get() calls without waiting; some may take longer than others
     for await (const key of this.keys()) {
-      const value = await this.get(key);
-      const entry = [key, value];
-      yield entry;
+      keys.push(key);
+      valuePromises.push(this.get(key));
+    }
+    // Now wait for all promises to resolve
+    const values = await Promise.all(valuePromises);
+    for (let i = 0; i < keys.length; i++) {
+      yield [keys[i], values[i]];
     }
   }
 
@@ -199,8 +206,13 @@ export default class AsyncMap {
    * @returns {AsyncIterableIterator<any>}
    */
   async *values() {
-    for await (const [, value] of this.entries()) {
-      yield value;
+    const valuePromises = [];
+    // Invoke get() calls without waiting; some may take longer than others
+    for await (const key of this.keys()) {
+      valuePromises.push(this.get(key));
     }
+    // Now wait for all promises to resolve
+    const values = await Promise.all(valuePromises);
+    yield* values;
   }
 }
