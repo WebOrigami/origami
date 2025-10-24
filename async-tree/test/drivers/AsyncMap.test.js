@@ -1,23 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import AsyncMap from "../../src/drivers/AsyncMap.js";
+import AsyncObjectMap from "../operations/AsyncObjectMap.js";
 
-class SampleAsyncMap extends AsyncMap {
-  constructor(iterable) {
-    super();
-    this.map = new Map(iterable);
-  }
-
-  async get(key) {
-    return this.map.get(key);
-  }
-
-  async *keys() {
-    yield* this.map.keys();
-  }
-}
-
-class SampleMutableAsyncMap extends SampleAsyncMap {
+class SampleMutableAsyncMap extends AsyncObjectMap {
   async delete(key) {
     return this.map.delete(key);
   }
@@ -39,7 +25,7 @@ describe("AsyncMap", () => {
   });
 
   test("entries invokes keys() and get()", async () => {
-    const map = new SampleAsyncMap([
+    const map = new AsyncObjectMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -54,7 +40,7 @@ describe("AsyncMap", () => {
   });
 
   test("forEach", async () => {
-    const map = new SampleAsyncMap([
+    const map = new AsyncObjectMap([
       ["a", 1],
       ["b", 2],
     ]);
@@ -86,7 +72,7 @@ describe("AsyncMap", () => {
   });
 
   test("readOnly if get() is overridden but not delete() and set()", () => {
-    const map1 = new SampleAsyncMap();
+    const map1 = new AsyncObjectMap();
     assert.strictEqual(map1.readOnly, true);
 
     const map2 = new SampleMutableAsyncMap();
@@ -107,7 +93,7 @@ describe("AsyncMap", () => {
   });
 
   test("values", async () => {
-    const map = new SampleAsyncMap([
+    const map = new AsyncObjectMap([
       ["a", 1],
       ["b", 2],
     ]);

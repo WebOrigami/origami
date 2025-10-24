@@ -21,7 +21,10 @@ export default async function copy(source, target) {
     countCopied = 0;
   }
 
-  await Tree.assign(targetTree, sourceTree);
+  // If target is sync, make source sync too.
+  const resolved =
+    targetTree instanceof Map ? await Tree.sync(sourceTree) : sourceTree;
+  await Tree.assign(targetTree, resolved);
 
   if (stdout.isTTY) {
     process.stdout.clearLine(0);
