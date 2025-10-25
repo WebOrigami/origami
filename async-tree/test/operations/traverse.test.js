@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import MapTree from "../../src/drivers/MapTree.js";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import traverse from "../../src/operations/traverse.js";
 
 describe("traverse", () => {
   test("traverses a path of keys", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a1: 1,
       a2: {
         b1: 2,
@@ -30,7 +30,7 @@ describe("traverse", () => {
   });
 
   test("traverses from one tree into another", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: {
         b: new MapTree([
           ["c", "Hello"],

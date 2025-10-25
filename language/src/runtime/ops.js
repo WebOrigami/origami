@@ -436,7 +436,7 @@ export async function property(object, key) {
   if (key in object) {
     // Object defines the property, get it
     let value = object[key];
-    // Is value an instance method? Copied from ObjectTree.
+    // Is value an instance method? Copied from ObjectMap.
     const isInstanceMethod =
       value instanceof Function && !Object.hasOwn(object, key);
     if (isInstanceMethod) {

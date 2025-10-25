@@ -1,6 +1,6 @@
 import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import DeferredTree from "../drivers/DeferredTree.js";
-import FunctionTree from "../drivers/FunctionTree.js";
+import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import SetTree from "../drivers/SetTree.js";
 import SyncMap from "../drivers/SyncMap.js";
@@ -13,9 +13,9 @@ import isAsyncTree from "./isAsyncTree.js";
 /**
  * Attempts to cast the indicated object to an asynchronous tree.
  *
- * If the object is a plain object, it will be converted to an ObjectTree. The
+ * If the object is a plain object, it will be converted to an ObjectMap. The
  * optional `deep` option can be set to `true` to convert a plain object to a
- * DeepObjectTree. The optional `parent` parameter will be used as the default
+ * DeepObjectMap. The optional `parent` parameter will be used as the default
  * parent of the new tree.
  *
  * @typedef {import("../../index.ts").Treelike} Treelike
@@ -40,7 +40,7 @@ export default function from(object, options = {}) {
     // @ts-ignore
     return object;
   } else if (typeof object === "function") {
-    tree = new FunctionTree(object);
+    tree = new FunctionMap(object);
   } else if (object instanceof Map) {
     tree = new SyncMap(object);
   } else if (object instanceof Set) {

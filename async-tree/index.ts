@@ -1,4 +1,5 @@
 import type { AsyncTree } from "@weborigami/types";
+import AsyncMap from "./src/drivers/AsyncMap.js";
 
 export * from "./main.js";
 
@@ -48,6 +49,8 @@ export type PlainObject = {
 export type ReduceFn = (values: any[], keys: any[], tree: AsyncTree) => Promise<any>;
 
 export type Stringlike = string | HasString;
+
+export type SyncOrAsyncMap = Map<any, any> | AsyncMap;
 
 export type Treelike =
   NativeTreelike |

@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import { default as del } from "../../src/operations/delete.js";
 import plain from "../../src/operations/plain.js";
 
 describe("delete", () => {
   test("removes a value", async () => {
-    const fixture = new ObjectTree({
+    const fixture = new ObjectMap({
       "Alice.md": "Hello, **Alice**.",
       "Bob.md": "Hello, **Bob**.",
       "Carol.md": "Hello, **Carol**.",

@@ -1,5 +1,5 @@
 import {
-  DeepObjectTree,
+  DeepObjectMap,
   Tree,
   getTreeArgument,
   keysFromPath,
@@ -54,8 +54,8 @@ export default async function crawlBuiltin(treelike, baseHref) {
   // for something already, that's better than a function that will get that
   // value.
   const result = Tree.deepMerge(
-    new DeepObjectTree(cache),
-    new (InvokeFunctionsTransform(DeepObjectTree))(resources)
+    new DeepObjectMap(cache),
+    new (InvokeFunctionsTransform(DeepObjectMap))(resources)
   );
   return result;
 }

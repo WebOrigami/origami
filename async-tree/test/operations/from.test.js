@@ -1,14 +1,14 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectMap } from "../../index.ts";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import from from "../../src/operations/from.js";
 import plain from "../../src/operations/plain.js";
 import * as symbols from "../../src/symbols.js";
 
 describe("from", () => {
   test("returns an async tree as is", async () => {
-    const tree1 = new ObjectTree({
+    const tree1 = new ObjectMap({
       a: "Hello, a.",
     });
     const tree2 = from(tree1);

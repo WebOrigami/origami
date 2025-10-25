@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import plain from "../../src/operations/plain.js";
 
 describe("plain", () => {
   test("produces a plain object version of a tree", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: 1,
       // Slashes should be normalized
       "sub1/": {
@@ -28,7 +28,7 @@ describe("plain", () => {
 
   test("produces an array for an array-like tree", async () => {
     const original = ["a", "b", "c"];
-    const tree = new ObjectTree(original);
+    const tree = new ObjectMap(original);
     assert.deepEqual(await plain(tree), original);
   });
 
@@ -39,14 +39,14 @@ describe("plain", () => {
       // missing
       3: "c",
     };
-    const tree = new ObjectTree(original);
+    const tree = new ObjectMap(original);
     assert.deepEqual(await plain(tree), original);
   });
 
-  test("returns empty array or object for ObjectTree as necessary", async () => {
-    const tree = new ObjectTree({});
+  test("returns empty array or object for ObjectMap as necessary", async () => {
+    const tree = new ObjectMap({});
     assert.deepEqual(await plain(tree), {});
-    const arrayTree = new ObjectTree([]);
+    const arrayTree = new ObjectMap([]);
     assert.deepEqual(await plain(arrayTree), []);
   });
 
@@ -60,7 +60,7 @@ describe("plain", () => {
   });
 
   test("coerces TypedArray values to strings", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: new TextEncoder().encode("Hello, world."),
     });
     const result = await plain(tree);

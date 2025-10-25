@@ -1,13 +1,15 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import cache from "../../src/operations/cache.js";
+import keys from "../../src/operations/keys.js";
 
 describe("cache", () => {
   test("caches reads of values from one tree into another", async () => {
-    const objectCache = new ObjectTree({});
+    const objectCache = new ObjectMap({});
     const fixture = await cache(
-      new DeepObjectTree({
+      new DeepObjectMap({
         a: 1,
         b: 2,
         c: 3,
@@ -18,7 +20,7 @@ describe("cache", () => {
       objectCache
     );
 
-    const treeKeys = await Tree.keys(fixture);
+    const treeKeys = await keys(fixture);
     assert.deepEqual(treeKeys, ["a", "b", "c", "more/"]);
 
     assert.equal(await objectCache.get("a"), undefined);

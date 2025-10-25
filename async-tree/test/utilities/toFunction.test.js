@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import toFunction from "../../src/utilities/toFunction.js";
 
 describe("toFunction", () => {
@@ -10,7 +10,7 @@ describe("toFunction", () => {
   });
 
   test("returns a tree's getter as a function", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: 1,
     });
     const fn = toFunction(tree);

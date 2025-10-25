@@ -1,7 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import map from "../../src/operations/map.js";
+import plain from "../../src/operations/plain.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
 describe("map", () => {
@@ -16,7 +18,7 @@ describe("map", () => {
   });
 
   test("maps values", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: "letter a",
       b: "letter b",
       c: undefined, // Won't be mapped
@@ -28,7 +30,7 @@ describe("map", () => {
         return sourceValue.toUpperCase();
       },
     });
-    assert.deepEqual(await Tree.plain(mapped), {
+    assert.deepEqual(await plain(mapped), {
       a: "LETTER A",
       b: "LETTER B",
       c: undefined,
@@ -44,7 +46,7 @@ describe("map", () => {
       assert(sourceKey === "a" || sourceKey === "b");
       return sourceValue.toUpperCase();
     });
-    assert.deepEqual(await Tree.plain(uppercaseValues), {
+    assert.deepEqual(await plain(uppercaseValues), {
       a: "LETTER A",
       b: "LETTER B",
     });
@@ -59,7 +61,7 @@ describe("map", () => {
       key: addUnderscore,
       inverseKey: removeUnderscore,
     });
-    assert.deepEqual(await Tree.plain(underscoreKeys), {
+    assert.deepEqual(await plain(underscoreKeys), {
       _a: "letter a",
       _b: "letter b",
     });
@@ -73,14 +75,14 @@ describe("map", () => {
     const underscoreKeys = await map(tree, {
       key: addUnderscore,
     });
-    assert.deepEqual(await Tree.plain(underscoreKeys), {
+    assert.deepEqual(await plain(underscoreKeys), {
       _a: "letter a",
       _b: "letter b",
     });
   });
 
   test("maps keys and values", async () => {
-    const treelike = new ObjectTree([
+    const treelike = new ObjectMap([
       { name: "Alice", age: 1 },
       { name: "Bob", age: 2 },
       { name: "Carol", age: 3 },
@@ -89,7 +91,7 @@ describe("map", () => {
       key: (value, key, tree) => value.name,
       value: (value, key, tree) => value.age,
     });
-    assert.deepEqual(await Tree.plain(result), {
+    assert.deepEqual(await plain(result), {
       Alice: 1,
       Bob: 2,
       Carol: 3,
@@ -108,7 +110,7 @@ describe("map", () => {
       inverseKey: async (resultKey, tree) => resultKey.slice(1),
       value: async (sourceValue, sourceKey, tree) => sourceKey,
     });
-    assert.deepEqual(await Tree.plain(underscoreKeys), {
+    assert.deepEqual(await plain(underscoreKeys), {
       _a: "a",
       _more: "more",
     });
@@ -123,14 +125,14 @@ describe("map", () => {
       b: "letter b",
     };
     const mapped = await map(tree, uppercase);
-    assert.deepEqual(await Tree.plain(mapped), {
+    assert.deepEqual(await plain(mapped), {
       _a: "LETTER A",
       _b: "LETTER B",
     });
   });
 
   test("deep maps values", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: "letter a",
       more: {
         b: "letter b",
@@ -140,7 +142,7 @@ describe("map", () => {
       deep: true,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    assert.deepEqual(await Tree.plain(uppercaseValues), {
+    assert.deepEqual(await plain(uppercaseValues), {
       a: "LETTER A",
       more: {
         b: "LETTER B",
@@ -149,7 +151,7 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: "letter a",
       more: {
         b: "letter b",
@@ -160,7 +162,7 @@ describe("map", () => {
       key: addUnderscore,
       inverseKey: removeUnderscore,
     });
-    assert.deepEqual(await Tree.plain(underscoreKeys), {
+    assert.deepEqual(await plain(underscoreKeys), {
       _a: "letter a",
       more: {
         _b: "letter b",
@@ -169,7 +171,7 @@ describe("map", () => {
   });
 
   test("deep maps leaf keys and values", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: "letter a",
       more: {
         b: "letter b",
@@ -181,7 +183,7 @@ describe("map", () => {
       inverseKey: removeUnderscore,
       value: async (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    assert.deepEqual(await Tree.plain(underscoreKeysUppercaseValues), {
+    assert.deepEqual(await plain(underscoreKeysUppercaseValues), {
       _a: "LETTER A",
       more: {
         _b: "LETTER B",
@@ -202,7 +204,7 @@ describe("map", () => {
         return key.toUpperCase();
       },
     });
-    assert.deepEqual(await Tree.plain(mapped), {
+    assert.deepEqual(await plain(mapped), {
       A: "letter a",
       B: "letter b",
       C: "letter c",

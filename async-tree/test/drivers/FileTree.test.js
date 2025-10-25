@@ -7,7 +7,7 @@ import FileTree from "../../src/drivers/FileTree.js";
 import { ObjectTree, Tree } from "../../src/internal.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const tempDirectory = path.join(dirname, "fixtures/temp");
+const tempDirectory = path.join(dirname, "fixtures/temp/FileTree");
 
 const textDecoder = new TextDecoder();
 
@@ -184,9 +184,10 @@ function createFixture(fixturePath) {
 }
 
 async function createTempDirectory() {
+  await fs.rm(tempDirectory, { force: true, recursive: true });
   await fs.mkdir(tempDirectory, { recursive: true });
 }
 
 async function removeTempDirectory() {
-  await fs.rm(tempDirectory, { recursive: true });
+  await fs.rm(tempDirectory, { force: true, recursive: true });
 }

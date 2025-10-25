@@ -4,16 +4,18 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileTree from "../../src/drivers/FileTree.js";
-import { ObjectTree, Tree } from "../../src/internal.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
+import clear from "../../src/operations/clear.js";
+import plain from "../../src/operations/plain.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
 
 describe("clear", () => {
   test("unsets all public keys in an object tree", async () => {
-    const tree = new ObjectTree({ a: 1, b: 2, c: 3 });
-    await Tree.clear(tree);
-    assert.deepEqual(await Tree.plain(tree), {});
+    const tree = new ObjectMap({ a: 1, b: 2, c: 3 });
+    await clear(tree);
+    assert.deepEqual(await plain(tree), {});
   });
 
   test("unsets all public keys in a file tree", async () => {
@@ -23,7 +25,7 @@ describe("clear", () => {
     await fs.writeFile(path.join(tempDirectory, "b"), "2");
 
     const tree = new FileTree(tempDirectory);
-    await Tree.clear(tree);
+    await clear(tree);
 
     const files = await fs.readdir(tempDirectory);
     assert.deepEqual(files, []);

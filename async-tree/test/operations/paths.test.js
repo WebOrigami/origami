@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectTree from "../../src/drivers/DeepObjectTree.js";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import paths from "../../src/operations/paths.js";
 
 describe("paths", () => {
   test("returns an array of paths to the values in the tree", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: 1,
       b: 2,
       c: {
@@ -18,15 +18,15 @@ describe("paths", () => {
   });
 
   test("can focus just on keys with trailing slashes", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: 1,
       b: 2,
-      // This is a shallow ObjectTree, so `c` won't have a trailing slash
+      // This is a shallow ObjectMap, so `c` won't have a trailing slash
       c: {
         d: 3,
       },
       // Explicitly include a trailing slash to signal a subtree
-      "d/": new ObjectTree({
+      "d/": new ObjectMap({
         e: 4,
       }),
     });

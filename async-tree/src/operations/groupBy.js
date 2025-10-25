@@ -1,4 +1,4 @@
-import ObjectTree from "../drivers/ObjectTree.js";
+import ObjectMap from "../drivers/ObjectMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isTreelike from "./isTreelike.js";
@@ -48,5 +48,5 @@ export default async function groupBy(treelike, groupKeyFn) {
     }
   }
 
-  return new ObjectTree(result);
+  return new ObjectMap(result);
 }

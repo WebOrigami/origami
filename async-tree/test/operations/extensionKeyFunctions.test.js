@@ -1,8 +1,9 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { ObjectTree, Tree } from "../../src/internal.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import extensionKeyFunctions from "../../src/operations/extensionKeyFunctions.js";
 import map from "../../src/operations/map.js";
+import plain from "../../src/operations/plain.js";
 
 describe("keyMapsForExtensions", () => {
   test("returns key functions that pass a matching key through", async () => {
@@ -34,7 +35,7 @@ describe("keyMapsForExtensions", () => {
   });
 
   test("works with map to handle keys that end in a given resultExtension", async () => {
-    const files = new ObjectTree({
+    const files = new ObjectMap({
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -45,13 +46,13 @@ describe("keyMapsForExtensions", () => {
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       "file1.txt": "WILL BE MAPPED",
     });
   });
 
   test("works with map to change a key's resultExtension", async () => {
-    const files = new ObjectTree({
+    const files = new ObjectMap({
       "file1.txt": "will be mapped",
       file2: "won't be mapped",
       "file3.foo": "won't be mapped",
@@ -62,7 +63,7 @@ describe("keyMapsForExtensions", () => {
       key,
       value: (sourceValue, sourceKey, tree) => sourceValue.toUpperCase(),
     });
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       "file1.upper": "WILL BE MAPPED",
     });
   });

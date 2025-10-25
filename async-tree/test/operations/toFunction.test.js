@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import toFunction from "../../src/operations/toFunction.js";
 
 describe("toFunction", () => {
   test("returns a function that invokes a tree's get() method", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: 1,
       b: 2,
     });

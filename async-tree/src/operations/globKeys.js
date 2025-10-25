@@ -1,4 +1,4 @@
-import ObjectTree from "../drivers/ObjectTree.js";
+import ObjectMap from "../drivers/ObjectMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -51,7 +51,7 @@ async function matchGlobs(globs, key) {
       globstarGlobs = await globs.get(glob);
       if (trailingSlash.has(key)) {
         // A key for a subtree matches the globstar
-        matches.push(new ObjectTree({ [globstar]: globstarGlobs }));
+        matches.push(new ObjectMap({ [globstar]: globstarGlobs }));
       }
     } else if (matchGlob(glob, key)) {
       // Text matches glob, get value
@@ -80,7 +80,7 @@ async function matchGlobs(globs, key) {
         return globstarValue;
       } else if (trailingSlash.has(key)) {
         // No match but key is for subtree, return globstar tree
-        return new ObjectTree({ [globstar]: globstarGlobs });
+        return new ObjectMap({ [globstar]: globstarGlobs });
       }
     }
   }

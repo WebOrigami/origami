@@ -1,12 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, ObjectTree } from "../../src/internal.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import cachedKeyFunctions from "../../src/operations/cachedKeyFunctions.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
 describe("cachedKeyFunctions", () => {
   test("maps keys with caching", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: "letter a",
       b: "letter b",
     });
@@ -41,7 +42,7 @@ describe("cachedKeyFunctions", () => {
   });
 
   test("maps keys with caching and deep option", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: "letter a",
       b: {
         c: "letter c",
@@ -76,7 +77,7 @@ describe("cachedKeyFunctions", () => {
   });
 
   test("preserves trailing slashes if key function does so", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: "letter a",
     });
     const addUnderscore = async (sourceValue, sourceKey) => `_${sourceKey}`;
@@ -90,7 +91,7 @@ describe("cachedKeyFunctions", () => {
   });
 
   test("if key function toggles slash, defers to key function slash handling", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       a: "letter a",
     });
     const addUnderscoreAndSlash = async (sourceValue, sourceKey) =>

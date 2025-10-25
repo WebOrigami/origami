@@ -1,6 +1,6 @@
 import {
   extension,
-  ObjectTree,
+  ObjectMap,
   setParent,
   symbols,
   trailingSlash,
@@ -87,7 +87,7 @@ export default async function expressionObject(entries, state = {}) {
       }
 
       const get = async () => {
-        tree ??= new ObjectTree(object);
+        tree ??= new ObjectMap(object);
         const newState = Object.assign({}, state, { object: tree });
         const result = await evaluate(code, newState);
         return extname ? handleExtension(result, key, tree) : result;

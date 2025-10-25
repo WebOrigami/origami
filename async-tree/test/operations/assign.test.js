@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import SyncMap from "../../src/drivers/SyncMap.js";
 import assign from "../../src/operations/assign.js";
 import plain from "../../src/operations/plain.js";
@@ -42,7 +42,7 @@ describe("assign", () => {
   });
 
   test("assign() can apply updates to an array", async () => {
-    const target = new ObjectTree(["a", "b", "c"]);
+    const target = new ObjectMap(["a", "b", "c"]);
     await assign(target, ["d", "e"]);
     assert.deepEqual(await plain(target), ["d", "e", "c"]);
   });

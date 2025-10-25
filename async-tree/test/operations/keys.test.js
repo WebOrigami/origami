@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import AsyncMap from "../../src/drivers/AsyncMap.js";
-import ObjectTree from "../../src/drivers/ObjectTree.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import keys from "../../src/operations/keys.js";
 
 describe("keys", () => {
   test("handles regular iterable", async () => {
-    const obj = new ObjectTree({
+    const obj = new ObjectMap({
       a: 1,
       b: 2,
       c: 3,

@@ -1,19 +1,22 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, ObjectTree, Tree } from "../../src/internal.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import merge from "../../src/operations/merge.js";
+import plain from "../../src/operations/plain.js";
+import traverse from "../../src/operations/traverse.js";
 
 describe("merge", () => {
   test("performs a shallow merge", async () => {
     const fixture = merge(
-      new ObjectTree({
+      new ObjectMap({
         a: 1,
         // Will be obscured by `b` that follows
         b: {
           c: 2,
         },
       }),
-      new ObjectTree({
+      new ObjectMap({
         b: {
           d: 3,
         },
@@ -23,7 +26,7 @@ describe("merge", () => {
       })
     );
 
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       a: 1,
       b: {
         d: 3,
@@ -34,23 +37,23 @@ describe("merge", () => {
     });
 
     // Merge is shallow, and last tree wins, so `b/c` doesn't exist
-    const c = await Tree.traverse(fixture, "b", "c");
+    const c = await traverse(fixture, "b", "c");
     assert.equal(c, undefined);
   });
 
   test("subtree can overwrite a leaf node", async () => {
     const fixture = merge(
-      new ObjectTree({
+      new ObjectMap({
         a: 1,
       }),
-      new DeepObjectTree({
+      new DeepObjectMap({
         a: {
           b: 2,
         },
       })
     );
     assert.deepEqual([...(await fixture.keys())], ["a/"]);
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       a: {
         b: 2,
       },

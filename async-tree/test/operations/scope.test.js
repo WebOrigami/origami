@@ -1,16 +1,16 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { ObjectTree } from "../../src/internal.js";
+import ObjectMap from "../../src/drivers/ObjectMap.js";
 import keys from "../../src/operations/keys.js";
 import scope from "../../src/operations/scope.js";
 
 describe("scope", () => {
   test("gets the first defined value from the scope trees", async () => {
-    const outer = new ObjectTree({
+    const outer = new ObjectMap({
       a: 1,
       b: 2,
     });
-    const inner = new ObjectTree({
+    const inner = new ObjectMap({
       a: 3,
     });
     inner.parent = outer;
