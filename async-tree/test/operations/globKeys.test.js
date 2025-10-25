@@ -5,18 +5,18 @@ import globKeys from "../../src/operations/globKeys.js";
 
 describe("globKeys", () => {
   test("matches globs", async () => {
-    const globTree = await globKeys({
+    const globMap = await globKeys({
       "*.txt": true,
       "*.js": false,
       "*.jsx": true,
       "foo*baz": true,
     });
-    assert(await globTree.get("file.txt"));
-    assert(!(await globTree.get("script.js")));
-    assert(await globTree.get("component.jsx"));
-    assert(await globTree.get("foobarbaz"));
-    assert(await globTree.get("foobaz"));
-    assert(!(await globTree.get("foo")));
+    assert(globMap.get("file.txt"));
+    assert(!globMap.get("script.js"));
+    assert(globMap.get("component.jsx"));
+    assert(globMap.get("foobarbaz"));
+    assert(globMap.get("foobaz"));
+    assert(!globMap.get("foo"));
   });
 
   test("matches nested globs", async () => {

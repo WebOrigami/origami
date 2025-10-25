@@ -1,31 +1,13 @@
-import ObjectMap from "../drivers/ObjectMap.js";
+import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncTree from "./isAsyncTree.js";
-import merge from "./merge.js";
 
 const globstar = "**";
 const globstarSlash = `${globstar}/`;
 
 export default async function globKeys(treelike) {
   const globs = await getTreeArgument(treelike, "globKeys", { deep: true });
-  return {
-    async get(key) {
-      if (typeof key !== "string") {
-        return undefined;
-      }
-
-      let value = await matchGlobs(globs, key);
-      if (isAsyncTree(value)) {
-        value = globKeys(value);
-      }
-      return value;
-    },
-
-    async keys() {
-      return globs.keys();
-    },
-  };
+  return globMap(globs);
 }
 
 // Convert the glob to a regular expression
@@ -40,24 +22,44 @@ function matchGlob(glob, key) {
   return regex.test(key);
 }
 
-async function matchGlobs(globs, key) {
+function globMap(globs) {
+  return Object.assign(new SyncMap(), {
+    get(key) {
+      if (typeof key !== "string") {
+        return undefined;
+      }
+
+      let value = matchGlobs(globs, key);
+      if (value instanceof Map) {
+        value = globMap(value);
+      }
+      return value;
+    },
+
+    keys() {
+      return globs.keys();
+    },
+  });
+}
+
+function matchGlobs(globs, key) {
   let globstarGlobs;
 
   // Collect all matches
   let matches = [];
-  for (let glob of await globs.keys()) {
+  for (let glob of globs.keys()) {
     if (glob === globstarSlash) {
       // Remember for later
-      globstarGlobs = await globs.get(glob);
+      globstarGlobs = globs.get(glob);
       if (trailingSlash.has(key)) {
         // A key for a subtree matches the globstar
-        matches.push(new ObjectMap({ [globstar]: globstarGlobs }));
+        matches.push(new SyncMap([[globstarSlash, globstarGlobs]]));
       }
     } else if (matchGlob(glob, key)) {
       // Text matches glob, get value
-      const globValue = await globs.get(glob);
+      const globValue = globs.get(glob);
       if (globValue !== undefined) {
-        if (!isAsyncTree(globValue)) {
+        if (!(globValue instanceof Map)) {
           // Found a non-tree match, return immediately
           return globValue;
         }
@@ -74,18 +76,22 @@ async function matchGlobs(globs, key) {
       return undefined;
     } else {
       // Try globstar
-      const globstarValue = await matchGlobs(globstarGlobs, key);
-      if (!isAsyncTree(globstarValue)) {
+      const globstarValue = matchGlobs(globstarGlobs, key);
+      if (!(globstarValue instanceof Map)) {
         // Found a non-tree match, return immediately
         return globstarValue;
       } else if (trailingSlash.has(key)) {
         // No match but key is for subtree, return globstar tree
-        return new ObjectMap({ [globstar]: globstarGlobs });
+        return new SyncMap([[globstar, globstarGlobs]]);
       }
     }
   }
 
+  if (matches.length === 1) {
+    return matches[0];
+  }
+
   // Merge all matches
-  const value = matches.length === 1 ? matches[0] : merge(...matches);
-  return value;
+  const mergedEntries = matches.flatMap((m) => [...m.entries()]);
+  return new SyncMap(mergedEntries);
 }
