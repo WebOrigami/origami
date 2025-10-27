@@ -46,7 +46,7 @@ async function matchGlobs(globs, key) {
   // Collect all matches
   let matches = [];
   for (let glob of await globs.keys()) {
-    if (glob === globstarSlash) {
+    if (glob === globstar || glob === globstarSlash) {
       // Remember for later
       globstarGlobs = await globs.get(glob);
       if (trailingSlash.has(key)) {
