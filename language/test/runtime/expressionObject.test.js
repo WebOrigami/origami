@@ -88,4 +88,12 @@ describe("expressionObject", () => {
       "object/",
     ]);
   });
+
+  test("sets symbols.async on objects with getters", async () => {
+    const noGetter = await expressionObject([["eager", 1]]);
+    assert.equal(noGetter[symbols.async], undefined);
+
+    const hasGetter = await expressionObject([["lazy", [ops.getter, [2]]]]);
+    assert.equal(hasGetter[symbols.async], true);
+  });
 });

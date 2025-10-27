@@ -38,6 +38,7 @@ export default async function expressionObject(entries, state = {}) {
   let tree;
   const eagerProperties = [];
   const propertyIsEnumerable = {};
+  let hasLazyProperties = false;
   for (let [key, value] of entries) {
     // Determine if we need to define a getter or a regular property. If the key
     // has an extension, we need to define a getter. If the value is code (an
@@ -80,6 +81,7 @@ export default async function expressionObject(entries, state = {}) {
       // Property getter
       let code;
       if (value[0] === ops.getter) {
+        hasLazyProperties = true;
         code = value[1];
       } else {
         eagerProperties.push(key);
@@ -113,12 +115,21 @@ export default async function expressionObject(entries, state = {}) {
   // and overwrite the property getter with the actual value.
   for (const key of eagerProperties) {
     const value = await object[key];
-    // @ts-ignore Unclear why TS thinks `object` might be undefined here
-    const enumerable = Object.getOwnPropertyDescriptor(object, key).enumerable;
+    const enumerable = Object.getOwnPropertyDescriptor(object, key)?.enumerable;
     Object.defineProperty(object, key, {
       configurable: true,
       enumerable,
       value,
+      writable: true,
+    });
+  }
+
+  // If there are any getters, mark the object as async
+  if (hasLazyProperties) {
+    Object.defineProperty(object, symbols.async, {
+      configurable: true,
+      enumerable: false,
+      value: true,
       writable: true,
     });
   }
