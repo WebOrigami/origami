@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { hiddenFileNames } from "../constants.js";
+import from from "../operations/from.js";
 import isMaplike from "../operations/isMaplike.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPacked from "../utilities/isPacked.js";
@@ -200,13 +201,21 @@ function clearDirectory(destPath, parent) {
   return destTree;
 }
 
-// Treat value as a subtree and write it out as a subdirectory.
+/**
+ * Treat value as a subtree and write it out as a subdirectory.
+ *
+ * @param {import("../../index.ts").Maplike} value
+ */
 function writeDirectory(value, destPath, parent) {
+  // Since value is Maplike, result will be a Map
+  /** @type {Map} */
+  // @ts-ignore
+  const valueMap = from(value);
   const destTree = clearDirectory(destPath, parent);
 
   // Write out the subtree.
-  for (const key of value.keys()) {
-    const childValue = value.get(key);
+  for (const key of valueMap.keys()) {
+    const childValue = valueMap.get(key);
     destTree.set(key, childValue);
   }
 }
