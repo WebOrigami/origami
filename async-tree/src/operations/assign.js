@@ -1,7 +1,7 @@
 import SyncMap from "../drivers/SyncMap.js";
 import from from "./from.js";
 import isAsyncMutableTree from "./isAsyncMutableTree.js";
-import isAsyncTree from "./isAsyncTree.js";
+import isTreelike from "./isTreelike.js";
 import keys from "./keys.js";
 
 /**
@@ -27,7 +27,7 @@ export default async function assign(target, source) {
   const promises = treeKeys.map(async (key) => {
     const sourceValue = await sourceTree.get(key);
 
-    if (isAsyncTree(sourceValue)) {
+    if (isTreelike(sourceValue)) {
       let targetValue = await targetTree.get(key);
       if (targetValue === undefined) {
         // Target key doesn't exist; create empty subtree
