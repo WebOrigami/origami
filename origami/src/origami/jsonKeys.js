@@ -1,4 +1,9 @@
-import { Tree, getTreeArgument, jsonKeys } from "@weborigami/async-tree";
+import {
+  AsyncMap,
+  Tree,
+  getTreeArgument,
+  jsonKeys,
+} from "@weborigami/async-tree";
 
 /**
  * Expose .keys.json for a tree.
@@ -15,7 +20,9 @@ export default async function jsonKeysBuiltin(treelike) {
 }
 
 function jsonKeysTree(tree) {
-  return Object.assign(Object.create(tree), {
+  return Object.assign(new AsyncMap(), {
+    description: "jsonKeys",
+
     async get(key) {
       let value = await tree.get(key);
       if (value === undefined && key === ".keys.json") {
@@ -27,10 +34,12 @@ function jsonKeysTree(tree) {
       return value;
     },
 
-    async keys() {
-      const keys = new Set(await tree.keys());
-      keys.add(".keys.json");
-      return keys;
+    async *keys() {
+      const treeKeys = new Set(await Tree.keys(tree));
+      treeKeys.add(".keys.json");
+      yield* treeKeys;
     },
+
+    source: tree,
   });
 }

@@ -1,4 +1,9 @@
-import { Tree, getTreeArgument, jsonKeys } from "@weborigami/async-tree";
+import {
+  AsyncMap,
+  Tree,
+  getTreeArgument,
+  jsonKeys,
+} from "@weborigami/async-tree";
 import indexPage from "./indexPage.js";
 
 /**
@@ -19,7 +24,9 @@ export default async function staticBuiltin(treelike) {
 staticBuiltin.key = "static";
 
 function staticTree(tree) {
-  return Object.assign(Object.create(tree), {
+  return Object.assign(new AsyncMap(), {
+    description: "static",
+
     async get(key) {
       let value = await tree.get(key);
       if (value === undefined && key === "index.html") {
@@ -33,11 +40,12 @@ function staticTree(tree) {
       return value;
     },
 
-    async keys() {
-      const keys = new Set(await tree.keys());
-      keys.add("index.html");
-      keys.add(".keys.json");
-      return keys;
+    async *keys() {
+      yield* tree.keys();
+      yield "index.html";
+      yield ".keys.json";
     },
+
+    source: tree,
   });
 }
