@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import { Tree } from "../../src/internal.js";
+import keys from "../../src/operations/keys.js";
 import sort from "../../src/operations/sort.js";
 
 describe("sort", () => {
@@ -11,7 +12,7 @@ describe("sort", () => {
       file9: null,
     });
     const sorted = await sort(tree);
-    assert.deepEqual(Array.from(await sorted.keys()), [
+    assert.deepEqual(Array.from(await keys(sorted)), [
       "file1",
       "file10",
       "file9",
@@ -27,7 +28,7 @@ describe("sort", () => {
     // Reverse order
     const compare = (a, b) => (a > b ? -1 : a < b ? 1 : 0);
     const sorted = await sort(tree, { compare });
-    assert.deepEqual(Array.from(await sorted.keys()), ["c", "b", "a"]);
+    assert.deepEqual(Array.from(await keys(sorted)), ["c", "b", "a"]);
   });
 
   test("invokes a sortKey function", async () => {
@@ -39,10 +40,6 @@ describe("sort", () => {
     const sorted = await sort(tree, {
       sortKey: async (value, key, tree) => value.age,
     });
-    assert.deepEqual(Array.from(await sorted.keys()), [
-      "Bob",
-      "Carol",
-      "Alice",
-    ]);
+    assert.deepEqual(Array.from(await keys(sorted)), ["Bob", "Carol", "Alice"]);
   });
 });
