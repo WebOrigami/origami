@@ -1,5 +1,5 @@
 import {
-  DeepObjectTree,
+  DeepObjectMap,
   Tree,
   castArraylike,
   isStringlike,
@@ -97,7 +97,7 @@ describe("utilities", () => {
         }
       };
     }
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: "a",
       more: {
         b: "b",

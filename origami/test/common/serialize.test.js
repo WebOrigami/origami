@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import * as serialize from "../../src/common/serialize.js";
@@ -17,13 +17,13 @@ c: Hello, c.`;
   });
 
   test("toJson() renders a tree as JSON", async () => {
-    const tree = new ObjectTree({ a: "Hello, a." });
+    const tree = new ObjectMap({ a: "Hello, a." });
     const json = await serialize.toJson(tree);
     assert.equal(json, `{\n  "a": "Hello, a."\n}`);
   });
 
   test("toYaml() renders a tree as YAML", async () => {
-    const tree = new ObjectTree({ a: "Hello, a." });
+    const tree = new ObjectMap({ a: "Hello, a." });
     const yaml = await serialize.toYaml(tree);
     assert.equal(yaml, `a: Hello, a.\n`);
   });

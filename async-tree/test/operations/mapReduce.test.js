@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectTree from "../../src/drivers/DeepObjectTree.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import mapReduce from "../../src/operations/mapReduce.js";
 
 describe("mapReduce", () => {
   test("can map values and reduce them", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       a: 1,
       b: 2,
       more: {

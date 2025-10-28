@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { before, describe, test } from "node:test";
 import OriCommandTransform from "../../src/dev/OriCommandTransform.js";
@@ -10,7 +10,7 @@ describe("OriCommandTransform", () => {
   });
 
   test("prefers value defined by base tree even if it starts with '!'", async () => {
-    const tree = new (OriCommandTransform(ObjectTree))({
+    const tree = new (OriCommandTransform(ObjectMap))({
       "!yaml": "foo",
     });
     const value = await tree.get("!yaml");
@@ -18,7 +18,7 @@ describe("OriCommandTransform", () => {
   });
 
   test("evaluates an Origami expression using the current tree", async () => {
-    const tree = new (OriCommandTransform(ObjectTree))({
+    const tree = new (OriCommandTransform(ObjectMap))({
       a: 1,
       b: 2,
     });
@@ -27,11 +27,11 @@ describe("OriCommandTransform", () => {
   });
 
   test("retrieves an Origami expression in the tree's scope", async () => {
-    const parent = new ObjectTree({
+    const parent = new ObjectMap({
       a: 1,
       b: 2,
     });
-    const tree = new (OriCommandTransform(ObjectTree))({});
+    const tree = new (OriCommandTransform(ObjectMap))({});
     tree.parent = parent;
     const value = await tree.get("!b");
     assert.deepEqual(value, 2);

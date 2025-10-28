@@ -1,13 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import SyncMap from "../../src/drivers/SyncMap.js";
 import cache from "../../src/operations/cache.js";
 import keys from "../../src/operations/keys.js";
 
 describe("cache", () => {
   test("caches reads of values from one tree into another", async () => {
-    const objectCache = new ObjectMap({});
+    const objectCache = new SyncMap();
     const fixture = await cache(
       new DeepObjectMap({
         a: 1,

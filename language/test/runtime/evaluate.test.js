@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
-import { ObjectTree } from "@weborigami/async-tree";
+import { SyncMap } from "@weborigami/async-tree";
 import evaluate from "../../src/runtime/evaluate.js";
 import { createCode } from "../compiler/codeHelpers.js";
 
@@ -32,7 +32,7 @@ describe("evaluate", () => {
       return this;
     };
     fn.containerAsTarget = true;
-    const container = new ObjectTree({});
+    const container = new SyncMap();
     const state = { container };
     const code = createCode([fn]);
     const result = await evaluate(code, state);

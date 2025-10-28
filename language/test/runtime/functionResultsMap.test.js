@@ -1,11 +1,11 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import functionResultsMap from "../../src/runtime/functionResultsMap.js";
 
 describe("functionResultsMap", () => {
   test("get() invokes functions, returns other values as is", async () => {
-    const tree = new ObjectTree({
+    const tree = new ObjectMap({
       fn: function () {
         return "Hello";
       },

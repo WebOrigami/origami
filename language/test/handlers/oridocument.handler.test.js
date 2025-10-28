@@ -1,11 +1,11 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import oridocument_handler from "../../src/handlers/oridocument_handler.js";
 
 describe("Origami document handler", () => {
   test("unpacks text with Origami expressions", async () => {
-    const parent = new ObjectTree({
+    const parent = new ObjectMap({
       name: "world",
     });
     const text = "Hello, ${ name }!";
@@ -28,7 +28,7 @@ describe("Origami document handler", () => {
   });
 
   test("YAML front matter is returned with _body", async () => {
-    const parent = new ObjectTree({
+    const parent = new ObjectMap({
       message: "Hello",
     });
     const text = `---

@@ -1,12 +1,13 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, Tree } from "../../src/internal.js";
+import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import deepMerge from "../../src/operations/deepMerge.js";
+import plain from "../../src/operations/plain.js";
 
 describe("mergeDeep", () => {
   test("can merge deep", async () => {
     const fixture = deepMerge(
-      new DeepObjectTree({
+      new DeepObjectMap({
         a: {
           b: 0, // Will be obscured by `b` below
           c: {
@@ -14,7 +15,7 @@ describe("mergeDeep", () => {
           },
         },
       }),
-      new DeepObjectTree({
+      new DeepObjectMap({
         a: {
           b: 1,
           c: {
@@ -24,7 +25,7 @@ describe("mergeDeep", () => {
         },
       })
     );
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       a: {
         b: 1,
         c: {

@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionMap from "../drivers/FunctionMap.js";
@@ -36,6 +37,11 @@ export default function from(object, options = {}) {
       "The tree argument was a Promise. Did you mean to use await?"
     );
   } else if (isAsyncTree(object)) {
+    if (!(object instanceof Map || object instanceof AsyncMap)) {
+      console.warn(
+        "from: warning: object is AsyncTree but not Map or AsyncMap"
+      );
+    }
     // Argument already supports the tree interface.
     // @ts-ignore
     return object;

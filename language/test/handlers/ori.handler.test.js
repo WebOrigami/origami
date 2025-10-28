@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import ori_handler from "../../src/handlers/ori_handler.js";
@@ -15,7 +15,7 @@ describe(".ori handler", async () => {
   });
 
   test("loads a tree expression", async () => {
-    const parent = new ObjectTree({
+    const parent = new ObjectMap({
       name: "world",
     });
     const source = `{
@@ -43,15 +43,15 @@ describe(".ori handler", async () => {
   });
 
   test("loads an object containing an object shorthand", async () => {
-    const assets = new ObjectTree({});
-    const parent = new ObjectTree({ assets });
+    const assets = new ObjectMap({});
+    const parent = new ObjectMap({ assets });
     const source = `{ assets }`;
     const object = await ori_handler.unpack(source, { parent });
     assert.equal(object.assets, assets);
   });
 
   test("loads a template literal", async () => {
-    const scope = new ObjectTree({
+    const scope = new ObjectMap({
       name: "Alice",
     });
     const source = `\`Hello, \${name}!\``;
@@ -62,7 +62,7 @@ describe(".ori handler", async () => {
   });
 
   test("loads a template lambda that reads from parent scope", async () => {
-    const parent = new ObjectTree({
+    const parent = new ObjectMap({
       name: "Alice",
     });
     const source = `() => \`Hello, \${name}!\``;

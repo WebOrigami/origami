@@ -1,4 +1,4 @@
-import { ObjectTree, symbols, Tree } from "@weborigami/async-tree";
+import { ObjectMap, symbols, SyncMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 
@@ -7,7 +7,7 @@ import { ops } from "../../src/runtime/internal.js";
 
 describe("expressionObject", () => {
   test("can instantiate an object", async () => {
-    const container = new ObjectTree({
+    const container = new ObjectMap({
       upper: (s) => s.toUpperCase(),
     });
 
@@ -15,7 +15,7 @@ describe("expressionObject", () => {
       ["hello", [[[ops.scope, container], "upper"], "hello"]],
       ["world", [[[ops.scope, container], "upper"], "world"]],
     ];
-    const context = new ObjectTree({});
+    const context = new SyncMap();
 
     const object = await expressionObject(entries, { object: context });
     assert.equal(await object.hello, "HELLO");
@@ -43,7 +43,7 @@ describe("expressionObject", () => {
       ["name", "world"],
       ["message", [ops.concat, "Hello, ", [[ops.inherited, 0], "name"], "!"]],
     ];
-    const context = new ObjectTree({});
+    const context = new SyncMap();
     const object = await expressionObject(entries, { object: context });
     assert.deepEqual(await Tree.plain(object), {
       name: "world",
@@ -54,7 +54,7 @@ describe("expressionObject", () => {
 
   test("returned object values can be unpacked", async () => {
     const entries = [["data.json", `{ "a": 1 }`]];
-    const context = new ObjectTree({});
+    const context = new SyncMap();
     const result = await expressionObject(entries, { object: context });
     const dataJson = await result["data.json"];
     const json = await dataJson.unpack();

@@ -1,13 +1,13 @@
-import { DeepObjectTree, Tree } from "@weborigami/async-tree";
+import { DeepObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import crawl from "../../../src/dev/crawler/crawl.js";
 
-// Test version of DeepObjectTree that doesn't return keys so we can confirm
+// Test version of DeepObjectMap that doesn't return keys so we can confirm
 // that the crawler is able to find linked resources without them.
-class DeepObjectTreeWithoutKeys extends DeepObjectTree {
-  async keys() {
-    return new Set();
+class DeepObjectMapWithoutKeys extends DeepObjectMap {
+  async *keys() {
+    yield* [];
   }
 }
 
@@ -23,7 +23,7 @@ describe("crawl", () => {
         "team.html": "Our Team",
       },
     };
-    const treeWithoutKeys = new DeepObjectTreeWithoutKeys(tree);
+    const treeWithoutKeys = new DeepObjectMapWithoutKeys(tree);
     const crawled = await crawl(treeWithoutKeys);
     // Crawl should recover entire tree
     const plain = await Tree.plain(crawled);

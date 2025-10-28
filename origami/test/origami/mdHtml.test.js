@@ -1,4 +1,4 @@
-import { ObjectTree, Tree } from "@weborigami/async-tree";
+import { ObjectMap, Tree } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import mdHtml from "../../src/origami/mdHtml.js";
@@ -24,7 +24,7 @@ describe("mdHtml", () => {
   });
 
   test("mapping with @mdHtml changes keys by default", async () => {
-    const markdownFiles = new ObjectTree({
+    const markdownFiles = new ObjectMap({
       "Alice.md": "Hello, **Alice**!",
       "Bob.md": "Hello, **Bob**!",
     });

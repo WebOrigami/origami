@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import DeepObjectTree from "../src/drivers/DeepObjectTree.js";
+import DeepObjectMap from "../src/drivers/DeepObjectMap.js";
 import * as jsonKeys from "../src/jsonKeys.js";
 
 describe("jsonKeys", () => {
   test("stringifies JSON Keys", async () => {
-    const tree = new DeepObjectTree({
+    const tree = new DeepObjectMap({
       about: {},
       "index.html": "Home",
     });

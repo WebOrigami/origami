@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { ObjectMap } from "@weborigami/async-tree";
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import handleExtension from "../../src/runtime/handleExtension.js";
@@ -25,7 +25,7 @@ describe("handleExtension", () => {
 });
 
 function createFixture() {
-  return new ObjectTree({
+  return new ObjectMap({
     foo: 1, // No extension, should be left alone
     "bar.json": `{ "bar": 2 }`,
   });

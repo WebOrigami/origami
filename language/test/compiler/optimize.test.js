@@ -1,4 +1,4 @@
-import { ObjectTree } from "@weborigami/async-tree";
+import { SyncMap } from "@weborigami/async-tree";
 import { describe, test } from "node:test";
 import * as compile from "../../src/compiler/compile.js";
 import {
@@ -313,7 +313,7 @@ describe("optimize", () => {
 });
 
 function assertCompile(expression, expected, mode = "shell") {
-  const parent = new ObjectTree({});
+  const parent = new SyncMap();
   const globals = {};
   const fn = compile.expression(expression, { globals, mode, parent });
   const actual = fn.code;
