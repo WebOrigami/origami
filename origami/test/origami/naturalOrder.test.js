@@ -11,7 +11,7 @@ describe("naturalOrder", () => {
       2: "two",
     };
     const sorted = await Tree.sort(tree, naturalOrder);
-    const keys = await sorted.keys();
-    assert.deepEqual(keys, ["1", "2", "10"]);
+    const treeKeys = await Tree.keys(sorted);
+    assert.deepEqual(treeKeys, ["1", "2", "10"]);
   });
 });

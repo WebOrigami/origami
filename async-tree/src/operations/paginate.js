@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
@@ -19,7 +20,9 @@ export default async function paginate(treelike, size = 10) {
   const treeKeys = await keys(tree);
   const pageCount = Math.ceil(treeKeys.length / size);
 
-  const paginated = {
+  const paginated = Object.assign(new AsyncMap(), {
+    description: "paginate",
+
     async get(pageKey) {
       const normalized = trailingSlash.remove(pageKey);
       // Note: page numbers are 1-based.
@@ -52,7 +55,9 @@ export default async function paginate(treelike, size = 10) {
       // Return an array from 1..totalPages
       return Array.from({ length: pageCount }, (_, index) => index + 1);
     },
-  };
+
+    source: tree,
+  });
 
   return paginated;
 }

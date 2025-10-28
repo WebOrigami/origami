@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import keys from "./keys.js";
 
@@ -10,7 +11,9 @@ import keys from "./keys.js";
 export default async function take(treelike, count) {
   const tree = await getTreeArgument(treelike, "take");
 
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: `take ${count}`,
+
     async keys() {
       const treeKeys = await keys(tree);
       return treeKeys.slice(0, count);
@@ -19,5 +22,7 @@ export default async function take(treelike, count) {
     async get(key) {
       return tree.get(key);
     },
-  };
+
+    source: tree,
+  });
 }

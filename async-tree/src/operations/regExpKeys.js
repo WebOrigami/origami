@@ -1,3 +1,4 @@
+import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -16,7 +17,7 @@ import keys from "./keys.js";
 export default async function regExpKeys(treelike) {
   const tree = await getTreeArgument(treelike, "regExpKeys");
 
-  const map = new Map();
+  const map = new SyncMap();
 
   // We build the output tree first so that we can refer to it when setting
   // `parent` on subtrees below.

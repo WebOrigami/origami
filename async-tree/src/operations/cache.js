@@ -1,4 +1,4 @@
-import ObjectMap from "../drivers/ObjectMap.js";
+import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import isReadOnlyMap from "./isReadOnlyMap.js";
@@ -11,7 +11,6 @@ import keys from "./keys.js";
  * If no second tree is supplied, an in-memory value cache is used.
  *
  * @typedef {import("../../index.ts").AsyncMap} AsyncMap
- * @typedef {import("../../index.ts").SyncMap} SyncMap
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} sourceTreelike
@@ -33,7 +32,7 @@ export default async function treeCache(sourceTreelike, cacheTreelike) {
       throw new Error("cache: Cache tree can't be read-only.");
     }
   } else {
-    cache = new ObjectMap({});
+    cache = new SyncMap();
   }
 
   let sourceKeys;

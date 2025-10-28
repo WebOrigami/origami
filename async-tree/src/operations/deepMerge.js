@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -17,7 +18,7 @@ export default function deepMerge(...sources) {
   const filtered = sources.filter((source) => source);
   let trees = filtered.map((treelike) => from(treelike, { deep: true }));
 
-  return {
+  return Object.assign(new AsyncMap(), {
     description: "deepMerge",
 
     async get(key) {
@@ -63,5 +64,7 @@ export default function deepMerge(...sources) {
       }
       return treeKeys;
     },
-  };
+
+    sources: trees,
+  });
 }

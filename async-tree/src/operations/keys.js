@@ -18,6 +18,7 @@ export default async function keys(treelike) {
       keys.push(key);
     }
   } else {
+    // TODO: Remove when Tree classes are gone
     if (iterable instanceof Promise) {
       iterable = await iterable;
     }

@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import keys from "./keys.js";
 
@@ -13,7 +14,9 @@ import keys from "./keys.js";
 export default async function reverse(treelike) {
   const tree = await getTreeArgument(treelike, "reverse");
 
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: "reverse",
+
     async get(key) {
       return tree.get(key);
     },
@@ -23,5 +26,7 @@ export default async function reverse(treelike) {
       treeKeys.reverse();
       return treeKeys;
     },
-  };
+
+    source: tree,
+  });
 }

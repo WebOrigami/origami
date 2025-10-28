@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -23,7 +24,9 @@ export default async function mask(aTreelike, bTreelike) {
     position: 1,
   });
 
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: "mask",
+
     async get(key) {
       // The key must exist in b and return a truthy value
       const bValue = await bTree.get(key);
@@ -56,5 +59,7 @@ export default async function mask(aTreelike, bTreelike) {
       );
       return treeKeys;
     },
-  };
+
+    source: aTree,
+  });
 }

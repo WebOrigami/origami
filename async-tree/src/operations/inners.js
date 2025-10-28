@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -15,7 +16,7 @@ import keys from "./keys.js";
 export default async function inners(treelike) {
   const tree = await getTreeArgument(treelike, "inners");
 
-  return {
+  return Object.assign(new AsyncMap(), {
     async get(key) {
       const value = await tree.get(key);
       return isAsyncTree(value) ? inners(value) : undefined;
@@ -26,5 +27,5 @@ export default async function inners(treelike) {
       const subtreeKeys = treeKeys.filter(trailingSlash.has);
       return subtreeKeys;
     },
-  };
+  });
 }

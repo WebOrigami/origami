@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import values from "./values.js";
 
@@ -20,7 +21,9 @@ export default async function withKeys(treelike, keysTreelike) {
 
   let keys;
 
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: "withKeys",
+
     async get(key) {
       return tree.get(key);
     },
@@ -29,5 +32,7 @@ export default async function withKeys(treelike, keysTreelike) {
       keys ??= await values(keysTree);
       return keys;
     },
-  };
+
+    source: tree,
+  });
 }

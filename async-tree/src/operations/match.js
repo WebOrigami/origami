@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 /**
@@ -36,7 +37,9 @@ export default function match(pattern, resultFn, keys = []) {
     throw new Error(`match(): Unsupported pattern`);
   }
 
-  const result = {
+  const result = Object.assign(new AsyncMap(), {
+    description: "match",
+
     async get(key) {
       const keyMatch = regex.exec(key);
       if (!keyMatch) {
@@ -68,7 +71,7 @@ export default function match(pattern, resultFn, keys = []) {
     async keys() {
       return typeof keys === "function" ? await keys() : keys;
     },
-  };
+  });
 
   return result;
 }

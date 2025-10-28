@@ -17,6 +17,7 @@ export default async function del(tree, key) {
     if (tree instanceof Map || tree instanceof AsyncMap) {
       await tree.delete(key);
     } else {
+      // TODO: Remove when Tree classes are gone
       await tree.set(key, undefined);
     }
     return true;

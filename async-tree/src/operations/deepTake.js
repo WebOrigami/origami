@@ -1,6 +1,7 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 
 /**
  * Returns a function that traverses a tree deeply and returns the values of the
@@ -20,7 +21,7 @@ export default async function deepTake(treelike, count) {
 
 async function traverse(tree, count) {
   const values = [];
-  for (const key of await tree.keys()) {
+  for (const key of await keys(tree)) {
     if (count <= 0) {
       break;
     }

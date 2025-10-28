@@ -15,7 +15,7 @@ import plain from "./plain.js";
 export default async function addNextPrevious(treelike) {
   const tree = await getTreeArgument(treelike, "addNextPrevious");
 
-  const treeEntries = [...(await entries(tree))];
+  const treeEntries = await entries(tree);
   const keys = treeEntries.map(([key]) => key);
 
   // Map to an array of [key, result] pairs, where the result includes

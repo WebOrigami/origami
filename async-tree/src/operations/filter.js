@@ -27,6 +27,8 @@ export default async function filter(treelike, options) {
   return map(tree, {
     deep,
 
+    description: "filter",
+
     // Assume source key is the same as result key
     inverseKey: async (resultKey) => resultKey,
 

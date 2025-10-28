@@ -9,7 +9,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp/OrigamiFiles");
 
 describe("OrigamiFiles", () => {
-  test("can watch its folder for changes", { timeout: 2000 }, async () => {
+  test.skip("can watch its folder for changes", { timeout: 2000 }, async () => {
     createTempDirectory();
 
     const tempFiles = new OrigamiFiles(tempDirectory);

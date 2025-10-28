@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import keys from "./keys.js";
 
@@ -14,7 +15,9 @@ import keys from "./keys.js";
 export default async function scope(treelike) {
   const tree = await getTreeArgument(treelike, "scope");
 
-  return {
+  return Object.assign(new AsyncMap(), {
+    description: "scope",
+
     // Starting with this tree, search up the parent hierarchy.
     async get(key) {
       /** @type {AsyncTree|null|undefined} */
@@ -62,5 +65,7 @@ export default async function scope(treelike) {
 
       return result;
     },
-  };
+
+    source: tree,
+  });
 }

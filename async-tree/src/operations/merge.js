@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPlainObject from "../utilities/isPlainObject.js";
 import from from "./from.js";
@@ -40,7 +41,7 @@ export default function merge(...sources) {
     return trees[0];
   }
 
-  return {
+  return Object.assign(new AsyncMap(), {
     description: "merge",
 
     async get(key) {
@@ -75,5 +76,5 @@ export default function merge(...sources) {
     get trees() {
       return trees;
     },
-  };
+  });
 }

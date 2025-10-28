@@ -1,9 +1,13 @@
-import from from "./from.js";
+import AsyncMap from "../drivers/AsyncMap.js";
+import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 
 export default async function invokeFunctions(treelike) {
-  const tree = from(treelike);
-  return {
+  const tree = await getTreeArgument(treelike, "invokeFunctions");
+
+  return Object.assign(new AsyncMap(), {
+    description: "invokeFunctions",
+
     async get(key) {
       let value = await tree.get(key);
       if (typeof value === "function") {
@@ -17,5 +21,7 @@ export default async function invokeFunctions(treelike) {
     async keys() {
       return tree.keys();
     },
-  };
+
+    source: tree,
+  });
 }

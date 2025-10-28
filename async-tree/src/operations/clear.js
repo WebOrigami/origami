@@ -14,7 +14,7 @@ export default async function clear(treelike) {
   if (!isAsyncMutableTree(tree)) {
     throw new TypeError("clear: can't clear a read-only tree.");
   }
-  const treeKeys = Array.from(await keys(tree));
+  const treeKeys = await keys(tree);
   const promises = treeKeys.map((key) =>
     "delete" in tree
       ? /** @type {any} */ (tree).delete(key)

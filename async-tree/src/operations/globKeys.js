@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
@@ -9,7 +10,7 @@ const globstarSlash = `${globstar}/`;
 
 export default async function globKeys(treelike) {
   const globs = await getTreeArgument(treelike, "globKeys", { deep: true });
-  return {
+  return Object.assign(new AsyncMap(), {
     async get(key) {
       if (typeof key !== "string") {
         return undefined;
@@ -25,7 +26,7 @@ export default async function globKeys(treelike) {
     async keys() {
       return globs.keys();
     },
-  };
+  });
 }
 
 // Convert the glob to a regular expression

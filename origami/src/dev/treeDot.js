@@ -48,7 +48,7 @@ async function statements(tree, nodePath, nodeLabel, options) {
 
   // Draw edges and collect labels for the nodes they lead to.
   let nodes = new Map();
-  for (const key of await tree.keys()) {
+  for (const key of await Tree.keys(tree)) {
     const destPath = nodePath ? `${trailingSlash.add(nodePath)}${key}` : key;
     const labelUrl = createLinks ? `; labelURL="${destPath}"` : "";
     const arc = `  "${nodePath}" -> "${destPath}" [label="${key}"${labelUrl}];`;
