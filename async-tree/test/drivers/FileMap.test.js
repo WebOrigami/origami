@@ -171,5 +171,5 @@ function createTempDirectory() {
 }
 
 function removeTempDirectory() {
-  fs.rmSync(tempDirectory, { recursive: true });
+  fs.rmSync(tempDirectory, { force: true, recursive: true });
 }
