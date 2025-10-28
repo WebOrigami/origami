@@ -1,16 +1,18 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
-import ObjectMap from "../../src/drivers/ObjectMap.js";
+import SetMap from "../../src/drivers/SetMap.js";
 import from from "../../src/operations/from.js";
 import plain from "../../src/operations/plain.js";
+import values from "../../src/operations/values.js";
 import * as symbols from "../../src/symbols.js";
 
 describe("from", () => {
-  test("returns an async tree as is", async () => {
-    const tree1 = new ObjectMap({
-      a: "Hello, a.",
-    });
+  test("returns a Map as is", async () => {
+    const tree1 = new Map([
+      ["a", 1],
+      ["b", 2],
+    ]);
     const tree2 = from(tree1);
     assert.equal(tree2, tree1);
   });
@@ -45,6 +47,13 @@ describe("from", () => {
     Object.defineProperty(obj, symbols.deep, { value: true });
     const tree = from(obj);
     assert(tree instanceof DeepObjectMap);
+  });
+
+  test("returns a SetMap for Set objects", async () => {
+    const set = new Set(["a", "b", "c"]);
+    const map = from(set);
+    assert(map instanceof SetMap);
+    assert.deepEqual(await values(map), ["a", "b", "c"]);
   });
 
   test("creates a deferred tree if unpack() returns a promise", async () => {

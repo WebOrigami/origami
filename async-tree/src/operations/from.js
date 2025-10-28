@@ -3,7 +3,7 @@ import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
-import SetTree from "../drivers/SetTree.js";
+import SetMap from "../drivers/SetMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
@@ -50,7 +50,7 @@ export default function from(object, options = {}) {
   } else if (object instanceof Map) {
     tree = new SyncMap(object);
   } else if (object instanceof Set) {
-    tree = new SetTree(object);
+    tree = new SetMap(object);
   } else if (isPlainObject(object) || object instanceof Array) {
     tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
   } else if (isUnpackable(object)) {
