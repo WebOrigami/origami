@@ -121,7 +121,8 @@ function createMapFn(options) {
    * @return {AsyncTree}
    */
   return function mapFn(tree) {
-    const transformed = Object.create(new AsyncMap());
+    /** @type {any} */
+    const transformed = new AsyncMap();
     transformed.description = options.description;
     transformed.source = tree;
     transformed.get = createGet(tree, options, mapFn);
