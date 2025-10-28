@@ -78,5 +78,9 @@ export default async function mapExtension(treelike, arg2, arg3) {
     }
   }
 
+  if (!options.description) {
+    options.description = `mapExtension ${options.extension}`;
+  }
+
   return map(treelike, options);
 }

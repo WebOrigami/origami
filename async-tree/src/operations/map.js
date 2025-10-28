@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isPlainObject from "../utilities/isPlainObject.js";
@@ -6,6 +7,7 @@ import toFunction from "../utilities/toFunction.js";
 import cachedKeyFunctions from "./cachedKeyFunctions.js";
 import extensionKeyFunctions from "./extensionKeyFunctions.js";
 import isAsyncTree from "./isAsyncTree.js";
+import keys from "./keys.js";
 import parseExtensions from "./parseExtensions.js";
 
 /**
@@ -87,9 +89,14 @@ function createGet(tree, options, mapFn) {
 // Create a keys() function for the map
 function createKeys(tree, options) {
   const { deep, keyFn, keyNeedsSourceValue } = options;
-  return async () => {
+  return async function* () {
     // Apply the keyFn to source keys for leaf values (not subtrees).
-    const sourceKeys = Array.from(await tree.keys());
+    const sourceKeys = await keys(tree);
+    if (!keyFn) {
+      // Return keys as is
+      yield* sourceKeys;
+      return;
+    }
     const sourceValues = keyNeedsSourceValue
       ? await Promise.all(sourceKeys.map((sourceKey) => tree.get(sourceKey)))
       : sourceKeys.map(() => null);
@@ -103,30 +110,22 @@ function createKeys(tree, options) {
     );
     // Filter out any cases where the keyFn returned undefined.
     const resultKeys = mapped.filter((key) => key !== undefined);
-    return resultKeys;
+    yield* resultKeys;
   };
 }
 
 // Create a map function for the given options
 function createMapFn(options) {
-  const { description, keyFn, valueFn } = options;
   /**
    * @param {AsyncTree} tree
    * @return {AsyncTree}
    */
   return function mapFn(tree) {
-    // The transformed tree is actually an extension of the original tree's
-    // prototype chain. This allows the transformed tree to inherit any
-    // properties/methods. For example, the `parent` of the transformed tree is
-    // the original tree's parent.
-    const transformed = Object.create(tree);
-    transformed.description = description;
-    if (keyFn || valueFn) {
-      transformed.get = createGet(tree, options, mapFn);
-    }
-    if (keyFn) {
-      transformed.keys = createKeys(tree, options);
-    }
+    const transformed = Object.create(new AsyncMap());
+    transformed.description = options.description;
+    transformed.source = tree;
+    transformed.get = createGet(tree, options, mapFn);
+    transformed.keys = createKeys(tree, options);
     return transformed;
   };
 }
