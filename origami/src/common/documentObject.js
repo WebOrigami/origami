@@ -26,14 +26,7 @@ export default async function documentObject(input, data) {
     text = toString(input);
     inputData = null;
   }
-  // TODO: Either restore this code, or move responsibility for packing a
-  // document to HandleExtensionsTransform set().
-  // const base = {
-  //   pack() {
-  //     return txt_handler.pack(this);
-  //   },
-  // };
-  // const result = Object.create(base);
+
   const result = {};
   Object.assign(result, inputData, data);
   Object.defineProperty(result, "_body", {
