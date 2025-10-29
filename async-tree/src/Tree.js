@@ -29,7 +29,6 @@ export { default as has } from "./operations/has.js";
 export { default as indent } from "./operations/indent.js";
 export { default as inners } from "./operations/inners.js";
 export { default as invokeFunctions } from "./operations/invokeFunctions.js";
-export { default as isAsyncMutableTree } from "./operations/isAsyncMutableTree.js";
 export { default as isAsyncTree } from "./operations/isAsyncTree.js";
 export { default as isTraversable } from "./operations/isTraversable.js";
 export { default as isTreelike } from "./operations/isTreelike.js";

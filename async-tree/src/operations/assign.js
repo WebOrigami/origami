@@ -1,6 +1,5 @@
 import SyncMap from "../drivers/SyncMap.js";
 import from from "./from.js";
-import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import isTreelike from "./isTreelike.js";
 import keys from "./keys.js";
 
@@ -19,7 +18,7 @@ import keys from "./keys.js";
 export default async function assign(target, source) {
   const targetTree = from(target);
   const sourceTree = from(source);
-  if (!isAsyncMutableTree(targetTree)) {
+  if ("readOnly" in targetTree && targetTree.readOnly) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }
   // Fire off requests to update all keys, then wait for all of them to finish.

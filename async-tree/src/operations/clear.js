@@ -1,5 +1,4 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import isAsyncMutableTree from "./isAsyncMutableTree.js";
 import keys from "./keys.js";
 
 /**
@@ -11,8 +10,8 @@ import keys from "./keys.js";
  */
 export default async function clear(treelike) {
   const tree = await getTreeArgument(treelike, "clear");
-  if (!isAsyncMutableTree(tree)) {
-    throw new TypeError("clear: can't clear a read-only tree.");
+  if ("readOnly" in tree && tree.readOnly) {
+    throw new TypeError("Target must be a mutable asynchronous tree");
   }
   const treeKeys = await keys(tree);
   const promises = treeKeys.map((key) =>
