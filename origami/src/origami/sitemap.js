@@ -22,21 +22,12 @@ export default async function sitemap(treelike, options = {}) {
   const tree = await getTreeArgument(treelike, "sitemap");
 
   // We're only interested in keys that end in .html or with no extension.
-  function test(key) {
-    return key.endsWith?.(".html") || !key.includes?.(".");
-  }
-  const filterTree = {
-    async keys() {
-      const treeKeys = await Tree.keys(tree);
-      return treeKeys.filter((key) => test(key));
-    },
+  const filtered = await Tree.filter(
+    tree,
+    (value, key) => key.endsWith?.(".html") || !key.includes?.(".")
+  );
 
-    async get(key) {
-      return test(key) ? tree.get(key) : undefined;
-    },
-  };
-
-  const treePaths = await Tree.paths(filterTree, options);
+  const treePaths = await Tree.paths(filtered, options);
 
   // For simplicity, we assume that HTML pages will end in .html.
   // If the page is named index.html, we remove index.html from
