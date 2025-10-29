@@ -6,7 +6,6 @@ export { default as constant } from "./src/drivers/constantTree.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
 export { default as DeepObjectMap } from "./src/drivers/DeepObjectMap.js";
 export { default as DeepObjectTree } from "./src/drivers/DeepObjectTree.js";
-export { default as DeferredTree } from "./src/drivers/DeferredTree.js";
 export { default as ExplorableSiteMap } from "./src/drivers/ExplorableSiteMap.js";
 export { default as ExplorableSiteTree } from "./src/drivers/ExplorableSiteTree.js";
 export { default as FileMap } from "./src/drivers/FileMap.js";

@@ -1,6 +1,7 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import isPlainObject from "../utilities/isPlainObject.js";
+import isUnpackable from "../utilities/isUnpackable.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
 import keys from "./keys.js";
@@ -18,27 +19,31 @@ import keys from "./keys.js";
  * @typedef {import("../../index.ts").PlainObject} PlainObject
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
- * @param {Treelike[]} sources
- * @returns {(AsyncTree & { description?: string, trees?: AsyncTree[]}) |
- * PlainObject}
+ * @param {Treelike[]} treelikes
+ * @returns {Promise}
  */
-export default function merge(...sources) {
-  const filtered = sources.filter((source) => source);
+export default async function merge(...treelikes) {
+  const filtered = treelikes.filter((source) => source);
+  const unpacked = await Promise.all(
+    filtered.map(async (source) =>
+      isUnpackable(source) ? await source.unpack() : source
+    )
+  );
 
   // If all arguments are plain objects, return a plain object.
   if (
-    filtered.every((source) => !isAsyncTree(source) && isPlainObject(source))
+    unpacked.every((source) => !isAsyncTree(source) && isPlainObject(source))
   ) {
-    return filtered.reduce((acc, obj) => ({ ...acc, ...obj }), {});
+    return unpacked.reduce((acc, obj) => ({ ...acc, ...obj }), {});
   }
 
-  const trees = filtered.map((treelike) => from(treelike));
+  const sources = unpacked.map((treelike) => from(treelike));
 
-  if (trees.length === 0) {
+  if (sources.length === 0) {
     throw new TypeError("merge: all trees are null or undefined");
-  } else if (trees.length === 1) {
+  } else if (sources.length === 1) {
     // Only one tree, no need to merge
-    return trees[0];
+    return sources[0];
   }
 
   return Object.assign(new AsyncMap(), {
@@ -46,8 +51,8 @@ export default function merge(...sources) {
 
     async get(key) {
       // Check trees for the indicated key in reverse order.
-      for (let index = trees.length - 1; index >= 0; index--) {
-        const tree = trees[index];
+      for (let index = sources.length - 1; index >= 0; index--) {
+        const tree = sources[index];
         const value = await tree.get(key);
         if (value !== undefined) {
           return value;
@@ -59,7 +64,7 @@ export default function merge(...sources) {
     async keys() {
       const treeKeys = new Set();
       // Collect keys in the order the trees were provided.
-      for (const tree of trees) {
+      for (const tree of sources) {
         for (const key of await keys(tree)) {
           // Remove the alternate form of the key (if it exists)
           const alternateKey = trailingSlash.toggle(key);
@@ -73,8 +78,6 @@ export default function merge(...sources) {
       return treeKeys;
     },
 
-    get trees() {
-      return trees;
-    },
+    sources,
   });
 }

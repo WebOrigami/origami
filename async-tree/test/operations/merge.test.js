@@ -2,13 +2,14 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
+import keys from "../../src/operations/keys.js";
 import merge from "../../src/operations/merge.js";
 import plain from "../../src/operations/plain.js";
 import traverse from "../../src/operations/traverse.js";
 
 describe("merge", () => {
   test("performs a shallow merge", async () => {
-    const fixture = merge(
+    const fixture = await merge(
       new ObjectMap({
         a: 1,
         // Will be obscured by `b` that follows
@@ -42,7 +43,7 @@ describe("merge", () => {
   });
 
   test("subtree can overwrite a leaf node", async () => {
-    const fixture = merge(
+    const fixture = await merge(
       new ObjectMap({
         a: 1,
       }),
@@ -52,7 +53,7 @@ describe("merge", () => {
         },
       })
     );
-    assert.deepEqual([...(await fixture.keys())], ["a/"]);
+    assert.deepEqual(await keys(fixture), ["a/"]);
     assert.deepEqual(await plain(fixture), {
       a: {
         b: 2,

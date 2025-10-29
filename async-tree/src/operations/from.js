@@ -1,6 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import DeepObjectMap from "../drivers/DeepObjectMap.js";
-import DeferredTree from "../drivers/DeferredTree.js";
 import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import SetMap from "../drivers/SetMap.js";
@@ -54,13 +53,9 @@ export default function from(object, options = {}) {
   } else if (isPlainObject(object) || object instanceof Array) {
     tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
   } else if (isUnpackable(object)) {
-    async function AsyncFunction() {} // Sample async function
-    tree =
-      object.unpack instanceof AsyncFunction.constructor
-        ? // Async unpack: return a deferred tree.
-          new DeferredTree(object.unpack, { deep })
-        : // Synchronous unpack: cast the result of unpack() to a tree.
-          from(object.unpack());
+    // Synchronous unpack: cast the result of unpack() to a tree.
+    console.warn("from: warning: unpacking object to create tree");
+    tree = from(object.unpack());
   } else if (object && typeof object === "object") {
     // An instance of some class.
     tree = new ObjectMap(object);

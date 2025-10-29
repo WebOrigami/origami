@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
@@ -37,7 +38,7 @@ export default async function treeCache(sourceTreelike, cacheTreelike) {
 
   let sourceKeys;
 
-  return /** @type {any} */ ({
+  return Object.assign(new AsyncMap(), {
     description: "cache",
 
     async get(key) {

@@ -6,7 +6,7 @@ import plain from "../../src/operations/plain.js";
 
 describe("mergeDeep", () => {
   test("can merge deep", async () => {
-    const fixture = deepMerge(
+    const fixture = await deepMerge(
       new DeepObjectMap({
         a: {
           b: 0, // Will be obscured by `b` below
