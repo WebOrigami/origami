@@ -6,14 +6,15 @@ import SyncMap from "./SyncMap.js";
  * slash, then the same type of subtree is returned.
  *
  * @param {any} constant
+ * @returns {SyncMap}
  */
 export default function constantTree(constant) {
   return Object.assign(new SyncMap(), {
-    async get(key) {
+    get(key) {
       return trailingSlash.has(key) ? constantTree(constant) : constant;
     },
 
-    async keys() {
+    keys() {
       return [];
     },
   });

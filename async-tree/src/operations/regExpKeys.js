@@ -1,3 +1,4 @@
+import AsyncMap from "../drivers/AsyncMap.js";
 import SyncMap from "../drivers/SyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
@@ -12,16 +13,20 @@ import keys from "./keys.js";
  * taken to match the entire key -- if they do not already start and end with
  * `^` and `$` respectively, those are added.
  *
- * @type {import("../../index.ts").TreeTransform}
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
+ * @typedef {import("../../index.ts").Treelike} Treelike
+ *
+ * @param {Treelike} treelike
+ * @returns {Promise<AsyncMap>}
  */
 export default async function regExpKeys(treelike) {
-  const tree = await getTreeArgument(treelike, "regExpKeys");
+  const tree = await getTreeArgument(treelike, "regExpKeys", { deep: true });
 
   const map = new SyncMap();
 
   // We build the output tree first so that we can refer to it when setting
   // `parent` on subtrees below.
-  let result = {
+  let result = Object.assign(new AsyncMap(), {
     // @ts-ignore
     description: "regExpKeys",
 
@@ -44,7 +49,9 @@ export default async function regExpKeys(treelike) {
     async keys() {
       return map.keys();
     },
-  };
+
+    source: tree,
+  });
 
   // Turn the input tree's string keys into regular expressions, then map those
   // to the corresponding values.
