@@ -3,7 +3,6 @@ import { describe, test } from "node:test";
 import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
 import SetMap from "../../src/drivers/SetMap.js";
 import from from "../../src/operations/from.js";
-import plain from "../../src/operations/plain.js";
 import values from "../../src/operations/values.js";
 import * as symbols from "../../src/symbols.js";
 
@@ -15,17 +14,6 @@ describe("from", () => {
     ]);
     const tree2 = from(tree1);
     assert.equal(tree2, tree1);
-  });
-
-  test("uses an object's unpack() method if defined", async () => {
-    const obj = new String();
-    /** @type {any} */ (obj).unpack = () => ({
-      a: "Hello, a.",
-    });
-    const tree = from(obj);
-    assert.deepEqual(await plain(tree), {
-      a: "Hello, a.",
-    });
   });
 
   test("returns a deep object map if deep option is true", async () => {
@@ -54,17 +42,6 @@ describe("from", () => {
     const map = from(set);
     assert(map instanceof SetMap);
     assert.deepEqual(await values(map), ["a", "b", "c"]);
-  });
-
-  test("creates a deferred tree if unpack() returns a promise", async () => {
-    const obj = new String();
-    /** @type {any} */ (obj).unpack = async () => ({
-      a: "Hello, a.",
-    });
-    const tree = from(obj);
-    assert.deepEqual(await plain(tree), {
-      a: "Hello, a.",
-    });
   });
 
   test("autoboxes primitive values", async () => {

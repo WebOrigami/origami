@@ -3,12 +3,9 @@ import DeepObjectMap from "../drivers/DeepObjectMap.js";
 import FunctionMap from "../drivers/FunctionMap.js";
 import ObjectMap from "../drivers/ObjectMap.js";
 import SetMap from "../drivers/SetMap.js";
-import SyncMap from "../drivers/SyncMap.js";
 import * as symbols from "../symbols.js";
 import box from "../utilities/box.js";
 import isPlainObject from "../utilities/isPlainObject.js";
-import isUnpackable from "../utilities/isUnpackable.js";
-import isAsyncTree from "./isAsyncTree.js";
 
 /**
  * Attempts to cast the indicated object to an asynchronous tree.
@@ -19,11 +16,10 @@ import isAsyncTree from "./isAsyncTree.js";
  * parent of the new tree.
  *
  * @typedef {import("../../index.ts").Treelike} Treelike
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
  *
  * @param {Treelike | Object} object
- * @param {{ deep?: boolean, parent?: AsyncTree|null }} [options]
- * @returns {AsyncTree}
+ * @param {{ deep?: boolean, parent?: Map|AsyncMap|null }} [options]
+ * @returns {Map|AsyncMap}
  */
 export default function from(object, options = {}) {
   const deep = options.deep ?? object[symbols.deep];
@@ -35,27 +31,15 @@ export default function from(object, options = {}) {
     throw new TypeError(
       "The tree argument was a Promise. Did you mean to use await?"
     );
-  } else if (isAsyncTree(object)) {
-    if (!(object instanceof Map || object instanceof AsyncMap)) {
-      console.warn(
-        "from: warning: object is AsyncTree but not Map or AsyncMap"
-      );
-    }
-    // Argument already supports the tree interface.
-    // @ts-ignore
+  } else if (object instanceof Map || object instanceof AsyncMap) {
+    // Already a map
     return object;
   } else if (typeof object === "function") {
     tree = new FunctionMap(object);
-  } else if (object instanceof Map) {
-    tree = new SyncMap(object);
   } else if (object instanceof Set) {
     tree = new SetMap(object);
   } else if (isPlainObject(object) || object instanceof Array) {
     tree = deep ? new DeepObjectMap(object) : new ObjectMap(object);
-  } else if (isUnpackable(object)) {
-    // Synchronous unpack: cast the result of unpack() to a tree.
-    console.warn("from: warning: unpacking object to create tree");
-    tree = from(object.unpack());
   } else if (object && typeof object === "object") {
     // An instance of some class.
     tree = new ObjectMap(object);
@@ -71,7 +55,7 @@ export default function from(object, options = {}) {
     throw new TypeError("Couldn't convert argument to an async tree");
   }
 
-  if (!tree.parent && options.parent) {
+  if ("parent" in tree && !tree.parent && options.parent) {
     tree.parent = options.parent;
   }
   return tree;
