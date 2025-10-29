@@ -15,42 +15,71 @@ import SyncMap from "./SyncMap.js";
  *
  * @typedef {string|undefined} CalendarOptionsDate
  * @typedef {( year: string, month: string, day: string ) => any} CalendarOptionsFn
+ * @typedef {{ year: number, month: number, day: number}} CalendarDateParts}
+ *
  * @param {{ end?: CalendarOptionsDate, start?: CalendarOptionsDate, value: CalendarOptionsFn }} options
- * @returns {SyncMap}
  */
-export default function calendarMap(options) {
-  const start = dateParts(options.start);
-  const end = dateParts(options.end);
-  const valueFn = options.value;
+export default class CalendarMap extends SyncMap {
+  constructor(options = {}) {
+    super();
 
-  // Fill in the missing parts of the start and end dates.
-  const today = new Date();
+    /** @type {CalendarDateParts} */
+    // @ts-ignore
+    const start = dateParts(options.start);
+    /** @type {CalendarDateParts} */
+    // @ts-ignore
+    const end = dateParts(options.end);
+    const valueFn = options.value;
 
-  if (start.day === undefined) {
-    start.day = start.year ? 1 : today.getDate();
-  }
-  if (start.month === undefined) {
-    start.month = start.year ? 1 : today.getMonth() + 1;
-  }
-  if (start.year === undefined) {
-    start.year = today.getFullYear();
+    // Fill in the missing parts of the start and end dates.
+    const today = new Date();
+
+    if (start.day === undefined) {
+      start.day = start.year ? 1 : today.getDate();
+    }
+    if (start.month === undefined) {
+      start.month = start.year ? 1 : today.getMonth() + 1;
+    }
+    if (start.year === undefined) {
+      start.year = today.getFullYear();
+    }
+
+    if (end.day === undefined) {
+      end.day = end.month
+        ? daysInMonth(end.year, end.month)
+        : end.year
+        ? 31 // Last day of December
+        : today.getDate();
+    }
+    if (end.month === undefined) {
+      end.month = end.year ? 12 : today.getMonth() + 1;
+    }
+    if (end.year === undefined) {
+      end.year = today.getFullYear();
+    }
+
+    this.start = start;
+    this.end = end;
+    this.valueFn = valueFn ?? defaultValueFn;
   }
 
-  if (end.day === undefined) {
-    end.day = end.month
-      ? daysInMonth(end.year, end.month)
-      : end.year
-      ? 31 // Last day of December
-      : today.getDate();
-  }
-  if (end.month === undefined) {
-    end.month = end.year ? 12 : today.getMonth() + 1;
-  }
-  if (end.year === undefined) {
-    end.year = today.getFullYear();
+  get(year) {
+    year = parseInt(trailingSlash.remove(year));
+    return this.inRange(year)
+      ? monthsForYearMap(year, this.start, this.end, this.valueFn)
+      : undefined;
   }
 
-  return yearsMap(start, end, valueFn);
+  inRange(year) {
+    return year >= this.start.year && year <= this.end.year;
+  }
+
+  keys() {
+    return Array.from(
+      { length: this.end.year - this.start.year + 1 },
+      (_, i) => this.start.year + i
+    )[Symbol.iterator]();
+  }
 }
 
 function dateParts(date) {
@@ -119,6 +148,10 @@ function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
+function defaultValueFn(year, month, day) {
+  return `${year}-${month}-${day}`;
+}
+
 function monthsForYearMap(year, start, end, valueFn) {
   return Object.assign(new SyncMap(), {
     get(month) {
@@ -151,26 +184,4 @@ function monthsForYearMap(year, start, end, valueFn) {
 
 function twoDigits(number) {
   return number.toString().padStart(2, "0");
-}
-
-function yearsMap(start, end, valueFn) {
-  return Object.assign(new SyncMap(), {
-    get(year) {
-      year = parseInt(trailingSlash.remove(year));
-      return this.inRange(year)
-        ? monthsForYearMap(year, start, end, valueFn)
-        : undefined;
-    },
-
-    inRange(year) {
-      return year >= start.year && year <= end.year;
-    },
-
-    *keys() {
-      yield* Array.from(
-        { length: end.year - start.year + 1 },
-        (_, i) => start.year + i
-      );
-    },
-  });
 }

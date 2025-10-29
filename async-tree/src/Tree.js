@@ -2,12 +2,12 @@
  * Collection of functions for working with async trees
  */
 
-export { default as calendar } from "./drivers/calendarTree.js";
-export { default as constant } from "./drivers/constantTree.js";
 export { default as addNextPrevious } from "./operations/addNextPrevious.js";
 export { default as assign } from "./operations/assign.js";
 export { default as cache } from "./operations/cache.js";
+export { default as calendar } from "./operations/calendar.js";
 export { default as clear } from "./operations/clear.js";
+export { default as constant } from "./operations/constant.js";
 export { default as deepEntries } from "./operations/deepEntries.js";
 export { default as deepMap } from "./operations/deepMap.js";
 export { default as deepMerge } from "./operations/deepMerge.js";

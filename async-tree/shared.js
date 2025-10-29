@@ -1,8 +1,8 @@
 // Exports for both Node.js and browser
 
 export { default as AsyncMap } from "./src/drivers/AsyncMap.js";
-export { default as calendar } from "./src/drivers/calendarTree.js";
-export { default as constant } from "./src/drivers/constantTree.js";
+export { default as CalendarMap } from "./src/drivers/CalendarMap.js";
+export { default as ConstantMap } from "./src/drivers/ConstantMap.js";
 export { default as DeepMapTree } from "./src/drivers/DeepMapTree.js";
 export { default as DeepObjectMap } from "./src/drivers/DeepObjectMap.js";
 export { default as DeepObjectTree } from "./src/drivers/DeepObjectTree.js";

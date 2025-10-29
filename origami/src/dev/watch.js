@@ -1,4 +1,4 @@
-import { constant, getTreeArgument, Tree } from "@weborigami/async-tree";
+import { ConstantMap, getTreeArgument, Tree } from "@weborigami/async-tree";
 import { formatError, moduleCache } from "@weborigami/language";
 
 /**
@@ -58,7 +58,7 @@ async function evaluateTree(parent, fn) {
     message = `Warning: watch expression did not return a tree`;
   }
   console.warn(message);
-  tree = constant(message);
+  tree = new ConstantMap(message);
   return tree;
 }
 

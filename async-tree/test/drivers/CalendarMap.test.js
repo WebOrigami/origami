@@ -1,13 +1,11 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import calendarTree from "../../src/drivers/calendarTree.js";
+import CalendarMap from "../../src/drivers/CalendarMap.js";
 import toPlainValue from "../../src/utilities/toPlainValue.js";
 
-describe("calendarTree", () => {
+describe("CalendarMap", () => {
   test("without a start or end, returns a map for today", async () => {
-    const map = calendarTree({
-      value: (year, month, day) => `${year}-${month}-${day}`,
-    });
+    const map = new CalendarMap();
     const plain = await toPlainValue(map);
     const today = new Date();
     const year = today.getFullYear();
@@ -23,10 +21,9 @@ describe("calendarTree", () => {
   });
 
   test("returns a map for a month range", async () => {
-    const map = calendarTree({
+    const map = new CalendarMap({
       start: "2025-01",
       end: "2025-02",
-      value: (year, month, day) => `${year}-${month}-${day}`,
     });
     const plain = await toPlainValue(map);
     assert.deepEqual(plain, {
@@ -99,21 +96,22 @@ describe("calendarTree", () => {
   });
 
   test("returns a map for a day range", async () => {
-    const map = calendarTree({
+    const map = new CalendarMap({
       start: "2025-02-27",
       end: "2025-03-02",
-      value: (year, month, day) => `${year}-${month}-${day}`,
+      // Exercise custom value function
+      value: (year, month, day) => `${year}.${month}.${day}`,
     });
     const plain = await toPlainValue(map);
     assert.deepEqual(plain, {
       2025: {
         "02": {
-          27: "2025-02-27",
-          28: "2025-02-28",
+          27: "2025.02.27",
+          28: "2025.02.28",
         },
         "03": {
-          "01": "2025-03-01",
-          "02": "2025-03-02",
+          "01": "2025.03.01",
+          "02": "2025.03.02",
         },
       },
     });
