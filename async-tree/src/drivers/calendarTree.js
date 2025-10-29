@@ -1,4 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
+import SyncMap from "./SyncMap.js";
 
 /**
  * Return a tree of years, months, and days from a start date to an end date.
@@ -15,8 +16,9 @@ import * as trailingSlash from "../trailingSlash.js";
  * @typedef {string|undefined} CalendarOptionsDate
  * @typedef {( year: string, month: string, day: string ) => any} CalendarOptionsFn
  * @param {{ end?: CalendarOptionsDate, start?: CalendarOptionsDate, value: CalendarOptionsFn }} options
+ * @returns {SyncMap}
  */
-export default function calendarTree(options) {
+export default function calendarMap(options) {
   const start = dateParts(options.start);
   const end = dateParts(options.end);
   const valueFn = options.value;
@@ -48,7 +50,7 @@ export default function calendarTree(options) {
     end.year = today.getFullYear();
   }
 
-  return yearsTree(start, end, valueFn);
+  return yearsMap(start, end, valueFn);
 }
 
 function dateParts(date) {
@@ -64,9 +66,9 @@ function dateParts(date) {
   return { year, month, day };
 }
 
-function daysForMonthTree(year, month, start, end, valueFn) {
-  return {
-    async get(day) {
+function daysForMonthMap(year, month, start, end, valueFn) {
+  return Object.assign(new SyncMap(), {
+    get(day) {
       day = parseInt(trailingSlash.remove(day));
       return this.inRange(day)
         ? valueFn(year.toString(), twoDigits(month), twoDigits(day))
@@ -101,28 +103,28 @@ function daysForMonthTree(year, month, start, end, valueFn) {
       }
     },
 
-    async keys() {
+    *keys() {
       const days = Array.from(
         { length: daysInMonth(year, month) },
         (_, i) => i + 1
       );
-      return days
+      yield* days
         .filter((day) => this.inRange(day))
         .map((day) => twoDigits(day));
     },
-  };
+  });
 }
 
 function daysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
-function monthsForYearTree(year, start, end, valueFn) {
-  return {
-    async get(month) {
+function monthsForYearMap(year, start, end, valueFn) {
+  return Object.assign(new SyncMap(), {
+    get(month) {
       month = parseInt(trailingSlash.remove(month));
       return this.inRange(month)
-        ? daysForMonthTree(year, month, start, end, valueFn)
+        ? daysForMonthMap(year, month, start, end, valueFn)
         : undefined;
     },
 
@@ -138,25 +140,25 @@ function monthsForYearTree(year, start, end, valueFn) {
       }
     },
 
-    async keys() {
+    *keys() {
       const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-      return months
+      yield* months
         .filter((month) => this.inRange(month))
         .map((month) => twoDigits(month));
     },
-  };
+  });
 }
 
 function twoDigits(number) {
   return number.toString().padStart(2, "0");
 }
 
-function yearsTree(start, end, valueFn) {
-  return {
-    async get(year) {
+function yearsMap(start, end, valueFn) {
+  return Object.assign(new SyncMap(), {
+    get(year) {
       year = parseInt(trailingSlash.remove(year));
       return this.inRange(year)
-        ? monthsForYearTree(year, start, end, valueFn)
+        ? monthsForYearMap(year, start, end, valueFn)
         : undefined;
     },
 
@@ -164,11 +166,11 @@ function yearsTree(start, end, valueFn) {
       return year >= start.year && year <= end.year;
     },
 
-    async keys() {
-      return Array.from(
+    *keys() {
+      yield* Array.from(
         { length: end.year - start.year + 1 },
         (_, i) => start.year + i
       );
     },
-  };
+  });
 }

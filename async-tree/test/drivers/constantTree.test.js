@@ -4,10 +4,10 @@ import constantTree from "../../src/drivers/constantTree.js";
 import { Tree } from "../../src/internal.js";
 
 describe("constantTree", () => {
-  test("returns a deep tree that returns constant for all keys", async () => {
+  test("returns a deep tree that returns constant for all keys", () => {
     const fixture = constantTree(1);
-    assert.equal(await fixture.get("a"), 1);
-    assert.equal(await fixture.get("b"), 1);
-    assert.equal(await Tree.traverse(fixture, "c/", "d/", "e"), 1);
+    assert.equal(fixture.get("a"), 1);
+    assert.equal(fixture.get("b"), 1);
+    assert.equal(Tree.traverse(fixture, "c/", "d/", "e"), 1);
   });
 });

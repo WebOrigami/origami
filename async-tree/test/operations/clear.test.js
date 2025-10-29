@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import FileTree from "../../src/drivers/FileTree.js";
+import FileMap from "../../src/drivers/FileMap.js";
 import ObjectMap from "../../src/drivers/ObjectMap.js";
 import clear from "../../src/operations/clear.js";
 import plain from "../../src/operations/plain.js";
@@ -24,7 +24,7 @@ describe("clear", () => {
     await fs.writeFile(path.join(tempDirectory, "a"), "1");
     await fs.writeFile(path.join(tempDirectory, "b"), "2");
 
-    const tree = new FileTree(tempDirectory);
+    const tree = new FileMap(tempDirectory);
     await clear(tree);
 
     const files = await fs.readdir(tempDirectory);

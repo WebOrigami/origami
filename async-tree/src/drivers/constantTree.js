@@ -1,4 +1,5 @@
 import * as trailingSlash from "../trailingSlash.js";
+import SyncMap from "./SyncMap.js";
 
 /**
  * A tree that returns a constant value for any key. If the key ends with a
@@ -7,7 +8,7 @@ import * as trailingSlash from "../trailingSlash.js";
  * @param {any} constant
  */
 export default function constantTree(constant) {
-  return {
+  return Object.assign(new SyncMap(), {
     async get(key) {
       return trailingSlash.has(key) ? constantTree(constant) : constant;
     },
@@ -15,5 +16,5 @@ export default function constantTree(constant) {
     async keys() {
       return [];
     },
-  };
+  });
 }
