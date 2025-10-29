@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionMap from "../../src/drivers/FunctionMap.js";
-import { Tree } from "../../src/internal.js";
 import deepText from "../../src/operations/deepText.js";
+import from from "../../src/operations/from.js";
 
 describe("deepText", () => {
   test("concatenates deep tree values", async () => {
-    const tree = Tree.from({
+    const tree = from({
       a: "A",
       b: "B",
       c: "C",

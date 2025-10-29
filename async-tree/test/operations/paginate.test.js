@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import paginate from "../../src/operations/paginate.js";
+import plain from "../../src/operations/plain.js";
 
 describe("paginate", () => {
   test("divides tree keys into fixed-length chunks", async () => {
@@ -13,8 +13,8 @@ describe("paginate", () => {
       e: 5,
     };
     const paginated = await paginate(treelike, 2);
-    const plain = await Tree.plain(paginated);
-    assert.deepEqual(await plain, {
+    const result = await plain(paginated);
+    assert.deepEqual(result, {
       1: {
         items: { a: 1, b: 2 },
         nextPage: 2,

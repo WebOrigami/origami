@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import globKeys from "../../src/operations/globKeys.js";
+import traverse from "../../src/operations/traverse.js";
 
 describe("globKeys", () => {
   test("matches globs", async () => {
@@ -26,8 +26,8 @@ describe("globKeys", () => {
         "*": "default",
       },
     });
-    assert.equal(await Tree.traverse(globTree, "sub/", "file"), "default");
-    assert.equal(await Tree.traverse(globTree, "sub/", "foo"), "bar");
+    assert.equal(await traverse(globTree, "sub/", "file"), "default");
+    assert.equal(await traverse(globTree, "sub/", "foo"), "bar");
   });
 
   test("supports deep matches with globstar", async () => {
@@ -43,11 +43,11 @@ describe("globKeys", () => {
         "*.html": true,
       },
     });
-    assert.equal(await Tree.traverse(globTree, "a/", "b/", "foo.txt"), true);
-    assert.equal(await Tree.traverse(globTree, "c/", "foo"), false);
-    assert.equal(await Tree.traverse(globTree, "sub/", "file.md"), true);
-    assert.equal(await Tree.traverse(globTree, "sub/", "file.txt"), true);
-    assert.equal(await Tree.traverse(globTree, "sub/", "file.html"), true);
-    assert.equal(await Tree.traverse(globTree, "sub/", "file"), false);
+    assert.equal(await traverse(globTree, "a/", "b/", "foo.txt"), true);
+    assert.equal(await traverse(globTree, "c/", "foo"), false);
+    assert.equal(await traverse(globTree, "sub/", "file.md"), true);
+    assert.equal(await traverse(globTree, "sub/", "file.txt"), true);
+    assert.equal(await traverse(globTree, "sub/", "file.html"), true);
+    assert.equal(await traverse(globTree, "sub/", "file"), false);
   });
 });

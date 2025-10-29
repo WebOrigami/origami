@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { DeepObjectTree, Tree } from "../../src/internal.js";
 
 describe.skip("DeepObjectTree", () => {
   test("returns an ObjectTree for value that's a plain sub-object or sub-array", async () => {

@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import DeepObjectMap from "../../src/drivers/DeepObjectMap.js";
-import { Tree } from "../../src/internal.js";
+import plain from "../../src/operations/plain.js";
 
 describe("DeepObjectMap", () => {
   test("returns a map for a value that's a plain sub-object or sub-array", async () => {
@@ -9,12 +9,12 @@ describe("DeepObjectMap", () => {
 
     const object = await map.get("object");
     assert.equal(object instanceof DeepObjectMap, true);
-    assert.deepEqual(await Tree.plain(object), { b: 2 });
+    assert.deepEqual(await plain(object), { b: 2 });
     assert.equal(object.parent, map);
 
     const array = await map.get("array");
     assert.equal(array instanceof DeepObjectMap, true);
-    assert.deepEqual(await Tree.plain(array), [3]);
+    assert.deepEqual(await plain(array), [3]);
     assert.equal(array.parent, map);
   });
 

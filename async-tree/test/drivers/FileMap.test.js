@@ -4,7 +4,8 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileMap from "../../src/drivers/FileMap.js";
-import { Tree } from "../../src/internal.js";
+import map from "../../src/operations/map.js";
+import plain from "../../src/operations/plain.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp");
@@ -107,7 +108,7 @@ describe("FileMap", () => {
       ["file1", "This is the first file."],
       ["subfolder", new Map([["file2", "This is the second file."]])],
     ]);
-    const object = await Tree.plain(files);
+    const object = await plain(files);
 
     // Write out files as a new folder called "folder".
     const tempFiles = new FileMap(tempDirectory);
@@ -115,12 +116,12 @@ describe("FileMap", () => {
 
     // Read them back in.
     const actualFiles = tempFiles.get("folder");
-    const strings = await Tree.map(actualFiles, {
+    const strings = await map(actualFiles, {
       deep: true,
       value: (buffer) => textDecoder.decode(buffer),
     });
-    const plain = await Tree.plain(strings);
-    assert.deepEqual(plain, object);
+    const result = await plain(strings);
+    assert.deepEqual(result, object);
 
     removeTempDirectory();
   });

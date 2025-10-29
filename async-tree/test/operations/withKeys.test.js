@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
+import plain from "../../src/operations/plain.js";
 import withKeys from "../../src/operations/withKeys.js";
 
 describe("withKeys", () => {
@@ -13,7 +13,7 @@ describe("withKeys", () => {
       },
       ["a", "c"]
     );
-    assert.deepEqual(await Tree.plain(result), {
+    assert.deepEqual(await plain(result), {
       a: 1,
       c: 3,
     });

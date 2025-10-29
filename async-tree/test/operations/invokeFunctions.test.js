@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import invokeFunctions from "../../src/operations/invokeFunctions.js";
+import plain from "../../src/operations/plain.js";
 
 describe("invokeFunctions", () => {
   test("invokes function values, leaves other values as is", async () => {
@@ -9,7 +9,7 @@ describe("invokeFunctions", () => {
       a: 1,
       b: () => 2,
     });
-    assert.deepEqual(await Tree.plain(fixture), {
+    assert.deepEqual(await plain(fixture), {
       a: 1,
       b: 2,
     });

@@ -1,7 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
 import BrowserFileTree from "../../src/drivers/BrowserFileTree.js";
-import { Tree } from "../../src/internal.js";
+import map from "../../src/operations/map.js";
+import plain from "../../src/operations/plain.js";
 
 // Skip these tests if we're not in a browser.
 const isBrowser = typeof window !== "undefined";
@@ -145,8 +146,8 @@ async function createFixture() {
 }
 
 async function strings(tree) {
-  return Tree.plain(
-    Tree.map(tree, {
+  return plain(
+    map(tree, {
       deep: true,
       value: (value) => text(value),
     })

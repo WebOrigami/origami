@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import match from "../../src/operations/match.js";
+import plain from "../../src/operations/plain.js";
 
 describe("match", () => {
   test("matches keys against a simplified pattern", async () => {
@@ -13,7 +13,7 @@ describe("match", () => {
       "Bob.html",
       "Carol.html",
     ]);
-    assert.deepEqual(await Tree.plain(tree), {
+    assert.deepEqual(await plain(tree), {
       "Alice.html": "Hello, Alice!",
       "Bob.html": "Hello, Bob!",
       "Carol.html": "Hello, Carol!",

@@ -4,7 +4,6 @@ import path from "node:path";
 import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import FileTree from "../../src/drivers/FileTree.js";
-import { ObjectTree, Tree } from "../../src/internal.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const tempDirectory = path.join(dirname, "fixtures/temp/FileTree");

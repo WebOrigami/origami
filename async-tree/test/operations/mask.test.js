@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import mask from "../../src/operations/mask.js";
+import plain from "../../src/operations/plain.js";
 
 describe("mask", () => {
   test("removes keys and values whose mask values are falsy", async () => {
@@ -22,7 +22,7 @@ describe("mask", () => {
       }
     );
     assert.deepEqual(await result.keys(), ["a", "c/"]);
-    assert.deepEqual(await Tree.plain(result), {
+    assert.deepEqual(await plain(result), {
       a: 1,
       c: {
         d: 3,

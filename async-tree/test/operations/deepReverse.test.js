@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import deepReverse from "../../src/operations/deepReverse.js";
+import plain from "../../src/operations/plain.js";
 
 describe("deepReverse", () => {
   test("reverses keys at all levels of a tree", async () => {
@@ -13,7 +13,7 @@ describe("deepReverse", () => {
       },
     };
     const reversed = await deepReverse(tree);
-    assert.deepEqual(await Tree.plain(reversed), {
+    assert.deepEqual(await plain(reversed), {
       b: {
         d: 3,
         c: 2,

@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { beforeEach, describe, mock, test } from "node:test";
 import AsyncMap from "../../src/drivers/AsyncMap.js";
 import ExplorableSiteMap from "../../src/drivers/ExplorableSiteMap.js";
-import { Tree } from "../../src/internal.js";
+import map from "../../src/operations/map.js";
 import * as trailingSlash from "../../src/trailingSlash.js";
 
 const textDecoder = new TextDecoder();
@@ -83,7 +83,7 @@ describe("ExplorableSiteMap", () => {
   test("can convert a site to a plain object", async () => {
     const fixture = new ExplorableSiteMap(mockHost);
     // Convert buffers to strings.
-    const strings = await Tree.map(fixture, {
+    const strings = await map(fixture, {
       deep: true,
       value: (value) => textDecoder.decode(value),
     });

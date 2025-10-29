@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
 import filter from "../../src/operations/filter.js";
+import plain from "../../src/operations/plain.js";
 
 describe("filter", () => {
   test("returns values that pass a filter function", async () => {
@@ -14,7 +14,7 @@ describe("filter", () => {
       },
       (value) => value % 2 === 1 // odd
     );
-    assert.deepEqual(await Tree.plain(result), {
+    assert.deepEqual(await plain(result), {
       a: 1,
       c: 3,
     });
@@ -35,7 +35,7 @@ describe("filter", () => {
         test: (value) => value % 2 === 1, // odd
       }
     );
-    assert.deepEqual(await Tree.plain(result), {
+    assert.deepEqual(await plain(result), {
       a: 1,
       c: {
         d: 3,

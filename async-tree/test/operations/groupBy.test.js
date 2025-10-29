@@ -1,7 +1,8 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
+import from from "../../src/operations/from.js";
 import groupBy from "../../src/operations/groupBy.js";
+import plain from "../../src/operations/plain.js";
 
 describe("groupBy transform", () => {
   test("groups an array using a group key function", async () => {
@@ -11,9 +12,9 @@ describe("groupBy transform", () => {
       { name: "Alegreya", tags: ["Serif"] },
       { name: "Work Sans", tags: ["Grotesque", "Sans Serif"] },
     ];
-    const tree = Tree.from(fonts);
+    const tree = from(fonts);
     const grouped = await groupBy(tree, (value, key, tree) => value.tags);
-    assert.deepEqual(await Tree.plain(grouped), {
+    assert.deepEqual(await plain(grouped), {
       Geometric: [{ name: "Albert Sans", tags: ["Geometric", "Sans Serif"] }],
       Grotesque: [{ name: "Work Sans", tags: ["Grotesque", "Sans Serif"] }],
       "Sans Serif": [
@@ -32,9 +33,9 @@ describe("groupBy transform", () => {
       Alegreya: { tags: ["Serif"] },
       "Work Sans": { tags: ["Grotesque", "Sans Serif"] },
     };
-    const tree = Tree.from(fonts);
+    const tree = from(fonts);
     const grouped = await groupBy(tree, (value, key, tree) => value.tags);
-    assert.deepEqual(await Tree.plain(grouped), {
+    assert.deepEqual(await plain(grouped), {
       Geometric: {
         "Albert Sans": { tags: ["Geometric", "Sans Serif"] },
       },

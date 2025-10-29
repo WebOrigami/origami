@@ -1,12 +1,12 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
+import from from "../../src/operations/from.js";
 import keys from "../../src/operations/keys.js";
 import sort from "../../src/operations/sort.js";
 
 describe("sort", () => {
   test("sorts keys using default sort order", async () => {
-    const tree = Tree.from({
+    const tree = from({
       file10: null,
       file1: null,
       file9: null,
@@ -20,7 +20,7 @@ describe("sort", () => {
   });
 
   test("invokes a comparison function", async () => {
-    const tree = Tree.from({
+    const tree = from({
       b: 2,
       c: 3,
       a: 1,

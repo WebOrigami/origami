@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { Tree } from "../../src/internal.js";
+import plain from "../../src/operations/plain.js";
 import reverse from "../../src/operations/reverse.js";
 
 describe("reverse", () => {
@@ -14,7 +14,7 @@ describe("reverse", () => {
     // @ts-ignore
     assert.deepEqual(Array.from(await reversed.keys()), ["c", "b", "a"]);
     // @ts-ignore
-    assert.deepEqual(await Tree.plain(reversed), {
+    assert.deepEqual(await plain(reversed), {
       c: "C",
       b: "B",
       a: "A",
