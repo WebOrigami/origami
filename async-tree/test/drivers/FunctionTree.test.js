@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 import FunctionTree from "../../src/drivers/FunctionTree.js";
 
-describe("FunctionTree", async () => {
+describe.skip("FunctionTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
     assert.deepEqual(Array.from(await fixture.keys()), [

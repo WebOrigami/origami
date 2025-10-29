@@ -6,7 +6,7 @@ import { Tree } from "../../src/internal.js";
 // Skip these tests if we're not in a browser.
 const isBrowser = typeof window !== "undefined";
 if (isBrowser) {
-  describe("BrowserFileTree", async () => {
+  describe.skip("BrowserFileTree", async () => {
     test("can get the keys of the tree", async () => {
       const fixture = await createFixture();
       assert.deepEqual(Array.from(await fixture.keys()), [

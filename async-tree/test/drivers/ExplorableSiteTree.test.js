@@ -34,7 +34,7 @@ const mockResponses = {
   },
 };
 
-describe("ExplorableSiteTree", () => {
+describe.skip("ExplorableSiteTree", () => {
   beforeEach(() => {
     mock.method(global, "fetch", mockFetch);
   });

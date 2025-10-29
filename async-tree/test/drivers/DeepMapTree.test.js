@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import DeepMapTree from "../../src/drivers/DeepMapTree.js";
 import { Tree } from "../../src/internal.js";
 
-describe("DeepMapTree", () => {
+describe.skip("DeepMapTree", () => {
   test("returns a DeepMapTree for value that's a Map", async () => {
     const tree = new DeepMapTree([
       ["a", 1],

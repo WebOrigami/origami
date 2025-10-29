@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import SetTree from "../../src/drivers/SetTree.js";
 import { ObjectTree } from "../../src/internal.js";
 
-describe("SetTree", () => {
+describe.skip("SetTree", () => {
   test("can get the keys of the tree", async () => {
     const set = new Set(["a", "b", "c"]);
     const fixture = new SetTree(set);

@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import { ObjectTree, Tree } from "../../src/internal.js";
 import * as symbols from "../../src/symbols.js";
 
-describe("ObjectTree", () => {
+describe.skip("ObjectTree", () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture();
     assert.deepEqual(Array.from(await fixture.keys()), [

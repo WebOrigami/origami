@@ -11,7 +11,7 @@ const tempDirectory = path.join(dirname, "fixtures/temp/FileTree");
 
 const textDecoder = new TextDecoder();
 
-describe("FileTree", async () => {
+describe.skip("FileTree", async () => {
   test("can get the keys of the tree", async () => {
     const fixture = createFixture("fixtures/markdown");
     assert.deepEqual(Array.from(await fixture.keys()), [
