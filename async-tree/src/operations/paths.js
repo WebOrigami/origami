@@ -1,7 +1,6 @@
 import * as trailingSlash from "../trailingSlash.js";
 import from from "./from.js";
 import isAsyncTree from "./isAsyncTree.js";
-import keys from "./keys.js";
 
 /**
  * Returns slash-separated paths for all values in the tree.
@@ -21,7 +20,7 @@ export default async function paths(treelike, options = {}) {
   const base = options.base ?? "";
   const assumeSlashes = options.assumeSlashes ?? false;
   const result = [];
-  for (const key of await keys(tree)) {
+  for await (const key of tree.keys()) {
     const separator = trailingSlash.has(base) ? "" : "/";
     const valuePath = base ? `${base}${separator}${key}` : key;
     let isSubtree;

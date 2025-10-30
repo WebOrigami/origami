@@ -14,7 +14,7 @@ import keys from "./operations/keys.js";
  */
 export async function stringify(treelike) {
   const tree = from(treelike);
-  let treeKeys = Array.from(await keys(tree));
+  let treeKeys = await keys(tree);
   // Skip the key `.keys.json` if present.
   treeKeys = treeKeys.filter((key) => key !== ".keys.json");
   const json = JSON.stringify(treeKeys);

@@ -1,6 +1,5 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import keys from "./keys.js";
 
 /**
  * Returns a new tree with the number of keys limited to the indicated count.
@@ -15,8 +14,14 @@ export default async function take(treelike, count) {
     description: `take ${count}`,
 
     async *keys() {
-      const treeKeys = await keys(tree);
-      yield* treeKeys.slice(0, count);
+      let i = 0;
+      for await (const key of tree.keys()) {
+        yield key;
+        i += 1;
+        if (i >= count) {
+          break;
+        }
+      }
     },
 
     async get(key) {

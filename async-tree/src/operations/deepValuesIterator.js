@@ -1,7 +1,6 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
 import isTreelike from "./isTreelike.js";
-import keys from "./keys.js";
 
 /**
  * Return an iterator that yields all values in a tree, including nested trees.
@@ -21,8 +20,8 @@ export default async function* deepValuesIterator(
     deep: true,
   });
 
-  for (const key of await keys(tree)) {
-    let value = await tree.get(key);
+  for await (const key of tree.keys()) {
+    const value = await tree.get(key);
 
     // Recurse into child trees, but don't expand functions.
     const recurse =

@@ -1,5 +1,4 @@
 import * as trailingSlash from "../trailingSlash.js";
-import keys from "./keys.js";
 
 // For each (tree, keyFn) combination, we maintain a cache mapping a source key to
 // a result key and vice versa. We have to maintain three levels of Map: tree ->
@@ -36,7 +35,7 @@ export default function cachedKeyFunctions(keyFn, deep = false) {
       // final match. This is O(n), but we stop as soon as we find a match,
       // and subsequent calls will benefit from the intermediate results.
       const resultKeyWithoutSlash = trailingSlash.remove(resultKey);
-      for (const sourceKey of await keys(tree)) {
+      for await (const sourceKey of tree.keys()) {
         // Skip any source keys we already know about.
         if (sourceKeyToResultKey.has(sourceKey)) {
           continue;

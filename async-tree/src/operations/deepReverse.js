@@ -27,7 +27,7 @@ export default async function deepReverse(treelike) {
     },
 
     async *keys() {
-      const treeKeys = Array.from(await keys(tree));
+      const treeKeys = await keys(tree);
       treeKeys.reverse();
       yield* treeKeys;
     },

@@ -1,5 +1,4 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import keys from "./keys.js";
 
 /**
  * Calls callbackFn once for each key-value pair present in the specific node of
@@ -12,10 +11,8 @@ import keys from "./keys.js";
  */
 export default async function forEach(treelike, callbackFn) {
   const tree = await getTreeArgument(treelike, "forEach");
-  const treeKeys = await keys(tree);
-  const promises = treeKeys.map(async (key) => {
+  for await (const key of tree.keys()) {
     const value = await tree.get(key);
-    return callbackFn(value, key, tree);
-  });
-  await Promise.all(promises);
+    await callbackFn(value, key, tree);
+  }
 }

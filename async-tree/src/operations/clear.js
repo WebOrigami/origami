@@ -1,5 +1,4 @@
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import keys from "./keys.js";
 
 /**
  * Remove all entries from the tree.
@@ -13,8 +12,10 @@ export default async function clear(treelike) {
   if ("readOnly" in tree && tree.readOnly) {
     throw new TypeError("Target must be a mutable asynchronous tree");
   }
-  const treeKeys = await keys(tree);
-  const promises = treeKeys.map((key) => tree.delete(key));
+  const promises = [];
+  for await (const key of tree.keys()) {
+    promises.push(tree.delete(key));
+  }
   await Promise.all(promises);
   return tree;
 }

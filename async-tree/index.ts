@@ -3,9 +3,9 @@ import AsyncMap from "./src/drivers/AsyncMap.js";
 
 export * from "./main.js";
 
-export type Invocable = Function | Treelike | Unpackable;
+export type Invocable = Function | Maplike | Unpackable;
 
-export type KeyFn = (key: any, innerTree: AsyncTree) => any;
+export type KeyFn = (key: any, map: SyncOrAsyncMap) => any;
 
 /**
  * An object with a non-trivial `toString` method.
@@ -22,6 +22,7 @@ export type Maplike =
   any[] |
   Function | 
   Map<any, any> | 
+  AsyncMap |
   PlainObject | 
   Set<any>;
 
@@ -46,7 +47,7 @@ export type PlainObject = {
   [key: string]: any;
 };
 
-export type ReduceFn = (values: any[], keys: any[], tree: AsyncTree) => Promise<any>;
+export type ReduceFn = (values: any[], keys: any[], map: SyncOrAsyncMap) => Promise<any>;
 
 export type Stringlike = string | HasString;
 
@@ -73,8 +74,6 @@ export type TreeMapExtensionOptions = {
   needsSourceValue?: boolean;
   value?: ValueKeyFn;
 };
-  
-export type TreeTransform = (treelike: Treelike) => AsyncTree;
 
 export type TypedArray =
   Float32Array |
@@ -96,4 +95,4 @@ export type Unpackable = {
  */
 export type UnpackFunction = (input: Packed, options?: any) => any;
 
-export type ValueKeyFn = (value: any, key: any, innerTree: AsyncTree) => any;
+export type ValueKeyFn = (value: any, key: any, map: SyncOrAsyncMap) => any;

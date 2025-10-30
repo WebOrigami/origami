@@ -1,16 +1,15 @@
 import AsyncMap from "../drivers/AsyncMap.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
-import keys from "./keys.js";
 
 /**
  * A tree's "scope" is the collection of everything in that tree and all of its
  * ancestors.
  *
- * @typedef {import("@weborigami/types").AsyncTree} AsyncTree
+ * @typedef {import("../../index.ts").AsyncMap} AsyncMap
  * @typedef {import("../../index.ts").Treelike} Treelike
  *
  * @param {Treelike} treelike
- * @returns {Promise<AsyncTree & {trees: AsyncTree[]}>}
+ * @returns {Promise<AsyncMap>}
  */
 export default async function scope(treelike) {
   const tree = await getTreeArgument(treelike, "scope");
@@ -20,7 +19,7 @@ export default async function scope(treelike) {
 
     // Starting with this tree, search up the parent hierarchy.
     async get(key) {
-      /** @type {AsyncTree|null|undefined} */
+      /** @type {Map|AsyncMap|null} */
       let current = tree;
       let value;
       while (current) {
@@ -28,7 +27,7 @@ export default async function scope(treelike) {
         if (value !== undefined) {
           break;
         }
-        current = current.parent;
+        current = "parent" in current ? current.parent : null;
       }
       return value;
     },
@@ -36,14 +35,13 @@ export default async function scope(treelike) {
     // Collect all keys for this tree and all parents
     async *keys() {
       const scopeKeys = new Set();
-
-      /** @type {AsyncTree|null|undefined} */
+      /** @type {Map|AsyncMap|null} */
       let current = tree;
       while (current) {
-        for (const key of await keys(current)) {
+        for await (const key of current.keys()) {
           scopeKeys.add(key);
         }
-        current = current.parent;
+        current = "parent" in current ? current.parent : null;
       }
 
       yield* scopeKeys;
@@ -56,11 +54,11 @@ export default async function scope(treelike) {
     get trees() {
       const result = [];
 
-      /** @type {AsyncTree|null|undefined} */
+      /** @type {Map|AsyncMap|null} */
       let current = tree;
       while (current) {
         result.push(current);
-        current = current.parent;
+        current = "parent" in current ? current.parent : null;
       }
 
       return result;

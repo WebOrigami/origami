@@ -2,7 +2,6 @@ import AsyncMap from "../drivers/AsyncMap.js";
 import * as trailingSlash from "../trailingSlash.js";
 import getTreeArgument from "../utilities/getTreeArgument.js";
 import isAsyncTree from "./isAsyncTree.js";
-import keys from "./keys.js";
 
 /**
  * Return the interior nodes of the tree. This relies on subtree keys having
@@ -23,9 +22,11 @@ export default async function inners(treelike) {
     },
 
     async *keys() {
-      const treeKeys = await keys(tree);
-      const subtreeKeys = treeKeys.filter(trailingSlash.has);
-      yield* subtreeKeys;
+      for await (const key of tree.keys()) {
+        if (trailingSlash.has(key)) {
+          yield key;
+        }
+      }
     },
   });
 }
